@@ -35,7 +35,6 @@
             AddCombatantClass("Druid");
             AddCombatantClass("Shaman");
             
-            //TODO:
             AddCivilianClass("Peasant");
             AddCivilianClass("Miner");
             AddCivilianClass("Craftsman");
@@ -54,7 +53,7 @@
             AddCrime(CRIME_TYPE.Vampire, CRIME_SEVERITY.Heinous);
             AddCrime(CRIME_TYPE.Demon_Worship, CRIME_SEVERITY.Heinous);
         }
-        public override void SetFromSaveData() {
+        public override void SetFixedData() {
             //structures
             AddNeededStructure(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.WOOD);
             AddNeededStructure(STRUCTURE_TYPE.DWELLING, RESOURCE.WOOD);
@@ -73,7 +72,6 @@
             AddCombatantClass("Druid");
             AddCombatantClass("Shaman");
             
-            //TODO:
             AddCivilianClass("Peasant");
             AddCivilianClass("Miner");
             AddCivilianClass("Craftsman");

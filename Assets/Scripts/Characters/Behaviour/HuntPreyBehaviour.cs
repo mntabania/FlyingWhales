@@ -11,7 +11,7 @@ public class HuntPreyBehaviour : CharacterBehaviourComponent {
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
-        Hunting hunting = character.traitContainer.GetNormalTrait<Hunting>("Hunting");
+        Hunting hunting = character.traitContainer.GetTraitOrStatus<Hunting>("Hunting");
         if (hunting != null) {
             List<Animal> animals = hunting.targetTile.GetAllDeadAndAliveCharactersInsideHex<Animal>();
             if (animals != null) {

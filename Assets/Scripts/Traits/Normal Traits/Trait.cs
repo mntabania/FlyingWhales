@@ -105,7 +105,7 @@ namespace Traits {
         public virtual void LoadTraitOnLoadTraitContainer(ITraitable addTo) { }
         public virtual void OnRemoveStatusBySchedule(ITraitable removedFrom) { }
         public virtual string GetToolTipText() { return string.Empty; }
-        public virtual bool IsUnique() { return true; }
+        //public virtual bool IsUnique() { return true; }
         /// <summary>
         /// Only used for characters, since traits aren't removed when a character dies.
         /// This function will be called to ensure that any unneeded resources in traits can be freed up when a character dies.
@@ -119,7 +119,7 @@ namespace Traits {
         /// returns to life.
         /// </summary>
         /// <param name="character">The character that returned to life.</param>
-        public virtual void OnReturnToLife(Character character) { }
+        //public virtual void OnReturnToLife(Character character) { } //Removed temporarily since this is not being used
         public virtual string GetTestingData(ITraitable traitable = null) {
             return string.Empty;
         }
@@ -134,6 +134,9 @@ namespace Traits {
         public virtual void OnOwnerInitiallyPlaced(Character owner) { }
         public virtual bool PerTickOwnerMovement() { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
         public virtual bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
+        public virtual void OnBeforeStartFlee(ITraitable traitable) { }
+        public virtual void OnAfterExitingCombat(ITraitable traitable) { }
+
         //Returns the string of the log key that's supposed to be logged
         public virtual string TriggerFlaw(Character character) {
             if (character.trapStructure.IsTrapped()) {

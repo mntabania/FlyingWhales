@@ -5,6 +5,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
+using Traits;
 namespace Inner_Maps.Location_Structures {
     public class PrisonCell : StructureRoom {
         
@@ -96,7 +97,10 @@ namespace Inner_Maps.Location_Structures {
                 
                 Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
                 character.traitContainer.AddTrait(character, "Restrained");
-
+                Prisoner prisonerTrait = character.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+                if (prisonerTrait != null) {
+                    prisonerTrait.SetPrisonerOfFaction(PlayerManager.Instance.player.playerFaction);
+                }
                 //open door
                 DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
                 door?.Open();

@@ -532,6 +532,7 @@ public static class Extensions {
             case JOB_TYPE.BUILD_BLUEPRINT:
             case JOB_TYPE.PLACE_BLUEPRINT:
             case JOB_TYPE.SPAWN_LAIR:
+            case JOB_TYPE.BUILD_VAMPIRE_CASTLE:
                 priority = 850;
                 break;
             case JOB_TYPE.SABOTAGE_NEIGHBOUR:
@@ -544,6 +545,8 @@ public static class Extensions {
             case JOB_TYPE.CULTIST_BOOBY_TRAP:
             case JOB_TYPE.EVANGELIZE:
             case JOB_TYPE.SNATCH:
+            case JOB_TYPE.VAMPIRIC_EMBRACE:
+            case JOB_TYPE.IMPRISON_BLOOD_SOURCE:
                 priority = 830;
                 break;
             case JOB_TYPE.BURY:
@@ -976,6 +979,15 @@ public static class Extensions {
                 return false;
             default:
                 return true;
+        }
+    }
+    public static bool IsSapient(this RACE race) {
+        switch (race) {
+            case RACE.HUMANS:
+            case RACE.ELVES:
+                return true;
+            default:
+                return false;
         }
     }
     #endregion

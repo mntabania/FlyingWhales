@@ -36,7 +36,7 @@ public class Poison : GoapAction {
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
 
-        Poisoned poisoned = target.traitContainer.GetNormalTrait<Poisoned>("Poisoned");
+        Poisoned poisoned = target.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
         poisoned?.AddAwareCharacter(witness); //make character aware of poisoned trait
 
         Character targetObjectOwner = null;
@@ -116,7 +116,7 @@ public class Poison : GoapAction {
                 if (!knownLoc.structure.IsOccupied()) {
                     return false;
                 }
-                Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait<Poisoned>("Poisoned");
+                Poisoned poisonedTrait = poiTarget.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
                 if (poisonedTrait?.responsibleCharacters != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
                     return false; //to prevent poisoning a table that has been already poisoned by this character
                 }

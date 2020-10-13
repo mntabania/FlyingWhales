@@ -12,7 +12,7 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
 
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
-        if (character.isFriendlyFactionless) {
+        if (character.isVagrantOrFactionless) {
             if(UnityEngine.Random.Range(0, 100) < 15) {
                 log += $"\n-{character.name} is factionless, 15% chance to join faction";
                 Faction chosenFaction = character.JoinFactionProcessing();
@@ -48,7 +48,7 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
                 leaveFactionChance += 8;
             }
             if (character.traitContainer.HasTrait("Betrayed") && character.faction.leader != null) {
-                Betrayed betrayed = character.traitContainer.GetNormalTrait<Betrayed>("Betrayed");
+                Betrayed betrayed = character.traitContainer.GetTraitOrStatus<Betrayed>("Betrayed");
                 if(betrayed.responsibleCharacter == character.faction.leader) {
                     leaveFactionChance += 30;
                 }

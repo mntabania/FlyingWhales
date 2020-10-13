@@ -14,7 +14,7 @@ using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UtilityScripts;
 namespace Inner_Maps {
-    // [ExecuteInEditMode]
+    [ExecuteInEditMode]
     public class InnerMapManager : BaseMonoBehaviour {
 
         public static InnerMapManager Instance;
@@ -27,7 +27,25 @@ namespace Inner_Maps {
         public const int DetailsTilemapSortingOrder = 40;
         public const int SelectedSortingOrder = 900;
         public const int Big_Tree_Yield = 300;
+
+        /// <summary>
+        /// At what tag index should randomly generated stuff start. i.e. tags per faction.
+        /// </summary>
+        public const int Starting_Tag_Index = 9;
+        public uint currentTagIndex = Starting_Tag_Index;
    
+        //tags
+        public const int All_Tags = -1;
+        public const int Ground_Tag = 1;
+        public const int Obstacle_Tag = 2;
+        public const int Demonic_Faction = 3;
+        public const int Demonic_Faction_Doors = 4;
+        public const int Undead_Faction = 5;
+        public const int Undead_Faction_Doors = 6;
+        public const int Roads = 7;
+        public const int Caves = 8;
+        public const int Special_Structures = 9;
+        
         private Vector3 _nextMapPos = Vector3.zero;
         public GameObject characterCollisionTriggerPrefab;
 
@@ -57,13 +75,15 @@ namespace Inner_Maps {
         public IPointOfInterest currentlyHoveredPoi { get; private set; }
         public List<LocationGridTile> currentlyHighlightedTiles { get; private set; }
         public List<LocationStructure> worldKnownDemonicStructures { get; private set; }
-        
+        public GraphMask mainGraphMask { get; private set; }
+
         public bool isAnInnerMapShowing => currentlyShowingMap != null;
         private LocationGridTile lastClickedTile;
         
         #region Monobehaviours
         private void Awake() {
             Instance = this;
+            mainGraphMask = 0;
         }
         public void LateUpdate() {
             if (GameManager.showAllTilesTooltip) {
@@ -283,6 +303,7 @@ namespace Inner_Maps {
             newMap.transform.localPosition = _nextMapPos;
             newMap.UpdateTilesWorldPosition();
             PathfindingManager.Instance.CreatePathfindingGraphForLocation(newMap);
+            mainGraphMask = mainGraphMask | GraphMask.FromGraph(newMap.pathfindingGraph);
             _nextMapPos = new Vector3(_nextMapPos.x, _nextMapPos.y + newMap.height + 50, _nextMapPos.z);
             newMap.OnMapGenerationFinished();
         }
@@ -359,7 +380,6 @@ namespace Inner_Maps {
             if (showingCharacter?.gridTileLocation != null) {
                 isPathPossible = PathUtilities.IsPathPossible(showingCharacter.gridTileLocation.graphNode, tile.graphNode);
             }
-            
             HexTile hexTile = tile.collectionOwner.partOfHextile?.hexTileOwner;
             string summary = tile.localPlace.ToString();
             summary = $"{summary}\n<b>Tile Persistent ID:</b>{tile.persistentID}";
@@ -376,13 +396,20 @@ namespace Inner_Maps {
             summary = $"{summary} <b>Tile State:</b>{tile.tileState.ToString()}";
             summary = $"{summary} <b>Current Tile Asset:</b>{(tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null")}";
             summary = $"{summary}\nTile Traits: ";
-            if (tile.genericTileObject != null && tile.normalTraits.Count > 0) {
+            if (tile.genericTileObject != null && tile.traits.Count > 0) {
                 summary = $"{summary}\n";
-                summary = tile.normalTraits.Aggregate(summary, (current, t) => $"{current}|{t.name}|");
+                summary = tile.traits.Aggregate(summary, (current, t) => $"{current}|{t.name}|");
             } else {
                 summary = $"{summary}None";
             }
-            
+            summary = $"{summary}\nTile Statuses: ";
+            if (tile.genericTileObject != null && tile.statuses.Count > 0) {
+                summary = $"{summary}\n";
+                summary = tile.statuses.Aggregate(summary, (current, t) => $"{current}|{t.name}|");
+            } else {
+                summary = $"{summary}None";
+            }
+
             IPointOfInterest poi = tile.objHere ?? tile.genericTileObject;
             summary = $"{summary}\nContent: {poi}";
             if (poi != null) {
@@ -401,8 +428,11 @@ namespace Inner_Maps {
                 summary = poi.advertisedActions != null && poi.advertisedActions.Count > 0 ? poi.advertisedActions.Aggregate(summary, (current, t) => $"{current}|{t.ToString()}|") : $"{summary}None";
                 
                 summary = $"{summary}\n\tObject Traits: ";
-                summary = poi.traitContainer.allTraitsAndStatuses.Count > 0 ? poi.traitContainer.allTraitsAndStatuses.Aggregate(summary, (current, t) => $"{current}\n\t\t- {t.name} - {t.GetTestingData(poi)}") : $"{summary}None";
-                
+                summary = poi.traitContainer.traits.Count > 0 ? poi.traitContainer.traits.Aggregate(summary, (current, t) => $"{current}\n\t\t- {t.name} - {t.GetTestingData(poi)}") : $"{summary}None";
+
+                summary = $"{summary}\n\tObject Statuses: ";
+                summary = poi.traitContainer.statuses.Count > 0 ? poi.traitContainer.statuses.Aggregate(summary, (current, t) => $"{current}\n\t\t- {t.name} - {t.GetTestingData(poi)}") : $"{summary}None";
+
                 summary = $"{summary}\n\tJobs Targeting this: ";
                 summary = poi.allJobsTargetingThis.Count > 0 ? poi.allJobsTargetingThis.Aggregate(summary, (current, t) => $"{current}\n\t\t- {t}") : $"{summary}None";
             }
@@ -866,6 +896,18 @@ namespace Inner_Maps {
         }
         #endregion
 
+        #region Tags
+        public uint ClaimNextTag() {
+            if (currentTagIndex > 31) {
+                Debug.LogError("Max Tag limit has been reached! Could not claim new tags!");
+                return 0; //always return 0 if ever tags run out, this should rarely happen!
+            }
+            uint claimedTag = currentTagIndex;
+            currentTagIndex++;
+            return claimedTag;
+        }
+        #endregion
+        
         protected override void OnDestroy() {
             Debug.Log("Cleaning up inner maps...");
             if (innerMaps != null) {

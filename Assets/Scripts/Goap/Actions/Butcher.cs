@@ -153,7 +153,7 @@ public class Butcher : GoapAction {
             }
         }
         if (targetCharacter is Animal || targetCharacter.race == RACE.WOLF || targetCharacter.race == RACE.SPIDER) {
-            CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(actor, actor, targetCharacter, CRIME_TYPE.Animal_Killing, null);
+            CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(actor, actor, targetCharacter, CRIME_TYPE.Animal_Killing);
             int currCost = 0;
             if(severity == CRIME_SEVERITY.Infraction) {
                 currCost = UtilityScripts.Utilities.Rng.Next(80, 91);

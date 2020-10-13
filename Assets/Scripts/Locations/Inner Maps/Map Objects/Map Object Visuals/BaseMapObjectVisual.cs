@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using Inner_Maps;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -65,7 +66,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
             hoverObject.transform.localRotation = rotation;    
         }
     }
-    public void SetVisual(Sprite sprite) {
+    public virtual void SetVisual(Sprite sprite) {
         objectVisual.sprite = sprite;
         hoverObject.sprite = sprite;
     }
@@ -249,13 +250,13 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     #endregion
     
     #region Graph Updates
-    public void InitializeGUS(Vector2 offset, Vector2 size) {
+    public void InitializeGUS(Vector2 offset, Vector2 size, [NotNull]LocationGridTile tile) {
         if (graphUpdateScene == null) {
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool("LocationGridTileGUS", Vector3.zero, Quaternion.identity, transform);
             LocationGridTileGUS gus = go.GetComponent<LocationGridTileGUS>();
             graphUpdateScene = gus;
         }
-        graphUpdateScene.Initialize(offset, size);
+        graphUpdateScene.Initialize(offset, size, tile.parentMap);
     }
     public void DestroyExistingGUS() {
         if (graphUpdateScene == null) return;
@@ -263,7 +264,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         graphUpdateScene = null;
     }
     public void ApplyGraphUpdate() {
-        graphUpdateScene.Apply();
+        graphUpdateScene.InstantApply();
     }
     #endregion
 }

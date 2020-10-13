@@ -23,7 +23,7 @@ namespace Traits {
                 if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT) {
                     if (poiTarget is Character) {
                         Character targetCharacter = poiTarget as Character;
-                        Unfaithful unfaithful = actor.traitContainer.GetNormalTrait<Unfaithful>("Unfaithful");
+                        Unfaithful unfaithful = actor.traitContainer.GetTraitOrStatus<Unfaithful>("Unfaithful");
                         if (unfaithful != null && actor.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
                             cost = UtilityScripts.Utilities.Rng.Next(15, 37);
                         }

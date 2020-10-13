@@ -164,7 +164,8 @@ public class GenericTileObject : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.GO_TO_TILE);
         AddAdvertisedAction(INTERACTION_TYPE.FLEE_CRIME);
         AddAdvertisedAction(INTERACTION_TYPE.PLACE_BLUEPRINT);
-        AddAdvertisedAction(INTERACTION_TYPE.BUILD_STRUCTURE);
+        AddAdvertisedAction(INTERACTION_TYPE.BUILD_BLUEPRINT);
+        AddAdvertisedAction(INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE);
     }
     public void ManualInitializeLoad(LocationGridTile tile, SaveDataTileObject saveDataTileObject) {
         if (hasBeenInitialized) {
@@ -189,7 +190,7 @@ public class GenericTileObject : TileObject {
                 LocationGridTile tile = occupiedTiles[j];
                 tile.SetHasBlueprint(true);
             }
-            structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint);
+            structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint, gridTileLocation.parentMap);
             structureObject.SetTilesInStructure(occupiedTiles.ToArray());
             blueprintOnTile = structureObject;
             gridTileLocation.SetIsDefault(false);
@@ -202,7 +203,7 @@ public class GenericTileObject : TileObject {
         HexTile hexTile = gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
         npcSettlement.AddTileToSettlement(hexTile);
         
-        blueprintOnTile.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Built);
+        blueprintOnTile.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Built, gridTileLocation.parentMap);
         LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(gridTileLocation.parentMap.region, blueprintOnTile.structureType, npcSettlement);
         blueprintOnTile.ClearOutUnimportantObjectsBeforePlacement();
     
@@ -247,7 +248,7 @@ public class GenericTileObject : TileObject {
             LocationGridTile tile = occupiedTiles[j];
             tile.SetHasBlueprint(true);
         }
-        structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint);
+        structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint, gridTileLocation.parentMap);
         structureObject.SetTilesInStructure(occupiedTiles.ToArray());
         blueprintOnTile = structureObject;
     }

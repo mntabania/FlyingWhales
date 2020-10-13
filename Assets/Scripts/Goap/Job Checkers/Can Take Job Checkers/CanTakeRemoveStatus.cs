@@ -10,7 +10,7 @@ namespace Goap.Job_Checkers {
             Character targetCharacter = goapPlanJob.targetPOI as Character;
             Assert.IsNotNull(targetCharacter);
             string traitName = goapPlanJob.goal.conditionKey;
-            Trait trait = targetCharacter.traitContainer.GetNormalTrait<Trait>(traitName);
+            Trait trait = targetCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
             if (trait == null) {
                 Debug.LogWarning($"{targetCharacter.name} has remove status {traitName} in settlement job queue but does not have that trait!");
                 return false;

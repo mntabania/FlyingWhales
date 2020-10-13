@@ -599,7 +599,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	private void TryCreateRemoveStatusJob() {
 		if (owner.homeSettlement != null && owner.gridTileLocation.IsNextToOrPartOfSettlement(owner.homeSettlement)
 		    && owner.traitContainer.HasTrait("Criminal") == false) {
-			List<Trait> statusTraits = owner.traitContainer.GetNormalTraits<Trait>(TraitManager.Instance.removeStatusTraits.ToArray());
+			List<Trait> statusTraits = owner.traitContainer.GetTraitsOrStatuses<Trait>(TraitManager.Instance.removeStatusTraits.ToArray());
 			for (int i = 0; i < statusTraits.Count; i++) {
 				Trait trait = statusTraits[i];
 				TryCreateRemoveStatusJob(trait);
@@ -1356,15 +1356,34 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             }
         }
     }
+    #endregion
+
+    #region Vampire
     public bool CreateDrinkBloodJob(JOB_TYPE jobType, IPointOfInterest target) {
-	    if (!owner.jobQueue.HasJob(jobType)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.DRINK_BLOOD, target, owner);
-		    if (owner.jobQueue.AddJobInQueue(job)) {
-			    owner.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
-		    }
-		    return true;
-	    }
-	    return false;
+        if (!owner.jobQueue.HasJob(jobType)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.DRINK_BLOOD, target, owner);
+            if (owner.jobQueue.AddJobInQueue(job)) {
+                owner.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
+            }
+            return true;
+        }
+        return false;
+    }
+    public bool CreateVampiricEmbraceJob(JOB_TYPE jobType, IPointOfInterest target) {
+        if (!owner.jobQueue.HasJob(jobType)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.VAMPIRIC_EMBRACE, target, owner);
+            return owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
+    }
+    public bool CreateVampiricEmbraceJob(JOB_TYPE jobType, IPointOfInterest target, out JobQueueItem producedJob) {
+        producedJob = null;
+        if (!owner.jobQueue.HasJob(jobType)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.VAMPIRIC_EMBRACE, target, owner);
+            producedJob = job;
+            return true;
+        }
+        return false;
     }
     #endregion
 
@@ -2157,7 +2176,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (canDoJob) {
             if (target.traitContainer.HasTrait("Criminal")) {
                 if (owner.jobQueue.HasJob(JOB_TYPE.APPREHEND, target) == false) {
-                    Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                    Criminal criminalTrait = target.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
                     if (criminalTrait.IsWantedBy(owner.faction)) {
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, target, owner);
                         job.SetStillApplicableChecker(JobManager.Apprehend_Applicability);
@@ -2334,10 +2353,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (!owner.jobQueue.HasJob(JOB_TYPE.SEEK_SHELTER) && owner.gridTileLocation != null) {
             List<LocationStructure> exclusions = null;
             if (owner.traitContainer.HasTrait("Freezing")) {
-                Freezing freezing = owner.traitContainer.GetNormalTrait<Freezing>("Freezing");
+                Freezing freezing = owner.traitContainer.GetTraitOrStatus<Freezing>("Freezing");
                 exclusions = freezing.excludedStructuresInSeekingShelter;
             } else if (owner.traitContainer.HasTrait("Overheating")) {
-                Overheating overheating = owner.traitContainer.GetNormalTrait<Overheating>("Overheating");
+                Overheating overheating = owner.traitContainer.GetTraitOrStatus<Overheating>("Overheating");
                 exclusions = overheating.excludedStructuresInSeekingShelter;
             }
             LocationStructure nearestInteriorStructure = owner.gridTileLocation.GetNearestInteriorStructureFromThisExcept(exclusions);
@@ -2861,6 +2880,87 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    job.SetAssignedPlan(goapPlan);
 		    producedJob = job;
 		    return true;
+	    }
+	    producedJob = null;
+	    return false;
+    }
+    #endregion
+
+    #region Build Vampire Castle
+    public bool TriggerBuildVampireCastle(LocationGridTile targetTile, out JobQueueItem producedJob, string structurePrefabName = "") {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.BUILD_VAMPIRE_CASTLE)) {
+		    var otherData = new OtherData[] {new StringOtherData(structurePrefabName)};
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE], owner, targetTile.genericTileObject, otherData, 0);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetTile.genericTileObject);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_VAMPIRE_CASTLE, INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE, targetTile.genericTileObject, owner);
+		    goapPlan.SetDoNotRecalculate(true);
+		    job.SetAssignedPlan(goapPlan);
+		    producedJob = job;
+		    return true;
+	    }
+	    producedJob = null;
+	    return false;
+    }
+    public void TriggerBuildVampireCastle(LocationGridTile targetTile, string structurePrefabName = "") {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.BUILD_VAMPIRE_CASTLE)) {
+		    var otherData = new OtherData[] {new StringOtherData(structurePrefabName)};
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE], owner, targetTile.genericTileObject, otherData, 0);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetTile.genericTileObject);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_VAMPIRE_CASTLE, INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE, targetTile.genericTileObject, owner);
+		    goapPlan.SetDoNotRecalculate(true);
+		    job.SetAssignedPlan(goapPlan);
+		    owner.jobQueue.AddJobInQueue(job);
+	    }
+    }
+    public bool TriggerImprisonBloodSource(out JobQueueItem producedJob, ref string log) {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.IMPRISON_BLOOD_SOURCE)) {
+		    log += $"\nWill try to imprison blood source";
+		    WeightedDictionary<Character> choices = new WeightedDictionary<Character>();
+		    foreach (var relationship in owner.relationshipContainer.relationships) {
+			    Character otherCharacter = CharacterManager.Instance.GetCharacterByID(relationship.Key);
+			    if (otherCharacter != null) {
+				    if (otherCharacter.traitContainer.GetTraitOrStatus<Trait>("Vampire") == null) {
+					    string opinion = relationship.Value.opinions.GetOpinionLabel();
+					    if (opinion == RelationshipManager.Acquaintance || opinion == RelationshipManager.Enemy || opinion == RelationshipManager.Rival) {
+						    int weight = 0;
+						    if (opinion == RelationshipManager.Acquaintance) {
+							    weight += 10;
+						    } else if (opinion == RelationshipManager.Enemy) {
+							    weight += 50;
+						    } else if (opinion == RelationshipManager.Rival) {
+							    weight += 100;
+						    }
+						    if (otherCharacter.homeSettlement != owner.homeSettlement) {
+							    weight += 200;
+						    }
+						    if (otherCharacter.faction != owner.faction) {
+							    weight *= 3;
+						    }
+						    if (weight > 0) {
+							    choices.AddElement(otherCharacter, weight);
+						    }    
+					    }
+				    }
+			    }
+		    }
+		    
+		    //Pick random animals
+		    List<Character> animalsInRegion = owner.currentRegion.charactersAtLocation.Where(x => x is Animal).ToList();
+		    for (int i = 0; i < 3; i++) {
+			    if (animalsInRegion.Count == 0) { break; }
+			    Character animal = UtilityScripts.CollectionUtilities.GetRandomElement(animalsInRegion);
+			    choices.AddElement(animal, 100);
+			    animalsInRegion.Remove(animal);
+		    }
+		    log += $"\n{choices.GetWeightsSummary("Weights are:")}";
+		    if (choices.GetTotalOfWeights() > 0) {
+			    Character target = choices.PickRandomElementGivenWeights();
+			    log += $"\nChosen target is {target.name}";
+			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IMPRISON_BLOOD_SOURCE, INTERACTION_TYPE.DROP, target, owner);
+			    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { owner.homeStructure });
+			    producedJob = job;
+			    return true;
+		    }
 	    }
 	    producedJob = null;
 	    return false;

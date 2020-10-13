@@ -156,7 +156,7 @@ public class TheFingersUI : MonoBehaviour {
         characterNameplateItems.Clear();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
-            if(character.isFriendlyFactionless /*&& character.faction.leader != character*/) {
+            if(character.isVagrantOrFactionless /*&& character.faction.leader != character*/) {
                 CharacterNameplateItem item = CreateNewCharacterNameplateItem();
                 item.SetObject(character);
                 item.SetAsToggle();
@@ -330,7 +330,7 @@ public class TheFingersUI : MonoBehaviour {
         List<Character> viableCharacters = new List<Character>();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
-            if (character.isFriendlyFactionless && character.isNormalEvenLycanAndNotAlliedWithPlayer && character.IsAble()) {
+            if (character.isVagrantOrFactionless && character.isNormalEvenLycanAndNotAlliedWithPlayer && character.IsAble()) {
                 viableCharacters.Add(character);
             }
         }

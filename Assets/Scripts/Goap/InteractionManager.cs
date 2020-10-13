@@ -143,7 +143,7 @@ public partial class InteractionManager : BaseMonoBehaviour {
 
     #region Precondition Resolvers
     public bool TargetHasNegativeTraitEffect(Character actor, IPointOfInterest target) {
-        return target.traitContainer.HasTraitOf(TRAIT_EFFECT.NEGATIVE);
+        return target.traitContainer.HasTraitOrStatusOf(TRAIT_EFFECT.NEGATIVE);
     }
     #endregion
 }

@@ -8,6 +8,8 @@ public class DoorTileObject : TileObject {
     
     public bool isOpen { get; private set; }
     public override Type serializedData => typeof(SaveDataDoorTileObject);
+
+    private DoorGameObject _doorGameObject;
     
     public DoorTileObject() {
         Initialize(TILE_OBJECT_TYPE.DOOR_TILE_OBJECT);
@@ -27,20 +29,26 @@ public class DoorTileObject : TileObject {
         }
     }
     #endregion
-    
+
+    protected override void CreateMapObjectVisual() {
+        base.CreateMapObjectVisual();
+        _doorGameObject = mapVisual as DoorGameObject;
+    }
     public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
         base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
         mapVisual.DestroyExistingGUS();
     }
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
         base.OnPlaceTileObjectAtTile(tile);
-        mapVisual.InitializeGUS(Vector2.zero, Vector2.one);
+        mapVisual.InitializeGUS(Vector2.zero, Vector2.one, tile);
     }
+    
 
     public void Open() {
         if (mapVisual == null) { return; }
         Debug.Log($"Opened door {this} at {structureLocation} {gridTileLocation}");
         isOpen = true;
+        _doorGameObject.SetBlockerState(false);
         mapVisual.SetVisualAlpha(0f);
         mapVisual.DestroyExistingGUS();
     }
@@ -48,8 +56,9 @@ public class DoorTileObject : TileObject {
         if (mapVisual == null) { return; }
         Debug.Log($"Closed door {this} at {structureLocation} {gridTileLocation}");
         isOpen = false;
+        _doorGameObject.SetBlockerState(true);
         mapVisual.SetVisualAlpha(1f);
-        mapVisual.InitializeGUS(Vector2.zero, Vector2.one);
+        mapVisual.InitializeGUS(Vector2.zero, Vector2.one, gridTileLocation);
     }
 }
 

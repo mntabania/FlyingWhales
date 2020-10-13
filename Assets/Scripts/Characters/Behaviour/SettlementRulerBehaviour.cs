@@ -20,11 +20,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                 int roll = Random.Range(0, 100);
                 log += $"\n-Roll: {roll}";
                 if (roll < 15) {
-                    Character targetCharacter = structure.GetRandomCharacterThatMeetCriteria(x => x.traitContainer.HasTrait("Restrained") 
-                    && x.faction != character.faction 
-                    && character.faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(x) 
-                    && !character.faction.IsCharacterBannedFromJoining(x) 
-                    && !x.HasJobTargetingThis(JOB_TYPE.RECRUIT));
+                    Character targetCharacter = structure.GetRandomCharacterThatMeetCriteria(x => CanCharacterBeRecruited(x, character));
 
                     if (targetCharacter != null) {
                         log += $"\n-Chosen target: {targetCharacter.name}";
@@ -47,7 +43,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                         log += $"\n-Chance met and dwellings not yet at maximum.";
                         //place dwelling blueprint
                         StructureSetting structureToPlace = new StructureSetting(STRUCTURE_TYPE.DWELLING, character.faction.factionType.mainResource);
-                        if (CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
+                        if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
                             log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
                             return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, out producedJob);    
                         }    
@@ -64,7 +60,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                         log += $"\n-Chance to build facility met.";
                         //place random facility based on weights
                         StructureSetting targetFacility = character.homeSettlement.GetMissingFacilityToBuildBasedOnWeights();
-                        if (targetFacility.hasValue && CanPlaceStructureBlueprint(character.homeSettlement, targetFacility, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
+                        if (targetFacility.hasValue && LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, targetFacility, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
                             log += $"\n-Will place blueprint {structurePrefabName} at {targetTile}.";
                             return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, targetFacility, targetTile, out producedJob);    
                         }
@@ -107,25 +103,24 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
         //return false;
     }
 
-    private bool CanPlaceStructureBlueprint(NPCSettlement npcSettlement, StructureSetting structureToPlace, out LocationGridTile targetTile, out string structurePrefabName, out int connectorToUse) {
-        List<StructureConnector> availableStructureConnectors = npcSettlement.GetAvailableStructureConnectors();
-        availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
-        List<GameObject> prefabChoices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureToPlace);
-        prefabChoices = CollectionUtilities.Shuffle(prefabChoices);
-        for (int j = 0; j < prefabChoices.Count; j++) {
-            GameObject prefabGO = prefabChoices[j];
-            LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
-            StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, npcSettlement.region.innerMap, out var connectorIndex, out LocationGridTile tileToPlaceStructure);
-            if (validConnector != null) {
-                targetTile = tileToPlaceStructure;
-                structurePrefabName = prefabGO.name;
-                connectorToUse = connectorIndex;
-                return true;
-            }
+    private bool CanCharacterBeRecruited(Character targetCharacter, Character recruiter) {
+        if (!targetCharacter.traitContainer.HasTrait("Restrained")) {
+            return false;
         }
-        targetTile = null;
-        structurePrefabName = string.Empty;
-        connectorToUse = -1;
-        return false;
+        if (targetCharacter.faction == recruiter.faction) {
+            return false;
+        }
+        if (targetCharacter.HasJobTargetingThis(JOB_TYPE.RECRUIT)) {
+            return false;
+        }
+        if (!recruiter.faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(targetCharacter)) {
+            //Cannot recruit characters that does not fit faction ideologies
+            return false;
+        }
+        if (recruiter.faction.IsCharacterBannedFromJoining(targetCharacter)) {
+            //Cannot recruit banned characters
+            return false;
+        }
+        return true;
     }
 }

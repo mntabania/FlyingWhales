@@ -15,23 +15,23 @@ public class VampirismData : SpellData {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        targetPOI.traitContainer.AddTrait(targetPOI, "Vampiric");
+        targetPOI.traitContainer.AddTrait(targetPOI, "Vampire");
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted", null, LOG_TAG.Player, LOG_TAG.Life_Changes);
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, "Vampiric", LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, "Vampire", LOG_IDENTIFIER.STRING_1);
         log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Cannibal", "Vampiric", "Beast")) {
+        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Cannibal", "Vampire", "Beast")) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);
     }
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
-        if (targetCharacter.traitContainer.HasTrait("Vampiric")) {
+        if (targetCharacter.traitContainer.HasTrait("Vampire")) {
             reasons += $"{targetCharacter.name} already has this Flaw,";
         }
         return reasons;

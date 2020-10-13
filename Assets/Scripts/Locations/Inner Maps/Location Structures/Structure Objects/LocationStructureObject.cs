@@ -314,7 +314,7 @@ public class LocationStructureObject : PooledObject {
             }
         }
         
-        RescanPathfindingGridOfStructure();
+        RescanPathfindingGridOfStructure(innerMap);
         UpdateSortingOrders();
         Messenger.Broadcast(Signals.STRUCTURE_OBJECT_PLACED, structure);
     }
@@ -330,13 +330,13 @@ public class LocationStructureObject : PooledObject {
         if (_blockWallsTilemap != null) {
             _blockWallsTilemap.gameObject.SetActive(false);    
         }
-        RescanPathfindingGridOfStructure();
+        RescanPathfindingGridOfStructure(innerMap);
         UpdateSortingOrders();
         SetPreplacedObjectsState(false);
         Messenger.Broadcast(Signals.STRUCTURE_OBJECT_PLACED, structure);
     }
-    public void OnOwnerStructureDestroyed() {
-        RescanPathfindingGridOfStructure();
+    public void OnOwnerStructureDestroyed(InnerTileMap innerTileMap) {
+        RescanPathfindingGridOfStructure(innerTileMap, 0);
         gameObject.SetActive(false); //disable this object.
         _parentTemplate.CheckForDestroy(); //check if whole structure template has been destroyed.
     }
@@ -413,7 +413,7 @@ public class LocationStructureObject : PooledObject {
     #endregion
 
     #region Visuals
-    public void SetVisualMode(Structure_Visual_Mode mode) {
+    public void SetVisualMode(Structure_Visual_Mode mode, InnerTileMap innerTileMap) {
         Color color = Color.white;
         switch (mode) {
             case Structure_Visual_Mode.Blueprint:
@@ -426,7 +426,7 @@ public class LocationStructureObject : PooledObject {
                 color = Color.white;
                 SetStructureColor(color);
                 SetWallCollidersState(true);
-                RescanPathfindingGridOfStructure();
+                RescanPathfindingGridOfStructure(innerTileMap);
                 break;
         }
     }
@@ -523,8 +523,12 @@ public class LocationStructureObject : PooledObject {
 
     #region Pathfinding
     [ContextMenu("Rescan Pathfinding Grid Of Structure")]
-    public void RescanPathfindingGridOfStructure() {
-        PathfindingManager.Instance.UpdatePathfindingGraphPartialCoroutine(_groundTileMapRenderer.bounds);
+    public void RescanPathfindingGridOfStructure(InnerTileMap innerTileMap, int tag = 1) {
+        GraphUpdateObject guo = new GraphUpdateObject(_groundTileMapRenderer.bounds) {nnConstraint = innerTileMap.onlyUnwalkableGraph};
+        PathfindingManager.Instance.UpdatePathfindingGraphPartialCoroutine(guo);
+
+        guo = new TagGraphUpdateObject(_groundTileMapRenderer.bounds) {nnConstraint = innerTileMap.onlyPathfindingGraph, updatePhysics = true, modifyWalkability = false};
+        PathfindingManager.Instance.UpdatePathfindingGraphPartialCoroutine(guo);
     }
     #endregion
 

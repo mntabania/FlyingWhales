@@ -36,7 +36,7 @@ public class DryTilesBehaviour : CharacterBehaviourComponent {
 
         for (int i = 0; i < character.behaviourComponent.dryingTilesForSettlement.settlementJobTriggerComponent.wetTiles.Count; i++) {
             LocationGridTile wetTile = character.behaviourComponent.dryingTilesForSettlement.settlementJobTriggerComponent.wetTiles[i];
-            Wet wet = wetTile.genericTileObject.traitContainer.GetNormalTrait<Wet>("Wet");
+            Wet wet = wetTile.genericTileObject.traitContainer.GetTraitOrStatus<Wet>("Wet");
             if (wet != null && wet.dryer == null) {
                 //only consider dousing fire that is not yet assigned
                 float dist = Vector2.Distance(character.worldObject.transform.position, wetTile.worldLocation);
@@ -47,7 +47,7 @@ public class DryTilesBehaviour : CharacterBehaviourComponent {
             }
         }
         if (nearestTile != null) {
-            Wet wet = nearestTile.genericTileObject.traitContainer.GetNormalTrait<Wet>("Wet"); 
+            Wet wet = nearestTile.genericTileObject.traitContainer.GetTraitOrStatus<Wet>("Wet"); 
             Assert.IsNotNull(wet, $"Wet of {nearestTile} is null.");
             wet.SetDryer(character);
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DRY_TILES, INTERACTION_TYPE.DRY_TILE,

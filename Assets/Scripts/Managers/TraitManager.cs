@@ -30,9 +30,12 @@ public class TraitManager : BaseMonoBehaviour {
     public const string Hour_Started_Trait = "Hour_Started_Trait";
     public const string See_Poi_Trait = "See_Poi_Trait";
     public const string See_Poi_Cannot_Witness_Trait = "See_Poi_Cannot_Witness_Trait";
+    public const string Before_Start_Flee = "Before_Start_Flee";
+    public const string After_Exiting_Combat = "After_Exiting_Combat";
+    public const string Per_Tick_Movement = "Per_Tick_Movement";
 
     public static string[] instancedTraitsAndStatuses = new string[] {
-        "Restrained", "Injured", "Kleptomaniac", "Lycanthrope", "Vampiric",
+        "Restrained", "Injured", "Kleptomaniac", "Lycanthrope", "Vampire",
         "Poisoned", "Resting", "Sick", "Unconscious", "Zapped", "Spooked", "Cannibal", "Lethargic",
         "Dead", "Unfaithful", "Drunk", "Burning", "Burnt", "Agoraphobic", "Infected", "Music Lover", "Music Hater", 
         "Psychopath", "Plagued", "Vigilant", "Diplomatic", "Wet", "Character Trait", "Nocturnal", "Glutton", 
@@ -44,11 +47,11 @@ public class TraitManager : BaseMonoBehaviour {
         "Fervor", "Tended", "Tending", "Cleansing", "Dousing", "Drying", "Patrolling", "Necromancer", "Mining", 
         "Webbed", "Cultist", "Stealthy", "Invisible", "Noxious Wanderer", "DeMooder", "Defender", "Invader", "Disabler", "Infestor",
         "Abductor", "Arsonist", "Hibernating", "Baby Infestor", "Tower", "Mighty", "Stoned", "Transforming", "Subterranean", "Petrasol",
-        "Snatcher", "Agitated", "Hunting", "Chained Electric",
+        "Snatcher", "Agitated", "Hunting", "Chained Electric", "Prisoner"
     };
 
     //public static string[] unhiddenInstancedTraits = new string[] {
-    //    "Kleptomaniac", "Lycanthrope", "Vampiric", "Cannibal", "Unfaithful", "Agoraphobic", "Music Lover", "Music Hater",
+    //    "Kleptomaniac", "Lycanthrope", "Vampire", "Cannibal", "Unfaithful", "Agoraphobic", "Music Lover", "Music Hater",
     //    "Psychopath", "Vigilant", "Diplomatic", "Nocturnal", "Glutton",
     //    "Suspicious", "Narcoleptic", "Hothead", "Inspiring", "Pyrophobic", "Alcoholic", "Pessimist", "Lazy",
     //    "Coward", "Chaste", "Lustful", "Edible", "Accident Prone",
@@ -248,7 +251,7 @@ public class TraitManager : BaseMonoBehaviour {
     /// <returns></returns>
     public bool CanStillTriggerFlaws(Character character) {
         if (character.isDead || character.faction.isPlayerFaction || UtilityScripts.GameUtilities.IsRaceBeast(character.race) || character is Summon 
-            || character.returnedToLife) {
+            || character.raisedFromDeadAsSkeleton) {
             return false;
         }
         //if(doNotDisturb > 0) {

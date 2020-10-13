@@ -33,7 +33,7 @@ public class CombatState : CharacterState {
     //Is this character fighting another character or has a character in hostile range list who is trying to apprehend him/her because he/she is a criminal?
     //See: https://trello.com/c/uCZfbCSa/2819-criminals-should-eventually-flee-npcSettlement-and-leave-faction
     public bool isBeingApprehended { get; private set; }
-    private int fleeChance;
+    //private int fleeChance;
     private bool isFleeToHome;
     /// <summary>
     /// The number of times this character has hit his/her current target
@@ -47,7 +47,7 @@ public class CombatState : CharacterState {
         duration = 0;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         _currentAttackTimer = 0;
-        fleeChance = 10;
+        //fleeChance = 10;
         //Default start of combat state is attacking
         isAttacking = true;
         allCharactersThatDegradedRel = new List<Character>();
@@ -197,6 +197,8 @@ public class CombatState : CharacterState {
                 //Character is already fleeing
                 CheckFlee(ref summary);
             } else {
+                //NOTE: If avoid reason is Vampire Bat, the character should always flee and must not trigger cowering, 
+                //the reason is we need to let him go to a place where he can transform back to human safely, that is also the reason why we put him in a flee state in the first place
                 summary = $"{summary}\n-Has no flee path";
                 if (HasStillAvoidPOIThatIsInRange()) {
                     string avoidReason = GetAvoidReason(stateComponent.owner.combatComponent.avoidInRange[0]);
@@ -205,9 +207,11 @@ public class CombatState : CharacterState {
                         summary = $"{summary}\n-Has home dwelling";
                         if (character.homeStructure == character.currentStructure) {
                             summary = $"{summary}\n-Is in Home Dwelling";
-                            if (UnityEngine.Random.Range(0, 2) == 0) {
+                            if (UnityEngine.Random.Range(0, 2) == 0 && avoidReason != CombatManager.Vampire_Bat) {
                                 summary = $"{summary}\n-Triggered Cowering";
                                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
+                                //SetIsFleeToHome(false);
+                                //SetIsAttacking(false);
                             } else {
                                 summary = $"{summary}\n-Triggered Flee";
                                 SetIsFleeToHome(false);
@@ -221,13 +225,15 @@ public class CombatState : CharacterState {
                                 summary = $"{summary}\n-Triggered Flee to Home";
                                 SetIsFleeToHome(true);
                                 SetIsAttacking(false);
-                            } else if (roll >= 40 && roll < 80) {
+                            } else if ((roll >= 40 && roll < 80) || avoidReason == CombatManager.Vampire_Bat) {
                                 summary = $"{summary}\n-Triggered Flee";
                                 SetIsFleeToHome(false);
                                 SetIsAttacking(false);
                             } else {
                                 summary = $"{summary}\n-Triggered Cowering";
                                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
+                                //SetIsFleeToHome(false);
+                                //SetIsAttacking(false);
                             }
                         }
                     } else if (character is Summon && (character as Summon).HasTerritory()) {
@@ -235,9 +241,11 @@ public class CombatState : CharacterState {
                         Summon summon = character as Summon;
                         if (summon.IsInTerritory()) {
                             summary = $"{summary}\n-Is in territory";
-                            if (UnityEngine.Random.Range(0, 2) == 0) {
+                            if (UnityEngine.Random.Range(0, 2) == 0 && avoidReason != CombatManager.Vampire_Bat) {
                                 summary = $"{summary}\n-Triggered Cowering";
                                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
+                                //SetIsFleeToHome(false);
+                                //SetIsAttacking(false);
                             } else {
                                 summary = $"{summary}\n-Triggered Flee";
                                 SetIsFleeToHome(false);
@@ -251,20 +259,24 @@ public class CombatState : CharacterState {
                                 summary = $"{summary}\n-Triggered Flee to territory";
                                 SetIsFleeToHome(true);
                                 SetIsAttacking(false);
-                            } else if (roll >= 40 && roll < 80) {
+                            } else if ((roll >= 40 && roll < 80) || avoidReason == CombatManager.Vampire_Bat) {
                                 summary = $"{summary}\n-Triggered Flee";
                                 SetIsFleeToHome(false);
                                 SetIsAttacking(false);
                             } else {
                                 summary = $"{summary}\n-Triggered Cowering";
                                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
+                                //SetIsFleeToHome(false);
+                                //SetIsAttacking(false);
                             }
                         }
                     } else {
                         summary = $"{summary}\n-Has no home dwelling nor territory";
-                        if (UnityEngine.Random.Range(0, 2) == 0) {
+                        if (UnityEngine.Random.Range(0, 2) == 0 && avoidReason != CombatManager.Vampire_Bat) {
                             summary = $"{summary}\n-Triggered Cowering";
                             character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
+                            //SetIsFleeToHome(false);
+                            //SetIsAttacking(false);
                         } else {
                             summary = $"{summary}\n-Triggered Flee";
                             SetIsFleeToHome(false);
@@ -361,18 +373,38 @@ public class CombatState : CharacterState {
                 //SetClosestHostile(null);
                 SetIsAttacking(true);
             } else {
-                debugLog = $"{debugLog}\n-Has no hostile that is still in range";
-                debugLog = $"{debugLog}\n-{fleeChance.ToString()}% chance to flee";
-                int roll = UnityEngine.Random.Range(0, 100);
-                debugLog = $"{debugLog}\n-Roll: {roll.ToString()}"; 
-                if (roll < fleeChance) {
-                    debugLog = $"{debugLog}\n-Stop fleeing";
-                    FinishedTravellingFleePath();
-                } else {
-                    fleeChance += 10;
-                    debugLog = $"{debugLog}\n-Flee chance increased by 10%, new flee chance is {fleeChance.ToString()}";
-                }
+                //No more flee chance, in the new system, instead of having flee chance, if there are no more characters in flee list, exit flee immediately, no need to finish flee path
+                //https://trello.com/c/rNoVtMDD/2457-flee-movement-updates
+                debugLog = $"{debugLog}\n-Has no hostile that is still in range, exit flee";
+                FinishedTravellingFleePath();
+
+                //debugLog = $"{debugLog}\n-{fleeChance.ToString()}% chance to flee";
+                //int roll = UnityEngine.Random.Range(0, 100);
+                //debugLog = $"{debugLog}\n-Roll: {roll.ToString()}"; 
+                //if (roll < fleeChance) {
+                //    debugLog = $"{debugLog}\n-Stop fleeing";
+                //    FinishedTravellingFleePath();
+                //} else {
+                //    fleeChance += 10;
+                //    debugLog = $"{debugLog}\n-Flee chance increased by 10%, new flee chance is {fleeChance.ToString()}";
+                //}
             }
+        } else {
+            UpdateFleePath();
+        }
+    }
+    public void CheckFlee() {
+        if (!HasStillAvoidPOIThatIsInRange()) {
+            if (HasStillHostilePOIThatIsInRange()) {
+                //SetClosestHostile(null);
+                SetIsAttacking(true);
+            } else {
+                //No more flee chance, in the new system, instead of having flee chance, if there are no more characters in flee list, exit flee immediately, no need to finish flee path
+                //https://trello.com/c/rNoVtMDD/2457-flee-movement-updates
+                FinishedTravellingFleePath();
+            }
+        } else {
+            UpdateFleePath();
         }
     }
     private bool HasStillAvoidPOIThatIsInRange() {
@@ -464,11 +496,11 @@ public class CombatState : CharacterState {
             if (stateComponent.owner.marker && stateComponent.owner.marker.hasFleePath) {
                 log = $"{log}\n-Still has flee path, force finish flee path";
                 stateComponent.owner.marker.SetHasFleePath(false);
-                fleeChance = 10;
+                //fleeChance = 10;
             } else if (!stateComponent.owner.marker) {
                 log = $"{log}\n-Has no marker!";
             }
-            Trait taunted = stateComponent.owner.traitContainer.GetNormalTrait<Trait>("Taunted");
+            Trait taunted = stateComponent.owner.traitContainer.GetTraitOrStatus<Trait>("Taunted");
             if (forcedTarget != null) {
                 log = $"{log}\n{stateComponent.owner.name} has a forced target. Setting {forcedTarget.name} as target.";
                 SetClosestHostile(forcedTarget);
@@ -548,21 +580,8 @@ public class CombatState : CharacterState {
             log = $"{log}\n{stateComponent.owner.name} is fleeing!";
             stateComponent.owner.logComponent.PrintLogIfActive(log);
 
-            IPointOfInterest objToAvoid = avoidInRange[avoidInRange.Count - 1];
-            lastFledFrom = objToAvoid;
-            lastFledFromStructure = objToAvoid.gridTileLocation?.structure;
-            
-            //if (isFleeToHome) {
-            //    stateComponent.character.marker.OnStartFleeToHome();
-            //} else {
-            //    stateComponent.character.marker.OnStartFlee();
-            //}
-            if (stateComponent.owner.currentStructure != null && stateComponent.owner.currentStructure.structureType.IsSpecialStructure()) {
-                stateComponent.owner.marker.OnStartFleeToOutside();
-            } else {
-                stateComponent.owner.marker.OnStartFlee();
-            }
-            
+            StartFlee();
+
             if (stateComponent.owner.isNormalCharacter) {
                 //character has finished fleeing and is no longer in combat.
                 if (lastFledFrom != null && lastFledFromStructure != null && lastFledFrom is Character character && !character.isNormalCharacter && 
@@ -572,15 +591,6 @@ public class CombatState : CharacterState {
             }
 
             Messenger.Broadcast(Signals.START_FLEE, stateComponent.owner);
-
-            string avoidReason = GetAvoidReason(objToAvoid);
-            Log fleeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "start_flee", providedTags: LOG_TAG.Combat);
-            fleeLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            fleeLog.AddToFillers(objToAvoid, objToAvoid is GenericTileObject ? "something" : objToAvoid.name,
-                LOG_IDENTIFIER.TARGET_CHARACTER);
-            fleeLog.AddToFillers(null, avoidReason, LOG_IDENTIFIER.STRING_1);
-            stateComponent.owner.logComponent.RegisterLog(fleeLog, null, false);
-            thoughtBubbleLog = fleeLog;
         }
     }
     private string GetAvoidReason(IPointOfInterest objToAvoid) {
@@ -589,14 +599,16 @@ public class CombatState : CharacterState {
         if(combatData != null && combatData.avoidReason != string.Empty) {
             avoidReason = combatData.avoidReason;
         }
-        if(avoidReason == "critically low health") {
-            if(stateComponent.owner.partyComponent.hasParty) {
-                Party party = stateComponent.owner.partyComponent.currentParty;
-                if(party.isActive && party.partyState == PARTY_STATE.Working && party.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Raid) {
-                    stateComponent.owner.partyComponent.currentParty.RemoveMemberThatJoinedQuest(stateComponent.owner);
-                }
-            }
-        }
+        //Removed this because it's a wrong practice to do this here since this is only a getter
+        //Transfered to StartFlee
+        //if(avoidReason == "critically low health") {
+        //    if(stateComponent.owner.partyComponent.hasParty) {
+        //        Party party = stateComponent.owner.partyComponent.currentParty;
+        //        if(party.isActive && party.partyState == PARTY_STATE.Working && party.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Raid) {
+        //            stateComponent.owner.partyComponent.currentParty.RemoveMemberThatJoinedQuest(stateComponent.owner);
+        //        }
+        //    }
+        //}
         return avoidReason;
     }
 
@@ -781,7 +793,8 @@ public class CombatState : CharacterState {
                 }
                 _timesHitCurrentTarget++;
 
-                if (damageable.gridTileLocation != null && damageable.gridTileLocation.structure is DemonicStructure demonicStructure) {
+                if (damageable.gridTileLocation != null && damageable.gridTileLocation.structure is DemonicStructure demonicStructure && 
+                    demonicStructure.objectsThatContributeToDamage.Contains(damageable)) {
                     demonicStructure.AddAttacker(stateComponent.owner);
                 }
             }
@@ -823,12 +836,70 @@ public class CombatState : CharacterState {
         //If it is, end state immediately
         //If not, flee again
         stateComponent.owner.marker.SetHasFleePath(false);
-        fleeChance = 10;
+        //fleeChance = 10;
         log += "\nFinished travelling flee path, determining action...";
         stateComponent.owner.logComponent.PrintLogIfActive(log);
         DetermineReaction(stateComponent.owner);
         stateComponent.owner.marker.UpdateAnimation();
         stateComponent.owner.marker.UpdateActionIcon();
+    }
+    private void UpdateFleePath() {
+        string log = $"Updating flee path of {stateComponent.owner.name}";
+        stateComponent.owner.logComponent.PrintLogIfActive(log);
+        StartFlee(false);
+    }
+    private void StartFlee(bool shouldLog = true) {
+        if (stateComponent.owner.combatComponent.avoidInRange.Count == 0) {
+            return;
+        }
+        List<IPointOfInterest> avoidInRange = stateComponent.owner.combatComponent.avoidInRange;
+        IPointOfInterest objToAvoid = avoidInRange[avoidInRange.Count - 1];
+        lastFledFrom = objToAvoid;
+        lastFledFromStructure = objToAvoid.gridTileLocation?.structure;
+
+        if (stateComponent.owner.marker && !stateComponent.owner.marker.hasFleePath) {
+            //We check here if no flee path because that is the indicator that the character will start flee for the first time
+            //Sometimes this function is called even if there is already a flee path just to update the path so there will be times that hasFleePath is already true when this is called
+            //So we need to have a checker so that the OnBeforeStartFlee will only be called once per flee
+            List<Trait> traitOverrideFunctions = stateComponent.owner.traitContainer.GetTraitOverrideFunctions(TraitManager.Before_Start_Flee);
+            if (traitOverrideFunctions != null) {
+                for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                    Trait trait = traitOverrideFunctions[i];
+                    trait.OnBeforeStartFlee(stateComponent.owner);
+                }
+            }
+        }
+        string reason = GetAvoidReason(objToAvoid);
+        if (reason == "critically low health") {
+            if (stateComponent.owner.partyComponent.hasParty) {
+                Party party = stateComponent.owner.partyComponent.currentParty;
+                if (party.isActive && party.partyState == PARTY_STATE.Working && party.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Raid) {
+                    stateComponent.owner.partyComponent.currentParty.RemoveMemberThatJoinedQuest(stateComponent.owner);
+                }
+            }
+        }
+        //stateComponent.owner.marker.OnStartFlee();
+        if (stateComponent.owner.currentStructure != null && stateComponent.owner.currentStructure.structureType.IsSpecialStructure()) {
+            stateComponent.owner.marker.OnStartFleeToOutside();
+        } else {
+            stateComponent.owner.marker.OnStartFlee();
+            //Removed Flee to Home temporarily because when triggered the character always goes home no matter how far he is, even in diff region, and we don't want his flee state to be that long
+            //if (isFleeToHome) {
+            //    stateComponent.owner.marker.OnStartFleeToHome();
+            //} else {
+            //    stateComponent.owner.marker.OnStartFlee();
+            //}
+        }
+
+        if (shouldLog) {
+            Log fleeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "start_flee", providedTags: LOG_TAG.Combat);
+            fleeLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            fleeLog.AddToFillers(objToAvoid, objToAvoid is GenericTileObject ? "something" : objToAvoid.name,
+                LOG_IDENTIFIER.TARGET_CHARACTER);
+            fleeLog.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
+            stateComponent.owner.logComponent.RegisterLog(fleeLog, null, false);
+            thoughtBubbleLog = fleeLog;
+        }
     }
     public void OnReachLowFleeSpeedThreshold() {
         string log = $"{stateComponent.owner.name} has reached low flee speed threshold, determining action...";

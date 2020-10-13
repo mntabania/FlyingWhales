@@ -31,7 +31,7 @@ public class SaveDataFactionType : SaveData<FactionType> {
     }
     public override FactionType Load() {
         FactionType newFactionType = FactionManager.Instance.CreateFactionType(type);
-        newFactionType.SetFromSaveData();
+        newFactionType.SetFixedData();
         //for (int i = 0; i < neededStructures.Count; i++) {
         //    newFactionType.AddNeededStructure(neededStructures[i]);
         //}
@@ -55,6 +55,7 @@ public class SaveDataFactionIdeology : SaveData<FactionIdeology> {
     public EXCLUSIVE_IDEOLOGY_CATEGORIES category;
     public RACE raceRequirement;
     public GENDER genderRequirement;
+    public string traitRequirement;
 
     #region Overrides
     public override void Save(FactionIdeology data) {
@@ -64,6 +65,7 @@ public class SaveDataFactionIdeology : SaveData<FactionIdeology> {
             category = exclusive.category;
             raceRequirement = exclusive.raceRequirement;
             genderRequirement = exclusive.genderRequirement;
+            traitRequirement = exclusive.traitRequirement;
         }
     }
     public override FactionIdeology Load() {
@@ -73,6 +75,8 @@ public class SaveDataFactionIdeology : SaveData<FactionIdeology> {
                 exclusive.SetRequirement(raceRequirement);
             } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.GENDER) {
                 exclusive.SetRequirement(genderRequirement);
+            } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.TRAIT) {
+                exclusive.SetRequirement(traitRequirement);
             }
         }
         return newIdeology;

@@ -411,7 +411,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
             //Should not create haul jobs if the target resource pile is in another village
             BaseSettlement settlement; 
-            if(target.gridTileLocation.IsPartOfSettlement(out settlement) && _owner != settlement && settlement.locationType == LOCATION_TYPE.SETTLEMENT) {
+            if(target.gridTileLocation.IsPartOfSettlement(out settlement) && _owner != settlement && settlement.locationType == LOCATION_TYPE.VILLAGE) {
                 return;
             }
 			ResourcePile chosenPileToDepositTo = _owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
@@ -436,7 +436,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
             NPCSettlement npcSettlement = target.currentStructure.settlementLocation as NPCSettlement;
             if(npcSettlement.prison == target.currentStructure && !npcSettlement.HasJob(JOB_TYPE.JUDGE_PRISONER, target)) {
                 if (!target.HasJobTargetingThis(JOB_TYPE.JUDGE_PRISONER)) {
-                    Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                    Criminal criminalTrait = target.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
                     if (criminalTrait.IsWantedBy(_owner.owner)) {
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.JUDGE_CHARACTER, target, _owner);
                         job.SetCanTakeThisJobChecker(JobManager.Can_Take_Judgement);
@@ -453,7 +453,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	public void TryCreateApprehend(Character target) {
 		if (target.currentSettlement == _owner && _owner.owner != null && target.traitContainer.HasTrait("Criminal") && !target.isDead && target.currentStructure != _owner.prison) {
 			if (_owner.HasJob(JOB_TYPE.APPREHEND, target) == false) {
-                Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                Criminal criminalTrait = target.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
                 if (criminalTrait.IsWantedBy(_owner.owner)) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, target, _owner);
                     job.SetCanTakeThisJobChecker(JobManager.Can_Take_Apprehend);

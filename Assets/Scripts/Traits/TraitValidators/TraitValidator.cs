@@ -25,11 +25,14 @@ namespace Traits {
 
             //Cannot add trait if it is unique and the character already has that type of trait.
             if (checkUniqueness) {
-                if (trait.IsUnique()) {
-                    if (obj.traitContainer.HasTrait(trait.name)) {
-                        return false;
-                    }
+                if (obj.traitContainer.HasTrait(trait.name)) {
+                    return false;
                 }
+                //if (trait.IsUnique()) {
+                //    if (obj.traitContainer.HasTrait(trait.name)) {
+                //        return false;
+                //    }
+                //}
             }
 
             //if (trait.isStacking) {

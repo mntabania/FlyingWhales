@@ -35,6 +35,7 @@ public class FactionInfoHubUI : MonoBehaviour {
 
     #region getters
     public FactionItem currentSelectedFactionItem => factionItems[factionScrollSnap.CurrentPage];
+    public bool isShowing => parentPanelGO.gameObject.activeInHierarchy;
     #endregion
 
     #region General
@@ -96,9 +97,11 @@ public class FactionInfoHubUI : MonoBehaviour {
         //if(currentPage >= factionItems.Count || currentPage < 0) {
         //    currentPage = 0;
         //}
-        factionScrollSnap.UpdateChildrenAndPagination();
-        yield return null;
-        factionScrollSnap.GoToScreen(0);
+        if (isShowing) {
+            factionScrollSnap.UpdateChildrenAndPagination();
+            yield return null;
+            factionScrollSnap.GoToScreen(0);
+        }
     }
     private void InitializeUI() {
         Messenger.AddListener<Faction>(Signals.FACTION_CREATED, OnFactionCreated);

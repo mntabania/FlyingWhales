@@ -10,25 +10,26 @@ using Debug = System.Diagnostics.Debug;
 namespace Traits {
     public class TraitContainer : ITraitContainer {
 
-        public List<Trait> allTraitsAndStatuses { get; private set; }
+        //public List<Trait> allTraitsAndStatuses { get; private set; }
+        public Dictionary<string, Trait> allTraitsAndStatuses { get; private set; }
         public List<Trait> traits { get; private set; }
         public List<Status> statuses { get; private set; }
         public Dictionary<string, List<Trait>> traitOverrideFunctions { get; private set; }
         public Dictionary<string, int> stacks { get; private set; }
         public Dictionary<string, List<TraitRemoveSchedule>> scheduleTickets { get; private set; }
-        public Dictionary<string, bool> traitSwitches { get; private set; }
+        //public Dictionary<string, bool> traitSwitches { get; private set; }
 
         #region getters/setters
         #endregion
 
         public TraitContainer() {
-            allTraitsAndStatuses = new List<Trait>();
+            allTraitsAndStatuses = new Dictionary<string, Trait>();
             statuses = new List<Status>();
             traits = new List<Trait>();
             traitOverrideFunctions = new Dictionary<string, List<Trait>>();
             stacks = new Dictionary<string, int>();
             scheduleTickets = new Dictionary<string, List<TraitRemoveSchedule>>();
-            traitSwitches = new Dictionary<string, bool>();
+            //traitSwitches = new Dictionary<string, bool>();
         }
 
         #region Adding
@@ -251,29 +252,30 @@ namespace Traits {
             }
             if(trait is Status) {
                 Status status = trait as Status;
+                string statusName = status.name;
                 if (status.isStacking) {
-                    if (stacks.ContainsKey(status.name)) {
-                        stacks[status.name]++;
-                        if (TraitManager.Instance.IsInstancedTrait(status.name)) {
-                            Status existingStatus = GetNormalTrait<Status>(status.name);
+                    if (stacks.ContainsKey(statusName)) {
+                        stacks[statusName]++;
+                        if (TraitManager.Instance.IsInstancedTrait(statusName)) {
+                            Status existingStatus = GetTraitOrStatus<Status>(statusName);
                             addTo.traitProcessor.OnStatusStacked(addTo, existingStatus, characterResponsible, gainedFromDoing, overrideDuration);
                         } else {
                             addTo.traitProcessor.OnStatusStacked(addTo, status, characterResponsible, gainedFromDoing, overrideDuration);
                         }
                     } else {
-                        stacks.Add(status.name, 1);
+                        stacks.Add(statusName, 1);
                         statuses.Add(status);
-                        allTraitsAndStatuses.Add(status);
+                        allTraitsAndStatuses.Add(statusName, status);
                         addTo.traitProcessor.OnTraitAdded(addTo, status, characterResponsible, gainedFromDoing, overrideDuration);
                     }
                 } else {
                     statuses.Add(status);
-                    allTraitsAndStatuses.Add(status);
+                    allTraitsAndStatuses.Add(statusName, status);
                     addTo.traitProcessor.OnTraitAdded(addTo, status, characterResponsible, gainedFromDoing, overrideDuration);
                 }
             } else {
                 traits.Add(trait);
-                allTraitsAndStatuses.Add(trait);
+                allTraitsAndStatuses.Add(trait.name, trait);
                 addTo.traitProcessor.OnTraitAdded(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
             }
             return true;
@@ -331,7 +333,7 @@ namespace Traits {
             } else {
                 removedOrUnstacked = traits.Remove(trait);
                 if (removedOrUnstacked) {
-                    allTraitsAndStatuses.Remove(trait);
+                    allTraitsAndStatuses.Remove(trait.name);
                     removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
                     RemoveScheduleTicket(trait.name, bySchedule);
                 }
@@ -340,7 +342,7 @@ namespace Traits {
         }
         public bool RemoveTrait(ITraitable removeFrom, string traitName, Character removedBy = null, bool bySchedule = false) {
             if (HasTrait(traitName)) {
-                Trait trait = GetNormalTrait<Trait>(traitName);
+                Trait trait = GetTraitOrStatus<Trait>(traitName);
                 return RemoveTrait(removeFrom, trait, removedBy, bySchedule);
             }
             return false;
@@ -359,7 +361,7 @@ namespace Traits {
             return removedCount == loopNum;
         }
         public void RemoveStatusAndStacks(ITraitable removeFrom, string name, Character removedBy = null, bool bySchedule = false) {
-            Status trait = GetNormalTrait<Status>(name);
+            Status trait = GetTraitOrStatus<Status>(name);
             if (trait != null) {
                 RemoveStatusAndStacks(removeFrom, trait, removedBy, bySchedule);
             }
@@ -369,7 +371,7 @@ namespace Traits {
             if (!status.isStacking) {
                 removedOrUnstacked = statuses.Remove(status);
                 if (removedOrUnstacked) {
-                    allTraitsAndStatuses.Remove(status);
+                    allTraitsAndStatuses.Remove(status.name);
                     removeFrom.traitProcessor.OnTraitRemoved(removeFrom, status, removedBy);
                     RemoveScheduleTicket(status.name, bySchedule);
                 }
@@ -384,7 +386,7 @@ namespace Traits {
                     } else {
                         removedOrUnstacked = statuses.Remove(status);
                         if (removedOrUnstacked) {
-                            allTraitsAndStatuses.Remove(status);
+                            allTraitsAndStatuses.Remove(status.name);
                             stacks.Remove(status.name);
                             removeFrom.traitProcessor.OnTraitRemoved(removeFrom, status, removedBy);
                             RemoveScheduleTicket(status.name, bySchedule);
@@ -401,7 +403,7 @@ namespace Traits {
             } else {
                 Trait trait = traits[index];
                 traits.RemoveAt(index);
-                allTraitsAndStatuses.Remove(trait);
+                allTraitsAndStatuses.Remove(trait.name);
                 removeFrom.traitProcessor.OnTraitRemoved(removeFrom, trait, removedBy);
                 RemoveScheduleTicket(trait.name);
             }
@@ -475,7 +477,7 @@ namespace Traits {
         }
         public bool RemoveTraitOnSchedule(ITraitable removeFrom, string traitName) {
             if (HasTrait(traitName)) {
-                Trait trait = GetNormalTrait<Trait>(traitName);
+                Trait trait = GetTraitOrStatus<Trait>(traitName);
                 return RemoveTraitOnSchedule(removeFrom, trait);
             }
             return false;
@@ -525,48 +527,55 @@ namespace Traits {
         #endregion
 
         #region Getting
-        public T GetNormalTrait<T>(params string[] traitNames) where T : Trait {
-            for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
-                Trait trait = allTraitsAndStatuses[i];
-                for (int j = 0; j < traitNames.Length; j++) {
-                    if (trait.name == traitNames[j]) { // || trait.GetType().ToString() == traitNames[j]
-                        return trait as T;
-                    }
+        public T GetTraitOrStatus<T>(params string[] traitNames) where T : Trait {
+            for (int i = 0; i < traitNames.Length; i++) {
+                string name = traitNames[i];
+                if (HasTrait(name)) {
+                    return allTraitsAndStatuses[name] as T;
                 }
             }
+            //for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
+            //    Trait trait = allTraitsAndStatuses[i];
+            //    for (int j = 0; j < traitNames.Length; j++) {
+            //        if (trait.name == traitNames[j]) { // || trait.GetType().ToString() == traitNames[j]
+            //            return trait as T;
+            //        }
+            //    }
+            //}
             return null;
         }
-        public List<T> GetNormalTraits<T>(params string[] traitNames) where T : Trait {
+        public List<T> GetTraitsOrStatuses<T>(params string[] traitNames) where T : Trait {
             List<T> traits = new List<T>();
-            for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
-                Trait trait = allTraitsAndStatuses[i];
-                if (traitNames.Contains(trait.name)) {
-                    traits.Add(trait as T);
+            for (int i = 0; i < traitNames.Length; i++) {
+                string name = traitNames[i];
+                if (HasTrait(name)) {
+                    traits.Add(allTraitsAndStatuses[name] as T);
                 }
             }
+            //for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
+            //    Trait trait = allTraitsAndStatuses[i];
+            //    if (traitNames.Contains(trait.name)) {
+            //        traits.Add(trait as T);
+            //    }
+            //}
             return traits;
         }
         public bool HasTraitOf(TRAIT_TYPE traitType) {
-            for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
-                if (allTraitsAndStatuses[i].type == traitType) {
+            for (int i = 0; i < traits.Count; i++) {
+                if (traits[i].type == traitType) {
                     return true;
                 }
             }
             return false;
         }
-        public bool HasTraitOf(TRAIT_TYPE type, TRAIT_EFFECT effect) {
-            for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
-                Trait currTrait = allTraitsAndStatuses[i];
-                if (currTrait.effect == effect && currTrait.type == type) {
+        public bool HasTraitOrStatusOf(TRAIT_EFFECT traitEffect) {
+            for (int i = 0; i < traits.Count; i++) {
+                if (traits[i].effect == traitEffect) {
                     return true;
                 }
             }
-            return false;
-        }
-        public bool HasTraitOf(TRAIT_EFFECT traitEffect) {
-            for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
-                Trait currTrait = allTraitsAndStatuses[i];
-                if (currTrait.effect == traitEffect) {
+            for (int i = 0; i < statuses.Count; i++) {
+                if (statuses[i].effect == traitEffect) {
                     return true;
                 }
             }
@@ -574,22 +583,18 @@ namespace Traits {
         }
         public List<Trait> GetAllTraitsOf(TRAIT_TYPE type) {
             List<Trait> traits = new List<Trait>();
-            for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
-                Trait currTrait = allTraitsAndStatuses[i];
+            for (int i = 0; i < traits.Count; i++) {
+                Trait currTrait = traits[i];
                 if (currTrait.type == type) {
                     traits.Add(currTrait);
                 }
             }
-            return traits;
-        }
-        public List<Trait> GetAllTraitsOf(TRAIT_TYPE type, TRAIT_EFFECT effect) {
-            List<Trait> traits = new List<Trait>();
-            for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
-                Trait currTrait = allTraitsAndStatuses[i];
-                if (currTrait.effect == effect && currTrait.type == type) {
-                    traits.Add(currTrait);
-                }
-            }
+            //for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
+            //    Trait currTrait = allTraitsAndStatuses[i];
+            //    if (currTrait.type == type) {
+            //        traits.Add(currTrait);
+            //    }
+            //}
             return traits;
         }
         public int GetStacks(string traitName) {
@@ -678,29 +683,29 @@ namespace Traits {
         #endregion
         
         #region Switches
-        public void SwitchOnTrait(string name) {
-            if (traitSwitches.ContainsKey(name)) {
-                traitSwitches[name] = true;
-            } else {
-                traitSwitches.Add(name, true);
-            }
-        }
-        public void SwitchOffTrait(string name) {
-            if (traitSwitches.ContainsKey(name)) {
-                traitSwitches[name] = false;
-            } else {
-                traitSwitches.Add(name, false);
-            }
-        }
-        private bool HasTraitSwitch(string name) {
-            if (traitSwitches.ContainsKey(name)) {
-                return traitSwitches[name];
-            }
-            return false;
-        }
+        //public void SwitchOnTrait(string name) {
+        //    if (traitSwitches.ContainsKey(name)) {
+        //        traitSwitches[name] = true;
+        //    } else {
+        //        traitSwitches.Add(name, true);
+        //    }
+        //}
+        //public void SwitchOffTrait(string name) {
+        //    if (traitSwitches.ContainsKey(name)) {
+        //        traitSwitches[name] = false;
+        //    } else {
+        //        traitSwitches.Add(name, false);
+        //    }
+        //}
+        //private bool HasTraitSwitch(string name) {
+        //    if (traitSwitches.ContainsKey(name)) {
+        //        return traitSwitches[name];
+        //    }
+        //    return false;
+        //}
         public bool HasTrait(params string[] traitNames) {
             for (int i = 0; i < traitNames.Length; i++) {
-                if (HasTraitSwitch(traitNames[i])) {
+                if (allTraitsAndStatuses.ContainsKey(traitNames[i])) {
                     return true;
                 }
             }
@@ -757,12 +762,12 @@ namespace Traits {
         private bool LoadUnInstancedTrait(ITraitable addTo, string traitName) {
             Assert.IsTrue(TraitManager.Instance.allTraits.ContainsKey(traitName), $"No trait named {traitName} in all traits");
             Trait trait = TraitManager.Instance.allTraits[traitName];
-            if (trait.IsUnique()) {
+            //if (trait.IsUnique()) {
                 //if uninstanced trait is unique then do not add it if object already has it.
                 if (addTo.traitContainer.HasTrait(trait.name)) {
                     return false;
                 }
-            }
+            //}
             return LoadTraitRoot(addTo, trait);
         }
         private bool LoadInstancedTrait(ITraitable addTo, Trait trait) {
@@ -775,7 +780,7 @@ namespace Traits {
                 traits.Add(trait);
             }
             trait.LoadTraitOnLoadTraitContainer(addTo);
-            allTraitsAndStatuses.Add(trait);
+            allTraitsAndStatuses.Add(trait.name, trait);
             
             if(trait.traitOverrideFunctionIdentifiers != null && trait.traitOverrideFunctionIdentifiers.Count > 0) {
                 for (int i = 0; i < trait.traitOverrideFunctionIdentifiers.Count; i++) {
@@ -815,10 +820,10 @@ namespace Traits {
                     AddScheduleTicket(ticket.Key, ticketID, removeDate);
                 }
             }
-            traitSwitches.Clear();
-            foreach (var pair in saveDataTraitContainer.traitSwitches) {
-                traitSwitches.Add(pair.Key, pair.Value);
-            }
+            //traitSwitches.Clear();
+            //foreach (var pair in saveDataTraitContainer.traitSwitches) {
+            //    traitSwitches.Add(pair.Key, pair.Value);
+            //}
         }
         #endregion
         
@@ -830,7 +835,7 @@ namespace Traits {
             traitOverrideFunctions?.Clear();
             stacks?.Clear();
             scheduleTickets?.Clear();
-            traitSwitches?.Clear();
+            //traitSwitches?.Clear();
         }
         #endregion
     }
@@ -855,14 +860,14 @@ public class SaveDataTraitContainer : SaveData<ITraitContainer> {
     public List<string> instancedTraitsIDs; //list of persistent ids per instanced trait
     public Dictionary<string, int> stacks;
     public Dictionary<string, List<GameDate>> scheduleTickets;
-    public Dictionary<string, bool> traitSwitches;
+    //public Dictionary<string, bool> traitSwitches;
     
     public override void Save(ITraitContainer data) {
         base.Save(data);
         nonInstancedTraits = new List<string>();
         instancedTraitsIDs = new List<string>();
-        for (int i = 0; i < data.allTraitsAndStatuses.Count; i++) {
-            Trait trait = data.allTraitsAndStatuses[i];
+        for (int i = 0; i < data.traits.Count; i++) {
+            Trait trait = data.traits[i];
             if (TraitManager.Instance.IsInstancedTrait(trait.name)) {
                 instancedTraitsIDs.Add(trait.persistentID);
                 Assert.IsFalse(string.IsNullOrEmpty(trait.persistentID), $"Persistent id of instanced trait {trait.name} is empty!");
@@ -871,6 +876,26 @@ public class SaveDataTraitContainer : SaveData<ITraitContainer> {
                 nonInstancedTraits.Add(trait.name);
             }
         }
+        for (int i = 0; i < data.statuses.Count; i++) {
+            Trait trait = data.statuses[i];
+            if (TraitManager.Instance.IsInstancedTrait(trait.name)) {
+                instancedTraitsIDs.Add(trait.persistentID);
+                Assert.IsFalse(string.IsNullOrEmpty(trait.persistentID), $"Persistent id of instanced status {trait.name} is empty!");
+                SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(trait);
+            } else {
+                nonInstancedTraits.Add(trait.name);
+            }
+        }
+        //for (int i = 0; i < data.allTraitsAndStatuses.Count; i++) {
+        //    Trait trait = data.allTraitsAndStatuses[i];
+        //    if (TraitManager.Instance.IsInstancedTrait(trait.name)) {
+        //        instancedTraitsIDs.Add(trait.persistentID);
+        //        Assert.IsFalse(string.IsNullOrEmpty(trait.persistentID), $"Persistent id of instanced trait {trait.name} is empty!");
+        //        SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(trait);
+        //    } else {
+        //        nonInstancedTraits.Add(trait.name);
+        //    }
+        //}
         stacks = data.stacks;
         scheduleTickets = new Dictionary<string, List<GameDate>>();
         foreach (var schedule in data.scheduleTickets) {
@@ -880,7 +905,7 @@ public class SaveDataTraitContainer : SaveData<ITraitContainer> {
                 scheduleTickets[schedule.Key].Add(removeSchedule.removeDate);
             }
         }
-        traitSwitches = data.traitSwitches;
+        //traitSwitches = data.traitSwitches;
     }
 }
 #endregion

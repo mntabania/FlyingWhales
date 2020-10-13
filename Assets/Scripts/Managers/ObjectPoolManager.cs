@@ -82,7 +82,15 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         instantiatedObj.SetActive(true);
         return instantiatedObj;
     }
-
+    public GameObject GetOriginalObjectFromPool(string poolName) {
+        poolName = poolName.ToUpper();
+        if (!allObjectPools.ContainsKey(poolName)) {
+            throw new Exception($"Object Pool does not have key {poolName}");
+        }
+        EZObjectPool objectPoolToUse = allObjectPools[poolName];
+        return objectPoolToUse.Template;
+    }
+    
     public void DestroyObject(PooledObject pooledObject) {
         PooledObject[] pooledObjects = pooledObject.GetComponents<PooledObject>();
         Messenger.Broadcast(Signals.POOLED_OBJECT_DESTROYED, pooledObject.gameObject);

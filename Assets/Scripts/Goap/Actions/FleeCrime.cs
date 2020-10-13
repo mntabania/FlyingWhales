@@ -28,7 +28,7 @@
         actor.traitContainer.RemoveTrait(actor, "Criminal");
 
         //If this criminal character is being apprehended and survived (meaning he did not die, or is not unconscious or restrained)
-        if (!actor.isFriendlyFactionless) {
+        if (!actor.isVagrantOrFactionless) {
             //Leave current faction and become banned from the current faction
             if (actor.faction != null) {
                 actor.faction.AddBannedCharacter(actor);

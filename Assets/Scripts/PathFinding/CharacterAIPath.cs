@@ -45,7 +45,7 @@ public class CharacterAIPath : AILerp {
     #region Overrides
     public override void OnTargetReached() {
         base.OnTargetReached();
-        if (!_hasReachedTarget && !pathPending && reachedEndOfPath &&
+        if (!_hasReachedTarget && reachedEndOfPath && //&& !pathPending
             //only execute target reach if the agent has a destination transform, vector or has a flee path
             (marker.destinationSetter.target != null || !float.IsPositiveInfinity(destination.x) || marker.hasFleePath)) {
             _hasReachedTarget = true;
@@ -139,6 +139,7 @@ public class CharacterAIPath : AILerp {
         p.SetNotAllowedStructures(notAllowedStructures);
         p.SetOnlyAllowedStructures(onlyAllowedStructures);
         p.SetAvoidSettlements(marker.character.movementComponent.avoidSettlements);
+        p.calculatePartial = true;
         seeker.StartPath(p);
 
         // This is where we should search to

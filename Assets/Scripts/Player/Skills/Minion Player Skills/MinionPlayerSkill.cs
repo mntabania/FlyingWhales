@@ -18,7 +18,7 @@ public class MinionPlayerSkill : SpellData {
         minion.Summon(targetTile);
         minion.SetMinionPlayerSkillType(type);
         if (targetTile.structure?.settlementLocation != null && 
-            targetTile.structure.settlementLocation.locationType != LOCATION_TYPE.SETTLEMENT) {
+            targetTile.structure.settlementLocation.locationType != LOCATION_TYPE.VILLAGE) {
             minion.character.MigrateHomeStructureTo(targetTile.structure);	
         } else {
             minion.character.AddTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);    

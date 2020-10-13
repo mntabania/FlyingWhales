@@ -228,7 +228,8 @@ public class GoapAction {
     private bool IsTargetMissing(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        if (poiTarget.IsAvailable() == false || poiTarget.gridTileLocation == null) {
+        //Action is invalid if the target is unavailable and the action cannot be advertised if target is unavailable
+        if ((poiTarget.IsAvailable() == false && !canBeAdvertisedEvenIfTargetIsUnavailable) || poiTarget.gridTileLocation == null) {
             return true;
         }
         if (actionLocationType != ACTION_LOCATION_TYPE.IN_PLACE && actor.currentRegion != poiTarget.gridTileLocation.structure.region) {
@@ -259,18 +260,18 @@ public class GoapAction {
             }
             if (actionCategory == ACTION_CATEGORY.CONSUME) {
                 //if action is consume type and actor knows that the object is poisoned, do not advertise this action.
-                Poisoned poisoned = tileObject.traitContainer.GetNormalTrait<Poisoned>("Poisoned");
+                Poisoned poisoned = tileObject.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
                 if (poisoned != null && poisoned.awareCharacters.Contains(actor)) {
                     requirementActionSatisfied = false;    
                 }    
                 //if action is consume type and actor knows that the object is booby trapped, do not advertise this action.
-                BoobyTrapped boobyTrapped = tileObject.traitContainer.GetNormalTrait<BoobyTrapped>("Booby Trapped");
+                BoobyTrapped boobyTrapped = tileObject.traitContainer.GetTraitOrStatus<BoobyTrapped>("Booby Trapped");
                 if (boobyTrapped != null && boobyTrapped.awareCharacters.Contains(actor)) {
                     requirementActionSatisfied = false;    
                 }    
             } else if (actionCategory == ACTION_CATEGORY.DIRECT) {
                 //if action is direct type and actor knows that the object is booby trapped, do not advertise this action.
-                BoobyTrapped boobyTrapped = tileObject.traitContainer.GetNormalTrait<BoobyTrapped>("Booby Trapped");
+                BoobyTrapped boobyTrapped = tileObject.traitContainer.GetTraitOrStatus<BoobyTrapped>("Booby Trapped");
                 if (boobyTrapped != null && boobyTrapped.awareCharacters.Contains(actor)) {
                     requirementActionSatisfied = false;    
                 }    

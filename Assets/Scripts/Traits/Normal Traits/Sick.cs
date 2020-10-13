@@ -20,6 +20,7 @@ namespace Traits {
             stackModifier = 0.5f;
             hindersSocials = true;
             pukeChance = 5f;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
         }
 
         #region Loading

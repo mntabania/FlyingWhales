@@ -40,7 +40,7 @@ public class MakeLove : GoapAction {
         }
         int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
         costLog += $" +{cost}(Initial)";
-        Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Chaste", "Lustful");
+        Trait trait = actor.traitContainer.GetTraitOrStatus<Trait>("Chaste", "Lustful");
         if (trait != null && trait.name == "Chaste") {
             cost += 2000;
             costLog += " +2000(Chaste)";
@@ -368,7 +368,7 @@ public class MakeLove : GoapAction {
             if (target.stateComponent.currentState is CombatState) { //do not invite characters that are currently in combat
                 return false;
             }
-            if (target.returnedToLife) { //do not woo characters that have been raised from the dead
+            if (target.raisedFromDeadAsSkeleton) { //do not woo characters that have been raised from the dead
                 return false;
             }
             if (target.carryComponent.masterCharacter.movementComponent.isTravellingInWorld || target.currentRegion != actor.currentRegion) {

@@ -56,7 +56,7 @@ namespace Inner_Maps.Location_Structures {
         #region HP
         private void OnWallRepaired(StructureWallObject structureWall, int amount) {
             if (structureWalls != null && structureWalls.Contains(structureWall)) {
-                structureObj.RescanPathfindingGridOfStructure();
+                structureObj.RescanPathfindingGridOfStructure(region.innerMap);
                 CheckInteriorState();
             }
             if (objectsThatContributeToDamage.Contains(structureWall)) {
@@ -66,7 +66,7 @@ namespace Inner_Maps.Location_Structures {
         private void OnWallDamaged(StructureWallObject structureWall, int amount) {
             if (structureWalls != null && structureWalls.Contains(structureWall)) {
                 //create repair job
-                structureObj.RescanPathfindingGridOfStructure();
+                structureObj.RescanPathfindingGridOfStructure(region.innerMap);
                 OnStructureDamaged();
             }
             if (objectsThatContributeToDamage.Contains(structureWall)) {
@@ -145,8 +145,12 @@ namespace Inner_Maps.Location_Structures {
             base.DestroyStructure();
         }
         protected override void AfterStructureDestruction() {
-            structureObj.OnOwnerStructureDestroyed(); 
+            structureObj.OnOwnerStructureDestroyed(region.innerMap);
+            InnerMapHexTile innerMapHexTile = occupiedHexTile;
             base.AfterStructureDestruction();
+            if (innerMapHexTile != null && innerMapHexTile.hexTileOwner != null) {
+                innerMapHexTile.hexTileOwner.CheckIfSettlementIsStillOnTile();
+            }
         }
         #endregion
 

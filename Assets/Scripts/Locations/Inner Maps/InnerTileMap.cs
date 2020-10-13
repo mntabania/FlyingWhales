@@ -69,9 +69,13 @@ namespace Inner_Maps {
         public List<LocationGridTile> allEdgeTiles { get; private set; }
         public Region region { get; private set; }
         public GridGraph pathfindingGraph { get; set; }
+        public GridGraph unwalkableGraph { get; set; }
         public Vector3 worldPos { get; private set; }
         public GameObject centerGo { get; private set; }
         public LocationGridTileCollection[,] locationGridTileCollections { get; protected set; }
+        public NNConstraint onlyUnwalkableGraph { get; private set; }
+        public NNConstraint onlyPathfindingGraph { get; private set; }
+        
         
         #region getters
         public bool isShowing => InnerMapManager.Instance.currentlyShowingMap == this;
@@ -365,20 +369,6 @@ namespace Inner_Maps {
         }
         #endregion
 
-        // #region Burning Source
-        // public void AddActiveBurningSource(BurningSource bs) {
-        //     if (!activeBurningSources.Contains(bs)) {
-        //         activeBurningSources.Add(bs);
-        //         // Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Location", "Fire");
-        //         // log.AddToFillers(region, region.name, LOG_IDENTIFIER.LANDMARK_1);
-        //         // PlayerManager.Instance.player.ShowNotificationFrom(region, log);
-        //     }
-        // }
-        // public void RemoveActiveBurningSources(BurningSource bs) {
-        //     activeBurningSources.Remove(bs);
-        // }
-        // #endregion
-
         #region Utilities
         public void Open() { }
         public void Close() { }
@@ -393,6 +383,14 @@ namespace Inner_Maps {
             cameraBounds.z = (cameraBounds.x + width) - 28.5f;
             cameraBounds.w = height - orthographicSize;
             SpawnCenterGo();
+            
+            onlyUnwalkableGraph = NNConstraint.Default;
+            onlyUnwalkableGraph.constrainWalkability = true;
+            onlyUnwalkableGraph.walkable = true;
+            onlyUnwalkableGraph.graphMask = GraphMask.FromGraph(unwalkableGraph);
+            
+            onlyPathfindingGraph = NNConstraint.Default;
+            onlyPathfindingGraph.graphMask = GraphMask.FromGraph(pathfindingGraph);
         }
         public void PredetermineGraphNodes() {
             //predetermine graph nodes
@@ -444,10 +442,12 @@ namespace Inner_Maps {
         #endregion
 
         #region Structures
-        public void PlaceBuiltStructureTemplateAt(GameObject structurePrefab, HexTile hexTile, BaseSettlement settlement) {
+        public List<LocationStructure> PlaceBuiltStructureTemplateAt(GameObject structurePrefab, HexTile hexTile, BaseSettlement settlement) {
             GameObject structureTemplateGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structurePrefab.name, hexTile.GetCenterLocationGridTile().centeredLocalLocation, 
                 Quaternion.identity, structureParent);
         
+            List<LocationStructure> createdStructures = new List<LocationStructure>();
+            
             StructureTemplate structureTemplate = structureTemplateGO.GetComponent<StructureTemplate>();
             structureTemplate.transform.localScale = Vector3.one;
             for (int i = 0; i < structureTemplate.structureObjects.Length; i++) {
@@ -460,6 +460,7 @@ namespace Inner_Maps {
                 structureObject.SetTilesInStructure(occupiedTiles.ToArray());
                 structureObject.ClearOutUnimportantObjectsBeforePlacement();
                 LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(hexTile.region, structureObject.structureType, settlement);
+                createdStructures.Add(structure);
                 for (int j = 0; j < occupiedTiles.Count; j++) {
                     LocationGridTile tile = occupiedTiles[j];
                     tile.SetStructure(structure);
@@ -479,6 +480,7 @@ namespace Inner_Maps {
             }
 
             hexTile.innerMapHexTile.Occupy();
+            return createdStructures;
         }
         /// <summary>
         /// Build a structure object at the given center tile.

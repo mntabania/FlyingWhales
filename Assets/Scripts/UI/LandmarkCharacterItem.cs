@@ -121,8 +121,8 @@ public class LandmarkCharacterItem : PooledObject {
     }
     public void ShowRestrainedTooltip() {
         string info = string.Empty;
-        Trait abductedTrait = character.traitContainer.GetNormalTrait<Trait>("Abducted");
-        Trait restrainedTrait = character.traitContainer.GetNormalTrait<Trait>("Restrained");
+        Trait abductedTrait = character.traitContainer.GetTraitOrStatus<Trait>("Abducted");
+        Trait restrainedTrait = character.traitContainer.GetTraitOrStatus<Trait>("Restrained");
         if (abductedTrait != null) {
             info += abductedTrait.GetToolTipText();
         }

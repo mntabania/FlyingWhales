@@ -10,9 +10,14 @@ using UnityEngine.Assertions;
 public class CombatManager : BaseMonoBehaviour {
     public static CombatManager Instance;
 
+    public int searchLength;
+    public int spread;
+    public int aimStrength;
+
     public const int pursueDuration = 4;
     public const string Hostility = "Hostility", Retaliation = "Retaliation", Berserked = "Berserked", Action = "Action",
-        Threatened = "Threatened", Anger = "Anger", Join_Combat = "Join Combat", Drunk = "Drunk", Rage = "Rage", Demon_Kill = "Demon Kill", Dig = "Dig";
+        Threatened = "Threatened", Anger = "Anger", Join_Combat = "Join Combat", Drunk = "Drunk", Rage = "Rage", Demon_Kill = "Demon Kill", Dig = "Dig",
+        Vampire_Bat = "Vampire Bat";
 
     [SerializeField] private ProjectileDictionary _projectileDictionary;
     [SerializeField] private GameObject _dragonProjectile;
@@ -195,7 +200,7 @@ public class CombatManager : BaseMonoBehaviour {
         int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
         traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire, true, characterResponsible, showHPBar: true);
         if (traitable.traitContainer.HasTrait("Burning")) {
-            Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
+            Burning burningTrait = traitable.traitContainer.GetTraitOrStatus<Burning>("Burning");
             if (burningTrait != null && burningTrait.sourceOfBurning == null) {
                 if (bs == null) {
                     bs = new BurningSource();

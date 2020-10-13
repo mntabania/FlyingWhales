@@ -9,6 +9,6 @@
             Warmonger warmonger = FactionManager.Instance.CreateIdeology<Warmonger>(FACTION_IDEOLOGY.Warmonger);
             AddIdeology(warmonger);
         }
-        public override void SetFromSaveData() { }
+        public override void SetFixedData() { }
     }
 }

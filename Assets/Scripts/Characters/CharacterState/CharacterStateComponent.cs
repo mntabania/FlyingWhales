@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 //This is the bridge between the character and the states, a component that stores all necessary information and process all data for the character and its states  
 //Basically, this is a manager for the character states
@@ -101,6 +102,16 @@ public class CharacterStateComponent : CharacterComponent {
                 owner.SetCurrentJob(null);
             }
             stateJob.ForceCancelJob();
+        }
+
+        if(currState.characterState == CHARACTER_STATE.COMBAT) {
+            List<Trait> traitOverrideFunctions = owner.traitContainer.GetTraitOverrideFunctions(TraitManager.After_Exiting_Combat);
+            if (traitOverrideFunctions != null) {
+                for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                    Trait trait = traitOverrideFunctions[i];
+                    trait.OnAfterExitingCombat(owner);
+                }
+            }
         }
     }
     private void PerTickCurrentState() {

@@ -61,7 +61,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public int canTakeJobsValue;
     public int sociableValue;
 
-    public bool returnedToLife;
+    public bool raisedFromDeadAsSkeleton;
 
     public SaveDataLycanthropeData lycanData;
     public bool hasLycan;
@@ -156,7 +156,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         canPerformValue = data.canPerformValue;
         canTakeJobsValue = data.canTakeJobsValue;
         sociableValue = data.sociableValue;
-        returnedToLife = data.returnedToLife;
+        raisedFromDeadAsSkeleton = data.raisedFromDeadAsSkeleton;
         previousClassName = data.previousClassName;
         isPreplaced = data.isPreplaced;
 

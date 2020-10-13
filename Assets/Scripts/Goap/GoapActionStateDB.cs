@@ -207,7 +207,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Make Love Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
         } },
         {INTERACTION_TYPE.DRINK_BLOOD, new[]{
-            new StateNameAndDuration(){ name = "Drink Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+            new StateNameAndDuration(){ name = "Drink Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
         } },
         {INTERACTION_TYPE.REPLACE_TILE_OBJECT, new[]{
             new StateNameAndDuration(){ name = "Replace Success", status = InteractionManager.Goap_State_Success, duration = 0 },
@@ -344,7 +344,7 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.PLACE_BLUEPRINT, new[]{
             new StateNameAndDuration(){ name = "Place Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
-        {INTERACTION_TYPE.BUILD_STRUCTURE, new[]{
+        {INTERACTION_TYPE.BUILD_BLUEPRINT, new[]{
             new StateNameAndDuration(){ name = "Build Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
         } },
         {INTERACTION_TYPE.STEALTH_TRANSFORM, new[]{
@@ -593,6 +593,12 @@ public static class GoapActionStateDB {
         } },
         {INTERACTION_TYPE.REMOVE_ENSNARED, new[]{
             new StateNameAndDuration(){ name = "Remove Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
+        {INTERACTION_TYPE.VAMPIRIC_EMBRACE, new[]{
+            new StateNameAndDuration(){ name = "Embrace Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
+        {INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE, new[]{
+            new StateNameAndDuration(){ name = "Build Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(45) },
         } },
     };
 }

@@ -149,7 +149,7 @@ public class Drop : GoapAction {
             BaseSettlement currentSettlement = goapNode.actor.currentSettlement;
             if (goapNode.associatedJobType == JOB_TYPE.APPREHEND && currentSettlement != null && currentSettlement is NPCSettlement settlement && targetCharacter.currentStructure == settlement.prison) {
                 if (targetCharacter.traitContainer.HasTrait("Criminal")) {
-                    Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                    Criminal criminalTrait = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
                     criminalTrait.SetIsImprisoned(true);
                 }    
             } else if (goapNode.associatedJobType == JOB_TYPE.SNATCH) {
