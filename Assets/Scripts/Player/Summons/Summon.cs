@@ -70,7 +70,11 @@ public class Summon : Character {
             LocationGridTile deathTile = gridTileLocation;
 
             if (lycanData != null) {
+                //Added this so that human and lycan form can share the same death log and prevent duplicates
+                Character humanForm = lycanData.originalForm;
                 lycanData.LycanDies(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
+                _deathLog = humanForm.deathLog;
+                _deathLog.AddInvolvedObjectManual(persistentID);
             }
             
             SetIsDead(true);
