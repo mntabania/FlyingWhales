@@ -14,15 +14,18 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} is a settlement ruler";
         if (character.homeSettlement != null && character.homeSettlement.prison != null) {
-            LocationStructure structure = character.homeSettlement.prison;
-            log += $"\n-15% chance to recruit a restrained character from different faction";
-            int roll = Random.Range(0, 100);
-            log += $"\n-Roll: {roll}";
-            if (roll < 15) {
-                Character targetCharacter = structure.GetRandomCharacterThatMeetCriteria(x => x.traitContainer.HasTrait("Restrained") && x.faction != character.faction && !x.HasJobTargetingThis(JOB_TYPE.RECRUIT));
-                if(targetCharacter != null) {
-                    log += $"\n-Chosen target: {targetCharacter.name}";
-                    return character.jobComponent.TriggerRecruitJob(targetCharacter, out producedJob);
+            if(character.faction != null) {
+                LocationStructure structure = character.homeSettlement.prison;
+                log += $"\n-15% chance to recruit a restrained character from different faction";
+                int roll = Random.Range(0, 100);
+                log += $"\n-Roll: {roll}";
+                if (roll < 15) {
+                    Character targetCharacter = structure.GetRandomCharacterThatMeetCriteria(x => CanCharacterBeRecruited(x, character));
+
+                    if (targetCharacter != null) {
+                        log += $"\n-Chosen target: {targetCharacter.name}";
+                        return character.jobComponent.TriggerRecruitJob(targetCharacter, out producedJob);
+                    }
                 }
             }
             if (character.homeSettlement.settlementType != null) {
@@ -98,5 +101,26 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
         //}
         //log += $"\n-{character.name} failed to place blueprint";
         //return false;
+    }
+
+    private bool CanCharacterBeRecruited(Character targetCharacter, Character recruiter) {
+        if (!targetCharacter.traitContainer.HasTrait("Restrained")) {
+            return false;
+        }
+        if (targetCharacter.faction == recruiter.faction) {
+            return false;
+        }
+        if (targetCharacter.HasJobTargetingThis(JOB_TYPE.RECRUIT)) {
+            return false;
+        }
+        if (!recruiter.faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(targetCharacter)) {
+            //Cannot recruit characters that does not fit faction ideologies
+            return false;
+        }
+        if (recruiter.faction.IsCharacterBannedFromJoining(targetCharacter)) {
+            //Cannot recruit banned characters
+            return false;
+        }
+        return true;
     }
 }

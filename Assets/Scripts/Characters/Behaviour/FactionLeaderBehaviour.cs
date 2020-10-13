@@ -43,13 +43,14 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
             }
         }
         if (character.homeSettlement != null) {
-            if (character.homeSettlement.prison != null) {
+            if (character.homeSettlement.prison != null && character.faction != null) {
                 LocationStructure structure = character.homeSettlement.prison;
                 log += $"\n-15% chance to recruit a restrained character from different faction";
                 int roll = Random.Range(0, 100);
                 log += $"\n-Roll: {roll}";
                 if (roll < 15) {
                     Character targetCharacter = structure.GetRandomCharacterThatMeetCriteria(x => CanCharacterBeRecruited(x, character));
+
                     if(targetCharacter != null) {
                         log += $"\n-Chosen target: {targetCharacter.name}";
                         return character.jobComponent.TriggerRecruitJob(targetCharacter, out producedJob);
@@ -108,6 +109,14 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
             return false;
         }
         if (targetCharacter.HasJobTargetingThis(JOB_TYPE.RECRUIT)) {
+            return false;
+        }
+        if (!recruiter.faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(targetCharacter)) {
+            //Cannot recruit characters that does not fit faction ideologies
+            return false;
+        }
+        if (recruiter.faction.IsCharacterBannedFromJoining(targetCharacter)) {
+            //Cannot recruit banned characters
             return false;
         }
         Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
