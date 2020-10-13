@@ -25,9 +25,9 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
             } else {
                 log += $"\nDid not meet chance to join faction. Checking if can create faction...";
                 int villagerFactionCount = FactionManager.Instance.GetActiveVillagerFactionCount();
-                log += $"\nActive villager faction count is {villagerFactionCount.ToString()} and all regions count is {GridMap.Instance.allRegions.Length.ToString()}";
-                if (villagerFactionCount < GridMap.Instance.allRegions.Length) {
-                    log += $"\nActive villager factions is less than number of regions, rolling chances";
+                log += $"\nActive villager faction count is {villagerFactionCount.ToString()}";
+                if (villagerFactionCount < 20) {
+                    log += $"\nActive villager factions is less than 20, rolling chances";
                     int createChance = 3;
                     if (character.traitContainer.HasTrait("Inspiring", "Ambitious")) {
                         createChance = 15;
