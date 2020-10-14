@@ -88,7 +88,7 @@ public class MonsterGeneration : MapGenerationComponent {
 				continue; //do not generate monsters in region wilderness if region is Teeming
 			}
 			List<LocationGridTile> locationChoices = new List<LocationGridTile>();
-			region.tiles.Where(h => h.landmarkOnTile == null && (h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES) && h.HasOwnedSettlementNeighbour() == false).
+			region.tiles.Where(h => h.settlementOnTile == null && h.landmarkOnTile == null && (h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES) && h.HasOwnedSettlementNeighbour() == false).
 				ToList().ForEach(h => locationChoices.AddRange(h.locationGridTiles));
 			if (locationChoices.Count == 0) {
 				Debug.LogWarning($"Could not find valid tiles to place monsters at {region.name}");
