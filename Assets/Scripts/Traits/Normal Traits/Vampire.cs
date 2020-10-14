@@ -76,22 +76,31 @@ namespace Traits {
         public override string TriggerFlaw(Character character) {
             //The character will begin Hunt for Blood.
             if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
-                Character targetCharacter = GetDrinkBloodTarget(character);
-                if(targetCharacter != null) {
-                    bool triggerGrieving = false;
-                    Griefstricken griefstricken = character.traitContainer.GetTraitOrStatus<Griefstricken>("Griefstricken");
-                    if (griefstricken != null) {
-                        triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[griefstricken.name]);
-                    }
-                    if (!triggerGrieving) {
-                        character.jobComponent.CreateDrinkBloodJob(JOB_TYPE.TRIGGER_FLAW, targetCharacter);
-                    } else {
-                        griefstricken.TriggerGrieving();
-                    }
+                // Character targetCharacter = GetDrinkBloodTarget(character);
+                // if(targetCharacter != null) {
+                //     bool triggerGrieving = false;
+                //     Griefstricken griefstricken = character.traitContainer.GetTraitOrStatus<Griefstricken>("Griefstricken");
+                //     if (griefstricken != null) {
+                //         triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[griefstricken.name]);
+                //     }
+                //     if (!triggerGrieving) {
+                //         character.jobComponent.CreateDrinkBloodJob(JOB_TYPE.TRIGGER_FLAW, targetCharacter);
+                //     } else {
+                //         griefstricken.TriggerGrieving();
+                //     }
+                // } else {
+                //     return "no_victim";
+                // }
+                WeightedDictionary<Character> embraceChoices = VampireBehaviour.GetVampiricEmbraceTargetWeights(character);
+                if (embraceChoices.GetTotalOfWeights() > 0) {
+                    string log = embraceChoices.GetWeightsSummary($"{character.name} embrace choices:");
+                    Character target = embraceChoices.PickRandomElementGivenWeights();
+                    log = $"{log}\n- Chosen target is {target.name}";
+                    Debug.Log(log);
+                    character.jobComponent.CreateVampiricEmbraceJob(JOB_TYPE.TRIGGER_FLAW, target);
                 } else {
                     return "no_victim";
                 }
-                
             } else {
                 return "has_trigger_flaw";
             }
