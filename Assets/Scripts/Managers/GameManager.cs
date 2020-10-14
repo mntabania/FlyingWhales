@@ -286,17 +286,18 @@ public class GameManager : MonoBehaviour {
     //Example: If the character is Nocturnal, MORNING will become LATE_NIGHT
     public static TIME_IN_WORDS GetCurrentTimeInWordsOfTick(Character relativeTo = null) {
         TIME_IN_WORDS time = TIME_IN_WORDS.NONE;
-        if ((today.tick >= 265 && today.tick <= 288) || (today.tick >= 1 && today.tick <= 60)) {
+        int currentTick = today.tick;
+        if ((currentTick >= 265 && currentTick <= 288) || (currentTick >= 1 && currentTick <= 60)) {
             time = TIME_IN_WORDS.AFTER_MIDNIGHT;
-        } else if (today.tick >= 61 && today.tick <= 132) {
+        } else if (currentTick >= 61 && currentTick <= 132) {
             time = TIME_IN_WORDS.MORNING;
-        } else if (today.tick >= 133 && today.tick <= 156) {
+        } else if (currentTick >= 133 && currentTick <= 156) {
             time = TIME_IN_WORDS.LUNCH_TIME;
-        } else if (today.tick >= 157 && today.tick <= 204) {
+        } else if (currentTick >= 157 && currentTick <= 204) {
             time = TIME_IN_WORDS.AFTERNOON;
-        } else if (today.tick >= 205 && today.tick <= 240) {
+        } else if (currentTick >= 205 && currentTick <= 240) {
             time = TIME_IN_WORDS.EARLY_NIGHT;
-        } else if (today.tick >= 241 && today.tick <= 264) {
+        } else if (currentTick >= 241 && currentTick <= 264) {
             time = TIME_IN_WORDS.LATE_NIGHT;
         }
         if(relativeTo != null && relativeTo.traitContainer.HasTrait("Nocturnal")) {

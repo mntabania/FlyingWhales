@@ -13,7 +13,7 @@ public class GluttonBehaviour : CharacterBehaviourComponent {
         log += $"\n  -RNG roll: {chance}";
         if (chance < 15) {
             if (character.needsComponent.isHungry) {
-                character.needsComponent.PlanFullnessRecoveryNormal(out producedJob);
+                character.needsComponent.PlanFullnessRecoveryGlutton(out producedJob);
                 return true;
             }
         }

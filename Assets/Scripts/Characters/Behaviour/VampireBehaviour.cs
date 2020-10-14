@@ -14,6 +14,14 @@ public class VampireBehaviour : CharacterBehaviourComponent {
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} is a vampire";
+
+        if (character.needsComponent.isHungry || character.needsComponent.isStarving) {
+            TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+            if (currentTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                character.needsComponent.PlanFullnessRecoveryActionsVampire();
+            }
+        }
+
         if (character.characterClass.className == "Vampire Lord") {
             log += $"\n-{character.name} is a Vampire Lord";
             if (character.homeStructure == null || character.homeStructure.structureType != STRUCTURE_TYPE.VAMPIRE_CASTLE) {
