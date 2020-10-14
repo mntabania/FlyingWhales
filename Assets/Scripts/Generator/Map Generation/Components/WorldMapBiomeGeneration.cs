@@ -15,7 +15,9 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
 			BIOMES biome;
-			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
+			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+				biome = BIOMES.GRASSLAND;
+			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
 				if (i == 0) {
 					biome = BIOMES.FOREST;
 				} else if (i == 1) {

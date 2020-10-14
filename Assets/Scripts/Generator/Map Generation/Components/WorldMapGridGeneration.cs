@@ -147,7 +147,20 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 		if (worldMapTemplates.ContainsKey(regionCount)) {
 			List<WorldMapTemplate> choices = worldMapTemplates[regionCount];
 			WorldMapTemplate chosenTemplate;
-			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
+			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+				chosenTemplate = new WorldMapTemplate() {
+					regionCount = 1,
+					worldMapWidth = 12,
+					worldMapHeight = 10,
+					regions = new Dictionary<int, RegionTemplate[]>() {
+						{
+							0, new[] {
+								new RegionTemplate(12, 10),
+							}
+						}
+					}
+				};
+			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 				chosenTemplate = new WorldMapTemplate() {
 					regionCount = 1,
 					worldMapWidth = 13,
