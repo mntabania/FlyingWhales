@@ -6,7 +6,7 @@ using UnityEngine;
 using Locations.Settlements;
 using UnityEngine.Assertions;
 using Logs;
-
+using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     [System.Serializable]
     public abstract class LocationStructure : IPlayerActionTarget, ISelectable, IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ISavable, ILogFiller {
@@ -24,7 +24,7 @@ namespace Inner_Maps.Location_Structures {
         public Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount> groupedTileObjects { get; private set; }
         public virtual InnerMapHexTile occupiedHexTile { get; private set; }
         //Inner Map
-        public List<LocationGridTile> tiles { get; private set; }
+        public HashSet<LocationGridTile> tiles { get; private set; }
         public List<LocationGridTile> passableTiles { get; private set; }
         public LinkedList<LocationGridTile> unoccupiedTiles { get; private set; }
         public bool isInterior { get; private set; }
@@ -72,7 +72,7 @@ namespace Inner_Maps.Location_Structures {
             charactersHere = new List<Character>();
             pointsOfInterest = new HashSet<IPointOfInterest>();
             groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();
-            tiles = new List<LocationGridTile>();
+            tiles = new HashSet<LocationGridTile>();
             passableTiles = new List<LocationGridTile>();
             unoccupiedTiles = new LinkedList<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
@@ -95,7 +95,7 @@ namespace Inner_Maps.Location_Structures {
             pointsOfInterest = new HashSet<IPointOfInterest>();
             groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();
             structureTags = new List<STRUCTURE_TAG>(data.structureTags);
-            tiles = new List<LocationGridTile>();
+            tiles = new HashSet<LocationGridTile>();
             passableTiles = new List<LocationGridTile>();
             unoccupiedTiles = new LinkedList<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
@@ -214,7 +214,7 @@ namespace Inner_Maps.Location_Structures {
         public List<LocationGridTile> GetOuterTiles() {
             List<LocationGridTile> outerTiles = new List<LocationGridTile>();
             for (int i = 0; i < tiles.Count; i++) {
-                LocationGridTile currTile = tiles[i];
+                LocationGridTile currTile = tiles.ElementAt(i);
                 if (currTile.HasDifferentDwellingOrOutsideNeighbour()) {
                     outerTiles.Add(currTile);
                 }
@@ -728,7 +728,7 @@ namespace Inner_Maps.Location_Structures {
             if (tiles.Count <= 0) {
                 return null;
             }
-            return tiles[UtilityScripts.Utilities.Rng.Next(0, tiles.Count)];
+            return CollectionUtilities.GetRandomElement(tiles); //tiles[UtilityScripts.Utilities.Rng.Next(0, tiles.Count)];
         }
         public LocationGridTile GetRandomPassableTile() {
             if (passableTiles.Count <= 0) {
@@ -775,7 +775,7 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
             for (int i = 0; i < tiles.Count; i++) {
-                LocationGridTile currTile = tiles[i];
+                LocationGridTile currTile = tiles.ElementAt(i);
                 if (currTile.genericTileObject.IsAvailable() && currTile.genericTileObject.AdvertisesAll(types)) {
                     objs.Add(currTile.genericTileObject);
                 }

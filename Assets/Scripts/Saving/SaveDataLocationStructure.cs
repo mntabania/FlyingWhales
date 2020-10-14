@@ -45,8 +45,9 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
 
         //tiles
         tileCoordinates = new Point[structure.tiles.Count];
-        for (int i = 0; i < structure.tiles.Count; i++) {
-            LocationGridTile tile = structure.tiles[i];
+        List<LocationGridTile> tiles = new List<LocationGridTile>(structure.tiles);
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile tile = tiles[i];
             Point point = new Point(tile.localPlace.x, tile.localPlace.y);
             tileCoordinates[i] = point;
         }

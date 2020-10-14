@@ -1,1 +1,1 @@
-{"items":[{"key":"flaw_effect","value":"%00@ will drink someone's blood."},{"key":"transform","value":"%00@ transformed into a bat."},{"key":"revert","value":"%00@ reverted back to normal form."}]}
+{"items":[{"key":"flaw_effect","value":"%00@ will turn another character into a Vampire."},{"key":"transform","value":"%00@ transformed into a bat."},{"key":"revert","value":"%00@ reverted back to normal form."},{"key":"no_victim","value":"%00@ cannot find a valid target nearby."}]}

@@ -103,27 +103,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
         if (character.needsComponent.isSulking) {
             log += $"\n-{character.name} is sulking. Rolling for chance to vampiric embrace.";
             if (GameUtilities.RollChance(3, ref log)) { //3
-                WeightedDictionary<Character> embraceWeights = new WeightedDictionary<Character>();
-                foreach (var relationships in character.relationshipContainer.relationships) {
-                    Character otherCharacter = DatabaseManager.Instance.characterDatabase.GetCharacterByID(relationships.Key);
-                    if (otherCharacter != null) {
-                        if (!otherCharacter.traitContainer.HasTrait("Vampire") && relationships.Value.awareness.state != AWARENESS_STATE.Presumed_Dead && 
-                            relationships.Value.awareness.state != AWARENESS_STATE.Missing && !otherCharacter.partyComponent.isActiveMember) {
-                            var opinionLabel = relationships.Value.opinions.GetOpinionLabel();
-                            if (relationships.Value.IsLover() && (opinionLabel == RelationshipManager.Close_Friend || opinionLabel == RelationshipManager.Friend)) {
-                                embraceWeights.AddElement(otherCharacter, 100);
-                            } else if (relationships.Value.HasRelationship(RELATIONSHIP_TYPE.AFFAIR) && (opinionLabel == RelationshipManager.Close_Friend || opinionLabel == RelationshipManager.Friend)) {
-                                embraceWeights.AddElement(otherCharacter, 50);
-                            } else if (opinionLabel == RelationshipManager.Close_Friend) {
-                                embraceWeights.AddElement(otherCharacter, 50);
-                            } else if (opinionLabel == RelationshipManager.Friend) {
-                                embraceWeights.AddElement(otherCharacter, 10);
-                            } else if (opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
-                                embraceWeights.AddElement(otherCharacter, 5);
-                            }
-                        }
-                    }
-                }
+                WeightedDictionary<Character> embraceWeights = GetVampiricEmbraceTargetWeights(character);
                 log += $"\n-{embraceWeights.GetWeightsSummary("Vampiric Embrace weights:")}.";
                 if (embraceWeights.GetTotalOfWeights() > 0) {
                     Character chosenEmbraceTarget = embraceWeights.PickRandomElementGivenWeights();
@@ -137,7 +117,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
         return false;
     }
 
-    public static LocationStructure GetFirstNonSettlementVampireCastles(Character character) {
+    private LocationStructure GetFirstNonSettlementVampireCastles(Character character) {
         List<Region> regionsToCheck = new List<Region> {character.currentRegion};
         regionsToCheck.AddRange(character.currentRegion.neighbours);
         for (int i = 0; i < regionsToCheck.Count; i++) {
@@ -154,7 +134,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
         }
         return null;
     }
-    public static HexTile GetNoStructurePlainHexInAllRegions() {
+    private HexTile GetNoStructurePlainHexInAllRegions() {
         HexTile chosenHex = null;
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region region = GridMap.Instance.allRegions[i];
@@ -165,7 +145,32 @@ public class VampireBehaviour : CharacterBehaviourComponent {
         }
         return chosenHex;
     }
-    public static HexTile GetNoStructurePlainHexInRegion(Region region) {
+    private HexTile GetNoStructurePlainHexInRegion(Region region) {
         return region.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
+    }
+
+    public static WeightedDictionary<Character> GetVampiricEmbraceTargetWeights(Character character) {
+        WeightedDictionary<Character> embraceWeights = new WeightedDictionary<Character>();
+        foreach (var relationships in character.relationshipContainer.relationships) {
+            Character otherCharacter = DatabaseManager.Instance.characterDatabase.GetCharacterByID(relationships.Key);
+            if (otherCharacter != null) {
+                if (!otherCharacter.traitContainer.HasTrait("Vampire") && relationships.Value.awareness.state != AWARENESS_STATE.Presumed_Dead && 
+                    relationships.Value.awareness.state != AWARENESS_STATE.Missing && !otherCharacter.partyComponent.isActiveMember) {
+                    var opinionLabel = relationships.Value.opinions.GetOpinionLabel();
+                    if (relationships.Value.IsLover() && (opinionLabel == RelationshipManager.Close_Friend || opinionLabel == RelationshipManager.Friend)) {
+                        embraceWeights.AddElement(otherCharacter, 100);
+                    } else if (relationships.Value.HasRelationship(RELATIONSHIP_TYPE.AFFAIR) && (opinionLabel == RelationshipManager.Close_Friend || opinionLabel == RelationshipManager.Friend)) {
+                        embraceWeights.AddElement(otherCharacter, 50);
+                    } else if (opinionLabel == RelationshipManager.Close_Friend) {
+                        embraceWeights.AddElement(otherCharacter, 50);
+                    } else if (opinionLabel == RelationshipManager.Friend) {
+                        embraceWeights.AddElement(otherCharacter, 10);
+                    } else if (opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
+                        embraceWeights.AddElement(otherCharacter, 5);
+                    }
+                }
+            }
+        }
+        return embraceWeights;
     }
 }

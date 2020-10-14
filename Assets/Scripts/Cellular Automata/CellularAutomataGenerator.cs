@@ -124,13 +124,48 @@ namespace Cellular_Automata {
 		/// <param name="groundAsset">Asset to use if tile is set as ground</param>
 		/// <param name="wallAction">Action to perform to the tile when it is set as a wall.</param>
 		/// <param name="groundAction">Action to perform to the tile when it is set as ground.</param>
-		public static void DrawMap(LocationGridTile[,] tileMap, int[,] cellAutomata, TileBase wallAsset,
+		public static IEnumerator DrawMapCoroutine(LocationGridTile[,] tileMap, int[,] cellAutomata, TileBase wallAsset,
 			TileBase groundAsset, System.Action<LocationGridTile> wallAction, System.Action<LocationGridTile> groundAction) {
 			Assert.IsTrue(tileMap.GetUpperBound(0) == cellAutomata.GetUpperBound(0),
 				$"Provided tile map and cell map have inconsistent first dimension bounds. {tileMap.GetUpperBound(0).ToString()}/{cellAutomata.GetUpperBound(0).ToString()}");
 			Assert.IsTrue(tileMap.GetUpperBound(1) == cellAutomata.GetUpperBound(1),
 				$"Provided tile map and cell map have inconsistent first dimension bounds. {tileMap.GetUpperBound(1).ToString()}/{cellAutomata.GetUpperBound(1).ToString()}");
 
+			int upperBoundX = tileMap.GetUpperBound(0) + 1;
+			int upperBoundY = tileMap.GetUpperBound(1) + 1;
+			int batchCount = 0;
+			for (int x = 0; x < upperBoundX; x++) {
+				for (int y = 0; y < upperBoundY; y++) {
+					LocationGridTile tile = tileMap[x, y];
+					int cellMapValue = cellAutomata[x, y];
+					if (tile != null) {
+						if (cellMapValue == 1) {
+							//wall
+							tile.SetStructureTilemapVisual(wallAsset);
+							wallAction?.Invoke(tile);
+						} else {
+							//ground	
+							tile.SetStructureTilemapVisual(groundAsset);
+							groundAction?.Invoke(tile);
+						}
+						
+						batchCount++;
+						if (batchCount == MapGenerationData.InnerMapElevationBatches) {
+							batchCount = 0;
+							yield return null;    
+						}
+					}
+				}	
+			}
+		}
+		
+		public static void DrawMap(LocationGridTile[,] tileMap, int[,] cellAutomata, TileBase wallAsset,
+			TileBase groundAsset, System.Action<LocationGridTile> wallAction, System.Action<LocationGridTile> groundAction) {
+			Assert.IsTrue(tileMap.GetUpperBound(0) == cellAutomata.GetUpperBound(0),
+				$"Provided tile map and cell map have inconsistent first dimension bounds. {tileMap.GetUpperBound(0).ToString()}/{cellAutomata.GetUpperBound(0).ToString()}");
+			Assert.IsTrue(tileMap.GetUpperBound(1) == cellAutomata.GetUpperBound(1),
+				$"Provided tile map and cell map have inconsistent first dimension bounds. {tileMap.GetUpperBound(1).ToString()}/{cellAutomata.GetUpperBound(1).ToString()}");
+		
 			int upperBoundX = tileMap.GetUpperBound(0) + 1;
 			int upperBoundY = tileMap.GetUpperBound(1) + 1;
 			for (int x = 0; x < upperBoundX; x++) {
@@ -150,7 +185,6 @@ namespace Cellular_Automata {
 					}
 				}	
 			}
-
 		}
 	}	
 }

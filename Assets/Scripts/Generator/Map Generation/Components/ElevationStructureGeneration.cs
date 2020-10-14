@@ -111,9 +111,9 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		}
 
 		if (island.elevation == ELEVATION.WATER) {
-			WaterCellAutomata(locationGridTiles, elevationStructure);
+			yield return MapGenerator.Instance.StartCoroutine(WaterCellAutomata(locationGridTiles, elevationStructure));
 		} else if (island.elevation == ELEVATION.MOUNTAIN) {
-			MountainCellAutomata(locationGridTiles, elevationStructure, island);
+			yield return MapGenerator.Instance.StartCoroutine(MountainCellAutomata(locationGridTiles, elevationStructure, island));
 		}
 
 		for (int i = 0; i < island.tilesInIsland.Count; i++) {
@@ -129,15 +129,14 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		}
 		yield return null;
 	}
-	private void WaterCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure) {
+	private IEnumerator WaterCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure) {
 		LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(locationGridTiles);
-		int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 2, 20);
+		int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 1, 20); //2
 		
 		Assert.IsNotNull(cellMap, $"There was no cellmap generated for elevation structure {elevationStructure.ToString()}");
 		
-		CellularAutomataGenerator.DrawMap(tileMap, cellMap, null, 
-			InnerMapManager.Instance.assetManager.shoreTile, 
-			null, (locationGridTile) => SetAsWater(locationGridTile, elevationStructure));
+		MapGenerator.Instance.StartCoroutine(CellularAutomataGenerator.DrawMapCoroutine(tileMap, cellMap, null, InnerMapManager.Instance.assetManager.shoreTile, 
+			null, (locationGridTile) => SetAsWater(locationGridTile, elevationStructure)));
 
 		//create water wells
 		int westMost = elevationStructure.tiles.Min(t => t.localPlace.x);
@@ -145,21 +144,19 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		int southMost = elevationStructure.tiles.Min(t => t.localPlace.y);
 		int northMost = elevationStructure.tiles.Max(t => t.localPlace.y);
 		
-		LocationGridTile northTile = CollectionUtilities.GetRandomElement(
-			elevationStructure.tiles.Where(t => t.localPlace.y == northMost && t.objHere == null));
+		LocationGridTile northTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == northMost && t.objHere == null));
 		CreateInvisibleWellAt(northTile);
 		
-		LocationGridTile southTile = CollectionUtilities.GetRandomElement(
-			elevationStructure.tiles.Where(t => t.localPlace.y == southMost && t.objHere == null));
+		LocationGridTile southTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == southMost && t.objHere == null));
 		CreateInvisibleWellAt(southTile);
 		
-		LocationGridTile westTile = CollectionUtilities.GetRandomElement(
-			elevationStructure.tiles.Where(t => t.localPlace.x == westMost && t.objHere == null));
+		LocationGridTile westTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == westMost && t.objHere == null));
 		CreateInvisibleWellAt(westTile);
 		
-		LocationGridTile eastTile = CollectionUtilities.GetRandomElement(
-			elevationStructure.tiles.Where(t => t.localPlace.x == eastMost && t.objHere == null));
+		LocationGridTile eastTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == eastMost && t.objHere == null));
 		CreateInvisibleWellAt(eastTile);
+		
+		yield return null;
 	}
 	private void CreateInvisibleWellAt(LocationGridTile tile) {
 		TileObject well = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
@@ -171,9 +168,8 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		tile.SetStructure(structure);
 		tile.genericTileObject.traitContainer.AddTrait(tile.genericTileObject, "Wet", overrideDuration: 0);
 	}
-	private void MountainCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure, ElevationIsland elevationIsland) {
-		List<LocationGridTile> refinedTiles =
-			locationGridTiles.Where(t => t.HasNeighbourNotInList(locationGridTiles) == false && t.IsAtEdgeOfMap() == false).ToList();
+	private IEnumerator MountainCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure, ElevationIsland elevationIsland) {
+		List<LocationGridTile> refinedTiles = locationGridTiles.Where(t => t.HasNeighbourNotInList(locationGridTiles) == false && t.IsAtEdgeOfMap() == false).ToList();
 		
 		LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(refinedTiles);
 		int fillPercent = 25;
@@ -186,10 +182,10 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		
 		Assert.IsNotNull(cellMap, $"There was no cellmap generated for elevation structure {elevationStructure.ToString()}");
 		
-		CellularAutomataGenerator.DrawMap(tileMap, cellMap, InnerMapManager.Instance.assetManager.caveWallTile, 
+		yield return MapGenerator.Instance.StartCoroutine(CellularAutomataGenerator.DrawMapCoroutine(tileMap, cellMap, InnerMapManager.Instance.assetManager.caveWallTile, 
 			null, 
 			(locationGridTile) => SetAsMountainWall(locationGridTile, elevationStructure),
-			(locationGridTile) => SetAsMountainGround(locationGridTile, elevationStructure));
+			(locationGridTile) => SetAsMountainGround(locationGridTile, elevationStructure)));
 
 		for (int i = 0; i < elevationIsland.tilesInIsland.Count; i++) {
 			HexTile tile = elevationIsland.tilesInIsland[i];

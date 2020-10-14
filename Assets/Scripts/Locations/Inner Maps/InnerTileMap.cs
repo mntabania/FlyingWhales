@@ -111,9 +111,17 @@ namespace Inner_Maps {
             allEdgeTiles = new List<LocationGridTile>();
             int batchCount = 0;
             LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            Vector3Int[] positionArray = new Vector3Int[width * height];
+            TileBase[] groundTilesArray = new TileBase[width * height];
+
+            int count = 0;
+            TileBase regionOutsideTile = InnerMapManager.Instance.assetManager.GetOutsideFloorTile(region);
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
-                    groundTilemap.SetTile(new Vector3Int(x, y, 0), InnerMapManager.Instance.assetManager.GetOutsideFloorTile(region));
+                    var position = new Vector3Int(x, y, 0);
+                    positionArray[count] = position;
+                    groundTilesArray[count] = regionOutsideTile;
+                    // groundTilemap.SetTile(position, regionOutsideTile);
                     LocationGridTile tile = new LocationGridTile(x, y, groundTilemap, this);
                     tile.CreateGenericTileObject();
                     tile.SetStructure(wilderness);
@@ -122,16 +130,38 @@ namespace Inner_Maps {
                         allEdgeTiles.Add(tile);
                     }
                     map[x, y] = tile;
+                    count++;
+                    batchCount++;
+                    if (batchCount == MapGenerationData.InnerMapTileGenerationBatches) {
+                        batchCount = 0;
+                        yield return null;    
+                    }
                 }
+            }
+            groundTilemap.SetTiles(positionArray, groundTilesArray);
+            // for (int i = 0; i < positionArray.Length; i++) {
+            //     LocationGridTile tile = map[positionArray[i].x, positionArray[i].y];
+            //     tile.InitialUpdateGroundTypeBasedOnAsset();
+            // }
+            stopwatch.Stop();
+            mapGenerationComponent.AddLog($"{region.name} GenerateGrid took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+            stopwatch.Reset();
+            
+            stopwatch.Start();
+            batchCount = 0;
+            for (int i = 0; i < allTiles.Count; i++) {
+                LocationGridTile tile = allTiles[i];
+                tile.FindNeighbours(map);
                 batchCount++;
                 if (batchCount == MapGenerationData.InnerMapTileGenerationBatches) {
                     batchCount = 0;
                     yield return null;    
                 }
             }
-            allTiles.ForEach(x => x.FindNeighbours(map));
             stopwatch.Stop();
-            mapGenerationComponent.AddLog($"{region.name} GenerateGrid took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+            mapGenerationComponent.AddLog($"{region.name} GridFindNeighbours took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+            // allTiles.ForEach(x => x.FindNeighbours(map));
+           
         }
         protected IEnumerator LoadGrid(int width, int height, MapGenerationComponent mapGenerationComponent, SaveDataInnerMap saveDataInnerMap, SaveDataCurrentProgress saveData) {
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
@@ -144,11 +174,18 @@ namespace Inner_Maps {
             allEdgeTiles = new List<LocationGridTile>();
             int batchCount = 0;
             
+            Vector3Int[] positionArray = new Vector3Int[width * height];
+            TileBase[] groundTilesArray = new TileBase[width * height];
+            int count = 0;
             LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            TileBase regionOutsideTile = InnerMapManager.Instance.assetManager.GetOutsideFloorTile(region);
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
                     SaveDataLocationGridTile existingSaveData = saveDataInnerMap.GetSaveDataForTile(new Point(x, y));
-                    groundTilemap.SetTile(new Vector3Int(x, y, 0), InnerMapManager.Instance.assetManager.GetOutsideFloorTile(region));
+                    var position = new Vector3Int(x, y, 0);
+                    positionArray[count] = position;
+                    groundTilesArray[count] = regionOutsideTile;
+                    // groundTilemap.SetTile(position, InnerMapManager.Instance.assetManager.GetOutsideFloorTile(region));
                     LocationGridTile tile;
                     if (existingSaveData != null) {
                         //has existing save data
@@ -163,17 +200,34 @@ namespace Inner_Maps {
                         allEdgeTiles.Add(tile);
                     }
                     map[x, y] = tile;
+                    
+                    batchCount++;
+                    if (batchCount == MapGenerationData.InnerMapTileGenerationBatches) {
+                        batchCount = 0;
+                        yield return null;    
+                    }
                 }
+                
+            }
+            groundTilemap.SetTiles(positionArray, groundTilesArray);
+            
+            stopwatch.Stop();
+            mapGenerationComponent.AddLog($"{region.name} Load Grid took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+            stopwatch.Reset();
+            
+            stopwatch.Start();
+            batchCount = 0;
+            for (int i = 0; i < allTiles.Count; i++) {
+                LocationGridTile tile = allTiles[i];
+                tile.FindNeighbours(map);
                 batchCount++;
                 if (batchCount == MapGenerationData.InnerMapTileGenerationBatches) {
                     batchCount = 0;
                     yield return null;    
                 }
             }
-            
-            allTiles.ForEach(x => x.FindNeighbours(map));
             stopwatch.Stop();
-            mapGenerationComponent.AddLog($"{region.name} Load Grid took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+            mapGenerationComponent.AddLog($"{region.name} GridFindNeighbours took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
         public IEnumerator LoadTileVisuals(MapGenerationComponent mapGenerationComponent, SaveDataInnerMap saveDataInnerMap, Dictionary<string, TileBase> tileAssetDB) {
             int batchCount = 0;

@@ -65,7 +65,13 @@ public class SettlementGeneration : MapGenerationComponent {
 					new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE),
 					new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE),
 					new StructureSetting(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE),
-					new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE)
+					new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE),
 				};
 			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 				structureSettings = new List<StructureSetting>() {
