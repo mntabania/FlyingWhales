@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Logs;
@@ -112,7 +113,7 @@ public class RepairStructure : GoapAction {
     public void AfterRepairSuccess(ActualGoapNode goapNode) {
         LocationStructure structure = goapNode.poiTarget.gridTileLocation.structure;
         for (int i = 0; i < structure.tiles.Count; i++) {
-            LocationGridTile tile = structure.tiles[i];
+            LocationGridTile tile = structure.tiles.ElementAt(i);
             tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
             tile.genericTileObject.traitContainer.RemoveTrait(tile.genericTileObject, "Burnt");
             for (int j = 0; j < tile.walls.Count; j++) {

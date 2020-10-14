@@ -115,6 +115,9 @@ namespace Inner_Maps {
             tileState = Tile_State.Empty;
             charactersHere = new List<Character>();
             walls = new List<StructureWallObject>();
+            _fourNeighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
+            _neighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
+            neighbourList = new List<LocationGridTile>();
             isDefault = true;
             connectorsOnTile = 0;
             DatabaseManager.Instance.locationGridTileDatabase.RegisterTile(this);
@@ -132,6 +135,9 @@ namespace Inner_Maps {
             tileState = data.tileState;
             charactersHere = new List<Character>();
             walls = new List<StructureWallObject>();
+            _fourNeighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
+            _neighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
+            neighbourList = new List<LocationGridTile>();
             isDefault = data.isDefault;
             connectorsOnTile = data.connectorsCount;
             DatabaseManager.Instance.locationGridTileDatabase.RegisterTile(this);
@@ -227,9 +233,6 @@ namespace Inner_Maps {
         }
         private Dictionary<GridNeighbourDirection, LocationGridTile> FourNeighboursDictionary() { return _fourNeighbours; }
         public void FindNeighbours(LocationGridTile[,] map) {
-            _fourNeighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
-            _neighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
-            neighbourList = new List<LocationGridTile>();
             int mapUpperBoundX = map.GetUpperBound(0);
             int mapUpperBoundY = map.GetUpperBound(1);
             Point thisPoint = new Point(localPlace.x, localPlace.y);

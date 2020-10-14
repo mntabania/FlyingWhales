@@ -17,7 +17,7 @@ public class MapGenerationData {
 	public static int WorldMapElevationRefinementBatches = 400;
 	public static int WorldMapFeatureGenerationBatches = 200;
 	public static int WorldMapHabitabilityGenerationBatches = 300;
-	public static int InnerMapTileGenerationBatches = 500;
+	public static int InnerMapTileGenerationBatches = 200;
 	public static int InnerMapSeamlessEdgeBatches = 200;
 	public static int InnerMapDetailBatches = 200;
 	public static int InnerMapElevationBatches = 200;
