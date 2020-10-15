@@ -1072,31 +1072,28 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void SetTargetPOI(IPointOfInterest poi) {
         this.targetPOI = poi;
     }
-    private bool CanDoStealthActionToTarget(Character target) {
+    private bool CanDoStealthActionToTarget(Character target, CRIME_TYPE crimeType) {
         if (!target.isDead) {
-            int inVisionNormalCharacterCount = 0;
             for (int i = 0; i < target.marker.inVisionCharacters.Count; i++) {
                 Character inVision = target.marker.inVisionCharacters[i];
-                if (inVision.isNormalCharacter) {
-                    inVisionNormalCharacterCount++;
-                    if (inVisionNormalCharacterCount > 1) {
-                        return false; //if there are 2 or more in vision of target character it means he is not alone anymore
+                if(inVision != character) {
+                    if (inVision.canWitness) {
+                        CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(inVision, character, target, crimeType);
+                        if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
+                            return false;
+                        }
                     }
                 }
             }
-            if (inVisionNormalCharacterCount == 1) {
-                if (!target.marker.inVisionCharacters.Contains(character)) {
-                    return false; //if there is only one in vision of target character and it is not this character, it means he is not alone
-                }
-            }
         } else {
-            int inVisionNormalCharacterCount = 0;
             for (int i = 0; i < inVisionCharacters.Count; i++) {
                 Character inVision = inVisionCharacters[i];
-                if (inVision.isNormalCharacter) {
-                    inVisionNormalCharacterCount++;
-                    if (inVisionNormalCharacterCount > 1) {
-                        return false;
+                if (inVision != target) {
+                    if (inVision.canWitness) {
+                        CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(inVision, character, target, crimeType);
+                        if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
+                            return false;
+                        }
                     }
                 }
             }
@@ -1117,19 +1114,22 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //}
         //return true;
     }
-    public bool CanDoStealthActionToTarget(IPointOfInterest target) {
-        if(target is Character) {
-            return CanDoStealthActionToTarget(target as Character);
-        }
-        for (int i = 0; i < inVisionCharacters.Count; i++) {
-            Character inVision = inVisionCharacters[i];
-            if (inVision.isNormalCharacter) {
-                return false;
+    public bool CanDoStealthCrimeToTarget(IPointOfInterest target, CRIME_TYPE crimeType) {
+        //If action is stealth and there is a character in vision that can witness and considers the action as a crime, then return false, this means that the actor must not do the action because there are witnesses
+        if(crimeType != CRIME_TYPE.Unset && crimeType != CRIME_TYPE.None) {
+            if (target is Character targetCharacter) {
+                return CanDoStealthActionToTarget(targetCharacter, crimeType);
+            }
+            for (int i = 0; i < inVisionCharacters.Count; i++) {
+                Character inVision = inVisionCharacters[i];
+                if (inVision.canWitness) {
+                    CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(inVision, character, target, crimeType);
+                    if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
+                        return false;
+                    }
+                }
             }
         }
-        //if (inVisionCharacters.Count > 0) {
-        //    return false;
-        //}
         return true;
     }
     public void SetMarkerColor(Color color) {
