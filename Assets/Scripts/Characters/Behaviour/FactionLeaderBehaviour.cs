@@ -120,7 +120,7 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
             return false;
         }
         Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-        if (prisoner == null || !prisoner.IsPrisonerOf(recruiter.faction)) {
+        if (prisoner == null || !prisoner.IsFactionPrisonerOf(recruiter.faction)) {
             //Only recruit characters that are prisoners of the recruiters faction.
             //This was added because sometimes vampire lords will recruit their imprisoned blood sources
             return false;

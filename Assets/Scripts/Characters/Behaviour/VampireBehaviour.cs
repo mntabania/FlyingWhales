@@ -17,6 +17,14 @@ public class VampireBehaviour : CharacterBehaviourComponent {
         if ((character.moodComponent.moodState == MOOD_STATE.Bad || character.moodComponent.moodState == MOOD_STATE.Critical) && character.traitContainer.HasTrait("Hemophobic")) {
             return character.jobComponent.TriggerSuicideJob(out producedJob, "Hemophobic Vampire");
         }
+
+        if (character.needsComponent.isHungry || character.needsComponent.isStarving) {
+            TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+            if (currentTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                character.needsComponent.PlanFullnessRecoveryActionsVampire();
+            }
+        }
+
         if (character.characterClass.className == "Vampire Lord") {
             log += $"\n-{character.name} is a Vampire Lord";
             if (character.homeStructure == null || character.homeStructure.structureType != STRUCTURE_TYPE.VAMPIRE_CASTLE) {

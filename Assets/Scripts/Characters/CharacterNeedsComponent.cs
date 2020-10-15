@@ -1004,18 +1004,25 @@ public class CharacterNeedsComponent : CharacterComponent {
         doNotGetHungry = Math.Max(doNotGetHungry, 0);
     }
     public void PlanScheduledFullnessRecovery() {
+        if (owner.traitContainer.HasTrait("Vampire")) {
+            //Note: Instead of just restricting the vampires from doing fullness recovery when it is not After Midnight, we will restrict the vampires from doing normal fullness recovery any time
+            //because their fullness recovery is now triggered in VampireBehaviour
+            //We did this to eliminate the conflict between nocturnals and vampires, because when a character becomes nocturnal, the fullnesss recovery sched is switched to Early Night, however, if it becomes a Vampire, it will switch to After Midnight
+            //Now, when a character becomes Nocturnal, after becoming a Vampire, the schedule will be on Early Night, not After Midnight
+            return;
+        }
         if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.currentTick >= fullnessForcedTick && owner.canPerform && doNotGetHungry <= 0) {
             hasForcedFullness = true;
-            if (owner.traitContainer.HasTrait("Vampire")) {
-                TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
-                if (currentTime != TIME_IN_WORDS.AFTER_MIDNIGHT) {
-                    //Vampires will only recover fullness after midnight, no matter how hungry they are
-                    //https://trello.com/c/f0ICyIAj/2475-vampires-only-drink-blood-at-night
-                    //The reason why the checking only happens here is because this is the one being called every hour, every time the character becomes starving, etc.
-                    //Some fullness recovery actions especially the ones forced by the player (ex. Glutton trigger flaw) must still occur even if it is After Midnight
-                    return;
-                }
-            }
+            //if (owner.traitContainer.HasTrait("Vampire")) {
+            //    TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+            //    if (currentTime != TIME_IN_WORDS.AFTER_MIDNIGHT) {
+            //        //Vampires will only recover fullness after midnight, no matter how hungry they are
+            //        //https://trello.com/c/f0ICyIAj/2475-vampires-only-drink-blood-at-night
+            //        //The reason why the checking only happens here is because this is the one being called every hour, every time the character becomes starving, etc.
+            //        //Some fullness recovery actions especially the ones forced by the player (ex. Glutton trigger flaw) must still occur even if it is After Midnight
+            //        return;
+            //    }
+            //}
             if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_URGENT)) {
                 JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;
                 if (isStarving) {
@@ -1034,15 +1041,22 @@ public class CharacterNeedsComponent : CharacterComponent {
             return false;
         }
         if (owner.traitContainer.HasTrait("Vampire")) {
-            TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
-            if(currentTime != TIME_IN_WORDS.AFTER_MIDNIGHT) {
-                //Vampires will only recover fullness after midnight, no matter how hungry they are
-                //https://trello.com/c/f0ICyIAj/2475-vampires-only-drink-blood-at-night
-                //The reason why the checking only happens here is because this is the one being called every hour, every time the character becomes starving, etc.
-                //Some fullness recovery actions especially the ones forced by the player (ex. Glutton trigger flaw) must still occur even if it is After Midnight
-                return false;
-            }
+            //Note: Instead of just restricting the vampires from doing fullness recovery when it is not After Midnight, we will restrict the vampires from doing normal fullness recovery any time
+            //because their fullness recovery is now triggered in VampireBehaviour
+            //We did this to eliminate the conflict between nocturnals and vampires, because when a character becomes nocturnal, the fullnesss recovery sched is switched to Early Night, however, if it becomes a Vampire, it will switch to After Midnight
+            //Now, when a character becomes Nocturnal, after becoming a Vampire, the schedule will be on Early Night, not After Midnight
+            return false;
         }
+        //if (owner.traitContainer.HasTrait("Vampire")) {
+        //    TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+        //    if(currentTime != TIME_IN_WORDS.AFTER_MIDNIGHT) {
+        //        //Vampires will only recover fullness after midnight, no matter how hungry they are
+        //        //https://trello.com/c/f0ICyIAj/2475-vampires-only-drink-blood-at-night
+        //        //The reason why the checking only happens here is because this is the one being called every hour, every time the character becomes starving, etc.
+        //        //Some fullness recovery actions especially the ones forced by the player (ex. Glutton trigger flaw) must still occur even if it is After Midnight
+        //        return false;
+        //    }
+        //}
         if (this.isStarving) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
                 //If there is already a HUNGER_RECOVERY JOB and the character becomes Starving, replace HUNGER_RECOVERY with HUNGER_RECOVERY_STARVING only if that character is not doing the job already
@@ -1064,6 +1078,41 @@ public class CharacterNeedsComponent : CharacterComponent {
                 return true;
             }
         } 
+        return false;
+    }
+    public bool PlanFullnessRecoveryActionsVampire() {
+        if (!owner.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
+            return false;
+        }
+        if (isStarving) {
+            if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
+                //If there is already a HUNGER_RECOVERY JOB and the character becomes Starving, replace HUNGER_RECOVERY with HUNGER_RECOVERY_STARVING only if that character is not doing the job already
+                JobQueueItem hungerRecoveryJob = owner.jobQueue.GetJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL);
+                if (hungerRecoveryJob != null) {
+                    //Replace this with Hunger Recovery Starving only if the character is not doing the Hunger Recovery Job already
+                    JobQueueItem currJob = owner.currentJob;
+                    if (currJob == hungerRecoveryJob) {
+                        return false;
+                    } else {
+                        hungerRecoveryJob.CancelJob();
+                    }
+                }
+                JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_URGENT;
+                GoapPlanJob job = PlanFullnessRecovery(jobType);
+                if (job != null) {
+                    owner.jobQueue.AddJobInQueue(job);
+                }
+                return true;
+            }
+        } else if (isHungry) {
+            if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL)) {
+                GoapPlanJob job = PlanFullnessRecoveryBase(JOB_TYPE.FULLNESS_RECOVERY_NORMAL);
+                if (job != null) {
+                    owner.jobQueue.AddJobInQueue(job);
+                }
+                return true;
+            }
+        }
         return false;
     }
     private bool PlanFullnessRecoveryActionsWhileInActiveParty() {
@@ -1104,16 +1153,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         }
         return false;
     }
-    public void PlanFullnessRecoveryNormal() {
-        if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL)) {
-            JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;
-            GoapPlanJob job = PlanFullnessRecovery(jobType);
-            if (job != null) {
-                owner.jobQueue.AddJobInQueue(job);
-            }
-        }
-    }
-    public void PlanFullnessRecoveryNormal(out JobQueueItem producedJob) {
+    public void PlanFullnessRecoveryGlutton(out JobQueueItem producedJob) {
         producedJob = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL)) {
             JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;

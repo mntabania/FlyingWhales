@@ -130,7 +130,7 @@ namespace Traits {
         //}
         #endregion
 
-        public bool IsPrisonerOf(Faction faction) {
+        public bool IsFactionPrisonerOf(Faction faction) {
             if (isFactionPrisoner) {
                 return prisonerOfFaction == faction;
             }
@@ -142,12 +142,12 @@ namespace Traits {
             }
             return false;
         }
-        public bool IsPrisonerOf(Character character) {
+        public bool IsConsideredPrisonerOf(Character character) {
             if (IsPersonalPrisonerOf(character)) {
                 return true;
             } else {
                 if (character.faction != null) {
-                    if (IsPrisonerOf(character.faction)) {
+                    if (IsFactionPrisonerOf(character.faction)) {
                         return true;
                     }
                 }

@@ -256,7 +256,7 @@ namespace Traits {
                                     bool willCreateAssumption = true;
                                     if (targetCharacter.traitContainer.HasTrait("Prisoner")) {
                                         Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-                                        if (prisoner.IsPrisonerOf(owner)) {
+                                        if (prisoner.IsConsideredPrisonerOf(owner)) {
                                             willCreateAssumption = false;
                                         }
                                     }

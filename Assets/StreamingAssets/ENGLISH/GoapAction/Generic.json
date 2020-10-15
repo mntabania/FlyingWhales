@@ -1,8 +1,1 @@
-{
-  "items": [
-    {
-      "key": "Invalid",
-      "value": "%00@ failed to do %111%."
-    }
-  ]
-}
+{"items":[{"key":"Invalid","value":"%00@ failed to do %111%."},{"key":"Invalid_Stealth","value":"%00@ failed to do %111% because there are witnesses around."}]}

@@ -143,6 +143,7 @@ public class GoapAction {
     public virtual GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
+
         string stateName = "Target Missing";
         bool defaultTargetMissing = IsTargetMissing(node);
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
@@ -324,14 +325,18 @@ public class GoapAction {
     private int PreconditionCostMultiplier() {
         return 1; //Math.Max(basePreconditions.Count * 2, 1);
     }
-    public void LogActionInvalid(GoapActionInvalidity goapActionInvalidity, ActualGoapNode node) {
+    public void LogActionInvalid(GoapActionInvalidity goapActionInvalidity, ActualGoapNode node, bool isInvalidStealth) {
         string invalidKey = goapActionInvalidity.stateName.ToLower() + "_description";
         if (goapActionInvalidity.stateName != "Target Missing" && LocalizationManager.Instance.HasLocalizedValue("GoapAction", name, invalidKey)) {
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, invalidKey, providedTags: LOG_TAG.Misc);
             AddFillersToLog(ref log, node);
             log.AddLogToDatabase();
         } else {
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Generic", "Invalid", providedTags: LOG_TAG.Misc);
+            string key = "Invalid";
+            if (isInvalidStealth) {
+                key = "Invalid_Stealth";
+            }
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Generic", key, providedTags: LOG_TAG.Misc);
             log.AddToFillers(node.actor, node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(node.poiTarget, node.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(goapType.ToString()), LOG_IDENTIFIER.STRING_1);

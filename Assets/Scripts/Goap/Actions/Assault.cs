@@ -67,11 +67,8 @@ public class Assault : GoapAction {
                 if (target is Character targetCharacter) {
                     string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                     if (node.associatedJobType == JOB_TYPE.APPREHEND) {
-                        bool targetHasHeinousOrSeriousCrime = false;
-                        if (targetCharacter.traitContainer.HasTrait("Criminal")) {
-                            targetHasHeinousOrSeriousCrime = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal").HasCrime(CRIME_SEVERITY.Serious, CRIME_SEVERITY.Heinous);
-                            //targetHasHeinousOrSeriousCrime = crimeData.crimeSeverity == CRIME_SEVERITY.Serious || crimeData.crimeSeverity == CRIME_SEVERITY.Heinous;
-                        }
+                        bool targetHasHeinousOrSeriousCrime = targetCharacter.crimeComponent.HasCrime(CRIME_SEVERITY.Serious, CRIME_SEVERITY.Heinous);
+
                         if (targetHasHeinousOrSeriousCrime) {
                             if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status, node);
@@ -162,17 +159,9 @@ public class Assault : GoapAction {
             if (target is Character targetCharacter && targetCharacter.faction != null && targetCharacter.faction.isMajorNonPlayer && !witness.IsHostileWith(targetCharacter)) {
                 if (node.associatedJobType == JOB_TYPE.APPREHEND) {
                     string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
-                    bool targetHasHeinousOrSeriousCrime = false;
-                    bool targetHasMisdemeanour = false;
-                    if (targetCharacter.traitContainer.HasTrait("Criminal")) {
-                        Criminal criminalTrait = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
-                        targetHasHeinousOrSeriousCrime = criminalTrait.HasCrime(CRIME_SEVERITY.Serious, CRIME_SEVERITY.Heinous);
-                        targetHasMisdemeanour = criminalTrait.HasCrime(CRIME_SEVERITY.Misdemeanor);
+                    bool targetHasHeinousOrSeriousCrime = targetCharacter.crimeComponent.HasCrime(CRIME_SEVERITY.Serious, CRIME_SEVERITY.Heinous);
+                    bool targetHasMisdemeanour = targetCharacter.crimeComponent.HasCrime(CRIME_SEVERITY.Misdemeanor);
 
-                        //CrimeData crimeData = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal").dataCrime;
-                        //targetHasHeinousOrSeriousCrime = crimeData.crimeSeverity == CRIME_SEVERITY.Serious || crimeData.crimeSeverity == CRIME_SEVERITY.Heinous;
-                        //targetHasMisdemeanour = crimeData.crimeSeverity == CRIME_SEVERITY.Misdemeanor;
-                    }
                     if (targetHasHeinousOrSeriousCrime) {
                         if (opinionLabel == RelationshipManager.Acquaintance) {
                             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, targetCharacter, status, node);

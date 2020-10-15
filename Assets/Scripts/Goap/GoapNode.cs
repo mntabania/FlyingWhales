@@ -359,12 +359,13 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public void PerformAction() {
         GoapActionInvalidity goapActionInvalidity = action.IsInvalid(this);
         bool isInvalidOnVision = action.IsInvalidOnVision(this);
-        if (goapActionInvalidity.isInvalid || isInvalidOnVision) {
+        bool isInvalidStealth = IsInvalidStealth();
+        if (goapActionInvalidity.isInvalid || isInvalidOnVision || isInvalidStealth) {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{actor.name}'s action {action.goapType.ToString()} was invalid!");
-            action.LogActionInvalid(goapActionInvalidity, this);
+            action.LogActionInvalid(goapActionInvalidity, this, isInvalidStealth);
             actor.GoapActionResult(InteractionManager.Goap_State_Fail, this);
             action.OnInvalidAction(this);
-            if (isInvalidOnVision) {
+            if (isInvalidOnVision || isInvalidStealth) { //If action is invalid because of stealth, cancel job immediately, we do not need to recalculate it anymore since there are witnesses around, it will just become invalid again even if we let it recalculate
                 associatedJob?.CancelJob(false);
             } else {
                 JobQueueItem job = associatedJob;
@@ -551,7 +552,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if (action.goapType == INTERACTION_TYPE.REMOVE_BUFF) {
             return true;
         }
-        if (action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.DRINK_BLOOD) {
+        if (action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.DRINK_BLOOD || action.goapType == INTERACTION_TYPE.VAMPIRIC_EMBRACE) {
             return true;
         } else if (action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER && job.jobType != JOB_TYPE.APPREHEND) {
             return true;
@@ -980,7 +981,19 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         return converted;
     }
     #endregion
-    
+
+    #region Stealth
+    private bool IsInvalidStealth() {
+        //If action is stealth and there is a character in vision that can witness and considers the action as a crime, then return false, this means that the actor must not do the action because there are witnesses
+        if (poiTarget != actor && isStealth) {
+            if (actor.marker && actor.marker.inVisionPOIs.Contains(poiTarget) && !actor.marker.CanDoStealthCrimeToTarget(poiTarget, crimeType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    #endregion
+
     #region Loading
     public void DoActionUponLoadingSavedGame() {
         if(actionStatus == ACTION_STATUS.STARTED) {

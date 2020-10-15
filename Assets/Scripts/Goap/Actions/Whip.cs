@@ -33,8 +33,7 @@ public class Whip : GoapAction {
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
         Character targetCharacter = target as Character;
-        Criminal criminalTrait = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
-        if (criminalTrait != null && criminalTrait.HasWantedCrime() && criminalTrait.IsTargetOfACrime(witness)) {
+        if (targetCharacter.crimeComponent.HasWantedCrime() && targetCharacter.crimeComponent.IsTargetOfACrime(witness)) {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, node.actor, status, node);
         } else {
             if (witness.relationshipContainer.IsFriendsWith(targetCharacter)
@@ -88,10 +87,10 @@ public class Whip : GoapAction {
         Character target = goapNode.target as Character;
         if (target.traitContainer.HasTrait("Criminal")) {
             Criminal criminalTrait = target.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
-            criminalTrait.SetDecisionAndJudgeToAllUnpunishedCrimesWantedBy(target.faction, CRIME_STATUS.Punished, goapNode.actor);
             criminalTrait.SetIsImprisoned(false);
-            criminalTrait.RemoveAllCrimesWantedBy(goapNode.actor.faction);
         }
+        target.crimeComponent.SetDecisionAndJudgeToAllUnpunishedCrimesWantedBy(target.faction, CRIME_STATUS.Punished, goapNode.actor);
+        target.crimeComponent.RemoveAllCrimesWantedBy(goapNode.actor.faction);
         //target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);
         target.traitContainer.RemoveTrait(target, "Restrained", goapNode.actor);
         target.traitContainer.AddTrait(target, "Injured", goapNode.actor, goapNode);

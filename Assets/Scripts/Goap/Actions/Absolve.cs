@@ -29,10 +29,10 @@ public class Absolve : GoapAction {
         Character target = goapNode.target as Character;
         if (target.traitContainer.HasTrait("Criminal")) {
             Criminal criminalTrait = target.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
-            criminalTrait.SetDecisionAndJudgeToAllUnpunishedCrimesWantedBy(target.faction, CRIME_STATUS.Absolved, goapNode.actor);
             criminalTrait.SetIsImprisoned(false);
-            criminalTrait.RemoveAllCrimesWantedBy(goapNode.actor.faction);
         }
+        target.crimeComponent.SetDecisionAndJudgeToAllUnpunishedCrimesWantedBy(target.faction, CRIME_STATUS.Absolved, goapNode.actor);
+        target.crimeComponent.RemoveAllCrimesWantedBy(goapNode.actor.faction);
         //target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);
         target.traitContainer.RemoveTrait(target, "Restrained", goapNode.actor);
     }

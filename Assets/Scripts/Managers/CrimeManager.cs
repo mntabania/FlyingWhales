@@ -69,15 +69,11 @@ public class CrimeManager : BaseMonoBehaviour {
     #region Character
     public void MakeCharacterACriminal(CRIME_TYPE crimeType, CRIME_SEVERITY crimeSeverity, ICrimeable crime, Character witness, Character criminal, IPointOfInterest target, Faction targetFaction, REACTION_STATUS reactionStatus, Criminal criminalTrait) {
         if(criminalTrait == null) {
-            Trait trait = null;
-            criminal.traitContainer.AddTrait(criminal, "Criminal", out trait);
-            if(trait != null) {
-                criminalTrait = trait as Criminal;
-            }
+            criminal.traitContainer.AddTrait(criminal, "Criminal");
         }
-        CrimeData existingCrimeData = criminalTrait.GetCrimeDataOf(crime);
+        CrimeData existingCrimeData = criminal.crimeComponent.GetCrimeDataOf(crime);
         if (existingCrimeData == null) {
-            existingCrimeData = criminalTrait.AddCrime(crimeType, crimeSeverity, crime, criminal, criminalTrait, target, targetFaction, reactionStatus);
+            existingCrimeData = criminal.crimeComponent.AddCrime(crimeType, crimeSeverity, crime, criminal, criminalTrait, target, targetFaction, reactionStatus);
             CrimeType crimeTypeObj = existingCrimeData.crimeTypeObj;
 
             Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "become_criminal", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
@@ -235,15 +231,14 @@ public class CrimeManager : BaseMonoBehaviour {
         }
         if (crimeType != CRIME_TYPE.Unset) {
             if(crimeType != CRIME_TYPE.None) {
-                bool hasAlreadyReacted = false;
-                Criminal existingCriminalTrait = null; 
-                if (actor.traitContainer.HasTrait("Criminal")) {
-                    existingCriminalTrait = actor.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
-                    hasAlreadyReacted = existingCriminalTrait.IsCrimeAlreadyWitnessedBy(witness, crime);
-                }
+                bool hasAlreadyReacted = actor.crimeComponent.IsCrimeAlreadyWitnessedBy(witness, crime);
                 if (hasAlreadyReacted) {
                     //Will only react to crime once
                     return;
+                }
+                Criminal existingCriminalTrait = null;
+                if (actor.traitContainer.HasTrait("Criminal")) {
+                    existingCriminalTrait = actor.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
                 }
 
                 CrimeType crimeTypeObj = GetCrimeType(crimeType);
@@ -488,7 +483,7 @@ public class CrimeData : ISavable {
         if (IsWitness(character)) {
             if (!HasWanted()) {
                 if (AreAllWitnessesDead()) {
-                    criminal.traitContainer.GetTraitOrStatus<Criminal>("Criminal").RemoveCrime(this);
+                    criminal.crimeComponent.RemoveCrime(this);
 
                     Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "dead_witnesses", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
                     addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

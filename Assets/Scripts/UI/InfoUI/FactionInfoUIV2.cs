@@ -139,8 +139,12 @@ public class FactionInfoUIV2 : MonoBehaviour {
     }
     private void UpdateOverview() {
         if (activeFaction.leader is Character leader) {
+            Character characterToShow = leader;
+            if (leader.lycanData != null) {
+                characterToShow = leader.lycanData.activeForm;
+            }
             leaderNameplateItem.gameObject.SetActive(true);
-            leaderNameplateItem.SetObject(leader);
+            leaderNameplateItem.SetObject(characterToShow);
             noLeaderTextGO.SetActive(false);
         } else {
             leaderNameplateItem.gameObject.SetActive(false);
@@ -273,6 +277,9 @@ public class FactionInfoUIV2 : MonoBehaviour {
                 CharacterNameplateItem nameplate = GetItem(toLimbo);
                 if(nameplate != null) {
                     nameplate.UpdateObject(fromLimbo);
+                }
+                if(leaderNameplateItem.character == toLimbo) {
+                    leaderNameplateItem.UpdateObject(fromLimbo);
                 }
             }
         } else {

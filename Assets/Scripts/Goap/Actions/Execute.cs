@@ -27,12 +27,12 @@ public class Execute : GoapAction {
     public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
-        Character poiTarget = target as Character;
-        Criminal criminalTrait = poiTarget.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
-        if (criminalTrait != null && criminalTrait.HasWantedCrime() && criminalTrait.IsTargetOfACrime(witness)) {
+        Character targetCharacter = target as Character;
+        //Criminal criminalTrait = poiTarget.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
+        if (targetCharacter.crimeComponent.HasWantedCrime() && targetCharacter.crimeComponent.IsTargetOfACrime(witness)) {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, node.actor, status, node);
         } else {
-            if (witness.relationshipContainer.IsFriendsWith(poiTarget) 
+            if (witness.relationshipContainer.IsFriendsWith(targetCharacter) 
                 && witness.traitContainer.HasTrait("Psychopath") == false) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, node.actor, status, node);
             }
@@ -92,9 +92,11 @@ public class Execute : GoapAction {
         Character target = goapNode.target as Character;
         if (target.traitContainer.HasTrait("Criminal")) {
             Criminal criminalTrait = target.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
-            criminalTrait.SetDecisionAndJudgeToAllUnpunishedCrimesWantedBy(target.faction, CRIME_STATUS.Executed, goapNode.actor);
             criminalTrait.SetIsImprisoned(false);
         }
+        target.crimeComponent.SetDecisionAndJudgeToAllUnpunishedCrimesWantedBy(target.faction, CRIME_STATUS.Executed, goapNode.actor);
+        target.crimeComponent.RemoveAllCrimesWantedBy(goapNode.actor.faction);
+
         target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);
         target.traitContainer.RemoveTrait(target, "Restrained", goapNode.actor);
         target.Death("executed", goapNode, goapNode.actor);

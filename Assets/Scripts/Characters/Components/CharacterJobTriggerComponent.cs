@@ -2176,8 +2176,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (canDoJob) {
             if (target.traitContainer.HasTrait("Criminal")) {
                 if (owner.jobQueue.HasJob(JOB_TYPE.APPREHEND, target) == false) {
-                    Criminal criminalTrait = target.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
-                    if (criminalTrait.IsWantedBy(owner.faction)) {
+                    if (target.crimeComponent.IsWantedBy(owner.faction)) {
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, target, owner);
                         job.SetStillApplicableChecker(JobManager.Apprehend_Applicability);
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { settlementToGoTo.prison });
