@@ -307,7 +307,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                 continue;
             }
 
-            if (member.IsWantedBy(this)) {
+            if (member.crimeComponent.IsWantedBy(this)) {
                 log += "\nMember is wanted by this faction, skipping...";
                 continue;
             }

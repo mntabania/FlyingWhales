@@ -665,9 +665,11 @@ public class ReactionComponent : CharacterComponent {
                         debugLog = $"{debugLog}\nActor is part of player faction and target character is dazed, do not combat!.";
                         return;
                     }
-                    if(!targetCharacter.isDead && targetCharacter.traitContainer.HasTrait("Restrained") && targetCharacter.IsInPrison()) {
-                        bool targetIsRestrainedInPrison = actor.homeSettlement != null && targetCharacter.IsInPrisonOf(actor.homeSettlement);
-                        if (targetIsRestrainedInPrison) {
+                    if(!targetCharacter.isDead && targetCharacter.traitContainer.HasTrait("Restrained") && targetCharacter.traitContainer.HasTrait("Prisoner")) {
+                        Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+                        bool targetIsFactionPrisonerAndIsInPrison = prisoner.IsFactionPrisonerOf(actor.faction) && actor.homeSettlement != null && targetCharacter.IsInPrisonOf(actor.homeSettlement);
+                        bool targetIsPersonalPrisoner = prisoner.IsPersonalPrisonerOf(actor);
+                        if (targetIsFactionPrisonerAndIsInPrison || targetIsPersonalPrisoner) {
                             if (targetCharacter.needsComponent.isStarving && !targetCharacter.traitContainer.HasTrait("Vampire")) {
                                 debugLog = $"{debugLog}\n-Target is hungry or starving, will create feed job";
                                 if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.FEED, targetCharacter)) {
@@ -751,10 +753,9 @@ public class ReactionComponent : CharacterComponent {
                             }
                         }
                     }
-                    Criminal targetCriminalTrait = disguisedTarget.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
-                    
+
                     //Wanted Criminal Reaction Code:
-                    if (disguisedTarget.isNormalCharacter && disguisedActor.isNormalCharacter && disguisedActor.faction != null && targetCriminalTrait != null && targetCriminalTrait.IsWantedBy(disguisedActor.faction)
+                    if (disguisedTarget.isNormalCharacter && disguisedActor.isNormalCharacter && disguisedActor.faction != null && disguisedTarget.crimeComponent.IsWantedBy(disguisedActor.faction)
                         && (!disguisedTarget.traitContainer.HasTrait("Restrained") || !(disguisedTarget.currentStructure is Prison))) { //if target is not restrained or not in prison, will create 
                         debugLog = $"{debugLog}\n-Target Character is a criminal";
                         bool cannotReactToCriminal = false;
@@ -767,8 +768,10 @@ public class ReactionComponent : CharacterComponent {
                             if ((opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) || 
                                 disguisedActor.relationshipContainer.IsRelativeLoverOrAffairAndNotRival(disguisedTarget)) {
                                 debugLog = $"{debugLog}\n-Character is friends/close friend/family member/lover/affair/not rival with target";
+
+                                Criminal targetCriminalTrait = disguisedTarget.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
                                 
-                                if (!targetCriminalTrait.HasCharacterThatIsAlreadyWorried(disguisedActor) && 
+                                if (targetCriminalTrait != null && !targetCriminalTrait.HasCharacterThatIsAlreadyWorried(disguisedActor) && 
                                     !disguisedTarget.defaultCharacterTrait.HasReactedToThis(disguisedActor)) {
                                     debugLog = $"{debugLog}\n-Character will worry";
                                     targetCriminalTrait.AddCharacterThatIsAlreadyWorried(disguisedActor);
@@ -794,15 +797,17 @@ public class ReactionComponent : CharacterComponent {
                     }
                     
                     //Accused Criminal Code:
-                    if (disguisedTarget.isNormalCharacter && disguisedActor.isNormalCharacter && disguisedActor.faction != null && targetCriminalTrait != null && 
-                        !targetCriminalTrait.IsWantedBy(disguisedActor.faction) && targetCriminalTrait.IsWitnessOfAnyActiveCrime(disguisedActor)) {
+                    if (disguisedTarget.isNormalCharacter && disguisedActor.isNormalCharacter && disguisedActor.faction != null && 
+                        !disguisedTarget.crimeComponent.IsWantedBy(disguisedActor.faction) && disguisedTarget.crimeComponent.IsWitnessOfAnyActiveCrime(disguisedActor)) {
                         
                         string opinionLabel = disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget);
                         if ((opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) || 
                             disguisedActor.relationshipContainer.IsRelativeLoverOrAffairAndNotRival(disguisedTarget)) {
                             debugLog = $"{debugLog}\n-Character is friends/close friend/family member/lover/affair/not rival with target";
-                            
-                            if (!targetCriminalTrait.HasCharacterThatIsAlreadyWorried(disguisedActor) && 
+
+                            Criminal targetCriminalTrait = disguisedTarget.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
+
+                            if (targetCriminalTrait != null && !targetCriminalTrait.HasCharacterThatIsAlreadyWorried(disguisedActor) && 
                                 !disguisedTarget.defaultCharacterTrait.HasReactedToThis(disguisedActor)) {
                                 debugLog = $"{debugLog}\n-Character will worry";
                                 targetCriminalTrait.AddCharacterThatIsAlreadyWorried(disguisedActor);
@@ -1056,14 +1061,14 @@ public class ReactionComponent : CharacterComponent {
                 if (targetCharacter.marker && targetCharacter.isNormalCharacter) {
                     if (targetCharacter.carryComponent.isCarryingAnyPOI && targetCharacter.carryComponent.carriedPOI is Character carriedCharacter) {
                         debugLog = $"{debugLog}\n-Target is carrying a character";
-                        if(carriedCharacter.traitContainer.HasTrait("Restrained", "Unconscious") && !carriedCharacter.isDead && !carriedCharacter.IsWantedBy(actor.faction)) {
+                        if(carriedCharacter.traitContainer.HasTrait("Restrained", "Unconscious") && !carriedCharacter.isDead && !carriedCharacter.crimeComponent.IsWantedBy(actor.faction)) {
                             debugLog = debugLog + ("\n-Will create Assault assumption on " + targetCharacter.name);
 
                             //If carried character is a prisoner, and the reactor considers that carried character as a prisoner also, do not create assumption
                             bool willCreateAssumption = true;
                             if (carriedCharacter.traitContainer.HasTrait("Prisoner")) {
                                 Prisoner prisoner = carriedCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-                                if (prisoner.IsPrisonerOf(actor)) {
+                                if (prisoner.IsConsideredPrisonerOf(actor)) {
                                     willCreateAssumption = false;
                                 }
                             }

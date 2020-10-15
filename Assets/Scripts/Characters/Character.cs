@@ -5775,34 +5775,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     #endregion
 
-    #region Crimes
-    public bool IsWantedBy(Faction faction) {
-        if (traitContainer.HasTrait("Criminal") && faction != null) {
-            Criminal criminalTrait = traitContainer.GetTraitOrStatus<Criminal>("Criminal");
-            return criminalTrait.IsWantedBy(faction);
-        }
-        return false;
-    }
-    public bool HasNonHostileVillagerInRangeThatConsidersVampirismACrime() {
-        if (marker) {
-            for (int i = 0; i < marker.inVisionCharacters.Count; i++) {
-                Character inVision = marker.inVisionCharacters[i];
-                if (inVision != this) {
-                    if (!IsHostileWith(inVision)) {
-                        CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(inVision, this, this, CRIME_TYPE.Vampire);
-                        if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-        //Return true so that the character will not transform into a bat if he has no marker
-        return true;
-    }
-    #endregion
-
     #region Prison
     public bool IsInPrison() {
         BaseSettlement currSettlement = currentSettlement;

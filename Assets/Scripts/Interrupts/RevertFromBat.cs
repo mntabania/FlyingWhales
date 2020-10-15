@@ -7,8 +7,8 @@ using UtilityScripts;
 namespace Interrupts {
     public class RevertFromBat : Interrupt {
         public RevertFromBat() : base(INTERRUPT.Revert_From_Bat) {
-            duration = 0;
-            isSimulateneous = true;
+            duration = 1;
+            //isSimulateneous = true;
             interruptIconString = GoapActionStateDB.No_Icon;
             logTags = new[] {LOG_TAG.Misc};
         }

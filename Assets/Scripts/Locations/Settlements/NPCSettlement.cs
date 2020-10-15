@@ -362,7 +362,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 continue;
             }
 
-            if (owner != null && resident.IsWantedBy(owner)) {
+            if (owner != null && resident.crimeComponent.IsWantedBy(owner)) {
                 log += "\nMember is wanted by the faction owner of this settlement " + owner.name + ", skipping...";
                 continue;
             }

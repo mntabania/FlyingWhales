@@ -7,8 +7,8 @@ using UtilityScripts;
 namespace Interrupts {
     public class TransformToBat : Interrupt {
         public TransformToBat() : base(INTERRUPT.Transform_To_Bat) {
-            duration = 0;
-            isSimulateneous = true;
+            duration = 1;
+            //isSimulateneous = true;
             interruptIconString = GoapActionStateDB.No_Icon;
             logTags = new[] {LOG_TAG.Misc};
         }

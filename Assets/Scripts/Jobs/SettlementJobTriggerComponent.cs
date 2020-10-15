@@ -436,8 +436,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
             NPCSettlement npcSettlement = target.currentStructure.settlementLocation as NPCSettlement;
             if(npcSettlement.prison == target.currentStructure && !npcSettlement.HasJob(JOB_TYPE.JUDGE_PRISONER, target)) {
                 if (!target.HasJobTargetingThis(JOB_TYPE.JUDGE_PRISONER)) {
-                    Criminal criminalTrait = target.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
-                    if (criminalTrait.IsWantedBy(_owner.owner)) {
+                    if (target.crimeComponent.IsWantedBy(_owner.owner)) {
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.JUDGE_CHARACTER, target, _owner);
                         job.SetCanTakeThisJobChecker(JobManager.Can_Take_Judgement);
                         job.SetStillApplicableChecker(JobManager.Judge_Applicability);
@@ -453,8 +452,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	public void TryCreateApprehend(Character target) {
 		if (target.currentSettlement == _owner && _owner.owner != null && target.traitContainer.HasTrait("Criminal") && !target.isDead && target.currentStructure != _owner.prison) {
 			if (_owner.HasJob(JOB_TYPE.APPREHEND, target) == false) {
-                Criminal criminalTrait = target.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
-                if (criminalTrait.IsWantedBy(_owner.owner)) {
+                if (target.crimeComponent.IsWantedBy(_owner.owner)) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, target, _owner);
                     job.SetCanTakeThisJobChecker(JobManager.Can_Take_Apprehend);
                     job.SetStillApplicableChecker(JobManager.Apprehend_Settlement_Applicability);

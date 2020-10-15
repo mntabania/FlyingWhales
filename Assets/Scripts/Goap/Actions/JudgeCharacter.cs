@@ -32,22 +32,13 @@ public class JudgeCharacter : GoapAction {
         WeightedDictionary<string> weights = new WeightedDictionary<string>();
         Character targetCharacter = goapNode.poiTarget as Character;
         Character actor = goapNode.actor;
-        Criminal criminalTrait = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
+        //Criminal criminalTrait = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
         FactionRelationship factionRelationship = actor.faction.GetRelationshipWith(targetCharacter.faction); //Will only be null if target and actor HAVE THE SAME FACTION
         string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
 
         //TODO: Loop all through crime and get weight result of each, at the end the highest count result will be the ultimate punishment
         //Right now just get the first crime
-        CrimeData crimeData = null;
-        //List<CrimeData> allCrimesToFaction = null;
-        if (criminalTrait != null) {
-            crimeData = criminalTrait.GetFirstCrimeWantedBy(actor.faction, CRIME_STATUS.Unpunished);
-
-            //allCrimesToFaction = criminalTrait.GetListOfCrimesWantedBy(actor.faction, CRIME_STATUS.Unpunished);
-            //if (allCrimesToFaction != null && allCrimesToFaction.Count > 0) {
-            //    crimeData = allCrimesToFaction[0];
-            //}
-        }
+        CrimeData crimeData = targetCharacter.crimeComponent.GetFirstCrimeWantedBy(actor.faction, CRIME_STATUS.Unpunished);
 
         if (crimeData != null) {
             string debugLog = $"{actor.name} is going to judge {targetCharacter.name}";

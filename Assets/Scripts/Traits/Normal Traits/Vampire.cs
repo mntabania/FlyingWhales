@@ -125,7 +125,7 @@ namespace Traits {
             base.OnBeforeStartFlee(traitable);
             if(traitable is Character character) {
                 if (!character.behaviourComponent.isInVampireBatForm) {
-                    if (!character.HasNonHostileVillagerInRangeThatConsidersVampirismACrime()) {
+                    if (!character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersVampirismACrime()) {
                         //TransformToBat(character);
                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Bat, character);
                     }
@@ -136,7 +136,7 @@ namespace Traits {
             base.OnAfterExitingCombat(traitable);
             if (traitable is Character character) {
                 if (character.behaviourComponent.isInVampireBatForm) {
-                    if (!character.HasNonHostileVillagerInRangeThatConsidersVampirismACrime()) {
+                    if (!character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersVampirismACrime()) {
                         //RevertToNormal(character);
                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Revert_From_Bat, character);
                     } else {

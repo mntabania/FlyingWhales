@@ -17,6 +17,8 @@ public class AssumptionComponent : CharacterComponent {
     #region General
     public void CreateAndReactToNewAssumption(Character assumedCharacter, IPointOfInterest targetOfAssumedCharacter, INTERACTION_TYPE assumedActionType, REACTION_STATUS reactionStatus) {
         if(HasAlreadyAssumedTo(assumedActionType, assumedCharacter, targetOfAssumedCharacter)) {
+            //If the witness already assumed with the set of characters and action, do not assume again
+            //Example: If A already assumed that B murdered C, A will never assume that B murdered C again
             return;
         }
         if (!owner.canWitness) {
@@ -70,15 +72,6 @@ public class AssumptionComponent : CharacterComponent {
         assumedAction.SetAsIllusion();
         assumedAction.SetCrimeType();
         return assumedAction;
-    }
-    private bool HasAlreadyAssumedTo(INTERACTION_TYPE actionType, Character actor, IPointOfInterest target, CRIME_TYPE crimeType) {
-        if (actor.traitContainer.HasTrait("Criminal")) {
-            Criminal criminalTrait = actor.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
-            if (criminalTrait.IsCrimeAlreadyWitnessedBy(actor, crimeType)) {
-                return true;
-            }
-        }
-        return false;
     }
     private bool HasAlreadyAssumedTo(INTERACTION_TYPE actionType, Character actor, IPointOfInterest target) {
         for (int i = 0; i < assumptionData.Count; i++) {
