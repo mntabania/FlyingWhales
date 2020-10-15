@@ -200,10 +200,11 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             List<LocationGridTile> choices = targetStructure.passableTiles; //targetStructure.unoccupiedTiles.ToList();
             if (choices.Count > 0) {
                 targetTile = choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];
-            } else {
-                throw new System.Exception(
-                    $"{actor.name} target tile of action {action.goapName} for {action.actionLocationType} is null.");
-            }
+            } 
+            //else {
+            //    throw new System.Exception(
+            //        $"{actor.name} target tile of action {action.goapName} for {action.actionLocationType} is null.");
+            //}
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B) {
             if (actor.movementComponent.isStationary) {
                 targetTile = null;
@@ -222,10 +223,11 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                 } else  if (actor.gridTileLocation != null){
                     //if even the structure has no tiles, then just return the actors current location
                     targetTile = actor.gridTileLocation;
-                } else {
-                     throw new System.Exception(
-                    $"{actor.name} target tile of action {action.goapName} for {action.actionLocationType} is null.");  
-                }
+                } 
+                //else {
+                //     throw new System.Exception(
+                //    $"{actor.name} target tile of action {action.goapName} for {action.actionLocationType} is null.");  
+                //}
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
             if (actor.marker.inVisionPOIs.Contains(poiTarget)) {
@@ -248,13 +250,16 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             LocationGridTile tile = action.GetOverrideTargetTile(this);
             if (tile != null) {
                 targetTile = tile;
-            } else {
-                throw new System.Exception(
-                    $"{actor.name} override target tile of action {action.goapName} for {action.actionLocationType} is null.");
-            }
-            if (actor.movementComponent.isStationary) {
-                if (actor.gridTileLocation != targetTile && !actor.gridTileLocation.IsNeighbour(targetTile)) {
-                    targetTile = null;
+            } 
+            //else {
+            //    throw new System.Exception(
+            //        $"{actor.name} override target tile of action {action.goapName} for {action.actionLocationType} is null.");
+            //}
+            if(targetTile != null) {
+                if (actor.movementComponent.isStationary) {
+                    if (actor.gridTileLocation != targetTile && !actor.gridTileLocation.IsNeighbour(targetTile)) {
+                        targetTile = null;
+                    }
                 }
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL) {

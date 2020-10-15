@@ -124,8 +124,15 @@ namespace UtilityScripts {
             return list[UtilityScripts.Utilities.Rng.Next(0, list.Length)];
         }
         public static T GetRandomElement<T>(IEnumerable<T> list) {
-            var enumerable = list.ToList();
-            return enumerable.ElementAt(UtilityScripts.Utilities.Rng.Next(0, enumerable.Count()));
+            //var enumerable = list.ToList();
+            if(list == null) {
+                return default;
+            }
+            int count = list.Count();
+            if(count <= 0) {
+                return default;
+            }
+            return list.ElementAt(UtilityScripts.Utilities.Rng.Next(0, count));
         }
         public static List<T> GetRandomElements<T>(List<T> list, int count) {
             int elementsToGet = count;

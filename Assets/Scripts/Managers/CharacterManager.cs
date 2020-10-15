@@ -87,7 +87,8 @@ public class CharacterManager : BaseMonoBehaviour {
     [SerializeField] private ArtifactSettingDictionary artifactSettings;
     [Header("Character Marker Effects")] 
     public Sprite webbedEffect;
-    
+    public Sprite stakeEffect;
+
     private Dictionary<string, DeadlySin> deadlySins { get; set; }
     private Dictionary<EMOTION, Emotion> emotionData { get; set; }
     private List<Emotion> allEmotions { get; set; }

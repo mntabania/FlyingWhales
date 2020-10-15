@@ -2576,3 +2576,4 @@ MonoBehaviour:
     - artifactPortrait: {fileID: 21300000, guid: 383ae1de09e8119428f08e6cb2fb1bc5,
         type: 3}
   webbedEffect: {fileID: 21300000, guid: b1c5464425860584ab1a0bad4f0de369, type: 3}
+  stakeEffect: {fileID: 21300000, guid: 87ce134795f668b409001e3d605ebe27, type: 3}

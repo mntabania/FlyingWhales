@@ -677,7 +677,7 @@ public class CombatState : CharacterState {
         //    timeElapsed = 0;
             //Profiler.BeginSample($"{stateComponent.character.name} Combat State Late Update");
         if (currentClosestHostile != null) {
-            if (currentClosestHostile.isDead) {
+            if (currentClosestHostile.isDead || currentClosestHostile.currentHP <= 0) {
                 stateComponent.owner.combatComponent.RemoveHostileInRange(currentClosestHostile);
             } else if (currentClosestHostile.currentRegion != stateComponent.owner.currentRegion) {
                 stateComponent.owner.combatComponent.RemoveHostileInRange(currentClosestHostile);

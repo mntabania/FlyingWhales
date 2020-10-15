@@ -1006,6 +1006,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void HideAdditionalEffect() {
         additionalEffectsImg.gameObject.SetActive(false);
     }
+    public bool IsShowingAdditionEffectImage(Sprite sprite) {
+        return additionalEffectsImg.sprite == sprite && additionalEffectsImg.gameObject.activeSelf;
+    }
     public void UpdateMarkerVisuals() {
         UpdateHairVisuals();
     }
@@ -1072,30 +1075,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void SetTargetPOI(IPointOfInterest poi) {
         this.targetPOI = poi;
     }
-    private bool CanDoStealthActionToTarget(Character target, CRIME_TYPE crimeType) {
+    private bool CanDoStealthCrimeToTarget(Character target, CRIME_TYPE crimeType) {
         if (!target.isDead) {
-            for (int i = 0; i < target.marker.inVisionCharacters.Count; i++) {
-                Character inVision = target.marker.inVisionCharacters[i];
-                if(inVision != character) {
-                    if (inVision.canWitness) {
-                        CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(inVision, character, target, crimeType);
-                        if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
-                            return false;
-                        }
-                    }
-                }
+            if(target.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(crimeType, character)) {
+                return false;
             }
         } else {
-            for (int i = 0; i < inVisionCharacters.Count; i++) {
-                Character inVision = inVisionCharacters[i];
-                if (inVision != target) {
-                    if (inVision.canWitness) {
-                        CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(inVision, character, target, crimeType);
-                        if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
-                            return false;
-                        }
-                    }
-                }
+            if (character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(crimeType, target)) {
+                return false;
             }
         }
         return true;
@@ -1118,16 +1105,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //If action is stealth and there is a character in vision that can witness and considers the action as a crime, then return false, this means that the actor must not do the action because there are witnesses
         if(crimeType != CRIME_TYPE.Unset && crimeType != CRIME_TYPE.None) {
             if (target is Character targetCharacter) {
-                return CanDoStealthActionToTarget(targetCharacter, crimeType);
+                return CanDoStealthCrimeToTarget(targetCharacter, crimeType);
             }
-            for (int i = 0; i < inVisionCharacters.Count; i++) {
-                Character inVision = inVisionCharacters[i];
-                if (inVision.canWitness) {
-                    CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(inVision, character, target, crimeType);
-                    if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
-                        return false;
-                    }
-                }
+            if (character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(crimeType)) {
+                return false;
             }
         }
         return true;

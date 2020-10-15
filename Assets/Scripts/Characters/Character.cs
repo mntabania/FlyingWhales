@@ -3855,6 +3855,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.WHIP);
         AddAdvertisedAction(INTERACTION_TYPE.EXECUTE);
         AddAdvertisedAction(INTERACTION_TYPE.ABSOLVE);
+        AddAdvertisedAction(INTERACTION_TYPE.BURN_AT_STAKE);
         AddAdvertisedAction(INTERACTION_TYPE.START_TEND);
         AddAdvertisedAction(INTERACTION_TYPE.START_DOUSE);
         AddAdvertisedAction(INTERACTION_TYPE.START_CLEANSE);
@@ -4765,6 +4766,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         needsComponent.OnCharacterLeftLocation(currentRegion);
 
         jobQueue.CancelAllJobs();
+
+        interruptComponent.OnSeizedOwner();
+
         UnsubscribeSignals();
         SetIsConversing(false);
         SetPOIState(POI_STATE.INACTIVE);

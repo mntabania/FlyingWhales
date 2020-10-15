@@ -929,7 +929,8 @@ public class ReactionComponent : CharacterComponent {
                             bool isEnsnared = targetCharacter.traitContainer.HasTrait("Ensnared");
                             bool isFrozen = targetCharacter.traitContainer.HasTrait("Frozen");
                             bool isUnconscious = targetCharacter.traitContainer.HasTrait("Unconscious");
-                            if (disguisedActor.isNormalCharacter && disguisedTarget.isNormalCharacter && (isRestrained || isEnsnared || isFrozen || isUnconscious) && !disguisedTarget.traitContainer.HasTrait("Criminal")) {
+                            if (disguisedActor.isNormalCharacter && disguisedTarget.isNormalCharacter && (isRestrained || isEnsnared || isFrozen || isUnconscious) && 
+                                !disguisedTarget.crimeComponent.IsWantedBy(disguisedActor.faction)) {
                                 if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.REMOVE_STATUS)) {
                                     if (isRestrained) {
                                         actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Restrained");    

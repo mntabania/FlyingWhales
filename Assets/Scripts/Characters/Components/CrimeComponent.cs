@@ -130,6 +130,9 @@ public class CrimeComponent : CharacterComponent {
         return false;
     }
     public bool IsWantedBy(Faction faction) {
+        if(faction == null) {
+            return false;
+        }
         for (int i = 0; i < activeCrimes.Count; i++) {
             CrimeData data = activeCrimes[i];
             if (data.IsWantedBy(faction)) {
@@ -246,13 +249,13 @@ public class CrimeComponent : CharacterComponent {
         }
         return false;
     }
-    public bool HasNonHostileVillagerInRangeThatConsidersVampirismACrime() {
+    public bool HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE crimeType, Character except = null) {
         if (owner.marker) {
             for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
                 Character inVision = owner.marker.inVisionCharacters[i];
-                if (inVision != owner) {
-                    if (!owner.IsHostileWith(inVision)) {
-                        CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(inVision, owner, owner, CRIME_TYPE.Vampire);
+                if (inVision != owner && except != inVision) {
+                    if (!owner.IsHostileWith(inVision) && inVision.canWitness) {
+                        CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(inVision, owner, owner, crimeType);
                         if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
                             return true;
                         }

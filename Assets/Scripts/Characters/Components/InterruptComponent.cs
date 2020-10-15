@@ -156,6 +156,8 @@ public class InterruptComponent : CharacterComponent {
                 AddEffectLog(currentInterrupt);
                 currentInterrupt.interrupt.ExecuteInterruptEndEffect(currentInterrupt);
                 EndInterrupt();
+            } else {
+                currentInterrupt.interrupt.PerTickInterrupt(currentInterrupt);
             }
         }
     }
@@ -178,6 +180,7 @@ public class InterruptComponent : CharacterComponent {
     //}
     public void ForceEndNonSimultaneousInterrupt() {
         if (isInterrupted) {
+            currentInterrupt.interrupt.OnForceEndInterrupt(currentInterrupt);
             EndInterrupt();
         }
     }
@@ -189,14 +192,17 @@ public class InterruptComponent : CharacterComponent {
     //        }
     //    }
     //}
-    private void EndInterrupt() {
-        if(currentInterrupt == null || currentInterrupt.interrupt == null) {
+    private void EndInterrupt() { //bool shouldAddLog = false
+        if (currentInterrupt == null || currentInterrupt.interrupt == null) {
             //Will not process anymore if there is no current interrupt, this means that the interrupt has already been ended before and has returned to the object pool
             //This can happen if the actor is a minion and the ExecuteInterruptEndEffect triggers the death of the actor
             //In this manner, the minion actor will have already ended the interrupt during death because we the ForceEndNonSimultaneousInterrupt is being called when a minion dies/unsummoned
             //so when the EndInterrupt is called again after the ExecuteInterruptEndEffect call, the current interrupt is already null
             return;
         }
+        //if (shouldAddLog) {
+        //    AddEffectLog(currentInterrupt);
+        //}
         bool willCheckInVision = currentInterrupt.interrupt.duration > 0;
         Interrupt finishedInterrupt = currentInterrupt.interrupt;
         SetNonSimultaneousInterrupt(null);
@@ -305,6 +311,11 @@ public class InterruptComponent : CharacterComponent {
                 ObjectPoolManager.Instance.ReturnInterruptToPool(triggeredSimultaneousInterrupt);
             }
             triggeredSimultaneousInterrupt = interrupt;
+        }
+    }
+    public void OnSeizedOwner() {
+        if(isInterrupted && currentInterrupt.interrupt.shouldEndOnSeize) {
+            ForceEndNonSimultaneousInterrupt();
         }
     }
     #endregion
