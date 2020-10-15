@@ -925,28 +925,62 @@ public class ReactionComponent : CharacterComponent {
 
                             //Add personal Remove Status - Restrained job when seeing a restrained non-enemy villager
                             //https://trello.com/c/Pe6wuHQc/1197-add-personal-remove-status-restrained-job-when-seeing-a-restrained-non-enemy-villager
-                            bool isRestrained = targetCharacter.traitContainer.HasTrait("Restrained");
-                            bool isEnsnared = targetCharacter.traitContainer.HasTrait("Ensnared");
-                            bool isFrozen = targetCharacter.traitContainer.HasTrait("Frozen");
-                            bool isUnconscious = targetCharacter.traitContainer.HasTrait("Unconscious");
-                            if (disguisedActor.isNormalCharacter && disguisedTarget.isNormalCharacter && (isRestrained || isEnsnared || isFrozen || isUnconscious) && 
-                                !disguisedTarget.crimeComponent.IsWantedBy(disguisedActor.faction)) {
-                                if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.REMOVE_STATUS)) {
-                                    if (isRestrained) {
-                                        actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Restrained");    
+                            Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+                            if(prisoner == null || !prisoner.IsConsideredPrisonerOf(disguisedActor)) {
+                                bool isRestrained = targetCharacter.traitContainer.HasTrait("Restrained");
+                                bool isEnsnared = targetCharacter.traitContainer.HasTrait("Ensnared");
+                                bool isFrozen = targetCharacter.traitContainer.HasTrait("Frozen");
+                                bool isUnconscious = targetCharacter.traitContainer.HasTrait("Unconscious");
+                                if (disguisedActor.isNormalCharacter && disguisedTarget.isNormalCharacter && (isRestrained || isEnsnared || isFrozen || isUnconscious) &&
+                                    !disguisedTarget.crimeComponent.IsWantedBy(disguisedActor.faction)) {
+                                    if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.REMOVE_STATUS)) {
+                                        if (isRestrained) {
+                                            actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Restrained");
+                                        }
+                                        if (isEnsnared) {
+                                            actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Ensnared");
+                                        }
+                                        if (isFrozen) {
+                                            actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Frozen");
+                                        }
+                                        if (isUnconscious) {
+                                            actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Unconscious");
+                                        }
+                                    } else {
+                                        if (!disguisedTarget.defaultCharacterTrait.HasReactedToThis(disguisedActor)) {
+                                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);
+                                        }
                                     }
-                                    if (isEnsnared) {
-                                        actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Ensnared");    
+                                }
+                            }
+                        }
+                    } else if (disguisedActor.faction != disguisedTarget.faction && disguisedActor.faction != null && disguisedTarget.faction != null) {
+                        //https://trello.com/c/Rictd9YD/2569-on-sight-of-restrained-ensnared-frozen-and-unconscious
+                        FactionRelationship factionRel = disguisedActor.faction.GetRelationshipWith(disguisedTarget.faction);
+                        if(factionRel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Neutral || factionRel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Friendly) {
+                            //If actor's faction is friendly/neutral with prisoner's faction and prisoner is restrained
+                            Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+                            if(prisoner != null) {
+                                bool isRestrained = targetCharacter.traitContainer.HasTrait("Restrained");
+                                if (isRestrained) {
+                                    Faction factionThatImprisoned = prisoner.GetFactionThatImprisoned();
+                                    //Release prisoner if actor's faction is hostile with the faction that imprisoned the prisoner and prisoner is not enemy/rival of the actor
+                                    //Or if the prisoner is friend/close friend/acquaintance
+                                    bool shouldRelease = false;
+                                    if(factionThatImprisoned != null && disguisedActor.faction != factionThatImprisoned) {
+                                        FactionRelationship relWithFactionTheImprisoned = disguisedActor.faction.GetRelationshipWith(factionThatImprisoned);
+                                        if(relWithFactionTheImprisoned.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile && !disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget)) {
+                                            shouldRelease = true;
+                                        }
                                     }
-                                    if (isFrozen) {
-                                        actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Frozen");    
+                                    if (!shouldRelease) {
+                                        string opinionTowardsPrisoner = disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget);
+                                        if(opinionTowardsPrisoner == RelationshipManager.Close_Friend || opinionTowardsPrisoner == RelationshipManager.Friend || opinionTowardsPrisoner == RelationshipManager.Acquaintance) {
+                                            shouldRelease = true;
+                                        }
                                     }
-                                    if (isUnconscious) {
-                                        actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Unconscious");    
-                                    }
-                                } else {
-                                    if (!disguisedTarget.defaultCharacterTrait.HasReactedToThis(disguisedActor)) {
-                                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);    
+                                    if (shouldRelease) {
+                                        actor.jobComponent.TriggerReleaseJob(targetCharacter);
                                     }
                                 }
                             }

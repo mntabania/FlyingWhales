@@ -154,6 +154,15 @@ namespace Traits {
             }
             return false;
         }
+        public Faction GetFactionThatImprisoned() {
+            Faction faction = null;
+            if(prisonerOfCharacter != null) {
+                faction = prisonerOfCharacter.faction;
+            } else if (prisonerOfFaction != null) {
+                faction = prisonerOfFaction;
+            }
+            return faction;
+        }
         public void SetPrisonerOfFaction(Faction faction) {
             prisonerOfFaction = faction;
         }

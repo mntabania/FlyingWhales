@@ -30,6 +30,9 @@ namespace Interrupts {
             //Set Religion-Type Ideology:
             FactionManager.Instance.RerollReligionTypeIdeology(faction, interruptHolder.actor);
 
+            //Set Faction Leader Trait Based Ideology:
+            FactionManager.Instance.RerollFactionLeaderTraitIdeology(faction, interruptHolder.actor);
+
             //Validate crimes
             FactionManager.Instance.RevalidateFactionCrimes(faction, interruptHolder.actor);
             
