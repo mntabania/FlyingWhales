@@ -129,6 +129,36 @@ public class JudgeCharacter : GoapAction {
                 debugLog += "\n-Rival: absolve = x0, whip = x0.5, kill = x3, exile = x1.5";
             }
 
+            if (crimeData.crimeType == CRIME_TYPE.Vampire) {
+                if (actor.traitContainer.HasTrait("Hemophobic")) {
+                    absolve *= 0;
+                    whip *= 0;
+                    kill *= 2;
+                    exile *= 1;
+                    debugLog += "\n-Hemophobic: absolve: x0, whip: x0, kill: x2, exile: x1";
+                } else if (actor.traitContainer.HasTrait("Hemophiliac")) {
+                    absolve *= 3;
+                    whip = Mathf.RoundToInt(whip * 0.5f);
+                    kill *= 0;
+                    exile = Mathf.RoundToInt(exile * 0.5f);
+                    debugLog += "\n-Hemophiliac: absolve: x3, whip: x0.5, kill: x0, exile: x0.5";
+                }
+            } else if (crimeData.crimeType == CRIME_TYPE.Werewolf) {
+                if (actor.traitContainer.HasTrait("Lycanphobic")) {
+                    absolve *= 0;
+                    whip *= 0;
+                    kill *= 2;
+                    exile *= 1;
+                    debugLog += "\n-Lycanphobic: absolve: x0, whip: x0, kill: x2, exile: x1";
+                } else if (actor.traitContainer.HasTrait("Lycanphiliac")) {
+                    absolve *= 3;
+                    whip = Mathf.RoundToInt(whip * 0.5f);
+                    kill *= 0;
+                    exile = Mathf.RoundToInt(exile * 0.5f);
+                    debugLog += "\n-Lycanphiliac: absolve: x3, whip: x0.5, kill: x0, exile: x0.5";
+                }
+            }
+            
             weights.AddElement("Absolve", absolve);
             weights.AddElement("Whip", whip);
             weights.AddElement("Execute", kill);

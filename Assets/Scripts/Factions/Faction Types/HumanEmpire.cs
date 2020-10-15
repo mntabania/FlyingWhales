@@ -4,6 +4,7 @@
         public override RESOURCE mainResource => RESOURCE.STONE;
         
         public HumanEmpire() : base(FACTION_TYPE.Human_Empire) { }
+        public HumanEmpire(SaveDataFactionType saveData) : base(FACTION_TYPE.Human_Empire, saveData) { }
         
         public override void SetAsDefault() {
             Peaceful peaceful = FactionManager.Instance.CreateIdeology<Peaceful>(FACTION_IDEOLOGY.Peaceful);
@@ -79,19 +80,19 @@
             AddCivilianClass("Craftsman");
 
 
-            //crimes
-            hasCrimes = true;
-            AddCrime(CRIME_TYPE.Infidelity, CRIME_SEVERITY.Infraction);
-            AddCrime(CRIME_TYPE.Theft, CRIME_SEVERITY.Misdemeanor);
-            AddCrime(CRIME_TYPE.Disturbances, CRIME_SEVERITY.Misdemeanor);
-            AddCrime(CRIME_TYPE.Assault, CRIME_SEVERITY.Misdemeanor);
-            AddCrime(CRIME_TYPE.Arson, CRIME_SEVERITY.Misdemeanor);
-            AddCrime(CRIME_TYPE.Trespassing, CRIME_SEVERITY.Misdemeanor);
-            AddCrime(CRIME_TYPE.Murder, CRIME_SEVERITY.Serious);
-            AddCrime(CRIME_TYPE.Cannibalism, CRIME_SEVERITY.Serious);
-            AddCrime(CRIME_TYPE.Werewolf, CRIME_SEVERITY.Heinous);
-            AddCrime(CRIME_TYPE.Vampire, CRIME_SEVERITY.Heinous);
-            AddCrime(CRIME_TYPE.Demon_Worship, CRIME_SEVERITY.Heinous);
+            // //crimes
+            // hasCrimes = true;
+            // AddCrime(CRIME_TYPE.Infidelity, CRIME_SEVERITY.Infraction);
+            // AddCrime(CRIME_TYPE.Theft, CRIME_SEVERITY.Misdemeanor);
+            // AddCrime(CRIME_TYPE.Disturbances, CRIME_SEVERITY.Misdemeanor);
+            // AddCrime(CRIME_TYPE.Assault, CRIME_SEVERITY.Misdemeanor);
+            // AddCrime(CRIME_TYPE.Arson, CRIME_SEVERITY.Misdemeanor);
+            // AddCrime(CRIME_TYPE.Trespassing, CRIME_SEVERITY.Misdemeanor);
+            // AddCrime(CRIME_TYPE.Murder, CRIME_SEVERITY.Serious);
+            // AddCrime(CRIME_TYPE.Cannibalism, CRIME_SEVERITY.Serious);
+            // AddCrime(CRIME_TYPE.Werewolf, CRIME_SEVERITY.Heinous);
+            // AddCrime(CRIME_TYPE.Vampire, CRIME_SEVERITY.Heinous);
+            // AddCrime(CRIME_TYPE.Demon_Worship, CRIME_SEVERITY.Heinous);
         }
         //public override CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType, ICrimeable crime) {
         //    switch (crimeType) {

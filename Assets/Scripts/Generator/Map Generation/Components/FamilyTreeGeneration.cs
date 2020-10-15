@@ -57,8 +57,7 @@ public class FamilyTreeGeneration : MapGenerationComponent {
     private PreCharacterData GetCompatibleChildFromFamily(PreCharacterData target, FamilyTree familyTree, FamilyTreeDatabase database) {
         for (int i = 0; i < familyTree.children.Count; i++) {
             PreCharacterData child = familyTree.children[i];
-            if (RelationshipManager.IsSexuallyCompatible(target.sexuality, child.sexuality, 
-                    target.gender, child.gender) 
+            if (RelationshipManager.IsSexuallyCompatible(target.sexuality, child.sexuality, target.gender, child.gender) 
                 && child.GetCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER, database) == null) {
                 return child;
             }

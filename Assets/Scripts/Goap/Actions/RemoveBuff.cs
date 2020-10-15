@@ -99,8 +99,7 @@ public class RemoveBuff : GoapAction {
         }
         else {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
-            if (RelationshipManager.IsSexuallyCompatible(witness.sexuality, actor.sexuality, witness.gender,
-                actor.gender)) {
+            if (RelationshipManager.IsSexuallyCompatible(witness, actor)) {
                 int chance = 10 * witness.relationshipContainer.GetCompatibility(actor);
                 int roll = Random.Range(0, 100);
                 if (roll < chance) {

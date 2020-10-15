@@ -22,6 +22,7 @@ public class HatesVampires : FactionIdeology {
     }
     public override void OnAddIdeology(FactionType factionType) {
         factionType.RemoveIdeology(FACTION_IDEOLOGY.Reveres_Vampires);
+        factionType.AddCrime(CRIME_TYPE.Vampire, CRIME_SEVERITY.Heinous);
     }
     #endregion
 }

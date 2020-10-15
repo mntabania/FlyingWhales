@@ -1,1 +1,1 @@
-{"items":[{"key":"strangle success_description","value":"%00@ strangled %86b."},{"key":"thought_bubble_m","value":"%00@ is going to strangle %86b."},{"key":"thought_bubble","value":"%00@ is strangling %86b."}]}
+{"items":[{"key":"strangle success_description","value":"%00@ strangled %86b. Reason: %111%."},{"key":"thought_bubble_m","value":"%00@ is going to strangle %86b. Reason: %111%."},{"key":"thought_bubble","value":"%00@ is strangling %86b. Reason: %111%."}]}

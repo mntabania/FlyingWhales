@@ -1,1 +1,1 @@
-{"items":[{"key":"well jump success_description","value":"%00@ jumped into a Well to drown %86b."},{"key":"thought_bubble_m","value":"%00@ is going to jump into a Well to drown %86b."}]}
+{"items":[{"key":"well jump success_description","value":"%00@ jumped into a Well to drown %86b. Reason: %111%."},{"key":"thought_bubble_m","value":"%00@ is going to jump into a Well to drown %86b. Reason: %111%."}]}

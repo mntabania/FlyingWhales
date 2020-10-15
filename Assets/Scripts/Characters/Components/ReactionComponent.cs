@@ -716,8 +716,8 @@ public class ReactionComponent : CharacterComponent {
                         } else {
                             debugLog =
                                 $"{debugLog}\n-Chat did not trigger, will now trigger Flirt if Character is Sexually Compatible with Target and Character is Unfaithful, or Target is Lover or Affair, or Character has no Lover and character is sociable.";
-                            if (RelationshipManager.IsSexuallyCompatibleOneSided(disguisedActor.sexuality, disguisedTarget.sexuality, disguisedActor.gender, disguisedTarget.gender)
-                                && disguisedActor.relationshipContainer.IsFamilyMember(disguisedTarget) == false && disguisedActor.isSociable) {
+                            if (RelationshipManager.IsSexuallyCompatibleOneSided(disguisedActor, disguisedTarget) && 
+                                disguisedActor.relationshipContainer.IsFamilyMember(disguisedTarget) == false && disguisedActor.isSociable) {
                                 
                                 if (disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
                                     || disguisedActor.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER) == -1
@@ -946,6 +946,16 @@ public class ReactionComponent : CharacterComponent {
                             }
                         }
                     }
+                    
+                    if (disguisedTarget.characterClass.className == "Vampire Lord") {
+                        //saw a vampire lord
+                        Vampire vampire = disguisedTarget.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                        Assert.IsNotNull(vampire, $"{disguisedActor.name} saw Vampire Lord {disguisedTarget.name}, but {disguisedTarget.name} does not have a Vampire trait!");
+                        if (!vampire.DoesCharacterKnowThisVampire(disguisedActor)) {
+                            disguisedActor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
+                        }
+                    }
+                    
                 } else {
                     debugLog = $"{debugLog}\n-Target is dead";
                     //Dead targetDeadTrait = targetCharacter.traitContainer.GetNormalTrait<Dead>("Dead");

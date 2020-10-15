@@ -127,8 +127,9 @@ public class LoadSecondWave : MapGenerationComponent {
     private IEnumerator LoadTileObjects(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading objects...");
         int batchCount = 0;
-        for (int i = 0; i < DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.Count; i++) {
-            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList[i];
+        TileObject[] allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.ToArray();
+        for (int i = 0; i < allTileObjects.Length; i++) {
+            TileObject tileObject = allTileObjects[i];
             string persistentID = tileObject.persistentID;
             SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, persistentID);
             if (saveDataTileObject == null) {
@@ -195,8 +196,9 @@ public class LoadSecondWave : MapGenerationComponent {
     private IEnumerator LoadTileObjectTraits(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading object traits...");
         int batchCount = 0;
-        for (int i = 0; i < DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.Count; i++) {
-            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList[i];
+        TileObject[] allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.ToArray();
+        for (int i = 0; i < allTileObjects.Length; i++) {
+            TileObject tileObject = allTileObjects[i];
             string persistentID = tileObject.persistentID;
             SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, persistentID);
             if (saveDataTileObject != null) {
@@ -213,8 +215,9 @@ public class LoadSecondWave : MapGenerationComponent {
     private IEnumerator LoadAdditionalTileObjectInfo(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading other object info...");
         int batchCount = 0;
-        for (int i = 0; i < DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.Count; i++) {
-            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList[i];
+        TileObject[] allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.ToArray();
+        for (int i = 0; i < allTileObjects.Length; i++) {
+            TileObject tileObject = allTileObjects[i];
             string persistentID = tileObject.persistentID;
             SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, persistentID);
             if (tileObject is Tombstone tombstone) {

@@ -3,6 +3,7 @@
         public override RESOURCE mainResource => RESOURCE.STONE;
         
         public VampireClan() : base(FACTION_TYPE.Vampire_Clan) { }
+        public VampireClan(SaveDataFactionType saveData) : base(FACTION_TYPE.Vampire_Clan, saveData) { }
         
         public override void SetAsDefault() {
             ReveresVampires reveresVampires = FactionManager.Instance.CreateIdeology<ReveresVampires>(FACTION_IDEOLOGY.Reveres_Vampires);
@@ -67,17 +68,17 @@
             AddCivilianClass("Miner");
             AddCivilianClass("Craftsman");
 
-            //crimes
-            hasCrimes = true;
-            AddCrime(CRIME_TYPE.Infidelity, CRIME_SEVERITY.Infraction);
-            AddCrime(CRIME_TYPE.Theft, CRIME_SEVERITY.Misdemeanor);
-            AddCrime(CRIME_TYPE.Disturbances, CRIME_SEVERITY.Misdemeanor);
-            AddCrime(CRIME_TYPE.Assault, CRIME_SEVERITY.Misdemeanor);
-            AddCrime(CRIME_TYPE.Arson, CRIME_SEVERITY.Misdemeanor);
-            AddCrime(CRIME_TYPE.Trespassing, CRIME_SEVERITY.Misdemeanor);
-            AddCrime(CRIME_TYPE.Murder, CRIME_SEVERITY.Serious);
-            AddCrime(CRIME_TYPE.Cannibalism, CRIME_SEVERITY.Serious);
-            AddCrime(CRIME_TYPE.Werewolf, CRIME_SEVERITY.Heinous);
+            // //crimes
+            // hasCrimes = true;
+            // AddCrime(CRIME_TYPE.Infidelity, CRIME_SEVERITY.Infraction);
+            // AddCrime(CRIME_TYPE.Theft, CRIME_SEVERITY.Misdemeanor);
+            // AddCrime(CRIME_TYPE.Disturbances, CRIME_SEVERITY.Misdemeanor);
+            // AddCrime(CRIME_TYPE.Assault, CRIME_SEVERITY.Misdemeanor);
+            // AddCrime(CRIME_TYPE.Arson, CRIME_SEVERITY.Misdemeanor);
+            // AddCrime(CRIME_TYPE.Trespassing, CRIME_SEVERITY.Misdemeanor);
+            // AddCrime(CRIME_TYPE.Murder, CRIME_SEVERITY.Serious);
+            // AddCrime(CRIME_TYPE.Cannibalism, CRIME_SEVERITY.Serious);
+            // AddCrime(CRIME_TYPE.Werewolf, CRIME_SEVERITY.Heinous);
         }
     }
 }

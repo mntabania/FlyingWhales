@@ -343,10 +343,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
 
             if (UnityEngine.Random.Range(0, 100) < 30) {//30
                 //Break up
-                if (owner.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)) {
-                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Break_Up, targetCharacter, reason);
-                    return;
-                }
+                BreakUp(owner, targetCharacter, reason);
             }
             int chance = 4;
             int roll = UnityEngine.Random.Range(0, 100);
@@ -696,6 +693,16 @@ public class BaseRelationshipContainer : IRelationshipContainer {
                 source.stateAwarenessComponent.OnSetAwarenessState(target, state);
             }
         }
+    }
+    #endregion
+
+    #region Utilities
+    public bool BreakUp(Character owner, Character targetCharacter, string reason) {
+        if (HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)) {
+            owner.interruptComponent.TriggerInterrupt(INTERRUPT.Break_Up, targetCharacter, reason);
+            return true;
+        }
+        return false;
     }
     #endregion
 }

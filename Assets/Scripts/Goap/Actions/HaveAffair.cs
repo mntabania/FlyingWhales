@@ -63,12 +63,8 @@ public class HaveAffair : GoapAction {
                 return false;
             }
             Character targetCharacter = poiTarget as Character;
-            SEXUALITY sexuality1 = actor.sexuality;
-            SEXUALITY sexuality2 = targetCharacter.sexuality;
-            GENDER gender1 = actor.gender;
-            GENDER gender2 = targetCharacter.gender;
-            if (RelationshipManager.IsSexuallyCompatible(sexuality1, sexuality2, gender1, gender2) 
-                && RelationshipManager.Instance.GetValidator(actor).CanHaveRelationship(actor, targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
+            if (RelationshipManager.IsSexuallyCompatible(actor, targetCharacter) && 
+                RelationshipManager.Instance.GetValidator(actor).CanHaveRelationship(actor, targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
                 return true;
             }
         }

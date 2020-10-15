@@ -14,6 +14,9 @@ public class VampireBehaviour : CharacterBehaviourComponent {
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} is a vampire";
+        if ((character.moodComponent.moodState == MOOD_STATE.Bad || character.moodComponent.moodState == MOOD_STATE.Critical) && character.traitContainer.HasTrait("Hemophobic")) {
+            return character.jobComponent.TriggerSuicideJob(out producedJob, "Hemophobic Vampire");
+        }
         if (character.characterClass.className == "Vampire Lord") {
             log += $"\n-{character.name} is a Vampire Lord";
             if (character.homeStructure == null || character.homeStructure.structureType != STRUCTURE_TYPE.VAMPIRE_CASTLE) {

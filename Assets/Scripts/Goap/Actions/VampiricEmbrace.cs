@@ -65,7 +65,7 @@ public class VampiricEmbrace : GoapAction {
             }
         } else {
             if (witness.traitContainer.HasTrait("Hemophiliac")) {
-                if(RelationshipManager.IsSexuallyCompatible(witness.sexuality, actor.sexuality, witness.gender, actor.gender)) {
+                if(RelationshipManager.IsSexuallyCompatible(witness, actor)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status, node);
                 } else {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
@@ -99,7 +99,7 @@ public class VampiricEmbrace : GoapAction {
                 }
             } else {
                 if (targetCharacter.traitContainer.HasTrait("Hemophiliac")) {
-                    if (RelationshipManager.IsSexuallyCompatible(targetCharacter.sexuality, actor.sexuality, targetCharacter.gender, actor.gender)) {
+                    if (RelationshipManager.IsSexuallyCompatible(actor, targetCharacter)) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, targetCharacter, actor, status, node);
                     } else {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, targetCharacter, actor, status, node);

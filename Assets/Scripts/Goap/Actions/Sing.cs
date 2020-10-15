@@ -63,13 +63,8 @@ public class Sing : GoapAction {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
             } else {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
-                SEXUALITY sexuality1 = witness.sexuality;
-                SEXUALITY sexuality2 = actor.sexuality;
-                GENDER gender1 = witness.gender;
-                GENDER gender2 = actor.gender;
-                if (RelationshipManager.Instance.GetCompatibilityBetween(witness, actor) >= 4
-                    && RelationshipManager.IsSexuallyCompatible(sexuality1, sexuality2, gender1, gender2)
-                    && witness.moodComponent.moodState != MOOD_STATE.Critical) {
+                if (RelationshipManager.Instance.GetCompatibilityBetween(witness, actor) >= 4 && 
+                    RelationshipManager.IsSexuallyCompatible(witness, actor) && witness.moodComponent.moodState != MOOD_STATE.Critical) {
                     int value = 50;
                     if (actor.traitContainer.HasTrait("Unattractive")) {
                         value = 20;

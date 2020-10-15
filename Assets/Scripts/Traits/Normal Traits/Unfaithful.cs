@@ -38,13 +38,8 @@ namespace Traits {
                             if (relationship.Key != loverID && relationship.Value.HasRelationship(RELATIONSHIP_TYPE.AFFAIR) == false) {
                                 Character otherCharacter = CharacterManager.Instance.GetCharacterByID(relationship.Key);
                                 if (otherCharacter != null && otherCharacter.isDead == false) {
-                                    SEXUALITY sexuality1 = character.sexuality;
-                                    SEXUALITY sexuality2 = otherCharacter.sexuality;
-                                    GENDER gender1 = character.gender;
-                                    GENDER gender2 = otherCharacter.gender;
-                                    if (RelationshipManager.IsSexuallyCompatible(sexuality1, sexuality2, gender1, gender2) 
-                                        && RelationshipManager.Instance.GetValidator(character).
-                                            CanHaveRelationship(character, otherCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
+                                    if (RelationshipManager.IsSexuallyCompatible(character, otherCharacter) && 
+                                        RelationshipManager.Instance.GetValidator(character).CanHaveRelationship(character, otherCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
                                         choices.Add(otherCharacter);
                                     }
                                 }

@@ -11,6 +11,8 @@ public class SaveDataFactionType : SaveData<FactionType> {
     public List<SaveDataFactionIdeology> ideologies;
     //public List<StructureSetting> neededStructures;
     //public List<string> combatantClasses;
+    public Dictionary<CRIME_TYPE, CRIME_SEVERITY> crimes;
+    public bool hasCrimes;
 
     #region Overrides
     public override void Save(FactionType data) {
@@ -26,11 +28,13 @@ public class SaveDataFactionType : SaveData<FactionType> {
             }
         }
 
+        crimes = new Dictionary<CRIME_TYPE, CRIME_SEVERITY>(data.crimes);
+        hasCrimes = data.hasCrimes;
         //neededStructures = data.neededStructures;
         //combatantClasses = data.combatantClasses;
     }
     public override FactionType Load() {
-        FactionType newFactionType = FactionManager.Instance.CreateFactionType(type);
+        FactionType newFactionType = FactionManager.Instance.CreateFactionType(type, this);
         newFactionType.SetFixedData();
         //for (int i = 0; i < neededStructures.Count; i++) {
         //    newFactionType.AddNeededStructure(neededStructures[i]);
@@ -38,10 +42,6 @@ public class SaveDataFactionType : SaveData<FactionType> {
         //for (int i = 0; i < combatantClasses.Count; i++) {
         //    newFactionType.AddCombatantClass(combatantClasses[i]);
         //}
-        for (int i = 0; i < ideologies.Count; i++) {
-            SaveDataFactionIdeology saveIdeology = ideologies[i];
-            newFactionType.AddIdeology(saveIdeology.Load());
-        }
         return newFactionType;
     }
     #endregion

@@ -181,8 +181,7 @@ public class DrinkBlood : GoapAction {
                 if (opinionToTarget == RelationshipManager.Friend || opinionToTarget == RelationshipManager.Close_Friend) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
-                } else if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
-                     && opinionToTarget != RelationshipManager.Rival) {
+                } else if (witness.relationshipContainer.IsRelativeLoverOrAffairAndNotRival(targetCharacter)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
                 } else if (opinionToTarget == RelationshipManager.Acquaintance || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
@@ -193,7 +192,7 @@ public class DrinkBlood : GoapAction {
             }
         } else {
             if (witness.traitContainer.HasTrait("Hemophiliac")) {
-                if(RelationshipManager.IsSexuallyCompatible(witness.sexuality, actor.sexuality, witness.gender, actor.gender)) {
+                if(RelationshipManager.IsSexuallyCompatible(witness, actor)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status, node);
                 } else {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
@@ -260,7 +259,7 @@ public class DrinkBlood : GoapAction {
                 }
             } else {
                 if (targetCharacter.traitContainer.HasTrait("Hemophiliac")) {
-                    if (RelationshipManager.IsSexuallyCompatible(targetCharacter.sexuality, actor.sexuality, targetCharacter.gender, actor.gender)) {
+                    if (RelationshipManager.IsSexuallyCompatible(actor, targetCharacter)) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, targetCharacter, actor, status, node);
                     } else {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, targetCharacter, actor, status, node);
@@ -376,169 +375,4 @@ public class DrinkBlood : GoapAction {
         infected?.InfectTarget(actor);
     }
     #endregion
-
-    //#region Intel Reactions
-    //private List<string> DrinkBloodSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
-    //    List<string> reactions = new List<string>();
-    //    Character targetCharacter = poiTarget as Character;
-    //    bool isRecipientVampire = recipient.traitContainer.GetNormalTrait<Trait>("Vampire") != null;
-
-    //    if (isOldNews) {
-    //        //Old News
-    //        reactions.Add("This is old news.");
-    //    } else {
-    //        //Not Yet Old News
-    //        if (awareCharactersOfThisAction.Contains(recipient)) {
-    //            //- If Recipient is Aware
-    //            reactions.Add("I know that already.");
-    //        } else {
-    //            //- Recipient is Actor
-    //            if (recipient == actor) {
-    //                reactions.Add("I know what I did.");
-    //            }
-    //            //- Recipient is Target
-    //            else if (recipient == targetCharacter) {
-    //                if (isRecipientVampire) {
-    //                    //- Recipient is a Vampire
-    //                    reactions.Add(string.Format("{0} must be the one that turned me into this...", actor.name));
-    //                } else {
-    //                    //- Recipient is NOT a Vampire
-    //                    RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
-    //                    bool hasRelationshipDegraded = false;
-    //                    if (!hasCrimeBeenReported) {
-    //                        hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
-    //                    }
-    //                    if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.POSITIVE) {
-    //                        if (hasRelationshipDegraded) {
-    //                            reactions.Add("Vampires are cursed beings that must be destroyed!");
-    //                        } else {
-    //                            reactions.Add(string.Format("I don't believe you! {0} is not a vampire.", actor.name));
-    //                        }
-    //                    } else if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.NEGATIVE) {
-    //                        reactions.Add(string.Format("I knew something is off with that {0}!", actor.name));
-    //                    } else {
-    //                        reactions.Add("Vampires are cursed beings that must be destroyed!");
-    //                    }
-    //                }
-    //            }
-    //            //- Recipient Has Positive Relationship with Target
-    //            else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
-    //                if (isRecipientVampire) {
-    //                    //- Recipient is a Vampire
-    //                    RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
-    //                    bool hasRelationshipDegraded = RelationshipManager.Instance.RelationshipDegradation(actor, recipient, this);
-    //                    if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.POSITIVE) {
-    //                        if (hasRelationshipDegraded) {
-    //                            reactions.Add(string.Format("I am also a vampire so I understand {0}'s unique needs but {1} shouldn't have hurt {2}!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false), targetCharacter.name));
-    //                            if(status != SHARE_INTEL_STATUS.WITNESSED) {
-    //                                recipient.CreateKnockoutJob(actor);
-    //                            }
-    //                        } else {
-    //                            reactions.Add(string.Format("I am also a vampire so I understand {0}'s unique needs.", actor.name));
-    //                        }
-    //                    } else if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.NEGATIVE) {
-    //                        reactions.Add(string.Format("I am also a vampire so I understand {0}'s unique needs but {1} shouldn't have hurt {2}!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false), targetCharacter.name));
-    //                        if (status != SHARE_INTEL_STATUS.WITNESSED) {
-    //                            recipient.CreateKnockoutJob(actor);
-    //                        }
-    //                    } else {
-    //                        reactions.Add(string.Format("I am also a vampire so I understand {0}'s unique needs but {1} shouldn't have hurt {2}!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false), targetCharacter.name));
-    //                        if (status != SHARE_INTEL_STATUS.WITNESSED) {
-    //                            recipient.CreateKnockoutJob(actor);
-    //                        }
-    //                    }
-    //                } else {
-    //                    //- Recipient is NOT a Vampire
-    //                    RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
-    //                    bool hasRelationshipDegraded = false;
-    //                    if (!hasCrimeBeenReported) {
-    //                        hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
-    //                    }
-    //                    if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.POSITIVE) {
-    //                        if (hasRelationshipDegraded) {
-    //                            reactions.Add("Vampires are cursed beings that must be destroyed!");
-    //                        } else {
-    //                            reactions.Add(string.Format("I don't believe you! {0} is not a vampire.", actor.name));
-    //                        }
-    //                    } else if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.NEGATIVE) {
-    //                        reactions.Add(string.Format("I knew something is off with that {0}!", actor.name));
-    //                    } else {
-    //                        reactions.Add("Vampires are cursed beings that must be destroyed!");
-    //                    }
-    //                }
-    //            }
-    //            //- Recipient Has Negative Relationship with Target
-    //            else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
-    //                if (isRecipientVampire) {
-    //                    //- Recipient is a Vampire
-    //                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-    //                        if (recipient.marker.inVisionCharacters.Contains(actor)) {
-    //                            recipient.combatComponent.AddAvoidInRange(actor, reason: "saw something shameful");
-    //                        }
-    //                    }
-    //                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
-    //                    if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
-    //                        reactions.Add(string.Format("I am also a vampire so I understand {0}'s unique needs.", actor.name));
-    //                    } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
-    //                        reactions.Add(string.Format("I may dislike {0} but I can't report a fellow vampire.", actor.name));
-    //                    } else {
-    //                        reactions.Add(string.Format("I am also a vampire so I understand {0}'s unique needs.", actor.name));
-    //                    }
-    //                } else {
-    //                    //- Recipient is NOT a Vampire
-    //                    RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
-    //                    bool hasRelationshipDegraded = false;
-    //                    if (!hasCrimeBeenReported) {
-    //                        hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
-    //                    }
-    //                    if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.POSITIVE) {
-    //                        if (hasRelationshipDegraded) {
-    //                            reactions.Add("Vampires are cursed beings that must be destroyed!");
-    //                        } else {
-    //                            reactions.Add(string.Format("I don't believe you! {0} is not a vampire.", actor.name));
-    //                        }
-    //                    } else if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.NEGATIVE) {
-    //                        reactions.Add("Vampires are cursed beings that must be destroyed!");
-    //                    } else {
-    //                        reactions.Add("Vampires are cursed beings that must be destroyed!");
-    //                    }
-    //                }
-    //            }
-    //            //- Recipient Has No Relationship with Target
-    //            else {
-    //                if (isRecipientVampire) {
-    //                    //- Recipient is a Vampire
-    //                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
-    //                    if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
-    //                        reactions.Add(string.Format("I am also a vampire so I understand {0}'s unique needs.", actor.name));
-    //                    } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
-    //                        reactions.Add(string.Format("I may dislike {0} but I can't report a fellow vampire.", actor.name));
-    //                    } else {
-    //                        reactions.Add(string.Format("I am also a vampire so I understand {0}'s unique needs.", actor.name));
-    //                    }
-    //                } else {
-    //                    //- Recipient is NOT a Vampire
-    //                    RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.relationshipContainer.GetRelationshipEffectWith(actor.currentAlterEgo);
-    //                    bool hasRelationshipDegraded = false;
-    //                    if (!hasCrimeBeenReported) {
-    //                        hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
-    //                    }
-    //                    if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.POSITIVE) {
-    //                        if (hasRelationshipDegraded) {
-    //                            reactions.Add("Vampires are cursed beings that must be destroyed!");
-    //                        } else {
-    //                            reactions.Add(string.Format("I don't believe you! {0} is not a vampire.", actor.name));
-    //                        }
-    //                    } else if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.NEGATIVE) {
-    //                        reactions.Add("Vampires are cursed beings that must be destroyed!");
-    //                    } else {
-    //                        reactions.Add("Vampires are cursed beings that must be destroyed!");
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //    return reactions;
-    //}
-    //#endregion
 }

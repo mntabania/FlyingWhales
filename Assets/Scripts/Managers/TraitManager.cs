@@ -33,6 +33,7 @@ public class TraitManager : BaseMonoBehaviour {
     public const string Before_Start_Flee = "Before_Start_Flee";
     public const string After_Exiting_Combat = "After_Exiting_Combat";
     public const string Per_Tick_Movement = "Per_Tick_Movement";
+    public const string Become_Faction_Leader = "Become_Faction_Leader";
 
     public static string[] instancedTraitsAndStatuses = new string[] {
         "Restrained", "Injured", "Kleptomaniac", "Lycanthrope", "Vampire",
@@ -47,7 +48,7 @@ public class TraitManager : BaseMonoBehaviour {
         "Fervor", "Tended", "Tending", "Cleansing", "Dousing", "Drying", "Patrolling", "Necromancer", "Mining", 
         "Webbed", "Cultist", "Stealthy", "Invisible", "Noxious Wanderer", "DeMooder", "Defender", "Invader", "Disabler", "Infestor",
         "Abductor", "Arsonist", "Hibernating", "Baby Infestor", "Tower", "Mighty", "Stoned", "Transforming", "Subterranean", "Petrasol",
-        "Snatcher", "Agitated", "Hunting", "Chained Electric", "Prisoner"
+        "Snatcher", "Agitated", "Hunting", "Chained Electric", "Prisoner", "Hemophiliac", "Hemophobic"
     };
 
     //public static string[] unhiddenInstancedTraits = new string[] {
@@ -328,12 +329,12 @@ public class TraitManager : BaseMonoBehaviour {
         if (WorldConfigManager.Instance.isTutorialWorld) {
             return new[] { "Inspiring", "Diplomatic", "Fast", "Persuasive", "Optimist", "Robust", "Suspicious", "Vigilant", 
                 "Fireproof", "Music Lover", "Authoritative", "Nocturnal", "Lustful", "Chaste", "Music Hater", "Alcoholic",
-                "Accident Prone", "Evil", "Treacherous", "Lazy", "Pessimist", "Unattractive", "Hothead", "Coward"
+                "Accident Prone", "Evil", "Treacherous", "Lazy", "Pessimist", "Unattractive", "Hothead", "Coward", "Hemophobic", "Hemophiliac"
             };
         } else {
             return new[] { "Inspiring", "Blessed", "Diplomatic", "Fast", "Persuasive", "Optimist", "Robust", "Suspicious", "Vigilant", 
                 "Fireproof", "Music Lover", "Authoritative", "Nocturnal", "Lustful", "Chaste", "Music Hater", "Alcoholic",
-                "Accident Prone", "Evil", "Treacherous", "Lazy", "Pessimist", "Unattractive", "Hothead", "Coward"
+                "Accident Prone", "Evil", "Treacherous", "Lazy", "Pessimist", "Unattractive", "Hothead", "Coward", "Hemophobic", "Hemophiliac"
             };;
         }
     }

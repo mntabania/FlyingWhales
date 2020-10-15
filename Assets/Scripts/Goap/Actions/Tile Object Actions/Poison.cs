@@ -59,7 +59,7 @@ public class Poison : GoapAction {
         } else {
             if (actor.traitContainer.HasTrait("Cultist") && witness.traitContainer.HasTrait("Cultist")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
-                if (RelationshipManager.IsSexuallyCompatibleOneSided(witness.sexuality, actor.sexuality, witness.gender, actor.gender)) {
+                if (RelationshipManager.IsSexuallyCompatibleOneSided(witness, actor)) {
                     int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(witness, actor);
                     if (UtilityScripts.GameUtilities.RollChance(compatibility * 10)) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status, node);
