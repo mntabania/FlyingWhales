@@ -717,24 +717,24 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Suicide
-    public GoapPlanJob TriggerSuicideJob() {
+    public GoapPlanJob TriggerSuicideJob(string reason) {
 		if (owner.jobQueue.HasJob(JOB_TYPE.COMMIT_SUICIDE) == false) {
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMMIT_SUICIDE, 
-				new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, 
-					false, GOAP_EFFECT_TARGET.ACTOR),
+				new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR),
 				owner,  owner);
+			job.AddOtherData(INTERACTION_TYPE.NONE, new object[] {reason});
 			owner.jobQueue.AddJobInQueue(job);
 			return job;	
 		}
 		return null;
 	}
-    public bool TriggerSuicideJob(out JobQueueItem producedJob) {
+    public bool TriggerSuicideJob(out JobQueueItem producedJob, string reason) {
         producedJob = null;
-        if (owner.jobQueue.HasJob(JOB_TYPE.COMMIT_SUICIDE) == false) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMMIT_SUICIDE,
-                new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty,
-                    false, GOAP_EFFECT_TARGET.ACTOR),
+        if (owner.jobQueue.HasJob(JOB_TYPE.COMMIT_SUICIDE) == false) { 
+	        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMMIT_SUICIDE, 
+		        new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR),
                 owner, owner);
+	        job.AddOtherData(INTERACTION_TYPE.NONE, new object[] {reason});
             producedJob = job;
             return true;
         }

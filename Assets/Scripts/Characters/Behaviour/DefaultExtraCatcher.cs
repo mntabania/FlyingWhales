@@ -33,9 +33,7 @@ public class DefaultExtraCatcher : CharacterBehaviourComponent {
                     } else {
                         log += $"\nChat roll failed.";
                         if (character.moodComponent.moodState == MOOD_STATE.Normal &&
-                            RelationshipManager.IsSexuallyCompatible(character.sexuality, chosenTarget.sexuality,
-                                character.gender, chosenTarget.gender) &&
-                            character.relationshipContainer.IsFamilyMember(chosenTarget) == false && character.isSociable) {
+                            RelationshipManager.IsSexuallyCompatible(character, chosenTarget) && character.relationshipContainer.IsFamilyMember(chosenTarget) == false && character.isSociable) {
                             log += "\nCharacter is in normal mood and is sexually compatible with target and target is not from same family tree and character is not Angry at Target";
 
                             if (character.relationshipContainer.HasRelationshipWith(chosenTarget, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)

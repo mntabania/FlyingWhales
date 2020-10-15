@@ -294,8 +294,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
     }
     public void DesignateNewLeader(bool willLog = true) {
-        string log =
-            $"Designating a new npcSettlement faction leader for: {name}(chance it triggered: {newLeaderDesignationChance.ToString()})";
+        string log = $"Designating a new npcSettlement faction leader for: {name}(chance it triggered: {newLeaderDesignationChance.ToString()})";
         newLeaderDesignationWeights.Clear();
         for (int i = 0; i < characters.Count; i++) {
             Character member = characters[i];

@@ -475,6 +475,17 @@ public class FactionManager : BaseMonoBehaviour {
             throw new Exception($"{typeName} has no data!");
         }
     }
+    public FactionType CreateFactionType(FACTION_TYPE factionType, SaveDataFactionType saveData) {
+        string enumStr = factionType.ToString();
+        var typeName = $"Factions.Faction_Types.{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(enumStr)}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        Type type = Type.GetType(typeName);
+        if (type != null) {
+            FactionType data = Activator.CreateInstance(type, saveData) as FactionType;
+            return data;
+        } else {
+            throw new Exception($"{typeName} has no data!");
+        }
+    }
     public FACTION_TYPE GetFactionTypeForCharacter(Character character) {
         if (character.traitContainer.HasTrait("Vampire")) {
             return FACTION_TYPE.Vampire_Clan;

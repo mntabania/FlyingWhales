@@ -6,12 +6,12 @@ using UnityEngine;
 public class TileObjectDatabase {
     public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> allTileObjects { get; private set; }
     public Dictionary<string, TileObject> tileObjectsByGUID { get; private set; }
-    public List<TileObject> allTileObjectsList { get; private set; }
+    public HashSet<TileObject> allTileObjectsList { get; private set; }
 
     public TileObjectDatabase() {
         allTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
         tileObjectsByGUID = new Dictionary<string, TileObject>();
-        allTileObjectsList = new List<TileObject>();
+        allTileObjectsList = new HashSet<TileObject>();
     }
 
     public void RegisterTileObject(TileObject tileObject) {

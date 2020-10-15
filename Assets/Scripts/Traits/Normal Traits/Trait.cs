@@ -136,7 +136,6 @@ namespace Traits {
         public virtual bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
         public virtual void OnBeforeStartFlee(ITraitable traitable) { }
         public virtual void OnAfterExitingCombat(ITraitable traitable) { }
-
         //Returns the string of the log key that's supposed to be logged
         public virtual string TriggerFlaw(Character character) {
             if (character.trapStructure.IsTrapped()) {
@@ -187,6 +186,7 @@ namespace Traits {
         public virtual void OnTickStarted(ITraitable traitable) { }
         public virtual void OnTickEnded(ITraitable traitable) { }
         public virtual void OnHourStarted(ITraitable traitable) { }
+        public virtual void OnBecomeFactionLeader(Character leader, Faction faction) { }
         public virtual string GetNameInUI(ITraitable traitable) {
             return name;
         }

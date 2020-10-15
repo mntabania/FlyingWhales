@@ -14,6 +14,8 @@ namespace Traits {
         public int numOfConvertedVillagers { get; private set; }
         public List<Character> awareCharacters { get; private set; }
         public override Type serializedData => typeof(SaveDataVampire);
+
+        private Character _owner;
         
         public Vampire() {
             name = "Vampire";
@@ -34,6 +36,7 @@ namespace Traits {
         public override void OnAddTrait(ITraitable sourceCharacter) {
             base.OnAddTrait(sourceCharacter);
             if (sourceCharacter is Character character) {
+                _owner = character;
                 character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT);
                 character.needsComponent.SetTirednessForcedTick(0);
                 //character.needsComponent.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.AFTER_MIDNIGHT);
@@ -177,7 +180,14 @@ namespace Traits {
             Assert.IsNotNull(saveDataVampire);
             awareCharacters.AddRange(SaveUtilities.ConvertIDListToCharacters(saveDataVampire.awareCharacters));
         }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character character) {
+                _owner = character;
+            }
+        }
         #endregion
+        
         private void DetermineIfDesireOrDislike(Character character) {
             if(character.traitContainer.HasTrait("Hemophobic", "Chaste")) {
                 dislikedBeingVampire = true;
@@ -219,6 +229,13 @@ namespace Traits {
         public void AddAwareCharacter(Character character) {
             if (!awareCharacters.Contains(character)) {
                 awareCharacters.Add(character);
+                if (character.traitContainer.HasTrait("Hemophiliac")) {
+                    Hemophiliac hemophiliac = character.traitContainer.GetTraitOrStatus<Hemophiliac>("Hemophiliac");
+                    hemophiliac.OnBecomeAwareOfVampire(_owner);
+                } else if (character.traitContainer.HasTrait("Hemophobic")) {
+                    Hemophobic hemophobic = character.traitContainer.GetTraitOrStatus<Hemophobic>("Hemophobic");
+                    hemophobic.OnBecomeAwareOfVampire(_owner);
+                }
             }
         }
         public bool DoesCharacterKnowThisVampire(Character character) {

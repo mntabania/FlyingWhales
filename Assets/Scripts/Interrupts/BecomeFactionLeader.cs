@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Logs;
+using Traits;
 using UnityEngine;
 using UtilityScripts;
 
@@ -30,6 +31,14 @@ namespace Interrupts {
                 //Set Religion-Type Ideology:
                 FactionManager.Instance.RerollReligionTypeIdeology(faction, interruptHolder.actor);
 
+                List<Trait> traitOverrideFunctions = interruptHolder.actor.traitContainer.GetTraitOverrideFunctions(TraitManager.Become_Faction_Leader);
+                if (traitOverrideFunctions != null) {
+                    for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                        Trait trait = traitOverrideFunctions[i];
+                        trait.OnBecomeFactionLeader(interruptHolder.actor, faction);
+                    }
+                }
+                
                 Messenger.Broadcast(Signals.FACTION_IDEOLOGIES_CHANGED, faction);
 
                 //create relationships

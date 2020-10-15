@@ -603,6 +603,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.BURN_AT_STAKE, new[]{
             new StateNameAndDuration(){ name = "Burn Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.IS_VAMPIRE, new[]{
+            new StateNameAndDuration(){ name = "Vampire Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

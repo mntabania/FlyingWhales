@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using Locations.Settlements;
 using Traits;
@@ -185,8 +186,9 @@ public class SaveDataCurrentProgress {
         UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving Objects...");
         int batchCount = 0;
 
-        for (int i = 0; i < DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.Count; i++) {
-            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList[i];
+        TileObject[] allTileObjects = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.ToArray();
+        for (int i = 0; i < allTileObjects.Length; i++) {
+            TileObject tileObject = allTileObjects[i];
             if (tileObject is GenericTileObject genericTileObject && genericTileObject.gridTileLocation.isDefault) {
                 //if tile object is a Generic Tile Object and its parent tile is set as default then do not save it.
                 continue;

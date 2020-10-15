@@ -25,6 +25,20 @@ namespace Factions.Faction_Types {
             civilianClasses = new List<string>();
             crimes = new Dictionary<CRIME_TYPE, CRIME_SEVERITY>();
         }
+        public FactionType(FACTION_TYPE type, SaveDataFactionType data) {
+            this.type = type;
+            name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+            ideologies = new List<FactionIdeology>();
+            neededStructures = new List<StructureSetting>();
+            combatantClasses = new List<string>();
+            civilianClasses = new List<string>();
+            for (int i = 0; i < data.ideologies.Count; i++) {
+                SaveDataFactionIdeology saveIdeology = data.ideologies[i];
+                AddIdeology(saveIdeology.Load());
+            }
+            crimes = new Dictionary<CRIME_TYPE, CRIME_SEVERITY>(data.crimes);
+            hasCrimes = data.hasCrimes;
+        }
 
         #region Initialization
         public abstract void SetAsDefault();
@@ -32,6 +46,10 @@ namespace Factions.Faction_Types {
         #endregion
 
         #region Ideologies
+        public void AddIdeology(FACTION_IDEOLOGY ideology) {
+            FactionIdeology factionIdeology = FactionManager.Instance.CreateIdeology<FactionIdeology>(ideology);
+            AddIdeology(factionIdeology);
+        }
         public void AddIdeology(FactionIdeology ideology) {
             if (!HasIdeology(ideology.ideologyType)) {
                 ideologies.Add(ideology);
@@ -90,6 +108,8 @@ namespace Factions.Faction_Types {
         public void AddCrime(CRIME_TYPE type, CRIME_SEVERITY severity) {
             if (!crimes.ContainsKey(type)) {
                 crimes.Add(type, severity);
+            } else {
+                crimes[type] = severity;
             }
         }
         public void RemoveCrime(CRIME_TYPE type) {
@@ -136,6 +156,6 @@ namespace Factions.Faction_Types {
             civilianClasses.Remove(className);
         }
         #endregion
-        
+
     }
 }

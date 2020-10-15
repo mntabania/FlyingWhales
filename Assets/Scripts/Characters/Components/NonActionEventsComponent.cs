@@ -434,7 +434,7 @@ public class NonActionEventsComponent : CharacterComponent {
             }
         }
         if(chance < 90) {
-            if(!RelationshipManager.IsSexuallyCompatibleOneSided(disguisedTarget.sexuality, disguisedActor.sexuality, disguisedTarget.gender, disguisedActor.gender)) {
+            if(!RelationshipManager.IsSexuallyCompatibleOneSided(disguisedTarget, disguisedActor)) {
                 owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Rebuffed courtship", -8, "engaged in disastrous flirting");
                 target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", -12, "engaged in disastrous flirting");
                 return "incompatible";

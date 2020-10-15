@@ -14,6 +14,9 @@ public class VampireBehaviour : CharacterBehaviourComponent {
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} is a vampire";
+        if ((character.moodComponent.moodState == MOOD_STATE.Bad || character.moodComponent.moodState == MOOD_STATE.Critical) && character.traitContainer.HasTrait("Hemophobic")) {
+            return character.jobComponent.TriggerSuicideJob(out producedJob, "Hemophobic Vampire");
+        }
 
         if (character.needsComponent.isHungry || character.needsComponent.isStarving) {
             TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();

@@ -495,6 +495,7 @@ public enum INTERACTION_TYPE {
     VAMPIRIC_EMBRACE = 199,
     BUILD_VAMPIRE_CASTLE = 200,
     BURN_AT_STAKE = 201,
+    IS_VAMPIRE = 202,
 }
 public enum INTERRUPT {
     None,

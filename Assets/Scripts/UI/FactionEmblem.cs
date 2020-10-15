@@ -24,6 +24,12 @@ public class FactionEmblem : MonoBehaviour, IPointerClickHandler{
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in faction.relationships) {
             text += $"\n{kvp.Key.name} - {kvp.Value.relationshipStatus}";
         }
+// #if UNITY_EDITOR || DEVELOPMENT_BUILD
+//         text = $"{text}\n Crimes:";
+//         foreach (var crime in faction.factionType.crimes) {
+//             text = $"{text}\n\t {crime.Key.ToString()} - {crime.Value.ToString()}";    
+//         }
+// #endif
         UIManager.Instance.ShowSmallInfo(text, autoReplaceText: false);
     }
     public void HideSmallInfo() {

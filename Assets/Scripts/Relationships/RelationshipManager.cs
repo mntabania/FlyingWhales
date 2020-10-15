@@ -89,6 +89,35 @@ public class RelationshipManager : BaseMonoBehaviour {
                 return RELATIONSHIP_TYPE.NONE;
         }
     }
+    /// <summary>
+    /// Check whether or not 2 characters are sexually compatible.
+    /// NOTE: This takes into account some traits.
+    /// </summary>
+    /// <returns>True or false.</returns>
+    public static bool IsSexuallyCompatible(Character character1, Character character2) {
+        return IsSexuallyCompatibleOneSided(character1, character2) && IsSexuallyCompatibleOneSided(character2, character1);
+    }
+    /// <summary>
+    /// Check if character1 is sexually compatible with character2. NOT Vice versa.
+    /// Use <see cref="IsSexuallyCompatible(Character,Character)"/> for 2 way checking.
+    /// NOTE: This takes into account some traits.
+    /// </summary>
+    /// <param name="character1">The side to check.</param>
+    /// /<param name="character2">The side to compare to.</param>
+    /// <returns>True or false.</returns>
+    public static bool IsSexuallyCompatibleOneSided(Character character1, Character character2) {
+        if (IsSexuallyCompatibleOneSided(character1.sexuality, character2.sexuality, character1.gender, character2.gender)) {
+            //if a character is hemophobic, and the other character is a vampire, check if the hemophobic character knows that it is a vampire. If it does then the 2 are incompatible.
+            if (character1.traitContainer.HasTrait("Hemophobic")) {
+                Vampire vampire = character2.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                if (vampire != null && vampire.DoesCharacterKnowThisVampire(character1)) {
+                    return false;    
+                }
+            }
+            return true;
+        }
+        return false;
+    }
     public static bool IsSexuallyCompatible(SEXUALITY sexuality1, SEXUALITY sexuality2, GENDER gender1, GENDER gender2) {
         bool sexuallyCompatible = IsSexuallyCompatibleOneSided(sexuality1, sexuality2, gender1, gender2);
         if (!sexuallyCompatible) {
@@ -97,7 +126,7 @@ public class RelationshipManager : BaseMonoBehaviour {
         sexuallyCompatible = IsSexuallyCompatibleOneSided(sexuality2, sexuality1, gender1, gender2);
         return sexuallyCompatible;
     }
-    public static bool IsSexuallyCompatibleOneSided(SEXUALITY sexuality1, SEXUALITY sexuality2, GENDER gender1, GENDER gender2) {
+    private static bool IsSexuallyCompatibleOneSided(SEXUALITY sexuality1, SEXUALITY sexuality2, GENDER gender1, GENDER gender2) {
         switch (sexuality1) {
             case SEXUALITY.STRAIGHT:
                 return gender1 != gender2;

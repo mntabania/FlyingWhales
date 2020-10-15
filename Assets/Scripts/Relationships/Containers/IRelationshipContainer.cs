@@ -83,4 +83,5 @@ public interface IRelationshipContainer {
     IRelationshipData GetOrCreateRelationshipDataWith(Relatable owner, Relatable relatable);
     int GetCompatibility(int targetID);
     bool HasSpecialPositiveRelationshipWith(Character characterThatDied);
+    bool BreakUp(Character owner, Character targetCharacter, string reason);
 }
