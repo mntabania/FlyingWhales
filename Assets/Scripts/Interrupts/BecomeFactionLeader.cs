@@ -35,6 +35,7 @@ namespace Interrupts {
                 FactionManager.Instance.RerollFactionLeaderTraitIdeology(faction, interruptHolder.actor);
 
                 Messenger.Broadcast(Signals.FACTION_IDEOLOGIES_CHANGED, faction);
+                Messenger.Broadcast(Signals.FACTION_CRIMES_CHANGED, faction);
 
                 //create relationships
                 //NOTE: Should not default relationships to neutral when leader changes, because we only want to overwrite relationships if other leader is friend/enemy 

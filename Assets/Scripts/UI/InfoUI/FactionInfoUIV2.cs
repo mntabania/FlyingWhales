@@ -90,7 +90,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
         Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateHistory);
         Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
         Messenger.AddListener<Faction>(Signals.FACTION_IDEOLOGIES_CHANGED, OnFactionIdeologiesChanged);
-        Messenger.AddListener<Faction>(Signals.FACTION_IDEOLOGIES_CHANGED, OnFactionIdeologiesChanged);
+        Messenger.AddListener<Faction>(Signals.FACTION_CRIMES_CHANGED, OnFactionCrimesChanged);
         Messenger.AddListener<Character, Character>(Signals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
         logsWindow.Initialize();
     }
@@ -130,6 +130,11 @@ public class FactionInfoUIV2 : MonoBehaviour {
     private void OnFactionIdeologiesChanged(Faction faction) {
         if (FactionInfoHubUI.Instance.IsShowing(faction)) {
             UpdateOverview();
+        }
+    }
+    private void OnFactionCrimesChanged(Faction faction) {
+        if (FactionInfoHubUI.Instance.IsShowing(faction)) {
+            UpdateCrimes();
         }
     }
     private void OnFactionLeaderRemoved(Faction faction, ILeader previousLeader) {
