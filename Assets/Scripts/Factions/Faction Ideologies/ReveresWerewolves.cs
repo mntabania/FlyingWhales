@@ -22,6 +22,7 @@ public class ReveresWerewolves : FactionIdeology {
     }
     public override void OnAddIdeology(FactionType factionType) {
         factionType.RemoveIdeology(FACTION_IDEOLOGY.Hates_Werewolves);
+        factionType.RemoveCrime(CRIME_TYPE.Werewolf);
     }
     #endregion
 }

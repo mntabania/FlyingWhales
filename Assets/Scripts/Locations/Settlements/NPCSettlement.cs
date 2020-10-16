@@ -351,8 +351,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
     }
     public void DesignateNewRuler(bool willLog = true) {
-        string log =
-            $"{GameManager.Instance.TodayLogString()}Designating a new npcSettlement ruler for: {region.name}(chance it triggered: {newRulerDesignationChance})";
+        string log = $"{GameManager.Instance.TodayLogString()}Designating a new npcSettlement ruler for: {region.name}(chance it triggered: {newRulerDesignationChance})";
         newRulerDesignationWeights.Clear();
         for (int i = 0; i < residents.Count; i++) {
             Character resident = residents[i];
@@ -369,6 +368,19 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
 
             int weight = 50;
             log += "\n  -Base Weight: +50";
+            if (owner != null && owner.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Vampires)) {
+                Vampire vampire = resident.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                if (vampire != null && vampire.DoesFactionKnowThisVampire(owner)) {
+                    weight += 100;
+                    log += "\n  -Faction reveres vampires and member is a known vampire: +100";
+                }
+            }
+            if (owner != null && owner.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
+                if (resident.lycanData != null && resident.lycanData.DoesFactionKnowThisLycan(owner)) {
+                    weight += 100;
+                    log += "\n  -Faction reveres werewolves and member is a known Lycanthrope: +100";
+                }
+            }
             if (resident.isFactionLeader) {
                 weight += 100;
                 log += "\n  -Faction Leader: +100";

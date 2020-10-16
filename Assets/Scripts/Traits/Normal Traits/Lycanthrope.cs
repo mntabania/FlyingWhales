@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
-
+using UtilityScripts;
 namespace Traits {
     public class Lycanthrope : Trait {
         public Character owner { get; private set; }
-        public override bool isPersistent => true;
+
         private int _level;
+
+        #region getters
+        public override bool isPersistent => true;
+        #endregion
+        
         public Lycanthrope() {
             name = "Lycanthrope";
             description = "Not a werewolf. Just sometimes turns to a plain ole wolf when it sleeps.";
@@ -36,6 +41,14 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             base.OnRemoveTrait(sourceCharacter, removedBy);
             owner.lycanData.EraseThisDataWhenTraitIsRemoved(owner);
+        }
+        public override string GetTestingData(ITraitable traitable = null) {
+            string data = base.GetTestingData(traitable);
+            if (traitable is Character character) {
+                data = $"{data}Dislikes Being Lycan: {character.lycanData.dislikesBeingLycan.ToString()}";
+                data = $"{data}\nIs Master: {character.lycanData.isMaster.ToString()}";
+            }
+            return data;
         }
         //public override bool OnDeath(Character character) {
         //    if(character == owner.lycanData.lycanthropeForm) {
@@ -107,6 +120,10 @@ namespace Traits {
 
         public Character lycanthropeForm { get; private set; }
         public Character originalForm { get; private set; }
+        
+        public bool dislikesBeingLycan { get; private set; }
+        public bool isMaster { get; private set; }
+        public List<Character> awareCharacters { get; private set; }
 
         public GameObject transformRevertEffectGO { get; private set; }
 
@@ -119,6 +136,9 @@ namespace Traits {
             lycanthropeForm.traitContainer.AddTrait(lycanthropeForm, "Lycanthrope");
             originalForm.SetLycanthropeData(this);
             lycanthropeForm.SetLycanthropeData(this);
+            isMaster = false;
+            awareCharacters = new List<Character>();
+            DetermineIfDesireOrDislike(originalForm);
         }
         public LycanthropeData(Character originalForm, Character lycanthropeForm, Character activeForm, Character limboForm) {
             this.originalForm = originalForm;
@@ -287,6 +307,85 @@ namespace Traits {
             //    originalForm.traitContainer.RemoveTrait(originalForm, "Lycanthrope");
             //}
         }
+
+        #region Additional Data
+        public void SetDislikesBeingLycan(bool state) {
+            dislikesBeingLycan = state;
+        }
+        public void SetIsMaster(bool state) {
+            isMaster = state;
+        }
+        private void DetermineIfDesireOrDislike(Character character) {
+            if(character.traitContainer.HasTrait("Lycanphobic", "Chaste")) {
+                SetDislikesBeingLycan(true);
+                return;
+            }
+            if (character.traitContainer.HasTrait("Lycanphiliac")) {
+                SetDislikesBeingLycan(false);
+                return;
+            }
+            if (character.traitContainer.HasTrait("Cultist") && GameUtilities.RollChance(75)) {
+                SetDislikesBeingLycan(false);
+                return;
+            }
+            if (character.characterClass.className == "Hero" && GameUtilities.RollChance(75)) {
+                SetDislikesBeingLycan(true);
+                return;
+            }
+            if (character.characterClass.className == "Shaman" && GameUtilities.RollChance(80)) {
+                SetDislikesBeingLycan(true);
+                return;
+            }
+            if (character.traitContainer.HasTrait("Vampire") && GameUtilities.RollChance(80)) {
+                SetDislikesBeingLycan(true);
+                return;
+            }
+            if (character.traitContainer.HasTrait("Evil", "Treacherous") && GameUtilities.RollChance(75)) {
+                SetDislikesBeingLycan(true);
+                return;
+            }
+            if (character.race == RACE.ELVES && GameUtilities.RollChance(75)) {
+                SetDislikesBeingLycan(false);
+                return;
+            }
+            SetDislikesBeingLycan(GameUtilities.RollChance(50));
+        }
+        #endregion
+
+        #region Aware Characters
+        public void AddAwareCharacter(Character character) {
+            if (!awareCharacters.Contains(character)) {
+                awareCharacters.Add(character);
+                if (character.traitContainer.HasTrait("Lycanphiliac")) {
+                    Lycanphiliac lycanphiliac = character.traitContainer.GetTraitOrStatus<Lycanphiliac>("Lycanphiliac");
+                    lycanphiliac.OnBecomeAwareOfLycan(originalForm);
+                } else if (character.traitContainer.HasTrait("Lycanphobic")) {
+                    Lycanphobic lycanphobic = character.traitContainer.GetTraitOrStatus<Lycanphobic>("Lycanphobic");
+                    lycanphobic.OnBecomeAwareOfLycan(originalForm);
+                }
+            }
+        }
+        public void LoadAwareCharacters(List<Character> characters) {
+            awareCharacters = new List<Character>();
+            if (characters.Count > 0) {
+                awareCharacters.AddRange(characters);
+            }
+        }
+        public bool DoesCharacterKnowThisLycan(Character character) {
+            return awareCharacters.Contains(character);
+        }
+        public bool DoesFactionKnowThisLycan(Faction faction) {
+            for (int i = 0; i < faction.characters.Count; i++) {
+                Character member = faction.characters[i];
+                if (member != originalForm) {
+                    if (DoesCharacterKnowThisLycan(member)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        #endregion
     }
 
     [System.Serializable]
@@ -296,6 +395,10 @@ namespace Traits {
 
         public string lycanthropeForm;
         public string originalForm;
+        
+        public bool dislikesBeingLycan;
+        public bool isMaster;
+        public List<string> awareCharacterIDs;
 
         #region Overrides
         public override void Save(LycanthropeData data) {
@@ -304,6 +407,9 @@ namespace Traits {
 
             lycanthropeForm = data.lycanthropeForm.persistentID;
             originalForm = data.originalForm.persistentID;
+            dislikesBeingLycan = data.dislikesBeingLycan;
+            isMaster = data.isMaster;
+            awareCharacterIDs = SaveUtilities.ConvertSavableListToIDs(data.awareCharacters);
         }
         public override LycanthropeData Load() {
             Character origForm = CharacterManager.Instance.GetCharacterByPersistentID(originalForm);
@@ -318,6 +424,9 @@ namespace Traits {
                 limboForm = lycanForm;
             }
             LycanthropeData data = new LycanthropeData(origForm, lycanForm, activeForm, limboForm);
+            data.SetDislikesBeingLycan(dislikesBeingLycan);
+            data.SetIsMaster(isMaster);
+            data.LoadAwareCharacters(SaveUtilities.ConvertIDListToCharacters(awareCharacterIDs));
             return data;
         }
         #endregion

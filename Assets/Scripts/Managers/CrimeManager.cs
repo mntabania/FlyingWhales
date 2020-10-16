@@ -618,6 +618,16 @@ public class CrimeData : ISavable {
                         }
                     }
                 }
+            } else if (crimeType == CRIME_TYPE.Werewolf) {
+                LycanthropeData lycanthropeData = criminal.lycanData;
+                if (lycanthropeData != null) {
+                    for (int i = 0; i < faction.characters.Count; i++) {
+                        Character factionMember = faction.characters[i];
+                        if(factionMember != criminal) {
+                            lycanthropeData.AddAwareCharacter(factionMember);
+                        }
+                    }
+                }
             }
         }
     }

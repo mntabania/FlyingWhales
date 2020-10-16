@@ -312,6 +312,19 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
             int weight = 50;
             log += "\n  -Base Weight: +50";
+            if (factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Vampires)) {
+                Vampire vampire = member.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                if (vampire != null && vampire.DoesFactionKnowThisVampire(this)) {
+                    weight += 100;
+                    log += "\n  -Faction reveres vampires and member is a known vampire: +100";
+                }
+            }
+            if (factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
+                if (member.lycanData != null && member.lycanData.DoesFactionKnowThisLycan(this)) {
+                    weight += 100;
+                    log += "\n  -Faction reveres werewolves and member is a known Lycanthrope: +100";
+                }
+            }
             if (member.isSettlementRuler) {
                 weight += 30;
                 log += "\n  -NPCSettlement Ruler: +30";

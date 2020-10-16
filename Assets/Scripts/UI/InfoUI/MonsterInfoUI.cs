@@ -248,7 +248,11 @@ public class MonsterInfoUI : InfoUIBase {
             int index = int.Parse(text);
             if (index < activeMonster.traitContainer.traits.Count) {
                 Trait trait = activeMonster.traitContainer.traits[index];
-                UIManager.Instance.ShowSmallInfo(trait.descriptionInUI);
+                string info = trait.descriptionInUI;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                info += $"\n{trait.GetTestingData(activeMonster)}";
+#endif
+                UIManager.Instance.ShowSmallInfo(info);    
             }
         }
     }
@@ -257,7 +261,11 @@ public class MonsterInfoUI : InfoUIBase {
             int index = int.Parse(text);
             if (index < activeMonster.traitContainer.statuses.Count) {
                 Trait trait = activeMonster.traitContainer.statuses[index];
-                UIManager.Instance.ShowSmallInfo(trait.descriptionInUI);
+                string info = trait.descriptionInUI;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                info += $"\n{trait.GetTestingData(activeMonster)}";
+#endif
+                UIManager.Instance.ShowSmallInfo(info);    
             }
         }
     }

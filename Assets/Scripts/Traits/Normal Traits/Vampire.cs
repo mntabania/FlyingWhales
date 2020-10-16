@@ -241,6 +241,17 @@ namespace Traits {
         public bool DoesCharacterKnowThisVampire(Character character) {
             return awareCharacters.Contains(character);
         }
+        public bool DoesFactionKnowThisVampire(Faction faction) {
+            for (int i = 0; i < faction.characters.Count; i++) {
+                Character member = faction.characters[i];
+                if (member != _owner) {
+                    if (DoesCharacterKnowThisVampire(member)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         private Character GetDrinkBloodTarget(Character vampire) {
             List<Character> targets = null;
             if(vampire.currentRegion != null) {
