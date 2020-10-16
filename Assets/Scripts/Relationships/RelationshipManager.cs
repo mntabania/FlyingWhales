@@ -116,7 +116,7 @@ public class RelationshipManager : BaseMonoBehaviour {
             }
             //if a character is lycanphobic, and the other character is a lycanthrope, check if the lycanphobic character knows that it is a lycan. If it does then the 2 are incompatible.
             if (character1.traitContainer.HasTrait("Lycanphobic")) {
-                if (character2.lycanData != null && character2.lycanData.DoesCharacterKnowThisLycan(character1)) {
+                if (character2.isLycanthrope && character2.lycanData.DoesCharacterKnowThisLycan(character1)) {
                     return false;    
                 }
             }

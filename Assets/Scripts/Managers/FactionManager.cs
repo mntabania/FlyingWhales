@@ -468,6 +468,10 @@ public class FactionManager : BaseMonoBehaviour {
                 shouldRevereVampires = true;
             }
         }
+        if (leader.isLycanthrope && !leader.lycanData.dislikesBeingLycan && GameUtilities.RollChance(50)) {
+            shouldRevereWerewolves = true;
+        }
+
         if (leader.traitContainer.HasTrait("Hemophiliac")) {
             shouldRevereVampires = true;
         } else if (leader.traitContainer.HasTrait("Hemophobic")) {
@@ -527,10 +531,11 @@ public class FactionManager : BaseMonoBehaviour {
     public FACTION_TYPE GetFactionTypeForCharacter(Character character) {
         if (character.traitContainer.HasTrait("Vampire")) {
             return FACTION_TYPE.Vampire_Clan;
+        } else if (character.isLycanthrope && character.lycanData.isMaster) {
+            return FACTION_TYPE.Lycan_Clan;
         } else if (character.traitContainer.HasTrait("Cultist")) {
             return FACTION_TYPE.Demon_Cult;
-        }
-        //TODO: Mastered Lycanthrope
+        } 
         return GetFactionTypeForRace(character.race);
     }
     public FACTION_TYPE GetFactionTypeForRace(RACE race) {

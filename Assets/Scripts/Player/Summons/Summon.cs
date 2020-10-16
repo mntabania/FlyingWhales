@@ -69,7 +69,7 @@ public class Summon : Character {
             LocationStructure deathStructure = currentStructure;
             LocationGridTile deathTile = gridTileLocation;
 
-            if (lycanData != null) {
+            if (isLycanthrope) {
                 //Added this so that human and lycan form can share the same death log and prevent duplicates
                 Character humanForm = lycanData.originalForm;
                 lycanData.LycanDies(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
@@ -281,7 +281,7 @@ public class Summon : Character {
     #region Selecatble
     public override bool IsCurrentlySelected() {
         Character characterToSelect = this;
-        if (lycanData != null) {
+        if (isLycanthrope) {
             characterToSelect = lycanData.activeForm;
         }
         return UIManager.Instance.monsterInfoUI.isShowing &&

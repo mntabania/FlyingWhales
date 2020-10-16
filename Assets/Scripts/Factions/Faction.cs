@@ -318,7 +318,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                 }
             }
             if (factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
-                if (member.lycanData != null && member.lycanData.DoesFactionKnowThisLycan(this)) {
+                if (member.isLycanthrope && member.lycanData.DoesFactionKnowThisLycan(this)) {
                     weight += 100;
                     log += "\n  -Faction reveres werewolves and member is a known Lycanthrope: +100";
                 }

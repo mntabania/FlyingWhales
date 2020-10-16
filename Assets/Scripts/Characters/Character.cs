@@ -166,14 +166,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool canTakeJobs => canTakeJobsValue >= 0;
     public bool isSociable => sociableValue >= 0;
     public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
-    public bool isLycanthrope => lycanData != null;
+    public bool isLycanthrope => isLycanthrope;
     /// <summary>
     /// Is this character a normal character?
     /// Characters that are not monsters or minions.
     /// </summary>
     public bool isNormalCharacter => (this is Summon) == false && minion == null && faction != FactionManager.Instance.undeadFaction;
     public bool isNormalAndNotAlliedWithPlayer => isNormalCharacter && !faction.isPlayerFaction && !isAlliedWithPlayer;
-    public bool isNormalEvenLycanAndNotAlliedWithPlayer => (isNormalCharacter || lycanData != null) && necromancerTrait == null && !faction.isPlayerFaction && !isAlliedWithPlayer;
+    public bool isNormalEvenLycanAndNotAlliedWithPlayer => (isNormalCharacter || isLycanthrope) && necromancerTrait == null && !faction.isPlayerFaction && !isAlliedWithPlayer;
 
     public int maxHP => combatComponent.maxHP;
     public Vector3 worldPosition => marker.transform.position;
@@ -1724,7 +1724,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return;
         }
         if (isInLimbo) {
-            if (lycanData != null && lycanData.activeForm != this) {
+            if (isLycanthrope && lycanData.activeForm != this) {
                 lycanData.activeForm.CenterOnCharacter();
             }  
         } else {
@@ -2767,12 +2767,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
                 traitContainer.AddTrait(this, chosenTrait);
             }
-
-            // if (GameUtilities.RollChance(50)) {
-            //     traitContainer.AddTrait(this, GameUtilities.RollChance(50) ? "Hemophiliac" : "Hemophobic");
-            // } else {
-            //     traitContainer.AddTrait(this, GameUtilities.RollChance(50) ? "Lycanphiliac" : "Lycanphobic");
-            // }
         }
     }
     public void AddTraitNeededToBeRemoved(Trait trait) {
@@ -5336,7 +5330,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #region Selectable
     public virtual bool IsCurrentlySelected() {
         Character characterToSelect = this;
-        if(lycanData != null) {
+        if(isLycanthrope) {
             characterToSelect = lycanData.activeForm;
         }
         if (characterToSelect.isNormalCharacter) {
@@ -5557,7 +5551,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //        i--;
             //    }
             //}
-            if (lycanData != null) {
+            if (isLycanthrope) {
                 lycanData.LycanDies(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
             }
             //------------------------ Things that are above this line are called before letting the character die so that if we need things done before actually setting the death of character we can do it here like cleaning up necessary things, etc.

@@ -376,7 +376,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 }
             }
             if (owner != null && owner.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
-                if (resident.lycanData != null && resident.lycanData.DoesFactionKnowThisLycan(owner)) {
+                if (resident.isLycanthrope && resident.lycanData.DoesFactionKnowThisLycan(owner)) {
                     weight += 100;
                     log += "\n  -Faction reveres werewolves and member is a known Lycanthrope: +100";
                 }
@@ -500,11 +500,10 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             for (int j = 0; j < residents.Count; j++) {
                 Character resident2 = residents[j];
                 if (resident1 != resident2) {
-                    if (resident1.relationshipContainer.IsFamilyMember(resident2) || resident1.relationshipContainer.HasRelationshipWith(resident2, RELATIONSHIP_TYPE.LOVER)) {
-                        continue; //Skip because families and couples already has pre generated relationships
-                    }
-                    IRelationshipData rel1Data = resident1.relationshipContainer.GetOrCreateRelationshipDataWith(resident1, resident2);
-                    IRelationshipData rel2Data = resident2.relationshipContainer.GetOrCreateRelationshipDataWith(resident2, resident1);
+                    IRelationshipData rel1Data =
+                        resident1.relationshipContainer.GetOrCreateRelationshipDataWith(resident1, resident2);
+                    IRelationshipData rel2Data =
+                        resident2.relationshipContainer.GetOrCreateRelationshipDataWith(resident2, resident1);
 
                     int compatibilityValue;
                     if (rel1Data.opinions.compatibilityValue != -1) {
@@ -512,7 +511,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                     } else if (rel2Data.opinions.compatibilityValue != -1) {
                         compatibilityValue = rel2Data.opinions.compatibilityValue;
                     } else {
-                        compatibilityValue = Random.Range(RelationshipManager.MinCompatibility, RelationshipManager.MaxCompatibility);  
+                        compatibilityValue = Random.Range(RelationshipManager.MinCompatibility,
+                            RelationshipManager.MaxCompatibility);  
                     }
                     rel1Data.opinions.SetCompatibilityValue(compatibilityValue);
                     rel2Data.opinions.SetCompatibilityValue(compatibilityValue);
