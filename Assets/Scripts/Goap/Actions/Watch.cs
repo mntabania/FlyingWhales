@@ -116,7 +116,7 @@ public class Watch : GoapAction {
             }
         }
 
-        if (!goapNode.actor.marker.inVisionPOIs.Contains(goapNode.poiTarget)) {
+        if (!goapNode.actor.marker.IsPOIInVision(goapNode.poiTarget)) {
             //if no longer in vision, stop watching
             goapNode.EndPerTickEffect();
         }

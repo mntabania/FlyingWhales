@@ -104,7 +104,7 @@ public class BerserkedState : CharacterState {
         //    IPointOfInterest hostile = stateComponent.character.combatComponent.avoidInRange[i];
         //    if (hostile is Character) {
         //        Character hostileChar = hostile as Character;
-        //        if (stateComponent.character.marker.inVisionCharacters.Contains(hostileChar)) {
+        //        if (stateComponent.character.marker.IsPOIInVision(hostileChar)) {
         //            stateComponent.character.combatComponent.AddHostileInRange(hostileChar, false, isLethal: areCombatsLethal);
         //        } else {
         //            stateComponent.character.combatComponent.RemoveAvoidInRange(hostile, false);

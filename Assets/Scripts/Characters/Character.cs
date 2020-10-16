@@ -598,11 +598,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private void IncreaseThreatThatSeesPOI(IPointOfInterest poi, int amount) {
         if (faction != null && faction.isMajorNonPlayerFriendlyNeutral && marker) {
             if (poi is Character character) {
-                if (marker.inVisionCharacters.Contains(character)) {
+                if (marker.IsPOIInVision(character)) {
                     PlayerManager.Instance.player.threatComponent.AdjustThreat(amount);
                 }
             } else if (poi is TileObject tileObject) {
-                if (marker.inVisionTileObjects.Contains(tileObject)) {
+                if (marker.IsPOIInVision(tileObject)) {
                     PlayerManager.Instance.player.threatComponent.AdjustThreat(amount);
                 }
             }
@@ -1822,7 +1822,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private void OnBeforeSeizingTileObject(TileObject tileObject) {
         //if(faction != null && faction.isMajorNonPlayerFriendlyNeutral && marker) {
-        //    if (marker.inVisionTileObjects.Contains(tileObject)) {
+        //    if (marker.IsPOIInVision(tileObject)) {
         //        PlayerManager.Instance.player.threatComponent.AdjustThreat(5);
         //    }
         //}
@@ -2013,11 +2013,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         //Instead of witnessing the action immediately, it needs to be pooled to avoid duplicates, so add the supposed to be witnessed action to the list and let ProcessAllUnprocessedVisionPOIs in CharacterMarker do its thing
         if (marker) { //&& !marker.actionsToWitness.Contains(node)
-            if (marker.inVisionCharacters.Contains(node.actor)) {
+            if (marker.IsPOIInVision(node.actor)) {
                 //marker.actionsToWitness.Add(node);
                 //This is done so that the character will react again
                 marker.AddUnprocessedAction(node);
-            } else if (marker.inVisionPOIs.Contains(node.poiTarget)) {
+            } else if (marker.IsPOIInVision(node.poiTarget)) {
                 //marker.actionsToWitness.Add(node);
                 //This is done so that the character will react again
                 marker.AddUnprocessedAction(node);
@@ -2035,11 +2035,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return;
         }
         if (marker) {
-            if (marker.inVisionCharacters.Contains(interruptHolder.actor)) {
+            if (marker.IsPOIInVision(interruptHolder.actor)) {
                 //This is done so that the character will react again
                 marker.AddUnprocessedPOI(interruptHolder.actor, true);
             } 
-            //else if (marker.inVisionPOIs.Contains(target)) {
+            //else if (marker.IsPOIInVision(target)) {
             //    //This is done so that the character will react again
             //    marker.unprocessedVisionPOIs.Add(target);
             //}
@@ -2102,7 +2102,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    } else {
         //        //Upon seeing other characters while target of stealth action is already in vision, automatically cancel job
         //        if (poiTarget is Character seenCharacter && seenCharacter.isNormalCharacter) {
-        //            if (marker.inVisionCharacters.Contains(currentActionNode.poiTarget)) {
+        //            if (marker.IsPOIInVision(currentActionNode.poiTarget)) {
         //                bool shouldDoAfterEffect = currentActionNode.action.goapType != INTERACTION_TYPE.REMOVE_BUFF;
         //                currentJob.CancelJob(reason: "There is a witness around", shouldDoAfterEffect: shouldDoAfterEffect);
         //            }
@@ -4021,7 +4021,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     //If character is Troll and job is Move Character, do not perform if target is not in vision, or target is outside and it is not Night time
                     if(this is Troll && currentTopPrioJob.jobType == JOB_TYPE.CAPTURE_CHARACTER) {
                         bool shouldCancelJob = false;
-                        if(!marker || (!marker.inVisionCharacters.Contains(currentTopPrioJob.targetPOI as Character) && !carryComponent.IsPOICarried(currentTopPrioJob.targetPOI) && !isAtHomeStructure && !IsInHomeSettlement())) {
+                        if(!marker || (!marker.IsPOIInVision(currentTopPrioJob.targetPOI as Character) && !carryComponent.IsPOICarried(currentTopPrioJob.targetPOI) && !isAtHomeStructure && !IsInHomeSettlement())) {
                             shouldCancelJob = true;
                         }
                         if (!shouldCancelJob) {
@@ -4055,7 +4055,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     }
                     //if (currentNode.poiTarget != this && currentNode.isStealth) {
                     //    //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
-                    //    if (marker.inVisionPOIs.Contains(currentNode.poiTarget) && !marker.CanDoStealthActionToTarget(currentNode.poiTarget)) {
+                    //    if (marker.IsPOIInVision(currentNode.poiTarget) && !marker.CanDoStealthActionToTarget(currentNode.poiTarget)) {
                     //        log = $"{log}\n - Action is stealth and character cannot do stealth action right now...";
                     //        logComponent.PrintLogIfActive(log);
                     //        return;
@@ -4162,7 +4162,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //            }
         //            if(plan.currentNode.action.poiTarget != this && plan.currentNode.action.isStealth) {
         //                //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
-        //                if (marker.inVisionPOIs.Contains(plan.currentNode.action.poiTarget) && !marker.CanDoStealthActionToTarget(plan.currentNode.action.poiTarget)) {
+        //                if (marker.IsPOIInVision(plan.currentNode.action.poiTarget) && !marker.CanDoStealthActionToTarget(plan.currentNode.action.poiTarget)) {
         //                    log += "\n - Action is stealth and character cannot do stealth action right now...";
         //                    continue;
         //                }
@@ -4267,7 +4267,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //        && currentActionNode.CanSatisfyAllPreconditions()) {
         //        //if (currentAction.poiTarget != this && currentAction.isStealth) {
         //        //    //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
-        //        //    if (marker.inVisionPOIs.Contains(currentAction.poiTarget) && !marker.CanDoStealthActionToTarget(currentAction.poiTarget)) {
+        //        //    if (marker.IsPOIInVision(currentAction.poiTarget) && !marker.CanDoStealthActionToTarget(currentAction.poiTarget)) {
         //        //        log += "\n - Action is stealth and character cannot do stealth action right now...";
         //        //        PrintLogIfActive(log);
         //        //        return;
@@ -5002,7 +5002,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //            return; //do not do watch.
             //        }
             //    }
-            //    if (marker.inVisionCharacters.Contains(characterThatStartedState)) {
+            //    if (marker.IsPOIInVision(characterThatStartedState)) {
             //        ThisCharacterWatchEvent(characterThatStartedState, null, null);
             //    }
             //}

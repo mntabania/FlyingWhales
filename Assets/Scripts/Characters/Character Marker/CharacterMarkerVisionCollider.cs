@@ -183,7 +183,7 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
             // parentMarker.RemovePOIAsInRangeButDifferentStructure(character);
         }
         //else if the character that arrived at the new structure is in this character's vision list and the character no longer has the same structure as this character, 
-        else if (parentMarker.inVisionCharacters.Contains(character) && structure != parentMarker.character.currentStructure) {
+        else if (parentMarker.IsPOIInVision(character) && structure != parentMarker.character.currentStructure) {
             //if both characters are in open space, do not remove from vision
             if (structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace()) {
                 return;

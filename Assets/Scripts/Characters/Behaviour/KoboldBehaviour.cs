@@ -73,7 +73,7 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
                         return true;
                     } else {
                         log += $"\nChance to butcher NOT met, will roll Mock/Laugh At {chosenCharacter.name} instead.";
-                        if (GameUtilities.RollChance(30) && character.marker.inVisionCharacters.Contains(chosenCharacter)) {
+                        if (GameUtilities.RollChance(30) && character.marker.IsPOIInVision(chosenCharacter)) {
                             log += $"\nMock/Laugh triggered.";
                             character.interruptComponent.TriggerInterrupt(
                                 GameUtilities.RollChance(50) ? INTERRUPT.Mock : INTERRUPT.Laugh_At, chosenCharacter);

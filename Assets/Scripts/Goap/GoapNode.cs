@@ -230,7 +230,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                 //}
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
-            if (actor.marker.inVisionPOIs.Contains(poiTarget)) {
+            if (actor.marker.IsPOIInVision(poiTarget)) {
                 targetTile = actor.gridTileLocation;
             } else {
                 if (actor.movementComponent.isStationary) {
@@ -348,7 +348,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     }
     private void OnArriveAtTargetLocation() {
         if(action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
-            if(actor.marker && actor.marker.inVisionPOIs.Contains(poiTarget)) {
+            if(actor.marker && actor.marker.IsPOIInVision(poiTarget)) {
                 //Only do perform goap action on arrive at location if the location type is not target in vision, because if it is, we no longer need this function because perform goap action is already called upon entering vision
                 actor.PerformGoapAction();
             }
@@ -991,7 +991,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     private bool IsInvalidStealth() {
         //If action is stealth and there is a character in vision that can witness and considers the action as a crime, then return false, this means that the actor must not do the action because there are witnesses
         if (poiTarget != actor && isStealth) {
-            if (actor.marker && actor.marker.inVisionPOIs.Contains(poiTarget) && !actor.marker.CanDoStealthCrimeToTarget(poiTarget, crimeType)) {
+            if (actor.marker && actor.marker.IsPOIInVision(poiTarget) && !actor.marker.CanDoStealthCrimeToTarget(poiTarget, crimeType)) {
                 return true;
             }
         }

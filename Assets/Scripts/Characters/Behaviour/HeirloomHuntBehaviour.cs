@@ -57,7 +57,7 @@ public class HeirloomHuntBehaviour : CharacterBehaviourComponent {
         //    if (heirloomHuntParty.foundHeirloom) {
         //        Character heirloomCarrier = heirloomHuntParty.GetMemberCarryingHeirloom();
         //        if(heirloomCarrier != null) {
-        //            if (character.marker.inVisionCharacters.Contains(heirloomCarrier)) {
+        //            if (character.marker.IsPOIInVision(heirloomCarrier)) {
         //                log += $"\n-Do nothing";
         //                producedJob = null;
         //                return true;

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace Pathfinding {
 	/// <summary>
@@ -49,8 +50,13 @@ namespace Pathfinding {
             p.Setup(start, avoid, searchLength, callback);
 			return p;
 		}
+        public static FleeMultiplePath Construct(Vector3 start, List<Vector3> avoid, int searchLength, OnPathDelegate callback = null) {
+            var p = PathPool.GetPath<FleeMultiplePath>();
 
-		protected void Setup (Vector3 start, Vector3[] avoid, int searchLength, OnPathDelegate callback) {
+            p.Setup(start, avoid, searchLength, callback);
+            return p;
+        }
+        protected void Setup (Vector3 start, Vector3[] avoid, int searchLength, OnPathDelegate callback) {
 			Setup(start, searchLength, callback);
             // Set the aim to a point in the opposite direction from the point we want to avoid
             // TODO: Why is this multiplication by 10 here?
@@ -60,6 +66,22 @@ namespace Pathfinding {
             for (int i = 0; i < avoid.Length; i++) {
                 aim += start - (avoid[i]-start) * 10;
             }
+            Debug.LogWarning("Aim: " + aim);
         }
-	}
+        protected void Setup(Vector3 start, List<Vector3> avoid, int searchLength, OnPathDelegate callback) {
+            Setup(start, searchLength, callback);
+            // Set the aim to a point in the opposite direction from the point we want to avoid
+            // TODO: Why is this multiplication by 10 here?
+            // Might want to remove it
+            //aim = start - (avoid-start)*10;
+            //avoidPoints = avoid;
+            Vector3 avoidCollected = Vector3.zero;
+            for (int i = 0; i < avoid.Count; i++) {
+                avoidCollected += avoid[i];
+            }
+            avoidCollected /= avoid.Count;
+            aim = start - (avoidCollected - start) * 10;
+            Debug.LogWarning("Aim: " + aim);
+        }
+    }
 }

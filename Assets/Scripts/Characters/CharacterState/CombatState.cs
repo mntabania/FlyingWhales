@@ -79,7 +79,7 @@ public class CombatState : CharacterState {
     //        //If character is pursuing the current closest hostile, check if that hostile is in range, if it is, start pursue timer
     //        //&& stateComponent.character.currentParty.icon.isTravelling
     //        if (isAttacking && currentClosestHostile != null && stateComponent.character.marker.targetPOI == currentClosestHostile &&
-    //            stateComponent.character.marker.inVisionPOIs.Contains(currentClosestHostile)) {
+    //            stateComponent.character.marker.IsPOIInVision(currentClosestHostile)) {
     //            StartPursueTimer();
     //        }
     //    }
@@ -305,7 +305,7 @@ public class CombatState : CharacterState {
             //    summary += "\nStill has characters to avoid, checking if those characters are still in range...";
             //    for (int i = 0; i < stateComponent.character.combatComponent.avoidInRange.Count; i++) {
             //        IPointOfInterest currAvoid = stateComponent.character.combatComponent.avoidInRange[i];
-            //        if (!stateComponent.character.marker.inVisionPOIs.Contains(currAvoid) 
+            //        if (!stateComponent.character.marker.IsPOIInVision(currAvoid) 
             //            && !stateComponent.character.marker.visionCollision.poisInRangeButDiffStructure.Contains(currAvoid)) {
             //            //I added checking for poisInRangeButDiffStructure beacuse characters are being removed from the character's avoid range when they exit a structure. (Myk)
             //            OnFinishedFleeingFrom(currAvoid);

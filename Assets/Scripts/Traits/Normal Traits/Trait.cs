@@ -231,7 +231,7 @@ namespace Traits {
                 if (assignedCharacter != null && assignedCharacter.currentActionNode.action != null
                     && assignedCharacter.currentJob != null && assignedCharacter.currentJob == currentJob) {
                     if (assignedCharacter != characterThatWillDoJob) {
-                        canBeTransfered = !assignedCharacter.marker.inVisionPOIs.Contains(assignedCharacter.currentActionNode.poiTarget);
+                        canBeTransfered = !assignedCharacter.marker.IsPOIInVision(assignedCharacter.currentActionNode.poiTarget);
                     }
                 } else {
                     canBeTransfered = true;

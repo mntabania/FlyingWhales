@@ -1030,7 +1030,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             JobQueueItem job = availableJobs[i];
             if (job.assignedCharacter == null && job is GoapPlanJob) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
-                if (goapJob.targetPOI != null && character.marker.inVisionPOIs.Contains(goapJob.targetPOI) &&
+                if (goapJob.targetPOI != null && character.marker.IsPOIInVision(goapJob.targetPOI) &&
                     character.jobQueue.CanJobBeAddedToQueue(job)) {
                     choices.Add(job);
                 }
@@ -1047,7 +1047,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             JobQueueItem job = availableJobs[i];
             if (job.assignedCharacter == null && job is GoapPlanJob) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
-                if (goapJob.targetPOI != null && character.marker.inVisionPOIs.Contains(goapJob.targetPOI) &&
+                if (goapJob.targetPOI != null && character.marker.IsPOIInVision(goapJob.targetPOI) &&
                     character.jobQueue.CanJobBeAddedToQueue(job)) {
                     return job;
                 }
@@ -1059,7 +1059,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
             if (job.assignedCharacter == null && job is GoapPlanJob goapJob && !jobTypes.Contains(goapJob.jobType)) {
-                if (goapJob.targetPOI != null && character.marker.inVisionPOIs.Contains(goapJob.targetPOI) &&
+                if (goapJob.targetPOI != null && character.marker.IsPOIInVision(goapJob.targetPOI) &&
                     character.jobQueue.CanJobBeAddedToQueue(goapJob)) {
                     return goapJob;
                 }

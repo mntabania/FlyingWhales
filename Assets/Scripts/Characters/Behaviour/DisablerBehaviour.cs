@@ -23,7 +23,7 @@ public class DisablerBehaviour : CharacterBehaviourComponent {
         // //if has invader to follow, create job to follow the target
         // if (character.behaviourComponent.invaderToFollow != null) {
         //     if (character.behaviourComponent.canDisable && 
-        //         character.marker.inVisionCharacters.Contains(character.behaviourComponent.invaderToFollow)) {
+        //         character.marker.IsPOIInVision(character.behaviourComponent.invaderToFollow)) {
         //         //can already see target to follow, check if can disable anyone inside vision of follow target
         //         List<Character> targets = GetDisableTargetInVisionOfInvader(character);
         //         if (targets != null) {

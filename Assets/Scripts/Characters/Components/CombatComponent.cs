@@ -160,7 +160,7 @@ public class CombatComponent : CharacterComponent {
             if (combatState.isAttacking) {
                 //Only become in "actual" combat in attacking mode if character is already in vision of the target or if the target is fleeing
                 if(combatState.currentClosestHostile != null) {
-                    if (owner.marker.inVisionPOIs.Contains(combatState.currentClosestHostile)) {
+                    if (owner.marker.IsPOIInVision(combatState.currentClosestHostile)) {
                         return true;
                     } else if (owner.marker.inVisionPOIsButDiffStructure.Contains(combatState.currentClosestHostile)) {
                         return true;
@@ -184,11 +184,11 @@ public class CombatComponent : CharacterComponent {
                 //Only become in "actual" combat in attacking mode if character is already in vision of the target or if the target is fleeing
                 if (combatState.currentClosestHostile != null && combatState.currentClosestHostile == target) {
                     if(combatState.currentClosestHostile is Character hostileCharacter) {
-                        if (owner.marker.inVisionCharacters.Contains(hostileCharacter)) {
+                        if (owner.marker.IsPOIInVision(hostileCharacter)) {
                             return true;
                         }
                     } else if (combatState.currentClosestHostile is TileObject hostileTileObject) {
-                        if (owner.marker.inVisionTileObjects.Contains(hostileTileObject)) {
+                        if (owner.marker.IsPOIInVision(hostileTileObject)) {
                             return true;
                         }
                     }
@@ -443,7 +443,7 @@ public class CombatComponent : CharacterComponent {
         }
         if (!avoidInRange.Contains(target)) {
             string debugLog = $"Triggered FLIGHT response for {owner.name} against {target.nameWithID}";
-            if (owner.marker.inVisionPOIs.Contains(target)) {
+            if (owner.marker.IsPOIInVision(target)) {
                 avoidInRange.Add(target);
                 SetWillProcessCombat(true);
 
@@ -482,7 +482,7 @@ public class CombatComponent : CharacterComponent {
             if (owner.canMove) {
                 for (int i = 0; i < hostilesInRange.Count; i++) {
                     IPointOfInterest hostile = hostilesInRange[i];
-                    if (owner.marker.inVisionPOIs.Contains(hostile)) {
+                    if (owner.marker.IsPOIInVision(hostile)) {
                         avoidInRange.Add(hostile);
 
                         if (combatDataDictionary.ContainsKey(hostile)) {
