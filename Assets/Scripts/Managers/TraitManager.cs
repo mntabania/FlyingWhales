@@ -33,7 +33,6 @@ public class TraitManager : BaseMonoBehaviour {
     public const string Before_Start_Flee = "Before_Start_Flee";
     public const string After_Exiting_Combat = "After_Exiting_Combat";
     public const string Per_Tick_Movement = "Per_Tick_Movement";
-    public const string Become_Faction_Leader = "Become_Faction_Leader";
 
     public static string[] instancedTraitsAndStatuses = new string[] {
         "Restrained", "Injured", "Kleptomaniac", "Lycanthrope", "Vampire",

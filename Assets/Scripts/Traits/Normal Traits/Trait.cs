@@ -186,7 +186,6 @@ namespace Traits {
         public virtual void OnTickStarted(ITraitable traitable) { }
         public virtual void OnTickEnded(ITraitable traitable) { }
         public virtual void OnHourStarted(ITraitable traitable) { }
-        public virtual void OnBecomeFactionLeader(Character leader, Faction faction) { }
         public virtual string GetNameInUI(ITraitable traitable) {
             return name;
         }

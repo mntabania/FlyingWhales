@@ -2767,6 +2767,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
                 traitContainer.AddTrait(this, chosenTrait);
             }
+
+            // if (GameUtilities.RollChance(50)) {
+            //     traitContainer.AddTrait(this, GameUtilities.RollChance(50) ? "Hemophiliac" : "Hemophobic");
+            // } else {
+            //     traitContainer.AddTrait(this, GameUtilities.RollChance(50) ? "Lycanphiliac" : "Lycanphobic");
+            // }
         }
     }
     public void AddTraitNeededToBeRemoved(Trait trait) {

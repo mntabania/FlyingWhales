@@ -83,6 +83,9 @@ public class MapGenerator : MonoBehaviour {
                 Faction faction = FactionManager.Instance.allFactions[i];
                 if (faction.isMajorNonPlayer) {
                     faction.DesignateNewLeader(false);
+                    if (faction.leader is Character leader) {
+                        FactionManager.Instance.RerollFactionLeaderTraitIdeology(faction, leader);    
+                    }
                     faction.GenerateInitialOpinionBetweenMembers();
                 }
             }
@@ -184,6 +187,9 @@ public class MapGenerator : MonoBehaviour {
                 Faction faction = FactionManager.Instance.allFactions[i];
                 if (faction.isMajorNonPlayer) {
                     faction.DesignateNewLeader(false);
+                    if (faction.leader is Character leader) {
+                        FactionManager.Instance.RerollFactionLeaderTraitIdeology(faction, leader);    
+                    }
                     faction.GenerateInitialOpinionBetweenMembers();
                 }
             }

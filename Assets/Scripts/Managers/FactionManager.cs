@@ -473,13 +473,11 @@ public class FactionManager : BaseMonoBehaviour {
         } else if (leader.traitContainer.HasTrait("Hemophobic")) {
             shouldHateVampires = true;
         }
-        //TODO: If Desires Lycanthrope, 50% chance to add Reveres Werewolves
-        //if (leader.traitContainer.HasTrait("Lycanthrope")) {
-        //Lycanthrope lycanthrope = leader.traitContainer.GetTraitOrStatus<Lycanthrope>("Lycanthrope");
-        //if (!lycanthrope.dislikedBeingVampire && GameUtilities.RollChance(50)) {
-        //    shouldRevereWerewolves = true;
-        //}
-        //}
+        if (leader.traitContainer.HasTrait("Lycanthrope")) {
+            if (!leader.lycanData.dislikesBeingLycan && GameUtilities.RollChance(50)) {
+                shouldRevereWerewolves = true;
+            }
+        }
         if (leader.traitContainer.HasTrait("Lycanphiliac")) {
             shouldRevereWerewolves = true;
         } else if (leader.traitContainer.HasTrait("Lycanphobic")) {
