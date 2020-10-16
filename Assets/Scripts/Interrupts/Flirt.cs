@@ -29,8 +29,8 @@ namespace Interrupts {
 
                     if (witness.traitContainer.HasTrait("Hemophobic")) {
                         bool isKnownVampire = false;
-                        Hemophobic hemophobic = witness.traitContainer.GetTraitOrStatus<Hemophobic>("Hemophobic");
-                        isKnownVampire = hemophobic != null && hemophobic.IsVampireKnown(actor);
+                        Vampire vampire = actor.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                        isKnownVampire = vampire != null && vampire.DoesCharacterKnowThisVampire(witness);
                         if (isKnownVampire) {
                             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
                         }

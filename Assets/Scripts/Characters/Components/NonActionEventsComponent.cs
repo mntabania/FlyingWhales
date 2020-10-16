@@ -242,16 +242,16 @@ public class NonActionEventsComponent : CharacterComponent {
         //Vampire
         if (disguisedActor.traitContainer.HasTrait("Hemophobic")) {
             bool isKnownVampire = false;
-            Hemophobic hemophobic = disguisedActor.traitContainer.GetTraitOrStatus<Hemophobic>("Hemophobic");
-            isKnownVampire = hemophobic != null && hemophobic.IsVampireKnown(disguisedTarget);
+            Vampire vampire = disguisedTarget.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+            isKnownVampire = vampire != null && vampire.DoesCharacterKnowThisVampire(disguisedActor);
             if (isKnownVampire) {
                 chatWeights.AddWeightToElement(Warm_Chat, -50);
                 chatWeights.AddWeightToElement(Insult, 50);
             }
         } else if (disguisedActor.traitContainer.HasTrait("Hemophiliac")) {
             bool isKnownVampire = false;
-            Hemophiliac hemophiliac = disguisedActor.traitContainer.GetTraitOrStatus<Hemophiliac>("Hemophiliac");
-            isKnownVampire = hemophiliac != null && hemophiliac.IsVampireKnown(disguisedTarget);
+            Vampire vampire = disguisedTarget.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+            isKnownVampire = vampire != null && vampire.DoesCharacterKnowThisVampire(disguisedActor);
             if (isKnownVampire) {
                 chatWeights.AddWeightToElement(Warm_Chat, 50);
                 chatWeights.AddWeightToElement(Praise, 50);
@@ -259,15 +259,15 @@ public class NonActionEventsComponent : CharacterComponent {
         }
         if (disguisedTarget.traitContainer.HasTrait("Hemophobic")) {
             bool isKnownVampire = false;
-            Hemophobic hemophobic = disguisedTarget.traitContainer.GetTraitOrStatus<Hemophobic>("Hemophobic");
-            isKnownVampire = hemophobic != null && hemophobic.IsVampireKnown(disguisedActor);
+            Vampire vampire = disguisedActor.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+            isKnownVampire = vampire != null && vampire.DoesCharacterKnowThisVampire(disguisedTarget);
             if (isKnownVampire) {
                 chatWeights.AddWeightToElement(Warm_Chat, -50);
             }
         } else if (disguisedTarget.traitContainer.HasTrait("Hemophiliac")) {
             bool isKnownVampire = false;
-            Hemophiliac hemophiliac = disguisedTarget.traitContainer.GetTraitOrStatus<Hemophiliac>("Hemophiliac");
-            isKnownVampire = hemophiliac != null && hemophiliac.IsVampireKnown(disguisedActor);
+            Vampire vampire = disguisedActor.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+            isKnownVampire = vampire != null && vampire.DoesCharacterKnowThisVampire(disguisedTarget);
             if (isKnownVampire) {
                 chatWeights.AddWeightToElement(Warm_Chat, 50);
             }
@@ -478,8 +478,8 @@ public class NonActionEventsComponent : CharacterComponent {
         }
         if (disguisedTarget.traitContainer.HasTrait("Hemophobic")) {
             bool isKnownVampire = false;
-            Hemophobic hemophobic = disguisedTarget.traitContainer.GetTraitOrStatus<Hemophobic>("Hemophobic");
-            isKnownVampire = hemophobic != null && hemophobic.IsVampireKnown(disguisedActor);
+            Vampire vampire = disguisedActor.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+            isKnownVampire = vampire != null && vampire.DoesCharacterKnowThisVampire(disguisedTarget);
             if (isKnownVampire) {
                 owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Rebuffed courtship", -8, "engaged in disastrous flirting");
                 target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", -12, "engaged in disastrous flirting");
