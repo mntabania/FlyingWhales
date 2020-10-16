@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UtilityScripts;
 
 [System.Serializable]
 public class OpinionData {
@@ -22,25 +23,29 @@ public class OpinionData {
     }
     
     public void RandomizeBaseOpinionBasedOnCompatibility() {
-        switch (compatibilityValue) {
-            case 0:
-                SetOpinion("Base", Random.Range(-100, 11));
-                break;
-            case 1:
-                SetOpinion("Base", Random.Range(-50, 21));
-                break;
-            case 2:
-                SetOpinion("Base", Random.Range(-20, 21));
-                break;
-            case 3:
-                SetOpinion("Base", Random.Range(0, 51));
-                break;
-            case 4:
-                SetOpinion("Base", Random.Range(20, 71));
-                break;
-            case 5:
-                SetOpinion("Base", Random.Range(50, 100));
-                break;
+        if (GameUtilities.RollChance(35)) {
+            switch (compatibilityValue) {
+                case 0:
+                    SetOpinion("Base", Random.Range(-100, 11));
+                    break;
+                case 1:
+                    SetOpinion("Base", Random.Range(-50, 21));
+                    break;
+                case 2:
+                    SetOpinion("Base", Random.Range(-20, 21));
+                    break;
+                case 3:
+                    SetOpinion("Base", Random.Range(0, 51));
+                    break;
+                case 4:
+                    SetOpinion("Base", Random.Range(20, 71));
+                    break;
+                case 5:
+                    SetOpinion("Base", Random.Range(50, 101));
+                    break;
+            }    
+        } else {
+            SetOpinion("Base", Random.Range(-10, 31));
         }
     }
     
