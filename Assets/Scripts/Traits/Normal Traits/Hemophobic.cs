@@ -32,6 +32,10 @@ namespace Traits {
                 _owner.relationshipContainer.BreakUp(_owner, vampire, "is a Vampire");
             }
         }
+
+        public bool IsVampireKnown(Character character) {
+            return _knownVampires.Contains(character);
+        }
         
         #region Override
         public override void OnAddTrait(ITraitable addedTo) {

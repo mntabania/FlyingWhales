@@ -238,7 +238,76 @@ public class NonActionEventsComponent : CharacterComponent {
             chatWeights.AddWeightToElement(Argument, 50);
             strLog += "\n\nTarget is angry with actor";
         }
-        
+
+        //Vampire
+        if (disguisedActor.traitContainer.HasTrait("Hemophobic")) {
+            bool isKnownVampire = false;
+            Hemophobic hemophobic = disguisedActor.traitContainer.GetTraitOrStatus<Hemophobic>("Hemophobic");
+            isKnownVampire = hemophobic != null && hemophobic.IsVampireKnown(disguisedTarget);
+            if (isKnownVampire) {
+                chatWeights.AddWeightToElement(Warm_Chat, -50);
+                chatWeights.AddWeightToElement(Insult, 50);
+            }
+        } else if (disguisedActor.traitContainer.HasTrait("Hemophiliac")) {
+            bool isKnownVampire = false;
+            Hemophiliac hemophiliac = disguisedActor.traitContainer.GetTraitOrStatus<Hemophiliac>("Hemophiliac");
+            isKnownVampire = hemophiliac != null && hemophiliac.IsVampireKnown(disguisedTarget);
+            if (isKnownVampire) {
+                chatWeights.AddWeightToElement(Warm_Chat, 50);
+                chatWeights.AddWeightToElement(Praise, 50);
+            }
+        }
+        if (disguisedTarget.traitContainer.HasTrait("Hemophobic")) {
+            bool isKnownVampire = false;
+            Hemophobic hemophobic = disguisedTarget.traitContainer.GetTraitOrStatus<Hemophobic>("Hemophobic");
+            isKnownVampire = hemophobic != null && hemophobic.IsVampireKnown(disguisedActor);
+            if (isKnownVampire) {
+                chatWeights.AddWeightToElement(Warm_Chat, -50);
+            }
+        } else if (disguisedTarget.traitContainer.HasTrait("Hemophiliac")) {
+            bool isKnownVampire = false;
+            Hemophiliac hemophiliac = disguisedTarget.traitContainer.GetTraitOrStatus<Hemophiliac>("Hemophiliac");
+            isKnownVampire = hemophiliac != null && hemophiliac.IsVampireKnown(disguisedActor);
+            if (isKnownVampire) {
+                chatWeights.AddWeightToElement(Warm_Chat, 50);
+            }
+        }
+
+        //Lycanthrope
+        //TODO:
+        //if (disguisedActor.traitContainer.HasTrait("Lycanphobic")) {
+        //    bool isKnownWerewolf = false;
+        //    Lycanphobic lycanphobic = disguisedActor.traitContainer.GetTraitOrStatus<Lycanphobic>("Lycanphobic");
+        //    isKnownWerewolf = lycanphobic != null && lycanphobic.IsWerewolfKnown(disguisedTarget);
+        //    if (isKnownWerewolf) {
+        //        chatWeights.AddWeightToElement(Warm_Chat, -50);
+        //        chatWeights.AddWeightToElement(Insult, 50);
+        //    }
+        //} else if (disguisedActor.traitContainer.HasTrait("Lycanphiliac")) {
+        //    bool isKnownWerewolf = false;
+        //    Lycanphiliac lycanphiliac = disguisedActor.traitContainer.GetTraitOrStatus<Lycanphiliac>("Lycanphiliac");
+        //    isKnownWerewolf = lycanphiliac != null && lycanphiliac.IsWerewolfKnown(disguisedTarget);
+        //    if (isKnownWerewolf) {
+        //        chatWeights.AddWeightToElement(Warm_Chat, 50);
+        //        chatWeights.AddWeightToElement(Praise, 50);
+        //    }
+        //}
+        //if (disguisedTarget.traitContainer.HasTrait("Lycanphobic")) {
+        //    bool isKnownWerewolf = false;
+        //    Lycanphobic lycanphobic = disguisedTarget.traitContainer.GetTraitOrStatus<Lycanphobic>("Lycanphobic");
+        //    isKnownWerewolf = lycanphobic != null && lycanphobic.IsWerewolfKnown(disguisedActor);
+        //    if (isKnownWerewolf) {
+        //        chatWeights.AddWeightToElement(Warm_Chat, -50);
+        //    }
+        //} else if (disguisedTarget.traitContainer.HasTrait("Lycanphiliac")) {
+        //    bool isKnownWerewolf = false;
+        //    Lycanphiliac lycanphiliac = disguisedTarget.traitContainer.GetTraitOrStatus<Lycanphiliac>("Lycanphiliac");
+        //    isKnownWerewolf = lycanphiliac != null && lycanphiliac.IsWerewolfKnown(disguisedActor);
+        //    if (isKnownWerewolf) {
+        //        chatWeights.AddWeightToElement(Warm_Chat, 50);
+        //    }
+        //}
+
         if (disguisedActor.traitContainer.HasTrait("Hero") || disguisedTarget.traitContainer.HasTrait("Hero")) {
             chatWeights.RemoveElement(Argument);
             strLog += "\n\nActor or target is Hero, removing argument weight...";
@@ -248,80 +317,63 @@ public class NonActionEventsComponent : CharacterComponent {
         strLog += $"\n\n{chatWeights.GetWeightsSummary("FINAL WEIGHTS")}";
 
         string result = chatWeights.PickRandomElementGivenWeights();
-        strLog += $"\nResult: {result}";
+        if (!string.IsNullOrEmpty(result)) {
+            strLog += $"\nResult: {result}";
 
-        //if (owner.traitContainer.HasTrait("Plagued") && !target.traitContainer.HasTrait("Plagued")) {
-        //    strLog += "\n\nCharacter has Plague, 25% chance to infect the Target";
-        //    int roll = UnityEngine.Random.Range(0, 100);
-        //    strLog += $"\nRoll: {roll}";
-        //    if (roll < 35) {
-        //        target.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, target);
-        //        // target.traitContainer.AddTrait(target, "Plagued", owner);
-        //    }
-        //} else if (!owner.traitContainer.HasTrait("Plagued") && target.traitContainer.HasTrait("Plagued")) {
-        //    strLog += "\n\nTarget has Plague, 25% chance to infect the Character";
-        //    int roll = UnityEngine.Random.Range(0, 100);
-        //    strLog += $"\nRoll: {roll}";
-        //    if (roll < 35) {
-        //        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, owner);
-        //        // owner.traitContainer.AddTrait(owner, "Plagued", target);
-        //    }
-        //}
-        
-        owner.logComponent.PrintLogIfActive(strLog);
+            owner.logComponent.PrintLogIfActive(strLog);
 
-        bool adjustOpinionBothSides = false;
-        int opinionValue = 0;
+            bool adjustOpinionBothSides = false;
+            int opinionValue = 0;
 
-        if(result == Warm_Chat) {
-            opinionValue = 6;
-            adjustOpinionBothSides = true;
-        } else if (result == Awkward_Chat) {
-            opinionValue = -3;
-            adjustOpinionBothSides = true;
-        } else if (result == Argument) {
-            opinionValue = -5;
-            adjustOpinionBothSides = true;
-        } else if (result == Insult) {
-            opinionValue = -6;
-        } else if (result == Praise) {
-            opinionValue = 6;
+            if (result == Warm_Chat) {
+                opinionValue = 6;
+                adjustOpinionBothSides = true;
+            } else if (result == Awkward_Chat) {
+                opinionValue = -3;
+                adjustOpinionBothSides = true;
+            } else if (result == Argument) {
+                opinionValue = -5;
+                adjustOpinionBothSides = true;
+            } else if (result == Insult) {
+                opinionValue = -6;
+            } else if (result == Praise) {
+                opinionValue = 6;
+            }
+
+            if (adjustOpinionBothSides) {
+                owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Conversations", opinionValue, "engaged in disastrous conversation");
+                target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", opinionValue, "engaged in disastrous conversation");
+            } else {
+                //If adjustment of opinion is not on both sides, this must mean that the result is either Insult or Praise, so adjust opinion of target to actor
+                target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", opinionValue);
+            }
+
+            GameDate dueDate = GameManager.Instance.Today();
+            overrideLog = GameManager.CreateNewLog(dueDate, "Interrupt", "Chat", result, providedTags: LOG_TAG.Social);
+            overrideLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            overrideLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            //owner.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            owner.SetIsConversing(true);
+            target.SetIsConversing(true);
+
+            Traits.Plagued ownerPlague = null;
+            Traits.Plagued targetPlague = null;
+            if (owner.traitContainer.HasTrait("Plagued")) {
+                ownerPlague = owner.traitContainer.GetTraitOrStatus<Traits.Plagued>("Plagued");
+            }
+            if (target.traitContainer.HasTrait("Plagued")) {
+                targetPlague = target.traitContainer.GetTraitOrStatus<Traits.Plagued>("Plagued");
+            }
+            if (ownerPlague != null && targetPlague == null) {
+                ownerPlague.ChatInfection(target);
+            }
+            if (targetPlague != null && ownerPlague == null) {
+                targetPlague.ChatInfection(owner);
+            }
+            dueDate.AddTicks(2);
+            SchedulingManager.Instance.AddEntry(dueDate, () => owner.SetIsConversing(false), owner);
+            SchedulingManager.Instance.AddEntry(dueDate, () => target.SetIsConversing(false), target);
         }
-
-        if (adjustOpinionBothSides) {
-            owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Conversations", opinionValue, "engaged in disastrous conversation");
-            target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", opinionValue, "engaged in disastrous conversation");
-        } else {
-            //If adjustment of opinion is not on both sides, this must mean that the result is either Insult or Praise, so adjust opinion of target to actor
-            target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", opinionValue);
-        }
-
-        GameDate dueDate = GameManager.Instance.Today();
-        overrideLog = GameManager.CreateNewLog(dueDate, "Interrupt", "Chat", result, providedTags: LOG_TAG.Social);
-        overrideLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        overrideLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        //owner.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
-        owner.SetIsConversing(true);
-        target.SetIsConversing(true);
-
-        Traits.Plagued ownerPlague = null;
-        Traits.Plagued targetPlague = null;
-        if (owner.traitContainer.HasTrait("Plagued")) {
-            ownerPlague = owner.traitContainer.GetTraitOrStatus<Traits.Plagued>("Plagued");
-        }
-        if (target.traitContainer.HasTrait("Plagued")) {
-            targetPlague = target.traitContainer.GetTraitOrStatus<Traits.Plagued>("Plagued");
-        }
-        if (ownerPlague != null && targetPlague == null) {
-            ownerPlague.ChatInfection(target);
-        }
-        if (targetPlague != null && ownerPlague == null) {
-            targetPlague.ChatInfection(owner);
-        }
-        dueDate.AddTicks(2);
-        SchedulingManager.Instance.AddEntry(dueDate, () => owner.SetIsConversing(false), owner);
-        SchedulingManager.Instance.AddEntry(dueDate, () => target.SetIsConversing(false), target);
-
     }
     public void SetLastConversationDate(GameDate date) {
         lastConversationDate = date;
@@ -411,11 +463,6 @@ public class NonActionEventsComponent : CharacterComponent {
             disguisedTarget = target.reactionComponent.disguisedCharacter;
         }
         
-        if (!disguisedTarget.isSociable) {
-            owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Rebuffed courtship", -8, "engaged in disastrous flirting");
-            target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", -12, "engaged in disastrous flirting");
-            return "unsociable";
-        }
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < 50) {
             if (disguisedActor.traitContainer.HasTrait("Unattractive")) {
@@ -424,7 +471,33 @@ public class NonActionEventsComponent : CharacterComponent {
                 return "ugly";
             }
         }
-        if(chance < 70) {
+        if (!disguisedTarget.isSociable) {
+            owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Rebuffed courtship", -8, "engaged in disastrous flirting");
+            target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", -12, "engaged in disastrous flirting");
+            return "unsociable";
+        }
+        if (disguisedTarget.traitContainer.HasTrait("Hemophobic")) {
+            bool isKnownVampire = false;
+            Hemophobic hemophobic = disguisedTarget.traitContainer.GetTraitOrStatus<Hemophobic>("Hemophobic");
+            isKnownVampire = hemophobic != null && hemophobic.IsVampireKnown(disguisedActor);
+            if (isKnownVampire) {
+                owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Rebuffed courtship", -8, "engaged in disastrous flirting");
+                target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", -12, "engaged in disastrous flirting");
+                return "vampire";
+            }
+        }
+        //TODO: Lycanphobic
+        //if (disguisedTarget.traitContainer.HasTrait("Lycanphobic")) {
+        //    bool isKnownWerewolf = false;
+        //    Lycanphobic lycanphobic = disguisedTarget.traitContainer.GetTraitOrStatus<Lycanphobic>("Lycanphobic");
+        //    isKnownWerewolf = lycanphobic != null && lycanphobic.IsWerewolfKnown(disguisedActor);
+        //    if (isKnownWerewolf) {
+        //        owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Rebuffed courtship", -8, "engaged in disastrous flirting");
+        //        target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", -12, "engaged in disastrous flirting");
+        //        return "werewolf";
+        //    }
+        //}
+        if (chance < 70) {
             Trait angry = disguisedTarget.traitContainer.GetTraitOrStatus<Trait>("Angry");
             if (angry?.responsibleCharacters != null && angry.responsibleCharacters.Contains(disguisedActor)) {
                 //target is angry at actor

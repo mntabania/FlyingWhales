@@ -1356,22 +1356,25 @@ namespace UtilityScripts {
         }
         public static T PickRandomElementWithWeights<T>(Dictionary<T, int> weights) {
             int totalOfAllWeights = GetTotalOfWeights(weights);
-            int chance = Rng.Next(0, totalOfAllWeights);
-            int upperBound = 0;
-            int lowerBound = 0;
-            foreach (KeyValuePair<T, int> kvp in weights) {
-                T currElementType = kvp.Key;
-                int weightOfCurrElement = kvp.Value;
-                if (weightOfCurrElement <= 0) {
-                    continue;
+            if(totalOfAllWeights > 0) {
+                int chance = Rng.Next(0, totalOfAllWeights);
+                int upperBound = 0;
+                int lowerBound = 0;
+                foreach (KeyValuePair<T, int> kvp in weights) {
+                    T currElementType = kvp.Key;
+                    int weightOfCurrElement = kvp.Value;
+                    if (weightOfCurrElement <= 0) {
+                        continue;
+                    }
+                    upperBound += weightOfCurrElement;
+                    if (chance >= lowerBound && chance < upperBound) {
+                        return currElementType;
+                    }
+                    lowerBound = upperBound;
                 }
-                upperBound += weightOfCurrElement;
-                if (chance >= lowerBound && chance < upperBound) {
-                    return currElementType;
-                }
-                lowerBound = upperBound;
             }
-            throw new Exception("Could not pick element in weights");
+            return default;
+            //throw new Exception("Could not pick element in weights");
         }
         public static T PickRandomElementWithWeights<T>(Dictionary<T, float> weights) {
             float totalOfAllWeights = GetTotalOfWeights(weights);
@@ -1407,6 +1410,10 @@ namespace UtilityScripts {
                 foreach (KeyValuePair<T, int> pair in kvp.Value) {
                     T otherElement = pair.Key;
                     int weightOfOtherElement = pair.Value;
+                    if(weightOfOtherElement < 0) {
+                        //Skip negative values
+                        continue;
+                    }
                     upperBound += weightOfOtherElement;
                     if (chance >= lowerBound && chance < upperBound) {
                         return new T[] { currElementType, otherElement };
@@ -1420,18 +1427,24 @@ namespace UtilityScripts {
             int totalOfAllWeights = 0;
             foreach (KeyValuePair<T, Dictionary<T, int>> kvp in weights) {
                 foreach (KeyValuePair<T, int> pair in kvp.Value) {
-                    totalOfAllWeights += pair.Value;
+                    if(pair.Value > 0) {
+                        totalOfAllWeights += pair.Value;
+                    }
                 }
             }
             return totalOfAllWeights;
         }
         public static int GetTotalOfWeights<T>(Dictionary<T, int> weights) {
-            return weights.Sum(x => x.Value);
+            //Must ignore negative values for getting total weight
+            //Because for example if: A -> -50, and B -> 20, if you get the total, the answer will be negative, this will break the weight system since the random generation is from 0 - total weight
+            return weights.Where(x => x.Value > 0).Sum(x => x.Value);
         }
         public static float GetTotalOfWeights<T>(Dictionary<T, float> weights) {
             float totalOfAllWeights = 0f;
             foreach (float weight in weights.Values) {
-                totalOfAllWeights += weight;
+                if(weight > 0) {
+                    totalOfAllWeights += weight;
+                }
             }
             return totalOfAllWeights;
         }
