@@ -166,7 +166,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool canTakeJobs => canTakeJobsValue >= 0;
     public bool isSociable => sociableValue >= 0;
     public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
-    public bool isLycanthrope => isLycanthrope;
+    public bool isLycanthrope => lycanData != null;
     /// <summary>
     /// Is this character a normal character?
     /// Characters that are not monsters or minions.
