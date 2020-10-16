@@ -456,6 +456,46 @@ public class FactionManager : BaseMonoBehaviour {
             faction.factionType.AddIdeology(divineWorship);
         }
     }
+    public void RerollFactionLeaderTraitIdeology(Faction faction, Character leader) {
+        bool shouldRevereVampires = false;
+        bool shouldRevereWerewolves = false;
+        bool shouldHateVampires = false;
+        bool shouldHateWerewolves = false;
+
+        if (leader.traitContainer.HasTrait("Vampire")) {
+            Vampire vampire = leader.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+            if(!vampire.dislikedBeingVampire && GameUtilities.RollChance(50)) {
+                shouldRevereVampires = true;
+            }
+        }
+        if (leader.traitContainer.HasTrait("Hemophiliac")) {
+            shouldRevereVampires = true;
+        } else if (leader.traitContainer.HasTrait("Hemophobic")) {
+            shouldHateVampires = true;
+        }
+        //TODO: If Desires Lycanthrope, 50% chance to add Reveres Werewolves
+        //if (leader.traitContainer.HasTrait("Lycanthrope")) {
+        //Lycanthrope lycanthrope = leader.traitContainer.GetTraitOrStatus<Lycanthrope>("Lycanthrope");
+        //if (!lycanthrope.dislikedBeingVampire && GameUtilities.RollChance(50)) {
+        //    shouldRevereWerewolves = true;
+        //}
+        //}
+        if (leader.traitContainer.HasTrait("Lycanphiliac")) {
+            shouldRevereWerewolves = true;
+        } else if (leader.traitContainer.HasTrait("Lycanphobic")) {
+            shouldHateWerewolves = true;
+        }
+        if (shouldRevereVampires) {
+            faction.factionType.AddIdeology(FACTION_IDEOLOGY.Reveres_Vampires);
+        } else if (shouldHateVampires) {
+            faction.factionType.AddIdeology(FACTION_IDEOLOGY.Hates_Vampires);
+        }
+        if (shouldRevereWerewolves) {
+            faction.factionType.AddIdeology(FACTION_IDEOLOGY.Reveres_Werewolves);
+        } else if (shouldHateWerewolves) {
+            faction.factionType.AddIdeology(FACTION_IDEOLOGY.Hates_Werewolves);
+        }
+    }
     public void RevalidateFactionCrimes(Faction faction, Character leader) {
         if (leader.traitContainer.HasTrait("Vampire")) {
             faction.factionType.RemoveCrime(CRIME_TYPE.Vampire);

@@ -125,12 +125,10 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         if (bypassIdeologyChecking || ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
             Faction prevFaction = character.prevFaction;
             if (AddCharacter(character)) {
-                //Once a character joins a non major faction and the previous faction is the owner of the home settlement, leave the settlement also
+                //Once a character joins any faction and the previous faction is the owner of the home settlement, leave the settlement also
                 //Reason: One village = One faction, no other faction can co exist in a village, for simplification
                 if (character.homeSettlement != null && character.homeSettlement.owner != null && character.homeSettlement.owner == prevFaction) {
-                    if (!isMajorNonPlayer) {
-                        character.MigrateHomeStructureTo(null);
-                    }
+                    character.MigrateHomeStructureTo(null);
                 }
 
                 if (broadcastSignal) {

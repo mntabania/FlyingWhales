@@ -47,14 +47,19 @@ namespace Factions.Faction_Types {
 
         #region Ideologies
         public void AddIdeology(FACTION_IDEOLOGY ideology) {
-            FactionIdeology factionIdeology = FactionManager.Instance.CreateIdeology<FactionIdeology>(ideology);
-            AddIdeology(factionIdeology);
+            if (!HasIdeology(ideology)) {
+                FactionIdeology factionIdeology = FactionManager.Instance.CreateIdeology<FactionIdeology>(ideology);
+                AddIdeologyBase(factionIdeology);
+            }
         }
         public void AddIdeology(FactionIdeology ideology) {
             if (!HasIdeology(ideology.ideologyType)) {
-                ideologies.Add(ideology);
-                ideology.OnAddIdeology(this);
+                AddIdeologyBase(ideology);
             }
+        }
+        private void AddIdeologyBase(FactionIdeology ideology) {
+            ideologies.Add(ideology);
+            ideology.OnAddIdeology(this);
         }
         public void RemoveIdeology(FACTION_IDEOLOGY ideology) {
             if (HasIdeology(ideology, out var factionIdeology)) {

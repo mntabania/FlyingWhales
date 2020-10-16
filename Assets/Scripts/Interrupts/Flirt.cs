@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Logs;
 using UnityEngine;
+using Traits;
 
 namespace Interrupts {
     public class Flirt : Interrupt {
@@ -25,6 +26,24 @@ namespace Interrupts {
                 if (target != witness) {
                     bool isActorLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
                     bool isTargetLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
+
+                    if (witness.traitContainer.HasTrait("Hemophobic")) {
+                        bool isKnownVampire = false;
+                        Vampire vampire = actor.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                        isKnownVampire = vampire != null && vampire.DoesCharacterKnowThisVampire(witness);
+                        if (isKnownVampire) {
+                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
+                        }
+                    }
+                    //TODO: Lycanphobic
+                    //if (witness.traitContainer.HasTrait("Lycanphobic")) {
+                    //    bool isKnownWerewolf = false;
+                    //    Lycanphobic lycanphobic = witness.traitContainer.GetTraitOrStatus<Lycanphobic>("Lycanphobic");
+                    //    isKnownWerewolf = lycanphobic != null && lycanphobic.IsWerewolfKnown(actor);
+                    //    if (isKnownWerewolf) {
+                    //        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
+                    //    }
+                    //}
 
                     if (isActorLoverOrAffairOfWitness) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status);

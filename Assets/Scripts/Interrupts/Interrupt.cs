@@ -16,6 +16,7 @@ namespace Interrupts {
         public bool isIntel { get; protected set; }
         public bool shouldAddLogs { get; protected set; } //Does this interrupt add logs to the involved characters
         public bool shouldShowNotif { get; protected set; }
+        public bool shouldEndOnSeize { get; protected set; }
         public LOG_TAG[] logTags { get; protected set; }
 
         protected Interrupt(INTERRUPT type) {
@@ -30,6 +31,10 @@ namespace Interrupts {
         #region Virtuals
         public virtual bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) { return false; }
         public virtual bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) { return false; }
+        public virtual bool OnForceEndInterrupt(InterruptHolder interruptHolder) { return false; }
+
+        //PerTickInterrupt does not trigger on the last tick of the interrupt because ExecuteInterruptEndEffect is triggered
+        public virtual bool PerTickInterrupt(InterruptHolder interruptHolder) { return false; }
 
         public virtual string ReactionToActor(Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) { return string.Empty; }
         public virtual string ReactionToTarget(Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) { return string.Empty; }

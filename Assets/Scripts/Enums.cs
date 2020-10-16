@@ -494,7 +494,8 @@ public enum INTERACTION_TYPE {
     REMOVE_ENSNARED = 198,
     VAMPIRIC_EMBRACE = 199,
     BUILD_VAMPIRE_CASTLE = 200,
-    IS_VAMPIRE = 201,
+    BURN_AT_STAKE = 201,
+    IS_VAMPIRE = 202,
 }
 public enum INTERRUPT {
     None,
@@ -560,7 +561,8 @@ public enum INTERRUPT {
     Noise_Wake_Up,
     Transform_To_Bat,
     Revert_From_Bat,
-    Become_Vampire_Lord
+    Become_Vampire_Lord,
+    Burning_At_Stake,
 }
 
 public enum TRAIT_TYPE {
@@ -889,7 +891,7 @@ public enum CHARACTER_STATE { NONE, PATROL, HUNT, STROLL, BERSERKED, STROLL_OUTS
     TEND_FARM
 }
 public enum CRIME_SEVERITY { Unapplicable, None, Infraction, Misdemeanor, Serious, Heinous, }
-public enum CRIME_STATUS { Unpunished, Punished, Exiled, Absolved, Executed }
+public enum CRIME_STATUS { Unpunished, Punished, Exiled, Absolved, Executed, Burned_At_Stake, }
 public enum CRIME_TYPE { Unset, None, Infidelity, Disturbances, Rumormongering, Kidnapping, Theft, Assault, Attempted_Murder, Murder, Arson, Demon_Worship, Divine_Worship, Nature_Worship,
     Aberration, Cannibalism, Plagued, Animal_Killing, Vampire, Werewolf, Treason, Trespassing, }
 public enum CHARACTER_MOOD {

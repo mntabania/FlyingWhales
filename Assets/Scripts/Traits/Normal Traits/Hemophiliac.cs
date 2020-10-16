@@ -30,6 +30,9 @@ namespace Traits {
                 _owner.relationshipContainer.AdjustOpinion(_owner, vampire, "Hemophiliac", 30);
             }
         }
+        public bool IsVampireKnown(Character character) {
+            return _knownVampires.Contains(character);
+        }
 
         #region Override
         public override void OnAddTrait(ITraitable addedTo) {

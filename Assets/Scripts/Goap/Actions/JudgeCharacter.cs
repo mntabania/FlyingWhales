@@ -4,6 +4,9 @@ using System.Linq;
 using Logs;
 using UnityEngine;  
 using Traits;
+using Inner_Maps.Location_Structures;
+using Inner_Maps;
+using UtilityScripts;
 
 public class JudgeCharacter : GoapAction {
 
@@ -78,20 +81,6 @@ public class JudgeCharacter : GoapAction {
                 absolve = Mathf.RoundToInt(absolve * 1.5f);
                 whip = Mathf.RoundToInt(whip * 1.5f);
                 debugLog += "\n-Same Faction: absolve = x1.5, whip = x1.5, kill = x1, exile = x1";
-            } else {
-                if (factionRelationship != null && factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Neutral) {
-                    absolve = Mathf.RoundToInt(absolve * 0.5f);
-                    whip = Mathf.RoundToInt(whip * 0.5f);
-                    kill = Mathf.RoundToInt(kill * 2f);
-                    exile *= 2;
-                    debugLog += "\n-Cold War Faction: absolve = x0.5, whip = x0.5, kill = x1.5, exile = x2";
-                } else if (factionRelationship != null && factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile) {
-                    absolve = Mathf.RoundToInt(absolve * 0.2f);
-                    whip = Mathf.RoundToInt(whip * 0.5f);
-                    kill *= 3;
-                    exile *= 0;
-                    debugLog += "\n-Hostile Faction: absolve = x0.2, whip = x0.5, kill = x2, exile = x1.5";
-                }
             }
 
             if (opinionLabel == RelationshipManager.Close_Friend) {
@@ -99,7 +88,7 @@ public class JudgeCharacter : GoapAction {
                 whip *= 2;
                 kill *= 0;
                 exile = Mathf.RoundToInt(exile * 0.5f);
-                debugLog += "\n-Close Friend: absolve = x3, whip = x2, kill = x0, exile = x0.2";
+                debugLog += "\n-Close Friend: absolve = x3, whip = x2, kill = x0, exile = x0.5";
             } else if (opinionLabel == RelationshipManager.Friend) {
                 absolve *= 2;
                 whip *= 2;
@@ -120,19 +109,19 @@ public class JudgeCharacter : GoapAction {
                 debugLog += "\n-Rival: absolve = x0, whip = x0.5, kill = x3, exile = x1.5";
             }
 
-            if (crimeData.crimeType == CRIME_TYPE.Vampire) {
+            if(crimeData.crimeType == CRIME_TYPE.Vampire) {
                 if (actor.traitContainer.HasTrait("Hemophobic")) {
                     absolve *= 0;
                     whip *= 0;
                     kill *= 2;
                     exile *= 1;
-                    debugLog += "\n-Hemophobic: absolve: x0, whip: x0, kill: x2, exile: x1";
+                    debugLog += "\n-Vampire prisoner, Hemophobic: absolve = x0, whip = x0, kill = x2, exile = x1";
                 } else if (actor.traitContainer.HasTrait("Hemophiliac")) {
                     absolve *= 3;
                     whip = Mathf.RoundToInt(whip * 0.5f);
                     kill *= 0;
-                    exile = Mathf.RoundToInt(exile * 0.5f);
-                    debugLog += "\n-Hemophiliac: absolve: x3, whip: x0.5, kill: x0, exile: x0.5";
+                    exile = Mathf.RoundToInt(whip * 0.5f);
+                    debugLog += "\n-Vampire prisoner, Hemophiliac: absolve = x3, whip = x0.5, kill = x0, exile = x0.5";
                 }
             } else if (crimeData.crimeType == CRIME_TYPE.Werewolf) {
                 if (actor.traitContainer.HasTrait("Lycanphobic")) {
@@ -140,16 +129,32 @@ public class JudgeCharacter : GoapAction {
                     whip *= 0;
                     kill *= 2;
                     exile *= 1;
-                    debugLog += "\n-Lycanphobic: absolve: x0, whip: x0, kill: x2, exile: x1";
+                    debugLog += "\n-Werewolf prisoner, Lycanphobic: absolve = x0, whip = x0, kill = x2, exile = x1";
                 } else if (actor.traitContainer.HasTrait("Lycanphiliac")) {
                     absolve *= 3;
                     whip = Mathf.RoundToInt(whip * 0.5f);
                     kill *= 0;
-                    exile = Mathf.RoundToInt(exile * 0.5f);
-                    debugLog += "\n-Lycanphiliac: absolve: x3, whip: x0.5, kill: x0, exile: x0.5";
+                    exile = Mathf.RoundToInt(whip * 0.5f);
+                    debugLog += "\n-Werewolf prisoner, Lycanphiliac: absolve = x3, whip = x0.5, kill = x0, exile = x0.5";
                 }
             }
-            
+
+            if (targetCharacter.faction != actor.faction) {
+                if (factionRelationship != null && factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Neutral) {
+                    absolve = Mathf.RoundToInt(absolve * 0.5f);
+                    whip = Mathf.RoundToInt(whip * 0.5f);
+                    kill = Mathf.RoundToInt(kill * 2f);
+                    exile *= 0;
+                    debugLog += "\n-Neutral Faction: absolve = x0.5, whip = x0.5, kill = x2, exile = x0";
+                } else if (factionRelationship != null && factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile) {
+                    absolve = Mathf.RoundToInt(absolve * 0.2f);
+                    whip = Mathf.RoundToInt(whip * 0.5f);
+                    kill *= 3;
+                    exile *= 0;
+                    debugLog += "\n-Hostile Faction: absolve = x0.2, whip = x0.5, kill = x3, exile = x0";
+                }
+            }
+
             weights.AddElement("Absolve", absolve);
             weights.AddElement("Whip", whip);
             weights.AddElement("Execute", kill);
@@ -157,37 +162,25 @@ public class JudgeCharacter : GoapAction {
 
             debugLog += $"\n\n{weights.GetWeightsSummary("FINAL WEIGHTS")}";
 
-            string chosen = weights.PickRandomElementGivenWeights();
+            string chosen = weights.PickRandomElementGivenWeights(); 
             debugLog += $"\n\n{chosen}";
             actor.logComponent.PrintLogIfActive(debugLog);
 
-            //goapNode.descriptionLog.AddToFillers(null, chosen.ToLower(), LOG_IDENTIFIER.STRING_1);
-            //CreateJudgeLog(goapNode, chosen);
-            //CRIME_STATUS decision = CRIME_STATUS.Absolved;
             if (chosen == "Absolve") {
-                //decision = CRIME_STATUS.Absolved;
                 TargetAbsolved(goapNode);
             } else if (chosen == "Whip") {
-                //decision = CRIME_STATUS.Punished;
                 TargetWhip(goapNode);
             } else if (chosen == "Execute") {
-                //decision = CRIME_STATUS.Executed;
-                TargetExecuted(goapNode);
+                if (GameUtilities.RollChance(50)) {
+                    TargetExecuted(goapNode);
+                } else {
+                    TargetBurnAtStake(goapNode);
+                }
             } else if (chosen == "Exile") {
-                //decision = CRIME_STATUS.Exiled;
                 TargetExiled(goapNode);
             }
-            //if(allCrimesToFaction != null) {
-            //    for (int i = 0; i < allCrimesToFaction.Count; i++) {
-            //        CrimeData crimeToFaction = allCrimesToFaction[i];
-            //        crimeToFaction.SetCrimeStatus(decision);
-            //        crimeToFaction.SetJudge(actor);
-            //    }
-            //}
         }
 
-        //if (crimeData != null) { crimeData.SetCrimeStatus(CRIME_STATUS.Exiled); }
-        //TargetExiled(goapNode);
     }
     private void TargetExecuted(ActualGoapNode goapNode) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.EXECUTE, goapNode.target, goapNode.actor);
@@ -212,6 +205,35 @@ public class JudgeCharacter : GoapAction {
         job.SetCannotBePushedBack(true);
         job.SetDoNotRecalculate(true);
         goapNode.actor.jobQueue.AddJobInQueue(job);
+    }
+    private void TargetBurnAtStake(ActualGoapNode goapNode) {
+        Character actor = goapNode.actor;
+
+        LocationStructure targetStructure = null;
+        LocationGridTile targetTile = null;
+        if(actor.currentRegion != null) {
+            targetStructure = actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+        }
+        if(targetStructure != null) {
+            if (actor.homeSettlement != null) {
+                targetTile = CollectionUtilities.GetRandomElement(targetStructure.unoccupiedTiles.Where(tile => tile.IsNextToSettlement(actor.homeSettlement) && actor.movementComponent.HasPathToEvenIfDiffRegion(tile)));
+            } else if (goapNode.poiTarget.gridTileLocation != null) {
+                targetTile = goapNode.poiTarget.gridTileLocation.GetNearestUnoccupiedTileFromThisWithStructure(targetStructure.structureType);
+            } else if (actor.gridTileLocation != null) {
+                targetTile = actor.gridTileLocation.GetNearestUnoccupiedTileFromThisWithStructure(targetStructure.structureType);
+            }
+        }
+        if(targetStructure != null && targetTile != null) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.BURN_AT_STAKE, goapNode.target, goapNode.actor);
+            job.SetCannotBePushedBack(true);
+            job.SetDoNotRecalculate(true);
+
+            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { targetStructure, targetTile });
+            goapNode.actor.jobQueue.AddJobInQueue(job);
+        } else {
+            //Fall back if actor cannot burn at stake, just execute prisoner
+            TargetExecuted(goapNode);
+        }
     }
     #endregion
 
