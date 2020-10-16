@@ -1341,7 +1341,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Profiler.EndSample();
     }
     public bool IsPOIInVision(IPointOfInterest poi) {
-        return (poi is TileObject tileObject && IsPOIInVision(tileObject)) || (poi is Character character && IsPOIInVision(character));
+        return (poi is TileObject tileObject && inVisionTileObjects.Contains(tileObject)) || (poi is Character character && inVisionCharacters.Contains(character));
     }
     #endregion
 
