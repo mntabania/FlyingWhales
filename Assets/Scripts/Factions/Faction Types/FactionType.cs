@@ -34,7 +34,7 @@ namespace Factions.Faction_Types {
             civilianClasses = new List<string>();
             for (int i = 0; i < data.ideologies.Count; i++) {
                 SaveDataFactionIdeology saveIdeology = data.ideologies[i];
-                AddIdeology(saveIdeology.Load());
+                ideologies.Add(saveIdeology.Load());
             }
             crimes = new Dictionary<CRIME_TYPE, CRIME_SEVERITY>(data.crimes);
             hasCrimes = data.hasCrimes;

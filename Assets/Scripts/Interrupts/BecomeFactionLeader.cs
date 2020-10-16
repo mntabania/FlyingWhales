@@ -31,15 +31,11 @@ namespace Interrupts {
                 //Set Religion-Type Ideology:
                 FactionManager.Instance.RerollReligionTypeIdeology(faction, interruptHolder.actor);
 
-                List<Trait> traitOverrideFunctions = interruptHolder.actor.traitContainer.GetTraitOverrideFunctions(TraitManager.Become_Faction_Leader);
-                if (traitOverrideFunctions != null) {
-                    for (int i = 0; i < traitOverrideFunctions.Count; i++) {
-                        Trait trait = traitOverrideFunctions[i];
-                        trait.OnBecomeFactionLeader(interruptHolder.actor, faction);
-                    }
-                }
-                
+                //Set Faction Leader Trait Based Ideology:
+                FactionManager.Instance.RerollFactionLeaderTraitIdeology(faction, interruptHolder.actor);
+
                 Messenger.Broadcast(Signals.FACTION_IDEOLOGIES_CHANGED, faction);
+                Messenger.Broadcast(Signals.FACTION_CRIMES_CHANGED, faction);
 
                 //create relationships
                 //NOTE: Should not default relationships to neutral when leader changes, because we only want to overwrite relationships if other leader is friend/enemy 

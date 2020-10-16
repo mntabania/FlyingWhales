@@ -342,11 +342,14 @@ public static class Signals {
     public static string FACTION_RELATIONSHIP_CHANGED = "OnFactionRelationshipChanged"; //Parameters (FactionRelationship rel)
     public static string FACTION_ACTIVE_CHANGED = "OnFactionActiveChanged"; //Parameters (Faction affectedFaction)
     public static string CHANGE_FACTION_RELATIONSHIP = "OnChangeFactionRelationship";
-
     /// <summary>
     /// Parameters (Faction faction)
     /// </summary>
     public static string FACTION_IDEOLOGIES_CHANGED = "OnFactionIdeologiesChanged";
+    /// <summary>
+    /// Parameters (Faction faction)
+    /// </summary>
+    public static string FACTION_CRIMES_CHANGED = "OnFactionCrimesChanged";
     #endregion
 
     #region Actions

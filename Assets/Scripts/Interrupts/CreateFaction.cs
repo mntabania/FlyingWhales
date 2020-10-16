@@ -41,6 +41,8 @@ namespace Interrupts {
             
             //create relationships
             FactionManager.Instance.RerollFactionRelationships(faction, interruptHolder.actor, true);
+            
+            Messenger.Broadcast(Signals.FACTION_CRIMES_CHANGED, faction);
 
             overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Create Faction", "character_create_faction", null, LOG_TAG.Life_Changes);
             overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

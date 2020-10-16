@@ -22,7 +22,6 @@ namespace Traits {
             canBeTriggered = false;
             mutuallyExclusive = new[] {"Lycanphiliac"};
             _knownLycans = new List<Character>();
-            AddTraitOverrideFunctionIdentifier(TraitManager.Become_Faction_Leader);
         }
         
 
@@ -32,10 +31,6 @@ namespace Traits {
             if (addedTo is Character character) {
                 _owner = character;
             }
-        }
-        public override void OnBecomeFactionLeader(Character leader, Faction faction) {
-            base.OnBecomeFactionLeader(leader, faction);
-            faction.factionType.AddIdeology(FACTION_IDEOLOGY.Hates_Werewolves);
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
