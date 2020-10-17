@@ -1628,15 +1628,16 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
         }
 
-        //Corrupted hexes should also be avoided
-        //https://trello.com/c/6WJtivlY/1274-fleeing-should-not-go-to-corrupted-structures
-        if (playerHexes.Count > 0) {
-            for (int i = 0; i < playerHexes.Count; i++) {
-                if (playerHexes[i].region == character.currentRegion) {
-                    avoidThisPositions.Add(playerHexes[i].GetCenterLocationGridTile().worldLocation);
-                }
-            }
-        }
+        //TODO: Must be on see only because the flee path will be messed up if they always avoid the hexes
+        ////Corrupted hexes should also be avoided
+        ////https://trello.com/c/6WJtivlY/1274-fleeing-should-not-go-to-corrupted-structures
+        //if (playerHexes.Count > 0) {
+        //    for (int i = 0; i < playerHexes.Count; i++) {
+        //        if (playerHexes[i].region == character.currentRegion) {
+        //            avoidThisPositions.Add(playerHexes[i].GetCenterLocationGridTile().worldLocation);
+        //        }
+        //    }
+        //}
 
         FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidThisPositions, CombatManager.Instance.searchLength);
         fleePath.aimStrength = CombatManager.Instance.aimStrength;
