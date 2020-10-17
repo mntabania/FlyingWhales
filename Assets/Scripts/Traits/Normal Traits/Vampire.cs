@@ -24,6 +24,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             canBeTriggered = true;
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED_SELF };
             awareCharacters = new List<Character>();
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Expected_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
@@ -119,7 +120,10 @@ namespace Traits {
                 if (!characterThatWillDoJob.relationshipContainer.IsFriendsWith(targetCharacter) &&
                     !characterThatWillDoJob.relationshipContainer.IsFamilyMember(targetCharacter) && 
                     !characterThatWillDoJob.relationshipContainer.HasSpecialPositiveRelationshipWith(targetCharacter)) {
-                    characterThatWillDoJob.jobComponent.CreateDrinkBloodJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, targetCharacter);
+                    TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+                    if(currentTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                        characterThatWillDoJob.jobComponent.CreateDrinkBloodJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, targetCharacter);
+                    }
                 }
             }
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);

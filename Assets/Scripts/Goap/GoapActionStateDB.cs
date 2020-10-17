@@ -606,6 +606,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.IS_VAMPIRE, new[]{
             new StateNameAndDuration(){ name = "Vampire Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.FEED_SELF, new[]{
+            new StateNameAndDuration(){ name = "Feed Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
+        } },
     };
 }
 

@@ -3905,7 +3905,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
             AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
             AddAdvertisedAction(INTERACTION_TYPE.HAVE_AFFAIR);
-            AddAdvertisedAction(INTERACTION_TYPE.OPEN);
+            //AddAdvertisedAction(INTERACTION_TYPE.OPEN);
             AddAdvertisedAction(INTERACTION_TYPE.CREATE_CULTIST_KIT);
             AddAdvertisedAction(INTERACTION_TYPE.REMOVE_BUFF);
             //AddAdvertisedAction(INTERACTION_TYPE.EXTERMINATE);
