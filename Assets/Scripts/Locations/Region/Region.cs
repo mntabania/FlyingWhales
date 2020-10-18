@@ -37,6 +37,13 @@ public class Region : ISavable, ILogFiller {
     public RegionFeatureComponent regionFeatureComponent { get; }
     public List<BaseSettlement> settlementsInRegion { get; private set; }
     public RegionTemplate regionTemplate { get; }
+    /// <summary>
+    /// Number of tile objects in this region categorized by type.
+    /// NOTE: This isn't saved/loaded since this is updated every time a new tile object is placed.
+    /// So loading this from a file would result in duplicates, since we still go through the process of
+    /// placing tile objects when loading them.
+    /// </summary>
+    public Dictionary<TILE_OBJECT_TYPE, int> objectsInRegionCount { get; private set; }
 
     private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an npcSettlement. 
     private string _activeEventAfterEffectScheduleId;
@@ -60,6 +67,7 @@ public class Region : ISavable, ILogFiller {
         settlementsInRegion = new List<BaseSettlement>();
         neighbours = new List<Region>();
         neighboursWithDirection = new Dictionary<GridNeighbourDirection, Region>();
+        objectsInRegionCount = new Dictionary<TILE_OBJECT_TYPE, int>();
     }
     public Region(HexTile coreTile, RegionTemplate regionTemplate) : this() {
         persistentID = System.Guid.NewGuid().ToString();
@@ -82,6 +90,7 @@ public class Region : ISavable, ILogFiller {
         tiles = new List<HexTile>();
         shuffledNonMountainWaterTiles = new List<HexTile>();
         regionColor = data.regionColor;
+        objectsInRegionCount = new Dictionary<TILE_OBJECT_TYPE, int>();
     }
 
     #region Loading
@@ -960,15 +969,6 @@ public class Region : ISavable, ILogFiller {
         }
         return objs;
     }
-    public int GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE type) {
-        int count = 0;
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
-            for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                count += keyValuePair.Value[i].GetTileObjectsOfTypeCount(type);
-            }
-        }
-        return count;
-    }
     public bool HasTileObjectOfType(TILE_OBJECT_TYPE type) {
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
             for (int i = 0; i < keyValuePair.Value.Count; i++) {
@@ -1271,6 +1271,33 @@ public class Region : ISavable, ILogFiller {
             }
         }
         return settlements;
+    }
+    #endregion
+
+    #region Tile Objects
+    public void AddTileObjectInRegion(TileObject tileObject) {
+        if (!objectsInRegionCount.ContainsKey(tileObject.tileObjectType)) {
+            objectsInRegionCount.Add(tileObject.tileObjectType, 0);
+        }
+        objectsInRegionCount[tileObject.tileObjectType] += 1;
+        // if (tileObject.tileObjectType == TILE_OBJECT_TYPE.WEREWOLF_PELT) {
+        //     int count = objectsInRegionCount[tileObject.tileObjectType];
+        //     Debug.Log($"Added {tileObject.name} to objects in region. Count is {count.ToString()}");    
+        // }
+    }
+    public void RemoveTileObjectInRegion(TileObject tileObject) {
+        if (objectsInRegionCount.ContainsKey(tileObject.tileObjectType)) {
+            objectsInRegionCount[tileObject.tileObjectType] -= 1;
+            if (objectsInRegionCount[tileObject.tileObjectType] <= 0) {
+                objectsInRegionCount.Remove(tileObject.tileObjectType);
+            }
+        }
+    }
+    public int GetTileObjectInRegionCount(TILE_OBJECT_TYPE tileObjectType) {
+        if (objectsInRegionCount.ContainsKey(tileObjectType)) {
+            return objectsInRegionCount[tileObjectType];
+        }
+        return 0;
     }
     #endregion
 
