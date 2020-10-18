@@ -51,38 +51,66 @@ public class KnockoutCharacter : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
         if (target is Character targetCharacter) {
-            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
-            if (opinionLabel == RelationshipManager.Rival) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
-            } else {
-                //if (node.associatedJobType != JOB_TYPE.APPREHEND) {
-                //    if (witness.homeSettlement == targetCharacter.homeSettlement ||
-                //        witness.faction == targetCharacter.faction ||
-                //        witness.relationshipContainer.HasRelationshipWith(targetCharacter)) {
-                //        //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Misdemeanor);
-                //        CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
-                //    }
-                //}
-                if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
-                                && opinionLabel != RelationshipManager.Rival) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status, node);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
-                } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
-                } else if (opinionLabel == RelationshipManager.Acquaintance) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
-                } else if (targetCharacter == witness) {
-                    CharacterManager.Instance.TriggerEmotion(
-                        GameUtilities.RollChance(50) ? EMOTION.Anger : EMOTION.Resentment, witness, actor, status, node);
+            string opinionOfTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
+            if (node.crimeType == CRIME_TYPE.Vampire) {
+                CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(witness, actor, target, node.crimeType);
+                if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
+                    if (witness.relationshipContainer.IsRelativeLoverOrAffairAndNotRival(targetCharacter)) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
+                    } else if (opinionOfTarget == RelationshipManager.Close_Friend) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
+                    } else if (actor.traitContainer.HasTrait("Cultist") && witness.traitContainer.HasTrait("Cultist")) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
+                        if (RelationshipManager.IsSexuallyCompatible(witness, actor)) {
+                            int chance = 10 * witness.relationshipContainer.GetCompatibility(actor);
+                            if (GameUtilities.RollChance(chance)) {
+                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status, node);        
+                            }
+                        }
+                    } else if (opinionOfTarget == RelationshipManager.Friend ||opinionOfTarget == RelationshipManager.Acquaintance) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
+                    } else if (targetCharacter == witness) {
+                        CharacterManager.Instance.TriggerEmotion(GameUtilities.RollChance(50) ? EMOTION.Anger : EMOTION.Resentment, witness, actor, status, node);
+                    }
+                } else {
+                    if (witness.traitContainer.HasTrait("Hemophiliac")) {
+                        if (RelationshipManager.IsSexuallyCompatible(witness, actor)) {
+                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status, node);
+                        } else {
+                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
+                        }
+                    } else if (witness.traitContainer.HasTrait("Hemophobic")) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
+                    }
+                }
+            } else if (node.crimeType == CRIME_TYPE.Assault) {
+                if (opinionOfTarget == RelationshipManager.Rival) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
+                } else {
+                    if (witness.relationshipContainer.IsRelativeLoverOrAffairAndNotRival(targetCharacter)) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
+                    } else if (opinionOfTarget == RelationshipManager.Friend || opinionOfTarget == RelationshipManager.Close_Friend) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
+                    } else if (opinionOfTarget == RelationshipManager.Acquaintance) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
+                    } else if (targetCharacter == witness) {
+                        CharacterManager.Instance.TriggerEmotion(GameUtilities.RollChance(50) ? EMOTION.Anger : EMOTION.Resentment, witness, actor, status, node);
+                    }
                 }
             }
+            
+            
 
             if (node.associatedJobType != JOB_TYPE.APPREHEND || node.associatedJobType != JOB_TYPE.RESTRAIN) {
                 if (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) {
@@ -113,9 +141,21 @@ public class KnockoutCharacter : GoapAction {
     }
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         if(target is Character targetCharacter) {
-            if ((targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) && (crime.associatedJobType != JOB_TYPE.APPREHEND || crime.associatedJobType != JOB_TYPE.RESTRAIN)) {
-                return CRIME_TYPE.Assault;
+            if (targetCharacter.race.IsSapient()) {
+                if (crime.associatedJobType != JOB_TYPE.APPREHEND && crime.associatedJobType != JOB_TYPE.RESTRAIN) {
+                    //since there is no drink blood job (it uses fullness recovery), to check if job is from drink blood, just check if the associated job type is knockout
+                    //since knockout will only ever be used for fullness recovery if it is for Drinking Blood 
+                    bool isDrinkBloodJob = crime.associatedJobType.IsFullnessRecovery(); 
+                    if (isDrinkBloodJob || crime.associatedJobType == JOB_TYPE.IMPRISON_BLOOD_SOURCE) {
+                        return CRIME_TYPE.Vampire;
+                    } else {
+                        return CRIME_TYPE.Assault;
+                    }
+                }
             }
+            // if ((targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) && (crime.associatedJobType != JOB_TYPE.APPREHEND || crime.associatedJobType != JOB_TYPE.RESTRAIN)) {
+            //     return CRIME_TYPE.Assault;
+            // }
         }
         return base.GetCrimeType(actor, target, crime);
     }
