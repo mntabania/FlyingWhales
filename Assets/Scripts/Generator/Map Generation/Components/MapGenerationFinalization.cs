@@ -295,10 +295,10 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		// 	.Where(x => x.isNormalCharacter && !x.isDead));
 		// for (int i = 0; i < choices.Count; i++) {
 		// 	Character character = choices[i];
-		// 	if (GameUtilities.RollChance(30)) {
+		// 	// if (GameUtilities.RollChance(30)) {
 		// 		TileObject phylactery = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.PHYLACTERY);
 		// 		character.ObtainItem(phylactery);
-		// 	}
+		// 	// }
 		// }
 		
 		yield return null;

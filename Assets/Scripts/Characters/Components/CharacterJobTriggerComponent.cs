@@ -2732,7 +2732,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    targetStructure.AddPOI(unbuiltFurniture);
 	    unbuiltFurniture.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 	    GoapPlanJob craftJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_MISSING_FURNITURE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, unbuiltFurniture, owner);
-	    craftJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(tileObjectType).constructionCost });
+	    craftJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(tileObjectType).mainRecipe });
 	    producedJob = craftJob;
 	    return true;
     }

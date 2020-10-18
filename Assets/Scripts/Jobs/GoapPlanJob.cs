@@ -245,6 +245,8 @@ public class GoapPlanJob : JobQueueItem {
                 convertedData = new CharacterOtherData(character);
             } else if (obj is string str) {
                 convertedData = new StringOtherData(str);
+            } else if (obj is TileObjectRecipe recipe) {
+                convertedData = new TileObjectRecipeOtherData(recipe);
             }
             if (convertedData != null) {
                 convertedDataArray[i] = convertedData;    

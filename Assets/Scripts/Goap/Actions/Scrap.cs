@@ -89,12 +89,11 @@ public class Scrap : GoapAction {
     public void AfterScrapSuccess(ActualGoapNode goapNode) {
         TileObject item = goapNode.poiTarget as TileObject;
         LocationGridTile tile = item.gridTileLocation;
-        int craftCost = TileObjectDB.GetTileObjectData(item.tileObjectType).constructionCost;
         //goapNode.actor.AdjustSupply(TokenManager.Instance.itemData[item.specialTokenType].supplyValue);
         goapNode.actor.DestroyItem(item);
 
         StonePile stonePile = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
-        stonePile.SetResourceInPile(Mathf.CeilToInt(craftCost * 0.5f));
+        stonePile.SetResourceInPile(10);
         tile.structure.AddPOI(stonePile, tile);
         // stonePile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.STONE_PILE);
     }

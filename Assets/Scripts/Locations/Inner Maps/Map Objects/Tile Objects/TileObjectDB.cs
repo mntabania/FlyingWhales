@@ -1,25 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Traits;
 
 public static class TileObjectDB {
 
     public static TileObjectData Default = new TileObjectData() {
-        constructionCost = 10,
-        constructionTime = 12,
         maxHP = 200,
         neededCharacterClass = new string[] { "Craftsman" },
-        providedFacilities = null,
         occupiedSize = new Point(1, 1),
-        itemRequirementsForCreation = null,
     };
 
     //tile objects
     public static Dictionary<TILE_OBJECT_TYPE, TileObjectData> tileObjectData = new Dictionary<TILE_OBJECT_TYPE, TileObjectData>() {
         { TILE_OBJECT_TYPE.WOOD_PILE, new TileObjectData() {
-            constructionCost = 10,
-            constructionTime = 12,
             maxHP = 600,
             neededCharacterClass =  new string[] { "Craftsman" },
         } },
@@ -48,79 +43,82 @@ public static class TileObjectDB {
             maxHP = 1,
         } },
         { TILE_OBJECT_TYPE.BED, new TileObjectData() {
-            constructionCost = 10,
-            constructionTime = 12,
             maxHP = 400,
             neededCharacterClass =  new string[] { "Craftsman" },
-            itemRequirementsForCreation = new[] { "Wood Pile" },
-            providedFacilities = new ProvidedFacility[] {
-                new ProvidedFacility() { type = FACILITY_TYPE.TIREDNESS_RECOVERY, value = 20 }
+            repairCost = 5,
+            craftRecipes = new [] {
+                new TileObjectRecipe(
+                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WOOD_PILE, 10)    
+                ),
             }
         } },
-
         { TILE_OBJECT_TYPE.DESK, new TileObjectData() {
-            constructionCost = 10,
-            constructionTime = 12,
             maxHP = 250,
             neededCharacterClass =  new string[] { "Craftsman" },
-            providedFacilities = new ProvidedFacility[] {
-                 new ProvidedFacility() { type = FACILITY_TYPE.SIT_DOWN_SPOT, value = 10 }
+            repairCost = 5,
+            craftRecipes = new [] {
+                new TileObjectRecipe(
+                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WOOD_PILE, 10)    
+                ),
             }
         } },
-
         { TILE_OBJECT_TYPE.GUITAR, new TileObjectData() {
-            constructionCost = 10,
-            constructionTime = 12,
             maxHP = 120,
             neededCharacterClass =  new string[] { "Craftsman" },
-            providedFacilities = new ProvidedFacility[] {
-                new ProvidedFacility() { type = FACILITY_TYPE.HAPPINESS_RECOVERY, value = 10 }
+            repairCost = 5,
+            craftRecipes = new [] {
+                new TileObjectRecipe(
+                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WOOD_PILE, 10)    
+                ),
             }
         } },
         { TILE_OBJECT_TYPE.TABLE, new TileObjectData() {
-            constructionCost = 10,
-            constructionTime = 12,
             maxHP = 250,
             neededCharacterClass =  new string[] { "Craftsman" },
-            itemRequirementsForCreation = new[] { "Wood Pile" },
-            providedFacilities = new ProvidedFacility[] {
-                new ProvidedFacility() { type = FACILITY_TYPE.FULLNESS_RECOVERY, value = 20 },
-                new ProvidedFacility() { type = FACILITY_TYPE.SIT_DOWN_SPOT, value = 5 }
+            repairCost = 5,
+            craftRecipes = new [] {
+                new TileObjectRecipe(
+                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WOOD_PILE, 10)    
+                ),
             }
         } },
         { TILE_OBJECT_TYPE.TREE_OBJECT, new TileObjectData() {
-            constructionCost = 10,
-            constructionTime = 12,
             maxHP = 600,
             neededCharacterClass =  new string[] { "Craftsman" },
         } },
         { TILE_OBJECT_TYPE.BIG_TREE_OBJECT, new TileObjectData() {
-            constructionCost = 10,
-            constructionTime = 12,
             maxHP = 1200,
             neededCharacterClass =  new string[] { "Craftsman" },
             occupiedSize =  new Point(2, 2),
         } },
         { TILE_OBJECT_TYPE.HEALING_POTION, new TileObjectData() {
-            constructionCost = 25,
-            constructionTime = 12,
             maxHP = 150,
             neededCharacterClass = null,
-            itemRequirementsForCreation = new[] { "Water Flask", "Herb Plant" },
+            craftRecipes = new [] {
+                new TileObjectRecipe(
+                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WATER_FLASK, 1),
+                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.HERB_PLANT, 1)
+                ),
+            }
         } },
         { TILE_OBJECT_TYPE.POISON_FLASK, new TileObjectData() {
-            constructionCost = 10,
-            constructionTime = 12,
             maxHP = 150,
             neededCharacterClass = null,
-            itemRequirementsForCreation = new[] { "Water Flask", "Herb Plant" },
+            craftRecipes = new [] {
+                new TileObjectRecipe(
+                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WATER_FLASK, 1),
+                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.HERB_PLANT, 1)
+                ),
+            }
         } },
          { TILE_OBJECT_TYPE.ANTIDOTE, new TileObjectData() {
-            constructionCost = 10,
-            constructionTime = 12,
             maxHP = 150,
             neededCharacterClass = null,
-            itemRequirementsForCreation = new[] { "Poison Flask" },
+            craftRecipes = new [] {
+                new TileObjectRecipe(
+                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.POISON_FLASK, 1)
+                ),
+            }
         } },
         { TILE_OBJECT_TYPE.LOCUST_SWARM, new TileObjectData() {
             maxHP = 100,
@@ -178,10 +176,13 @@ public static class TileObjectDB {
         } },
         { TILE_OBJECT_TYPE.WATER_WELL, new TileObjectData() {
             maxHP = 1000,
-            constructionCost = 30,
-            constructionTime = 12,
             neededCharacterClass = new string[] { "Craftsman" },
-            itemRequirementsForCreation = new[] { "Stone Pile" },
+            repairCost = 5,
+            craftRecipes = new [] {
+                new TileObjectRecipe(
+                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.STONE_PILE, 30)
+                ),
+            }
         } },
         { TILE_OBJECT_TYPE.TOMBSTONE, new TileObjectData() {
             maxHP = 400,
@@ -241,11 +242,34 @@ public static class TileObjectDB {
             maxHP = 200,
         } },
         { TILE_OBJECT_TYPE.CULTIST_KIT, new TileObjectData() {
-            constructionCost = 10,
-            constructionTime = 12,
             maxHP = 150,
             neededCharacterClass = null,
-            itemRequirementsForCreation = new[] { "Wood Pile", "Stone Pile" },
+            craftRecipes = new [] {
+                new TileObjectRecipe(
+                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.STONE_PILE, 10),
+                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WOOD_PILE, 10)
+                ),
+            }
+        } },
+        { TILE_OBJECT_TYPE.TORCH, new TileObjectData() {
+            maxHP = 200,
+            neededCharacterClass = new string[] { "Craftsman" },
+            repairCost = 5,
+            craftRecipes = new [] {
+                new TileObjectRecipe(
+                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WOOD_PILE, 30)
+                ),
+            }
+        } },
+        { TILE_OBJECT_TYPE.PHYLACTERY, new TileObjectData() {
+            maxHP = 200,
+            neededCharacterClass = new string[] { "Shaman" },
+            repairCost = 5,
+            craftRecipes = new [] {
+                new TileObjectRecipe(new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WOOD_PILE, 10)),
+                new TileObjectRecipe(new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.STONE_PILE, 10)),
+                new TileObjectRecipe(new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.METAL_PILE, 10)),
+            }
         } },
     };
 
@@ -270,27 +294,50 @@ public static class TileObjectDB {
 }
 
 public class TileObjectData {
-    public int constructionCost;
-    public int constructionTime; //in ticks
     public int maxHP;
     public string[] neededCharacterClass;
-    public string[] itemRequirementsForCreation;
-    public ProvidedFacility[] providedFacilities;
-    //when this object is placed, how many tiles does it occupy? (Default is 0,0) meaning this object only occupies 1 tile.
-    public Point occupiedSize; 
+    /// <summary>
+    /// When this object is placed, how many tiles does it occupy? (Default is 0,0) meaning this object only occupies 1 tile. 
+    /// </summary>
+    public Point occupiedSize;
+    /// <summary>
+    /// List of recipes for crafting this object.
+    /// NOTE: The first recipe will be considered as the main recipe and is the
+    /// recipe that will be used by default for crafting <see cref="CraftTileObject"/> 
+    /// </summary>
+    public TileObjectRecipe[] craftRecipes;
+    public int repairCost;
+    public TileObjectRecipe mainRecipe => craftRecipes.FirstOrDefault();
+}
 
-    public bool CanProvideFacility(FACILITY_TYPE type) {
-        if (providedFacilities != null) {
-            for (int i = 0; i < providedFacilities.Length; i++) {
-                if (providedFacilities[i].type == type) {
-                    return true;
-                }
+public struct TileObjectRecipe {
+    public TileObjectRecipeIngredient[] ingredients;
+    public bool hasValue;
+    public TileObjectRecipe(params TileObjectRecipeIngredient[] ingredients) {
+        this.ingredients = ingredients;
+        hasValue = true;
+    }
+
+    public int GetNeededAmountForIngredient(TILE_OBJECT_TYPE ingredient) {
+        for (int i = 0; i < ingredients.Length; i++) {
+            TileObjectRecipeIngredient recipeIngredient = ingredients[i];
+            if (recipeIngredient.ingredient == ingredient) {
+                return recipeIngredient.amount;
             }
         }
-        return false;
+        return 0;
     }
+    
 }
-public struct ProvidedFacility {
-    public FACILITY_TYPE type;
-    public int value;
+public struct TileObjectRecipeIngredient {
+    public TILE_OBJECT_TYPE ingredient;
+    public int amount;
+    public string ingredientName;
+    
+    public TileObjectRecipeIngredient(TILE_OBJECT_TYPE ingredient, int amount) {
+        this.ingredient = ingredient;
+        this.amount = amount;
+        ingredientName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(ingredient.ToString());
+    }
+    
 }
