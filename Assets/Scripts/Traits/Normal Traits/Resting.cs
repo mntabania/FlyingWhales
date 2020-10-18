@@ -52,7 +52,7 @@ namespace Traits {
         }
 
         private void CheckForLycanthropy(Character character) {
-            if(character.isLycanthrope) {
+            if(character.isLycanthrope && !character.lycanData.isMaster) {
                 int chance = UnityEngine.Random.Range(0, 100);
                 if (chance < 25) {
                     character.lycanData.Transform(character);
