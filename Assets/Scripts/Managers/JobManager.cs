@@ -16,39 +16,40 @@ public class JobManager : BaseMonoBehaviour {
     public const string Can_Take_Bury_Job = "CanTakeBury";
     public const string Can_Take_Join_Gathering = "CanTakeJoinGathering";
     public const string Can_Take_Remove_Status = "CanTakeRemoveStatus";
-    public static string Can_Take_Counterattack = "CanTakeCounterattack";
-    public static string Can_Take_Raid = "CanTakeRaid";
-    public static string Can_Take_Hunt_Heirloom = "CanTakeHuntHeirloom";
-    public static string Can_Take_Repair = "CanTakeRepair";
-    public static string Can_Take_Haul = "CanTakeHaul";
-    public static string Can_Take_Judgement = "CanTakeJudgement";
-    public static string Can_Take_Apprehend = "CanTakeApprehend";
-    public static string Can_Take_Obtain_Personal_Food = "CanTakeObtainPersonalFood";
-    public static string Can_Take_Restrain = "CanTakeRestrain";
-    public static string Can_Take_Remove_Fire = "CanTakeRemoveFire";
-    public static string Can_Take_Exterminate = "CanTakeExterminate";
-    public static string Can_Brew_Potion = "CanBrewPotion";
-    public static string Can_Craft_Tool = "CanCraftTool";
-    public static string Can_Brew_Antidote = "CanBrewAntidote";
-    public static string Can_Craft_Well = "CanCraftWell";
+    public const string Can_Take_Counterattack = "CanTakeCounterattack";
+    public const string Can_Take_Raid = "CanTakeRaid";
+    public const string Can_Take_Hunt_Heirloom = "CanTakeHuntHeirloom";
+    public const string Can_Take_Repair = "CanTakeRepair";
+    public const string Can_Take_Haul = "CanTakeHaul";
+    public const string Can_Take_Judgement = "CanTakeJudgement";
+    public const string Can_Take_Apprehend = "CanTakeApprehend";
+    public const string Can_Take_Obtain_Personal_Food = "CanTakeObtainPersonalFood";
+    public const string Can_Take_Restrain = "CanTakeRestrain";
+    public const string Can_Take_Remove_Fire = "CanTakeRemoveFire";
+    public const string Can_Take_Exterminate = "CanTakeExterminate";
+    public const string Can_Brew_Potion = "CanBrewPotion";
+    public const string Can_Craft_Tool = "CanCraftTool";
+    public const string Can_Brew_Antidote = "CanBrewAntidote";
+    public const string Can_Craft_Well = "CanCraftWell";
+    public const string Can_Craft_Phylactery = "CanCraftPhylactery";
     
     //applicability
-    public static string Destroy_Applicability = "IsDestroyApplicable";
-    public static string Remove_Status_Applicability = "IsRemoveStatusApplicable";
-    public static string Remove_Status_Self_Applicability = "IsRemoveStatusSelfApplicable";
-    public static string Remove_Status_Target_Applicability = "IsRemoveStatusTargetApplicable";
-    public static string Heal_Self_Applicability = "IsHealSelfApplicable";
-    public static string Bury_Settlement_Applicability = "IsBurySettlementApplicable";
-    public static string Bury_Applicability = "IsBuryApplicable";
-    public static string Apprehend_Applicability = "IsApprehendApplicable";
-    public static string Produce_Resource_Applicability = "IsProduceResourceApplicable";
-    public static string Repair_Applicability = "IsRepairApplicable";
-    public static string Haul_Applicability = "IsHaulApplicable";
-    public static string Judge_Applicability = "IsJudgeApplicable";
-    public static string Apprehend_Settlement_Applicability = "IsApprehendSettlementApplicable";
-    public static string Obtain_Personal_Food_Applicability = "IsObtainPersonalFoodApplicable";
-    public static string Combine_Stockpile_Applicability = "IsCombineStockpileApplicable";
-    public static string Restrain_Applicability = "IsRestrainApplicable";
+    public const string Destroy_Applicability = "IsDestroyApplicable";
+    public const string Remove_Status_Applicability = "IsRemoveStatusApplicable";
+    public const string Remove_Status_Self_Applicability = "IsRemoveStatusSelfApplicable";
+    public const string Remove_Status_Target_Applicability = "IsRemoveStatusTargetApplicable";
+    public const string Heal_Self_Applicability = "IsHealSelfApplicable";
+    public const string Bury_Settlement_Applicability = "IsBurySettlementApplicable";
+    public const string Bury_Applicability = "IsBuryApplicable";
+    public const string Apprehend_Applicability = "IsApprehendApplicable";
+    public const string Produce_Resource_Applicability = "IsProduceResourceApplicable";
+    public const string Repair_Applicability = "IsRepairApplicable";
+    public const string Haul_Applicability = "IsHaulApplicable";
+    public const string Judge_Applicability = "IsJudgeApplicable";
+    public const string Apprehend_Settlement_Applicability = "IsApprehendSettlementApplicable";
+    public const string Obtain_Personal_Food_Applicability = "IsObtainPersonalFoodApplicable";
+    public const string Combine_Stockpile_Applicability = "IsCombineStockpileApplicable";
+    public const string Restrain_Applicability = "IsRestrainApplicable";
     void Awake() {
         Instance = this;
     }
@@ -78,6 +79,7 @@ public class JobManager : BaseMonoBehaviour {
             {Can_Craft_Tool, new CanCraftTool()},
             {Can_Brew_Antidote, new CanBrewAntidote()},
             {Can_Craft_Well, new CanCraftWell()},
+            {Can_Craft_Phylactery, new CanCraftPhylactery()},
         };
         _applicabilityCheckers = new Dictionary<string, JobApplicabilityChecker>() {
             {Destroy_Applicability, new DestroyJobApplicabilityChecker()},

@@ -4,6 +4,7 @@ using UnityEngine;
 using Traits;
 using Inner_Maps;
 using Logs;
+using UnityEngine.Assertions;
 
 public class TakeResource : GoapAction {
     public TakeResource() : base(INTERACTION_TYPE.TAKE_RESOURCE) {
@@ -129,29 +130,23 @@ public class TakeResource : GoapAction {
     #region State Effects
     public void PreTakeSuccess(ActualGoapNode goapNode) {
         ResourcePile resourcePile = goapNode.poiTarget as ResourcePile;
+        Assert.IsNotNull(resourcePile);
         int takenResource;
-        //bool hasNeededAmount = false;
-        if (goapNode.otherData != null) {
-            //hasNeededAmount = true;
-            takenResource = (int)goapNode.otherData[0].obj;
+        if (goapNode.otherData != null && goapNode.otherData.Length == 1) {
+            OtherData otherData = goapNode.otherData[0];
+            if (otherData is IntOtherData intOtherData) {
+                takenResource = intOtherData.integer;    
+            } else if (otherData is TileObjectRecipeOtherData tileObjectRecipeOtherData) {
+                TileObjectRecipe recipe = tileObjectRecipeOtherData.recipe;
+                takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);
+            } else {
+                //set amount just to prevent errors.
+                takenResource = 10;
+            }
         } else {
             takenResource = Mathf.Min(20, resourcePile.resourceInPile);
         }
-        //int amountAlreadyCarried = 0;
-        //ResourcePile carriedResourcePile = null;
-        //if (goapNode.actor.ownParty.isCarryingAnyPOI) {
-        //    IPointOfInterest carriedPOI = goapNode.actor.ownParty.carriedPOI;
-        //    if (carriedPOI is ResourcePile) {
-        //        carriedResourcePile = carriedPOI as ResourcePile;
-        //        if (carriedResourcePile.tileObjectType == resourcePile.tileObjectType) {
-        //            amountAlreadyCarried = carriedResourcePile.resourceInPile;
-        //        }
-        //    }
-        //}
-
-        //if (hasNeededAmount && takenResource > amountAlreadyCarried) {
-        //    takenResource -= amountAlreadyCarried;
-        //}
+        
         if (takenResource > resourcePile.resourceInPile) {
             takenResource = resourcePile.resourceInPile;
         }
@@ -160,30 +155,23 @@ public class TakeResource : GoapAction {
     }
     public void AfterTakeSuccess(ActualGoapNode goapNode) {
         ResourcePile resourcePile = goapNode.poiTarget as ResourcePile;
+        Assert.IsNotNull(resourcePile);
         int takenResource;
-        //bool hasNeededAmount = false;
-        if (goapNode.otherData != null) {
-            //hasNeededAmount = true;
-            takenResource = (int)goapNode.otherData[0].obj;
+        if (goapNode.otherData != null && goapNode.otherData.Length == 1) {
+            OtherData otherData = goapNode.otherData[0];
+            if (otherData is IntOtherData intOtherData) {
+                takenResource = intOtherData.integer;    
+            } else if (otherData is TileObjectRecipeOtherData tileObjectRecipeOtherData) {
+                TileObjectRecipe recipe = tileObjectRecipeOtherData.recipe;
+                takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);
+            } else {
+                //set amount just to prevent errors.
+                takenResource = 10;
+            }
         } else {
             takenResource = Mathf.Min(20, resourcePile.resourceInPile);
         }
-
-        //int amountAlreadyCarried = 0;
-        //ResourcePile carriedResourcePile = null;
-        //if (goapNode.actor.ownParty.isCarryingAnyPOI) {
-        //    IPointOfInterest carriedPOI = goapNode.actor.ownParty.carriedPOI;
-        //    if (carriedPOI is ResourcePile) {
-        //        carriedResourcePile = carriedPOI as ResourcePile;
-        //        if (carriedResourcePile.tileObjectType == resourcePile.tileObjectType) {
-        //            amountAlreadyCarried = carriedResourcePile.resourceInPile;
-        //        }
-        //    }
-        //}
-
-        //if(hasNeededAmount && takenResource > amountAlreadyCarried) {
-        //    takenResource -= amountAlreadyCarried;
-        //}
+        
         if (takenResource > resourcePile.resourceInPile) {
             takenResource = resourcePile.resourceInPile;
         }

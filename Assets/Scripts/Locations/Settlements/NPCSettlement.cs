@@ -41,6 +41,13 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private int _isBeingInvadedCount;
     private string _plaguedExpiryKey;
 
+    private TILE_OBJECT_TYPE[] neededObjects = new TILE_OBJECT_TYPE[] {
+        TILE_OBJECT_TYPE.HEALING_POTION,
+        TILE_OBJECT_TYPE.TOOL,
+        TILE_OBJECT_TYPE.ANTIDOTE,
+        TILE_OBJECT_TYPE.PHYLACTERY
+    }; 
+    
     #region getters
     public override Type serializedData => typeof(SaveDataNPCSettlement);
     public override Region region => _region;
@@ -1069,9 +1076,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void CheckAreaInventoryJobs(LocationStructure affectedStructure, TileObject objectThatTriggeredChange) {
         if (affectedStructure == mainStorage &&
-            (objectThatTriggeredChange == null || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION
-                                               || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.TOOL
-                                               || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.ANTIDOTE)) {
+            (objectThatTriggeredChange == null || neededObjects.Contains(objectThatTriggeredChange.tileObjectType))) {
             //brew potion
             if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.HEALING_POTION) < 2) {
                 //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
@@ -1108,6 +1113,23 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
 
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
                     job.SetCanTakeThisJobChecker(JobManager.Can_Brew_Antidote);
+                    AddToAvailableJobs(job);
+                }
+            }
+            
+            //TODO: Delete after testing phylactery
+            //craft phylactery
+            if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.PHYLACTERY) < 2) {
+                if (!HasJob(JOB_TYPE.CRAFT_OBJECT)) {
+                    //create an un crafted antidote and place it at the main storage structure, then use that as the target for the job.
+                    TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.PHYLACTERY);
+                    item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+                    affectedStructure.AddPOI(item);
+
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
+                    TileObjectData data = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.PHYLACTERY);
+                    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[]{ data.mainRecipe });
+                    job.SetCanTakeThisJobChecker(JobManager.Can_Craft_Phylactery);
                     AddToAvailableJobs(job);
                 }
             }

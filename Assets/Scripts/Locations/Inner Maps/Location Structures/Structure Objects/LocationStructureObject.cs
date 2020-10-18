@@ -30,6 +30,7 @@ public class LocationStructureObject : PooledObject {
     [SerializeField] private Vector2Int _size;
     [SerializeField] private Vector3Int _center;
     [SerializeField] private int _craftCost = 50;
+    [SerializeField] private int _repairCost = 5;
 
     [Header("Objects")]
     [FormerlySerializedAs("_objectsParent")] public Transform objectsParent;
@@ -73,6 +74,7 @@ public class LocationStructureObject : PooledObject {
     }
     public RESOURCE thinWallResource => _thinWallResource;
     public int craftCost => _craftCost;
+    public int repairCost => _repairCost;
     #endregion
 
     #region Monobehaviours
@@ -186,7 +188,7 @@ public class LocationStructureObject : PooledObject {
             if (!newTileObject.tileObjectType.IsPreBuilt()) { //non-prebuilt items should create a craft job targeting themselves
                 newTileObject.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, newTileObject, npcSettlement);
-                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(newTileObject.tileObjectType).constructionCost });
+                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(newTileObject.tileObjectType).mainRecipe });
                 npcSettlement.AddToAvailableJobs(job);    
             }
             

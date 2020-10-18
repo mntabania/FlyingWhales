@@ -97,13 +97,37 @@ public class Repair : GoapAction {
     #region State Effects
     public void PreRepairSuccess(ActualGoapNode goapNode) {
         //goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        TileObject tileObj = goapNode.poiTarget as TileObject;
-        TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
-        int cost = (int) (data.constructionCost * 0.5f);
-        if (goapNode.actor.carryComponent.carriedPOI != null) {
-            ResourcePile carriedPile = goapNode.actor.carryComponent.carriedPOI as ResourcePile;
-            carriedPile.AdjustResourceInPile(-cost);
-            tileObj.AdjustResource(RESOURCE.WOOD, cost);
+        TileObject obj = goapNode.poiTarget as TileObject;
+        Character actor = goapNode.actor;
+        // TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
+        // int cost = (int) (data.constructionCost * 0.5f);
+        // if (goapNode.actor.carryComponent.carriedPOI != null) {
+        //     ResourcePile carriedPile = goapNode.actor.carryComponent.carriedPOI as ResourcePile;
+        //     carriedPile.AdjustResourceInPile(-cost);
+        //     tileObj.AdjustResource(RESOURCE.WOOD, cost);
+        // }
+        TileObjectData data = TileObjectDB.GetTileObjectData(obj.tileObjectType);
+        if (data != null && data.craftRecipes != null) {
+            TileObjectRecipe recipe = data.mainRecipe;
+            for (int i = 0; i < recipe.ingredients.Length; i++) {
+                TileObjectRecipeIngredient ingredient = recipe.ingredients[i];
+                string neededItem = ingredient.ingredientName;
+                if (neededItem == "Wood Pile") {
+                    ResourcePile resourcePile = actor.GetItem(TILE_OBJECT_TYPE.WOOD_PILE) as ResourcePile;
+                    resourcePile?.AdjustResourceInPile(-ingredient.amount);
+                    obj.AdjustResource(RESOURCE.WOOD, ingredient.amount);
+                } else if (neededItem == "Stone Pile") {
+                    ResourcePile resourcePile = actor.GetItem(TILE_OBJECT_TYPE.STONE_PILE) as ResourcePile;
+                    resourcePile?.AdjustResourceInPile(-ingredient.amount);
+                    obj.AdjustResource(RESOURCE.STONE, ingredient.amount);
+                } else if (neededItem == "Metal Pile") {
+                    ResourcePile resourcePile = actor.GetItem(TILE_OBJECT_TYPE.METAL_PILE) as ResourcePile;
+                    resourcePile?.AdjustResourceInPile(-ingredient.amount);
+                    obj.AdjustResource(RESOURCE.METAL, ingredient.amount);
+                } else {
+                    actor.UnobtainItem(neededItem);
+                }
+            }
         }
     }
     // public void PerTickRepairSuccess(ActualGoapNode goapNode) {
@@ -113,13 +137,29 @@ public class Repair : GoapAction {
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Burnt");
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Damaged");
 
-        TileObject tileObj = goapNode.poiTarget as TileObject;
-        TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
-        int cost = (int) (data.constructionCost * 0.5f);
-        tileObj.AdjustResource(RESOURCE.WOOD, -cost);
+        TileObject obj = goapNode.poiTarget as TileObject;
+        Character actor = goapNode.actor;
+        // TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
+        // int cost = (int) (data.constructionCost * 0.5f);
+        // tileObj.AdjustResource(RESOURCE.WOOD, -cost);
+        TileObjectData data = TileObjectDB.GetTileObjectData(obj.tileObjectType);
+        if (data != null && data.craftRecipes != null) {
+            TileObjectRecipe recipe = data.mainRecipe;
+            for (int i = 0; i < recipe.ingredients.Length; i++) {
+                TileObjectRecipeIngredient ingredient = recipe.ingredients[i];
+                string neededItem = ingredient.ingredientName;
+                if (neededItem == "Wood Pile") {
+                    obj.AdjustResource(RESOURCE.WOOD, -ingredient.amount);
+                } else if (neededItem == "Stone Pile") {
+                    obj.AdjustResource(RESOURCE.STONE, -ingredient.amount);
+                } else if (neededItem == "Metal Pile") {
+                    obj.AdjustResource(RESOURCE.METAL, -ingredient.amount);
+                }
+            }
+        }
 
-        int missingHP = tileObj.maxHP - tileObj.currentHP;
-        tileObj.AdjustHP(missingHP, ELEMENTAL_TYPE.Normal);
+        int missingHP = obj.maxHP - obj.currentHP;
+        obj.AdjustHP(missingHP, ELEMENTAL_TYPE.Normal);
 
         //goapNode.actor.AdjustSupply((int) (data.constructionCost * 0.5f));
 
@@ -128,12 +168,13 @@ public class Repair : GoapAction {
 
     #region Preconditions
     private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
-        TileObject tileObj = poiTarget as TileObject;
-        TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
-        int craftCost = (int)(data.constructionCost * 0.5f);
+        TileObject obj = poiTarget as TileObject;
+        TileObjectData data = TileObjectDB.GetTileObjectData(obj.tileObjectType);
+        int craftCost = data.repairCost;
         if (poiTarget.HasResourceAmount(RESOURCE.WOOD, craftCost)) {
             return true;
         }
+
         if (actor.carryComponent.isCarryingAnyPOI && actor.carryComponent.carriedPOI is WoodPile) {
             //ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
             //return carriedPile.resourceInPile >= craftCost;

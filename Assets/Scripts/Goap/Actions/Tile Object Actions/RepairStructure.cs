@@ -73,14 +73,12 @@ public class RepairStructure : GoapAction {
     private bool HasResource(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         StructureTileObject tileObj = poiTarget as StructureTileObject;
         Assert.IsNotNull(tileObj, $"Target of repair is not Structure Tile Object! {poiTarget}");
-        TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
-        int craftCost = (int)(data.constructionCost * 0.5f);
 
         ManMadeStructure manMadeStructure = tileObj.structureParent as ManMadeStructure;
         Assert.IsNotNull(manMadeStructure, $"Parent structure is not Man Made structure! {tileObj.structureParent}");
         RESOURCE neededResourceType = manMadeStructure.wallsAreMadeOf;
         
-        if (poiTarget.HasResourceAmount(neededResourceType, craftCost)) {
+        if (poiTarget.HasResourceAmount(neededResourceType, manMadeStructure.structureObj.repairCost)) {
             return true;
         }
         

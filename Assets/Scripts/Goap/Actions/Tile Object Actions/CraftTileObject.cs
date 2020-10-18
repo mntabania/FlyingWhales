@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Logs;
 using UnityEngine;  
@@ -21,11 +22,21 @@ public class CraftTileObject : GoapAction {
     //}
     public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData) {
         if(target is TileObject tileObject) {
-            TileObjectData data = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
-            if (data != null && data.itemRequirementsForCreation != null) {
-                List<Precondition> p = new List<Precondition>();
-                for (int i = 0; i < data.itemRequirementsForCreation.Length; i++) {
-                    string req = data.itemRequirementsForCreation[i];
+            TileObjectRecipe recipe = default;
+            if (otherData != null && otherData.Length == 1) {
+                //preselected recipe
+                recipe = (TileObjectRecipe)otherData[0].obj;
+            } else {
+                TileObjectData data = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
+                if (data?.craftRecipes != null) {
+                    recipe = data.mainRecipe;
+                }
+            }
+            List<Precondition> p = new List<Precondition>();
+            if (recipe.hasValue) {
+                for (int i = 0; i < recipe.ingredients.Length; i++) {
+                    TileObjectRecipeIngredient ingredient = recipe.ingredients[i];
+                    string req = ingredient.ingredientName;
                     if (req == "Wood Pile") {
                         p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, req, false, GOAP_EFFECT_TARGET.ACTOR), HasWood));
                     } else if (req == "Stone Pile") {
@@ -35,9 +46,9 @@ public class CraftTileObject : GoapAction {
                     } else {
                         p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, req, false, GOAP_EFFECT_TARGET.ACTOR), (thisActor, thisTarget, thisOtherData, jobType) => IsCarriedOrInInventory(thisActor, thisTarget, thisOtherData, req)));    
                     }
-                }
-                return p;
+                }    
             }
+            return p;
         }
         return base.GetPreconditions(actor, target, otherData);
     }
@@ -82,23 +93,34 @@ public class CraftTileObject : GoapAction {
     public void PreCraftSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
         TileObject obj = goapNode.poiTarget as TileObject;
-        TileObjectData data = TileObjectDB.GetTileObjectData(obj.tileObjectType);
-        if (data != null && data.itemRequirementsForCreation != null) {
-            for (int i = 0; i < data.itemRequirementsForCreation.Length; i++) {
-                string neededItem = data.itemRequirementsForCreation[i];
+        
+        TileObjectRecipe recipe = default;
+        if (goapNode.otherData != null && goapNode.otherData.Length == 1) {
+            //preselected recipe
+            recipe = (TileObjectRecipe)goapNode.otherData[0].obj;
+        } else {
+            TileObjectData data = TileObjectDB.GetTileObjectData(obj.tileObjectType);
+            if (data?.craftRecipes != null) {
+                recipe = data.mainRecipe;
+            }
+        }
+        
+        if (recipe.hasValue) {
+            for (int i = 0; i < recipe.ingredients.Length; i++) {
+                TileObjectRecipeIngredient ingredient = recipe.ingredients[i];
+                string neededItem = ingredient.ingredientName;
                 if (neededItem == "Wood Pile") {
                     ResourcePile resourcePile = actor.GetItem(TILE_OBJECT_TYPE.WOOD_PILE) as ResourcePile;
-                    resourcePile?.AdjustResourceInPile(-data.constructionCost);
+                    resourcePile?.AdjustResourceInPile(-ingredient.amount);
                 } else if (neededItem == "Stone Pile") {
                     ResourcePile resourcePile = actor.GetItem(TILE_OBJECT_TYPE.STONE_PILE) as ResourcePile;
-                    resourcePile?.AdjustResourceInPile(-data.constructionCost);
+                    resourcePile?.AdjustResourceInPile(-ingredient.amount);
                 } else if (neededItem == "Metal Pile") {
                     ResourcePile resourcePile = actor.GetItem(TILE_OBJECT_TYPE.METAL_PILE) as ResourcePile;
-                    resourcePile?.AdjustResourceInPile(-data.constructionCost);
+                    resourcePile?.AdjustResourceInPile(-ingredient.amount);
                 } else {
                     if (!actor.UnobtainItem(neededItem)) {
-                        actor.logComponent.PrintLogErrorIfActive(
-                            "Trying to craft " + obj.name + " but " + actor + " does not have " + neededItem);
+                        actor.logComponent.PrintLogErrorIfActive("Trying to craft " + obj.name + " but " + actor + " does not have " + neededItem);
                     }
                 }
             }
@@ -145,15 +167,15 @@ public class CraftTileObject : GoapAction {
     }
     private bool HasWood(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         return poiTarget is TileObject tileObject && actor.GetItem(TILE_OBJECT_TYPE.WOOD_PILE) is ResourcePile pile && 
-               pile.resourceInPile >= TileObjectDB.GetTileObjectData(tileObject.tileObjectType).constructionCost; 
+               pile.resourceInPile >= TileObjectDB.GetTileObjectData(tileObject.tileObjectType).mainRecipe.GetNeededAmountForIngredient(TILE_OBJECT_TYPE.WOOD_PILE); 
     }
     private bool HasStone(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         return poiTarget is TileObject tileObject && actor.GetItem(TILE_OBJECT_TYPE.STONE_PILE) is ResourcePile pile && 
-               pile.resourceInPile >= TileObjectDB.GetTileObjectData(tileObject.tileObjectType).constructionCost; 
+               pile.resourceInPile >= TileObjectDB.GetTileObjectData(tileObject.tileObjectType).mainRecipe.GetNeededAmountForIngredient(TILE_OBJECT_TYPE.STONE_PILE); 
     }
     private bool HasMetal(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         return poiTarget is TileObject tileObject && actor.GetItem(TILE_OBJECT_TYPE.METAL_PILE) is ResourcePile pile && 
-               pile.resourceInPile >= TileObjectDB.GetTileObjectData(tileObject.tileObjectType).constructionCost; 
+               pile.resourceInPile >= TileObjectDB.GetTileObjectData(tileObject.tileObjectType).mainRecipe.GetNeededAmountForIngredient(TILE_OBJECT_TYPE.METAL_PILE); 
     }
     #endregion
 

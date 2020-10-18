@@ -60,5 +60,6 @@ public class SaveDataRegion : SaveData<Region> {
             Faction factionHere = region.factionsHere[i];
             factionsHereIDs[i] = factionHere.persistentID;
         }
+        
     }
 }

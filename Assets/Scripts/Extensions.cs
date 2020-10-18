@@ -285,13 +285,6 @@ public static class Extensions {
         }
         return FURNITURE_TYPE.NONE;
     }
-    public static bool CanProvideFacility(this TILE_OBJECT_TYPE tileObj, FACILITY_TYPE facility) {
-        TileObjectData data;
-        if (TileObjectDB.TryGetTileObjectData(tileObj, out data)) {
-            return data.CanProvideFacility(facility);
-        }
-        return false;
-    }
     public static bool IsPreBuilt(this TILE_OBJECT_TYPE tileObjectType) {
         switch (tileObjectType) {
             case TILE_OBJECT_TYPE.TABLE:

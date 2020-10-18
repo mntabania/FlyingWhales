@@ -93,7 +93,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		Assert.IsTrue(poi is TileObject); // || poi is SpecialToken
 		TileObject tileObject = poi as TileObject;
 		if (poi.gridTileLocation != null && poi.gridTileLocation.IsPartOfSettlement(_owner) && tileObject.tileObjectType.CanBeRepaired()) {
-			TryCreateRepairJob(poi);
+			TryCreateRepairTileObjectJob(poi);
 		}
 	}
 	private void OnObjectFullyRepaired(IPointOfInterest poi) {
@@ -377,17 +377,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	#endregion
 
 	#region Repair
-	private void TryCreateRepairJob(IPointOfInterest target) {
+	private void TryCreateRepairTileObjectJob(IPointOfInterest target) {
 		if (_owner.HasJob(JOB_TYPE.REPAIR, target) == false) {
-			GoapPlanJob job =
-				JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR, target, _owner);
+			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR, target, _owner);
 			job.SetCanTakeThisJobChecker(JobManager.Can_Take_Repair);
 			job.SetStillApplicableChecker(JobManager.Repair_Applicability);
-			if (target is TileObject) {
-				TileObject tileObject = target as TileObject;
-				job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] {
-					(int) (TileObjectDB.GetTileObjectData(tileObject.tileObjectType).constructionCost * 0.5f)
-				});	
+			if (target is TileObject tileObject) {
+				job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] {TileObjectDB.GetTileObjectData(tileObject.tileObjectType).repairCost});	
 			} 
 			// else if (target is SpecialToken) {
 			// 	SpecialToken specialToken = target as SpecialToken;
@@ -915,7 +911,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	    
 	    if (!_owner.HasJob(JOB_TYPE.CRAFT_OBJECT, waterWell)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, waterWell, _owner);
-		    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.WATER_WELL).constructionCost });
+		    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.WATER_WELL).mainRecipe });
 		    job.SetCanTakeThisJobChecker(JobManager.Can_Craft_Well);
 		    _owner.AddToAvailableJobs(job); 
 	    }

@@ -21,6 +21,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             canBeTriggered = true;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
             //effects = new List<TraitEffect>();
             //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_TO_WOLF, INTERACTION_TYPE.REVERT_TO_NORMAL };
         }
@@ -49,6 +50,20 @@ namespace Traits {
                 data = $"{data}\nIs Master: {character.lycanData.isMaster.ToString()}";
             }
             return data;
+        }
+        public override bool PerTickOwnerMovement() {
+            if (owner.lycanData.activeForm == owner.lycanData.lycanthropeForm || owner.lycanData.isInWerewolfForm) {
+                float roll = Random.Range(0f, 100f);
+                float chance = 2f;
+                if (owner.currentRegion.GetTileObjectInRegionCount(TILE_OBJECT_TYPE.WEREWOLF_PELT) >= 3) {
+                    chance = 0.5f;
+                }
+                if (roll < chance && owner.gridTileLocation.objHere == null) {
+                    //spawn werewolf pelt
+                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Shed_Pelt, owner);
+                }
+            }
+            return false;
         }
         //public override bool OnDeath(Character character) {
         //    if(character == owner.lycanData.lycanthropeForm) {

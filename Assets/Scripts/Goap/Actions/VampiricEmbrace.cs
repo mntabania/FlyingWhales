@@ -143,7 +143,7 @@ public class VampiricEmbrace : GoapAction {
                 targetCharacter.UnobtainItem("Phylactery");
                 actor.AdjustHP(-500, ELEMENTAL_TYPE.Normal);
                 if(actor.currentHP <= 0) {
-                    actor.Death(deathFromAction: goapNode, responsibleCharacter: targetCharacter, _deathLog: goapNode.descriptionLog);
+                    actor.Death(deathFromAction: goapNode, responsibleCharacter: targetCharacter, _deathLog: log);
                 } else {
                     actor.traitContainer.AddTrait(actor, "Unconscious", targetCharacter, goapNode);
                 }

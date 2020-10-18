@@ -250,11 +250,13 @@ public class CharacterVisuals {
         
     }
     public string GetCharacterStringIcon() {
-        if (_owner.isNormalCharacter == false) {
+        if (!_owner.isNormalCharacter) {
             if (_owner.characterClass.className == "Necromancer") {
                 return UtilityScripts.Utilities.VillagerIcon();        
-            } else if (_owner.faction.isPlayerFaction) {
+            } else if (_owner.faction != null && _owner.faction.isPlayerFaction) {
                 return UtilityScripts.Utilities.DemonIcon();
+            } else if (_owner.faction != null && _owner.faction.factionType.type == FACTION_TYPE.Undead) {
+                return UtilityScripts.Utilities.UndeadIcon();
             }
             return UtilityScripts.Utilities.MonsterIcon();
         } else if (_owner.isAlliedWithPlayer) {

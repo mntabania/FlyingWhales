@@ -339,6 +339,7 @@ namespace Inner_Maps.Location_Structures {
                     && tileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
                         npcSettlement.OnItemAddedToLocation(tileObject, this);
                     }
+                    region.AddTileObjectInRegion(tileObject);
                 }
                 return true;
             }
