@@ -205,7 +205,7 @@ public class CombatComponent : CharacterComponent {
     #region Fight or Flight
     public CombatReaction GetFightOrFlightReaction(IPointOfInterest target, string fightReason) {
         string debugLog = $"FIGHT or FLIGHT response of {owner.name} against {target.nameWithID}";
-        return new CombatReaction(COMBAT_REACTION.Flight);
+        //return new CombatReaction(COMBAT_REACTION.Flight);
 
         if (!owner.canPerform || !owner.canMove) {
             debugLog += "\n-Character cannot move/perform, will not fight or flight";

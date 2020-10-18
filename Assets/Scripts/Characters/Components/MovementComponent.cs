@@ -363,13 +363,17 @@ public class MovementComponent : CharacterComponent {
         }
     }
     public LocationGridTile GetBlockerTargetTileOnReachEndPath(Path path, LocationGridTile lastGridTileInPath) {
-        LocationGridTile targetTile;
+        LocationGridTile targetTile = null;
+
+        if (!owner.marker) {
+            return null;
+        }
 
         LocationGridTile tile = lastGridTileInPath;// owner.currentRegion.innerMap.GetTile(lastPositionInPath);
-        if (tile.objHere is BlockWall) {
+        if (tile.objHere is BlockWall || tile.centeredWorldLocation == owner.marker.transform.position) {
             targetTile = tile;
         } else {
-            Vector2 direction = lastGridTileInPath.centeredWorldLocation - tile.centeredWorldLocation; //character.behaviourComponent.currentAbductTarget.worldPosition - tile.centeredWorldLocation;
+            Vector2 direction = tile.centeredWorldLocation - owner.marker.transform.position; //character.behaviourComponent.currentAbductTarget.worldPosition - tile.centeredWorldLocation;
             if (direction.y > 0) {
                 //north
                 targetTile = tile.GetNeighbourAtDirection(GridNeighbourDirection.North);
@@ -383,17 +387,18 @@ public class MovementComponent : CharacterComponent {
                 //west
                 targetTile = tile.GetNeighbourAtDirection(GridNeighbourDirection.West);
             }
-
-            //We must not check the neighbours of neighbours
-            if (targetTile != null && targetTile.objHere == null) {
-                for (int i = 0; i < tile.neighbourList.Count; i++) {
-                    LocationGridTile neighbour = tile.neighbourList[i];
-                    if (neighbour.objHere is BlockWall) {
-                        targetTile = neighbour;
-                        break;
-                    }
+        }
+        //We must not check the neighbours of neighbours
+        if (targetTile != null && (targetTile.objHere == null || !(targetTile.objHere is BlockWall))) {
+            LocationGridTile newTargetTile = null;
+            for (int i = 0; i < tile.neighbourList.Count; i++) {
+                LocationGridTile neighbour = tile.neighbourList[i];
+                if (neighbour.objHere is BlockWall) {
+                    newTargetTile = neighbour;
+                    break;
                 }
             }
+            targetTile = newTargetTile;
         }
         return targetTile;
     }

@@ -688,7 +688,7 @@ public class CombatState : CharacterState {
                 // float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.worldPosition);
                 // Profiler.EndSample();
                 float distance = Vector2.Distance(stateComponent.owner.marker.transform.position, currentClosestHostile.worldPosition);
-                if (distance <= stateComponent.owner.characterClass.attackRange) {
+                if (stateComponent.owner.characterClass.attackRange >= distance) {
                     if (stateComponent.owner.movementComponent.isStationary) {
                         Attack();
                     } else {
