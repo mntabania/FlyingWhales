@@ -604,46 +604,68 @@ namespace Inner_Maps {
             if (hasSnareTrap) {
                 TriggerSnareTrap(character);
             }
-            if (isCorrupted && !character.isDead && character.canMove) {
-                //Reporting does not trigger until Tutorial is over
-                //https://trello.com/c/OmmyR6go/1239-reporting-does-not-trigger-until-tutorial-is-over
-
-                LocationStructure mostImportantStructureOnTile =
-                    collectionOwner.partOfHextile.hexTileOwner.GetMostImportantStructureOnTile();
-                if(mostImportantStructureOnTile is DemonicStructure demonicStructure) {
-                    if (!character.behaviourComponent.isAttackingDemonicStructure 
-                        && character.homeSettlement != null && character.necromancerTrait == null && (character.race == RACE.HUMANS || character.race == RACE.ELVES)
-                        && character.marker != null && character.carryComponent.IsNotBeingCarried() && character.isAlliedWithPlayer == false
-                        && (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue)) 
-                        //&& !InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)
-                        && (Tutorial.TutorialManager.Instance.hasCompletedImportantTutorials || WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial)) {
-                        if (character.faction != null && character.faction.isMajorNonPlayer && !character.faction.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Counterattack) && !character.faction.HasActiveReportDemonicStructureJob(mostImportantStructureOnTile)) {
-                            character.jobComponent.CreateReportDemonicStructure(mostImportantStructureOnTile);
-                            return;
+            if (isCorrupted) {
+                if(!character.isDead && character.canMove && character.canPerform) {
+                    if (!character.movementComponent.hasMovedOnCorruption) {
+                        //Corrupted hexes should also be avoided
+                        //https://trello.com/c/6WJtivlY/1274-fleeing-should-not-go-to-corrupted-structures
+                        //Note: Instead of always fleeing from all corrupted hex tiles all the time, we must only let the characters flee from it if it walks on a corrupted tile
+                        //The reason for this is so that if the corrupted hex is too far away the character will not try to run from it, and thus, the flee path will not be messed up
+                        //Right now, the flee path sometimes gets messed up when the character tries to run from another character, sometimes they go to the same direction, it is because right now, we always take into account the corrupted hex tile even if they are too far
+                        if (character.marker && character.marker.hasFleePath && character.isNormalCharacter) {
+                            if (character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                                //TileObject genericTileObject = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile().genericTileObject;
+                                character.movementComponent.SetHasMovedOnCorruption(true);
+                                //character.marker.AddPOIAsInVisionRange(genericTileObject);
+                                //character.combatComponent.Flight(genericTileObject, "saw something frightening", forcedFlight: true);
+                                //genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
+                                character.marker.AddAvoidPositions(character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile().worldLocation);
+                                return;
+                            }
                         }
                     }
-                    //If cannot report flee instead
-                    //do not make characters that are allied with the player or attacking a demonic structure flee from corruption.
-                    if (!character.behaviourComponent.isAttackingDemonicStructure 
-                        && (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Heirloom_Hunt)) 
-                        && character.isAlliedWithPlayer == false 
-                        && character.necromancerTrait == null
-                        && !character.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
-                        if (!character.movementComponent.hasMovedOnCorruption) {
-                            character.movementComponent.SetHasMovedOnCorruption(true);
-                            if (character.isNormalCharacter) {
-                                //Instead of fleeing when character steps on a corrupted tile, trigger Shocked interrupt only
-                                //The reason for this is to eliminate the bug wherein the character will flee from the corrupted tile, then after fleeing, he will again move across it, thus triggering flee again, which results in unending loop of fleeing and moving
-                                //So to eliminate this behaviour we will not let the character flee, but will trigger Shocked interrupt only and then go on with his job/action
-                                //https://trello.com/c/yiW344Sb/2499-villagers-fleeing-from-demonic-area-can-get-stuck-repeating-it
-                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, character);
-                                //genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
 
-                                //if (character.characterClass.IsCombatant()) {
-                                //    character.behaviourComponent.SetIsAttackingDemonicStructure(true, demonicStructure);
-                                //} else {
-                                //    genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
-                                //}
+
+                    //Reporting does not trigger until Tutorial is over
+                    //https://trello.com/c/OmmyR6go/1239-reporting-does-not-trigger-until-tutorial-is-over
+
+                    LocationStructure mostImportantStructureOnTile =
+                        collectionOwner.partOfHextile.hexTileOwner.GetMostImportantStructureOnTile();
+                    if(mostImportantStructureOnTile is DemonicStructure demonicStructure) {
+                        if (!character.behaviourComponent.isAttackingDemonicStructure 
+                            && character.homeSettlement != null && character.necromancerTrait == null && (character.race == RACE.HUMANS || character.race == RACE.ELVES)
+                            && character.marker != null && character.carryComponent.IsNotBeingCarried() && character.isAlliedWithPlayer == false
+                            && (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue)) 
+                            //&& !InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)
+                            && (Tutorial.TutorialManager.Instance.hasCompletedImportantTutorials || WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial)) {
+                            if (character.faction != null && character.faction.isMajorNonPlayer && !character.faction.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Counterattack) && !character.faction.HasActiveReportDemonicStructureJob(mostImportantStructureOnTile)) {
+                                character.jobComponent.CreateReportDemonicStructure(mostImportantStructureOnTile);
+                                return;
+                            }
+                        }
+                        //If cannot report flee instead
+                        //do not make characters that are allied with the player or attacking a demonic structure flee from corruption.
+                        if (!character.behaviourComponent.isAttackingDemonicStructure 
+                            && (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Heirloom_Hunt)) 
+                            && character.isAlliedWithPlayer == false 
+                            && character.necromancerTrait == null
+                            && !character.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
+                            if (!character.movementComponent.hasMovedOnCorruption) {
+                                character.movementComponent.SetHasMovedOnCorruption(true);
+                                if (character.isNormalCharacter) {
+                                    //Instead of fleeing when character steps on a corrupted tile, trigger Shocked interrupt only
+                                    //The reason for this is to eliminate the bug wherein the character will flee from the corrupted tile, then after fleeing, he will again move across it, thus triggering flee again, which results in unending loop of fleeing and moving
+                                    //So to eliminate this behaviour we will not let the character flee, but will trigger Shocked interrupt only and then go on with his job/action
+                                    //https://trello.com/c/yiW344Sb/2499-villagers-fleeing-from-demonic-area-can-get-stuck-repeating-it
+                                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, character);
+                                    //genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
+
+                                    //if (character.characterClass.IsCombatant()) {
+                                    //    character.behaviourComponent.SetIsAttackingDemonicStructure(true, demonicStructure);
+                                    //} else {
+                                    //    genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
+                                    //}
+                                }
                             }
                         }
                     }

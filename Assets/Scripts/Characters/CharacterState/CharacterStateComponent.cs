@@ -112,6 +112,13 @@ public class CharacterStateComponent : CharacterComponent {
                     trait.OnAfterExitingCombat(owner);
                 }
             }
+            if (owner.isInWerewolfForm) {
+                if (!owner.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Werewolf)) {
+                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Revert_From_Werewolf, owner);
+                } else {
+                    owner.crimeComponent.FleeToAllNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(owner, CRIME_TYPE.Werewolf);
+                }
+            }
         }
     }
     private void PerTickCurrentState() {

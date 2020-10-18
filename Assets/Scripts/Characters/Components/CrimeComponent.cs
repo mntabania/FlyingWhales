@@ -267,6 +267,21 @@ public class CrimeComponent : CharacterComponent {
         //Return true so that the character will not transform into a bat if he has no marker
         return true;
     }
+    public void FleeToAllNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(Character character, CRIME_TYPE crimeType) {
+        if (character.marker) {
+            for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
+                Character inVision = character.marker.inVisionCharacters[i];
+                if (inVision != character) {
+                    if (!character.IsHostileWith(inVision)) {
+                        CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(inVision, character, character, crimeType);
+                        if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
+                            character.combatComponent.Flight(inVision, CombatManager.Transforming_Into_A_Creature);
+                        }
+                    }
+                }
+            }
+        }
+    }
     #endregion
 
     #region Loading

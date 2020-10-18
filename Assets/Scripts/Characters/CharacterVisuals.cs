@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Logs;
 using UnityEngine;
 using UtilityScripts;
+using Traits;
 using Object = UnityEngine.Object;
 
 public class CharacterVisuals {
@@ -125,15 +126,21 @@ public class CharacterVisuals {
 
     #region Animations
     private void UpdateMarkerAnimations(Character character) {
-        bool isInBatForm = character.behaviourComponent.isInVampireBatForm;
+        bool isInBatForm = character.isInVampireBatForm;
+        bool isInWerewolfForm = character.isInWerewolfForm;
         if (character.reactionComponent.disguisedCharacter != null) {
             character = character.reactionComponent.disguisedCharacter;
             //If a character is only disguising, do not copy bat form of the original character in case the original one is currently in bat form
             isInBatForm = false;
+            isInWerewolfForm = false;
         }
         CharacterClassAsset assets = null;
         if (!isInBatForm) {
-            assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender, character.visuals.classToUseForVisuals);
+            if (!isInWerewolfForm) {
+                assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender, character.visuals.classToUseForVisuals);
+            } else {
+                assets = CharacterManager.Instance.GetAdditionalMarkerAsset("Werewolf");
+            }
         } else {
             assets = CharacterManager.Instance.GetAdditionalMarkerAsset("Vampire Bat");
         }

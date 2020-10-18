@@ -17,7 +17,7 @@ public class CombatManager : BaseMonoBehaviour {
     public const int pursueDuration = 4;
     public const string Hostility = "Hostility", Retaliation = "Retaliation", Berserked = "Berserked", Action = "Action",
         Threatened = "Threatened", Anger = "Anger", Join_Combat = "Join Combat", Drunk = "Drunk", Rage = "Rage", Demon_Kill = "Demon Kill", Dig = "Dig",
-        Vampire_Bat = "Vampire Bat";
+        Transforming_Into_A_Creature = "Transforming into a creature";
 
     [SerializeField] private ProjectileDictionary _projectileDictionary;
     [SerializeField] private GameObject _dragonProjectile;

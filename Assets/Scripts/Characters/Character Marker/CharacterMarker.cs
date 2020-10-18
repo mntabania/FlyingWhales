@@ -1123,14 +1123,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if(character.reactionComponent.disguisedCharacter != null) {
             character = character.reactionComponent.disguisedCharacter;
         }
-
         if (character.characterClass.className == "Mage" || character.characterClass.className == "Necromancer" || character.visuals.portraitSettings.hair == -1 || 
             character.race == RACE.WOLF || character.race == RACE.SKELETON || 
             character.race == RACE.GOLEM || character.race == RACE.ELEMENTAL || character.race == RACE.KOBOLD ||
             character.race == RACE.SPIDER || character.race == RACE.MIMIC || character.race == RACE.ENT || 
             character.race == RACE.PIG || character.race == RACE.CHICKEN || character.race == RACE.SHEEP 
             || character.race == RACE.ABOMINATION
-            || character.behaviourComponent.isInVampireBatForm) {
+            || character.isInVampireBatForm) {
             hairImg.gameObject.SetActive(false);
             knockedOutHairImg.gameObject.SetActive(false);
         } else {
@@ -1609,12 +1608,15 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Flee
     public void OnStartFlee() {
-        pathfindingAI.ClearAllCurrentPathData();
+        if (!hasFleePath) {
+            //Only clear path on the first start of flee, once the character is already in flee path and decided to flee again do not clear path anymore
+            pathfindingAI.ClearAllCurrentPathData();
+        }
         SetHasFleePath(true);
         pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
 
         List<HexTile> playerHexes = PlayerManager.Instance.player.playerSettlement.tiles;
-        if(avoidThisPositions == null) {
+        if (avoidThisPositions == null) {
             avoidThisPositions = new List<Vector3>();
         } else {
             avoidThisPositions.Clear();
@@ -1629,23 +1631,30 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
 
         //TODO: Must be on see only because the flee path will be messed up if they always avoid the hexes
-        ////Corrupted hexes should also be avoided
-        ////https://trello.com/c/6WJtivlY/1274-fleeing-should-not-go-to-corrupted-structures
-        //if (playerHexes.Count > 0) {
-        //    for (int i = 0; i < playerHexes.Count; i++) {
-        //        if (playerHexes[i].region == character.currentRegion) {
-        //            avoidThisPositions.Add(playerHexes[i].GetCenterLocationGridTile().worldLocation);
-        //        }
-        //    }
-        //}
+        //Corrupted hexes should also be avoided
+        //https://trello.com/c/6WJtivlY/1274-fleeing-should-not-go-to-corrupted-structures
+        if (character.isNormalCharacter) {
+            if (playerHexes.Count > 0) {
+                for (int i = 0; i < playerHexes.Count; i++) {
+                    HexTile corruptedHex = playerHexes[i];
+                    if (corruptedHex.region == character.currentRegion) {
+                        if (character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                            if (character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == corruptedHex) {
+                                avoidThisPositions.Add(corruptedHex.GetCenterLocationGridTile().worldLocation);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidThisPositions, CombatManager.Instance.searchLength);
-        fleePath.aimStrength = CombatManager.Instance.aimStrength;
-        fleePath.spread = CombatManager.Instance.spread;
-        seeker.StartPath(fleePath);
+        ReconstructFleePath();
     }
     public void OnStartFleeToHome() {
-        pathfindingAI.ClearAllCurrentPathData();
+        if (!hasFleePath) {
+            //Only clear path on the first start of flee, once the character is already in flee path and decided to flee again do not clear path anymore
+            pathfindingAI.ClearAllCurrentPathData();
+        }
         SetHasFleePath(true);
         LocationGridTile chosenTile = null;
         if(character.homeStructure != null) {
@@ -1666,7 +1675,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     public void OnStartFleeToOutside() {
-        pathfindingAI.ClearAllCurrentPathData();
+        if (!hasFleePath) {
+            //Only clear path on the first start of flee, once the character is already in flee path and decided to flee again do not clear path anymore
+            pathfindingAI.ClearAllCurrentPathData();
+        }
         SetHasFleePath(true);
         LocationGridTile chosenTile = null;
         if(character.currentStructure != null && character.currentStructure.structureType.IsSpecialStructure()) {
@@ -1696,6 +1708,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
             OnStartFlee();
         }
     }
+    public void ReconstructFleePath() {
+        if(avoidThisPositions.Count > 0) {
+            FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidThisPositions, CombatManager.Instance.searchLength);
+            fleePath.aimStrength = CombatManager.Instance.aimStrength;
+            fleePath.spread = CombatManager.Instance.spread;
+            seeker.StartPath(fleePath);
+        }
+    }
     public void OnFleePathComputed(Path path) {
         if (character == null || !character.canPerform || !character.canMove) {
             return; //this is for cases that the character is no longer in a combat state, but the pathfinding thread returns a flee path
@@ -1712,6 +1732,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void SetHasFleePath(bool state) {
         hasFleePath = state;
+    }
+    public void AddAvoidPositions(Vector3 avoid) {
+        avoidThisPositions.Add(avoid);
+        ReconstructFleePath();
     }
     #endregion
 
