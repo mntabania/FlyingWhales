@@ -1541,7 +1541,7 @@ public class ReactionComponent : CharacterComponent {
                     if (GameUtilities.RollChance(50) && !actor.jobQueue.HasJob(JOB_TYPE.INSPECT, targetTileObject) && !actor.defaultCharacterTrait.HasAlreadyInspectedObject(targetTileObject)) {
                         actor.jobComponent.TriggerInspect(targetTileObject);
                     } else if (!actor.IsInventoryAtFullCapacity()) {
-                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, targetTileObject);
+                        actor.jobComponent.CreateTakeItemJob(targetTileObject);
                     }
                 }
             }

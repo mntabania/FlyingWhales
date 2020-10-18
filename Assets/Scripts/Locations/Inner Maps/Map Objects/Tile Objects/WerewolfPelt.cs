@@ -7,7 +7,7 @@
         AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
-        //TODO: Add Interesting trait
+        traitContainer.AddTrait(this, "Interesting");
     }
     public WerewolfPelt(SaveDataTileObject data) { }
     protected override string GenerateName() { return "Werewolf Pelt"; }
