@@ -124,6 +124,7 @@ namespace Traits {
         public bool dislikesBeingLycan { get; private set; }
         public bool isMaster { get; private set; }
         public List<Character> awareCharacters { get; private set; }
+        public bool isInWerewolfForm { get; private set; }
 
         public GameObject transformRevertEffectGO { get; private set; }
 
@@ -307,6 +308,9 @@ namespace Traits {
             //    originalForm.traitContainer.RemoveTrait(originalForm, "Lycanthrope");
             //}
         }
+        public void SetIsInWerewolfForm(bool state) {
+            isInWerewolfForm = state;
+        }
 
         #region Additional Data
         public void SetDislikesBeingLycan(bool state) {
@@ -400,6 +404,8 @@ namespace Traits {
         public bool isMaster;
         public List<string> awareCharacterIDs;
 
+        public bool isInWerewolfForm;
+
         #region Overrides
         public override void Save(LycanthropeData data) {
             activeForm = data.activeForm.persistentID;
@@ -409,6 +415,7 @@ namespace Traits {
             originalForm = data.originalForm.persistentID;
             dislikesBeingLycan = data.dislikesBeingLycan;
             isMaster = data.isMaster;
+            isInWerewolfForm = data.isInWerewolfForm;
             awareCharacterIDs = SaveUtilities.ConvertSavableListToIDs(data.awareCharacters);
         }
         public override LycanthropeData Load() {
@@ -426,6 +433,7 @@ namespace Traits {
             LycanthropeData data = new LycanthropeData(origForm, lycanForm, activeForm, limboForm);
             data.SetDislikesBeingLycan(dislikesBeingLycan);
             data.SetIsMaster(isMaster);
+            data.SetIsInWerewolfForm(isInWerewolfForm);
             data.LoadAwareCharacters(SaveUtilities.ConvertIDListToCharacters(awareCharacterIDs));
             return data;
         }

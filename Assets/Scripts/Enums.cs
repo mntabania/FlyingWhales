@@ -564,7 +564,9 @@ public enum INTERRUPT {
     Revert_From_Bat,
     Become_Vampire_Lord,
     Burning_At_Stake,
-    Become_Lycanthrope
+    Become_Lycanthrope,
+    Transform_To_Werewolf,
+    Revert_From_Werewolf,
 }
 
 public enum TRAIT_TYPE {

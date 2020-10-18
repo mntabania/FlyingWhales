@@ -6,8 +6,8 @@ using Traits;
 using UnityEngine;
 using UtilityScripts;
 namespace Interrupts {
-    public class TransformToBat : Interrupt {
-        public TransformToBat() : base(INTERRUPT.Transform_To_Bat) {
+    public class TransformToWerewolf : Interrupt {
+        public TransformToWerewolf() : base(INTERRUPT.Transform_To_Werewolf) {
             duration = 1;
             //isSimulateneous = true;
             interruptIconString = GoapActionStateDB.No_Icon;
@@ -18,29 +18,20 @@ namespace Interrupts {
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Character actor = interruptHolder.actor;
-            actor.RevertFromWerewolfForm();
-            actor.TransformToVampireBatForm();
-            //if (!actor.isInVampireBatForm) {
-            //    actor.SetIsInVampireBatForm(true);
-            //    actor.movementComponent.AdjustSpeedModifier(0.20f);
-            //    actor.movementComponent.SetTagAsTraversable(InnerMapManager.Obstacle_Tag);
-            //    if (actor.visuals != null) {
-            //        actor.visuals.UpdateAllVisuals(actor);
-            //    }
-            //}
+            actor.RevertFromVampireBatForm();
+            actor.TransformToWerewolfForm();
             return true;
         }
         public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
             string response = base.ReactionToActor(actor, target, witness, interrupt, status);
 
-            Vampire vampire = actor.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
-            if(vampire != null) {
-                vampire.AddAwareCharacter(witness);
+            if(actor.isLycanthrope) {
+                actor.lycanData.AddAwareCharacter(witness);
             }
 
             CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, interrupt.crimeType, interrupt, status);
 
-            CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(witness, actor, target, CRIME_TYPE.Vampire);
+            CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(witness, actor, target, CRIME_TYPE.Werewolf);
             if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
                 string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
@@ -67,13 +58,13 @@ namespace Interrupts {
                     }
                 }
             } else {
-                if (witness.traitContainer.HasTrait("Hemophiliac")) {
+                if (witness.traitContainer.HasTrait("Lycanphiliac")) {
                     if(RelationshipManager.IsSexuallyCompatible(witness, actor)) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status);
                     } else {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);
                     }
-                } else if (witness.traitContainer.HasTrait("Hemophobic")) {
+                } else if (witness.traitContainer.HasTrait("Lycanphobic")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status);
                 }
             }
@@ -81,7 +72,7 @@ namespace Interrupts {
             return response;
         }
         public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, InterruptHolder crime) {
-            return CRIME_TYPE.Vampire;
+            return CRIME_TYPE.Werewolf;
         }
         #endregion
     }

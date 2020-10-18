@@ -76,10 +76,12 @@ namespace Pathfinding {
             //aim = start - (avoid-start)*10;
             //avoidPoints = avoid;
             Vector3 avoidCollected = Vector3.zero;
-            for (int i = 0; i < avoid.Count; i++) {
+            if (avoid.Count > 0) {
+                for (int i = 0; i < avoid.Count; i++) {
                 avoidCollected += avoid[i];
+                }
+                avoidCollected /= avoid.Count;
             }
-            avoidCollected /= avoid.Count;
             aim = start - (avoidCollected - start) * 10;
             Debug.LogWarning("Aim: " + aim);
         }

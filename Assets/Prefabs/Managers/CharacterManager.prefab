@@ -2550,6 +2550,13 @@ MonoBehaviour:
       - {fileID: 21300000, guid: ba06203cf50b1834290351e49bfa8835, type: 3}
       - {fileID: 21300000, guid: 134a0c52f1cb18c4881aca600fc8c540, type: 3}
       - {fileID: 21300000, guid: 667c6fcb442d10b46b54d19885e9c520, type: 3}
+  - identifier: Werewolf
+    asset:
+      defaultSprite: {fileID: 21300000, guid: 08179e20cdf1bb749bd6c80a059af751, type: 3}
+      animationSprites:
+      - {fileID: 21300000, guid: 08179e20cdf1bb749bd6c80a059af751, type: 3}
+      - {fileID: 21300000, guid: db3bca99a1bac6140b5bef69d64c1f82, type: 3}
+      - {fileID: 21300000, guid: 4757a7c2f87c09b4f8f2f8336c6fe98f, type: 3}
   summonSettings:
     m_keys: 00000000010000000200000003000000040000000500000006000000
     m_values:

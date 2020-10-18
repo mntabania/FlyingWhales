@@ -13,10 +13,14 @@ namespace Traits {
         public bool dislikedBeingVampire { get; private set; }
         public int numOfConvertedVillagers { get; private set; }
         public List<Character> awareCharacters { get; private set; }
-        public override Type serializedData => typeof(SaveDataVampire);
+        public bool isInVampireBatForm { get; private set; }
 
         private Character _owner;
-        
+
+        #region getters
+        public override Type serializedData => typeof(SaveDataVampire);
+        #endregion
+
         public Vampire() {
             name = "Vampire";
             description = "Sustains itself by drinking other's blood.";
@@ -131,7 +135,7 @@ namespace Traits {
         public override void OnBeforeStartFlee(ITraitable traitable) {
             base.OnBeforeStartFlee(traitable);
             if(traitable is Character character) {
-                if (!character.behaviourComponent.isInVampireBatForm) {
+                if (!isInVampireBatForm) {
                     if (!character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
                         //TransformToBat(character);
                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Bat, character);
@@ -142,12 +146,12 @@ namespace Traits {
         public override void OnAfterExitingCombat(ITraitable traitable) {
             base.OnAfterExitingCombat(traitable);
             if (traitable is Character character) {
-                if (character.behaviourComponent.isInVampireBatForm) {
+                if (isInVampireBatForm) {
                     if (!character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
                         //RevertToNormal(character);
                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Revert_From_Bat, character);
                     } else {
-                        FleeToAllNonHostileVillagerInRangeThatConsidersVampirismACrime(character);
+                        character.crimeComponent.FleeToAllNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(character, CRIME_TYPE.Vampire);
                     }
                 }
             }
@@ -177,6 +181,7 @@ namespace Traits {
             Debug.Assert(saveDataVampire != null, nameof(saveDataVampire) + " != null");
             dislikedBeingVampire = saveDataVampire.dislikedBeingVampire;
             numOfConvertedVillagers = saveDataVampire.numOfConvertedVillagers;
+            isInVampireBatForm = saveDataVampire.isInVampireBatForm;
         }
         public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadSecondWaveInstancedTrait(saveDataTrait);
@@ -191,7 +196,10 @@ namespace Traits {
             }
         }
         #endregion
-        
+
+        public void SetIsInVampireBatForm(bool state) {
+            isInVampireBatForm = state;
+        }
         private void DetermineIfDesireOrDislike(Character character) {
             if(character.traitContainer.HasTrait("Hemophobic", "Chaste")) {
                 dislikedBeingVampire = true;
@@ -275,21 +283,6 @@ namespace Traits {
             }
             return null;
         }
-        private void FleeToAllNonHostileVillagerInRangeThatConsidersVampirismACrime(Character character) {
-            if (character.marker) {
-                for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
-                    Character inVision = character.marker.inVisionCharacters[i];
-                    if (inVision != character) {
-                        if (!character.IsHostileWith(inVision)) {
-                            CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(inVision, character, character, CRIME_TYPE.Vampire);
-                            if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
-                                character.combatComponent.Flight(inVision, CombatManager.Vampire_Bat);
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -298,6 +291,7 @@ public class SaveDataVampire : SaveDataTrait {
     public bool dislikedBeingVampire;
     public int numOfConvertedVillagers;
     public List<string> awareCharacters;
+    public bool isInVampireBatForm;
 
     public override void Save(Trait trait) {
         base.Save(trait);
@@ -306,6 +300,7 @@ public class SaveDataVampire : SaveDataTrait {
         awareCharacters = SaveUtilities.ConvertSavableListToIDs(vampire.awareCharacters);
         dislikedBeingVampire = vampire.dislikedBeingVampire;
         numOfConvertedVillagers = vampire.numOfConvertedVillagers;
+        isInVampireBatForm = vampire.isInVampireBatForm;
     }
 }
 #endregion

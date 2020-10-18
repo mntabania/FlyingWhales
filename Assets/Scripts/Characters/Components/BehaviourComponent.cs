@@ -22,7 +22,6 @@ public class BehaviourComponent : CharacterComponent {
     public bool hasLayedAnEgg { get; private set; }
     public bool isAgitated { get; private set; }
     public bool subterraneanJustExitedCombat { get; private set; }
-    public bool isInVampireBatForm { get; private set; }
     public string defaultBehaviourSetName { get; private set; }
     
     //douse fire
@@ -114,7 +113,6 @@ public class BehaviourComponent : CharacterComponent {
         hasEatenInTheMorning = data.hasEatenInTheMorning;
         hasEatenInTheNight = data.hasEatenInTheNight;
         isCurrentlySnatching = data.isCurrentlySnatching;
-        isInVampireBatForm = data.isInVampireBatForm;
         combatModeBeforeAttackingDemonicStructure = data.combatModeBeforeAttackingDemonicStructure;
     }
 
@@ -947,12 +945,6 @@ public class BehaviourComponent : CharacterComponent {
     }
     #endregion
 
-    #region Vampire
-    public void SetIsInVampireBatForm(bool state) {
-        isInVampireBatForm = state;
-    }
-    #endregion
-
     #region Loading
     public void LoadReferences(SaveDataBehaviourComponent data) {
         if (!string.IsNullOrEmpty(data.attackVillageTarget)) {
@@ -1071,8 +1063,6 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
     //snatcher
     public bool isCurrentlySnatching;
 
-    //vampire
-    public bool isInVampireBatForm;
 
     public COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
 
@@ -1094,7 +1084,6 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
         hasEatenInTheMorning = data.hasEatenInTheMorning;
         hasEatenInTheNight = data.hasEatenInTheNight;
         isCurrentlySnatching = data.isCurrentlySnatching;
-        isInVampireBatForm = data.isInVampireBatForm;
         combatModeBeforeAttackingDemonicStructure = data.combatModeBeforeAttackingDemonicStructure;
 
         if (data.attackVillageTarget != null) {

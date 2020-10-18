@@ -18,14 +18,7 @@ namespace Interrupts {
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Character actor = interruptHolder.actor;
-            if (actor.behaviourComponent.isInVampireBatForm) {
-                actor.behaviourComponent.SetIsInVampireBatForm(false);
-                actor.movementComponent.AdjustSpeedModifier(-0.20f);
-                actor.movementComponent.SetTagAsUnTraversable(InnerMapManager.Obstacle_Tag);
-                if (actor.visuals != null) {
-                    actor.visuals.UpdateAllVisuals(actor);
-                }
-            }
+            actor.RevertFromVampireBatForm();
             return true;
         }
         public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {

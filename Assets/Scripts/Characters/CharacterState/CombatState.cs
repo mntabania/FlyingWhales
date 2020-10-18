@@ -207,7 +207,7 @@ public class CombatState : CharacterState {
                         summary = $"{summary}\n-Has home dwelling";
                         if (character.homeStructure == character.currentStructure) {
                             summary = $"{summary}\n-Is in Home Dwelling";
-                            if (UnityEngine.Random.Range(0, 2) == 0 && avoidReason != CombatManager.Vampire_Bat) {
+                            if (UnityEngine.Random.Range(0, 2) == 0 && avoidReason != CombatManager.Transforming_Into_A_Creature) {
                                 summary = $"{summary}\n-Triggered Cowering";
                                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                                 //SetIsFleeToHome(false);
@@ -225,7 +225,7 @@ public class CombatState : CharacterState {
                                 summary = $"{summary}\n-Triggered Flee to Home";
                                 SetIsFleeToHome(true);
                                 SetIsAttacking(false);
-                            } else if ((roll >= 40 && roll < 80) || avoidReason == CombatManager.Vampire_Bat) {
+                            } else if ((roll >= 40 && roll < 80) || avoidReason == CombatManager.Transforming_Into_A_Creature) {
                                 summary = $"{summary}\n-Triggered Flee";
                                 SetIsFleeToHome(false);
                                 SetIsAttacking(false);
@@ -241,7 +241,7 @@ public class CombatState : CharacterState {
                         Summon summon = character as Summon;
                         if (summon.IsInTerritory()) {
                             summary = $"{summary}\n-Is in territory";
-                            if (UnityEngine.Random.Range(0, 2) == 0 && avoidReason != CombatManager.Vampire_Bat) {
+                            if (UnityEngine.Random.Range(0, 2) == 0 && avoidReason != CombatManager.Transforming_Into_A_Creature) {
                                 summary = $"{summary}\n-Triggered Cowering";
                                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                                 //SetIsFleeToHome(false);
@@ -259,7 +259,7 @@ public class CombatState : CharacterState {
                                 summary = $"{summary}\n-Triggered Flee to territory";
                                 SetIsFleeToHome(true);
                                 SetIsAttacking(false);
-                            } else if ((roll >= 40 && roll < 80) || avoidReason == CombatManager.Vampire_Bat) {
+                            } else if ((roll >= 40 && roll < 80) || avoidReason == CombatManager.Transforming_Into_A_Creature) {
                                 summary = $"{summary}\n-Triggered Flee";
                                 SetIsFleeToHome(false);
                                 SetIsAttacking(false);
@@ -272,7 +272,7 @@ public class CombatState : CharacterState {
                         }
                     } else {
                         summary = $"{summary}\n-Has no home dwelling nor territory";
-                        if (UnityEngine.Random.Range(0, 2) == 0 && avoidReason != CombatManager.Vampire_Bat) {
+                        if (UnityEngine.Random.Range(0, 2) == 0 && avoidReason != CombatManager.Transforming_Into_A_Creature) {
                             summary = $"{summary}\n-Triggered Cowering";
                             character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                             //SetIsFleeToHome(false);
@@ -432,6 +432,15 @@ public class CombatState : CharacterState {
             actionIconString = GoapActionStateDB.Hostile_Icon;
             thoughtBubbleLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "CharacterState", "Combat State", "thought_bubble", providedTags: LOG_TAG.Combat);
             thoughtBubbleLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+
+            //When attacking, a Mastered Lycanthrope will transform to werewolf first
+            if(stateComponent.owner.isLycanthrope && stateComponent.owner.lycanData.isMaster) {
+                if (!stateComponent.owner.isInWerewolfForm) {
+                    if (!stateComponent.owner.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Werewolf)) {
+                        stateComponent.owner.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Werewolf, stateComponent.owner);
+                    }
+                }
+            }
         } else {
             actionIconString = GoapActionStateDB.Flee_Icon;
         }

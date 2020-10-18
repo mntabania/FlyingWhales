@@ -167,6 +167,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isSociable => sociableValue >= 0;
     public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
     public bool isLycanthrope => lycanData != null;
+    public bool isInWerewolfForm => isLycanthrope && lycanData.isInWerewolfForm;
+    public bool isInVampireBatForm => IsInVampireBatForm();
     /// <summary>
     /// Is this character a normal character?
     /// Characters that are not monsters or minions.
@@ -3820,6 +3822,27 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (isDead && !marker) {
                 return false;
             }
+            if (isInVampireBatForm) {
+                Vampire vampireTrait = traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                if (!vampireTrait.DoesCharacterKnowThisVampire(character)) {
+                    return false;
+                }
+            } else if (isInWerewolfForm) {
+                if (!lycanData.DoesCharacterKnowThisLycan(character)) {
+                    return false;
+                }
+            }
+
+            if (character.isInVampireBatForm) {
+                Vampire vampireTrait = character.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                if (!vampireTrait.DoesCharacterKnowThisVampire(this)) {
+                    return false;
+                }
+            } else if (character.isInWerewolfForm) {
+                if (!character.lycanData.DoesCharacterKnowThisLycan(this)) {
+                    return false;
+                }
+            }
             return true;
         }
         return false;
@@ -4920,7 +4943,28 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //This should almost never happen since we expect that all characters should have a faction.
             return false;
         }
-        
+        if (isInVampireBatForm) {
+            Vampire vampireTrait = traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+            if (!vampireTrait.DoesCharacterKnowThisVampire(otherCharacter)) {
+                return true;
+            }
+        } else if (isInWerewolfForm) {
+            if (!lycanData.DoesCharacterKnowThisLycan(otherCharacter)) {
+                return true;
+            }
+        }
+
+        if (otherCharacter.isInVampireBatForm) {
+            Vampire vampireTrait = otherCharacter.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+            if (!vampireTrait.DoesCharacterKnowThisVampire(this)) {
+                return true;
+            }
+        } else if (otherCharacter.isInWerewolfForm) {
+            if (!otherCharacter.lycanData.DoesCharacterKnowThisLycan(this)) {
+                return true;
+            }
+        }
+
         return faction.IsHostileWith(otherCharacter.faction);
         
         // if (isFactionless || otherCharacter.isFactionless) {
@@ -5252,6 +5296,27 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //This way we can easily know and access the lycan data
     public void SetLycanthropeData(LycanthropeData data) {
         lycanData = data;
+    }
+    public void SetIsInWerewolfForm(bool state) {
+        if (isLycanthrope) {
+            lycanData.SetIsInWerewolfForm(state);
+        }
+    }
+    public void TransformToWerewolfForm() {
+        if (isLycanthrope && !lycanData.isInWerewolfForm) {
+            lycanData.SetIsInWerewolfForm(true);
+            if (visuals != null) {
+                visuals.UpdateAllVisuals(this);
+            }
+        }
+    }
+    public void RevertFromWerewolfForm() {
+        if (isLycanthrope && lycanData.isInWerewolfForm) {
+            lycanData.SetIsInWerewolfForm(false);
+            if (visuals != null) {
+                visuals.UpdateAllVisuals(this);
+            }
+        }
     }
     #endregion
 
@@ -5796,6 +5861,35 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     #endregion
 
+    #region Vampire
+    private bool IsInVampireBatForm() {
+        Vampire vampireTrait = traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+        return vampireTrait != null && vampireTrait.isInVampireBatForm;
+    }
+    public void TransformToVampireBatForm() {
+        Vampire vampireTrait = traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+        if (vampireTrait != null && !vampireTrait.isInVampireBatForm) {
+            vampireTrait.SetIsInVampireBatForm(true);
+            movementComponent.AdjustSpeedModifier(0.20f);
+            movementComponent.SetTagAsTraversable(InnerMapManager.Obstacle_Tag);
+            if (visuals != null) {
+                visuals.UpdateAllVisuals(this);
+            }
+        }
+    }
+    public void RevertFromVampireBatForm() {
+        Vampire vampireTrait = traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+        if (vampireTrait != null && vampireTrait.isInVampireBatForm) {
+            vampireTrait.SetIsInVampireBatForm(false);
+            movementComponent.AdjustSpeedModifier(-0.20f);
+            movementComponent.SetTagAsUnTraversable(InnerMapManager.Obstacle_Tag);
+            if (visuals != null) {
+                visuals.UpdateAllVisuals(this);
+            }
+        }
+    }
+    #endregion
+
     #region Loading
     public virtual void LoadReferences(SaveDataCharacter data) {
         ConstructDefaultActions();
@@ -5910,14 +6004,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
         }
+        //Load character traits after all references and visuals and objects of character has been placed since
+        LoadCharacterTraitsFromSave(data);
+        SetRelationshipContainer(data.saveDataBaseRelationshipContainer.Load());
+
         visuals.UpdateAllVisuals(this);
         //Do updating hidden state here because the marker must be created first and visuals must be updated
         OnSetIsHidden();
         reactionComponent.UpdateHiddenState();
-
-        //Load character traits after all references and visuals and objects of character has been placed since
-        LoadCharacterTraitsFromSave(data);
-        SetRelationshipContainer(data.saveDataBaseRelationshipContainer.Load());
         if (marker) {
             marker.UpdateAnimation();
         }

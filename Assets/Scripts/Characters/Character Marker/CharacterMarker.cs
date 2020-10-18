@@ -1123,14 +1123,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if(character.reactionComponent.disguisedCharacter != null) {
             character = character.reactionComponent.disguisedCharacter;
         }
-
         if (character.characterClass.className == "Mage" || character.characterClass.className == "Necromancer" || character.visuals.portraitSettings.hair == -1 || 
             character.race == RACE.WOLF || character.race == RACE.SKELETON || 
             character.race == RACE.GOLEM || character.race == RACE.ELEMENTAL || character.race == RACE.KOBOLD ||
             character.race == RACE.SPIDER || character.race == RACE.MIMIC || character.race == RACE.ENT || 
             character.race == RACE.PIG || character.race == RACE.CHICKEN || character.race == RACE.SHEEP 
             || character.race == RACE.ABOMINATION
-            || character.behaviourComponent.isInVampireBatForm) {
+            || character.isInVampireBatForm) {
             hairImg.gameObject.SetActive(false);
             knockedOutHairImg.gameObject.SetActive(false);
         } else {
@@ -1710,10 +1709,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     public void ReconstructFleePath() {
-        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidThisPositions, CombatManager.Instance.searchLength);
-        fleePath.aimStrength = CombatManager.Instance.aimStrength;
-        fleePath.spread = CombatManager.Instance.spread;
-        seeker.StartPath(fleePath);
+        if(avoidThisPositions.Count > 0) {
+            FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidThisPositions, CombatManager.Instance.searchLength);
+            fleePath.aimStrength = CombatManager.Instance.aimStrength;
+            fleePath.spread = CombatManager.Instance.spread;
+            seeker.StartPath(fleePath);
+        }
     }
     public void OnFleePathComputed(Path path) {
         if (character == null || !character.canPerform || !character.canMove) {
