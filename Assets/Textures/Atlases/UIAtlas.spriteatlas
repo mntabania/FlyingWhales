@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8322737
+    totalSpriteSurfaceArea: 8324477
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -88,20 +88,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fed4f602cdd25ce45ac3c95e68292179, type: 3}
   - {fileID: 21300000, guid: 4bdc5012594c6c2428feb60b9110bb6e, type: 3}
   - {fileID: 21300000, guid: 6da4931288c87ee439f3d3382f24c078, type: 3}
-  - {fileID: 5398943851152672197, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
-  - {fileID: -4696520873778137625, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
-  - {fileID: 8525357217409305892, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
-  - {fileID: -7319396352633551538, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
-  - {fileID: -4902642843917760881, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
-  - {fileID: -1876928399738112333, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
-  - {fileID: 5460844314999936526, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
-  - {fileID: 8111521169853545773, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
-  - {fileID: -3245737078341706568, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
-  - {fileID: -9117326914685285593, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
-  - {fileID: -2974455358559527292, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
-  - {fileID: 6816212366213478964, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
-  - {fileID: -5839074180369450957, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
-  - {fileID: -3821279244680687459, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
   - {fileID: 21300000, guid: b6303b1211fb90d498597fc6b939e2e1, type: 3}
   - {fileID: 21300000, guid: 32961622a5d8f21419cf1e02fc3f5f74, type: 3}
   - {fileID: 21300000, guid: cedec622ca7c924479b4d362719e2991, type: 3}
@@ -245,6 +231,21 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 6dcd4669a0b8ea24d916fafcbccd8827, type: 3}
   - {fileID: 21300000, guid: abd6566936bd55e46af0000593628602, type: 3}
   - {fileID: 21300000, guid: 78b42a89f6925ca4caae504b7c91e78c, type: 3}
+  - {fileID: 6673349324106512867, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: -543441588228765798, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: 1501607038925938723, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: -3497533211660145408, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: 3985457369112799095, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: 1244409664232175619, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: 3547658689238351715, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: 6362753445474963185, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: -2126816305063651932, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: -3053055662445826506, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: -6281302631860722087, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: 7078123920453852532, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: -8236894391047943605, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: 6206799429775631491, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: -5934634420481666465, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: 21300000, guid: 9450c3a9507c1e549800df5991839a0e, type: 3}
   - {fileID: 21300000, guid: b5a91dc998b014448be00704f6143f25, type: 3}
   - {fileID: 21300000, guid: ffe6ffd9e0f5644498cde93bf53e394a, type: 3}
@@ -409,20 +410,6 @@ SpriteAtlas:
   - tutorial_goal_checkbox_complete
   - tab_traits_inactive
   - Icon_Social
-  - Text_Sprites_13
-  - Text_Sprites_12
-  - Text_Sprites_11
-  - Text_Sprites_10
-  - Text_Sprites_8
-  - Text_Sprites_9
-  - Text_Sprites_4
-  - Text_Sprites_5
-  - Text_Sprites_6
-  - Text_Sprites_7
-  - Text_Sprites_0
-  - Text_Sprites_1
-  - Text_Sprites_2
-  - Text_Sprites_3
   - Enlarged-Border-Gold
   - tab_relations_inactive
   - minion_tab_skill_active
@@ -566,6 +553,21 @@ SpriteAtlas:
   - CooldownIcon
   - FactionList-Cont-Selected
   - nameplate_container
+  - icon_ideology
+  - icon_villager
+  - Key_A
+  - icon_leader
+  - Key_D
+  - icon_threat
+  - icon_cooldown
+  - Key_S
+  - Key_W
+  - icon_undead
+  - icon_demon
+  - icon_mana
+  - icon_cultist
+  - icon_chargesB
+  - icon_monster
   - dropdown_container
   - active_ability_icon
   - FilterPopUp

@@ -1,93 +1,57 @@
 fileFormatVersion: 2
-guid: f0f73412fb5958346808998fdabb9ccc
+guid: 3ac8fd99bd951024e8e2de5be93c738b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2974455358559527292
-    second: Text_Sprites_0
+      213: 6206799429775631491
+    second: icon_chargesB
   - first:
-      213: 6816212366213478964
-    second: Text_Sprites_1
+      213: 3547658689238351715
+    second: icon_cooldown
   - first:
-      213: -5839074180369450957
-    second: Text_Sprites_2
+      213: -8236894391047943605
+    second: icon_cultist
   - first:
-      213: -3821279244680687459
-    second: Text_Sprites_3
+      213: -6281302631860722087
+    second: icon_demon
   - first:
-      213: 5460844314999936526
-    second: Text_Sprites_4
+      213: 6673349324106512867
+    second: icon_ideology
   - first:
-      213: 8111521169853545773
-    second: Text_Sprites_5
+      213: -3497533211660145408
+    second: icon_leader
   - first:
-      213: -3245737078341706568
-    second: Text_Sprites_6
+      213: 7078123920453852532
+    second: icon_mana
   - first:
-      213: -249298715137947318
-    second: Text_Sprites_0
+      213: -5934634420481666465
+    second: icon_monster
   - first:
-      213: -1317307689901790000
-    second: Text_Sprites_1
+      213: 1244409664232175619
+    second: icon_threat
   - first:
-      213: 8771499588205160709
-    second: Text_Sprites_2
+      213: -543441588228765798
+    second: icon_villager
   - first:
-      213: 5784058017249625838
-    second: Text_Sprites_3
+      213: 1501607038925938723
+    second: Key_A
   - first:
-      213: -3022486151913050111
-    second: Text_Sprites_4
+      213: 3985457369112799095
+    second: Key_D
   - first:
-      213: -1504217672418605783
-    second: Text_Sprites_5
+      213: 6362753445474963185
+    second: Key_S
   - first:
-      213: -3859169699162737227
-    second: Text_Sprites_6
+      213: -2126816305063651932
+    second: Key_W
   - first:
-      213: -9117326914685285593
-    second: Text_Sprites_7
-  - first:
-      213: -4902642843917760881
-    second: Text_Sprites_8
-  - first:
-      213: -1876928399738112333
-    second: Text_Sprites_9
-  - first:
-      213: -7319396352633551538
-    second: Text_Sprites_10
-  - first:
-      213: 8004585477919030019
-    second: Text_Sprites_7
-  - first:
-      213: -6563813181826152006
-    second: Text_Sprites_8
-  - first:
-      213: 701288554155354146
-    second: Text_Sprites_9
-  - first:
-      213: 9121748865401994447
-    second: Text_Sprites_10
-  - first:
-      213: 8525357217409305892
-    second: Text_Sprites_11
-  - first:
-      213: -4696520873778137625
-    second: Text_Sprites_12
-  - first:
-      213: -2034358801589500809
-    second: Text_Sprites_11
-  - first:
-      213: -5237996060128649994
-    second: Text_Sprites_12
-  - first:
-      213: 5398943851152672197
-    second: Text_Sprites_13
+      213: -3053055662445826506
+    second: icon_undead
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 0
+    enableMipMap: 1
     sRGBTexture: 1
     linearTexture: 0
     fadeOut: 0
@@ -112,13 +76,13 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: -1
     aniso: -1
     mipBias: -100
-    wrapU: 1
-    wrapV: 1
+    wrapU: -1
+    wrapV: -1
     wrapW: -1
-  nPOTScale: 0
+  nPOTScale: 1
   lightmap: 0
   compressionQuality: 50
   spriteMode: 2
@@ -130,7 +94,7 @@ TextureImporter:
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
-  alphaIsTransparency: 1
+  alphaIsTransparency: 0
   spriteTessellationDetail: -1
   textureType: 8
   textureShape: 1
@@ -138,26 +102,14 @@ TextureImporter:
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
-  applyGammaDecoding: 1
+  applyGammaDecoding: 0
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
-    resizeAlgorithm: 1
+    resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: Standalone
-    maxTextureSize: 2048
-    resizeAlgorithm: 1
-    textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -168,295 +120,316 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Text_Sprites_0
+      name: icon_chargesB
       rect:
         serializedVersion: 2
-        x: 17
-        y: 65
-        width: 24
-        height: 22
+        x: 32
+        y: 25
+        width: 21
+        height: 31
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 48e5dc85c9c98b6d0800000000000000
-      internalID: -2974455358559527292
+      spriteID: 384afd3423bf22650800000000000000
+      internalID: 6206799429775631491
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Text_Sprites_1
+      name: icon_cooldown
       rect:
         serializedVersion: 2
-        x: 42
-        y: 63
+        x: 56
+        y: 76
+        width: 23
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36f316418c0db3130800000000000000
+      internalID: 3547658689238351715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_cultist
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 104
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4a0e29313ca0bd80800000000000000
+      internalID: -8236894391047943605
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_demon
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 80
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 956273d398454d8a0800000000000000
+      internalID: -6281302631860722087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_ideology
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 114
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e936757adf7c9c50800000000000000
+      internalID: 6673349324106512867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_leader
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 80
+        width: 24
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00dadd02314467fc0800000000000000
+      internalID: -3497533211660145408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_mana
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 102
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47dd8d2443c8a3260800000000000000
+      internalID: 7078123920453852532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_monster
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 32
         width: 22
         height: 24
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 43a77c1880d089e50800000000000000
-      internalID: 6816212366213478964
+      spriteID: f5252670071f3ada0800000000000000
+      internalID: -5934634420481666465
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Text_Sprites_2
+      name: icon_threat
       rect:
         serializedVersion: 2
-        x: 2
-        y: 39
-        width: 20
+        x: 32
+        y: 102
+        width: 28
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3083f971ff7054110800000000000000
+      internalID: 1244409664232175619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_undead
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 56
+        width: 23
         height: 24
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.47826087, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 3387ced38f077fea0800000000000000
-      internalID: -5839074180369450957
+      spriteID: 63eeb600d0e51a5d0800000000000000
+      internalID: -3053055662445826506
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Text_Sprites_3
+      name: icon_villager
       rect:
         serializedVersion: 2
-        x: 1
-        y: 0
-        width: 30
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 32
+        y: 1
+        width: 23
+        height: 24
+      alignment: 9
+      pivot: {x: 0.5217391, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: d901c31e5c618fac0800000000000000
-      internalID: -3821279244680687459
+      spriteID: a97437931ce4578f0800000000000000
+      internalID: -543441588228765798
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Text_Sprites_4
-      rect:
-        serializedVersion: 2
-        x: 65
-        y: 0
-        width: 30
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1007fa0dbd8fd06d0800000000000000
-      internalID: -3022486151913050111
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Text_Sprites_5
+      name: Key_A
       rect:
         serializedVersion: 2
         x: 0
-        y: 71
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 925cf922ff1ff1be0800000000000000
-      internalID: -1504217672418605783
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Text_Sprites_6
-      rect:
-        serializedVersion: 2
-        x: 67
-        y: 63
-        width: 20
-        height: 24
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 5b53479fa99717ac0800000000000000
-      internalID: -3859169699162737227
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Text_Sprites_7
-      rect:
-        serializedVersion: 2
-        x: 92
-        y: 63
-        width: 18
-        height: 23
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 30b3d910510061f60800000000000000
-      internalID: 8004585477919030019
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Text_Sprites_8
-      rect:
-        serializedVersion: 2
-        x: 28
-        y: 38
-        width: 15
-        height: 25
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ab9c93d00b6a8e4a0800000000000000
-      internalID: -6563813181826152006
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Text_Sprites_9
-      rect:
-        serializedVersion: 2
-        x: 48
-        y: 39
-        width: 24
-        height: 22
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 2282a73793a7bb900800000000000000
-      internalID: 701288554155354146
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Text_Sprites_10
-      rect:
-        serializedVersion: 2
-        x: 74
-        y: 38
-        width: 26
-        height: 23
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: fccbb949346f69e70800000000000000
-      internalID: 9121748865401994447
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Text_Sprites_11
-      rect:
-        serializedVersion: 2
-        x: 102
-        y: 33
-        width: 19
-        height: 28
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 774819dc27184c3e0800000000000000
-      internalID: -2034358801589500809
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Text_Sprites_12
-      rect:
-        serializedVersion: 2
-        x: 33
-        y: 0
-        width: 30
+        y: 96
+        width: 32
         height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 6fcd22dd556ee47b0800000000000000
-      internalID: -5237996060128649994
+      spriteID: 320286365a7c6d410800000000000000
+      internalID: 1501607038925938723
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Text_Sprites_13
+      name: Key_D
       rect:
         serializedVersion: 2
-        x: 97
-        y: 0
-        width: 30
+        x: 0
+        y: 64
+        width: 32
         height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 5c50c3ae3d6ecea40800000000000000
-      internalID: 5398943851152672197
+      spriteID: 7776e618c503f4730800000000000000
+      internalID: 3985457369112799095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Key_S
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fe8dee1c8a0d4850800000000000000
+      internalID: 6362753445474963185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Key_W
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a51c22c6d70c72e0800000000000000
+      internalID: -2126816305063651932
       vertices: []
       indices: 
       edges: []
@@ -464,7 +437,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: a8ba5a7209cc9f94f9c31040ac5a661d
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 

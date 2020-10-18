@@ -1004,6 +1004,9 @@ namespace UtilityScripts {
         public static string DemonIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Demon_Icon\"> ";
         }
+        public static string UndeadIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Undead_Icon\"> ";
+        }
         public static string ColorizeAction(string actionString) {
             return $"<color=#f87f43>{actionString}</color>";
         }
