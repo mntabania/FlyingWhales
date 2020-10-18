@@ -331,6 +331,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.ICE_CRYSTAL:
             case TILE_OBJECT_TYPE.ICE:
             case TILE_OBJECT_TYPE.EXCALIBUR:
+            case TILE_OBJECT_TYPE.WEREWOLF_PELT:
                 return true;
             default:
                 return false;
@@ -817,6 +818,16 @@ public static class Extensions {
                 return false;
             default:
                 return true;
+        }
+    }
+    public static bool IsFullnessRecovery(this JOB_TYPE type) {
+        switch (type) {
+            case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
+            case JOB_TYPE.FULLNESS_RECOVERY_URGENT:
+            case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
+                return true;
+            default:
+                return false;
         }
     }
     #endregion

@@ -48,7 +48,7 @@ public class TraitManager : BaseMonoBehaviour {
         "Webbed", "Cultist", "Stealthy", "Invisible", "Noxious Wanderer", "DeMooder", "Defender", "Invader", "Disabler", "Infestor",
         "Abductor", "Arsonist", "Hibernating", "Baby Infestor", "Tower", "Mighty", "Stoned", "Transforming", "Subterranean", "Petrasol",
         "Snatcher", "Agitated", "Hunting", "Chained Electric", "Prisoner", "Hemophiliac", "Hemophobic", "Burning At Stake",
-        "Lycanphiliac", "Lycanphobic"
+        "Lycanphiliac", "Lycanphobic", "Interesting"
 
     };
 
