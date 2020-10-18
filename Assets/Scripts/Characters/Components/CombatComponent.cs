@@ -118,7 +118,7 @@ public class CombatComponent : CharacterComponent {
         if (willProcessCombat) {
             SetWillProcessCombat(false); //Moved this up here, because ProcessCombatBehavior can set process combat to true again, and we don't want to overwrite that.
             ProcessCombatBehavior();
-        }
+        } 
         //else {
         //    if (owner.marker && owner.marker.hasFleePath) {
         //        if (owner.combatComponent.isInCombat) {
