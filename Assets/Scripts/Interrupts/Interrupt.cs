@@ -17,6 +17,7 @@ namespace Interrupts {
         public bool shouldAddLogs { get; protected set; } //Does this interrupt add logs to the involved characters
         public bool shouldShowNotif { get; protected set; }
         public bool shouldEndOnSeize { get; protected set; }
+        public bool shouldStopMovement { get; protected set; }
         public LOG_TAG[] logTags { get; protected set; }
 
         protected Interrupt(INTERRUPT type) {
@@ -26,6 +27,7 @@ namespace Interrupts {
             interruptIconString = GoapActionStateDB.No_Icon;
             shouldAddLogs = true;
             shouldShowNotif = true;
+            shouldStopMovement = true;
         }
 
         #region Virtuals

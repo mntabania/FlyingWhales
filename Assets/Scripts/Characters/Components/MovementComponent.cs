@@ -279,6 +279,15 @@ public class MovementComponent : CharacterComponent {
     public bool HasPathTo(LocationGridTile toTile) {
         LocationGridTile fromTile = owner.gridTileLocation;
         if (!CanDig()) {
+            if (owner.traitContainer.HasTrait("Vampire")) {
+                //Always has path if the character is a vampire and there are no non hostile villager in range that considers vampire a crime because he can just switch to bat form and move through walls
+                if (!owner.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
+                    if (fromTile == null || toTile == null) { return false; }
+                    if (fromTile == toTile) { return true; }
+
+                    return true;
+                }
+            }
             return PathfindingManager.Instance.HasPath(fromTile, toTile);
         } else {
             if (fromTile == null || toTile == null) { return false; }
@@ -315,6 +324,15 @@ public class MovementComponent : CharacterComponent {
             }
             return false;
         } else {
+            if (owner.traitContainer.HasTrait("Vampire")) {
+                //Always has path if the character is a vampire and there are no non hostile villager in range that considers vampire a crime because he can just switch to bat form and move through walls
+                if (!owner.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
+                    if (fromTile == null || toTile == null) { return false; }
+                    if (fromTile == toTile) { return true; }
+
+                    return true;
+                }
+            }
             return PathfindingManager.Instance.HasPathEvenDiffRegion(fromTile, toTile);
         }
     }
@@ -336,6 +354,15 @@ public class MovementComponent : CharacterComponent {
             //If digging is enabled, always return true, because the digging will handle the blocked path
             return true;
         } else {
+            if (owner.traitContainer.HasTrait("Vampire")) {
+                //Always has path if the character is a vampire and there are no non hostile villager in range that considers vampire a crime because he can just switch to bat form and move through walls
+                if (!owner.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
+                    if (fromTile == null || toTile == null) { return false; }
+                    if (fromTile == toTile) { return true; }
+
+                    return true;
+                }
+            }
             return PathfindingManager.Instance.HasPathEvenDiffRegion(fromTile, toTile, constraint);
         }
     }

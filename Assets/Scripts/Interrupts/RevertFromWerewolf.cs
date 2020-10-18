@@ -10,6 +10,7 @@ namespace Interrupts {
         public RevertFromWerewolf() : base(INTERRUPT.Revert_From_Werewolf) {
             duration = 1;
             //isSimulateneous = true;
+            shouldStopMovement = false;
             interruptIconString = GoapActionStateDB.No_Icon;
             logTags = new[] {LOG_TAG.Misc};
         }

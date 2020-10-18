@@ -646,8 +646,26 @@ public class CharacterMarker : MapObjectVisual<Character> {
         SetDestination(destination);
         StartMovement();
     }
-    public void ArrivedAtTarget() {
+    public void ArrivedAtTarget(ref bool shouldRecomputePath) {
         StopMovement();
+
+        if (character.traitContainer.HasTrait("Vampire")) {
+            LocationGridTile destinationTile = null;
+            LocationGridTile attainedDestinationTile = null;
+            ProcessDestinationAndAttainedDestinationTile(ref destinationTile, ref attainedDestinationTile);
+            if (attainedDestinationTile != null && character.gridTileLocation != null && destinationTile != null && destinationTile != attainedDestinationTile) {
+                //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
+                //Transform to bat so the character can traverse the tile
+                Vampire vampireTrait = character.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                if (!vampireTrait.isInVampireBatForm && !vampireTrait.isTraversingUnwalkableAsBat && !character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
+                    if(character.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Bat, character)) {
+                        vampireTrait.SetIsTraversingUnwalkableAsBat(true);
+                        shouldRecomputePath = true;
+                        return;
+                    }
+                }
+            }
+        }
 
         if (character.combatComponent.isInCombat) {
             CombatState combatState = character.stateComponent.currentState as CombatState;
@@ -693,11 +711,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         targetPOI = null;
     }
     private void ProcessDestinationAndAttainedDestinationTile(ref LocationGridTile destinationTile, ref LocationGridTile attainedDestinationTile) {
-        if (targetPOI != null) {
-            destinationTile = targetPOI.gridTileLocation;
-        } else if (this.destinationTile != null) {
-            destinationTile = this.destinationTile;
-        }
+        destinationTile = GetDestinationTile();
+
         if (character.gridTileLocation == destinationTile || character.gridTileLocation.IsNeighbour(destinationTile)) {
             attainedDestinationTile = destinationTile;
         } else {
@@ -711,7 +726,15 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
         }
     }
-    private void StartMovement() {
+    public LocationGridTile GetDestinationTile() {
+        if (targetPOI != null) {
+            return targetPOI.gridTileLocation;
+        } else if (destinationTile != null) {
+            return destinationTile;
+        }
+        return null;
+    }
+    public void StartMovement() {
         if (character.movementComponent.isStationary) {
             return;
         }
@@ -1129,7 +1152,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.race == RACE.SPIDER || character.race == RACE.MIMIC || character.race == RACE.ENT || 
             character.race == RACE.PIG || character.race == RACE.CHICKEN || character.race == RACE.SHEEP 
             || character.race == RACE.ABOMINATION
-            || character.isInVampireBatForm) {
+            || character.isInVampireBatForm
+            || character.isInWerewolfForm) {
             hairImg.gameObject.SetActive(false);
             knockedOutHairImg.gameObject.SetActive(false);
         } else {

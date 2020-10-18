@@ -60,7 +60,7 @@ public class InterruptComponent : CharacterComponent {
             
             CreateThoughtBubbleLog(triggeredInterrupt);
 
-            if (ReferenceEquals(owner.marker, null) == false && owner.marker.isMoving) {
+            if (ReferenceEquals(owner.marker, null) == false && owner.marker.isMoving && triggeredInterrupt.shouldStopMovement) {
                 owner.marker.StopMovement();
                 owner.marker.SetHasFleePath(false);
             }
