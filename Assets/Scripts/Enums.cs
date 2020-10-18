@@ -563,6 +563,7 @@ public enum INTERRUPT {
     Revert_From_Bat,
     Become_Vampire_Lord,
     Burning_At_Stake,
+    Become_Lycanthrope
 }
 
 public enum TRAIT_TYPE {
@@ -829,6 +830,8 @@ public enum TILE_OBJECT_TYPE {
     TROLL_CAULDRON = 155,
     WURM_HOLE = 156,
     HEIRLOOM = 157,
+    WEREWOLF_PELT = 158,
+    PHYLACTERY = 159,
 }
 public enum POI_STATE {
     ACTIVE,

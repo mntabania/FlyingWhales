@@ -728,6 +728,8 @@ namespace Inner_Maps {
                         detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetFlowerTile(region));
                         Assert.IsNotNull(currTile.structure);
                         ConvertDetailToTileObject(currTile);
+                        // TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WEREWOLF_PELT);
+                        // currTile.structure.AddPOI(obj, currTile);
                     } else if (Random.Range(0, 100) < 4) {
                         detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetRockTile(region));
                         Assert.IsNotNull(currTile.structure);
