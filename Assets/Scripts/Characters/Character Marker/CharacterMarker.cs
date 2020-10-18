@@ -92,6 +92,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private string _destroySchedule;
     private GameDate _destroyDate;
     private List<HexTile> hexInWildernessForFlee;
+    private List<Vector3> avoidThisPositions;
 
     #region Getters
     public GameDate destroyDate => _destroyDate;
@@ -454,7 +455,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.combatComponent.RemoveAvoidInRange(otherCharacter);
             RemovePOIFromInVisionRange(otherCharacter);
         } else {
-            if (inVisionCharacters.Contains(otherCharacter)) {
+            if (IsPOIInVision(otherCharacter)) {
                 character.CreateJobsOnTargetGainTrait(otherCharacter, trait);
             }
 
@@ -1090,7 +1091,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //    if (target.marker.inVisionCharacters.Count > 1) {
         //        return false; //if there are 2 or more in vision of target character it means he is not alone anymore
         //    } else if (target.marker.inVisionCharacters.Count == 1) {
-        //        if (!target.marker.inVisionCharacters.Contains(character)) {
+        //        if (!target.marker.IsPOIInVision(character)) {
         //            return false; //if there is only one in vision of target character and it is not this character, it means he is not alone
         //        }
         //    }
@@ -1157,7 +1158,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public bool IsStillInRange(IPointOfInterest poi) {
         //I added checking for poisInRangeButDiffStructure beacuse characters are being removed from the character's avoid range when they exit a structure. (Myk)
-        return inVisionPOIs.Contains(poi) || inVisionPOIsButDiffStructure.Contains(poi);
+        return IsPOIInVision(poi) || inVisionPOIsButDiffStructure.Contains(poi);
     }
     #endregion
 
@@ -1169,7 +1170,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         visionTrigger.Initialize(character);
     }
     public void AddPOIAsInVisionRange(IPointOfInterest poi) {
-        if (!inVisionPOIs.Contains(poi)) {
+        if (!IsPOIInVision(poi)) {
             inVisionPOIs.Add(poi);
             AddUnprocessedPOI(poi);
             if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -1281,7 +1282,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         return unprocessedVisionPOIs.Contains(poi);
     }
     private void ReprocessPOI(IPointOfInterest poi) {
-        if (HasUnprocessedPOI(poi) == false && inVisionPOIs.Contains(poi)) {
+        if (HasUnprocessedPOI(poi) == false && IsPOIInVision(poi)) {
             AddUnprocessedPOI(poi);
         }
     }
@@ -1338,6 +1339,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         character.SetHasSeenPoisoned(false);
         character.combatComponent.CheckCombatPerTickEnded();
         Profiler.EndSample();
+    }
+    public bool IsPOIInVision(IPointOfInterest poi) {
+        return (poi is TileObject tileObject && inVisionTileObjects.Contains(tileObject)) || (poi is Character character && inVisionCharacters.Contains(character));
     }
     #endregion
 
@@ -1431,7 +1435,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //}
     public void OnOtherCharacterDied(Character otherCharacter) {
         //NOTE: This is no longer needed since this will only cause duplicates because CreateJobsOnEnterVisionWith will also be called upon adding the Dead trait
-        //if (inVisionCharacters.Contains(otherCharacter)) {
+        //if (IsPOIInVision(otherCharacter)) {
         //    character.CreateJobsOnEnterVisionWith(otherCharacter); //this is used to create jobs that involve characters that died within the character's range of vision
         //}
 
@@ -1461,7 +1465,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void OnBeforeSeizingOtherCharacter(Character otherCharacter) {
         //if (character.faction != null && character.faction.isMajorNonPlayerFriendlyNeutral) {
-        //    if (inVisionCharacters.Contains(otherCharacter)) {
+        //    if (IsPOIInVision(otherCharacter)) {
         //        PlayerManager.Instance.player.threatComponent.AdjustThreat(10);
         //    }
         //}
@@ -1610,23 +1614,30 @@ public class CharacterMarker : MapObjectVisual<Character> {
         pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
 
         List<HexTile> playerHexes = PlayerManager.Instance.player.playerSettlement.tiles;
-        Vector3[] avoidThisPositions = new Vector3[character.combatComponent.avoidInRange.Count + playerHexes.Count + 1];
-        avoidThisPositions[0] = character.gridTileLocation.worldLocation;
-        int lastIndex = 0;
+        if(avoidThisPositions == null) {
+            avoidThisPositions = new List<Vector3>();
+        } else {
+            avoidThisPositions.Clear();
+        }
         if (character.combatComponent.avoidInRange.Count > 0) {
-            for (int i = 1; i < character.combatComponent.avoidInRange.Count; i++) {
-                avoidThisPositions[i] = character.combatComponent.avoidInRange[i].gridTileLocation.worldLocation;
+            for (int i = 0; i < character.combatComponent.avoidInRange.Count; i++) {
+                IPointOfInterest poi = character.combatComponent.avoidInRange[i];
+                if(IsPOIInVision(poi)) {
+                    avoidThisPositions.Add(poi.gridTileLocation.worldLocation);
+                }
             }
-            lastIndex = character.combatComponent.avoidInRange.Count;
         }
 
-        //Corrupted hexes should also be avoided
-        //https://trello.com/c/6WJtivlY/1274-fleeing-should-not-go-to-corrupted-structures
-        if (playerHexes.Count > 0) {
-            for (int i = 0; i < playerHexes.Count; i++) {
-                avoidThisPositions[i + lastIndex] = playerHexes[i].GetCenterLocationGridTile().worldLocation;
-            }
-        }
+        //TODO: Must be on see only because the flee path will be messed up if they always avoid the hexes
+        ////Corrupted hexes should also be avoided
+        ////https://trello.com/c/6WJtivlY/1274-fleeing-should-not-go-to-corrupted-structures
+        //if (playerHexes.Count > 0) {
+        //    for (int i = 0; i < playerHexes.Count; i++) {
+        //        if (playerHexes[i].region == character.currentRegion) {
+        //            avoidThisPositions.Add(playerHexes[i].GetCenterLocationGridTile().worldLocation);
+        //        }
+        //    }
+        //}
 
         FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidThisPositions, CombatManager.Instance.searchLength);
         fleePath.aimStrength = CombatManager.Instance.aimStrength;
@@ -1724,7 +1735,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (target is BlockWall == false) {
             //only Check in vision list if target is NOT Block Wall. 
             //TODO: Rework this after build. This issue arises when angels try to attack demonic structures.
-            if (inVisionPOIs.Contains(target) == false) { return false; }    
+            if (IsPOIInVision(target) == false) { return false; }    
         }
         Profiler.EndSample();
         

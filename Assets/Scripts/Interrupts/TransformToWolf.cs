@@ -30,7 +30,7 @@ namespace Interrupts {
             InterruptHolder interrupt, REACTION_STATUS status) {
             string response = base.ReactionToActor(actor, target, witness, interrupt, status);
             Character originalForm = actor;
-            if(actor.lycanData != null) {
+            if(actor.isLycanthrope) {
                 originalForm = actor.lycanData.originalForm;
                 actor.lycanData.AddAwareCharacter(witness);
             }

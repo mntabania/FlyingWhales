@@ -53,7 +53,7 @@ public class UndeadBehaviour : CharacterBehaviourComponent {
                     } else {
                         if (!undeadFactionLeader.isBeingSeized && undeadFactionLeader.marker && undeadFactionLeader.gridTileLocation != null && !undeadFactionLeader.isDead
                             && character.gridTileLocation != null && character.movementComponent.HasPathToEvenIfDiffRegion(undeadFactionLeader.gridTileLocation)) {
-                            if (character.marker.inVisionCharacters.Contains(undeadFactionLeader)) {
+                            if (character.marker.IsPOIInVision(undeadFactionLeader)) {
                                 log += $"\n-Character can see faction leader";
                                 if (undeadFactionLeader.combatComponent.isInCombat) {
                                     log += $"\n-Faction leader in combat, will try to combat also";

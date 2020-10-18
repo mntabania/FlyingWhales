@@ -214,7 +214,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
             minion.Save(data.minion);
 
         }
-        if(data.lycanData != null) {
+        if(data.isLycanthrope) {
             hasLycan = true;
             lycanData = new SaveDataLycanthropeData();
             lycanData.Save(data.lycanData);

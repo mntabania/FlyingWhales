@@ -145,7 +145,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     private void UpdateOverview() {
         if (activeFaction.leader is Character leader) {
             Character characterToShow = leader;
-            if (leader.lycanData != null) {
+            if (leader.isLycanthrope) {
                 characterToShow = leader.lycanData.activeForm;
             }
             leaderNameplateItem.gameObject.SetActive(true);
@@ -276,7 +276,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
 
     #region Characters
     private void OnCharacterSwitchFromLimbo(Character toLimbo, Character fromLimbo) {
-        if(toLimbo.lycanData != null) {
+        if(toLimbo.isLycanthrope) {
             Faction factionToBeFollowed = toLimbo.lycanData.originalForm.faction;
             if(activeFaction == factionToBeFollowed) {
                 CharacterNameplateItem nameplate = GetItem(toLimbo);
@@ -306,7 +306,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
                 continue;
             }
             if(currCharacter.race != RACE.ANGEL) {
-                if(currCharacter.lycanData != null) {
+                if(currCharacter.isLycanthrope) {
                     currCharacter = currCharacter.lycanData.activeForm;
                 }
                 CreateNewCharacterItem(currCharacter, false);

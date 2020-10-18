@@ -320,7 +320,17 @@ public class DrinkBlood : GoapAction {
         goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
     }
     public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustFullness(34f);
+        Character actor = goapNode.actor;
+
+        actor.needsComponent.AdjustFullness(34f);
+
+        Infected infectedTarget = goapNode.poiTarget.traitContainer.GetTraitOrStatus<Infected>("Infected");
+        infectedTarget?.InfectTarget(actor);
+
+        if(goapNode.poiTarget is Character targetCharacter) {
+            Infected infectedActor = actor.traitContainer.GetTraitOrStatus<Infected>("Infected");
+            infectedActor?.InfectTarget(targetCharacter);
+        }
     }
     public void AfterDrinkSuccess(ActualGoapNode goapNode) {
         //poiTarget.SetPOIState(POI_STATE.ACTIVE);
@@ -370,9 +380,6 @@ public class DrinkBlood : GoapAction {
                 }
             }
         }
-
-        Infected infected = goapNode.poiTarget.traitContainer.GetTraitOrStatus<Infected>("Infected");
-        infected?.InfectTarget(actor);
     }
     #endregion
 }

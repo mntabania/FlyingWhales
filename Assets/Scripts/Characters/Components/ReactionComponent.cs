@@ -667,15 +667,29 @@ public class ReactionComponent : CharacterComponent {
                     }
                     if(!targetCharacter.isDead && targetCharacter.traitContainer.HasTrait("Restrained") && targetCharacter.traitContainer.HasTrait("Prisoner")) {
                         Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-                        bool targetIsFactionPrisonerAndIsInPrison = prisoner.IsFactionPrisonerOf(actor.faction) && actor.homeSettlement != null && targetCharacter.IsInPrisonOf(actor.homeSettlement);
-                        bool targetIsPersonalPrisoner = prisoner.IsPersonalPrisonerOf(actor);
+                        bool targetIsFactionPrisonerAndIsInPrison = prisoner.IsFactionPrisonerOf(disguisedActor.faction) && disguisedActor.homeSettlement != null && targetCharacter.IsInPrisonOf(disguisedActor.homeSettlement);
+                        bool targetIsPersonalPrisoner = prisoner.IsPersonalPrisonerOf(disguisedActor);
                         if (targetIsFactionPrisonerAndIsInPrison || targetIsPersonalPrisoner) {
-                            if (targetCharacter.needsComponent.isStarving && !targetCharacter.traitContainer.HasTrait("Vampire")) {
-                                debugLog = $"{debugLog}\n-Target is hungry or starving, will create feed job";
-                                if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.FEED, targetCharacter)) {
-                                    actor.jobComponent.TryTriggerFeed(targetCharacter);
+                            if (targetCharacter.needsComponent.isStarving) {
+                                Vampire vampireTrait = disguisedTarget.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                                bool targetIsKnownVampire = vampireTrait != null && vampireTrait.DoesCharacterKnowThisVampire(disguisedActor);
+                                if(targetIsKnownVampire) {
+                                    if(disguisedActor.traitContainer.HasTrait("Hemophiliac") || (disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget) == RelationshipManager.Close_Friend && !disguisedActor.traitContainer.HasTrait("Hemophobic"))) {
+                                        debugLog = $"{debugLog}\n-Target is starving and is known vampire and actor is Hemophiliac/Non-Hemophobic Close Friend, feed self";
+                                        if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.FEED, JOB_TYPE.OFFER_BLOOD)) {
+                                            actor.jobComponent.CreateFeedSelfToVampireJob(targetCharacter);
+                                        } else {
+                                            debugLog = $"{debugLog}\n-Already has a feed/offer blood job targeting character";
+                                        }
+                                    }
+                                    
                                 } else {
-                                    debugLog = $"{debugLog}\n-Already has a feed job targeting character";
+                                    debugLog = $"{debugLog}\n-Target is starving, will create feed job";
+                                    if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.FEED)) {
+                                        actor.jobComponent.TryTriggerFeed(targetCharacter);
+                                    } else {
+                                        debugLog = $"{debugLog}\n-Already has a feed job targeting character";
+                                    }
                                 }
                             }
                         }
@@ -860,12 +874,19 @@ public class ReactionComponent : CharacterComponent {
                             bool targetIsParalyzedOrEnsnared = targetCharacter.traitContainer.HasTrait("Paralyzed", "Ensnared");
                             bool targetIsRestrainedCriminal = targetCharacter.traitContainer.HasTrait("Restrained") && disguisedTarget.traitContainer.HasTrait("Criminal");
                             bool targetIsCatatonic = targetCharacter.traitContainer.HasTrait("Catatonic");
+
+                            Vampire vampireTrait = disguisedTarget.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+
+                            bool targetIsKnownVampire = vampireTrait != null && vampireTrait.DoesCharacterKnowThisVampire(disguisedActor);
+                            bool targetIsKnownWerewolf = disguisedTarget.isLycanthrope && disguisedTarget.lycanData.DoesCharacterKnowThisLycan(disguisedActor);
+
+
                             if (targetIsParalyzedOrEnsnared || targetIsRestrainedCriminal || targetIsCatatonic) {
                                 debugLog =
                                     $"{debugLog}\n-Target is Restrained Criminal({targetIsRestrainedCriminal.ToString()}) or is Paralyzed or Ensnared({targetIsParalyzedOrEnsnared.ToString()}) or is Catatonic {targetIsCatatonic.ToString()}";
-                                if ((targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) && !targetCharacter.traitContainer.HasTrait("Vampire")) {
-                                    debugLog = $"{debugLog}\n-Target is hungry or starving, will create feed job";
-                                    if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.FEED, targetCharacter)) {
+                                if ((targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) && !targetIsKnownVampire) {
+                                    debugLog = $"{debugLog}\n-Target is hungry or starving and not known vampire, will create feed job";
+                                    if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.FEED)) {
                                         actor.jobComponent.TryTriggerFeed(targetCharacter);
                                     } else {
                                         debugLog = $"{debugLog}\n-Already has a feed job targeting character";
@@ -876,7 +897,7 @@ public class ReactionComponent : CharacterComponent {
                                         Bed bed = disguisedTarget.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED) as Bed;
                                         if (bed != null && bed.gridTileLocation != targetCharacter.gridTileLocation) {
                                             debugLog = $"{debugLog}\n-Target has a home and an available bed, will trigger Move Character job to bed";
-                                            if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER, targetCharacter)) {
+                                            if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.MOVE_CHARACTER)) {
                                                 if(targetCharacter.currentActionNode == null) {
                                                     actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, disguisedTarget.homeStructure, bed.gridTileLocation);
                                                 }
@@ -895,7 +916,7 @@ public class ReactionComponent : CharacterComponent {
                                         //Pray
                                         if (targetCharacter.currentStructure != disguisedTarget.homeStructure) {
                                             debugLog = $"{debugLog}\n-Target chose Pray and is not inside his/her house, will trigger Move Character job";
-                                            if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER, targetCharacter)) {
+                                            if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.MOVE_CHARACTER)) {
                                                 if (targetCharacter.currentActionNode == null) {
                                                     actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, disguisedTarget.homeStructure);
                                                 }
@@ -909,7 +930,7 @@ public class ReactionComponent : CharacterComponent {
                                         //Daydream
                                         if (!targetCharacter.currentStructure.structureType.IsOpenSpace()) {
                                             debugLog = $"{debugLog}\n-Target chose Daydream and is not in an open space structure, will trigger Move Character job";
-                                            if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER, targetCharacter)) {
+                                            if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.MOVE_CHARACTER)) {
                                                 if (targetCharacter.currentActionNode == null) {
                                                     actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
                                                 }
@@ -920,6 +941,33 @@ public class ReactionComponent : CharacterComponent {
                                             debugLog = $"{debugLog}\n-Target chose Daydream but is already in an open space structure, will not trigger Move Character job";
                                         }
                                     }
+                                }
+                            }
+
+                            if (targetIsKnownVampire) {
+                                //TODO: Cure Magical Affliction
+                                debugLog = $"{debugLog}\n-Target is known vampire";
+                                if (disguisedActor.traitContainer.HasTrait("Hemophobic")) {
+                                    debugLog = $"{debugLog}\n-Actor is Hemophobic, will wary";
+                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, targetCharacter);
+                                } else if (targetCharacter.needsComponent.isStarving) {
+                                    if (disguisedActor.traitContainer.HasTrait("Hemophiliac") || disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget) == RelationshipManager.Close_Friend) {
+                                        debugLog = $"{debugLog}\n-Target is starving and is known vampire and actor is Hemophiliac/Close Friend, feed self";
+                                        if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.FEED, JOB_TYPE.OFFER_BLOOD)) {
+                                            actor.jobComponent.CreateFeedSelfToVampireJob(targetCharacter);
+                                        } else {
+                                            debugLog = $"{debugLog}\n-Already has a feed/offer blood job targeting character";
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (targetIsKnownWerewolf) {
+                                //TODO: Cure Magical Affliction
+                                debugLog = $"{debugLog}\n-Target is known werewolf";
+                                if (disguisedActor.traitContainer.HasTrait("Lycanphobic")) {
+                                    debugLog = $"{debugLog}\n-Actor is Lycanphobic, will wary";
+                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, targetCharacter);
                                 }
                             }
 
@@ -1477,6 +1525,27 @@ public class ReactionComponent : CharacterComponent {
                 }
             }
         }
+
+        if (targetTileObject.traitContainer.HasTrait("Interesting")) {
+            Interesting interestingTrait = targetTileObject.traitContainer.GetTraitOrStatus<Interesting>("Interesting");
+            if (!interestingTrait.HasAlreadyBeenSeenByCharacter(actor)) {
+                interestingTrait.AddCharacterThatSaw(actor);
+
+                if (actor.traitContainer.HasTrait("Suspicious")) {
+                    if (GameUtilities.RollChance(50)) {
+                        actor.jobComponent.TriggerDestroy(targetTileObject);
+                    } else {
+                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, targetTileObject);
+                    }
+                } else {
+                    if (GameUtilities.RollChance(50) && !actor.jobQueue.HasJob(JOB_TYPE.INSPECT, targetTileObject) && !actor.defaultCharacterTrait.HasAlreadyInspectedObject(targetTileObject)) {
+                        actor.jobComponent.TriggerInspect(targetTileObject);
+                    } else if (!actor.IsInventoryAtFullCapacity()) {
+                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, targetTileObject);
+                    }
+                }
+            }
+        }
     }
     private void ReactToCarriedObject(Character actor, TileObject targetTileObject, Character carrier, ref string debugLog) {
         debugLog = $"{debugLog}{actor.name} is reacting to {targetTileObject.nameWithID} carried by {carrier.name}";
@@ -1692,12 +1761,16 @@ public class ReactionComponent : CharacterComponent {
         }
         return false;
     }
-    private bool IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE jobType, IPointOfInterest poi) {
+    private bool IsPOICurrentlyTargetedByAPerformingAction(IPointOfInterest poi, params JOB_TYPE[] jobType) {
         for (int i = 0; i < poi.allJobsTargetingThis.Count; i++) {
             JobQueueItem job = poi.allJobsTargetingThis[i];
-            if (job is GoapPlanJob planJob) {
-                if (planJob.assignedPlan != null && planJob.assignedPlan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING) {
-                    return true;
+            for (int j = 0; j < jobType.Length; j++) {
+                if(jobType[j] == job.jobType) {
+                    if (job is GoapPlanJob planJob) {
+                        if (planJob.assignedPlan != null && planJob.assignedPlan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING) {
+                            return true;
+                        }
+                    }
                 }
             }
         }

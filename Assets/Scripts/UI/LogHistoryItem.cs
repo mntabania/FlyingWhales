@@ -41,7 +41,7 @@ public class LogHistoryItem : LogItem {
     public void OnHoverOverLog(object obj) {
         if (obj is Character character && _hoverPosition != null) {
             Character characterToShow = character;
-            if(character.lycanData != null) {
+            if(character.isLycanthrope) {
                 characterToShow = character.lycanData.activeForm;
             }
             UIManager.Instance.ShowCharacterNameplateTooltip(characterToShow, _hoverPosition);

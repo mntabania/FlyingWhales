@@ -14,7 +14,7 @@ public class Embarassment : Emotion {
         witness.needsComponent.AdjustHope(-5);
         witness.traitContainer.AddTrait(witness, "Ashamed");
         
-        if (witness.marker.inVisionPOIs.Contains(target)) {
+        if (witness.marker.IsPOIInVision(target)) {
             //If source of of Embarrassment is within vision, will trigger Flight
             witness.combatComponent.Flight(target, "felt embarrassed");    
         }

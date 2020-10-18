@@ -173,7 +173,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// </summary>
     public bool isNormalCharacter => (this is Summon) == false && minion == null && faction != FactionManager.Instance.undeadFaction;
     public bool isNormalAndNotAlliedWithPlayer => isNormalCharacter && !faction.isPlayerFaction && !isAlliedWithPlayer;
-    public bool isNormalEvenLycanAndNotAlliedWithPlayer => (isNormalCharacter || lycanData != null) && necromancerTrait == null && !faction.isPlayerFaction && !isAlliedWithPlayer;
+    public bool isNormalEvenLycanAndNotAlliedWithPlayer => (isNormalCharacter || isLycanthrope) && necromancerTrait == null && !faction.isPlayerFaction && !isAlliedWithPlayer;
 
     public int maxHP => combatComponent.maxHP;
     public Vector3 worldPosition => marker.transform.position;
@@ -598,11 +598,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private void IncreaseThreatThatSeesPOI(IPointOfInterest poi, int amount) {
         if (faction != null && faction.isMajorNonPlayerFriendlyNeutral && marker) {
             if (poi is Character character) {
-                if (marker.inVisionCharacters.Contains(character)) {
+                if (marker.IsPOIInVision(character)) {
                     PlayerManager.Instance.player.threatComponent.AdjustThreat(amount);
                 }
             } else if (poi is TileObject tileObject) {
-                if (marker.inVisionTileObjects.Contains(tileObject)) {
+                if (marker.IsPOIInVision(tileObject)) {
                     PlayerManager.Instance.player.threatComponent.AdjustThreat(amount);
                 }
             }
@@ -1724,7 +1724,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return;
         }
         if (isInLimbo) {
-            if (lycanData != null && lycanData.activeForm != this) {
+            if (isLycanthrope && lycanData.activeForm != this) {
                 lycanData.activeForm.CenterOnCharacter();
             }  
         } else {
@@ -1822,7 +1822,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private void OnBeforeSeizingTileObject(TileObject tileObject) {
         //if(faction != null && faction.isMajorNonPlayerFriendlyNeutral && marker) {
-        //    if (marker.inVisionTileObjects.Contains(tileObject)) {
+        //    if (marker.IsPOIInVision(tileObject)) {
         //        PlayerManager.Instance.player.threatComponent.AdjustThreat(5);
         //    }
         //}
@@ -2013,11 +2013,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         //Instead of witnessing the action immediately, it needs to be pooled to avoid duplicates, so add the supposed to be witnessed action to the list and let ProcessAllUnprocessedVisionPOIs in CharacterMarker do its thing
         if (marker) { //&& !marker.actionsToWitness.Contains(node)
-            if (marker.inVisionCharacters.Contains(node.actor)) {
+            if (marker.IsPOIInVision(node.actor)) {
                 //marker.actionsToWitness.Add(node);
                 //This is done so that the character will react again
                 marker.AddUnprocessedAction(node);
-            } else if (marker.inVisionPOIs.Contains(node.poiTarget)) {
+            } else if (marker.IsPOIInVision(node.poiTarget)) {
                 //marker.actionsToWitness.Add(node);
                 //This is done so that the character will react again
                 marker.AddUnprocessedAction(node);
@@ -2035,11 +2035,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return;
         }
         if (marker) {
-            if (marker.inVisionCharacters.Contains(interruptHolder.actor)) {
+            if (marker.IsPOIInVision(interruptHolder.actor)) {
                 //This is done so that the character will react again
                 marker.AddUnprocessedPOI(interruptHolder.actor, true);
             } 
-            //else if (marker.inVisionPOIs.Contains(target)) {
+            //else if (marker.IsPOIInVision(target)) {
             //    //This is done so that the character will react again
             //    marker.unprocessedVisionPOIs.Add(target);
             //}
@@ -2102,7 +2102,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    } else {
         //        //Upon seeing other characters while target of stealth action is already in vision, automatically cancel job
         //        if (poiTarget is Character seenCharacter && seenCharacter.isNormalCharacter) {
-        //            if (marker.inVisionCharacters.Contains(currentActionNode.poiTarget)) {
+        //            if (marker.IsPOIInVision(currentActionNode.poiTarget)) {
         //                bool shouldDoAfterEffect = currentActionNode.action.goapType != INTERACTION_TYPE.REMOVE_BUFF;
         //                currentJob.CancelJob(reason: "There is a witness around", shouldDoAfterEffect: shouldDoAfterEffect);
         //            }
@@ -2767,12 +2767,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
                 traitContainer.AddTrait(this, chosenTrait);
             }
-
-            // if (GameUtilities.RollChance(50)) {
-            //     traitContainer.AddTrait(this, GameUtilities.RollChance(50) ? "Hemophiliac" : "Hemophobic");
-            // } else {
-            //     traitContainer.AddTrait(this, GameUtilities.RollChance(50) ? "Lycanphiliac" : "Lycanphobic");
-            // }
         }
     }
     public void AddTraitNeededToBeRemoved(Trait trait) {
@@ -3911,7 +3905,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
             AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
             AddAdvertisedAction(INTERACTION_TYPE.HAVE_AFFAIR);
-            AddAdvertisedAction(INTERACTION_TYPE.OPEN);
+            //AddAdvertisedAction(INTERACTION_TYPE.OPEN);
             AddAdvertisedAction(INTERACTION_TYPE.CREATE_CULTIST_KIT);
             AddAdvertisedAction(INTERACTION_TYPE.REMOVE_BUFF);
             //AddAdvertisedAction(INTERACTION_TYPE.EXTERMINATE);
@@ -4027,7 +4021,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     //If character is Troll and job is Move Character, do not perform if target is not in vision, or target is outside and it is not Night time
                     if(this is Troll && currentTopPrioJob.jobType == JOB_TYPE.CAPTURE_CHARACTER) {
                         bool shouldCancelJob = false;
-                        if(!marker || (!marker.inVisionCharacters.Contains(currentTopPrioJob.targetPOI as Character) && !carryComponent.IsPOICarried(currentTopPrioJob.targetPOI) && !isAtHomeStructure && !IsInHomeSettlement())) {
+                        if(!marker || (!marker.IsPOIInVision(currentTopPrioJob.targetPOI as Character) && !carryComponent.IsPOICarried(currentTopPrioJob.targetPOI) && !isAtHomeStructure && !IsInHomeSettlement())) {
                             shouldCancelJob = true;
                         }
                         if (!shouldCancelJob) {
@@ -4061,7 +4055,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     }
                     //if (currentNode.poiTarget != this && currentNode.isStealth) {
                     //    //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
-                    //    if (marker.inVisionPOIs.Contains(currentNode.poiTarget) && !marker.CanDoStealthActionToTarget(currentNode.poiTarget)) {
+                    //    if (marker.IsPOIInVision(currentNode.poiTarget) && !marker.CanDoStealthActionToTarget(currentNode.poiTarget)) {
                     //        log = $"{log}\n - Action is stealth and character cannot do stealth action right now...";
                     //        logComponent.PrintLogIfActive(log);
                     //        return;
@@ -4168,7 +4162,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //            }
         //            if(plan.currentNode.action.poiTarget != this && plan.currentNode.action.isStealth) {
         //                //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
-        //                if (marker.inVisionPOIs.Contains(plan.currentNode.action.poiTarget) && !marker.CanDoStealthActionToTarget(plan.currentNode.action.poiTarget)) {
+        //                if (marker.IsPOIInVision(plan.currentNode.action.poiTarget) && !marker.CanDoStealthActionToTarget(plan.currentNode.action.poiTarget)) {
         //                    log += "\n - Action is stealth and character cannot do stealth action right now...";
         //                    continue;
         //                }
@@ -4273,7 +4267,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //        && currentActionNode.CanSatisfyAllPreconditions()) {
         //        //if (currentAction.poiTarget != this && currentAction.isStealth) {
         //        //    //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
-        //        //    if (marker.inVisionPOIs.Contains(currentAction.poiTarget) && !marker.CanDoStealthActionToTarget(currentAction.poiTarget)) {
+        //        //    if (marker.IsPOIInVision(currentAction.poiTarget) && !marker.CanDoStealthActionToTarget(currentAction.poiTarget)) {
         //        //        log += "\n - Action is stealth and character cannot do stealth action right now...";
         //        //        PrintLogIfActive(log);
         //        //        return;
@@ -5008,7 +5002,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //            return; //do not do watch.
             //        }
             //    }
-            //    if (marker.inVisionCharacters.Contains(characterThatStartedState)) {
+            //    if (marker.IsPOIInVision(characterThatStartedState)) {
             //        ThisCharacterWatchEvent(characterThatStartedState, null, null);
             //    }
             //}
@@ -5336,7 +5330,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #region Selectable
     public virtual bool IsCurrentlySelected() {
         Character characterToSelect = this;
-        if(lycanData != null) {
+        if(isLycanthrope) {
             characterToSelect = lycanData.activeForm;
         }
         if (characterToSelect.isNormalCharacter) {
@@ -5557,7 +5551,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //        i--;
             //    }
             //}
-            if (lycanData != null) {
+            if (isLycanthrope) {
                 lycanData.LycanDies(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
             }
             //------------------------ Things that are above this line are called before letting the character die so that if we need things done before actually setting the death of character we can do it here like cleaning up necessary things, etc.

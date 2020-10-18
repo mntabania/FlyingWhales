@@ -32768,8 +32768,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4e631494c371c340b0d0ad164ee4ffd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  searchLength: 1000
-  spread: 500000
+  searchLength: 10000
+  spread: 500
   aimStrength: 1
   _projectileDictionary:
     m_keys: 0000000001000000020000000300000004000000050000000600000007000000

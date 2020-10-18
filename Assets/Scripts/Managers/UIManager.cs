@@ -851,7 +851,7 @@ public class UIManager : BaseMonoBehaviour {
             return;
         }
         Character characterToShow = character;
-        if(character.lycanData != null) {
+        if(character.isLycanthrope) {
             characterToShow = character.lycanData.activeForm;
         }
         if(characterToShow.isNormalCharacter) {

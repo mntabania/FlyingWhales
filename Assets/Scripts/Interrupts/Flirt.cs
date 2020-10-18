@@ -35,15 +35,13 @@ namespace Interrupts {
                             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
                         }
                     }
-                    //TODO: Lycanphobic
-                    //if (witness.traitContainer.HasTrait("Lycanphobic")) {
-                    //    bool isKnownWerewolf = false;
-                    //    Lycanphobic lycanphobic = witness.traitContainer.GetTraitOrStatus<Lycanphobic>("Lycanphobic");
-                    //    isKnownWerewolf = lycanphobic != null && lycanphobic.IsWerewolfKnown(actor);
-                    //    if (isKnownWerewolf) {
-                    //        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
-                    //    }
-                    //}
+                    if (witness.traitContainer.HasTrait("Lycanphobic")) {
+                        bool isKnownWerewolf = false;
+                        isKnownWerewolf = actor.isLycanthrope && actor.lycanData.DoesCharacterKnowThisLycan(witness);
+                        if (isKnownWerewolf) {
+                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
+                        }
+                    }
 
                     if (isActorLoverOrAffairOfWitness) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status);

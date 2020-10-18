@@ -274,39 +274,34 @@ public class NonActionEventsComponent : CharacterComponent {
         }
 
         //Lycanthrope
-        //TODO:
-        //if (disguisedActor.traitContainer.HasTrait("Lycanphobic")) {
-        //    bool isKnownWerewolf = false;
-        //    Lycanphobic lycanphobic = disguisedActor.traitContainer.GetTraitOrStatus<Lycanphobic>("Lycanphobic");
-        //    isKnownWerewolf = lycanphobic != null && lycanphobic.IsWerewolfKnown(disguisedTarget);
-        //    if (isKnownWerewolf) {
-        //        chatWeights.AddWeightToElement(Warm_Chat, -50);
-        //        chatWeights.AddWeightToElement(Insult, 50);
-        //    }
-        //} else if (disguisedActor.traitContainer.HasTrait("Lycanphiliac")) {
-        //    bool isKnownWerewolf = false;
-        //    Lycanphiliac lycanphiliac = disguisedActor.traitContainer.GetTraitOrStatus<Lycanphiliac>("Lycanphiliac");
-        //    isKnownWerewolf = lycanphiliac != null && lycanphiliac.IsWerewolfKnown(disguisedTarget);
-        //    if (isKnownWerewolf) {
-        //        chatWeights.AddWeightToElement(Warm_Chat, 50);
-        //        chatWeights.AddWeightToElement(Praise, 50);
-        //    }
-        //}
-        //if (disguisedTarget.traitContainer.HasTrait("Lycanphobic")) {
-        //    bool isKnownWerewolf = false;
-        //    Lycanphobic lycanphobic = disguisedTarget.traitContainer.GetTraitOrStatus<Lycanphobic>("Lycanphobic");
-        //    isKnownWerewolf = lycanphobic != null && lycanphobic.IsWerewolfKnown(disguisedActor);
-        //    if (isKnownWerewolf) {
-        //        chatWeights.AddWeightToElement(Warm_Chat, -50);
-        //    }
-        //} else if (disguisedTarget.traitContainer.HasTrait("Lycanphiliac")) {
-        //    bool isKnownWerewolf = false;
-        //    Lycanphiliac lycanphiliac = disguisedTarget.traitContainer.GetTraitOrStatus<Lycanphiliac>("Lycanphiliac");
-        //    isKnownWerewolf = lycanphiliac != null && lycanphiliac.IsWerewolfKnown(disguisedActor);
-        //    if (isKnownWerewolf) {
-        //        chatWeights.AddWeightToElement(Warm_Chat, 50);
-        //    }
-        //}
+        if (disguisedActor.traitContainer.HasTrait("Lycanphobic")) {
+            bool isKnownWerewolf = false;
+            isKnownWerewolf = disguisedTarget.isLycanthrope && disguisedTarget.lycanData.DoesCharacterKnowThisLycan(disguisedActor);
+            if (isKnownWerewolf) {
+                chatWeights.AddWeightToElement(Warm_Chat, -50);
+                chatWeights.AddWeightToElement(Insult, 50);
+            }
+        } else if (disguisedActor.traitContainer.HasTrait("Lycanphiliac")) {
+            bool isKnownWerewolf = false;
+            isKnownWerewolf = disguisedTarget.isLycanthrope && disguisedTarget.lycanData.DoesCharacterKnowThisLycan(disguisedActor);
+            if (isKnownWerewolf) {
+                chatWeights.AddWeightToElement(Warm_Chat, 50);
+                chatWeights.AddWeightToElement(Praise, 50);
+            }
+        }
+        if (disguisedTarget.traitContainer.HasTrait("Lycanphobic")) {
+            bool isKnownWerewolf = false;
+            isKnownWerewolf = disguisedActor.isLycanthrope && disguisedActor.lycanData.DoesCharacterKnowThisLycan(disguisedTarget);
+            if (isKnownWerewolf) {
+                chatWeights.AddWeightToElement(Warm_Chat, -50);
+            }
+        } else if (disguisedTarget.traitContainer.HasTrait("Lycanphiliac")) {
+            bool isKnownWerewolf = false;
+            isKnownWerewolf = disguisedActor.isLycanthrope && disguisedActor.lycanData.DoesCharacterKnowThisLycan(disguisedTarget);
+            if (isKnownWerewolf) {
+                chatWeights.AddWeightToElement(Warm_Chat, 50);
+            }
+        }
 
         if (disguisedActor.traitContainer.HasTrait("Hero") || disguisedTarget.traitContainer.HasTrait("Hero")) {
             chatWeights.RemoveElement(Argument);
@@ -486,17 +481,15 @@ public class NonActionEventsComponent : CharacterComponent {
                 return "vampire";
             }
         }
-        //TODO: Lycanphobic
-        //if (disguisedTarget.traitContainer.HasTrait("Lycanphobic")) {
-        //    bool isKnownWerewolf = false;
-        //    Lycanphobic lycanphobic = disguisedTarget.traitContainer.GetTraitOrStatus<Lycanphobic>("Lycanphobic");
-        //    isKnownWerewolf = lycanphobic != null && lycanphobic.IsWerewolfKnown(disguisedActor);
-        //    if (isKnownWerewolf) {
-        //        owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Rebuffed courtship", -8, "engaged in disastrous flirting");
-        //        target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", -12, "engaged in disastrous flirting");
-        //        return "werewolf";
-        //    }
-        //}
+        if (disguisedTarget.traitContainer.HasTrait("Lycanphobic")) {
+            bool isKnownWerewolf = false;
+            isKnownWerewolf = disguisedActor.isLycanthrope && disguisedActor.lycanData.DoesCharacterKnowThisLycan(disguisedTarget);
+            if (isKnownWerewolf) {
+                owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Rebuffed courtship", -8, "engaged in disastrous flirting");
+                target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", -12, "engaged in disastrous flirting");
+                return "werewolf";
+            }
+        }
         if (chance < 70) {
             Trait angry = disguisedTarget.traitContainer.GetTraitOrStatus<Trait>("Angry");
             if (angry?.responsibleCharacters != null && angry.responsibleCharacters.Contains(disguisedActor)) {

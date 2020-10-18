@@ -1361,6 +1361,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #region Vampire
     public bool CreateDrinkBloodJob(JOB_TYPE jobType, IPointOfInterest target) {
         if (!owner.jobQueue.HasJob(jobType)) {
+            if (owner.partyComponent.isActiveMember) {
+                return false;
+            }
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.DRINK_BLOOD, target, owner);
             if (owner.jobQueue.AddJobInQueue(job)) {
                 owner.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
@@ -1382,6 +1385,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.VAMPIRIC_EMBRACE, target, owner);
             producedJob = job;
             return true;
+        }
+        return false;
+    }
+    public bool CreateFeedSelfToVampireJob(Character vampire) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.OFFER_BLOOD)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OFFER_BLOOD, INTERACTION_TYPE.FEED_SELF, vampire, owner);
+            return owner.jobQueue.AddJobInQueue(job);
         }
         return false;
     }

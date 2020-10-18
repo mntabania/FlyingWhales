@@ -71,6 +71,9 @@ namespace Traits {
                 alreadyInspectedTileObjects.Add(to);
             }
         }
+        public bool HasAlreadyInspectedObject(TileObject to) {
+            return alreadyInspectedTileObjects.Contains(to);
+        }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
             owner = addTo as Character;

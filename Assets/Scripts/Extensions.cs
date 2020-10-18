@@ -467,6 +467,9 @@ public static class Extensions {
             case JOB_TYPE.BURY_SERIAL_KILLER_VICTIM:
                 priority = 1010;
                 break;
+            case JOB_TYPE.OFFER_BLOOD:
+                priority = 1009;
+                break;
             case JOB_TYPE.REMOVE_STATUS:
                 priority = 1008;
                 break;
