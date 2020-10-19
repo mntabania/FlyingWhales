@@ -42,6 +42,7 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     bool IsStillConsideredPartOfAwarenessByCharacter(Character character);
     bool IsOwnedBy(Character character);
     void OnPlacePOI();
+    void OnLoadPlacePOI();
     void OnDestroyPOI();
     void ConstructResources();
     void SetResource(RESOURCE resourceType, int amount);

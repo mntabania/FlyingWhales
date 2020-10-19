@@ -238,6 +238,17 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         UnsubscribeListeners();
     }
     public virtual void OnPlacePOI() {
+        DefaultProcessOnPlacePOI();
+    }
+    public virtual void OnLoadPlacePOI() {
+        OnPlacePOI(); //just defaulted to normal on place poi behaviour, since usually this is okay, override function as needed.
+    }
+    /// <summary>
+    /// Convenience function for executing expected behaviour when placing a tile object.
+    /// This is mostly used for when you want to override <see cref="OnLoadPlacePOI"/>
+    /// and use the default functionality without using any of the overridden <see cref="OnPlacePOI"/>
+    /// </summary>
+    protected void DefaultProcessOnPlacePOI() {
         SetPOIState(POI_STATE.ACTIVE);
         if (mapVisual == null) {
             InitializeMapObject(this);

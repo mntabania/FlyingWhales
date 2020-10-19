@@ -309,6 +309,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 classManager.OnRemoveResident(character);
                 jobPriorityComponent.OnRemoveResident(character);
             }
+            UnassignJobsTakenBy(character);
             return true;
         }
         return false;
@@ -1181,6 +1182,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void ClearAllBlacklistToAllExistingJobs() {
         for (int i = 0; i < availableJobs.Count; i++) {
             availableJobs[i].ClearBlacklist();
+        }
+    }
+    private void UnassignJobsTakenBy(Character character) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.assignedCharacter == character && job is GoapPlanJob goapJob) {
+                goapJob.CancelJob(false, string.Empty);
+            }
         }
     }
     //public bool HasActiveParty(PARTY_QUEST_TYPE partyType) {

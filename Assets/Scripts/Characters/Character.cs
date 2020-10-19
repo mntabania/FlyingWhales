@@ -3813,6 +3813,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return state != POI_STATE.INACTIVE;
     }
     public void OnPlacePOI() { /*FOR INTERFACE ONLY*/ }
+    public void OnLoadPlacePOI() { /*FOR INTERFACE ONLY*/ }
     public void OnDestroyPOI() { /*FOR INTERFACE ONLY*/ }
     public virtual bool IsStillConsideredPartOfAwarenessByCharacter(Character character) {
         if(character.currentRegion == currentRegion && !isBeingSeized/* && !isMissing*/) {

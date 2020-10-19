@@ -345,6 +345,26 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
+        public virtual bool LoadPOI(IPointOfInterest poi, LocationGridTile tileLocation) {
+            if (!pointsOfInterest.Contains(poi)) {
+                pointsOfInterest.Add(poi);
+                if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
+                    region.innerMap.LoadObject(poi, tileLocation);
+                }
+                if (poi is TileObject tileObject) {
+                    if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
+                        groupedTileObjects[tileObject.tileObjectType].AddTileObject(tileObject);
+                    } else {
+                        TileObjectsAndCount toac = new TileObjectsAndCount();
+                        toac.AddTileObject(tileObject);
+                        groupedTileObjects.Add(tileObject.tileObjectType, toac);
+                    }
+                    region.AddTileObjectInRegion(tileObject);
+                }
+                return true;
+            }
+            return false;
+        }
         public virtual bool RemovePOI(IPointOfInterest poi, Character removedBy = null) {
             if (pointsOfInterest.Remove(poi)) {
                 if (poi is TileObject obj) {
