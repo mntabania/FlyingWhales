@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 using Inner_Maps;
+using UtilityScripts;
 
 public class CombatComponent : CharacterComponent {
     public int attack { get; private set; }
@@ -217,159 +218,260 @@ public class CombatComponent : CharacterComponent {
             owner.logComponent.PrintLogIfActive(debugLog);
             return new CombatReaction(COMBAT_REACTION.None);
         }
-        if (owner.faction == FactionManager.Instance.undeadFaction || owner.race == RACE.SKELETON) {
-            debugLog += "\n-Character is zombie";
-            debugLog += "\n-FIGHT";
-            owner.logComponent.PrintLogIfActive(debugLog);
-            return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-        }
         if (owner.behaviourComponent.HasBehaviour(typeof(DisablerBehaviour))) {
             debugLog += "\n-Character is a Disabler";
             debugLog += "\n-FLIGHT";
             owner.logComponent.PrintLogIfActive(debugLog);
             return new CombatReaction(COMBAT_REACTION.Flight);
         }
-        if (target is Character) {
-            debugLog += "\n-Target is character";
-            Character targetCharacter = target as Character;
-            if (owner.traitContainer.HasTrait("Coward")) {
-                debugLog += "\n-Character is coward";
-                if(owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
-                    debugLog += "\n-Character is a demon";
-                    debugLog += "\n-FIGHT";
-                    owner.logComponent.PrintLogIfActive(debugLog);
-                    return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-                } else {
-                    debugLog += "\n-FLIGHT";
-                    owner.logComponent.PrintLogIfActive(debugLog);
-                    return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
-                }
+        if (owner.traitContainer.HasTrait("Berserked") || owner is Summon || owner.characterClass.className == "Zombie" || owner.race == RACE.DEMON) {
+            debugLog += "\n-Character is berserked/monster/zombie/demon";
+            debugLog += "\n-FIGHT";
+            owner.logComponent.PrintLogIfActive(debugLog);
+            return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+        } else if (owner.traitContainer.HasTrait("Drunk")) {
+            debugLog += "\n-Character is drunk, 50% chance to Fight";
+            if (GameUtilities.RollChance(50)) {
+                debugLog += "\n-FIGHT";
+                owner.logComponent.PrintLogIfActive(debugLog);
+                return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
             } else {
-                debugLog += "\n-Character is not coward";
-                if (!owner.traitContainer.HasTrait("Combatant", "Royalty")) {
-                    debugLog += "\n-Character is not combatant, 20% to Fight";
-                    int chance = UnityEngine.Random.Range(0, 100);
-                    debugLog += $"\n-Roll: {chance}";
-                    if (chance < 20) {
-                        debugLog += "\n-FIGHT";
-                        owner.logComponent.PrintLogIfActive(debugLog);
-                        return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-                    } else {
-                        if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
-                            debugLog += "\n-Character is a demon";
-                            debugLog += "\n-FIGHT";
-                            owner.logComponent.PrintLogIfActive(debugLog);
-                            return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-                        } else {
-                            debugLog += "\n-FLIGHT";
-                            owner.logComponent.PrintLogIfActive(debugLog);
-                            return new CombatReaction(COMBAT_REACTION.Flight, "got scared");
-                        }
-                    }
-                } else {
-                    debugLog += "\n-Character is combatant or royalty";
-                    if (owner.currentHP > targetCharacter.currentHP) {
-                        debugLog += "\n-Character hp is higher than target";
-                        debugLog += "\n-FIGHT";
-                        owner.logComponent.PrintLogIfActive(debugLog);
-                        return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-                    } else {
-                        debugLog += "\n-Character hp is lower or equal than target";
-                        if (CombatManager.Instance.IsImmuneToElement(targetCharacter, elementalDamage.type)) {
-                            debugLog += "\n-Target is immune to character elemental damage";
-                            if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
-                                debugLog += "\n-Character is a demon";
-                                debugLog += "\n-FIGHT";
-                                owner.logComponent.PrintLogIfActive(debugLog);
-                                return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-                            } else {
-                                debugLog += "\n-FLIGHT";
-                                owner.logComponent.PrintLogIfActive(debugLog);
-                                return new CombatReaction(COMBAT_REACTION.Flight, "got scared");
-                            }
-                        } else if (CombatManager.Instance.IsImmuneToElement(owner, targetCharacter.combatComponent.elementalDamage.type)) {
-                            debugLog += "\n-Character is immune to target elemental damage";
-                            debugLog += "\n-FIGHT";
-                            owner.logComponent.PrintLogIfActive(debugLog);
-                            return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-                        } else {
-                            if (owner.currentHP >= Mathf.CeilToInt(owner.maxHP * 0.15f)) {
-                                debugLog += "\n-Character's hp is greater than or equal to 30% of its max hp";
-                                debugLog += "\n-FIGHT";
-                                owner.logComponent.PrintLogIfActive(debugLog);
-                                return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-                            } else {
-                                int fightChance = 25;
-                                for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
-                                    if (owner.marker.inVisionCharacters[i].combatComponent.hostilesInRange.Contains(target)) {
-                                        debugLog += "\n-Character has another character in vision who has the same target";
-                                        fightChance = 75;
-                                        break;
-                                    }
-                                }
-                                debugLog += $"\n-Fight chance: {fightChance}";
-                                int roll = UnityEngine.Random.Range(0, 100);
-                                debugLog += $"\n-Roll: {roll}";
-                                if (roll < fightChance) {
-                                    debugLog += "\n-FIGHT";
-                                    owner.logComponent.PrintLogIfActive(debugLog);
-                                    return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-                                } else {
-                                    if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
-                                        debugLog += "\n-Character is a demon";
-                                        debugLog += "\n-FIGHT";
-                                        owner.logComponent.PrintLogIfActive(debugLog);
-                                        return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-                                    } else {
-                                        debugLog += "\n-FLIGHT";
-                                        owner.logComponent.PrintLogIfActive(debugLog);
-                                        return new CombatReaction(COMBAT_REACTION.Flight, "got scared");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                debugLog += "\n-FLIGHT";
+                owner.logComponent.PrintLogIfActive(debugLog);
+                return new CombatReaction(COMBAT_REACTION.Flight);
             }
-        } else if (target is TileObject tileObject) {
+        } else if (target is TileObject targetTileObject) {
             debugLog += "\n-Target is object";
             if (owner.traitContainer.HasTrait("Coward")) {
                 debugLog += "\n-Character is coward";
-                if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
-                    debugLog += "\n-Character is a demon";
+                debugLog += "\n-FLIGHT";
+                owner.logComponent.PrintLogIfActive(debugLog);
+                return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
+            } else if (targetTileObject.traitContainer.HasTrait("Dangerous")) {
+                debugLog += "\n-Object is dangerous";
+                if (string.IsNullOrEmpty(targetTileObject.neutralizer) == false &&
+                    owner.traitContainer.HasTrait(targetTileObject.neutralizer)) {
+                    debugLog += $"\n-Character has neutralizer trait {targetTileObject.neutralizer}";
                     debugLog += "\n-FIGHT";
                     owner.logComponent.PrintLogIfActive(debugLog);
                     return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                 } else {
                     debugLog += "\n-FLIGHT";
                     owner.logComponent.PrintLogIfActive(debugLog);
-                    return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
+                    return new CombatReaction(COMBAT_REACTION.Flight);
                 }
-            } else if (tileObject.traitContainer.HasTrait("Dangerous")) {
-                debugLog += "\n-Object is dangerous";
-                if (string.IsNullOrEmpty(tileObject.neutralizer) == false && 
-                    owner.traitContainer.HasTrait(tileObject.neutralizer)) {
-                    debugLog += $"\n-Character has neutralizer trait {tileObject.neutralizer}";
+            } else {
+                debugLog += "\n-FIGHT";
+                owner.logComponent.PrintLogIfActive(debugLog);
+                return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+            }
+        } else if (target is Character targetCharacter) {
+            debugLog += "\n-Target is character";
+            bool isOwnerCombatant = owner.characterClass.IsCombatant() || owner.characterClass.className == "Noble";
+            if (!isOwnerCombatant) {
+                debugLog += "\n-Character is non-combatant";
+                if (owner.traitContainer.HasTrait("Coward")) {
+                    debugLog += "\n-Character is coward";
+                    debugLog += "\n-FLIGHT";
                     owner.logComponent.PrintLogIfActive(debugLog);
-                    return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+                    return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
                 } else {
-                    if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
-                        debugLog += "\n-Character is a demon";
+                    bool isTargetCombatant = targetCharacter.characterClass.IsCombatant() || targetCharacter.characterClass.className == "Noble";
+                    if (!isTargetCombatant) {
+                        debugLog += "\n-Target is non-combatant";
+                        debugLog += "\n-FIGHT";
+                        owner.logComponent.PrintLogIfActive(debugLog);
+                        return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+                    } else if (HasCharacterInVisionWithSameHostile(targetCharacter) && owner.IsInHomeSettlement()) {
+                        debugLog += "\n-Character has someone in vision with the same hostile target and Character is in home settlement";
+                        debugLog += "\n-FIGHT";
+                        owner.logComponent.PrintLogIfActive(debugLog);
+                        return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+                    } else if (targetCharacter.characterClass.className == "Noble") {
+                        debugLog += "\n-Target is Noble";
+                        debugLog += "\n-FLIGHT";
+                        owner.logComponent.PrintLogIfActive(debugLog);
+                        return new CombatReaction(COMBAT_REACTION.Flight);
+                    } else {
+                        debugLog += "\n-95% chance to Flight";
+                        if (GameUtilities.RollChance(95)) {
+                            debugLog += "\n-FLIGHT";
+                            owner.logComponent.PrintLogIfActive(debugLog);
+                            return new CombatReaction(COMBAT_REACTION.Flight);
+                        } else {
+                            debugLog += "\n-FIGHT";
+                            owner.logComponent.PrintLogIfActive(debugLog);
+                            return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+                        }
+                    }
+                }
+            } else {
+                debugLog += "\n-Character is combatant";
+                if (CombatManager.Instance.IsImmuneToElement(targetCharacter, elementalDamage.type)) {
+                    debugLog += "\n-Target is immune to character elemental damage";
+                    if (HasCharacterInVisionWithSameHostile(targetCharacter)) {
+                        debugLog += "\n-Character has someone in vision with the same hostile target";
                         debugLog += "\n-FIGHT";
                         owner.logComponent.PrintLogIfActive(debugLog);
                         return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                     } else {
                         debugLog += "\n-FLIGHT";
                         owner.logComponent.PrintLogIfActive(debugLog);
-                        return new CombatReaction(COMBAT_REACTION.Flight, "got scared");
+                        return new CombatReaction(COMBAT_REACTION.Flight);
                     }
+                } else if (owner.traitContainer.HasTrait("Coward") && owner.currentHP <= Mathf.CeilToInt(owner.maxHP * 0.2f)) {
+                    debugLog += "\n-Character is coward and and HP is 20% or less of Max HP";
+                    debugLog += "\n-FLIGHT";
+                    owner.logComponent.PrintLogIfActive(debugLog);
+                    return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
+                } else {
+                    debugLog += "\n-FIGHT";
+                    owner.logComponent.PrintLogIfActive(debugLog);
+                    return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                 }
-            } else {
-                debugLog += "\n-Object is not dangerous";
-                owner.logComponent.PrintLogIfActive(debugLog);
-                return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
             }
         }
+        //if (target is Character) {
+        //    debugLog += "\n-Target is character";
+        //    Character targetCharacter = target as Character;
+        //    if (owner.traitContainer.HasTrait("Coward")) {
+        //        debugLog += "\n-Character is coward";
+        //        if(owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
+        //            debugLog += "\n-Character is a demon";
+        //            debugLog += "\n-FIGHT";
+        //            owner.logComponent.PrintLogIfActive(debugLog);
+        //            return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+        //        } else {
+        //            debugLog += "\n-FLIGHT";
+        //            owner.logComponent.PrintLogIfActive(debugLog);
+        //            return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
+        //        }
+        //    } else {
+        //        debugLog += "\n-Character is not coward";
+        //        if (!owner.traitContainer.HasTrait("Combatant", "Royalty")) {
+        //            debugLog += "\n-Character is not combatant, 20% to Fight";
+        //            int chance = UnityEngine.Random.Range(0, 100);
+        //            debugLog += $"\n-Roll: {chance}";
+        //            if (chance < 20) {
+        //                debugLog += "\n-FIGHT";
+        //                owner.logComponent.PrintLogIfActive(debugLog);
+        //                return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+        //            } else {
+        //                if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
+        //                    debugLog += "\n-Character is a demon";
+        //                    debugLog += "\n-FIGHT";
+        //                    owner.logComponent.PrintLogIfActive(debugLog);
+        //                    return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+        //                } else {
+        //                    debugLog += "\n-FLIGHT";
+        //                    owner.logComponent.PrintLogIfActive(debugLog);
+        //                    return new CombatReaction(COMBAT_REACTION.Flight, "got scared");
+        //                }
+        //            }
+        //        } else {
+        //            debugLog += "\n-Character is combatant or royalty";
+        //            if (owner.currentHP > targetCharacter.currentHP) {
+        //                debugLog += "\n-Character hp is higher than target";
+        //                debugLog += "\n-FIGHT";
+        //                owner.logComponent.PrintLogIfActive(debugLog);
+        //                return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+        //            } else {
+        //                debugLog += "\n-Character hp is lower or equal than target";
+        //                if (CombatManager.Instance.IsImmuneToElement(targetCharacter, elementalDamage.type)) {
+        //                    debugLog += "\n-Target is immune to character elemental damage";
+        //                    if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
+        //                        debugLog += "\n-Character is a demon";
+        //                        debugLog += "\n-FIGHT";
+        //                        owner.logComponent.PrintLogIfActive(debugLog);
+        //                        return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+        //                    } else {
+        //                        debugLog += "\n-FLIGHT";
+        //                        owner.logComponent.PrintLogIfActive(debugLog);
+        //                        return new CombatReaction(COMBAT_REACTION.Flight, "got scared");
+        //                    }
+        //                } else if (CombatManager.Instance.IsImmuneToElement(owner, targetCharacter.combatComponent.elementalDamage.type)) {
+        //                    debugLog += "\n-Character is immune to target elemental damage";
+        //                    debugLog += "\n-FIGHT";
+        //                    owner.logComponent.PrintLogIfActive(debugLog);
+        //                    return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+        //                } else {
+        //                    if (owner.currentHP >= Mathf.CeilToInt(owner.maxHP * 0.15f)) {
+        //                        debugLog += "\n-Character's hp is greater than or equal to 30% of its max hp";
+        //                        debugLog += "\n-FIGHT";
+        //                        owner.logComponent.PrintLogIfActive(debugLog);
+        //                        return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+        //                    } else {
+        //                        int fightChance = 25;
+        //                        for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
+        //                            if (owner.marker.inVisionCharacters[i].combatComponent.hostilesInRange.Contains(target)) {
+        //                                debugLog += "\n-Character has another character in vision who has the same target";
+        //                                fightChance = 75;
+        //                                break;
+        //                            }
+        //                        }
+        //                        debugLog += $"\n-Fight chance: {fightChance}";
+        //                        int roll = UnityEngine.Random.Range(0, 100);
+        //                        debugLog += $"\n-Roll: {roll}";
+        //                        if (roll < fightChance) {
+        //                            debugLog += "\n-FIGHT";
+        //                            owner.logComponent.PrintLogIfActive(debugLog);
+        //                            return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+        //                        } else {
+        //                            if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
+        //                                debugLog += "\n-Character is a demon";
+        //                                debugLog += "\n-FIGHT";
+        //                                owner.logComponent.PrintLogIfActive(debugLog);
+        //                                return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+        //                            } else {
+        //                                debugLog += "\n-FLIGHT";
+        //                                owner.logComponent.PrintLogIfActive(debugLog);
+        //                                return new CombatReaction(COMBAT_REACTION.Flight, "got scared");
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //} else if (target is TileObject tileObject) {
+        //    debugLog += "\n-Target is object";
+        //    if (owner.traitContainer.HasTrait("Coward")) {
+        //        debugLog += "\n-Character is coward";
+        //        if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
+        //            debugLog += "\n-Character is a demon";
+        //            debugLog += "\n-FIGHT";
+        //            owner.logComponent.PrintLogIfActive(debugLog);
+        //            return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+        //        } else {
+        //            debugLog += "\n-FLIGHT";
+        //            owner.logComponent.PrintLogIfActive(debugLog);
+        //            return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
+        //        }
+        //    } else if (tileObject.traitContainer.HasTrait("Dangerous")) {
+        //        debugLog += "\n-Object is dangerous";
+        //        if (string.IsNullOrEmpty(tileObject.neutralizer) == false && 
+        //            owner.traitContainer.HasTrait(tileObject.neutralizer)) {
+        //            debugLog += $"\n-Character has neutralizer trait {tileObject.neutralizer}";
+        //            owner.logComponent.PrintLogIfActive(debugLog);
+        //            return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+        //        } else {
+        //            if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
+        //                debugLog += "\n-Character is a demon";
+        //                debugLog += "\n-FIGHT";
+        //                owner.logComponent.PrintLogIfActive(debugLog);
+        //                return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+        //            } else {
+        //                debugLog += "\n-FLIGHT";
+        //                owner.logComponent.PrintLogIfActive(debugLog);
+        //                return new CombatReaction(COMBAT_REACTION.Flight, "got scared");
+        //            }
+        //        }
+        //    } else {
+        //        debugLog += "\n-Object is not dangerous";
+        //        owner.logComponent.PrintLogIfActive(debugLog);
+        //        return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+        //    }
+        //}
         owner.logComponent.PrintLogIfActive(debugLog);
         return new CombatReaction(COMBAT_REACTION.None);
     }
@@ -697,6 +799,20 @@ public class CombatComponent : CharacterComponent {
     }
     private bool RemovePOIToBannedFromHostile(Character targetCharacter) {
         return bannedFromHostileList.Remove(targetCharacter);
+    }
+    public bool HasCharacterInVisionWithSameHostile(Character hostile) {
+        if (owner.marker) {
+            for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
+                Character inVision = owner.marker.inVisionCharacters[i];
+                if(inVision != hostile) {
+                    if (inVision.combatComponent.hostilesInRange.Contains(hostile)) {
+                        return true;
+                    }
+                }
+                
+            }
+        }
+        return false;
     }
     #endregion
 

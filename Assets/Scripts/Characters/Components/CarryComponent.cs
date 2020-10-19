@@ -132,7 +132,7 @@ public class CarryComponent : CharacterComponent {
                         owner.gridTileLocation.structure.AddPOI(tileObject, chosenTile);
                     } else {
                         //If neighbours of the grid tile already have objects, get the nearest tile with no object
-                        chosenTile = owner.gridTileLocation.GetFirstNearestTileFromThisWithNoObject(new List<LocationGridTile>());
+                        chosenTile = owner.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
                         owner.gridTileLocation.structure.AddPOI(tileObject, chosenTile);
                     }
                 } else {
