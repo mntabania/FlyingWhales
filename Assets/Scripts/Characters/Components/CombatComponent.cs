@@ -987,7 +987,7 @@ public class CombatComponent : CharacterComponent {
         if (resetHP) {
             UpdateMaxHPAndReset();
         } else {
-            UpdateMaxHP();
+            UpdateMaxHPAndProportionateHP();
         }
     }
     private void UpdateAttack() {
@@ -1006,6 +1006,15 @@ public class CombatComponent : CharacterComponent {
     public void UpdateMaxHPAndReset() {
         UpdateMaxHP();
         owner.ResetToFullHP();
+    }
+    public void UpdateMaxHPAndProportionateHP() {
+        float hpPercentage = owner.currentHP / (float) maxHP;
+        UpdateMaxHP();
+        int newCurrentHP = Mathf.RoundToInt(hpPercentage * maxHP);
+        if(newCurrentHP < 0) {
+            newCurrentHP = 0;
+        }
+        owner.SetHP(newCurrentHP);
     }
     public void AdjustMaxHPModifier(int modification) {
         maxHPModification += modification;

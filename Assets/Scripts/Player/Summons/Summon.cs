@@ -182,6 +182,9 @@ public class Summon : Character {
                 interruptComponent.ForceEndNonSimultaneousInterrupt();
             }
             traitContainer.AddTrait(this, "Dead", responsibleCharacter, gainedFromDoing: deathFromAction);
+            if (cause == "attacked" && responsibleCharacter != null && responsibleCharacter.isInWerewolfForm) {
+                traitContainer.AddTrait(this, "Mangled", responsibleCharacter, gainedFromDoing: deathFromAction);
+            }
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this as Character);
 
             marker?.OnDeath(deathTile);

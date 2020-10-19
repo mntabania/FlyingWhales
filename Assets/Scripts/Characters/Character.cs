@@ -797,7 +797,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     protected void OnUpdateCharacterClass() {
-        combatComponent.UpdateBasicData(true);
+        combatComponent.UpdateBasicData(false);
         needsComponent.UpdateBaseStaminaDecreaseRate();
         for (int i = 0; i < _characterClass.traitNames.Length; i++) {
             traitContainer.AddTrait(this, _characterClass.traitNames[i]);
@@ -1673,7 +1673,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return false;
     }
     protected void OnUpdateRace() {
-        combatComponent.UpdateBasicData(true);
+        combatComponent.UpdateBasicData(false);
         needsComponent.UpdateBaseStaminaDecreaseRate();
         for (int i = 0; i < _raceSetting.traitNames.Length; i++) {
             traitContainer.AddTrait(this, _raceSetting.traitNames[i]);
@@ -5309,6 +5309,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void TransformToWerewolfForm() {
         if (isLycanthrope && !lycanData.isInWerewolfForm) {
             lycanData.SetIsInWerewolfForm(true);
+            AssignClass("Werewolf");
             if (visuals != null) {
                 visuals.UpdateAllVisuals(this);
             }
@@ -5317,6 +5318,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void RevertFromWerewolfForm() {
         if (isLycanthrope && lycanData.isInWerewolfForm) {
             lycanData.SetIsInWerewolfForm(false);
+            AssignClass(previousClassName);
             if (visuals != null) {
                 visuals.UpdateAllVisuals(this);
             }
@@ -5788,6 +5790,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //Dead dead = new Dead();
             //dead.SetCharacterResponsibleForTrait(responsibleCharacter);
             traitContainer.AddTrait(this, "Dead", responsibleCharacter, gainedFromDoing: deathFromAction);
+
+            if(cause == "attacked" && responsibleCharacter != null && responsibleCharacter.isInWerewolfForm) {
+                traitContainer.AddTrait(this, "Mangled", responsibleCharacter, gainedFromDoing: deathFromAction);
+            }
 
             logComponent.PrintLogIfActive($"{name} died of {cause}");
             Log localDeathLog;
