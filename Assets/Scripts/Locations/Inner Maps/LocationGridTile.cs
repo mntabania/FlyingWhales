@@ -700,6 +700,26 @@ namespace Inner_Maps {
             }
             Messenger.Broadcast(Signals.OBJECT_PLACED_ON_TILE, this, poi);
         }
+        public void LoadObjectHere(IPointOfInterest poi) {
+            bool isPassablePreviously = IsPassable();
+            if (poi is TileObject tileObject) {
+                if (tileObject.OccupiesTile()) {
+                    objHere = poi;
+                }
+            } else {
+                objHere = poi;    
+            }
+            
+            poi.SetGridTileLocation(this);
+            poi.OnLoadPlacePOI();
+            SetTileState(Tile_State.Occupied);
+            if (!IsPassable()) {
+                structure.RemovePassableTile(this);
+            } else if (IsPassable() && !isPassablePreviously) {
+                structure.AddPassableTile(this);
+            }
+            Messenger.Broadcast(Signals.OBJECT_PLACED_ON_TILE, this, poi);
+        }
         public IPointOfInterest RemoveObjectHere(Character removedBy) {
             if (objHere != null) {
                 IPointOfInterest removedObj = objHere;

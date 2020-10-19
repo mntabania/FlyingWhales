@@ -27,4 +27,8 @@ public class Ice : TileObject{
             traitContainer.RemoveTrait(this, "Melting");
         }
     }
+    public override void OnLoadPlacePOI() {
+        //override this so that melting trait does not create an additional Melting trait when loading.
+        DefaultProcessOnPlacePOI();
+    }
 }

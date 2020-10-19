@@ -342,6 +342,16 @@ namespace Inner_Maps {
                     break;
             }
         }
+        public void LoadObject(IPointOfInterest obj, LocationGridTile tile) {
+            switch (obj.poiType) {
+                case POINT_OF_INTEREST_TYPE.CHARACTER:
+                    OnPlaceCharacterOnTile(obj as Character, tile);
+                    break;
+                default:
+                    tile.LoadObjectHere(obj);
+                    break;
+            }
+        }
         public void RemoveObject(LocationGridTile tile, Character removedBy = null) {
             tile.RemoveObjectHere(removedBy);
         }

@@ -159,7 +159,7 @@ public class LoadSecondWave : MapGenerationComponent {
                         tileObject.LoadSecondWave(saveDataTileObject);    
                     }
                 } else {
-                    gridTileLocation.structure.AddPOI(tileObject, gridTileLocation);
+                    gridTileLocation.structure.LoadPOI(tileObject, gridTileLocation);
                     if (tileObject.mapObjectVisual != null) {
                         if (InnerMapManager.Instance.assetManager.allTileObjectSprites.ContainsKey(saveDataTileObject.spriteName)) {
                             tileObject.mapObjectVisual.SetVisual(InnerMapManager.Instance.assetManager.allTileObjectSprites[saveDataTileObject.spriteName]);
@@ -227,7 +227,7 @@ public class LoadSecondWave : MapGenerationComponent {
                         continue;
                     }
                     LocationGridTile gridTileLocation = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(saveDataTileObject.tileLocationID);
-                    gridTileLocation.structure.AddPOI(tileObject, gridTileLocation);
+                    gridTileLocation.structure.LoadPOI(tileObject, gridTileLocation);
                     if (tileObject.mapObjectVisual != null) {
                         if (InnerMapManager.Instance.assetManager.allTileObjectSprites.ContainsKey(saveDataTileObject.spriteName)) {
                             tileObject.mapObjectVisual.SetVisual(InnerMapManager.Instance.assetManager.allTileObjectSprites[saveDataTileObject.spriteName]);
