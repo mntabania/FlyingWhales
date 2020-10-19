@@ -50,8 +50,9 @@ public class LoadSecondWave : MapGenerationComponent {
         yield return MapGenerator.Instance.StartCoroutine(LoadHexTileSpellsComponent(saveData));
 
         yield return MapGenerator.Instance.StartCoroutine(LoadActionReferences(saveData));
-        yield return MapGenerator.Instance.StartCoroutine(LoadAdditionalActionReferences(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadInterruptReferences(saveData));
+        yield return MapGenerator.Instance.StartCoroutine(LoadAdditionalActionReferences(saveData));
+        
         // yield return MapGenerator.Instance.StartCoroutine(LoadLogReferences(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadPartyReferences(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadPartyQuestsReferences(saveData));
