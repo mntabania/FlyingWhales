@@ -126,8 +126,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 character.marker.pathfindingAI.ClearAllCurrentPathData();
             }
 
-            character.RevertFromVampireBatForm();
-            character.RevertFromWerewolfForm();
+            //character.RevertFromVampireBatForm();
+            //character.RevertFromWerewolfForm();
 
             character.UncarryPOI();
             if (character.traitContainer.HasTrait("Unconscious")) {
