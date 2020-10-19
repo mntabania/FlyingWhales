@@ -164,7 +164,7 @@ namespace Traits {
                 if (_owner.marker && _owner.gridTileLocation != null) {
                     LocationGridTile destinationTile = _owner.marker.GetDestinationTile();
                     if(destinationTile != null) {
-                        if(PathfindingManager.Instance.HasPathEvenDiffRegion(_owner.gridTileLocation, destinationTile)) {
+                        if(PathfindingManager.Instance.HasPathEvenDiffRegion(_owner.gridTileLocation, destinationTile) && _owner.gridTileLocation.IsPassable()) {
                             SetIsTraversingUnwalkableAsBat(false);
                             _owner.interruptComponent.TriggerInterrupt(INTERRUPT.Revert_From_Bat, _owner);
                         }
