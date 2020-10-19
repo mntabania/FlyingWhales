@@ -188,6 +188,7 @@ namespace Traits {
             dislikedBeingVampire = saveDataVampire.dislikedBeingVampire;
             numOfConvertedVillagers = saveDataVampire.numOfConvertedVillagers;
             isInVampireBatForm = saveDataVampire.isInVampireBatForm;
+            isTraversingUnwalkableAsBat = saveDataVampire.isTraversingUnwalkableAsBat;
         }
         public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadSecondWaveInstancedTrait(saveDataTrait);
@@ -302,6 +303,7 @@ public class SaveDataVampire : SaveDataTrait {
     public int numOfConvertedVillagers;
     public List<string> awareCharacters;
     public bool isInVampireBatForm;
+    public bool isTraversingUnwalkableAsBat;
 
     public override void Save(Trait trait) {
         base.Save(trait);
@@ -311,6 +313,7 @@ public class SaveDataVampire : SaveDataTrait {
         dislikedBeingVampire = vampire.dislikedBeingVampire;
         numOfConvertedVillagers = vampire.numOfConvertedVillagers;
         isInVampireBatForm = vampire.isInVampireBatForm;
+        isTraversingUnwalkableAsBat = vampire.isTraversingUnwalkableAsBat;
     }
 }
 #endregion
