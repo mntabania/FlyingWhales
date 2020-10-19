@@ -53,10 +53,13 @@ public class CharacterAIPath : AILerp {
             //if (marker.hasFleePath) {
             //    marker.OnFinishedTraversingFleePath();
             //} else {
-            marker.ArrivedAtTarget();
+            bool shouldRecomputePath = false;
+            marker.ArrivedAtTarget(ref shouldRecomputePath);
             //}
             currentPath = null;
-
+            if (shouldRecomputePath) {
+                marker.StartMovement();    
+            }
         }
     }
     protected override void OnPathComplete(Path newPath) {

@@ -4783,6 +4783,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    //Once a character is seized, leave party also - except counter attack
         //    partyComponent.currentParty.RemoveMember(this);
         //}
+        RevertFromVampireBatForm();
+        RevertFromWerewolfForm();
         minion?.OnSeize();
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         //ForceCancelAllJobsTargettingThisCharacter();

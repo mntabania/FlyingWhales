@@ -10,6 +10,7 @@ namespace Interrupts {
         public RevertFromBat() : base(INTERRUPT.Revert_From_Bat) {
             duration = 1;
             //isSimulateneous = true;
+            shouldStopMovement = false;
             interruptIconString = GoapActionStateDB.No_Icon;
             logTags = new[] {LOG_TAG.Misc};
         }

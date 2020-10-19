@@ -6,6 +6,7 @@ using UnityEngine;
 using UtilityScripts;
 using Traits;
 using UnityEngine.Assertions;
+using Inner_Maps;
 
 namespace Traits {
     public class Vampire : Trait {
@@ -14,6 +15,7 @@ namespace Traits {
         public int numOfConvertedVillagers { get; private set; }
         public List<Character> awareCharacters { get; private set; }
         public bool isInVampireBatForm { get; private set; }
+        public bool isTraversingUnwalkableAsBat { get; private set; }
 
         private Character _owner;
 
@@ -34,7 +36,7 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Before_Start_Flee);
             AddTraitOverrideFunctionIdentifier(TraitManager.After_Exiting_Combat);
-            //AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Ended_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Ended_Trait);
         }
 
         #region Overrides
@@ -156,16 +158,20 @@ namespace Traits {
                 }
             }
         }
-        //public override void OnTickEnded(ITraitable traitable) {
-        //    base.OnTickEnded(traitable);
-        //    if (traitable is Character character) {
-        //        if (character.behaviourComponent.isInVampireBatForm) {
-        //            if (!HasNonHostileVillagerInRangeThatConsidersVampirismACrime(character)) {
-        //                RevertToNormal(character);
-        //            }
-        //        }
-        //    }
-        //}
+        public override void OnTickEnded(ITraitable traitable) {
+            base.OnTickEnded(traitable);
+            if (isInVampireBatForm && isTraversingUnwalkableAsBat) {
+                if (_owner.marker && _owner.gridTileLocation != null) {
+                    LocationGridTile destinationTile = _owner.marker.GetDestinationTile();
+                    if(destinationTile != null) {
+                        if(PathfindingManager.Instance.HasPathEvenDiffRegion(_owner.gridTileLocation, destinationTile)) {
+                            SetIsTraversingUnwalkableAsBat(false);
+                            _owner.interruptComponent.TriggerInterrupt(INTERRUPT.Revert_From_Bat, _owner);
+                        }
+                    }
+                }
+            }
+        }
         public override string GetTestingData(ITraitable traitable = null) {
             string data = base.GetTestingData(traitable);
             data = $"{data} Dislikes Being Vampire: {dislikedBeingVampire.ToString()}";
@@ -199,6 +205,10 @@ namespace Traits {
 
         public void SetIsInVampireBatForm(bool state) {
             isInVampireBatForm = state;
+            SetIsTraversingUnwalkableAsBat(state);
+        }
+        public void SetIsTraversingUnwalkableAsBat(bool state) {
+            isTraversingUnwalkableAsBat = state;
         }
         private void DetermineIfDesireOrDislike(Character character) {
             if(character.traitContainer.HasTrait("Hemophobic", "Chaste")) {

@@ -10,6 +10,7 @@ namespace Interrupts {
         public TransformToBat() : base(INTERRUPT.Transform_To_Bat) {
             duration = 1;
             //isSimulateneous = true;
+            shouldStopMovement = false;
             interruptIconString = GoapActionStateDB.No_Icon;
             logTags = new[] {LOG_TAG.Misc};
         }
