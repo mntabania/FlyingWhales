@@ -127,13 +127,13 @@ public class CarryComponent : CharacterComponent {
             //tileObject.areaMapVisual.collisionTrigger.SetMainColliderState(true);
             if (dropLocation == null) {
                 if (owner.gridTileLocation.isOccupied) {
-                    LocationGridTile chosenTile = owner.gridTileLocation.GetRandomUnoccupiedNeighbor();
+                    LocationGridTile chosenTile = owner.gridTileLocation.GetFirstNoObjectNeighbor();
                     if (chosenTile != null) {
                         owner.gridTileLocation.structure.AddPOI(tileObject, chosenTile);
                     } else {
-                        Debug.LogWarning(
-                            $"{GameManager.Instance.TodayLogString()}{tileObject.name} is being dropped by {owner.name} but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
-                        owner.gridTileLocation.structure.AddPOI(tileObject);
+                        //If neighbours of the grid tile already have objects, get the nearest tile with no object
+                        chosenTile = owner.gridTileLocation.GetFirstNearestTileFromThisWithNoObject(new List<LocationGridTile>());
+                        owner.gridTileLocation.structure.AddPOI(tileObject, chosenTile);
                     }
                 } else {
                     owner.gridTileLocation.structure.AddPOI(tileObject, owner.gridTileLocation);

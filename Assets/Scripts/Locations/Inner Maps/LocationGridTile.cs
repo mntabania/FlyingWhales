@@ -90,10 +90,10 @@ namespace Inner_Maps {
         #region Pathfinding
         public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty).ToList(); } }
         public List<LocationGridTile> CaveInterconnectionTiles { get { return FourNeighbours().Where(o => o.structure == structure && !o.HasDifferentStructureNeighbour()).ToList() ; } } //
-        public List<LocationGridTile> UnoccupiedNeighbours { get { return _neighbours.Values.Where(o => !o.isOccupied && o.structure == structure).ToList(); } }
+        public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbourList.Where(o => !o.isOccupied && o.structure == structure).ToList(); } }
         public List<LocationGridTile> UnoccupiedNeighboursWithinHex {
             get {
-                return _neighbours.Values.Where(o =>
+                return neighbourList.Where(o =>
                         !o.isOccupied && o.charactersHere.Count <= 0 && o.structure == structure &&
                         o.collectionOwner.isPartOfParentRegionMap &&
                         o.collectionOwner.partOfHextile.hexTileOwner == collectionOwner.partOfHextile.hexTileOwner)
@@ -1140,6 +1140,64 @@ namespace Inner_Maps {
             List<LocationGridTile> unoccupiedNeighbours = UnoccupiedNeighbours;
             if (unoccupiedNeighbours.Count > 0) {
                 return unoccupiedNeighbours[Random.Range(0, unoccupiedNeighbours.Count)];
+            }
+            return null;
+        }
+        public LocationGridTile GetFirstNoObjectNeighbor(bool thisStructureOnly = false) {
+            for (int i = 0; i < neighbourList.Count; i++) {
+                LocationGridTile neighbor = neighbourList[i];
+                if (!thisStructureOnly || neighbor.structure == structure) {
+                    if (neighbor.objHere == null) {
+                        return neighbor;
+                    }
+                }
+            }
+            return null;
+        }
+        public LocationGridTile GetFirstNearestTileFromThisWithNoObject(bool thisStructureOnly = false) {
+            return GetFirstNearestTileFromThisWithNoObjectBase(thisStructureOnly, new List<LocationGridTile>());
+        }
+        private LocationGridTile GetFirstNearestTileFromThisWithNoObjectBase(bool thisStructureOnly, List<LocationGridTile> checkedTiles) {
+            if (!checkedTiles.Contains(this)) {
+                checkedTiles.Add(this);
+
+                if (objHere == null) {
+                    return this;
+                }
+                LocationGridTile chosenTile = GetFirstNoObjectNeighbor(thisStructureOnly);
+                if (chosenTile != null) {
+                    return chosenTile;
+                } else {
+                    for (int i = 0; i < neighbourList.Count; i++) {
+                        LocationGridTile neighbor = neighbourList[i];
+                        if (!thisStructureOnly || neighbor.structure == structure) {
+                            chosenTile = neighbor.GetFirstNearestTileFromThisWithNoObjectBase(thisStructureOnly, checkedTiles);
+                            if (chosenTile != null) {
+                                return chosenTile;
+                            }
+                        }
+                    }
+                }
+
+                //LocationGridTile chosenTile = GetFirstNoObjectNeighbor(structureOnly);
+                //if (chosenTile != null) {
+                //    return chosenTile;
+                //} else {
+                //    for (int i = 0; i < neighbourList.Count; i++) {
+                //        LocationGridTile neighbor = neighbourList[i];
+                //        chosenTile = neighbor.GetFirstNoObjectNeighbor(structureOnly);
+                //        if (chosenTile != null) {
+                //            return chosenTile;
+                //        }
+                //    }
+                //    for (int i = 0; i < neighbourList.Count; i++) {
+                //        LocationGridTile neighbor = neighbourList[i];
+                //        chosenTile = neighbor.GetFirstNearestTileFromThisWithNoObjectBase(structureOnly, checkedTiles);
+                //        if (chosenTile != null) {
+                //            return chosenTile;
+                //        }
+                //    }
+                //}
             }
             return null;
         }

@@ -75,9 +75,12 @@ public class DropItem : GoapAction {
     #region State Effects
     public void AfterDropSuccess(ActualGoapNode goapNode) {
         //if current grid location is occupied and cannot get any unoccupied tile from current location, then just let the object disappear
-        bool addToLocation = !(goapNode.actor.gridTileLocation.objHere != null && goapNode.actor.gridTileLocation.GetNearestUnoccupiedTileFromThis() == null);
-        
-        goapNode.actor.UncarryPOI(goapNode.poiTarget as TileObject, addToLocation: addToLocation);
+        LocationGridTile tile = goapNode.actor.gridTileLocation;
+        if(tile != null && tile.objHere != null) {
+            tile = goapNode.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
+        }
+        bool addToLocation = tile != null;
+        goapNode.actor.UncarryPOI(goapNode.poiTarget as TileObject, addToLocation: addToLocation, dropLocation: tile);
         //if(goapNode.associatedJobType == JOB_TYPE.TAKE_ARTIFACT) {
         //    goapNode.actor.behaviourComponent.SetIsDefending(false, null);
         //}

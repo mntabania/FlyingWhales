@@ -3348,7 +3348,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 targetTile = gridTileLocation;
             }
             if (targetTile == null || targetTile.objHere != null) {
-                targetTile = gridTileLocation.GetNearestUnoccupiedTileFromThis();
+                targetTile = gridTileLocation.GetFirstNearestTileFromThisWithNoObject(new List<LocationGridTile>());
             }
             if (targetTile != null) {
                 targetTile.structure.AddPOI(item, targetTile);

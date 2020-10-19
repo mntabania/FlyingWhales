@@ -551,7 +551,7 @@ public class CharacterManager : BaseMonoBehaviour {
             targetTile = poi.gridTileLocation;
         }
         if (targetTile != null && targetTile.objHere != null) {
-            targetTile = targetTile.GetNearestUnoccupiedTileFromThis();
+            targetTile = targetTile.GetFirstNearestTileFromThisWithNoObject();
         }
         if(targetTile != null) {
             int food = GetFoodAmountTakenFromPOI(poi);

@@ -43,7 +43,7 @@ public abstract class Ent : Summon {
         base.AfterDeath(deathTileLocation);
         LocationGridTile placeForWoodPile = deathTileLocation;
         if (deathTileLocation.objHere != null) {
-            placeForWoodPile = deathTileLocation.GetNearestUnoccupiedTileFromThis();
+            placeForWoodPile = deathTileLocation.GetFirstNearestTileFromThisWithNoObject();
         }
         int wood = InnerMapManager.Big_Tree_Yield;
         WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);

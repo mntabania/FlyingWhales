@@ -62,24 +62,28 @@ public class Fish : GoapAction {
         goapNode.descriptionLog.AddToFillers(null, "50", LOG_IDENTIFIER.STRING_1);
     }
     public void AfterFishSuccess(ActualGoapNode goapNode) {
-        LocationGridTile tile = goapNode.actor.gridTileLocation.GetNearestUnoccupiedTileFromThis() ?? goapNode.actor.gridTileLocation;
+        LocationGridTile tile = goapNode.actor.gridTileLocation;
+        if(tile != null && tile.objHere != null) {
+            tile = goapNode.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
+        }
 
         // FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FISH_PILE);
         // foodPile.SetResourceInPile(50);
         // tile.structure.AddPOI(foodPile, tile);
         // foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
-        if (goapNode.associatedJobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
-            FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FISH_PILE);
-            foodPile.SetResourceInPile(50);
-            tile.structure.AddPOI(foodPile, tile);
-            if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.targetCamp != null) {
-                goapNode.actor.partyComponent.currentParty.jobComponent.CreateHaulForCampJob(foodPile, goapNode.actor.partyComponent.currentParty.targetCamp);
-                goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
+        if(tile != null) {
+            if (goapNode.associatedJobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
+                FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FISH_PILE);
+                foodPile.SetResourceInPile(50);
+                tile.structure.AddPOI(foodPile, tile);
+                if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.targetCamp != null) {
+                    goapNode.actor.partyComponent.currentParty.jobComponent.CreateHaulForCampJob(foodPile, goapNode.actor.partyComponent.currentParty.targetCamp);
+                    goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
+                }
+            } else {
+                InnerMapManager.Instance.CreateNewResourcePileAndTryCreateHaulJob<FoodPile>(TILE_OBJECT_TYPE.FISH_PILE, 50, goapNode.actor, tile);
             }
-        } else {
-            InnerMapManager.Instance.CreateNewResourcePileAndTryCreateHaulJob<FoodPile>(TILE_OBJECT_TYPE.FISH_PILE, 50, goapNode.actor, tile);
         }
-
     }
     #endregion
 }
