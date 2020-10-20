@@ -74200,8 +74200,8 @@ MonoBehaviour:
   _majorMentalBreakHourThreshold: 2
   _minorMentalBreakDayThreshold: 1
   _baseFullnessDecreaseRate: 0.34
-  _baseTirednessDecreaseRate: 0.17
-  _baseHappinessDecreaseRate: 0.21
+  _baseTirednessDecreaseRate: 0.18
+  _baseHappinessDecreaseRate: 0.26
   _startingMana: 200
   _maximumMana: 500
   _summonMinionManaCost: 80

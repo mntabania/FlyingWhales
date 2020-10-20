@@ -2876,6 +2876,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (needsComponent.HasNeeds()) {
             needsComponent.PlanScheduledFullnessRecovery();
             //needsComponent.PlanScheduledTirednessRecovery(this);
+            needsComponent.PlanScheduledHappinessRecovery();
+            needsComponent.PlanScheduledSecondHappinessRecovery();
         }
         if (isNormalCharacter) {
             //try to take settlement job that this character can see the target of.
@@ -5551,6 +5553,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             MigrateHomeStructureTo(null);
             needsComponent.SetTirednessForcedTick(0);
             needsComponent.SetFullnessForcedTick(0);
+            needsComponent.SetHappinessForcedTick(0);
+            needsComponent.SetSecondHappinessForcedTick(0);
             if (!behaviourComponent.HasBehaviour(typeof(ZombieBehaviour))) {
                 behaviourComponent.AddBehaviourComponent(typeof(ZombieBehaviour));
             }
@@ -5582,6 +5586,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //ChangeHomeStructure(null);
             needsComponent.SetTirednessForcedTick();
             needsComponent.SetFullnessForcedTick();
+            needsComponent.SetHappinessForcedTick();
+            needsComponent.SetSecondHappinessForcedTick();
             needsComponent.SetHasCancelledSleepSchedule(false);
             needsComponent.ResetSleepTicks();
             ConstructDefaultActions();

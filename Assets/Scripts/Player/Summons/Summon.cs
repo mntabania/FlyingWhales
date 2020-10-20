@@ -59,6 +59,8 @@ public class Summon : Character {
         ConstructInitialGoapAdvertisementActions();
         needsComponent.SetFullnessForcedTick(0);
         needsComponent.SetTirednessForcedTick(0);
+        needsComponent.SetHappinessForcedTick(0);
+        needsComponent.SetSecondHappinessForcedTick(0);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Monster_Behaviour);
     }
     public override void OnActionPerformed(ActualGoapNode node) { } //overridden OnActionStateSet so that summons cannot witness other events.

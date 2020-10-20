@@ -159,6 +159,7 @@ namespace Traits {
             }
             if (!triggerBrokenhearted) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, actionType, owner, owner);
+                job.SetDoNotRecalculate(true);
                 //job.AddOtherData(actionType, new object[] { ACTION_LOCATION_TYPE.IN_PLACE });
                 owner.jobQueue.AddJobInQueue(job);
             } else {

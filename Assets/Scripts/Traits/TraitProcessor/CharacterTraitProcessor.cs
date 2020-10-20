@@ -21,7 +21,7 @@ namespace Traits {
                 if (trait.name == "Starving") {
                     character.needsComponent.PlanFullnessRecoveryActions();
                 } else if (trait.name == "Sulking" || trait.name == "Lonely") {
-                    character.needsComponent.PlanHappinessRecoveryActions();
+                    // character.needsComponent.PlanHappinessRecoveryActions();
                 } else if (trait.name == "Exhausted") {
                     character.needsComponent.PlanTirednessRecoveryActions();
                 }
