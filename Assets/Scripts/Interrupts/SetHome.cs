@@ -93,24 +93,23 @@ namespace Interrupts {
                     log += "\n-Character is a vagrant";
                     if (actor.homeStructure == null || actor.homeStructure.hasBeenDestroyed) {
                         log += "\n-Character has no home structure";
-                        log += "\n-20% chance to join faction";
+                        //log += "\n-20% chance to join faction";
                         int roll = UnityEngine.Random.Range(0, 100);
+                        //log += "\n-Roll: " + roll;
+                        //if (roll < 20) {
+                        //    Faction joinedFaction = actor.JoinFactionProcessing();
+                        //    if (joinedFaction != null) {
+                        //        log += $"\n-Chosen faction to join: {joinedFaction.name}";
+                        //        SetNewHomeSettlementForNonVagrant(actor, ref log);
+                        //        actor.logComponent.PrintLogIfActive(log);
+                        //        return;
+                        //    } else {
+                        //        log += "\n-No available faction for character";
+                        //    }
+                        //}
+                        log += "\n-40% chance: find an unoccupied but Habitable Special Structure within the region and randomly select one as its new Home Structure";
                         log += "\n-Roll: " + roll;
-                        if (roll < 20) {
-                            Faction joinedFaction = actor.JoinFactionProcessing();
-                            if (joinedFaction != null) {
-                                log += $"\n-Chosen faction to join: {joinedFaction.name}";
-                                SetNewHomeSettlementForNonVagrant(actor, ref log);
-                                actor.logComponent.PrintLogIfActive(log);
-                                return;
-                            } else {
-                                log += "\n-No available faction for character";
-                            }
-                        }
-                        log += "\n-60% chance: find an unoccupied but Habitable Special Structure within the region and randomly select one as its new Home Structure";
-                        roll = UnityEngine.Random.Range(0, 100);
-                        log += "\n-Roll: " + roll;
-                        if (roll < 60) {
+                        if (roll < 40) {
                             LocationStructure chosenHomeStructure = currentRegion.GetRandomUnoccupiedStructureWithTag(STRUCTURE_TAG.Shelter);
                             if (chosenHomeStructure != null) {
                                 log += "\n-Chosen Habitable Structure: " + chosenHomeStructure.name;

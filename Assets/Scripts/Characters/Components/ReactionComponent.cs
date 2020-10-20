@@ -1064,20 +1064,20 @@ public class ReactionComponent : CharacterComponent {
                                     if (vampire == null || !vampire.DoesCharacterKnowThisVampire(disguisedActor)) {
                                         if (disguisedActor.traitContainer.HasTrait("Suspicious") || disguisedActor.moodComponent.moodState == MOOD_STATE.Critical) {
                                             debugLog = $"{debugLog}\n-Witness is suspicious or in critical mood, will create assumption that {disguisedTarget.name} is a vampire";
-                                            disguisedActor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
+                                            actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
                                         } else if (disguisedActor.moodComponent.moodState == MOOD_STATE.Bad && !disguisedActor.relationshipContainer.IsFriendsWith(disguisedTarget)) {
                                             debugLog = $"{debugLog}\n-Witness is in bad mood, and is not friend/close friend with {disguisedTarget.name}";
                                             if (disguisedTarget.currentStructure is Dwelling dwelling && dwelling != disguisedTarget.homeStructure) {
                                                 debugLog = $"{debugLog}\n-{disguisedTarget.name} is at another dwelling {dwelling.name}. Rolling for chance to create assumption";
                                                 if (GameUtilities.RollChance(50, ref debugLog)) {
                                                     debugLog = $"{debugLog}\n-Created new is vampire assumption";
-                                                    disguisedActor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);        
+                                                    actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);        
                                                 }
                                             } else if (disguisedTarget.gridTileLocation != null && disguisedTarget.gridTileLocation.IsPartOfSettlement(disguisedActor.homeSettlement)) {
                                                 debugLog = $"{debugLog}\n-{disguisedTarget.name} is inside settlement at night. Rolling for chance to create assumption";
                                                 if (GameUtilities.RollChance(35, ref debugLog)) {
                                                     debugLog = $"{debugLog}\n-Created new is vampire assumption";
-                                                    disguisedActor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);        
+                                                    actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);        
                                                 }
                                             }
                                         }
@@ -1094,9 +1094,39 @@ public class ReactionComponent : CharacterComponent {
                         Assert.IsNotNull(vampire, $"{disguisedActor.name} saw Vampire Lord {disguisedTarget.name}, but {disguisedTarget.name} does not have a Vampire trait!");
                         if (!vampire.DoesCharacterKnowThisVampire(disguisedActor)) {
                             debugLog = $"{debugLog}\n-Will create is vampire assumption";
-                            disguisedActor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
+                            actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
                         }
                     }
+
+                    //if (disguisedTarget.traitContainer.HasTrait("Nocturnal")) {
+                    //    if(disguisedActor.homeSettlement != null) {
+                    //        //TODO: Checking if there is an active Vampire Hunt event
+                    //        TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+                    //        if(currentTime == TIME_IN_WORDS.LATE_NIGHT || currentTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                    //            Vampire vampireTrait = disguisedTarget.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                    //            CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(disguisedActor, disguisedTarget, disguisedTarget, CRIME_TYPE.Vampire);
+                    //            bool isTargetAKnownVampire = vampireTrait != null && vampireTrait.DoesCharacterKnowThisVampire(disguisedActor);
+
+                    //            if(severity != CRIME_SEVERITY.Unapplicable && severity != CRIME_SEVERITY.None && !isTargetAKnownVampire) {
+                    //                if(disguisedActor.traitContainer.HasTrait("Suspicious") || disguisedActor.moodComponent.moodState == MOOD_STATE.Critical) {
+                    //                    actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
+                    //                } else if (disguisedActor.moodComponent.moodState == MOOD_STATE.Bad && !disguisedActor.relationshipContainer.IsFriendsWith(disguisedActor)) {
+                    //                    if(targetCharacter.currentStructure != null) {
+                    //                        if(targetCharacter.currentStructure.IsOccupied() && targetCharacter.currentStructure.IsResident(disguisedTarget)) {
+                    //                            if (GameUtilities.RollChance(50)) {
+                    //                                actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
+                    //                            }
+                    //                        } else if (!targetCharacter.currentStructure.isInterior && targetCharacter.currentSettlement == disguisedActor.homeSettlement) {
+                    //                            if (GameUtilities.RollChance(35)) {
+                    //                                actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
+                    //                            }
+                    //                        }
+                    //                    }
+                    //                }
+                    //            }
+                    //        }
+                    //    }
+                    //}
                     
                 } else {
                     debugLog = $"{debugLog}\n-Target is dead";
