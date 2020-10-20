@@ -506,6 +506,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<IPointOfInterest, Character>(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.AddListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
+        Messenger.AddListener<Faction, Character>(Signals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
         //Messenger.AddListener<LocationGridTile, int>(Signals.INCREASE_THREAT_THAT_SEES_TILE, IncreaseThreatThatSeesTile);
 
         //Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
@@ -545,6 +546,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<IPointOfInterest, Character>(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.RemoveListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
+        Messenger.RemoveListener<Faction, Character>(Signals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
         //Messenger.RemoveListener<LocationGridTile, int>(Signals.INCREASE_THREAT_THAT_SEES_TILE, IncreaseThreatThatSeesTile);
         //Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
         needsComponent.UnsubscribeToSignals();
@@ -598,7 +600,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private void IncreaseThreatThatSeesPOI(IPointOfInterest poi, int amount) {
-        if (faction != null && faction.isMajorNonPlayerFriendlyNeutral && marker) {
+        if (faction != null && faction.isMajorNonPlayerOrVagrant && marker) {
             if (poi is Character character) {
                 if (marker.IsPOIInVision(character)) {
                     PlayerManager.Instance.player.threatComponent.AdjustThreat(amount);
@@ -611,7 +613,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private void IncreaseThreatThatSeesTile(LocationGridTile tile, int amount) {
-        if (faction != null && faction.isMajorNonPlayerFriendlyNeutral && marker && gridTileLocation != null && gridTileLocation.parentMap.region == tile.parentMap.region) {
+        if (faction != null && faction.isMajorNonPlayerOrVagrant && marker && gridTileLocation != null && gridTileLocation.parentMap.region == tile.parentMap.region) {
             if(gridTileLocation.structure == tile.structure || (!gridTileLocation.structure.isInterior && !tile.structure.isInterior)) {
                 float distance = Vector2.Distance(tile.centeredWorldLocation, gridTileLocation.centeredWorldLocation);
                 if (distance <= 5f) {
@@ -803,11 +805,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             traitContainer.AddTrait(this, _characterClass.traitNames[i]);
         }
         if (_characterClass.interestedItemNames != null) {
-            AddItemAsInteresting(_characterClass.interestedItemNames);    
+            AddItemAsInteresting(_characterClass.interestedItemNames);
         }
         visuals.UpdateAllVisuals(this);
         //minion?.SetAssignedDeadlySinName(_characterClass.className);
         UpdateCanCombatState();
+        if (previousClassName == "Necromancer") {
+            traitContainer.RemoveTrait(this, "Necromancer");
+        }
         if (_characterClass.className == "Hero") {
             //Reference: https://www.notion.so/ruinarch/Hero-9697369ffca6410296f852f295ee0090
             traitContainer.RemoveAllTraitsByType(this, TRAIT_TYPE.FLAW);
@@ -815,6 +820,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddLogToDatabase();
             traitContainer.AddTrait(this, "Blessed");
+        } else if (_characterClass.className == "Necromancer") {
+            traitContainer.AddTrait(this, "Necromancer");
         }
     }
     public void AssignClass(CharacterClass characterClass, bool isInitial = false) {
@@ -1391,6 +1398,72 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return chosenFaction;
         }
         return null;
+    }
+    private void OnFactionCreated(Faction newFaction, Character creator) {
+        if(this != creator) {
+            if(faction == null || faction.isMajorNonPlayerOrVagrant) {
+                JoinFactionProcessingSpecific(newFaction, creator);
+            }
+        }
+    }
+    public void JoinFactionProcessingSpecific(Faction faction, Character factionLeader) {
+        string debugLog = "Faction " + faction.name + " is created by " + factionLeader.name + ". " + name + " will try to join";
+        if (isFactionLeader || isSettlementRuler) {
+            debugLog += "\nCharacter is faction leader/settlement ruler, WILL NOT JOIN";
+            logComponent.PrintLogIfActive(debugLog);
+            return;
+        }
+        if (partyComponent.isMemberThatJoinedQuest) {
+            debugLog += "\nCharacter is in an active party with quest, WILL NOT JOIN";
+            logComponent.PrintLogIfActive(debugLog);
+            return;
+        }
+        if (!faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(this)) {
+            debugLog += "\nCharacter is does not fit faction ideologies, WILL NOT JOIN";
+            logComponent.PrintLogIfActive(debugLog);
+            return;
+        }
+        Faction currentFaction = this.faction;
+        if(currentFaction == faction) {
+            debugLog += "\nCharacter's current faction is the newly created faction, WILL NOT JOIN";
+            logComponent.PrintLogIfActive(debugLog);
+            return;
+        }
+        Character lover = relationshipContainer.GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER);
+        bool hasNoLoverOrLoverIsNotFriendOrCloseFriend = lover == null || !relationshipContainer.IsFriendsWith(lover);
+        bool isFactionLeaderFriendOrCloseFriend = relationshipContainer.IsFriendsWith(factionLeader);
+
+        int chance = 0;
+        if(lover == factionLeader && isFactionLeaderFriendOrCloseFriend) {
+            debugLog += "\nFaction Leader is Lover and Faction Leader is Friend/Close Friend, 90%";
+            chance = 90;
+        } else if (relationshipContainer.HasRelationshipWith(factionLeader, RELATIONSHIP_TYPE.AFFAIR) && isFactionLeaderFriendOrCloseFriend && hasNoLoverOrLoverIsNotFriendOrCloseFriend) {
+            debugLog += "\nFaction Leader is Affair and Faction Leader is Friend/Close Friend and Character has no lover that is friend/close friend, 60%";
+            chance = 60;
+        } else if (relationshipContainer.IsFamilyMember(factionLeader) && isFactionLeaderFriendOrCloseFriend) {
+            debugLog += "\nFaction Leader is Family Member and Faction Leader is Friend/Close Friend, 30%";
+            chance = 30;
+        } else if (isFactionLeaderFriendOrCloseFriend) {
+            debugLog += "\nFaction Leader is Friend/Close Friend, 10%";
+            chance = 10;
+        } else if (isVagrantOrFactionless && race.IsSapient()) {
+            debugLog += "\nCharacter is vagrant and sapient, 15%";
+            chance = 15;
+        }
+
+        if(currentFaction != null && currentFaction.HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS.Hostile, faction)) {
+            debugLog += "\nCharacter's current faction is hostile with the new faction, half the chance";
+            chance = Mathf.RoundToInt(chance * 0.5f);
+            debugLog += "\nNew chance: " + chance;
+        }
+
+        if (GameUtilities.RollChance(chance)) {
+            debugLog += "\nCharacter will join new faction";
+            interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, factionLeader, "join_faction_decision");
+        } else {
+            debugLog += "\nCharacter will NOT join new faction";
+        }
+        logComponent.PrintLogIfActive(debugLog);
     }
     #endregion
 
@@ -4968,6 +5041,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else if (otherCharacter.isInWerewolfForm) {
             if (!otherCharacter.lycanData.DoesCharacterKnowThisLycan(this)) {
                 return true;
+            }
+        }
+
+        if(faction != otherCharacter.faction){
+            if (faction != null && faction.isMajorOrVagrant && otherCharacter.traitContainer.HasTrait("Transitioning")) {
+                //Those characters that are "transitioning" (this means that their faction will be changed most likely to a hostile one), will not be considered hostile by villagers/vagrants during the transition period
+                return false;
+            }
+            if (otherCharacter.faction != null && otherCharacter.faction.isMajorOrVagrant && traitContainer.HasTrait("Transitioning")) {
+                //Those characters that are "transitioning" (this means that their faction will be changed most likely to a hostile one), will not be considered hostile by villagers/vagrants during the transition period
+                return false;
             }
         }
 

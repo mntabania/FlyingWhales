@@ -11,6 +11,19 @@ public class WorkBehaviour : CharacterBehaviourComponent {
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} will try to do settlement work...";
+        if (character.faction != null && character.faction.isMajorNonPlayer && !character.isFactionLeader && !character.isSettlementRuler) {
+            for (int i = 0; i < character.crimeComponent.witnessedCrimes.Count; i++) {
+                CrimeData crimeData = character.crimeComponent.witnessedCrimes[i];
+                if (!crimeData.isRemoved) {
+                    if (!character.crimeComponent.IsReported(crimeData)) {
+                        if (character.jobComponent.TryCreateReportCrimeJob(crimeData.criminal, crimeData.target, crimeData, crimeData.crime, out producedJob)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
         if (character.moodComponent.moodState == MOOD_STATE.Normal) {
             log += $"\n-{character.name} is in normal mood, will do settlement work";
             return PlanWorkActions(character, out producedJob);

@@ -92,7 +92,8 @@ public class ConsoleBase : InfoUIBase {
             {"/save_manual", SaveManual },
             {"/set_party_state", SwitchPartyState },
             {"/raid", StartRaid },
-            {"/save_db", SaveDatabaseInMemory}
+            {"/save_db", SaveDatabaseInMemory},
+            {"/find_object", FindTileObject}
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

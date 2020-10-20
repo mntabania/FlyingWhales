@@ -43,7 +43,7 @@ namespace Quests {
         #region Utilities
         public static bool ShouldConsiderCharacterAsEliminated(Character character) {
             return character.isDead ||
-                   (character.faction != null && character.faction.isMajorNonPlayerFriendlyNeutral == false) ||
+                   (character.faction != null && character.faction.isMajorNonPlayerOrVagrant == false) ||
                    character.isAlliedWithPlayer;
         }
         #endregion

@@ -336,7 +336,7 @@ public class InterruptComponent : CharacterComponent {
         return false;
     }
     public bool CanNecromanticTransform() {
-        if(CharacterManager.Instance.necromancerInTheWorld == null) {
+        if(CharacterManager.Instance.necromancerInTheWorld == null && owner.characterClass.className != "Necromancer") {
             return owner.traitContainer.HasTrait("Evil", "Treacherous");
         }
         return false; 

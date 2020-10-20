@@ -51,12 +51,15 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             owner = addedTo as Character;
             prevClassName = owner.characterClass.className;
-            owner.AssignClass("Necromancer");
+            //NOTE: Removed assigning class here because Necromancer trait should be added when Necromancer class is assigned, not the other way around. This means, that the class controls the trait not vice-versa.
+            //owner.AssignClass("Necromancer");
             owner.behaviourComponent.AddBehaviourComponent(typeof(NecromancerBehaviour));
             owner.SetNecromancerTrait(this);
             //Temporary fix: Change faction to undead when the necromancer sucessfully built his lair so that the other characters in the village will not attack him
-            //owner.ChangeFactionTo(FactionManager.Instance.undeadFaction);
-            //FactionManager.Instance.undeadFaction.OnlySetLeader(owner);
+            //EDIT NOTE: Faction changing is brought back when necromancer trait is added not when the character built a lair because we now have the Transitioning trait
+            //This means that the character will no longer be hostile to villagers if he/she is transitioning
+            owner.ChangeFactionTo(FactionManager.Instance.undeadFaction);
+            FactionManager.Instance.undeadFaction.OnlySetLeader(owner);
             CharacterManager.Instance.SetNecromancerInTheWorld(owner);
             owner.MigrateHomeStructureTo(null);
             owner.ClearTerritory();
@@ -74,7 +77,7 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            owner.AssignClass(prevClassName);
+            //owner.AssignClass(prevClassName);
             owner.behaviourComponent.RemoveBehaviourComponent(typeof(NecromancerBehaviour));
             owner.SetNecromancerTrait(null);
             owner.ChangeFactionTo(FactionManager.Instance.vagrantFaction);

@@ -346,6 +346,7 @@ public static class Signals {
     public static string FACTION_RELATIONSHIP_CHANGED = "OnFactionRelationshipChanged"; //Parameters (FactionRelationship rel)
     public static string FACTION_ACTIVE_CHANGED = "OnFactionActiveChanged"; //Parameters (Faction affectedFaction)
     public static string CHANGE_FACTION_RELATIONSHIP = "OnChangeFactionRelationship";
+    public static string CREATE_FACTION_INTERRUPT = "OnCreateFactionInterrupt"; //Parameters (Faction createdFaction, Character creator)
     /// <summary>
     /// Parameters (Faction faction)
     /// </summary>

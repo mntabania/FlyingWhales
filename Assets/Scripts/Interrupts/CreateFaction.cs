@@ -48,7 +48,8 @@ namespace Interrupts {
             overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
             overrideEffectLog.AddToFillers(interruptHolder.actor.currentRegion, interruptHolder.actor.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-            
+
+            Messenger.Broadcast(Signals.CREATE_FACTION_INTERRUPT, faction, interruptHolder.actor);
             return true;
         }
         #endregion

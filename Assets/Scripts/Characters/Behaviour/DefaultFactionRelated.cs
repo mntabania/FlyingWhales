@@ -56,16 +56,6 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
             if (GameUtilities.RollChance(leaveFactionChance)) {
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_normal");
             }
-            for (int i = 0; i < character.crimeComponent.witnessedCrimes.Count; i++) {
-                CrimeData crimeData = character.crimeComponent.witnessedCrimes[i];
-                if (!crimeData.isRemoved) {
-                    if (!character.crimeComponent.IsReported(crimeData)) {
-                        if (character.jobComponent.TryCreateReportCrimeJob(crimeData.criminal, crimeData.target, crimeData, crimeData.crime)) {
-                            return true;
-                        }
-                    }
-                }
-            }
         }
         return false;
     }

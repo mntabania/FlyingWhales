@@ -5,6 +5,9 @@ using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using Logs;
 using UnityEngine.Assertions;
+using Inner_Maps;
+using UtilityScripts;
+
 namespace Interrupts {
     public class SetHome : Interrupt {
         public SetHome() : base(INTERRUPT.Set_Home) {
@@ -118,6 +121,22 @@ namespace Interrupts {
                                 return;
                             }
                         }
+                        roll = UnityEngine.Random.Range(0, 100);
+                        log += "\n-20% chance: find an unoccupied Village within the region and randomly select one of its Structures (prioritize Dwellings) as its new Home Structure.  Clear out Territory data if it has one.";
+                        log += "\n-Roll: " + roll;
+                        if (roll < 20) {
+                            BaseSettlement chosenSettlement = currentRegion.GetFirstSettlementInRegion(x => x.locationType == LOCATION_TYPE.VILLAGE && x.residents.Count <= 0);
+                            if(chosenSettlement != null) {
+                                log += "\n-Chosen Settlement: " + chosenSettlement.name;
+                                LocationStructure chosenHomeStructure = GetStructureInSettlementPrioritizeDwellings(chosenSettlement, actor);
+                                if (chosenHomeStructure != null) {
+                                    log += "\n-Chosen Home Structure: " + chosenHomeStructure.name;
+                                    actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
+                                    actor.logComponent.PrintLogIfActive(log);
+                                    return;
+                                }
+                            }
+                        }
                         if (!actor.HasTerritory()) {
                             log += "\n-Character has no territory";
                             HexTile hex = currentRegion.GetRandomNoStructureUncorruptedPlainHex();
@@ -175,66 +194,66 @@ namespace Interrupts {
                         int roll = UnityEngine.Random.Range(0, 100);
                         log += "\n-Roll: " + roll;
                         if (roll < 20) {
-                            log += "\nFind an unoccupied House in one of those other Villages and set that as its Home Structure";
-                            string identifier = string.Empty;
-                            LocationStructure chosenHomeStructure = FindHabitableStructureOrUnoccupiedHouseInOneOfOwnedSettlementsProcessing(actor, ref identifier);
-                            if(chosenHomeStructure != null && identifier == "unoccupied") {
-                                log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
-                                actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
-                                actor.logComponent.PrintLogIfActive(log);
-                                return;
-                            }
+                            if (actor.faction.HasOwnedSettlementExcept(actor.homeSettlement)) {
+                                log += "\nFind an unoccupied House in one of those other Villages and set that as its Home Structure";
+                                string identifier = string.Empty;
+                                LocationStructure chosenHomeStructure = FindHabitableStructureOrUnoccupiedHouseInOneOfOwnedSettlementsProcessing(actor, ref identifier);
+                                if (chosenHomeStructure != null && identifier == "unoccupied") {
+                                    log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
+                                    actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
+                                    actor.logComponent.PrintLogIfActive(log);
+                                    return;
+                                }
 
-                            log += "\nFind a Habitable Special Structure or House that is still not at full capacity and is home of a non-enemy and non-rival relative or a non-relative but close friende";
-                            if (chosenHomeStructure != null && identifier == "occupied") {
-                                log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
-                                actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
-                                actor.logComponent.PrintLogIfActive(log);
-                                return;
-                            }
+                                log += "\nFind a Habitable Special Structure or House that is still not at full capacity and is home of a non-enemy and non-rival relative or a non-relative but close friende";
+                                if (chosenHomeStructure != null && identifier == "occupied") {
+                                    log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
+                                    actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
+                                    actor.logComponent.PrintLogIfActive(log);
+                                    return;
+                                }
 
-                            if (chosenHomeStructure != null && identifier == "habitable") {
-                                log += "\nFound Habitable Structure: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
-                                actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
-                                actor.logComponent.PrintLogIfActive(log);
-                                return;
-                            }
+                                if (chosenHomeStructure != null && identifier == "habitable") {
+                                    log += "\nFound Habitable Structure: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
+                                    actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
+                                    actor.logComponent.PrintLogIfActive(log);
+                                    return;
+                                }
 
-                            log += "\nFind an unoccupied but Habitable Special Structure within the region";
-                            chosenHomeStructure = currentRegion.GetRandomUnoccupiedStructureWithTag(STRUCTURE_TAG.Shelter);
-                            if (chosenHomeStructure != null) {
-                                log += "\n-Chosen Habitable Structure: " + chosenHomeStructure.name;
-                                actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
-                                actor.logComponent.PrintLogIfActive(log);
-                                return;
-                            }
+                                log += "\nFind an unoccupied but Habitable Special Structure within the region";
+                                chosenHomeStructure = currentRegion.GetRandomUnoccupiedStructureWithTag(STRUCTURE_TAG.Shelter);
+                                if (chosenHomeStructure != null) {
+                                    log += "\n-Chosen Habitable Structure: " + chosenHomeStructure.name;
+                                    actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
+                                    actor.logComponent.PrintLogIfActive(log);
+                                    return;
+                                }
 
-                            log += "\n-15% chance: set Territory to a random structure-less Area in one of the adjacent regions";
-                            roll = UnityEngine.Random.Range(0, 100);
-                            log += "\n-Roll: " + roll;
-                            if (roll < 15) {
-                                HexTile territory = GetTerritoryInAdjacentRegions(currentRegion);
-                                if (territory != null) {
+                                log += "\n-15% chance: set Territory to a random structure-less Area in one of the adjacent regions";
+                                roll = UnityEngine.Random.Range(0, 100);
+                                log += "\n-Roll: " + roll;
+                                if (roll < 15) {
+                                    HexTile territory = GetTerritoryInAdjacentRegions(currentRegion);
+                                    if (territory != null) {
+                                        actor.ClearTerritory();
+                                        actor.AddTerritory(territory);
+                                        log += "\n-Territory found: " + territory.tileName + " in region: " + territory.region.name;
+                                        actor.logComponent.PrintLogIfActive(log);
+                                        return;
+                                    }
+                                }
+
+                                log += "\n-Set a random structure-less Area as its Territory and make character go there";
+                                HexTile hex = currentRegion.GetRandomNoStructureUncorruptedPlainHex();
+                                if (hex != null) {
                                     actor.ClearTerritory();
-                                    actor.AddTerritory(territory);
-                                    log += "\n-Territory found: " + territory.tileName + " in region: " + territory.region.name;
+                                    actor.AddTerritory(hex);
+                                    log += "\n-Territory found: " + hex.tileName;
                                     actor.logComponent.PrintLogIfActive(log);
                                     return;
                                 }
                             }
-
-                            log += "\n-Set a random structure-less Area as its Territory and make character go there";
-                            HexTile hex = currentRegion.GetRandomNoStructureUncorruptedPlainHex();
-                            if (hex != null) {
-                                actor.ClearTerritory();
-                                actor.AddTerritory(hex);
-                                log += "\n-Territory found: " + hex.tileName;
-                                actor.logComponent.PrintLogIfActive(log);
-                                return;
-                            }
                         }
-
-                        //TODO: Build House
                     }
                 }
             } else {
@@ -244,39 +263,98 @@ namespace Interrupts {
                 log += "\n-Roll: " + roll;
                 LocationStructure chosenHomeStructure = null;
                 if (roll < 20) {
-                    log += "\nFind an unoccupied House in one of those other Villages and set that as its Home Structure";
-                    string identifier = string.Empty;
-                    chosenHomeStructure = FindHabitableStructureOrUnoccupiedHouseInOneOfOwnedSettlementsProcessing(actor, ref identifier);
-                    if (chosenHomeStructure != null && identifier == "unoccupied") {
-                        log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
-                        actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
-                        actor.logComponent.PrintLogIfActive(log);
-                        return;
-                    }
+                    if (actor.faction.HasOwnedSettlementExcept(actor.homeSettlement)) {
+                        log += "\nFind an unoccupied House in one of those other Villages and set that as its Home Structure";
+                        string identifier = string.Empty;
+                        chosenHomeStructure = FindHabitableStructureOrUnoccupiedHouseInOneOfOwnedSettlementsProcessing(actor, ref identifier);
+                        if (chosenHomeStructure != null && identifier == "unoccupied") {
+                            log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
+                            actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
+                            actor.logComponent.PrintLogIfActive(log);
+                            return;
+                        }
 
-                    log += "\nFind a Habitable Special Structure or House that is still not at full capacity and is home of a non-enemy and non-rival relative or a non-relative but close friend";
-                    if (chosenHomeStructure != null && identifier == "occupied") {
-                        log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
-                        actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
-                        actor.logComponent.PrintLogIfActive(log);
-                        return;
-                    }
+                        log += "\nFind a Habitable Special Structure or House that is still not at full capacity and is home of a non-enemy and non-rival relative or a non-relative but close friend";
+                        if (chosenHomeStructure != null && identifier == "occupied") {
+                            log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
+                            actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
+                            actor.logComponent.PrintLogIfActive(log);
+                            return;
+                        }
 
-                    if (chosenHomeStructure != null && identifier == "habitable") {
-                        log += "\nFound Habitable Structure: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
-                        actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
+                        if (chosenHomeStructure != null && identifier == "habitable") {
+                            log += "\nFound Habitable Structure: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
+                            actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
+                            actor.logComponent.PrintLogIfActive(log);
+                            return;
+                        }
+                    }
+                }
+                log += "\n35% chance: if the character is a Faction Leader and they do not own any Villages";
+                roll = UnityEngine.Random.Range(0, 100);
+                log += "\n-Roll: " + roll;
+                if (roll < 35) {
+                    if(actor.isFactionLeader && !actor.faction.HasOwnedSettlement() && actor.currentRegion != null && !actor.currentRegion.IsRegionVillageCapacityReached()) {
+                        log += $"\n-Find new village";
+                        StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.VAMPIRE_CASTLE, RESOURCE.STONE); //character.faction.factionType.mainResource
+
+                        HexTile targetTile = actor.currentRegion.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
+                        //Build vampire castle
+                        List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
+                        GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
+                        actor.jobComponent.TriggerFindNewVillage(targetTile.GetCenterLocationGridTile(), chosenStructurePrefab.name);
+
                         actor.logComponent.PrintLogIfActive(log);
                         return;
                     }
                 }
 
-                log += "\nFind an unoccupied but Habitable Special Structure within the region";
-                chosenHomeStructure = currentRegion.GetRandomUnoccupiedStructureWithTag(STRUCTURE_TAG.Shelter);
-                if (chosenHomeStructure != null) {
-                    log += "\n-Chosen Habitable Structure: " + chosenHomeStructure.name;
-                    actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
-                    actor.logComponent.PrintLogIfActive(log);
-                    return;
+                log += "\n3% chance: Create a Found New Village Job if the current region's Village capacity is not yet full";
+                log += "\n-Roll: " + roll;
+                if (roll < 3) {
+                    if (actor.isFactionLeader && !actor.faction.HasOwnedSettlement() && actor.currentRegion != null && !actor.currentRegion.IsRegionVillageCapacityReached()) {
+                        log += $"\n-Find new village";
+                        StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.VAMPIRE_CASTLE, RESOURCE.STONE); //character.faction.factionType.mainResource
+
+                        HexTile targetTile = actor.currentRegion.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
+                        //Build vampire castle
+                        List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
+                        GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
+                        actor.jobComponent.TriggerFindNewVillage(targetTile.GetCenterLocationGridTile(), chosenStructurePrefab.name);
+
+                        actor.logComponent.PrintLogIfActive(log);
+                        return;
+                    }
+                }
+
+                log += "\n-15% chance: find an unoccupied Village within the region and randomly select one of its Structures (prioritize Dwellings) as its new Home Structure.  Clear out Territory data if it has one.";
+                roll = UnityEngine.Random.Range(0, 100);
+                log += "\n-Roll: " + roll;
+                if (roll < 15) {
+                    BaseSettlement chosenSettlement = currentRegion.GetFirstSettlementInRegion(x => x.locationType == LOCATION_TYPE.VILLAGE && x.residents.Count <= 0);
+                    if (chosenSettlement != null) {
+                        log += "\n-Chosen Settlement: " + chosenSettlement.name;
+                        chosenHomeStructure = GetStructureInSettlementPrioritizeDwellings(chosenSettlement, actor);
+                        if (chosenHomeStructure != null) {
+                            log += "\n-Chosen Home Structure: " + chosenHomeStructure.name;
+                            actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
+                            actor.logComponent.PrintLogIfActive(log);
+                            return;
+                        }
+                    }
+                }
+
+                log += "\n-15% chance: Find an unoccupied but Habitable Special Structure within the region";
+                roll = UnityEngine.Random.Range(0, 100);
+                log += "\n-Roll: " + roll;
+                if (roll < 15) {
+                    chosenHomeStructure = currentRegion.GetRandomUnoccupiedStructureWithTag(STRUCTURE_TAG.Shelter);
+                    if (chosenHomeStructure != null) {
+                        log += "\n-Chosen Habitable Structure: " + chosenHomeStructure.name;
+                        actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
+                        actor.logComponent.PrintLogIfActive(log);
+                        return;
+                    }
                 }
 
                 log += "\n-15% chance: set Territory to a random structure-less Area in one of the adjacent regions";
@@ -418,6 +496,21 @@ namespace Interrupts {
                 }
             }
             return chosenDwelling;
+        }
+
+        private LocationStructure GetStructureInSettlementPrioritizeDwellings(BaseSettlement settlement, Character actor) {
+            LocationStructure secondaryStructure = null;
+            for (int i = 0; i < settlement.allStructures.Count; i++) {
+                LocationStructure currStructure = settlement.allStructures[i];
+                if(currStructure is Dwelling) {
+                    return currStructure;
+                } else {
+                    if(secondaryStructure == null) {
+                        secondaryStructure = currStructure;
+                    }
+                }
+            }
+            return secondaryStructure;
         }
     }
 }

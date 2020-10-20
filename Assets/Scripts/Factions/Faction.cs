@@ -44,9 +44,10 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
 
     #region getters/setters
     public bool isDestroyed => characters.Count <= 0;
-    public bool isMajorFriendlyNeutral => isMajorFaction || this == FactionManager.Instance.vagrantFaction;
-    public bool isMajorNonPlayerFriendlyNeutral => isMajorNonPlayer || this == FactionManager.Instance.vagrantFaction;
+    public bool isMajorOrVagrant => isMajorFaction || this == FactionManager.Instance.vagrantFaction;
+    public bool isMajorNonPlayerOrVagrant => isMajorNonPlayer || this == FactionManager.Instance.vagrantFaction;
     public bool isMajorNonPlayer => isMajorFaction && !isPlayerFaction;
+    public bool isNonMajorOrPlayer => !isMajorFaction || isPlayerFaction;
     public JobTriggerComponent jobTriggerComponent => factionJobTriggerComponent;
     public bool isPlayerFaction => factionType.type == FACTION_TYPE.Demons;
     public JOB_OWNER ownerType => JOB_OWNER.FACTION;
@@ -130,6 +131,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                 if (character.homeSettlement != null && character.homeSettlement.owner != null && character.homeSettlement.owner != this) {
                     character.MigrateHomeStructureTo(null);
                 }
+
+                //Whenever a character joins a new faction, add Transitioning status, so that if his new faction is hostile with his previous faction he will not be attacked immediately by the people of his previous faction
+                character.traitContainer.AddTrait(character, "Transitioning");
 
                 if (broadcastSignal) {
                     Messenger.Broadcast(Signals.CHARACTER_ADDED_TO_FACTION, character, this);

@@ -66,8 +66,8 @@ public class BuildLair : GoapAction {
         OtherData[] otherData = goapNode.otherData;
         Character actor = goapNode.actor;
 
-        actor.ChangeFactionTo(FactionManager.Instance.undeadFaction);
-        FactionManager.Instance.undeadFaction.OnlySetLeader(actor);
+        //actor.ChangeFactionTo(FactionManager.Instance.undeadFaction);
+        //FactionManager.Instance.undeadFaction.OnlySetLeader(actor);
 
         //if necromancer is a cultist then make the undead faction friendly towards the player.
         if (actor.traitContainer.HasTrait("Cultist")) {

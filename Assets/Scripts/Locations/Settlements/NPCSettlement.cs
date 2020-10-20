@@ -175,13 +175,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
+        Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         //Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
         //Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         //Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
         if (locationType == LOCATION_TYPE.VILLAGE) {
             settlementJobTriggerComponent.SubscribeToListeners();    
-        } else if (locationType == LOCATION_TYPE.DUNGEON) {
-            Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         }
     }
     private void UnsubscribeToSignals() {
@@ -195,35 +194,53 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
+        Messenger.RemoveListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
         if (locationType == LOCATION_TYPE.VILLAGE) {
             settlementJobTriggerComponent.UnsubscribeListeners();
-        } else if (locationType == LOCATION_TYPE.DUNGEON) {
-            Messenger.RemoveListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         }
     }
     private void OnCharacterAddedToFaction(Character character, Faction faction) {
-        Assert.IsTrue(locationType == LOCATION_TYPE.DUNGEON, $"{character.name} was added to faction {faction.name} and is trying to change settlement owner of {name}, but {name} is not a dungeon type settlement!");
         //once a resident character changes its faction, check if all the residents of this settlement share the same faction,
         //if it does, then update the owner of this settlement to use the new faction.
-        //NOTE: This only applies to dungeon settlements.
         //This was added because vampire lords start off as vagrants and can create vampire castles while they are vagrants, and we want to
         //update the castles that they've made to be owned by their new faction.
-        if (residents.Contains(character) && owner != null) {
-            bool areAllResidentsPartOfNewFaction = true;
-            for (int i = 0; i < residents.Count; i++) {
-                Character resident = residents[i];
-                if (resident.faction != faction) {
-                    areAllResidentsPartOfNewFaction = false;
-                    break;
+        //EDIT NOTE: This applies to dungeon and village settlements
+        if(locationType == LOCATION_TYPE.DUNGEON) {
+            if (residents.Contains(character) && owner != null) {
+                bool areAllResidentsPartOfNewFaction = true;
+                for (int i = 0; i < residents.Count; i++) {
+                    Character resident = residents[i];
+                    if (resident.faction != faction) {
+                        areAllResidentsPartOfNewFaction = false;
+                        break;
+                    }
+                }
+                if (areAllResidentsPartOfNewFaction) {
+                    LandmarkManager.Instance.OwnSettlement(faction, this);
                 }
             }
-            if (areAllResidentsPartOfNewFaction) {
-                LandmarkManager.Instance.OwnSettlement(faction, this);    
+        } else if (locationType == LOCATION_TYPE.VILLAGE) {
+            //If a character joins a faction and his home settlement is a village that is not owned by any faction
+            //and there are no other residents that is in a major/undead faction
+            //claim the settlement as owned by the faction that the character joined
+            if(character.homeSettlement == this && character.homeSettlement.owner == null) {
+                bool areThereOtherResidentsThatIsInAMajorOrUndeadFaction = false;
+                for (int i = 0; i < residents.Count; i++) {
+                    Character resident = residents[i];
+                    if (resident != character && resident.faction != faction) {
+                        if(resident.faction != null && (resident.faction.isMajorNonPlayer || resident.faction == FactionManager.Instance.undeadFaction)) {
+                            areThereOtherResidentsThatIsInAMajorOrUndeadFaction = true;
+                            break;
+                        }
+                    }
+                }
+                if (!areThereOtherResidentsThatIsInAMajorOrUndeadFaction) {
+                    LandmarkManager.Instance.OwnSettlement(faction, this);
+                }
             }
-            
         }
     }
     #endregion
@@ -304,7 +321,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (base.AddResident(character, chosenHome, ignoreCapacity)) {
             //region.AddResident(character);
             character.SetHomeSettlement(this);
-            eventManager.OnResidentAdded(character);
+            OnAddResident(character);
             if (character.race == RACE.DEMON || character is Summon) { return true; }
             if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
                 classManager.OnAddResident(character);
@@ -606,6 +623,13 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 Character character = prison.charactersHere[i];
                 settlementJobTriggerComponent.TryCreateJudgePrisoner(character);
             }
+        }
+    }
+    private void OnAddResident(Character character) {
+        eventManager.OnResidentAdded(character);
+        if(residents.Count == 1) {
+            //First resident
+            ChangeSettlementTypeAccordingTo(character);
         }
     }
     #endregion
@@ -1303,6 +1327,13 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             this.settlementType = LandmarkManager.Instance.CreateSettlementType(settlementType);
             //NOTE: For now always apply default settings. This will change in the future.
             this.settlementType.ApplyDefaultSettings();    
+        }
+    }
+    public void ChangeSettlementTypeAccordingTo(Character character) {
+        if (character.race == RACE.HUMANS && settlementType.settlementType != SETTLEMENT_TYPE.Default_Human) {
+            SetSettlementType(SETTLEMENT_TYPE.Default_Human);
+        } else if (character.race == RACE.ELVES && settlementType.settlementType != SETTLEMENT_TYPE.Default_Elf) {
+            SetSettlementType(SETTLEMENT_TYPE.Default_Elf);
         }
     }
     #endregion

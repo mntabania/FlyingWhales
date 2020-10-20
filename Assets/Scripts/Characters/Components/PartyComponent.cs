@@ -8,7 +8,7 @@ public class PartyComponent : CharacterComponent {
     #region getters
     public bool hasParty => currentParty != null;
     public bool isActiveMember => IsPartyActiveAndOwnerActivePartOfQuest();
-    public bool isMemberTheJoinedQuest => IsPartyActiveAndOwnerJoinedQuest();
+    public bool isMemberThatJoinedQuest => IsPartyActiveAndOwnerJoinedQuest();
     #endregion
 
     public PartyComponent() {

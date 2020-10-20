@@ -52,7 +52,7 @@ public class DrinkBlood : GoapAction {
             if (!actor.isVagrant) {
                 AWARENESS_STATE awarenessState = actor.relationshipContainer.GetAwarenessState(targetCharacter);
                 if(actor.currentRegion != targetCharacter.currentRegion || awarenessState == AWARENESS_STATE.Missing || awarenessState == AWARENESS_STATE.Presumed_Dead
-                    || targetCharacter.partyComponent.isMemberTheJoinedQuest) {
+                    || targetCharacter.partyComponent.isMemberThatJoinedQuest) {
                     cost += 2000;
                     costLog += " +2000(not Vagrant and not Same Region/Missing/Presumed Dead/Joined a Party Quest)";
                     actor.logComponent.AppendCostLog(costLog);

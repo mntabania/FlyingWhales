@@ -15,7 +15,8 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            return interruptHolder.target.traitContainer.AddTrait(interruptHolder.target, "Necromancer");
+            interruptHolder.actor.AssignClass("Necromancer");
+            return true;
         }
         public override Log CreateEffectLog(Character actor, IPointOfInterest target) {
             if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", name, "effect")) {

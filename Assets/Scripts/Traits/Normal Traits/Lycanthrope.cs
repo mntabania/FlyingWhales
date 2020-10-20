@@ -199,6 +199,7 @@ namespace Traits {
             lycanthropeForm.needsComponent.ResetHappinessMeter();
             lycanthropeForm.needsComponent.ResetStaminaMeter();
             lycanthropeForm.needsComponent.ResetHopeMeter();
+            lycanthropeForm.traitContainer.AddTrait(lycanthropeForm, "Transitioning");
             Messenger.Broadcast(Signals.ON_SWITCH_FROM_LIMBO, originalForm, lycanthropeForm);
         }
 
@@ -217,6 +218,7 @@ namespace Traits {
             Region homeRegion = lycanthropeForm.homeRegion;
             PutToLimbo(lycanthropeForm);
             ReleaseFromLimbo(originalForm, tile, homeRegion);
+            lycanthropeForm.traitContainer.RemoveTrait(lycanthropeForm, "Transitioning");
             Messenger.Broadcast(Signals.ON_SWITCH_FROM_LIMBO, lycanthropeForm, originalForm);
         }
 

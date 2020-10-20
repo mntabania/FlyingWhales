@@ -18,6 +18,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
 
     public static LandmarkManager Instance = null;
     public const int SUMMON_MINION_DURATION = 96;
+    public const int REGION_VILLAGE_CAPACITY = 3;
     
     [SerializeField] private List<LandmarkData> landmarkData;
     public List<AreaData> areaData;

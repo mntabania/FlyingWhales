@@ -1812,7 +1812,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool TryCreateReportCrimeJob(Character actor, IPointOfInterest target, CrimeData crimeData, ICrimeable crime) {
         if(owner.crimeComponent.CanCreateReportCrimeJob(actor, target, crimeData, crime)) {
-            return CreateReportCrimeJob(crimeData, crime);
+            GoapPlanJob job = CreateReportCrimeJob(crimeData, crime);
+            if (job != null) {
+                return owner.jobQueue.AddJobInQueue(job);
+            }
         } else {
             Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing", null, LOG_TAG.Crimes);
             addLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -1823,11 +1826,28 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
-    public bool CreateReportCrimeJob(CrimeData crimeData, ICrimeable crime) {
+    public bool TryCreateReportCrimeJob(Character actor, IPointOfInterest target, CrimeData crimeData, ICrimeable crime, out JobQueueItem producedJob) {
+        producedJob = null;
+        if (owner.crimeComponent.CanCreateReportCrimeJob(actor, target, crimeData, crime)) {
+            producedJob = CreateReportCrimeJob(crimeData, crime);
+            if(producedJob != null) {
+                return true;
+            }
+        } else {
+            Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing", null, LOG_TAG.Crimes);
+            addLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            addLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            addLog.AddToFillers(null, crimeData.crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
+            addLog.AddLogToDatabase();
+            owner.crimeComponent.AddReportedCrime(crimeData);
+        }
+        return false;
+    }
+    private GoapPlanJob CreateReportCrimeJob(CrimeData crimeData, ICrimeable crime) {
         if(owner.faction != null && owner.faction.isMajorNonPlayer) {
             if (crimeData.IsWantedBy(owner.faction)) {
                 //Should no longer report if already wanted by the source's faction
-                return false;
+                return null;
             }
         }
         bool canReportToFactionLeader = false;
@@ -1860,9 +1880,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if(targetCharacter != null) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, targetCharacter, owner);
             job.AddOtherData(INTERACTION_TYPE.REPORT_CRIME, new object[] { crime, crimeData });
-            return owner.jobQueue.AddJobInQueue(job);
+            return job;
         }
-        return false;
+        return null;
     }
     #endregion
 
@@ -2976,6 +2996,21 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    }
 	    producedJob = null;
 	    return false;
+    }
+    #endregion
+
+    #region Building New Village
+    public bool TriggerFindNewVillage(LocationGridTile targetTile, string structurePrefabName = "") {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.FIND_NEW_VILLAGE)) {
+            var otherData = new OtherData[] { new StringOtherData(structurePrefabName) };
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_NEW_VILLAGE], owner, targetTile.genericTileObject, otherData, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetTile.genericTileObject);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FIND_NEW_VILLAGE, INTERACTION_TYPE.BUILD_NEW_VILLAGE, targetTile.genericTileObject, owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetAssignedPlan(goapPlan);
+            return owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
     }
     #endregion
 

@@ -1273,6 +1273,25 @@ public class Region : ISavable, ILogFiller {
         }
         return settlements;
     }
+    public BaseSettlement GetFirstSettlementInRegion(System.Func<BaseSettlement, bool> validityChecker) {
+        for (int i = 0; i < settlementsInRegion.Count; i++) {
+            BaseSettlement settlement = settlementsInRegion[i];
+            if (validityChecker.Invoke(settlement)) {
+                return settlement;
+            }
+        }
+        return null;
+    }
+    public bool IsRegionVillageCapacityReached() {
+        int count = 0;
+        for (int i = 0; i < settlementsInRegion.Count; i++) {
+            BaseSettlement settlement = settlementsInRegion[i];
+            if (settlement.locationType == LOCATION_TYPE.VILLAGE) {
+                count++;
+            }
+        }
+        return count >= LandmarkManager.REGION_VILLAGE_CAPACITY;
+    }
     #endregion
 
     #region Tile Objects
