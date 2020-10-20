@@ -82,6 +82,7 @@ public class CrimeManager : BaseMonoBehaviour {
             //addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_2);
             addLog.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFrom(criminal, addLog);
+            Messenger.Broadcast(Signals.CHARACTER_ACCUSED_OF_CRIME, criminal, crimeType, witness);
         }
 
         if (!existingCrimeData.IsWitness(witness)) {
@@ -289,7 +290,7 @@ public class CrimeManager : BaseMonoBehaviour {
         CrimeType crimeTypeObj = GetCrimeType(crimeType);
         CRIME_SEVERITY factionCrimeSeverity = CRIME_SEVERITY.Unapplicable;
         if (witness.faction != null) {
-            factionCrimeSeverity = witness.faction.GetCrimeSeverity(witness, actor, target, crimeType);
+            factionCrimeSeverity = witness.faction.GetCrimeSeverity(actor, target, crimeType);
         }
         CRIME_SEVERITY witnessCrimeSeverity = crimeTypeObj.GetCrimeSeverity(witness, actor, target);
         CRIME_SEVERITY finalCrimeSeverity = witnessCrimeSeverity;
@@ -603,7 +604,7 @@ public class CrimeData : ISavable {
                 criminal.logComponent.RegisterLog(log, onlyClickedCharacter: false);
             }
             if (target is Character targetCharacter && crime is ActualGoapNode crimeAction) {
-                CRIME_SEVERITY severityOfCrime = faction.GetCrimeSeverity(null, criminal, target, crimeType);
+                CRIME_SEVERITY severityOfCrime = faction.GetCrimeSeverity(criminal, target, crimeType);
                 faction.CheckForWar(criminal.faction, severityOfCrime, criminal, targetCharacter, crimeAction);    
             }
             

@@ -199,8 +199,11 @@ public class GoapPlanner {
             goapThread.job.CancelJob(false);
 
             if(jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL) {
-                //Special case for when a character cannot do hunger recovery, he/she must produce food instead
-                owner.jobComponent.CreateProduceFoodJob();
+                if (!owner.traitContainer.HasTrait("Vampire")) {
+                    //Special case for when a character cannot do hunger recovery, he/she must produce food instead
+                    //NOTE: Excluded vampires because we don't want vampires to produce food when they fail to drink blood.
+                    owner.jobComponent.CreateProduceFoodJob();    
+                }
             } else if (jobType == JOB_TYPE.RECOVER_HP) {
                 owner.jobComponent.SetDoNotDoRecoverHPJob(true);
             }

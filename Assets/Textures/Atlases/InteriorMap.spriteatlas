@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 3538069
+    totalSpriteSurfaceArea: 3546261
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -73,6 +73,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 58a5576055dde95498c878f2b0aba27f, type: 3}
   - {fileID: 21300000, guid: 10c29c60dd06da7439130880dcbe5465, type: 3}
   - {fileID: 21300000, guid: c25b8e600f2a6574ea352e177dfd3b13, type: 3}
+  - {fileID: 21300000, guid: 2604707076c2ead48a96af928172dbe3, type: 3}
   - {fileID: 21300000, guid: ee03c170e8308a94c85b0564801c1a74, type: 3}
   - {fileID: 21300000, guid: 111e7270f8580af4591781e6597b7c4f, type: 3}
   - {fileID: 21300000, guid: dba90670f65992f4d8ab227556cb5e00, type: 3}
@@ -797,6 +798,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: db212fbf853dc1e44b4726b914e182cb, type: 3}
   - {fileID: 21300000, guid: 974602cff4f8ad64a90abf3201f7eaa2, type: 3}
   - {fileID: 21300000, guid: f4b4c4cf00362f348b61c6bf8639fdea, type: 3}
+  - {fileID: 21300000, guid: c3563ecf1a4bd624b8c8c19588e5cb64, type: 3}
   - {fileID: 21300000, guid: 34ae46dfeea5667478f41b02b372e631, type: 3}
   - {fileID: 21300000, guid: 357c98efabdb8e643aa3c41c9e86fe95, type: 3}
   - {fileID: 21300000, guid: e89f5cff1455e174abd5eb390f279111, type: 3}
@@ -827,6 +829,7 @@ SpriteAtlas:
   - shore01110101-00
   - boneGround01
   - poison01110111-00
+  - Phylactery
   - corruptedGround_h01
   - demonDoorwayVert00
   - laidWallA00111010-00
@@ -1551,6 +1554,7 @@ SpriteAtlas:
   - corruptedBones02
   - demonWallA-10000000-00
   - CRATE#1
+  - Werewolf_Pelt
   - poison01010001-00
   - WATER_BASIN#2
   - TRASH#8

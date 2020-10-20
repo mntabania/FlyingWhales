@@ -655,7 +655,10 @@ public class UIManager : BaseMonoBehaviour {
         if (obj is Character character) {
             ShowCharacterInfo(character, true);
         } else if (obj is NPCSettlement settlement) {
-            ShowRegionInfo(settlement.region);
+            if (settlement.allStructures.Count > 0) {
+                settlement.allStructures.First().CenterOnStructure();
+            }
+            // ShowRegionInfo(settlement.region);
         } else if (obj is Faction faction) {
             ShowFactionInfo(faction);
         } else if (obj is Minion minion) {

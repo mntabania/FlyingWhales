@@ -217,9 +217,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		if (structure is CityCenter && item is WaterWell) {
 			//immediately create a new unbuilt water well at tile to reserve it.
 			TileObject waterWell = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
-			waterWell.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 			structure.AddPOI(waterWell, removedFrom);
-			
+			waterWell.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 			//create craft water well job any time water well is destroyed.
 			StartCraftWaterWellCheck();
 		}

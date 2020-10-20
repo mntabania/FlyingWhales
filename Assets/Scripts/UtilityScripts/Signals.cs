@@ -203,6 +203,10 @@ public static class Signals {
     /// Parameters Character 
     /// </summary>
     public static string CHARACTER_MARKER_EXPIRED = "OnCharacterMarkerExpired";
+    /// <summary>
+    /// Parameters: Character criminal, CRIME_TYPE crimeType, Character accuser
+    /// </summary>
+    public static string CHARACTER_ACCUSED_OF_CRIME = "OnCharacterAccusedOfCrime";
     #endregion
 
     #region UI

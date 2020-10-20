@@ -139,6 +139,12 @@ public class SettlementGeneration : MapGenerationComponent {
 				for (int i = 0; i < faction.factionType.combatantClasses.Count; i++) {
 					npcSettlement.classManager.AddCombatantClass(faction.factionType.combatantClasses[i]);
 				}
+				string combatantClasses = $"{npcSettlement.name} combatant classes:";
+				foreach (var combatantClass in npcSettlement.classManager.combatantClasses) {
+					combatantClasses += $"\n{combatantClass.Key} - {combatantClass.Value.ToString()}";
+				}
+				Debug.Log(combatantClasses);
+				
 				List<Character> spawnedCharacters = GenerateSettlementResidents(dwellingCount, npcSettlement, faction, data);
 			
 				List<TileObject> objectsInDwellings =
@@ -300,6 +306,12 @@ public class SettlementGeneration : MapGenerationComponent {
 		for (int j = 0; j < faction.factionType.combatantClasses.Count; j++) {
 			npcSettlement.classManager.AddCombatantClass(faction.factionType.combatantClasses[j]);
 		}
+		string combatantClasses = $"{npcSettlement.name} combatant classes:";
+		foreach (var combatantClass in npcSettlement.classManager.combatantClasses) {
+			combatantClasses += $"\n{combatantClass.Key} - {combatantClass.Value.ToString()}";
+		}
+		Debug.Log(combatantClasses);
+
 
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			List<Character> createdCharacters = new List<Character>();

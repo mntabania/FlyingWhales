@@ -13,7 +13,7 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
             interruptHolder.actor.AssignClass("Vampire Lord");
-            if (interruptHolder.actor.faction != null && interruptHolder.actor.faction.GetCrimeSeverity(null, interruptHolder.actor, interruptHolder.actor, CRIME_TYPE.Vampire) != CRIME_SEVERITY.None) {
+            if (interruptHolder.actor.faction != null && interruptHolder.actor.faction.GetCrimeSeverity(interruptHolder.actor, interruptHolder.actor, CRIME_TYPE.Vampire) != CRIME_SEVERITY.None) {
                 interruptHolder.actor.MigrateHomeStructureTo(null);
                 if (interruptHolder.actor.faction.isMajorFaction) {
                     //Banned vampire lord from its previous faction because when the vampire lord leaves it's faction after this

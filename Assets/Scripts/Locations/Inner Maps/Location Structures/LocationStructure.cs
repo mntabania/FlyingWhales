@@ -339,7 +339,9 @@ namespace Inner_Maps.Location_Structures {
                     && tileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
                         npcSettlement.OnItemAddedToLocation(tileObject, this);
                     }
-                    region.AddTileObjectInRegion(tileObject);
+                    // if (tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                    //     region.AddTileObjectInRegion(tileObject);    
+                    // }
                 }
                 return true;
             }
@@ -359,7 +361,9 @@ namespace Inner_Maps.Location_Structures {
                         toac.AddTileObject(tileObject);
                         groupedTileObjects.Add(tileObject.tileObjectType, toac);
                     }
-                    region.AddTileObjectInRegion(tileObject);
+                    // if (tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                    //     region.AddTileObjectInRegion(tileObject);    
+                    // }
                 }
                 return true;
             }

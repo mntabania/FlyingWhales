@@ -1062,12 +1062,6 @@ public enum RELATIONS_FILTER {
 }
 public enum OVERLAP_UI_TAG { Top, Bottom, }
 
-#region Crime Subcategories
-[System.AttributeUsage(System.AttributeTargets.Field)]
-public class SubcategoryOf : System.Attribute {
-    public SubcategoryOf(CRIME_SEVERITY cat) {
-        Category = cat;
-    }
-    public CRIME_SEVERITY Category { get; private set; }
+public enum SETTLEMENT_EVENT {
+    Vampire_Hunt, Werewolf_Hunt
 }
-#endregion

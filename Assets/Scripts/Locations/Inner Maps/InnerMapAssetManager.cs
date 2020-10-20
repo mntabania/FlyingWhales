@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
@@ -195,7 +196,9 @@ namespace Inner_Maps {
                 Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(fullFilePath, typeof(Sprite));
                 if (loadedSprite != null) {
                     Debug.Log($"Loaded {loadedSprite.name} sprite.");
-                    allTileObjectSprites.Add(loadedSprite.name, loadedSprite);
+                    if (!allTileObjectSprites.ContainsKey(loadedSprite.name)) {
+                        allTileObjectSprites.Add(loadedSprite.name, loadedSprite);    
+                    }
                 }
                 Debug.Log("Loaded all tile object assets");
             }

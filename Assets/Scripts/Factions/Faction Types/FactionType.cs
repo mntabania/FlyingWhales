@@ -36,7 +36,7 @@ namespace Factions.Faction_Types {
                 SaveDataFactionIdeology saveIdeology = data.ideologies[i];
                 ideologies.Add(saveIdeology.Load());
             }
-            crimes = new Dictionary<CRIME_TYPE, CRIME_SEVERITY>(data.crimes);
+            crimes = data.crimes != null ? new Dictionary<CRIME_TYPE, CRIME_SEVERITY>(data.crimes) : new Dictionary<CRIME_TYPE, CRIME_SEVERITY>();
             hasCrimes = data.hasCrimes;
         }
 
@@ -92,7 +92,7 @@ namespace Factions.Faction_Types {
         #endregion
 
         #region Crimes
-        public CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType) {
+        public CRIME_SEVERITY GetCrimeSeverity(Character actor, IPointOfInterest target, CRIME_TYPE crimeType) {
             if (hasCrimes) {
                 if (crimes.ContainsKey(crimeType)) {
                     return crimes[crimeType];
