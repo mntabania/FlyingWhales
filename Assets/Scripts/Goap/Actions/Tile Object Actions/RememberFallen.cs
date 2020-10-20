@@ -8,8 +8,7 @@ using Inner_Maps;
 
 public class RememberFallen : GoapAction {
 
-    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
-
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.INDIRECT;
     public RememberFallen() : base(INTERACTION_TYPE.REMEMBER_FALLEN) {
         actionIconString = GoapActionStateDB.Sad_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
@@ -21,7 +20,7 @@ public class RememberFallen : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -53,19 +52,18 @@ public class RememberFallen : GoapAction {
         if (numOfTimesActionDone > 5) {
             cost += 2000;
             costLog += " +2000(Times Reminisced > 5)";
-        } else {
-            int timesCost = 10 * numOfTimesActionDone;
-            cost += timesCost;
-            costLog += $" +{timesCost}(10 x Times Reminisced)";
         }
-        if (actor.traitContainer.HasTrait("Psychopath")) {
+        if (actor.traitContainer.HasTrait("Psychopath") || actor.partyComponent.isActiveMember) {
             cost += 2000;
-            costLog += " +2000(Psychopath)";
+            costLog += " +2000(Psychopath or active member in a party)";
         }
-        if (actor.moodComponent.moodState == MOOD_STATE.Bad || actor.moodComponent.moodState == MOOD_STATE.Critical) {
-            cost += -15;
-            costLog += " -15(Low or Crit Mood)";
+        if (actor.moodComponent.moodState == MOOD_STATE.Bad || actor.moodComponent.moodState == MOOD_STATE.Critical || !actor.isSociable) {
+            cost -= 15;
+            costLog += " -15(Low or Critical Mood or Unsociable)";
         }
+        int timesCost = 10 * numOfTimesActionDone;
+        cost += timesCost;
+        costLog += $" +{timesCost.ToString()}(10 x Times Reminisced)";
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
@@ -140,7 +138,7 @@ public class RememberFallen : GoapAction {
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickRememberSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(4.5f);
+        goapNode.actor.needsComponent.AdjustHappiness(1.5f);
     }
     public void AfterRememberSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);

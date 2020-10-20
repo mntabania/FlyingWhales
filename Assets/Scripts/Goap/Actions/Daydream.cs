@@ -10,7 +10,7 @@ public class Daydream : GoapAction {
 
     public Daydream() : base(INTERACTION_TYPE.DAYDREAM) {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
-        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING,  TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.AFTERNOON, };
         actionIconString = GoapActionStateDB.Happy_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
@@ -19,8 +19,8 @@ public class Daydream : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.STAMINA_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.STAMINA_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -34,11 +34,15 @@ public class Daydream : GoapAction {
         if (numOfTimesActionDone > 5) {
             cost += 2000;
             costLog += " +2000(Times Daydreamed > 5)";
-        } else {
-            int timesCost = 10 * numOfTimesActionDone;
-            cost += timesCost;
-            costLog += $" +{timesCost}(10 x Times Daydreamed)";
+        } 
+        int timesCost = 10 * numOfTimesActionDone;
+        cost += timesCost;
+        costLog += $" +{timesCost.ToString()}(10 x Times Daydreamed)";
+        if (actor.traitContainer.HasTrait("Lazy")) {
+            cost -= 25;
+            costLog += $" -25(Actor is Lazy)";    
         }
+        
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
@@ -46,23 +50,23 @@ public class Daydream : GoapAction {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
         actor.needsComponent.AdjustDoNotGetBored(-1);
-        actor.needsComponent.AdjustDoNotGetTired(-1);
+        actor.needsComponent.AdjustDoNotGetDrained(-1);
     }
     #endregion
 
     #region Effects
     public void PreDaydreamSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
-        goapNode.actor.needsComponent.AdjustDoNotGetTired(1);
+        goapNode.actor.needsComponent.AdjustDoNotGetDrained(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickDaydreamSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(5f);
-        goapNode.actor.needsComponent.AdjustStamina(1f);
+        goapNode.actor.needsComponent.AdjustHappiness(1.1f);
+        goapNode.actor.needsComponent.AdjustStamina(0.33f);
     }
     public void AfterDaydreamSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
-        goapNode.actor.needsComponent.AdjustDoNotGetTired(-1);
+        goapNode.actor.needsComponent.AdjustDoNotGetDrained(-1);
     }
     #endregion
 

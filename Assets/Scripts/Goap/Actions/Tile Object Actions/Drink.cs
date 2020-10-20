@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 using Inner_Maps;
+using UtilityScripts;
 
 public class Drink : GoapAction {
 
-    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.CONSUME; } }
-
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.CONSUME;
     public Drink() : base(INTERACTION_TYPE.DRINK) {
-        // validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.EARLY_NIGHT, TIME_IN_WORDS.LATE_NIGHT, TIME_IN_WORDS.AFTER_MIDNIGHT, };
         actionIconString = GoapActionStateDB.Drink_Icon;
-        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         logTags = new[] {LOG_TAG.Needs};
@@ -19,7 +17,7 @@ public class Drink : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -48,12 +46,12 @@ public class Drink : GoapAction {
         int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
         costLog += $" +{cost}(Initial)";
         if (actor.traitContainer.HasTrait("Alcoholic")) {
-            cost += -15;
-            costLog += " -15(Alcoholic)";
+            cost -= 35;
+            costLog += " -35(Alcoholic)";
         } else {
             int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
             TIME_IN_WORDS timeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
-            if (timeOfDay == TIME_IN_WORDS.MORNING || timeOfDay == TIME_IN_WORDS.LUNCH_TIME ||  timeOfDay == TIME_IN_WORDS.AFTERNOON) {
+            if (timeOfDay == TIME_IN_WORDS.MORNING ||  timeOfDay == TIME_IN_WORDS.AFTERNOON) {
                 cost += 2000;
                 costLog += " +2000(not Alcoholic, Morning/Lunch/Afternoon)";
             }
@@ -88,21 +86,20 @@ public class Drink : GoapAction {
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(4.1f);
-        goapNode.actor.needsComponent.AdjustStamina(2f);
-        if (goapNode.poiTarget is Table) {
-            Table table = goapNode.poiTarget as Table;
-            table.AdjustResource(RESOURCE.FOOD, -1);
-        }
+        goapNode.actor.needsComponent.AdjustHappiness(goapNode.actor.traitContainer.HasTrait("Alcoholic") ? 0.5f : 1f);
+        // goapNode.actor.needsComponent.AdjustStamina(2f);
+        // if (goapNode.poiTarget is Table) {
+        //     Table table = goapNode.poiTarget as Table;
+        //     table.AdjustResource(RESOURCE.FOOD, -1);
+        // }
     }
     public void AfterDrinkSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Drunk");
-        int chance = UnityEngine.Random.Range(0, 100);
-        if ((goapNode.actor.moodComponent.moodState == MOOD_STATE.Bad && chance < 2) || goapNode.actor.moodComponent.moodState == MOOD_STATE.Critical && chance < 4) {
+        if ((goapNode.actor.moodComponent.moodState == MOOD_STATE.Bad && GameUtilities.RollChance(2)) || goapNode.actor.moodComponent.moodState == MOOD_STATE.Critical && GameUtilities.RollChance(4)) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Alcoholic");
         }
-        //TODO: Remove all Withdrawal stacks
+        goapNode.actor.traitContainer.RemoveStatusAndStacks(goapNode.actor, "Withdrawal");
         
     }
     //public void PreDrinkPoisoned() {

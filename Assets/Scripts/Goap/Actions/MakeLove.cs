@@ -23,7 +23,7 @@ public class MakeLove : GoapAction {
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.INVITED, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetInvited);
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -38,16 +38,17 @@ public class MakeLove : GoapAction {
                 return 2000;
             }
         }
-        int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
+        int cost = UtilityScripts.Utilities.Rng.Next(90, 131);
         costLog += $" +{cost}(Initial)";
-        Trait trait = actor.traitContainer.GetTraitOrStatus<Trait>("Chaste", "Lustful");
-        if (trait != null && trait.name == "Chaste") {
+        Character targetCharacter = target as Character;
+        Angry angry = actor.traitContainer.GetTraitOrStatus<Angry>("Angry");
+        if (actor.traitContainer.HasTrait("Chaste") || (angry != null && angry.responsibleCharacters.Contains(targetCharacter))) {
             cost += 2000;
-            costLog += " +2000(Chaste)";
+            costLog += " +2000(Chaste or Angry at target)";
         }
-        if (trait != null && trait.name == "Lustful") {
-            cost += -15;
-            costLog += " -15(Lustful)";
+        if (actor.traitContainer.HasTrait("Lustful")) {
+            cost -= 40;
+            costLog += " -40(Lustful)";
         } else {
             int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
             if (numOfTimesActionDone > 5) {

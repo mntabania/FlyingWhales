@@ -10,7 +10,6 @@ public class Pray : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.EARLY_NIGHT, TIME_IN_WORDS.LATE_NIGHT, TIME_IN_WORDS.AFTER_MIDNIGHT };
         actionIconString = GoapActionStateDB.Pray_Icon;
-        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         logTags = new[] {LOG_TAG.Needs};
@@ -18,7 +17,7 @@ public class Pray : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -32,19 +31,19 @@ public class Pray : GoapAction {
         if (numOfTimesActionDone > 5) {
             cost += 2000;
             costLog += " +2000(Times Prayed > 5)";
-        } else {
-            int timesCost = 10 * numOfTimesActionDone;
-            cost += timesCost;
-            costLog += $" +{timesCost}(10 x Times Prayed)";
         }
         if (actor.traitContainer.HasTrait("Evil", "Psychopath")) {
             cost += 2000;
             costLog += " +2000(Evil/Psychopath)";
         }
         if (actor.traitContainer.HasTrait("Chaste")) {
-            cost += -15;
+            cost -= 15;
             costLog += " -15(Chaste)";
         }
+        int timesCost = 10 * numOfTimesActionDone;
+        cost += timesCost;
+        costLog += $" +{timesCost}(10 x Times Prayed)";
+        
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
@@ -61,7 +60,7 @@ public class Pray : GoapAction {
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickPraySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(12f);
+        goapNode.actor.needsComponent.AdjustHappiness(1.6f);
         //goapNode.actor.needsComponent.AdjustStamina(0.5f);
     }
     public void AfterPraySuccess(ActualGoapNode goapNode) {

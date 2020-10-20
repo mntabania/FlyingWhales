@@ -45,6 +45,12 @@ public class Fish : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        if (node.actor.characterClass.IsCombatant()) {
+            node.actor.needsComponent.AdjustDoNotGetBored(-1);
+        }
+    }
     #endregion
 
     #region Requirements
@@ -60,8 +66,19 @@ public class Fish : GoapAction {
     #region State Effects
     public void PreFishSuccess(ActualGoapNode goapNode) {
         goapNode.descriptionLog.AddToFillers(null, "50", LOG_IDENTIFIER.STRING_1);
+        if (goapNode.actor.characterClass.IsCombatant()) {
+            goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+        }
+    }
+    public void PerTickFishSuccess(ActualGoapNode goapNode) {
+        if (goapNode.actor.characterClass.IsCombatant()) {
+            goapNode.actor.needsComponent.AdjustHappiness(-2);
+        }
     }
     public void AfterFishSuccess(ActualGoapNode goapNode) {
+        if (goapNode.actor.characterClass.IsCombatant()) {
+            goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+        }
         LocationGridTile tile = goapNode.actor.gridTileLocation;
         if(tile != null && tile.objHere != null) {
             tile = goapNode.actor.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();

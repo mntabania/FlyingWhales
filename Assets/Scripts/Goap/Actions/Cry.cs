@@ -7,6 +7,10 @@ public class Cry : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
 
+    private readonly string[] _costTraits = new[] {
+        "Worried", "Exhausted", "Traumatized", "Heartbroken", "Betrayed", "Dolorous", "Griefstricken"
+    };
+    
     public Cry() : base(INTERACTION_TYPE.CRY) {
         actionIconString = GoapActionStateDB.Sad_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
@@ -18,7 +22,7 @@ public class Cry : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -31,9 +35,22 @@ public class Cry : GoapAction {
         int timesCost = 10 * actor.jobComponent.GetNumOfTimesActionDone(this);
         cost += timesCost;
         costLog += $" +{timesCost.ToString()}(10 x Times Cried)";
-        if (actor.moodComponent.moodState != MOOD_STATE.Bad && actor.moodComponent.moodState != MOOD_STATE.Critical) {
+        // if (actor.moodComponent.moodState != MOOD_STATE.Bad && actor.moodComponent.moodState != MOOD_STATE.Critical) {
+        //     cost += 2000;
+        //     costLog += " +2000(not Low and Critical mood)";
+        // }
+        if (actor.traitContainer.HasTrait(_costTraits)) {
+            for (int i = 0; i < _costTraits.Length; i++) {
+                string trait = _costTraits[i];
+                if (actor.traitContainer.HasTrait(trait)) {
+                    int randomAmount = UtilityScripts.Utilities.Rng.Next(0, 4);
+                    cost -= randomAmount;
+                    costLog += $" -{randomAmount.ToString()}(Has {trait})";            
+                }
+            }
+        } else {
             cost += 2000;
-            costLog += " +2000(not Low and Critical mood)";
+            costLog += " +2000(does not have any of cost traits)";    
         }
         actor.logComponent.AppendCostLog(costLog);
         return cost;
@@ -60,18 +77,30 @@ public class Cry : GoapAction {
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
     }
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        if (node.actor.characterClass.IsCombatant()) {
+            node.actor.needsComponent.AdjustDoNotGetBored(-1);
+        }
+    }
     #endregion    
 
     #region State Effects
     public void PreCrySuccess(ActualGoapNode goapNode) {
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
+        if (goapNode.actor.characterClass.IsCombatant()) {
+            goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+        }
     }
     public void PerTickCrySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(12f);
+        goapNode.actor.needsComponent.AdjustHappiness(-3.33f);
     }
     public void AfterCrySuccess(ActualGoapNode goapNode) {
         //Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, goapNode.actor.marker.transform.position, 
         //    3, goapNode.actor.currentRegion.innerMap);
+        if (goapNode.actor.characterClass.IsCombatant()) {
+            goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+        }
         goapNode.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, goapNode.actor, "feeling sad");
     }
     #endregion

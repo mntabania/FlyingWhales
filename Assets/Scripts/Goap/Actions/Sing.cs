@@ -7,7 +7,7 @@ public class Sing : GoapAction {
 
     public Sing() : base(INTERACTION_TYPE.SING) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
-        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
         actionIconString = GoapActionStateDB.Entertain_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
@@ -17,7 +17,7 @@ public class Sing : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -25,27 +25,26 @@ public class Sing : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
-        int cost = UtilityScripts.Utilities.Rng.Next(90, 131);
+        int cost = UtilityScripts.Utilities.Rng.Next(85, 126);
         costLog += $" +{cost}(Initial)";
         int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
         if (numOfTimesActionDone > 5) {
             cost += 2000;
             costLog += " +2000(Times Played > 5)";
-        } else {
-            int timesCost = 10 * numOfTimesActionDone;
-            cost += timesCost;
-            costLog += $" +{timesCost}(10 x Times Played)";
         }
-        Trait trait = actor.traitContainer.GetTraitOrStatus<Trait>("Music Hater", "Music Lover");
-        if (trait != null) {
-            if (trait.name == "Music Hater") {
-                cost += 2000;
-                costLog += " +2000(Music Hater)";
-            } else {
-                cost += -15;
-                costLog += " -15(Music Lover)";
-            }
+
+        if (actor.traitContainer.HasTrait("Music Hater") || !actor.isSociable || actor.marker.HasEnemyOrRivalInVision()) {
+            cost += 2000;
+            costLog += " +2000 (Actor is Music Hater or is Unsociable or has Enemy/Rival in vision)";
         }
+        if (actor.traitContainer.HasTrait("Music Lover")) {
+            cost -= 20;
+            costLog += " -20 (Actor is Music Lover)";
+        }
+        int timesCost = 10 * numOfTimesActionDone;
+        cost += timesCost;
+        costLog += $" +{timesCost}(10 x Times Played)";
+
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }

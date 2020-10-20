@@ -30,6 +30,12 @@ public class MineStone : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        if (node.actor.characterClass.IsCombatant()) {
+            node.actor.needsComponent.AdjustDoNotGetBored(-1);
+        }
+    }
     #endregion
 
     #region Requirements
@@ -46,8 +52,19 @@ public class MineStone : GoapAction {
     public void PreMineSuccess(ActualGoapNode goapNode) {
         Rock rock = goapNode.poiTarget as Rock;
         goapNode.descriptionLog.AddToFillers(null, rock.yield.ToString(), LOG_IDENTIFIER.STRING_1);
+        if (goapNode.actor.characterClass.IsCombatant()) {
+            goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+        }
+    }
+    public void PerTickMineSuccess(ActualGoapNode goapNode) {
+        if (goapNode.actor.characterClass.IsCombatant()) {
+            goapNode.actor.needsComponent.AdjustHappiness(-2);
+        }
     }
     public void AfterMineSuccess(ActualGoapNode goapNode) {
+        if (goapNode.actor.characterClass.IsCombatant()) {
+            goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+        }
         Rock rock = goapNode.poiTarget as Rock;
         int stone = rock.yield;
         LocationGridTile tile = rock.gridTileLocation;
