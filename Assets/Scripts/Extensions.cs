@@ -325,6 +325,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.ICE:
             case TILE_OBJECT_TYPE.EXCALIBUR:
             case TILE_OBJECT_TYPE.WEREWOLF_PELT:
+            case TILE_OBJECT_TYPE.PHYLACTERY:
                 return true;
             default:
                 return false;
