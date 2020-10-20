@@ -1051,7 +1051,7 @@ public class ReactionComponent : CharacterComponent {
                     }
                     
                     //nocturnal
-                    if (disguisedTarget.traitContainer.HasTrait("Nocturnal")) {
+                    if (disguisedTarget.traitContainer.HasTrait("Nocturnal") && !disguisedTarget.crimeComponent.IsCrimeAlreadyWitnessedBy(disguisedActor, CRIME_TYPE.Vampire)) {
                         debugLog = $"{debugLog}\n-Target is nocturnal";
                         TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
                         if (timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
