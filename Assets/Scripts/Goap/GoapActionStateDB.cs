@@ -609,6 +609,12 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.FEED_SELF, new[]{
             new StateNameAndDuration(){ name = "Feed Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
         } },
+        {INTERACTION_TYPE.CARRY_RESTRAINED, new[]{
+            new StateNameAndDuration(){ name = "Carry Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.DROP_RESTRAINED, new[]{
+            new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

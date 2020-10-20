@@ -391,21 +391,25 @@ public class GoapAction {
     }
     private bool EffectPreconditionMatching(GoapEffect effect, GoapEffect precondition) {
         if(effect.conditionType == precondition.conditionType && effect.target == precondition.target) { //&& CharacterManager.Instance.POIValueTypeMatching(effect.targetPOI, precondition.targetPOI)
-            if (effect.conditionKey != "" && precondition.conditionKey != "") {
-                if(effect.isKeyANumber && precondition.isKeyANumber) {
-                    int effectInt = int.Parse(effect.conditionKey);
-                    int preconditionInt = int.Parse(precondition.conditionKey);
-                    return effectInt >= preconditionInt;
-                } else {
-                    if (precondition.conditionKey == "Food Pile") {
-                        //if precondition is looking for a food pile, allow actions that have the following effects:
-                        //TODO: There might be a better way to do this?
-                        return effect.conditionKey == "Animal Meat" || effect.conditionKey == "Human Meat" ||
-                               effect.conditionKey == "Elf Meat" || effect.conditionKey == "Vegetables" ||
-                               effect.conditionKey == "Fish Pile" || effect.conditionKey == "Food Pile";
+            if(effect.conditionKey == string.Empty && precondition.conditionKey == string.Empty) {
+                return true;
+            } else {
+                if(!string.IsNullOrEmpty(effect.conditionKey) && !string.IsNullOrEmpty(precondition.conditionKey)) {
+                    if (effect.isKeyANumber && precondition.isKeyANumber) {
+                        int effectInt = int.Parse(effect.conditionKey);
+                        int preconditionInt = int.Parse(precondition.conditionKey);
+                        return effectInt >= preconditionInt;
+                    } else {
+                        if (precondition.conditionKey == "Food Pile") {
+                            //if precondition is looking for a food pile, allow actions that have the following effects:
+                            //TODO: There might be a better way to do this?
+                            return effect.conditionKey == "Animal Meat" || effect.conditionKey == "Human Meat" ||
+                                   effect.conditionKey == "Elf Meat" || effect.conditionKey == "Vegetables" ||
+                                   effect.conditionKey == "Fish Pile" || effect.conditionKey == "Food Pile";
+                        }
                     }
-                    return effect.conditionKey == precondition.conditionKey;
                 }
+                return effect.conditionKey == precondition.conditionKey;
                 //switch (effect.conditionType) {
                 //    case GOAP_EFFECT_CONDITION.HAS_SUPPLY:
                 //    case GOAP_EFFECT_CONDITION.HAS_FOOD:
@@ -415,8 +419,6 @@ public class GoapAction {
                 //    default:
                 //        return effect.conditionKey == precondition.conditionKey;
                 //}
-            } else {
-                return true;
             }
         }
         return false;

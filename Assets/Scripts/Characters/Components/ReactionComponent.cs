@@ -1040,9 +1040,39 @@ public class ReactionComponent : CharacterComponent {
                         Vampire vampire = disguisedTarget.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
                         Assert.IsNotNull(vampire, $"{disguisedActor.name} saw Vampire Lord {disguisedTarget.name}, but {disguisedTarget.name} does not have a Vampire trait!");
                         if (!vampire.DoesCharacterKnowThisVampire(disguisedActor)) {
-                            disguisedActor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
+                            actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
                         }
                     }
+
+                    //if (disguisedTarget.traitContainer.HasTrait("Nocturnal")) {
+                    //    if(disguisedActor.homeSettlement != null) {
+                    //        //TODO: Checking if there is an active Vampire Hunt event
+                    //        TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+                    //        if(currentTime == TIME_IN_WORDS.LATE_NIGHT || currentTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                    //            Vampire vampireTrait = disguisedTarget.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                    //            CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(disguisedActor, disguisedTarget, disguisedTarget, CRIME_TYPE.Vampire);
+                    //            bool isTargetAKnownVampire = vampireTrait != null && vampireTrait.DoesCharacterKnowThisVampire(disguisedActor);
+
+                    //            if(severity != CRIME_SEVERITY.Unapplicable && severity != CRIME_SEVERITY.None && !isTargetAKnownVampire) {
+                    //                if(disguisedActor.traitContainer.HasTrait("Suspicious") || disguisedActor.moodComponent.moodState == MOOD_STATE.Critical) {
+                    //                    actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
+                    //                } else if (disguisedActor.moodComponent.moodState == MOOD_STATE.Bad && !disguisedActor.relationshipContainer.IsFriendsWith(disguisedActor)) {
+                    //                    if(targetCharacter.currentStructure != null) {
+                    //                        if(targetCharacter.currentStructure.IsOccupied() && targetCharacter.currentStructure.IsResident(disguisedTarget)) {
+                    //                            if (GameUtilities.RollChance(50)) {
+                    //                                actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
+                    //                            }
+                    //                        } else if (!targetCharacter.currentStructure.isInterior && targetCharacter.currentSettlement == disguisedActor.homeSettlement) {
+                    //                            if (GameUtilities.RollChance(35)) {
+                    //                                actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
+                    //                            }
+                    //                        }
+                    //                    }
+                    //                }
+                    //            }
+                    //        }
+                    //    }
+                    //}
                     
                 } else {
                     debugLog = $"{debugLog}\n-Target is dead";

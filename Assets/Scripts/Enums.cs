@@ -497,6 +497,8 @@ public enum INTERACTION_TYPE {
     BURN_AT_STAKE = 201,
     IS_VAMPIRE = 202,
     FEED_SELF = 203,
+    CARRY_RESTRAINED = 204,
+    DROP_RESTRAINED = 205,
 }
 public enum INTERRUPT {
     None,

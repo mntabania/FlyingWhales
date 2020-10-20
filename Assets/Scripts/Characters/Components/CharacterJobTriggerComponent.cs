@@ -2190,9 +2190,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             if (target.traitContainer.HasTrait("Criminal")) {
                 if (owner.jobQueue.HasJob(JOB_TYPE.APPREHEND, target) == false) {
                     if (target.crimeComponent.IsWantedBy(owner.faction)) {
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, target, owner);
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP_RESTRAINED, target, owner);
                         job.SetStillApplicableChecker(JobManager.Apprehend_Applicability);
-                        job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { settlementToGoTo.prison });
+                        job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { settlementToGoTo.prison });
                         return owner.jobQueue.AddJobInQueue(job);
                     }
                 }
@@ -2590,9 +2590,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool TriggerKidnapJob(Character target) {
         if (owner.homeSettlement != null && owner.homeSettlement.prison != null) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.KIDNAP)) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KIDNAP, INTERACTION_TYPE.DROP,
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KIDNAP, INTERACTION_TYPE.DROP_RESTRAINED,
                     target, owner);
-                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { owner.homeSettlement.prison });
+                job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { owner.homeSettlement.prison });
                 return owner.jobQueue.AddJobInQueue(job);
             }
         }
@@ -2601,9 +2601,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool TriggerKidnapRaidJob(Character target) {
         if (owner.homeSettlement != null && owner.homeSettlement.prison != null) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.KIDNAP_RAID)) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KIDNAP_RAID, INTERACTION_TYPE.DROP,
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KIDNAP_RAID, INTERACTION_TYPE.DROP_RESTRAINED,
                     target, owner);
-                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { owner.homeSettlement.prison });
+                job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { owner.homeSettlement.prison });
                 return owner.jobQueue.AddJobInQueue(job);
             }
         }

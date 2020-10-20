@@ -3868,6 +3868,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.RETURN_HOME);
         AddAdvertisedAction(INTERACTION_TYPE.CARRY);
         AddAdvertisedAction(INTERACTION_TYPE.DROP);
+        AddAdvertisedAction(INTERACTION_TYPE.CARRY_RESTRAINED);
+        AddAdvertisedAction(INTERACTION_TYPE.DROP_RESTRAINED);
         AddAdvertisedAction(INTERACTION_TYPE.KNOCKOUT_CHARACTER);
         AddAdvertisedAction(INTERACTION_TYPE.RESTRAIN_CHARACTER);
         AddAdvertisedAction(INTERACTION_TYPE.JUDGE_CHARACTER);
