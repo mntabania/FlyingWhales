@@ -15,7 +15,7 @@ public class Invite : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.INVITED, target = GOAP_EFFECT_TARGET.TARGET });
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.INVITED, string.Empty, false, GOAP_EFFECT_TARGET.TARGET));
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);

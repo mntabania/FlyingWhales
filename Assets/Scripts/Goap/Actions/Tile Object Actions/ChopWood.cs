@@ -30,6 +30,12 @@ public class ChopWood : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        if (node.actor.characterClass.IsCombatant()) {
+            node.actor.needsComponent.AdjustDoNotGetBored(-1);
+        }
+    }
     #endregion
 
     #region Requirements
@@ -48,13 +54,22 @@ public class ChopWood : GoapAction {
         //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         goapNode.descriptionLog.AddToFillers(null, tree.yield.ToString(), LOG_IDENTIFIER.STRING_1);
         //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+        if (goapNode.actor.characterClass.IsCombatant()) {
+            goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+        }
     }
     public void PerTickChopSuccess(ActualGoapNode goapNode) {
         TreeObject tree = goapNode.poiTarget as TreeObject;
         tree.AdjustHP(-1, ELEMENTAL_TYPE.Normal);
+        if (goapNode.actor.characterClass.IsCombatant()) {
+            goapNode.actor.needsComponent.AdjustHappiness(-2);
+        }
     }
     
     public void AfterChopSuccess(ActualGoapNode goapNode) {
+        if (goapNode.actor.characterClass.IsCombatant()) {
+            goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+        }
         TreeObject tree = goapNode.poiTarget as TreeObject;
         LocationGridTile tile = tree.gridTileLocation;
         int wood = tree.yield;

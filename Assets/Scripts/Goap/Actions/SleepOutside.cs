@@ -10,7 +10,6 @@ public class SleepOutside : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Sleep_Icon;
         //animationName = "Sleep Ground";
-        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] {
             RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON,
@@ -70,6 +69,7 @@ public class SleepOutside : GoapAction {
             goapNode.OverrideCurrentStateDuration(goapNode.currentState.duration);
         }
         needsComponent.AdjustTiredness(1f);
+        needsComponent.AdjustHappiness(-0.26f);
         needsComponent.AdjustSleepTicks(-1);
         //needsComponent.AdjustStamina(0.2f);
     }

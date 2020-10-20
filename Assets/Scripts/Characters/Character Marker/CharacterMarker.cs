@@ -1186,6 +1186,15 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //I added checking for poisInRangeButDiffStructure beacuse characters are being removed from the character's avoid range when they exit a structure. (Myk)
         return IsPOIInVision(poi) || inVisionPOIsButDiffStructure.Contains(poi);
     }
+    public bool HasEnemyOrRivalInVision() {
+        for (int i = 0; i < inVisionCharacters.Count; i++) {
+            Character otherCharacter = inVisionCharacters[i];
+            if (character.relationshipContainer.IsEnemiesWith(otherCharacter)) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Vision Collision

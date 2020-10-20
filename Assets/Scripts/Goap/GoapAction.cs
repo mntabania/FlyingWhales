@@ -224,7 +224,11 @@ public class GoapAction {
         //    Trait trait = target.traitContainer.allTraits[i];
         //    trait.ExecuteCostModification(goapType, actor, target, otherData, ref baseCost);
         //}
-        return (baseCost * TimeOfDaysCostMultiplier(actor) * PreconditionCostMultiplier()) + GetDistanceCost(actor, target, job);
+        
+        //* TimeOfDaysCostMultiplier(actor) removed cost multiplier since action should be disabled if time of day is invalid
+        int distanceCost = GetDistanceCost(actor, target, job);
+        actor.logComponent.AppendCostLog($"+{distanceCost.ToString()}(Distance Cost)");
+        return (baseCost * PreconditionCostMultiplier()) + distanceCost;
     }
     private bool IsTargetMissing(ActualGoapNode node) {
         Character actor = node.actor;
@@ -288,7 +292,8 @@ public class GoapAction {
         if (requirementActionSatisfied) {
             requirementActionSatisfied = AreRequirementsSatisfied(actor, poiTarget, otherData);
         }
-        return requirementActionSatisfied; //&& (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
+        //if action has valid times of day then check if current time is valid.
+        return requirementActionSatisfied && (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
     }
     public bool DoesCharacterMatchRace(Character character) {
         //If no race is specified, assume all races are allowed

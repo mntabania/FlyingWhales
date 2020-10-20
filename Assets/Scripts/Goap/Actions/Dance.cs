@@ -8,7 +8,7 @@ public class Dance : GoapAction {
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
     public Dance() : base(INTERACTION_TYPE.DANCE) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
-        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
         actionIconString = GoapActionStateDB.Party_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
@@ -17,7 +17,7 @@ public class Dance : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -32,11 +32,23 @@ public class Dance : GoapAction {
         if (numOfTimesActionDone > 5) {
             cost += 2000;
             costLog += " +2000(Times Danced > 5)";
-        } else {
-            int timesCost = 10 * numOfTimesActionDone;
-            cost += timesCost;
-            costLog += $" +{timesCost}(10 x Times Danced)";
+        } 
+        int timesCost = 10 * numOfTimesActionDone;
+        cost += timesCost;
+        costLog += $" +{timesCost}(10 x Times Danced)";
+
+        Character[] inVisionCharacters = actor.marker.inVisionCharacters.ToArray(); 
+        for (int i = 0; i < inVisionCharacters.Length; i++) {
+            Character invisionCharacter = inVisionCharacters[i];
+            if (actor.relationshipContainer.IsFriendsWith(invisionCharacter) && 
+                invisionCharacter.currentActionNode != null && invisionCharacter.currentActionNode.action != null && 
+                (invisionCharacter.currentActionNode.action.goapType == INTERACTION_TYPE.SING || invisionCharacter.currentActionNode.action.goapType == INTERACTION_TYPE.PLAY_GUITAR)) {
+                cost -= 35;
+                costLog += " -35(Has Friend/Close Friend in vision that is singing or playing a guitar)";
+                break;
+            }
         }
+        
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
@@ -67,7 +79,7 @@ public class Dance : GoapAction {
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickDanceSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(14f);
+        goapNode.actor.needsComponent.AdjustHappiness(2f);
     }
     public void AfterDanceSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);

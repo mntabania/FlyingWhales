@@ -18,6 +18,7 @@ namespace Interrupts {
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             if (!interruptHolder.actor.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR }, interruptHolder.actor, interruptHolder.actor);
+                job.SetDoNotRecalculate(true);
                 interruptHolder.actor.jobQueue.AddJobInQueue(job);
                 //bool triggerBrokenhearted = false;
                 //Heartbroken heartbroken = actor.traitContainer.GetNormalTrait<Trait>("Heartbroken") as Heartbroken;

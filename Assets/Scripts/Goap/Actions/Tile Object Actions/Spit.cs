@@ -4,6 +4,7 @@ using Logs;
 using UnityEngine;  
 using Traits;
 using Inner_Maps;
+using Debug = System.Diagnostics.Debug;
 
 public class Spit : GoapAction {
 
@@ -26,6 +27,10 @@ public class Spit : GoapAction {
         base.Perform(goapNode);
         SetState("Spit Success", goapNode);
     }
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        node.actor.needsComponent.AdjustDoNotGetBored(-1);
+    }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
@@ -46,25 +51,41 @@ public class Spit : GoapAction {
                 }
             }
         }
-        int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
+        int cost = UtilityScripts.Utilities.Rng.Next(80, 131);
         costLog += $" +{cost}(Initial)";
         int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
         if (numOfTimesActionDone > 5) {
             cost += 2000;
             costLog += " +2000(Times Spat > 5)";
-        } else {
-            int timesCost = 10 * numOfTimesActionDone;
-            cost += timesCost;
-            costLog += $" +{timesCost}(10 x Times Spat)";
+        }
+        if (!actor.partyComponent.isActiveMember) {
+            cost += 2000;
+            costLog += " +2000(Is not in active party quest)";
+        }
+        if (!actor.traitContainer.HasTrait("Angry", "Annoyed", "Drunk")) {
+            cost += 2000;
+            costLog += " +2000(Not angry, annoyed or drunk)";
+        }
+        Betrayed betrayed = actor.traitContainer.GetTraitOrStatus<Betrayed>("Betrayed");
+        if (target is Tombstone tombstone) {
+            if (betrayed != null && betrayed.responsibleCharacter == tombstone.character) {
+                cost -= 25;
+                costLog += " -25(Actor is betrayed by target)";
+            }    
         }
         if (actor.traitContainer.HasTrait("Evil")) {
-            cost += -15;
-            costLog += " -15(Evil)";
+            cost -= 10;
+            costLog += " -10(Evil)";
         }
         if (actor.traitContainer.HasTrait("Treacherous")) {
-            cost += -10;
+            cost -= 10;
             costLog += " -10(Treacherous)";
         }
+
+        int timesCost = 10 * numOfTimesActionDone;
+        cost += timesCost;
+        costLog += $" +{timesCost.ToString()}(10 x Times Spat)";
+
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
@@ -123,11 +144,13 @@ public class Spit : GoapAction {
     #region Effects
     public void PreSpitSuccess(ActualGoapNode goapNode) {
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
+        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+    }
+    public void PerTickSpitSuccess(ActualGoapNode goapNode) {
+        goapNode.actor.needsComponent.AdjustHappiness(10f);
     }
     public void AfterSpitSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(30f);
-        //Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, goapNode.actor.marker.transform.position, 
-        //    4, goapNode.actor.currentRegion.innerMap);
+        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
     }
     #endregion
 

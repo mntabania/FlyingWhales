@@ -11,7 +11,6 @@ public class Sleep : GoapAction {
 
     public Sleep() : base(INTERACTION_TYPE.SLEEP) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
-        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         logTags = new[] {LOG_TAG.Needs};
@@ -68,15 +67,7 @@ public class Sleep : GoapAction {
                 cost += 100;
                 costLog += " +100(Travelling)";
             } else {
-                if(targetBed.characterOwner != null && !targetBed.IsOwnedBy(actor) && targetBed.characterOwner.faction != actor.faction) {
-                    if (actor.needsComponent.isExhausted) {
-                        cost += 400;
-                        costLog += $" +400(Exhausted/Not same faction as owner)";
-                    } else {
-                        cost += 2000;
-                        costLog += $" +2000(Not Exhausted/Not same faction as owner)";
-                    }
-                } else if (targetBed.IsOwnedBy(actor) || targetBed.structureLocation == actor.homeStructure) {
+                if (targetBed.IsOwnedBy(actor) || targetBed.structureLocation == actor.homeStructure) {
                     if(actor.needsComponent.isExhausted || actor.traitContainer.HasTrait("Drunk")) {
                         cost += UtilityScripts.Utilities.Rng.Next(30, 51);
                         costLog += $" +{cost}(Owned/Location is in home structure, Exhausted/Drunk)";
@@ -84,24 +75,22 @@ public class Sleep : GoapAction {
                         cost += UtilityScripts.Utilities.Rng.Next(5, 16);
                         costLog += $" +{cost}(Owned/Location is in home structure)";
                     }
-                } else {
-                    if (actor.needsComponent.isExhausted) {
-                        if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Close_Friend, RelationshipManager.Friend)) {
-                            cost += UtilityScripts.Utilities.Rng.Next(130, 151);
-                            costLog += $" +{cost}(Exhausted, Is in Friend home structure)";
-                        } else if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Rival, RelationshipManager.Enemy)) {
-                            cost += 2000;
-                            costLog += " +2000(Exhausted, Is in Enemy home structure)";
-                        } else {
-                            cost = UtilityScripts.Utilities.Rng.Next(80, 101);
-                            costLog += $" +{cost}(Else)";
-                        }
-                    } else {
+                } else  if (actor.needsComponent.isExhausted) {
+                    if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Close_Friend, RelationshipManager.Friend)) {
+                        cost += UtilityScripts.Utilities.Rng.Next(130, 151);
+                        costLog += $" +{cost}(Exhausted, Is in Friend home structure)";
+                    } else if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Rival, RelationshipManager.Enemy)) {
                         cost += 2000;
-                        costLog += $" +{cost}(Not Exhausted)";
+                        costLog += " +2000(Exhausted, Is in Enemy home structure)";
+                    } else {
+                        cost = UtilityScripts.Utilities.Rng.Next(80, 101);
+                        costLog += $" +{cost}(Else)";
                     }
+                } else {
+                    cost += 2000;
+                    costLog += $" +{cost}(Not Exhausted)";
                 }
-
+                
                 Character alreadySleepingCharacter = null;
                 for (int i = 0; i < targetBed.users.Length; i++) {
                     if (targetBed.users[i] != null) {
@@ -206,6 +195,7 @@ public class Sleep : GoapAction {
             goapNode.OverrideCurrentStateDuration(goapNode.currentState.duration);
         }
         needsComponent.AdjustTiredness(1.1f);
+        needsComponent.AdjustHappiness(0.105f);
         needsComponent.AdjustSleepTicks(-1);
 
         //float staminaAdjustment = 0f;

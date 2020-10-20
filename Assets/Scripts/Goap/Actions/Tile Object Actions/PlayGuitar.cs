@@ -7,10 +7,9 @@ using Traits;
 
 public class PlayGuitar : GoapAction {
 
-    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
-
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.DIRECT;
     public PlayGuitar() : base(INTERACTION_TYPE.PLAY_GUITAR) {
-        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
+        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
         actionIconString = GoapActionStateDB.Entertain_Icon;
         // showNotification = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
@@ -21,7 +20,7 @@ public class PlayGuitar : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, target = GOAP_EFFECT_TARGET.ACTOR });
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -53,36 +52,23 @@ public class PlayGuitar : GoapAction {
         if (numOfTimesActionDone > 5) {
             cost += 2000;
             costLog += " +2000(Times Played > 5)";
-        } else {
-            int timesCost = 10 * numOfTimesActionDone;
-            cost += timesCost;
-            costLog += $" +{timesCost}(10 x Times Played)";
         }
 
-        if (target.gridTileLocation != null && target.gridTileLocation.structure is Dwelling
-            && target.gridTileLocation.structure != actor.homeStructure
-            && !actor.traitContainer.HasTrait("Psychopath")) {
-            Dwelling structureLocation = target.gridTileLocation.structure as Dwelling;
-            if (structureLocation.residents.Count > 0) {
-                Character dwellingOwner = structureLocation.residents[0];
-                if (actor.relationshipContainer.IsFriendsWith(dwellingOwner)) {
-                    cost += 20; 
-                    costLog += " +20 Guitar is in friend/close friends home";
-                } else if (actor.relationshipContainer.IsEnemiesWith(dwellingOwner)) {
-                    cost += 2000; 
-                    costLog += " +2000 Guitar is in enemy/rivals home";
-                } else {
-                    cost += 200;
-                    costLog += " +200 guitar is in an owned structure but not friend or enemy";
-                }
+        if (target.gridTileLocation != null) {
+            if (target.gridTileLocation.structure != actor.homeStructure && actor.trapStructure.IsTrappedAndTrapStructureIsNot(target.gridTileLocation.structure)) {
+                cost += 2000;
+                costLog += " +2000(Guitar is not at home or trap structure)";    
             }
         }
-        
 
         if (actor.traitContainer.HasTrait("Music Lover")) {
-            cost += -15;
-            costLog += " -15(Music Lover)";
+            cost += -25;
+            costLog += " -25(Music Lover)";
         }
+        int timesCost = 10 * numOfTimesActionDone;
+        cost += timesCost;
+        costLog += $" +{timesCost}(10 x Times Played)";
+        
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
@@ -150,7 +136,7 @@ public class PlayGuitar : GoapAction {
         goapNode.poiTarget.SetPOIState(POI_STATE.INACTIVE);
     }
     public void PerTickPlaySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(6f);
+        goapNode.actor.needsComponent.AdjustHappiness(1.6f);
     }
     public void AfterPlaySuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);

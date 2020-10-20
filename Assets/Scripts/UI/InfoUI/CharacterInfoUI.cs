@@ -135,7 +135,7 @@ public class CharacterInfoUI : InfoUIBase {
         fullnessMeter.AddMark(CharacterNeedsComponent.STARVING_UPPER_LIMIT/100f, Color.red);
         
         happinessMeter.ResetMarks();
-        happinessMeter.AddMark(CharacterNeedsComponent.ENTERTAINED_LOWER_LIMIT/100f, Color.green);
+        // happinessMeter.AddMark(CharacterNeedsComponent.ENTERTAINED_LOWER_LIMIT/100f, Color.green);
         happinessMeter.AddMark(CharacterNeedsComponent.BORED_UPPER_LIMIT/100f, Color.yellow);
         happinessMeter.AddMark(CharacterNeedsComponent.SULKING_UPPER_LIMIT/100f, Color.red);
         
@@ -497,6 +497,8 @@ public class CharacterInfoUI : InfoUIBase {
         summary = $"{summary} {"POI State: " + activeCharacter.state.ToString()}";
         summary = $"{summary}{"\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick))}";
         summary = $"{summary}{"\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick))}";
+        summary = $"{summary}{"\nHappiness Time: " + (activeCharacter.needsComponent.happinessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.happinessForcedTick))} - Satisfied Schedule Today ({activeCharacter.needsComponent.hasForcedHappiness.ToString()})";
+        summary = $"{summary}{"\n2nd Happiness Time: " + (activeCharacter.needsComponent.happinessSecondForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.happinessSecondForcedTick))} - Satisfied Schedule Today ({activeCharacter.needsComponent.hasForcedSecondHappiness.ToString()})";
         summary = $"{summary}{"\nRemaining Sleep Ticks: " + activeCharacter.needsComponent.currentSleepTicks.ToString()}";
         //summary = $"{summary}{("\nFood: " + activeCharacter.food.ToString())}";
         summary = $"{summary}{"\nSexuality: " + activeCharacter.sexuality.ToString()}";

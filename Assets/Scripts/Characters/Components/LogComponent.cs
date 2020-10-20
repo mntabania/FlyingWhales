@@ -97,7 +97,9 @@ public class LogComponent {
         _planCostLog = string.Empty;
     }
     public void AppendCostLog(string text) {
+#if UNITY_EDITOR
         _planCostLog += text;
+#endif
     }
     public void PrintCostLog(){
         PrintLogIfActive(_planCostLog);   
