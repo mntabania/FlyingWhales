@@ -29,7 +29,7 @@ public class CraftTileObject : GoapAction {
             } else {
                 TileObjectData data = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
                 if (data?.craftRecipes != null) {
-                    recipe = data.mainRecipe;
+                    data.TryGetPossibleRecipe(actor.currentRegion, out recipe);
                 }
             }
             List<Precondition> p = new List<Precondition>();
@@ -101,7 +101,13 @@ public class CraftTileObject : GoapAction {
         } else {
             TileObjectData data = TileObjectDB.GetTileObjectData(obj.tileObjectType);
             if (data?.craftRecipes != null) {
-                recipe = data.mainRecipe;
+                if (actor.carryComponent.carriedPOI is TileObject tileObject) {
+                    //get recipe that uses what the actor is currently carrying.
+                    //TODO: Find a way to store the recipe that the character is using, since this cane be very fragile.
+                    recipe = data.GetRecipeThatUses(tileObject.tileObjectType);
+                } else {
+                    recipe = data.mainRecipe;    
+                }
             }
         }
         

@@ -176,6 +176,11 @@ namespace Traits {
             string data = base.GetTestingData(traitable);
             data = $"{data} Dislikes Being Vampire: {dislikedBeingVampire.ToString()}";
             data = $"{data}\n Converted Villagers: {numOfConvertedVillagers.ToString()}";
+            data = $"{data}\n Aware Characters:";
+            for (int i = 0; i < awareCharacters.Count; i++) {
+                Character character = awareCharacters[i];
+                data = $"{data}|{character.name}|";
+            }
             return data;
         }
         #endregion

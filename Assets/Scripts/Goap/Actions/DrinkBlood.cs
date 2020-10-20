@@ -153,8 +153,7 @@ public class DrinkBlood : GoapAction {
         }
         return actionInvalidity;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
 
         Vampire vampire = actor.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
@@ -234,8 +233,7 @@ public class DrinkBlood : GoapAction {
         //}
         return response;
     }
-    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node,
-        REACTION_STATUS status) {
+    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionOfTarget(actor, target, node, status);
         if (target is Character targetCharacter) {
             Vampire vampire = actor.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
@@ -352,6 +350,14 @@ public class DrinkBlood : GoapAction {
                     actor.traitContainer.AddTrait(actor, "Unconscious", targetCharacter, goapNode);
                 }
             } else {
+                if (actor.currentSettlement is NPCSettlement currentSettlement) {
+                    if (currentSettlement.owner != null && GameUtilities.RollChance(15)) { //15
+                        CRIME_SEVERITY crimeSeverity = currentSettlement.owner.GetCrimeSeverity(actor, goapNode.poiTarget, CRIME_TYPE.Vampire);
+                        if (crimeSeverity != CRIME_SEVERITY.None && crimeSeverity != CRIME_SEVERITY.Unapplicable && !currentSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Vampire_Hunt)) {
+                            currentSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Vampire_Hunt);
+                        }
+                    }
+                }
                 if (!targetCharacter.race.IsSapient()) {
                     actor.traitContainer.AddTrait(actor, "Poor Meal", targetCharacter);
                 }

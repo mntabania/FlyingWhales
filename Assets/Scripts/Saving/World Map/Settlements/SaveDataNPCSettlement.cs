@@ -9,6 +9,8 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
     public string mainStorageID;
     public string rulerID;
     public SaveDataSettlementType settlementType;
+    public SaveDataLocationEventManager eventManager;
+    public List<TILE_OBJECT_TYPE> neededObjects;
     
     public override void Save(BaseSettlement baseSettlement) {
         base.Save(baseSettlement);
@@ -37,6 +39,10 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
             settlementType = new SaveDataSettlementType();
             settlementType.Save(npcSettlement.settlementType);
         }
+        eventManager = new SaveDataLocationEventManager();
+        eventManager.Save(npcSettlement.eventManager);
+        
+        neededObjects = new List<TILE_OBJECT_TYPE>(npcSettlement.neededObjects);
     }
     public override BaseSettlement Load() {
         return LandmarkManager.Instance.LoadNPCSettlement(this);

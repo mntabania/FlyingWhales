@@ -42,6 +42,7 @@ public class Region : ISavable, ILogFiller {
     /// NOTE: This isn't saved/loaded since this is updated every time a new tile object is placed.
     /// So loading this from a file would result in duplicates, since we still go through the process of
     /// placing tile objects when loading them.
+    /// NOTE: This just includes BUILT objects!
     /// </summary>
     public Dictionary<TILE_OBJECT_TYPE, int> objectsInRegionCount { get; private set; }
 
@@ -1280,14 +1281,17 @@ public class Region : ISavable, ILogFiller {
             objectsInRegionCount.Add(tileObject.tileObjectType, 0);
         }
         objectsInRegionCount[tileObject.tileObjectType] += 1;
-        // if (tileObject.tileObjectType == TILE_OBJECT_TYPE.WEREWOLF_PELT) {
+        // if (tileObject.tileObjectType == TILE_OBJECT_TYPE.WOOD_PILE) {
         //     int count = objectsInRegionCount[tileObject.tileObjectType];
-        //     Debug.Log($"Added {tileObject.name} to objects in region. Count is {count.ToString()}");    
+        //     Debug.Log($"Added {tileObject.nameWithID} to objects in region. Count is {count.ToString()}");    
         // }
     }
     public void RemoveTileObjectInRegion(TileObject tileObject) {
         if (objectsInRegionCount.ContainsKey(tileObject.tileObjectType)) {
             objectsInRegionCount[tileObject.tileObjectType] -= 1;
+            // if (tileObject.tileObjectType == TILE_OBJECT_TYPE.WOOD_PILE) {
+            //     Debug.Log($"Removed {tileObject.nameWithID} to objects in region. Count is {objectsInRegionCount[tileObject.tileObjectType].ToString()}");
+            // }
             if (objectsInRegionCount[tileObject.tileObjectType] <= 0) {
                 objectsInRegionCount.Remove(tileObject.tileObjectType);
             }

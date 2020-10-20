@@ -6,22 +6,17 @@ using System.Linq;
 using System.IO;
 using System.Threading;
 
-public class LocalizationManager : MonoBehaviour {
+public class LocalizationManager : BaseMonoBehaviour {
 	public static LocalizationManager Instance;
 
 	public LANGUAGES language;
 	public string filePath;
 
 	protected Dictionary<string, Dictionary<string, Dictionary<string, string>>> _localizedText = new Dictionary<string, Dictionary<string, Dictionary<string, string>>> ();
-	private bool isReady = false;
 	//private string missingTextString = "Localized text not found";
-
-
+	
 	//getters and setters
-	public Dictionary<string, Dictionary<string, Dictionary<string, string>>> localizedText{
-		get {return this._localizedText;}
-	}
-
+	public Dictionary<string, Dictionary<string, Dictionary<string, string>>> localizedText => _localizedText;
 	void Awake(){
 		Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
         if (Instance == null) {
@@ -72,7 +67,6 @@ public class LocalizationManager : MonoBehaviour {
 				}
 			}
 		}
-		this.isReady = true;
 	}
 
 	/*
@@ -187,15 +181,11 @@ public class LocalizationManager : MonoBehaviour {
 		}
 		return result;
 	}
-
-	/*
-	 * Get if the LocalizationManager has loaded
-	 * all the necessary files into the localizedText
-	 * Dictionary.
-	 * */
-	public bool GetIsReady(){
-		return isReady;
-	}
 	
-
+	protected override void OnDestroy() {
+		base.OnDestroy();
+		Instance = null;
+		_localizedText?.Clear();
+		_localizedText = null;
+	}
 }

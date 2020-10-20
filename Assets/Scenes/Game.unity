@@ -85844,16 +85844,16 @@ MonoBehaviour:
         m_keys: 06000000
         m_values:
         - activeTile:
-          - {fileID: 21300000, guid: 2d5e4d4f738ca4649b80ad3b03c6ce8b, type: 3}
+          - {fileID: 21300000, guid: c3563ecf1a4bd624b8c8c19588e5cb64, type: 3}
           inactiveTile:
-          - {fileID: 21300000, guid: 2d5e4d4f738ca4649b80ad3b03c6ce8b, type: 3}
+          - {fileID: 21300000, guid: c3563ecf1a4bd624b8c8c19588e5cb64, type: 3}
     - biomeAssets:
         m_keys: 06000000
         m_values:
         - activeTile:
-          - {fileID: 21300000, guid: 75c4c58e2555fde478e308b91e2ce2f1, type: 3}
+          - {fileID: 21300000, guid: 2604707076c2ead48a96af928172dbe3, type: 3}
           inactiveTile:
-          - {fileID: 21300000, guid: 75c4c58e2555fde478e308b91e2ce2f1, type: 3}
+          - {fileID: 21300000, guid: 2604707076c2ead48a96af928172dbe3, type: 3}
   corruptedTileObjectAssets:
     m_keys: 090000004b000000
     m_values:
@@ -86053,6 +86053,7 @@ MonoBehaviour:
     - necronomicon_open
     - ore00
     - oreDepleted00
+    - Phylactery
     - PLANT#1
     - PLANT#2
     - PLANT#3
@@ -86113,6 +86114,7 @@ MonoBehaviour:
     - spirits_green_OK
     - spirits_red_idle
     - spirits_red_KO
+    - stake
     - stone_pile
     - stump
     - supplies
@@ -86130,6 +86132,7 @@ MonoBehaviour:
     - templeColumn00
     - templeStatueGoddess00
     - TEMPLE_ALTAR
+    - TOOL#1
     - TORCH#1
     - TORCH#2
     - TORCH#3
@@ -86169,6 +86172,7 @@ MonoBehaviour:
     - well05
     - well06
     - well07
+    - Werewolf_Pelt
     - wheelbarrow
     - winter_rose
     - woodpile00
@@ -86375,9 +86379,9 @@ MonoBehaviour:
     - d_metal_corner_1
     - d_metal_horizontal_1
     - d_metal_vertical_1
-    - metal_corner_1
-    - metal_horizontal_1
-    - metal_vertical_1
+    - corner
+    - horizontal
+    - verttical
     - Bot
     - BotLeft
     - BotRight
@@ -86389,15 +86393,10 @@ MonoBehaviour:
     - d_stone_corner_1
     - d_stone_horizontal_1
     - d_stone_vertical_1
-    - stone_corner_1
-    - stone_horizontal_1
-    - stone_vertical_1
+    - vertical
     - d_wood_corner_1
     - d_wood_horizontal_1
     - d_wood_vertical_1
-    - wood_corner_1
-    - wood_horizontal_1
-    - wood_vertical_1
     m_values:
     - {fileID: 21300000, guid: 47925766893f5664493bc782e664f4b9, type: 3}
     - {fileID: 21300000, guid: 87f6c55abd2da114ebc141713ab6dba3, type: 3}
@@ -86578,6 +86577,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 4aae22799ddcf37429e6268d9f13e95b, type: 3}
     - {fileID: 21300000, guid: 04bc161e03119a1499a546c9c01f6422, type: 3}
     - {fileID: 21300000, guid: 51135a4c08bdb184a91a8ae51a729303, type: 3}
+    - {fileID: 21300000, guid: 2604707076c2ead48a96af928172dbe3, type: 3}
     - {fileID: 21300000, guid: 918d893e6c4c568499aa05881fa73183, type: 3}
     - {fileID: 21300000, guid: 866fc2fd1952a3e4096feb783efef97b, type: 3}
     - {fileID: 21300000, guid: dfc0f975a76d87f408f2de99b76d6615, type: 3}
@@ -86638,6 +86638,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: dcc64230081c2c1428bb04c1d38b5a18, type: 3}
     - {fileID: 21300000, guid: 01f0efcc5652ee84cb4381a9e942e3e3, type: 3}
     - {fileID: 21300000, guid: 68ed339a21348e944b49d142f6f8c2bb, type: 3}
+    - {fileID: 21300000, guid: 87ce134795f668b409001e3d605ebe27, type: 3}
     - {fileID: 21300000, guid: aa10dfc76002394428480256299305c6, type: 3}
     - {fileID: 21300000, guid: 095c036e22c10bb44b1aea6ee3923ccd, type: 3}
     - {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
@@ -86655,6 +86656,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 44e1bf90b0bf3a84ba5c10aaf930c72c, type: 3}
     - {fileID: 21300000, guid: fb15e384f1b419340b7e6ce28588efa8, type: 3}
     - {fileID: 21300000, guid: 79924df66277c024ba10116c3f49cdfb, type: 3}
+    - {fileID: 21300000, guid: dcac2c87a0eeec24ba5e531b110de011, type: 3}
     - {fileID: 21300000, guid: f65e95031a5778745b5b7e8740e9293b, type: 3}
     - {fileID: 21300000, guid: f626551d73d6e3244b00a22f41ac76c7, type: 3}
     - {fileID: 21300000, guid: 3e754cdc0f2805a489b22801aeb6dc31, type: 3}
@@ -86694,6 +86696,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 2c0dbd579f0fd1d49b5b2cf8194cb866, type: 3}
     - {fileID: 21300000, guid: b18cd78c05ed95946b13f071946d7858, type: 3}
     - {fileID: 21300000, guid: 08510eabe628a0f44b0629ebbf080bbf, type: 3}
+    - {fileID: 21300000, guid: c3563ecf1a4bd624b8c8c19588e5cb64, type: 3}
     - {fileID: 21300000, guid: 344cff1c65b03a2438882fb25691094c, type: 3}
     - {fileID: 21300000, guid: 11906c63aaedadb42843a1861b2d282b, type: 3}
     - {fileID: 21300000, guid: bd4076f458db38740abbd837e950bea8, type: 3}
@@ -86914,15 +86917,10 @@ MonoBehaviour:
     - {fileID: 21300000, guid: e043d61ae7e287e499fcc70d473269c1, type: 3}
     - {fileID: 21300000, guid: 83946b5144b82ea44beee7243ecabd36, type: 3}
     - {fileID: 21300000, guid: 9a413a4dd10689f459841c52dfb59ce8, type: 3}
-    - {fileID: 21300000, guid: b5761337a77ed174c84274ccb2d26535, type: 3}
-    - {fileID: 21300000, guid: 0818c7b5e1bcc58428dcec02d83c1750, type: 3}
     - {fileID: 21300000, guid: 4f89222ed07e243459217b006cbd8ba2, type: 3}
     - {fileID: 21300000, guid: 2bdd76dc16a512b4fa3ccfa83e0dccd1, type: 3}
     - {fileID: 21300000, guid: a00693e3a0046bc4cace6805e967adc3, type: 3}
     - {fileID: 21300000, guid: 95ab6aa30060bf14a98f8c70aab2cf46, type: 3}
-    - {fileID: 21300000, guid: 7d5a9c90862f612468b2361d27f477af, type: 3}
-    - {fileID: 21300000, guid: c1fc69be7a8f674419b60a08b4861276, type: 3}
-    - {fileID: 21300000, guid: 221f45d73efa56143a0d985295f71935, type: 3}
   burntMaterial: {fileID: 2100000, guid: 1010dec766f2511479731f5cc07e612d, type: 2}
   defaultObjectMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3,
     type: 2}

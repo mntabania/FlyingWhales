@@ -308,6 +308,37 @@ public class TileObjectData {
     public TileObjectRecipe[] craftRecipes;
     public int repairCost;
     public TileObjectRecipe mainRecipe => craftRecipes.FirstOrDefault();
+
+    public bool TryGetPossibleRecipe(Region region, out TileObjectRecipe possibleRecipe) {
+        for (int i = 0; i < craftRecipes.Length; i++) { 
+            TileObjectRecipe recipe = craftRecipes[i];
+            bool hasAllIngredients = true;
+            for (int j = 0; j < recipe.ingredients.Length; j++) {
+                TileObjectRecipeIngredient ingredient = recipe.ingredients[j];
+                if (region.GetTileObjectInRegionCount(ingredient.ingredient) <= 0) {
+                    hasAllIngredients = false;
+                    break;
+                }
+            }
+            if (hasAllIngredients) {
+                possibleRecipe = recipe;
+                return true;
+            }
+        }
+        //if no possible recipe was found just return main recipe
+        possibleRecipe = mainRecipe;
+        return false;
+    }
+    public TileObjectRecipe GetRecipeThatUses(TILE_OBJECT_TYPE tileObjectType) {
+        for (int i = 0; i < craftRecipes.Length; i++) {
+            TileObjectRecipe recipe = craftRecipes[i];
+            if (recipe.UsesIngredient(tileObjectType)) {
+                return recipe;
+            }
+        }
+        return mainRecipe;
+    }
+
 }
 
 public struct TileObjectRecipe {
@@ -326,6 +357,15 @@ public struct TileObjectRecipe {
             }
         }
         return 0;
+    }
+    public bool UsesIngredient(TILE_OBJECT_TYPE tileObjectType) {
+        for (int i = 0; i < ingredients.Length; i++) {
+            TileObjectRecipeIngredient recipeIngredient = ingredients[i];
+            if (recipeIngredient.ingredient == tileObjectType) {
+                return true;
+            }
+        }
+        return false;
     }
     
 }

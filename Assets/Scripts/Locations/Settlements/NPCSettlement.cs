@@ -30,7 +30,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public List<JobQueueItem> availableJobs { get; }
     public JOB_OWNER ownerType => JOB_OWNER.SETTLEMENT;
     public LocationClassManager classManager { get; }
-    public LocationEventManager eventManager { get; }
+    public LocationEventManager eventManager { get; private set; }
     public SettlementJobPriorityComponent jobPriorityComponent { get; }
     public SettlementType settlementType { get; private set; }
 
@@ -40,13 +40,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private int _isBeingHarassedCount;
     private int _isBeingInvadedCount;
     private string _plaguedExpiryKey;
+    private List<TILE_OBJECT_TYPE> _neededObjects;
 
-    private TILE_OBJECT_TYPE[] neededObjects = new TILE_OBJECT_TYPE[] {
-        TILE_OBJECT_TYPE.HEALING_POTION,
-        TILE_OBJECT_TYPE.TOOL,
-        TILE_OBJECT_TYPE.ANTIDOTE,
-        TILE_OBJECT_TYPE.PHYLACTERY
-    }; 
+     
+    //     = new TILE_OBJECT_TYPE[] {
+    //     TILE_OBJECT_TYPE.HEALING_POTION,
+    //     TILE_OBJECT_TYPE.TOOL,
+    //     TILE_OBJECT_TYPE.ANTIDOTE,
+    //     TILE_OBJECT_TYPE.PHYLACTERY
+    // }; 
     
     #region getters
     public override Type serializedData => typeof(SaveDataNPCSettlement);
@@ -55,6 +57,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public SettlementJobTriggerComponent settlementJobTriggerComponent { get; }
     public bool isBeingHarassed => _isBeingHarassedCount > 0;
     public bool isBeingInvaded => _isBeingInvadedCount > 0;
+    public List<TILE_OBJECT_TYPE> neededObjects => _neededObjects;
     #endregion
 
     public NPCSettlement(Region region, LOCATION_TYPE locationType) : base(locationType) {
@@ -68,8 +71,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         jobPriorityComponent = new SettlementJobPriorityComponent(this);
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
         _plaguedExpiryKey = string.Empty;
+        _neededObjects = new List<TILE_OBJECT_TYPE>() {
+            TILE_OBJECT_TYPE.HEALING_POTION,
+            TILE_OBJECT_TYPE.TOOL,
+            TILE_OBJECT_TYPE.ANTIDOTE
+        };
     }
     public NPCSettlement(SaveDataBaseSettlement saveDataBaseSettlement) : base (saveDataBaseSettlement) {
+        SaveDataNPCSettlement saveData = saveDataBaseSettlement as SaveDataNPCSettlement;
+        System.Diagnostics.Debug.Assert(saveData != null, nameof(saveData) + " != null");
         //NOTE: This assumes that all tiles in this settlement is part of the same region.
         _region = GameUtilities.GetHexTilesGivenCoordinates(saveDataBaseSettlement.tileCoordinates, GridMap.Instance.map)[0].region;
         newRulerDesignationWeights = new WeightedDictionary<Character>();
@@ -77,10 +87,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         ResetNewRulerDesignationChance();
         availableJobs = new List<JobQueueItem>();
         classManager = new LocationClassManager();
-        eventManager = new LocationEventManager(this);
+        // eventManager = new LocationEventManager(this, saveData.eventManager); //loaded event manager at LoadReferences
         jobPriorityComponent = new SettlementJobPriorityComponent(this);
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
         _plaguedExpiryKey = string.Empty;
+        _neededObjects = new List<TILE_OBJECT_TYPE>(saveData.neededObjects);
     }
 
     #region Loading
@@ -95,6 +106,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 LocationStructure storage = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataNpcSettlement.mainStorageID);
                 LoadMainStorage(storage);
             }
+            eventManager = saveDataNpcSettlement.eventManager != null ? new LocationEventManager(this, saveDataNpcSettlement.eventManager) : new LocationEventManager(this);
             LoadJobs(saveDataNpcSettlement);
             LoadRuler(saveDataNpcSettlement.rulerID);
             LoadResidents(saveDataNpcSettlement);
@@ -292,6 +304,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (base.AddResident(character, chosenHome, ignoreCapacity)) {
             //region.AddResident(character);
             character.SetHomeSettlement(this);
+            eventManager.OnResidentAdded(character);
             if (character.race == RACE.DEMON || character is Summon) { return true; }
             if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
                 classManager.OnAddResident(character);
@@ -305,6 +318,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (base.RemoveResident(character)) {
             //region.RemoveResident(character);
             character.SetHomeSettlement(null);
+            eventManager.OnResidentRemoved(character);
             if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
                 classManager.OnRemoveResident(character);
                 jobPriorityComponent.OnRemoveResident(character);
@@ -508,10 +522,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             for (int j = 0; j < residents.Count; j++) {
                 Character resident2 = residents[j];
                 if (resident1 != resident2) {
-                    IRelationshipData rel1Data =
-                        resident1.relationshipContainer.GetOrCreateRelationshipDataWith(resident1, resident2);
-                    IRelationshipData rel2Data =
-                        resident2.relationshipContainer.GetOrCreateRelationshipDataWith(resident2, resident1);
+                    IRelationshipData rel1Data = resident1.relationshipContainer.GetOrCreateRelationshipDataWith(resident1, resident2);
+                    IRelationshipData rel2Data = resident2.relationshipContainer.GetOrCreateRelationshipDataWith(resident2, resident1);
 
                     int compatibilityValue;
                     if (rel1Data.opinions.compatibilityValue != -1) {
@@ -608,28 +620,37 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         settlementJobTriggerComponent.OnItemRemovedFromStructure(item, structure, tile);
     }
     private void CheckIfInventoryJobsAreStillValid(TileObject item, LocationStructure structure) {
-        if (structure == mainStorage && (item.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION || item.tileObjectType == TILE_OBJECT_TYPE.TOOL)) {
-            if (item.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION) {
-                if (mainStorage.GetBuiltTileObjectsOfType<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION).Count >= 2) {
-                    List<JobQueueItem> jobs = GetJobs(JOB_TYPE.CRAFT_OBJECT);
-                    for (int i = 0; i < jobs.Count; i++) {
-                        JobQueueItem jqi = jobs[i];
-                        if (jqi is GoapPlanJob goapPlanJob && goapPlanJob.targetPOI is TileObject tileObject && tileObject.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION) {
-                            jqi.ForceCancelJob(false, "Settlement has enough healing potions");    
-                        }
-                    }
-                }
-            } else if (item.tileObjectType == TILE_OBJECT_TYPE.TOOL) {
-                if (mainStorage.GetBuiltTileObjectsOfType<TileObject>(TILE_OBJECT_TYPE.TOOL).Count >= 2) {
-                    List<JobQueueItem> jobs = GetJobs(JOB_TYPE.CRAFT_OBJECT);
-                    for (int i = 0; i < jobs.Count; i++) {
-                        JobQueueItem jqi = jobs[i];
-                        if (jqi is GoapPlanJob goapPlanJob && goapPlanJob.targetPOI is TileObject tileObject && tileObject.tileObjectType == TILE_OBJECT_TYPE.TOOL) {
-                            jqi.ForceCancelJob(false, "Settlement has enough tools");    
-                        }
+        if (structure == mainStorage && neededObjects.Contains(item.tileObjectType)) {
+            if (mainStorage.GetBuiltTileObjectsOfType<TileObject>(item.tileObjectType).Count >= 2) {
+                List<JobQueueItem> jobs = GetJobs(JOB_TYPE.CRAFT_OBJECT);
+                for (int i = 0; i < jobs.Count; i++) {
+                    JobQueueItem jqi = jobs[i];
+                    if (jqi is GoapPlanJob goapPlanJob && goapPlanJob.targetPOI is TileObject tileObject && tileObject.tileObjectType == item.tileObjectType) {
+                        jqi.ForceCancelJob(false, "Settlement has enough");    
                     }
                 }
             }
+            // if (item.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION) {
+            //     if (mainStorage.GetBuiltTileObjectsOfType<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION).Count >= 2) {
+            //         List<JobQueueItem> jobs = GetJobs(JOB_TYPE.CRAFT_OBJECT);
+            //         for (int i = 0; i < jobs.Count; i++) {
+            //             JobQueueItem jqi = jobs[i];
+            //             if (jqi is GoapPlanJob goapPlanJob && goapPlanJob.targetPOI is TileObject tileObject && tileObject.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION) {
+            //                 jqi.ForceCancelJob(false, "Settlement has enough healing potions");    
+            //             }
+            //         }
+            //     }
+            // } else if (item.tileObjectType == TILE_OBJECT_TYPE.TOOL) {
+            //     if (mainStorage.GetBuiltTileObjectsOfType<TileObject>(TILE_OBJECT_TYPE.TOOL).Count >= 2) {
+            //         List<JobQueueItem> jobs = GetJobs(JOB_TYPE.CRAFT_OBJECT);
+            //         for (int i = 0; i < jobs.Count; i++) {
+            //             JobQueueItem jqi = jobs[i];
+            //             if (jqi is GoapPlanJob goapPlanJob && goapPlanJob.targetPOI is TileObject tileObject && tileObject.tileObjectType == TILE_OBJECT_TYPE.TOOL) {
+            //                 jqi.ForceCancelJob(false, "Settlement has enough tools");    
+            //             }
+            //         }
+            //     }
+            // }
         }
     }
     #endregion
@@ -1076,64 +1097,98 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         return null;
     }
     private void CheckAreaInventoryJobs(LocationStructure affectedStructure, TileObject objectThatTriggeredChange) {
-        if (affectedStructure == mainStorage &&
-            (objectThatTriggeredChange == null || neededObjects.Contains(objectThatTriggeredChange.tileObjectType))) {
-            //brew potion
-            if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.HEALING_POTION) < 2) {
-                //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
-                TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION);
-                item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
-                affectedStructure.AddPOI(item);
-
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
-                job.SetCanTakeThisJobChecker(JobManager.Can_Brew_Potion);
-                AddToAvailableJobs(job);
-            }
-
-            //craft tool
-            if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.TOOL) < 2) {
-                if (!HasJob(JOB_TYPE.CRAFT_OBJECT)) {
-                    //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
-                    TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TOOL);
-                    item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
-                    affectedStructure.AddPOI(item);
-
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
-                    job.SetCanTakeThisJobChecker(JobManager.Can_Craft_Tool);
-                    AddToAvailableJobs(job);
-                }
-            }
-
-            //brew antidote
-            if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.ANTIDOTE) < 2) {
-                if (!HasJob(JOB_TYPE.CRAFT_OBJECT)) {
-                    //create an un crafted antidote and place it at the main storage structure, then use that as the target for the job.
-                    TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ANTIDOTE);
-                    item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
-                    affectedStructure.AddPOI(item);
-
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
-                    job.SetCanTakeThisJobChecker(JobManager.Can_Brew_Antidote);
-                    AddToAvailableJobs(job);
+        if (affectedStructure == mainStorage && (objectThatTriggeredChange == null || neededObjects.Contains(objectThatTriggeredChange.tileObjectType))) {
+            for (int i = 0; i < neededObjects.Count; i++) {
+                TILE_OBJECT_TYPE neededObject = neededObjects[i];
+                int objectsCount = affectedStructure.GetTileObjectsOfTypeCount(neededObject); //This includes unbuilt objects 
+                int neededCount = 2;
+                if (objectsCount < neededCount) {
+                    int missing = neededCount - objectsCount;
+                    for (int j = 0; j < missing; j++) {
+                        //create an un crafted object and place it at the main storage structure, then use that as the target for the job.
+                        TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(neededObject);
+                        affectedStructure.AddPOI(item);
+                        item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
+                        switch (neededObject) {
+                            case TILE_OBJECT_TYPE.HEALING_POTION:
+                                job.SetCanTakeThisJobChecker(JobManager.Can_Brew_Potion);
+                                break;
+                            case TILE_OBJECT_TYPE.TOOL:
+                                job.SetCanTakeThisJobChecker(JobManager.Can_Craft_Tool);
+                                break;
+                            case TILE_OBJECT_TYPE.ANTIDOTE:
+                                job.SetCanTakeThisJobChecker(JobManager.Can_Brew_Antidote);
+                                break;
+                            case TILE_OBJECT_TYPE.PHYLACTERY:
+                                job.SetCanTakeThisJobChecker(JobManager.Can_Craft_Phylactery);
+                                // TileObjectData data = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.PHYLACTERY);
+                                // data.TryGetPossibleRecipe(region, out var recipeToUse); //get possible recipe and assign that to job
+                                // job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[]{ recipeToUse });
+                                break;
+                        }
+                        AddToAvailableJobs(job);    
+                    }
                 }
             }
             
-            //TODO: Delete after testing phylactery
-            //craft phylactery
-            if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.PHYLACTERY) < 2) {
-                if (!HasJob(JOB_TYPE.CRAFT_OBJECT)) {
-                    //create an un crafted antidote and place it at the main storage structure, then use that as the target for the job.
-                    TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.PHYLACTERY);
-                    item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
-                    affectedStructure.AddPOI(item);
-
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
-                    TileObjectData data = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.PHYLACTERY);
-                    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[]{ data.mainRecipe });
-                    job.SetCanTakeThisJobChecker(JobManager.Can_Craft_Phylactery);
-                    AddToAvailableJobs(job);
-                }
-            }
+            
+            // //brew potion
+            // if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.HEALING_POTION) < 2) {
+            //     //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
+            //     TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION);
+            //     item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+            //     affectedStructure.AddPOI(item);
+            //
+            //     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
+            //     job.SetCanTakeThisJobChecker(JobManager.Can_Brew_Potion);
+            //     AddToAvailableJobs(job);
+            // }
+            //
+            // //craft tool
+            // if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.TOOL) < 2) {
+            //     if (!HasJob(JOB_TYPE.CRAFT_OBJECT)) {
+            //         //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
+            //         TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TOOL);
+            //         item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+            //         affectedStructure.AddPOI(item);
+            //
+            //         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
+            //         job.SetCanTakeThisJobChecker(JobManager.Can_Craft_Tool);
+            //         AddToAvailableJobs(job);
+            //     }
+            // }
+            //
+            // //brew antidote
+            // if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.ANTIDOTE) < 2) {
+            //     if (!HasJob(JOB_TYPE.CRAFT_OBJECT)) {
+            //         //create an un crafted antidote and place it at the main storage structure, then use that as the target for the job.
+            //         TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ANTIDOTE);
+            //         item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+            //         affectedStructure.AddPOI(item);
+            //
+            //         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
+            //         job.SetCanTakeThisJobChecker(JobManager.Can_Brew_Antidote);
+            //         AddToAvailableJobs(job);
+            //     }
+            // }
+            //
+            // //TODO: Delete after testing phylactery
+            // //craft phylactery
+            // if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.PHYLACTERY) < 2) {
+            //     if (!HasJob(JOB_TYPE.CRAFT_OBJECT)) {
+            //         //create an un crafted antidote and place it at the main storage structure, then use that as the target for the job.
+            //         TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.PHYLACTERY);
+            //         item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+            //         affectedStructure.AddPOI(item);
+            //
+            //         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
+            //         TileObjectData data = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.PHYLACTERY);
+            //         job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[]{ data.mainRecipe });
+            //         job.SetCanTakeThisJobChecker(JobManager.Can_Craft_Phylactery);
+            //         AddToAvailableJobs(job);
+            //     }
+            // }
         }
     }
     private void OnJobRemovedFromAvailableJobs(JobQueueItem job) {
@@ -1249,6 +1304,18 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             //NOTE: For now always apply default settings. This will change in the future.
             this.settlementType.ApplyDefaultSettings();    
         }
+    }
+    #endregion
+
+    #region Needed Items
+    public void AddNeededItems(TILE_OBJECT_TYPE tileObjectType) {
+        //Allowed duplicate entries because multiple events can add the same item, and we don't want that item to be removed when only one event ends
+        //And this is alright since the inventory jobs can handle duplicate values.
+        neededObjects.Add(tileObjectType);
+        CheckAreaInventoryJobs(mainStorage, null);
+    }
+    public void RemoveNeededItems(TILE_OBJECT_TYPE tileObjectType) {
+        neededObjects.Remove(tileObjectType);
     }
     #endregion
 

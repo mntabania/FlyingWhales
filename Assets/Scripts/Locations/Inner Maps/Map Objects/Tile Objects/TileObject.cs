@@ -216,7 +216,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual bool OccupiesTile() { return true;}
     public virtual void OnDestroyPOI() {
         //DisableGameObject();
-        previousTile?.parentMap.region.RemoveTileObjectInRegion(this);
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         OnRemoveTileObject(null, previousTile);
         DestroyMapVisualGameObject();
@@ -395,6 +394,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
             //if object is unbuilt, and it was removed, stop checking for invalidity.
             Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
+        } else if (mapObjectState == MAP_OBJECT_STATE.BUILT) {
+            removedFrom?.parentMap.region.RemoveTileObjectInRegion(this);
         }
         if (hasCreatedSlots && destroyTileSlots) {
             DestroyTileSlots();
@@ -1048,6 +1049,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         AddAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
         UnsubscribeListeners();
         Messenger.AddListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
+        if (gridTileLocation != null) {
+            //remove tile object from region count.
+            gridTileLocation.parentMap.region.RemoveTileObjectInRegion(this);    
+        }
     }
     protected virtual void OnSetObjectAsBuilding() {
         mapVisual.SetVisualAlpha(128f / 255f);
@@ -1063,6 +1068,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
         }
         SubscribeListeners();
+        if (gridTileLocation != null) {
+            //add tile object to region count. This will be called at DefaultProcessOnPlacePOI
+            gridTileLocation.parentMap.region.AddTileObjectInRegion(this);    
+        }
     }
     private void CheckUnbuiltObjectValidity() {
         if (allExistingJobsTargetingThis.Count <= 0) {

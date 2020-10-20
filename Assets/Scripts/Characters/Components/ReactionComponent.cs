@@ -566,6 +566,21 @@ public class ReactionComponent : CharacterComponent {
                 dragon.AddCharacterThatWary(actor);
             }
         }
+
+        if (disguisedTarget.characterClass.className == "Werewolf" && disguisedActor.homeSettlement != null && 
+            disguisedTarget.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(disguisedActor.homeSettlement) && disguisedTarget.lycanData != null && 
+            !disguisedTarget.lycanData.DoesCharacterKnowThisLycan(disguisedActor)) {
+            debugLog = $"{debugLog}\n-Target is a werewolf and is near {disguisedActor.homeSettlement.name}";
+            CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(disguisedActor, disguisedTarget, disguisedTarget, CRIME_TYPE.Werewolf);
+            if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable && !disguisedActor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Werewolf_Hunt)) {
+                debugLog = $"{debugLog}\n-Witness considers werewolf as a crime and there is no active werewolf hunt at active settlement";    
+                if (GameUtilities.RollChance(25, ref debugLog)) {
+                    debugLog = $"{debugLog}\n-Created new werewolf hunt event at {disguisedActor.homeSettlement.name}";
+                    disguisedActor.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Werewolf_Hunt);       
+                }
+            }
+        }
+        
         if (isHostile) {
             debugLog = $"{debugLog}\n-Target is hostile";
             if(disguisedActor is Troll && disguisedTarget.isNormalCharacter && disguisedActor.homeStructure != null && !targetCharacter.isDead) {
@@ -1035,11 +1050,50 @@ public class ReactionComponent : CharacterComponent {
                         }
                     }
                     
+                    //nocturnal
+                    if (disguisedTarget.traitContainer.HasTrait("Nocturnal")) {
+                        debugLog = $"{debugLog}\n-Target is nocturnal";
+                        TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+                        if (timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                            debugLog = $"{debugLog}\n-Current time is Late night/after midnight";
+                            if (disguisedActor.homeSettlement != null && disguisedActor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Vampire_Hunt)) {
+                                CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(disguisedActor, disguisedTarget, disguisedTarget, CRIME_TYPE.Vampire);
+                                if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
+                                    debugLog = $"{debugLog}\n-Witness' home settlement considers vampirism as a crime";
+                                    Vampire vampire = disguisedTarget.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                                    if (vampire == null || !vampire.DoesCharacterKnowThisVampire(disguisedActor)) {
+                                        if (disguisedActor.traitContainer.HasTrait("Suspicious") || disguisedActor.moodComponent.moodState == MOOD_STATE.Critical) {
+                                            debugLog = $"{debugLog}\n-Witness is suspicious or in critical mood, will create assumption that {disguisedTarget.name} is a vampire";
+                                            disguisedActor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
+                                        } else if (disguisedActor.moodComponent.moodState == MOOD_STATE.Bad && !disguisedActor.relationshipContainer.IsFriendsWith(disguisedTarget)) {
+                                            debugLog = $"{debugLog}\n-Witness is in bad mood, and is not friend/close friend with {disguisedTarget.name}";
+                                            if (disguisedTarget.currentStructure is Dwelling dwelling && dwelling != disguisedTarget.homeStructure) {
+                                                debugLog = $"{debugLog}\n-{disguisedTarget.name} is at another dwelling {dwelling.name}. Rolling for chance to create assumption";
+                                                if (GameUtilities.RollChance(50, ref debugLog)) {
+                                                    debugLog = $"{debugLog}\n-Created new is vampire assumption";
+                                                    disguisedActor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);        
+                                                }
+                                            } else if (disguisedTarget.gridTileLocation != null && disguisedTarget.gridTileLocation.IsPartOfSettlement(disguisedActor.homeSettlement)) {
+                                                debugLog = $"{debugLog}\n-{disguisedTarget.name} is inside settlement at night. Rolling for chance to create assumption";
+                                                if (GameUtilities.RollChance(35, ref debugLog)) {
+                                                    debugLog = $"{debugLog}\n-Created new is vampire assumption";
+                                                    disguisedActor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);        
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
                     if (disguisedTarget.characterClass.className == "Vampire Lord") {
+                        debugLog = $"{debugLog}\n-Target is Vampire Lord";
                         //saw a vampire lord
                         Vampire vampire = disguisedTarget.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
                         Assert.IsNotNull(vampire, $"{disguisedActor.name} saw Vampire Lord {disguisedTarget.name}, but {disguisedTarget.name} does not have a Vampire trait!");
                         if (!vampire.DoesCharacterKnowThisVampire(disguisedActor)) {
+                            debugLog = $"{debugLog}\n-Will create is vampire assumption";
                             disguisedActor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
                         }
                     }
@@ -1122,10 +1176,8 @@ public class ReactionComponent : CharacterComponent {
                         }
 
                         if (actor.marker && disguisedTarget.isNormalCharacter) {
-                            if(disguisedActor.traitContainer.HasTrait("Suspicious") 
-                                || actor.moodComponent.moodState == MOOD_STATE.Critical 
-                                || (actor.moodComponent.moodState == MOOD_STATE.Bad && UnityEngine.Random.Range(0, 2) == 0)
-                                || UnityEngine.Random.Range(0, 100) < 15) {
+                            if(disguisedActor.traitContainer.HasTrait("Suspicious") || actor.moodComponent.moodState == MOOD_STATE.Critical || 
+                               (actor.moodComponent.moodState == MOOD_STATE.Bad && UnityEngine.Random.Range(0, 2) == 0) || UnityEngine.Random.Range(0, 100) < 15) {
                                 debugLog = $"{debugLog}\n-Owner is Suspicious or Critical Mood or Low Mood";
 
                                 _assumptionSuspects.Clear();
@@ -1146,6 +1198,20 @@ public class ReactionComponent : CharacterComponent {
                                     debugLog = debugLog + ("\n-Will create Murder assumption on " + chosenSuspect.name);
                                     actor.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, disguisedTarget, INTERACTION_TYPE.MURDER, REACTION_STATUS.WITNESSED);
                                 }
+                            }
+                        }
+
+                        if (disguisedTarget.traitContainer.HasTrait("Mangled") && disguisedActor.homeSettlement != null) {
+                            CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(disguisedActor, disguisedTarget, disguisedTarget, CRIME_TYPE.Werewolf);
+                            if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable && !disguisedActor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Werewolf_Hunt)) {
+                                debugLog = $"{debugLog}\n-Saw a mangled body and no active werewolf hunt is active yet and considers werewolf as a crime.";
+                                if (disguisedTarget.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(disguisedActor.homeSettlement)) {
+                                    debugLog = $"{debugLog}\n-Mangled body is near settlement, will roll for chance to create werewolf hunt event";
+                                    if (GameUtilities.RollChance(15, ref debugLog)) {
+                                        debugLog = $"{debugLog}\n-Created new werewolf hunt event!";
+                                        disguisedActor.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Werewolf_Hunt);
+                                    }
+                                }    
                             }
                         }
                     }
