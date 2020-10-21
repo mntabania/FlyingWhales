@@ -58,11 +58,15 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                         return true;
                     } else if (GameUtilities.RollChance(15, ref log) && character.faction.factionType.type != FACTION_TYPE.Vagrants){ //15
                         HexTile targetTile = GetNoStructurePlainHexInAllRegions();
-                        log += $"\n-Could not find valid castle in wild, and successfully rolled to build a new castle at {targetTile}";
-                        //Build vampire castle
-                        List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
-                        GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-                        return character.jobComponent.TriggerBuildVampireCastle(targetTile.GetCenterLocationGridTile(), out producedJob, chosenStructurePrefab.name);
+                        if (targetTile != null) {
+                            log += $"\n-Could not find valid castle in wild, and successfully rolled to build a new castle at {targetTile}";
+                            //Build vampire castle
+                            List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
+                            GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
+                            return character.jobComponent.TriggerBuildVampireCastle(targetTile.GetCenterLocationGridTile(), out producedJob, chosenStructurePrefab.name);    
+                        } else {
+                            log += $"\n-Could not find valid Area in wild to build a vampire castle.";
+                        }
                     }
                 }
             }
