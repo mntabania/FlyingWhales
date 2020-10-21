@@ -382,33 +382,33 @@ namespace Inner_Maps {
             }
             HexTile hexTile = tile.collectionOwner.partOfHextile?.hexTileOwner;
             string summary = tile.localPlace.ToString();
-            summary = $"{summary}\n<b>Tile Persistent ID:</b>{tile.persistentID}";
-            summary = $"{summary}\n<b>Is Tile Default:</b>{tile.isDefault.ToString()}";
-            summary = $"{summary}\n<b>Path Area:</b>{tile.graphNode?.Area.ToString()}";
-            summary = $"{summary}\n<b>Is Path Possible to Selected Character:</b>{isPathPossible.ToString()}";
+            // summary = $"{summary}\n<b>Tile Persistent ID:</b>{tile.persistentID}";
+            // summary = $"{summary}\n<b>Is Tile Default:</b>{tile.isDefault.ToString()}";
+            // summary = $"{summary}\n<b>Path Area:</b>{tile.graphNode?.Area.ToString()}";
+            // summary = $"{summary}\n<b>Is Path Possible to Selected Character:</b>{isPathPossible.ToString()}";
             summary = $"{summary}\n<b>HexTile:</b>{(hexTile?.ToString() ?? "None")}";
-            summary = $"{summary}\n<b>Local Location:</b>{tile.localLocation.ToString()}";
-            summary = $"{summary} <b>World Location:</b>{tile.worldLocation.ToString()}";
-            summary = $"{summary} <b>Centered World Location:</b>{tile.centeredWorldLocation.ToString()}";
+            // summary = $"{summary}\n<b>Local Location:</b>{tile.localLocation.ToString()}";
+            // summary = $"{summary} <b>World Location:</b>{tile.worldLocation.ToString()}";
+            // summary = $"{summary} <b>Centered World Location:</b>{tile.centeredWorldLocation.ToString()}";
             summary = $"{summary} <b>Ground Type:</b>{tile.groundType.ToString()}";
             summary = $"{summary} <b>Is Occupied:</b>{tile.isOccupied.ToString()}";
             summary = $"{summary} <b>Tile Type:</b>{tile.tileType.ToString()}";
             summary = $"{summary} <b>Tile State:</b>{tile.tileState.ToString()}";
             summary = $"{summary} <b>Current Tile Asset:</b>{(tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null")}";
-            summary = $"{summary}\nTile Traits: ";
-            if (tile.genericTileObject != null && tile.traits.Count > 0) {
-                summary = $"{summary}\n";
-                summary = tile.traits.Aggregate(summary, (current, t) => $"{current}|{t.name}|");
-            } else {
-                summary = $"{summary}None";
-            }
-            summary = $"{summary}\nTile Statuses: ";
-            if (tile.genericTileObject != null && tile.statuses.Count > 0) {
-                summary = $"{summary}\n";
-                summary = tile.statuses.Aggregate(summary, (current, t) => $"{current}|{t.name}|");
-            } else {
-                summary = $"{summary}None";
-            }
+            // summary = $"{summary}\nTile Traits: ";
+            // if (tile.genericTileObject != null && tile.traits.Count > 0) {
+            //     summary = $"{summary}\n";
+            //     summary = tile.traits.Aggregate(summary, (current, t) => $"{current}|{t.name}|");
+            // } else {
+            //     summary = $"{summary}None";
+            // }
+            // summary = $"{summary}\nTile Statuses: ";
+            // if (tile.genericTileObject != null && tile.statuses.Count > 0) {
+            //     summary = $"{summary}\n";
+            //     summary = tile.statuses.Aggregate(summary, (current, t) => $"{current}|{t.name}|");
+            // } else {
+            //     summary = $"{summary}None";
+            // }
 
             IPointOfInterest poi = tile.objHere ?? tile.genericTileObject;
             summary = $"{summary}\nContent: {poi}";
@@ -438,15 +438,14 @@ namespace Inner_Maps {
             }
             if (tile.structure != null) {
                 summary = $"{summary}\nStructure: {tile.structure},Is Interior: {tile.structure.isInterior.ToString()}";
-                summary = $"{summary}\nOccupied Hex Tiles: {tile.structure.occupiedHexTiles.Count.ToString()}";
+                // summary = $"{summary}\nOccupied Hex Tiles: {tile.structure.occupiedHexTiles.Count.ToString()}";
                 summary = $"{summary}\nSettlement: {tile.structure.settlementLocation?.name}";
                 summary = $"{summary}\nCharacters at {tile.structure}: ";
                 if (tile.structure.charactersHere.Count > 0) {
                     for (int i = 0; i < tile.structure.charactersHere.Count; i++) {
                         Character currCharacter = tile.structure.charactersHere[i];
                         if (character == currCharacter) {
-                            summary = $"{summary}\n<b>{currCharacter.name}</b>";
-                            summary = $"{summary}\n\t{GetCharacterHoverData(currCharacter)}\n";
+                            summary = $"{summary}\n{GetCharacterHoverData(currCharacter)}\n";
                         } else {
                             summary = $"{summary}{currCharacter.name},";
                         }
@@ -511,14 +510,14 @@ namespace Inner_Maps {
             summary =
                 $"{summary} <b>Actions Being Performed on this:</b>{character.numOfActionsBeingPerformedOnThis.ToString()}";
 
-            summary = $"{summary}\n\tDestination Tile: ";
+            summary = $"{summary}Destination Tile: ";
             summary = character.marker.destinationTile == null ? $"{summary}None" : $"{summary}{character.marker.destinationTile} at {character.marker.destinationTile.parentMap.region.name}";
             
             summary = $"{summary}\n\tCharacters that have reacted to me: ";
             summary = character.defaultCharacterTrait.charactersThatHaveReactedToThis.Count > 0 ? character.defaultCharacterTrait.charactersThatHaveReactedToThis.Aggregate(summary, (current, c) => $"{current}{c.name}, ") : $"{summary}None";
-            
-            summary = $"{summary}\n\tPersonal Job Queue: ";
-            summary = character.jobQueue.jobsInQueue.Count > 0 ? character.jobQueue.jobsInQueue.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
+            //
+            // summary = $"{summary}\n\tPersonal Job Queue: ";
+            // summary = character.jobQueue.jobsInQueue.Count > 0 ? character.jobQueue.jobsInQueue.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
             
             summary = $"{summary}\n\tHostiles in Range: ";
             summary = character.combatComponent.hostilesInRange.Count > 0 ? character.combatComponent.hostilesInRange.Aggregate(summary, (current, poi) => $"{current}{poi.name}, ") : $"{summary}None";

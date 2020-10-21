@@ -13,7 +13,7 @@ public class MakeLove : GoapAction {
     public MakeLove() : base(INTERACTION_TYPE.MAKE_LOVE) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Flirt_Icon;
-        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.EARLY_NIGHT, TIME_IN_WORDS.LATE_NIGHT, TIME_IN_WORDS.AFTER_MIDNIGHT, };
+        // validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.EARLY_NIGHT, TIME_IN_WORDS.LATE_NIGHT, TIME_IN_WORDS.AFTER_MIDNIGHT, };
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.LESSER_DEMON };
         isNotificationAnIntel = true;
@@ -22,7 +22,7 @@ public class MakeLove : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.INVITED, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetInvited);
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.INVITED, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), IsTargetInvited);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -41,6 +41,11 @@ public class MakeLove : GoapAction {
         int cost = UtilityScripts.Utilities.Rng.Next(90, 131);
         costLog += $" +{cost}(Initial)";
         Character targetCharacter = target as Character;
+        TIME_IN_WORDS timeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
+        if (actor.race.IsSapient() && timeOfDay != TIME_IN_WORDS.EARLY_NIGHT && timeOfDay != TIME_IN_WORDS.LATE_NIGHT && timeOfDay != TIME_IN_WORDS.AFTER_MIDNIGHT) {
+            cost += 2000;
+            costLog += " +2000(Actor is sapient and Time is not Early Night/Late Night/After Midnight)";
+        }
         Angry angry = actor.traitContainer.GetTraitOrStatus<Angry>("Angry");
         if (actor.traitContainer.HasTrait("Chaste") || (angry != null && angry.responsibleCharacters.Contains(targetCharacter))) {
             cost += 2000;
