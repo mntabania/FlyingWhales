@@ -36,7 +36,7 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Before_Start_Flee);
             AddTraitOverrideFunctionIdentifier(TraitManager.After_Exiting_Combat);
-            AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Ended_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
         }
 
         #region Overrides
@@ -158,14 +158,20 @@ namespace Traits {
                 }
             }
         }
-        public override void OnTickEnded(ITraitable traitable) {
-            base.OnTickEnded(traitable);
+        public override void OnTickStarted(ITraitable traitable) {
+            base.OnTickStarted(traitable);
             if (isInVampireBatForm && isTraversingUnwalkableAsBat) {
                 if (_owner.marker && _owner.gridTileLocation != null) {
                     LocationGridTile destinationTile = _owner.marker.GetDestinationTile();
                     if(destinationTile != null) {
                         if(PathfindingManager.Instance.HasPathEvenDiffRegion(_owner.gridTileLocation, destinationTile) && _owner.gridTileLocation.IsPassable()) {
-                            //SetIsTraversingUnwalkableAsBat(false);
+                            if(_owner.marker && _owner.marker.hasFleePath) {
+                                //If vampire is fleeing, do not revert to normal form here because the one that will handle it is the AfterExitingCombat
+                                //Just set isTraversingUnwalkableAsBat to false because it is only used when doing actions
+                                //And since the character is fleeing, it is no longer needed
+                                SetIsTraversingUnwalkableAsBat(false);
+                                return;
+                            }
                             _owner.interruptComponent.TriggerInterrupt(INTERRUPT.Revert_From_Bat, _owner);
                         }
                     }

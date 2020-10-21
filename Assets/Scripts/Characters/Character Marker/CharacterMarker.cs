@@ -665,6 +665,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     }
                 } else if (vampireTrait.isTraversingUnwalkableAsBat) {
                     //If character is still traversing unwalkable path do not do arrive action
+                    shouldRecomputePath = true;
                     return;
                 }
             }
