@@ -296,16 +296,15 @@ namespace Interrupts {
                 if (roll < 35) {
                     if(actor.isFactionLeader && !actor.faction.HasOwnedSettlement() && actor.currentRegion != null && !actor.currentRegion.IsRegionVillageCapacityReached()) {
                         log += $"\n-Find new village";
-                        StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.VAMPIRE_CASTLE, RESOURCE.STONE); //character.faction.factionType.mainResource
-
                         HexTile targetTile = actor.currentRegion.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
-                        //Build vampire castle
-                        List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
-                        GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-                        actor.jobComponent.TriggerFindNewVillage(targetTile.GetCenterLocationGridTile(), chosenStructurePrefab.name);
-
-                        actor.logComponent.PrintLogIfActive(log);
-                        return;
+                        if(targetTile != null) {
+                            StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, actor.faction.factionType.mainResource); //character.faction.factionType.mainResource
+                            List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
+                            GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
+                            actor.jobComponent.TriggerFindNewVillage(targetTile.GetCenterLocationGridTile(), chosenStructurePrefab.name);
+                            actor.logComponent.PrintLogIfActive(log);
+                            return;
+                        }
                     }
                 }
 
@@ -314,16 +313,15 @@ namespace Interrupts {
                 if (roll < 3) {
                     if (actor.isFactionLeader && !actor.faction.HasOwnedSettlement() && actor.currentRegion != null && !actor.currentRegion.IsRegionVillageCapacityReached()) {
                         log += $"\n-Find new village";
-                        StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.VAMPIRE_CASTLE, RESOURCE.STONE); //character.faction.factionType.mainResource
-
                         HexTile targetTile = actor.currentRegion.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
-                        //Build vampire castle
-                        List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
-                        GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-                        actor.jobComponent.TriggerFindNewVillage(targetTile.GetCenterLocationGridTile(), chosenStructurePrefab.name);
-
-                        actor.logComponent.PrintLogIfActive(log);
-                        return;
+                        if (targetTile != null) {
+                            StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, actor.faction.factionType.mainResource); //character.faction.factionType.mainResource
+                            List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
+                            GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
+                            actor.jobComponent.TriggerFindNewVillage(targetTile.GetCenterLocationGridTile(), chosenStructurePrefab.name);
+                            actor.logComponent.PrintLogIfActive(log);
+                            return;
+                        }
                     }
                 }
 
