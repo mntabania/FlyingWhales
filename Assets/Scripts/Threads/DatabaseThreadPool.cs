@@ -25,9 +25,9 @@ public class DatabaseThreadPool : BaseMonoBehaviour {
         functionsToBeRunInThread = new Queue<string>();
         // functionsToBeResolved = new Queue<string>();
 
-        newThread = new Thread(RunThread);
-        newThread.IsBackground = true;
-        newThread.Start();
+        // newThread = new Thread(RunThread);
+        // newThread.IsBackground = true;
+        // newThread.Start();
     }
     protected override void OnDestroy() {
         this.isRunning = false;
@@ -49,20 +49,20 @@ public class DatabaseThreadPool : BaseMonoBehaviour {
     }
 
     private void RunThread() {
-        while (isRunning) { // && !exitHandle.Wait(20)
-            if (this.functionsToBeRunInThread.Count > 0) {
-                //Thread.Sleep(20);
-                string newFunction = this.functionsToBeRunInThread.Dequeue();
-                if (newFunction != null) {
-                    lock (THREAD_LOCKER) {
-                        if (DatabaseManager.Instance != null && DatabaseManager.Instance.mainSQLDatabase != null) {
-                            DatabaseManager.Instance.mainSQLDatabase.ExecuteInsertCommand(newFunction);
-                        }
-                    }
-                    // this.functionsToBeResolved.Enqueue(newFunction);
-                }
-            }
-        }
+        // while (isRunning) { // && !exitHandle.Wait(20)
+        //     if (this.functionsToBeRunInThread.Count > 0) {
+        //         //Thread.Sleep(20);
+        //         string newFunction = this.functionsToBeRunInThread.Dequeue();
+        //         if (newFunction != null) {
+        //             lock (THREAD_LOCKER) {
+        //                 if (DatabaseManager.Instance != null && DatabaseManager.Instance.mainSQLDatabase != null) {
+        //                     DatabaseManager.Instance.mainSQLDatabase.ExecuteInsertCommand(newFunction);
+        //                 }
+        //             }
+        //             // this.functionsToBeResolved.Enqueue(newFunction);
+        //         }
+        //     }
+        // }
     }
     private void Stop() {
         ////exitHandle.Set();

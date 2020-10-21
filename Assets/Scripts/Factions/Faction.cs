@@ -571,13 +571,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return factions;
     }
-    public void AdjustRelationshipFor(Faction otherFaction, int adjustment) {
-        if (relationships.ContainsKey(otherFaction)) {
-            relationships[otherFaction].AdjustRelationshipStatus(adjustment);
-        } else {
-            Debug.LogWarning($"There is no key for {otherFaction.name} in {this.name}'s relationship dictionary");
-        }
-    }
     public bool SetRelationshipFor(Faction otherFaction, FACTION_RELATIONSHIP_STATUS status) {
         if (relationships.ContainsKey(otherFaction)) {
             return relationships[otherFaction].SetRelationshipStatus(status);

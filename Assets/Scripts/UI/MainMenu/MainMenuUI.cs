@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -93,13 +94,16 @@ public class MainMenuUI : MonoBehaviour {
         //Load latest save
         string latestFile = SaveManager.Instance.saveCurrentProgressManager.GetLatestSaveFile();
         if (!string.IsNullOrEmpty(latestFile)) {
-            SaveManager.Instance.saveCurrentProgressManager.SetCurrentSaveDataPath(latestFile);
-            MainMenuManager.Instance.StartGame();
+            if (SaveUtilities.IsSaveFileValid(latestFile)) {
+                SaveManager.Instance.saveCurrentProgressManager.SetCurrentSaveDataPath(latestFile);
+                MainMenuManager.Instance.StartGame();    
+            } else {
+                yesNoConfirmation.ShowYesNoConfirmation("Incompatible Save", "The latest save file is no longer compatible with the current game version. Do you want to delete it?", () => OnConfirmDelete(latestFile), showCover: true, layer:50);
+            }
         } else {
             //in case no latest file was found, doubt that this will happen.
             OnClickPlayGame();
         }
-        
     }
     public void OnClickSettings() {
         SettingsManager.Instance.OpenSettings();
@@ -111,6 +115,10 @@ public class MainMenuUI : MonoBehaviour {
         bool hasSaves = SaveManager.Instance.saveCurrentProgressManager.HasAnySaveFiles();
         continueButton.interactable = hasSaves;
         loadGameButton.interactable = hasSaves;
+    }
+    private void OnConfirmDelete(string path) {
+        File.Delete(path);
+        Messenger.Broadcast(Signals.SAVE_FILE_DELETED, path);
     }
 
     #region Load Game
