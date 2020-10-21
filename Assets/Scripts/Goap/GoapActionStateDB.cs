@@ -615,6 +615,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.DROP_RESTRAINED, new[]{
             new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.BUILD_NEW_VILLAGE, new[]{
+            new StateNameAndDuration(){ name = "Build Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(45) },
+        } },
     };
 }
 

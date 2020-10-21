@@ -10,6 +10,9 @@ namespace UtilityScripts {
             summary += "\nLocations Info:";
             for (int i = 0; i < settlements.Count; i++) {
                 NPCSettlement npcSettlement = settlements[i];
+                if (npcSettlement.locationType != LOCATION_TYPE.VILLAGE) {
+                    continue;
+                }
                 summary += $"\n<b>{npcSettlement.name}</b>";
                 summary += $"\nStorage: {npcSettlement.mainStorage?.name ?? "None"}. Prison: {npcSettlement.prison?.name ?? "None"}";
                 // if (npcSettlement.settlementType != null) {
