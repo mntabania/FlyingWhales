@@ -184,7 +184,7 @@ public class LocalizationManager : BaseMonoBehaviour {
 	
 	protected override void OnDestroy() {
 		base.OnDestroy();
-		Instance = null;
+		// Instance = null;
 		_localizedText?.Clear();
 		_localizedText = null;
 	}
