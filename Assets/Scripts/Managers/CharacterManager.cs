@@ -357,11 +357,11 @@ public class CharacterManager : BaseMonoBehaviour {
         newCharacter.SetIsLimboCharacter(true);
         newCharacter.Initialize();
         if (faction != null) {
-            if (!faction.JoinFaction(newCharacter, false)) {
-                FactionManager.Instance.vagrantFaction.JoinFaction(newCharacter, false);
+            if (!faction.JoinFaction(newCharacter, false, isInitial: true)) {
+                FactionManager.Instance.vagrantFaction.JoinFaction(newCharacter, false, isInitial: true);
             }
         } else {
-            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, false);
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, false, isInitial: true);
         }
         if(homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false);
@@ -381,11 +381,11 @@ public class CharacterManager : BaseMonoBehaviour {
         Character newCharacter = new Character(className, race, gender);
         newCharacter.Initialize();
         if (faction != null) {
-            if (!faction.JoinFaction(newCharacter)) {
-                FactionManager.Instance.vagrantFaction.JoinFaction(newCharacter);
+            if (!faction.JoinFaction(newCharacter, isInitial: true)) {
+                FactionManager.Instance.vagrantFaction.JoinFaction(newCharacter, isInitial: true);
             }
         } else {
-            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, isInitial: true);
         }
         if (homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
@@ -412,11 +412,11 @@ public class CharacterManager : BaseMonoBehaviour {
         Character newCharacter = new Character(className, race, gender, sexuality);
         newCharacter.Initialize();
         if (faction != null) {
-            if (!faction.JoinFaction(newCharacter)) {
-                FactionManager.Instance.vagrantFaction.JoinFaction(newCharacter);
+            if (!faction.JoinFaction(newCharacter, isInitial: true)) {
+                FactionManager.Instance.vagrantFaction.JoinFaction(newCharacter, isInitial: true);
             }
         } else {
-            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, isInitial: true);
         }
         if (homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
@@ -446,11 +446,11 @@ public class CharacterManager : BaseMonoBehaviour {
         
         newCharacter.Initialize();
         if (faction != null) {
-            if (!faction.JoinFaction(newCharacter)) {
-                FactionManager.Instance.vagrantFaction.JoinFaction(newCharacter);
+            if (!faction.JoinFaction(newCharacter, isInitial: true)) {
+                FactionManager.Instance.vagrantFaction.JoinFaction(newCharacter, isInitial: true);
             }
         } else {
-            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, isInitial: true);
         }
         if (homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
@@ -705,9 +705,9 @@ public class CharacterManager : BaseMonoBehaviour {
         Summon newCharacter = CreateNewSummonClassFromType(summonType, className);
         newCharacter.Initialize();
         if (faction != null) {
-            faction.JoinFaction(newCharacter);
+            faction.JoinFaction(newCharacter, isInitial: true);
         } else {
-            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, isInitial: true);
         }
         if (homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
@@ -734,9 +734,9 @@ public class CharacterManager : BaseMonoBehaviour {
         Summon newCharacter = CreateNewSummonClassFromType(summonType, className);
         newCharacter.Initialize();
         if (faction != null) {
-            faction.JoinFaction(newCharacter);
+            faction.JoinFaction(newCharacter, isInitial: true);
         } else {
-            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, isInitial: true);
         }
         if (homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);

@@ -122,7 +122,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     }
 
     #region Characters
-    public bool JoinFaction(Character character, bool broadcastSignal = true, bool bypassIdeologyChecking = false) {
+    public bool JoinFaction(Character character, bool broadcastSignal = true, bool bypassIdeologyChecking = false, bool isInitial = false) {
         if (bypassIdeologyChecking || ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
             Faction prevFaction = character.prevFaction;
             if (AddCharacter(character)) {
@@ -132,8 +132,10 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                     character.MigrateHomeStructureTo(null);
                 }
 
-                //Whenever a character joins a new faction, add Transitioning status, so that if his new faction is hostile with his previous faction he will not be attacked immediately by the people of his previous faction
-                character.traitContainer.AddTrait(character, "Transitioning");
+                if (!isInitial) {
+                    //Whenever a character joins a new faction, add Transitioning status, so that if his new faction is hostile with his previous faction he will not be attacked immediately by the people of his previous faction
+                    character.traitContainer.AddTrait(character, "Transitioning");
+                }
 
                 if (broadcastSignal) {
                     Messenger.Broadcast(Signals.CHARACTER_ADDED_TO_FACTION, character, this);
