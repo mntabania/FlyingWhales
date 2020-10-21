@@ -144,7 +144,7 @@ public class TakeResource : GoapAction {
                 takenResource = 10;
             }
         } else {
-            if (goapNode.associatedJob is GoapPlanJob job && job.targetPOI is TileObject tileObject) {
+            if (goapNode.associatedJob is GoapPlanJob job && job.targetPOI is TileObject tileObject && !job.jobType.IsFullnessRecovery()) {
                 TileObjectData data = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
                 TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);
                 takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);
@@ -175,7 +175,7 @@ public class TakeResource : GoapAction {
                 takenResource = 10;
             }
         } else {
-            if (goapNode.associatedJob is GoapPlanJob job && job.targetPOI is TileObject tileObject) {
+            if (goapNode.associatedJob is GoapPlanJob job && job.targetPOI is TileObject tileObject && !job.jobType.IsFullnessRecovery()) {
                 TileObjectData data = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
                 TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);
                 takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);
