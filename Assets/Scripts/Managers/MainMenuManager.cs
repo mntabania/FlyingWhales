@@ -40,6 +40,7 @@ public class MainMenuManager : MonoBehaviour {
         AudioManager.Instance.ResetAndPlayMainMenuMusic();
         AudioManager.Instance.TransitionToMainMenu();
         MainMenuUI.Instance.ShowMenuButtons();
+        MainMenuUI.Instance.ShowEarlyAccessAnnouncement();
         LevelLoaderManager.Instance.SetLoadingState(false);
     }
     #endregion

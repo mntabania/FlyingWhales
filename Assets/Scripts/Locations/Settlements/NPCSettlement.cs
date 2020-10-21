@@ -627,7 +627,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void OnAddResident(Character character) {
         eventManager.OnResidentAdded(character);
-        if(residents.Count == 1) {
+        if(residents.Count == 1 && locationType == LOCATION_TYPE.VILLAGE) {
             //First resident
             ChangeSettlementTypeAccordingTo(character);
         }
@@ -1330,9 +1330,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
     }
     public void ChangeSettlementTypeAccordingTo(Character character) {
-        if (character.race == RACE.HUMANS && settlementType.settlementType != SETTLEMENT_TYPE.Default_Human) {
+        if (character.race == RACE.HUMANS && (settlementType == null || settlementType.settlementType != SETTLEMENT_TYPE.Default_Human)) {
             SetSettlementType(SETTLEMENT_TYPE.Default_Human);
-        } else if (character.race == RACE.ELVES && settlementType.settlementType != SETTLEMENT_TYPE.Default_Elf) {
+        } else if (character.race == RACE.ELVES && (settlementType == null || settlementType.settlementType != SETTLEMENT_TYPE.Default_Elf)) {
             SetSettlementType(SETTLEMENT_TYPE.Default_Elf);
         }
     }

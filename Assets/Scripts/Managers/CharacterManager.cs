@@ -344,7 +344,7 @@ public class CharacterManager : BaseMonoBehaviour {
         CHARACTER_PRESUMED_DEAD_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(24); //72
         summonsPool = new[] { SUMMON_TYPE.Wolf, SUMMON_TYPE.Golem, SUMMON_TYPE.Incubus, SUMMON_TYPE.Succubus };
         combatModes = new COMBAT_MODE[] { COMBAT_MODE.Aggressive, COMBAT_MODE.Passive, COMBAT_MODE.Defend };
-        rumorWorthyActions = new List<string>() { Make_Love, Steal, Poison_Food, Place_Trap, Flirt, Transform_To_Wolf, Drink_Blood, Destroy_Action };
+        rumorWorthyActions = new List<string>() { Make_Love, Steal, Poison_Food, Place_Trap, Flirt, Transform_To_Wolf, Drink_Blood };
         ConstructEmotionData();
         ConstructCharacterBehaviours();
         Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
