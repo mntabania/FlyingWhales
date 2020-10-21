@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Newtonsoft.Json;
@@ -11,7 +12,7 @@ using UnityEngine.Assertions;
 public static class SaveUtilities {
 
 
-    public static string[] compatibleSaveFileVersions = new[] {
+    public static List<string> compatibleSaveFileVersions = new List<string>() {
         "0.33.28"
     };
     
@@ -137,6 +138,24 @@ public static class SaveUtilities {
             }
         }
         return string.Empty;
+    }
+    public static bool IsSaveFileValid(string path) {
+        string json = string.Empty;
+        using (ZipArchive zip = ZipFile.Open(path, ZipArchiveMode.Read)) {
+            foreach (ZipArchiveEntry entry in zip.Entries) {
+                if (entry.Name == "mainSave.sav") {
+                    using (StreamReader reader = new StreamReader(entry.Open())) {
+                        json = reader.ReadToEnd();
+                    }
+                    break;
+                }
+            }
+        }
+        if (!string.IsNullOrEmpty(json)) {
+            string saveFileVersion = GetGameVersionOfSaveFile(json);
+            return saveFileVersion == Application.version || compatibleSaveFileVersions.Contains(saveFileVersion);
+        }
+        return false;
     }
     #endregion
 }

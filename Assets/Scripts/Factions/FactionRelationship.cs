@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UtilityScripts;
@@ -23,16 +24,21 @@ public class FactionRelationship {
 	}
     #endregion
 
-    public FactionRelationship(Faction faction1, Faction faction2) {
+    public FactionRelationship(Faction faction1, Faction faction2, int relationshipStatInt = 0) {
         _faction1 = faction1;
         _faction2 = faction2;
-        _relationshipStatInt = 0; //Friendly
+        _relationshipStatInt = relationshipStatInt; //Default is Friendly
     }
 
     #region Relationship Status
     public bool SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS newStatus) {
 		if(newStatus == relationshipStatus) {
             return false;
+        }
+        if ((_faction1.factionType.type == FACTION_TYPE.Vagrants || _faction2.factionType.type == FACTION_TYPE.Vagrants) && newStatus == FACTION_RELATIONSHIP_STATUS.Hostile) {
+            if (faction1.factionType.type == FACTION_TYPE.Human_Empire || faction1.factionType.type == FACTION_TYPE.Elven_Kingdom || faction2.factionType.type == FACTION_TYPE.Human_Empire || faction2.factionType.type == FACTION_TYPE.Elven_Kingdom) {
+                throw new Exception($"Setting relationship between {_faction2.name} and {_faction1.name} to Hostile!");    
+            }
         }
         FACTION_RELATIONSHIP_STATUS oldStatus = relationshipStatus;
         //_relationshipStatus = newStatus;
@@ -42,14 +48,6 @@ public class FactionRelationship {
         //    currentWarCombatCount = 0;
         //}
         return true;
-    }
-    public void AdjustRelationshipStatus(int amount) {
-        int previousValue = _relationshipStatInt;
-        _relationshipStatInt += amount;
-        _relationshipStatInt = Mathf.Clamp(_relationshipStatInt, 1, CollectionUtilities.GetEnumValues<FACTION_RELATIONSHIP_STATUS>().Length - 1);
-        if (_relationshipStatInt != previousValue) {
-            Messenger.Broadcast(Signals.FACTION_RELATIONSHIP_CHANGED, this);
-        }
     }
     #endregion
 }
