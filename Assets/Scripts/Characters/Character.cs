@@ -2949,7 +2949,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (needsComponent.HasNeeds()) {
             needsComponent.PlanScheduledFullnessRecovery();
             //needsComponent.PlanScheduledTirednessRecovery(this);
-            needsComponent.PlanScheduledHappinessRecovery();
             needsComponent.PlanScheduledSecondHappinessRecovery();
         }
         if (isNormalCharacter) {
@@ -5649,7 +5648,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             needsComponent.SetTirednessForcedTick(0);
             needsComponent.SetFullnessForcedTick(0);
             needsComponent.SetHappinessForcedTick(0);
-            needsComponent.SetSecondHappinessForcedTick(0);
             if (!behaviourComponent.HasBehaviour(typeof(ZombieBehaviour))) {
                 behaviourComponent.AddBehaviourComponent(typeof(ZombieBehaviour));
             }
@@ -5682,7 +5680,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             needsComponent.SetTirednessForcedTick();
             needsComponent.SetFullnessForcedTick();
             needsComponent.SetHappinessForcedTick();
-            needsComponent.SetSecondHappinessForcedTick();
             needsComponent.SetHasCancelledSleepSchedule(false);
             needsComponent.ResetSleepTicks();
             ConstructDefaultActions();

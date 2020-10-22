@@ -36,6 +36,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     [Header("Other")]
     [SerializeField] private FactionEmblem factionEmblem;
     [SerializeField] private GameObject hoverObj;
+    [SerializeField] private GameObject leaderIcon;
 
     private System.Action onClickAction;
     private bool _isSubscribedToListeners;
@@ -52,11 +53,13 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     public void GeneratePortrait(PortraitSettings portraitSettings, bool makePixelPerfect = true) {
         _portraitSettings = portraitSettings;
         UpdatePortrait(makePixelPerfect);
+        UpdateLeaderIcon();
     }
     public void GeneratePortrait(Character character, bool makePixelPerfect = true) {
         _character = character;
         _portraitSettings = character.visuals.portraitSettings;
         UpdatePortrait(makePixelPerfect);
+        UpdateLeaderIcon();
     }
 
     private void UpdatePortrait(bool makePixelPerfect) {
@@ -244,6 +247,8 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
         Messenger.AddListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnCharacterSetAsFactionLeader);
         Messenger.AddListener<Character, Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
+        Messenger.AddListener<Faction, ILeader>(Signals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
+        Messenger.AddListener<NPCSettlement, Character>(Signals.ON_SETTLEMENT_RULER_REMOVED, OnSettlementRulerRemoved);
     }
     private void RemoveListeners() {
         _isSubscribedToListeners = false;
@@ -252,6 +257,8 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         Messenger.RemoveListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
         Messenger.RemoveListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnCharacterSetAsFactionLeader);
         Messenger.RemoveListener<Character, Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
+        Messenger.RemoveListener<Faction, ILeader>(Signals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
+        Messenger.RemoveListener<NPCSettlement, Character>(Signals.ON_SETTLEMENT_RULER_REMOVED, OnSettlementRulerRemoved);
     }
     #endregion
 
@@ -291,6 +298,29 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
     #endregion
 
+    #region Leader Icon
+    private void UpdateLeaderIcon() {
+        if (character != null) {
+            leaderIcon.SetActive(character.isFactionLeader || character.isSettlementRuler);    
+        } else {
+            leaderIcon.SetActive(false);
+        }
+    }
+    public void OnHoverLeaderIcon() {
+        string message = string.Empty;
+        if (character.isSettlementRuler) {
+            message = $"<b>{character.name}</b> is the Settlement Ruler of <b>{character.ruledSettlement.name}</b>\n";
+        } 
+        if (character.isFactionLeader) {
+            message += $"<b>{character.name}</b> is the Faction Leader of <b>{character.faction.name}</b>";
+        }
+        UIManager.Instance.ShowSmallInfo(message);
+    }
+    public void OnHoverExitLeaderIcon() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
+
     public void OnCharacterChangedRace(Character character) {
         if (_character != null && _character.id == character.id) {
             GeneratePortrait(character, isPixelPerfect);
@@ -311,6 +341,16 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         if (_character != null && _character == character) {
             // UpdateFrame();
             GeneratePortrait(character, isPixelPerfect);
+        }
+    }
+    private void OnFactionLeaderRemoved(Faction faction, ILeader newLeader) {
+        if (_character != null && _character == newLeader) {
+            UpdateLeaderIcon();
+        }
+    }
+    private void OnSettlementRulerRemoved(NPCSettlement settlement, Character previousLeader) {
+        if (previousLeader == character) {
+            UpdateLeaderIcon();
         }
     }
 }
