@@ -23561,23 +23561,20 @@ MonoBehaviour:
   m_text: 'Thank you for playing Ruinarch! This game is being developed by a core
     team of 3 from Manila, Philippines.
 
-    
 
-    We just recently launched the
-    game in Early Access to gather feedback from early adopters. The game is still
-    in active development so you are likely to encounter bugs and balance issues.
-    We will fix these issues as soon as possible.
+    We just recently launched the game
+    in Early Access to gather feedback from early adopters. The game is still in
+    active development so you are likely to encounter bugs and balance issues. We
+    will fix these issues as soon as possible.
 
-    
 
-    We would also highly
-    appreciate any feedback or suggestions you can provide as it will go a long way
-    towards the betterment of the game.
+    We would also highly appreciate
+    any feedback or suggestions you can provide as it will go a long way towards
+    the betterment of the game.
 
-    
 
-    Please kindly report problems
-    that you encounter by using the Bug Report function in the ESC panel of the game.
+    Please kindly report problems that you encounter
+    by using the Bug Report function in the ESC panel of the game.
 
 '
   m_isRightToLeft: 0
@@ -25561,7 +25558,7 @@ MonoBehaviour:
   worldWideItemGenerationSetting: {fileID: 11400000, guid: acfbe38be903c424aa99c568054c1231,
     type: 2}
   initialArtifactChoices: 010000000200000003000000
-  _disableLogs: 0
+  _disableLogs: 1
   useRandomGenerationForScenarioMaps: 0
 --- !u!1 &1654958421
 GameObject:
@@ -35491,6 +35488,16 @@ PrefabInstance:
     - target: {fileID: 6186091219942898610, guid: 39888b675721e8e488059363d0de61d1,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
+        type: 3}
+      propertyPath: _unlockAllSkills
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
+        type: 3}
+      propertyPath: _unlimitedCast
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
