@@ -22,9 +22,11 @@ namespace Traits {
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is Character character) {
-                character.AddPlayerAction(SPELL_TYPE.CULTIST_TRANSFORM);
+                //character.AddPlayerAction(SPELL_TYPE.CULTIST_TRANSFORM);
                 character.AddPlayerAction(SPELL_TYPE.CULTIST_POISON);
                 character.AddPlayerAction(SPELL_TYPE.CULTIST_BOOBY_TRAP);
+                character.AddPlayerAction(SPELL_TYPE.EVANGELIZE);
+                character.AddPlayerAction(SPELL_TYPE.SPREAD_RUMOR);
             }
         }
         #endregion
@@ -36,9 +38,11 @@ namespace Traits {
                 character.behaviourComponent.AddBehaviourComponent(typeof(CultistBehaviour));
                 character.SetIsAlliedWithPlayer(true);
                 character.AddItemAsInteresting("Cultist Kit");
-                character.AddPlayerAction(SPELL_TYPE.CULTIST_TRANSFORM);
+                //character.AddPlayerAction(SPELL_TYPE.CULTIST_TRANSFORM);
                 character.AddPlayerAction(SPELL_TYPE.CULTIST_POISON);
                 character.AddPlayerAction(SPELL_TYPE.CULTIST_BOOBY_TRAP);
+                character.AddPlayerAction(SPELL_TYPE.EVANGELIZE);
+                character.AddPlayerAction(SPELL_TYPE.SPREAD_RUMOR);
                 character.traitContainer.AddTrait(character, "Nocturnal");
 
                 //if necromancer is a cultist then make the undead faction friendly towards the player.
@@ -55,9 +59,11 @@ namespace Traits {
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(CultistBehaviour));
                 character.SetIsAlliedWithPlayer(false);
                 character.RemoveItemAsInteresting("Cultist Kit");
-                character.RemovePlayerAction(SPELL_TYPE.CULTIST_TRANSFORM);
+                //character.RemovePlayerAction(SPELL_TYPE.CULTIST_TRANSFORM);
                 character.RemovePlayerAction(SPELL_TYPE.CULTIST_POISON);
                 character.RemovePlayerAction(SPELL_TYPE.CULTIST_BOOBY_TRAP);
+                character.RemovePlayerAction(SPELL_TYPE.EVANGELIZE);
+                character.RemovePlayerAction(SPELL_TYPE.SPREAD_RUMOR);
             }
         }
         public override bool OnDeath(Character character) {
