@@ -19,7 +19,20 @@ namespace Crime_System {
         #region Virtuals
         public virtual CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target) {
             if(witness.traitContainer.HasTrait("Cultist") && actor.traitContainer.HasTrait("Cultist")) {
-                return CRIME_SEVERITY.None;
+                //cultists should not consider each others actions as crimes, unless they are directed towards each other.
+                //https://trello.com/c/5KPHa5gA/2587-prevent-cultists-from-reporting-each-other
+                if (target is TileObject targetTileObject) {
+                    if (!targetTileObject.IsOwnedBy(witness)) {
+                        return CRIME_SEVERITY.None;
+                    }
+                } else if (target is Character targetCharacter) {
+                    if (targetCharacter != witness) {
+                        return CRIME_SEVERITY.None;    
+                    }    
+                } else {
+                    return CRIME_SEVERITY.None;
+                }
+                
             }
             return CRIME_SEVERITY.Unapplicable;
         }

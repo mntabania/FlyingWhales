@@ -77,8 +77,7 @@ public class DarkRitual : GoapAction {
     
     #region State Effects
     public void AfterRitualSuccess(ActualGoapNode goapNode) {
-        Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, goapNode.poiTarget.worldPosition, Random.Range(2, 6), 
-            goapNode.poiTarget.gridTileLocation.parentMap);
+        Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, goapNode.poiTarget.worldPosition, Random.Range(2, 6), goapNode.poiTarget.gridTileLocation.parentMap);
         goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.CULTIST_KIT);
     }
     #endregion

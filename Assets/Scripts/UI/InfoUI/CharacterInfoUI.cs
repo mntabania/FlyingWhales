@@ -495,6 +495,7 @@ public class CharacterInfoUI : InfoUIBase {
         summary = $"{summary} {"Is Sociable: " + activeCharacter.isSociable.ToString()}";
         summary = $"{summary} {"Is Running: " + activeCharacter.movementComponent.isRunning.ToString()}";
         summary = $"{summary} {"POI State: " + activeCharacter.state.ToString()}";
+        summary = $"{summary} {"Personal Religion: " + activeCharacter.religionComponent.religion.ToString()}";
         summary = $"{summary}{"\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick))}";
         summary = $"{summary}{"\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick))}";
         summary = $"{summary}{"\nHappiness Time: " + (activeCharacter.needsComponent.happinessSecondForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.happinessSecondForcedTick))} - Satisfied Schedule Today ({activeCharacter.needsComponent.hasForcedSecondHappiness.ToString()})";

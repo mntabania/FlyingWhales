@@ -313,7 +313,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
             } else {
                 message = $"{message}{character.visuals.GetCharacterNameWithIconAndColor()} is the actor of this intel.\n";
             }
-            if (PlayerManager.Instance.player.currentActiveIntel.target is Character targetCharacter) {
+            //NOTE: Added checking for target character and actor to prevent duplicates.
+            if (PlayerManager.Instance.player.currentActiveIntel.target is Character targetCharacter && targetCharacter != PlayerManager.Instance.player.currentActiveIntel.actor) {
                 if (targetCharacter != character) {
                     if (character.relationshipContainer.HasRelationshipWith(targetCharacter)) {
                         string relationshipName = character.relationshipContainer.GetRelationshipNameWith(targetCharacter);
