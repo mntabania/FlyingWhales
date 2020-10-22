@@ -55,9 +55,16 @@ public class PlayGuitar : GoapAction {
         }
 
         if (target.gridTileLocation != null) {
-            if (target.gridTileLocation.structure != actor.homeStructure && actor.trapStructure.IsTrappedAndTrapStructureIsNot(target.gridTileLocation.structure)) {
-                cost += 2000;
-                costLog += " +2000(Guitar is not at home or trap structure)";    
+            if (actor.trapStructure.IsTrapped()) {
+                if (actor.trapStructure.IsTrapStructure(target.gridTileLocation.structure)) {
+                    cost += 2000;
+                    costLog += " +2000(Actor trapped and guitar is not at trap structure)";
+                }
+            } else {
+                if (target.gridTileLocation.structure != actor.homeStructure) {
+                    cost += 2000;
+                    costLog += " +2000(Actor is not trapped and guitar is not at home)";    
+                }
             }
         }
 
