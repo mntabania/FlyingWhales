@@ -614,7 +614,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	#region Feed
 	public bool TryTriggerFeed(Character targetCharacter) {
 		if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.FEED)) {
-			GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
+			GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.TARGET);
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, targetCharacter, owner);
 			job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
 			return owner.jobQueue.AddJobInQueue(job);

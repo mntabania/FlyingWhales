@@ -1068,3 +1068,6 @@ public enum OVERLAP_UI_TAG { Top, Bottom, }
 public enum SETTLEMENT_EVENT {
     Vampire_Hunt, Werewolf_Hunt
 }
+public enum RELIGION {
+    None, Demon_Worship, Divine_Worship, Nature_Worship
+}

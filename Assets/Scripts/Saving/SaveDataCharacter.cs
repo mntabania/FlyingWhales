@@ -112,6 +112,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataGatheringComponent gatheringComponent;
     public SaveDataTileObjectComponent tileObjectComponent;
     public SaveDataCrimeComponent crimeComponent;
+    public SaveDataReligionComponent religionComponent;
 
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
@@ -192,6 +193,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         gatheringComponent = new SaveDataGatheringComponent(); gatheringComponent.Save(data.gatheringComponent);
         tileObjectComponent = new SaveDataTileObjectComponent(); tileObjectComponent.Save(data.tileObjectComponent);
         crimeComponent = new SaveDataCrimeComponent(); crimeComponent.Save(data.crimeComponent);
+        religionComponent = new SaveDataReligionComponent(); religionComponent.Save(data.religionComponent);            
 
         if(data.currentJob != null && data.currentJob.jobType != JOB_TYPE.NONE) {
             currentJob = data.currentJob.persistentID;

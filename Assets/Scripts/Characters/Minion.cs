@@ -284,6 +284,7 @@ public class Minion {
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character.ForceCancelAllJobsTargetingPOI);
         Messenger.AddListener<Character>(Signals.CHARACTER_CAN_PERFORM_AGAIN, OnCharacterCanPerformAgain);
+        character.religionComponent.SubscribeListeners();
     }
     private void UnSubscribeListeners() {
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
@@ -292,6 +293,7 @@ public class Minion {
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character.ForceCancelAllJobsTargetingPOI);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_PERFORM_AGAIN, OnCharacterCanPerformAgain);
+        character.religionComponent.UnsubscribeListeners();
     }
     private void OnCharacterStartedState(Character characterThatStartedState, CharacterState state) {
         if (characterThatStartedState == character) {

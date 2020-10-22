@@ -137,6 +137,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public GatheringComponent gatheringComponent { get; private set; }
     public TileObjectComponent tileObjectComponent { get; private set; }
     public CrimeComponent crimeComponent { get; private set; }
+    public ReligionComponent religionComponent { get; private set; }
 
     #region getters / setters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
@@ -343,6 +344,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         gatheringComponent = new GatheringComponent(); gatheringComponent.SetOwner(this);
         tileObjectComponent = new TileObjectComponent(); tileObjectComponent.SetOwner(this);
         crimeComponent = new CrimeComponent(); crimeComponent.SetOwner(this);
+        religionComponent = new ReligionComponent(); religionComponent.SetOwner(this);
 
         needsComponent.ResetSleepTicks();
     }
@@ -428,6 +430,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         gatheringComponent = data.gatheringComponent.Load(); gatheringComponent.SetOwner(this);
         tileObjectComponent = data.tileObjectComponent.Load(); tileObjectComponent.SetOwner(this);
         crimeComponent = data.crimeComponent.Load(); crimeComponent.SetOwner(this);
+        religionComponent = data.religionComponent.Load(); religionComponent.SetOwner(this);
 
         if (data.hasMinion) {
             _minion = data.minion.Load(this);
@@ -448,12 +451,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         ConstructDefaultActions();
         OnUpdateRace();
         OnUpdateCharacterClass();
-
         moodComponent.SetMoodValue(50);
-
         if (needsComponent.HasNeeds()) {
             needsComponent.Initialize();    
         }
+        religionComponent.Initialize();
     }
     public void InitialCharacterPlacement(LocationGridTile tile) {
         if (needsComponent.HasNeeds()) {
@@ -464,14 +466,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         marker.InitialPlaceMarkerAt(tile); //since normal characters are already placed in their areas.
         //AddInitialAwareness();
         SubscribeToSignals();
-
-        //Removed this because, it is no longer used
-        //for (int i = 0; i < traitContainer.traits.Count; i++) {
-        //    traitContainer.traits[i].OnOwnerInitiallyPlaced(this);
-        //}
-        //for (int i = 0; i < traitContainer.statuses.Count; i++) {
-        //    traitContainer.statuses[i].OnOwnerInitiallyPlaced(this);
-        //}
     }
 
     #region Signals
@@ -515,6 +509,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         stateAwarenessComponent.SubscribeSignals();
         combatComponent.SubscribeToSignals();
         visuals.SubscribeListeners();
+        religionComponent.SubscribeListeners();
     }
     public virtual void UnsubscribeSignals() {
         if (!hasSubscribedToSignals) {
@@ -554,6 +549,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         stateAwarenessComponent.UnsubscribeSignals();
         combatComponent.UnsubscribeToSignals();
         visuals.UnsubscribeListeners();
+        religionComponent.UnsubscribeListeners();
     }
     #endregion
 
