@@ -35,7 +35,6 @@ public class Minion {
         character.needsComponent.SetFullnessForcedTick(0);
         character.needsComponent.SetTirednessForcedTick(0);
         character.needsComponent.SetHappinessForcedTick(0);
-        character.needsComponent.SetSecondHappinessForcedTick(0);
         if (character.behaviourComponent.defaultBehaviourSetName == CharacterManager.Default_Resident_Behaviour) {
             //only change default behaviour set of minion if it is currently using the default resident behaviour.
             character.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Minion_Behaviour);    

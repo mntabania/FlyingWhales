@@ -59,7 +59,6 @@ public class CharacterNeedsComponent : CharacterComponent {
     //Happiness
     public float happiness { get; private set; }
     public float happinessDecreaseRate { get; private set; }
-    public int happinessForcedTick { get; private set; }
     public int happinessSecondForcedTick { get; private set; }
     private float happinessLowerBound; //how low can this characters happiness go
     public const float HAPPINESS_DEFAULT = 100f;
@@ -87,12 +86,10 @@ public class CharacterNeedsComponent : CharacterComponent {
 
     public bool hasForcedFullness { get; set; }
     public bool hasForcedTiredness { get; set; }
-    public bool hasForcedHappiness { get; set; }
     public bool hasForcedSecondHappiness { get; set; }
     public TIME_IN_WORDS forcedFullnessRecoveryTimeInWords { get; private set; }
     public TIME_IN_WORDS forcedTirednessRecoveryTimeInWords { get; private set; }
-    public TIME_IN_WORDS forcedHappinessRecoveryTimeInWords { get; private set; }
-    public TIME_IN_WORDS forcedHappinessSecondRecoveryTimeInWords { get; private set; }
+    public TIME_IN_WORDS[] forcedHappinessRecoveryChoices { get; private set; }
 
     private bool _hasTriggeredThisHour;
 
@@ -104,12 +101,10 @@ public class CharacterNeedsComponent : CharacterComponent {
         SetHopeLowerBound(0f);
         SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
         SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
-        SetForcedHappinessRecoveryTimeInWords(TIME_IN_WORDS.MORNING);
-        SetForcedHappinessSecondRecoveryTimeInWords(GameUtilities.RollChance(50) ? TIME_IN_WORDS.AFTERNOON : TIME_IN_WORDS.EARLY_NIGHT);
+        SetForcedHappinessRecoveryTimeChoices(TIME_IN_WORDS.MORNING, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT);
         SetFullnessForcedTick();
         SetTirednessForcedTick();
         SetHappinessForcedTick();
-        SetSecondHappinessForcedTick();
         //UpdateBaseStaminaDecreaseRate();
     }
     public CharacterNeedsComponent(SaveDataCharacterNeedsComponent data) {
@@ -138,7 +133,6 @@ public class CharacterNeedsComponent : CharacterComponent {
 
         happiness = data.happiness;
         happinessDecreaseRate = data.happinessDecreaseRate;
-        happinessForcedTick = data.happinessForcedTick;
         happinessSecondForcedTick = data.happinessSecondForcedTick;
 
         stamina = data.stamina;
@@ -149,12 +143,10 @@ public class CharacterNeedsComponent : CharacterComponent {
 
         hasForcedFullness = data.hasForcedFullness;
         hasForcedTiredness = data.hasForcedTiredness;
-        hasForcedHappiness = data.hasForcedHappiness;
         hasForcedSecondHappiness = data.hasForcedSecondHappiness;
         forcedFullnessRecoveryTimeInWords = data.forcedFullnessRecoveryTimeInWords;
         forcedTirednessRecoveryTimeInWords = data.forcedTirednessRecoveryTimeInWords;
-        forcedHappinessRecoveryTimeInWords = data.forcedHappinessRecoveryTimeInWords;
-        forcedHappinessSecondRecoveryTimeInWords = data.forcedHappinessSecondRecoveryTimeInWords;
+        forcedHappinessRecoveryChoices = data.forcedHappinessRecoveryChoices;
     }
 
     #region Initialization
@@ -171,7 +163,6 @@ public class CharacterNeedsComponent : CharacterComponent {
     public void DailyGoapProcesses() {
         hasForcedFullness = false;
         hasForcedTiredness = false;
-        hasForcedHappiness = false;
         hasForcedSecondHappiness = false;
     }
     public void Initialize() {
@@ -799,22 +790,13 @@ public class CharacterNeedsComponent : CharacterComponent {
     //     }
     //     return false;
     // }
-    public void PlanScheduledHappinessRecovery() {
-        if (!hasForcedHappiness && happinessForcedTick != 0 && GameManager.Instance.currentTick >= happinessForcedTick && owner.canPerform && doNotGetBored <= 0) {
-            hasForcedHappiness = true;
-            if (!owner.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
-                PlanHappinessRecoveryActions();
-            }
-            SetHappinessForcedTick();
-        }
-    }
     public void PlanScheduledSecondHappinessRecovery() {
         if (!hasForcedSecondHappiness && happinessSecondForcedTick != 0 && GameManager.Instance.currentTick >= happinessSecondForcedTick && owner.canPerform && doNotGetBored <= 0) {
             hasForcedSecondHappiness = true;
             if (!owner.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
                 PlanHappinessRecoveryActions();
             }
-            SetSecondHappinessForcedTick();
+            SetHappinessForcedTick();
         }
     }
     public bool PlanHappinessRecoveryActions() {
@@ -869,49 +851,24 @@ public class CharacterNeedsComponent : CharacterComponent {
         return false;
     }
     public void SetHappinessForcedTick() {
-        if (!hasForcedHappiness) {
-            if (forcedHappinessRecoveryTimeInWords == GameManager.GetCurrentTimeInWordsOfTick()) {
-                //If the forced recovery job has not been done yet and the character is already on the time of day when it is supposed to be done,
-                //the tick that will be assigned will be ensured that the character will not miss it
-                //Example if the time of day is Afternoon, the supposed tick range for it is 145 - 204
-                //So if the current tick of the game is already in 160, the range must be adjusted to 161 - 204, so as to ensure that the character will hit it
-                //But if the current tick of the game is already in 204, it cannot be 204 - 204, so, it will revert back to 145 - 204 
-                int newTick = GameManager.GetRandomTickFromTimeInWords(forcedHappinessRecoveryTimeInWords, GameManager.Instance.Today().tick + 1);
-                TIME_IN_WORDS timeInWords = GameManager.GetTimeInWordsOfTick(newTick);
-                if(timeInWords != forcedHappinessRecoveryTimeInWords) {
-                    newTick = GameManager.GetRandomTickFromTimeInWords(forcedHappinessRecoveryTimeInWords);
-                }
-                happinessForcedTick = newTick;
-                return;
-            }
-        }
-        happinessForcedTick = GameManager.GetRandomTickFromTimeInWords(forcedHappinessRecoveryTimeInWords);
-    }
-    public void SetHappinessForcedTick(int tick) {
-        happinessForcedTick = tick;
-    }
-    public void SetForcedHappinessRecoveryTimeInWords(TIME_IN_WORDS timeInWords) {
-        forcedHappinessRecoveryTimeInWords = timeInWords;
-    }
-    public void SetSecondHappinessForcedTick() {
         //reroll happiness recovery range so character can schedule on another time of day
-        //NOTE: Only reroll time if character is not nocturnal, since nocturnal characters should have a constant time of day that they will schedule happiness recovery actions.
-        if (owner != null && !owner.traitContainer.HasTrait("Nocturnal")) {
-            SetForcedHappinessSecondRecoveryTimeInWords(GameUtilities.RollChance(50) ? TIME_IN_WORDS.AFTERNOON : TIME_IN_WORDS.EARLY_NIGHT);
-        }
+        TIME_IN_WORDS chosenTime = CollectionUtilities.GetRandomElement(forcedHappinessRecoveryChoices);
+        // if (owner != null && !owner.traitContainer.HasTrait("Nocturnal")) {
+        //     SetForcedHappinessSecondRecoveryTimeInWords(GameUtilities.RollChance(50) ? TIME_IN_WORDS.AFTERNOON : TIME_IN_WORDS.EARLY_NIGHT);
+        // }
        
-        int newTick = GameManager.GetRandomTickFromTimeInWords(forcedHappinessSecondRecoveryTimeInWords, GameManager.Instance.Today().tick + 1);
+        int newTick = GameManager.GetRandomTickFromTimeInWords(chosenTime, GameManager.Instance.Today().tick + 1);
         TIME_IN_WORDS timeInWords = GameManager.GetTimeInWordsOfTick(newTick);
-        if(timeInWords != forcedHappinessSecondRecoveryTimeInWords) {
-            newTick = GameManager.GetRandomTickFromTimeInWords(forcedHappinessSecondRecoveryTimeInWords);
+        if(timeInWords != chosenTime) {
+            newTick = GameManager.GetRandomTickFromTimeInWords(chosenTime);
         }
         happinessSecondForcedTick = newTick;
     }
-    public void SetSecondHappinessForcedTick(int tick) {
+    public void SetHappinessForcedTick(int tick) {
         happinessSecondForcedTick = tick;
     }
-    public void SetForcedHappinessSecondRecoveryTimeInWords(TIME_IN_WORDS timeInWords) {
-        forcedHappinessSecondRecoveryTimeInWords = timeInWords;
+    public void SetForcedHappinessRecoveryTimeChoices(params TIME_IN_WORDS[] timeInWords) {
+        forcedHappinessRecoveryChoices = timeInWords;
     }
     #endregion
 
@@ -1564,7 +1521,6 @@ public class SaveDataCharacterNeedsComponent : SaveData<CharacterNeedsComponent>
     //Happiness
     public float happiness;
     public float happinessDecreaseRate;
-    public int happinessForcedTick;
     public int happinessSecondForcedTick;
 
     //Stamina
@@ -1577,12 +1533,10 @@ public class SaveDataCharacterNeedsComponent : SaveData<CharacterNeedsComponent>
 
     public bool hasForcedFullness;
     public bool hasForcedTiredness;
-    public bool hasForcedHappiness;
     public bool hasForcedSecondHappiness;
     public TIME_IN_WORDS forcedFullnessRecoveryTimeInWords;
     public TIME_IN_WORDS forcedTirednessRecoveryTimeInWords;
-    public TIME_IN_WORDS forcedHappinessRecoveryTimeInWords;
-    public TIME_IN_WORDS forcedHappinessSecondRecoveryTimeInWords;
+    public TIME_IN_WORDS[] forcedHappinessRecoveryChoices;
 
     #region Overrides
     public override void Save(CharacterNeedsComponent data) {
@@ -1605,7 +1559,6 @@ public class SaveDataCharacterNeedsComponent : SaveData<CharacterNeedsComponent>
 
         happiness = data.happiness;
         happinessDecreaseRate = data.happinessDecreaseRate;
-        happinessForcedTick = data.happinessForcedTick;
         happinessSecondForcedTick = data.happinessSecondForcedTick;
 
         stamina = data.stamina;
@@ -1616,12 +1569,10 @@ public class SaveDataCharacterNeedsComponent : SaveData<CharacterNeedsComponent>
 
         hasForcedFullness = data.hasForcedFullness;
         hasForcedTiredness = data.hasForcedTiredness;
-        hasForcedHappiness = data.hasForcedHappiness;
         hasForcedSecondHappiness = data.hasForcedSecondHappiness;
         forcedFullnessRecoveryTimeInWords = data.forcedFullnessRecoveryTimeInWords;
         forcedTirednessRecoveryTimeInWords = data.forcedTirednessRecoveryTimeInWords;
-        forcedHappinessRecoveryTimeInWords = data.forcedHappinessRecoveryTimeInWords;
-        forcedHappinessSecondRecoveryTimeInWords = data.forcedHappinessSecondRecoveryTimeInWords;
+        forcedHappinessRecoveryChoices = data.forcedHappinessRecoveryChoices;
     }
 
     public override CharacterNeedsComponent Load() {

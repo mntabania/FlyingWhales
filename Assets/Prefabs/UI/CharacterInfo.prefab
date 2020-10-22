@@ -4292,6 +4292,7 @@ GameObject:
   - component: {fileID: 222474980280605076}
   - component: {fileID: 114784037522239488}
   - component: {fileID: 7482983092920739180}
+  - component: {fileID: 1592071266}
   m_Layer: 5
   m_Name: Mood
   m_TagString: Untagged
@@ -4373,6 +4374,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   KeepWindowInCanvas: 10
+--- !u!114 &1592071266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239099528323172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d9fc4ac6f426f4459d80b127eece198, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tag: 1
 --- !u!1 &1242322817380550
 GameObject:
   m_ObjectHideFlags: 0
@@ -4956,6 +4970,19 @@ MonoBehaviour:
       m_Calls: []
   isHovering: 0
   wasHoveringPreviousFrame: 0
+--- !u!114 &1592071263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1300351494739672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d9fc4ac6f426f4459d80b127eece198, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tag: 1
 --- !u!1 &1308075166252458
 GameObject:
   m_ObjectHideFlags: 0
@@ -5207,7 +5234,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &224579316077557694
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5703,6 +5730,7 @@ GameObject:
   - component: {fileID: 222143453244176728}
   - component: {fileID: 114705568798973608}
   - component: {fileID: 4711726627436992290}
+  - component: {fileID: 1592071264}
   m_Layer: 5
   m_Name: Relationships
   m_TagString: Untagged
@@ -5785,6 +5813,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   KeepWindowInCanvas: 10
+--- !u!114 &1592071264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1355692602888260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d9fc4ac6f426f4459d80b127eece198, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tag: 1
 --- !u!1 &1358984319848368
 GameObject:
   m_ObjectHideFlags: 0
@@ -9569,8 +9610,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 259.86993, y: -31.925018}
-  m_SizeDelta: {x: 237.62, y: 35.5}
+  m_AnchoredPosition: {x: 278.44, y: -31.925018}
+  m_SizeDelta: {x: 274.76495, y: 35.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &222178911441619200
 CanvasRenderer:
@@ -9599,7 +9640,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Aradgoland - Elven Craftsman
+  m_text: Aradgoland - Elven Craftsmanasdasd
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f8d165fc58518da4b871ca2551648bf9, type: 2}
   m_sharedMaterial: {fileID: 21189737157306288, guid: f8d165fc58518da4b871ca2551648bf9,
@@ -11120,6 +11161,7 @@ GameObject:
   - component: {fileID: 222666623559339528}
   - component: {fileID: 114738694898733654}
   - component: {fileID: 7885775411616430712}
+  - component: {fileID: 1592071265}
   m_Layer: 5
   m_Name: Info
   m_TagString: Untagged
@@ -11206,6 +11248,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   KeepWindowInCanvas: 10
+--- !u!114 &1592071265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1809511826865796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d9fc4ac6f426f4459d80b127eece198, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tag: 1
 --- !u!1 &1819635943643624
 GameObject:
   m_ObjectHideFlags: 0
@@ -16759,7 +16814,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6123710703160871193
 RectTransform:
   m_ObjectHideFlags: 0
@@ -17527,6 +17582,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 45c61da7357cd044d98b6f14f6818c8f, type: 3}
+--- !u!224 &224123032393650398 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 554021689976384631, guid: 45c61da7357cd044d98b6f14f6818c8f,
+    type: 3}
+  m_PrefabInstance: {fileID: 336777659841903785}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1300351494739672 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 335773082369436273, guid: 45c61da7357cd044d98b6f14f6818c8f,
+    type: 3}
+  m_PrefabInstance: {fileID: 336777659841903785}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &8102344463353875651 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8420946405646299242, guid: 45c61da7357cd044d98b6f14f6818c8f,
@@ -17539,18 +17606,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3287e4e9f3540b597715a9296ee5775, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1300351494739672 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 335773082369436273, guid: 45c61da7357cd044d98b6f14f6818c8f,
-    type: 3}
-  m_PrefabInstance: {fileID: 336777659841903785}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &224123032393650398 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 554021689976384631, guid: 45c61da7357cd044d98b6f14f6818c8f,
-    type: 3}
-  m_PrefabInstance: {fileID: 336777659841903785}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6512713030524152671
 PrefabInstance:
   m_ObjectHideFlags: 0

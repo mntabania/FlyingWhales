@@ -4,8 +4,8 @@ using UnityEngine;
 namespace Interrupts {
     public class ShedPelt : Interrupt {
         public ShedPelt() : base(INTERRUPT.Shed_Pelt) {
-            duration = 3;
-            doesStopCurrentAction = true;
+            duration = 0;
+            isSimulateneous = true;
             interruptIconString = GoapActionStateDB.Work_Icon;
             isIntel = true;
             logTags = new[] {LOG_TAG.Misc};

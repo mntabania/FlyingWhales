@@ -30,13 +30,14 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             canBeTriggered = true;
-            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED_SELF };
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED_SELF, INTERACTION_TYPE.DISPEL };
             awareCharacters = new List<Character>();
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Expected_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Before_Start_Flee);
             AddTraitOverrideFunctionIdentifier(TraitManager.After_Exiting_Combat);
             AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
         }
 
         #region Overrides
@@ -63,6 +64,7 @@ namespace Traits {
                 character.needsComponent.SetFullnessForcedTick();
                 character.needsComponent.AdjustDoNotGetTired(-1);
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(VampireBehaviour));
+                character.RevertFromVampireBatForm();
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
@@ -188,6 +190,16 @@ namespace Traits {
                 data = $"{data}|{character.name}|";
             }
             return data;
+        }
+        public override bool PerTickOwnerMovement() {
+            if (dislikedBeingVampire && GameUtilities.RollChance(1) && _owner.currentJob != null && _owner.currentJob.jobType.IsFullnessRecovery()) { //1
+                _owner.currentJob.ForceCancelJob(false, "Resisted Hunger");
+                _owner.traitContainer.AddTrait(_owner, "Ashamed");
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Vampire", "resist_hunger", null, LOG_TAG.Needs);
+                log.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddLogToDatabase();
+            }
+            return false;
         }
         #endregion
         

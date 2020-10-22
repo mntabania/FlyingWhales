@@ -1823,11 +1823,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         owner.jobQueue.AddJobInQueue(job);
         return true;
     }
-    public bool TryCreateReportCrimeJob(Character actor, IPointOfInterest target, CrimeData crimeData, ICrimeable crime) {
+    public void TryCreateReportCrimeJob(Character actor, IPointOfInterest target, CrimeData crimeData, ICrimeable crime) {
         if(owner.crimeComponent.CanCreateReportCrimeJob(actor, target, crimeData, crime)) {
             GoapPlanJob job = CreateReportCrimeJob(crimeData, crime);
             if (job != null) {
-                return owner.jobQueue.AddJobInQueue(job);
+	            owner.jobQueue.AddJobInQueue(job);
             }
         } else {
             Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing", null, LOG_TAG.Crimes);
@@ -1836,9 +1836,31 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             addLog.AddToFillers(null, crimeData.crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
             addLog.AddLogToDatabase();
             owner.crimeComponent.AddReportedCrime(crimeData);
+            if (owner.characterClass.className == "Shaman" && owner.relationshipContainer.IsFriendsWith(actor) && 
+                (crimeData.crimeType == CRIME_TYPE.Vampire || crimeData.crimeType == CRIME_TYPE.Werewolf)) {
+	            //Create Cure Magical Affliction job
+	            string traitToRemove = string.Empty;
+	            if (actor.traitContainer.HasTrait("Vampire")) {
+		            traitToRemove = "Vampire";
+	            } else if (actor.traitContainer.HasTrait("Lycanthrope")) {
+		            traitToRemove = "Lycanthrope";
+	            }
+	            if (!string.IsNullOrEmpty(traitToRemove)) {
+		            owner.jobComponent.TriggerCureMagicalAffliction(actor, traitToRemove);    
+	            }
+            }
         }
-        return false;
     }
+    /// <summary>
+    /// Try to create a job to report a crime.
+    /// </summary>
+    /// <param name="actor">The criminal</param>
+    /// <param name="target">The target of the crime</param>
+    /// <param name="crimeData">The crime data</param>
+    /// <param name="crime">The crime committed.</param>
+    /// <param name="producedJob">The created job.</param>
+    /// <returns>Whether or not a job was created. NOTE: This doesn't always guarantee that a
+    /// report job was created even if it returns true. It can sometimes create a Cure Magical Affliction Job.</returns>
     public bool TryCreateReportCrimeJob(Character actor, IPointOfInterest target, CrimeData crimeData, ICrimeable crime, out JobQueueItem producedJob) {
         producedJob = null;
         if (owner.crimeComponent.CanCreateReportCrimeJob(actor, target, crimeData, crime)) {
@@ -1853,6 +1875,20 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             addLog.AddToFillers(null, crimeData.crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
             addLog.AddLogToDatabase();
             owner.crimeComponent.AddReportedCrime(crimeData);
+            
+            //Try to Create Cure Magical Affliction job
+            if (owner.characterClass.className == "Shaman" && owner.relationshipContainer.IsFriendsWith(actor) && 
+                (crimeData.crimeType == CRIME_TYPE.Vampire || crimeData.crimeType == CRIME_TYPE.Werewolf)) {
+	            string traitToRemove = string.Empty;
+	            if (actor.traitContainer.HasTrait("Vampire")) {
+		            traitToRemove = "Vampire";
+	            } else if (actor.traitContainer.HasTrait("Lycanthrope")) {
+		            traitToRemove = "Lycanthrope";
+	            }
+	            if (!string.IsNullOrEmpty(traitToRemove)) {
+		            return TriggerCureMagicalAffliction(actor, traitToRemove, out producedJob);    
+	            }
+            }
         }
         return false;
     }
@@ -3024,6 +3060,41 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             return owner.jobQueue.AddJobInQueue(job);
         }
         return false;
+    }
+    #endregion
+
+    #region Cure Magical Affliction
+    public void TriggerCureMagicalAffliction(Character target, string traitName) {
+	    //NOTE: Added checking for limbo since behaviour might constantly try to target an unavailable character, causing him/her to be stuck
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.CURE_MAGICAL_AFFLICTION) && !target.isInLimbo) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CURE_MAGICAL_AFFLICTION, INTERACTION_TYPE.DISPEL, target, owner);
+		    job.AddOtherData(INTERACTION_TYPE.DISPEL, new object[]{ traitName });
+		    owner.jobQueue.AddJobInQueue(job);
+	    }
+    }
+    public bool TriggerCureMagicalAffliction(Character target, string traitName, out JobQueueItem producedJob) {
+	    //NOTE: Added checking for limbo since behaviour might constantly try to target an unavailable character, causing him/her to be stuck
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.CURE_MAGICAL_AFFLICTION) && !target.isInLimbo) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CURE_MAGICAL_AFFLICTION, INTERACTION_TYPE.DISPEL, target, owner);
+		    job.AddOtherData(INTERACTION_TYPE.DISPEL, new object[]{ traitName });
+		    producedJob = job;
+		    return true;
+	    }
+	    producedJob = null;
+	    return false;
+    }
+    #endregion
+
+    #region Werewolf Hunt for Prey
+    public bool TriggerHuntPreyJob(Character target) {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.LYCAN_HUNT_PREY)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.LYCAN_HUNT_PREY, 
+			    new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, owner);
+		    job.SetDoNotRecalculate(true);
+		    owner.jobQueue.AddJobInQueue(job);
+		    return true;
+	    }
+	    return false;
     }
     #endregion
 

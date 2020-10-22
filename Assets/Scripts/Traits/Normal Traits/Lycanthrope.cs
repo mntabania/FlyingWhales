@@ -22,8 +22,8 @@ namespace Traits {
             ticksDuration = 0;
             canBeTriggered = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
-            //effects = new List<TraitEffect>();
-            //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_TO_WOLF, INTERACTION_TYPE.REVERT_TO_NORMAL };
+            AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Cannot_Witness_Trait);
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DISPEL };
         }
 
         #region Overrides
@@ -41,6 +41,7 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             base.OnRemoveTrait(sourceCharacter, removedBy);
+            owner.RevertFromWerewolfForm();
             owner.lycanData.EraseThisDataWhenTraitIsRemoved(owner);
         }
         public override string GetTestingData(ITraitable traitable = null) {
@@ -51,16 +52,63 @@ namespace Traits {
             }
             return data;
         }
+        public override void OnSeePOIEvenCannotWitness(IPointOfInterest targetPOI, Character character) {
+            base.OnSeePOIEvenCannotWitness(targetPOI, character);
+            if (IsHuntingForPrey() && targetPOI is Character seenCharacter && !owner.combatComponent.IsInActualCombatWith(seenCharacter)) {
+                if (owner.relationshipContainer.IsFriendsWith(seenCharacter)) {
+                    CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(seenCharacter, owner, owner, CRIME_TYPE.Werewolf);
+                    if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
+                        JobQueueItem huntPreyJob = owner.jobQueue.GetJob(JOB_TYPE.LYCAN_HUNT_PREY);
+                        huntPreyJob?.ForceCancelJob(false, "avoiding discovery");
+                        owner.crimeComponent.FleeToAllVillagerInRangeThatConsidersCrimeTypeACrime(owner, CRIME_TYPE.Werewolf, "avoiding discovery");
+                    }
+                }
+            }
+        }
         public override bool PerTickOwnerMovement() {
             if (owner.lycanData.activeForm == owner.lycanData.lycanthropeForm || owner.lycanData.isInWerewolfForm) {
                 float roll = Random.Range(0f, 100f);
-                float chance = 2f;
+                float chance = 0.85f;
                 if (owner.currentRegion.GetTileObjectInRegionCount(TILE_OBJECT_TYPE.WEREWOLF_PELT) >= 3) {
                     chance = 0.5f;
                 }
                 if (roll < chance && owner.gridTileLocation.objHere == null) {
                     //spawn werewolf pelt
                     owner.interruptComponent.TriggerInterrupt(INTERRUPT.Shed_Pelt, owner);
+                }
+            }
+            if (owner.needsComponent.isStarving && owner.lycanData.isMaster && !IsHuntingForPrey() && GameUtilities.RollChance(1)) {
+                Character huntPreyTarget = GetHuntPreyTarget();
+                owner.jobComponent.TriggerHuntPreyJob(huntPreyTarget);
+            }
+            if (owner.lycanData.dislikesBeingLycan && GameUtilities.RollChance(1)) { //1
+                if (IsHuntingForPrey()) {
+                    ResistHunger();
+                }
+            }
+            return false;
+        }
+        private void ResistHunger() {
+            JobQueueItem huntPreyJob = owner.jobQueue.GetJob(JOB_TYPE.LYCAN_HUNT_PREY);
+            huntPreyJob?.ForceCancelJob(false, "Resisted Hunger");
+            
+            owner.traitContainer.AddTrait(owner, "Ashamed");
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Lycanthrope", "resist_hunger", null, LOG_TAG.Needs);
+            log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddLogToDatabase();
+            if (owner.lycanData.isInWerewolfForm) {
+                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Revert_From_Werewolf, owner);    
+            }
+        }
+        private bool IsHuntingForPrey() {
+            if (owner.currentJob is GoapPlanJob && owner.currentJob.jobType == JOB_TYPE.LYCAN_HUNT_PREY) {
+                return true;
+            } else if (owner.currentJob is CharacterStateJob && owner.stateComponent.currentState is CombatState combatState) {
+                if (combatState.currentClosestHostile != null) {
+                    CombatData combatData = owner.combatComponent.GetCombatData(combatState.currentClosestHostile);
+                    if (combatData != null && combatData.connectedAction != null && combatData.connectedAction.associatedJobType == JOB_TYPE.LYCAN_HUNT_PREY) {
+                        return true;
+                    }    
                 }
             }
             return false;
@@ -94,7 +142,13 @@ namespace Traits {
 
         public override string TriggerFlaw(Character character) {
             if (IsAlone()) {
-                DoTransform();
+                if (DoTriggerFlawTransform(out bool createdHuntPreyJob)) {
+                    if (!createdHuntPreyJob) {
+                        return string.Empty;
+                    }
+                } else {
+                    return "fail_no_target";
+                }
             } else {
                 //go to a random tile in the wilderness
                 //then check if the character is alone, if not pick another random tile,
@@ -110,7 +164,7 @@ namespace Traits {
         public void CheckIfAlone() {
             if (IsAlone()) {
                 //alone
-                DoTransform();
+                DoTriggerFlawTransform(out bool createdHuntPreyJob);
             } else {
                 //go to a different tile
                 LocationStructure wilderness = owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
@@ -120,10 +174,73 @@ namespace Traits {
             }
         }
         private bool IsAlone() {
-            return owner.marker.inVisionCharacters.Count == 0;
+            return !owner.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Werewolf);
+            // return owner.marker.inVisionCharacters.Count == 0;
         }
-        private void DoTransform() {
-            owner.lycanData.Transform(owner);
+        private bool DoTriggerFlawTransform(out bool createdHuntPreyJob) {
+            if (owner.lycanData.isMaster) {
+                Character huntPreyTarget = GetHuntPreyTarget();
+                if (huntPreyTarget != null) {
+                    owner.jobQueue.CancelAllJobs();
+                    createdHuntPreyJob = owner.jobComponent.TriggerHuntPreyJob(huntPreyTarget);
+                    if (createdHuntPreyJob) {
+                        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Werewolf, owner);
+                    }
+                    return true;
+                }
+                createdHuntPreyJob = false;
+                return false;
+            } else {
+                owner.lycanData.Transform(owner);
+                createdHuntPreyJob = true;
+                return true;
+            }
+        }
+
+        private Character GetHuntPreyTarget() { 
+            string log = $"{GameManager.Instance.TodayLogString()} {owner.name} will try to get hunt prey target"; 
+            WeightedDictionary<Character> choices = new WeightedDictionary<Character>();
+            
+            int animalCount = 0;
+            for (int i = 0; i < owner.currentRegion.charactersAtLocation.Count; i++) { 
+                Character otherCharacter = owner.currentRegion.charactersAtLocation[i]; 
+                if (otherCharacter != owner) { 
+                    int weight = 0; 
+                    if (otherCharacter is Animal) { 
+                        if (animalCount< 3) { 
+                            weight = 10; 
+                            animalCount++;    
+                        } else { 
+                            continue; //skip
+                        }
+                    } else if (otherCharacter.race.IsSapient()){ 
+                        if (otherCharacter.faction != owner.faction && !owner.isDead) { 
+                            if (!owner.relationshipContainer.IsFriendsWith(otherCharacter)) { 
+                                weight = 10;    
+                            }
+                        }
+                    }
+                    if (weight > 0) { 
+                        choices.AddElement(otherCharacter, weight);
+                    }
+                }
+            }
+             
+            log += $"\n{choices.GetWeightsSummary("Weights are:")}";
+		    if (choices.GetTotalOfWeights() > 0) {
+			    Character target = choices.PickRandomElementGivenWeights();
+			    log += $"\nChosen target is {target.name}";
+                owner.logComponent.PrintLogIfActive(log);
+                return target;
+            }
+            owner.logComponent.PrintLogIfActive(log);
+            return null;
+        }
+        public override string GetTriggerFlawEffectDescription(Character character, string key) {
+            if (owner.lycanData.isMaster) {
+                key = "flaw_effect_master";
+            }
+            return base.GetTriggerFlawEffectDescription(character, key);
         }
     }
 

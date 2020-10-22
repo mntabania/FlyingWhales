@@ -426,6 +426,7 @@ public static class Extensions {
                 priority = 1088;
                 break;
             case JOB_TYPE.BUILD_CAMP:
+            case JOB_TYPE.LYCAN_HUNT_PREY:
                 priority = 1087;
                 break;
             case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
@@ -465,6 +466,7 @@ public static class Extensions {
                 priority = 1009;
                 break;
             case JOB_TYPE.REMOVE_STATUS:
+            case JOB_TYPE.CURE_MAGICAL_AFFLICTION:
                 priority = 1008;
                 break;
             case JOB_TYPE.RECOVER_HP:
