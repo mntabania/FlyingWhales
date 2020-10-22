@@ -1,6 +1,11 @@
 {
   "items": [
     { "key": "flaw_effect", "value": "%00@ will turn into a wolf." },
-    { "key": "resist_hunger", "value": "%00@ resisted %85b hunger for flesh!" }
+    { "key": "resist_hunger", "value": "%00@ resisted %85b hunger for flesh!" },
+    { "key": "fail_no_target", "value": "%00@ could not find prey to hunt!" },
+    {
+      "key": "flaw_effect_master",
+      "value": "%00@ will turn into a Werewolf and hunt for prey."
+    }
   ]
 }

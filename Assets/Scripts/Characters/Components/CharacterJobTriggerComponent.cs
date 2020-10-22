@@ -3085,6 +3085,19 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     #endregion
 
+    #region Werewolf Hunt for Prey
+    public bool TriggerHuntPreyJob(Character target) {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.LYCAN_HUNT_PREY)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.LYCAN_HUNT_PREY, 
+			    new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, owner);
+		    job.SetDoNotRecalculate(true);
+		    owner.jobQueue.AddJobInQueue(job);
+		    return true;
+	    }
+	    return false;
+    }
+    #endregion
+
     #region Loading
     public void LoadReferences(SaveDataCharacterJobTriggerComponent data) {
         //Currently N/A

@@ -426,6 +426,7 @@ public static class Extensions {
                 priority = 1088;
                 break;
             case JOB_TYPE.BUILD_CAMP:
+            case JOB_TYPE.LYCAN_HUNT_PREY:
                 priority = 1087;
                 break;
             case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
