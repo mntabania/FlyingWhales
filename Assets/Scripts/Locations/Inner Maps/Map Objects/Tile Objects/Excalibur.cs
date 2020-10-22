@@ -65,7 +65,7 @@ public class Excalibur : TileObject {
         AddFinishedCharacter(inspector);
         if (lockedState == Locked_State.Locked) {
             if (inspector.traitContainer.HasTrait("Blessed") && 
-                inspector.traitContainer.HasTrait("Evil", "Treacherous") == false) {
+                inspector.traitContainer.HasTrait("Evil", "Treacherous", "Cultist") == false) {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Tile Object", "Excalibur", "on_inspect_success", providedTags: LOG_TAG.Life_Changes);
                 log.AddToFillers(inspector, inspector.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToDatabase();

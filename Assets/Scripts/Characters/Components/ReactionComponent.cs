@@ -539,9 +539,10 @@ public class ReactionComponent : CharacterComponent {
         }
         bool isHostile = false;
         if (disguisedTarget != targetCharacter && targetCharacter is SeducerSummon && !disguisedActor.isNormalCharacter) {
-            isHostile = disguisedActor.IsHostileWith(targetCharacter);
+            //If actor is not a villager and the one that he saw is a Succubus/Incubus, check hostility with the Succubus/Incubus, not the disguised succubus so that the monsters will still not attack the disguised succubus even if he is disguised
+            isHostile = disguisedActor.IsHostileWith(targetCharacter) && disguisedActor.IsLycanHostileWith(targetCharacter);
         } else {
-            isHostile = disguisedActor.IsHostileWith(disguisedTarget);
+            isHostile = disguisedActor.IsHostileWith(disguisedTarget) && disguisedActor.IsLycanHostileWith(disguisedTarget);
         }
 
         //TODO: Check if demooder and disabler can be set as cannot witness to achieve the same effect

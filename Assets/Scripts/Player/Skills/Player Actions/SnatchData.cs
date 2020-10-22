@@ -12,7 +12,7 @@ public class SnatchData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.SNATCH;
     public override string name => "Snatch";
     public override bool canBeCastOnBlessed => true;
-    public override string description => $"This Action can be used to instruct an available Skeleton to abduct a target Villager or Monster. If successful, it will then bring it to an appropriate demonic structure - Defiler or Prison for Villagers, Kennel for Monsters.";
+    public override string description => $"This Action can be used to instruct an available Skeleton or Cultist to abduct a target Villager or Monster. If successful, it will then bring it to an appropriate demonic structure - Defiler or Prison for Villagers, Kennel for Monsters.";
     public SnatchData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
@@ -42,8 +42,8 @@ public class SnatchData : PlayerAction {
         if (obj is LocationStructure structure) {
             UIManager.Instance.HideObjectPicker();
             //get an available skeleton then add job to skeleton to drop character near chosen structure
-            Character availableSkeleton = GetNearestAvailableSkeleton(targetCharacter);
-            availableSkeleton.jobQueue.CancelAllJobs();
+            Character availableSkeletonOrCultist = GetNearestAvailableSkeletonOrCultist(targetCharacter);
+            availableSkeletonOrCultist.jobQueue.CancelAllJobs();
             
             List<LocationGridTile> choices;
             if (structure is Kennel) {
@@ -53,9 +53,9 @@ public class SnatchData : PlayerAction {
                 choices = structure.passableTiles.Where(t => !t.structure.IsTilePartOfARoom(t, out var room)).ToList();    
             }
             if (choices.Count > 0) {
-                availableSkeleton.jobComponent.CreateSnatchJob(targetCharacter, CollectionUtilities.GetRandomElement(choices), structure);
+                availableSkeletonOrCultist.jobComponent.CreateSnatchJob(targetCharacter, CollectionUtilities.GetRandomElement(choices), structure);
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", "Snatch", "instructed", null, LOG_TAG.Player);
-                log.AddToFillers(availableSkeleton, availableSkeleton.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(availableSkeletonOrCultist, availableSkeletonOrCultist.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddToFillers(structure, structure.nameplateName, LOG_IDENTIFIER.LANDMARK_1);
                 log.AddLogToDatabase();
@@ -68,8 +68,15 @@ public class SnatchData : PlayerAction {
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         bool canPerform = CanPerformAbility(); //NOTE: Did not use base since this action can be used on blessed characters
         if (canPerform) {
-            if (!PlayerManager.Instance.player.playerFaction.characters.Any(CanDoSnatch)) {
-                return false;
+
+            if(PlayerSkillManager.Instance.selectedArchetype == PLAYER_ARCHETYPE.Lich) {
+                if (!CharacterManager.Instance.allCharacters.Any(CanDoSnatch)) {
+                    return false;
+                }
+            } else {
+                if (!PlayerManager.Instance.player.playerFaction.characters.Any(CanDoSnatch)) {
+                    return false;
+                }
             }
             if (targetCharacter is Summon) {
                 return PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.KENNEL);
@@ -117,22 +124,46 @@ public class SnatchData : PlayerAction {
     }
     #endregion
 
-    private Character GetNearestAvailableSkeleton(Character targetCharacter) {
+    private Character GetNearestAvailableSkeletonOrCultist(Character targetCharacter) {
         Character nearest = null;
-        float nearestDist = 9999f;
-        for (int i = 0; i < PlayerManager.Instance.player.playerFaction.characters.Count; i++) {
-            Character snatcher = PlayerManager.Instance.player.playerFaction.characters[i];
-            if (CanDoSnatch(snatcher)) {
-                float dist = Vector2.Distance(snatcher.worldPosition, targetCharacter.worldPosition);
-                if (dist < nearestDist) {
-                    nearest = snatcher;
-                    nearestDist = dist;
+        float nearestDist = 0f;
+        if(PlayerSkillManager.Instance.selectedArchetype == PLAYER_ARCHETYPE.Lich) {
+            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                Character snatcher = CharacterManager.Instance.allCharacters[i];
+                if (CanDoSnatch(snatcher)) {
+                    float dist = Vector2.Distance(snatcher.worldPosition, targetCharacter.worldPosition);
+                    if (nearest == null || dist < nearestDist) {
+                        nearest = snatcher;
+                        nearestDist = dist;
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < PlayerManager.Instance.player.playerFaction.characters.Count; i++) {
+                Character snatcher = PlayerManager.Instance.player.playerFaction.characters[i];
+                if (CanDoSnatch(snatcher)) {
+                    float dist = Vector2.Distance(snatcher.worldPosition, targetCharacter.worldPosition);
+                    if (nearest == null || dist < nearestDist) {
+                        nearest = snatcher;
+                        nearestDist = dist;
+                    }
                 }
             }
         }
         return nearest;
     }
     private static bool CanDoSnatch(Character character) {
-        return character.behaviourComponent.HasBehaviour(typeof(SnatcherBehaviour)) && !character.behaviourComponent.isCurrentlySnatching && character.canPerform;
+        //Snatch is no longer exclusive to those characters that has SnatcherBehaviour
+        //Cultists can no snatch if archetype is Lich
+        if (character.isDead) {
+            return false;
+        }
+        if (character.traitContainer.HasTrait("Cultist", "Snatcher")) {
+            return !character.behaviourComponent.isCurrentlySnatching && character.canPerform;
+        } 
+        //else if (character.behaviourComponent.HasBehaviour(typeof(SnatcherBehaviour))) {
+        //    return !character.behaviourComponent.isCurrentlySnatching && character.canPerform;
+        //}
+        return false;
     }
 }

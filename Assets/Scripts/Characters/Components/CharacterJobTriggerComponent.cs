@@ -2866,7 +2866,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Evangelize
-    private bool IsValidEvangelizeTarget(Character character) {
+    public bool IsValidEvangelizeTarget(Character character) {
 	    AWARENESS_STATE awarenessState = owner.relationshipContainer.GetAwarenessState(character);
 	    return character.isNormalCharacter && !character.traitContainer.HasTrait("Travelling") && 
 	           character.traitContainer.HasTrait("Cultist") == false && owner.HasSameHomeAs(character) &&
@@ -2920,6 +2920,22 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    
 	    producedJob = job;
 	    return true;
+    }
+    public bool TryCreateEvangelizeJob(Character target) {
+        //create predetermined plan and job
+        if(!owner.jobQueue.HasJob(JOB_TYPE.EVANGELIZE, target)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EVANGELIZE, INTERACTION_TYPE.EVANGELIZE, target, owner);
+            List<JobNode> jobNodes = new List<JobNode>();
+            ActualGoapNode evangelizeNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.EVANGELIZE], owner, target, null, 0);
+            jobNodes.Add(new SingleJobNode(evangelizeNode));
+
+            GoapPlan goapPlan = new GoapPlan(jobNodes, target);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            return owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
     }
     #endregion
 

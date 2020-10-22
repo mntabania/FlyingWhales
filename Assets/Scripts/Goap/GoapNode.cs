@@ -565,6 +565,10 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if(job.jobType == JOB_TYPE.PLACE_TRAP || job.jobType == JOB_TYPE.POISON_FOOD) {
             return true;
         }
+        if(job.jobType == JOB_TYPE.SNATCH && (action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER || action.goapType == INTERACTION_TYPE.ASSAULT)) {
+            //Snatch assault or knockout jobs must be stealth
+            return true;
+        }
         return false;
     }
 
@@ -993,7 +997,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     #region Stealth
     private bool IsInvalidStealth() {
         //If action is stealth and there is a character in vision that can witness and considers the action as a crime, then return false, this means that the actor must not do the action because there are witnesses
-        if (poiTarget != actor && isStealth) {
+        //Only do this if the actor is a Villager, otherwise, it does not make sense for monsters to be stealthy
+        if (poiTarget != actor && isStealth && actor.isNormalCharacter) {
             if (actor.marker && actor.marker.IsPOIInVision(poiTarget) && !actor.marker.CanDoStealthCrimeToTarget(poiTarget, crimeType)) {
                 return true;
             }

@@ -31,7 +31,7 @@ public class TriggerFlawData : PlayerAction {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character character) {
-            if (!character.isNormalCharacter) {
+            if (!character.isNormalCharacter || character.traitContainer.HasTrait("Cultist")) {
                 return false;
             }
         }

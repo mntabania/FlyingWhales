@@ -261,6 +261,10 @@ public class Assault : GoapAction {
         return false;
     }
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
+        if(crime.associatedJobType == JOB_TYPE.SNATCH) {
+            //Crime is Assault if the job is Snatch because Snatch jobs are supposed to be Stealth, and Stealth only works if the action is a crime
+            return CRIME_TYPE.Assault;
+        }
         if(target is Character targetCharacter) {
             if (targetCharacter.race.IsSapient()) {
                 if (crime.associatedJobType != JOB_TYPE.APPREHEND && crime.associatedJobType != JOB_TYPE.RESTRAIN) {

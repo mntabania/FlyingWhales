@@ -5075,6 +5075,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //     return faction.IsHostileWith(otherCharacter.faction);
         // }
     }
+    public bool IsLycanHostileWith(Character targetCharacter) {
+        if((isLycanthrope && targetCharacter.race == RACE.WOLF) || (targetCharacter.isLycanthrope && race == RACE.WOLF)) {
+            return false;
+        }
+        return true;
+    }
     #endregion
 
     #region Pathfinding
