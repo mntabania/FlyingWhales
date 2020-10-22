@@ -301,6 +301,14 @@ namespace Locations.Settlements {
             }
             return null;
         }
+        public bool AreAllResidentsVagrantOrFactionless() {
+            for (int i = 0; i < residents.Count; i++) {
+                if (!residents[i].isVagrantOrFactionless) {
+                    return false;
+                }
+            }
+            return true;
+        }
         #endregion
 
         #region Faction

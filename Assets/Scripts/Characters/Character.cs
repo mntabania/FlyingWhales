@@ -5056,12 +5056,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
         if(faction != otherCharacter.faction){
-            if (faction != null && faction.isMajorOrVagrant && otherCharacter.traitContainer.HasTrait("Transitioning")) {
-                //Those characters that are "transitioning" (this means that their faction will be changed most likely to a hostile one), will not be considered hostile by villagers/vagrants during the transition period
+            if (faction != null && faction.isMajorOrVagrant && otherCharacter.traitContainer.HasTrait("Transitioning") && otherCharacter.faction != null && otherCharacter.faction != FactionManager.Instance.neutralFaction) {
+                //Non transitioning characters will not attack transitioning characters as long as the transitioning character is not from monster faction, if they are, non transitioning characters will still attack
                 return false;
             }
             if (otherCharacter.faction != null && otherCharacter.faction.isMajorOrVagrant && traitContainer.HasTrait("Transitioning")) {
-                //Those characters that are "transitioning" (this means that their faction will be changed most likely to a hostile one), will not be considered hostile by villagers/vagrants during the transition period
+                //Transitioning characters will not attack vagrant characters or characters that are in a hostile major faction, but will still attack character from monster/player/undead/etc faction
                 return false;
             }
         }

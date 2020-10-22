@@ -78,6 +78,15 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                         }    
                     }
                 }
+                if(dwellingCount <= 0) {
+                    log += $"\n-Settlement has no dwelling yet, always build dwelling first";
+                    //place dwelling blueprint
+                    StructureSetting structureToPlace = new StructureSetting(STRUCTURE_TYPE.DWELLING, character.faction.factionType.mainResource);
+                    if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
+                        log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
+                        return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, out producedJob);
+                    }
+                }
                 log += $"\n-Check chance to build a missing facility.";
                 int facilityCount = character.homeSettlement.GetFacilityCount();
                 if (facilityCount < character.homeSettlement.settlementType.maxFacilities) {
