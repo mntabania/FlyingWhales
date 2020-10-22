@@ -70,30 +70,50 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                     log += $"\n-{character.name} will try to trigger Undermine";
                     int roll = UnityEngine.Random.Range(0, 100);
                     log += $"\n-Undermine Roll: " + roll;
-                    if (roll < 4) {
+                    int chance = 4;
+                    if (character.traitContainer.HasTrait("Treacherous")) {
+                        chance += 4;
+                    }
+                    if (roll < chance) {
                         List<Character> enemies = character.relationshipContainer.GetEnemyCharacters();
                         if (enemies.Count > 0) {
                             Character chosenEnemy = CollectionUtilities.GetRandomElement(enemies);
-                            if(UnityEngine.Random.Range(0, 2) == 0) {
-                                //Place Trap
-                                character.jobComponent.CreatePlaceTrapJob(chosenEnemy, out producedJob);
-                                return true;
-                            } else {
-                                //Poison Food
-                                character.jobComponent.CreatePoisonFoodJob(chosenEnemy, out producedJob);
-                                return true;
+                            if(chosenEnemy.homeSettlement != null) {
+                                if (chosenEnemy.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Vampire_Hunt)) {
+                                    Character spreadRumorOrNegativeInfoTarget = character.rumorComponent.GetRandomSpreadRumorOrNegativeInfoTarget(chosenEnemy);
+                                    if (spreadRumorOrNegativeInfoTarget != null) {
+                                        Rumor rumor = character.rumorComponent.CreateNewRumor(chosenEnemy, chosenEnemy, INTERACTION_TYPE.IS_VAMPIRE);
+                                        if (rumor != null) {
+                                            if(character.jobComponent.CreateSpreadRumorJob(spreadRumorOrNegativeInfoTarget, rumor, out producedJob)) {
+                                                return true;
+                                            }
+                                        }
+                                    }
+                                }
+                                if (chosenEnemy.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Werewolf_Hunt)) {
+                                    Character spreadRumorOrNegativeInfoTarget = character.rumorComponent.GetRandomSpreadRumorOrNegativeInfoTarget(chosenEnemy);
+                                    if (spreadRumorOrNegativeInfoTarget != null) {
+                                        Rumor rumor = character.rumorComponent.CreateNewRumor(chosenEnemy, chosenEnemy, INTERACTION_TYPE.IS_WEREWOLF);
+                                        if (rumor != null) {
+                                            if (character.jobComponent.CreateSpreadRumorJob(spreadRumorOrNegativeInfoTarget, rumor, out producedJob)) {
+                                                return true;
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                            //if (chosenEnemy.homeRegion.GetFirstTileObjectOnTheFloorOwnedBy(chosenEnemy) != null) {
-                            //    if (character.jobComponent.CreateUndermineJob(chosenEnemy, "normal")) {
-                            //        log += $"\n-{character.name} created undermine job for " + chosenEnemy;
-                            //        return true;
-                            //    }
-                            //    else {
-                            //        log += $"\n-{character.name} could not create undermine job for " + chosenEnemy;
-                            //    }
-                            //} else {
-                            //    log += $"\n-{chosenEnemy.name} does not have an owned item on the floor ";
-                            //}
+                            if (chosenEnemy.HasOwnedItemThatIsOnGroundInSameRegion()) {
+                                if (GameUtilities.RollChance(50)) {
+                                    //Place Trap
+                                    if (character.jobComponent.CreatePlaceTrapJob(chosenEnemy, out producedJob)) {
+                                        return true;
+                                    }
+                                }
+                                //Poison Food
+                                if (character.jobComponent.CreatePoisonFoodJob(chosenEnemy, out producedJob)) {
+                                    return true;
+                                }
+                            }
                         } else {
                             log += $"\n-{character.name} does not have enemy or rival";
                         }

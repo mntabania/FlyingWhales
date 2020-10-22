@@ -157,6 +157,9 @@ public class LocationStructureObject : PooledObject {
             StructureTemplateObjectData preplacedObj = preplacedObjs[i];
             Vector3Int tileCoords = innerMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
             LocationGridTile tile = innerMap.map[tileCoords.x, tileCoords.y];
+            if (tile.objHere != null) {
+                tile.structure.RemovePOI(tile.objHere);
+            }
             TileObject newTileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
             newTileObject.SetIsPreplaced(true);
             
@@ -342,6 +345,13 @@ public class LocationStructureObject : PooledObject {
         gameObject.SetActive(false); //disable this object.
         _parentTemplate.CheckForDestroy(); //check if whole structure template has been destroyed.
     }
+    public void OnRepairStructure(InnerTileMap innerMap, LocationStructure structure) {
+        RepairWallsAndFloors(innerMap, structure);
+        RegisterPreplacedObjects(structure, innerMap);
+
+        RescanPathfindingGridOfStructure(innerMap);
+        UpdateSortingOrders();
+    }
     #endregion
 
     #region Inquiry
@@ -476,12 +486,17 @@ public class LocationStructureObject : PooledObject {
     /// <param name="structure">The structure instance this object is connected to.</param>
     private void RegisterWalls(InnerTileMap map, LocationStructure structure) {
         if (_blockWallsTilemap != null) {
+            _blockWallsTilemap.gameObject.SetActive(true);
             for (int i = 0; i < tiles.Length; i++) {
                 LocationGridTile tile = tiles[i];
                 //block walls
                 TileBase blockWallAsset = _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
                 if (blockWallAsset != null) {
                     if (blockWallAsset.name.Contains("Wall")) {
+                        if (tile.objHere != null) {
+                            tile.structure.RemovePOI(tile.objHere);
+                        }
+
                         BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
                         blockWall.SetWallType(_blockWallType);
                         structure.AddPOI(blockWall, tile);
@@ -514,6 +529,66 @@ public class LocationStructureObject : PooledObject {
             }    
             manMadeStructure.SetWallObjects(wallObjects, _thinWallResource);
         }
+    }
+    private void RepairWallsAndFloors(InnerTileMap map, LocationStructure structure) {
+        if (_blockWallsTilemap != null) {
+            _blockWallsTilemap.gameObject.SetActive(true);
+            for (int i = 0; i < tiles.Length; i++) {
+                LocationGridTile tile = tiles[i];
+
+                ApplyGroundTileAssetForTile(tile);
+                tile.CreateSeamlessEdgesForTile(map);
+                tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
+
+                //block walls
+                TileBase blockWallAsset = _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
+                if (blockWallAsset != null) {
+                    if (blockWallAsset.name.Contains("Wall")) {
+                        if (tile.objHere != null) {
+                            tile.structure.RemovePOI(tile.objHere);
+                        }
+
+                        BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
+                        blockWall.SetWallType(_blockWallType);
+                        structure.AddPOI(blockWall, tile);
+                        if (wallsContributeToDamage) {
+                            structure.AddObjectAsDamageContributor(blockWall);
+                        }
+                    } else {
+                        map.structureTilemap.SetTile(tile.localPlace, blockWallAsset);
+                    }
+                }
+            }
+            //disable block walls tilemap
+            _blockWallsTilemap.gameObject.SetActive(false);
+        } else {
+            if (wallVisuals != null && wallVisuals.Length > 0 && structure is ManMadeStructure manMadeStructure) {
+                for (int i = 0; i < tiles.Length; i++) {
+                    LocationGridTile tile = tiles[i];
+
+                    ApplyGroundTileAssetForTile(tile);
+                    tile.CreateSeamlessEdgesForTile(map);
+                    tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
+                }
+                //structure walls
+                List<StructureWallObject> wallObjects = new List<StructureWallObject>();
+                for (int i = 0; i < wallVisuals.Length; i++) {
+                    WallVisual wallVisual = wallVisuals[i];
+                    StructureWallObject structureWallObject = new StructureWallObject(structure, wallVisual, _thinWallResource);
+                    Vector3Int tileLocation = map.groundTilemap.WorldToCell(wallVisual.transform.position);
+                    LocationGridTile tile = map.map[tileLocation.x, tileLocation.y];
+                    tile.SetTileType(LocationGridTile.Tile_Type.Wall);
+                    structureWallObject.SetGridTileLocation(tile);
+                    tile.AddWallObject(structureWallObject);
+                    if (wallsContributeToDamage) {
+                        structure.AddObjectAsDamageContributor(structureWallObject);
+                    }
+                    wallObjects.Add(structureWallObject);
+                }
+                manMadeStructure.SetWallObjects(wallObjects, _thinWallResource);
+            }
+        }
+        
     }
     private void SetWallCollidersState(bool state) {
         for (int i = 0; i < wallVisuals.Length; i++) {

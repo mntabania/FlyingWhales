@@ -8,6 +8,7 @@ using DG.Tweening;
 using Managers;
 using Settings;
 using TMPro;
+using Ruinarch.Custom_UI;
 
 public class MainMenuUI : MonoBehaviour {
 
@@ -37,7 +38,12 @@ public class MainMenuUI : MonoBehaviour {
     [Header("Load Game")]
     [SerializeField] private Button loadGameButton;
     [SerializeField] private LoadWindow loadWindow;
-    
+
+    [Header("Early Access Announcement")]
+    [SerializeField] private GameObject earlyAccessAnnouncementGO;
+    [SerializeField] private GameObject roadmapGO;
+    [SerializeField] private RuinarchToggle skipEarlyAccessAnnouncementToggle;
+
     private void Awake() {
         Instance = this;
     }
@@ -60,6 +66,23 @@ public class MainMenuUI : MonoBehaviour {
     }
     private void HideMenuButtons() {
         buttonsTween.OnValueChangedAnimation(false);
+    }
+    public void ShowEarlyAccessAnnouncement() {
+        if (!SettingsManager.Instance.hasShownEarlyAccessAnnouncement) {
+            SettingsManager.Instance.SetHasShownEarlyAccessAnnouncement(true);
+            if (SettingsManager.Instance.settings.skipEarlyAccessAnnouncement) {
+                earlyAccessAnnouncementGO.SetActive(false);
+                roadmapGO.SetActive(true);
+            } else {
+                skipEarlyAccessAnnouncementToggle.isOn = SettingsManager.Instance.settings.skipEarlyAccessAnnouncement;
+                earlyAccessAnnouncementGO.SetActive(true);
+                roadmapGO.SetActive(false);
+            }
+        }
+    }
+    public void OnClickOkEarlyAccessAnnouncement() {
+        earlyAccessAnnouncementGO.SetActive(false);
+        roadmapGO.SetActive(true);
     }
     public void ExitGame() {
         Application.Quit();

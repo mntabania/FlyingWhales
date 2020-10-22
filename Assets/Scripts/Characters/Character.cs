@@ -2535,7 +2535,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             } else {
                 Death();
             }
-        } else if (amount < 0 && IsHealthCriticallyLow() && traitContainer.HasTrait("Berserked") == false && characterClass.className != "Zombie") { //do not make berserked characters trigger flight
+        } else if (amount < 0 && IsHealthCriticallyLow() && traitContainer.HasTrait("Coward") && traitContainer.HasTrait("Berserked") == false && characterClass.className != "Zombie") { //do not make berserked characters trigger flight
             combatComponent.FlightAll("critically low health");
             // Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
         }
@@ -3314,6 +3314,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool RemoveOwnedItem(TileObject item) {
         return ownedItems.Remove(item);
+    }
+    public bool HasOwnedItemThatIsOnGroundInSameRegion() {
+        for (int i = 0; i < ownedItems.Count; i++) {
+            TileObject item = ownedItems[i];
+            if(item.gridTileLocation != null && item.gridTileLocation.structure.region == currentRegion) {
+                return true;
+            }
+        }
+        return false;
     }
     public bool ObtainItem(TileObject item, bool changeCharacterOwnership = false, bool setOwnership = true) {
         if (AddItem(item)) {
@@ -5047,12 +5056,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
         if(faction != otherCharacter.faction){
-            if (faction != null && faction.isMajorOrVagrant && otherCharacter.traitContainer.HasTrait("Transitioning")) {
-                //Those characters that are "transitioning" (this means that their faction will be changed most likely to a hostile one), will not be considered hostile by villagers/vagrants during the transition period
+            if (faction != null && faction.isMajorOrVagrant && otherCharacter.traitContainer.HasTrait("Transitioning") && otherCharacter.faction != null && otherCharacter.faction != FactionManager.Instance.neutralFaction) {
+                //Non transitioning characters will not attack transitioning characters as long as the transitioning character is not from monster faction, if they are, non transitioning characters will still attack
                 return false;
             }
             if (otherCharacter.faction != null && otherCharacter.faction.isMajorOrVagrant && traitContainer.HasTrait("Transitioning")) {
-                //Those characters that are "transitioning" (this means that their faction will be changed most likely to a hostile one), will not be considered hostile by villagers/vagrants during the transition period
+                //Transitioning characters will not attack vagrant characters or characters that are in a hostile major faction, but will still attack character from monster/player/undead/etc faction
                 return false;
             }
         }

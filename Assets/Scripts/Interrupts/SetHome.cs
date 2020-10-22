@@ -122,10 +122,10 @@ namespace Interrupts {
                             }
                         }
                         roll = UnityEngine.Random.Range(0, 100);
-                        log += "\n-20% chance: find an unoccupied Village within the region and randomly select one of its Structures (prioritize Dwellings) as its new Home Structure.  Clear out Territory data if it has one.";
+                        log += "\n-20% chance: find an unoccupied Village or Village occupied only by Vagrants within the region and randomly select one of its Structures (prioritize Dwellings) as its new Home Structure.  Clear out Territory data if it has one.";
                         log += "\n-Roll: " + roll;
                         if (roll < 20) {
-                            BaseSettlement chosenSettlement = currentRegion.GetFirstSettlementInRegion(x => x.locationType == LOCATION_TYPE.VILLAGE && x.residents.Count <= 0);
+                            BaseSettlement chosenSettlement = currentRegion.GetFirstSettlementInRegion(x => x.locationType == LOCATION_TYPE.VILLAGE && (x.residents.Count <= 0 || x.AreAllResidentsVagrantOrFactionless()));
                             if(chosenSettlement != null) {
                                 log += "\n-Chosen Settlement: " + chosenSettlement.name;
                                 LocationStructure chosenHomeStructure = GetStructureInSettlementPrioritizeDwellings(chosenSettlement, actor);

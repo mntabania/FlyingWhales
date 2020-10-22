@@ -954,6 +954,9 @@ namespace Inner_Maps.Location_Structures {
         }
         public void SetMaxHPAndReset(int amount) {
             SetMaxHP(amount);
+            ResetHP();
+        }
+        public void ResetHP() {
             currentHP = maxHP;
         }
         #endregion

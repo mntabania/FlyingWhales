@@ -40,6 +40,8 @@ namespace Settings {
         private List<Resolution> resolutions;
         private Settings _settings;
 
+        public bool hasShownEarlyAccessAnnouncement { get; private set; }
+
         #region getters
         public Settings settings => _settings;
         public bool doNotShowVideos => true; // settings.doNotShowVideos;
@@ -160,6 +162,7 @@ namespace Settings {
                      masterVolume = AudioManager.Maximum_Volume_Level,
                      isVsyncOn = false,
                      doNotShowVideos = true,
+                     skipEarlyAccessAnnouncement = false,
                  };
                  Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, settings.fullscreen);
                  QualitySettings.SetQualityLevel(settings.graphicsQuality);
@@ -264,6 +267,15 @@ namespace Settings {
             } else {
                 Cursor.lockState = CursorLockMode.None;
             }
+        }
+        #endregion
+
+        #region Early Access Announcement
+        public void OnToggleSkipEarlyAccessAnnouncement(bool state) {
+            _settings.skipEarlyAccessAnnouncement = state;
+        }
+        public void SetHasShownEarlyAccessAnnouncement(bool state) {
+            hasShownEarlyAccessAnnouncement = state;
         }
         #endregion
     }

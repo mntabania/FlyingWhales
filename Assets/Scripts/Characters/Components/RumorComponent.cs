@@ -240,7 +240,22 @@ public class RumorComponent : CharacterComponent {
             rumorable.SetAsRumor(rumor);
             return rumor;
         }
-        throw new System.Exception("Cannot create new rumor for identifier " + identifier + " because rumorable is null!");
+        return null;
+        //throw new System.Exception("Cannot create new rumor for identifier " + identifier + " because rumorable is null!");
+    }
+    public Rumor CreateNewRumor(Character rumoredCharacter, IPointOfInterest targetOfRumoredCharacter, INTERACTION_TYPE actionType) {
+        if (rumoredCharacter != null && targetOfRumoredCharacter != null) {
+            ActualGoapNode action = new ActualGoapNode(InteractionManager.Instance.goapActionData[actionType], rumoredCharacter, targetOfRumoredCharacter, null, 0);
+            if (actionType == INTERACTION_TYPE.POISON) {
+                if (targetOfRumoredCharacter.gridTileLocation != null) {
+                    action.SetTargetStructure(targetOfRumoredCharacter.gridTileLocation.structure);
+                }
+            }
+            Rumor rumor = new Rumor(owner, rumoredCharacter);
+            action.SetAsRumor(rumor);
+            return rumor;
+        }
+        return null;
     }
     #endregion
 

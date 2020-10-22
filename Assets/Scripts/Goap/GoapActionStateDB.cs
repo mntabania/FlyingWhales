@@ -618,6 +618,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.BUILD_NEW_VILLAGE, new[]{
             new StateNameAndDuration(){ name = "Build Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(45) },
         } },
+        {INTERACTION_TYPE.IS_WEREWOLF, new[]{
+            new StateNameAndDuration(){ name = "Werewolf Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

@@ -17,5 +17,8 @@
         //Audio
         public float musicVolume;
         public float masterVolume;
+
+        //Misc
+        public bool skipEarlyAccessAnnouncement;
     }
 }

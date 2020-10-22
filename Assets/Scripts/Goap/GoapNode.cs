@@ -562,6 +562,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         } else if (action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER && job.jobType != JOB_TYPE.APPREHEND) {
             return true;
         }
+        if(job.jobType == JOB_TYPE.PLACE_TRAP || job.jobType == JOB_TYPE.POISON_FOOD) {
+            return true;
+        }
         return false;
     }
 

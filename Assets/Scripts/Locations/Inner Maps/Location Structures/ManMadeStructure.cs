@@ -118,6 +118,10 @@ namespace Inner_Maps.Location_Structures {
                 InnerMapCameraMove.Instance.CenterCameraOn(structureObj.gameObject);
             } 
         }
+        public void RepairStructure() {
+            ResetHP();
+            structureObj.OnRepairStructure(region.innerMap, this);
+        }
         #endregion
 
         #region Repair

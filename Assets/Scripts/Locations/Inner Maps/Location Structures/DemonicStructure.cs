@@ -37,6 +37,10 @@ namespace Inner_Maps.Location_Structures {
             CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
             Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
+        public override void ConstructDefaultActions() {
+            base.ConstructDefaultActions();
+            AddPlayerAction(SPELL_TYPE.REPAIR);
+        }
         #endregion
 
         #region Listeners
@@ -61,6 +65,10 @@ namespace Inner_Maps.Location_Structures {
             if (structureObj != null) {
                 InnerMapCameraMove.Instance.CenterCameraOn(structureObj.gameObject);
             } 
+        }
+        public void RepairStructure() {
+            ResetHP();
+            structureObj.OnRepairStructure(region.innerMap, this);
         }
         #endregion
 
