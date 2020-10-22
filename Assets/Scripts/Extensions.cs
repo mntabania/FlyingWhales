@@ -465,6 +465,7 @@ public static class Extensions {
                 priority = 1009;
                 break;
             case JOB_TYPE.REMOVE_STATUS:
+            case JOB_TYPE.CURE_MAGICAL_AFFLICTION:
                 priority = 1008;
                 break;
             case JOB_TYPE.RECOVER_HP:

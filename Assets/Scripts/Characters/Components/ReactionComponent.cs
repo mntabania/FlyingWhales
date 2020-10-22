@@ -960,9 +960,12 @@ public class ReactionComponent : CharacterComponent {
                             }
 
                             if (targetIsKnownVampire) {
-                                //TODO: Cure Magical Affliction
                                 debugLog = $"{debugLog}\n-Target is known vampire";
-                                if (disguisedActor.traitContainer.HasTrait("Hemophobic")) {
+                                if (disguisedActor.characterClass.className == "Shaman" && disguisedActor.relationshipContainer.IsFriendsWith(disguisedTarget)) {
+                                    //Cure Magical Affliction
+                                    debugLog = $"{debugLog}\n-Actor is Shaman and is Friend/Close Friend with target";
+                                    actor.jobComponent.TriggerCureMagicalAffliction(disguisedTarget, "Vampire");
+                                } else if (disguisedActor.traitContainer.HasTrait("Hemophobic")) {
                                     debugLog = $"{debugLog}\n-Actor is Hemophobic, will wary";
                                     actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, targetCharacter);
                                 } else if (targetCharacter.needsComponent.isStarving) {
@@ -978,9 +981,12 @@ public class ReactionComponent : CharacterComponent {
                             }
 
                             if (targetIsKnownWerewolf) {
-                                //TODO: Cure Magical Affliction
                                 debugLog = $"{debugLog}\n-Target is known werewolf";
-                                if (disguisedActor.traitContainer.HasTrait("Lycanphobic")) {
+                                if (disguisedActor.characterClass.className == "Shaman" && disguisedActor.relationshipContainer.IsFriendsWith(disguisedTarget)) {
+                                    //Cure Magical Affliction
+                                    debugLog = $"{debugLog}\n-Actor is Shaman and is Friend/Close Friend with target";
+                                    actor.jobComponent.TriggerCureMagicalAffliction(disguisedTarget, "Lycanthrope");
+                                } else if (disguisedActor.traitContainer.HasTrait("Lycanphobic")) {
                                     debugLog = $"{debugLog}\n-Actor is Lycanphobic, will wary";
                                     actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, targetCharacter);
                                 }

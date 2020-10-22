@@ -621,6 +621,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.IS_WEREWOLF, new[]{
             new StateNameAndDuration(){ name = "Werewolf Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.DISPEL, new[]{
+            new StateNameAndDuration(){ name = "Dispel Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
+        } },
     };
 }
 

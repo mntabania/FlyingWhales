@@ -1,1 +1,6 @@
-{"items":[{"key":"flaw_effect","value":"%00@ will turn into a wolf."}]}
+{
+  "items": [
+    { "key": "flaw_effect", "value": "%00@ will turn into a wolf." },
+    { "key": "resist_hunger", "value": "%00@ resisted %85b hunger for flesh!" }
+  ]
+}

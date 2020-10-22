@@ -68,6 +68,10 @@ public class CrimeComponent : CharacterComponent {
         } else if ((owner.relationshipContainer.IsFamilyMember(actor) || owner.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
             && opinionLabel != RelationshipManager.Rival && severity != CRIME_SEVERITY.Heinous) {
             return false;
+        } else if (owner.characterClass.className == "Shaman" && (opinionLabel == RelationshipManager.Close_Friend || opinionLabel == RelationshipManager.Friend) && 
+                   (crimeData.crimeType == CRIME_TYPE.Vampire || crimeData.crimeType == CRIME_TYPE.Werewolf)) {
+            //NOTE: Make sure to create Cure Magical Affliction job
+            return false;
         }
         return true;
     }

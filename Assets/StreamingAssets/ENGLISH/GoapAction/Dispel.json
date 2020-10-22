@@ -1,0 +1,15 @@
+{
+  "items": [
+    {
+      "key": "thought_bubble_m",
+      "value": "%00@ is going to dispel %10@'s %111%."
+    },
+    { "key": "thought_bubble", "value": "%00@ is dispelling %10@'s %111%." },
+    {
+      "key": "dispel success_description",
+      "value": "%00@ dispelled %10@'s %111%."
+    },
+    { "key": "refuse", "value": "%10@ refused to get cured of %97b %111%!" },
+    { "key": "success", "value": "%00@ cured %10@ of %97b %111%!" }
+  ]
+}

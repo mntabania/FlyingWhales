@@ -22,8 +22,7 @@ namespace Traits {
             ticksDuration = 0;
             canBeTriggered = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
-            //effects = new List<TraitEffect>();
-            //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_TO_WOLF, INTERACTION_TYPE.REVERT_TO_NORMAL };
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DISPEL };
         }
 
         #region Overrides
@@ -41,6 +40,7 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             base.OnRemoveTrait(sourceCharacter, removedBy);
+            owner.RevertFromWerewolfForm();
             owner.lycanData.EraseThisDataWhenTraitIsRemoved(owner);
         }
         public override string GetTestingData(ITraitable traitable = null) {
@@ -63,7 +63,27 @@ namespace Traits {
                     owner.interruptComponent.TriggerInterrupt(INTERRUPT.Shed_Pelt, owner);
                 }
             }
+            if (owner.lycanData.dislikesBeingLycan && GameUtilities.RollChance(1) && owner.currentJob is GoapPlanJob goapPlanJob) { //1
+                if (owner.currentJob.jobType == JOB_TYPE.LYCAN_HUNT_PREY) {
+                    ResistHunger();
+                } else if (owner.stateComponent.currentState is CombatState) {
+                    CombatData combatData = owner.combatComponent.GetCombatData(goapPlanJob.targetPOI);
+                    if (combatData != null && combatData.connectedAction != null && combatData.connectedAction.associatedJobType == JOB_TYPE.LYCAN_HUNT_PREY) {
+                        ResistHunger();    
+                    }
+                }
+            }
             return false;
+        }
+        private void ResistHunger() {
+            owner.currentJob.ForceCancelJob(false, "Resisted Hunger");
+            owner.traitContainer.AddTrait(owner, "Ashamed");
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Lycanthrope", "resist_hunger", null, LOG_TAG.Needs);
+            log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddLogToDatabase();
+            if (owner.lycanData.isInWerewolfForm) {
+                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Revert_From_Werewolf, owner);    
+            }
         }
         //public override bool OnDeath(Character character) {
         //    if(character == owner.lycanData.lycanthropeForm) {
