@@ -16,12 +16,12 @@ public class CultistBoobyTrapData : PlayerAction {
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character character) {
             List<Character> choices = new List<Character>();
-            for (int i = 0; i < character.homeSettlement.residents.Count; i++) {
-                Character resident = character.homeSettlement.residents[i];
-                if (resident.isNormalCharacter && resident.traitContainer.HasTrait("Cultist") == false && 
-                    resident.isDead == false &&
-                    character.relationshipContainer.HasOpinionLabelWithCharacter(resident, RelationshipManager.Close_Friend) == false) {
-                    choices.Add(resident);
+            for (int i = 0; i < character.relationshipContainer.charactersWithOpinion.Count; i++) {
+                Character target = character.relationshipContainer.charactersWithOpinion[i];
+                if (target.isNormalCharacter && target.traitContainer.HasTrait("Cultist") == false && 
+                    target.isDead == false &&
+                    character.relationshipContainer.HasOpinionLabelWithCharacter(target, RelationshipManager.Close_Friend) == false) {
+                    choices.Add(target);
                 }
             }
             UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), showCover: true,

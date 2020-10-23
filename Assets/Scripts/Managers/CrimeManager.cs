@@ -73,6 +73,10 @@ public class CrimeManager : BaseMonoBehaviour {
         }
         CrimeData existingCrimeData = criminal.crimeComponent.GetCrimeDataOf(crime);
         if (existingCrimeData == null) {
+            //If crime is added, and crime is interrupt, do not object pool the interrupt because the data will be cleared out and that will cause problems in the crime data
+            if(crime is InterruptHolder interrupt) {
+                interrupt.SetShouldNotBeObjectPooled(true);
+            }
             existingCrimeData = criminal.crimeComponent.AddCrime(crimeType, crimeSeverity, crime, criminal, criminalTrait, target, targetFaction, reactionStatus);
             CrimeType crimeTypeObj = existingCrimeData.crimeTypeObj;
 
