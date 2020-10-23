@@ -13,7 +13,7 @@ namespace UtilityScripts {
                 if (npcSettlement.locationType != LOCATION_TYPE.VILLAGE) {
                     continue;
                 }
-                summary += $"\n<b>{npcSettlement.name}</b>";
+                summary += $"\n<b>{npcSettlement.name}</b> Settlement Type: {npcSettlement.settlementType?.settlementType.ToString() ?? "None"}";
                 summary += $"\nStorage: {npcSettlement.mainStorage?.name ?? "None"}. Prison: {npcSettlement.prison?.name ?? "None"}";
                 // if (npcSettlement.settlementType != null) {
                 //     summary += $"\n<b>Max Dwellings: {npcSettlement.settlementType.maxDwellings.ToString()}</b>, <b>Max Facilities: {npcSettlement.settlementType.maxFacilities.ToString()}</b>";

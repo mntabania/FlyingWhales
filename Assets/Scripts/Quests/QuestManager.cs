@@ -22,9 +22,7 @@ namespace Quests {
             //Finished_Tutorial,
             //Wolf_Migration, Villager_Migration,
             Excalibur_Obtained, Disguised_Succubus, Activated_Ankh, Dragon_Left, Dragon_Awakened, Sleeping_Dragon,
-            The_Sword,
-            The_Crack,
-            The_Necronomicon,
+            The_Sword, The_Crack, The_Necronomicon, Cult_Leader
         }
 
         

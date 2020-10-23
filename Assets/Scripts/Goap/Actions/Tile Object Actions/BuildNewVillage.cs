@@ -75,13 +75,6 @@ public class BuildNewVillage : GoapAction {
                 if(goapNode.actor.faction != null && goapNode.actor.faction.isMajorNonPlayer) {
                     LandmarkManager.Instance.OwnSettlement(goapNode.actor.faction, settlement);
                 }
-                if (goapNode.actor.faction.race == RACE.HUMANS) {
-                    settlement.SetSettlementType(SETTLEMENT_TYPE.Default_Human);
-                } else if (goapNode.actor.faction.race == RACE.ELVES) {
-                    settlement.SetSettlementType(SETTLEMENT_TYPE.Default_Elf);
-                } else {
-                    settlement.SetSettlementType(SETTLEMENT_TYPE.Default_Human);
-                }
 
                 if (genericTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                     settlement.AddTileToSettlement(genericTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
@@ -90,8 +83,19 @@ public class BuildNewVillage : GoapAction {
                 List<LocationStructure> createdStructures = new List<LocationStructure>();
                 createdStructures.Add(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(settlement, goapNode.actor.currentRegion.innerMap, genericTileObject.gridTileLocation, prefabName));
 
+                settlement.PlaceInitialObjects();
+                
                 LocationStructure firstStructure = createdStructures[0];
                 goapNode.actor.MigrateHomeStructureTo(firstStructure);
+                
+                settlement.SetSettlementType(LandmarkManager.Instance.GetSettlementTypeForCharacter(goapNode.actor));
+                // if (goapNode.actor.faction.race == RACE.HUMANS) {
+                //     settlement.SetSettlementType(SETTLEMENT_TYPE.Default_Human);
+                // } else if (goapNode.actor.faction.race == RACE.ELVES) {
+                //     settlement.SetSettlementType(SETTLEMENT_TYPE.Default_Elf);
+                // } else {
+                //     settlement.SetSettlementType(SETTLEMENT_TYPE.Default_Human);
+                // }
 
                 //This is added since the character will be the first character in the settlement, it should learn how to build structures, so that when he place blueprints to build houses, etc, he can also build them
                 //If we do not add this, the character will just place blueprints and will not build them if his class does not know how to build, so he will end up waiting for another character to join the settlement that can build structures

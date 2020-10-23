@@ -13,16 +13,16 @@
             AddIdeology(reveresWerewolves);
             
             //structures
-            AddNeededStructure(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.DWELLING, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.FARM, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.APOTHECARY, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.CEMETERY, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.TAVERN, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.BARRACKS, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.WAREHOUSE, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.PRISON, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.DWELLING, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.FARM, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.APOTHECARY, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.CEMETERY, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.TAVERN, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.BARRACKS, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.WAREHOUSE, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.PRISON, RESOURCE.WOOD);
 
             //combatant classes
             AddCombatantClass("Archer");
@@ -49,16 +49,16 @@
         }
         public override void SetFixedData() {
             //structures
-            AddNeededStructure(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.DWELLING, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.FARM, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.APOTHECARY, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.CEMETERY, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.TAVERN, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.BARRACKS, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.WAREHOUSE, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.PRISON, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.DWELLING, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.FARM, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.APOTHECARY, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.CEMETERY, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.TAVERN, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.BARRACKS, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.WAREHOUSE, RESOURCE.WOOD);
+            // AddNeededStructure(STRUCTURE_TYPE.PRISON, RESOURCE.WOOD);
 
             //combatant classes
             AddCombatantClass("Archer");

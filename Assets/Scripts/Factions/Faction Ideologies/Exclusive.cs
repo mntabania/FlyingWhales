@@ -10,6 +10,7 @@ public class Exclusive : FactionIdeology {
     public RACE raceRequirement { get; private set; }
     public GENDER genderRequirement { get; private set; }
     public string traitRequirement { get; private set; }
+    public RELIGION religionRequirement { get; private set; }
 
     public Exclusive() : base(FACTION_IDEOLOGY.Exclusive) { }
 
@@ -21,6 +22,8 @@ public class Exclusive : FactionIdeology {
             return character.race == raceRequirement;
         } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.TRAIT) {
             return character.traitContainer.HasTrait(traitRequirement);
+        } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.RELIGION) {
+            return character.religionComponent.religion == religionRequirement;
         }
         return true;
     }
@@ -31,6 +34,8 @@ public class Exclusive : FactionIdeology {
             return character.race == raceRequirement;
         } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.TRAIT) {
             return false; //Default to false since PreCharacterData does not have traits
+        } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.RELIGION) {
+            return ReligionComponent.GetDefaultReligionForRace(character.race) == religionRequirement;
         }
         return true;
     }
@@ -61,6 +66,10 @@ public class Exclusive : FactionIdeology {
         category = EXCLUSIVE_IDEOLOGY_CATEGORIES.TRAIT;
         traitRequirement = trait;
     }
+    public void SetRequirement(RELIGION religion) {
+        category = EXCLUSIVE_IDEOLOGY_CATEGORIES.RELIGION;
+        religionRequirement = religion;
+    }
     #endregion
 
     private string GetRequirementAsString() {
@@ -68,8 +77,10 @@ public class Exclusive : FactionIdeology {
             return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(genderRequirement.ToString());
         } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE) {
             return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(raceRequirement.ToString());
-        } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE) {
+        } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.TRAIT) {
             return traitRequirement;
+        } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.RELIGION) {
+            return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(religionRequirement.ToString());
         }
         return string.Empty;
     }

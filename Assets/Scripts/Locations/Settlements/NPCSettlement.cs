@@ -830,9 +830,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #endregion
 
     #region Inner Map
-    public IEnumerator PlaceInitialObjects() {
+    public IEnumerator PlaceInitialObjectsCoroutine() {
         PlaceResourcePiles();
         yield return null;
+    }
+    public void PlaceInitialObjects() {
+        PlaceResourcePiles();
     }
     private void PlaceResourcePiles() {
         WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);

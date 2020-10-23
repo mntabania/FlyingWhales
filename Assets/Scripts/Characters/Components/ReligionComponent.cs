@@ -53,6 +53,16 @@
                 break;
         }
     }
+    public static RELIGION GetDefaultReligionForRace(RACE race) {
+        switch (race) {
+            case RACE.HUMANS:
+                return RELIGION.Divine_Worship;
+            case RACE.ELVES:
+                return RELIGION.Nature_Worship;
+            default:
+                return RELIGION.None;
+        }
+    }
     #endregion
     
 }

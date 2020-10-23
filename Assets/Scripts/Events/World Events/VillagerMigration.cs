@@ -6,6 +6,9 @@ using UnityEngine;
 using UtilityScripts;
 namespace Events.World_Events {
     public class VillagerMigration : WorldEvent {
+
+        public VillagerMigration() { }
+        public VillagerMigration(SaveDataVillagerMigration data) { }
         
         public override void InitializeEvent() {
             Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
@@ -88,6 +91,17 @@ namespace Events.World_Events {
                 }
             }
             return count;
+        }
+        public override SaveDataWorldEvent Save() {
+            SaveDataVillagerMigration save = new SaveDataVillagerMigration();
+            save.Save(this);
+            return save;
+        }
+    }
+
+    public class SaveDataVillagerMigration : SaveDataWorldEvent {
+        public override WorldEvent Load() {
+            return new VillagerMigration(this);
         }
     }
 }

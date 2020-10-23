@@ -426,8 +426,12 @@ public class FactionManager : BaseMonoBehaviour {
         faction.factionType.AddIdeology(peaceful);
     }
     public void RerollInclusiveTypeIdeology(Faction faction, Character leader) {
-        //TODO: If Demon Cult, 100% chance Demon Worshipper Exclusive
-        if (GameUtilities.RollChance(60)) {
+        if (faction.factionType.type == FACTION_TYPE.Demon_Cult) {
+            //If Demon Cult, 100% chance Demon Worshipper Exclusive
+            Exclusive exclusive = CreateIdeology<Exclusive>(FACTION_IDEOLOGY.Exclusive);
+            exclusive.SetRequirement(RELIGION.Demon_Worship);
+            faction.factionType.AddIdeology(exclusive);
+        } else if (GameUtilities.RollChance(60)) {
             Inclusive inclusive = CreateIdeology<Inclusive>(FACTION_IDEOLOGY.Inclusive);
             faction.factionType.AddIdeology(inclusive);
         } else {

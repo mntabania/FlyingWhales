@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Databases;
+using Events.World_Events;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using UnityEngine;
@@ -13,17 +14,19 @@ public class WorldMapSave {
     public List<SaveDataRegion> regionSaves;
     public List<SaveDataBaseSettlement> settlementSaves;
     public List<SaveDataLocationStructure> structureSaves;
+    public List<SaveDataWorldEvent> worldEventSaves;
     
-    public void SaveWorld(WorldMapTemplate _worldMapTemplate, HexTileDatabase hexTileDatabase, RegionDatabase regionDatabase, SettlementDatabase settlementDatabase, LocationStructureDatabase structureDatabase) {
-        //if saved world is tutorial, set world type as custom, this is so that tutorials will not spawn again when loading from a map from the tutorial
-        worldType = WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial ? WorldSettingsData.World_Type.Custom : WorldSettings.Instance.worldSettingsData.worldType;
-        worldMapTemplate = _worldMapTemplate;
-        SaveHexTiles(hexTileDatabase.allHexTiles);
-        SaveRegions(regionDatabase.allRegions);
-        SaveSettlements(settlementDatabase.allSettlements);
-        SaveStructures(structureDatabase.allStructures);
-    }
-    public IEnumerator SaveWorldCoroutine(WorldMapTemplate _worldMapTemplate, HexTileDatabase hexTileDatabase, RegionDatabase regionDatabase, SettlementDatabase settlementDatabase, LocationStructureDatabase structureDatabase) {
+    // public void SaveWorld(WorldMapTemplate _worldMapTemplate, HexTileDatabase hexTileDatabase, RegionDatabase regionDatabase, SettlementDatabase settlementDatabase, LocationStructureDatabase structureDatabase) {
+    //     //if saved world is tutorial, set world type as custom, this is so that tutorials will not spawn again when loading from a map from the tutorial
+    //     worldType = WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial ? WorldSettingsData.World_Type.Custom : WorldSettings.Instance.worldSettingsData.worldType;
+    //     worldMapTemplate = _worldMapTemplate;
+    //     SaveHexTiles(hexTileDatabase.allHexTiles);
+    //     SaveRegions(regionDatabase.allRegions);
+    //     SaveSettlements(settlementDatabase.allSettlements);
+    //     SaveStructures(structureDatabase.allStructures);
+    // }
+    public IEnumerator SaveWorldCoroutine(WorldMapTemplate _worldMapTemplate, HexTileDatabase hexTileDatabase, RegionDatabase regionDatabase, SettlementDatabase settlementDatabase, 
+        LocationStructureDatabase structureDatabase, List<WorldEvent> activeEvents) {
         UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving world map...");
         //if saved world is tutorial, set world type as custom, this is so that tutorials will not spawn again when loading from a map from the tutorial
         worldType = WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial ? WorldSettingsData.World_Type.Custom : WorldSettings.Instance.worldSettingsData.worldType;
@@ -32,6 +35,7 @@ public class WorldMapSave {
         yield return SaveManager.Instance.StartCoroutine(SaveRegionsCoroutine(regionDatabase.allRegions));
         yield return SaveManager.Instance.StartCoroutine(SaveSettlementsCoroutine(settlementDatabase.allSettlements));
         yield return SaveManager.Instance.StartCoroutine(SaveStructuresCoroutine(structureDatabase.allStructures));
+        yield return SaveManager.Instance.StartCoroutine(SaveWorldEventsCoroutine(activeEvents));
     }
 
     #region Hex Tiles
@@ -187,6 +191,17 @@ public class WorldMapSave {
                 yield return null;    
             }
         }
+    }
+    #endregion
+
+    #region World Events
+    public IEnumerator SaveWorldEventsCoroutine(List<WorldEvent> worldEvents) {
+        worldEventSaves = new List<SaveDataWorldEvent>();
+        for (int i = 0; i < worldEvents.Count; i++) {
+            WorldEvent worldEvent = worldEvents[i];
+            worldEventSaves.Add(worldEvent.Save());
+        }
+        yield return null;
     }
     #endregion
 

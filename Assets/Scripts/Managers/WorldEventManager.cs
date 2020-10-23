@@ -7,7 +7,11 @@ namespace Managers {
 
         public static WorldEventManager Instance;
 
-        private List<WorldEvent> activeEvents;
+        private List<WorldEvent> _activeEvents;
+
+        #region getters
+        public List<WorldEvent> activeEvents => _activeEvents;
+        #endregion
         
         private void Awake() {
             Instance = this;
@@ -18,7 +22,7 @@ namespace Managers {
         }
         
         public void Initialize() {
-            activeEvents = new List<WorldEvent>();
+            _activeEvents = new List<WorldEvent>();
             Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
         }
         private void OnGameLoaded() {
@@ -32,13 +36,19 @@ namespace Managers {
         /// </summary>
         /// <param name="worldEvent">The new World Event.</param>
         public void AddActiveEvent(WorldEvent worldEvent) {
-            activeEvents.Add(worldEvent);
+            _activeEvents.Add(worldEvent);
         }
         private void ActivateEvents() {
-            for (int i = 0; i < activeEvents.Count; i++) {
-                WorldEvent worldEvent = activeEvents[i];
+            for (int i = 0; i < _activeEvents.Count; i++) {
+                WorldEvent worldEvent = _activeEvents[i];
                 worldEvent.InitializeEvent();
             }
+        }
+        #endregion
+
+        #region Loading
+        public void LoadEvent(WorldEvent worldEvent) {
+            _activeEvents.Add(worldEvent);
         }
         #endregion
         

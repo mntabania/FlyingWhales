@@ -124,13 +124,14 @@ public class BuildVampireCastle : GoapAction {
                 if (goapNode.actor.homeSettlement == null) {
                     settlement = LandmarkManager.Instance.CreateNewSettlement(goapNode.actor.currentRegion, LOCATION_TYPE.VILLAGE);
                     LandmarkManager.Instance.OwnSettlement(goapNode.actor.faction, settlement);
-                    if (goapNode.actor.faction.race == RACE.HUMANS) {
-                        settlement.SetSettlementType(SETTLEMENT_TYPE.Default_Human);
-                    } else if (goapNode.actor.faction.race == RACE.ELVES) {
-                        settlement.SetSettlementType(SETTLEMENT_TYPE.Default_Elf);
-                    } else {
-                        settlement.SetSettlementType(SETTLEMENT_TYPE.Default_Human);
-                    }
+                    settlement.SetSettlementType(LandmarkManager.Instance.GetSettlementTypeForCharacter(goapNode.actor));
+                    // if (goapNode.actor.faction.race == RACE.HUMANS) {
+                    //     settlement.SetSettlementType(SETTLEMENT_TYPE.Default_Human);
+                    // } else if (goapNode.actor.faction.race == RACE.ELVES) {
+                    //     settlement.SetSettlementType(SETTLEMENT_TYPE.Default_Elf);
+                    // } else {
+                    //     settlement.SetSettlementType(SETTLEMENT_TYPE.Default_Human);
+                    // }
                 }
 
                 if (genericTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
