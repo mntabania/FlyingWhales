@@ -95,7 +95,6 @@ public class SettlementGeneration : MapGenerationComponent {
 				};
 			} else {
 				structureSettings = GenerateFacilities(npcSettlement, faction, Random.Range(2, 4));
-				int generatedFacilities = structureSettings.Count;
 				int randomDwellings = Random.Range(4, 11);
 				for (int i = 0; i < randomDwellings; i++) {
 					structureSettings.Add(new StructureSetting(STRUCTURE_TYPE.DWELLING, faction.factionType.mainResource));
@@ -129,6 +128,7 @@ public class SettlementGeneration : MapGenerationComponent {
 			}
 
 			Assert.IsTrue(structureSettings.First().structureType == STRUCTURE_TYPE.CITY_CENTER);
+			Assert.IsTrue(npcSettlement.tiles.Count > 0);
 			yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
 			// yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceBuiltStructuresForSettlement(npcSettlement, region.innerMap, structureSettings.ToArray()));
 			yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjects());
@@ -156,12 +156,17 @@ public class SettlementGeneration : MapGenerationComponent {
 
 				CharacterManager.Instance.PlaceInitialCharacters(spawnedCharacters, npcSettlement);	
 			}
-			npcSettlement.Initialize();
+			// npcSettlement.Initialize();
 		}
 	}
 	private IEnumerator EnsuredStructurePlacement(Region region, List<StructureSetting> structureSettings, NPCSettlement npcSettlement) {
 		List<StructureSetting> unplacedStructures = new List<StructureSetting>();
 		List<StructureSetting> structuresToPlace = new List<StructureSetting>(structureSettings);
+		
+		StructureSetting cityCenter = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, npcSettlement.owner.factionType.mainResource);
+		yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlementCoroutine(npcSettlement, region.innerMap, cityCenter));
+		structuresToPlace.Remove(cityCenter);
+		
 		for (int i = 0; i < 2; i++) {
 			yield return MapGenerator.Instance.StartCoroutine(PlaceStructures(region, structuresToPlace, npcSettlement));
 			//check whole structure list to verify if all needed structures were placed.
@@ -184,7 +189,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				break; //no more unplaced structures
 			}
 			else {
-				//make structure setting list and unplaced structures list identical so that unplaced structures will tried to be placed on next iteration.
+				//make structure setting list and unplaced structures list identical so that unplaced structures will try to be placed on next iteration.
 				structuresToPlace.Clear();
 				structuresToPlace.AddRange(unplacedStructures);
 				if (i + 1 == 2) {
@@ -202,29 +207,25 @@ public class SettlementGeneration : MapGenerationComponent {
 		for (int i = 0; i < structureSettings.Count; i++) {
 			StructureSetting structureSetting = structureSettings[i];
 			if (structureSetting.structureType == STRUCTURE_TYPE.CITY_CENTER) {
-				yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlementCoroutine(npcSettlement, region.innerMap, structureSetting));
-			} else {
-				List<StructureConnector> availableStructureConnectors = npcSettlement.GetAvailableStructureConnectors();
-				availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
-				List<GameObject> prefabChoices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
-				prefabChoices = CollectionUtilities.Shuffle(prefabChoices);
-				for (int j = 0; j < prefabChoices.Count; j++) {
-					GameObject prefabGO = prefabChoices[j];
-					LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
-					StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, region.innerMap, out var connectorIndex, out LocationGridTile tileToPlaceStructure);
-					if (validConnector != null) {
-						//instantiate structure object at tile.
-						LocationStructure createdStructure = LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(npcSettlement, region.innerMap, prefabGO, tileToPlaceStructure);
-						// validConnector.SetOpenState(false);
-						// if (createdStructure is ManMadeStructure manMadeStructure) {
-						// 	StructureConnector chosenConnector = manMadeStructure.structureObj.connectors[connectorIndex];
-						// 	chosenConnector.SetOpenState(false);
-						// }
-						break; //stop loop since structure was already placed.
-					}
+				// yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlementCoroutine(npcSettlement, region.innerMap, structureSetting));
+				continue;
+			}
+			List<StructureConnector> availableStructureConnectors = npcSettlement.GetAvailableStructureConnectors();
+			availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
+			List<GameObject> prefabChoices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
+			prefabChoices = CollectionUtilities.Shuffle(prefabChoices);
+			for (int j = 0; j < prefabChoices.Count; j++) {
+				GameObject prefabGO = prefabChoices[j];
+				LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
+				StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, region.innerMap, out var connectorIndex, out LocationGridTile tileToPlaceStructure);
+				if (validConnector != null) {
+					//instantiate structure object at tile.
+					LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(npcSettlement, region.innerMap, prefabGO, tileToPlaceStructure);
+					break; //stop loop since structure was already placed.
 				}
 			}
 		}
+		yield return null;
 	}
 	#endregion
 
@@ -269,7 +270,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				}
 			
 				CharacterManager.Instance.PlaceInitialCharacters(spawnedCharacters, npcSettlement);
-				npcSettlement.Initialize();
+				// npcSettlement.Initialize();
 				yield return null;
 			}
 			ApplyPreGeneratedRelationships(data);
@@ -457,7 +458,7 @@ public class SettlementGeneration : MapGenerationComponent {
 
 	#region Settlement Structures
 	private List<StructureSetting> GenerateFacilities(NPCSettlement settlement, Faction faction, int facilityCount) {
-		List<StructureSetting> structures = new List<StructureSetting> { faction.factionType.GetStructureSettingFor(STRUCTURE_TYPE.CITY_CENTER) };
+		List<StructureSetting> structures = new List<StructureSetting> { new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, faction.factionType.mainResource) }; //faction.factionType.GetStructureSettingFor(STRUCTURE_TYPE.CITY_CENTER)
 		List<STRUCTURE_TYPE> createdStructureTypes = new List<STRUCTURE_TYPE>();
 		for (int i = 0; i < facilityCount; i++) {
 			WeightedDictionary<StructureSetting> structuresChoices = GetStructureWeights(createdStructureTypes, faction);

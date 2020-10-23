@@ -75,16 +75,21 @@ public class PathfindingManager : BaseMonoBehaviour {
     public bool HasPathEvenDiffRegion(LocationGridTile fromTile, LocationGridTile toTile, NNConstraint constraint) {
         if (fromTile == null || toTile == null) { return false; }
         if (fromTile == toTile) { return true; }
+        GraphNode fromNode = AstarPath.active.GetNearest(fromTile.centeredWorldLocation, constraint).node;
+        GraphNode toNode = AstarPath.active.GetNearest(toTile.centeredWorldLocation, constraint).node;
+        if (fromNode == null || toNode == null) { return false; }
+        
         if(fromTile.structure.region == toTile.structure.region) {
-            return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, constraint).node,
-                AstarPath.active.GetNearest(toTile.centeredWorldLocation, constraint).node);
+            return PathUtilities.IsPathPossible(fromNode, toNode);
         } else {
             LocationGridTile nearestEdgeFrom = fromTile.GetNearestEdgeTileFromThis();
-            if(PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, constraint).node,
-                AstarPath.active.GetNearest(nearestEdgeFrom.centeredWorldLocation, constraint).node)) {
+            GraphNode nearestEdgeFromNode = AstarPath.active.GetNearest(nearestEdgeFrom.centeredWorldLocation, constraint).node;
+            if (nearestEdgeFromNode == null) { return false; }
+            if(PathUtilities.IsPathPossible(fromNode, nearestEdgeFromNode)) {
                 LocationGridTile nearestEdgeTo = toTile.GetNearestEdgeTileFromThis();
-                return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(toTile.centeredWorldLocation, constraint).node,
-                    AstarPath.active.GetNearest(nearestEdgeTo.centeredWorldLocation, constraint).node);
+                GraphNode nearestEdgeToNode = AstarPath.active.GetNearest(nearestEdgeTo.centeredWorldLocation, constraint).node;
+                if (nearestEdgeToNode == null) { return false; }
+                return PathUtilities.IsPathPossible(toNode, nearestEdgeToNode);
             }
         }
         return false;

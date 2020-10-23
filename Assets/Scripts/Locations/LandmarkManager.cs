@@ -281,6 +281,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         }
         Messenger.Broadcast(Signals.AREA_CREATED, newNpcSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newNpcSettlement);
+        newNpcSettlement.Initialize();
         return newNpcSettlement;
     }
     public NPCSettlement LoadNPCSettlement(SaveDataNPCSettlement saveDataNpcSettlement) {

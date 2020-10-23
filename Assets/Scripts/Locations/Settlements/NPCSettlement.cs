@@ -114,7 +114,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             if (saveDataNpcSettlement.settlementType != null) {
                 settlementType = saveDataNpcSettlement.settlementType.Load();    
             }
-            SubscribeToSignals();
+            Initialize();
         }
     }
     private void LoadJobs(SaveDataNPCSettlement data) {
@@ -208,7 +208,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         //update the castles that they've made to be owned by their new faction.
         //EDIT NOTE: This applies to dungeon and village settlements
         if(locationType == LOCATION_TYPE.DUNGEON) {
-            if (residents.Contains(character) && owner != null) {
+            if (residents.Contains(character) && faction.isMajorFaction) {
                 bool areAllResidentsPartOfNewFaction = true;
                 for (int i = 0; i < residents.Count; i++) {
                     Character resident = residents[i];
