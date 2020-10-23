@@ -133,7 +133,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                 List<LocationStructure> vampireCastles = region.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.VAMPIRE_CASTLE);
                 for (int j = 0; j < vampireCastles.Count; j++) {
                     LocationStructure structure = vampireCastles[j];
-                    if (structure.settlementLocation == null || structure.settlementLocation.locationType != LOCATION_TYPE.VILLAGE) {
+                    if (structure.settlementLocation == null || structure.settlementLocation.owner == null) {
                         return structure;
                     }
                 }

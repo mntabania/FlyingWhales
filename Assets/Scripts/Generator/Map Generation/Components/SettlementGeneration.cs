@@ -95,7 +95,6 @@ public class SettlementGeneration : MapGenerationComponent {
 				};
 			} else {
 				structureSettings = GenerateFacilities(npcSettlement, faction, Random.Range(2, 4));
-				int generatedFacilities = structureSettings.Count;
 				int randomDwellings = Random.Range(4, 11);
 				for (int i = 0; i < randomDwellings; i++) {
 					structureSettings.Add(new StructureSetting(STRUCTURE_TYPE.DWELLING, faction.factionType.mainResource));
@@ -157,7 +156,7 @@ public class SettlementGeneration : MapGenerationComponent {
 
 				CharacterManager.Instance.PlaceInitialCharacters(spawnedCharacters, npcSettlement);	
 			}
-			npcSettlement.Initialize();
+			// npcSettlement.Initialize();
 		}
 	}
 	private IEnumerator EnsuredStructurePlacement(Region region, List<StructureSetting> structureSettings, NPCSettlement npcSettlement) {
@@ -271,7 +270,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				}
 			
 				CharacterManager.Instance.PlaceInitialCharacters(spawnedCharacters, npcSettlement);
-				npcSettlement.Initialize();
+				// npcSettlement.Initialize();
 				yield return null;
 			}
 			ApplyPreGeneratedRelationships(data);
@@ -459,7 +458,7 @@ public class SettlementGeneration : MapGenerationComponent {
 
 	#region Settlement Structures
 	private List<StructureSetting> GenerateFacilities(NPCSettlement settlement, Faction faction, int facilityCount) {
-		List<StructureSetting> structures = new List<StructureSetting> { faction.factionType.GetStructureSettingFor(STRUCTURE_TYPE.CITY_CENTER) };
+		List<StructureSetting> structures = new List<StructureSetting> { new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, faction.factionType.mainResource) }; //faction.factionType.GetStructureSettingFor(STRUCTURE_TYPE.CITY_CENTER)
 		List<STRUCTURE_TYPE> createdStructureTypes = new List<STRUCTURE_TYPE>();
 		for (int i = 0; i < facilityCount; i++) {
 			WeightedDictionary<StructureSetting> structuresChoices = GetStructureWeights(createdStructureTypes, faction);
