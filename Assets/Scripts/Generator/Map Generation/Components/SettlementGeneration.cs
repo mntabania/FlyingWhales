@@ -54,11 +54,9 @@ public class SettlementGeneration : MapGenerationComponent {
 			NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement(region, locationType, settlementTiles.First());
 			// npcSettlement.AddStructure(region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
 			LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);
-			if (faction.race == RACE.HUMANS) {
-				npcSettlement.SetSettlementType(SETTLEMENT_TYPE.Default_Human);
-			} else if (faction.race == RACE.ELVES) {
-				npcSettlement.SetSettlementType(SETTLEMENT_TYPE.Default_Elf);
-			}
+			SETTLEMENT_TYPE settlementType = LandmarkManager.Instance.GetSettlementTypeForRace(faction.race);
+			npcSettlement.SetSettlementType(settlementType);
+			
 			List<StructureSetting> structureSettings;
 			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 				structureSettings = new List<StructureSetting>() {
@@ -131,7 +129,7 @@ public class SettlementGeneration : MapGenerationComponent {
 			Assert.IsTrue(npcSettlement.tiles.Count > 0);
 			yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
 			// yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceBuiltStructuresForSettlement(npcSettlement, region.innerMap, structureSettings.ToArray()));
-			yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjects());
+			yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjectsCoroutine());
 
 			if (npcSettlement.structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
 				int dwellingCount = npcSettlement.structures[STRUCTURE_TYPE.DWELLING].Count;
@@ -257,7 +255,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				StructureSetting[] structureSettings = settlementTemplate.structureSettings;
 				yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings.ToList(), npcSettlement));
 				// yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceBuiltStructuresForSettlement(npcSettlement, region.innerMap, structureSettings));
-				yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjects());
+				yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjectsCoroutine());
 				
 				int dwellingCount = npcSettlement.structures[STRUCTURE_TYPE.DWELLING].Count;
 				List<Character> spawnedCharacters = CreateSettlementResidentsForScenario(dwellingCount, npcSettlement, faction, data, settlementTemplate.minimumVillagerCount);

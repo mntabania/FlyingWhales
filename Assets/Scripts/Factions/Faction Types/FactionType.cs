@@ -6,7 +6,7 @@ namespace Factions.Faction_Types {
         public readonly string name;
         public readonly FACTION_TYPE type;
         public readonly List<FactionIdeology> ideologies;
-        public readonly List<StructureSetting> neededStructures;
+        // public readonly List<StructureSetting> neededStructures;
         public readonly List<string> combatantClasses;
         public readonly List<string> civilianClasses;
         public readonly Dictionary<CRIME_TYPE, CRIME_SEVERITY> crimes;
@@ -20,7 +20,7 @@ namespace Factions.Faction_Types {
             this.type = type;
             name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
             ideologies = new List<FactionIdeology>();
-            neededStructures = new List<StructureSetting>();
+            // neededStructures = new List<StructureSetting>();
             combatantClasses = new List<string>();
             civilianClasses = new List<string>();
             crimes = new Dictionary<CRIME_TYPE, CRIME_SEVERITY>();
@@ -29,7 +29,7 @@ namespace Factions.Faction_Types {
             this.type = type;
             name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
             ideologies = new List<FactionIdeology>();
-            neededStructures = new List<StructureSetting>();
+            // neededStructures = new List<StructureSetting>();
             combatantClasses = new List<string>();
             civilianClasses = new List<string>();
             for (int i = 0; i < data.ideologies.Count; i++) {
@@ -125,23 +125,23 @@ namespace Factions.Faction_Types {
         #endregion
 
         #region Structures
-        public void AddNeededStructure(StructureSetting structureSetting) {
-            neededStructures.Add(structureSetting);
-        }
-        public void AddNeededStructure(STRUCTURE_TYPE structureType, RESOURCE resource) {
-            StructureSetting structureSetting = new StructureSetting(structureType, resource);
-            neededStructures.Add(structureSetting);
-        }
-        public StructureSetting GetStructureSettingFor(STRUCTURE_TYPE structureType) {
-            for (int i = 0; i < neededStructures.Count; i++) {
-                StructureSetting structureSetting = neededStructures[i];
-                if (structureSetting.structureType == structureType) {
-                    return structureSetting;
-                }
-            }
-            Debug.LogWarning($"{type} has no structure setting for {structureType}");
-            return default;
-        }
+        // public void AddNeededStructure(StructureSetting structureSetting) {
+        //     neededStructures.Add(structureSetting);
+        // }
+        // public void AddNeededStructure(STRUCTURE_TYPE structureType, RESOURCE resource) {
+        //     StructureSetting structureSetting = new StructureSetting(structureType, resource);
+        //     neededStructures.Add(structureSetting);
+        // }
+        // public StructureSetting GetStructureSettingFor(STRUCTURE_TYPE structureType) {
+        //     for (int i = 0; i < neededStructures.Count; i++) {
+        //         StructureSetting structureSetting = neededStructures[i];
+        //         if (structureSetting.structureType == structureType) {
+        //             return structureSetting;
+        //         }
+        //     }
+        //     Debug.LogWarning($"{type} has no structure setting for {structureType}");
+        //     return default;
+        // }
         #endregion
 
         #region Combatants

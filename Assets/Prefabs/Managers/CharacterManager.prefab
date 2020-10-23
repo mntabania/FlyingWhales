@@ -1289,6 +1289,7 @@ MonoBehaviour:
         - Archer
         - Barbarian
         - Craftsman
+        - Cult Leader
         - Druid
         - Hero
         - Hunter
@@ -1367,6 +1368,26 @@ MonoBehaviour:
           - {fileID: 21300000, guid: b0a57c4c1622f50499786db7ae3d84c5, type: 3}
           - {fileID: 21300000, guid: b81ec49c63b019842ba0dad75fa3fe49, type: 3}
           - {fileID: 21300000, guid: 19fb848e78ec2134c83af113c1ddc3f5, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 457ca2d0a8fd9414ab7a77709ade59d0,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 1c3b5c10e9ca2de4d812fa7723225f71, type: 3}
+          - {fileID: 21300000, guid: 47c69db5b1a574e41b69fb94f42b8c21, type: 3}
+          - {fileID: 21300000, guid: 8d7758f69c10b6045bb3325673811748, type: 3}
+          - {fileID: 21300000, guid: e3103df51ad352f41b3320604f62edc1, type: 3}
+          - {fileID: 21300000, guid: 457ca2d0a8fd9414ab7a77709ade59d0, type: 3}
+          - {fileID: 21300000, guid: 077af1e53bb7257409555996e8c25e76, type: 3}
+          - {fileID: 21300000, guid: 1d41b9670b4defd4e820acc8f30c1f4f, type: 3}
+          - {fileID: 21300000, guid: f1437ea1987e5774988834f7a3900e7d, type: 3}
+          - {fileID: 21300000, guid: 24a84cde4bf5d9945a11197977b723c9, type: 3}
+          - {fileID: 21300000, guid: bd5bdbe4b37723147a39abe02f255001, type: 3}
+          - {fileID: 21300000, guid: 57e75b8b01b43a34e84c6b0e55c19b45, type: 3}
+          - {fileID: 21300000, guid: 2d586c4d31a3448458e5e272c2c46fa5, type: 3}
+          - {fileID: 21300000, guid: c379c36a23e1cd246888c3b9bc8425a5, type: 3}
+          - {fileID: 21300000, guid: 4301355a8ee61384e9a2a40f9865f79e, type: 3}
+          - {fileID: 21300000, guid: ba1ecd8255803d34d8716d80f4ef7699, type: 3}
+          - {fileID: 21300000, guid: d7fcb55e60a670343af9992b2ece3acd, type: 3}
+          - {fileID: 21300000, guid: a4c0f3377c863544abf034753ce86d52, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 1dfbc03de77197143a24f6af59f8ce44,
             type: 3}
           animationSprites:
@@ -1775,6 +1796,7 @@ MonoBehaviour:
         - Archer
         - Barbarian
         - Craftsman
+        - Cult Leader
         - Druid
         - Hero
         - Hunter
@@ -1853,6 +1875,26 @@ MonoBehaviour:
           - {fileID: 21300000, guid: a2b7aec9441c636438b962c9b182bceb, type: 3}
           - {fileID: 21300000, guid: b2ecb5654e072e84fb1c18d61b4881c8, type: 3}
           - {fileID: 21300000, guid: bc4340299e0ed8d459cce716b1221c0e, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 35cd9c965c88eb7498fae75c750c05f1,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 8326648581881c84ba15ae4a9d1f8929, type: 3}
+          - {fileID: 21300000, guid: 7d93bbbc4581a3f4690ef829d88d7a46, type: 3}
+          - {fileID: 21300000, guid: eaf97210fa5fa604597473fa90aef879, type: 3}
+          - {fileID: 21300000, guid: d8302bc356a5bde49ad0b6e13b3d002b, type: 3}
+          - {fileID: 21300000, guid: 35cd9c965c88eb7498fae75c750c05f1, type: 3}
+          - {fileID: 21300000, guid: 17163cf8e9daf1342a9dfc111c750a21, type: 3}
+          - {fileID: 21300000, guid: 8debcbabddb908f4599cb359fc8c30ea, type: 3}
+          - {fileID: 21300000, guid: 572602f5705f4834a88ab3109b70711b, type: 3}
+          - {fileID: 21300000, guid: d6bb44e9dea693849b8684160043f00d, type: 3}
+          - {fileID: 21300000, guid: a5fffe8230ee00c45b14077048b95575, type: 3}
+          - {fileID: 21300000, guid: 21a18f93fa233a64ca2521bbd7ca9165, type: 3}
+          - {fileID: 21300000, guid: 0e36a2569ecd6ea48af57e94b30d7a64, type: 3}
+          - {fileID: 21300000, guid: 1e24e018e88f2e3448d083ed80d59f8b, type: 3}
+          - {fileID: 21300000, guid: 7980ced6c2129854296741a56301ddc9, type: 3}
+          - {fileID: 21300000, guid: 4df4a96ea2b697544bcaafa4df4bff52, type: 3}
+          - {fileID: 21300000, guid: 65fe74a0af0058541a0ce3f36888fe03, type: 3}
+          - {fileID: 21300000, guid: 3715b1c2b51c42842884e6bd6b2be10a, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 8f530a58a805d184d9f0557e1cd6a36c,
             type: 3}
           animationSprites:

@@ -1,4 +1,8 @@
 ﻿
+using System.Collections.Generic;
+using Inner_Maps;
+using Inner_Maps.Location_Structures;
+using UnityEngine;
 using UtilityScripts;
 
 public class CultistBehaviour : CharacterBehaviourComponent {
@@ -8,6 +12,16 @@ public class CultistBehaviour : CharacterBehaviourComponent {
     }
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        if (character.homeSettlement == null && !character.currentRegion.IsRegionVillageCapacityReached() && character.faction != null && character.faction.factionType.type == FACTION_TYPE.Demon_Cult) {
+            HexTile targetTile = character.currentRegion.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
+            if(targetTile != null) {
+                StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, character.faction.factionType.mainResource);
+                List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
+                GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
+                return character.jobComponent.TriggerFindNewVillage(targetTile.GetCenterLocationGridTile(), out producedJob, chosenStructurePrefab.name);
+            }    
+        }
+        
         TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         int chance = 0;
         if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {

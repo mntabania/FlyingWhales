@@ -572,7 +572,8 @@ public enum INTERRUPT {
     Become_Lycanthrope,
     Transform_To_Werewolf,
     Revert_From_Werewolf,
-    Shed_Pelt
+    Shed_Pelt,
+    Become_Cult_Leader
 }
 
 public enum TRAIT_TYPE {
@@ -951,6 +952,7 @@ public enum SPELL_TYPE { NONE = 0, LYCANTHROPY = 1, KLEPTOMANIA = 2, VAMPIRISM =
     REVENANT = 147,
     SNATCH = 148,
     SACRIFICE = 149, REPAIR = 150, EVANGELIZE = 151, SPREAD_RUMOR = 152,
+    FOUND_CULT = 153
 }
 //public enum INTERVENTION_ABILITY_TYPE { NONE, AFFLICTION, SPELL, }
 public enum SPELL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON }
@@ -1011,7 +1013,7 @@ public enum FACTION_IDEOLOGY { Inclusive = 0, Exclusive = 1, Warmonger = 2, Peac
     Reveres_Vampires = 7, Reveres_Werewolves = 8, Hates_Vampires = 9, Hates_Werewolves = 10,
 }
 public enum BEHAVIOUR_COMPONENT_ATTRIBUTE { WITHIN_HOME_SETTLEMENT_ONLY, ONCE_PER_DAY, DO_NOT_SKIP_PROCESSING, } //, OUTSIDE_SETTLEMENT_ONLY
-public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, TRAIT, }
+public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, TRAIT, RELIGION }
 public enum EMOTION { None, Fear, Approval, Embarassment, Disgust, Anger, Betrayal, Concern, Disappointment, Scorn, Sadness, Threatened,
     Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, Rage, Plague_Hysteria, Distraught,
 }
@@ -1058,7 +1060,7 @@ public enum LOG_TAG {
     Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Misc, Player, Intel, Important
 }
 public enum PARTY_TARGET_DESTINATION_TYPE { Structure, Settlement, Hextile, }
-public enum SETTLEMENT_TYPE { Default_Human, Default_Elf, Capital }
+public enum SETTLEMENT_TYPE { Default_Human, Default_Elf, Capital, Cult_Town }
 
 public enum RELATIONS_FILTER {
     Enemies, Rivals, Acquaintances, Friends, Close_Friends, Relatives, Lovers,

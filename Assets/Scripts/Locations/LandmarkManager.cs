@@ -374,6 +374,23 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         defaultPos.y -= 1.25f;
         return defaultPos;
     }
+    public SETTLEMENT_TYPE GetSettlementTypeForCharacter(Character character) {
+        if (character.characterClass.className == "Cult Leader") {
+            return SETTLEMENT_TYPE.Cult_Town;
+        }
+        return GetSettlementTypeForRace(character.race);
+    }
+    public SETTLEMENT_TYPE GetSettlementTypeForRace(RACE race) {
+        switch (race) {
+            case RACE.HUMANS:
+                return SETTLEMENT_TYPE.Default_Human;
+            case RACE.ELVES:
+                return SETTLEMENT_TYPE.Default_Elf;
+            default:
+                return SETTLEMENT_TYPE.Default_Human;
+        }
+    }
+    
     #endregion
 
     #region Location Structures

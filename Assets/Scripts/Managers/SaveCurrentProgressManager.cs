@@ -8,6 +8,7 @@ using System.IO.Compression;
 using System.Threading;
 using UnityEngine;
 using BayatGames.SaveGameFree;
+using Managers;
 using Tutorial;
 using UtilityScripts;
 using Debug = UnityEngine.Debug;
@@ -63,7 +64,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         //save world map
         WorldMapSave worldMapSave = new WorldMapSave();
         yield return StartCoroutine(worldMapSave.SaveWorldCoroutine(WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, DatabaseManager.Instance.hexTileDatabase,
-            DatabaseManager.Instance.regionDatabase, DatabaseManager.Instance.settlementDatabase, DatabaseManager.Instance.structureDatabase));
+            DatabaseManager.Instance.regionDatabase, DatabaseManager.Instance.settlementDatabase, DatabaseManager.Instance.structureDatabase, WorldEventManager.Instance.activeEvents));
         currentSaveDataProgress.worldMapSave = worldMapSave;
         yield return StartCoroutine(currentSaveDataProgress.SaveTileObjectsCoroutine());
         currentSaveDataProgress.familyTreeDatabase = DatabaseManager.Instance.familyTreeDatabase;

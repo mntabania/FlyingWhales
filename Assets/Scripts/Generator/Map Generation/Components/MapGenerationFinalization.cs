@@ -22,7 +22,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(LoadSettlementItems());
 		yield return MapGenerator.Instance.StartCoroutine(CharacterFinalization());
 		yield return MapGenerator.Instance.StartCoroutine(LoadArtifacts());
-		yield return MapGenerator.Instance.StartCoroutine(LoadWorldEvents());
+		yield return MapGenerator.Instance.StartCoroutine(CreateWorldEvents());
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i]; 
 			region.GenerateOuterBorders();
@@ -31,8 +31,17 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	}
 
 	#region Events
-	private IEnumerator LoadWorldEvents() {
+	private IEnumerator CreateWorldEvents() {
 		WorldEventManager.Instance.AddActiveEvent(new VillagerMigration());
+		WorldEventManager.Instance.AddActiveEvent(new CultLeaderEvent());
+		yield return null;
+	}
+	private IEnumerator LoadWorldEvents(SaveDataCurrentProgress saveData) {
+		for (int i = 0; i < saveData.worldMapSave.worldEventSaves.Count; i++) {
+			SaveDataWorldEvent saveDataWorldEvent = saveData.worldMapSave.worldEventSaves[i];
+			WorldEvent worldEvent = saveDataWorldEvent.Load();
+			WorldEventManager.Instance.LoadEvent(worldEvent);
+		}
 		yield return null;
 	}
 	#endregion
@@ -64,7 +73,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Finalizing world...");
 		yield return MapGenerator.Instance.StartCoroutine(FinalizeInnerMaps());
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteLoadedFeatureInitialActions());
-		yield return MapGenerator.Instance.StartCoroutine(LoadWorldEvents());
+		yield return MapGenerator.Instance.StartCoroutine(LoadWorldEvents(saveData));
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i]; 
 			region.GenerateOuterBorders();
