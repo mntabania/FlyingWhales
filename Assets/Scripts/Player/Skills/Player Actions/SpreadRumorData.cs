@@ -15,17 +15,11 @@ public class SpreadRumorData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character character) {
-            List<Character> choices = new List<Character>();
-            for (int i = 0; i < character.relationshipContainer.charactersWithOpinion.Count; i++) {
-                Character target = character.relationshipContainer.charactersWithOpinion[i];
-                if (target.isNormalCharacter && target.traitContainer.HasTrait("Cultist") == false &&
-                    target.isDead == false &&
-                    character.relationshipContainer.HasOpinionLabelWithCharacter(target, RelationshipManager.Close_Friend) == false) {
-                    choices.Add(target);
-                }
+            List<Character> choices = character.GetListOfCultistTargets(x => x.isNormalCharacter && x.traitContainer.HasTrait("Cultist") == false && x.isDead == false && character.relationshipContainer.HasOpinionLabelWithCharacter(x, RelationshipManager.Close_Friend) == false);
+            if (choices != null) {
+                UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), showCover: true,
+                    shouldShowConfirmationWindowOnPick: false, layer: 40, asButton: false);
             }
-            UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), showCover: true,
-                shouldShowConfirmationWindowOnPick: false, layer: 40, asButton: false);
         }
         // base.ActivateAbility(targetPOI);
     }

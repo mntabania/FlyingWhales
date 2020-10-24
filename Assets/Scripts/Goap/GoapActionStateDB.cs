@@ -245,6 +245,12 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.DROP, new[]{
             new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.CARRY_CORSPE, new[]{
+            new StateNameAndDuration(){ name = "Carry Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.DROP_CORPSE, new[]{
+            new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
         {INTERACTION_TYPE.KNOCKOUT_CHARACTER, new[]{
             new StateNameAndDuration(){ name = "Knockout Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },

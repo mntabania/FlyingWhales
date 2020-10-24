@@ -17,6 +17,9 @@
             exclusive.SetRequirement(RELIGION.Demon_Worship);
             AddIdeology(exclusive);
 
+            BoneGolemMakers boneGolemMakers = FactionManager.Instance.CreateIdeology<BoneGolemMakers>(FACTION_IDEOLOGY.Bone_Golem_Makers);
+            AddIdeology(boneGolemMakers);
+
             //TODO: Corrupted Resource?
             //structures
             // AddNeededStructure(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE);

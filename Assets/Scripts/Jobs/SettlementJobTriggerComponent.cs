@@ -10,6 +10,7 @@ using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Locations.Settlements;
+using UtilityScripts;
 
 public class SettlementJobTriggerComponent : JobTriggerComponent {
 
@@ -914,6 +915,72 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		    job.SetCanTakeThisJobChecker(JobManager.Can_Craft_Well);
 		    _owner.AddToAvailableJobs(job); 
 	    }
+    }
+    #endregion
+
+    #region Steal Corpse
+    public bool CreateStealCorpseJob(LocationStructure dropLocation) {
+        if(!_owner.HasJob(JOB_TYPE.STEAL_CORPSE)) {
+            LocationGridTile targetTile = dropLocation.GetRandomUnoccupiedTile();
+            if (HasStealCorpseTarget()) {
+                IPointOfInterest target = GetStealCorpseTarget();
+                if(target != null) {
+                    if(target is Character) {
+                        targetTile = dropLocation.GetRandomPassableTile();
+                    }
+                    if(targetTile != null) {
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STEAL_CORPSE, INTERACTION_TYPE.DROP_CORPSE, target, _owner);
+                        job.AddOtherData(INTERACTION_TYPE.DROP_CORPSE, new object[] { dropLocation, targetTile });
+                        job.SetCanTakeThisJobChecker(JobManager.Can_Steal_Corpse);
+                        _owner.AddToAvailableJobs(job);
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    private bool HasStealCorpseTarget() {
+        Region region = _owner.region;
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            Character target = region.charactersAtLocation[i];
+            if (target.race.IsSapient() || target is Animal) {
+                if (target.isDead && (target.marker || (target.grave != null && target.grave.mapObjectVisual))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    private IPointOfInterest GetStealCorpseTarget() {
+        Region region = _owner.region;
+        List<IPointOfInterest> choices = null;
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            Character target = region.charactersAtLocation[i];
+            if (target.race.IsSapient() || target is Animal) {
+                if (target.isDead && (target.marker || (target.grave != null && target.grave.mapObjectVisual))) {
+                    IPointOfInterest targetPOI = target;
+                    LocationGridTile gridTile = target.gridTileLocation;
+                    if (target.grave != null) {
+                        gridTile = target.grave.gridTileLocation;
+                        targetPOI = target.grave;
+                    }
+                    if (gridTile != null) {
+                        if (gridTile.structure.settlementLocation == _owner) {
+                            //If the target is inside this settlement, only take corpse those corpses that are not in the cult temple
+                            //We should not take corpses from our own settlement that are already in the Cult Temple
+                            if (gridTile.structure.structureType != STRUCTURE_TYPE.TEMPLE) {
+                                if (choices == null) { choices = new List<IPointOfInterest>(); }
+                                choices.Add(targetPOI);
+                            }
+                        } else {
+                            if (choices == null) { choices = new List<IPointOfInterest>(); }
+                            choices.Add(targetPOI);
+                        }
+                    }
+                }
+            }
+        }
+        return CollectionUtilities.GetRandomElement(choices);
     }
     #endregion
 }

@@ -10,7 +10,7 @@ namespace UtilityScripts {
             if (index == collection.Count - 1) {
                 //if index provided is equal to the number of elements in the list,
                 //then the next element is the first element
-                return collection[0]; 
+                return collection[0];
             }
             return collection[index + 1];
         }
@@ -21,7 +21,7 @@ namespace UtilityScripts {
             if (index == collection.Length - 1) {
                 //if index provided is equal to the number of elements in the list,
                 //then the next element is the first element
-                return collection[0]; 
+                return collection[0];
             }
             return collection[index + 1];
         }
@@ -65,9 +65,9 @@ namespace UtilityScripts {
             } else {
                 foreach (KeyValuePair<T, V> kvp in dict) {
                     log += $"{kvp.Key.ToString()} - {kvp.Value.ToString()}";
-                }    
+                }
             }
-            
+
             return log;
         }
         public static T[] CreateCopyOfArray<T>(T[] sourceArray) {
@@ -106,19 +106,19 @@ namespace UtilityScripts {
         /// <param name="list">The sample list.</param>
         /// <returns>An integer.</returns>
         public static int GetRandomIndexInList<T>(List<T> list) {
-            if (list.Count == 0) {
+            if (list == null || list.Count == 0) {
                 return -1;
             }
             return UtilityScripts.Utilities.Rng.Next(0, list.Count);
         }
         public static T GetRandomElement<T>(List<T> list) {
-            if (list.Count == 0) {
+            if (list == null || list.Count == 0) {
                 return default;
             }
             return list[UtilityScripts.Utilities.Rng.Next(0, list.Count)];
         }
         public static T GetRandomElement<T>(T[] list) {
-            if (list.Length == 0) {
+            if (list == null || list.Length == 0) {
                 return default;
             }
             return list[UtilityScripts.Utilities.Rng.Next(0, list.Length)];

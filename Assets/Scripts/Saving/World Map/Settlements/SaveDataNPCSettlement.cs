@@ -11,11 +11,13 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
     public SaveDataSettlementType settlementType;
     public SaveDataLocationEventManager eventManager;
     public List<TILE_OBJECT_TYPE> neededObjects;
-    
+    public bool hasTriedToStealCorpse;
+
     public override void Save(BaseSettlement baseSettlement) {
         base.Save(baseSettlement);
         NPCSettlement npcSettlement = baseSettlement as NPCSettlement;
         Assert.IsNotNull(npcSettlement);
+        hasTriedToStealCorpse = npcSettlement.hasTriedToStealCorpse;
         jobIDs = new List<string>();
         for (int i = 0; i < npcSettlement.availableJobs.Count; i++) {
             JobQueueItem job = npcSettlement.availableJobs[i];
