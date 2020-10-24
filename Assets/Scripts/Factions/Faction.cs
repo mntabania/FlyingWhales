@@ -63,7 +63,10 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                 case FACTION_TYPE.Demons:
                     return RACE.DEMON;
                 default:
-                    return RACE.NONE;
+                    if (leader is Character character) {
+                        return character.race;
+                    }
+                    return RACE.HUMANS;
             }
         }
     }
