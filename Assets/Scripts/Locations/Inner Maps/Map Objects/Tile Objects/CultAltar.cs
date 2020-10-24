@@ -5,4 +5,7 @@
     public CultAltar(SaveDataTileObject data) : base(data) {
         
     }
+    public override bool CanBeDamaged() {
+        return false;
+    }
 }
