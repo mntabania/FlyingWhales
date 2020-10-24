@@ -7,6 +7,7 @@ public class RumorOtherData : OtherData {
     public override object obj => rumor;
     
     public RumorOtherData(Rumor rumor) {
+        Assert.IsNotNull(rumor);
         this.rumor = rumor;
     }
     public RumorOtherData(SaveDataRumorOtherData data) { }
