@@ -141,7 +141,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 ruler = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(rulerID);
             } else {
                 ruler = null;
-                Messenger.AddListener(Signals.HOUR_STARTED, CheckForNewRulerDesignation);
             }    
         }
     }
@@ -255,9 +254,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{name} Under Siege state changed to {isUnderSiege.ToString()}");
             Messenger.Broadcast(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, this, isUnderSiege);
             if (isUnderSiege) {
-                Messenger.AddListener(Signals.HOUR_STARTED, CheckIfStillUnderSiege);
             } else {
-                Messenger.RemoveListener(Signals.HOUR_STARTED, CheckIfStillUnderSiege);
                 if(exterminateTargetStructure != null) {
                     if(owner != null && !owner.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, exterminateTargetStructure)) {
                         if(exterminateTargetStructure.settlementLocation == null || exterminateTargetStructure.settlementLocation.HasAliveResidentThatIsHostileWith(owner)) {
@@ -292,6 +289,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void OnHourStarted() {
         CheckForJudgePrisoners();
+        if(ruler == null) {
+            CheckForNewRulerDesignation();
+        }
+        if (isUnderSiege) {
+            CheckIfStillUnderSiege();
+        }
     }
     #endregion
 
@@ -367,13 +370,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if(ruler != null) {
             ruler.SetRuledSettlement(this);
             //ResetNewRulerDesignationChance();
-            if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
-                Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForNewRulerDesignation);
-            }
             Messenger.Broadcast(Signals.ON_SET_AS_SETTLEMENT_RULER, ruler, previousRuler);
         } else {
             Messenger.Broadcast(Signals.ON_SETTLEMENT_RULER_REMOVED, this, previousRuler);
-            Messenger.AddListener(Signals.HOUR_STARTED, CheckForNewRulerDesignation);
         }
     }
     private void CheckForNewRulerDesignation() {
@@ -619,6 +618,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void CheckForJudgePrisoners() {
         if(prison != null) {
+            //Will try to judge prisoners in prison per hour
             for (int i = 0; i < prison.charactersHere.Count; i++) {
                 Character character = prison.charactersHere[i];
                 settlementJobTriggerComponent.TryCreateJudgePrisoner(character);

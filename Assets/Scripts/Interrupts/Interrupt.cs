@@ -85,6 +85,7 @@ namespace Interrupts {
         public List<Character> awareCharacters { get; private set; }
         public string reason { get; private set; }
         public CRIME_TYPE crimeType { get; private set; }
+        public bool shouldNotBeObjectPooled { get; private set; }
 
         #region getters
         public string name => interrupt.name;
@@ -111,6 +112,7 @@ namespace Interrupts {
             identifier = data.identifier;
             reason = data.reason;
             crimeType = data.crimeType;
+            shouldNotBeObjectPooled = data.shouldNotBeObjectPooled;
         }
 
         #region General
@@ -206,6 +208,9 @@ namespace Interrupts {
             crimeType = CRIME_TYPE.Unset;
             awareCharacters.Clear();
         }
+        public void SetShouldNotBeObjectPooled(bool state) {
+            shouldNotBeObjectPooled = state;
+        }
         #endregion
 
         #region Testing
@@ -273,6 +278,7 @@ public class SaveDataInterruptHolder : SaveData<InterruptHolder>, ISavableCounte
     public List<string> awareCharacterIDs;
     public string reason;
     public CRIME_TYPE crimeType;
+    public bool shouldNotBeObjectPooled;
 
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Interrupt;
@@ -290,6 +296,7 @@ public class SaveDataInterruptHolder : SaveData<InterruptHolder>, ISavableCounte
         identifier = data.identifier;
         reason = data.reason;
         crimeType = data.crimeType;
+        shouldNotBeObjectPooled = data.shouldNotBeObjectPooled;
 
         disguisedActorID = string.Empty;
         disguisedTargetID = string.Empty;

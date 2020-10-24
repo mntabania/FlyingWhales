@@ -56,14 +56,16 @@ public class InterruptIntel : IIntel, IDisposable {
     #endregion
 
     public InterruptIntel(InterruptHolder interrupt) {
-        interruptHolder = ObjectPoolManager.Instance.CreateNewInterrupt();
-        interruptHolder.Initialize(interrupt.interrupt, interrupt.actor, interrupt.target, interrupt.identifier, interrupt.reason);
-        interruptHolder.SetEffectLog(interrupt.effectLog);
+        interrupt.SetShouldNotBeObjectPooled(true);
+        interruptHolder = interrupt;
+        //interruptHolder = ObjectPoolManager.Instance.CreateNewInterrupt();
+        //interruptHolder.Initialize(interrupt.interrupt, interrupt.actor, interrupt.target, interrupt.identifier, interrupt.reason);
+        //interruptHolder.SetEffectLog(interrupt.effectLog);
 
-        //This is set because the interrupt intel must copy the data of the interrupt
-        interruptHolder.SetDisguisedActor(interrupt.disguisedActor);
-        interruptHolder.SetDisguisedTarget(interrupt.disguisedTarget);
-        
+        ////This is set because the interrupt intel must copy the data of the interrupt
+        //interruptHolder.SetDisguisedActor(interrupt.disguisedActor);
+        //interruptHolder.SetDisguisedTarget(interrupt.disguisedTarget);
+
         DatabaseManager.Instance.mainSQLDatabase.SetLogIntelState(log.persistentID, true);
     }
     public InterruptIntel(SaveDataInterruptIntel data) {

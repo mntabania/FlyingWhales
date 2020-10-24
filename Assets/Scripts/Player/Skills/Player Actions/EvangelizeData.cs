@@ -16,13 +16,30 @@ public class EvangelizeData : PlayerAction {
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character character) {
             List<Character> choices = new List<Character>();
-            for (int i = 0; i < character.homeSettlement.residents.Count; i++) {
-                Character resident = character.homeSettlement.residents[i];
-                //if (resident.isNormalCharacter && resident.traitContainer.HasTrait("Cultist") == false && 
-                //    resident.isDead == false &&
-                //    character.relationshipContainer.HasOpinionLabelWithCharacter(resident, RelationshipManager.Close_Friend) == false) {
-                if (character.jobComponent.IsValidEvangelizeTarget(character)) {
-                    choices.Add(resident);
+            if(character.characterClass.className == "Cultist Leader") {
+                //Cultist leader should have all characters as the target for evangelization
+                for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                    Character target = CharacterManager.Instance.allCharacters[i];
+                    //if (resident.isNormalCharacter && resident.traitContainer.HasTrait("Cultist") == false && 
+                    //    resident.isDead == false &&
+                    //    character.relationshipContainer.HasOpinionLabelWithCharacter(resident, RelationshipManager.Close_Friend) == false) {
+                    if(!target.isDead && target.isNormalCharacter && target.race.IsSapient()) {
+                        if (character.jobComponent.IsValidEvangelizeTarget(target)) {
+                            choices.Add(target);
+                        }
+                    }
+                }
+            } else {
+                for (int i = 0; i < character.relationshipContainer.charactersWithOpinion.Count; i++) {
+                    Character target = character.relationshipContainer.charactersWithOpinion[i];
+                    //if (resident.isNormalCharacter && resident.traitContainer.HasTrait("Cultist") == false && 
+                    //    resident.isDead == false &&
+                    //    character.relationshipContainer.HasOpinionLabelWithCharacter(resident, RelationshipManager.Close_Friend) == false) {
+                    if (!target.isDead && target.isNormalCharacter && target.race.IsSapient()) {
+                        if (character.jobComponent.IsValidEvangelizeTarget(target)) {
+                            choices.Add(target);
+                        }
+                    }
                 }
             }
             UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), showCover: true,

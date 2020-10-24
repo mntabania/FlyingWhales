@@ -237,6 +237,9 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         return data;
     }
     public void ReturnInterruptToPool(InterruptHolder data) {
+        if (data.shouldNotBeObjectPooled) {
+            return;
+        }
         data.Reset();
         interruptPool.Add(data);
     }
