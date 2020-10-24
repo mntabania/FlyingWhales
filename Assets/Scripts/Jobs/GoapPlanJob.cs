@@ -71,7 +71,9 @@ public class GoapPlanJob : JobQueueItem {
             for (int i = 0; i < loadedOtherData.Length; i++) {
                 SaveDataOtherData saved = saveDataOtherData.Value[i];
                 if (saved != null) {
-                    loadedOtherData[i] = saved.Load();    
+                    OtherData d = saved.Load();
+                    d.LoadAdditionalData(saved);
+                    loadedOtherData[i] = d;    
                 }
             }
             otherData.Add(saveDataOtherData.Key, loadedOtherData);
