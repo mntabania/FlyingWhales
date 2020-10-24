@@ -15,9 +15,9 @@ public class EvangelizeData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character character) {
-            List<Character> choices = new List<Character>();
             if(character.characterClass.className == "Cultist Leader") {
                 //Cultist leader should have all characters as the target for evangelization
+                List<Character> choices = new List<Character>();
                 for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
                     Character target = CharacterManager.Instance.allCharacters[i];
                     //if (resident.isNormalCharacter && resident.traitContainer.HasTrait("Cultist") == false && 
@@ -30,20 +30,13 @@ public class EvangelizeData : PlayerAction {
                     }
                 }
             } else {
-                for (int i = 0; i < character.relationshipContainer.charactersWithOpinion.Count; i++) {
-                    Character target = character.relationshipContainer.charactersWithOpinion[i];
-                    //if (resident.isNormalCharacter && resident.traitContainer.HasTrait("Cultist") == false && 
-                    //    resident.isDead == false &&
-                    //    character.relationshipContainer.HasOpinionLabelWithCharacter(resident, RelationshipManager.Close_Friend) == false) {
-                    if (!target.isDead && target.isNormalCharacter && target.race.IsSapient()) {
-                        if (character.jobComponent.IsValidEvangelizeTarget(target)) {
-                            choices.Add(target);
-                        }
-                    }
+                List<Character> choices = character.GetListOfCultistTargets(x => !x.isDead && x.isNormalCharacter && x.race.IsSapient() && character.jobComponent.IsValidEvangelizeTarget(x));
+                if (choices != null) {
+                    UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), showCover: true,
+                        shouldShowConfirmationWindowOnPick: false, layer: 40, asButton: false);
                 }
             }
-            UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), showCover: true,
-                shouldShowConfirmationWindowOnPick: false, layer: 40, asButton: false);
+
         }
         // base.ActivateAbility(targetPOI);
     }

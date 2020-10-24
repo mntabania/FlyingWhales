@@ -24,6 +24,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; }
     public bool isUnderSiege { get; private set; }
     public bool isPlagued { get; private set; }
+    public bool hasTriedToStealCorpse { get; private set; }
     public LocationStructure exterminateTargetStructure { get; private set; }
 
     //structures
@@ -81,6 +82,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public NPCSettlement(SaveDataBaseSettlement saveDataBaseSettlement) : base (saveDataBaseSettlement) {
         SaveDataNPCSettlement saveData = saveDataBaseSettlement as SaveDataNPCSettlement;
         System.Diagnostics.Debug.Assert(saveData != null, nameof(saveData) + " != null");
+        hasTriedToStealCorpse = saveData.hasTriedToStealCorpse;
         //NOTE: This assumes that all tiles in this settlement is part of the same region.
         _region = GameUtilities.GetHexTilesGivenCoordinates(saveDataBaseSettlement.tileCoordinates, GridMap.Instance.map)[0].region;
         newRulerDesignationWeights = new WeightedDictionary<Character>();
@@ -295,6 +297,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         ProcessForcedCancelJobsOnTickEnded();
     }
     private void OnDayStarted() {
+        hasTriedToStealCorpse = false;
         ClearAllBlacklistToAllExistingJobs();
     }
     private void OnHourStarted() {
@@ -304,6 +307,25 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         if (isUnderSiege) {
             CheckIfStillUnderSiege();
+        }
+        if(owner != null) {
+            if (!hasTriedToStealCorpse) {
+                TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+                if (currentTime == TIME_IN_WORDS.MORNING) {
+                    hasTriedToStealCorpse = true;
+                    if (settlementType != null && settlementType.settlementType == SETTLEMENT_TYPE.Cult_Town) {
+                        if (GameUtilities.RollChance(20)) {
+                            if (owner.factionType.HasIdeology(FACTION_IDEOLOGY.Bone_Golem_Makers)) {
+                                LocationStructure cultTemple = GetFirstStructureOfType(STRUCTURE_TYPE.TEMPLE);
+                                if (cultTemple != null) {
+                                    settlementJobTriggerComponent.CreateStealCorpseJob(cultTemple);
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
         }
     }
     #endregion

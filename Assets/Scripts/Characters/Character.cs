@@ -3427,7 +3427,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 targetTile = gridTileLocation;
             }
             if (targetTile == null || targetTile.objHere != null) {
-                targetTile = gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
+                targetTile = gridTileLocation.GetFirstNearestTileFromThisWithNoObject(true);
             }
             if (targetTile != null) {
                 targetTile.structure.AddPOI(item, targetTile);
@@ -3947,6 +3947,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.RETURN_HOME);
         AddAdvertisedAction(INTERACTION_TYPE.CARRY);
         AddAdvertisedAction(INTERACTION_TYPE.DROP);
+        AddAdvertisedAction(INTERACTION_TYPE.CARRY_CORSPE);
+        AddAdvertisedAction(INTERACTION_TYPE.DROP_CORPSE);
         AddAdvertisedAction(INTERACTION_TYPE.CARRY_RESTRAINED);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_RESTRAINED);
         AddAdvertisedAction(INTERACTION_TYPE.KNOCKOUT_CHARACTER);
@@ -5997,6 +5999,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 visuals.UpdateAllVisuals(this);
             }
         }
+    }
+    #endregion
+
+    #region Cultist
+    public List<Character> GetListOfCultistTargets(Func<Character, bool> criteria) {
+        List<Character> choices = null;
+        for (int i = 0; i < relationshipContainer.charactersWithOpinion.Count; i++) {
+            Character target = relationshipContainer.charactersWithOpinion[i];
+            if (criteria.Invoke(target)) {
+                if(choices == null) { choices = new List<Character>(); }
+                choices.Add(target);
+            }
+        }
+        return choices;
     }
     #endregion
 

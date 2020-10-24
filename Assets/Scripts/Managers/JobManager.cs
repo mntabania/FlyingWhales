@@ -32,6 +32,7 @@ public class JobManager : BaseMonoBehaviour {
     public const string Can_Brew_Antidote = "CanBrewAntidote";
     public const string Can_Craft_Well = "CanCraftWell";
     public const string Can_Craft_Phylactery = "CanCraftPhylactery";
+    public const string Can_Steal_Corpse = "CanStealCorpse";
     
     //applicability
     public const string Destroy_Applicability = "IsDestroyApplicable";

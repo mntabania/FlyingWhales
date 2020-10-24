@@ -8,23 +8,20 @@ using Traits;
 using UtilityScripts;
 using Locations.Settlements;
 
-public class Drop : GoapAction {
+public class DropCorpse : GoapAction {
 
-    public Drop() : base(INTERACTION_TYPE.DROP) {
+    public DropCorpse() : base(INTERACTION_TYPE.DROP_CORPSE) {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         actionIconString = GoapActionStateDB.Haul_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF,
-        //    RACE.SPIDER, RACE.DRAGON, RACE.GOLEM, RACE.DEMON, RACE.ELEMENTAL, RACE.KOBOLD, RACE.MIMIC, RACE.ABOMINATION,
-        //    RACE.CHICKEN, RACE.SHEEP, RACE.PIG, RACE.NYMPH, RACE.WISP, RACE.SLUDGE, RACE.GHOST, RACE.LESSER_DEMON, RACE.ANGEL };
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         logTags = new[] {LOG_TAG.Misc};
     }
 
     
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), IsCarriedOrInInventory);
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Carry Corpse", false, GOAP_EFFECT_TARGET.TARGET), IsCarriedOrInInventory);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, string.Empty, false, GOAP_EFFECT_TARGET.TARGET));
     }
     public override void Perform(ActualGoapNode actionNode) {
@@ -76,15 +73,6 @@ public class Drop : GoapAction {
         string stateName = "Target Missing";
         bool defaultTargetMissing = IsDropTargetMissing(node);
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
-        //if (defaultTargetMissing == false) {
-        //    //check the target's traits, if any of them can make this action invalid
-        //    for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
-        //        Trait trait = poiTarget.traitContainer.allTraits[i];
-        //        if (trait.TryStopAction(goapType, actor, poiTarget, ref goapActionInvalidity)) {
-        //            break; //a trait made this action invalid, stop loop
-        //        }
-        //    }
-        //}
         return goapActionInvalidity;
     }
     private bool IsDropTargetMissing(ActualGoapNode node) {
@@ -145,57 +133,6 @@ public class Drop : GoapAction {
             }
         }
         goapNode.actor.UncarryPOI(goapNode.poiTarget, dropLocation: tile);
-        if(goapNode.poiTarget is Character targetCharacter) {
-            BaseSettlement currentSettlement = goapNode.actor.currentSettlement;
-            if (goapNode.associatedJobType == JOB_TYPE.APPREHEND && currentSettlement != null && currentSettlement is NPCSettlement settlement && targetCharacter.currentStructure == settlement.prison) {
-                if (targetCharacter.traitContainer.HasTrait("Criminal")) {
-                    Criminal criminalTrait = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
-                    criminalTrait.SetIsImprisoned(true);
-                }    
-            } else if (goapNode.associatedJobType == JOB_TYPE.SNATCH) {
-                //snatcher specific behaviour
-                HexTile hexTileLocation = targetCharacter.hexTileLocation;
-                if(hexTileLocation != null) {
-                    LocationStructure structure = hexTileLocation.GetMostImportantStructureOnTile();
-                    if (structure is DemonicStructure) {
-                        if (structure is Kennel) {
-                            List<LocationGridTile> choices = structure.passableTiles.Where(t => (t.objHere == null || t.IsPassable()) && !(t.objHere is DoorTileObject)).ToList();
-                            if (choices.Count > 0) {
-                                LocationGridTile randomTile = CollectionUtilities.GetRandomElement(choices);
-                                targetCharacter.marker.PlaceMarkerAt(randomTile);
-                            } else {
-                                Debug.LogWarning($"{goapNode.actor.name} could not place {targetCharacter.name} in a room in kennel, because no valid tiles could be found.");
-                            }
-                        } else if (structure.rooms != null && structure.rooms.Length > 0) {
-                            //place target in a random room
-                            List<StructureRoom> roomChoices = structure.rooms.Where(r => r.CanUnseizeCharacterInRoom(targetCharacter)).ToList();
-                            if (roomChoices.Count > 0) {
-                                StructureRoom randomRoom = CollectionUtilities.GetRandomElement(roomChoices);
-                                List<LocationGridTile> choices = randomRoom.tilesInRoom.Where(t => (t.objHere == null || t.IsPassable()) && !(t.objHere is DoorTileObject)).ToList();
-                                if (choices.Count > 0) {
-                                    LocationGridTile randomTileInRoom = CollectionUtilities.GetRandomElement(choices);
-                                    targetCharacter.marker.PlaceMarkerAt(randomTileInRoom);
-                                    DoorTileObject door = randomRoom.GetTileObjectInRoom<DoorTileObject>(); //close door in room
-                                    door?.Close();
-                                } else {
-                                    Debug.LogWarning($"{goapNode.actor.name} could not place {targetCharacter.name} in a room, because no valid tiles in room could be found.");
-                                }
-
-                            } else {
-                                Debug.LogWarning($"{goapNode.actor.name} could not place {targetCharacter.name} in a room, because no valid rooms could be found.");
-                            }
-                        }
-                    }
-                }
-                goapNode.actor.behaviourComponent.SetIsSnatching(false);
-            }
-        }
-
-        if (goapNode.associatedJobType == JOB_TYPE.KIDNAP_RAID) {
-            if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive && goapNode.actor.partyComponent.currentParty.currentQuest is RaidPartyQuest) {
-                goapNode.actor.partyComponent.currentParty.RemoveMemberThatJoinedQuest(goapNode.actor);
-            }
-        }
     }
     #endregion
 }
