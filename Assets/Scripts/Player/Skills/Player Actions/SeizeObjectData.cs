@@ -27,6 +27,9 @@ public class SeizeObjectData : PlayerAction {
             if(targetTileObject is WurmHole) {
                 return false;
             }
+            if(targetTileObject is CultAltar) {
+                return false;
+            }
             return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && targetTileObject.mapVisual != null && 
                    (targetTileObject.isBeingCarriedBy != null || targetTileObject.gridTileLocation != null);
         }
