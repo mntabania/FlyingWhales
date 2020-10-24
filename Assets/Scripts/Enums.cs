@@ -664,6 +664,7 @@ public enum STRUCTURE_TYPE {
     TEMPLE = 43,
     RUINED_ZOO = 44,
     VAMPIRE_CASTLE = 45,
+    CULT_TEMPLE = 46,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
@@ -842,6 +843,9 @@ public enum TILE_OBJECT_TYPE {
     HEIRLOOM = 157,
     WEREWOLF_PELT = 158,
     PHYLACTERY = 159,
+    CULT_CIRCLE = 160,
+    CULT_ALTAR = 161,
+    CULT_CROSS = 162
 }
 public enum POI_STATE {
     ACTIVE,

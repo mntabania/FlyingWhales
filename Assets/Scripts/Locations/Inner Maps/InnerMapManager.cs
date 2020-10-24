@@ -60,6 +60,7 @@ namespace Inner_Maps {
         [Header("Structures")]
         [SerializeField] private LocationStructurePrefabDictionary structurePrefabs;
         [SerializeField] private LocationStructurePrefabDictionary individualStructurePrefabs;
+        [SerializeField] private LocationStructurePrefabDictionary corruptedStructurePrefabs;
 
         [Header("Tilemap Assets")] 
         public InnerMapAssetManager assetManager;
@@ -659,7 +660,11 @@ namespace Inner_Maps {
             return structurePrefabs[structureSetting];
         }
         public List<GameObject> GetIndividualStructurePrefabsForStructure(StructureSetting structureSetting) {
-            return individualStructurePrefabs[structureSetting];
+            if (structureSetting.isCorrupted) {
+                return corruptedStructurePrefabs[structureSetting];
+            } else {
+                return individualStructurePrefabs[structureSetting];    
+            }
         }
         public void AddWorldKnownDemonicStructure(LocationStructure structure) {
             worldKnownDemonicStructures.Add(structure);

@@ -1,7 +1,6 @@
 ﻿namespace Factions.Faction_Types {
     public class DemonCult : FactionType {
         public override RESOURCE mainResource => RESOURCE.STONE;
-        
         public DemonCult() : base(FACTION_TYPE.Demon_Cult) { }
         public DemonCult(SaveDataFactionType saveData) : base(FACTION_TYPE.Demon_Cult, saveData) { }
         
@@ -16,20 +15,7 @@
             Exclusive exclusive = FactionManager.Instance.CreateIdeology<Exclusive>(FACTION_IDEOLOGY.Exclusive);
             exclusive.SetRequirement(RELIGION.Demon_Worship);
             AddIdeology(exclusive);
-
-            //TODO: Corrupted Resource?
-            //structures
-            // AddNeededStructure(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.MAGE_QUARTERS, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.BARRACKS, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.WAREHOUSE, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.PRISON, RESOURCE.STONE);
-
+            
             //combatant classes
             AddCombatantClass("Archer");
             AddCombatantClass("Hunter");

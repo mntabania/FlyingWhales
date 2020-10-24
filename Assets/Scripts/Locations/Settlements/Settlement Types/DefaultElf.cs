@@ -17,5 +17,8 @@ namespace Locations.Settlements.Settlement_Types {
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.BARRACKS, RESOURCE.WOOD), 20, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.WOOD), 30, 1);
         }
+        public override StructureSetting GetDwellingSetting(Faction faction) {
+            return new StructureSetting(STRUCTURE_TYPE.DWELLING, RESOURCE.WOOD);
+        }
     }
 }

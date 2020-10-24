@@ -71,7 +71,7 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                     if (GameUtilities.RollChance(chance, ref log)) {
                         log += $"\n-Chance met and dwellings not yet at maximum.";
                         //place dwelling blueprint
-                        StructureSetting structureToPlace = new StructureSetting(STRUCTURE_TYPE.DWELLING, character.faction.factionType.mainResource);
+                        StructureSetting structureToPlace = character.homeSettlement.settlementType.GetDwellingSetting(character.faction);
                         if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
                             log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
                             return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, out producedJob);    
@@ -81,7 +81,7 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                 if(dwellingCount <= 0) {
                     log += $"\n-Settlement has no dwelling yet, always build dwelling first";
                     //place dwelling blueprint
-                    StructureSetting structureToPlace = new StructureSetting(STRUCTURE_TYPE.DWELLING, character.faction.factionType.mainResource);
+                    StructureSetting structureToPlace = character.homeSettlement.settlementType.GetDwellingSetting(character.faction);
                     if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
                         log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
                         return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, out producedJob);
@@ -103,6 +103,13 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                             return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, targetFacility, targetTile, out producedJob);    
                         }
                     }
+                    // if (character.characterClass.className == "Cult Leader") {
+                    //     StructureSetting structureToPlace = new StructureSetting(STRUCTURE_TYPE.CULT_TEMPLE, RESOURCE.STONE);
+                    //     if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
+                    //         log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
+                    //         return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, out producedJob);
+                    //     }
+                    // }
                 }
             }
         }

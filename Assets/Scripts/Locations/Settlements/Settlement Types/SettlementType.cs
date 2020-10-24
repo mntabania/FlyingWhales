@@ -45,6 +45,7 @@ namespace Locations.Settlements.Settlement_Types {
             }
             return 0;
         }
+        public abstract StructureSetting GetDwellingSetting(Faction faction);
         #endregion
     }
 }

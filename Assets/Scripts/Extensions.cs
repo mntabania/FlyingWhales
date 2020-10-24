@@ -57,6 +57,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.LUMBERYARD:
             case STRUCTURE_TYPE.MINE_SHACK:
             case STRUCTURE_TYPE.TAVERN:
+            case STRUCTURE_TYPE.CULT_TEMPLE:
                 return true;
             default:
                 return false;
