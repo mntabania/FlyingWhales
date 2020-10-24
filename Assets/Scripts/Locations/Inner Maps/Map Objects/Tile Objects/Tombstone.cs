@@ -26,7 +26,7 @@ public class Tombstone : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.REMEMBER_FALLEN);
         AddAdvertisedAction(INTERACTION_TYPE.SPIT);
         AddAdvertisedAction(INTERACTION_TYPE.RAISE_CORPSE);
-        AddAdvertisedAction(INTERACTION_TYPE.CARRY_CORSPE);
+        AddAdvertisedAction(INTERACTION_TYPE.CARRY_CORPSE);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_CORPSE);
         _respawnCorpseOnDestroy = true;
     }
@@ -61,6 +61,9 @@ public class Tombstone : TileObject {
                 character.SetGrave(null);
                 character.jobComponent.TriggerBuryMe();
             } else {
+                if (character.currentRegion != null) {
+                    character.currentRegion.RemoveCharacterFromLocation(character);
+                }
                 if (character.marker) {
                     character.DestroyMarker();
                 }
@@ -68,6 +71,9 @@ public class Tombstone : TileObject {
             }
         } else {
             character.SetGrave(null);
+            if (character.currentRegion != null) {
+                character.currentRegion.RemoveCharacterFromLocation(character);
+            }
             character.DestroyMarker();
         }
         Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);

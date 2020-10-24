@@ -33,7 +33,8 @@ public class JobManager : BaseMonoBehaviour {
     public const string Can_Craft_Well = "CanCraftWell";
     public const string Can_Craft_Phylactery = "CanCraftPhylactery";
     public const string Can_Steal_Corpse = "CanStealCorpse";
-    
+    public const string Can_Summon_Bone_Golem = "CanSummonBoneGolem";
+
     //applicability
     public const string Destroy_Applicability = "IsDestroyApplicable";
     public const string Remove_Status_Applicability = "IsRemoveStatusApplicable";
@@ -81,6 +82,9 @@ public class JobManager : BaseMonoBehaviour {
             {Can_Brew_Antidote, new CanBrewAntidote()},
             {Can_Craft_Well, new CanCraftWell()},
             {Can_Craft_Phylactery, new CanCraftPhylactery()},
+            {Can_Steal_Corpse, new CanStealCorpse()},
+            {Can_Summon_Bone_Golem, new CanSummonBoneGolem()},
+
         };
         _applicabilityCheckers = new Dictionary<string, JobApplicabilityChecker>() {
             {Destroy_Applicability, new DestroyJobApplicabilityChecker()},

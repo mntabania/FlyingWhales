@@ -245,7 +245,7 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.DROP, new[]{
             new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
-        {INTERACTION_TYPE.CARRY_CORSPE, new[]{
+        {INTERACTION_TYPE.CARRY_CORPSE, new[]{
             new StateNameAndDuration(){ name = "Carry Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
         {INTERACTION_TYPE.DROP_CORPSE, new[]{
@@ -629,6 +629,9 @@ public static class GoapActionStateDB {
         } },
         {INTERACTION_TYPE.DISPEL, new[]{
             new StateNameAndDuration(){ name = "Dispel Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
+        } },
+        {INTERACTION_TYPE.SUMMON_BONE_GOLEM, new[]{
+            new StateNameAndDuration(){ name = "Summon Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
     };
 }

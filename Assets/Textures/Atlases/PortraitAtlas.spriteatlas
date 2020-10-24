@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 891be410796e8554eafb2611643cc64f, type: 3}
-    totalSpriteSurfaceArea: 3377766
+    totalSpriteSurfaceArea: 3390310
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -261,6 +261,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 61e9aeeb643a72d408839d250914c3ef, type: 3}
   - {fileID: 21300000, guid: feb3d3fb40f06214ca9b4d4e383a29af, type: 3}
   - {fileID: 21300000, guid: b96224fb6da78634094b169ea4cce888, type: 3}
+  - {fileID: 21300000, guid: 3187860cdb845ff4a8fe10bb432bd421, type: 3}
   - {fileID: 21300000, guid: e7a2781c7d87254478da24e883eb4144, type: 3}
   - {fileID: 21300000, guid: 9178512c96957d74a9107fce70f9a498, type: 3}
   - {fileID: 21300000, guid: a657484cd2323604da890b3920f6b0e9, type: 3}
@@ -538,6 +539,7 @@ SpriteAtlas:
   - mail_human_eyes4
   - female_human_hair10
   - female_elf_nose2
+  - M-BoneGolem
   - M-ElectricWisp
   - male_elf_ears1
   - mail_human_eyes2

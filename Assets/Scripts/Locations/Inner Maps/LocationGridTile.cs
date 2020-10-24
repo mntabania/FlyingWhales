@@ -1224,6 +1224,15 @@ namespace Inner_Maps {
         public LocationGridTile GetRandomNeighbor() {
             return neighbourList[Random.Range(0, neighbourList.Count)];
         }
+        public LocationGridTile GetFirstNeighbor(bool sameStructure = true) {
+            for (int i = 0; i < neighbourList.Count; i++) {
+                LocationGridTile neighbour = neighbourList[i];
+                if(!sameStructure || structure == neighbour.structure) {
+                    return neighbour;
+                }
+            }
+            return null;
+        }
         public bool IsAtEdgeOfWalkableMap() {
             if ((localPlace.y == InnerTileMap.SouthEdge && localPlace.x >= InnerTileMap.WestEdge && localPlace.x <= parentMap.width - InnerTileMap.EastEdge - 1)
                 || (localPlace.y == parentMap.height - InnerTileMap.NorthEdge - 1 && localPlace.x >= InnerTileMap.WestEdge && localPlace.x <= parentMap.width - InnerTileMap.EastEdge - 1)

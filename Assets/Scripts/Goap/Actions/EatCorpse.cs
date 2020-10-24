@@ -57,6 +57,9 @@
     public void AfterEatSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetHungry(-1);
         if (goapNode.poiTarget is Character character && character.marker != null) {
+            if (character.currentRegion != null) {
+                character.currentRegion.RemoveCharacterFromLocation(character);
+            }
             character.DestroyMarker();
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, goapNode.poiTarget, "target is already dead");
         }

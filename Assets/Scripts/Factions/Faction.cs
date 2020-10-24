@@ -479,14 +479,14 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         isMajorFaction = state;
     }
     public bool IsHostileWith(Faction faction) {
-        if (faction.id == this.id) {
+        if (faction == this) {
             return false;
         }
         FactionRelationship rel = GetRelationshipWith(faction);
         return rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile;
     }
     public bool IsFriendlyWith(Faction faction) {
-        if (faction.id == this.id) {
+        if (faction == this) {
             return false;
         }
         FactionRelationship rel = GetRelationshipWith(faction);

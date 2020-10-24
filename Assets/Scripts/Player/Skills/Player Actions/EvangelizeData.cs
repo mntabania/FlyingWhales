@@ -29,6 +29,10 @@ public class EvangelizeData : PlayerAction {
                         }
                     }
                 }
+                if (choices.Count > 0) {
+                    UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), showCover: true,
+                        shouldShowConfirmationWindowOnPick: false, layer: 40, asButton: false);
+                }
             } else {
                 List<Character> choices = character.GetListOfCultistTargets(x => !x.isDead && x.isNormalCharacter && x.race.IsSapient() && character.jobComponent.IsValidEvangelizeTarget(x));
                 if (choices != null) {

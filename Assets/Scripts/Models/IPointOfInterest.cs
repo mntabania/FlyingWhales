@@ -14,6 +14,7 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     //Vector3 worldPosition { get; }
     bool isDead { get; }
     bool isHidden { get; }
+    bool isBeingSeized { get; }
     int numOfActionsBeingPerformedOnThis { get; } //this is increased, when the action of another character stops this characters movement
     POINT_OF_INTEREST_TYPE poiType { get; }
     POI_STATE state { get; }
