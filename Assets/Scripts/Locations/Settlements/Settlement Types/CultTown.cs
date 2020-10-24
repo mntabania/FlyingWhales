@@ -10,12 +10,15 @@ namespace Locations.Settlements.Settlement_Types {
             maxFacilities = 5;
         }
         public override void ApplyDefaultSettings() {
-            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE), 50, 1);
-            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE), 30, 1);
-            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE), 10, 1);
-            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.BARRACKS, RESOURCE.STONE), 20, 1);
-            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.STONE), 30, 1);
-            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.TEMPLE, RESOURCE.STONE), 40, 1);
+            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE, true), 50, 1);
+            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE, true), 30, 1);
+            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE, true), 10, 1);
+            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.BARRACKS, RESOURCE.STONE, true), 20, 1);
+            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.STONE, true), 30, 1);
+            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.CULT_TEMPLE, RESOURCE.STONE, true), 40, 1);
+        }
+        public override StructureSetting GetDwellingSetting(Faction faction) {
+            return new StructureSetting(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE, true);
         }
     }
 }
