@@ -503,7 +503,7 @@ public enum INTERACTION_TYPE {
     IS_WEREWOLF = 207,
     DISPEL = 208,
     DROP_CORPSE = 209,
-    CARRY_CORSPE = 210,
+    CARRY_CORPSE = 210,
 }
 public enum INTERRUPT {
     None,

@@ -26,7 +26,7 @@ public class Tombstone : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.REMEMBER_FALLEN);
         AddAdvertisedAction(INTERACTION_TYPE.SPIT);
         AddAdvertisedAction(INTERACTION_TYPE.RAISE_CORPSE);
-        AddAdvertisedAction(INTERACTION_TYPE.CARRY_CORSPE);
+        AddAdvertisedAction(INTERACTION_TYPE.CARRY_CORPSE);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_CORPSE);
         _respawnCorpseOnDestroy = true;
     }

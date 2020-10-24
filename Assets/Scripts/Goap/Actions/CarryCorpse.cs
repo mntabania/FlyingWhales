@@ -6,7 +6,7 @@ using Traits;
 
 public class CarryCorpse : GoapAction {
 
-    public CarryCorpse() : base(INTERACTION_TYPE.CARRY_CORSPE) {
+    public CarryCorpse() : base(INTERACTION_TYPE.CARRY_CORPSE) {
         actionIconString = GoapActionStateDB.Work_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
