@@ -33,6 +33,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public LocationEventManager eventManager { get; private set; }
     public SettlementJobPriorityComponent jobPriorityComponent { get; }
     public SettlementType settlementType { get; private set; }
+    public GameDate plaguedExpiryDate { get; private set; }
 
     private Region _region;
     private readonly WeightedDictionary<Character> newRulerDesignationWeights;
@@ -113,6 +114,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             LoadParties(saveDataNpcSettlement);
             if (saveDataNpcSettlement.settlementType != null) {
                 settlementType = saveDataNpcSettlement.settlementType.Load();    
+            }
+            isUnderSiege = saveDataNpcSettlement.isUnderSiege;
+            isPlagued = saveDataNpcSettlement.isPlagued;
+            if (isPlagued) {
+                //reschedule plague expiry
+                GameDate expiryDate = saveDataNpcSettlement.plaguedExpiry;
+                _plaguedExpiryKey = SchedulingManager.Instance.AddEntry(expiryDate, () => SetIsPlagued(false), this);
+                plaguedExpiryDate = expiryDate;
             }
             Initialize();
         }
@@ -274,7 +283,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
             GameDate expiryDate = GameManager.Instance.Today();
             expiryDate.AddDays(2);
-            _plaguedExpiryKey = SchedulingManager.Instance.AddEntry(expiryDate, () => SetIsPlagued(false), this);    
+            _plaguedExpiryKey = SchedulingManager.Instance.AddEntry(expiryDate, () => SetIsPlagued(false), this);
+            plaguedExpiryDate = expiryDate;
         }
 
         isPlagued = state;

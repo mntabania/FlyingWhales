@@ -57,6 +57,9 @@ public class FactionIdeologyComponent {
         //Set Religion-Type Ideology:
         FactionManager.Instance.RerollReligionTypeIdeology(owner, leader);
         
+        //Validate crimes
+        FactionManager.Instance.RevalidateFactionCrimes(owner, leader);
+        
         //If Demon Worshipper, friendly with player faction
         FactionRelationship relationshipToPlayerFaction = owner.GetRelationshipWith(PlayerManager.Instance.player.playerFaction);
         relationshipToPlayerFaction.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Friendly);
@@ -71,5 +74,6 @@ public class FactionIdeologyComponent {
         changeRelationsLog.AddLogToDatabase();
         
         Messenger.Broadcast(Signals.FACTION_IDEOLOGIES_CHANGED, owner);
+        Messenger.Broadcast(Signals.FACTION_CRIMES_CHANGED, owner);
     }
 }

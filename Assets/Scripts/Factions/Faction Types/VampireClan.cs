@@ -8,19 +8,6 @@
         public override void SetAsDefault() {
             ReveresVampires reveresVampires = FactionManager.Instance.CreateIdeology<ReveresVampires>(FACTION_IDEOLOGY.Reveres_Vampires);
             AddIdeology(reveresVampires);
-            
-            //structures
-            // AddNeededStructure(STRUCTURE_TYPE.VAMPIRE_CASTLE, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.MAGE_QUARTERS, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.BARRACKS, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.WAREHOUSE, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.PRISON, RESOURCE.STONE);
 
             //combatant classes
             AddCombatantClass("Archer");
@@ -45,19 +32,6 @@
             AddCrime(CRIME_TYPE.Werewolf, CRIME_SEVERITY.Heinous);
         }
         public override void SetFixedData() {
-            //structures
-            // AddNeededStructure(STRUCTURE_TYPE.VAMPIRE_CASTLE, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.MAGE_QUARTERS, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.BARRACKS, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.WAREHOUSE, RESOURCE.STONE);
-            // AddNeededStructure(STRUCTURE_TYPE.PRISON, RESOURCE.STONE);
-
             //combatant classes
             AddCombatantClass("Archer");
             AddCombatantClass("Hunter");
@@ -67,18 +41,29 @@
             AddCivilianClass("Peasant");
             AddCivilianClass("Miner");
             AddCivilianClass("Craftsman");
-
-            // //crimes
-            // hasCrimes = true;
-            // AddCrime(CRIME_TYPE.Infidelity, CRIME_SEVERITY.Infraction);
-            // AddCrime(CRIME_TYPE.Theft, CRIME_SEVERITY.Misdemeanor);
-            // AddCrime(CRIME_TYPE.Disturbances, CRIME_SEVERITY.Misdemeanor);
-            // AddCrime(CRIME_TYPE.Assault, CRIME_SEVERITY.Misdemeanor);
-            // AddCrime(CRIME_TYPE.Arson, CRIME_SEVERITY.Misdemeanor);
-            // AddCrime(CRIME_TYPE.Trespassing, CRIME_SEVERITY.Misdemeanor);
-            // AddCrime(CRIME_TYPE.Murder, CRIME_SEVERITY.Serious);
-            // AddCrime(CRIME_TYPE.Cannibalism, CRIME_SEVERITY.Serious);
-            // AddCrime(CRIME_TYPE.Werewolf, CRIME_SEVERITY.Heinous);
+        }
+        public override CRIME_SEVERITY GetDefaultSeverity(CRIME_TYPE crimeType) {
+            switch (crimeType) {
+                case CRIME_TYPE.Infidelity:
+                    return CRIME_SEVERITY.Infraction;
+                case CRIME_TYPE.Theft:
+                    return CRIME_SEVERITY.Misdemeanor;
+                case CRIME_TYPE.Disturbances:
+                    return CRIME_SEVERITY.Misdemeanor;
+                case CRIME_TYPE.Assault:
+                    return CRIME_SEVERITY.Misdemeanor;
+                case CRIME_TYPE.Arson:
+                    return CRIME_SEVERITY.Misdemeanor;
+                case CRIME_TYPE.Trespassing:
+                    return CRIME_SEVERITY.Misdemeanor;
+                case CRIME_TYPE.Murder:
+                    return CRIME_SEVERITY.Serious;
+                case CRIME_TYPE.Cannibalism:
+                    return CRIME_SEVERITY.Heinous;
+                case CRIME_TYPE.Werewolf:
+                    return CRIME_SEVERITY.Heinous;
+            }
+            return CRIME_SEVERITY.None;
         }
     }
 }

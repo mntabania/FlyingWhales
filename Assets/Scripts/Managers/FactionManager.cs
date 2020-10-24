@@ -503,8 +503,47 @@ public class FactionManager : BaseMonoBehaviour {
         }
     }
     public void RevalidateFactionCrimes(Faction faction, Character leader) {
+        //religion based crimes
+        if (leader.traitContainer.HasTrait("Cultist")) {
+            faction.factionType.RemoveCrime(CRIME_TYPE.Demon_Worship);
+            faction.factionType.AddCrime(CRIME_TYPE.Divine_Worship, CRIME_SEVERITY.Serious);
+            faction.factionType.AddCrime(CRIME_TYPE.Nature_Worship, CRIME_SEVERITY.Serious);
+        } else if (leader.religionComponent.religion == RELIGION.Divine_Worship) {
+            faction.factionType.RemoveCrime(CRIME_TYPE.Divine_Worship);
+        } else if (leader.religionComponent.religion == RELIGION.Nature_Worship) {
+            faction.factionType.RemoveCrime(CRIME_TYPE.Nature_Worship);
+        } else if (leader.religionComponent.religion == RELIGION.Demon_Worship) {
+            faction.factionType.RemoveCrime(CRIME_TYPE.Demon_Worship);
+        }
+        //vampire based crimes
         if (leader.traitContainer.HasTrait("Vampire")) {
+            Vampire vampire = leader.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+            if (!vampire.dislikedBeingVampire) {
+                faction.factionType.RemoveCrime(CRIME_TYPE.Vampire);    
+            }
+        } else if (leader.traitContainer.HasTrait("Hemophiliac")) {
             faction.factionType.RemoveCrime(CRIME_TYPE.Vampire);
+        } else if (leader.traitContainer.HasTrait("Hemophobic")) {
+            faction.factionType.AddCrime(CRIME_TYPE.Vampire, CRIME_SEVERITY.Heinous);
+        }
+        //lycanthrope based crimes
+        if ((leader.lycanData != null && !leader.lycanData.dislikesBeingLycan) || leader.traitContainer.HasTrait("Lycanphiliac")) {
+            faction.factionType.RemoveCrime(CRIME_TYPE.Werewolf);
+        } else if (leader.traitContainer.HasTrait("Lycanphobic")) {
+            faction.factionType.AddCrime(CRIME_TYPE.Werewolf, CRIME_SEVERITY.Heinous);
+        }
+        //Kleptomaniac based crimes
+        if (leader.traitContainer.HasTrait("Kleptomaniac")) {
+            faction.factionType.RemoveCrime(CRIME_TYPE.Theft);
+        } else {
+            faction.factionType.AddCrime(CRIME_TYPE.Theft, faction.factionType.GetDefaultSeverity(CRIME_TYPE.Theft));
+        }
+        //Evil based crimes
+        if (leader.traitContainer.HasTrait("Evil", "Psychopath")) {
+            CRIME_TYPE crimeType = faction.factionType.GetRandomNonReligionSeriousCrime();
+            if (crimeType != CRIME_TYPE.None) {
+                faction.factionType.RemoveCrime(crimeType);    
+            }
         }
     }
     #endregion

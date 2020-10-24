@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Specialized;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
+using UtilityScripts;
 namespace Factions.Faction_Types {
     public abstract class FactionType {
         public readonly string name;
@@ -121,6 +123,19 @@ namespace Factions.Faction_Types {
             if (crimes.ContainsKey(type)) {
                 crimes.Remove(type);
             }
+        }
+        public abstract CRIME_SEVERITY GetDefaultSeverity(CRIME_TYPE crimeType);
+        public CRIME_TYPE GetRandomNonReligionSeriousCrime() {
+            List<CRIME_TYPE> choices = new List<CRIME_TYPE>();
+            foreach (var crime in crimes) {
+                if (crime.Value == CRIME_SEVERITY.Serious && !crime.Key.IsReligiousCrime()) {
+                    choices.Add(crime.Key);
+                }
+            }
+            if (choices.Count > 0) {
+                return CollectionUtilities.GetRandomElement(choices);
+            }
+            return CRIME_TYPE.None;
         }
         #endregion
 

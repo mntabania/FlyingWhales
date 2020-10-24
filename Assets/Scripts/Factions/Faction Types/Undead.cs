@@ -11,5 +11,8 @@
             AddIdeology(warmonger);
         }
         public override void SetFixedData() { }
+        public override CRIME_SEVERITY GetDefaultSeverity(CRIME_TYPE crimeType) {
+            return CRIME_SEVERITY.Unapplicable;
+        }
     }
 }

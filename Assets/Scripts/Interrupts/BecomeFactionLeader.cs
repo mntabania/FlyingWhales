@@ -34,6 +34,9 @@ namespace Interrupts {
                 //Set Faction Leader Trait Based Ideology:
                 FactionManager.Instance.RerollFactionLeaderTraitIdeology(faction, interruptHolder.actor);
 
+                //Validate crimes
+                FactionManager.Instance.RevalidateFactionCrimes(faction, interruptHolder.actor);
+                
                 Messenger.Broadcast(Signals.FACTION_IDEOLOGIES_CHANGED, faction);
                 Messenger.Broadcast(Signals.FACTION_CRIMES_CHANGED, faction);
 

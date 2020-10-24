@@ -4,7 +4,7 @@ using Logs;
 public class EvangelizeData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.EVANGELIZE;
     public override string name => "Evangelize";
-    public override string description => "This Action forces the character to turn another character into a Cultist.";
+    public override string description => GetDescription();
     public override SPELL_CATEGORY category => SPELL_CATEGORY.PLAYER_ACTION;
 
     
@@ -63,6 +63,12 @@ public class EvangelizeData : PlayerAction {
             reasons += "Cannot be used while target is incapacitated,";
         }
         return reasons;
+    }
+    private string GetDescription() {
+        if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.characterClass.className == "Cult Leader") {
+            return "This Action forces the Villager to turn any another Villager into a Cultist."; 
+        }
+        return "This Action forces the Villager to turn another known Villager into a Cultist.";
     }
     #endregion
 

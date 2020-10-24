@@ -15,6 +15,16 @@ public static class Extensions {
     public static bool IsGreaterThanOrEqual(this CRIME_SEVERITY sub, CRIME_SEVERITY other) {
         return sub >= other;
     }
+    public static bool IsReligiousCrime(this CRIME_TYPE crimeType) {
+        switch (crimeType) {
+            case CRIME_TYPE.Demon_Worship:
+            case CRIME_TYPE.Nature_Worship:
+            case CRIME_TYPE.Divine_Worship:
+                return true;
+            default:
+                return false;
+        }
+    }
     #endregion
 
     #region Structures

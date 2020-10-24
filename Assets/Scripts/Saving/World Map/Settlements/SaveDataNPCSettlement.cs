@@ -11,6 +11,9 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
     public SaveDataSettlementType settlementType;
     public SaveDataLocationEventManager eventManager;
     public List<TILE_OBJECT_TYPE> neededObjects;
+    public bool isUnderSiege;
+    public bool isPlagued;
+    public GameDate plaguedExpiry;
     
     public override void Save(BaseSettlement baseSettlement) {
         base.Save(baseSettlement);
@@ -43,6 +46,12 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
         eventManager.Save(npcSettlement.eventManager);
         
         neededObjects = new List<TILE_OBJECT_TYPE>(npcSettlement.neededObjects);
+
+        isUnderSiege = npcSettlement.isUnderSiege;
+        isPlagued = npcSettlement.isPlagued;
+        if (isPlagued) {
+            plaguedExpiry = npcSettlement.plaguedExpiryDate;
+        }
     }
     public override BaseSettlement Load() {
         return LandmarkManager.Instance.LoadNPCSettlement(this);
