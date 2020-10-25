@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Traits;
 using UnityEngine;
+using Inner_Maps.Location_Structures;
+using UtilityScripts;
 
 public class DefaultHomeless : CharacterBehaviourComponent {
     public DefaultHomeless() {
@@ -13,7 +15,15 @@ public class DefaultHomeless : CharacterBehaviourComponent {
         producedJob = null;
         if (character.homeStructure == null || character.homeStructure.hasBeenDestroyed) {
             log += $"\n-{character.name} is homeless, 25% chance to find home";
-            if (UnityEngine.Random.Range(0, 100) < 25) {
+            if (GameUtilities.RollChance(25)) {
+                log += $"\n-Character will try to set home";
+                character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
+                return true;
+            }
+        }
+        if(character.homeStructure != null && !(character.homeStructure is Dwelling) && !character.isVagrantOrFactionless) {
+            log += $"\n-{character.name} has a home but his home is not a house and character is not vagrant, 5% chance to find home";
+            if (GameUtilities.RollChance(5)) {
                 log += $"\n-Character will try to set home";
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
                 return true;

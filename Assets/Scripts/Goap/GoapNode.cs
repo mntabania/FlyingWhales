@@ -42,6 +42,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public Character disguisedActor { get; private set; }
     public Character disguisedTarget { get; private set; }
     public bool isStealth { get; private set; }
+    public bool avoidCombat { get; private set; }
     public OtherData[] otherData { get; private set; }
     public int cost { get; private set; }
 
@@ -117,6 +118,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         awareCharacters = new List<Character>();
         persistentID = data.persistentID;
         isStealth = data.isStealth;
+        avoidCombat = data.avoidCombat;
         cost = data.cost;
         action = InteractionManager.Instance.goapActionData[data.action];
         actionStatus = data.actionStatus;
@@ -137,6 +139,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         associatedJobType = job.jobType; //We create a separate field for the job type that this action is connected instead of getting the job type from the associtatedJob because since the JobQueueItem is object pooled, there will be a time that the job will be brought back to the object pool when that happens the jobType will go back to NONE if we do not store it separately
         SetJob(job);
         isStealth = IsActionStealth(job);
+        avoidCombat = IsActionAvoidCombat(job);
         actor.SetCurrentActionNode(this, job, plan);
         // CreateThoughtBubbleLog(targetStructure);
         //parentPlan?.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
@@ -301,6 +304,15 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                 actor.NoPathToDoJobOrAction(job, this);
             }
         } else {
+            if (avoidCombat) {
+                if (actor.marker) {
+                    actor.marker.SetVisionColliderSize(CharacterManager.AVOID_COMBAT_VISION_RANGE);
+                }
+            } else {
+                if (actor.marker) {
+                    actor.marker.SetVisionColliderSize(CharacterManager.VISION_RANGE);
+                }
+            }
             action.OnMoveToDoAction(this);
         }
     }
@@ -567,6 +579,12 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         }
         if(job.jobType == JOB_TYPE.SNATCH && (action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER || action.goapType == INTERACTION_TYPE.ASSAULT)) {
             //Snatch assault or knockout jobs must be stealth
+            return true;
+        }
+        return false;
+    }
+    private bool IsActionAvoidCombat(JobQueueItem job) {
+        if(job.jobType == JOB_TYPE.STEAL_CORPSE) {
             return true;
         }
         return false;
@@ -1123,6 +1141,7 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
     public string disguisedActor;
     public string disguisedTarget;
     public bool isStealth;
+    public bool avoidCombat;
     public SaveDataOtherData[] otherData;
     public int cost;
 
@@ -1161,6 +1180,7 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
     public override void Save(ActualGoapNode data) {
         persistentID = data.persistentID;
         isStealth = data.isStealth;
+        avoidCombat = data.avoidCombat;
         cost = data.cost;
         action = data.action.goapType;
         actionStatus = data.actionStatus;

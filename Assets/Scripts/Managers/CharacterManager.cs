@@ -57,7 +57,9 @@ public class CharacterManager : BaseMonoBehaviour {
         
 
     public const int MAX_HISTORY_LOGS = 300;
-    
+    public const int VISION_RANGE = 8;
+    public const int AVOID_COMBAT_VISION_RANGE = 12;
+
     public GameObject characterIconPrefab;
     public Transform characterIconsParent;
     public bool lessenCharacterLogs;

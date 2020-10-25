@@ -308,8 +308,8 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 log += "\n-Otherwise, if character has at least one item in his inventory, 15% chance (multiplied by number of items in inventory, but cap at 4) to add a Drop Item job";
                 if (character.HasItem() && character.homeStructure != null) {
                     log += $"\n  -Has " + character.items.Count + " items in inventory";
-                    int multiplier = character.items.Count > 4 ? 4 : character.items.Count;
-                    int chance = multiplier * 15;
+                    //int multiplier = character.items.Count > 4 ? 4 : character.items.Count;
+                    int chance = /*multiplier **/ 15;
                     int roll = UnityEngine.Random.Range(0, 100);
                     log += $"\n  -Chance: {chance.ToString()}";
                     log += $"\n  -Roll: {roll.ToString()}";

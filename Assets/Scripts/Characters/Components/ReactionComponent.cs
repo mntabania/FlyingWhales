@@ -584,6 +584,10 @@ public class ReactionComponent : CharacterComponent {
         
         if (isHostile) {
             debugLog = $"{debugLog}\n-Target is hostile";
+            if(actor.currentJob != null && actor.currentActionNode != null && actor.currentActionNode.avoidCombat && actor.currentActionNode.actionStatus == ACTION_STATUS.STARTED) {
+                actor.currentJob.CancelJob(false);
+                actor.combatComponent.Flight(targetCharacter, "Encountered hostile");
+            }
             if(disguisedActor is Troll && disguisedTarget.isNormalCharacter && disguisedActor.homeStructure != null && !targetCharacter.isDead) {
                 debugLog = $"{debugLog}\n-Actor is a Troll and target is a Villager and actor has a home structure";
                 if (targetCharacter.currentStructure != disguisedActor.homeStructure) {
@@ -1058,8 +1062,8 @@ public class ReactionComponent : CharacterComponent {
                     }
                     
                     //nocturnal
-                    if (disguisedTarget.traitContainer.HasTrait("Nocturnal") && !disguisedTarget.crimeComponent.IsCrimeAlreadyWitnessedBy(disguisedActor, CRIME_TYPE.Vampire)) {
-                        debugLog = $"{debugLog}\n-Target is nocturnal";
+                    if (targetCharacter.canPerform && !targetCharacter.partyComponent.isMemberThatJoinedQuest && !disguisedTarget.crimeComponent.IsCrimeAlreadyWitnessedBy(disguisedActor, CRIME_TYPE.Vampire)) {
+                        debugLog = $"{debugLog}\n-Target can perform and not an active member of a party that has a quest and has not yet witnessed a vampire crime of actor";
                         TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
                         if (timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
                             debugLog = $"{debugLog}\n-Current time is Late night/after midnight";

@@ -323,7 +323,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                             if (currentTime == TIME_IN_WORDS.MORNING) {
                                 hasTriedToStealCorpse = true;
                                 if (GameUtilities.RollChance(20)) {
-                                    //settlementJobTriggerComponent.CreateStealCorpseJob(cultTemple);
+                                    settlementJobTriggerComponent.CreateStealCorpseJob(cultTemple);
                                 }
                             }
                         }

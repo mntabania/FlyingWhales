@@ -679,8 +679,7 @@ MonoBehaviour:
   pathfindingAI: {fileID: 114720397635659402}
   destinationSetter: {fileID: 114167030245026914}
   seeker: {fileID: 114578536136533292}
-  colliders:
-  - {fileID: 6363129055570018152}
+  collider: {fileID: 6363129055570018152}
   visionCollider: {fileID: 114699231813471468}
   projectileParent: {fileID: 4968866154022664}
   colorHighlight: {fileID: 212374460377128016}

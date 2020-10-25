@@ -45,7 +45,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public CharacterAIPath pathfindingAI;    
     public AIDestinationSetter destinationSetter;
     public Seeker seeker;
-    public Collider2D[] colliders;
+    public BoxCollider2D collider;
     [FormerlySerializedAs("visionCollision")] public CharacterMarkerVisionCollider visionCollider;
 
     [Header("Combat")]
@@ -529,6 +529,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         base.Reset(); 
         TryCancelExpiry();
         destinationTile = null;
+        SetVisionColliderSize(CharacterManager.VISION_RANGE);
         //onProcessCombat = null;
         _pauseAnimationCounter = 0;
         //character.combatComponent.SetOnProcessCombatAction(null);
@@ -561,7 +562,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         pathfindingAI = null;    
         destinationSetter = null;
         seeker = null;
-        colliders = null;
+        collider = null;
         character = null;
         base.OnDestroy();
     }
@@ -1840,13 +1841,17 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Colliders
     public void SetCollidersState(bool state) {
-        for (int i = 0; i < colliders.Length; i++) {
-            colliders[i].enabled = state;
-        }
+        //for (int i = 0; i < collider.Length; i++) {
+        //    collider[i].enabled = state;
+        //}
+        collider.enabled = state;
     }
     public void SetAllColliderStates(bool state) {
         SetCollidersState(state);
         visionTrigger.SetAllCollidersState(state);
+    }
+    public void SetVisionColliderSize(int size) {
+        collider.size = new Vector2(size, size);
     }
     #endregion
 

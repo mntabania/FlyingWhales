@@ -288,6 +288,17 @@ namespace Interrupts {
                             actor.logComponent.PrintLogIfActive(log);
                             return;
                         }
+
+                        log += "\n30% chance: Find the Village with least number of Villagers owned by the character's Faction and set its Town Center as its Home Structure. Make character go there.";
+                        if (GameUtilities.RollChance(30)) {
+                            chosenHomeStructure = actor.faction.GetFirstStructureOfTypeFromOwnedSettlementsWithLeastVillagers(STRUCTURE_TYPE.CITY_CENTER);
+                            if(chosenHomeStructure != null) {
+                                log += "\nFound City Center: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
+                                actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
+                                actor.logComponent.PrintLogIfActive(log);
+                                return;
+                            }
+                        }
                     }
                 }
                 log += "\n35% chance: if the character is a Faction Leader and they do not own any Villages";

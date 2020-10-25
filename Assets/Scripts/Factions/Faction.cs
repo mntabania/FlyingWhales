@@ -666,6 +666,26 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return null;
     }
+    public BaseSettlement GetFirstOwnedSettlementThatMeetCriteria(Func<BaseSettlement, bool> criteria) {
+        for (int i = 0; i < ownedSettlements.Count; i++) {
+            BaseSettlement settlement = ownedSettlements[i];
+            if (criteria.Invoke(settlement)) {
+                return settlement;
+            }
+        }
+        return null;
+    }
+    public LocationStructure GetFirstStructureOfTypeFromOwnedSettlementsWithLeastVillagers(STRUCTURE_TYPE structureType) {
+        BaseSettlement leastVillagersSettlement = null;
+        LocationStructure structure = null;
+        for (int i = 0; i < ownedSettlements.Count; i++) {
+            BaseSettlement settlement = ownedSettlements[i];
+            if (structure == null || leastVillagersSettlement == null || settlement.residents.Count < leastVillagersSettlement.residents.Count) {
+                structure = settlement.GetFirstStructureOfType(structureType);
+            }
+        }
+        return null;
+    }
     //public bool HasOwnedStructures() {
     //    return ownedStructures.Count > 0;
     //}

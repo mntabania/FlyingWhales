@@ -4684,6 +4684,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //}
 
         //SetIsStopped(true);
+        if (currentActionNode.avoidCombat) {
+            if (marker) {
+                marker.SetVisionColliderSize(CharacterManager.VISION_RANGE);
+            }
+        }
         currentActionNode.StopActionNode(shouldDoAfterEffect);
         SetCurrentActionNode(null, null, null);
         
