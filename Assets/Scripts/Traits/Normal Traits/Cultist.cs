@@ -28,6 +28,8 @@ namespace Traits {
                 character.AddPlayerAction(SPELL_TYPE.EVANGELIZE);
                 character.AddPlayerAction(SPELL_TYPE.SPREAD_RUMOR);
                 character.AddPlayerAction(SPELL_TYPE.FOUND_CULT);
+                character.jobComponent.AddPriorityJob(JOB_TYPE.STEAL_CORPSE);
+                character.jobComponent.AddPriorityJob(JOB_TYPE.SUMMON_BONE_GOLEM);
             }
         }
         #endregion
@@ -45,6 +47,8 @@ namespace Traits {
                 character.AddPlayerAction(SPELL_TYPE.EVANGELIZE);
                 character.AddPlayerAction(SPELL_TYPE.SPREAD_RUMOR);
                 character.AddPlayerAction(SPELL_TYPE.FOUND_CULT);
+                character.jobComponent.AddPriorityJob(JOB_TYPE.STEAL_CORPSE);
+                character.jobComponent.AddPriorityJob(JOB_TYPE.SUMMON_BONE_GOLEM);
                 character.traitContainer.AddTrait(character, "Nocturnal");
 
                 //if necromancer is a cultist then make the undead faction friendly towards the player.
@@ -67,6 +71,8 @@ namespace Traits {
                 character.RemovePlayerAction(SPELL_TYPE.EVANGELIZE);
                 character.RemovePlayerAction(SPELL_TYPE.SPREAD_RUMOR);
                 character.RemovePlayerAction(SPELL_TYPE.FOUND_CULT);
+                character.jobComponent.RemovePriorityJob(JOB_TYPE.STEAL_CORPSE);
+                character.jobComponent.RemovePriorityJob(JOB_TYPE.SUMMON_BONE_GOLEM);
             }
         }
         public override bool OnDeath(Character character) {

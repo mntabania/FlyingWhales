@@ -314,6 +314,16 @@ namespace Inner_Maps.Location_Structures {
             }
             return null;
         }
+        public int GetNumOfCharactersThatMeetCriteria(System.Func<Character, bool> criteria) {
+            int count = 0;
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character character = charactersHere[i];
+                if (criteria.Invoke(character)) {
+                    count++;
+                }
+            }
+            return count;
+        }
         #endregion
 
         #region Points Of Interest

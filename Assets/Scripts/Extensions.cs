@@ -547,6 +547,10 @@ public static class Extensions {
             case JOB_TYPE.FIND_NEW_VILLAGE:
                 priority = 850;
                 break;
+            case JOB_TYPE.STEAL_CORPSE:
+            case JOB_TYPE.SUMMON_BONE_GOLEM:
+                priority = 840;
+                break;
             case JOB_TYPE.SABOTAGE_NEIGHBOUR:
             case JOB_TYPE.DECREASE_MOOD:
             case JOB_TYPE.DISABLE:

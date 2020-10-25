@@ -411,7 +411,7 @@ namespace Inner_Maps {
             //     summary = $"{summary}None";
             // }
 
-            IPointOfInterest poi = tile.objHere ?? tile.genericTileObject;
+            IPointOfInterest poi = tile.objHere; //?? tile.genericTileObject
             summary = $"{summary}\nContent: {poi}";
             if (poi != null) {
                 summary = $"{summary}\nPUID: {poi.persistentID}";

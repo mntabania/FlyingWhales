@@ -309,20 +309,25 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             CheckIfStillUnderSiege();
         }
         if(owner != null) {
-            if (!hasTriedToStealCorpse) {
-                TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
-                if (currentTime == TIME_IN_WORDS.MORNING) {
-                    hasTriedToStealCorpse = true;
-                    if (settlementType != null && settlementType.settlementType == SETTLEMENT_TYPE.Cult_Town) {
-                        if (GameUtilities.RollChance(20)) {
-                            if (owner.factionType.HasIdeology(FACTION_IDEOLOGY.Bone_Golem_Makers)) {
-                                LocationStructure cultTemple = GetFirstStructureOfType(STRUCTURE_TYPE.TEMPLE);
-                                if (cultTemple != null) {
-                                    settlementJobTriggerComponent.CreateStealCorpseJob(cultTemple);
+            if (settlementType != null && settlementType.settlementType == SETTLEMENT_TYPE.Cult_Town) {
+                //The checker here should be if the faction has Bone_Golem_Makers ideology, instead of checking if faction type is Demon Cult
+                //The reason we did this is right now Demon Cult is the only faction type that has Bone Golem Makers ideology and we are sure the it has that ideology
+                //This is done for performance reasons since checking if it has the ideology per hour will always loop through the ideologies of the faction type
+                //and will be heavy on processing if there are many of this kind of settlement exists
+                //So until we can have a more performant solution, checking for Demon Cult faction type is what we're doing right now
+                if (owner.factionType.type == FACTION_TYPE.Demon_Cult) { 
+                    LocationStructure cultTemple = GetFirstStructureOfType(STRUCTURE_TYPE.CULT_TEMPLE);
+                    if (cultTemple != null) {
+                        if (!hasTriedToStealCorpse) {
+                            TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+                            if (currentTime == TIME_IN_WORDS.MORNING) {
+                                hasTriedToStealCorpse = true;
+                                if (GameUtilities.RollChance(20)) {
+                                    //settlementJobTriggerComponent.CreateStealCorpseJob(cultTemple);
                                 }
                             }
-
                         }
+                        settlementJobTriggerComponent.CreateSummonBoneGolemJob(cultTemple);
                     }
                 }
             }

@@ -65,6 +65,9 @@ public class AbsorbPower : GoapAction {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, targetCharacter.characterClass.elementalType.ToString() + " Attacker");
 
         if (targetCharacter.marker) {
+            if (targetCharacter.currentRegion != null) {
+                targetCharacter.currentRegion.RemoveCharacterFromLocation(targetCharacter);
+            }
             targetCharacter.DestroyMarker();
         }
     }

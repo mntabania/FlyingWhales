@@ -943,10 +943,12 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
         Region region = _owner.region;
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             Character target = region.charactersAtLocation[i];
-            if (target.race.IsSapient() || target is Animal) {
-                if (target.isDead && (target.marker || (target.grave != null && target.grave.mapObjectVisual))) {
-                    return true;
-                }
+            IPointOfInterest targetPOI = target;
+            if(target.grave != null) {
+                targetPOI = target.grave;
+            }
+            if (target.isDead && targetPOI.gridTileLocation != null && targetPOI.mapObjectVisual) {
+                return true;
             }
         }
         return false;
@@ -956,31 +958,64 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
         List<IPointOfInterest> choices = null;
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             Character target = region.charactersAtLocation[i];
-            if (target.race.IsSapient() || target is Animal) {
-                if (target.isDead && (target.marker || (target.grave != null && target.grave.mapObjectVisual))) {
-                    IPointOfInterest targetPOI = target;
-                    LocationGridTile gridTile = target.gridTileLocation;
-                    if (target.grave != null) {
-                        gridTile = target.grave.gridTileLocation;
-                        targetPOI = target.grave;
+            IPointOfInterest targetPOI = target;
+            if (target.grave != null) {
+                targetPOI = target.grave;
+            }
+            if (target.isDead && targetPOI.gridTileLocation != null && targetPOI.mapObjectVisual) {
+                if (targetPOI.gridTileLocation.structure.settlementLocation == _owner) {
+                    //If the target is inside this settlement, only take corpse those corpses that are not in the cult temple
+                    //We should not take corpses from our own settlement that are already in the Cult Temple
+                    if (targetPOI.gridTileLocation.structure.structureType != STRUCTURE_TYPE.CULT_TEMPLE) {
+                        if (choices == null) { choices = new List<IPointOfInterest>(); }
+                        choices.Add(targetPOI);
                     }
-                    if (gridTile != null) {
-                        if (gridTile.structure.settlementLocation == _owner) {
-                            //If the target is inside this settlement, only take corpse those corpses that are not in the cult temple
-                            //We should not take corpses from our own settlement that are already in the Cult Temple
-                            if (gridTile.structure.structureType != STRUCTURE_TYPE.TEMPLE) {
-                                if (choices == null) { choices = new List<IPointOfInterest>(); }
-                                choices.Add(targetPOI);
-                            }
-                        } else {
-                            if (choices == null) { choices = new List<IPointOfInterest>(); }
-                            choices.Add(targetPOI);
-                        }
-                    }
+                } else {
+                    if (choices == null) { choices = new List<IPointOfInterest>(); }
+                    choices.Add(targetPOI);
                 }
             }
         }
         return CollectionUtilities.GetRandomElement(choices);
+    }
+    #endregion
+
+    #region Summon Bone Golem
+    public bool CreateSummonBoneGolemJob(LocationStructure cultTemple) {
+        if (!_owner.HasJob(JOB_TYPE.SUMMON_BONE_GOLEM)) {
+            object[] corpses = Get3CorpsesToSummonBoneGolem(cultTemple);
+            if (corpses != null) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SUMMON_BONE_GOLEM, new GoapEffect(GOAP_EFFECT_CONDITION.SUMMON, "Bone Golem", false, GOAP_EFFECT_TARGET.ACTOR), null, _owner);
+                job.AddOtherData(INTERACTION_TYPE.SUMMON_BONE_GOLEM, corpses);
+                job.SetCanTakeThisJobChecker(JobManager.Can_Summon_Bone_Golem);
+                _owner.AddToAvailableJobs(job);
+            }
+        }
+        return false;
+    }
+    public object[] Get3CorpsesToSummonBoneGolem(LocationStructure cultTemple) {
+        Character corpse1 = null;
+        Character corpse2 = null;
+        Character corpse3 = null;
+
+        for (int i = 0; i < cultTemple.charactersHere.Count; i++) {
+            Character character = cultTemple.charactersHere[i];
+            if(character.isDead && character.gridTileLocation != null) {
+                if(corpse1 == null) {
+                    corpse1 = character;
+                } else if (corpse2 == null) {
+                    corpse2 = character;
+                } else if (corpse3 == null) {
+                    corpse3 = character;
+                    break;
+                }
+            }
+        }
+        if(corpse1 == null || corpse2 == null || corpse3 == null) {
+            return null;
+        } else {
+            return new object[] { corpse1, corpse2, corpse3 };
+        }
     }
     #endregion
 }

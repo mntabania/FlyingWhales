@@ -623,6 +623,9 @@ public class CharacterManager : BaseMonoBehaviour {
             target.SetGrave(null);
         }
         summon.InitialCharacterPlacement(tile);
+        if (target.currentRegion != null) {
+            target.currentRegion.RemoveCharacterFromLocation(target);
+        }
         target.DestroyMarker();
         // RemoveCharacter(target);
     }
@@ -704,9 +707,7 @@ public class CharacterManager : BaseMonoBehaviour {
     public Summon CreateNewLimboSummon(SUMMON_TYPE summonType, Faction faction = null, NPCSettlement homeLocation = null, LocationStructure homeStructure = null, string className = "") {
         Summon newCharacter = CreateNewSummonClassFromType(summonType, className);
         newCharacter.Initialize();
-        if (faction != null) {
-            faction.JoinFaction(newCharacter, isInitial: true);
-        } else {
+        if (faction == null || !faction.JoinFaction(newCharacter, isInitial: true)) {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, isInitial: true);
         }
         if (homeStructure != null) {
@@ -730,13 +731,11 @@ public class CharacterManager : BaseMonoBehaviour {
         return newCharacter;
     }
     public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, BaseSettlement homeLocation = null,
-        Region homeRegion = null, LocationStructure homeStructure = null, string className = "") {
+        Region homeRegion = null, LocationStructure homeStructure = null, string className = "", bool bypassIdeologyChecking = false) {
         Summon newCharacter = CreateNewSummonClassFromType(summonType, className);
         newCharacter.Initialize();
-        if (faction != null) {
-            faction.JoinFaction(newCharacter, isInitial: true);
-        } else {
-            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, isInitial: true);
+        if (faction == null || !faction.JoinFaction(newCharacter, bypassIdeologyChecking: bypassIdeologyChecking, isInitial: true)) {
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, bypassIdeologyChecking: bypassIdeologyChecking, isInitial: true);
         }
         if (homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);

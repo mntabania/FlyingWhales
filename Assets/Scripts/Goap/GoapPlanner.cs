@@ -548,6 +548,7 @@ public class GoapPlanner {
             if (job.otherData.ContainsKey(action.goapType)) {
                 preconditions = action.GetPreconditions(actor, target, job.otherData[action.goapType]);
             } else if (job.otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+                //None Interaction Type means that the other data is applied to all actions in plan
                 preconditions = action.GetPreconditions(actor, target, job.otherData[INTERACTION_TYPE.NONE]);
             } else {
                 preconditions = action.GetPreconditions(actor, target, null);

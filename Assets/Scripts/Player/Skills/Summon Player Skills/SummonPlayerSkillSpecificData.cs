@@ -178,6 +178,16 @@ public class GolemData : SummonPlayerSkill {
         className = "Golem";
     }
 }
+public class BoneGolemData : SummonPlayerSkill {
+    public override SPELL_TYPE type => SPELL_TYPE.BONE_GOLEM;
+    public override string name => "Bone Golem";
+    public override string description => "Bone Golem";
+    public BoneGolemData() {
+        summonType = SUMMON_TYPE.Bone_Golem;
+        race = RACE.GOLEM;
+        className = "Bone Golem";
+    }
+}
 public class IncubusData : SummonPlayerSkill {
     public override SPELL_TYPE type => SPELL_TYPE.INCUBUS;
     public override string name => "Incubus";

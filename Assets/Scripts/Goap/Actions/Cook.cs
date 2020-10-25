@@ -89,7 +89,9 @@ public class Cook : GoapAction {
     public void PreCookSuccess(ActualGoapNode goapNode) {
         if(goapNode.poiTarget is Character targetCharacter) {
             goapNode.actor.UncarryPOI(addToLocation: false);
-            targetCharacter.currentStructure.RemoveCharacterAtLocation(targetCharacter);
+            if (targetCharacter.currentRegion != null) {
+                targetCharacter.currentRegion.RemoveCharacterFromLocation(targetCharacter);
+            }
             targetCharacter.DestroyMarker();
         }
     }
