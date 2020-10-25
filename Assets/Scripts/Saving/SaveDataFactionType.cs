@@ -55,6 +55,7 @@ public class SaveDataFactionIdeology : SaveData<FactionIdeology> {
     public EXCLUSIVE_IDEOLOGY_CATEGORIES category;
     public RACE raceRequirement;
     public GENDER genderRequirement;
+    public RELIGION religionRequirement;
     public string traitRequirement;
 
     #region Overrides
@@ -66,6 +67,7 @@ public class SaveDataFactionIdeology : SaveData<FactionIdeology> {
             raceRequirement = exclusive.raceRequirement;
             genderRequirement = exclusive.genderRequirement;
             traitRequirement = exclusive.traitRequirement;
+            religionRequirement = exclusive.religionRequirement;
         }
     }
     public override FactionIdeology Load() {
@@ -77,6 +79,8 @@ public class SaveDataFactionIdeology : SaveData<FactionIdeology> {
                 exclusive.SetRequirement(genderRequirement);
             } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.TRAIT) {
                 exclusive.SetRequirement(traitRequirement);
+            } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.RELIGION) {
+                exclusive.SetRequirement(religionRequirement);
             }
         }
         return newIdeology;
