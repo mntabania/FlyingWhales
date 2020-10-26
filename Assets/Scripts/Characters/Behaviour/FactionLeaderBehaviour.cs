@@ -58,58 +58,58 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                 }    
             }
             if (character.homeSettlement.settlementType != null) {
-                log += $"\n-Check chance to build dwelling if not yet at max.";
-                int dwellingCount = character.homeSettlement.GetStructureCount(STRUCTURE_TYPE.DWELLING);
-                if (dwellingCount < character.homeSettlement.settlementType.maxDwellings) {
-                    int chance = 3;
-                    if (dwellingCount < (character.homeSettlement.settlementType.maxDwellings/2)) {
-                        chance = 5;
+                int existingBuildJobs = character.homeSettlement.GetNumberOfJobsWith(JOB_TYPE.BUILD_BLUEPRINT);
+                if (existingBuildJobs < 2) {
+                    log += $"\n-Check chance to build dwelling if not yet at max.";
+                    int dwellingCount = character.homeSettlement.GetStructureCount(STRUCTURE_TYPE.DWELLING);
+                    if (dwellingCount < character.homeSettlement.settlementType.maxDwellings) {
+                        int chance = 3;
+                        if (dwellingCount < (character.homeSettlement.settlementType.maxDwellings/2)) {
+                            chance = 5;
+                        }
+                        if (character.homeSettlement.HasHomelessResident()) {
+                            chance = 7;
+                        }
+                        // chance = 100;
+                        if (GameUtilities.RollChance(chance, ref log)) {
+                            log += $"\n-Chance met and dwellings not yet at maximum.";
+                            //place dwelling blueprint
+                            StructureSetting structureToPlace = character.homeSettlement.settlementType.GetDwellingSetting(character.faction);
+                            if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
+                                log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
+                                return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, out producedJob);    
+                            }    
+                        }
                     }
-                    if (character.homeSettlement.HasHomelessResident()) {
-                        chance = 7;
-                    }
-                    if (GameUtilities.RollChance(chance, ref log)) {
-                        log += $"\n-Chance met and dwellings not yet at maximum.";
+                    if(dwellingCount <= 0) {
+                        log += $"\n-Settlement has no dwelling yet, always build dwelling first";
                         //place dwelling blueprint
                         StructureSetting structureToPlace = character.homeSettlement.settlementType.GetDwellingSetting(character.faction);
                         if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
                             log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
-                            return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, out producedJob);    
-                        }    
-                    }
-                }
-                if(dwellingCount <= 0) {
-                    log += $"\n-Settlement has no dwelling yet, always build dwelling first";
-                    //place dwelling blueprint
-                    StructureSetting structureToPlace = character.homeSettlement.settlementType.GetDwellingSetting(character.faction);
-                    if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
-                        log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
-                        return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, out producedJob);
-                    }
-                }
-                log += $"\n-Check chance to build a missing facility.";
-                int facilityCount = character.homeSettlement.GetFacilityCount();
-                if (facilityCount < character.homeSettlement.settlementType.maxFacilities) {
-                    int chance = 2;
-                    if (facilityCount < (character.homeSettlement.settlementType.maxFacilities/2)) {
-                        chance = 3;
-                    }
-                    if (GameUtilities.RollChance(chance, ref log)) {
-                        log += $"\n-Chance to build facility met.";
-                        //place random facility based on weights
-                        StructureSetting targetFacility = character.homeSettlement.GetMissingFacilityToBuildBasedOnWeights();
-                        if (targetFacility.hasValue && LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, targetFacility, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
-                            log += $"\n-Will place blueprint {structurePrefabName} at {targetTile}.";
-                            return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, targetFacility, targetTile, out producedJob);    
+                            return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, out producedJob);
                         }
                     }
-                    // if (character.characterClass.className == "Cult Leader") {
-                    //     StructureSetting structureToPlace = new StructureSetting(STRUCTURE_TYPE.CULT_TEMPLE, RESOURCE.STONE);
-                    //     if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
-                    //         log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
-                    //         return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, out producedJob);
-                    //     }
-                    // }
+                    log += $"\n-Check chance to build a missing facility.";
+                    int facilityCount = character.homeSettlement.GetFacilityCount();
+                    if (facilityCount < character.homeSettlement.settlementType.maxFacilities) {
+                        int chance = 2;
+                        if (facilityCount < (character.homeSettlement.settlementType.maxFacilities/2)) {
+                            chance = 3;
+                        }
+                        // chance = 100;
+                        if (GameUtilities.RollChance(chance, ref log)) {
+                            log += $"\n-Chance to build facility met.";
+                            //place random facility based on weights
+                            StructureSetting targetFacility = character.homeSettlement.GetMissingFacilityToBuildBasedOnWeights();
+                            if (targetFacility.hasValue && LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, targetFacility, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
+                                log += $"\n-Will place blueprint {structurePrefabName} at {targetTile}.";
+                                return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, targetFacility, targetTile, out producedJob);    
+                            }
+                        }
+                    }
+                } else {
+                    log += $"\n-Maximum build blueprint jobs reached.";
                 }
             }
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
@@ -10,10 +11,16 @@ using Debug = System.Diagnostics.Debug;
 
 public class GenericTileObject : TileObject {
     private bool hasBeenInitialized { get; set; }
-    public override LocationGridTile gridTileLocation => _owner;
+    public LocationStructureObject blueprintOnTile { get; private set; }
+    public GameDate blueprintExpiryDate { get; private set; }
+    public bool isCurrentlyBuilding { get; private set; }
     private LocationGridTile _owner;
-    
-    public override System.Type serializedData => typeof(SaveDataGenericTileObject);
+    private string _expiryKey;
+
+    #region getters
+    public override Type serializedData => typeof(SaveDataGenericTileObject);
+    public override LocationGridTile gridTileLocation => _owner;
+    #endregion
     
     public GenericTileObject(LocationGridTile locationGridTile) : base() {
         SetTileOwner(locationGridTile);
@@ -130,6 +137,18 @@ public class GenericTileObject : TileObject {
         base.OnReferencedInALog();
         _owner.SetIsDefault(false);
     }
+    public override void OnDoActionToObject(ActualGoapNode action) {
+        base.OnDoActionToObject(action);
+        if (action.goapType == INTERACTION_TYPE.BUILD_BLUEPRINT) {
+            isCurrentlyBuilding = true;
+        }
+    }
+    public override void OnCancelActionTowardsObject(ActualGoapNode action) {
+        base.OnCancelActionTowardsObject(action);
+        if (action.goapType == INTERACTION_TYPE.BUILD_BLUEPRINT) {
+            isCurrentlyBuilding = false;
+        }
+    }
     #endregion
 
     public BaseMapObjectVisual GetOrCreateMapVisual() {
@@ -178,7 +197,6 @@ public class GenericTileObject : TileObject {
     }
 
     #region Structure Blueprints
-    public LocationStructureObject blueprintOnTile { get; private set; }
     public bool PlaceBlueprintOnTile(string prefabName) {
         GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefabName, Vector3.zero, Quaternion.identity, gridTileLocation.parentMap.structureParent);
         LocationStructureObject structureObject = structurePrefab.GetComponent<LocationStructureObject>();
@@ -195,10 +213,37 @@ public class GenericTileObject : TileObject {
             structureObject.SetTilesInStructure(occupiedTiles.ToArray());
             blueprintOnTile = structureObject;
             gridTileLocation.SetIsDefault(false);
+            ScheduleBlueprintExpiry();
             return true;
         }
         ObjectPoolManager.Instance.DestroyObject(structurePrefab); //destroy structure since it wasn't placed
         return false;
+    }
+    private void ScheduleBlueprintExpiry() {
+        blueprintExpiryDate = GameManager.Instance.Today();
+        blueprintExpiryDate = blueprintExpiryDate.AddDays(3);
+        // blueprintExpiryDate = blueprintExpiryDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(1));
+        _expiryKey = SchedulingManager.Instance.AddEntry(blueprintExpiryDate, ExpireBlueprint, this);
+    }
+    private void CancelBlueprintExpiry() {
+        if (!string.IsNullOrEmpty(_expiryKey)) {
+            SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);
+            _expiryKey = string.Empty;
+        }
+    }
+    private void ExpireBlueprint() {
+        if (isCurrentlyBuilding) {
+            //if currently building, schedule expiry again after 1 hour.
+            blueprintExpiryDate = GameManager.Instance.Today();
+            blueprintExpiryDate = blueprintExpiryDate.AddTicks(GameManager.ticksPerHour);
+            _expiryKey = SchedulingManager.Instance.AddEntry(blueprintExpiryDate, ExpireBlueprint, this);
+        } else {
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, this as IPointOfInterest, "", JOB_TYPE.BUILD_BLUEPRINT);
+            ObjectPoolManager.Instance.DestroyObject(blueprintOnTile);
+            blueprintOnTile = null;
+            _expiryKey = string.Empty;    
+        }
+        
     }
     public LocationStructure BuildBlueprint(NPCSettlement npcSettlement) {
         HexTile hexTile = gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
@@ -223,7 +268,9 @@ public class GenericTileObject : TileObject {
         blueprintOnTile.OnBuiltStructureObjectPlaced(gridTileLocation.parentMap, structure);
         structure.CreateRoomsBasedOnStructureObject(blueprintOnTile);
         structure.OnBuiltNewStructure();
+        CancelBlueprintExpiry();
         blueprintOnTile = null;
+        isCurrentlyBuilding = false;
         return structure;
         
     }
@@ -236,6 +283,10 @@ public class GenericTileObject : TileObject {
         Debug.Assert(saveDataGenericTileObject != null, nameof(saveDataGenericTileObject) + " != null");
         if (!string.IsNullOrEmpty(saveDataGenericTileObject.blueprintOnTileName)) {
             LoadBlueprintOnTile(saveDataGenericTileObject.blueprintOnTileName);
+            //schedule expiry
+            blueprintExpiryDate = saveDataGenericTileObject.blueprintExpiryDate;
+            _expiryKey = SchedulingManager.Instance.AddEntry(blueprintExpiryDate, ExpireBlueprint, this);
+            isCurrentlyBuilding = saveDataGenericTileObject.isCurrentlyBuilding;
         }
     }
     private void LoadBlueprintOnTile(string prefabName) {
@@ -260,12 +311,17 @@ public class GenericTileObject : TileObject {
 public class SaveDataGenericTileObject : SaveDataTileObject {
 
     public string blueprintOnTileName;
+    public GameDate blueprintExpiryDate;
+    public bool isCurrentlyBuilding;
+    
     public override void Save(TileObject data) {
         base.Save(data);
         GenericTileObject genericTileObject = data as GenericTileObject;
         Debug.Assert(genericTileObject != null, nameof(genericTileObject) + " != null");
         if (genericTileObject.blueprintOnTile != null) {
             blueprintOnTileName = genericTileObject.blueprintOnTile.name.Replace("(Clone)", "");
+            blueprintExpiryDate = genericTileObject.blueprintExpiryDate;
+            isCurrentlyBuilding = genericTileObject.isCurrentlyBuilding;
         }
     }
     public override TileObject Load() {
