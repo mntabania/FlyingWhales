@@ -66,6 +66,7 @@ public class GoapThread : Multithread {
             CreatePlan();
         } catch(System.Exception e) {
             Debug.unityLogger.LogError("Error", $"Problem with {actor.name}'s GoapThread! \nJob is {(job?.jobType.ToString() ?? "None")}\nTarget is {target.name}\n{e.Message}\n{e.StackTrace}");
+            // throw new Exception($"Problem with {actor.name}'s GoapThread! \nJob is {(job?.jobType.ToString() ?? "None")}\nTarget is {target.name}\n{e.Message}\n{e.StackTrace}");
         }
     }
     public override void FinishMultithread() {
