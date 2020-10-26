@@ -1171,6 +1171,9 @@ public class CharacterNeedsComponent : CharacterComponent {
         if (owner.traitContainer.HasTrait("Vampire")) {
             return false;
         }
+        if (owner.traitContainer.HasTrait("Fasting")) {
+            return false;
+        }
         if (isStarving) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
                 //If there is already a HUNGER_RECOVERY JOB and the character becomes Starving, replace HUNGER_RECOVERY with HUNGER_RECOVERY_STARVING only if that character is not doing the job already
@@ -1222,6 +1225,9 @@ public class CharacterNeedsComponent : CharacterComponent {
         //No matter what happens if the character is burning, he/she wil not trigger fullness recovery
         if (owner.traitContainer.HasTrait("Burning")) {
             owner.logComponent.PrintLogIfActive($"\n{owner.name} is burning will not plan fullness recovery...");
+            return null;
+        }
+        if (owner.traitContainer.HasTrait("Fasting")) {
             return null;
         }
         //This base recovery creation function is different from tiredness/happiness because instead of adding the job in the job queue we only return the created job

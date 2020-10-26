@@ -195,6 +195,7 @@ namespace Traits {
             if (dislikedBeingVampire && GameUtilities.RollChance(1) && _owner.currentJob != null && _owner.currentJob.jobType.IsFullnessRecovery()) { //1
                 _owner.currentJob.ForceCancelJob(false, "Resisted Hunger");
                 _owner.traitContainer.AddTrait(_owner, "Ashamed");
+                _owner.traitContainer.AddTrait(_owner, "Fasting");
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Vampire", "resist_hunger", null, LOG_TAG.Needs);
                 log.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToDatabase();

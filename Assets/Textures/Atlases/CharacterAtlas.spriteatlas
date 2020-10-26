@@ -867,9 +867,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: cd7f30fedc2f82743a649b0fb0cb0e54, type: 3}
   - {fileID: 21300000, guid: 894432fee2e4460438eb597d1b538530, type: 3}
   - {fileID: 21300000, guid: fabfb7fe8f812f44db4aedd99fbe8719, type: 3}
-  - {fileID: 21300000, guid: 206b39fed6b572142bac6c29ae6d9a57, type: 3}
   - {fileID: 21300000, guid: a6b4edfeb453c6e49aeea17fd3a2500e, type: 3}
   - {fileID: 21300000, guid: ee293efe27740dc48b015e510e0888be, type: 3}
+  - {fileID: 21300000, guid: 2e9e350ff43fb084db318ef7a298b66b, type: 3}
   - {fileID: 21300000, guid: b114680f13536f24d9a71e9d79aeaf7e, type: 3}
   - {fileID: 21300000, guid: fb08712f2ed1a9b458b8ae92de06e432, type: 3}
   - {fileID: 21300000, guid: 0e8cb82ff97c46c42b4803e93f1aa556, type: 3}
@@ -1738,9 +1738,9 @@ SpriteAtlas:
   - attack_4
   - dead_1
   - walk_1
-  - sleep_1
   - idle_3
   - idle_4
+  - sleep_1
   - marauder_elf_body
   - attack_2
   - attack_2

@@ -1397,6 +1397,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             if (owner.partyComponent.isActiveMember) {
                 return false;
             }
+            if (owner.traitContainer.HasTrait("Fasting")) {
+	            return false;
+            }
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.DRINK_BLOOD, target, owner);
             if (owner.jobQueue.AddJobInQueue(job)) {
                 owner.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
