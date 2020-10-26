@@ -8,19 +8,12 @@ using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using UtilityScripts;
 
-public class DefendBehaviour : CharacterBehaviourComponent {
-    public DefendBehaviour() {
-        priority = 10;
+public class BoneGolemBehaviour : CharacterBehaviourComponent {
+    public BoneGolemBehaviour() {
+        priority = 8;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-        if (character.isAtHomeStructure || character.IsAtTerritory()) {
-            //List<Character> choices = GetTargetChoices(character.territories, character);
-            //if (choices != null) {
-            //    Character chosenTarget = CollectionUtilities.GetRandomElement(choices);
-            //    character.combatComponent.Fight(chosenTarget, CombatManager.Hostility);
-            //    producedJob = null;
-            //    return true;
-            //}
+        if (character.isAtHomeStructure || character.IsInHomeSettlement() || character.IsAtTerritory()) {
             Character hostile = GetFirstHostileIntruder(character);
             if(hostile != null) {
                 character.combatComponent.Fight(hostile, CombatManager.Hostility);
@@ -28,7 +21,7 @@ public class DefendBehaviour : CharacterBehaviourComponent {
                 return true;
             } else {
                 //Roam around tile
-                return character.jobComponent.TriggerRoamAroundTerritory(out producedJob);
+                return character.jobComponent.TriggerRoamAroundTile(out producedJob);
             }
         } else {
             //character is not at home, go back.

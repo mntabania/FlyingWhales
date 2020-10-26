@@ -134,14 +134,15 @@ namespace Traits {
                         if (item.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
                             && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM)) {
                             int chance = 100;
-                            if (characterThatWillDoJob.HasItem(item.name)) {
+                            if (characterThatWillDoJob.HasItem(item.name) || characterThatWillDoJob.HasOwnedItemInHomeStructure(item.name)) {
                                 chance = 10;
-                                if (characterThatWillDoJob.GetItemCount(item.name) >= 2) {
+                                int itemCount = characterThatWillDoJob.GetItemCount(item.name) + characterThatWillDoJob.GetNumOfOwnedItemsInHomeStructure(item.name);
+                                if (itemCount >= 2) {
                                     chance = 0;
                                 }
                             }
                             if (UnityEngine.Random.Range(0, 100) < chance) {
-                                characterThatWillDoJob.jobComponent.CreateTakeItemJob(item);
+                                characterThatWillDoJob.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, item);
                                 return true;
                             }
                         }

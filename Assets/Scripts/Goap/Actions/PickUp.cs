@@ -50,10 +50,12 @@ public class PickUp : GoapAction {
             if (!target.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)) {
                 cost += 2000;
                 costLog = $"{costLog} +2000(Object is not part of home settlement and job is Obtain Personal Item)";
-            } else if (target.IsOwnedBy(actor) && target.gridTileLocation.structure == actor.homeStructure) {
-                cost += 2000;
-                costLog = $"{costLog} +2000(Object is owned by actor and object is in home and job is Obtain Personal Item)";
             }
+            
+            //else if (target.IsOwnedBy(actor) && target.gridTileLocation.structure == actor.homeStructure) {
+            //    cost += 2000;
+            //    costLog = $"{costLog} +2000(Object is owned by actor and object is in home and job is Obtain Personal Item)";
+            //}
         }
         if(target is TileObject targetTileObject) {
             if(targetTileObject is Heirloom && job != null && job.jobType == JOB_TYPE.DROP_ITEM_PARTY) { //|| job.jobType == JOB_TYPE.DROP_ITEM
@@ -93,8 +95,13 @@ public class PickUp : GoapAction {
                     }
                 } else {
                     if (targetTileObject.IsOwnedBy(actor)) {
-                        cost += UtilityScripts.Utilities.Rng.Next(20, 61);
-                        costLog = $"{costLog} +{cost}(Personal owner is actor)";
+                        if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.structure == actor.homeStructure) {
+                            cost += UtilityScripts.Utilities.Rng.Next(10, 31);
+                            costLog = $"{costLog} +{cost}(Personal owner is actor and object is inside home structure of actor)";
+                        } else {
+                            cost += UtilityScripts.Utilities.Rng.Next(40, 81);
+                            costLog = $"{costLog} +{cost}(Personal owner is actor)";
+                        }
                     } else {
                         cost += 2000;
                         costLog = $"{costLog} +2000(Has owner)";

@@ -302,7 +302,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void OnHourStarted() {
         CheckForJudgePrisoners();
-        if(ruler == null) {
+        if(ruler == null && locationType == LOCATION_TYPE.VILLAGE && owner != null && owner.isMajorNonPlayer) {
             CheckForNewRulerDesignation();
         }
         if (isUnderSiege) {
@@ -426,10 +426,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
     }
     public void DesignateNewRuler(bool willLog = true) {
+        if(owner == null) {
+            return;
+        }
         string log = $"{GameManager.Instance.TodayLogString()}Designating a new npcSettlement ruler for: {region.name}(chance it triggered: {newRulerDesignationChance})";
         newRulerDesignationWeights.Clear();
         for (int i = 0; i < residents.Count; i++) {
             Character resident = residents[i];
+            if(resident.faction != owner) {
+                continue;
+            }
             log += $"\n\n-{resident.name}";
             if(resident.isDead /*|| resident.isMissing*/ || resident.isBeingSeized) {
                 log += "\nEither dead or missing or seized, will not be part of candidates for ruler";

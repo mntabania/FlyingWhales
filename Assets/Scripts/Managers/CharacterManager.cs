@@ -53,7 +53,8 @@ public class CharacterManager : BaseMonoBehaviour {
         Succubus_Behaviour = "Succubus Behaviour",
         Dragon_Behaviour = "Dragon Behaviour",
         Troll_Behaviour = "Troll Behaviour",
-        Snatcher_Behaviour = "Snatcher Behaviour";
+        Snatcher_Behaviour = "Snatcher Behaviour",
+        Bone_Golem_Behaviour = "Bone Golem Behaviour";
         
 
     public const int MAX_HISTORY_LOGS = 300;
@@ -322,6 +323,13 @@ public class CharacterManager : BaseMonoBehaviour {
             new []{
                 typeof(MovementProcessing),
                 typeof(SnatcherBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Bone_Golem_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(BoneGolemBehaviour),
                 typeof(DefaultExtraCatcher),
             }
         },
