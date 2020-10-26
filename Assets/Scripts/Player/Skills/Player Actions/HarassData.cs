@@ -18,9 +18,9 @@ public class HarassData : PlayerAction {
     public override bool CanPerformAbilityTowards(HexTile targetHex) {
         bool canPerform = base.CanPerformAbilityTowards(targetHex);
         if (canPerform) {
-            if (targetHex.settlementOnTile != null && targetHex.settlementOnTile is NPCSettlement npcSettlement) {
-                return !npcSettlement.isBeingHarassed;
-            }
+            // if (targetHex.settlementOnTile != null && targetHex.settlementOnTile is NPCSettlement npcSettlement) {
+            //     return !npcSettlement.isBeingHarassed;
+            // }
             return false;
         }
         return canPerform;

@@ -14,6 +14,7 @@ namespace UtilityScripts {
                     continue;
                 }
                 summary += $"\n<b>{npcSettlement.name}</b> Settlement Type: {npcSettlement.settlementType?.settlementType.ToString() ?? "None"}";
+                summary += $"\nHas Peasants: {npcSettlement.hasPeasants.ToString()}, Has Workers: {npcSettlement.hasWorkers.ToString()}";
                 summary += $"\nStorage: {npcSettlement.mainStorage?.name ?? "None"}. Prison: {npcSettlement.prison?.name ?? "None"}";
                 // if (npcSettlement.settlementType != null) {
                 //     summary += $"\n<b>Max Dwellings: {npcSettlement.settlementType.maxDwellings.ToString()}</b>, <b>Max Facilities: {npcSettlement.settlementType.maxFacilities.ToString()}</b>";

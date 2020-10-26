@@ -17,9 +17,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public LocationStructure prison { get; private set; }
     public LocationStructure mainStorage { get; private set; }
     public CityCenter cityCenter { get; private set; }
-
-    //Data that are only referenced from this npcSettlement's region
-    //These are only getter data, meaning it cannot be stored
+    
     public Character ruler { get; private set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; }
     public bool isUnderSiege { get; private set; }
@@ -29,37 +27,27 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
 
     //structures
     public List<JobQueueItem> availableJobs { get; }
-    public JOB_OWNER ownerType => JOB_OWNER.SETTLEMENT;
     public LocationClassManager classManager { get; }
     public LocationEventManager eventManager { get; private set; }
     public SettlementJobPriorityComponent jobPriorityComponent { get; }
     public SettlementType settlementType { get; private set; }
     public GameDate plaguedExpiryDate { get; private set; }
-
-    private Region _region;
+    public SettlementJobTriggerComponent settlementJobTriggerComponent { get; }
+    public bool hasPeasants { get; private set; }
+    public bool hasWorkers { get; private set; }
+    
+    private readonly Region _region;
     private readonly WeightedDictionary<Character> newRulerDesignationWeights;
     private int newRulerDesignationChance;
-    private int _isBeingHarassedCount;
-    private int _isBeingInvadedCount;
     private string _plaguedExpiryKey;
-    private List<TILE_OBJECT_TYPE> _neededObjects;
+    private readonly List<TILE_OBJECT_TYPE> _neededObjects;
 
-     
-    //     = new TILE_OBJECT_TYPE[] {
-    //     TILE_OBJECT_TYPE.HEALING_POTION,
-    //     TILE_OBJECT_TYPE.TOOL,
-    //     TILE_OBJECT_TYPE.ANTIDOTE,
-    //     TILE_OBJECT_TYPE.PHYLACTERY
-    // }; 
-    
     #region getters
     public override Type serializedData => typeof(SaveDataNPCSettlement);
     public override Region region => _region;
     public JobTriggerComponent jobTriggerComponent => settlementJobTriggerComponent;
-    public SettlementJobTriggerComponent settlementJobTriggerComponent { get; }
-    public bool isBeingHarassed => _isBeingHarassedCount > 0;
-    public bool isBeingInvaded => _isBeingInvadedCount > 0;
     public List<TILE_OBJECT_TYPE> neededObjects => _neededObjects;
+    public JOB_OWNER ownerType => JOB_OWNER.SETTLEMENT;
     #endregion
 
     public NPCSettlement(Region region, LOCATION_TYPE locationType) : base(locationType) {
@@ -125,6 +113,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 _plaguedExpiryKey = SchedulingManager.Instance.AddEntry(expiryDate, () => SetIsPlagued(false), this);
                 plaguedExpiryDate = expiryDate;
             }
+            hasPeasants = saveDataNpcSettlement.hasPeasants;
+            hasWorkers = saveDataNpcSettlement.hasWorkers;
             Initialize();
         }
     }
@@ -177,7 +167,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void SubscribeToSignals() {
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingCharacter);
-        //Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
+        Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
         Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         // Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
@@ -196,7 +186,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void UnsubscribeToSignals() {
         Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingCharacter);
-        //Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
+        Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         // Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
@@ -375,7 +365,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (base.RemoveResident(character)) {
             //region.RemoveResident(character);
             character.SetHomeSettlement(null);
-            eventManager.OnResidentRemoved(character);
+            OnRemoveResident(character);
             if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
                 classManager.OnRemoveResident(character);
                 jobPriorityComponent.OnRemoveResident(character);
@@ -673,6 +663,29 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if(residents.Count == 1 && locationType == LOCATION_TYPE.VILLAGE) {
             //First resident
             ChangeSettlementTypeAccordingTo(character);
+        }
+        bool hasUpdatedPeasantSwitch = false;
+        if (character.characterClass.className == "Peasant") {
+            hasUpdatedPeasantSwitch = UpdateHasPeasants();
+        }
+        bool hasUpdatedWorkerSwitch = false;
+        if (character.traitContainer.HasTrait("Worker")) {
+            hasUpdatedWorkerSwitch = UpdateHasWorkers();
+        }
+        if (!hasUpdatedPeasantSwitch && !hasUpdatedWorkerSwitch) {
+            //if neither the switches was updated, manually call the update resident able jobs since it is possible that one of the switches are already off
+            //and not calling it will result in the new residents able jobs not being updated.
+            UpdateAbleJobsOfResident(character);
+        }
+    }
+    private void OnRemoveResident(Character character) {
+        eventManager.OnResidentRemoved(character);
+        UnapplyAbleJobsFromSettlement(character);
+        if (character.characterClass.className == "Peasant") {
+            UpdateHasPeasants();
+        }
+        if (character.traitContainer.HasTrait("Worker")) {
+            UpdateHasWorkers();
         }
     }
     #endregion
@@ -1109,8 +1122,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                     chosenPriorityJob = job;
                 } else if (chosenSecondaryJob == null && character.characterClass.secondaryJobs != null && character.characterClass.secondaryJobs.Contains(job.jobType)) {
                     chosenSecondaryJob = job;
-                } else if (chosenAbleJob == null && character.characterClass.ableJobs != null && character.characterClass.ableJobs.Contains(job.jobType)) {
-                    chosenAbleJob = job;
+                } else if (chosenAbleJob == null) {
+                    bool isAble = character.characterClass.ableJobs != null && character.characterClass.ableJobs.Contains(job.jobType);
+                    if (!isAble) {
+                        isAble = character.jobComponent.additionalAbleJobs.Contains(job.jobType);
+                    }
+                    if (isAble) {
+                        chosenAbleJob = job;    
+                    }
                 }
             }
         }
@@ -1283,8 +1302,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void ForceCancelJobTypesTargetingPOI(IPointOfInterest target, string reason, JOB_TYPE jobType) {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
-            if (job.jobType == jobType && job is GoapPlanJob) {
-                GoapPlanJob goapJob = job as GoapPlanJob;
+            if (!job.hasBeenReset && job.jobType == jobType && job is GoapPlanJob goapJob) {
                 if (goapJob.targetPOI == target) {
                     if (goapJob.ForceCancelJob(false, reason)) {
                         i--;
@@ -1317,15 +1335,118 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
     }
-    //public bool HasActiveParty(PARTY_QUEST_TYPE partyType) {
-    //    for (int i = 0; i < residents.Count; i++) {
-    //        Character character = residents[i];
-    //        if (character.partyComponent.hasParty && character.partyComponent.currentParty.partyType == partyType) {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
+    /// <summary>
+    /// Update the hasPeasants switch.
+    /// </summary>
+    /// <returns>Whether or not a change happened</returns>
+    private bool UpdateHasPeasants() {
+        for (int i = 0; i < residents.Count; i++) {
+            Character resident = residents[i];
+            if (resident.characterClass.className == "Peasant") {
+                return SetHasPeasants(true);
+            }
+        }
+        return SetHasPeasants(false);
+    }
+    /// <summary>
+    /// Update the hasWorkers switch.
+    /// </summary>
+    /// <returns>Whether or not a change happened</returns>
+    private bool UpdateHasWorkers() {
+        for (int i = 0; i < residents.Count; i++) {
+            Character resident = residents[i];
+            if (resident.traitContainer.HasTrait("Worker")) {
+                return SetHasWorkers(true);
+            }
+        }
+        return SetHasWorkers(false);
+    }
+    /// <summary>
+    /// Switch the has peasants switch on/off
+    /// </summary>
+    /// <param name="state">The state to switch to</param>
+    /// <returns>Whether or not the switched was toggled</returns>
+    private bool SetHasPeasants(bool state) {
+        if (hasPeasants != state) {
+            hasPeasants = state;
+            UpdateAbleJobsOfAllResidents();
+            return true;
+        }
+        return false;
+    }
+    /// <summary>
+    /// Switch the has workers switch on/off
+    /// </summary>
+    /// <param name="state">The state to switch to</param>
+    /// <returns>Whether or not the switched was toggled</returns>
+    private bool SetHasWorkers(bool state) {
+        if (hasWorkers != state) {
+            hasWorkers = state;
+            UpdateAbleJobsOfAllResidents();
+            return true;
+        }
+        return false;
+    }
+    private void UpdateAbleJobsOfAllResidents() {
+        for (int i = 0; i < residents.Count; i++) {
+            Character character = residents[i];
+            UpdateAbleJobsOfResident(character);
+        }
+    }
+    public void UpdateAbleJobsOfResident(Character character) {
+        //update jobs based on hasPeasants switch
+        if (!hasPeasants) {
+            if (character.characterClass.className != "Noble") {
+                CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
+                character.jobComponent.AddAdditionalAbleJob(peasantClass.priorityJobs);
+                character.jobComponent.AddAdditionalAbleJob(peasantClass.secondaryJobs);
+                character.jobComponent.AddAdditionalAbleJob(peasantClass.ableJobs);
+            }
+        } else {
+            if (character.characterClass.className != "Noble") {
+                CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
+                character.jobComponent.RemoveAdditionalAbleJob(peasantClass.priorityJobs);
+                character.jobComponent.RemoveAdditionalAbleJob(peasantClass.secondaryJobs);
+                character.jobComponent.RemoveAdditionalAbleJob(peasantClass.ableJobs);
+            }
+        }
+        
+        //update jobs based on hasWorkers switch
+        if (!hasWorkers) {
+            if (character.characterClass.className == "Noble") {
+                CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
+                character.jobComponent.AddAdditionalAbleJob(peasantClass.priorityJobs);
+                character.jobComponent.AddAdditionalAbleJob(peasantClass.secondaryJobs);
+                character.jobComponent.AddAdditionalAbleJob(peasantClass.ableJobs);
+            }
+        } else {
+            if (character.characterClass.className == "Noble") {
+                CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
+                character.jobComponent.RemoveAdditionalAbleJob(peasantClass.priorityJobs);
+                character.jobComponent.RemoveAdditionalAbleJob(peasantClass.secondaryJobs);
+                character.jobComponent.RemoveAdditionalAbleJob(peasantClass.ableJobs);
+            }
+        }
+    }
+    public void UnapplyAbleJobsFromSettlement(Character character) {
+        if (!hasPeasants) {
+            if (character.characterClass.className != "Noble") {
+                CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
+                character.jobComponent.RemoveAdditionalAbleJob(peasantClass.priorityJobs);
+                character.jobComponent.RemoveAdditionalAbleJob(peasantClass.secondaryJobs);
+                character.jobComponent.RemoveAdditionalAbleJob(peasantClass.ableJobs);
+            }
+        }
+        
+        if (!hasWorkers) {
+            if (character.characterClass.className == "Noble") {
+                CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");
+                character.jobComponent.RemoveAdditionalAbleJob(peasantClass.priorityJobs);
+                character.jobComponent.RemoveAdditionalAbleJob(peasantClass.secondaryJobs);
+                character.jobComponent.RemoveAdditionalAbleJob(peasantClass.ableJobs);
+            }
+        }
+    }
     #endregion
 
     #region IJobOwner

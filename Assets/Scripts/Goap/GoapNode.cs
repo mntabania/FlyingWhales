@@ -815,8 +815,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if (GoapActionStateDB.GetStateResult(action.goapType, currentStateName) != InteractionManager.Goap_State_Success) {
             return;
         }
-        if (poiTarget is TileObject target) {
-            target.OnDoActionToObject(this);
+        if (poiTarget is TileObject tileObject) {
+            tileObject.OnDoActionToObject(this);
         }
         //else if (poiTarget is Character) {
         //    if (currentState.name != "Target Missing" && !doesNotStopTargetCharacter) {
@@ -833,9 +833,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         }
     }
     private void OnCancelActionTowardsTarget() {
-        if (poiTarget is TileObject) {
-            TileObject target = poiTarget as TileObject;
-            target.OnCancelActionTowardsObject(this);
+        if (poiTarget is TileObject tileObject) {
+            tileObject.OnCancelActionTowardsObject(this);
         }
     }
     public void OverrideCurrentStateDuration(int val) {
