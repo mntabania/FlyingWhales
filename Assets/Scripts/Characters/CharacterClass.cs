@@ -232,10 +232,4 @@ public class CharacterClass {
         return priorityJobs.Contains(jobType) || ableJobs.Contains(jobType) || secondaryJobs.Contains(jobType);
     }
     #endregion
-    //public void ConstructData() {
-    //    ConstructSkills();
-    //}
-    //private void ConstructSkills() {
-    //    _skill = SkillManager.Instance.allSkills[_skillName];
-    //}
 }

@@ -512,6 +512,7 @@ public class CharacterInfoUI : InfoUIBase {
         summary = $"{summary}{"\nPriority Jobs: " + activeCharacter.jobComponent.GetPriorityJobs()}";
         summary = $"{summary}{"\nSecondary Jobs: " + activeCharacter.jobComponent.GetSecondaryJobs()}";
         summary = $"{summary}{"\nAble Jobs: " + activeCharacter.jobComponent.GetAbleJobs()}";
+        summary = $"{summary}{"\nAdditional Able Jobs: " + activeCharacter.jobComponent.GetAdditionalAbleJobs()}";
         summary = $"{summary}{("\nParty: " + (activeCharacter.partyComponent.hasParty ? activeCharacter.partyComponent.currentParty.partyName : "None") + ", State: " + activeCharacter.partyComponent.currentParty?.partyState.ToString() + ", Members: " + activeCharacter.partyComponent.currentParty?.members.Count)}";
         summary = $"{summary}{"\nPrimary Bed: " + (activeCharacter.tileObjectComponent.primaryBed != null ? activeCharacter.tileObjectComponent.primaryBed.name : "None")}";
         summary = $"{summary}{"\nEnable Digging: " + activeCharacter.movementComponent.enableDigging.ToString()}";

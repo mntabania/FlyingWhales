@@ -15,6 +15,8 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
     public bool isUnderSiege;
     public bool isPlagued;
     public GameDate plaguedExpiry;
+    public bool hasPeasants;
+    public bool hasWorkers;
 
     public override void Save(BaseSettlement baseSettlement) {
         base.Save(baseSettlement);
@@ -54,6 +56,8 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
         if (isPlagued) {
             plaguedExpiry = npcSettlement.plaguedExpiryDate;
         }
+        hasPeasants = npcSettlement.hasPeasants;
+        hasWorkers = npcSettlement.hasWorkers;
     }
     public override BaseSettlement Load() {
         return LandmarkManager.Instance.LoadNPCSettlement(this);

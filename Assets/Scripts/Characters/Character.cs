@@ -1,8 +1,6 @@
-﻿
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
@@ -14,8 +12,6 @@ using UnityEngine.EventSystems;
 using UnityEngine.Profiling;
 using UtilityScripts;
 using JetBrains.Annotations;
-using Logs;
-using Random = UnityEngine.Random;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyQuestTarget, IGatheringTarget, ISavable {
     private int _id;
@@ -68,7 +64,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public List<TileObject> ownedItems { get; private set; }
     public List<JobQueueItem> allJobsTargetingThis { get; private set; }
     public List<Trait> traitsNeededToBeRemoved { get; private set; }
-
     //public Party ownParty { get; protected set; }
     //public Party currentParty { get; protected set; }
     public Dictionary<RESOURCE, int> storedResources { get; protected set; }
@@ -88,14 +83,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Log deathLog { get; private set; }
     public List<string> interestedItemNames { get; private set; }
     public string previousClassName { get; private set; }
-
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
     public List<HexTile> territories { get; private set; }
     public NPCSettlement ruledSettlement { get; private set; }
-
     public LycanthropeData lycanData { get; protected set; }
     public Necromancer necromancerTrait { get; protected set; }
-
     public POI_STATE state { get; private set; }
 
     //limiters
@@ -189,11 +181,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return null;
         }
     }
-
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.CHARACTER;
     public RACE race => _raceSetting.race;
     public JOB_OWNER ownerType => JOB_OWNER.CHARACTER;
-
     public CharacterClass characterClass => _characterClass;
     public RaceSetting raceSetting => _raceSetting;
     public Faction faction => _faction;
@@ -823,6 +813,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void AssignClass(CharacterClass characterClass, bool isInitial = false) {
         CharacterClass previousClass = _characterClass;
         if (previousClass != null) {
+            homeSettlement?.UnapplyAbleJobsFromSettlement(this);
             previousClassName = previousClass.className;
             //This means that the character currently has a class and it will be replaced with a new class
             for (int i = 0; i < previousClass.traitNames.Length; i++) {
@@ -835,6 +826,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _characterClass = characterClass;
         //behaviourComponent.OnChangeClass(_characterClass, previousClass);
         if (!isInitial) {
+            homeSettlement?.UpdateAbleJobsOfResident(this);
             OnUpdateCharacterClass();
             Messenger.Broadcast(Signals.CHARACTER_CLASS_CHANGE, this, previousClass, _characterClass);
         }

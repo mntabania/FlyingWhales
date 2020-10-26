@@ -95,7 +95,11 @@ public class PlayerNotificationItem : PooledObject {
 
     public void OnHoverOverLog(object obj) {
         if (obj is Character character && _hoverPosition != null) {
-            UIManager.Instance.ShowCharacterNameplateTooltip(character, _hoverPosition);
+            Character characterToShow = character;
+            if(character.isLycanthrope) {
+                characterToShow = character.lycanData.activeForm;
+            }
+            UIManager.Instance.ShowCharacterNameplateTooltip(characterToShow, _hoverPosition);
         }
     }
     public void OnHoverOutLog() {
