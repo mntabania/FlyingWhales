@@ -38,9 +38,16 @@ public class MakeLove : GoapAction {
                 return 2000;
             }
         }
+        Character targetCharacter = target as Character;
+        if (!(actor is Succubus) && targetCharacter != null && targetCharacter.partyComponent.hasParty && targetCharacter.partyComponent.currentParty.isActive) {
+            if (targetCharacter.partyComponent.isActiveMember) {
+                costLog += $" +2000(Target is in Active Party and actor is NOT a Succubus, Cannot make love)";
+                actor.logComponent.AppendCostLog(costLog);
+                return 2000;
+            }
+        }
         int cost = UtilityScripts.Utilities.Rng.Next(90, 131);
         costLog += $" +{cost}(Initial)";
-        Character targetCharacter = target as Character;
         TIME_IN_WORDS timeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
         if (actor.race.IsSapient() && timeOfDay != TIME_IN_WORDS.EARLY_NIGHT && timeOfDay != TIME_IN_WORDS.LATE_NIGHT && timeOfDay != TIME_IN_WORDS.AFTER_MIDNIGHT) {
             cost += 2000;
