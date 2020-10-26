@@ -16698,8 +16698,8 @@ MonoBehaviour:
         m_RotationOrder: 4
       StartPos: {x: -237, y: 0, z: 0}
       EndPos: {x: 202, y: 0, z: 0}
-      StartWorldPos: {x: -237, y: 540, z: 0}
-      EndWorldPos: {x: 202, y: 540, z: 0}
+      StartWorldPos: {x: -108.37812, y: 246.99998, z: 0}
+      EndWorldPos: {x: 92.37292, y: 246.99998, z: 0}
     ScalePropetiesAnim:
       scaleEnabled: 0
       TweenCurveEnterScale:
@@ -35488,12 +35488,12 @@ PrefabInstance:
     - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
         type: 3}
       propertyPath: _unlimitedCast
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
         type: 3}
       propertyPath: _unlockAllSkills
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 39888b675721e8e488059363d0de61d1, type: 3}
