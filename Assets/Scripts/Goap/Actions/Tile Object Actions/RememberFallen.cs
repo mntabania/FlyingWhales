@@ -138,7 +138,7 @@ public class RememberFallen : GoapAction {
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickRememberSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(1.5f);
+        goapNode.actor.needsComponent.AdjustHappiness(2.1f);
     }
     public void AfterRememberSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);

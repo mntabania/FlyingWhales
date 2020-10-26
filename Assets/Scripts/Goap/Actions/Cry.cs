@@ -30,7 +30,7 @@ public class Cry : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
-        int cost = UtilityScripts.Utilities.Rng.Next(90, 131);
+        int cost = UtilityScripts.Utilities.Rng.Next(75, 131);
         costLog += $" +{cost.ToString()}(Initial)";
         int timesCost = 10 * actor.jobComponent.GetNumOfTimesActionDone(this);
         cost += timesCost;
@@ -43,7 +43,7 @@ public class Cry : GoapAction {
             for (int i = 0; i < _costTraits.Length; i++) {
                 string trait = _costTraits[i];
                 if (actor.traitContainer.HasTrait(trait)) {
-                    int randomAmount = UtilityScripts.Utilities.Rng.Next(0, 4);
+                    int randomAmount = UtilityScripts.Utilities.Rng.Next(0, 11);
                     cost -= randomAmount;
                     costLog += $" -{randomAmount.ToString()}(Has {trait})";            
                 }

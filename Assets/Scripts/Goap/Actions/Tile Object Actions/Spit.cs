@@ -147,7 +147,7 @@ public class Spit : GoapAction {
         goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
     }
     public void PerTickSpitSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(10f);
+        goapNode.actor.needsComponent.AdjustHappiness(18f);
     }
     public void AfterSpitSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
