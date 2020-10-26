@@ -2046,7 +2046,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         hasRisen = state;
     }
     public bool IsAtTerritory() {
-        return territories.Count > 0 && hexTileLocation != null && territories.Contains(hexTileLocation);
+        HexTile hex = hexTileLocation;
+        return territories.Count > 0 && hex != null && territories.Contains(hex);
     }
     public bool IsInDanger() {
         return traitContainer.HasTrait("Restrained") && !IsInHomeSettlement();
@@ -3310,6 +3311,31 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
         return false;
+    }
+    public bool HasOwnedItemInHomeStructure(string itemName) {
+        if(homeStructure == null) {
+            return false;
+        }
+        for (int i = 0; i < ownedItems.Count; i++) {
+            TileObject item = ownedItems[i];
+            if (itemName == item.name && item.gridTileLocation != null && item.gridTileLocation.structure == homeStructure) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public int GetNumOfOwnedItemsInHomeStructure(string itemName) {
+        int count = 0;
+        if (homeStructure == null) {
+            return count;
+        }
+        for (int i = 0; i < ownedItems.Count; i++) {
+            TileObject item = ownedItems[i];
+            if (itemName == item.name && item.gridTileLocation != null && item.gridTileLocation.structure == homeStructure) {
+                count++;
+            }
+        }
+        return count;
     }
     public bool ObtainItem(TileObject item, bool changeCharacterOwnership = false, bool setOwnership = true) {
         if (AddItem(item)) {
@@ -5027,16 +5053,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //This should almost never happen since we expect that all characters should have a faction.
             return false;
         }
-        if (isInVampireBatForm) {
-            Vampire vampireTrait = traitContainer.GetTraitOrStatus<Vampire>("Vampire");
-            if (!vampireTrait.DoesCharacterKnowThisVampire(otherCharacter)) {
-                return true;
-            }
-        } else if (isInWerewolfForm) {
-            if (!lycanData.DoesCharacterKnowThisLycan(otherCharacter)) {
-                return true;
-            }
-        }
+        //if (isInVampireBatForm) {
+        //    Vampire vampireTrait = traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+        //    if (!vampireTrait.DoesCharacterKnowThisVampire(otherCharacter)) {
+        //        return true;
+        //    }
+        //} else if (isInWerewolfForm) {
+        //    if (!lycanData.DoesCharacterKnowThisLycan(otherCharacter)) {
+        //        return true;
+        //    }
+        //}
 
         if (otherCharacter.isInVampireBatForm) {
             Vampire vampireTrait = otherCharacter.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
@@ -5839,8 +5865,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 LocationStructure homeStructure = this.homeStructure;
                 homeRegion.RemoveResident(this);
                 MigrateHomeStructureTo(null, addToRegionResidents: false);
-                SetHomeRegion(home); //keep this data with character to prevent errors
-                SetHomeStructure(homeStructure); //keep this data with character to prevent errors
+                //SetHomeRegion(home); //keep this data with character to prevent errors
+                //SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             }
             if (homeSettlement != null) {
                 homeSettlement.jobPriorityComponent.UnassignResidentToPrimaryJob(this);

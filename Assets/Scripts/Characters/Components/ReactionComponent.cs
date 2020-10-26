@@ -172,21 +172,6 @@ public class ReactionComponent : CharacterComponent {
             }
         }
         if(actor != owner && target != owner) {
-            if (addLog) {
-                //Only log witness event if event is not an action. If it is an action, the CharacterManager.Instance.CanAddCharacterLogOrShowNotif must return true
-                if (reactable is ActualGoapNode action && (!action.action.shouldAddLogs || !CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType))) {
-                    //Should not add witness log if the action log itself is not added to the actor
-                } else {
-                    Log witnessLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "witness_event", reactable as ActualGoapNode, LOG_TAG.Witnessed);
-                    // witnessLog.SetLogType(LOG_TYPE.Witness);
-                    // witnessLog.AddTag(reactable.logTags);
-                    witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
-                    witnessLog.AddToFillers(null, reactable.informationLog.unReplacedText, LOG_IDENTIFIER.APPEND);
-                    witnessLog.AddToFillers(reactable.informationLog.fillers);
-                    witnessLog.AddLogToDatabase();
-                    // owner.logComponent.AddHistory(witnessLog);
-                }
-            }
             string emotionsToActor = reactable.ReactionToActor(actor, target, owner, REACTION_STATUS.WITNESSED);
             if(emotionsToActor != string.Empty) {
                 if (!CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
@@ -228,6 +213,24 @@ public class ReactionComponent : CharacterComponent {
             string response =
                 $"Witness action reaction of {owner.name} to {reactable.name} of {actor.name} with target {reactable.target.name}: {emotionsToActor}{emotionsToTarget}";
             owner.logComponent.PrintLogIfActive(response);
+
+            //Should not add witnessed log if there are no reaction/emotion felt
+            //Reason: Assault action still logs that the character witnessed actor is assaulting target even if there are no reactions trigger
+            if (addLog && emotionsToActor != string.Empty && emotionsToTarget != string.Empty) {
+                //Only log witness event if event is not an action. If it is an action, the CharacterManager.Instance.CanAddCharacterLogOrShowNotif must return true
+                if (reactable is ActualGoapNode action && (!action.action.shouldAddLogs || !CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType))) {
+                    //Should not add witness log if the action log itself is not added to the actor
+                } else {
+                    Log witnessLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "witness_event", reactable as ActualGoapNode, LOG_TAG.Witnessed);
+                    // witnessLog.SetLogType(LOG_TYPE.Witness);
+                    // witnessLog.AddTag(reactable.logTags);
+                    witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
+                    witnessLog.AddToFillers(null, reactable.informationLog.unReplacedText, LOG_IDENTIFIER.APPEND);
+                    witnessLog.AddToFillers(reactable.informationLog.fillers);
+                    witnessLog.AddLogToDatabase();
+                    // owner.logComponent.AddHistory(witnessLog);
+                }
+            }
         } else if (reactable.target == owner) {
             if (!reactable.isStealth || reactable.target.traitContainer.HasTrait("Vigilant")) {
                 string emotionsOfTarget = reactable.ReactionOfTarget(actor, reactable.target, REACTION_STATUS.WITNESSED);
@@ -712,6 +715,20 @@ public class ReactionComponent : CharacterComponent {
                                     }
                                 }
                             }
+                        } else {
+                            if (!targetCharacter.traitContainer.HasTrait("Unconscious", "Restrained") || (isLethal && isTopPrioJobLethal)) {
+                                //Determine whether to fight or flight.
+                                CombatReaction combatReaction = actor.combatComponent.GetFightOrFlightReaction(targetCharacter, CombatManager.Hostility);
+                                if (combatReaction.reaction == COMBAT_REACTION.Flight) {
+                                    //if flight was decided
+                                    //if target is restrained or resting, do nothing
+                                    if (targetCharacter.traitContainer.HasTrait("Restrained", "Resting") == false) {
+                                        actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);
+                                    }
+                                } else {
+                                    actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);
+                                }
+                            }
                         }
                     } else {
                         //If the target is already unconscious/restrained (it cannot fight back), attack it again only if this character's top priority job is considered lethal
@@ -1065,8 +1082,8 @@ public class ReactionComponent : CharacterComponent {
                     if (targetCharacter.canPerform && !targetCharacter.partyComponent.isMemberThatJoinedQuest && !disguisedTarget.crimeComponent.IsCrimeAlreadyWitnessedBy(disguisedActor, CRIME_TYPE.Vampire)) {
                         debugLog = $"{debugLog}\n-Target can perform and not an active member of a party that has a quest and has not yet witnessed a vampire crime of actor";
                         TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-                        if (timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-                            debugLog = $"{debugLog}\n-Current time is Late night/after midnight";
+                        if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                            debugLog = $"{debugLog}\n-Current time is After midnight";
                             if (disguisedActor.homeSettlement != null && disguisedActor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Vampire_Hunt)) {
                                 CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(disguisedActor, disguisedTarget, disguisedTarget, CRIME_TYPE.Vampire);
                                 if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
@@ -1577,7 +1594,7 @@ public class ReactionComponent : CharacterComponent {
             }
             if(targetTileObject.tileObjectType.IsTileObjectAnItem() && !actor.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, targetTileObject) && targetTileObject.Advertises(INTERACTION_TYPE.PICK_UP) && actor.canMove) {
                 //NOTE: Added checker if character can move, so that Paralyzed characters will not try to pick up items
-                actor.jobComponent.CreateTakeItemJob(targetTileObject);
+                actor.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, targetTileObject);
             }
         }
 
@@ -1648,7 +1665,7 @@ public class ReactionComponent : CharacterComponent {
                     if (GameUtilities.RollChance(50) && !actor.jobQueue.HasJob(JOB_TYPE.INSPECT, targetTileObject) && !actor.defaultCharacterTrait.HasAlreadyInspectedObject(targetTileObject)) {
                         actor.jobComponent.TriggerInspect(targetTileObject);
                     } else if (!actor.IsInventoryAtFullCapacity()) {
-                        actor.jobComponent.CreateTakeItemJob(targetTileObject);
+                        actor.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, targetTileObject);
                     }
                 }
             }

@@ -128,7 +128,8 @@ public class RescueBehaviour : CharacterBehaviourComponent {
         if(target != null && target.currentStructure != null && target.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
             if(target is Character targetCharacter && targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                 HexTile targetHex = targetCharacter.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-                return actor.jobComponent.TriggerRoamAroundTile(out producedJob, targetHex.GetRandomTile());
+                //Job type is Roam Around Structure because the Roam Around Tile job priority is less than the Rescue Behaviour
+                return actor.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_STRUCTURE, out producedJob, targetHex.GetRandomTile());
             }
         }
         //When roaming around structure or hex relative to the target and the target is not in a tile that we expect him to be, just roam aroung current structure to avoid null refs

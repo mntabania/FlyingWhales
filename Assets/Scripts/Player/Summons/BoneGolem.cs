@@ -9,9 +9,11 @@ public class BoneGolem : Summon {
     public override string raceClassName => "Bone Golem";
     public BoneGolem() : base(SUMMON_TYPE.Bone_Golem, "Bone Golem", RACE.GOLEM, UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
+        traitContainer.AddTrait(this, "Fire Prone");
     }
     public BoneGolem(string className) : base(SUMMON_TYPE.Bone_Golem, className, RACE.GOLEM, UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
+        traitContainer.AddTrait(this, "Fire Prone");
     }
     public BoneGolem(SaveDataSummon data) : base(data) {
         visuals.SetHasBlood(false);
@@ -20,7 +22,7 @@ public class BoneGolem : Summon {
     #region Overrides
     public override void Initialize() {
         base.Initialize();
-        behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Defender_Behaviour);
+        behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Bone_Golem_Behaviour);
     }
     public override void SubscribeToSignals() {
         base.SubscribeToSignals();

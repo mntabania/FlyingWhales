@@ -1155,7 +1155,7 @@ public class CharacterNeedsComponent : CharacterComponent {
             }
         } else if (isHungry) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL)) {
-                GoapPlanJob job = PlanFullnessRecoveryBase(JOB_TYPE.FULLNESS_RECOVERY_NORMAL);
+                GoapPlanJob job = PlanFullnessRecovery(JOB_TYPE.FULLNESS_RECOVERY_NORMAL);
                 if (job != null) {
                     owner.jobQueue.AddJobInQueue(job);
                 }

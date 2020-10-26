@@ -148,8 +148,9 @@ public class Summon : Character {
                 Region home = homeRegion;
                 LocationStructure homeStructure = this.homeStructure;
                 homeRegion.RemoveResident(this);
-                SetHomeRegion(home); //keep this data with character to prevent errors
-                SetHomeStructure(homeStructure); //keep this data with character to prevent errors
+                MigrateHomeStructureTo(null, addToRegionResidents: false);
+                //SetHomeRegion(home); //keep this data with character to prevent errors
+                //SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             }
             //if (homeNpcSettlement != null) {
             //    NPCSettlement home = homeNpcSettlement;

@@ -166,7 +166,8 @@ public class VampireBehaviour : CharacterBehaviourComponent {
             Character otherCharacter = DatabaseManager.Instance.characterDatabase.GetCharacterByID(relationships.Key);
             if (otherCharacter != null) {
                 if (!otherCharacter.traitContainer.HasTrait("Vampire") && relationships.Value.awareness.state != AWARENESS_STATE.Presumed_Dead && 
-                    relationships.Value.awareness.state != AWARENESS_STATE.Missing && !otherCharacter.partyComponent.isActiveMember) {
+                    relationships.Value.awareness.state != AWARENESS_STATE.Missing && !otherCharacter.partyComponent.isActiveMember && !otherCharacter.isDead
+                    && otherCharacter.marker && otherCharacter.gridTileLocation != null && otherCharacter.grave == null) {
                     var opinionLabel = relationships.Value.opinions.GetOpinionLabel();
                     if (relationships.Value.IsLover() && (opinionLabel == RelationshipManager.Close_Friend || opinionLabel == RelationshipManager.Friend)) {
                         embraceWeights.AddElement(otherCharacter, 100);

@@ -19,7 +19,6 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public List<JOB_TYPE> priorityJobs { get; private set; }
     public Dictionary<INTERACTION_TYPE, int> numOfTimesActionDone { get; private set; }
     public List<JOB_TYPE> primaryJobCandidates { get; private set; }
-    public List<string> obtainPersonalItemRandomList { get; private set; }
     public List<string> obtainPersonalItemUnownedRandomList { get; private set; }
     public bool hasStartedScreamCheck { get; private set; }
     public bool doNotDoRecoverHPJob { get; private set; }
@@ -39,7 +38,6 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         priorityJobs = data.priorityJobs;
         numOfTimesActionDone = data.numOfTimesActionDone;
         primaryJobCandidates = data.primaryJobCandidates;
-        obtainPersonalItemRandomList = data.obtainPersonalItemRandomList;
         obtainPersonalItemUnownedRandomList = data.obtainPersonalItemUnownedRandomList;
         hasStartedScreamCheck = data.hasStartedScreamCheck;
         doNotDoRecoverHPJob = data.doNotDoRecoverHPJob;
@@ -927,10 +925,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (!owner.jobQueue.HasJob(jobType)) {
             LocationGridTile chosenTile = tile;
             if (chosenTile == null) {
-                if (owner.isAtHomeStructure) {
-                    chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
-                } else if (owner.IsInHomeSettlement()) {
+                if (owner.IsInHomeSettlement()) {
                     chosenTile = owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+                } else if (owner.isAtHomeStructure) {
+                    chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
                 } else if (owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
                     HexTile chosenTerritory = owner.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => owner.movementComponent.HasPathTo(h));
                     chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
@@ -954,11 +952,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    if (!owner.jobQueue.HasJob(jobType)) {
 		    LocationGridTile chosenTile = tile;
 		    if (chosenTile == null) {
-			    if (owner.isAtHomeStructure) {
-				    chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
-			    } else if (owner.IsInHomeSettlement()) {
-				    chosenTile = owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
-			    } else if (owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
+                if (owner.IsInHomeSettlement()) {
+                    chosenTile = owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+                } else if (owner.isAtHomeStructure) {
+                    chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
+                } else if (owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
 				    HexTile chosenTerritory = owner.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => owner.movementComponent.HasPathTo(h));
 				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
 			    } else {
@@ -982,10 +980,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TILE)) {
 		    LocationGridTile chosenTile = tile;
 		    if (chosenTile == null) {
-                if (owner.isAtHomeStructure) {
-                    chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
-                } else if (owner.IsInHomeSettlement()) {
+                if (owner.IsInHomeSettlement()) {
                     chosenTile = owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+                } else if (owner.isAtHomeStructure) {
+                    chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
                 } else if (owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
 				    HexTile chosenTerritory = owner.gridTileLocation.GetNearestHexTileWithinRegion();
 				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
@@ -1434,8 +1432,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Items
-    public void CreateTakeItemJob(TileObject targetItem) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TAKE_ITEM, INTERACTION_TYPE.PICK_UP, targetItem, owner);
+    public void CreateTakeItemJob(JOB_TYPE jobType, TileObject targetItem) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.PICK_UP, targetItem, owner);
         owner.jobQueue.AddJobInQueue(job);
     }
     public bool TryCreateObtainPersonalItemJob() {
@@ -1494,12 +1492,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     private string GetItemNameForObtainPersonalItemJob() {
         if (owner.homeSettlement != null && owner.interestedItemNames != null && owner.interestedItemNames.Count > 0) {
-            if (obtainPersonalItemRandomList == null) { obtainPersonalItemRandomList = new List<string>(); }
             if (obtainPersonalItemUnownedRandomList == null) { obtainPersonalItemUnownedRandomList = new List<string>(); }
-            obtainPersonalItemRandomList.Clear();
             obtainPersonalItemUnownedRandomList.Clear();
             for (int i = 0; i < owner.interestedItemNames.Count; i++) {
                 string itemName = owner.interestedItemNames[i];
+                if (owner.HasItem(itemName)) {
+                    //Pick one of the character class's needed items and only choose the ones that he doesn't have yet in his inventory
+                    continue;
+                }
                 bool itemHasBeenAdded = false;
                 for (int j = 0; j < owner.homeSettlement.tiles.Count; j++) {
                     HexTile hexInSettlement = owner.homeSettlement.tiles[j];
@@ -1511,10 +1511,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                                 continue;
                             }
                             itemHasBeenAdded = true;
-                            obtainPersonalItemRandomList.Add(itemName);
-                            if (!owner.HasItem(itemName)) {
-                                obtainPersonalItemUnownedRandomList.Add(itemName);
-                            }
+                            obtainPersonalItemUnownedRandomList.Add(itemName);
                             break;
                         }
                     }
@@ -1525,8 +1522,6 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             }
             if (obtainPersonalItemUnownedRandomList.Count > 0) {
                 return obtainPersonalItemUnownedRandomList[UnityEngine.Random.Range(0, obtainPersonalItemUnownedRandomList.Count)];
-            } else if (obtainPersonalItemRandomList.Count > 0) {
-                return obtainPersonalItemRandomList[UnityEngine.Random.Range(0, obtainPersonalItemRandomList.Count)];
             }
         }
         return string.Empty;
@@ -3189,7 +3184,6 @@ public class SaveDataCharacterJobTriggerComponent : SaveData<CharacterJobTrigger
         priorityJobs = data.priorityJobs;
         numOfTimesActionDone = data.numOfTimesActionDone;
         primaryJobCandidates = data.primaryJobCandidates;
-        obtainPersonalItemRandomList = data.obtainPersonalItemRandomList;
         obtainPersonalItemUnownedRandomList = data.obtainPersonalItemUnownedRandomList;
         hasStartedScreamCheck = data.hasStartedScreamCheck;
         doNotDoRecoverHPJob = data.doNotDoRecoverHPJob;
