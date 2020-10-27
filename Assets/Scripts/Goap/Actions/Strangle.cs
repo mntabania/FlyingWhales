@@ -141,7 +141,14 @@ public class Strangle : GoapAction {
         //    deathReason = "murder";
         //}
         //target.Death("suicide", goapNode, _deathLog: goapNode.action.states[goapNode.currentStateName].descriptionLog);
-        goapNode.actor.Death("suicide", goapNode, _deathLog: goapNode.descriptionLog);
+        Character responsibleCharacter = null;
+        if(goapNode.actor != goapNode.poiTarget) {
+            //Only put responsible character if target is strangled by another character
+            //If suicide, do not put the responsible character as himself
+            //because this might cause problems if the responsible character for death is also himself
+            responsibleCharacter = goapNode.actor;
+        }
+        goapNode.actor.Death("suicide", goapNode, responsibleCharacter: responsibleCharacter, _deathLog: goapNode.descriptionLog);
 
     }
     #endregion

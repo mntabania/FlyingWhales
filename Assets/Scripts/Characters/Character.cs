@@ -3441,19 +3441,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //    //location.AddSpecialTokenToLocation(token, structure, gridTile);
             //}
             LocationGridTile targetTile = gridTile;
-            if(gridTile == null) {
+            if(targetTile == null) {
                 targetTile = gridTileLocation;
             }
-            if (targetTile == null || targetTile.objHere != null) {
-                targetTile = gridTileLocation.GetFirstNearestTileFromThisWithNoObject(true);
+            if (targetTile == null) {
+                return true; //if there is no tile to drop the item, do not drop it
             }
-            if (targetTile != null) {
-                targetTile.structure.AddPOI(item, targetTile);
-            } else {
-                return true; //if character cannot drop the item, then just discard it
-                // logComponent.PrintLogErrorIfActive(
-                //     $"Cannot drop {item.nameWithID} of {name} because there is no target tile.");
+            if (targetTile.objHere != null) {
+                targetTile = targetTile.GetFirstNearestTileFromThisWithNoObject(true);
             }
+            targetTile.structure.AddPOI(item, targetTile);
             item.OnTileObjectDroppedBy(this, targetTile);
             return true;
         }

@@ -1166,12 +1166,15 @@ public class ReactionComponent : CharacterComponent {
                             debugLog = $"{debugLog}\n-Actor is Psychopath";
                             if (targetCharacter.isNormalCharacter) {
                                 debugLog = $"{debugLog}\n-Target is a normal character";
-                                if (UnityEngine.Random.Range(0, 2) == 0) {
-                                    debugLog = $"{debugLog}\n-Target will Mock";
-                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
-                                } else {
-                                    debugLog = $"{debugLog}\n-Target will Laugh At";
-                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
+                                Dead dead = targetCharacter.traitContainer.GetTraitOrStatus<Dead>("Dead");
+                                if (dead == null || dead.responsibleCharacter != actor) {
+                                    if (UnityEngine.Random.Range(0, 2) == 0) {
+                                        debugLog = $"{debugLog}\n-Target will Mock";
+                                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
+                                    } else {
+                                        debugLog = $"{debugLog}\n-Target will Laugh At";
+                                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
+                                    }
                                 }
                             }
                         } else {
@@ -1184,6 +1187,24 @@ public class ReactionComponent : CharacterComponent {
                                     actor.jobComponent.CreateVampiricEmbraceJob(JOB_TYPE.VAMPIRIC_EMBRACE, targetCharacter);
                                     actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, $"saw dead {disguisedTarget.name}");
                                 } else {
+                                    Dead dead = targetCharacter.traitContainer.GetTraitOrStatus<Dead>("Dead");
+                                    if(dead == null || dead.responsibleCharacter != actor) {
+                                        if (UnityEngine.Random.Range(0, 2) == 0) {
+                                            debugLog = $"{debugLog}\n-Target will Cry";
+                                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, $"saw dead {disguisedTarget.name}");
+                                        } else {
+                                            debugLog = $"{debugLog}\n-Target will Puke";
+                                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter, $"saw dead {disguisedTarget.name}");
+                                        }
+                                    }
+                                }
+                            } else if ((disguisedActor.relationshipContainer.IsFamilyMember(disguisedTarget) ||
+                                        disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget, RELATIONSHIP_TYPE.AFFAIR)) &&
+                                      !disguisedActor.relationshipContainer.HasOpinionLabelWithCharacter(disguisedTarget, RelationshipManager.Rival)) {
+                                debugLog = $"{debugLog}\n-Target is Relative, Lover or Affair and not Rival";
+                                // if Actor is Relative, Lover, Affair and not a Rival
+                                Dead dead = targetCharacter.traitContainer.GetTraitOrStatus<Dead>("Dead");
+                                if (dead == null || dead.responsibleCharacter != actor) {
                                     if (UnityEngine.Random.Range(0, 2) == 0) {
                                         debugLog = $"{debugLog}\n-Target will Cry";
                                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, $"saw dead {disguisedTarget.name}");
@@ -1192,21 +1213,27 @@ public class ReactionComponent : CharacterComponent {
                                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter, $"saw dead {disguisedTarget.name}");
                                     }
                                 }
-                            } else if ((disguisedActor.relationshipContainer.IsFamilyMember(disguisedTarget) ||
-                                        disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget, RELATIONSHIP_TYPE.AFFAIR)) &&
-                                      !disguisedActor.relationshipContainer.HasOpinionLabelWithCharacter(disguisedTarget, RelationshipManager.Rival)) {
-                                debugLog = $"{debugLog}\n-Target is Relative, Lover or Affair and not Rival";
-                                // if Actor is Relative, Lover, Affair and not a Rival
-                                if (UnityEngine.Random.Range(0, 2) == 0) {
-                                    debugLog = $"{debugLog}\n-Target will Cry";
-                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, $"saw dead {disguisedTarget.name}");
-                                } else {
-                                    debugLog = $"{debugLog}\n-Target will Puke";
-                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter, $"saw dead {disguisedTarget.name}");
-                                }
                             } else if (opinionLabel == RelationshipManager.Enemy) {
                                 debugLog = $"{debugLog}\n-Target is Enemy";
-                                if(UnityEngine.Random.Range(0, 100) < 25) {
+                                Dead dead = targetCharacter.traitContainer.GetTraitOrStatus<Dead>("Dead");
+                                if (dead == null || dead.responsibleCharacter != actor) {
+                                    if (UnityEngine.Random.Range(0, 100) < 25) {
+                                        if (UnityEngine.Random.Range(0, 2) == 0) {
+                                            debugLog = $"{debugLog}\n-Target will Mock";
+                                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
+                                        } else {
+                                            debugLog = $"{debugLog}\n-Target will Laugh At";
+                                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
+                                        }
+                                    } else {
+                                        debugLog = $"{debugLog}\n-Shock";
+                                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);
+                                    }
+                                }
+                            } else if (opinionLabel == RelationshipManager.Rival) {
+                                debugLog = $"{debugLog}\n-Target is Rival";
+                                Dead dead = targetCharacter.traitContainer.GetTraitOrStatus<Dead>("Dead");
+                                if (dead == null || dead.responsibleCharacter != actor) {
                                     if (UnityEngine.Random.Range(0, 2) == 0) {
                                         debugLog = $"{debugLog}\n-Target will Mock";
                                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
@@ -1214,22 +1241,13 @@ public class ReactionComponent : CharacterComponent {
                                         debugLog = $"{debugLog}\n-Target will Laugh At";
                                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
                                     }
-                                } else {
-                                    debugLog = $"{debugLog}\n-Shock";
-                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);
-                                }
-                            } else if (opinionLabel == RelationshipManager.Rival) {
-                                debugLog = $"{debugLog}\n-Target is Rival";
-                                if (UnityEngine.Random.Range(0, 2) == 0) {
-                                    debugLog = $"{debugLog}\n-Target will Mock";
-                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
-                                } else {
-                                    debugLog = $"{debugLog}\n-Target will Laugh At";
-                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
                                 }
                             } else if (targetCharacter.isNormalCharacter && actor.relationshipContainer.HasRelationshipWith(targetCharacter)) {
                                 debugLog = $"{debugLog}\n-Otherwise, Shock";
-                                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);
+                                Dead dead = targetCharacter.traitContainer.GetTraitOrStatus<Dead>("Dead");
+                                if (dead == null || dead.responsibleCharacter != actor) {
+                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);
+                                }
                             }
                         }
 
