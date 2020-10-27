@@ -76,7 +76,7 @@ namespace Tutorial {
                 $"Look for a Villager with either Low or Critical Mood. Villagers who are Evil, " +
                 $"Treacherous or have recently been Betrayed are also much easier to Brainwash. " +
                 $"Faction Leaders and Settlement Rulers are especially difficult to successfully brainwash.", 
-                stepItem.hoverPosition, "Seize"
+                stepItem.hoverPosition, "Good Cultist Candidates"
             );
         }
         private void OnHoverChamber(QuestStepItem stepItem) {
@@ -96,8 +96,8 @@ namespace Tutorial {
         private void OnCompleteBrainwash() {
             PlayerUI.Instance.ShowGeneralConfirmation("Cultist",
                 $"{UtilityScripts.Utilities.ColorizeAction("Cultists")} are secretly aligned with your cause. They won't be under your control for the most " +
-                "part but they will perform special actions to assist you. You can also instruct them to place traps or " +
-                $"poison other Villagers. You can also transform one into an {UtilityScripts.Utilities.ColorizeAction("Abomination")}.");
+                "part but they will perform special actions to assist you. Depending on your Archetype, you may also instruct them to evangelize, spread rumor, place traps or snatch other Villagers. " +
+                "A Cultist may eventually even become a Cult Leader!");
         }
         #endregion
 
