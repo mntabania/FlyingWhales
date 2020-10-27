@@ -589,7 +589,7 @@ public class ReactionComponent : CharacterComponent {
             debugLog = $"{debugLog}\n-Target is hostile";
             if(actor.currentJob != null && actor.currentActionNode != null && actor.currentActionNode.avoidCombat && actor.currentActionNode.actionStatus == ACTION_STATUS.STARTED) {
                 actor.currentJob.CancelJob(false);
-                actor.combatComponent.Flight(targetCharacter, "Encountered hostile");
+                actor.combatComponent.Flight(targetCharacter, CombatManager.Encountered_Hostile);
             }
             if(disguisedActor is Troll && disguisedTarget.isNormalCharacter && disguisedActor.homeStructure != null && !targetCharacter.isDead) {
                 debugLog = $"{debugLog}\n-Actor is a Troll and target is a Villager and actor has a home structure";
@@ -1831,12 +1831,6 @@ public class ReactionComponent : CharacterComponent {
                         log = $"{log}\n-Reactor will react to crime";
                         CrimeManager.Instance.ReactToCrime(reactor, attacker, characterHit, characterHit.faction, crimeType, possibleCrimeAction, REACTION_STATUS.WITNESSED);
                     }
-                } else {
-                    //create assault action so that witness can react to it as a crime.
-                    ActualGoapNode action = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ASSAULT], reactor, characterHit, null, 0);
-                    action.SetAsIllusion();
-                    action.SetCrimeType();
-                    CrimeManager.Instance.ReactToCrime(reactor, attacker, characterHit, characterHit.faction, action.crimeType, action, REACTION_STATUS.WITNESSED);
                 }
             }
 

@@ -202,12 +202,13 @@ public class CombatState : CharacterState {
                 summary = $"{summary}\n-Has no flee path";
                 if (HasStillAvoidPOIThatIsInRange()) {
                     string avoidReason = GetAvoidReason(stateComponent.owner.combatComponent.avoidInRange[0]);
+                    bool doNotCower = avoidReason == CombatManager.Avoiding_Witnesses || avoidReason == CombatManager.Encountered_Hostile;
                     summary = $"{summary}\n-Has avoid that is still in range";
                     if (character.homeStructure != null) {
                         summary = $"{summary}\n-Has home dwelling";
                         if (character.homeStructure == character.currentStructure) {
                             summary = $"{summary}\n-Is in Home Dwelling";
-                            if (UnityEngine.Random.Range(0, 2) == 0 && avoidReason != CombatManager.Transforming_Into_A_Creature) {
+                            if (UnityEngine.Random.Range(0, 2) == 0 && !doNotCower) {
                                 summary = $"{summary}\n-Triggered Cowering";
                                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                                 //SetIsFleeToHome(false);
@@ -225,7 +226,7 @@ public class CombatState : CharacterState {
                                 summary = $"{summary}\n-Triggered Flee to Home";
                                 SetIsFleeToHome(true);
                                 SetIsAttacking(false);
-                            } else if ((roll >= 40 && roll < 80) || avoidReason == CombatManager.Transforming_Into_A_Creature) {
+                            } else if ((roll >= 40 && roll < 80) || doNotCower) {
                                 summary = $"{summary}\n-Triggered Flee";
                                 SetIsFleeToHome(false);
                                 SetIsAttacking(false);
@@ -241,7 +242,7 @@ public class CombatState : CharacterState {
                         Summon summon = character as Summon;
                         if (summon.IsInTerritory()) {
                             summary = $"{summary}\n-Is in territory";
-                            if (UnityEngine.Random.Range(0, 2) == 0 && avoidReason != CombatManager.Transforming_Into_A_Creature) {
+                            if (UnityEngine.Random.Range(0, 2) == 0 && !doNotCower) {
                                 summary = $"{summary}\n-Triggered Cowering";
                                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                                 //SetIsFleeToHome(false);
@@ -259,7 +260,7 @@ public class CombatState : CharacterState {
                                 summary = $"{summary}\n-Triggered Flee to territory";
                                 SetIsFleeToHome(true);
                                 SetIsAttacking(false);
-                            } else if ((roll >= 40 && roll < 80) || avoidReason == CombatManager.Transforming_Into_A_Creature) {
+                            } else if ((roll >= 40 && roll < 80) || doNotCower) {
                                 summary = $"{summary}\n-Triggered Flee";
                                 SetIsFleeToHome(false);
                                 SetIsAttacking(false);
@@ -272,7 +273,7 @@ public class CombatState : CharacterState {
                         }
                     } else {
                         summary = $"{summary}\n-Has no home dwelling nor territory";
-                        if (UnityEngine.Random.Range(0, 2) == 0 && avoidReason != CombatManager.Transforming_Into_A_Creature) {
+                        if (UnityEngine.Random.Range(0, 2) == 0 && !doNotCower) {
                             summary = $"{summary}\n-Triggered Cowering";
                             character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                             //SetIsFleeToHome(false);
