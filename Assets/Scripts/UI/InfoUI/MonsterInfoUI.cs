@@ -206,9 +206,15 @@ public class MonsterInfoUI : InfoUIBase {
 
         for (int i = 0; i < _activeMonster.traitContainer.statuses.Count; i++) {
             Status currStatus = _activeMonster.traitContainer.statuses[i];
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            // if (currStatus.isHidden) {
+            //     continue; //skip
+            // }
+#else
             if (currStatus.isHidden) {
                 continue; //skip
             }
+#endif
             string color = UIManager.normalTextColor;
             if (!string.IsNullOrEmpty(statusTraits)) {
                 statusTraits = $"{statusTraits}, ";

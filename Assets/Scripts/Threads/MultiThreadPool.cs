@@ -52,7 +52,7 @@ public class MultiThreadPool : BaseMonoBehaviour {
                 //Thread.Sleep(20);
                 Multithread newFunction = this.functionsToBeRunInThread.Dequeue();
                 if (newFunction != null) {
-                    timer = new System.Threading.Timer(new TimerCallback(TimerCallback), newFunction, 1000, 1000);
+                    timer = new System.Threading.Timer(TimerCallback, newFunction, 1000, 1000);
                     lock (THREAD_LOCKER) {
                         newFunction.DoMultithread();
                     }
@@ -70,7 +70,7 @@ public class MultiThreadPool : BaseMonoBehaviour {
         if (elapsedTime == 10) {
             GoapThread goapThread = state as GoapThread;
             if (goapThread != null) {
-                Debug.unityLogger.LogError("Error", $"{goapThread.actor.name}'s GoapThread has exceeded 20 seconds! " +
+                Debug.unityLogger.LogError("Error", $"{goapThread.actor.name}'s GoapThread has exceeded 10 seconds! " +
                                                     $"\nJob is {(goapThread.job?.jobType.ToString() ?? "None")}" +
                                                     $"\nTarget is {goapThread.target.name}" +
                                                     $"\nTarget action is {goapThread.goalType.ToString()}" +

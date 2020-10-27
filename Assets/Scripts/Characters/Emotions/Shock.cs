@@ -17,10 +17,10 @@ public class Shock : Emotion {
             if(UnityEngine.Random.Range(0, 100) < 30) {
                 witness.combatComponent.Flight(target, "shocked");
             } else {
-                witness.interruptComponent.TriggerInterrupt(INTERRUPT.Surprised, target, reason: Surprised.Witness_Reason);
+                witness.interruptComponent.TriggerInterrupt(INTERRUPT.Surprised, target, reason: Surprised.Witness_Reason, identifier: "Shocked");
             }
         } else {
-            witness.interruptComponent.TriggerInterrupt(INTERRUPT.Surprised, target, reason: Surprised.Witness_Reason);
+            witness.interruptComponent.TriggerInterrupt(INTERRUPT.Surprised, target, reason: Surprised.Witness_Reason, identifier: "Shocked");
         }
         return base.ProcessEmotion(witness, target, status, goapNode);
     }

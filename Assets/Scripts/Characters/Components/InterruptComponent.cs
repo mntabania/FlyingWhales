@@ -41,8 +41,7 @@ public class InterruptComponent : CharacterComponent {
     }
 
     #region General
-    public bool TriggerInterrupt(INTERRUPT interrupt, IPointOfInterest targetPOI, string identifier = "",
-        ActualGoapNode actionThatTriggered = null, string reason = "") {
+    public bool TriggerInterrupt(INTERRUPT interrupt, IPointOfInterest targetPOI, string identifier = "", ActualGoapNode actionThatTriggered = null, string reason = "") {
         Interrupt triggeredInterrupt = InteractionManager.Instance.GetInterruptData(interrupt);
         if (!triggeredInterrupt.isSimulateneous) {
             if (isInterrupted) {
@@ -245,7 +244,7 @@ public class InterruptComponent : CharacterComponent {
     }
     private void AddEffectLog(InterruptHolder interruptHolder) {
         if(interruptHolder.effectLog.hasValue) {
-            if (interruptHolder.interrupt.shouldAddLogs || interruptHolder.interrupt.shouldShowNotif) {
+            if (interruptHolder.interrupt.ShouldAddLogs(interruptHolder) || interruptHolder.interrupt.shouldShowNotif) {
                 interruptHolder.effectLog.AddLogToDatabase();
             }
             // if (interruptHolder.interrupt.shouldAddLogs) {

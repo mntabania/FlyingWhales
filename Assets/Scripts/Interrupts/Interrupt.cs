@@ -69,6 +69,9 @@ namespace Interrupts {
         public virtual CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, InterruptHolder crime) {
             return CRIME_TYPE.None;
         }
+        public virtual bool ShouldAddLogs(InterruptHolder interruptHolder) {
+            return shouldAddLogs;
+        }
         #endregion
     }
 

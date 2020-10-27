@@ -32,6 +32,12 @@ namespace Interrupts {
                 log.AddToFillers(null, actor.interruptComponent.currentInterrupt.reason, LOG_IDENTIFIER.STRING_1);
             }
         }
+        public override bool ShouldAddLogs(InterruptHolder interruptHolder) {
+            if (interruptHolder.identifier == "Shocked") {
+                return false; //do not log surprised if surprised came from shock 
+            }
+            return base.ShouldAddLogs(interruptHolder);
+        }
         #endregion
         
         //#region Overrides

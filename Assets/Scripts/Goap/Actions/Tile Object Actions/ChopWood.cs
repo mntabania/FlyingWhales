@@ -62,7 +62,7 @@ public class ChopWood : GoapAction {
         TreeObject tree = goapNode.poiTarget as TreeObject;
         tree.AdjustHP(-1, ELEMENTAL_TYPE.Normal);
         if (goapNode.actor.characterClass.IsCombatant()) {
-            goapNode.actor.needsComponent.AdjustHappiness(-2);
+            goapNode.actor.needsComponent.AdjustHappiness(-1);
         }
     }
     
