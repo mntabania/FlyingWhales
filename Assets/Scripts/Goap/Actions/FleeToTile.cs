@@ -6,7 +6,7 @@
         actionIconString = GoapActionStateDB.Flee_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         shouldAddLogs = false;
-        logTags = new[] {LOG_TAG.Misc};
+        logTags = new[] {LOG_TAG.Crimes};
     }
     
     #region Overrides

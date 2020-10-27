@@ -8,7 +8,7 @@ namespace Interrupts {
             duration = 0;
             isSimulateneous = true;
             interruptIconString = GoapActionStateDB.No_Icon;
-            logTags = new LOG_TAG[] { LOG_TAG.Misc };
+            logTags = new LOG_TAG[] { LOG_TAG.Party };
         }
 
         #region Overrides

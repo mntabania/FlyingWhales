@@ -8,7 +8,7 @@ namespace Interrupts {
             isSimulateneous = true;
             interruptIconString = GoapActionStateDB.Work_Icon;
             isIntel = true;
-            logTags = new[] {LOG_TAG.Misc};
+            logTags = new[] {LOG_TAG.Crimes};
         }
 
         #region Overrides

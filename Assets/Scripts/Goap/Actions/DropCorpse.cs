@@ -15,7 +15,7 @@ public class DropCorpse : GoapAction {
         actionIconString = GoapActionStateDB.Haul_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        logTags = new[] {LOG_TAG.Misc};
+        logTags = new[] {LOG_TAG.Work};
     }
 
     

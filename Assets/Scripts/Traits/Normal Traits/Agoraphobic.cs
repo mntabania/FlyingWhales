@@ -59,7 +59,7 @@ namespace Traits {
                         characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, characterThatWillDoJob, reason: "Agoraphobic");
                     }
                     characterThatWillDoJob.logComponent.PrintLogIfActive(debugLog);
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Agoraphobic", "on_see_first", null, LOG_TAG.Misc);
+                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Agoraphobic", "on_see_first", null, LOG_TAG.Social);
                     log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddLogToDatabase();
                     hasReactedThisTick = true;

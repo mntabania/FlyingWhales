@@ -16,7 +16,7 @@ public class LayEgg : GoapAction {
             RACE.GOLEM, RACE.KOBOLD, RACE.LESSER_DEMON,
             RACE.NYMPH, RACE.ELEMENTAL, RACE.ABOMINATION,
         };
-        logTags = new[] {LOG_TAG.Misc};
+        logTags = new[] {LOG_TAG.Life_Changes};
     }
 
     #region Overrides

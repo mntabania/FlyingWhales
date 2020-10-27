@@ -204,7 +204,7 @@ public class MovementComponent : CharacterComponent {
             owner.carryComponent.carriedPOI.SetPOIState(POI_STATE.INACTIVE);
         }
 
-        Log leftLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "left_location", providedTags: LOG_TAG.Misc);
+        Log leftLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "left_location", providedTags: LOG_TAG.Life_Changes);
         leftLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER, false);
         leftLog.AddToFillers(owner.currentRegion, owner.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
         leftLog.AddLogToDatabase();
@@ -245,7 +245,7 @@ public class MovementComponent : CharacterComponent {
         if (owner.carryComponent.isCarryingAnyPOI) {
             owner.carryComponent.carriedPOI.SetPOIState(POI_STATE.ACTIVE);
         }
-        Log arriveLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "arrive_location", providedTags: LOG_TAG.Misc);
+        Log arriveLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "arrive_location", providedTags: LOG_TAG.Life_Changes);
         arriveLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER, false);
         arriveLog.AddToFillers(targetRegionToTravelInWorld, targetRegionToTravelInWorld.name, LOG_IDENTIFIER.LANDMARK_1);
         arriveLog.AddLogToDatabase();

@@ -502,7 +502,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             currentQuest.SetAssignedParty(this);
             SetPartyState(PARTY_STATE.Waiting);
 
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "Quest", "accept_quest", providedTags: LOG_TAG.Party);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "Quest", "accept_quest", null, LOG_TAG.Party, LOG_TAG.Major);
             log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
             log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_2);
             log.AddLogToDatabase();

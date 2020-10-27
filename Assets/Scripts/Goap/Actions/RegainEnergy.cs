@@ -12,7 +12,7 @@ public class RegainEnergy : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON, RACE.DEMON };
-        logTags = new[] {LOG_TAG.Misc};
+        logTags = new[] {LOG_TAG.Needs};
     }
 
     #region Overrides

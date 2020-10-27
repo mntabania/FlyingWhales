@@ -39,7 +39,7 @@ public class PlayerNotificationItem : PooledObject {
         dateLbl.text = log.gameDate.ConvertToTime();    
         logLbl.text = log.logText;
         fromActionID = log.actionID;
-        // _bg.sprite = log.IsImportant() ? _importantSprite : _normalSprite;
+        _bg.sprite = log.IsImportant() ? _importantSprite : _normalSprite;
         this.onDestroyAction = onDestroyAction;
         _logsTagButton.SetTags(log.tags);
         Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemovedFromDatabase);
@@ -50,7 +50,7 @@ public class PlayerNotificationItem : PooledObject {
         dateLbl.text = log.gameDate.ConvertToTime();
         logLbl.text = log.logText;
         fromActionID = log.actionID;
-        // _bg.sprite = log.IsImportant() ? _importantSprite : _normalSprite;
+        _bg.sprite = log.IsImportant() ? _importantSprite : _normalSprite;
         this.onDestroyAction = onDestroyAction;
         _logsTagButton.SetTags(log.tags);
         Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemovedFromDatabase);

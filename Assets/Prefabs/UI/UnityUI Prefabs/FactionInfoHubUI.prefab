@@ -8130,6 +8130,7 @@ GameObject:
   - component: {fileID: 8110327888217913916}
   - component: {fileID: 8108562787763914764}
   - component: {fileID: 8215924637312149948}
+  - component: {fileID: 4565489225569693968}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -8195,6 +8196,32 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4565489225569693968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8327921771333686250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f19b7e2285c104f6ca47d583f3e5444f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectFactor: 0
+  m_Width: 0.25
+  m_Rotation: 135
+  m_Softness: 1
+  m_Brightness: 1
+  m_Gloss: 1
+  m_EffectArea: 0
+  m_Player:
+    play: 0
+    initialPlayDelay: 0
+    duration: 1
+    loop: 1
+    loopDelay: 0
+    updateMode: 0
 --- !u!1 &8327928861275550422
 GameObject:
   m_ObjectHideFlags: 0
@@ -9618,7 +9645,7 @@ GameObject:
   - component: {fileID: 8110854222028159610}
   - component: {fileID: 8216751761613296560}
   m_Layer: 5
-  m_Name: Crimes
+  m_Name: Faction Crimes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12007,12 +12034,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 192605b2e90f468409baf06dedf19376, type: 3}
---- !u!224 &2318186084995872264 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 224160814062034900, guid: 192605b2e90f468409baf06dedf19376,
-    type: 3}
-  m_PrefabInstance: {fileID: 2537700208093194716}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2495181871145033998 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114580475263862994, guid: 192605b2e90f468409baf06dedf19376,
@@ -12025,6 +12046,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 733e6a9f0e408384bb2826ea9faf7e0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &2318186084995872264 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 224160814062034900, guid: 192605b2e90f468409baf06dedf19376,
+    type: 3}
+  m_PrefabInstance: {fileID: 2537700208093194716}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4364071144572210036
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12421,21 +12448,15 @@ PrefabInstance:
     - {fileID: 376863425148757755, guid: 45c61da7357cd044d98b6f14f6818c8f, type: 3}
     - {fileID: 8047120650782463148, guid: 45c61da7357cd044d98b6f14f6818c8f, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 45c61da7357cd044d98b6f14f6818c8f, type: 3}
---- !u!224 &4260418850293884675 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 554021689976384631, guid: 45c61da7357cd044d98b6f14f6818c8f,
-    type: 3}
-  m_PrefabInstance: {fileID: 4364071144572210036}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4051177270344605957 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 335773082369436273, guid: 45c61da7357cd044d98b6f14f6818c8f,
     type: 3}
   m_PrefabInstance: {fileID: 4364071144572210036}
   m_PrefabAsset: {fileID: 0}
---- !u!224 &4260765551650813231 stripped
+--- !u!224 &4260418850293884675 stripped
 RectTransform:
-  m_CorrespondingSourceObject: {fileID: 554237579304402523, guid: 45c61da7357cd044d98b6f14f6818c8f,
+  m_CorrespondingSourceObject: {fileID: 554021689976384631, guid: 45c61da7357cd044d98b6f14f6818c8f,
     type: 3}
   m_PrefabInstance: {fileID: 4364071144572210036}
   m_PrefabAsset: {fileID: 0}
@@ -12451,3 +12472,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3287e4e9f3540b597715a9296ee5775, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &4260765551650813231 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 554237579304402523, guid: 45c61da7357cd044d98b6f14f6818c8f,
+    type: 3}
+  m_PrefabInstance: {fileID: 4364071144572210036}
+  m_PrefabAsset: {fileID: 0}

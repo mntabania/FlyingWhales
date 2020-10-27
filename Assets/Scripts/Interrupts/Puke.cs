@@ -10,7 +10,7 @@ namespace Interrupts {
             doesStopCurrentAction = true;
             interruptIconString = GoapActionStateDB.Sick_Icon;
             isIntel = true;
-            logTags = new[] {LOG_TAG.Misc};
+            logTags = new[] {LOG_TAG.Needs};
         }
 
         #region Overrides

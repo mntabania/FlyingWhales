@@ -10,7 +10,7 @@ namespace Interrupts {
             isSimulateneous = true;
             shouldShowNotif = false;
             interruptIconString = GoapActionStateDB.Happy_Icon;
-            logTags = new[] {LOG_TAG.Social, LOG_TAG.Misc};
+            logTags = new[] {LOG_TAG.Social};
         }
 
         #region Overrides

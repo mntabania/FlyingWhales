@@ -10,7 +10,8 @@ public class SummonBoneGolem : GoapAction {
     public SummonBoneGolem() : base(INTERACTION_TYPE.SUMMON_BONE_GOLEM) {
         actionIconString = GoapActionStateDB.Magic_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        logTags = new[] {LOG_TAG.Misc};
+        logTags = new[] {LOG_TAG.Major, LOG_TAG.Work};
+        showNotification = true;
     }
 
     #region Overrides

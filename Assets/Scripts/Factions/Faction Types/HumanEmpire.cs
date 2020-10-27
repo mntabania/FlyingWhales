@@ -22,6 +22,7 @@
             AddCombatantClass("Barbarian");
             AddCombatantClass("Mage");
             AddCombatantClass("Stalker");
+            AddCombatantClass("Shaman");
             
             //TODO:
             AddCivilianClass("Peasant");

@@ -10,7 +10,7 @@ namespace Interrupts {
             duration = 2;
             doesStopCurrentAction = true;
             shouldAddLogs = false;
-            logTags = new[] {LOG_TAG.Misc};
+            logTags = new[] {LOG_TAG.Social};
         }
     }
 }

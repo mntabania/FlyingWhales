@@ -41,7 +41,7 @@ namespace Traits {
                 owner.AddTraitNeededToBeRemoved(this);
 
                 if (gainedFromDoing == null || gainedFromDoing.goapType != INTERACTION_TYPE.EAT) {
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing, LOG_TAG.Misc);
+                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing, LOG_TAG.Needs);
                     // if (gainedFromDoing != null) {
                     //     addLog.SetLogType(LOG_TYPE.Action);
                     // }
@@ -54,7 +54,7 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             owner.movementComponent.AdjustSpeedModifier(0.10f);
             owner.RemoveTraitNeededToBeRemoved(this);
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "remove_trait", null, LOG_TAG.Misc);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "remove_trait", null, LOG_TAG.Needs);
             log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddLogToDatabase();

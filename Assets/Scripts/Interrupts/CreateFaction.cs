@@ -9,7 +9,8 @@ namespace Interrupts {
             duration = 0;
             isSimulateneous = true;
             interruptIconString = GoapActionStateDB.No_Icon;
-            logTags = new[] {LOG_TAG.Life_Changes};
+            logTags = new[] {LOG_TAG.Major};
+            shouldShowNotif = true;
         }
 
         #region Overrides
