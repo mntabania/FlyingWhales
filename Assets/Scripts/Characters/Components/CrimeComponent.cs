@@ -280,7 +280,7 @@ public class CrimeComponent : CharacterComponent {
                         CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(inVision, character, character, crimeType);
                         if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
                             if (string.IsNullOrEmpty(reason)) {
-                                reason = CombatManager.Transforming_Into_A_Creature;
+                                reason = CombatManager.Avoiding_Witnesses;
                             }
                             character.combatComponent.Flight(inVision, reason);
                         }
@@ -298,7 +298,7 @@ public class CrimeComponent : CharacterComponent {
                         CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(inVision, character, character, crimeType);
                         if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
                             if (string.IsNullOrEmpty(reason)) {
-                                reason = CombatManager.Transforming_Into_A_Creature;
+                                reason = CombatManager.Avoiding_Witnesses;
                             }
                             character.combatComponent.Flight(inVision, reason);
                         }
