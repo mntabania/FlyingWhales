@@ -68,7 +68,7 @@ public class BurnAtStake : GoapAction {
         target.MigrateHomeStructureTo(null);
         target.ClearTerritory();
 
-        target.interruptComponent.TriggerInterrupt(INTERRUPT.Burning_At_Stake, target);
+        target.interruptComponent.TriggerInterrupt(INTERRUPT.Burning_At_Stake, goapNode.actor);
     }
     #endregion
 
