@@ -15,7 +15,7 @@ public class Stand : GoapAction {
         
         shouldAddLogs = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        logTags = new[] {LOG_TAG.Misc};
+        logTags = new[] {LOG_TAG.Needs};
     }
 
     #region Overrides

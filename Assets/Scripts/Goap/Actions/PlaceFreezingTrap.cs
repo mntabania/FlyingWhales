@@ -3,7 +3,7 @@
         actionIconString = GoapActionStateDB.Work_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.KOBOLD };
-        logTags = new[] {LOG_TAG.Misc};
+        logTags = new[] {LOG_TAG.Work};
     }
     
     #region Overrides

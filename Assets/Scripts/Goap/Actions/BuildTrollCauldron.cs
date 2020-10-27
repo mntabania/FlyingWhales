@@ -13,7 +13,7 @@ public class BuildTrollCauldron : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         actionIconString = GoapActionStateDB.Build_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        logTags = new[] {LOG_TAG.Misc};
+        logTags = new[] {LOG_TAG.Work};
     }
 
     #region Overrides

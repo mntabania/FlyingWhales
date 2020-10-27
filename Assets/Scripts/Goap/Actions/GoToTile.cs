@@ -10,7 +10,7 @@
         //    RACE.SPIDER, RACE.DRAGON, RACE.GOLEM, RACE.DEMON, RACE.ELEMENTAL, RACE.KOBOLD, RACE.MIMIC, RACE.ABOMINATION,
         //    RACE.CHICKEN, RACE.SHEEP, RACE.PIG, RACE.NYMPH, RACE.WISP, RACE.SLUDGE, RACE.GHOST, RACE.LESSER_DEMON, RACE.ANGEL };
         shouldAddLogs = false;
-        logTags = new[] {LOG_TAG.Misc};
+        logTags = new[] {LOG_TAG.Work};
     }
     
     #region Overrides

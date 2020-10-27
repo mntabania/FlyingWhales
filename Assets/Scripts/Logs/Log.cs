@@ -48,7 +48,7 @@ public struct Log {
             AddTag(providedTags);
         } else {
             //always default log to misc if no tags were provided, this is to prevent logs from having no tags
-            AddTag(LOG_TAG.Misc);
+            AddTag(LOG_TAG.Work);
         }
     }
     public Log(string id, GameDate date, string logText, string category, string key, string file, string involvedObjects, List<LOG_TAG> providedTags, string rawText) {
@@ -69,7 +69,7 @@ public struct Log {
             AddTag(providedTags);
         } else {
             //always default log to misc if no tags were provided, this is to prevent logs from having no tags
-            AddTag(LOG_TAG.Misc);
+            AddTag(LOG_TAG.Work);
         }
     }
 
@@ -194,7 +194,7 @@ public struct Log {
 
     #region Utilities
     public bool IsImportant() {
-        return tags.Contains(LOG_TAG.Crimes) || tags.Contains(LOG_TAG.Intel) || tags.Contains(LOG_TAG.Important);
+        return tags.Contains(LOG_TAG.Major);
     }
     #endregion
 }

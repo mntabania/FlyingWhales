@@ -337,7 +337,7 @@ public class DrinkBlood : GoapAction {
 
         if (goapNode.poiTarget is Character targetCharacter) {
             if (targetCharacter.HasItem("Phylactery")) {
-                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "activate_phylactery", goapNode, LOG_TAG.Misc);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "activate_phylactery", goapNode, LOG_TAG.Social);
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddLogToDatabase();

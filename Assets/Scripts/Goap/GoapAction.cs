@@ -333,7 +333,7 @@ public class GoapAction {
     public void LogActionInvalid(GoapActionInvalidity goapActionInvalidity, ActualGoapNode node, bool isInvalidStealth) {
         string invalidKey = goapActionInvalidity.stateName.ToLower() + "_description";
         if (goapActionInvalidity.stateName != "Target Missing" && LocalizationManager.Instance.HasLocalizedValue("GoapAction", name, invalidKey)) {
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, invalidKey, providedTags: LOG_TAG.Misc);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, invalidKey, providedTags: LOG_TAG.Work);
             AddFillersToLog(ref log, node);
             log.AddLogToDatabase();
         } else {
@@ -341,7 +341,7 @@ public class GoapAction {
             if (isInvalidStealth) {
                 key = "Invalid_Stealth";
             }
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Generic", key, providedTags: LOG_TAG.Misc);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Generic", key, providedTags: LOG_TAG.Work);
             log.AddToFillers(node.actor, node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(node.poiTarget, node.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(goapType.ToString()), LOG_IDENTIFIER.STRING_1);

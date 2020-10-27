@@ -12,7 +12,7 @@ public class Dig : GoapAction {
         //    RACE.GHOST, RACE.NYMPH, RACE.SLIME, RACE.SLUDGE, RACE.CHICKEN, RACE.ELEMENTAL, RACE.ABOMINATION, RACE.ANGEL, RACE.DEMON
         //};
         canBePerformedEvenIfPathImpossible = true;
-        logTags = new[] {LOG_TAG.Misc};
+        logTags = new[] {LOG_TAG.Work};
     }
     
     #region Overrides

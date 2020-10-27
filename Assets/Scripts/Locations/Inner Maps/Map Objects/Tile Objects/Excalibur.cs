@@ -71,7 +71,7 @@ public class Excalibur : TileObject {
                 log.AddLogToDatabase();
                 UnlockSword(inspector);
             } else {
-                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Tile Object", "Excalibur", "on_inspect_fail", providedTags: LOG_TAG.Misc);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Tile Object", "Excalibur", "on_inspect_fail", providedTags: LOG_TAG.Work);
                 log.AddToFillers(inspector, inspector.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToDatabase();
             }

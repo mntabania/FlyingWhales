@@ -1283,7 +1283,7 @@ public class ReactionComponent : CharacterComponent {
                                 debugLog = $"{debugLog}\n-Saw a mangled body and no active werewolf hunt is active yet and considers werewolf as a crime.";
                                 if (disguisedTarget.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(disguisedActor.homeSettlement)) {
                                     debugLog = $"{debugLog}\n-Mangled body is near settlement, will roll for chance to create werewolf hunt event";
-                                    if (GameUtilities.RollChance(15, ref debugLog)) {
+                                    if (GameUtilities.RollChance(25, ref debugLog)) {
                                         debugLog = $"{debugLog}\n-Created new werewolf hunt event!";
                                         disguisedActor.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Werewolf_Hunt);
                                     }

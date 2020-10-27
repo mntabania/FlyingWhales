@@ -1065,7 +1065,7 @@ public enum PASSIVE_SKILL {
     Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen
 }
 public enum LOG_TAG {
-    Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Misc, Player, Intel, Important
+    Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Major, Player, Intel, Important
 }
 public enum PARTY_TARGET_DESTINATION_TYPE { Structure, Settlement, Hextile, }
 public enum SETTLEMENT_TYPE { Default_Human, Default_Elf, Capital, Cult_Town }

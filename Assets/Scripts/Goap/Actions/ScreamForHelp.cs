@@ -12,7 +12,7 @@ public class ScreamForHelp : GoapAction {
         actionIconString = GoapActionStateDB.Shock_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        logTags = new[] {LOG_TAG.Misc};
+        logTags = new[] {LOG_TAG.Social};
     }
 
     #region Overrides

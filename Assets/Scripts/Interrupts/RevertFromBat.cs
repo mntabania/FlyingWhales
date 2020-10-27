@@ -12,7 +12,7 @@ namespace Interrupts {
             //isSimulateneous = true;
             shouldStopMovement = false;
             interruptIconString = GoapActionStateDB.No_Icon;
-            logTags = new[] {LOG_TAG.Misc};
+            logTags = new[] {LOG_TAG.Combat, LOG_TAG.Crimes};
         }
 
         #region Overrides

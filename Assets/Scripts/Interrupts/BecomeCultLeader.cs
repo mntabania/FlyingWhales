@@ -6,6 +6,7 @@
             doesDropCurrentJob = true;
             interruptIconString = GoapActionStateDB.No_Icon;
             logTags = new[] {LOG_TAG.Life_Changes};
+            shouldShowNotif = true;
         }
 
         #region Overrides

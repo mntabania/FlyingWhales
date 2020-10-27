@@ -35,7 +35,7 @@
             ScheduleEnd();
             SubscribeListeners();
             
-            Log log = new Log(GameManager.Instance.Today(), "Settlement Event", "Vampire Hunt", "started", null, LOG_TAG.Crimes);
+            Log log = new Log(GameManager.Instance.Today(), "Settlement Event", "Vampire Hunt", "started", null, LOG_TAG.Major);
             log.AddToFillers(settlement, settlement.name, LOG_IDENTIFIER.LANDMARK_1);
             if (settlement.owner != null) {
                 log.AddInvolvedObjectManual(settlement.owner.persistentID);    
@@ -51,7 +51,7 @@
             settlement.RemoveNeededItems(TILE_OBJECT_TYPE.PHYLACTERY);
             UnsubscribeListeners();
 
-            Log log = new Log(GameManager.Instance.Today(), "Settlement Event", "Vampire Hunt", "ended", null, LOG_TAG.Crimes);
+            Log log = new Log(GameManager.Instance.Today(), "Settlement Event", "Vampire Hunt", "ended", null, LOG_TAG.Major);
             log.AddToFillers(settlement, settlement.name, LOG_IDENTIFIER.LANDMARK_1);
             if (settlement.owner != null) {
                 //in case when this event ends and a faction no longer owns the settlement that has this event

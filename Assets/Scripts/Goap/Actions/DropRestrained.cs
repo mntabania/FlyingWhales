@@ -15,7 +15,7 @@ public class DropRestrained : GoapAction {
         actionIconString = GoapActionStateDB.Haul_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        logTags = new[] {LOG_TAG.Misc};
+        logTags = new[] {LOG_TAG.Work};
     }
 
     

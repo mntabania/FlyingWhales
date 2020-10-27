@@ -8,7 +8,7 @@ namespace Interrupts {
             duration = 4;
             doesStopCurrentAction = true;
             interruptIconString = GoapActionStateDB.Watch_Icon;
-            logTags = new[] {LOG_TAG.Misc};
+            logTags = new[] {LOG_TAG.Social};
         }
 
         //#region Overrides

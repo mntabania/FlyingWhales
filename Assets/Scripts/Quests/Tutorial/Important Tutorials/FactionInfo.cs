@@ -29,12 +29,15 @@ namespace Tutorial {
                     new ToggleTurnedOnStep("Faction Overview", "Open its Overview tab")
                         .SetCompleteAction(OnClickOverview)
                         .SetOnTopmostActions(OnTopMostFactionInfo, OnNoLongerTopMostFactionInfo),
-                    // new ToggleTurnedOnStep("Faction Characters", "Open its Members tab")
-                    //     .SetCompleteAction(OnClickFactionCharacters)
-                    //     .SetOnTopmostActions(OnTopMostCharacters, OnNoLongerTopMostCharacters),
                     new ToggleTurnedOnStep("Faction Owned Locations", "Open its Locations tab")
                         .SetCompleteAction(OnClickLocations)
                         .SetOnTopmostActions(OnTopMostLocations, OnNoLongerTopMostLocations),
+                    new ToggleTurnedOnStep("Faction Relations", "Open its Relations tab")
+                        .SetCompleteAction(OnClickRelations)
+                        .SetOnTopmostActions(OnTopMostRelations, OnNoLongerTopMostRelations),
+                    new ToggleTurnedOnStep("Faction Crimes", "Open its Crimes tab")
+                        .SetCompleteAction(OnClickCrimes)
+                        .SetOnTopmostActions(OnTopMostCrimes, OnNoLongerTopMostCrimes),
                     new ToggleTurnedOnStep("Faction Logs", "Open its Logs tab")
                         .SetCompleteAction(OnClickLogs)
                         .SetOnTopmostActions(OnTopMostLogs, OnNoLongerTopMostLogs)
@@ -57,13 +60,17 @@ namespace Tutorial {
                 $"The Overview tab provides you with basic information about the Faction such as its " +
                 $"{UtilityScripts.Utilities.ColorizeAction("Name, Banner, Faction Leader, Ideologies and Relations")}.");
         }
-        private void OnClickFactionCharacters() {
-            PlayerUI.Instance.ShowGeneralConfirmation("Members Tab",
-                "The Members tab shows a list of all characters belonging to the Faction.");
-        }
         private void OnClickLocations() {
             PlayerUI.Instance.ShowGeneralConfirmation("Locations Tab",
                 "The Locations tab shows a list of all territories belonging to the Faction.");
+        }
+        private void OnClickRelations() {
+            PlayerUI.Instance.ShowGeneralConfirmation("Relations Tab",
+                "The Relations tab shows the Faction's relationship with other Factions.");
+        }
+        private void OnClickCrimes() {
+            PlayerUI.Instance.ShowGeneralConfirmation("Crimes Tab",
+                "The Crimes tab shows a list of all the things that are considered a Crime in the Faction as well as their Severity.");
         }
         private void OnClickLogs() {
             PlayerUI.Instance.ShowGeneralConfirmation("Logs Tab",
@@ -102,12 +109,30 @@ namespace Tutorial {
         }
         #endregion
         
-        #region Relations Tab
+        #region Locations Tab
         private void OnTopMostLocations() {
             Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Faction Owned Locations");
         }
         private void OnNoLongerTopMostLocations() {
             Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Faction Owned Locations");
+        }
+        #endregion
+        
+        #region Relations Tab
+        private void OnTopMostRelations() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Faction Relations");
+        }
+        private void OnNoLongerTopMostRelations() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Faction Relations");
+        }
+        #endregion
+        
+        #region Crimes Tab
+        private void OnTopMostCrimes() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Faction Crimes");
+        }
+        private void OnNoLongerTopMostCrimes() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Faction Crimes");
         }
         #endregion
         

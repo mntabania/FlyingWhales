@@ -802,9 +802,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (_characterClass.className == "Hero") {
             //Reference: https://www.notion.so/ruinarch/Hero-9697369ffca6410296f852f295ee0090
             traitContainer.RemoveAllTraitsByType(this, TRAIT_TYPE.FLAW);
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "became_hero", providedTags: LOG_TAG.Life_Changes);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "became_hero", providedTags: LOG_TAG.Major);
             log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddLogToDatabase();
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
             traitContainer.AddTrait(this, "Blessed");
         } else if (_characterClass.className == "Necromancer") {
             traitContainer.AddTrait(this, "Necromancer");
@@ -4663,7 +4664,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             shouldLogReason = false;
         }
         if (shouldLogReason) {
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason", providedTags: LOG_TAG.Misc);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason", providedTags: LOG_TAG.Social);
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, currentActionNode.action.goapName, LOG_IDENTIFIER.STRING_1);
             log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
