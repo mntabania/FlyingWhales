@@ -375,7 +375,7 @@ namespace Inner_Maps {
             }
 
             Profiler.BeginSample("Show Tile Data Sample");
-#if UNITY_EDITOR
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             Character showingCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
             bool isPathPossible = false;
             if (showingCharacter?.gridTileLocation != null) {
@@ -459,20 +459,6 @@ namespace Inner_Maps {
             }
             Profiler.EndSample();
             UIManager.Instance.ShowSmallInfo(summary, autoReplaceText: false);
-#elif DEVELOPMENT_BUILD
-        if (character == null && tile.objHere != null) {
-            string tooltip =  tile.objHere.nameWithID;
-            if (tile.objHere is TileObject tileObject && tileObject.users != null && tileObject.users.Length > 0) {
-                tooltip += " used by:";
-                for (int i = 0; i < tileObject.users.Length; i++) {
-                    Character user = tileObject.users[i];
-                    if (user != null) {
-                        tooltip += $"\n\t- {user.name}";
-                    }
-                }
-            }
-            UIManager.Instance.ShowSmallInfo(tooltip, autoReplaceText: false);
-        }
 #else
          //For build only
         if (character == null && tile.objHere != null) {
