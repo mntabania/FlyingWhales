@@ -826,6 +826,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _characterClass = characterClass;
         //behaviourComponent.OnChangeClass(_characterClass, previousClass);
         if (!isInitial) {
+            homeSettlement?.OnResidentUpdatedClass();
             homeSettlement?.UpdateAbleJobsOfResident(this);
             OnUpdateCharacterClass();
             Messenger.Broadcast(Signals.CHARACTER_CLASS_CHANGE, this, previousClass, _characterClass);

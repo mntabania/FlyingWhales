@@ -479,7 +479,7 @@ namespace Traits {
                 return;
             }
             if (character.traitContainer.HasTrait("Evil", "Treacherous") && GameUtilities.RollChance(75)) {
-                SetDislikesBeingLycan(true);
+                SetDislikesBeingLycan(false);
                 return;
             }
             if (character.race == RACE.ELVES && GameUtilities.RollChance(75)) {
