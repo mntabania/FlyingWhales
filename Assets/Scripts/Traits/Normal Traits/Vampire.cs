@@ -16,6 +16,7 @@ namespace Traits {
         public List<Character> awareCharacters { get; private set; }
         public bool isInVampireBatForm { get; private set; }
         public bool isTraversingUnwalkableAsBat { get; private set; }
+        public bool hasAlreadyBecomeVampireLord { get; private set; }
 
         private Character _owner;
 
@@ -65,6 +66,11 @@ namespace Traits {
                 character.needsComponent.AdjustDoNotGetTired(-1);
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(VampireBehaviour));
                 character.RevertFromVampireBatForm();
+                if (character.characterClass.className == "Vampire Lord") {
+                    //make character a peasant when he/she loses Vampire trait while they are a Vampire Lord
+                    //This is to ensure that anytime this trait is removed from a Vampire Lord that its class will be changed.
+                    character.AssignClass("Peasant");
+                }
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
@@ -184,6 +190,7 @@ namespace Traits {
             string data = base.GetTestingData(traitable);
             data = $"{data} Dislikes Being Vampire: {dislikedBeingVampire.ToString()}";
             data = $"{data}\n Converted Villagers: {numOfConvertedVillagers.ToString()}";
+            data = $"{data}\n Has Become Vampire Lord: {hasAlreadyBecomeVampireLord.ToString()}";
             data = $"{data}\n Aware Characters:";
             for (int i = 0; i < awareCharacters.Count; i++) {
                 Character character = awareCharacters[i];
@@ -213,6 +220,7 @@ namespace Traits {
             numOfConvertedVillagers = saveDataVampire.numOfConvertedVillagers;
             isInVampireBatForm = saveDataVampire.isInVampireBatForm;
             isTraversingUnwalkableAsBat = saveDataVampire.isTraversingUnwalkableAsBat;
+            hasAlreadyBecomeVampireLord = saveDataVampire.hasAlreadyBecomeVampireLord;
         }
         public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadSecondWaveInstancedTrait(saveDataTrait);
@@ -318,6 +326,9 @@ namespace Traits {
             }
             return null;
         }
+        public void SetHasBecomeVampireLord(bool state) {
+            hasAlreadyBecomeVampireLord = state;
+        }
     }
 }
 
@@ -328,6 +339,7 @@ public class SaveDataVampire : SaveDataTrait {
     public List<string> awareCharacters;
     public bool isInVampireBatForm;
     public bool isTraversingUnwalkableAsBat;
+    public bool hasAlreadyBecomeVampireLord;
 
     public override void Save(Trait trait) {
         base.Save(trait);
@@ -338,6 +350,7 @@ public class SaveDataVampire : SaveDataTrait {
         numOfConvertedVillagers = vampire.numOfConvertedVillagers;
         isInVampireBatForm = vampire.isInVampireBatForm;
         isTraversingUnwalkableAsBat = vampire.isTraversingUnwalkableAsBat;
+        hasAlreadyBecomeVampireLord = vampire.hasAlreadyBecomeVampireLord;
     }
 }
 #endregion

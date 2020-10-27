@@ -30,7 +30,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		tileDryers = new List<Character>();
 		dousers = new List<Character>();
 	}
-	
+
 	#region Listeners
 	public void SubscribeToListeners() {
 		Messenger.AddListener(Signals.HOUR_STARTED, HourlyJobActions);
@@ -74,10 +74,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			LoadTendFarmCheck();
 			LoadCheckResource();
 		} else {
-			CheckIfFarmShouldBeTended(true);
-			ScheduledCheckResource();
-			TryCreateMiningJob();	
+			KickstartJobs();
 		}
+	}
+	public void KickstartJobs() {
+		CheckIfFarmShouldBeTended(true);
+		ScheduledCheckResource();
+		TryCreateMiningJob();
 	}
 	private void HourlyJobActions() {
 		CreatePatrolJobs();
