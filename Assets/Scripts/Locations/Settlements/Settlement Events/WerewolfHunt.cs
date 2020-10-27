@@ -36,7 +36,9 @@
             
             Log log = new Log(GameManager.Instance.Today(), "Settlement Event", "Werewolf Hunt", "started", null, LOG_TAG.Crimes);
             log.AddToFillers(settlement, settlement.name, LOG_IDENTIFIER.LANDMARK_1);
-            log.AddInvolvedObjectManual(settlement.owner.persistentID);
+            if (settlement.owner != null) {
+                log.AddInvolvedObjectManual(settlement.owner.persistentID);    
+            }
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         }

@@ -1336,6 +1336,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
     }
     /// <summary>
+    /// Whenever a resident updates its class also update the
+    /// hasPeasants and hasWorkers switch
+    /// </summary>
+    public void OnResidentUpdatedClass() {
+        UpdateHasPeasants();
+        UpdateHasWorkers();
+    }
+    /// <summary>
     /// Update the hasPeasants switch.
     /// </summary>
     /// <returns>Whether or not a change happened</returns>
