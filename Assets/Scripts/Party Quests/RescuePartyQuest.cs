@@ -38,7 +38,12 @@ public class RescuePartyQuest : PartyQuest {
     public override string GetPartyQuestTextInLog() {
         return "Rescue " + targetCharacter.name;
     }
-
+    public override void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {
+        base.OnAssignedPartySwitchedState(fromState, toState);
+        if (toState == PARTY_STATE.Working) {
+            StartSearchTimer();
+        }
+    }
     //public override bool IsAllowedToJoin(Character character) {
     //    return (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") || character.characterClass.className == "Noble"
     //        || (character.isNormalCharacter && character.relationshipContainer.GetOpinionLabel(targetCharacter) == RelationshipManager.Close_Friend);
@@ -75,7 +80,10 @@ public class RescuePartyQuest : PartyQuest {
 
     #region General
     private void ProcessDisbandment() {
-        if (isReleasing) { return; }
+        if (isReleasing) {
+            StartSearchTimer();
+            return;
+        }
         if(assignedParty != null && assignedParty.isActive && assignedParty.currentQuest == this) {
             assignedParty.GoBackHomeAndEndQuest();
         }

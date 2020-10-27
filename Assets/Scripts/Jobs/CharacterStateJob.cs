@@ -11,6 +11,7 @@ public class CharacterStateJob : JobQueueItem {
     public IPointOfInterest targetPOI { get; protected set; }
 
     #region getters
+    public override IPointOfInterest poiTarget => targetPOI;
     public override OBJECT_TYPE objectType => OBJECT_TYPE.Job;
     public override Type serializedData => typeof(SaveDataCharacterStateJob);
     #endregion

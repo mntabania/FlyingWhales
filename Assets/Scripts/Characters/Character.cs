@@ -826,7 +826,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _characterClass = characterClass;
         //behaviourComponent.OnChangeClass(_characterClass, previousClass);
         if (!isInitial) {
-            homeSettlement?.OnResidentUpdatedClass();
             homeSettlement?.UpdateAbleJobsOfResident(this);
             OnUpdateCharacterClass();
             Messenger.Broadcast(Signals.CHARACTER_CLASS_CHANGE, this, previousClass, _characterClass);
@@ -5098,6 +5097,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if((isLycanthrope && targetCharacter.race == RACE.WOLF) || (targetCharacter.isLycanthrope && race == RACE.WOLF)) {
             return false;
         }
+        if (targetCharacter.race == RACE.WOLF || (targetCharacter.isLycanthrope && targetCharacter.lycanData.isInWerewolfForm)) {
+            if(faction != null && faction.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
+                //Reveres Werewolf factions will not initiate combat with Wolves and Werewolves
+                return false;
+            }
+        }
         return true;
     }
     #endregion
@@ -5439,7 +5444,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void RevertFromWerewolfForm() {
         if (isLycanthrope && lycanData.isInWerewolfForm) {
             lycanData.SetIsInWerewolfForm(false);
-            AssignClass(previousClassName);
+            if(previousClassName != "Werewolf") {
+                //Reverting back from werewolf form should mean that the class to be assigned must not be werewolf
+                AssignClass(previousClassName);
+            }
             if (visuals != null) {
                 visuals.UpdateAllVisuals(this);
             }

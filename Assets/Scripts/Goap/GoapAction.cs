@@ -310,6 +310,12 @@ public class GoapAction {
         if (job.jobType == JOB_TYPE.SNATCH || job.jobType == JOB_TYPE.DROP_ITEM_PARTY) {
             return 1; //ignore distance cost if job is snatch, this is so that snatchers won't reach the maximum cost when trying to snatch someone from a different region. 
         }
+        if(poiTarget == job.poiTarget) {
+            //If the job has a specific target and the target for this action is the job's target, do not calculate distance anymore so that the actor will always go to target no matter how far he is
+            //This is the solution for psychopath ritual killing because when the chosen target of psychopath is too far away, he will not do the plan anymore because the cost will exceed 1000
+            //Solution for: https://trello.com/c/kICZdLWG/2541-03325-psychopathy-targeting-issue
+            return 1;
+        }
         LocationGridTile tile = poiTarget.gridTileLocation;
         if (actor.gridTileLocation != null && tile != null) {
             int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));

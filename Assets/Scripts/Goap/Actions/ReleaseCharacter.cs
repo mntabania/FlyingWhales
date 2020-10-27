@@ -40,6 +40,38 @@ public class ReleaseCharacter : GoapAction {
         }
         return goapActionInvalidity;
     }
+    public override void OnStoppedInterrupt(ActualGoapNode node) {
+        base.OnStoppedInterrupt(node);
+        if (node.actor.partyComponent.hasParty && node.actor.partyComponent.currentParty.isActive && node.actor.partyComponent.currentParty.currentQuest is RescuePartyQuest quest) {
+            if (quest.targetCharacter == node.poiTarget) {
+                quest.SetIsReleasing(false);
+            }
+        }
+    }
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        if (node.actor.partyComponent.hasParty && node.actor.partyComponent.currentParty.isActive && node.actor.partyComponent.currentParty.currentQuest is RescuePartyQuest quest) {
+            if (quest.targetCharacter == node.poiTarget) {
+                quest.SetIsReleasing(false);
+            }
+        }
+    }
+    public override void OnStopWhileStarted(ActualGoapNode node) {
+        base.OnStopWhileStarted(node);
+        if (node.actor.partyComponent.hasParty && node.actor.partyComponent.currentParty.isActive && node.actor.partyComponent.currentParty.currentQuest is RescuePartyQuest quest) {
+            if (quest.targetCharacter == node.poiTarget) {
+                quest.SetIsReleasing(false);
+            }
+        }
+    }
+    public override void OnInvalidAction(ActualGoapNode node) {
+        base.OnInvalidAction(node);
+        if (node.actor.partyComponent.hasParty && node.actor.partyComponent.currentParty.isActive && node.actor.partyComponent.currentParty.currentQuest is RescuePartyQuest quest) {
+            if (quest.targetCharacter == node.poiTarget) {
+                quest.SetIsReleasing(false);
+            }
+        }
+    }
     #endregion
 
     //#region Preconditions
@@ -69,6 +101,7 @@ public class ReleaseCharacter : GoapAction {
 
         if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive && goapNode.actor.partyComponent.currentParty.currentQuest is RescuePartyQuest quest) {
             if(quest.targetCharacter == goapNode.poiTarget) {
+                quest.SetIsReleasing(false);
                 goapNode.actor.partyComponent.currentParty.GoBackHomeAndEndQuest();
             }
         }
