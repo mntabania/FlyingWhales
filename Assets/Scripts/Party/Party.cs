@@ -743,7 +743,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
                         }
                     }
                 } else if (targetCamp != null) {
-                    if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                    if (character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                         && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == targetCamp) {
                         isActive = true;
                     } else {

@@ -206,6 +206,15 @@ namespace Traits {
                                         }
                                     }
                                 }
+                            } else {
+                                if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
+                                    if (owner.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueParty && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
+                                        if (rescueParty.isWaitTimeOver && rescueParty.targetCharacter == targetCharacter) {
+                                            rescueParty.SetIsReleasing(false);
+                                            owner.partyComponent.currentParty.GoBackHomeAndEndQuest();
+                                        }
+                                    }
+                                }
                             }
                             if ((!targetCharacter.canPerform || !targetCharacter.canMove) && !owner.combatComponent.isInCombat && owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
                                 if (owner.partyComponent.currentParty.currentQuest is RaidPartyQuest raidParty

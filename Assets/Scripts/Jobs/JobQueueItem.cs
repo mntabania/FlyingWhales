@@ -35,6 +35,8 @@ public abstract class JobQueueItem : ISavable {
 
     protected int _priority; //The lower the amount the higher the priority
 
+    public virtual IPointOfInterest poiTarget => null;
+
     public JobQueueItem() {
         id = -1;
         blacklistedCharacters = new List<Character>();

@@ -21,6 +21,7 @@ public class GoapPlanJob : JobQueueItem {
     public bool shouldBeCancelledOnDeath { get; private set; } //should this job be cancelled when the target dies?
 
     #region getters
+    public override IPointOfInterest poiTarget => targetPOI;
     public override OBJECT_TYPE objectType => OBJECT_TYPE.Job;
     public override Type serializedData => typeof(SaveDataGoapPlanJob);
     #endregion

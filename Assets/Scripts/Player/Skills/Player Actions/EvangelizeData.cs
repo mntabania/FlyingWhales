@@ -44,6 +44,9 @@ public class EvangelizeData : PlayerAction {
         }
         // base.ActivateAbility(targetPOI);
     }
+    //private bool CanBeEvangelized(Character character) {
+        
+    //}
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
         if (canPerform) {

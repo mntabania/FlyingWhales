@@ -1682,7 +1682,7 @@ public class ReactionComponent : CharacterComponent {
                 } else {
                     if (GameUtilities.RollChance(50) && !actor.jobQueue.HasJob(JOB_TYPE.INSPECT, targetTileObject) && !actor.defaultCharacterTrait.HasAlreadyInspectedObject(targetTileObject)) {
                         actor.jobComponent.TriggerInspect(targetTileObject);
-                    } else if (!actor.IsInventoryAtFullCapacity()) {
+                    } else if (!actor.IsInventoryAtFullCapacity() && !actor.HasItem(targetTileObject.name) && !actor.HasOwnedItemInHomeStructure(targetTileObject.name)) {
                         actor.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, targetTileObject);
                     }
                 }

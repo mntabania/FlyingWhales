@@ -98,6 +98,13 @@ public class BaseRelationshipContainer : IRelationshipContainer {
     public bool HasRelationshipWith(int id) {
         return relationships.ContainsKey(id);
     }
+    public bool HasSpecialRelationshipWith(Relatable relatable) {
+        IRelationshipData relData = GetRelationshipDataWith(relatable);
+        if(relData != null && relData.relationships != null && relData.relationships.Count > 0) {
+            return true;
+        }
+        return false;
+    }
     public bool HasRelationshipWith(Relatable relatable, RELATIONSHIP_TYPE relType) {
         if (HasRelationshipWith(relatable)) {
             IRelationshipData data = relationships[relatable.id];

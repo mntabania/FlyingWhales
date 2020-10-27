@@ -23,6 +23,7 @@ public interface IRelationshipContainer {
     bool HasRelationshipWith(Relatable relatable);
     bool HasRelationshipWith(Relatable relatable, RELATIONSHIP_TYPE relType);
     bool HasRelationshipWith(Relatable relatable, params RELATIONSHIP_TYPE[] relType);
+    bool HasSpecialRelationshipWith(Relatable relatable);
     bool HasRelationship(params RELATIONSHIP_TYPE[] type);
     #endregion
 

@@ -194,7 +194,18 @@ public class ReportCrime : GoapAction {
 
             if (result == "Belief") {
                 //Recipient believes
-                recipient.reactionComponent.ReactTo(crime, REACTION_STATUS.INFORMED, false);
+                CRIME_TYPE crimeType = crime.crimeType;
+                CRIME_SEVERITY severity = CRIME_SEVERITY.None;
+                if(crimeType != CRIME_TYPE.Unset && crimeType != CRIME_TYPE.None) {
+                    severity = CrimeManager.Instance.GetCrimeSeverity(recipient, crime.actor, crime.target, crimeType);
+                }
+                if(severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
+                    recipient.reactionComponent.ReactTo(crime, REACTION_STATUS.INFORMED, false);
+                } else {
+                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, "not_crime", providedTags: LOG_TAG.Crimes);
+                    log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddLogToDatabase();
+                }
             } else {
                 //Recipient does not believe
                 CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, crime as ActualGoapNode);
