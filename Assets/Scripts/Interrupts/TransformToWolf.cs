@@ -22,6 +22,7 @@ namespace Interrupts {
             return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
         }
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
+            Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, interruptHolder.actor.marker.transform.position, 1, interruptHolder.actor.currentRegion.innerMap);
             interruptHolder.actor.lycanData.TurnToWolf();
             return base.ExecuteInterruptEndEffect(interruptHolder);
         }

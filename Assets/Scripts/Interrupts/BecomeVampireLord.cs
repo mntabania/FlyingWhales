@@ -1,5 +1,5 @@
 ﻿using Crime_System;
-
+using UnityEngine.Assertions;
 namespace Interrupts {
     public class BecomeVampireLord : Interrupt {
         public BecomeVampireLord() : base(INTERRUPT.Become_Vampire_Lord) {
@@ -14,6 +14,9 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
             interruptHolder.actor.AssignClass("Vampire Lord");
+            Traits.Vampire vampire = interruptHolder.actor.traitContainer.GetTraitOrStatus<Traits.Vampire>("Vampire");
+            Assert.IsNotNull(vampire, $"{interruptHolder.actor.name}");
+            vampire.SetHasBecomeVampireLord(true);
             if (interruptHolder.actor.faction != null && interruptHolder.actor.faction.GetCrimeSeverity(interruptHolder.actor, interruptHolder.actor, CRIME_TYPE.Vampire) != CRIME_SEVERITY.None) {
                 interruptHolder.actor.MigrateHomeStructureTo(null);
                 if (interruptHolder.actor.faction.isMajorFaction) {

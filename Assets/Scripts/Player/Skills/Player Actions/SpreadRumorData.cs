@@ -4,7 +4,7 @@ using Logs;
 public class SpreadRumorData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.SPREAD_RUMOR;
     public override string name => "Spread Rumor";
-    public override string description => "This Action forces the character to spread a rumor about another character.";
+    public override string description => "This Action instructs the character to Spread a Rumor about someone they know.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.PLAYER_ACTION;
 
     

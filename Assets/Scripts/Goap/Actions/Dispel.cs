@@ -88,17 +88,19 @@ public class Dispel : GoapAction {
                     } else {
                         //Vampire is removed
                         targetCharacter.traitContainer.RemoveTrait(targetCharacter, traitToRemove, actor);
-                        if (targetCharacter.characterClass.className == "Vampire Lord") {
-                            targetCharacter.AssignClass("Peasant");
-                        }
+                        //NOTE: Moved this to OnRemoveTrait of Vampire
+                        // if (targetCharacter.characterClass.className == "Vampire Lord") {
+                        //     targetCharacter.AssignClass("Peasant");
+                        // }
                         targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, actor, "Removed my Vampirism!", -15);
                     }
                 } else {
-                    //lycanthropy is removed
+                    //Vampire is removed
                     targetCharacter.traitContainer.RemoveTrait(targetCharacter, traitToRemove, actor);
-                    if (targetCharacter.characterClass.className == "Vampire Lord") {
-                        targetCharacter.AssignClass("Peasant");
-                    }
+                    //NOTE: Moved this to OnRemoveTrait of Vampire
+                    // if (targetCharacter.characterClass.className == "Vampire Lord") {
+                    //     targetCharacter.AssignClass("Peasant");
+                    // }
                     targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, actor, "Removed my Vampirism!", 15);
                 }
             }    

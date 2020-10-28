@@ -54,7 +54,7 @@ namespace Traits {
         }
         public override void OnSeePOIEvenCannotWitness(IPointOfInterest targetPOI, Character character) {
             base.OnSeePOIEvenCannotWitness(targetPOI, character);
-            if (IsHuntingForPrey() && targetPOI is Character seenCharacter && !owner.combatComponent.IsInActualCombatWith(seenCharacter)) {
+            if (IsHuntingForPrey() && targetPOI is Character seenCharacter && !seenCharacter.isDead && !owner.combatComponent.IsInActualCombatWith(seenCharacter)) {
                 if (owner.relationshipContainer.IsFriendsWith(seenCharacter)) {
                     CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(seenCharacter, owner, owner, CRIME_TYPE.Werewolf);
                     if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
@@ -142,21 +142,21 @@ namespace Traits {
 
         public override string TriggerFlaw(Character character) {
             if (IsAlone()) {
-                if (DoTriggerFlawTransform(out bool createdHuntPreyJob)) {
-                    if (!createdHuntPreyJob) {
-                        return string.Empty;
-                    }
-                } else {
+                if (!DoTriggerFlawTransform()) {
                     return "fail_no_target";
                 }
             } else {
-                //go to a random tile in the wilderness
-                //then check if the character is alone, if not pick another random tile,
-                //repeat the process until alone, then transform to wolf
-                LocationStructure wilderness = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-                //LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
-                //character.marker.GoTo(randomWildernessTile, CheckIfAlone);
-                character.PlanAction(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, character, new OtherData[] { new LocationStructureOtherData(wilderness),  });
+                if (CanDoTriggerFlaw()) {
+                    //go to a random tile in the wilderness
+                    //then check if the character is alone, if not pick another random tile,
+                    //repeat the process until alone, then transform to wolf
+                    LocationStructure wilderness = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+                    //LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
+                    //character.marker.GoTo(randomWildernessTile, CheckIfAlone);
+                    character.PlanAction(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, character, new OtherData[] { new LocationStructureOtherData(wilderness),  });    
+                } else {
+                    return "fail_no_target";
+                }
             }
             return base.TriggerFlaw(character);
         }
@@ -164,7 +164,7 @@ namespace Traits {
         public void CheckIfAlone() {
             if (IsAlone()) {
                 //alone
-                DoTriggerFlawTransform(out bool createdHuntPreyJob);
+                DoTriggerFlawTransform();
             } else {
                 //go to a different tile
                 LocationStructure wilderness = owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
@@ -177,22 +177,24 @@ namespace Traits {
             return !owner.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Werewolf);
             // return owner.marker.inVisionCharacters.Count == 0;
         }
-        private bool DoTriggerFlawTransform(out bool createdHuntPreyJob) {
+        private bool DoTriggerFlawTransform() {
             if (owner.lycanData.isMaster) {
                 Character huntPreyTarget = GetHuntPreyTarget();
                 if (huntPreyTarget != null) {
                     owner.jobQueue.CancelAllJobs();
-                    createdHuntPreyJob = owner.jobComponent.TriggerHuntPreyJob(huntPreyTarget);
-                    if (createdHuntPreyJob) {
-                        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Werewolf, owner);
-                    }
-                    return true;
+                    return owner.jobComponent.TriggerHuntPreyJob(huntPreyTarget);
                 }
-                createdHuntPreyJob = false;
                 return false;
             } else {
                 owner.lycanData.Transform(owner);
-                createdHuntPreyJob = true;
+                return true;
+            }
+        }
+        private bool CanDoTriggerFlaw() {
+            if (owner.lycanData.isMaster) {
+                Character huntPreyTarget = GetHuntPreyTarget();
+                return huntPreyTarget != null;
+            } else {
                 return true;
             }
         }
@@ -204,7 +206,7 @@ namespace Traits {
             int animalCount = 0;
             for (int i = 0; i < owner.currentRegion.charactersAtLocation.Count; i++) { 
                 Character otherCharacter = owner.currentRegion.charactersAtLocation[i]; 
-                if (otherCharacter != owner) { 
+                if (otherCharacter != owner && !otherCharacter.isDead) { 
                     int weight = 0; 
                     if (otherCharacter is Animal) { 
                         if (animalCount< 3) { 

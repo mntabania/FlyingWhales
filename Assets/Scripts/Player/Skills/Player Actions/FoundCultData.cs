@@ -30,6 +30,10 @@ public class FoundCultData : PlayerAction {
                     GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
                     character.jobComponent.TriggerFindNewVillage(targetTile.GetCenterLocationGridTile(), chosenStructurePrefab.name);
                 }    
+            } else {
+                PlayerUI.Instance.ShowGeneralConfirmation("Village Capacity Reached", 
+                    $"{character.visuals.GetCharacterNameWithIconAndColor()} has founded a new faction: {character.faction.name}, but can no longer build a village on " +
+                    $"{character.currentRegion.name} since the limit has been reached!");
             }
         }
     }

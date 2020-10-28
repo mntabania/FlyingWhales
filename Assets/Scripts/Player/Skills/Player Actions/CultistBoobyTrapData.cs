@@ -4,7 +4,7 @@ using Logs;
 public class CultistBoobyTrapData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.CULTIST_BOOBY_TRAP;
     public override string name => "Booby Trap Neighbor";
-    public override string description => "This Action forces the character to Booby Trap an object owned by a specified target.";
+    public override string description => "This Action instructs the character to Booby Trap an object owned by someone they know.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.PLAYER_ACTION;
     public override bool canBeCastOnBlessed => true;
     

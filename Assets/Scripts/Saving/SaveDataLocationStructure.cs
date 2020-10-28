@@ -151,12 +151,13 @@ public class SaveDataDemonicStructure : SaveDataLocationStructure {
     
     public string structureTemplateName;
     public Vector3Save structureObjectWorldPosition;
+    // public int activeSnatchJobs;
 
     public override void Save(LocationStructure locationStructure) {
         base.Save(locationStructure);
         DemonicStructure demonicStructure = locationStructure as DemonicStructure;
         Assert.IsNotNull(demonicStructure);
-        
+
         if (demonicStructure.hasBeenDestroyed) {
             structureTemplateName = string.Empty;
             structureObjectWorldPosition = Vector3.zero;
@@ -167,5 +168,7 @@ public class SaveDataDemonicStructure : SaveDataLocationStructure {
             structureTemplateName = templateName;
             structureObjectWorldPosition = demonicStructure.structureObj.transform.position;
         }
+
+        // activeSnatchJobs = demonicStructure.activeSnatchJobs;
     }
 }

@@ -158,13 +158,17 @@ public class Drop : GoapAction {
                 if(hexTileLocation != null) {
                     LocationStructure structure = hexTileLocation.GetMostImportantStructureOnTile();
                     if (structure is DemonicStructure) {
-                        if (structure is Kennel) {
-                            List<LocationGridTile> choices = structure.passableTiles.Where(t => (t.objHere == null || t.IsPassable()) && !(t.objHere is DoorTileObject)).ToList();
-                            if (choices.Count > 0) {
-                                LocationGridTile randomTile = CollectionUtilities.GetRandomElement(choices);
-                                targetCharacter.marker.PlaceMarkerAt(randomTile);
+                        if (structure is Kennel kennel) {
+                            if (!kennel.HasReachedKennelCapacity()) {
+                                List<LocationGridTile> choices = structure.passableTiles.Where(t => (t.objHere == null || t.IsPassable()) && !(t.objHere is DoorTileObject)).ToList();
+                                if (choices.Count > 0) {
+                                    LocationGridTile randomTile = CollectionUtilities.GetRandomElement(choices);
+                                    targetCharacter.marker.PlaceMarkerAt(randomTile);
+                                } else {
+                                    Debug.LogWarning($"{goapNode.actor.name} could not place {targetCharacter.name} in a room in kennel, because no valid tiles could be found.");
+                                }    
                             } else {
-                                Debug.LogWarning($"{goapNode.actor.name} could not place {targetCharacter.name} in a room in kennel, because no valid tiles could be found.");
+                                Debug.LogWarning($"{goapNode.actor.name} could not place {targetCharacter.name} in a room in kennel, because kennel capacity has been reached.");
                             }
                         } else if (structure.rooms != null && structure.rooms.Length > 0) {
                             //place target in a random room
@@ -185,6 +189,9 @@ public class Drop : GoapAction {
                                 Debug.LogWarning($"{goapNode.actor.name} could not place {targetCharacter.name} in a room, because no valid rooms could be found.");
                             }
                         }
+                        //this is to prevent player monsters from attacking on sight the snatched character while they are restrained.
+                        //this will be switched off when character loses the restrained trait
+                        targetCharacter.defaultCharacterTrait.SetHasBeenAbductedByPlayerMonster(true);
                     }
                 }
                 goapNode.actor.behaviourComponent.SetIsSnatching(false);

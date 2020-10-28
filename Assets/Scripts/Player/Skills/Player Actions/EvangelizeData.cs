@@ -61,9 +61,9 @@ public class EvangelizeData : PlayerAction {
     }
     private string GetDescription() {
         if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.characterClass.className == "Cult Leader") {
-            return "This Action forces the Villager to turn any another Villager into a Cultist."; 
+            return "This Action instructs the character to Evangelize about Demon Worship to any Villager."; 
         }
-        return "This Action forces the Villager to turn another known Villager into a Cultist.";
+        return "This Action instructs the character to Evangelize about Demon Worship to someone they know.";
     }
     #endregion
 

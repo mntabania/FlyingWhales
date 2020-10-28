@@ -30,7 +30,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		tileDryers = new List<Character>();
 		dousers = new List<Character>();
 	}
-	
+
 	#region Listeners
 	public void SubscribeToListeners() {
 		Messenger.AddListener(Signals.HOUR_STARTED, HourlyJobActions);
@@ -74,10 +74,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			LoadTendFarmCheck();
 			LoadCheckResource();
 		} else {
-			CheckIfFarmShouldBeTended(true);
-			ScheduledCheckResource();
-			TryCreateMiningJob();	
+			KickstartJobs();
 		}
+	}
+	public void KickstartJobs() {
+		CheckIfFarmShouldBeTended(true);
+		ScheduledCheckResource();
+		TryCreateMiningJob();
 	}
 	private void HourlyJobActions() {
 		CreatePatrolJobs();
@@ -228,6 +231,23 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		if (structure is CityCenter && item is WaterWell) {
 			CheckIfShouldStopWaterWellCheck();
 		}
+	}
+	#endregion
+
+	#region Utilities
+	private bool HasNearbyCave() {
+		List<HexTile> nearbyTiles = new List<HexTile>();
+		for (int i = 0; i < _owner.tiles.Count; i++) {
+			HexTile tile = _owner.tiles[i];
+			nearbyTiles.AddRange(tile.GetTilesInRange(2));
+		}
+		for (int j = 0; j < nearbyTiles.Count; j++) {
+			HexTile neighbour = nearbyTiles[j];
+			if (neighbour.elevationType == ELEVATION.MOUNTAIN) {
+				return true;
+			}
+		}
+		return false;
 	}
 	#endregion
 
@@ -857,7 +877,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	#region Mining
 	private void TryCreateMiningJob() {
-		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6 && !_owner.HasJob(JOB_TYPE.MINE)) { //6
+		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6 && !_owner.HasJob(JOB_TYPE.MINE) && HasNearbyCave()) { //6
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.BEGIN_MINE, null, _owner);
 			_owner.AddToAvailableJobs(job);
 		}

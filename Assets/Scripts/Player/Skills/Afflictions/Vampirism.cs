@@ -27,12 +27,18 @@ public class VampirismData : SpellData {
         if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Cannibal", "Vampire", "Beast")) {
             return false;
         }
+        if (targetCharacter.HasItem(TILE_OBJECT_TYPE.PHYLACTERY)) {
+            return false;
+        }
         return base.CanPerformAbilityTowards(targetCharacter);
     }
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
         if (targetCharacter.traitContainer.HasTrait("Vampire")) {
             reasons += $"{targetCharacter.name} already has this Flaw,";
+        }
+        if (targetCharacter.HasItem(TILE_OBJECT_TYPE.PHYLACTERY)) {
+            reasons += $"{targetCharacter.name} has a Phylactery,";
         }
         return reasons;
     }

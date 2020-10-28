@@ -120,8 +120,10 @@ public class BuildVampireCastle : GoapAction {
             string prefabName = (string)goapNode.otherData[0].obj;
             if (LandmarkManager.Instance.HasEnoughSpaceForStructure(prefabName, genericTileObject.gridTileLocation)) {
                 NPCSettlement settlement = goapNode.actor.homeSettlement;
+                bool createdNewSettlement = false;
                 //create new settlement if vampire has no home settlement yet
                 if (goapNode.actor.homeSettlement == null) {
+                    createdNewSettlement = true;
                     settlement = LandmarkManager.Instance.CreateNewSettlement(goapNode.actor.currentRegion, LOCATION_TYPE.VILLAGE);
                     LandmarkManager.Instance.OwnSettlement(goapNode.actor.faction, settlement);
                     settlement.SetSettlementType(LandmarkManager.Instance.GetSettlementTypeForCharacter(goapNode.actor));
@@ -141,6 +143,10 @@ public class BuildVampireCastle : GoapAction {
                 List<LocationStructure> createdStructures = new List<LocationStructure>();
                 createdStructures.Add(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(settlement, goapNode.actor.currentRegion.innerMap, genericTileObject.gridTileLocation, prefabName));
 
+                if (createdNewSettlement) {
+                    settlement.settlementJobTriggerComponent.KickstartJobs();
+                }
+                
                 LocationStructure castle = createdStructures[0];
                 goapNode.actor.MigrateHomeStructureTo(castle);
             }

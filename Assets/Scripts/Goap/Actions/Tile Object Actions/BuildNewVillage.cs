@@ -84,11 +84,14 @@ public class BuildNewVillage : GoapAction {
                 createdStructures.Add(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(settlement, goapNode.actor.currentRegion.innerMap, genericTileObject.gridTileLocation, prefabName));
 
                 settlement.PlaceInitialObjects();
+                settlement.settlementJobTriggerComponent.KickstartJobs();
                 
                 LocationStructure firstStructure = createdStructures[0];
                 goapNode.actor.MigrateHomeStructureTo(firstStructure);
                 
+                //added this after migrating home of character since it will trigger NPCSettlement.ChangeSettlementTypeAccordingTo which will overwrite any changes we make to the settlement type.
                 settlement.SetSettlementType(LandmarkManager.Instance.GetSettlementTypeForCharacter(goapNode.actor));
+                
                 // if (goapNode.actor.faction.race == RACE.HUMANS) {
                 //     settlement.SetSettlementType(SETTLEMENT_TYPE.Default_Human);
                 // } else if (goapNode.actor.faction.race == RACE.ELVES) {

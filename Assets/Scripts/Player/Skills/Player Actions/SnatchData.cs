@@ -22,7 +22,8 @@ public class SnatchData : PlayerAction {
         if (targetPOI is Character targetCharacter) {
             if (targetPOI is Summon) {
                 List<LocationStructure> validStructures = PlayerManager.Instance.player.playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.KENNEL);
-                UIManager.Instance.ShowClickableObjectPicker(validStructures, o => OnPickTargetStructure(o, targetCharacter) , title: "Select Affliction", 
+                UIManager.Instance.ShowClickableObjectPicker(validStructures, o => OnPickTargetStructure(o, targetCharacter), validityChecker: IsStructureValid, 
+                    onHoverAction: OnHoverStructure, onHoverExitAction: OnHoverExitStructure, title: "Select Structure", 
                     portraitGetter: null, showCover: true, layer: 25, shouldShowConfirmationWindowOnPick: true, asButton: true);
             } else {
                 List<LocationStructure> validStructures = new List<LocationStructure>();
@@ -33,9 +34,30 @@ public class SnatchData : PlayerAction {
                     validStructures.AddRange(PlayerManager.Instance.player.playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.TORTURE_CHAMBERS));
                 }
                 
-                UIManager.Instance.ShowClickableObjectPicker(validStructures, o => OnPickTargetStructure(o, targetCharacter) , title: "Select Affliction", 
+                UIManager.Instance.ShowClickableObjectPicker(validStructures, o => OnPickTargetStructure(o, targetCharacter), validityChecker: IsStructureValid, 
+                    onHoverAction: OnHoverStructure, onHoverExitAction: OnHoverExitStructure, title: "Select Structure", 
                     portraitGetter: null, showCover: true, layer: 25, shouldShowConfirmationWindowOnPick: true, asButton: true);
             }
+        }
+    }
+    private bool IsStructureValid(LocationStructure structure) {
+        if (structure is Kennel kennel) {
+            return !kennel.HasReachedKennelCapacity();
+        } else if (structure is Defiler defiler) {
+            return defiler.HasUnoccupiedRoom();
+        } else if (structure is TortureChambers prison) {
+            return prison.HasUnoccupiedRoom();
+        }
+        return false;
+    }
+    private void OnHoverStructure(LocationStructure structure) {
+        if (!IsStructureValid(structure)) {
+            UIManager.Instance.ShowSmallInfo($"{structure.name} is already at max capacity!", "Maximum Capacity Reached");
+        }
+    }
+    private void OnHoverExitStructure(LocationStructure structure) {
+        if (!IsStructureValid(structure)) {
+            UIManager.Instance.HideSmallInfo();
         }
     }
     private void OnPickTargetStructure(object obj, Character targetCharacter) {
@@ -68,7 +90,6 @@ public class SnatchData : PlayerAction {
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         bool canPerform = CanPerformAbility(); //NOTE: Did not use base since this action can be used on blessed characters
         if (canPerform) {
-
             if(PlayerSkillManager.Instance.selectedArchetype == PLAYER_ARCHETYPE.Lich) {
                 if (!CharacterManager.Instance.allCharacters.Any(CanDoSnatch)) {
                     return false;
@@ -79,10 +100,10 @@ public class SnatchData : PlayerAction {
                 }
             }
             if (targetCharacter is Summon) {
-                return PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.KENNEL);
+                return PlayerManager.Instance.player.playerSettlement.HasAvailableKennelForSnatch();
             } else {
-                return PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.DEFILER) ||
-                       PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.TORTURE_CHAMBERS);  
+                return PlayerManager.Instance.player.playerSettlement.HasAvailableDefilerForSnatch() ||
+                       PlayerManager.Instance.player.playerSettlement.HasAvailablePrisonForSnatch();  
             }
         }
         return false;
@@ -90,16 +111,21 @@ public class SnatchData : PlayerAction {
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
         if (!PlayerManager.Instance.player.playerFaction.characters.Any(CanDoSnatch)) {
-            reasons += $"You have no available Snatchers,";
+            reasons += "You have no available Snatchers,";
         }
         if (targetCharacter is Summon) {
             if (!PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.KENNEL)) {
-                reasons += $"You have no Kennel,";    
+                reasons += "You have no Kennels,";    
+            } else if (!PlayerManager.Instance.player.playerSettlement.HasAvailableKennelForSnatch()) {
+                reasons += "You have no Kennels that can house more Monsters,";    
             }
         } else {
             if (!PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.DEFILER) &&
                 !PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.TORTURE_CHAMBERS)) {
-                reasons += $"You have no Defiler or Prison,";    
+                reasons += "You have no Defiler or Prison,";    
+            } else if (!PlayerManager.Instance.player.playerSettlement.HasAvailableDefilerForSnatch() && 
+                       !PlayerManager.Instance.player.playerSettlement.HasAvailablePrisonForSnatch()) {
+                reasons += "You have no unoccupied Defiler Rooms or Prison Cells,";    
             }
         }
         return reasons;

@@ -10,7 +10,8 @@ namespace Inner_Maps.Location_Structures {
         public Defiler(Region location, SaveDataLocationStructure data) : base(location, data) {
             selectableSize = new Vector2(10f, 10f);
         }
-        
+
+        #region Overrides
         public override void OnCharacterUnSeizedHere(Character character) {
             base.OnCharacterUnSeizedHere(character);
             if (character.gridTileLocation != null && IsTilePartOfARoom(character.gridTileLocation, out var room)) {
@@ -22,6 +23,7 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
+        #endregion
         
         #region Listeners
         protected override void SubscribeListeners() {
@@ -32,15 +34,13 @@ namespace Inner_Maps.Location_Structures {
             base.UnsubscribeListeners();
             Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         }
-        #endregion
-        
         private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
             if (structure == this && character.isNormalCharacter && IsTilePartOfARoom(character.gridTileLocation, out var room) && room is DefilerRoom defilerRoom && defilerRoom.skeleton == null) {
                 DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
                 door?.Close();
             }
         }
-
+        #endregion
 
         #region Rooms
         protected override StructureRoom CreteNewRoomForStructure(List<LocationGridTile> tilesInRoom) {

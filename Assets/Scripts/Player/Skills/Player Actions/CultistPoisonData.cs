@@ -4,7 +4,7 @@ using Logs;
 public class CultistPoisonData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.CULTIST_POISON;
     public override string name => "Poison Neighbor";
-    public override string description => "This Action forces the character to Poison an object owned by a specified target.";
+    public override string description => "This Action instructs the character to Poison an object owned by someone they know.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.PLAYER_ACTION;
     public override bool canBeCastOnBlessed => true;
     

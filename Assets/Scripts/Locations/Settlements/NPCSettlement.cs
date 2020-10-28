@@ -1504,12 +1504,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             this.settlementType.ApplyDefaultSettings();    
         }
     }
-    public void ChangeSettlementTypeAccordingTo(Character character) {
-        if (character.race == RACE.HUMANS && (settlementType == null || settlementType.settlementType != SETTLEMENT_TYPE.Default_Human)) {
-            SetSettlementType(SETTLEMENT_TYPE.Default_Human);
-        } else if (character.race == RACE.ELVES && (settlementType == null || settlementType.settlementType != SETTLEMENT_TYPE.Default_Elf)) {
-            SetSettlementType(SETTLEMENT_TYPE.Default_Elf);
+    private void ChangeSettlementTypeAccordingTo(Character character) {
+        SETTLEMENT_TYPE typeToSet = LandmarkManager.Instance.GetSettlementTypeForCharacter(character);
+        if (settlementType == null || settlementType.settlementType != typeToSet) {
+            SetSettlementType(typeToSet);
         }
+        // if (character.race == RACE.HUMANS && (settlementType == null || settlementType.settlementType != SETTLEMENT_TYPE.Default_Human)) {
+        //     SetSettlementType(SETTLEMENT_TYPE.Default_Human);
+        // } else if (character.race == RACE.ELVES && (settlementType == null || settlementType.settlementType != SETTLEMENT_TYPE.Default_Elf)) {
+        //     SetSettlementType(SETTLEMENT_TYPE.Default_Elf);
+        // }
     }
     #endregion
 
