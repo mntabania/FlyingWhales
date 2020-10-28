@@ -64,5 +64,48 @@ namespace Locations.Settlements {
             return null;
         }
 
+        public bool HasAvailableKennelForSnatch() {
+            if (HasStructure(STRUCTURE_TYPE.KENNEL)) {
+                List<LocationStructure> kennels = GetStructuresOfType(STRUCTURE_TYPE.KENNEL);
+                for (int i = 0; i < kennels.Count; i++) {
+                    LocationStructure structure = kennels[i];
+                    if (structure is Kennel kennel) {
+                        if (!kennel.HasReachedKennelCapacity()) { //&& kennel.activeSnatchJobs < kennel.GetAvailableCapacity()
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        public bool HasAvailablePrisonForSnatch() {
+            if (HasStructure(STRUCTURE_TYPE.TORTURE_CHAMBERS)) {
+                List<LocationStructure> structuresOfType = GetStructuresOfType(STRUCTURE_TYPE.TORTURE_CHAMBERS);
+                for (int i = 0; i < structuresOfType.Count; i++) {
+                    LocationStructure structure = structuresOfType[i];
+                    if (structure is DemonicStructure demonicStructure) {
+                        if (demonicStructure.HasUnoccupiedRoom()) { //demonicStructure.activeSnatchJobs < demonicStructure.GetUnoccupiedRoomCount()
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        public bool HasAvailableDefilerForSnatch() {
+            if (HasStructure(STRUCTURE_TYPE.DEFILER)) {
+                List<LocationStructure> structuresOfType = GetStructuresOfType(STRUCTURE_TYPE.DEFILER);
+                for (int i = 0; i < structuresOfType.Count; i++) {
+                    LocationStructure kennel = structuresOfType[i];
+                    if (kennel is DemonicStructure demonicStructure) {
+                        if (demonicStructure.HasUnoccupiedRoom()) {//demonicStructure.activeSnatchJobs < demonicStructure.GetUnoccupiedRoomCount()
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
     }
 }

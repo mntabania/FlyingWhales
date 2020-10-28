@@ -190,10 +190,10 @@ public class PlayerUI : BaseMonoBehaviour {
 #if UNITY_EDITOR
         itemsToggle.gameObject.SetActive(false);
         artifactsToggle.gameObject.SetActive(false);    
-        // itemsToggle.gameObject.SetActive(true);
-        // artifactsToggle.gameObject.SetActive(true);
-        // CreateItemsForTesting();
-        // CreateArtifactsForTesting();
+        itemsToggle.gameObject.SetActive(true);
+        artifactsToggle.gameObject.SetActive(true);
+        CreateItemsForTesting();
+        CreateArtifactsForTesting();
 #else
         itemsToggle.gameObject.SetActive(false);
         artifactsToggle.gameObject.SetActive(false);        
@@ -987,7 +987,7 @@ public class PlayerUI : BaseMonoBehaviour {
             TILE_OBJECT_TYPE.ELECTRIC_CRYSTAL, TILE_OBJECT_TYPE.FIRE_CRYSTAL, TILE_OBJECT_TYPE.ICE_CRYSTAL,
             TILE_OBJECT_TYPE.POISON_CRYSTAL, TILE_OBJECT_TYPE.WATER_CRYSTAL, TILE_OBJECT_TYPE.SNOW_MOUND,
             TILE_OBJECT_TYPE.WINTER_ROSE, TILE_OBJECT_TYPE.DESERT_ROSE, TILE_OBJECT_TYPE.CULTIST_KIT,
-            TILE_OBJECT_TYPE.TREASURE_CHEST, TILE_OBJECT_TYPE.ICE
+            TILE_OBJECT_TYPE.TREASURE_CHEST, TILE_OBJECT_TYPE.ICE, TILE_OBJECT_TYPE.HERB_PLANT, TILE_OBJECT_TYPE.ANIMAL_MEAT
         };
         for (int i = 0; i < items.Length; i++) {
             CreateNewItemItem(items[i]);

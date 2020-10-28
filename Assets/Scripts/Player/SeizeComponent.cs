@@ -151,12 +151,9 @@ public class SeizeComponent {
                 return false;
             }
         }
-        if (tileLocation.structure.structureType == STRUCTURE_TYPE.KENNEL) {
-            if (seizedPOI is Summon summon) {
-                int numOfSummons = tileLocation.structure.GetNumberOfSummonsHere();
-                if(numOfSummons < 3) {
-                    return true;
-                }
+        if (tileLocation.structure.structureType == STRUCTURE_TYPE.KENNEL && tileLocation.structure is Kennel kennel) {
+            if (seizedPOI is Summon) {
+                return !kennel.HasReachedKennelCapacity();
             }
             return false;
         } else if (tileLocation.structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS || 

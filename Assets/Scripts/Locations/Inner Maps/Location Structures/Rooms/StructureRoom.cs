@@ -104,6 +104,9 @@ namespace Inner_Maps.Location_Structures {
         protected LocationGridTile GetCenterTile() {
             return GameUtilities.GetCenterTile(tilesInRoom, tilesInRoom[0].parentMap.map);
         }
+        public bool HasAnyAliveCharacterInRoom() {
+            return charactersInRoom.Any(c => !c.isDead);
+        }
         #endregion
 
         #region Seize

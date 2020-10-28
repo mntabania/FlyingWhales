@@ -9,8 +9,6 @@ namespace Inner_Maps.Location_Structures {
         public override string nameplateName => $"{name}";
         private const int BreedingDuration = GameManager.ticksPerHour;
         
-        private const int MaxCapacity = 10;
-        private int _remainingCapacity;
         private bool _isCurrentlyBreeding;
         private int _remainingBreedingTicks;
         private RaceClass _currentlyBreeding;
@@ -30,11 +28,6 @@ namespace Inner_Maps.Location_Structures {
         }
 
         #region Overrides
-        public override void Initialize() {
-            base.Initialize();
-            _remainingCapacity = MaxCapacity;
-            //AddBreedMonsterAction();
-        }
         public override void SetStructureObject(LocationStructureObject structureObj) {
             base.SetStructureObject(structureObj);
             _markerDummy = ObjectPoolManager.Instance
@@ -50,6 +43,14 @@ namespace Inner_Maps.Location_Structures {
                 ObjectPoolManager.Instance.DestroyObject(_markerDummy.gameObject);
             }
             //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        }
+        public bool HasReachedKennelCapacity() {
+            int numOfSummons = GetNumberOfSummonsHere();
+            return numOfSummons >= 3;
+        }
+        public int GetAvailableCapacity() {
+            int numOfSummons = GetNumberOfSummonsHere();
+            return 3 - numOfSummons;
         }
         #endregion
     }
