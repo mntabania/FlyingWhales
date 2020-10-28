@@ -576,7 +576,8 @@ public enum INTERRUPT {
     Transform_To_Werewolf,
     Revert_From_Werewolf,
     Shed_Pelt,
-    Become_Cult_Leader
+    Become_Cult_Leader,
+    Evaluate_Cultist_Affiliation,
 }
 
 public enum TRAIT_TYPE {
