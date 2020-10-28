@@ -273,6 +273,8 @@ public class CharacterVisuals {
         if (_owner.relationshipContainer.HasRelationshipWith(character)) {
             string relationshipName = _owner.relationshipContainer.GetRelationshipNameWith(character);
             return $"{character.visuals.GetCharacterNameWithIconAndColor()} - {relationshipName} of {_owner.visuals.GetCharacterNameWithIconAndColor()}\n";
+        } else {
+            return $"{_owner.visuals.GetCharacterNameWithIconAndColor()} doesn't have a relationship with {character.visuals.GetCharacterNameWithIconAndColor()}\n";
         }
         return string.Empty;
     }
