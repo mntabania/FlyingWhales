@@ -79,7 +79,7 @@ public class BuildCampfire : GoapAction {
             targetTile.structure.RemovePOI(targetTile.objHere);
         }
         Campfire campfire = InnerMapManager.Instance.CreateNewTileObject<Campfire>(TILE_OBJECT_TYPE.CAMPFIRE);
-        actor.gridTileLocation.structure.AddPOI(campfire, targetTile);
+        targetTile.structure.AddPOI(campfire, targetTile);
         goapNode.descriptionLog.AddInvolvedObjectManual(campfire.persistentID);
 
         if (targetTile != null) {
@@ -104,7 +104,7 @@ public class BuildCampfire : GoapAction {
                 }
                 FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.ANIMAL_MEAT);
                 foodPile.SetResourceInPile(food);
-                targetTile.structure.AddPOI(foodPile, foodPileTile);
+                foodPileTile.structure.AddPOI(foodPile, foodPileTile);
             }
 
         }
