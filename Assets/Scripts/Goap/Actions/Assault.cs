@@ -204,8 +204,7 @@ public class Assault : GoapAction {
         }
         return response;
     }
-    public override string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
+    public override string ReactionToTarget(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToTarget(actor, target, witness, node, status);
         if(status == REACTION_STATUS.INFORMED || node.isAssumption) {
             if (target is Character targetCharacter && targetCharacter.faction != null && targetCharacter.faction.isMajorNonPlayer && !witness.IsHostileWith(targetCharacter)) {
@@ -246,6 +245,23 @@ public class Assault : GoapAction {
         }
         return response;
     }
+    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionOfTarget(actor, target, node, status);
+        if (status == REACTION_STATUS.WITNESSED) {
+            if (target is Character targetCharacter) {
+                CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(targetCharacter, actor, target, node.crimeType);
+                if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, targetCharacter, actor, status, node);
+                    if (targetCharacter.relationshipContainer.IsFriendsWith(actor)) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status, node);    
+                    } else if (targetCharacter.relationshipContainer.IsRelativeLoverOrAffairAndNotRival(actor)) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status, node);
+                    }
+                }
+            }
+        }
+        return response;
+    }
     public override void OnStoppedInterrupt(ActualGoapNode node) {
         base.OnStoppedInterrupt(node);
         node.actor.combatComponent.RemoveHostileInRange(node.poiTarget);
@@ -274,6 +290,11 @@ public class Assault : GoapAction {
                     if (isDrinkBloodJob || crime.associatedJobType == JOB_TYPE.IMPRISON_BLOOD_SOURCE) {
                         return CRIME_TYPE.Vampire;
                     } else {
+                        CombatData combatDataAgainstPOIHit = actor.combatComponent.GetCombatData(targetCharacter);
+                        if (combatDataAgainstPOIHit != null && combatDataAgainstPOIHit.reasonForCombat == CombatManager.Retaliation) {
+                            //if combat came from retaliation, do no consider assault as a crime.
+                            return CRIME_TYPE.None;
+                        }
                         return CRIME_TYPE.Assault;
                     }
                 }

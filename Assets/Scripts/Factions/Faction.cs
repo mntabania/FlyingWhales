@@ -218,12 +218,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             } else {
                 character.ChangeFactionTo(FactionManager.Instance.vagrantFaction);
             }
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            if (character.homeSettlement != null && character.homeSettlement.locationType == LOCATION_TYPE.VILLAGE) {
-                Debug.LogError($"{character.name} still has a home village {character.homeSettlement.name} even though it is already a vagrant!");
-            }
-#endif
-            
             //character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
             //Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_not_fit");
             //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

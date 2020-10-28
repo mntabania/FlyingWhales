@@ -272,11 +272,22 @@ public class CharacterVisuals {
     public string GetRelationshipSummary(Character character) {
         if (_owner.relationshipContainer.HasRelationshipWith(character)) {
             string relationshipName = _owner.relationshipContainer.GetRelationshipNameWith(character);
-            return $"{character.visuals.GetCharacterNameWithIconAndColor()} - {relationshipName} of {_owner.visuals.GetCharacterNameWithIconAndColor()}\n";
+            int opinionOfOwner = _owner.relationshipContainer.GetTotalOpinion(character);
+            int opinionOfTarget = character.relationshipContainer.GetTotalOpinion(_owner);
+            string opinionOfOwnerStr = $"<color={BaseRelationshipContainer.OpinionColor(opinionOfOwner)}>{GetOpinionText(opinionOfOwner)}";
+            string opinionOfTargetStr = $"<color={BaseRelationshipContainer.OpinionColor(opinionOfTarget)}>{GetOpinionText(opinionOfTarget)}";
+            return $"{relationshipName}  {character.visuals.GetCharacterNameWithIconAndColor()}  {opinionOfOwnerStr}({opinionOfTargetStr})";
+            // return $"{character.visuals.GetCharacterNameWithIconAndColor()} - {relationshipName} of {_owner.visuals.GetCharacterNameWithIconAndColor()}\n";
         } else {
             return $"{_owner.visuals.GetCharacterNameWithIconAndColor()} doesn't have a relationship with {character.visuals.GetCharacterNameWithIconAndColor()}\n";
         }
         return string.Empty;
+    }
+    private string GetOpinionText(int number) {
+        if (number < 0) {
+            return $"{number.ToString()}";
+        }
+        return $"+{number.ToString()}";
     }
     public string GetBothWayRelationshipSummary(Character otherCharacter) {
         string relationship1 = GetRelationshipSummary(otherCharacter);

@@ -375,7 +375,10 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         return defaultPos;
     }
     public SETTLEMENT_TYPE GetSettlementTypeForCharacter(Character character) {
-        if (character.characterClass.className == "Cult Leader") {
+        // if (character.characterClass.className == "Cult Leader") {
+        //     return SETTLEMENT_TYPE.Cult_Town;
+        // }
+        if (character.faction != null && character.faction.factionType.type == FACTION_TYPE.Demon_Cult) {
             return SETTLEMENT_TYPE.Cult_Town;
         }
         return GetSettlementTypeForRace(character.race);

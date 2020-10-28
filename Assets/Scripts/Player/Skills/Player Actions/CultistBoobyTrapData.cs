@@ -67,7 +67,7 @@ public class CultistBoobyTrapData : PlayerAction {
             PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(target.name, UtilityScripts.Utilities.InvalidColorize("Cannot target Close Friends."));
             return;
         }
-        string relationshipSummary = owner.visuals.GetBothWayRelationshipSummary(target);
+        string relationshipSummary = owner.visuals.GetRelationshipSummary(target);
         if (!string.IsNullOrEmpty(relationshipSummary)) {
             PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(target.name, relationshipSummary);    
         }

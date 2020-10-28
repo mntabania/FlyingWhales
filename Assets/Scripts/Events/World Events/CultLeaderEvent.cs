@@ -84,7 +84,9 @@ namespace Events.World_Events {
             }
         }
         private void OnCharacterChangedClass(Character character, CharacterClass previousClass, CharacterClass newClass) {
-            if (_currentCultLeader == character && newClass.className != "Cult Leader") {
+            //NOTE: Added checker for werewolf class since werewolf class is only temporary.
+            //TODO: Improve This
+            if (_currentCultLeader == character && newClass.className != "Cult Leader" && newClass.className != "Werewolf") {
                 SetCurrentCultLeaderInWorld(null);
             }
         }
