@@ -81,14 +81,18 @@ public class LogComponent {
 
     #region Debug
     public void PrintLogIfActive(string log) {
+#if UNITY_EDITOR
         //if (InteriorMapManager.Instance.currentlyShowingArea == specificLocation) {//UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this
         Debug.Log(GameManager.Instance.TodayLogString() + log);
         //}
+#endif
     }
     public void PrintLogErrorIfActive(string log) {
+#if UNITY_EDITOR
         //if (InteriorMapManager.Instance.currentlyShowingArea == specificLocation) {//UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this
         Debug.LogError(GameManager.Instance.TodayLogString() + log);
         //}
+#endif
     }
     #endregion
     

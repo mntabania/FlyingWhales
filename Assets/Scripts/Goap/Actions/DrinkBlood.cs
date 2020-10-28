@@ -139,6 +139,7 @@ public class DrinkBlood : GoapAction {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
         actor.needsComponent.AdjustDoNotGetHungry(-1);
+        actor.needsComponent.AdjustDoNotGetBored(-1);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity actionInvalidity = base.IsInvalid(node);
@@ -316,11 +317,13 @@ public class DrinkBlood : GoapAction {
     #region Effects
     public void PreDrinkSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
+        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
     }
     public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
 
         actor.needsComponent.AdjustFullness(34f);
+        actor.needsComponent.AdjustHappiness(13.3f);
 
         Infected infectedTarget = goapNode.poiTarget.traitContainer.GetTraitOrStatus<Infected>("Infected");
         infectedTarget?.InfectTarget(actor);
@@ -334,6 +337,7 @@ public class DrinkBlood : GoapAction {
         //poiTarget.SetPOIState(POI_STATE.ACTIVE);
         Character actor = goapNode.actor;
         actor.needsComponent.AdjustDoNotGetHungry(-1);
+        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
 
         if (goapNode.poiTarget is Character targetCharacter) {
             if (targetCharacter.HasItem("Phylactery")) {
