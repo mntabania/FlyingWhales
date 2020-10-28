@@ -5,7 +5,7 @@ using Inner_Maps.Location_Structures;
 
 public class RescueBehaviour : CharacterBehaviourComponent {
     public RescueBehaviour() {
-        priority = 450;
+        priority = 200;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;

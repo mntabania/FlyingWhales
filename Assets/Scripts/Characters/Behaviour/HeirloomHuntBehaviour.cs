@@ -5,7 +5,7 @@ using Inner_Maps.Location_Structures;
 
 public class HeirloomHuntBehaviour : CharacterBehaviourComponent {
     public HeirloomHuntBehaviour() {
-        priority = 450;
+        priority = 200;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
@@ -117,7 +117,7 @@ public class HeirloomHuntBehaviour : CharacterBehaviourComponent {
         if(target.currentStructure != null && target.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
             if(target is Character targetCharacter && targetCharacter.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                 HexTile targetHex = targetCharacter.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-                return actor.jobComponent.TriggerRoamAroundTile(out producedJob, targetHex.GetRandomTile());
+                return actor.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_STRUCTURE, out producedJob, targetHex.GetRandomTile());
             }
         }
         return actor.jobComponent.TriggerRoamAroundStructure(out producedJob);

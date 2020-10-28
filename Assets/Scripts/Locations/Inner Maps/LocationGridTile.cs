@@ -1233,6 +1233,15 @@ namespace Inner_Maps {
             }
             return null;
         }
+        public LocationGridTile GetFirstNeighborThatMeetCriteria(Func<LocationGridTile, bool> criteria) {
+            for (int i = 0; i < neighbourList.Count; i++) {
+                LocationGridTile neighbour = neighbourList[i];
+                if (criteria.Invoke(neighbour)) {
+                    return neighbour;
+                }
+            }
+            return null;
+        }
         public bool IsAtEdgeOfWalkableMap() {
             if ((localPlace.y == InnerTileMap.SouthEdge && localPlace.x >= InnerTileMap.WestEdge && localPlace.x <= parentMap.width - InnerTileMap.EastEdge - 1)
                 || (localPlace.y == parentMap.height - InnerTileMap.NorthEdge - 1 && localPlace.x >= InnerTileMap.WestEdge && localPlace.x <= parentMap.width - InnerTileMap.EastEdge - 1)

@@ -258,51 +258,8 @@ namespace Interrupts {
                 }
             } else {
                 log += "\nCharacter is not part of a village";
-                log += "\n20% chance: if the character's Faction also owns other Villages or Special Structure";
-                int roll = UnityEngine.Random.Range(0, 100);
-                log += "\n-Roll: " + roll;
-                LocationStructure chosenHomeStructure = null;
-                if (roll < 20) {
-                    if (actor.faction.HasOwnedSettlementExcept(actor.homeSettlement)) {
-                        log += "\nFind an unoccupied House in one of those other Villages and set that as its Home Structure";
-                        string identifier = string.Empty;
-                        chosenHomeStructure = FindHabitableStructureOrUnoccupiedHouseInOneOfOwnedSettlementsProcessing(actor, ref identifier);
-                        if (chosenHomeStructure != null && identifier == "unoccupied") {
-                            log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
-                            actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
-                            actor.logComponent.PrintLogIfActive(log);
-                            return;
-                        }
-
-                        log += "\nFind a Habitable Special Structure or House that is still not at full capacity and is home of a non-enemy and non-rival relative or a non-relative but close friend";
-                        if (chosenHomeStructure != null && identifier == "occupied") {
-                            log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
-                            actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
-                            actor.logComponent.PrintLogIfActive(log);
-                            return;
-                        }
-
-                        if (chosenHomeStructure != null && identifier == "habitable") {
-                            log += "\nFound Habitable Structure: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
-                            actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
-                            actor.logComponent.PrintLogIfActive(log);
-                            return;
-                        }
-
-                        log += "\n30% chance: Find the Village with least number of Villagers owned by the character's Faction and set its Town Center as its Home Structure. Make character go there.";
-                        if (GameUtilities.RollChance(30)) {
-                            chosenHomeStructure = actor.faction.GetFirstStructureOfTypeFromOwnedSettlementsWithLeastVillagers(STRUCTURE_TYPE.CITY_CENTER);
-                            if(chosenHomeStructure != null) {
-                                log += "\nFound City Center: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
-                                actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
-                                actor.logComponent.PrintLogIfActive(log);
-                                return;
-                            }
-                        }
-                    }
-                }
                 log += "\n35% chance: if the character is a Faction Leader and they do not own any Villages";
-                roll = UnityEngine.Random.Range(0, 100);
+                int roll = UnityEngine.Random.Range(0, 100);
                 log += "\n-Roll: " + roll;
                 if (roll < 35) {
                     if(actor.isFactionLeader && !actor.faction.HasOwnedSettlement() && actor.currentRegion != null && !actor.currentRegion.IsRegionVillageCapacityReached()) {
@@ -332,6 +289,50 @@ namespace Interrupts {
                             actor.jobComponent.TriggerFindNewVillage(targetTile.GetCenterLocationGridTile(), chosenStructurePrefab.name);
                             actor.logComponent.PrintLogIfActive(log);
                             return;
+                        }
+                    }
+                }
+
+                log += "\n80% chance: if the character's Faction also owns other Villages or Special Structure";
+                roll = UnityEngine.Random.Range(0, 100);
+                log += "\n-Roll: " + roll;
+                LocationStructure chosenHomeStructure = null;
+                if (roll < 80) {
+                    if (actor.faction.HasOwnedSettlementExcept(actor.homeSettlement)) {
+                        log += "\nFind an unoccupied House in one of those other Villages and set that as its Home Structure";
+                        string identifier = string.Empty;
+                        chosenHomeStructure = FindHabitableStructureOrUnoccupiedHouseInOneOfOwnedSettlementsProcessing(actor, ref identifier);
+                        if (chosenHomeStructure != null && identifier == "unoccupied") {
+                            log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
+                            actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
+                            actor.logComponent.PrintLogIfActive(log);
+                            return;
+                        }
+
+                        log += "\nFind a Habitable Special Structure or House that is still not at full capacity and is home of a non-enemy and non-rival relative or a non-relative but close friend";
+                        if (chosenHomeStructure != null && identifier == "occupied") {
+                            log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
+                            actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
+                            actor.logComponent.PrintLogIfActive(log);
+                            return;
+                        }
+
+                        if (chosenHomeStructure != null && identifier == "habitable") {
+                            log += "\nFound Habitable Structure: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
+                            actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
+                            actor.logComponent.PrintLogIfActive(log);
+                            return;
+                        }
+
+                        log += "\n30% chance: Find the Village with least number of Villagers owned by the character's Faction and set its Town Center as its Home Structure. Make character go there.";
+                        if (GameUtilities.RollChance(30)) {
+                            chosenHomeStructure = actor.faction.GetFirstStructureOfTypeFromOwnedSettlementsWithLeastVillagers(STRUCTURE_TYPE.CITY_CENTER);
+                            if (chosenHomeStructure != null) {
+                                log += "\nFound City Center: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
+                                actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
+                                actor.logComponent.PrintLogIfActive(log);
+                                return;
+                            }
                         }
                     }
                 }

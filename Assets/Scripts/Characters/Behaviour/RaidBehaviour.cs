@@ -6,7 +6,7 @@ using Locations.Settlements;
 
 public class RaidBehaviour : CharacterBehaviourComponent {
     public RaidBehaviour() {
-        priority = 450;
+        priority = 200;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
