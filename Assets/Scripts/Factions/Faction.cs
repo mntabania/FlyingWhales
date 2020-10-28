@@ -27,7 +27,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public List<BaseSettlement> ownedSettlements { get; }
     public List<Character> bannedCharacters { get; }
     public Dictionary<Faction, FactionRelationship> relationships { get; }
-    public FactionType factionType { get; }
+    public FactionType factionType { get; protected set; }
     public bool isActive { get; private set; }
     // public List<Log> history { get; }
     public List<JobQueueItem> availableJobs { get; }
@@ -79,7 +79,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         // SetEmblem(FactionManager.Instance.GenerateFactionEmblem(this));
         SetFactionColor(UtilityScripts.Utilities.GetColorForFaction());
         SetFactionActiveState(true);
-        factionType = FactionManager.Instance.CreateFactionType(_factionType);
+        SetFactionType(_factionType);
+        //factionType = FactionManager.Instance.CreateFactionType(_factionType);
         characters = new List<Character>();
         relationships = new Dictionary<Faction, FactionRelationship>();
         ownedSettlements = new List<BaseSettlement>();
@@ -1048,7 +1049,29 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         pathfindingDoorTag = tag;
     }
     #endregion
-    
+
+    #region Faction Type
+    public bool SetFactionType(FactionType factionType) {
+        if(this.factionType == null || this.factionType.type != factionType.type) {
+            this.factionType = factionType;
+            return true;
+        }
+        return false;
+    }
+    public bool SetFactionType(FACTION_TYPE type) {
+        if(factionType == null || factionType.type != type) {
+            FactionType newFactionType = FactionManager.Instance.CreateFactionType(type);
+            return SetFactionType(newFactionType);
+        }
+        return false;
+    }
+    public void ChangeFactionType(FACTION_TYPE type) {
+        if (SetFactionType(type)) {
+            this.factionType.SetAsDefault();
+        }
+    }
+    #endregion
+
     #region Loading
     public void LoadReferences(SaveDataFaction data) {
         if (!data.isLeaderPlayer) {

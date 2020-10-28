@@ -4,15 +4,14 @@ namespace Interrupts {
     public class BecomeVampireLord : Interrupt {
         public BecomeVampireLord() : base(INTERRUPT.Become_Vampire_Lord) {
             duration = 0;
-            doesStopCurrentAction = true;
-            doesDropCurrentJob = true;
+            isSimulateneous = true;
             interruptIconString = GoapActionStateDB.No_Icon;
             logTags = new[] {LOG_TAG.Major};
             shouldShowNotif = true;
         }
 
         #region Overrides
-        public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             interruptHolder.actor.AssignClass("Vampire Lord");
             Traits.Vampire vampire = interruptHolder.actor.traitContainer.GetTraitOrStatus<Traits.Vampire>("Vampire");
             Assert.IsNotNull(vampire, $"{interruptHolder.actor.name}");
@@ -27,7 +26,7 @@ namespace Interrupts {
                 }
                 interruptHolder.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, interruptHolder.actor, "left_faction_vampire");
             }
-            return base.ExecuteInterruptEndEffect(interruptHolder);
+            return true;
         }
         #endregion
     }

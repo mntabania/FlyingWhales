@@ -4,6 +4,7 @@ using Logs;
 using Traits;
 using UnityEngine;
 using UtilityScripts;
+using Locations.Settlements;
 
 namespace Interrupts {
     public class BecomeFactionLeader : Interrupt {
@@ -17,36 +18,61 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            interruptHolder.actor.faction.SetLeader(interruptHolder.actor);
+            Character actor = interruptHolder.actor;
 
-            Faction faction = interruptHolder.actor.faction;
+            actor.faction.SetLeader(actor);
+
+            Faction faction = actor.faction;
             if (faction.isMajorNonPlayer) {
                 //Do not clear ideologies when character becomes a leader of an existing faction
                 //Instead it should only change the existing ones depending on the faction leader
                 //Keep other ideologies that is not affected by rerolls
                 //faction.factionType.ClearIdeologies();
 
+                if(actor.characterClass.className == "Cult Leader") {
+                    //Change faction type to Demon Cult
+                    faction.ChangeFactionType(FACTION_TYPE.Demon_Cult);
+
+                    //Evaluate all character if they will stay or leave
+                    for (int i = 0; i < faction.characters.Count; i++) {
+                        Character member = faction.characters[i];
+                        if (member != actor) {
+                            member.interruptComponent.TriggerInterrupt(INTERRUPT.Evaluate_Cultist_Affiliation, member);
+                        }
+                    }
+
+                    //Transform all villages to Cult Towns
+                    for (int i = 0; i < faction.ownedSettlements.Count; i++) {
+                        BaseSettlement settlement = faction.ownedSettlements[i];
+                        if (settlement is NPCSettlement village) {
+                            if (village.settlementType == null || village.settlementType.settlementType != SETTLEMENT_TYPE.Cult_Town) {
+                                village.SetSettlementType(SETTLEMENT_TYPE.Cult_Town);
+                            }
+                        }
+                    }
+                }
+
                 //Set Peace-Type Ideology:
-                FactionManager.Instance.RerollPeaceTypeIdeology(faction, interruptHolder.actor);
+                FactionManager.Instance.RerollPeaceTypeIdeology(faction, actor);
 
                 //Set Inclusivity-Type Ideology:
-                FactionManager.Instance.RerollInclusiveTypeIdeology(faction, interruptHolder.actor);
+                FactionManager.Instance.RerollInclusiveTypeIdeology(faction, actor);
                
                 //Set Religion-Type Ideology:
-                FactionManager.Instance.RerollReligionTypeIdeology(faction, interruptHolder.actor);
+                FactionManager.Instance.RerollReligionTypeIdeology(faction, actor);
 
                 //Set Faction Leader Trait Based Ideology:
-                FactionManager.Instance.RerollFactionLeaderTraitIdeology(faction, interruptHolder.actor);
+                FactionManager.Instance.RerollFactionLeaderTraitIdeology(faction, actor);
 
                 //Validate crimes
-                FactionManager.Instance.RevalidateFactionCrimes(faction, interruptHolder.actor);
+                FactionManager.Instance.RevalidateFactionCrimes(faction, actor);
                 
                 Messenger.Broadcast(Signals.FACTION_IDEOLOGIES_CHANGED, faction);
                 Messenger.Broadcast(Signals.FACTION_CRIMES_CHANGED, faction);
 
                 //create relationships
                 //NOTE: Should not default relationships to neutral when leader changes, because we only want to overwrite relationships if other leader is friend/enemy 
-                FactionManager.Instance.RerollFactionRelationships(faction, interruptHolder.actor, false, OnFactionRelationshipSet);
+                FactionManager.Instance.RerollFactionRelationships(faction, actor, false, OnFactionRelationshipSet);
 
                 Log changeIdeologyLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "ideology_change", null, LOG_TAG.Life_Changes);
                 changeIdeologyLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
@@ -55,7 +81,7 @@ namespace Interrupts {
                 
                 //check if faction characters still meets ideology requirements
                 List<Character> charactersToCheck = new List<Character>(faction.characters);
-                charactersToCheck.Remove(interruptHolder.actor);
+                charactersToCheck.Remove(actor);
                 for (int i = 0; i < charactersToCheck.Count; i++) {
                     Character factionMember = charactersToCheck[i];
                     faction.CheckIfCharacterStillFitsIdeology(factionMember);
@@ -63,8 +89,8 @@ namespace Interrupts {
             }
 
             overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Become Faction Leader", "became_leader", null, LOG_TAG.Major);
-            overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            overrideEffectLog.AddToFillers(interruptHolder.actor.faction, interruptHolder.actor.faction.name, LOG_IDENTIFIER.FACTION_1);
+            overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            overrideEffectLog.AddToFillers(actor.faction, actor.faction.name, LOG_IDENTIFIER.FACTION_1);
             return true;
         }
         #endregion
@@ -99,7 +125,6 @@ namespace Interrupts {
                     PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
                 }    
             }
-            
         }
     }
 }
