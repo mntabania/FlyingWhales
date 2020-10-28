@@ -87,13 +87,15 @@ public class SmallSpider : Summon {
         Faction targetFaction = faction;
 
         LocationStructure home = homeStructure;
+        NPCSettlement settlement = homeSettlement;
+        Region region = homeRegion;
         List<HexTile> ogTerritories = territories;
         
         SetShowNotificationOnDeath(false);
         Death("Transform Giant Spider");
         
         //create giant spider
-        Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Giant_Spider, targetFaction, homeSettlement, homeRegion, homeStructure);
+        Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Giant_Spider, targetFaction, settlement, region, home);
         summon.SetName(name);
         if (ogTerritories.Count > 0) {
             for (int i = 0; i < ogTerritories.Count; i++) {

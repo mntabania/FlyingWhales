@@ -827,6 +827,7 @@ public static class Extensions {
             case JOB_TYPE.KIDNAP_RAID:
             case JOB_TYPE.CAPTURE_CHARACTER:
             case JOB_TYPE.BERSERK_ATTACK:
+            case JOB_TYPE.SNATCH:
                 return false;
             default:
                 return true;

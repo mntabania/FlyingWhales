@@ -16,10 +16,9 @@ public class CultistPoisonData : PlayerAction {
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character character) {
             List<Character> choices = character.GetListOfCultistTargets(x => x.isNormalCharacter && x.race.IsSapient() && !x.isDead);
-            if(choices != null) {
-                UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), validityChecker: t => CanBePoisoned(character, t), onHoverAction: t => OnHoverEnter(character, t), onHoverExitAction: OnHoverExit, showCover: true,
-                    shouldShowConfirmationWindowOnPick: false, layer: 40, asButton: false);
-            }
+            if(choices == null) { choices = new List<Character>(); }
+            UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), validityChecker: t => CanBePoisoned(character, t), onHoverAction: t => OnHoverEnter(character, t), onHoverExitAction: OnHoverExit, showCover: true,
+                shouldShowConfirmationWindowOnPick: false, layer: 25, asButton: false);
         }
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
@@ -58,16 +57,23 @@ public class CultistPoisonData : PlayerAction {
     }
     private void OnHoverEnter(Character owner, Character target) {
         if (target.traitContainer.HasTrait("Cultist")) {
-            UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Cultists.</color>");
+            // UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Cultists.</color>");
+            PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(target.name, UtilityScripts.Utilities.InvalidColorize("Cannot target Cultists."));
             return;
         }
         if (owner.relationshipContainer.HasOpinionLabelWithCharacter(target, RelationshipManager.Close_Friend)) {
-            UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Close Friends.</color>");
+            // UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Close Friends.</color>");
+            PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(target.name, UtilityScripts.Utilities.InvalidColorize("Cannot target Close Friends."));
             return;
+        }
+        string relationshipSummary = owner.visuals.GetBothWayRelationshipSummary(target);
+        if (!string.IsNullOrEmpty(relationshipSummary)) {
+            PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(target.name, relationshipSummary);    
         }
     }
     private void OnHoverExit(Character target) {
-        UIManager.Instance.HideSmallInfo();
+        // UIManager.Instance.HideSmallInfo();
+        PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
     }
     private void OnChooseCharacter(object obj, Character actor) {
         if (obj is Character targetCharacter) {

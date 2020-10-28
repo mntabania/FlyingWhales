@@ -1426,6 +1426,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if(lover == factionLeader && isFactionLeaderFriendOrCloseFriend) {
             debugLog += "\nFaction Leader is Lover and Faction Leader is Friend/Close Friend, 90%";
             chance = 90;
+        } else if (traitContainer.HasTrait("Cultist") && faction.factionType.type == FACTION_TYPE.Demon_Cult) {
+            debugLog += "\nCharacter is a Cultist and new faction is a Demon Cult";
+            chance = 50;
         } else if (relationshipContainer.HasRelationshipWith(factionLeader, RELATIONSHIP_TYPE.AFFAIR) && isFactionLeaderFriendOrCloseFriend && hasNoLoverOrLoverIsNotFriendOrCloseFriend) {
             debugLog += "\nFaction Leader is Affair and Faction Leader is Friend/Close Friend and Character has no lover that is friend/close friend, 60%";
             chance = 60;

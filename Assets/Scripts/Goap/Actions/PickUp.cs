@@ -44,6 +44,18 @@ public class PickUp : GoapAction {
                 return 2000;
             }
         }
+        if (job != null && job.jobType == JOB_TYPE.TAKE_ITEM && target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(out var settlement) 
+            && settlement.locationType == LOCATION_TYPE.VILLAGE && settlement.owner != null) {
+            if (settlement.owner != actor.faction && actor.faction != null) {
+                FactionRelationship rel = actor.faction.GetRelationshipWith(settlement.owner);
+                if (rel != null && rel.relationshipStatus != FACTION_RELATIONSHIP_STATUS.Hostile) {
+                    costLog += $" +2000(Job is take item and Location of target is in settlement that is NOT hostile with actor)";
+                    actor.logComponent.AppendCostLog(costLog);
+                    return 2000;
+                }
+            }
+
+        }
         costLog = $"\n{name} {target.nameWithID}:";
         int cost = 0;
         if (job != null && job.jobType == JOB_TYPE.OBTAIN_PERSONAL_ITEM) {

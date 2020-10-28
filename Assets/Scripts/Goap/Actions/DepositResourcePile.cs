@@ -116,14 +116,19 @@ public class DepositResourcePile : GoapAction {
         base.OnStopWhileStarted(node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        actor.UncarryPOI(poiTarget, dropLocation: actor.gridTileLocation);
+        // actor.UncarryPOI(poiTarget, dropLocation: actor.gridTileLocation);
+        if (actor.carryComponent.carriedPOI is ResourcePile resourcePile) {
+            actor.UncarryPOI(resourcePile, dropLocation: actor.gridTileLocation);
+        }
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        Character targetCharacter = poiTarget as Character;
-        actor.UncarryPOI(poiTarget);
+        // actor.UncarryPOI(poiTarget);
+        if (actor.carryComponent.carriedPOI is ResourcePile resourcePile) {
+            actor.UncarryPOI(resourcePile, dropLocation: actor.gridTileLocation);
+        }
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         Character actor = node.actor;
