@@ -358,7 +358,6 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         if(targetDestination == partySettlement) {
             goHome = true;
         }
-        
         //Every time we switch to moving state we must set the target destination so that the members will know where to go
         if (goHome) {
             SetTargetDestination(partySettlement);
