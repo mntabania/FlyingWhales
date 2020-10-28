@@ -79,7 +79,9 @@ namespace Traits {
             }
             if (owner.needsComponent.isStarving && owner.lycanData.isMaster && !IsHuntingForPrey() && GameUtilities.RollChance(1)) {
                 Character huntPreyTarget = GetHuntPreyTarget();
-                owner.jobComponent.TriggerHuntPreyJob(huntPreyTarget);
+                if (huntPreyTarget != null) {
+                    owner.jobComponent.TriggerHuntPreyJob(huntPreyTarget);    
+                }
             }
             if (owner.lycanData.dislikesBeingLycan && GameUtilities.RollChance(1)) { //1
                 if (IsHuntingForPrey()) {

@@ -455,6 +455,7 @@ public static class Extensions {
                 priority = 1080;
                 break;
             case JOB_TYPE.TRIGGER_FLAW:
+            case JOB_TYPE.FIND_NEW_VILLAGE:
                 priority = 1050;
                 break;
             case JOB_TYPE.RETURN_HOME_URGENT:
@@ -544,7 +545,6 @@ public static class Extensions {
             case JOB_TYPE.PLACE_BLUEPRINT:
             case JOB_TYPE.SPAWN_LAIR:
             case JOB_TYPE.BUILD_VAMPIRE_CASTLE:
-            case JOB_TYPE.FIND_NEW_VILLAGE:
                 priority = 850;
                 break;
             case JOB_TYPE.STEAL_CORPSE:

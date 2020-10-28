@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Locations.Settlements;
 using Traits;
 using UnityEngine;
 using UtilityScripts;
@@ -28,11 +29,13 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
                 log += $"\nActive villager faction count is {villagerFactionCount.ToString()}";
                 if (villagerFactionCount < 20) {
                     log += $"\nActive villager factions is less than 20, rolling chances";
-                    int createChance = 3;
+                    int factionsInRegion = GetFactionsInRegion(character.currentRegion);
+                    float createChance = factionsInRegion >= 2 ? 2f : 3f;
                     if (character.traitContainer.HasTrait("Inspiring", "Ambitious")) {
-                        createChance = 15;
+                        createChance = factionsInRegion >= 2 ? 0.5f : 15f;
                     }
-                    if (GameUtilities.RollChance(createChance, ref log)) {
+                    float roll = Random.Range(0f, 100f);
+                    if (roll < createChance) {
                         log += $"\nChance met, creating new faction";
                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Faction, character);
                         return true;
@@ -58,5 +61,16 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
             }
         }
         return false;
+    }
+
+    private int GetFactionsInRegion(Region region) {
+        List<Faction> factionsInRegion = new List<Faction>();
+        for (int i = 0; i < region.settlementsInRegion.Count; i++) {
+            BaseSettlement settlement = region.settlementsInRegion[i];
+            if (settlement is NPCSettlement && settlement.owner != null && settlement.owner.isMajorNonPlayer && !factionsInRegion.Contains(settlement.owner)) {
+                factionsInRegion.Add(settlement.owner);
+            }
+        }
+        return factionsInRegion.Count;
     }
 }

@@ -405,6 +405,9 @@ public class GameManager : MonoBehaviour {
     public int GetHoursBasedOnTicks(int ticks) {
         return ticks / ticksPerHour;
     }
+    public int GetMinutesBasedOnTicks(int ticks) {
+        return ticks * 5; //since per tick is 5 minutes
+    }
     public int GetCeilingHoursBasedOnTicks(int ticks) {
         return Mathf.CeilToInt(ticks / (float) ticksPerHour);
     }

@@ -15,7 +15,7 @@ public class CultistBehaviour : CharacterBehaviourComponent {
         if (character.homeSettlement == null && !character.currentRegion.IsRegionVillageCapacityReached() && character.faction != null && character.faction.factionType.type == FACTION_TYPE.Demon_Cult) {
             HexTile targetTile = character.currentRegion.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
             if(targetTile != null) {
-                StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, character.faction.factionType.mainResource);
+                StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, character.faction.factionType.mainResource, true);
                 List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
                 GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
                 return character.jobComponent.TriggerFindNewVillage(targetTile.GetCenterLocationGridTile(), out producedJob, chosenStructurePrefab.name);

@@ -11,7 +11,7 @@ namespace Traits {
             description = "Lost a loved one.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(72);
             moodEffect = -12;
             isStacking = true;
             stackLimit = 5;
