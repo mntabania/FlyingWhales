@@ -428,6 +428,10 @@ public class FactionManager : BaseMonoBehaviour {
     public void RerollInclusiveTypeIdeology(Faction faction, Character leader) {
         if (faction.factionType.type == FACTION_TYPE.Demon_Cult) {
             //If Demon Cult, 100% chance Demon Worshipper Exclusive
+
+            //Remove first the existing Exclusive ideology so it can be replaced with a new one that has a diff requirement
+            faction.factionType.RemoveIdeology(FACTION_IDEOLOGY.Exclusive);
+
             Exclusive exclusive = CreateIdeology<Exclusive>(FACTION_IDEOLOGY.Exclusive);
             exclusive.SetRequirement(RELIGION.Demon_Worship);
             faction.factionType.AddIdeology(exclusive);
@@ -435,6 +439,9 @@ public class FactionManager : BaseMonoBehaviour {
             Inclusive inclusive = CreateIdeology<Inclusive>(FACTION_IDEOLOGY.Inclusive);
             faction.factionType.AddIdeology(inclusive);
         } else {
+            //Remove first the existing Exclusive ideology so it can be replaced with a new one that has a diff requirement
+            faction.factionType.RemoveIdeology(FACTION_IDEOLOGY.Exclusive);
+
             Exclusive exclusive = CreateIdeology<Exclusive>(FACTION_IDEOLOGY.Exclusive);
             if(faction.factionType.type == FACTION_TYPE.Vampire_Clan && GameUtilities.RollChance(35)) {
                 exclusive.SetRequirement("Vampire");
