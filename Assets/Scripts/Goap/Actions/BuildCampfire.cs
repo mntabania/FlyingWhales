@@ -64,13 +64,50 @@ public class BuildCampfire : GoapAction {
 
     #region Effects
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
-        LocationGridTile targetTile = goapNode.actor.gridTileLocation;
-        if (targetTile.objHere != null) {
+        Character actor = goapNode.actor;
+        LocationGridTile targetTile = actor.gridTileLocation;
+
+        if (targetTile != null && targetTile.objHere != null) {
+            if (targetTile.collectionOwner.isPartOfParentRegionMap) {
+                targetTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable() && x.collectionOwner.isPartOfParentRegionMap && x.collectionOwner.partOfHextile.hexTileOwner == targetTile.collectionOwner.partOfHextile.hexTileOwner);
+            }
+        }
+        if (targetTile != null && targetTile.objHere != null) {
+            targetTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable());
+        }
+        if (targetTile != null && targetTile.objHere != null) {
             targetTile.structure.RemovePOI(targetTile.objHere);
         }
         Campfire campfire = InnerMapManager.Instance.CreateNewTileObject<Campfire>(TILE_OBJECT_TYPE.CAMPFIRE);
-        goapNode.actor.gridTileLocation.structure.AddPOI(campfire, targetTile);
+        actor.gridTileLocation.structure.AddPOI(campfire, targetTile);
         goapNode.descriptionLog.AddInvolvedObjectManual(campfire.persistentID);
+
+        if (targetTile != null) {
+            LocationGridTile foodPileTile = null; ;
+            if (targetTile.collectionOwner.isPartOfParentRegionMap) {
+                foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable() && x.collectionOwner.isPartOfParentRegionMap && x.collectionOwner.partOfHextile.hexTileOwner == targetTile.collectionOwner.partOfHextile.hexTileOwner);
+            }
+
+            if(foodPileTile == null) {
+                foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable());
+            }
+            if (foodPileTile == null) {
+                foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.IsPassable());
+            }
+            if(foodPileTile != null) {
+                if(foodPileTile.objHere != null) {
+                    foodPileTile.structure.RemovePOI(foodPileTile.objHere);
+                }
+                int food = 12;
+                if (actor.partyComponent.isMemberThatJoinedQuest) {
+                    food = actor.partyComponent.currentParty.membersThatJoinedQuest.Count * 12;
+                }
+                FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.ANIMAL_MEAT);
+                foodPile.SetResourceInPile(food);
+                targetTile.structure.AddPOI(foodPile, targetTile);
+            }
+
+        }
         // campfire.logComponent.AddHistory(goapNode.descriptionLog);
     }
     #endregion
