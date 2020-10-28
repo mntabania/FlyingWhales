@@ -15,9 +15,10 @@ public class CultistPoisonData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character character) {
-            List<Character> choices = character.GetListOfCultistTargets(x => x.isNormalCharacter && x.traitContainer.HasTrait("Cultist") == false && x.isDead == false && character.relationshipContainer.HasOpinionLabelWithCharacter(x, RelationshipManager.Close_Friend) == false);
+            List<Character> choices = character.GetListOfCultistTargets(x => x.isNormalCharacter && x.race.IsSapient() && !x.isDead);
             if(choices != null) {
-                UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), showCover: true, layer: 40, asButton: false, shouldShowConfirmationWindowOnPick: false);
+                UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), validityChecker: t => CanBePoisoned(character, t), onHoverAction: t => OnHoverEnter(character, t), onHoverExitAction: OnHoverExit, showCover: true,
+                    shouldShowConfirmationWindowOnPick: false, layer: 40, asButton: false);
             }
         }
     }
@@ -31,6 +32,12 @@ public class CultistPoisonData : PlayerAction {
         }
         return false;
     }
+    public override bool IsValid(IPlayerActionTarget target) {
+        if (PlayerSkillManager.Instance.selectedArchetype != PLAYER_ARCHETYPE.Lich) {
+            return false;
+        }
+        return base.IsValid(target);
+    }
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter); 
         if (targetCharacter.canPerform == false) {
@@ -40,6 +47,28 @@ public class CultistPoisonData : PlayerAction {
     }
     #endregion
 
+    private bool CanBePoisoned(Character owner, Character target) {
+        if (target.traitContainer.HasTrait("Cultist")) {
+            return false;
+        }
+        if (owner.relationshipContainer.HasOpinionLabelWithCharacter(target, RelationshipManager.Close_Friend)) {
+            return false;
+        }
+        return true;
+    }
+    private void OnHoverEnter(Character owner, Character target) {
+        if (target.traitContainer.HasTrait("Cultist")) {
+            UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Cultists.</color>");
+            return;
+        }
+        if (owner.relationshipContainer.HasOpinionLabelWithCharacter(target, RelationshipManager.Close_Friend)) {
+            UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Close Friends.</color>");
+            return;
+        }
+    }
+    private void OnHoverExit(Character target) {
+        UIManager.Instance.HideSmallInfo();
+    }
     private void OnChooseCharacter(object obj, Character actor) {
         if (obj is Character targetCharacter) {
             UIManager.Instance.HideObjectPicker();

@@ -216,7 +216,7 @@ public class ReactionComponent : CharacterComponent {
 
             //Should not add witnessed log if there are no reaction/emotion felt
             //Reason: Assault action still logs that the character witnessed actor is assaulting target even if there are no reactions trigger
-            if (addLog && emotionsToActor != string.Empty && emotionsToTarget != string.Empty) {
+            if (addLog && (emotionsToActor != string.Empty || emotionsToTarget != string.Empty)) {
                 //Only log witness event if event is not an action. If it is an action, the CharacterManager.Instance.CanAddCharacterLogOrShowNotif must return true
                 if (reactable is ActualGoapNode action && (!action.action.shouldAddLogs || !CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType))) {
                     //Should not add witness log if the action log itself is not added to the actor

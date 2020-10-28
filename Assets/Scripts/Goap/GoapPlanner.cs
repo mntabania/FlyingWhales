@@ -202,7 +202,11 @@ public class GoapPlanner {
                 if (!owner.traitContainer.HasTrait("Vampire")) {
                     //Special case for when a character cannot do hunger recovery, he/she must produce food instead
                     //NOTE: Excluded vampires because we don't want vampires to produce food when they fail to drink blood.
-                    owner.jobComponent.CreateProduceFoodJob();    
+                    if (!owner.partyComponent.isMemberThatJoinedQuest) {
+                        //If character is currently in an active party with a quest and it is one of the members that joined the quest
+                        //It should not produce food personally because the produce food while in a party that has quest is controlled by the party itseld, the Produce Food For Camp
+                        owner.jobComponent.CreateProduceFoodJob();
+                    }
                 }
             } else if (jobType == JOB_TYPE.RECOVER_HP) {
                 owner.jobComponent.SetDoNotDoRecoverHPJob(true);
