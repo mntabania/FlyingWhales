@@ -21,13 +21,16 @@ namespace Interrupts {
 
             Faction faction = interruptHolder.actor.faction;
             if (faction.isMajorNonPlayer) {
-                faction.factionType.ClearIdeologies();
+                //Do not clear ideologies when character becomes a leader of an existing faction
+                //Instead it should only change the existing ones depending on the faction leader
+                //Keep other ideologies that is not affected by rerolls
+                //faction.factionType.ClearIdeologies();
 
                 //Set Peace-Type Ideology:
                 FactionManager.Instance.RerollPeaceTypeIdeology(faction, interruptHolder.actor);
 
                 //Set Inclusivity-Type Ideology:
-               FactionManager.Instance.RerollInclusiveTypeIdeology(faction, interruptHolder.actor);
+                FactionManager.Instance.RerollInclusiveTypeIdeology(faction, interruptHolder.actor);
                
                 //Set Religion-Type Ideology:
                 FactionManager.Instance.RerollReligionTypeIdeology(faction, interruptHolder.actor);

@@ -1022,24 +1022,33 @@ public class ReactionComponent : CharacterComponent {
                                 bool isEnsnared = targetCharacter.traitContainer.HasTrait("Ensnared");
                                 bool isFrozen = targetCharacter.traitContainer.HasTrait("Frozen");
                                 bool isUnconscious = targetCharacter.traitContainer.HasTrait("Unconscious");
+
                                 if (disguisedActor.isNormalCharacter && disguisedTarget.isNormalCharacter && (isRestrained || isEnsnared || isFrozen || isUnconscious) &&
                                     !disguisedTarget.crimeComponent.IsWantedBy(disguisedActor.faction)) {
+
+                                    bool isResponsibleForRestrained = isRestrained && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Restrained").IsResponsibleForTrait(disguisedActor);
+                                    bool isResponsibleForEnsnared = isEnsnared && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Ensnared").IsResponsibleForTrait(disguisedActor);
+                                    bool isResponsibleForFrozen = isFrozen && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Frozen").IsResponsibleForTrait(disguisedActor);
+                                    bool isResponsibleForUnconscious = isUnconscious && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Unconscious").IsResponsibleForTrait(disguisedActor);
+
                                     if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.REMOVE_STATUS)) {
-                                        if (isRestrained) {
+                                        if (isRestrained && !isResponsibleForRestrained) {
                                             actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Restrained");
                                         }
-                                        if (isEnsnared) {
+                                        if (isEnsnared && !isResponsibleForEnsnared) {
                                             actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Ensnared");
                                         }
-                                        if (isFrozen) {
+                                        if (isFrozen && !isResponsibleForFrozen) {
                                             actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Frozen");
                                         }
-                                        if (isUnconscious) {
+                                        if (isUnconscious && !isResponsibleForUnconscious) {
                                             actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Unconscious");
                                         }
                                     } else {
-                                        if (!disguisedTarget.defaultCharacterTrait.HasReactedToThis(disguisedActor)) {
-                                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);
+                                        if(!isResponsibleForRestrained && !isResponsibleForEnsnared && !isResponsibleForFrozen && !isResponsibleForUnconscious) {
+                                            if (!disguisedTarget.defaultCharacterTrait.HasReactedToThis(disguisedActor)) {
+                                                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);
+                                            }
                                         }
                                     }
                                 }
@@ -1167,7 +1176,7 @@ public class ReactionComponent : CharacterComponent {
                             if (targetCharacter.isNormalCharacter) {
                                 debugLog = $"{debugLog}\n-Target is a normal character";
                                 Dead dead = targetCharacter.traitContainer.GetTraitOrStatus<Dead>("Dead");
-                                if (dead == null || dead.responsibleCharacter != actor) {
+                                if (dead == null || !dead.IsResponsibleForTrait(actor)) {
                                     if (UnityEngine.Random.Range(0, 2) == 0) {
                                         debugLog = $"{debugLog}\n-Target will Mock";
                                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
@@ -1188,7 +1197,7 @@ public class ReactionComponent : CharacterComponent {
                                     actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, $"saw dead {disguisedTarget.name}");
                                 } else {
                                     Dead dead = targetCharacter.traitContainer.GetTraitOrStatus<Dead>("Dead");
-                                    if(dead == null || dead.responsibleCharacter != actor) {
+                                    if(dead == null || !dead.IsResponsibleForTrait(actor)) {
                                         if (UnityEngine.Random.Range(0, 2) == 0) {
                                             debugLog = $"{debugLog}\n-Target will Cry";
                                             actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, $"saw dead {disguisedTarget.name}");
@@ -1204,7 +1213,7 @@ public class ReactionComponent : CharacterComponent {
                                 debugLog = $"{debugLog}\n-Target is Relative, Lover or Affair and not Rival";
                                 // if Actor is Relative, Lover, Affair and not a Rival
                                 Dead dead = targetCharacter.traitContainer.GetTraitOrStatus<Dead>("Dead");
-                                if (dead == null || dead.responsibleCharacter != actor) {
+                                if (dead == null || !dead.IsResponsibleForTrait(actor)) {
                                     if (UnityEngine.Random.Range(0, 2) == 0) {
                                         debugLog = $"{debugLog}\n-Target will Cry";
                                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, $"saw dead {disguisedTarget.name}");
@@ -1216,7 +1225,7 @@ public class ReactionComponent : CharacterComponent {
                             } else if (opinionLabel == RelationshipManager.Enemy) {
                                 debugLog = $"{debugLog}\n-Target is Enemy";
                                 Dead dead = targetCharacter.traitContainer.GetTraitOrStatus<Dead>("Dead");
-                                if (dead == null || dead.responsibleCharacter != actor) {
+                                if (dead == null || !dead.IsResponsibleForTrait(actor)) {
                                     if (UnityEngine.Random.Range(0, 100) < 25) {
                                         if (UnityEngine.Random.Range(0, 2) == 0) {
                                             debugLog = $"{debugLog}\n-Target will Mock";
@@ -1233,7 +1242,7 @@ public class ReactionComponent : CharacterComponent {
                             } else if (opinionLabel == RelationshipManager.Rival) {
                                 debugLog = $"{debugLog}\n-Target is Rival";
                                 Dead dead = targetCharacter.traitContainer.GetTraitOrStatus<Dead>("Dead");
-                                if (dead == null || dead.responsibleCharacter != actor) {
+                                if (dead == null || !dead.IsResponsibleForTrait(actor)) {
                                     if (UnityEngine.Random.Range(0, 2) == 0) {
                                         debugLog = $"{debugLog}\n-Target will Mock";
                                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
@@ -1245,7 +1254,7 @@ public class ReactionComponent : CharacterComponent {
                             } else if (targetCharacter.isNormalCharacter && actor.relationshipContainer.HasRelationshipWith(targetCharacter)) {
                                 debugLog = $"{debugLog}\n-Otherwise, Shock";
                                 Dead dead = targetCharacter.traitContainer.GetTraitOrStatus<Dead>("Dead");
-                                if (dead == null || dead.responsibleCharacter != actor) {
+                                if (dead == null || !dead.IsResponsibleForTrait(actor)) {
                                     actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);
                                 }
                             }

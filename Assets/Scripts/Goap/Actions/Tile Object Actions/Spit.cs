@@ -68,7 +68,7 @@ public class Spit : GoapAction {
         }
         Betrayed betrayed = actor.traitContainer.GetTraitOrStatus<Betrayed>("Betrayed");
         if (target is Tombstone tombstone) {
-            if (betrayed != null && betrayed.responsibleCharacter == tombstone.character) {
+            if (betrayed != null && betrayed.IsResponsibleForTrait(tombstone.character)) {
                 cost -= 25;
                 costLog += " -25(Actor is betrayed by target)";
             }    

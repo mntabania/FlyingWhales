@@ -44,21 +44,33 @@ public partial class InteractionManager {
         return false;
     }
     public bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter) {
-        if (character.isAtHomeRegion 
-            && !character.traitContainer.HasTrait("Criminal") 
-            && !character.traitContainer.HasTrait("Coward") 
-            && character.homeSettlement != null 
-            && character.homeSettlement.prison != null
-            /*&& !character.combatComponent.bannedFromHostileList.Contains(targetCharacter)*/) {
+        if (character.isAtHomeRegion && !character.traitContainer.HasTrait("Criminal") && !character.traitContainer.HasTrait("Coward") && character.homeSettlement != null && character.homeSettlement.prison != null) {
             Criminal criminalTrait = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
             if (criminalTrait == null || !criminalTrait.isImprisoned) {
-                if (character.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                    return false;
-                } else if ((character.relationshipContainer.IsFamilyMember(targetCharacter) || character.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
-                                && !character.relationshipContainer.IsEnemiesWith(targetCharacter)) {
-                    return false;
+                bool canTakeApprehend = true;
+                if(character.traitContainer.HasTrait("Cultist") && targetCharacter.traitContainer.HasTrait("Cultist")) {
+                    canTakeApprehend = false;
                 }
-                return true;
+                if (character.traitContainer.HasTrait("Hemophiliac")) {
+                    Vampire vampireTrait = targetCharacter.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                    if(vampireTrait != null && vampireTrait.DoesCharacterKnowThisVampire(character)) {
+                        canTakeApprehend = false;
+                    }
+                }
+                if (character.traitContainer.HasTrait("Lycanphiliac")) {
+                    if (targetCharacter.isLycanthrope && targetCharacter.lycanData.DoesCharacterKnowThisLycan(character)) {
+                        canTakeApprehend = false;
+                    }
+                }
+                if (canTakeApprehend) {
+                    if (character.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                        return false;
+                    } else if ((character.relationshipContainer.IsFamilyMember(targetCharacter) || character.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
+                               && !character.relationshipContainer.IsEnemiesWith(targetCharacter)) {
+                        return false;
+                    }
+                    return true;
+                }
             }
         }
         return false;

@@ -665,19 +665,25 @@ public class CombatState : CharacterState {
     }
     private void CreateNewCombatTargetLog() {
         CombatData combatData = stateComponent.owner.combatComponent.GetCombatData(currentClosestHostile);
-        Log log;
-        string key = stateComponent.owner.combatComponent.GetCombatLogKeyReason(currentClosestHostile);
-        if (key != string.Empty && LocalizationManager.Instance.HasLocalizedValue("Character", "Combat", key)) {
-            log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Combat", "new_combat_target_with_reason", providedTags: LOG_TAG.Combat);
-            string reason = LocalizationManager.Instance.GetLocalizedValue("Character", "Combat", key);
-            log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
-        } else {
-            //use default log instead, because no text for combat reason was provided. This is to prevent text with %125%.
-            log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Combat", "new_combat_target", providedTags: LOG_TAG.Combat);
+        if(combatData.connectedAction == null) {
+            //If the combat data regarding the hostile is from a job/action, do not log "[Actor] started attacking [Hostile]..."
+            //The reason for this is so we can eliminate the duplication of logs during Assault action
+            //Because Assault action already logs "[Actor] is assaulting [Hostile]", it would be redundant to log "[Actor] started attacking [Hostile]..."
+            //So, only when there is no connected action should we log the "started attacking"
+            Log log;
+            string key = stateComponent.owner.combatComponent.GetCombatLogKeyReason(currentClosestHostile);
+            if (key != string.Empty && LocalizationManager.Instance.HasLocalizedValue("Character", "Combat", key)) {
+                log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Combat", "new_combat_target_with_reason", providedTags: LOG_TAG.Combat);
+                string reason = LocalizationManager.Instance.GetLocalizedValue("Character", "Combat", key);
+                log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
+            } else {
+                //use default log instead, because no text for combat reason was provided. This is to prevent text with %125%.
+                log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Combat", "new_combat_target", providedTags: LOG_TAG.Combat);
+            }
+            log.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(currentClosestHostile, currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            stateComponent.owner.logComponent.RegisterLog(log, null, false);
         }
-        log.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(currentClosestHostile, currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        stateComponent.owner.logComponent.RegisterLog(log, null, false);
     }
     private float timeElapsed;
     public void LateUpdate() {
