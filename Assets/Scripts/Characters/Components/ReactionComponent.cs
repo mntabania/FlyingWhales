@@ -1823,13 +1823,21 @@ public class ReactionComponent : CharacterComponent {
                 log = $"{log}\n-Reactor is the same faction/home settlement as Attacker";
                 log = $"{log}\n-Reactor is checking for crime";
                 CombatData combatDataAgainstPOIHit = attacker.combatComponent.GetCombatData(characterHit);
-                if (combatDataAgainstPOIHit != null && combatDataAgainstPOIHit.connectedAction != null) {
-                    ActualGoapNode possibleCrimeAction = combatDataAgainstPOIHit.connectedAction;
-                    CRIME_TYPE crimeType = possibleCrimeAction.crimeType;
-                    log = $"{log}\n-Crime committed is: {crimeType}";
-                    if (crimeType != CRIME_TYPE.None && crimeType != CRIME_TYPE.Unset) {
-                        log = $"{log}\n-Reactor will react to crime";
-                        CrimeManager.Instance.ReactToCrime(reactor, attacker, characterHit, characterHit.faction, crimeType, possibleCrimeAction, REACTION_STATUS.WITNESSED);
+                if (combatDataAgainstPOIHit != null) {
+                    if (combatDataAgainstPOIHit.connectedAction != null) {
+                        ActualGoapNode possibleCrimeAction = combatDataAgainstPOIHit.connectedAction;
+                        CRIME_TYPE crimeType = possibleCrimeAction.crimeType;
+                        log = $"{log}\n-Crime committed is: {crimeType}";
+                        if (crimeType != CRIME_TYPE.None && crimeType != CRIME_TYPE.Unset) {
+                            log = $"{log}\n-Reactor will react to crime";
+                            CrimeManager.Instance.ReactToCrime(reactor, attacker, characterHit, characterHit.faction, crimeType, possibleCrimeAction, REACTION_STATUS.WITNESSED);
+                        }
+                    } else {
+                        //create assault action so that witness can react to it as a crime.
+                        ActualGoapNode action = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ASSAULT], reactor, characterHit, null, 0);
+                        action.SetAsIllusion();
+                        action.SetCrimeType();
+                        CrimeManager.Instance.ReactToCrime(reactor, attacker, characterHit, characterHit.faction, action.crimeType, action, REACTION_STATUS.WITNESSED);
                     }
                 }
             }
