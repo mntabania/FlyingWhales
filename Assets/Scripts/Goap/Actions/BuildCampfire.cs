@@ -83,7 +83,7 @@ public class BuildCampfire : GoapAction {
         goapNode.descriptionLog.AddInvolvedObjectManual(campfire.persistentID);
 
         if (targetTile != null) {
-            LocationGridTile foodPileTile = null; ;
+            LocationGridTile foodPileTile = null;
             if (targetTile.collectionOwner.isPartOfParentRegionMap) {
                 foodPileTile = targetTile.GetFirstNeighborThatMeetCriteria(x => x.objHere == null && x.IsPassable() && x.collectionOwner.isPartOfParentRegionMap && x.collectionOwner.partOfHextile.hexTileOwner == targetTile.collectionOwner.partOfHextile.hexTileOwner);
             }
@@ -104,7 +104,7 @@ public class BuildCampfire : GoapAction {
                 }
                 FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.ANIMAL_MEAT);
                 foodPile.SetResourceInPile(food);
-                targetTile.structure.AddPOI(foodPile, targetTile);
+                targetTile.structure.AddPOI(foodPile, foodPileTile);
             }
 
         }
