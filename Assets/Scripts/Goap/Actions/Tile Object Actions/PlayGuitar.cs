@@ -143,7 +143,7 @@ public class PlayGuitar : GoapAction {
         goapNode.poiTarget.SetPOIState(POI_STATE.INACTIVE);
     }
     public void PerTickPlaySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(2.1f);
+        goapNode.actor.needsComponent.AdjustHappiness(3.34f);
     }
     public void AfterPlaySuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);

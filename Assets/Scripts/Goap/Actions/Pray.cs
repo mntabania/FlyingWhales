@@ -96,7 +96,7 @@ public class Pray : GoapAction {
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickPraySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(1.6f);
+        goapNode.actor.needsComponent.AdjustHappiness(4.4f);
         //goapNode.actor.needsComponent.AdjustStamina(0.5f);
     }
     public void AfterPraySuccess(ActualGoapNode goapNode) {

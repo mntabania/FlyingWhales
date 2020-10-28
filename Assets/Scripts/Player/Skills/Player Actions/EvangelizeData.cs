@@ -15,7 +15,7 @@ public class EvangelizeData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character character) {
-            if(character.characterClass.className == "Cultist Leader") {
+            if(character.characterClass.className == "Cult Leader") {
                 //Cultist leader should have all characters as the target for evangelization
                 List<Character> choices = new List<Character>();
                 for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {

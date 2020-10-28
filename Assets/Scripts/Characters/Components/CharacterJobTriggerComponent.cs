@@ -561,7 +561,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             || (owner.traitContainer.HasTrait("Restrained") && owner.currentStructure.structureType != STRUCTURE_TYPE.PRISON)) {
 			hasStartedScreamCheck = true;
 			Messenger.AddListener(Signals.HOUR_STARTED, HourlyScreamCheck);
-			Debug.Log($"<color=green>{GameManager.Instance.TodayLogString()}{owner.name} has started scream check</color>");
+			owner.logComponent.PrintLogIfActive($"<color=green>{GameManager.Instance.TodayLogString()}{owner.name} has started scream check</color>");
 		}
 	}
 	private void TryStopScreamCheck() {
@@ -582,7 +582,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    || owner.gridTileLocation == null || owner.isDead) {
 			hasStartedScreamCheck = false;
 			Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyScreamCheck);
-			Debug.Log($"<color=red>{GameManager.Instance.TodayLogString()}{owner.name} has stopped scream check</color>");
+			owner.logComponent.PrintLogIfActive($"<color=red>{GameManager.Instance.TodayLogString()}{owner.name} has stopped scream check</color>");
 		}
 	}
 	private void HourlyScreamCheck() {
@@ -602,7 +602,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		summary += $"Chance is {chance.ToString()}.";
 		int roll = Random.Range(0, 100); 
 		summary += $"Roll is {roll.ToString()}.";
-		Debug.Log($"<color=blue>{summary}</color>");
+		owner.logComponent.PrintLogIfActive($"<color=blue>{summary}</color>");
 		if (roll < chance) {
 			TriggerScreamJob();
 		}
@@ -2975,7 +2975,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SNATCH, INTERACTION_TYPE.DROP, targetCharacter, owner);
 		    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { structure, targetLocation });
 		    owner.jobQueue.AddJobInQueue(job);
-		    Debug.Log($"{owner.name} will do snatch job towards {targetCharacter.name}. Will drop at {structure.name}, ({targetLocation.localPlace.ToString()})");
+		    owner.logComponent.PrintLogIfActive($"{owner.name} will do snatch job towards {targetCharacter.name}. Will drop at {structure.name}, ({targetLocation.localPlace.ToString()})");
 	    }
     }
     #endregion

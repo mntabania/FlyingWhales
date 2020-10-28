@@ -195,7 +195,7 @@ public class Sleep : GoapAction {
             goapNode.OverrideCurrentStateDuration(goapNode.currentState.duration);
         }
         needsComponent.AdjustTiredness(1.1f);
-        needsComponent.AdjustHappiness(0.26f);
+        needsComponent.AdjustHappiness(0.325f);
         needsComponent.AdjustSleepTicks(-1);
 
         //float staminaAdjustment = 0f;
