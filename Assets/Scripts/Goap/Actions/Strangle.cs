@@ -11,7 +11,6 @@ public class Strangle : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.EARLY_NIGHT, TIME_IN_WORDS.LATE_NIGHT, TIME_IN_WORDS.AFTER_MIDNIGHT, };
         isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Life_Changes};
     }
