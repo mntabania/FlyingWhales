@@ -930,6 +930,9 @@ public class CombatComponent : CharacterComponent {
                                 key = "Destroy_Music_Hater";
                                 break;
                             }
+                        } else if (target is CultistKit) {
+                            key = "Destroy_Cultist_Kit";
+                            break;
                         }
                         if (owner.traitContainer.HasTrait("Angry")) {
                             key = "Destroy_Angry";

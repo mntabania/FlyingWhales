@@ -60,7 +60,12 @@ namespace Ruinarch {
                     SettingsManager.Instance.CloseSettings();
                     return;
                 }
+            } else if (Input.GetKeyDown(KeyCode.F8)) {
+                if (!CanUseHotkeys()) return;
+                ReportABug();
+                Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.F8);
             }
+            
             if (runUpdate == false) { return; }
             if (ReferenceEquals(PlayerManager.Instance, null) == false && PlayerManager.Instance.player != null) {
                 if (PlayerManager.Instance.player.seizeComponent.hasSeizedPOI) {
@@ -394,6 +399,23 @@ namespace Ruinarch {
         public void Select(ISelectable objToSelect) {
             objToSelect.LeftSelectAction();
             Messenger.Broadcast(Signals.SELECTABLE_LEFT_CLICKED, objToSelect);
+        }
+        #endregion
+
+        #region Report A Bug
+        private void ReportABug() {
+            YesNoConfirmation yesNoConfirmation = null;
+            if (UIManager.Instance != null) {
+                yesNoConfirmation = UIManager.Instance.yesNoConfirmation;
+            } else if (MainMenuUI.Instance != null) {
+                yesNoConfirmation = MainMenuUI.Instance.yesNoConfirmation;
+            }
+            if (yesNoConfirmation != null) {
+                if (!yesNoConfirmation.isShowing) {
+                    yesNoConfirmation.ShowYesNoConfirmation("Open Browser", "To report a bug, the game needs to open a Web browser, do you want to proceed?",
+                        () => Application.OpenURL("https://forms.gle/gcoa8oHxywFLegNx7"), layer: 50, showCover: true);    
+                }
+            }
         }
         #endregion
     }
