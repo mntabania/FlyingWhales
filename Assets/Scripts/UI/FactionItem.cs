@@ -25,6 +25,13 @@ public class FactionItem : PooledObject {
         nameLbl.text = faction.name;
         typeLbl.text = faction.factionType.name;
     }
+    public void UpdateFaction() {
+        if(faction != null) {
+            emblem.sprite = faction.emblem;
+            nameLbl.text = faction.name;
+            typeLbl.text = faction.factionType.name;
+        }
+    }
     public void SetSelected(bool state) {
         selectedGO.SetActive(state);
         SetGrayscale(!state);

@@ -5,8 +5,8 @@ using UnityEngine;
 using UtilityScripts;
 
 namespace Interrupts {
-    public class EvaluateCultistAffliction : Interrupt {
-        public EvaluateCultistAffliction() : base(INTERRUPT.Evaluate_Cultist_Affiliation) {
+    public class EvaluateCultistAffiliation : Interrupt {
+        public EvaluateCultistAffiliation() : base(INTERRUPT.Evaluate_Cultist_Affiliation) {
             duration = 0;
             isSimulateneous = true;
             interruptIconString = GoapActionStateDB.No_Icon;
