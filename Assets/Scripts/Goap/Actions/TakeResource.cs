@@ -82,6 +82,16 @@ public class TakeResource : GoapAction {
                 cost = 400;
                 costLog += $" +{cost}(not Obtain Personal Food)";    
             }
+            if (job.jobType == JOB_TYPE.BUILD_BLUEPRINT && target is ResourcePile resourcePile) {
+                int neededResource = GetNeededResource(job, otherData, resourcePile);
+                if (actor.homeSettlement != null) {
+                    int availableResources = actor.homeSettlement.settlementJobTriggerComponent.GetTotalResource(resourcePile.providedResource);
+                    if (availableResources < neededResource) {
+                        cost = 2000;
+                        costLog += $" +{cost}(Settlement does not have enough resources for building)";    
+                    }
+                }
+            }
         }
         actor.logComponent.AppendCostLog(costLog);
         return cost;
@@ -240,5 +250,31 @@ public class TakeResource : GoapAction {
         } else {
             carrier.ShowItemVisualCarryingPOI(pile);
         }
+    }
+
+    private int GetNeededResource(JobQueueItem jobQueueItem, OtherData[] otherData, ResourcePile resourcePile) {
+        int takenResource;
+        if (otherData != null && otherData.Length == 1) {
+            OtherData data = otherData[0];
+            if (data is IntOtherData intOtherData) {
+                takenResource = intOtherData.integer;    
+            } else if (data is TileObjectRecipeOtherData tileObjectRecipeOtherData) {
+                TileObjectRecipe recipe = tileObjectRecipeOtherData.recipe;
+                takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);
+            } else {
+                //set amount just to prevent errors.
+                takenResource = 10;
+            }
+        } else {
+            if (jobQueueItem is GoapPlanJob job && job.targetPOI is TileObject tileObject && !job.jobType.IsFullnessRecovery()) {
+                TileObjectData data = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
+                TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);
+                takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);
+            } else {
+                takenResource = Mathf.Min(20, resourcePile.resourceInPile);    
+            }
+        }
+
+        return takenResource;
     }
 }
