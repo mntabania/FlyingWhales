@@ -252,7 +252,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	#endregion
 
 	#region Resources
-	private int GetTotalResource(RESOURCE resourceType) {
+	public int GetTotalResource(RESOURCE resourceType) {
 		int resource = 0;
 		List<ResourcePile> piles = _owner.mainStorage.GetTileObjectsOfType<ResourcePile>();
 		for (int i = 0; i < piles.Count; i++) {
