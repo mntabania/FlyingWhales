@@ -983,7 +983,9 @@ public class ReactionComponent : CharacterComponent {
 
                             if (targetIsKnownVampire) {
                                 debugLog = $"{debugLog}\n-Target is known vampire";
-                                if (disguisedActor.characterClass.className == "Shaman" && disguisedActor.relationshipContainer.IsFriendsWith(disguisedTarget)) {
+                                if (disguisedActor.characterClass.className == "Shaman" && disguisedActor.relationshipContainer.IsFriendsWith(disguisedTarget) && 
+                                    !disguisedActor.traitContainer.HasTrait("Hemophiliac") && disguisedActor.faction != null && 
+                                    !disguisedActor.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Vampires)) {
                                     //Cure Magical Affliction
                                     debugLog = $"{debugLog}\n-Actor is Shaman and is Friend/Close Friend with target";
                                     actor.jobComponent.TriggerCureMagicalAffliction(disguisedTarget, "Vampire");
@@ -1004,7 +1006,9 @@ public class ReactionComponent : CharacterComponent {
 
                             if (targetIsKnownWerewolf) {
                                 debugLog = $"{debugLog}\n-Target is known werewolf";
-                                if (disguisedActor.characterClass.className == "Shaman" && disguisedActor.relationshipContainer.IsFriendsWith(disguisedTarget)) {
+                                if (disguisedActor.characterClass.className == "Shaman" && disguisedActor.relationshipContainer.IsFriendsWith(disguisedTarget) && 
+                                    !disguisedActor.traitContainer.HasTrait("Lycanphiliac") && disguisedActor.faction != null && 
+                                    !disguisedActor.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
                                     //Cure Magical Affliction
                                     debugLog = $"{debugLog}\n-Actor is Shaman and is Friend/Close Friend with target";
                                     actor.jobComponent.TriggerCureMagicalAffliction(disguisedTarget, "Lycanthrope");
