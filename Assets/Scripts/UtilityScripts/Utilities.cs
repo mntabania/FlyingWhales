@@ -977,6 +977,9 @@ namespace UtilityScripts {
         #endregion
 
         #region String Utilities
+        public static string InvalidColorize(string str) {
+            return $"<color=#FE3E83>{str}</color>";
+        }
         public static string MonsterIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Monster_Icon\"> ";
         }

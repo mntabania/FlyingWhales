@@ -124531,6 +124531,11 @@ PrefabInstance:
       propertyPath: defaultPosition
       value: 
       objectReference: {fileID: 384644718}
+    - target: {fileID: 3219990642523896373, guid: 29c4742b647766648a7a78449f3565eb,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5490087281256822442, guid: 29c4742b647766648a7a78449f3565eb,
         type: 3}
       propertyPath: m_Name
@@ -124609,7 +124614,7 @@ PrefabInstance:
     - target: {fileID: 7147031280361248744, guid: 29c4742b647766648a7a78449f3565eb,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 654.91003
+      value: 602.70996
       objectReference: {fileID: 0}
     - target: {fileID: 7147031280361248744, guid: 29c4742b647766648a7a78449f3565eb,
         type: 3}

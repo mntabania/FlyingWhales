@@ -80,7 +80,11 @@ public class Exclusive : FactionIdeology {
         } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.TRAIT) {
             return traitRequirement;
         } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.RELIGION) {
-            return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(religionRequirement.ToString());
+            if (religionRequirement == RELIGION.Demon_Worship) {
+                return "Demon Worshipers";
+            } else {
+                return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(religionRequirement.ToString());    
+            }
         }
         return string.Empty;
     }

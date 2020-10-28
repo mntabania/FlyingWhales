@@ -27,16 +27,13 @@ public class EvangelizeData : PlayerAction {
                         choices.Add(target);
                     }
                 }
-                if (choices.Count > 0) {
-                    UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), validityChecker: t => CanBeEvangelized(character, t), onHoverAction: t => OnHoverEnter(character, t), onHoverExitAction: OnHoverExit, showCover: true,
-                        shouldShowConfirmationWindowOnPick: false, layer: 40, asButton: false);
-                }
+                UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), validityChecker: t => CanBeEvangelized(character, t), onHoverAction: t => OnHoverEnter(character, t), onHoverExitAction: OnHoverExit, showCover: true,
+                    shouldShowConfirmationWindowOnPick: false, layer: 25, asButton: false);
             } else {
                 List<Character> choices = character.GetListOfCultistTargets(x => !x.isDead && x.isNormalCharacter && x.race.IsSapient());
-                if (choices != null) {
-                    UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), validityChecker: t => CanBeEvangelized(character, t), onHoverAction: t => OnHoverEnter(character, t), onHoverExitAction: OnHoverExit, showCover: true,
-                        shouldShowConfirmationWindowOnPick: false, layer: 40, asButton: false);
-                }
+                if (choices == null) { choices = new List<Character>(); }
+                UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), validityChecker: t => CanBeEvangelized(character, t), onHoverAction: t => OnHoverEnter(character, t), onHoverExitAction: OnHoverExit, showCover: true,
+                    shouldShowConfirmationWindowOnPick: false, layer: 25, asButton: false);
             }
 
         }
@@ -85,25 +82,34 @@ public class EvangelizeData : PlayerAction {
     }
     private void OnHoverEnter(Character owner, Character target) {
         if (target.traitContainer.HasTrait("Cultist")) {
-            UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Cultists.</color>");
+            // UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Cultists.</color>");
+            PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(target.name, UtilityScripts.Utilities.InvalidColorize("Cannot target Cultists."));
             return;
         }
         AWARENESS_STATE awarenessState = owner.relationshipContainer.GetAwarenessState(target);
         if (awarenessState == AWARENESS_STATE.Missing) {
-            UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Missing characters.</color>");
+            // UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Missing characters.</color>");
+            PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(target.name, UtilityScripts.Utilities.InvalidColorize("Cannot target Missing characters."));
             return;
         }
         if (awarenessState == AWARENESS_STATE.Presumed_Dead) {
-            UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Presumed Dead characters.</color>");
+            // UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Presumed Dead characters.</color>");
+            PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(target.name, UtilityScripts.Utilities.InvalidColorize("Cannot target Presumed Dead characters."));
             return;
         }
         if (target.traitContainer.HasTrait("Travelling")) {
-            UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Travelling characters.</color>");
+            // UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Travelling characters.</color>");
+            PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(target.name, UtilityScripts.Utilities.InvalidColorize("Cannot target Travelling characters."));
             return;
+        }
+        string relationshipSummary = owner.visuals.GetBothWayRelationshipSummary(target);
+        if (!string.IsNullOrEmpty(relationshipSummary)) {
+            PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(target.name, relationshipSummary);    
         }
     }
     private void OnHoverExit(Character target) {
-        UIManager.Instance.HideSmallInfo();
+        // UIManager.Instance.HideSmallInfo();
+        PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
     }
     private void OnChooseCharacter(object obj, Character actor) {
         if (obj is Character targetCharacter) {

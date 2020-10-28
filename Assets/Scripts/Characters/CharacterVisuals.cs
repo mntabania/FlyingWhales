@@ -269,6 +269,25 @@ public class CharacterVisuals {
         string characterName = UtilityScripts.Utilities.ColorizeName(_owner.name);
         return $"{icon}{characterName}";
     }
+    public string GetRelationshipSummary(Character character) {
+        if (_owner.relationshipContainer.HasRelationshipWith(character)) {
+            string relationshipName = _owner.relationshipContainer.GetRelationshipNameWith(character);
+            return $"{character.visuals.GetCharacterNameWithIconAndColor()} - {relationshipName} of {_owner.visuals.GetCharacterNameWithIconAndColor()}\n";
+        }
+        return string.Empty;
+    }
+    public string GetBothWayRelationshipSummary(Character otherCharacter) {
+        string relationship1 = GetRelationshipSummary(otherCharacter);
+        string relationship2 = otherCharacter.visuals.GetRelationshipSummary(_owner);
+        string relationshipSummary = string.Empty;
+        if (!string.IsNullOrEmpty(relationship1)) {
+            relationshipSummary += $"{relationship1}\n";
+        }
+        if (!string.IsNullOrEmpty(relationship2)) {
+            relationshipSummary += $"{relationship2}\n";
+        }
+        return relationshipSummary;
+    }
     #endregion
 
     public void CleanUp() {
