@@ -85,20 +85,20 @@ public class EvangelizeData : PlayerAction {
     }
     private void OnHoverEnter(Character owner, Character target) {
         if (target.traitContainer.HasTrait("Cultist")) {
-            UIManager.Instance.ShowSmallInfo("Cannot target Cultists");
+            UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Cultists.</color>");
             return;
         }
         AWARENESS_STATE awarenessState = owner.relationshipContainer.GetAwarenessState(target);
         if (awarenessState == AWARENESS_STATE.Missing) {
-            UIManager.Instance.ShowSmallInfo("Cannot target Missing characters");
+            UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Missing characters.</color>");
             return;
         }
         if (awarenessState == AWARENESS_STATE.Presumed_Dead) {
-            UIManager.Instance.ShowSmallInfo("Cannot target Presumed Dead characters");
+            UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Presumed Dead characters.</color>");
             return;
         }
         if (target.traitContainer.HasTrait("Travelling")) {
-            UIManager.Instance.ShowSmallInfo("Cannot target Travelling characters");
+            UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Travelling characters.</color>");
             return;
         }
     }

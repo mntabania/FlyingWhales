@@ -58,11 +58,11 @@ public class CultistPoisonData : PlayerAction {
     }
     private void OnHoverEnter(Character owner, Character target) {
         if (target.traitContainer.HasTrait("Cultist")) {
-            UIManager.Instance.ShowSmallInfo("Cannot target Cultists");
+            UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Cultists.</color>");
             return;
         }
         if (owner.relationshipContainer.HasOpinionLabelWithCharacter(target, RelationshipManager.Close_Friend)) {
-            UIManager.Instance.ShowSmallInfo("Cannot target Close Friends");
+            UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Close Friends.</color>");
             return;
         }
     }
