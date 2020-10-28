@@ -24,19 +24,17 @@ public class EvangelizeData : PlayerAction {
                     //    resident.isDead == false &&
                     //    character.relationshipContainer.HasOpinionLabelWithCharacter(resident, RelationshipManager.Close_Friend) == false) {
                     if(!target.isDead && target.isNormalCharacter && target.race.IsSapient()) {
-                        if (character.jobComponent.IsValidEvangelizeTarget(target)) {
-                            choices.Add(target);
-                        }
+                        choices.Add(target);
                     }
                 }
                 if (choices.Count > 0) {
-                    UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), showCover: true,
+                    UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), validityChecker: t => CanBeEvangelized(character, t), onHoverAction: t => OnHoverEnter(character, t), onHoverExitAction: OnHoverExit, showCover: true,
                         shouldShowConfirmationWindowOnPick: false, layer: 40, asButton: false);
                 }
             } else {
-                List<Character> choices = character.GetListOfCultistTargets(x => !x.isDead && x.isNormalCharacter && x.race.IsSapient() && character.jobComponent.IsValidEvangelizeTarget(x));
+                List<Character> choices = character.GetListOfCultistTargets(x => !x.isDead && x.isNormalCharacter && x.race.IsSapient());
                 if (choices != null) {
-                    UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), showCover: true,
+                    UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), validityChecker: t => CanBeEvangelized(character, t), onHoverAction: t => OnHoverEnter(character, t), onHoverExitAction: OnHoverExit, showCover: true,
                         shouldShowConfirmationWindowOnPick: false, layer: 40, asButton: false);
                 }
             }
@@ -44,9 +42,6 @@ public class EvangelizeData : PlayerAction {
         }
         // base.ActivateAbility(targetPOI);
     }
-    //private bool CanBeEvangelized(Character character) {
-        
-    //}
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
         if (canPerform) {
@@ -72,6 +67,44 @@ public class EvangelizeData : PlayerAction {
     }
     #endregion
 
+    private bool CanBeEvangelized(Character owner, Character target) {
+        if (target.traitContainer.HasTrait("Cultist")) {
+            return false;
+        }
+        AWARENESS_STATE awarenessState = owner.relationshipContainer.GetAwarenessState(target);
+        if (awarenessState == AWARENESS_STATE.Missing) {
+            return false;
+        }
+        if (awarenessState == AWARENESS_STATE.Presumed_Dead) {
+            return false;
+        }
+        if (target.traitContainer.HasTrait("Travelling")) {
+            return false;
+        }
+        return true;
+    }
+    private void OnHoverEnter(Character owner, Character target) {
+        if (target.traitContainer.HasTrait("Cultist")) {
+            UIManager.Instance.ShowSmallInfo("Cannot target Cultists");
+            return;
+        }
+        AWARENESS_STATE awarenessState = owner.relationshipContainer.GetAwarenessState(target);
+        if (awarenessState == AWARENESS_STATE.Missing) {
+            UIManager.Instance.ShowSmallInfo("Cannot target Missing characters");
+            return;
+        }
+        if (awarenessState == AWARENESS_STATE.Presumed_Dead) {
+            UIManager.Instance.ShowSmallInfo("Cannot target Presumed Dead characters");
+            return;
+        }
+        if (target.traitContainer.HasTrait("Travelling")) {
+            UIManager.Instance.ShowSmallInfo("Cannot target Travelling characters");
+            return;
+        }
+    }
+    private void OnHoverExit(Character target) {
+        UIManager.Instance.HideSmallInfo();
+    }
     private void OnChooseCharacter(object obj, Character actor) {
         if (obj is Character targetCharacter) {
             UIManager.Instance.HideObjectPicker();

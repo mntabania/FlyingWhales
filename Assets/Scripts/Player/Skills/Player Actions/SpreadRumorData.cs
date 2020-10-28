@@ -15,9 +15,9 @@ public class SpreadRumorData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character character) {
-            List<Character> choices = character.GetListOfCultistTargets(x => x.isNormalCharacter && x.traitContainer.HasTrait("Cultist") == false && x.isDead == false && character.relationshipContainer.HasOpinionLabelWithCharacter(x, RelationshipManager.Close_Friend) == false);
+            List<Character> choices = character.GetListOfCultistTargets(x => x.isNormalCharacter && x.race.IsSapient() && !x.isDead);
             if (choices != null) {
-                UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), showCover: true,
+                UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), validityChecker: t => CanBeRumored(character, t), onHoverAction: t => OnHoverEnter(character, t), onHoverExitAction: OnHoverExit, showCover: true,
                     shouldShowConfirmationWindowOnPick: false, layer: 40, asButton: false);
             }
         }
@@ -40,8 +40,36 @@ public class SpreadRumorData : PlayerAction {
         }
         return reasons;
     }
+    public override bool IsValid(IPlayerActionTarget target) {
+        if(PlayerSkillManager.Instance.selectedArchetype != PLAYER_ARCHETYPE.Puppet_Master) {
+            return false;
+        }
+        return base.IsValid(target);
+    }
     #endregion
 
+    private bool CanBeRumored(Character owner, Character target) {
+        if (target.traitContainer.HasTrait("Cultist")) {
+            return false;
+        }
+        if (owner.relationshipContainer.HasOpinionLabelWithCharacter(target, RelationshipManager.Close_Friend)) {
+            return false;
+        }
+        return true;
+    }
+    private void OnHoverEnter(Character owner, Character target) {
+        if (target.traitContainer.HasTrait("Cultist")) {
+            UIManager.Instance.ShowSmallInfo("Cannot target Cultists");
+            return;
+        }
+        if (owner.relationshipContainer.HasOpinionLabelWithCharacter(target, RelationshipManager.Close_Friend)) {
+            UIManager.Instance.ShowSmallInfo("Cannot target Close Friends");
+            return;
+        }
+    }
+    private void OnHoverExit(Character target) {
+        UIManager.Instance.HideSmallInfo();
+    }
     private void OnChooseCharacter(object obj, Character actor) {
         if (obj is Character targetCharacter) {
             UIManager.Instance.HideObjectPicker();
