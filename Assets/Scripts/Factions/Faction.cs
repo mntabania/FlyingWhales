@@ -1062,6 +1062,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public void ChangeFactionType(FACTION_TYPE type) {
         if (SetFactionType(type)) {
             this.factionType.SetAsDefault();
+            FactionInfoHubUI.Instance.UpdateFactionItem(this);
         }
     }
     #endregion

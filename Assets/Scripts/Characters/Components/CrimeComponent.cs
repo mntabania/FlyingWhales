@@ -36,6 +36,10 @@ public class CrimeComponent : CharacterComponent {
         reportedCrimes.Add(data);
     }
     public bool IsReported(CrimeData data) {
+        if (data.isRemoved) {
+            //If crime is already removed meaning it is no longer a crime, it should be tagged as Reported so that removed crimes will no longer be reported
+            return true;
+        }
         return reportedCrimes.Contains(data);
     }
     public bool HasUnreportedCrime() {

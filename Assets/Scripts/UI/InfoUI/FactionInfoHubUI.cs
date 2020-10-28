@@ -227,6 +227,12 @@ public class FactionInfoHubUI : MonoBehaviour {
         item.SetFaction(faction);
         return item;
     }
+    public void UpdateFactionItem(Faction faction) {
+        FactionItem item = GetFactionItem(faction);
+        if(item != null) {
+            item.UpdateFaction();
+        }
+    }
     private void CreateFactionItemPagination() {
         GameObject go = Instantiate(factionItemPaginationPrefab, Vector3.zero, Quaternion.identity, factionScrollSnapPagination);
         go.GetComponent<Toggle>().group = factionScrollSnapPaginationGroup;
