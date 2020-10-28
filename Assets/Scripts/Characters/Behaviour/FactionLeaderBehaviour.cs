@@ -58,11 +58,14 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                 }    
             }
             if (character.homeSettlement.settlementType != null) {
-                int existingBuildJobs = character.homeSettlement.GetNumberOfJobsWith(JOB_TYPE.BUILD_BLUEPRINT);
-                if (existingBuildJobs < 2) {
+                // int existingBuildJobs = character.homeSettlement.GetNumberOfJobsWith(JOB_TYPE.BUILD_BLUEPRINT);
+                List<JobQueueItem> buildJobs = character.homeSettlement.GetJobs(JOB_TYPE.BUILD_BLUEPRINT);
+                if (buildJobs.Count < 2) {
                     log += $"\n-Check chance to build dwelling if not yet at max.";
                     int dwellingCount = character.homeSettlement.GetStructureCount(STRUCTURE_TYPE.DWELLING);
-                    if (dwellingCount < character.homeSettlement.settlementType.maxDwellings) {
+                    int totalDwellingCount = dwellingCount + GetJobsThatWillBuildDwelling(buildJobs);
+                    
+                    if (totalDwellingCount < character.homeSettlement.settlementType.maxDwellings) {
                         int chance = 3;
                         if (dwellingCount < (character.homeSettlement.settlementType.maxDwellings/2)) {
                             chance = 5;
@@ -92,7 +95,9 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                     }
                     log += $"\n-Check chance to build a missing facility.";
                     int facilityCount = character.homeSettlement.GetFacilityCount();
-                    if (facilityCount < character.homeSettlement.settlementType.maxFacilities) {
+                    int totalFacilityCount = facilityCount + GetJobsThatWillBuildFacility(buildJobs);
+                    
+                    if (totalFacilityCount < character.homeSettlement.settlementType.maxFacilities) {
                         int chance = 2;
                         if (facilityCount < (character.homeSettlement.settlementType.maxFacilities/2)) {
                             chance = 3;
@@ -142,5 +147,29 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
             return false;
         }
         return true;
+    }
+    private int GetJobsThatWillBuildFacility(List<JobQueueItem> jobs) {
+        int count = 0;
+        for (int i = 0; i < jobs.Count; i++) {
+            JobQueueItem job = jobs[i];
+            if (job is GoapPlanJob goapPlanJob && goapPlanJob.poiTarget is GenericTileObject genericTileObject) {
+                if (genericTileObject.blueprintOnTile != null && genericTileObject.blueprintOnTile.structureType.IsFacilityStructure()) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    private int GetJobsThatWillBuildDwelling(List<JobQueueItem> jobs) {
+        int count = 0;
+        for (int i = 0; i < jobs.Count; i++) {
+            JobQueueItem job = jobs[i];
+            if (job is GoapPlanJob goapPlanJob && goapPlanJob.poiTarget is GenericTileObject genericTileObject) {
+                if (genericTileObject.blueprintOnTile != null && genericTileObject.blueprintOnTile.structureType == STRUCTURE_TYPE.DWELLING) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 }

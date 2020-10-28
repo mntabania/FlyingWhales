@@ -17,9 +17,19 @@ public class DarkRitual : GoapAction {
         SetState("Ritual Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+        int cost = 10;
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
-        return 10;
+        if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
+            if (!actor.partyComponent.hasParty) {
+                //target is at structure that character is avoiding
+                cost = 2000;
+                costLog += $" +{cost}(Location of target is in avoid structure)";
+                actor.logComponent.AppendCostLog(costLog);
+                return cost;
+            }
+        }
+        return cost;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;

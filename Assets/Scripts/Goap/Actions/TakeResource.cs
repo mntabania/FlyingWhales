@@ -54,6 +54,15 @@ public class TakeResource : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 0;
+        if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
+            if (!actor.partyComponent.hasParty) {
+                //target is at structure that character is avoiding
+                cost = 2000;
+                costLog += $" +{cost}(Location of target is in avoid structure)";
+                actor.logComponent.AppendCostLog(costLog);
+                return cost;
+            }
+        }
         if(job.jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL || job.jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || job.jobType == JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT || job.jobType == JOB_TYPE.OBTAIN_PERSONAL_FOOD) {
             if(target is ElfMeat || target is HumanMeat) {
                 if (actor.traitContainer.HasTrait("Cannibal")) {

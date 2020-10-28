@@ -85,6 +85,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.CEMETERY:
             case STRUCTURE_TYPE.BARRACKS:
             case STRUCTURE_TYPE.MAGE_QUARTERS:
+            case STRUCTURE_TYPE.CULT_TEMPLE:
                 return true;
             default:
                 return false;

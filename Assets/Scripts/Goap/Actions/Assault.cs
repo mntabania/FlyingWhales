@@ -249,13 +249,15 @@ public class Assault : GoapAction {
         string response = base.ReactionOfTarget(actor, target, node, status);
         if (status == REACTION_STATUS.WITNESSED) {
             if (target is Character targetCharacter) {
-                CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(targetCharacter, actor, target, node.crimeType);
-                if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, targetCharacter, actor, status, node);
-                    if (targetCharacter.relationshipContainer.IsFriendsWith(actor)) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status, node);    
-                    } else if (targetCharacter.relationshipContainer.IsRelativeLoverOrAffairAndNotRival(actor)) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status, node);
+                if (node.crimeType != CRIME_TYPE.None && node.crimeType != CRIME_TYPE.Unset) {
+                    CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(targetCharacter, actor, target, node.crimeType);
+                    if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, targetCharacter, actor, status, node);
+                        if (targetCharacter.relationshipContainer.IsFriendsWith(actor)) {
+                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status, node);    
+                        } else if (targetCharacter.relationshipContainer.IsRelativeLoverOrAffairAndNotRival(actor)) {
+                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status, node);
+                        }
                     }
                 }
             }
