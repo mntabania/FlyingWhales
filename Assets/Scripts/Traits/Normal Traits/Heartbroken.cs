@@ -11,7 +11,7 @@ namespace Traits {
             description = "Experiencing a strong amount of emotional stress.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(48);
             moodEffect = -8;
             isStacking = true;
             stackLimit = 5;

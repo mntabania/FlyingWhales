@@ -1066,11 +1066,28 @@ public class CharacterInfoUI : InfoUIBase {
                 GameDate expiryDate = modifications.expiryDates.Last();
                 string expiryText = string.Empty;
                 if (expiryDate.hasValue) {
-                    expiryText = expiryDate.ConvertToContinuousDaysWithTime();
+                    GameDate today = GameManager.Instance.Today();
+                    int tickDiff = today.GetTickDifference(expiryDate);
+                    if (tickDiff >= GameManager.ticksPerHour) {
+                        int hours = GameManager.Instance.GetHoursBasedOnTicks(tickDiff);
+                        if (hours > 1) {
+                            expiryText = $"Lasts for: {hours.ToString()} hours";  //expiryDate.ConvertToContinuousDaysWithTime();    
+                        } else {
+                            expiryText = $"Lasts for: {hours.ToString()} hour";  //expiryDate.ConvertToContinuousDaysWithTime();
+                        }
+                    } else {
+                        int minutes = GameManager.Instance.GetMinutesBasedOnTicks(tickDiff);
+                        if (minutes > 1) {
+                            expiryText = $"Lasts for: {minutes.ToString()} minutes";    
+                        } else {
+                            expiryText = $"Lasts for: {minutes.ToString()} minute";
+                        }
+                        
+                    }
                 } else {
-                    expiryText = "Linked to Needs";
+                    expiryText = "Lasts until: Linked to Needs";
                 }
-                string summary = $"<color={color}>{modificationSign}{total.ToString()}</color> Lasts until: {expiryText}";
+                string summary = $"<color={color}>{modificationSign}{total.ToString()}</color> {expiryText}";
                 // int dateIndex = modifications.expiryDates.Count - 1;
                 // for (int i = 0; i < modifications.modifications.Count; i++) {
                 //     int modificationValue = modifications.modifications[i];

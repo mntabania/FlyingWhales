@@ -35,7 +35,7 @@ namespace Traits {
             mutuallyExclusive = new string[] { "Robust" };
             moodEffect = -6;
             isStacking = true;
-            stackLimit = 5;
+            stackLimit = 3;
             stackModifier = 0.5f;
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
@@ -126,7 +126,7 @@ namespace Traits {
         public override void OnTickStarted(ITraitable traitable1) {
             base.OnTickStarted(traitable);
             if (!isVenomous) {
-                characterOwner?.AdjustHP(-Mathf.RoundToInt(characterOwner.maxHP * (0.005f * characterOwner.traitContainer.stacks[name])),
+                characterOwner?.AdjustHP(-Mathf.RoundToInt(1 * characterOwner.traitContainer.stacks[name]),
                 ELEMENTAL_TYPE.Normal, true, showHPBar: true);
             }
         }

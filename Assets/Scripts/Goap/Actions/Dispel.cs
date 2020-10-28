@@ -8,6 +8,7 @@ public class Dispel : GoapAction {
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         logTags = new[] {LOG_TAG.Work, LOG_TAG.Life_Changes};
+        showNotification = true;
     }
     
     #region Overrides
@@ -65,6 +66,11 @@ public class Dispel : GoapAction {
             Character actor = goapNode.actor;
             Assert.IsNotNull(targetCharacter);
             if (traitToRemove == "Lycanthrope") {
+                if (targetCharacter.interruptComponent.isInterrupted && 
+                    (targetCharacter.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Transform_To_Wolf || 
+                     targetCharacter.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Transform_To_Werewolf)) {
+                    targetCharacter.interruptComponent.ForceEndNonSimultaneousInterrupt();
+                }
                 if (targetCharacter.lycanData.isMaster && !targetCharacter.lycanData.dislikesBeingLycan) {
                     if (targetCharacter.canPerform) {
                         //lycanthropy is kept

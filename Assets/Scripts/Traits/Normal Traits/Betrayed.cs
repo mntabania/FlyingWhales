@@ -8,7 +8,7 @@ namespace Traits {
             description = "Someone backstabbed it.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(48);
             moodEffect = -10;
             isStacking = true;
             stackLimit = 5;

@@ -158,7 +158,7 @@ public class LogsWindow : MonoBehaviour {
                     if (siblingIndex < 0) {
                         siblingIndex = 0;
                     }
-                    CreateDaySeparator(currLog.gameDate.day, siblingIndex);
+                    CreateDaySeparator(currLog.gameDate.ConvertToContinuousDays(), siblingIndex);
                     currentDay = currLog.gameDate.day;
                 }
             } else {

@@ -217,7 +217,7 @@ namespace Traits {
                 //Temporary fix only, if the burning object has no longer have a tile location (presumably destroyed), spreading of fire should not trigger
                 return;
             }
-            owner.AdjustHP(-(int) (owner.maxHP * 0.02f), ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
+            owner.AdjustHP(-2, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
 
             //Sleeping characters in bed should also receive damage
             //https://trello.com/c/kFZAHo11/1203-sleeping-characters-in-bed-should-also-receive-damage
@@ -225,7 +225,7 @@ namespace Traits {
                 if(bed.users != null && bed.users.Length > 0) {
                     for (int i = 0; i < bed.users.Length; i++) {
                         Character user = bed.users[i];
-                        user.AdjustHP(-(int) (user.maxHP * 0.02f), ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
+                        user.AdjustHP(-2, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
                     }
                 }
             }
