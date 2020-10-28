@@ -14,7 +14,7 @@ public class ReportCrime : GoapAction {
         actionIconString = GoapActionStateDB.Social_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        doesNotStopTargetCharacter = true;
+        // doesNotStopTargetCharacter = true;
         isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Crimes};
     }
