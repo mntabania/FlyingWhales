@@ -11,7 +11,8 @@ public class WorkBehaviour : CharacterBehaviourComponent {
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} will try to do settlement work...";
-        if (character.faction != null && character.faction.isMajorNonPlayer && !character.isFactionLeader && !character.isSettlementRuler) {
+        if (character.faction != null && character.faction.isMajorNonPlayer && !character.isFactionLeader && !character.isSettlementRuler && !character.crimeComponent.hasReportedCrime) {
+            character.crimeComponent.SetHasReportedCrime(true);
             for (int i = 0; i < character.crimeComponent.witnessedCrimes.Count; i++) {
                 CrimeData crimeData = character.crimeComponent.witnessedCrimes[i];
                 if (!crimeData.isRemoved) {

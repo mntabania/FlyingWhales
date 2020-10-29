@@ -12,6 +12,9 @@ public class CrimeComponent : CharacterComponent {
     public List<CrimeData> activeCrimes { get; protected set; }
     public List<CrimeData> previousCrimes { get; protected set; }
 
+    public bool hasReportedCrime { get; private set; }
+    public GameDate dateToReportCrimeAgain { get; private set; }
+
     public CrimeComponent() {
         witnessedCrimes = new List<CrimeData>();
         reportedCrimes = new List<CrimeData>();
@@ -23,6 +26,13 @@ public class CrimeComponent : CharacterComponent {
         reportedCrimes = new List<CrimeData>();
         activeCrimes = new List<CrimeData>();
         previousCrimes = new List<CrimeData>();
+
+        hasReportedCrime = data.hasReportedCrime;
+        dateToReportCrimeAgain = data.dateToReportCrimeAgain;
+
+        if (hasReportedCrime) {
+            SchedulingManager.Instance.AddEntry(dateToReportCrimeAgain, () => SetHasReportedCrime(false), null);
+        }
     }
 
     #region Crimes
@@ -311,6 +321,16 @@ public class CrimeComponent : CharacterComponent {
             }
         }
     }
+    public void SetHasReportedCrime(bool state) {
+        if(hasReportedCrime != state) {
+            hasReportedCrime = state;
+            if (hasReportedCrime) {
+                //8 hours cooldown until he can report crime again
+                dateToReportCrimeAgain = GameManager.Instance.Today().AddTicks(96);
+                SchedulingManager.Instance.AddEntry(dateToReportCrimeAgain, () => SetHasReportedCrime(false), null);
+            }
+        }
+    }
     #endregion
 
     #region Loading
@@ -353,8 +373,14 @@ public class SaveDataCrimeComponent : SaveData<CrimeComponent> {
     public List<string> activeCrimes;
     public List<string> previousCrimes;
 
+    public bool hasReportedCrime;
+    public GameDate dateToReportCrimeAgain;
+
     #region Overrides
     public override void Save(CrimeComponent data) {
+        hasReportedCrime = data.hasReportedCrime;
+        dateToReportCrimeAgain = data.dateToReportCrimeAgain;
+
         if(data.witnessedCrimes != null) {
             witnessedCrimes = new List<string>();
             for (int i = 0; i < data.witnessedCrimes.Count; i++) {

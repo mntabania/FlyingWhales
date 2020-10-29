@@ -1663,7 +1663,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character.combatComponent.avoidInRange.Count > 0) {
             for (int i = 0; i < character.combatComponent.avoidInRange.Count; i++) {
                 IPointOfInterest poi = character.combatComponent.avoidInRange[i];
-                if(IsPOIInVision(poi)) {
+                if(IsStillInRange(poi)) {
                     avoidThisPositions.Add(poi.gridTileLocation.worldLocation);
                 }
             }
@@ -1686,7 +1686,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 }
             }
         }
-
         ReconstructFleePath();
     }
     public void OnStartFleeToHome() {
@@ -1753,6 +1752,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
             fleePath.aimStrength = CombatManager.Instance.aimStrength;
             fleePath.spread = CombatManager.Instance.spread;
             seeker.StartPath(fleePath);
+        } else {
+            //No positions to avoid, should redetermine combat action, or if there is no combat state anymore, just finish path
+            OnFinishedTraversingFleePath();
         }
     }
     public void OnFleePathComputed(Path path) {
