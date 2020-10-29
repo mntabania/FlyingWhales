@@ -319,7 +319,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                             TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
                             if (currentTime == TIME_IN_WORDS.MORNING) {
                                 hasTriedToStealCorpse = true;
-                                if (GameUtilities.RollChance(20)) {
+                                if (GameUtilities.RollChance(45)) {
                                     settlementJobTriggerComponent.CreateStealCorpseJob(cultTemple);
                                 }
                             }

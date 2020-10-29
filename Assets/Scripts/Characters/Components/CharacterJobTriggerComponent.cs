@@ -2019,7 +2019,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (owner.gridTileLocation != null && !owner.jobQueue.HasJob(JOB_TYPE.BURY, targetCharacter)) {
             LocationStructure targetStructure = null;
             if (owner.homeSettlement != null) {
-	            targetStructure = owner.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
+                targetStructure = owner.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CULT_TEMPLE) ??
+                                    owner.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
             }
             if (targetStructure == null) {
 	            targetStructure = owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
