@@ -54,7 +54,7 @@ public class InfestorBehaviour : CharacterBehaviourComponent {
                         HexTile targetHex = targets[0];
                         log += $"\n-Will attack";
                         if (targetHex.settlementOnTile != null && targetHex.settlementOnTile is NPCSettlement settlement) {
-                            return character.jobComponent.TriggerMonsterInvadeJob(settlement.cityCenter, out producedJob);
+                            return character.jobComponent.TriggerMonsterInvadeJob(settlement.mainStorage, out producedJob);
                         } else {
                             return character.jobComponent.TriggerMonsterInvadeJob(targetHex, out producedJob);
                         }

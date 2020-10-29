@@ -29,11 +29,11 @@ public class ReportCorruptedStructure : GoapAction {
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         Character actor = node.actor;
-        return actor.homeSettlement.cityCenter;
+        return actor.homeSettlement.mainStorage;
     }
     public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
-        return actor.homeSettlement.cityCenter.GetRandomTile();
+        return actor.homeSettlement.mainStorage.GetRandomTile();
     }
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
         return null;

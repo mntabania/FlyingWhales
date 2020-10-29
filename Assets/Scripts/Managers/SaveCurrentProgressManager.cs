@@ -31,8 +31,13 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial && !TutorialManager.Instance.hasCompletedImportantTutorials) {
             return false;
         }
-        if (UIManager.Instance != null && UIManager.Instance.optionsMenu.IsLoadWindowShowing()) {
-            return false;
+        if (UIManager.Instance != null) {
+            if (UIManager.Instance.optionsMenu.IsLoadWindowShowing()) {
+                return false;    
+            }
+            if (UIManager.Instance.IsShowingEndScreen()) {
+                return false;
+            }
         }
         if (!GameManager.Instance.gameHasStarted) {
             return false;

@@ -1215,22 +1215,28 @@ public class UIManager : BaseMonoBehaviour {
         PlaceNewNotification(newItem, log);
     }
     private void PlaceNewNotification(PlayerNotificationItem newNotif, in Log shownLog) {
+        //NOTE: Removed this since this was only needed when we would also show notifications of an action that the character is currently doing
+        //but since we now only show logs after the fact, then this would be irrelevant and could cause notifications to get overwritten
+        //example is Vampiric embrace that has a success log ([Actor Name] gave [Target Name] a Vampiric Embrace!) which is also an intel,
+        //but also has a result log. ([Target name] contracted Vampirism from [Actor name]). But the result notification will overwrite the
+        //intel notification since they both came from the same action
+        
         //check if the log used is from a GoapAction
         //then check all other currently showing notifications, if it is from the same goap action
         //replace that log with this new one
-        PlayerNotificationItem itemToReplace = null;
-        if (shownLog.hasValue && !string.IsNullOrEmpty(shownLog.actionID)) {
-            for (int i = 0; i < activeNotifications.Count; i++) {
-                PlayerNotificationItem currItem = activeNotifications[i];
-                if (!string.IsNullOrEmpty(currItem.fromActionID) && shownLog.actionID == currItem.fromActionID) {
-                    itemToReplace = currItem;
-                    break;
-                }
-            }
-        }
-        if (itemToReplace != null) {
-            itemToReplace.DeleteNotification();
-        }
+        // PlayerNotificationItem itemToReplace = null;
+        // if (shownLog.hasValue && !string.IsNullOrEmpty(shownLog.actionID)) {
+        //     for (int i = 0; i < activeNotifications.Count; i++) {
+        //         PlayerNotificationItem currItem = activeNotifications[i];
+        //         if (!string.IsNullOrEmpty(currItem.fromActionID) && shownLog.actionID == currItem.fromActionID) {
+        //             itemToReplace = currItem;
+        //             break;
+        //         }
+        //     }
+        // }
+        // if (itemToReplace != null) {
+        //     itemToReplace.DeleteNotification();
+        // }
         activeNotifications.Add(newNotif);
         activeNotificationIDs.Add(shownLog.persistentID);
         if (activeNotifications.Count > maxPlayerNotif) {
@@ -1557,6 +1563,9 @@ public class UIManager : BaseMonoBehaviour {
     }
     public void ShowEndDemoScreen(string summary) {
         _demoUI.ShowSummaryThenEndScreen(summary);
+    }
+    public bool IsShowingEndScreen() {
+        return _demoUI.IsShowingEndScreen();
     }
     #endregion
 

@@ -88,6 +88,9 @@ public class DemoUI : MonoBehaviour {
     #endregion
     
     #region End Screen
+    public bool IsShowingEndScreen() {
+        return summaryScreen.gameObject.activeInHierarchy || endScreen.activeInHierarchy;
+    }
     public void ShowSummaryThenEndScreen(string summary) {
         GameManager.Instance.SetPausedState(true);
         UIManager.Instance.SetSpeedTogglesState(false);
