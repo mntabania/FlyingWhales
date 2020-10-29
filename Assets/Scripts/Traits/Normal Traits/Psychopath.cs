@@ -238,24 +238,29 @@ namespace Traits {
                 }
                 if (outsideSettlementTile != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
+                    job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
                     job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { outsideSettlementTile.collectionOwner.partOfHextile.hexTileOwner });
                 } else if (character.homeStructure != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
+                    job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { character.homeStructure });
                     job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
                 } else {
                     HexTile hex = character.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.settlementOnTile == null);
                     if(hex != null) {
                         LocationGridTile chosenTile = hex.GetRandomTile();
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { chosenTile.structure, chosenTile });
+                        job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { chosenTile.structure, chosenTile });
                         job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { chosenTile });
                     } else {
                         LocationStructure structure = character.currentRegion.GetStructureOfTypeWithoutSettlement(STRUCTURE_TYPE.WILDERNESS);
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { structure });
+                        job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { structure });
                         job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { structure });
                     }
                 }
             } else {
                 job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
+                job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { character.homeStructure });
                 job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
             }
             //job.SetIsStealth(true);
@@ -277,24 +282,29 @@ namespace Traits {
                 }
                 if (outsideSettlementTile != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
+                    job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
                     job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { outsideSettlementTile.collectionOwner.partOfHextile.hexTileOwner });
                 } else if (character.homeStructure != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
+                    job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { character.homeStructure });
                     job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
                 } else {
                     HexTile hex = targetVictim.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.settlementOnTile == null);
                     if (hex != null) {
                         LocationGridTile chosenTile = hex.GetRandomTile();
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { chosenTile.structure, chosenTile });
+                        job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { chosenTile.structure, chosenTile });
                         job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { chosenTile });
                     } else {
                         LocationStructure structure = targetVictim.currentRegion.GetStructureOfTypeWithoutSettlement(STRUCTURE_TYPE.WILDERNESS);
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { structure });
+                        job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { structure });
                         job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { structure });
                     }
                 }
             } else {
                 job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
+                job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { character.homeStructure });
                 job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
             }
             //job.SetIsStealth(true);
