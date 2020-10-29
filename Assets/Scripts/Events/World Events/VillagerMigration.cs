@@ -48,11 +48,18 @@ namespace Events.World_Events {
                             unspawnedCharacters.Remove(characterToSpawn);
 
                             string classToCreate;
-                            if (GameUtilities.RollChance(50)) {
-                                classToCreate = CollectionUtilities.GetRandomElement(randomSettlement.owner.factionType.combatantClasses);
-                            } else {
+                            if (i == 0) {
+                                //always ensure that first villager is a civilian type 
+                                //https://trello.com/c/I53VfSsC/2688-one-of-the-migrants-should-always-be-a-non-combatant-the-rest-should-be-combatants
                                 classToCreate = CollectionUtilities.GetRandomElement(randomSettlement.owner.factionType.civilianClasses);
+                            } else {
+                                classToCreate = CollectionUtilities.GetRandomElement(randomSettlement.owner.factionType.combatantClasses);
                             }
+                            // if (GameUtilities.RollChance(50)) {
+                            //     classToCreate = CollectionUtilities.GetRandomElement(randomSettlement.owner.factionType.combatantClasses);
+                            // } else {
+                            //     classToCreate = CollectionUtilities.GetRandomElement(randomSettlement.owner.factionType.civilianClasses);
+                            // }
                             Character newCharacter = CharacterManager.Instance.CreateNewCharacter(characterToSpawn, classToCreate, randomSettlement.owner, randomSettlement);
                             RelationshipManager.Instance.ApplyPreGeneratedRelationships(WorldConfigManager.Instance.mapGenerationData, characterToSpawn, newCharacter);
                             newCharacter.CreateRandomInitialTraits();

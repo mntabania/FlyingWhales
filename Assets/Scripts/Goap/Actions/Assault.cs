@@ -293,7 +293,7 @@ public class Assault : GoapAction {
                         return CRIME_TYPE.Vampire;
                     } else {
                         CombatData combatDataAgainstPOIHit = actor.combatComponent.GetCombatData(targetCharacter);
-                        if (combatDataAgainstPOIHit != null && combatDataAgainstPOIHit.reasonForCombat == CombatManager.Retaliation) {
+                        if (combatDataAgainstPOIHit != null && (combatDataAgainstPOIHit.reasonForCombat == CombatManager.Retaliation || combatDataAgainstPOIHit.reasonForCombat == CombatManager.Hostility)) {
                             //if combat came from retaliation, do no consider assault as a crime.
                             return CRIME_TYPE.None;
                         }

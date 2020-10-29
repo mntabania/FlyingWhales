@@ -2528,8 +2528,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             } else {
                 Death();
             }
-        } else if (amount < 0 && IsHealthCriticallyLow() && traitContainer.HasTrait("Coward") && traitContainer.HasTrait("Berserked") == false && characterClass.className != "Zombie") { //do not make berserked characters trigger flight
-            combatComponent.FlightAll("critically low health");
+        } else if (amount < 0 && IsHealthCriticallyLow() && traitContainer.HasTrait("Coward", "Vampire") && traitContainer.HasTrait("Berserked") == false && characterClass.className != "Zombie") { //do not make berserked characters trigger flight
+            bool willflight = true;
+            if (traitContainer.HasTrait("Vampire") && crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
+                willflight = false;
+            }
+            if (willflight) {
+                combatComponent.FlightAll("critically low health");    
+            }
             // Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
         }
     }
@@ -2543,7 +2549,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool IsHealthCriticallyLow() {
         //chance based dependent on the character
-        return currentHP < (maxHP * 0.15f);
+        return currentHP < (maxHP * 0.2f);
     }
     #endregion
 
