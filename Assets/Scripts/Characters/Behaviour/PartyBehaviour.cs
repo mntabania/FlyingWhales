@@ -89,7 +89,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
 
                                         hasJob = CampBehaviour(character, party, out producedJob);
                                     } else {
-                                        LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(party.targetCamp.locationGridTiles);
+                                        LocationGridTile targetTile = party.targetCamp.GetRandomPassableTile();
                                         hasJob = character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
                                     }
                                 }
