@@ -118,6 +118,27 @@ public class BuildBlueprint : GoapAction {
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is GenericTileObject genericTileObject) {
             genericTileObject.BuildBlueprint(goapNode.actor.homeSettlement);
+
+            if(genericTileObject.blueprintOnTile != null) {
+                //After successfully building house, no house faction leader/settlement ruler/nobles should have first dibs on the newly built house
+                if(genericTileObject.blueprintOnTile.structureType == STRUCTURE_TYPE.DWELLING && goapNode.actor.homeSettlement != null) {
+                    Character importantCharacterThatShouldSetHome = null;
+                    for (int i = 0; i < goapNode.actor.homeSettlement.residents.Count; i++) {
+                        Character resident = goapNode.actor.homeSettlement.residents[i];
+                        if(resident.isFactionLeader || resident.isSettlementRuler || resident.characterClass.className == "Noble") {
+                            if(resident.homeStructure == null 
+                                || (resident.homeStructure.structureType != STRUCTURE_TYPE.DWELLING && resident.homeStructure.structureType != STRUCTURE_TYPE.VAMPIRE_CASTLE)) {
+                                importantCharacterThatShouldSetHome = resident;
+                                break;
+                            }
+                        }
+                    }
+
+                    if(importantCharacterThatShouldSetHome != null) {
+                        importantCharacterThatShouldSetHome.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
+                    }
+                }
+            }
         }
         //PlayerUI.Instance.ShowGeneralConfirmation("New Structure", $"A new {structure.name} has been built at {spot.gridTileLocation.structure.location.name}");
     }

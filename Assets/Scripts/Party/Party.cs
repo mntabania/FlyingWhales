@@ -423,9 +423,11 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         }
     }
     private void RestingPerHour() {
-        if (!HasActiveMemberThatMustDoNeedsRecovery()) {
-            //Messenger.RemoveListener(Signals.HOUR_STARTED, RestingPerHour); //Removed this because there is already a call on OnSwitchFromRestingState
-            SetPartyState(PARTY_STATE.Moving);
+        if (isActive) {
+            if (!HasActiveMemberThatMustDoNeedsRecovery()) {
+                //Messenger.RemoveListener(Signals.HOUR_STARTED, RestingPerHour); //Removed this because there is already a call on OnSwitchFromRestingState
+                SetPartyState(PARTY_STATE.Moving);
+            }
         }
     }
     private void FindNearbyTavernOrCamp() {
