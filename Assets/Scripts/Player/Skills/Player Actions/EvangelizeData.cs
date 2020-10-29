@@ -6,7 +6,7 @@ public class EvangelizeData : PlayerAction {
     public override string name => "Evangelize";
     public override string description => GetDescription();
     public override SPELL_CATEGORY category => SPELL_CATEGORY.PLAYER_ACTION;
-
+    public override bool canBeCastOnBlessed => true;
     
     public EvangelizeData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
@@ -45,7 +45,7 @@ public class EvangelizeData : PlayerAction {
             if (targetCharacter.canPerform == false) {
                 return false;
             }
-            return targetCharacter.isDead == false && targetCharacter.homeSettlement != null && targetCharacter.traitContainer.HasTrait("Cultist");
+            return targetCharacter.isDead == false; //&& targetCharacter.traitContainer.HasTrait("Cultist"); //&& targetCharacter.homeSettlement != null
         }
         return false;
     }

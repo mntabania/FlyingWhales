@@ -1312,6 +1312,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public GoapPlanJob CreateBrawlJob(Character targetCharacter) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.BRAWL, targetCharacter)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BRAWL, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, owner);
+            job.SetCannotBePushedBack(true);
+            job.SetDoNotRecalculate(true);
             owner.jobQueue.AddJobInQueue(job);
             return job;
         }

@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
+using Locations.Settlements;
 using UtilityScripts;
 
 public class InvadeBehaviour : CharacterBehaviourComponent {
@@ -11,7 +13,7 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
         log += $"\n{character.name} is an Invader";
         if (character.behaviourComponent.invadeVillageTarget == null) {
             log += $"\n-No invade target yet, setting one...";
-            character.behaviourComponent.SetInvadeVillageTarget(character.behaviourComponent.GetVillageTargetsByPriority());
+            character.behaviourComponent.SetInvadeVillageTarget(GetVillageTargetsByPriority(character));
             if (character.behaviourComponent.invadeVillageTarget == null) {
                 log += $"\n-Still no invade target, un-summoning minion.";
                 //if still no valid location was set, then unsummon minion.
@@ -51,9 +53,7 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
         List<Character> characters = null;
         for (int i = 0; i < tiles.Count; i++) {
             HexTile tile = tiles[i];
-            List<Character> charactersAtHexTile =
-                tile.GetAllCharactersInsideHexThatMeetCriteria<Character>(c =>
-                    c.isNormalCharacter && c.isDead == false && c.isAlliedWithPlayer == false);
+            List<Character> charactersAtHexTile = tile.GetAllCharactersInsideHexThatMeetCriteria<Character>(IsCharacterValidForInvade);
             if (charactersAtHexTile != null) {
                 if(characters == null) {
                     characters = new List<Character>();
@@ -62,6 +62,40 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
             }
         }
         return characters;
+    }
+    private bool IsCharacterValidForInvade(Character character) {
+        return character.isNormalCharacter && character.isDead == false && character.isAlliedWithPlayer == false;
+    }
+    private List<HexTile> GetVillageTargetsByPriority(Character owner) {
+        //get settlements in region that have normal characters living there.
+        List<BaseSettlement> settlementsInRegion = owner.currentRegion?.GetSettlementsInRegion(
+            settlement => settlement.residents.Count(IsCharacterValidForInvade) > 0
+        );
+        if (settlementsInRegion != null) {
+            List<BaseSettlement> villageChoices = settlementsInRegion.Where(
+                x => x.locationType == LOCATION_TYPE.VILLAGE
+            ).ToList();
+            if (villageChoices.Count > 0) {
+                //a random village occupied by Villagers within current region
+                BaseSettlement chosenVillage = CollectionUtilities.GetRandomElement(villageChoices);
+                return new List<HexTile>(chosenVillage.tiles);
+            } else {
+                //a random special structure occupied by Villagers within current region
+                List<BaseSettlement> specialStructureChoices = settlementsInRegion.Where(x => x.locationType == LOCATION_TYPE.DUNGEON).ToList();
+                if (specialStructureChoices.Count > 0) {
+                    BaseSettlement chosenSpecialStructure = CollectionUtilities.GetRandomElement(specialStructureChoices);
+                    return new List<HexTile>(chosenSpecialStructure.tiles);
+                }
+            }
+        } 
+        // //no settlements in region.
+        // //a random area occupied by Villagers within current region
+        // List<HexTile> occupiedAreas = owner.currentRegion?.GetAreasOccupiedByVillagers();
+        // if (occupiedAreas != null) {
+        //     HexTile randomArea = CollectionUtilities.GetRandomElement(occupiedAreas);
+        //     return new List<HexTile>() { randomArea };
+        // }
+        return null;
     }
     // public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
     //     producedJob = null;

@@ -28,7 +28,7 @@ public class CultistBoobyTrapData : PlayerAction {
             if (targetCharacter.canPerform == false) {
                 return false;
             }
-            return targetCharacter.isDead == false && targetCharacter.homeSettlement != null;
+            return targetCharacter.isDead == false; //&& targetCharacter.homeSettlement != null;
         }
         return false;
     }

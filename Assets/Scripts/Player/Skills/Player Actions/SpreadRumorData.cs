@@ -6,6 +6,7 @@ public class SpreadRumorData : PlayerAction {
     public override string name => "Spread Rumor";
     public override string description => "This Action instructs the character to Spread a Rumor about someone they know.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.PLAYER_ACTION;
+    public override bool canBeCastOnBlessed => true;
 
     
     public SpreadRumorData() : base() {
@@ -28,7 +29,7 @@ public class SpreadRumorData : PlayerAction {
             if (targetCharacter.canPerform == false) {
                 return false;
             }
-            return targetCharacter.isDead == false && targetCharacter.homeSettlement != null && targetCharacter.traitContainer.HasTrait("Cultist");
+            return targetCharacter.isDead == false; //&& targetCharacter.traitContainer.HasTrait("Cultist"); //&& targetCharacter.homeSettlement != null
         }
         return false;
     }

@@ -23727,7 +23727,7 @@ MonoBehaviour:
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
-  m_ScreenMatchMode: 0
+  m_ScreenMatchMode: 1
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
@@ -25488,7 +25488,7 @@ MonoBehaviour:
   saveCurrentProgressManager: {fileID: 1380393232}
   alwaysResetSpecialPopupsOnStartup: 0
   alwaysResetBonusTutorialsOnStartup: 0
-  _unlockAllWorlds: 0
+  _unlockAllWorlds: 1
 --- !u!4 &1625756931
 Transform:
   m_ObjectHideFlags: 0
@@ -25553,7 +25553,7 @@ MonoBehaviour:
   worldWideItemGenerationSetting: {fileID: 11400000, guid: acfbe38be903c424aa99c568054c1231,
     type: 2}
   initialArtifactChoices: 010000000200000003000000
-  _disableLogs: 1
+  _disableLogs: 0
   useRandomGenerationForScenarioMaps: 0
 --- !u!1 &1654958421
 GameObject:
@@ -35561,6 +35561,11 @@ PrefabInstance:
     - target: {fileID: 8277815899201242394, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
         type: 3}
       propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8277815899201242394, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9016050650569718918, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
