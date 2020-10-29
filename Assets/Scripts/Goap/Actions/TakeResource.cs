@@ -177,8 +177,13 @@ public class TakeResource : GoapAction {
         } else {
             if (goapNode.associatedJob is GoapPlanJob job && job.targetPOI is TileObject tileObject && !job.jobType.IsFullnessRecovery()) {
                 TileObjectData data = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
-                TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);
-                takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);
+                if (data != null && data.craftRecipes != null) {
+                    TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);
+                    takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);    
+                } else {
+                    //set amount just to prevent errors.
+                    takenResource = Mathf.Min(20, resourcePile.resourceInPile);
+                }
             } else {
                 takenResource = Mathf.Min(20, resourcePile.resourceInPile);    
             }
@@ -208,8 +213,13 @@ public class TakeResource : GoapAction {
         } else {
             if (goapNode.associatedJob is GoapPlanJob job && job.targetPOI is TileObject tileObject && !job.jobType.IsFullnessRecovery()) {
                 TileObjectData data = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
-                TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);
-                takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);
+                if (data != null && data.craftRecipes != null) {
+                    TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);
+                    takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);    
+                } else {
+                    //set amount just to prevent errors.
+                    takenResource = Mathf.Min(20, resourcePile.resourceInPile);
+                }
             } else {
                 takenResource = Mathf.Min(20, resourcePile.resourceInPile);    
             }
@@ -289,8 +299,13 @@ public class TakeResource : GoapAction {
         } else {
             if (jobQueueItem is GoapPlanJob job && job.targetPOI is TileObject tileObject && !job.jobType.IsFullnessRecovery()) {
                 TileObjectData data = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
-                TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);
-                takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);
+                if (data != null && data.craftRecipes != null) {
+                    TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);
+                    takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);    
+                } else {
+                    //set amount just to prevent errors.
+                    takenResource = Mathf.Min(20, resourcePile.resourceInPile);
+                }
             } else {
                 takenResource = Mathf.Min(20, resourcePile.resourceInPile);    
             }

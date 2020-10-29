@@ -28,7 +28,7 @@ namespace Quests.Special_Popups {
         private void SetTargetCharacter(QuestCriteria criteria) {
             if (criteria is DragonLeftCriteria dragonLeftCriteria) {
                 _targetCharacter = dragonLeftCriteria.targetCharacter;
-                _targetRegion = _targetCharacter.homeRegion;
+                _targetRegion = dragonLeftCriteria.region;
             }
         }
         public override void Activate() {

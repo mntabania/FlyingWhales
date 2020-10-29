@@ -242,8 +242,10 @@ namespace Traits {
                 }
                 if (_burningSpreadChoices.Count > 0) {
                     ITraitable chosen = _burningSpreadChoices[Random.Range(0, _burningSpreadChoices.Count)];
-                    chosen.traitContainer.AddTrait(chosen, "Burning", out var trait, bypassElementalChance: true);
-                    (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, chosen);
+                    if (chosen.gridTileLocation != null) {
+                        chosen.traitContainer.AddTrait(chosen, "Burning", out var trait, bypassElementalChance: true);
+                        (trait as Burning)?.SetSourceOfBurning(sourceOfBurning, chosen);    
+                    }
                 }    
             }
 

@@ -72,7 +72,7 @@ public class MainMenuUI : MonoBehaviour {
             SettingsManager.Instance.SetHasShownEarlyAccessAnnouncement(true);
             if (SettingsManager.Instance.settings.skipEarlyAccessAnnouncement) {
                 earlyAccessAnnouncementGO.SetActive(false);
-                roadmapGO.SetActive(true);
+                roadmapGO.SetActive(false);
             } else {
                 skipEarlyAccessAnnouncementToggle.isOn = SettingsManager.Instance.settings.skipEarlyAccessAnnouncement;
                 earlyAccessAnnouncementGO.SetActive(true);
@@ -82,7 +82,7 @@ public class MainMenuUI : MonoBehaviour {
     }
     public void OnClickOkEarlyAccessAnnouncement() {
         earlyAccessAnnouncementGO.SetActive(false);
-        roadmapGO.SetActive(true);
+        roadmapGO.SetActive(false);
     }
     public void ExitGame() {
         Application.Quit();

@@ -632,7 +632,7 @@ namespace Locations.Settlements {
             }
         }
         private void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
-            if (trait is Burning && traitable.gridTileLocation.IsPartOfSettlement(this)) {
+            if (trait is Burning && traitable.gridTileLocation != null && traitable.gridTileLocation.IsPartOfSettlement(this)) {
                 AddObjectOnFire(traitable);
             }
         }

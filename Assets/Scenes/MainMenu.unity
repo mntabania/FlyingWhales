@@ -99,7 +99,7 @@ LightmapSettings:
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 112000002, guid: 9252122cd68805a4891073545c6d21fc,
     type: 2}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -3849,8 +3849,8 @@ MonoBehaviour:
         m_RotationOrder: 4
       StartPos: {x: -8, y: 155, z: 0}
       EndPos: {x: -8, y: -155, z: 0}
-      StartWorldPos: {x: 218.66296, y: 283.5926, z: 0}
-      EndWorldPos: {x: 218.66296, y: 212.4074, z: 0}
+      StartWorldPos: {x: 1904, y: 1510, z: 0}
+      EndWorldPos: {x: 1904, y: 890, z: 0}
     ScalePropetiesAnim:
       scaleEnabled: 0
       TweenCurveEnterScale:
@@ -10995,8 +10995,8 @@ MonoBehaviour:
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
-  m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_ScreenMatchMode: 1
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -16698,8 +16698,8 @@ MonoBehaviour:
         m_RotationOrder: 4
       StartPos: {x: -237, y: 0, z: 0}
       EndPos: {x: 202, y: 0, z: 0}
-      StartWorldPos: {x: -108.37812, y: 246.99998, z: 0}
-      EndWorldPos: {x: 92.37292, y: 246.99998, z: 0}
+      StartWorldPos: {x: -263.33334, y: 600, z: 0}
+      EndWorldPos: {x: 224.44446, y: 600, z: 0}
     ScalePropetiesAnim:
       scaleEnabled: 0
       TweenCurveEnterScale:
@@ -17546,7 +17546,7 @@ MonoBehaviour:
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
-  m_ScreenMatchMode: 0
+  m_ScreenMatchMode: 1
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
@@ -19183,9 +19183,9 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 1000
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
-  m_textAlignment: 514
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -21134,17 +21134,17 @@ PrefabInstance:
     - target: {fileID: 3345934888100056602, guid: e898f929097e0494a8264891fc37a3c7,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3345934888100056602, guid: e898f929097e0494a8264891fc37a3c7,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3345934888100056602, guid: e898f929097e0494a8264891fc37a3c7,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3345934888100056602, guid: e898f929097e0494a8264891fc37a3c7,
         type: 3}
@@ -21249,7 +21249,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 1171372862}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 2128279969}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83642d2664bd42c69b0a404aaa09ffb2, type: 3}
@@ -23561,15 +23561,15 @@ MonoBehaviour:
   m_text: 'Thank you for playing Ruinarch! This game is being developed by a core
     team of 3 from the Philippines.
 
-    
-
-    We just recently launched the game
-    in Early Access to gather feedback from players. The game is still in active
-    development so you may encounter bugs and balance issues.
 
 
-    At any time,
-    press F8 to send us your feedback!
+    We just recently launched the game in
+    Early Access to gather feedback from players. The game is still in active development
+    so you may encounter bugs and balance issues.
+
+
+    At any time, press F8 to
+    send us your feedback!
 
 '
   m_isRightToLeft: 0
@@ -25488,7 +25488,7 @@ MonoBehaviour:
   saveCurrentProgressManager: {fileID: 1380393232}
   alwaysResetSpecialPopupsOnStartup: 0
   alwaysResetBonusTutorialsOnStartup: 0
-  _unlockAllWorlds: 1
+  _unlockAllWorlds: 0
 --- !u!4 &1625756931
 Transform:
   m_ObjectHideFlags: 0
@@ -25553,7 +25553,7 @@ MonoBehaviour:
   worldWideItemGenerationSetting: {fileID: 11400000, guid: acfbe38be903c424aa99c568054c1231,
     type: 2}
   initialArtifactChoices: 010000000200000003000000
-  _disableLogs: 0
+  _disableLogs: 1
   useRandomGenerationForScenarioMaps: 0
 --- !u!1 &1654958421
 GameObject:
@@ -34694,7 +34694,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -0.26904297, y: 0}
+  m_SizeDelta: {x: -1536.2688, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2055022139
 MonoBehaviour:
@@ -35214,6 +35214,50 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &2128279969 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3276266618370622418, guid: e898f929097e0494a8264891fc37a3c7,
+    type: 3}
+  m_PrefabInstance: {fileID: 1171372862}
+  m_PrefabAsset: {fileID: 0}
+--- !u!223 &2128279970
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128279969}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 1007957311
+  m_SortingOrder: 5
+  m_TargetDisplay: 0
+--- !u!114 &2128279971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2128279969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1001 &1471678630450151158
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -35488,12 +35532,12 @@ PrefabInstance:
     - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
         type: 3}
       propertyPath: _unlimitedCast
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
         type: 3}
       propertyPath: _unlockAllSkills
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 39888b675721e8e488059363d0de61d1, type: 3}
@@ -35517,16 +35561,6 @@ PrefabInstance:
     - target: {fileID: 8277815899201242394, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8277815899201242394, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9016050650569718915, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
-        type: 3}
-      propertyPath: m_MatchWidthOrHeight
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9016050650569718918, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
