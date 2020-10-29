@@ -266,7 +266,7 @@ namespace Interrupts {
                         log += $"\n-Find new village";
                         HexTile targetTile = actor.currentRegion.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
                         if(targetTile != null) {
-                            StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, actor.faction.factionType.mainResource); //character.faction.factionType.mainResource
+                            StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, actor.faction.factionType.mainResource, actor.faction.factionType.usesCorruptedStructures); //character.faction.factionType.mainResource
                             List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
                             GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
                             actor.jobComponent.TriggerFindNewVillage(targetTile.GetCenterLocationGridTile(), chosenStructurePrefab.name);
@@ -283,7 +283,7 @@ namespace Interrupts {
                         log += $"\n-Find new village";
                         HexTile targetTile = actor.currentRegion.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
                         if (targetTile != null) {
-                            StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, actor.faction.factionType.mainResource); //character.faction.factionType.mainResource
+                            StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, actor.faction.factionType.mainResource, actor.faction.factionType.usesCorruptedStructures); //character.faction.factionType.mainResource
                             List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
                             GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
                             actor.jobComponent.TriggerFindNewVillage(targetTile.GetCenterLocationGridTile(), chosenStructurePrefab.name);

@@ -1779,6 +1779,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         hasFleePath = state;
     }
     public void AddAvoidPositions(Vector3 avoid) {
+        if (avoidThisPositions == null) {
+            avoidThisPositions = new List<Vector3>();
+        }
         avoidThisPositions.Add(avoid);
         ReconstructFleePath();
     }

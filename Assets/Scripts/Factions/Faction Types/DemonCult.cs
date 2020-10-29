@@ -1,6 +1,8 @@
 ﻿namespace Factions.Faction_Types {
     public class DemonCult : FactionType {
         public override RESOURCE mainResource => RESOURCE.STONE;
+        public override bool usesCorruptedStructures => true;
+        
         public DemonCult() : base(FACTION_TYPE.Demon_Cult) { }
         public DemonCult(SaveDataFactionType saveData) : base(FACTION_TYPE.Demon_Cult, saveData) { }
         
