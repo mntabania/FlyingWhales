@@ -59,6 +59,11 @@
             }
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+
+            if (!string.IsNullOrEmpty(_currentScheduleKey)) {
+                SchedulingManager.Instance.RemoveSpecificEntry(_currentScheduleKey);
+                _currentScheduleKey = string.Empty;
+            }
         }
         public override void ProcessNewVillager(Character newVillager) {
             base.ProcessNewVillager(newVillager);

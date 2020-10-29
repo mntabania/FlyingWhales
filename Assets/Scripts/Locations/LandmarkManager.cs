@@ -112,20 +112,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public GameObject GetLandmarkGO() {
         return this.landmarkGO;
     }
-    public bool AreAllNonPlayerAreasCorrupted() {
-        List<NPCSettlement> areas = allNonPlayerSettlements;
-        for (int i = 0; i < areas.Count; i++) {
-            NPCSettlement npcSettlement = areas[i];
-            for (int j = 0; j < npcSettlement.tiles.Count; j++) {
-                HexTile currTile = npcSettlement.tiles[j];
-                if (!currTile.isCorrupted) {
-                    return false;
-                }    
-            }
-           
-        }
-        return true;
-    }
     public BaseLandmark CreateNewLandmarkInstance(HexTile location, LANDMARK_TYPE type) {
         return new BaseLandmark(location, type);
     }

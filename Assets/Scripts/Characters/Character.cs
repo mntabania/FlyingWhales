@@ -1804,13 +1804,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         WorldMapCameraMove.Instance.CenterCameraOn(carryComponent.masterCharacter.currentRegion.coreTile.gameObject);
                     }
                 } else if (carryComponent.masterCharacter.gridTileLocation != null) {
-                    if (marker.gameObject.activeInHierarchy) {
+                    // if (marker.gameObject.activeInHierarchy) {
                         bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(currentRegion);
                         if (instantCenter) {
                             InnerMapManager.Instance.ShowInnerMap(carryComponent.masterCharacter.gridTileLocation.structure.region, false);
                         }
                         InnerMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
-                    }
+                    // }
                 }
             } 
         }

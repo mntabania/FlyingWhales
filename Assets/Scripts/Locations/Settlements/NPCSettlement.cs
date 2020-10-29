@@ -71,8 +71,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         SaveDataNPCSettlement saveData = saveDataBaseSettlement as SaveDataNPCSettlement;
         System.Diagnostics.Debug.Assert(saveData != null, nameof(saveData) + " != null");
         hasTriedToStealCorpse = saveData.hasTriedToStealCorpse;
-        //NOTE: This assumes that all tiles in this settlement is part of the same region.
-        _region = GameUtilities.GetHexTilesGivenCoordinates(saveDataBaseSettlement.tileCoordinates, GridMap.Instance.map)[0].region;
+        _region = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveData.regionID);
         newRulerDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         ResetNewRulerDesignationChance();
@@ -116,6 +115,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             hasPeasants = saveDataNpcSettlement.hasPeasants;
             hasWorkers = saveDataNpcSettlement.hasWorkers;
             Initialize();
+            if (tiles.Count <= 0) {
+                UnsubscribeToSignals(); //make sure that settlements that have no more areas should no longer listen to signals.
+            }
         }
     }
     private void LoadJobs(SaveDataNPCSettlement data) {
@@ -248,6 +250,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #region Utilities
     public void Initialize() {
         SubscribeToSignals();
+    }
+    protected override void SettlementWipedOut() {
+        base.SettlementWipedOut();
+        UnsubscribeToSignals();
+        eventManager.OnSettlementDestroyed();
     }
     private void SetIsUnderSiege(bool state) {
         if(isUnderSiege != state) {
