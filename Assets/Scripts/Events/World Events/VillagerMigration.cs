@@ -23,16 +23,16 @@ namespace Events.World_Events {
                 if(randomSettlement != null) {
                     int unoccupiedDwellings = GetUnoccupiedDwellingCount(randomSettlement);
                     debugLog = $"{debugLog}\n{randomSettlement.name} was chosen. It has {unoccupiedDwellings.ToString()} unoccupied dwellings.";
-                    int baseChance = 5;
-                    if (GameManager.Instance.Today().day >= 15) {
-                        baseChance = 3;
+                    int baseChance = 4;
+                    if (GameManager.Instance.Today().day >= 12) {
+                        baseChance = 2;
                     }
                     int chance = baseChance * unoccupiedDwellings;
-                    //cap chance to 20% before day 15 and 10% after day 15
-                    if (GameManager.Instance.Today().day < 15) {
-                        chance = Mathf.Min(chance, 20);
+                    //cap chance to 16% before day 12 and 8% after day 12
+                    if (GameManager.Instance.Today().day < 12) {
+                        chance = Mathf.Min(chance, 16);
                     } else {
-                        chance = Mathf.Min(chance, 10);
+                        chance = Mathf.Min(chance, 8);
                     }
                     if (GameUtilities.RollChance(chance, ref debugLog)) { //7
                         int availableCapacity = unoccupiedDwellings; //to get available capacity, get all unoccupied dwellings multiplied by the maximum number of residents per dwelling (2)
