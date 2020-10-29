@@ -37,7 +37,8 @@ public class Dig : GoapAction {
     #region State Effects
     [UsedImplicitly]
     public void AfterDigSuccess(ActualGoapNode goapNode) {
-        goapNode.poiTarget.gridTileLocation.structure.RemovePOI(goapNode.poiTarget);
+        goapNode.poiTarget.AdjustHP(-goapNode.poiTarget.maxHP, ELEMENTAL_TYPE.Normal, true);
+        // goapNode.poiTarget.gridTileLocation.structure.RemovePOI(goapNode.poiTarget);
     }
     #endregion
 }

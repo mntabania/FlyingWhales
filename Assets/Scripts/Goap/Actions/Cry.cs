@@ -91,6 +91,20 @@ public class Cry : GoapAction {
         if (goapNode.actor.characterClass.IsCombatant()) {
             goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         }
+        
+        if (goapNode.actor.traitContainer.HasTrait("Griefstricken")) {
+            goapNode.descriptionLog.AddToFillers(null, "grieving", LOG_IDENTIFIER.STRING_1);
+        } else if (goapNode.actor.traitContainer.HasTrait("Heartbroken")) {
+            goapNode.descriptionLog.AddToFillers(null, "feeling heartbroken", LOG_IDENTIFIER.STRING_1);
+        } else if (goapNode.actor.traitContainer.HasTrait("Worried")) {
+            goapNode.descriptionLog.AddToFillers(null, "worried about someone", LOG_IDENTIFIER.STRING_1);
+        } else if (goapNode.actor.traitContainer.HasTrait("Traumatized")) {
+            goapNode.descriptionLog.AddToFillers(null, "traumatized", LOG_IDENTIFIER.STRING_1);
+        } else if (goapNode.actor.traitContainer.HasTrait("Betrayed")) {
+            goapNode.descriptionLog.AddToFillers(null, "feeling betrayed", LOG_IDENTIFIER.STRING_1);
+        } else {
+            goapNode.descriptionLog.AddToFillers(null, "feeling sad", LOG_IDENTIFIER.STRING_1);
+        }
     }
     public void PerTickCrySuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(-3.33f);
@@ -101,7 +115,8 @@ public class Cry : GoapAction {
         if (goapNode.actor.characterClass.IsCombatant()) {
             goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
         }
-        goapNode.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, goapNode.actor, "feeling sad");
+        // goapNode.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, goapNode.actor, "feeling sad");
+        Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, goapNode.actor.marker.transform.position, 2, goapNode.actor.currentRegion.innerMap);
     }
     #endregion
 

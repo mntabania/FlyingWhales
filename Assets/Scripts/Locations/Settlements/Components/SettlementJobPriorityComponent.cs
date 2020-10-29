@@ -21,7 +21,7 @@ public class SettlementJobPriorityComponent
             { JOB_TYPE.DOUSE_FIRE, 0 },
             { JOB_TYPE.REPAIR, 0 },
             { JOB_TYPE.CRAFT_OBJECT, 0 },
-            { JOB_TYPE.PATROL, 0 },
+            // { JOB_TYPE.PATROL, 0 },
             { JOB_TYPE.RESTRAIN, 0 },
             { JOB_TYPE.REMOVE_STATUS, 0 },
             { JOB_TYPE.TEND_FARM, 0 },

@@ -23,14 +23,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool hasStartedScreamCheck { get; private set; }
     public bool doNotDoRecoverHPJob { get; private set; }
     public bool canReportDemonicStructure { get; private set; }
-    public List<JOB_TYPE> additionalAbleJobs { get; }
+    public List<JOB_TYPE> additionalPriorityJobs { get; }
 
     public CharacterJobTriggerComponent() {
         canReportDemonicStructure = true;
         numOfTimesActionDone = new Dictionary<INTERACTION_TYPE, int>();
         primaryJobCandidates = new List<JOB_TYPE>();
         priorityJobs = new List<JOB_TYPE>();
-        additionalAbleJobs = new List<JOB_TYPE>();
+        additionalPriorityJobs = new List<JOB_TYPE>();
         SetPrimaryJob(JOB_TYPE.NONE);
 	}
     public CharacterJobTriggerComponent(SaveDataCharacterJobTriggerComponent data) {
@@ -42,7 +42,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         hasStartedScreamCheck = data.hasStartedScreamCheck;
         doNotDoRecoverHPJob = data.doNotDoRecoverHPJob;
         canReportDemonicStructure = data.canReportDemonicStructure;
-        additionalAbleJobs = data.additionalAbleJobs;
+        additionalPriorityJobs = data.additionalPriorityJobs;
         if (!canReportDemonicStructure) {
 	        //make character listen to this so that he/she can report again after reaching home
 	        Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, TryEnableReportStructure);
@@ -269,14 +269,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return jobs;
     }
-    public string GetAdditionalAbleJobs() {
+    public string GetAdditionalPriorityJobs() {
 	    string jobs = string.Empty;
-	    if (additionalAbleJobs != null && additionalAbleJobs.Count > 0) {
-		    for (int i = 0; i < additionalAbleJobs.Count; i++) {
+	    if (additionalPriorityJobs != null && additionalPriorityJobs.Count > 0) {
+		    for (int i = 0; i < additionalPriorityJobs.Count; i++) {
 			    if (i > 0) {
 				    jobs += ",";
 			    }
-			    jobs += additionalAbleJobs[i].ToString();
+			    jobs += additionalPriorityJobs[i].ToString();
 		    }
 	    }
 	    return jobs;
@@ -303,22 +303,22 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    }
     }
     public bool CanDoJob(JOB_TYPE jobType) {
-	    return owner.jobComponent.primaryJob == jobType || owner.characterClass.CanDoJob(jobType) || priorityJobs.Contains(jobType) || additionalAbleJobs.Contains(jobType);
+	    return owner.jobComponent.primaryJob == jobType || owner.characterClass.CanDoJob(jobType) || priorityJobs.Contains(jobType) || additionalPriorityJobs.Contains(jobType);
     }
-    public void AddAdditionalAbleJob(JOB_TYPE jobType) {
-		additionalAbleJobs.Add(jobType);    
+    public void AddAdditionalPriorityJob(JOB_TYPE jobType) {
+		additionalPriorityJobs.Add(jobType);    
     }
-    public void RemoveAdditionalAbleJob(JOB_TYPE jobType) {
-	    additionalAbleJobs.Remove(jobType);
+    public void RemoveAdditionalPriorityJob(JOB_TYPE jobType) {
+	    additionalPriorityJobs.Remove(jobType);
     }
-    public void AddAdditionalAbleJob(params JOB_TYPE[] jobType) {
+    public void AddAdditionalPriorityJob(params JOB_TYPE[] jobType) {
 	    for (int i = 0; i < jobType.Length; i++) {
-		    AddAdditionalAbleJob(jobType[i]);    
+		    AddAdditionalPriorityJob(jobType[i]);    
 	    }
     }
-    public void RemoveAdditionalAbleJob(params JOB_TYPE[] jobType) {
+    public void RemoveAdditionalPriorityJob(params JOB_TYPE[] jobType) {
 	    for (int i = 0; i < jobType.Length; i++) {
-		    RemoveAdditionalAbleJob(jobType[i]);    
+		    RemoveAdditionalPriorityJob(jobType[i]);    
 	    }
     }
     #endregion
@@ -3169,7 +3169,7 @@ public class SaveDataCharacterJobTriggerComponent : SaveData<CharacterJobTrigger
     public List<JOB_TYPE> priorityJobs;
     public Dictionary<INTERACTION_TYPE, int> numOfTimesActionDone;
     public List<JOB_TYPE> primaryJobCandidates;
-    public List<JOB_TYPE> additionalAbleJobs;
+    public List<JOB_TYPE> additionalPriorityJobs;
 
     public List<string> obtainPersonalItemRandomList;
     public List<string> obtainPersonalItemUnownedRandomList;
@@ -3187,7 +3187,7 @@ public class SaveDataCharacterJobTriggerComponent : SaveData<CharacterJobTrigger
         hasStartedScreamCheck = data.hasStartedScreamCheck;
         doNotDoRecoverHPJob = data.doNotDoRecoverHPJob;
         canReportDemonicStructure = data.canReportDemonicStructure;
-        additionalAbleJobs = data.additionalAbleJobs;
+        additionalPriorityJobs = data.additionalPriorityJobs;
     }
 
     public override CharacterJobTriggerComponent Load() {

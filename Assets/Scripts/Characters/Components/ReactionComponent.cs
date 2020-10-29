@@ -1773,14 +1773,14 @@ public class ReactionComponent : CharacterComponent {
                     log = $"{log}\n-Do nothing";
                 } else {
                     log = $"{log}\n-Reactor felt Shocked";
-                    CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
+                    CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED, reason: "accidentally attacked");
                 }
             } else {
                 CombatData combatDataAgainstCharacterHit = attacker.combatComponent.GetCombatData(characterHit);
                 if (combatDataAgainstCharacterHit != null && combatDataAgainstCharacterHit.connectedAction != null && combatDataAgainstCharacterHit.connectedAction.associatedJobType == JOB_TYPE.APPREHEND) {
                     log = $"{log}\n-Combat is part of Apprehend Job";
                     log = $"{log}\n-Reactor felt Shocked";
-                    CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
+                    CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED, reason: "being apprehended");
                 } else {
                     if (characterHit == reactor) {
                         log = $"{log}\n-Hit Character is the Reactor";
@@ -1800,7 +1800,7 @@ public class ReactionComponent : CharacterComponent {
                             if (reactor.relationshipContainer.IsFriendsWith(attacker)) {
                                 log = $"{log}\n-Reactor is Friends/Close Friends with Attacker";
                                 log = $"{log}\n-Reactor felt Shock, Disappointment";
-                                CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
+                                CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED, reason: "attacked by a friend");
                                 CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, reactor, attacker, REACTION_STATUS.WITNESSED);
                             } else if (reactor.relationshipContainer.IsEnemiesWith(attacker)) {
                                 log = $"{log}\n-Reactor is Enemies/Rivals with Attacker";
@@ -1819,14 +1819,14 @@ public class ReactionComponent : CharacterComponent {
                             } else if (reactor.relationshipContainer.IsEnemiesWith(attacker)) {
                                 log = $"{log}\n-Reactor is Enemies/Rivals with Attacker";
                                 log = $"{log}\n-Reactor felt Shock";
-                                CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
+                                CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED, reason: "sudden attack");
                             } else {
                                 log = $"{log}\n-Reactor felt Approval";
                                 CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, reactor, attacker, REACTION_STATUS.WITNESSED);
                             }
                         } else {
                             log = $"{log}\n-Reactor felt Shock";
-                            CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED);
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, reactor, attacker, REACTION_STATUS.WITNESSED, reason: "sudden attack");
                         }
                     }
                 }

@@ -1298,10 +1298,10 @@ public class CharacterManager : BaseMonoBehaviour {
             }
         }
     }
-    public string TriggerEmotion(EMOTION emotionType, Character emoter, IPointOfInterest target, REACTION_STATUS status, ActualGoapNode action = null) {
+    public string TriggerEmotion(EMOTION emotionType, Character emoter, IPointOfInterest target, REACTION_STATUS status, ActualGoapNode action = null, string reason = "") {
         if (emoter.isNormalCharacter) {
             if (emoter.CanFeelEmotion(emotionType)) {
-                return $" {GetEmotion(emotionType).ProcessEmotion(emoter, target, status, action)}";    
+                return $" {GetEmotion(emotionType).ProcessEmotion(emoter, target, status, action, reason)}";    
             }
             return string.Empty;
         } else {

@@ -11,11 +11,11 @@ public class Fear : Emotion {
 
     #region Overrides
     public override string ProcessEmotion(Character witness, IPointOfInterest target, REACTION_STATUS status,
-        ActualGoapNode goapNode = null) {
+        ActualGoapNode goapNode = null, string reason = "") {
         witness.traitContainer.AddTrait(witness, "Spooked");
         //Fight or Flight, Flight
         witness.combatComponent.Flight(target, "saw something frightening");
-        return base.ProcessEmotion(witness, target, status, goapNode);
+        return base.ProcessEmotion(witness, target, status, goapNode, reason);
     }
     #endregion
 }

@@ -31,7 +31,7 @@ namespace Events.World_Events {
             Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
             Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
             Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
-            Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, OnInterruptFinished);
+            // Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, OnInterruptFinished);
             Messenger.AddListener<Character>(Signals.CHARACTER_MARKER_DESTROYED, OnMarkerDestroyed);
             Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterChangedClass);
         }
@@ -52,6 +52,7 @@ namespace Events.World_Events {
                         if (leaderWeights.GetTotalOfWeights() > 0) {
                             Character chosenLeader = leaderWeights.PickRandomElementGivenWeights();
                             chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Cult_Leader, chosenLeader);
+                            SetCurrentCultLeaderInWorld(chosenLeader);
                         }    
                     }
                 }
@@ -67,20 +68,22 @@ namespace Events.World_Events {
                 _activeCultists.Remove(character);
             }
         }
-        private void OnInterruptFinished(INTERRUPT interrupt, Character actor) {
-            if (interrupt == INTERRUPT.Become_Cult_Leader) {
-                Assert.IsNull(_currentCultLeader, $"There is already a cult leader in the world but {actor.name} still triggered the Become cult leader interrupt.");
-                SetCurrentCultLeaderInWorld(actor);
-            }
-        }
+        // private void OnInterruptFinished(INTERRUPT interrupt, Character actor) {
+        //     if (interrupt == INTERRUPT.Become_Cult_Leader) {
+        //         Assert.IsNull(_currentCultLeader, $"There is already a cult leader in the world but {actor.name} still triggered the Become cult leader interrupt.");
+        //         SetCurrentCultLeaderInWorld(actor);
+        //     }
+        // }
         private void OnMarkerDestroyed(Character character) {
-            if (_activeCultists.Contains(character)) {
-                _activeCultists.Remove(character);
-            }
-            //only unassign current cult leader if that characters marker is destroyed
-            //this means that that character can no longer return and it is safe for us to spawn a new cult leader.
-            if (_currentCultLeader == character) {
-                SetCurrentCultLeaderInWorld(null);
+            if (character.isDead) {
+                if (_activeCultists.Contains(character)) {
+                    _activeCultists.Remove(character);
+                }
+                //only unassign current cult leader if that characters marker is destroyed
+                //this means that that character can no longer return and it is safe for us to spawn a new cult leader.
+                if (_currentCultLeader == character) {
+                    SetCurrentCultLeaderInWorld(null);
+                }    
             }
         }
         private void OnCharacterChangedClass(Character character, CharacterClass previousClass, CharacterClass newClass) {
