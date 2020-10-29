@@ -382,21 +382,25 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             action.LogActionInvalid(goapActionInvalidity, this, isInvalidStealth);
             actor.GoapActionResult(InteractionManager.Goap_State_Fail, this);
             action.OnInvalidAction(this);
-            if (isInvalidOnVision || isInvalidStealth) { //If action is invalid because of stealth, cancel job immediately, we do not need to recalculate it anymore since there are witnesses around, it will just become invalid again even if we let it recalculate
-                associatedJob?.CancelJob(false);
-            } else {
-                JobQueueItem job = associatedJob;
-                if(job != null) {
-                    //Special case for Invite action for Make Love
-                    //Once the invite action became invalid because the target rejected the invite, it must be cancelled immediately, so that the actor will not try to invite again
-                    //Maybe create a system for this?
-                    if(goapActionInvalidity.stateName == "Invite Rejected" && action.goapType == INTERACTION_TYPE.INVITE) {
+            JobQueueItem job = associatedJob;
+            if (job != null) {
+                if (job.forceCancelOnInvalid) {
+                    job.ForceCancelJob(false);
+                } else {
+                    if (isInvalidOnVision || isInvalidStealth) { //If action is invalid because of stealth, cancel job immediately, we do not need to recalculate it anymore since there are witnesses around, it will just become invalid again even if we let it recalculate
                         job.CancelJob(false);
                     } else {
-                        if (job.invalidCounter > 0) {
+                        //Special case for Invite action for Make Love
+                        //Once the invite action became invalid because the target rejected the invite, it must be cancelled immediately, so that the actor will not try to invite again
+                        //Maybe create a system for this?
+                        if (goapActionInvalidity.stateName == "Invite Rejected" && action.goapType == INTERACTION_TYPE.INVITE) {
                             job.CancelJob(false);
                         } else {
-                            job.IncreaseInvalidCounter();
+                            if (job.invalidCounter > 0) {
+                                job.CancelJob(false);
+                            } else {
+                                job.IncreaseInvalidCounter();
+                            }
                         }
                     }
                 }

@@ -50,7 +50,7 @@ public class SummonBoneGolem : GoapAction {
                     invalidity.isInvalid = true;
                 } else {
                     for (int i = 0; i < otherData.Length; i++) {
-                        if(otherData[i].obj == null) {
+                        if (otherData[i].obj == null) {
                             invalidity.isInvalid = true;
                             break;
                         } else {
@@ -59,14 +59,19 @@ public class SummonBoneGolem : GoapAction {
                                 invalidity.isInvalid = true;
                                 break;
                             } else {
-                                IPointOfInterest target = targetCorpse;
-                                if(targetCorpse.grave != null) {
-                                    target = targetCorpse.grave;
-                                }
-                                if(target.gridTileLocation == null || target.mapObjectVisual == null || target.isBeingCarriedBy != null || target.isBeingSeized || target.gridTileLocation.structure.structureType != STRUCTURE_TYPE.CULT_TEMPLE
-                                    || target.gridTileLocation.structure.settlementLocation == null || target.gridTileLocation.structure.settlementLocation != node.actor.homeSettlement) {
+                                if (!targetCorpse.isDead) {
                                     invalidity.isInvalid = true;
                                     break;
+                                } else {
+                                    IPointOfInterest target = targetCorpse;
+                                    if (targetCorpse.grave != null) {
+                                        target = targetCorpse.grave;
+                                    }
+                                    if (target.gridTileLocation == null || target.mapObjectVisual == null || target.isBeingCarriedBy != null || target.isBeingSeized || target.gridTileLocation.structure.structureType != STRUCTURE_TYPE.CULT_TEMPLE
+                                        || target.gridTileLocation.structure.settlementLocation == null || target.gridTileLocation.structure.settlementLocation != node.actor.homeSettlement) {
+                                        invalidity.isInvalid = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -85,6 +90,9 @@ public class SummonBoneGolem : GoapAction {
             for (int i = 0; i < otherData.Length; i++) {
                 if (otherData[i].obj is Character targetCorpse) {
                     if (targetCorpse != null) {
+                        if (!targetCorpse.isDead) {
+                            continue;
+                        }
                         IPointOfInterest target = targetCorpse;
                         if (targetCorpse.grave != null) {
                             target = targetCorpse.grave;

@@ -1008,6 +1008,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SUMMON_BONE_GOLEM, new GoapEffect(GOAP_EFFECT_CONDITION.SUMMON, "Bone Golem", false, GOAP_EFFECT_TARGET.ACTOR), null, _owner);
                 job.AddOtherData(INTERACTION_TYPE.SUMMON_BONE_GOLEM, corpses);
                 job.SetCanTakeThisJobChecker(JobManager.Can_Summon_Bone_Golem);
+                job.SetForceCancelOnInvalid(true);
                 _owner.AddToAvailableJobs(job);
             }
         }

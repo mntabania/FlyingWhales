@@ -7,6 +7,8 @@ public class UnallowOverlaps : MonoBehaviour
     public RectTransform rectTransform { get; private set; }
     public OVERLAP_UI_TAG tag;
 
+    private Vector3 _defaultLocalPosition;
+
     #region getters
     public Vector2 anchoredOffsetMin {
         get {
@@ -30,10 +32,14 @@ public class UnallowOverlaps : MonoBehaviour
     }
     #endregion
 
+    public void Initialize() {
+        _defaultLocalPosition = transform.localPosition;
+    }
     void OnEnable() {
         if(rectTransform == null) {
             rectTransform = gameObject.GetComponent<RectTransform>();
             UIManager.Instance.AddUnallowOverlapUI(this);
+            Initialize();
         }
         UnallowOverlaps overlappedUI = UIManager.Instance.GetOverlappedUI(this);
         if(overlappedUI != null) {
@@ -41,6 +47,18 @@ public class UnallowOverlaps : MonoBehaviour
                 Reposition(overlappedUI);
             } else if(overlappedUI.tag == OVERLAP_UI_TAG.Bottom && tag == OVERLAP_UI_TAG.Top) {
                 overlappedUI.Reposition(this);
+            }
+        } else {
+            //When UI is shown and there is no overlapping UI always put it to the default position, left edge of the screen
+            DefaultPosition();
+
+            overlappedUI = UIManager.Instance.GetOverlappedUI(this);
+            if (overlappedUI != null) {
+                if (overlappedUI.tag == OVERLAP_UI_TAG.Top && tag == OVERLAP_UI_TAG.Bottom) {
+                    Reposition(overlappedUI);
+                } else if (overlappedUI.tag == OVERLAP_UI_TAG.Bottom && tag == OVERLAP_UI_TAG.Top) {
+                    overlappedUI.Reposition(this);
+                }
             }
         }
     }
@@ -59,5 +77,8 @@ public class UnallowOverlaps : MonoBehaviour
         transform.localPosition = new Vector3(newXPos, transform.localPosition.y, transform.localPosition.z);
         //string log = "offset min: " + anchoredOffsetMin + ", offset max: " + anchoredOffsetMax + ", width: " + rectTransform.rect.width + ", localPos: " + transform.localPosition + ", rect pos: + " + rectTransform.rect.position;
         //Debug.LogWarning(log);
+    }
+    public void DefaultPosition() {
+        transform.localPosition = _defaultLocalPosition;
     }
 }

@@ -29,11 +29,20 @@ public class BoneGolemBehaviour : CharacterBehaviourComponent {
         }
     }
     private Character GetFirstHostileIntruder(Character actor) {
-        if(actor.homeStructure != null) {
+        if(actor.homeSettlement != null && actor.homeSettlement.region != null) {
+            for (int i = 0; i < actor.homeSettlement.region.charactersAtLocation.Count; i++) {
+                Character target = actor.homeSettlement.region.charactersAtLocation[i];
+                if (actor != target && actor.IsHostileWith(target) && !target.isDead && !target.isAlliedWithPlayer
+                    && target.marker && target.marker.isMainVisualActive && actor.movementComponent.HasPathTo(target.gridTileLocation) 
+                    && target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)) {
+                    return target;
+                }
+            }
+        } else if(actor.homeStructure != null) {
             for (int i = 0; i < actor.homeStructure.charactersHere.Count; i++) {
                 Character target = actor.homeStructure.charactersHere[i];
                 if(actor != target && actor.IsHostileWith(target) && !target.isDead && !target.isAlliedWithPlayer 
-                    && target.marker && target.marker.isMainVisualActive && actor.movementComponent.HasPathTo(target.gridTileLocation)) {
+                    && target.marker && target.marker.isMainVisualActive && actor.movementComponent.HasPathTo(target.gridTileLocation) && target.gridTileLocation != null) {
                     return target;
                 }
             }
@@ -41,7 +50,7 @@ public class BoneGolemBehaviour : CharacterBehaviourComponent {
             HexTile hex = actor.hexTileLocation;
             if(hex != null) {
                 Character chosenTarget = hex.GetFirstCharacterInsideHexThatMeetCriteria<Character>(target => actor != target && actor.IsHostileWith(target) && !target.isDead && !target.isAlliedWithPlayer
-                    && target.marker && target.marker.isMainVisualActive && actor.movementComponent.HasPathTo(target.gridTileLocation));
+                    && target.marker && target.marker.isMainVisualActive && actor.movementComponent.HasPathTo(target.gridTileLocation) && target.gridTileLocation != null);
                 if(chosenTarget != null) {
                     return chosenTarget;
                 }

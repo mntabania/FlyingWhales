@@ -166,8 +166,8 @@ public class UIManager : BaseMonoBehaviour {
     }
     internal void InitializeUI() {
         _pointer = new PointerEventData(EventSystem.current);
-        unallowOverlaps = new List<UnallowOverlaps>();
         _raycastResults = new List<RaycastResult>();
+        unallowOverlaps = new List<UnallowOverlaps>();
         allMenus = transform.GetComponentsInChildren<InfoUIBase>(true);
         for (int i = 0; i < allMenus.Length; i++) {
             allMenus[i].Initialize();
@@ -216,6 +216,7 @@ public class UIManager : BaseMonoBehaviour {
         UpdateSearchFieldsState();
         
         UpdateUI();
+        //InitializeOverlapUI();
         // && WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Oona
     }
     private void TryUpdateFactionLog(Faction faction) {
@@ -1655,6 +1656,12 @@ public class UIManager : BaseMonoBehaviour {
     #endregion
 
     #region Overlap UI
+    public void InitializeOverlapUI() {
+        for (int i = 0; i < unallowOverlaps.Count; i++) {
+            UnallowOverlaps currOverlap = unallowOverlaps[i];
+            currOverlap.Initialize();
+        }
+    }
     public void AddUnallowOverlapUI(UnallowOverlaps overlap) {
         unallowOverlaps.Add(overlap);
     }

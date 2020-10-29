@@ -190,10 +190,10 @@ namespace Interrupts {
                         log += "\nFound dwelling: " + chosenDwelling.name;
                         actor.ClearTerritoryAndMigrateHomeStructureTo(chosenDwelling, affectSettlement: false);
                     } else {
-                        log += "\n20% chance: if the character's Faction also owns other Villages or Special Structure";
+                        log += "\n35% chance: if the character's Faction also owns other Villages or Special Structure";
                         int roll = UnityEngine.Random.Range(0, 100);
                         log += "\n-Roll: " + roll;
-                        if (roll < 20) {
+                        if (roll < 35) {
                             if (actor.faction.HasOwnedSettlementExcept(actor.homeSettlement)) {
                                 log += "\nFind an unoccupied House in one of those other Villages and set that as its Home Structure";
                                 string identifier = string.Empty;

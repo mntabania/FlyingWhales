@@ -24,6 +24,7 @@ public abstract class SaveDataJobQueueItem : SaveData<JobQueueItem>, ISavableCou
     public bool isThisAGatheringJob;
     public bool cannotBePushedBack;
     public bool shouldBeRemovedFromSettlementWhenUnassigned;
+    public bool forceCancelOnInvalid;
 
     public string canTakeJobKey;
     public string applicabilityCheckerKey;
@@ -65,6 +66,7 @@ public abstract class SaveDataJobQueueItem : SaveData<JobQueueItem>, ISavableCou
         isThisAGatheringJob = job.isThisAGatheringJob;
         cannotBePushedBack = job.cannotBePushedBack;
         shouldBeRemovedFromSettlementWhenUnassigned = job.shouldBeRemovedFromSettlementWhenUnassigned;
+        forceCancelOnInvalid = job.forceCancelOnInvalid;
 
         canTakeJobKey = job.canTakeJobChecker == null ? string.Empty : job.canTakeJobChecker.key;
         applicabilityCheckerKey = job.stillApplicable == null ? string.Empty : job.stillApplicable.key;
