@@ -102450,9 +102450,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "<color=#FB6F37>Ruinarch</color> is a work in progress. Your feedback during
-    \nour Early Access is welcome and appreciated!\n\nOur current priority is to
-    <color=#FB6F37>make the Villager AI more believable</color> and to <color=#FB6F37>make
-    the existing scenarios richer</color>, replayable and different from each other.\n\nPlease
+    \nour Early Access is welcome and appreciated!\n\nOur next update revolves around
+    customizing your own Plague as well as ways for Villagers to deal with it!\n\nPlease
     join us on our <color=#FB6F37>Discord channel</color> or \nsubmit your feedback
     on the form below. Thank you!"
   m_isRightToLeft: 0

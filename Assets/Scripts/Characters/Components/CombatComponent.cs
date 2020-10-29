@@ -319,7 +319,7 @@ public class CombatComponent : CharacterComponent {
                         owner.logComponent.PrintLogIfActive(debugLog);
                         return new CombatReaction(COMBAT_REACTION.Flight);
                     }
-                } else if (owner.traitContainer.HasTrait("Coward") && owner.currentHP <= Mathf.CeilToInt(owner.maxHP * 0.2f)) {
+                } else if (owner.traitContainer.HasTrait("Coward", "Vampire") && owner.currentHP <= Mathf.CeilToInt(owner.maxHP * 0.2f)) {
                     debugLog += "\n-Character is coward and and HP is 20% or less of Max HP";
                     debugLog += "\n-FLIGHT";
                     owner.logComponent.PrintLogIfActive(debugLog);
