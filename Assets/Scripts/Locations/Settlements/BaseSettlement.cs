@@ -22,7 +22,7 @@ namespace Locations.Settlements {
         public List<IPointOfInterest> firesInSettlement { get; }
         public List<LocationStructure> allStructures { get; protected set; }
         public List<Party> parties { get; protected set; }
-
+        
         #region getters
         public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
         public virtual Type serializedData => typeof(SaveDataBaseSettlement);
@@ -492,6 +492,10 @@ namespace Locations.Settlements {
                 if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
                     tile.SetCorruption(false);
                 }
+                if (tiles.Count <= 0) {
+                    //when a settlement loses all its tiles consider it as wiped out
+                    SettlementWipedOut();
+                }
             }
         }
         public bool HasTileInRegion(Region region) {
@@ -646,6 +650,7 @@ namespace Locations.Settlements {
         #endregion
 
         #region Utilities
+        protected virtual void SettlementWipedOut() { }
         public bool HasPathTowardsTileInSettlement(Character character, int tileCount) {
             List<LocationGridTile> locationGridTilesInSettlement = GetLocationGridTilesInSettlement(tile => tile.isOccupied == false);
             if (locationGridTilesInSettlement.Count > 0) {

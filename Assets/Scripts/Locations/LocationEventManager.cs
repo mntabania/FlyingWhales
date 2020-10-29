@@ -73,7 +73,15 @@ public class LocationEventManager {
         }
     }
     #endregion
-    
+
+    #region Utilites
+    public void OnSettlementDestroyed() {
+        List<SettlementEvent> events = new List<SettlementEvent>(_activeEvents);
+        for (int i = 0; i < events.Count; i++) {
+            DeactivateEvent(events[i]);
+        }
+    }
+    #endregion
 }
 
 public class SaveDataLocationEventManager : SaveData<LocationEventManager> {

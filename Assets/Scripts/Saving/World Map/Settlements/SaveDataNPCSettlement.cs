@@ -3,6 +3,7 @@ using Locations.Settlements;
 using UnityEngine.Assertions;
 
 public class SaveDataNPCSettlement : SaveDataBaseSettlement {
+    public string regionID;
     public List<string> jobIDs;
     public List<string> forceCancelJobIDs;
     public string prisonID;
@@ -23,6 +24,7 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
         NPCSettlement npcSettlement = baseSettlement as NPCSettlement;
         Assert.IsNotNull(npcSettlement);
         hasTriedToStealCorpse = npcSettlement.hasTriedToStealCorpse;
+        regionID = npcSettlement.region.persistentID;
         jobIDs = new List<string>();
         for (int i = 0; i < npcSettlement.availableJobs.Count; i++) {
             JobQueueItem job = npcSettlement.availableJobs[i];
