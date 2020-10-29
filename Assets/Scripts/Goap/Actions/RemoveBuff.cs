@@ -15,9 +15,9 @@ public class RemoveBuff : GoapAction {
     }
     
     #region Overrides
-    protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR), HasCultistKit);
-    }
+    // protected override void ConstructBasePreconditionsAndEffects() {
+    //     AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR), HasCultistKit);
+    // }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Remove Buff Success", goapNode);
@@ -49,7 +49,7 @@ public class RemoveBuff : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData) {
         bool hasMetRequirements = base.AreRequirementsSatisfied(actor, target, otherData);
         if (hasMetRequirements) {
-            return target != actor && target.traitContainer.HasTrait("Resting", "Unconscious") && target.traitContainer.HasTraitOf(TRAIT_TYPE.BUFF);
+            return target != actor && target.traitContainer.HasTrait("Resting", "Unconscious") && target.traitContainer.HasTraitOf(TRAIT_TYPE.BUFF) && actor.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT);
         }
         return false;
     }

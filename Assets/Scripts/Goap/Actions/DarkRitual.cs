@@ -9,9 +9,9 @@ public class DarkRitual : GoapAction {
     }
     
     #region Overrides
-    protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR), HasCultistKit);
-    }
+    // protected override void ConstructBasePreconditionsAndEffects() {
+    //     AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR), HasCultistKit);
+    // }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Ritual Success", goapNode);
@@ -73,7 +73,7 @@ public class DarkRitual : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, target, otherData);
         if (satisfied) {
-            return target.gridTileLocation != null;
+            return target.gridTileLocation != null && actor.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT);
         }
         return false;
     }
