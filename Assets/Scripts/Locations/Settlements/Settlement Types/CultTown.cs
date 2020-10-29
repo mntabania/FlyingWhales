@@ -15,7 +15,7 @@ namespace Locations.Settlements.Settlement_Types {
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE, true), 10, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.BARRACKS, RESOURCE.STONE, true), 20, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.STONE, true), 30, 1);
-            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.CULT_TEMPLE, RESOURCE.STONE, true), 40, 1);
+            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.CULT_TEMPLE, RESOURCE.STONE, true), 80, 1);
         }
         public override StructureSetting GetDwellingSetting(Faction faction) {
             return new StructureSetting(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE, true);

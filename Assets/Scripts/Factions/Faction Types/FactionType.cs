@@ -16,6 +16,7 @@ namespace Factions.Faction_Types {
 
         #region getters
         public abstract RESOURCE mainResource { get; }
+        public virtual bool usesCorruptedStructures => false;
         #endregion
         
         protected FactionType(FACTION_TYPE type) {

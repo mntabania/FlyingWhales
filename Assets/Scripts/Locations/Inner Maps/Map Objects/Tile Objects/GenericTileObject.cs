@@ -37,7 +37,14 @@ public class GenericTileObject : TileObject {
     public override void OnPlacePOI() {
         SetPOIState(POI_STATE.ACTIVE);
     }
-    protected override string GenerateName() { return "the floor"; }
+    protected override string GenerateName() {
+#if UNITY_EDITOR
+        return $"the floor at {gridTileLocation}";
+#else
+        return "the floor";
+#endif
+        
+    }
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) { } //overridden this to reduce unnecessary processing 
     public override void OnDestroyPOI() {
         DisableGameObject();
