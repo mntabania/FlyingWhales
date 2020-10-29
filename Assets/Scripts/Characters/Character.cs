@@ -5876,7 +5876,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 LocationStructure homeStructure = this.homeStructure;
                 homeRegion.RemoveResident(this);
                 MigrateHomeStructureTo(null, addToRegionResidents: false);
-                //SetHomeRegion(home); //keep this data with character to prevent errors
+                SetHomeRegion(home); //keep this data with character to prevent errors
                 //SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             }
             if (homeSettlement != null) {

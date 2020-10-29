@@ -17,6 +17,7 @@ public class DragonBehaviour : CharacterBehaviourComponent {
             if (dragon.willLeaveWorld) {
                 log += $"\n-Will leave world";
                 if (dragon.gridTileLocation.IsAtEdgeOfMap()) {
+                    Region currentRegion = dragon.currentRegion;
                     dragon.SetDestroyMarkerOnDeath(true);
                     dragon.SetShowNotificationOnDeath(false);
                     Log deathLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Summon", "Dragon", "left", providedTags: LOG_TAG.Life_Changes);
@@ -26,7 +27,7 @@ public class DragonBehaviour : CharacterBehaviourComponent {
                     if(UIManager.Instance.monsterInfoUI.isShowing && UIManager.Instance.monsterInfoUI.activeMonster == dragon) {
                         UIManager.Instance.monsterInfoUI.CloseMenu();
                     }
-                    Messenger.Broadcast(Signals.DRAGON_LEFT_WORLD, character);
+                    Messenger.Broadcast(Signals.DRAGON_LEFT_WORLD, character, currentRegion);
                 } else {
                     dragon.jobComponent.CreateGoToJob(dragon.gridTileLocation.GetNearestEdgeTileFromThis(), out producedJob);
                 }
