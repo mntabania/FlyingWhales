@@ -163,7 +163,9 @@ public class SpellItem : NameplateItem<SpellData> {
         cooldownCoverImage.DOFillAmount(fillAmount, 0.4f);
     }
     private void StopCooldownFill() {
-        cooldownCoverImage.DOFillAmount(0f, 0.4f).OnComplete(UpdateInteractableState);
+        cooldownCoverImage.fillAmount = 0f;
+        UpdateInteractableState();
+        //cooldownCoverImage.DOFillAmount(0f, 0.4f).OnComplete(UpdateInteractableState);
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
     }
     #endregion

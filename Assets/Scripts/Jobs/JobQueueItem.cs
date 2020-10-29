@@ -27,6 +27,7 @@ public abstract class JobQueueItem : ISavable {
     public bool isThisAGatheringJob { get; protected set; }
     public bool cannotBePushedBack { get; protected set; }
     public bool shouldBeRemovedFromSettlementWhenUnassigned { get; protected set; }
+    public bool forceCancelOnInvalid { get; protected set; }
     //object pool
     /// <summary>
     /// Has this job been returned to the pool?
@@ -70,6 +71,8 @@ public abstract class JobQueueItem : ISavable {
         SetIsThisAGatheringJob(data.isThisAGatheringJob);
         SetCannotBePushedBack(data.cannotBePushedBack);
         SetShouldBeRemovedFromSettlementWhenUnassigned(data.shouldBeRemovedFromSettlementWhenUnassigned);
+        SetForceCancelOnInvalid(data.forceCancelOnInvalid);
+
         if (!string.IsNullOrEmpty(data.canTakeJobKey)) {
             SetCanTakeThisJobChecker(data.canTakeJobKey);    
         }
@@ -277,6 +280,9 @@ public abstract class JobQueueItem : ISavable {
     public void SetFinishedSuccessfully(bool state) {
         finishedSuccessfully = state;
     }
+    public void SetForceCancelOnInvalid(bool state) {
+        forceCancelOnInvalid = state;
+    }
 
     #region Priority
     public int GetPriority() {
@@ -344,6 +350,7 @@ public abstract class JobQueueItem : ISavable {
         SetDoNotRecalculate(false);
         SetIsThisAPartyJob(false);
         SetIsThisAGatheringJob(false);
+        SetForceCancelOnInvalid(false);
         ResetInvalidCounter();
         Messenger.RemoveListener<JOB_TYPE, IPointOfInterest>(Signals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
         Messenger.RemoveListener<IPointOfInterest>(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);

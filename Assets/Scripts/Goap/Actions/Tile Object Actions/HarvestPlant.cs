@@ -5,6 +5,7 @@ using Logs;
 using UnityEngine;  
 using Traits;
 using UtilityScripts;
+using Locations.Settlements;
 
 public class HarvestPlant : GoapAction {
 
@@ -31,6 +32,17 @@ public class HarvestPlant : GoapAction {
             costLog += $" +2000(Location of target is in avoid structure)";
             actor.logComponent.AppendCostLog(costLog);
             return 2000;
+        }
+        if(target.gridTileLocation != null) {
+            BaseSettlement settlement;
+            if(target.gridTileLocation.IsPartOfSettlement(out settlement)) {
+                if(settlement.owner != null && actor.homeSettlement != settlement) {
+                    //If target is in a claimed settlement and actor's home settlement is not the target's settlement, do not harvest, even if the faction owner of the target's settlement is also the faciton of the actor
+                    costLog += $" +2000(Target's settlement is not the actor's home settlement)";
+                    actor.logComponent.AppendCostLog(costLog);
+                    return 2000;
+                }
+            }
         }
         if(job.jobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
             if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null

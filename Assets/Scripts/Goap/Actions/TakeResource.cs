@@ -5,6 +5,7 @@ using Traits;
 using Inner_Maps;
 using Logs;
 using UnityEngine.Assertions;
+using Locations.Settlements;
 
 public class TakeResource : GoapAction {
     public TakeResource() : base(INTERACTION_TYPE.TAKE_RESOURCE) {
@@ -63,7 +64,18 @@ public class TakeResource : GoapAction {
                 return cost;
             }
         }
-        if(job.jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL || job.jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || job.jobType == JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT || job.jobType == JOB_TYPE.OBTAIN_PERSONAL_FOOD) {
+        if (target.gridTileLocation != null) {
+            BaseSettlement settlement;
+            if (target.gridTileLocation.IsPartOfSettlement(out settlement)) {
+                if (settlement.owner != null && actor.homeSettlement != settlement) {
+                    //If target is in a claimed settlement and actor's home settlement is not the target's settlement, do not harvest, even if the faction owner of the target's settlement is also the faciton of the actor
+                    costLog += $" +2000(Target's settlement is not the actor's home settlement)";
+                    actor.logComponent.AppendCostLog(costLog);
+                    return 2000;
+                }
+            }
+        }
+        if (job.jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL || job.jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || job.jobType == JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT || job.jobType == JOB_TYPE.OBTAIN_PERSONAL_FOOD) {
             if(target is ElfMeat || target is HumanMeat) {
                 if (actor.traitContainer.HasTrait("Cannibal")) {
                     int currCost = 450; //UtilityScripts.Utilities.Rng.Next(450, 501);

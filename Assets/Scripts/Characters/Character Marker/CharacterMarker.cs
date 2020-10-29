@@ -660,10 +660,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 //Transform to bat so the character can traverse the tile
                 Vampire vampireTrait = character.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
                 if (!vampireTrait.isInVampireBatForm && !vampireTrait.isTraversingUnwalkableAsBat && !character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
-                    if(character.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Bat, character)) {
-                        vampireTrait.SetIsTraversingUnwalkableAsBat(true);
-                        shouldRecomputePath = true;
-                        return;
+                    if(!PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, destinationTile)){
+                        //Only transform to bat if there is really no path between the current location and destination tile
+                        //If it has, even if the destination reached is not really the destination tile, do not transform
+                        if (character.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Bat, character)) {
+                            vampireTrait.SetIsTraversingUnwalkableAsBat(true);
+                            shouldRecomputePath = true;
+                            return;
+                        }
                     }
                 } else if (vampireTrait.isTraversingUnwalkableAsBat) {
                     //If character is still traversing unwalkable path do not do arrive action

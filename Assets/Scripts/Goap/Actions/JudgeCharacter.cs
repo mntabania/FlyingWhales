@@ -229,6 +229,7 @@ public class JudgeCharacter : GoapAction {
             job.SetDoNotRecalculate(true);
 
             job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { targetStructure, targetTile });
+            job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { targetStructure, targetTile });
             goapNode.actor.jobQueue.AddJobInQueue(job);
         } else {
             //Fall back if actor cannot burn at stake, just execute prisoner
