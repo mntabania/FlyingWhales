@@ -1,1 +1,24 @@
-{"items":[{"key":"evangelize success_description","value":"%00@'s evangelizing has proven effective on %10@. %83a is now also a Cultist!"},{"key":"crime","value":"%00@'s evangelizing did not work on %10@ and has now been accused of Demon Worship!"},{"key":"thought_bubble","value":"%00@ is evangelizing %10@."},{"key":"thought_bubble_m","value":"%00@ is going to evangelize %10@."},{"key":"nothing_happens","value":"%00@'s evangelizing did not work on %10@. %10@ decided not to accuse %00@ of Demon Worship."}]}
+{
+  "items": [
+    {
+      "key": "evangelize success_description",
+      "value": "%00@'s preaching has proven effective on %10@. %83a is now also a Cultist!"
+    },
+    {
+      "key": "crime",
+      "value": "%00@'s preaching did not work on %10@ and has now been accused of Demon Worship!"
+    },
+    {
+      "key": "thought_bubble",
+      "value": "%00@ is preaching Demonic Worship to %10@."
+    },
+    {
+      "key": "thought_bubble_m",
+      "value": "%00@ is going to preach Demonic Worship to %10@."
+    },
+    {
+      "key": "nothing_happens",
+      "value": "%00@'s preaching did not work on %10@. %10@ decided not to accuse %00@ of Demon Worship."
+    }
+  ]
+}

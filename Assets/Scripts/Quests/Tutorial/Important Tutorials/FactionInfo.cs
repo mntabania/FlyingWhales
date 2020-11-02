@@ -23,25 +23,25 @@ namespace Tutorial {
                     new EventLabelLinkClicked("FactionLbl", "Click on its Faction")
                         .SetHoverOverAction(OnHoverOverClickFaction)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
-                        .SetCompleteAction(OnCompleteExecuteSpell)
+                        .SetCompleteAction(OnCompleteClickFaction)
                 ),
-                new QuestStepCollection(
-                    new ToggleTurnedOnStep("Faction Overview", "Open its Overview tab")
-                        .SetCompleteAction(OnClickOverview)
-                        .SetOnTopmostActions(OnTopMostFactionInfo, OnNoLongerTopMostFactionInfo),
-                    new ToggleTurnedOnStep("Faction Owned Locations", "Open its Locations tab")
-                        .SetCompleteAction(OnClickLocations)
-                        .SetOnTopmostActions(OnTopMostLocations, OnNoLongerTopMostLocations),
-                    new ToggleTurnedOnStep("Faction Relations", "Open its Relations tab")
-                        .SetCompleteAction(OnClickRelations)
-                        .SetOnTopmostActions(OnTopMostRelations, OnNoLongerTopMostRelations),
-                    new ToggleTurnedOnStep("Faction Crimes", "Open its Crimes tab")
-                        .SetCompleteAction(OnClickCrimes)
-                        .SetOnTopmostActions(OnTopMostCrimes, OnNoLongerTopMostCrimes),
-                    new ToggleTurnedOnStep("Faction Logs", "Open its Logs tab")
-                        .SetCompleteAction(OnClickLogs)
-                        .SetOnTopmostActions(OnTopMostLogs, OnNoLongerTopMostLogs)
-                )
+                // new QuestStepCollection(
+                //     new ToggleTurnedOnStep("Faction Overview", "Open its Overview tab")
+                //         .SetCompleteAction(OnClickOverview)
+                //         .SetOnTopmostActions(OnTopMostFactionInfo, OnNoLongerTopMostFactionInfo),
+                //     new ToggleTurnedOnStep("Faction Owned Locations", "Open its Locations tab")
+                //         .SetCompleteAction(OnClickLocations)
+                //         .SetOnTopmostActions(OnTopMostLocations, OnNoLongerTopMostLocations),
+                //     new ToggleTurnedOnStep("Faction Relations", "Open its Relations tab")
+                //         .SetCompleteAction(OnClickRelations)
+                //         .SetOnTopmostActions(OnTopMostRelations, OnNoLongerTopMostRelations),
+                //     new ToggleTurnedOnStep("Faction Crimes", "Open its Crimes tab")
+                //         .SetCompleteAction(OnClickCrimes)
+                //         .SetOnTopmostActions(OnTopMostCrimes, OnNoLongerTopMostCrimes),
+                //     new ToggleTurnedOnStep("Faction Logs", "Open its Logs tab")
+                //         .SetCompleteAction(OnClickLogs)
+                //         .SetOnTopmostActions(OnTopMostLogs, OnNoLongerTopMostLogs)
+                // )
             };
         }
         protected override void MakeAvailable() {
@@ -50,10 +50,10 @@ namespace Tutorial {
         }
 
         #region Step Helpers
-        private void OnCompleteExecuteSpell() {
+        private void OnCompleteClickFaction() {
             PlayerUI.Instance.ShowGeneralConfirmation("Factions",
-                "A Faction is a group of characters that belong together. " +
-                "It typically has a single Faction Leader, several sets of ideologies, Villager members and claimed territories.");
+                "A Faction is a group of characters that belong together. It typically has a single Faction Leader, several sets of ideologies, Villager members and claimed territories. " +
+                "You can browse other details regarding the Faction including what they consider as Criminal Acts as well as their claimed territories.");
         }
         private void OnClickOverview() {
             PlayerUI.Instance.ShowGeneralConfirmation("Overview Tab",
