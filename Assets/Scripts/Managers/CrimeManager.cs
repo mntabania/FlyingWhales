@@ -83,6 +83,7 @@ public class CrimeManager : BaseMonoBehaviour {
             Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "become_criminal", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
             addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(null, crimeTypeObj.accuseText, LOG_IDENTIFIER.STRING_1);
+            addLog.AddToFillers(witness, witness.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             //addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_2);
             addLog.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFrom(criminal, addLog);

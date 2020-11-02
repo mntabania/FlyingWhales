@@ -3450,10 +3450,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 targetTile = gridTileLocation;
             }
             if (targetTile == null) {
-                return true; //if there is no tile to drop the item, do not drop it
+                return true; //if there is no tile to drop the item, just discard it
             }
             if (targetTile.objHere != null) {
                 targetTile = targetTile.GetFirstNearestTileFromThisWithNoObject(true);
+            }
+            if (targetTile == null) {
+                return true; //if there is STILL no tile to drop the item, just discard it
             }
             targetTile.structure.AddPOI(item, targetTile);
             item.OnTileObjectDroppedBy(this, targetTile);
