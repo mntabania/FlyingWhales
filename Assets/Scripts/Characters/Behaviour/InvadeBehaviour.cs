@@ -15,9 +15,8 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
             log += $"\n-No invade target yet, setting one...";
             character.behaviourComponent.SetInvadeVillageTarget(GetVillageTargetsByPriority(character));
             if (character.behaviourComponent.invadeVillageTarget == null) {
-                log += $"\n-Still no invade target, un-summoning minion.";
-                //if still no valid location was set, then unsummon minion.
-                character.minion.Death();
+                log += $"\n-Still no invade target, roam around.";
+                return character.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_TILE, out producedJob);
             }
             producedJob = null;
             return true;

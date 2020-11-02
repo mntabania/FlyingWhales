@@ -424,7 +424,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         if (data.hasMinion) {
             _minion = data.minion.Load(this);
-            visuals.CreateWholeImageMaterial();
+            visuals.CreateWholeImageMaterial(visuals.portraitSettings);
         }
 
         //if (data.hasMarker) {
@@ -2873,7 +2873,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Assert.IsFalse(moodComponent.executeMoodChangeEffects);
         }
         _minion = minion;
-        visuals.CreateWholeImageMaterial();
+        visuals.CreateWholeImageMaterial(visuals.portraitSettings);
     }
     #endregion
 

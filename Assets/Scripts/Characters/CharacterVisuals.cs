@@ -43,7 +43,6 @@ public class CharacterVisuals {
     public CharacterVisuals(Character character) {
         _owner = character;
         _hasBlood = true;
-        CreateHairMaterial();
         markerAnimations = new Dictionary<string, Sprite>();
     }
    
@@ -51,13 +50,14 @@ public class CharacterVisuals {
         _owner = character;
         _hasBlood = true;
         portraitSettings = data.portraitSettings;
-        CreateHairMaterial();
+        CreateHairMaterial(portraitSettings);
         markerAnimations = new Dictionary<string, Sprite>();
     }
 
     #region Initialization
     public void Initialize() {
         portraitSettings = CharacterManager.Instance.GeneratePortrait(_owner);
+        CreateHairMaterial(portraitSettings);
         UpdateMarkerAnimations(_owner);
     }
     #endregion
@@ -84,23 +84,23 @@ public class CharacterVisuals {
     #endregion
     
     #region Hair
-    private void CreateHairMaterial() {
+    private void CreateHairMaterial(PortraitSettings ps) {
         hairMaterial = Object.Instantiate(CharacterManager.Instance.hsvMaterial);
-        hairMaterial.SetFloat(HairHue, portraitSettings.hairColorHue);
-        hairMaterial.SetFloat(HairSaturation, portraitSettings.hairColorSaturation);
-        hairMaterial.SetFloat(HairValue, portraitSettings.hairColorValue);
+        hairMaterial.SetFloat(HairHue, ps.hairColorHue);
+        hairMaterial.SetFloat(HairSaturation, ps.hairColorSaturation);
+        hairMaterial.SetFloat(HairValue, ps.hairColorValue);
         
         hairUIMaterial = Object.Instantiate(CharacterManager.Instance.hairUIMaterial);
-        hairUIMaterial.SetVector(HsvaAdjust, new Vector4(portraitSettings.hairColorHue, portraitSettings.hairColorSaturation, portraitSettings.hairColorValue, 0f));
+        hairUIMaterial.SetVector(HsvaAdjust, new Vector4(ps.hairColorHue, ps.hairColorSaturation, ps.hairColorValue, 0f));
     }
-    public void CreateWholeImageMaterial() {
+    public void CreateWholeImageMaterial(PortraitSettings ps) {
         hairMaterial = Object.Instantiate(CharacterManager.Instance.hsvMaterial);
-        hairMaterial.SetFloat(HairHue, portraitSettings.hairColorHue);
-        hairMaterial.SetFloat(HairSaturation, portraitSettings.hairColorSaturation);
-        hairMaterial.SetFloat(HairValue, portraitSettings.hairColorValue);
+        hairMaterial.SetFloat(HairHue, ps.hairColorHue);
+        hairMaterial.SetFloat(HairSaturation, ps.hairColorSaturation);
+        hairMaterial.SetFloat(HairValue, ps.hairColorValue);
         
         hairUIMaterial = Object.Instantiate(CharacterManager.Instance.hairUIMaterial);
-        hairUIMaterial.SetVector(HsvaAdjust, new Vector4(portraitSettings.hairColorHue, portraitSettings.hairColorSaturation, portraitSettings.hairColorValue, 0f));
+        hairUIMaterial.SetVector(HsvaAdjust, new Vector4(ps.hairColorHue, ps.hairColorSaturation, ps.hairColorValue, 0f));
     }
     #endregion
 
