@@ -166,10 +166,16 @@ public class KnockoutCharacter : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) { 
-        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
-            return actor != poiTarget && (actor.traitContainer.HasTrait("Psychopath") || actor.traitContainer.HasTrait("Vampire") || actor.isNormalCharacter == false);
+            if (actor == poiTarget) {
+                return false;
+            }
+            if (job != null && job.jobType == JOB_TYPE.SNATCH && actor.traitContainer.HasTrait("Cultist")) {
+                return true; //only allow cultists to use knock out if it is for snatching 
+            }
+            return actor.traitContainer.HasTrait("Psychopath") || actor.traitContainer.HasTrait("Vampire") || actor.isNormalCharacter == false;
         }
         return false;
     }

@@ -329,7 +329,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                     //if (otherData.ContainsKey(currType)) {
                     //    otherActionData = otherData[currType];
                     //}
-                    if (action.CanSatisfyRequirements(actor, this, data)
+                    if (action.CanSatisfyRequirements(actor, this, data, job)
                         && action.WillEffectsSatisfyPrecondition(precondition, actor, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
                         int actionCost = action.GetCost(actor, this, job, data);
                         log += $"({actionCost}){action.goapName}-{nameWithID}, ";
@@ -374,7 +374,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                         data = otherData[INTERACTION_TYPE.NONE];
                     }
                 }
-                if (action.CanSatisfyRequirements(actor, this, data)) {
+                if (action.CanSatisfyRequirements(actor, this, data, job)) {
                     cost = action.GetCost(actor, this, job, data);
                     return true;
                 }

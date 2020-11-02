@@ -28,8 +28,8 @@
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
-        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             if (poiTarget is MovingTileObject movingTileObject && movingTileObject.hasExpired) {
                 return false;

@@ -54,8 +54,8 @@ public class Visit : GoapAction {
     #endregion
 
     #region Requirement
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
-        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             if (otherData.Length == 2) {
               //if provided other data is 2, assume that the second data is the target character, and check that the poi target is the same as that object

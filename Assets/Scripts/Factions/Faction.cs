@@ -1077,7 +1077,11 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         for (int i = 0; i < data.characterIDs.Count; i++) {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.characterIDs[i]);
-            characters.Add(character);
+            if (character != null) { 
+                //added checker for safety because it is possible in previous versions that the game was saved with a character that should no longer exist
+                //aka. In Limbo lycanthropes that are already dead, but they weren't removed from the Wild Monsters Faction.
+                characters.Add(character);    
+            }
         }
         for (int i = 0; i < data.bannedCharacterIDs.Count; i++) {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.bannedCharacterIDs[i]);

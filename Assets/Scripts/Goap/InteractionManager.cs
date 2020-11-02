@@ -102,9 +102,9 @@ public partial class InteractionManager : BaseMonoBehaviour {
         return null;
     }
 
-    public bool CanSatisfyGoapActionRequirements(INTERACTION_TYPE goapType, Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
+    public bool CanSatisfyGoapActionRequirements(INTERACTION_TYPE goapType, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         if (goapActionData.ContainsKey(goapType)) {
-            return goapActionData[goapType].CanSatisfyRequirements(actor, poiTarget, otherData);
+            return goapActionData[goapType].CanSatisfyRequirements(actor, poiTarget, otherData, job);
         }
         throw new Exception($"No Goap Action Data for {goapType}");
     }

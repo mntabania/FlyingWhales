@@ -110,7 +110,7 @@ public class GoapAction {
     }
     protected virtual void ConstructBasePreconditionsAndEffects() { }
     public virtual void Perform(ActualGoapNode actionNode) { }
-    protected virtual bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData) { return true; }
+    protected virtual bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData, JobQueueItem job) { return true; }
     protected virtual int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 0;
     }
@@ -253,7 +253,7 @@ public class GoapAction {
         }
         return false;
     }
-    public bool CanSatisfyRequirements(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
+    public bool CanSatisfyRequirements(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         // bool requirementActionSatisfied = !(poiTarget.poiType != POINT_OF_INTEREST_TYPE.CHARACTER 
         //                                     && poiTarget.traitContainer.HasTrait("Frozen") 
         //                                     && (actionCategory == ACTION_CATEGORY.DIRECT || actionCategory == ACTION_CATEGORY.CONSUME));
@@ -290,7 +290,7 @@ public class GoapAction {
         }
         
         if (requirementActionSatisfied) {
-            requirementActionSatisfied = AreRequirementsSatisfied(actor, poiTarget, otherData);
+            requirementActionSatisfied = AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         }
         //if action has valid times of day then check if current time is valid.
         return requirementActionSatisfied && (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));

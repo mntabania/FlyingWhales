@@ -129,8 +129,8 @@ public class RepairStructure : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData) {
-        bool requirementsSatisfied = base.AreRequirementsSatisfied(actor, target, otherData);
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData, JobQueueItem job) {
+        bool requirementsSatisfied = base.AreRequirementsSatisfied(actor, target, otherData, job);
         if (requirementsSatisfied) {
             if (target is StructureTileObject structureTileObject) {
                 if (structureTileObject.gridTileLocation == null || structureTileObject.structureParent.hasBeenDestroyed

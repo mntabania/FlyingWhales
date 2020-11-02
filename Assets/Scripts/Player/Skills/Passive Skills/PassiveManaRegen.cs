@@ -8,8 +8,8 @@ public class PassiveManaRegen : PassiveSkill {
         Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
     }
     private void OnHourStarted() {
-        if(PlayerManager.Instance.player.mana < 40) {
-            PlayerManager.Instance.player.AdjustMana(10);
+        if(PlayerManager.Instance.player.mana < 45) {
+            PlayerManager.Instance.player.AdjustMana(15);
         }
     }
 }

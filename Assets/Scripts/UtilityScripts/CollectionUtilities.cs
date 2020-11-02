@@ -149,5 +149,11 @@ namespace UtilityScripts {
             }
             return randomElements;
         }
+        public static bool IsLastIndex<T>(List<T> list, int index) {
+            if (index + 1 == list.Count) {
+                return true;
+            }
+            return false;
+        }
     }
 }
