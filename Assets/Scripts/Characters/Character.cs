@@ -2617,11 +2617,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
                 return true;
             }
-            if(previousHome is NPCSettlement previousNPCSettlement) {
-                if(newHomeSettlement != null && newHomeSettlement is NPCSettlement newNPCSettlement && previousNPCSettlement.region == newNPCSettlement.region) {
-                    sameRegionLocationAlready = true;
-                } else {
-                    previousNPCSettlement.region.RemoveResident(this);
+        }
+        if (homeRegion != null) {
+            if (newHomeSettlement != null && newHomeSettlement is NPCSettlement newNPCSettlement && homeRegion == newNPCSettlement.region) {
+                sameRegionLocationAlready = true;
+            } else {
+                //Only remove from previous home region if character has a new home settlement, if it doesn't, for example, if the character only left the settlement but did not have a new home settlement assigned, he should not be removed from his home region because he only left the settlement
+                if(newHomeSettlement != null) {
+                    homeRegion.RemoveResident(this);
                 }
             }
         }

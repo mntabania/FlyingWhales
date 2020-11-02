@@ -10,7 +10,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
-        bool hasJob = true;
+        bool hasJob = false;
         Party party = character.partyComponent.currentParty;
         if (party.isActive) {
             log += $"\n-Party is active, will try to do party behaviour";
@@ -106,14 +106,16 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                     }
                                 }
                             }
-                            hasJob = true;
+                            //hasJob = true;
                         }
+                        hasJob = true;
                     }
                 }
             }
-        } else {
-            hasJob = false;
         }
+        //else {
+        //    hasJob = false;
+        //}
         if (producedJob != null) {
             producedJob.SetIsThisAPartyJob(true);
         }

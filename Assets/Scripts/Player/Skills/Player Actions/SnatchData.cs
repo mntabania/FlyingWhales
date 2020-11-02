@@ -153,29 +153,39 @@ public class SnatchData : PlayerAction {
     private Character GetNearestAvailableSkeletonOrCultist(Character targetCharacter) {
         Character nearest = null;
         float nearestDist = 0f;
-        if(PlayerSkillManager.Instance.selectedArchetype == PLAYER_ARCHETYPE.Lich) {
-            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-                Character snatcher = CharacterManager.Instance.allCharacters[i];
-                if (CanDoSnatch(snatcher)) {
-                    float dist = Vector2.Distance(snatcher.worldPosition, targetCharacter.worldPosition);
-                    if (nearest == null || dist < nearestDist) {
-                        nearest = snatcher;
-                        nearestDist = dist;
-                    }
-                }
-            }
-        } else {
-            for (int i = 0; i < PlayerManager.Instance.player.playerFaction.characters.Count; i++) {
-                Character snatcher = PlayerManager.Instance.player.playerFaction.characters[i];
-                if (CanDoSnatch(snatcher)) {
-                    float dist = Vector2.Distance(snatcher.worldPosition, targetCharacter.worldPosition);
-                    if (nearest == null || dist < nearestDist) {
-                        nearest = snatcher;
-                        nearestDist = dist;
-                    }
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character snatcher = CharacterManager.Instance.allCharacters[i];
+            if (CanDoSnatch(snatcher)) {
+                float dist = Vector2.Distance(snatcher.worldPosition, targetCharacter.worldPosition);
+                if (nearest == null || dist < nearestDist) {
+                    nearest = snatcher;
+                    nearestDist = dist;
                 }
             }
         }
+        //if (PlayerSkillManager.Instance.selectedArchetype == PLAYER_ARCHETYPE.Lich) {
+        //    for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+        //        Character snatcher = CharacterManager.Instance.allCharacters[i];
+        //        if (CanDoSnatch(snatcher)) {
+        //            float dist = Vector2.Distance(snatcher.worldPosition, targetCharacter.worldPosition);
+        //            if (nearest == null || dist < nearestDist) {
+        //                nearest = snatcher;
+        //                nearestDist = dist;
+        //            }
+        //        }
+        //    }
+        //} else {
+        //    for (int i = 0; i < PlayerManager.Instance.player.playerFaction.characters.Count; i++) {
+        //        Character snatcher = PlayerManager.Instance.player.playerFaction.characters[i];
+        //        if (CanDoSnatch(snatcher)) {
+        //            float dist = Vector2.Distance(snatcher.worldPosition, targetCharacter.worldPosition);
+        //            if (nearest == null || dist < nearestDist) {
+        //                nearest = snatcher;
+        //                nearestDist = dist;
+        //            }
+        //        }
+        //    }
+        //}
         return nearest;
     }
     private static bool CanDoSnatch(Character character) {
