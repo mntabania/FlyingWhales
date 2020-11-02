@@ -59,8 +59,8 @@ public class CarryRestrained : GoapAction {
     #endregion
 
     #region Requirements
-   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) { 
-        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             if(actor.gridTileLocation != null && poiTarget.gridTileLocation != null) {
                 if (poiTarget is Character character) {

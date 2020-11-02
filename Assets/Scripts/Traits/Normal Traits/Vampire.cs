@@ -188,13 +188,24 @@ namespace Traits {
         }
         public override string GetTestingData(ITraitable traitable = null) {
             string data = base.GetTestingData(traitable);
-            data = $"{data} Dislikes Being Vampire: {dislikedBeingVampire.ToString()}";
-            data = $"{data}\n Converted Villagers: {numOfConvertedVillagers.ToString()}";
-            data = $"{data}\n Has Become Vampire Lord: {hasAlreadyBecomeVampireLord.ToString()}";
-            data = $"{data}\n Aware Characters:";
-            for (int i = 0; i < awareCharacters.Count; i++) {
-                Character character = awareCharacters[i];
-                data = $"{data}|{character.name}|";
+            data = $"{data}Converted Villagers: {numOfConvertedVillagers.ToString()}";
+            data = $"{data}\nHas Become Vampire Lord: {hasAlreadyBecomeVampireLord.ToString()}";
+            return data;
+        }
+        protected override string GetDescriptionInUI() {
+            string data = base.GetDescriptionInUI();
+            data = dislikedBeingVampire ? 
+                $"{data}\n{_owner.visuals.GetCharacterNameWithIconAndColor()} loathes being a Vampire" : 
+                $"{data}\n{_owner.visuals.GetCharacterNameWithIconAndColor()} enjoys being a Vampire";
+            if (awareCharacters.Count > 0) {
+                data = $"{data}\nAware: ";
+                for (int i = 0; i < awareCharacters.Count; i++) {
+                    Character character = awareCharacters[i];
+                    data = $"{data}{character.visuals.GetCharacterNameWithIconAndColor()}";
+                    if (!CollectionUtilities.IsLastIndex(awareCharacters, i)) {
+                        data = $"{data}, ";
+                    }
+                }    
             }
             return data;
         }

@@ -23,8 +23,8 @@ public class ZombieDeath : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 10;
     }
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData) {
-        bool satisfied = base.AreRequirementsSatisfied(actor, target, otherData);
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData, JobQueueItem job) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, target, otherData, job);
         if (satisfied) {
             return actor == target;
         }

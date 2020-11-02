@@ -42,7 +42,18 @@ public class CultistBehaviour : CharacterBehaviourComponent {
         producedJob = null;
         return false;
     }
-
+    public override void OnAddBehaviourToCharacter(Character character) {
+        base.OnAddBehaviourToCharacter(character);
+        character.behaviourComponent.OnBecomeCultist();
+    }
+    public override void OnRemoveBehaviourFromCharacter(Character character) {
+        base.OnRemoveBehaviourFromCharacter(character);
+        character.behaviourComponent.OnNoLongerCultist();
+    }
+    public override void OnLoadBehaviourToCharacter(Character character) {
+        base.OnLoadBehaviourToCharacter(character);
+        character.behaviourComponent.OnBecomeCultist();
+    }
     public bool TryCreateCultistJob(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT) == false 
             && character.homeStructure?.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT) == null) {

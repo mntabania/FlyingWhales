@@ -46,8 +46,8 @@ public class RemoveBuff : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData) {
-        bool hasMetRequirements = base.AreRequirementsSatisfied(actor, target, otherData);
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData, JobQueueItem job) {
+        bool hasMetRequirements = base.AreRequirementsSatisfied(actor, target, otherData, job);
         if (hasMetRequirements) {
             return target != actor && target.traitContainer.HasTrait("Resting", "Unconscious") && target.traitContainer.HasTraitOf(TRAIT_TYPE.BUFF) && actor.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT);
         }

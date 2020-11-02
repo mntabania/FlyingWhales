@@ -47,8 +47,24 @@ namespace Traits {
         public override string GetTestingData(ITraitable traitable = null) {
             string data = base.GetTestingData(traitable);
             if (traitable is Character character) {
-                data = $"{data}Dislikes Being Lycan: {character.lycanData.dislikesBeingLycan.ToString()}";
-                data = $"{data}\nIs Master: {character.lycanData.isMaster.ToString()}";
+                data = $"{data}Is Master: {character.lycanData.isMaster.ToString()}";
+            }
+            return data;
+        }
+        protected override string GetDescriptionInUI() {
+            string data = base.GetDescriptionInUI();
+            data = owner.lycanData.dislikesBeingLycan ? 
+                $"{data}\n{owner.visuals.GetCharacterNameWithIconAndColor()} loathes being a Lycanthrope" : 
+                $"{data}\n{owner.visuals.GetCharacterNameWithIconAndColor()} enjoys being a Lycanthrope";
+            if (owner.lycanData.awareCharacters.Count > 0) {
+                data = $"{data}\nAware: ";
+                for (int i = 0; i < owner.lycanData.awareCharacters.Count; i++) {
+                    Character character = owner.lycanData.awareCharacters[i];
+                    data = $"{data}{character.visuals.GetCharacterNameWithIconAndColor()}";
+                    if (!CollectionUtilities.IsLastIndex(owner.lycanData.awareCharacters, i)) {
+                        data = $"{data}, ";
+                    }
+                }    
             }
             return data;
         }

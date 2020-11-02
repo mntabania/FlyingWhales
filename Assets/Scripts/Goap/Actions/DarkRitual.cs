@@ -70,8 +70,8 @@ public class DarkRitual : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData) {
-        bool satisfied = base.AreRequirementsSatisfied(actor, target, otherData);
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData, JobQueueItem job) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, target, otherData, job);
         if (satisfied) {
             return target.gridTileLocation != null && actor.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT);
         }

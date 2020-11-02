@@ -893,7 +893,6 @@ public class BehaviourComponent : CharacterComponent {
             character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
         }
     }
-    
     private void OnSnatchJobRemoved(JobQueueItem job, Character character) {
         if (character == owner && job.jobType == JOB_TYPE.SNATCH) {
             SetIsSnatching(false);
@@ -902,6 +901,29 @@ public class BehaviourComponent : CharacterComponent {
             } else {
                 character.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
             }
+        }
+    }
+    #endregion
+
+    #region Cultist
+    public void OnBecomeCultist() {
+        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnCultistSnatchAddedJobToQueue);
+        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnCultistSnatchJobRemoved);   
+    }
+    public void OnNoLongerCultist() {
+        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnCultistSnatchAddedJobToQueue);
+        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnCultistSnatchJobRemoved);   
+    }
+    private void OnCultistSnatchAddedJobToQueue(JobQueueItem job, Character character) {
+        if (character == owner && job.jobType == JOB_TYPE.SNATCH && character.combatComponent.combatMode != COMBAT_MODE.Defend) {
+            character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        }
+    }
+    private void OnCultistSnatchJobRemoved(JobQueueItem job, Character character) {
+        if (character == owner && job.jobType == JOB_TYPE.SNATCH) {
+            SetIsSnatching(false);
+            //since characters are Aggressive by default
+            character.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
         }
     }
     #endregion

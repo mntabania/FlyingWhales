@@ -3860,7 +3860,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     //if (otherData.ContainsKey(currType)) {
                     //    otherActionData = otherData[currType];
                     //}
-                    if (action.CanSatisfyRequirements(actor, this, data)
+                    if (action.CanSatisfyRequirements(actor, this, data, job)
                         && action.WillEffectsSatisfyPrecondition(precondition, actor, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
                         int actionCost = action.GetCost(actor, this, job, data);
                         log += $"({actionCost}){action.goapName}-{nameWithID}, ";
@@ -3901,7 +3901,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     data = otherData[INTERACTION_TYPE.NONE];
                 }
             }
-            if (action.CanSatisfyRequirements(actor, this, data)) {
+            if (action.CanSatisfyRequirements(actor, this, data, job)) {
                 cost = action.GetCost(actor, this, job, data);
                 return true;
             }
@@ -4132,7 +4132,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             GoapPlan plan = currentTopPrioJob.assignedPlan;
             ActualGoapNode currentNode = plan.currentActualNode;
             if (RaceManager.Instance.CanCharacterDoGoapAction(this, currentNode.action.goapType)
-                && InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentNode.action.goapType, currentNode.actor, currentNode.poiTarget, currentNode.otherData)) {
+                && InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentNode.action.goapType, currentNode.actor, currentNode.poiTarget, currentNode.otherData, currentTopPrioJob)) {
                 bool preconditionsSatisfied = plan.currentActualNode.action.CanSatisfyAllPreconditions(currentNode.actor, currentNode.poiTarget, currentNode.otherData, currentTopPrioJob.jobType);
                 if (!preconditionsSatisfied) {
                     log =
@@ -4348,7 +4348,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (!willStillContinueAction) {
             return;
         }
-        if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentActionNode.action.goapType, currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData)
+        if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentActionNode.action.goapType, currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData, currentActionNode.associatedJob)
             && currentActionNode.action.CanSatisfyAllPreconditions(currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData, currentActionNode.associatedJobType)) {
             log +=
                 $"\nAction satisfies all requirements and preconditions, proceeding to perform actual action: {currentActionNode.action.goapName} to {currentActionNode.poiTarget.name} at {currentActionNode.poiTarget.gridTileLocation}" ?? "No Tile Location";
