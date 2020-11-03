@@ -25,6 +25,7 @@ namespace UtilityScripts {
         public static int Unpassable_Layer_Mask = LayerMask.GetMask("Unpassable");
 
         public static WaitForSeconds waitFor2Seconds = new WaitForSeconds(2f);
+        public static WaitForSeconds waitFor3Seconds = new WaitForSeconds(3f);
         public static WaitForSeconds waitFor5Seconds = new WaitForSeconds(5f);
         
         public static string GetNormalizedSingularRace(RACE race) {

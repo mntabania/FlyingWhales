@@ -43,7 +43,7 @@ public class QuestItem : PooledObject {
         StartCoroutine(HideTutorialQuestCoroutine(_quest));
     }
     private IEnumerator HideTutorialQuestCoroutine(SteppedQuest quest) {
-        yield return new WaitForSeconds(1.5f);
+        yield return GameUtilities.waitFor2Seconds;
         RectTransform rectTransform = quest.questItem.transform as RectTransform;
         Vector2 targetSize = rectTransform.sizeDelta;
         targetSize.x = 0f;

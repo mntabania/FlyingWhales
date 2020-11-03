@@ -9,6 +9,7 @@ using Traits;
 using Archetype;
 using Locations.Settlements;
 using UnityEngine.Assertions;
+using UtilityScripts;
 
 public class PlayerManager : BaseMonoBehaviour {
     public static PlayerManager Instance;
@@ -41,12 +42,13 @@ public class PlayerManager : BaseMonoBehaviour {
         availableChaosOrbs = new List<ChaosOrb>();
         Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
+        // Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        // Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
+        // Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
         Messenger.AddListener<Vector3, int, InnerTileMap>(Signals.CREATE_CHAOS_ORBS, CreateChaosOrbsAt);
         Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DID_ACTION_SUCCESSFULLY, OnCharacterDidActionSuccess);
-        Messenger.AddListener(Signals.CHECK_IF_PLAYER_WINS, CheckWinCondition);
+        // Messenger.AddListener(Signals.CHECK_IF_PLAYER_WINS, CheckWinCondition);
+        Messenger.AddListener(Signals.WIN_GAME, WinGame);
     }
     public void InitializePlayer(HexTile portal) {
         player = new Player();
@@ -325,53 +327,61 @@ public class PlayerManager : BaseMonoBehaviour {
     #endregion
 
     #region End Game Mechanics
-    private void OnCharacterDied(Character character) {
-        CheckWinCondition();
+    private void WinGame() {
+        StartCoroutine(DelayedWinGame());
     }
-    private void OnCharacterCanNoLongerPerform(Character character) {
-        //CheckWinCondition();
+    private IEnumerator DelayedWinGame() {
+        UIManager.Instance.SetSpeedTogglesState(false);
+        yield return GameUtilities.waitFor3Seconds;
+        PlayerUI.Instance.WinGameOver();
     }
-    private void OnCharacterCanNoLongerMove(Character character) {
-        //CheckWinCondition();
-    }
-    private void CheckWinCondition() {
-        if (DoesPlayerWin()) {
-            if (!_hasWinCheckTimer) {
-                CreateWinCheckTimer();
-            }
-        }
-    }
-    private void FinalCheckWinCondition() {
-        if (DoesPlayerWin()) {
-            PlayerUI.Instance.WinGameOver();
-        }
-        _hasWinCheckTimer = false;
-    }
-    private bool DoesPlayerWin() {
-        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-            Character character = CharacterManager.Instance.allCharacters[i];
-            if(character.isNormalCharacter && !character.isAlliedWithPlayer) {
-                if(!character.isDead) {
-                    return false;
-                }
-            }
-        }
-        //check limbo characters
-        for (int i = 0; i < CharacterManager.Instance.limboCharacters.Count; i++) {
-            Character character = CharacterManager.Instance.limboCharacters[i];
-            if(character.isNormalCharacter && !character.isAlliedWithPlayer) {
-                if(!character.isDead) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    private void CreateWinCheckTimer() {
-        GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(15));
-        SchedulingManager.Instance.AddEntry(dueDate, FinalCheckWinCondition, this);
-        _hasWinCheckTimer = true;
-    }
+    // private void OnCharacterDied(Character character) {
+    //     CheckWinCondition();
+    // }
+    // private void OnCharacterCanNoLongerPerform(Character character) {
+    //     //CheckWinCondition();
+    // }
+    // private void OnCharacterCanNoLongerMove(Character character) {
+    //     //CheckWinCondition();
+    // }
+    // private void CheckWinCondition() {
+    //     if (DoesPlayerWin()) {
+    //         if (!_hasWinCheckTimer) {
+    //             CreateWinCheckTimer();
+    //         }
+    //     }
+    // }
+    // private void FinalCheckWinCondition() {
+    //     if (DoesPlayerWin()) {
+    //         PlayerUI.Instance.WinGameOver();
+    //     }
+    //     _hasWinCheckTimer = false;
+    // }
+    // private bool DoesPlayerWin() {
+    //     for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+    //         Character character = CharacterManager.Instance.allCharacters[i];
+    //         if(character.isNormalCharacter && !character.isAlliedWithPlayer) {
+    //             if(!character.isDead) {
+    //                 return false;
+    //             }
+    //         }
+    //     }
+    //     //check limbo characters
+    //     for (int i = 0; i < CharacterManager.Instance.limboCharacters.Count; i++) {
+    //         Character character = CharacterManager.Instance.limboCharacters[i];
+    //         if(character.isNormalCharacter && !character.isAlliedWithPlayer) {
+    //             if(!character.isDead) {
+    //                 return false;
+    //             }
+    //         }
+    //     }
+    //     return true;
+    // }
+    // private void CreateWinCheckTimer() {
+    //     GameDate dueDate = GameManager.Instance.Today();
+    //     dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(15));
+    //     SchedulingManager.Instance.AddEntry(dueDate, FinalCheckWinCondition, this);
+    //     _hasWinCheckTimer = true;
+    // }
     #endregion
 }
