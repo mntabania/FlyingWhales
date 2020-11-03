@@ -178,7 +178,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                 targetTile = targetToGoTo.gridTileLocation;
             }
             if (actor.movementComponent.isStationary) {
-                if (actor.gridTileLocation != targetTile && !actor.gridTileLocation.IsNeighbour(targetTile)) {
+                if (actor.gridTileLocation != targetTile && !actor.gridTileLocation.IsNeighbour(targetTile, true)) {
                     targetTile = null;
                 }
             }
@@ -260,7 +260,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             //}
             if(targetTile != null) {
                 if (actor.movementComponent.isStationary) {
-                    if (actor.gridTileLocation != targetTile && !actor.gridTileLocation.IsNeighbour(targetTile)) {
+                    if (actor.gridTileLocation != targetTile && !actor.gridTileLocation.IsNeighbour(targetTile, true)) {
                         targetTile = null;
                     }
                 }
@@ -278,7 +278,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     targetTile = targetToGoTo.gridTileLocation;
                 }
                 if (actor.movementComponent.isStationary) {
-                    if (actor.gridTileLocation != targetTile && !actor.gridTileLocation.IsNeighbour(targetTile)) {
+                    if (actor.gridTileLocation != targetTile && !actor.gridTileLocation.IsNeighbour(targetTile, true)) {
                         targetTile = null;
                     }
                 }

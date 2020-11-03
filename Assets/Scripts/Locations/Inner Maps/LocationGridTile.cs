@@ -936,13 +936,32 @@ namespace Inner_Maps {
             }
             return false;
         }
-        public bool IsNeighbour(LocationGridTile tile) {
-            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in _neighbours) {
-                if (keyValuePair.Value == tile) {
-                    return true;
+        public bool IsNeighbour(LocationGridTile tile, bool sameStructureOnly = false) {
+            if (sameStructureOnly) {
+                for (int i = 0; i < neighbourList.Count; i++) {
+                    LocationGridTile neighbour = neighbourList[i];
+                    if (neighbour == tile) {
+                        if ((structure.structureType.IsOpenSpace() && tile.structure.structureType.IsOpenSpace()) || structure == tile.structure) {
+                            return true;
+                        }
+                    }
+                }
+            } else {
+                for (int i = 0; i < neighbourList.Count; i++) {
+                    LocationGridTile neighbour = neighbourList[i];
+                    if (neighbour == tile) {
+                        return true;
+                    }
                 }
             }
+
             return false;
+            //foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in _neighbours) {
+            //    if (keyValuePair.Value == tile) {
+            //        return true;
+            //    }
+            //}
+            //return false;
         }
         public bool IsAdjacentTo(Type type) {
             foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in _neighbours) {

@@ -95,6 +95,6 @@ public class CarryRestrained : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         return poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion
-                    || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || !poiTarget.mapObjectVisual;
+                    || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true)) || !poiTarget.mapObjectVisual;
     }
 }

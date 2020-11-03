@@ -65,15 +65,18 @@ public class GoapThread : Multithread {
         try {
             CreatePlan();
         } catch(System.Exception e) {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            throw new Exception($"Problem with {actor.name}'s GoapThread! \nJob is {(job?.jobType.ToString() ?? "None")}\nTarget is {target.name}\n{e.Message}\n{e.StackTrace}");
+#else
             Debug.unityLogger.LogError("Error", $"Problem with {actor.name}'s GoapThread! \nJob is {(job?.jobType.ToString() ?? "None")}\nTarget is {target.name}\n{e.Message}\n{e.StackTrace}");
-            // throw new Exception($"Problem with {actor.name}'s GoapThread! \nJob is {(job?.jobType.ToString() ?? "None")}\nTarget is {target.name}\n{e.Message}\n{e.StackTrace}");
+#endif
         }
     }
     public override void FinishMultithread() {
         base.FinishMultithread();
         ReturnPlanFromGoapThread();
     }
-    #endregion
+#endregion
 
     public void CreatePlan() {
         if(recalculationPlan != null) {
@@ -148,7 +151,7 @@ public class GoapThread : Multithread {
         actor.planner.ReceivePlanFromGoapThread(this);
     }
 
-    #region Object Pool
+#region Object Pool
     public void Reset() {
         actor = null;
         createdPlan = null;
@@ -164,5 +167,5 @@ public class GoapThread : Multithread {
         recalculationPlan = null;
         owner = null;
     }
-    #endregion
+#endregion
 }

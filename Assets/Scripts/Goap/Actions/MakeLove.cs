@@ -278,12 +278,12 @@ public class MakeLove : GoapAction {
         Bed bed = null;
         if (actor.tileObjectComponent.primaryBed != null) {
             if(actor.tileObjectComponent.primaryBed.gridTileLocation != null 
-                && (actor.gridTileLocation == actor.tileObjectComponent.primaryBed.gridTileLocation || actor.gridTileLocation.IsNeighbour(actor.tileObjectComponent.primaryBed.gridTileLocation))) {
+                && (actor.gridTileLocation == actor.tileObjectComponent.primaryBed.gridTileLocation || actor.gridTileLocation.IsNeighbour(actor.tileObjectComponent.primaryBed.gridTileLocation, true))) {
                 bed = actor.tileObjectComponent.primaryBed;
             }
         } else if (targetCharacter.tileObjectComponent.primaryBed != null) {
             if (targetCharacter.tileObjectComponent.primaryBed.gridTileLocation != null
-                && (actor.gridTileLocation == targetCharacter.tileObjectComponent.primaryBed.gridTileLocation || actor.gridTileLocation.IsNeighbour(targetCharacter.tileObjectComponent.primaryBed.gridTileLocation))) {
+                && (actor.gridTileLocation == targetCharacter.tileObjectComponent.primaryBed.gridTileLocation || actor.gridTileLocation.IsNeighbour(targetCharacter.tileObjectComponent.primaryBed.gridTileLocation, true))) {
                 bed = targetCharacter.tileObjectComponent.primaryBed;
             }
         }
@@ -315,12 +315,12 @@ public class MakeLove : GoapAction {
         Bed bed = null;
         if (actor.tileObjectComponent.primaryBed != null) {
             if (actor.tileObjectComponent.primaryBed.gridTileLocation != null
-                && (actor.gridTileLocation == actor.tileObjectComponent.primaryBed.gridTileLocation || actor.gridTileLocation.IsNeighbour(actor.tileObjectComponent.primaryBed.gridTileLocation))) {
+                && (actor.gridTileLocation == actor.tileObjectComponent.primaryBed.gridTileLocation || actor.gridTileLocation.IsNeighbour(actor.tileObjectComponent.primaryBed.gridTileLocation, true))) {
                 bed = actor.tileObjectComponent.primaryBed;
             }
         } else if (targetCharacter.tileObjectComponent.primaryBed != null) {
             if (targetCharacter.tileObjectComponent.primaryBed.gridTileLocation != null
-                && (actor.gridTileLocation == targetCharacter.tileObjectComponent.primaryBed.gridTileLocation || actor.gridTileLocation.IsNeighbour(targetCharacter.tileObjectComponent.primaryBed.gridTileLocation))) {
+                && (actor.gridTileLocation == targetCharacter.tileObjectComponent.primaryBed.gridTileLocation || actor.gridTileLocation.IsNeighbour(targetCharacter.tileObjectComponent.primaryBed.gridTileLocation, true))) {
                 bed = targetCharacter.tileObjectComponent.primaryBed;
             }
         }

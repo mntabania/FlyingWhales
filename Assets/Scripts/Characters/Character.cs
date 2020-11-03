@@ -4885,7 +4885,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else if (UIManager.Instance.monsterInfoUI.isShowing && UIManager.Instance.monsterInfoUI.activeMonster == this) {
             UIManager.Instance.monsterInfoUI.CloseMenu();
         }
-        marker.StopMovement();
 
         if (trapStructure.IsTrapped()) {
             trapStructure.ResetAllTrapStructures();
@@ -4915,6 +4914,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         SetPOIState(POI_STATE.INACTIVE);
         SchedulingManager.Instance.ClearAllSchedulesBy(this);
         if (marker) {
+            marker.StopMovement();
             //DestroyMarker();
             //marker.collisionTrigger.SetCollidersState(false);
             marker.OnSeize();
@@ -4933,7 +4933,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public virtual void OnUnseizePOI(LocationGridTile tileLocation) {
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStartedWhileSeized);
-        needsComponent.OnCharacterArrivedAtLocation(tileLocation.structure.region.coreTile.region);
+        needsComponent.OnCharacterArrivedAtLocation(tileLocation.structure.region);
         if (minion == null) {
             if (!isDead) {
                 SubscribeToSignals();
@@ -4949,7 +4949,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         EnableMarker();
         marker.OnUnseize();
         minion?.OnUnseize();
-        if(tileLocation.structure.region.coreTile.region != currentRegion) {
+        if(tileLocation.structure.region != currentRegion) {
             currentRegion.RemoveCharacterFromLocation(this);
         }
         marker.InitialPlaceMarkerAt(tileLocation);
@@ -6201,12 +6201,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     Bed bed = null;
                     if (actor.tileObjectComponent.primaryBed != null) {
                         if (actor.tileObjectComponent.primaryBed.gridTileLocation != null
-                            && (actor.gridTileLocation == actor.tileObjectComponent.primaryBed.gridTileLocation || actor.gridTileLocation.IsNeighbour(actor.tileObjectComponent.primaryBed.gridTileLocation))) {
+                            && (actor.gridTileLocation == actor.tileObjectComponent.primaryBed.gridTileLocation || actor.gridTileLocation.IsNeighbour(actor.tileObjectComponent.primaryBed.gridTileLocation, true))) {
                             bed = actor.tileObjectComponent.primaryBed;
                         }
                     } else if (targetCharacter.tileObjectComponent.primaryBed != null) {
                         if (targetCharacter.tileObjectComponent.primaryBed.gridTileLocation != null
-                            && (actor.gridTileLocation == targetCharacter.tileObjectComponent.primaryBed.gridTileLocation || actor.gridTileLocation.IsNeighbour(targetCharacter.tileObjectComponent.primaryBed.gridTileLocation))) {
+                            && (actor.gridTileLocation == targetCharacter.tileObjectComponent.primaryBed.gridTileLocation || actor.gridTileLocation.IsNeighbour(targetCharacter.tileObjectComponent.primaryBed.gridTileLocation, true))) {
                             bed = targetCharacter.tileObjectComponent.primaryBed;
                         }
                     }
