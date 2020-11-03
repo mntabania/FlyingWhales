@@ -400,8 +400,8 @@ namespace Traits {
                 }
                 form.DestroyMarker();
             }
-            form.currentRegion.RemoveCharacterFromLocation(form);
-            form.homeRegion.RemoveResident(form);
+            form.currentRegion?.RemoveCharacterFromLocation(form);
+            form.homeRegion?.RemoveResident(form);
             CharacterManager.Instance.AddNewLimboCharacter(form);
             CharacterManager.Instance.RemoveCharacter(form, false);
             Messenger.AddListener(Signals.TICK_STARTED, form.OnTickStartedWhileSeized);
@@ -410,7 +410,7 @@ namespace Traits {
             if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
                 Messenger.RemoveListener(Signals.TICK_STARTED, form.OnTickStartedWhileSeized);
             }
-            homeRegion.AddResident(form);
+            homeRegion?.AddResident(form);
             form.needsComponent.OnCharacterArrivedAtLocation(tileLocation.structure.region.coreTile.region);
             form.SubscribeToSignals();
             form.SetPOIState(POI_STATE.ACTIVE);

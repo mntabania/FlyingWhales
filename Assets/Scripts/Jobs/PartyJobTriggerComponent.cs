@@ -35,6 +35,7 @@ public class PartyJobTriggerComponent : JobTriggerComponent {
             } else {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, _owner);
                 job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { hex });
+                job.SetDoNotRecalculate(true);
                 _owner.jobBoard.AddToAvailableJobs(job);
             }
         }

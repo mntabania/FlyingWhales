@@ -92,7 +92,11 @@ public abstract class JobQueueItem : ISavable {
                 originalOwner = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.originalOwnerID) as NPCSettlement;
             } else if (data.originalOwnerType == OBJECT_TYPE.Character) {
                 originalOwner = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.originalOwnerID);
-            }    
+            } else if (data.originalOwnerType == OBJECT_TYPE.Faction) {
+                originalOwner = DatabaseManager.Instance.factionDatabase.GetFactionBasedOnPersistentID(data.originalOwnerID);
+            } else if (data.originalOwnerType == OBJECT_TYPE.Party) {
+                originalOwner = DatabaseManager.Instance.partyDatabase.GetPartyByPersistentID(data.originalOwnerID);
+            }
         }
         assignedCharacter = string.IsNullOrEmpty(data.assignedCharacterID) ? null : DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.assignedCharacterID);
         for (int i = 0; i < data.blacklistedCharacterIDs.Count; i++) {
