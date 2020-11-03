@@ -58,6 +58,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                         } else {
                                             party.SetPartyState(PARTY_STATE.Working);
                                         }
+                                        hasJob = true;
                                         return hasJob;
                                         //hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                                     } else {
