@@ -31,7 +31,7 @@ public class GeneralConfirmationWithVisual : GeneralConfirmation {
             SetVisual(videoClip);
         } else {
             //If there is no video clip to show, leave the left side of the window blank
-            picture.texture = null;
+            picture.gameObject.SetActive(false);
         }
     }
     public override void Close() {
@@ -43,9 +43,10 @@ public class GeneralConfirmationWithVisual : GeneralConfirmation {
 
     #region Visual
     private void SetVisual(Texture texture) {
-        if(_videoPlayer.clip != null) {
+        if (_videoPlayer.clip != null) {
             _videoPlayer.Stop();
         }
+        picture.gameObject.SetActive(true);
         picture.texture = texture;
     }
     private void SetVisual(VideoClip videoClip) {
