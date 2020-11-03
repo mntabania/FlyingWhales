@@ -134,10 +134,7 @@ namespace Traits {
                 if (!characterThatWillDoJob.relationshipContainer.IsFriendsWith(targetCharacter) &&
                     !characterThatWillDoJob.relationshipContainer.IsFamilyMember(targetCharacter) && 
                     !characterThatWillDoJob.relationshipContainer.HasSpecialPositiveRelationshipWith(targetCharacter)) {
-                    TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
-                    if(currentTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-                        characterThatWillDoJob.jobComponent.CreateDrinkBloodJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, targetCharacter);
-                    }
+                    characterThatWillDoJob.jobComponent.CreateDrinkBloodJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, targetCharacter);
                 }
             }
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);

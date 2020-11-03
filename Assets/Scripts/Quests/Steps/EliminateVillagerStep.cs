@@ -6,9 +6,8 @@ namespace Quests.Steps {
         private readonly Func<List<Character>, int, string> _descriptionGetter;
         private readonly List<Character> _targets;
         private int _initialCharactersToEliminate;
-        
-        public EliminateVillagerStep(Func<List<Character>, int, string> descriptionGetter, List<Character> targets) 
-            : base(string.Empty) {
+
+        public EliminateVillagerStep(Func<List<Character>, int, string> descriptionGetter, List<Character> targets) : base(string.Empty) {
             _descriptionGetter = descriptionGetter;
             _targets = new List<Character>(targets);
             _initialCharactersToEliminate = _targets.Count;
@@ -42,7 +41,8 @@ namespace Quests.Steps {
                     objectsToCenter?.Remove(character);
                     Messenger.Broadcast(Signals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
                     if (_targets.Count == 0) {
-                        Complete();    
+                        Complete();
+                        Messenger.Broadcast(Signals.WIN_GAME);
                     }
                 }    
             }

@@ -13,7 +13,6 @@ namespace Quests {
         public override Type serializedData => typeof(SaveDataEliminateAllVillagers);
         #endregion
         
-        
         public EliminateAllVillagers() : base($"Eliminate All Villagers") { }
         protected override void ConstructSteps() {
             List<Character> villagers = CharacterManager.Instance.GetAllNormalCharacters();
@@ -43,7 +42,7 @@ namespace Quests {
         #region Utilities
         public static bool ShouldConsiderCharacterAsEliminated(Character character) {
             return character.isDead ||
-                   (character.faction != null && character.faction.isMajorNonPlayerOrVagrant == false) ||
+                   (character.faction != null && !character.faction.isMajorNonPlayerOrVagrant) ||
                    character.isAlliedWithPlayer;
         }
         #endregion

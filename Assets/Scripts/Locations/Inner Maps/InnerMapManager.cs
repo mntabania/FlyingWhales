@@ -762,8 +762,9 @@ namespace Inner_Maps {
 
         #region Monster Lair
         public void MonsterLairCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure structure, Region region, LocationStructure wilderness) {
-		    LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(locationGridTiles);
-		    int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 2, 15);
+            List<LocationGridTile> refinedTiles = locationGridTiles.Where(t => !t.IsAtEdgeOfMap()).ToList();
+		    LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(refinedTiles);
+		    int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, refinedTiles, 2, 15);
             
 		    Assert.IsNotNull(cellMap, $"There was no cellmap generated for monster lair structure {structure.ToString()}");
 		    
@@ -772,7 +773,7 @@ namespace Inner_Maps {
 			    (locationGridTile) => SetAsWall(locationGridTile, structure),
 			    (locationGridTile) => SetAsGround(locationGridTile, structure));
 
-		    List<LocationGridTile> tilesToRefine = new List<LocationGridTile>(locationGridTiles);
+		    List<LocationGridTile> tilesToRefine = new List<LocationGridTile>(refinedTiles);
 		    //refine further
 		    for (int i = 0; i < tilesToRefine.Count; i++) {
 			    LocationGridTile tile = tilesToRefine[i];
@@ -782,14 +783,14 @@ namespace Inner_Maps {
 				    tile.SetTileState(LocationGridTile.Tile_State.Empty);
 				    tile.RevertTileToOriginalPerlin();
 				    tile.SetStructure(wilderness);
-				    locationGridTiles.Remove(tile);
+                    refinedTiles.Remove(tile);
 			    }
 		    }
-		    MonsterLairPerlin(locationGridTiles, structure);
+		    MonsterLairPerlin(refinedTiles, structure);
 		    //create entrances
 		    //get tiles that are at the edge of the given tiles, but are not at the edge of its map.
 		    for (int i = 0; i < 5; i++) {
-			    List<LocationGridTile> targetChoices = locationGridTiles
+			    List<LocationGridTile> targetChoices = refinedTiles
 				    .Where(t => t.tileType == LocationGridTile.Tile_Type.Wall 
 				                && t.IsAtEdgeOfMap() == false
 				                && t.HasDifferentStructureNeighbour(true)
@@ -802,7 +803,7 @@ namespace Inner_Maps {
 				    target.SetTileType(LocationGridTile.Tile_Type.Empty);
 				    target.SetStructure(wilderness);
 				    target.RevertTileToOriginalPerlin();
-				    locationGridTiles.Remove(target);
+                    refinedTiles.Remove(target);
 			    }
 			    else {
 				    Debug.LogWarning($"Could not find entrance for {structure}");
@@ -812,8 +813,8 @@ namespace Inner_Maps {
 		    
 		    
 
-		    for (int i = 0; i < locationGridTiles.Count; i++) {
-			    LocationGridTile tile = locationGridTiles[i];
+		    for (int i = 0; i < refinedTiles.Count; i++) {
+			    LocationGridTile tile = refinedTiles[i];
 			    if (tile.tileType == LocationGridTile.Tile_Type.Wall) {
 				    //create wall tile object for all walls
 				    BlockWall blockWall = CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);

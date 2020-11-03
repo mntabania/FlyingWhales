@@ -503,6 +503,7 @@ public static class Signals {
     public static string CHAOS_ORB_EXPIRED = "OnChaosOrbExpired";
     public static string CHARGES_ADJUSTED = "OnChargesAdjusted";
     public static string CHECK_IF_PLAYER_WINS = "CheckIfPlayerWins";
+    public static string WIN_GAME = "PlayerWins";
     #endregion
 
     #region Interaction
