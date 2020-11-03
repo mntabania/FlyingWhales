@@ -27,16 +27,25 @@ public class GeneralConfirmationWithVisual : GeneralConfirmation {
             return;
         }
         base.ShowGeneralConfirmation(header, body, buttonText, onClickOK);
-        SetVisual(videoClip);
+        if (!Settings.SettingsManager.Instance.doNotShowVideos) {
+            SetVisual(videoClip);
+        } else {
+            //If there is no video clip to show, leave the left side of the window blank
+            picture.texture = null;
+        }
     }
     public override void Close() {
-        _videoPlayer.Stop();
+        if (_videoPlayer.clip != null) {
+            _videoPlayer.Stop();
+        }
         base.Close();
     }
 
     #region Visual
     private void SetVisual(Texture texture) {
-        _videoPlayer.Stop();
+        if(_videoPlayer.clip != null) {
+            _videoPlayer.Stop();
+        }
         picture.texture = texture;
     }
     private void SetVisual(VideoClip videoClip) {
