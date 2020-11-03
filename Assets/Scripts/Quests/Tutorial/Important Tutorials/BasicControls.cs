@@ -84,10 +84,9 @@ namespace Tutorial {
         }
         private IEnumerator DelayedAreaTooltip() {
             yield return new WaitForSeconds(1f);
-            UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Areas", 
+            PlayerUI.Instance.ShowGeneralConfirmation("Areas", 
                 "Areas have representations in both the Interior Map and World Map. " +
-                "An Area in the World Map is represented by a Hex Tile and an Area in the Interior Map is represented by a Square when selected.", 
-                TutorialManager.Instance.areaVideoClip);
+                "An Area in the World Map is represented by a Hex Tile and an Area in the Interior Map is represented by a Square when selected."); //TutorialManager.Instance.areaVideoClip
         }
         private bool IsSelectedStructureAHouse(LocationStructure structure) {
             return structure is Dwelling;

@@ -60,9 +60,9 @@ namespace Tutorial {
         }
         private IEnumerator DelayedOnExecuteSpellPopup() {
             yield return new WaitForSecondsRealtime(1.5f);
-            UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Spells",
+            PlayerUI.Instance.ShowGeneralConfirmation("Spells",
                 "These are powerful magic that you may cast on a tile or an area of the map. " +
-                "All Spells Cost Mana, have a limited number of Charges and also have a short Cooldown.", TutorialManager.Instance.spellsVideoClip);
+                "All Spells Cost Mana, have a limited number of Charges and also have a short Cooldown.");
         }
         private void OnHoverElectric(QuestStepItem item) {
             UIManager.Instance.ShowSmallInfo("You can spread Electric damage and zap characters on Wet tiles. Try to cast Lightning on a Wet tile.", 

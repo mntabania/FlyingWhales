@@ -56,15 +56,13 @@ public class DropCorpse : GoapAction {
         base.OnStopWhileStarted(node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        Character targetCharacter = poiTarget as Character;
-        actor.UncarryPOI(targetCharacter);
+        actor.UncarryPOI(poiTarget);
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        Character targetCharacter = poiTarget as Character;
-        actor.UncarryPOI(targetCharacter);
+        actor.UncarryPOI(poiTarget);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         Character actor = node.actor;
