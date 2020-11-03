@@ -3048,7 +3048,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    foreach (var relationship in owner.relationshipContainer.relationships) {
 			    Character otherCharacter = CharacterManager.Instance.GetCharacterByID(relationship.Key);
 			    if (otherCharacter != null) {
-				    if (otherCharacter.traitContainer.GetTraitOrStatus<Trait>("Vampire") == null) {
+				    if (!otherCharacter.isDead && otherCharacter.traitContainer.GetTraitOrStatus<Trait>("Vampire") == null) {
 					    string opinion = relationship.Value.opinions.GetOpinionLabel();
 					    if (opinion == RelationshipManager.Acquaintance || opinion == RelationshipManager.Enemy || opinion == RelationshipManager.Rival) {
 						    int weight = 0;
@@ -3074,7 +3074,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    }
 		    
 		    //Pick random animals
-		    List<Character> animalsInRegion = owner.currentRegion.charactersAtLocation.Where(x => x is Animal).ToList();
+		    List<Character> animalsInRegion = owner.currentRegion.charactersAtLocation.Where(x => x is Animal && !x.isDead).ToList();
 		    for (int i = 0; i < 3; i++) {
 			    if (animalsInRegion.Count == 0) { break; }
 			    Character animal = UtilityScripts.CollectionUtilities.GetRandomElement(animalsInRegion);
