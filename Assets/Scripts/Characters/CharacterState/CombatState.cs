@@ -461,7 +461,7 @@ public class CombatState : CharacterState {
             if (poi is Character hostile) {
                 if (hostile.combatComponent.isInCombat) {
                     CombatData combatData = hostile.combatComponent.GetCombatData(stateComponent.owner);
-                    if(combatData != null && combatData.connectedAction != null && combatData.connectedAction.associatedJobType == JOB_TYPE.APPREHEND) {
+                    if(combatData != null && combatData.connectedAction != null && combatData.connectedAction.associatedJobType == JOB_TYPE.APPREHEND && hostile.faction == stateComponent.owner.faction) {
                         isBeingApprehended = true;
                         return;
                     }
@@ -474,7 +474,7 @@ public class CombatState : CharacterState {
             if (poi is Character hostile) {
                 if (hostile.combatComponent.isInCombat) {
                     CombatData combatData = hostile.combatComponent.GetCombatData(stateComponent.owner);
-                    if (combatData != null && combatData.connectedAction != null && combatData.connectedAction.associatedJobType == JOB_TYPE.APPREHEND) {
+                    if (combatData != null && combatData.connectedAction != null && combatData.connectedAction.associatedJobType == JOB_TYPE.APPREHEND && hostile.faction == stateComponent.owner.faction) {
                         isBeingApprehended = true;
                         return;
                     }
