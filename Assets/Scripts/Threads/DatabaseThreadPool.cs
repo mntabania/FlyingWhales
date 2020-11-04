@@ -48,7 +48,7 @@ public class DatabaseThreadPool : BaseMonoBehaviour {
 
     private void RunThread() {
         while (isRunning) {
-            if (functionsToBeRunInThread.Count > 0) {
+            if (functionsToBeRunInThread != null && functionsToBeRunInThread.Count > 0) {
                 LogDatabaseThread newFunction = functionsToBeRunInThread.Dequeue();
                 if (newFunction != null) {
                     lock (THREAD_LOCKER) {
