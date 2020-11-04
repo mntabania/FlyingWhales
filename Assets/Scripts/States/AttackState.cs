@@ -31,18 +31,18 @@ public class AttackState : State {
 
     private void InitiateCombat() {
         if (!_assignedCharacter.isInCombat && !_targetCharacter.isInCombat) {
-			ICombatInitializer source = _assignedCharacter;
-			ICombatInitializer target = _targetCharacter;
-			if(_assignedCharacter.party != null){
-				source = _assignedCharacter.party;
-			}
-			if(_targetCharacter.party != null){
-				target = _targetCharacter.party;
-			}
+			Character source = _assignedCharacter;
+			Character target = _targetCharacter;
+			//if(_assignedCharacter.party != null){
+			//	source = _assignedCharacter.party;
+			//}
+			//if(_targetCharacter.party != null){
+			//	target = _targetCharacter.party;
+			//}
 			_assignedCharacter.specificLocation.StartCombatBetween(source, target);
-			if(_wonInCombatAction != null){
-				source.SetCurrentFunction (() => _wonInCombatAction ());
-			}
+			//if(_wonInCombatAction != null){
+			//	source.SetCurrentFunction (() => _wonInCombatAction ());
+			//}
         }
     }
 }

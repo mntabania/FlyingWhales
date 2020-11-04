@@ -77,11 +77,11 @@ public class FactionInfoUI : UIMenu {
 			for (int i = 0; i < currentlyShowingFaction.characters.Count; i++) {
 				ECS.Character currChar = currentlyShowingFaction.characters[i];
 				text += "\n" + currChar.urlName  + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
-				if (currChar.currentAction != null) {
+				if (currChar.actionData.currentAction != null) {
                     //if(currChar.currentTask.taskType == TASK_TYPE.QUEST) {
                     //    text += " (" + ((OldQuest.Quest)currChar.currentTask).urlName + ")";
                     //} else {
-                        text += " (" + currChar.currentAction.actionData.actionName.ToString() + ")";
+                        text += " (" + currChar.actionData.currentAction.actionData.actionName.ToString() + ")";
                     //}
 					
 				}

@@ -66,17 +66,19 @@ public class SettlementInfoClick : MonoBehaviour {
 					//	UIManager.Instance.ShowQuestInfo(quest);
 					//}	
 				}
-			} else if (url.Contains("_party")) {
-				Party party = UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.GetPartyAtLocationByLeaderID(idToUse);
-				if (party != null) {
-					UIManager.Instance.ShowCharacterInfo(party.partyLeader);
-				} else {
-					party = UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.tileLocation.GetPartyAtLocationByLeaderID(idToUse);
-					if (party != null) {
-						UIManager.Instance.ShowCharacterInfo(party.partyLeader);
-					}
-				}
-			} else if(url.Contains("_prisoner")){
+			} 
+   //         else if (url.Contains("_party")) {
+			//	Party party = UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.GetPartyAtLocationByLeaderID(idToUse);
+			//	if (party != null) {
+			//		UIManager.Instance.ShowCharacterInfo(party.partyLeader);
+			//	} else {
+			//		party = UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark.tileLocation.GetPartyAtLocationByLeaderID(idToUse);
+			//		if (party != null) {
+			//			UIManager.Instance.ShowCharacterInfo(party.partyLeader);
+			//		}
+			//	}
+			//} 
+            else if(url.Contains("_prisoner")){
 				BaseLandmark landmark = UIManager.Instance.landmarkInfoUI.currentlyShowingLandmark;
 				ECS.Character character = landmark.GetPrisonerByID(idToUse);
 				if(character != null){

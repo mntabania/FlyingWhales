@@ -9,3 +9,6 @@ public class ListWrapper<T> {
 
 [System.Serializable]
 public class TextAssetListWrapper: ListWrapper<TextAsset>{}
+
+[System.Serializable]
+public class StringListWrapper : ListWrapper<string> { }

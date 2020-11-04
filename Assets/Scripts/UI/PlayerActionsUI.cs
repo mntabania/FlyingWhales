@@ -180,7 +180,7 @@ public class PlayerActionsUI : MonoBehaviour {
 		List<ECS.Character> characters = new List<ECS.Character> ();
 		BaseLandmark landmark = this.location as BaseLandmark;
 		for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
-			ECS.Character character = landmark.charactersAtLocation [i].mainCharacter;
+			ECS.Character character = landmark.charactersAtLocation [i];
 			if(!task.canTargetSelf && character.id == assignedCharacter.id){
 				continue;
 			}

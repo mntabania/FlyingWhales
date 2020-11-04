@@ -126,12 +126,12 @@ public class LandmarkInfoUI : UIMenu {
                 if (currObject is ECS.Character) {
 					ECS.Character currChar = (ECS.Character)currObject;
 					text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
-					if (currChar.currentAction != null) {
+					if (currChar.actionData.currentAction != null) {
 						//if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
 						//	OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
 						//	text += " (" + currQuest.urlName + ")";
 						//} else {
-							text += " (" + currChar.currentAction.actionData.actionName + ")";
+							text += " (" + currChar.actionData.currentAction.actionData.actionName + ")";
 						//}
                         //for (int j = 0; j < currChar.currentAction.alignments.Count; j++) {
                         //    ACTION_ALIGNMENT currAlignment = currChar.currentAction.alignments[j];
@@ -156,12 +156,12 @@ public class LandmarkInfoUI : UIMenu {
                 if (currObject is ECS.Character) {
                     ECS.Character currChar = (ECS.Character)currObject;
                     text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
-                    if (currChar.currentAction != null) {
+                    if (currChar.actionData.currentAction != null) {
                         //if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
                         //    OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
                         //    text += " (" + currQuest.urlName + ")";
                         //} else {
-                            text += " (" + currChar.currentAction.actionData.actionName + ")";
+                            text += " (" + currChar.actionData.currentAction.actionData.actionName + ")";
                         //}
                     }
                 } else if (currObject is Party) {
@@ -239,7 +239,7 @@ public class LandmarkInfoUI : UIMenu {
 		if (currentlyShowingLandmark.itemsInLandmark.Count > 0) {
 			for (int i = 0; i < currentlyShowingLandmark.itemsInLandmark.Count; i++) {
 				ECS.Item item = currentlyShowingLandmark.itemsInLandmark[i];
-				text += "\n" + item.nameWithQuality + " (" + ((item.owner == null ? "NONE" : item.owner.name)) + ")";
+				text += "\n" + item.itemName + " (" + ((item.owner == null ? "NONE" : item.owner.name)) + ")";
 			}
 		} else {
 			text += "NONE";

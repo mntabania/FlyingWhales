@@ -80,7 +80,8 @@ public class Region : IHasNeighbours<Region> {
         get { return GetCharactersInRegion(); }
     }
     internal int numOfCharactersInLandmarks {
-        get { return landmarks.Sum(x => x.charactersAtLocation.Sum(y => y.numOfCharacters)); }
+        //get { return landmarks.Sum(x => x.charactersAtLocation.Sum(y => y.numOfCharacters)); }
+        get { return landmarks.Sum(x => x.charactersAtLocation.Count); }
     }
     public List<SpriteRenderer> regionBorderLines { get; private set; }
     #endregion
@@ -510,9 +511,9 @@ public class Region : IHasNeighbours<Region> {
         List<ECS.Character> characters = new List<ECS.Character>();
         for (int i = 0; i < tilesInRegion.Count; i++) {
             HexTile currTile = tilesInRegion[i];
-            characters.AddRange(currTile.charactersAtLocation.Select(x => x.mainCharacter));
+            characters.AddRange(currTile.charactersAtLocation.Select(x => x));
             if (currTile.landmarkOnTile != null) {
-                characters.AddRange(currTile.landmarkOnTile.charactersAtLocation.Select(x => x.mainCharacter));
+                characters.AddRange(currTile.landmarkOnTile.charactersAtLocation.Select(x => x));
             }
         }
         return characters;

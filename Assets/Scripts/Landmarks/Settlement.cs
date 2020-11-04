@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
+using ECS;
 
 public class Settlement : BaseLandmark {
 
@@ -124,16 +125,17 @@ public class Settlement : BaseLandmark {
 			for (int j = 0; j < adjacentRegion.landmarks.Count; j++) {
 				if(adjacentRegion.landmarks[j].charactersAtLocation.Count > 0){
 					for (int k = 0; k < adjacentRegion.landmarks[j].charactersAtLocation.Count; k++) {
-						ICombatInitializer combatInitializer = adjacentRegion.landmarks [j].charactersAtLocation [k];
-						if(combatInitializer is Party){
-							Party party = (Party)combatInitializer;
-							for (int l = 0; l < party.partyMembers.Count; l++) {
-								party.partyMembers [l].AssignTag (CHARACTER_TAG.MILD_PSYTOXIN);
-							}
-						}else if(combatInitializer is ECS.Character){
-							ECS.Character character = (ECS.Character)combatInitializer;
-							character.AssignTag (CHARACTER_TAG.MILD_PSYTOXIN);
-						}
+                        Character combatInitializer = adjacentRegion.landmarks[j].charactersAtLocation[k];
+                        combatInitializer.AssignTag(CHARACTER_TAG.MILD_PSYTOXIN);
+      //                  if (combatInitializer is Party){
+						//	Party party = (Party)combatInitializer;
+						//	for (int l = 0; l < party.partyMembers.Count; l++) {
+						//		party.partyMembers [l].AssignTag (CHARACTER_TAG.MILD_PSYTOXIN);
+						//	}
+						//}else if(combatInitializer is ECS.Character){
+						//	ECS.Character character = (ECS.Character)combatInitializer;
+						//	character.AssignTag (CHARACTER_TAG.MILD_PSYTOXIN);
+						//}
 					}
 				}
 			}

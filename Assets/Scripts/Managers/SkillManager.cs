@@ -13,7 +13,7 @@ public class SkillManager : MonoBehaviour {
 	public Dictionary<string, Skill> bodyPartSkills;
     public Dictionary<string, Skill> generalSkills;
 
-    public Dictionary<WEAPON_TYPE, List<Skill>> weaponTypeSkills = new Dictionary<WEAPON_TYPE, List<Skill>>();
+    //public Dictionary<WEAPON_TYPE, List<Skill>> weaponTypeSkills = new Dictionary<WEAPON_TYPE, List<Skill>>();
 
     private void Awake() {
         Instance = this;
@@ -21,7 +21,7 @@ public class SkillManager : MonoBehaviour {
     }
 	internal void Initialize(){
 		ConstructAllSkillsList();
-		ConstructWeaponTypeSkills();
+		//ConstructWeaponTypeSkills();
 	}
     private void ConstructAllSkillsList() {
         allSkills = new Dictionary<string, Skill>();
@@ -88,15 +88,15 @@ public class SkillManager : MonoBehaviour {
         }
         throw new System.Exception("There is no skill called " + skillName);
     }
-    private void ConstructWeaponTypeSkills() {
-        string path = Utilities.dataPath + "WeaponTypes/";
-        string[] weaponTypesJson = System.IO.Directory.GetFiles(path, "*.json");
-		for (int i = 0; i < weaponTypesJson.Length; i++) {
-			string file = weaponTypesJson[i];
-            string dataAsJson = System.IO.File.ReadAllText(file);
-			WeaponType weapType = JsonUtility.FromJson<WeaponType>(dataAsJson);
-			weapType.ConstructWeaponSkillsList();
-			weaponTypeSkills.Add(weapType.weaponType, new List<Skill>(weapType.skills));
-        }
-    }
+  //  private void ConstructWeaponTypeSkills() {
+  //      string path = Utilities.dataPath + "WeaponTypes/";
+  //      string[] weaponTypesJson = System.IO.Directory.GetFiles(path, "*.json");
+		//for (int i = 0; i < weaponTypesJson.Length; i++) {
+		//	string file = weaponTypesJson[i];
+  //          string dataAsJson = System.IO.File.ReadAllText(file);
+		//	WeaponType weapType = JsonUtility.FromJson<WeaponType>(dataAsJson);
+		//	weapType.ConstructWeaponSkillsList();
+		//	weaponTypeSkills.Add(weapType.weaponType, new List<Skill>(weapType.skills));
+  //      }
+  //  }
 }

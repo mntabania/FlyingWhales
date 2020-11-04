@@ -99,16 +99,19 @@ public class Attack : CharacterTask {
 		}
 		return null;
 	}
-    public override bool HasHostilitiesBecauseOfTask(ICombatInitializer other) {
-        if (other is ECS.Character) {
-            if (targetCharacter.id == (other as ECS.Character).id) {
-                return true;
-            }
-        } else if(other is Party) {
-            if ((other as Party).partyMembers.Contains(targetCharacter)) {
-                return true;
-            }
+    public override bool HasHostilitiesBecauseOfTask(Character other) {
+        if (targetCharacter.id == other.id) {
+            return true;
         }
+        //if (other is ECS.Character) {
+        //    if (targetCharacter.id == (other as ECS.Character).id) {
+        //        return true;
+        //    }
+        //} else if(other is Party) {
+        //    if ((other as Party).partyMembers.Contains(targetCharacter)) {
+        //        return true;
+        //    }
+        //}
         return base.HasHostilitiesBecauseOfTask(other);
     }
     #endregion

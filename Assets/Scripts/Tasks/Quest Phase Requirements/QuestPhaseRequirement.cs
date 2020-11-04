@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using ECS;
 
 /*
  Base class for the requirements of a quest phase before the quest can advance.
@@ -141,27 +142,32 @@ public class MustKillCharacter : QuestPhaseRequirement {
     }
     public override void ActivateRequirement(ECS.Character owner) {
         base.ActivateRequirement(owner);
-        Messenger.AddListener<ICombatInitializer, ECS.Character>(Signals.CHARACTER_KILLED, CheckIfRequirementMet);
+        Messenger.AddListener<Character, ECS.Character>(Signals.CHARACTER_KILLED, CheckIfRequirementMet);
     }
     public override void DeactivateRequirement() {
         base.DeactivateRequirement();
-        Messenger.RemoveListener<ICombatInitializer, ECS.Character>(Signals.CHARACTER_KILLED, CheckIfRequirementMet);
+        Messenger.RemoveListener<Character, ECS.Character>(Signals.CHARACTER_KILLED, CheckIfRequirementMet);
     }
-    protected void CheckIfRequirementMet(ICombatInitializer killer, ECS.Character characterThatDied) {
+    protected void CheckIfRequirementMet(Character killer, ECS.Character characterThatDied) {
         if (characterThatDied.id == target.id) {
-            if (killer is ECS.Character) {
-                if ((killer as ECS.Character).id == owner.id) {
-                    //the target has died
-                    _isRequirementMet = true;
-                    owner.questData.CheckPhaseAdvancement();
-                }
-            } else if (killer is Party) {
-                if ((killer as Party).partyMembers.Contains(owner)) {
-                    //the target has died
-                    _isRequirementMet = true;
-                    owner.questData.CheckPhaseAdvancement();
-                }
+            if (killer.id == owner.id) {
+                //the target has died
+                _isRequirementMet = true;
+                owner.questData.CheckPhaseAdvancement();
             }
+            //if (killer is ECS.Character) {
+            //    if ((killer as ECS.Character).id == owner.id) {
+            //        //the target has died
+            //        _isRequirementMet = true;
+            //        owner.questData.CheckPhaseAdvancement();
+            //    }
+            //} else if (killer is Party) {
+            //    if ((killer as Party).partyMembers.Contains(owner)) {
+            //        //the target has died
+            //        _isRequirementMet = true;
+            //        owner.questData.CheckPhaseAdvancement();
+            //    }
+            //}
         }
     }
 }

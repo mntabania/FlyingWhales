@@ -47,7 +47,7 @@ public class AttackEnemy : CharacterTask {
 	public override bool CanBeDone(Character character, ILocation location) {
 		if(location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
 			for (int i = 0; i < location.charactersAtLocation.Count; i++) {
-				Character targetCharacter = location.charactersAtLocation [i].mainCharacter;
+				Character targetCharacter = location.charactersAtLocation [i];
 				if(CanMeetRequirements(targetCharacter, character)){
 					return true;
 				}
@@ -73,7 +73,7 @@ public class AttackEnemy : CharacterTask {
 		for (int i = 0; i < character.currentRegion.landmarks.Count; i++) {
 			BaseLandmark landmark = character.currentRegion.landmarks [i];
 			for (int j = 0; j < landmark.charactersAtLocation.Count; j++) {
-				Character targetCharacter = landmark.charactersAtLocation [j].mainCharacter;
+				Character targetCharacter = landmark.charactersAtLocation [j];
 				Relationship relationship = character.GetRelationshipWith (targetCharacter);
 				//if(relationship != null && relationship.HasStatus(CHARACTER_RELATIONSHIP.ENEMY)){
 				//	weight = 50;

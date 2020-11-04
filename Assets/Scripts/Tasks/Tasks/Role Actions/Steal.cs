@@ -55,21 +55,24 @@ public class Steal : CharacterTask {
 	public override bool CanBeDone(Character character, ILocation location) {
 		if(location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
 			for (int i = 0; i < location.charactersAtLocation.Count; i++) {
-				ICombatInitializer initializer = location.charactersAtLocation [i];
-				if(initializer is Party){
-					Party party = initializer as Party;
-					for (int j = 0; j < party.partyMembers.Count; j++) {
-						Character currCharacter = party.partyMembers [j];
-						if(CanMeetRequirements(currCharacter)){
-							return true;
-						}
-					}
-				}else if(initializer is Character){
-					Character currCharacter = initializer as Character;
-					if(CanMeetRequirements(currCharacter)){
-						return true;
-					}
-				}
+				Character initializer = location.charactersAtLocation [i];
+                if (CanMeetRequirements(initializer)) {
+                    return true;
+                }
+    //            if (initializer is Party){
+				//	Party party = initializer as Party;
+				//	for (int j = 0; j < party.partyMembers.Count; j++) {
+				//		Character currCharacter = party.partyMembers [j];
+				//		if(CanMeetRequirements(currCharacter)){
+				//			return true;
+				//		}
+				//	}
+				//}else if(initializer is Character){
+				//	Character currCharacter = initializer as Character;
+				//	if(CanMeetRequirements(currCharacter)){
+				//		return true;
+				//	}
+				//}
 			}
 		}
 		return base.CanBeDone(character, location);
@@ -92,29 +95,31 @@ public class Steal : CharacterTask {
 		for (int i = 0; i < character.currentRegion.landmarks.Count; i++) {
 			BaseLandmark landmark = character.currentRegion.landmarks [i];
 			for (int j = 0; j < landmark.charactersAtLocation.Count; j++) {
-				ICombatInitializer initializer = landmark.charactersAtLocation [j];
+				Character initializer = landmark.charactersAtLocation [j];
 				weight = 0;
-				if(initializer is Party){
-					Party party = initializer as Party;
-					for (int k = 0; k < party.partyMembers.Count; k++) {
-						Character currCharacter = party.partyMembers [k];
-						weight += (currCharacter.inventory.Count * 30);
-					}
-				}else if(initializer is Character){
-					Character currCharacter = initializer as Character;
-					weight += (currCharacter.inventory.Count * 30);
-				}
-				if(initializer.mainCharacter.faction == null || character.faction == null){
-					weight += 20;
-				}else if(initializer.mainCharacter.faction.id != character.faction.id){
-					weight += 20;
-				}
-				//Relationship relationship = character.GetRelationshipWith (initializer.mainCharacter);
-				//if(relationship != null && relationship.HasStatus(CHARACTER_RELATIONSHIP.ENEMY)){
-				//	weight += 50;
+                Character currCharacter = initializer as Character;
+                weight += (initializer.inventory.Count * 30);
+                //if (initializer is Party){
+				//	Party party = initializer as Party;
+				//	for (int k = 0; k < party.partyMembers.Count; k++) {
+				//		Character currCharacter = party.partyMembers [k];
+				//		weight += (currCharacter.inventory.Count * 30);
+				//	}
+				//}else if(initializer is Character){
+				//	Character currCharacter = initializer as Character;
+				//	weight += (currCharacter.inventory.Count * 30);
 				//}
+				if(initializer.faction == null || character.faction == null){
+					weight += 20;
+				}else if(initializer.faction.id != character.faction.id){
+					weight += 20;
+				}
+				Relationship relationship = character.GetRelationshipWith (initializer);
+				if(relationship != null && relationship.HasStatus(CHARACTER_RELATIONSHIP.ENEMY)){
+					weight += 50;
+				}
 				if(weight > 0){
-					_characterWeights.AddElement (initializer.mainCharacter, weight);
+					_characterWeights.AddElement (initializer, weight);
 				}
 			}
 		}

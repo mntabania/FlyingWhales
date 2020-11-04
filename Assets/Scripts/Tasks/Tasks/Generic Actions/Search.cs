@@ -157,7 +157,7 @@ public class Search : CharacterTask {
 					}
 				}
 				for (int j = 0; j < currLandmark.charactersAtLocation.Count; j++) {
-					ECS.Character characterThatHasItem = currLandmark.charactersAtLocation [j].mainCharacter;
+					ECS.Character characterThatHasItem = currLandmark.charactersAtLocation [j];
 					if(characterThatHasItem.GetItemInInventory(itemName) != null){
 						weight += 100;
 					}

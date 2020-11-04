@@ -15,5 +15,6 @@ public class DataConstructor : MonoBehaviour {
         SkillManager.Instance.Initialize();
         CharacterManager.Instance.Initialize();
         RaceManager.Instance.Initialize();
+        MonsterManager.Instance.Initialize();
     }
 }

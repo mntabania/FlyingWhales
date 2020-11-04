@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections;
 using System.IO;
+using System;
 
 namespace ECS {
 	[CustomEditor(typeof(SkillComponent))]
@@ -18,10 +19,10 @@ namespace ECS {
 			skillComponent.skillCategory = (SKILL_CATEGORY)EditorGUILayout.EnumPopup("Skill Category: ", skillComponent.skillCategory);
 			skillComponent.skillName = EditorGUILayout.TextField("Skill Name: ", skillComponent.skillName);
 			skillComponent.description = EditorGUILayout.TextField("Description: ", skillComponent.description);
-			skillComponent.actWeightType = (ACTIVATION_WEIGHT_TYPE)EditorGUILayout.EnumPopup("Activation Weight Type: ", skillComponent.actWeightType);
+			//skillComponent.actWeightType = (ACTIVATION_WEIGHT_TYPE)EditorGUILayout.EnumPopup("Activation Weight Type: ", skillComponent.actWeightType);
 			skillComponent.activationWeight = EditorGUILayout.IntField("Activation Weight: ", skillComponent.activationWeight);
 			skillComponent.range = EditorGUILayout.IntField("Range: ", skillComponent.range);
-			skillComponent.accuracy = EditorGUILayout.Slider("Accuracy: ", skillComponent.accuracy, 0f, 100f);
+			//skillComponent.accuracy = EditorGUILayout.Slider("Accuracy: ", skillComponent.accuracy, 0f, 100f);
 
             switch (skillComponent.skillType) {
                 case SKILL_TYPE.ATTACK:
@@ -40,28 +41,50 @@ namespace ECS {
                     ShowMoveItemFields();
                     break;
             }
-
-			SerializedProperty skillRequirement = serializedObject.FindProperty("skillRequirements");
-			EditorGUILayout.PropertyField(skillRequirement, true);
-			serializedObject.ApplyModifiedProperties();
+            switch (skillComponent.skillCategory) {
+                case SKILL_CATEGORY.BODY_PART:
+                ShowBodyPartFields();
+                break;
+                case SKILL_CATEGORY.WEAPON:
+                ShowWeaponFields();
+                break;
+            }
 
             if (GUILayout.Button("Save Skill")) {
 				SaveSkill(skillComponent.skillName);
             }
         }
 
-        private void ShowAttackSkillFields() {
-			skillComponent.attackType = (ATTACK_TYPE)EditorGUILayout.EnumPopup("Attack Type: ", skillComponent.attackType);
-            skillComponent.durabilityDamage = EditorGUILayout.IntField("Durability Damage: ", skillComponent.durabilityDamage);
-            skillComponent.durabilityCost = EditorGUILayout.IntField("Durability Cost: ", skillComponent.durabilityCost);
+        private void ShowBodyPartFields() {
+            SerializedProperty serializedProperty = serializedObject.FindProperty("skillRequirements");
+            EditorGUILayout.PropertyField(serializedProperty, true);
+            serializedObject.ApplyModifiedProperties();
+        }
 
-			SerializedProperty serializedProperty = serializedObject.FindProperty("statusEffectRates");
-			EditorGUILayout.PropertyField(serializedProperty, true);
-			serializedObject.ApplyModifiedProperties();
+        private void ShowWeaponFields() {
+            SerializedProperty serializedProperty = serializedObject.FindProperty("allowedWeaponTypes");
+            EditorGUILayout.PropertyField(serializedProperty, true);
+            serializedObject.ApplyModifiedProperties();
+        }
+
+        private void ShowAttackSkillFields() {
+            skillComponent.power = EditorGUILayout.IntField("Power: ", skillComponent.power);
+            skillComponent.spCost = EditorGUILayout.IntField("SP Cost: ", skillComponent.spCost);
+            skillComponent.attackCategory = (ATTACK_CATEGORY) EditorGUILayout.EnumPopup("Attack Category: ", skillComponent.attackCategory);
+            skillComponent.element = (ELEMENT) EditorGUILayout.EnumPopup("Element: ", skillComponent.element);
+
+            //skillComponent.durabilityDamage = EditorGUILayout.IntField("Durability Damage: ", skillComponent.durabilityDamage);
+            //skillComponent.attackType = (ATTACK_TYPE)EditorGUILayout.EnumPopup("Attack Type: ", skillComponent.attackType);
+            //         skillComponent.durabilityDamage = EditorGUILayout.IntField("Durability Damage: ", skillComponent.durabilityDamage);
+            //         skillComponent.durabilityCost = EditorGUILayout.IntField("Durability Cost: ", skillComponent.durabilityCost);
+
+            //SerializedProperty serializedProperty = serializedObject.FindProperty("statusEffectRates");
+            //EditorGUILayout.PropertyField(serializedProperty, true);
+            //serializedObject.ApplyModifiedProperties();
         }
         private void ShowHealSkillFields() {
 			skillComponent.healPower = EditorGUILayout.IntField("Heal Power: ",skillComponent. healPower);
-            skillComponent.durabilityCost = EditorGUILayout.IntField("Durability Cost: ", skillComponent.durabilityCost);
+            //skillComponent.durabilityCost = EditorGUILayout.IntField("Durability Cost: ", skillComponent.durabilityCost);
         }
         private void ShowObtainItemFields() {
             //Nothing yet
@@ -111,21 +134,22 @@ namespace ECS {
 			newSkill.skillName = skillComponent.skillName;
 			newSkill.skillCategory = skillComponent.skillCategory;
 			newSkill.description = skillComponent.description;
-			newSkill.actWeightType = skillComponent.actWeightType;
+			//newSkill.actWeightType = skillComponent.actWeightType;
 			newSkill.activationWeight = skillComponent.activationWeight;
-			newSkill.accuracy = skillComponent.accuracy;
+			//newSkill.accuracy = skillComponent.accuracy;
 			newSkill.range = skillComponent.range;
 			newSkill.skillRequirements = skillComponent.skillRequirements;
+            newSkill.allowedWeaponTypes = skillComponent.allowedWeaponTypes;
         }
         private void SaveAttackSkill(string path) {
             AttackSkill newSkill = new AttackSkill();
 
             SetCommonData(newSkill);
 
-			newSkill.attackType = skillComponent.attackType;
-            newSkill.durabilityDamage = skillComponent.durabilityDamage;
-            newSkill.durabilityCost = skillComponent.durabilityCost;
-			newSkill.statusEffectRates = skillComponent.statusEffectRates;
+            newSkill.power = skillComponent.power;
+            newSkill.spCost = skillComponent.spCost;
+            newSkill.attackCategory = skillComponent.attackCategory;
+            newSkill.element = skillComponent.element;
 
             SaveJson(newSkill, path);
         }
@@ -133,7 +157,7 @@ namespace ECS {
             HealSkill newSkill = new HealSkill();
             SetCommonData(newSkill);
 			newSkill.healPower = skillComponent.healPower;
-            newSkill.durabilityCost = skillComponent.durabilityCost;
+            //newSkill.durabilityCost = skillComponent.durabilityCost;
             SaveJson(newSkill, path);
         }
         private void SaveFleeSkill(string path) {

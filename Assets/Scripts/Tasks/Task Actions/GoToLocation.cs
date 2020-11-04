@@ -41,12 +41,12 @@ public class GoToLocation : TaskAction {
             //action doer is already at the target location
             ActionDone(TASK_ACTION_RESULT.SUCCESS);
         } else {
-            if (actionDoer.avatar == null) {
-                //Instantiate a new character avatar
-                actionDoer.CreateNewAvatar();
-            }
-            actionDoer.avatar.SetTarget(targetLocation);
-            actionDoer.avatar.StartPath(_pathfindingMode, () => ActionDone(TASK_ACTION_RESULT.SUCCESS));
+            //if (actionDoer.avatar == null) {
+            //    //Instantiate a new character avatar
+            //    actionDoer.CreateNewAvatar();
+            //}
+            //actionDoer.avatar.SetTarget(targetLocation);
+            //actionDoer.avatar.StartPath(_pathfindingMode, () => ActionDone(TASK_ACTION_RESULT.SUCCESS));
         }
     }
 
@@ -55,12 +55,12 @@ public class GoToLocation : TaskAction {
 			//action doer is already at the target location
 			ActionDone(TASK_ACTION_RESULT.SUCCESS);
 		} else {
-			if (actionDoer.avatar == null) {
-				//Instantiate a new character avatar
-				actionDoer.CreateNewAvatar();
-			}
-			actionDoer.avatar.SetTarget (targetLocation);
-			actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS, () => ActionDone(TASK_ACTION_RESULT.SUCCESS));
+			//if (actionDoer.avatar == null) {
+			//	//Instantiate a new character avatar
+			//	actionDoer.CreateNewAvatar();
+			//}
+			//actionDoer.avatar.SetTarget (targetLocation);
+			//actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS, () => ActionDone(TASK_ACTION_RESULT.SUCCESS));
             //actionDoer.currentAction.AddNewLog(actionDoer.name + " goes to " + targetTile.name);
 
         }
@@ -70,12 +70,12 @@ public class GoToLocation : TaskAction {
 			//action doer is already at the target location
 			ActionDone(TASK_ACTION_RESULT.SUCCESS);
 		} else {
-			if (actionDoer.avatar == null) {
-				//Instantiate a new character avatar
-				actionDoer.CreateNewAvatar();
-			}
-			actionDoer.avatar.SetTarget (targetLocation);
-			actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS, () => ActionDone(TASK_ACTION_RESULT.SUCCESS));
+			//if (actionDoer.avatar == null) {
+			//	//Instantiate a new character avatar
+			//	actionDoer.CreateNewAvatar();
+			//}
+			//actionDoer.avatar.SetTarget (targetLocation);
+			//actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS, () => ActionDone(TASK_ACTION_RESULT.SUCCESS));
 		}
 	}
 	internal void Attack() {
@@ -83,12 +83,12 @@ public class GoToLocation : TaskAction {
 			//action doer is already at the target location
 			ActionDone(TASK_ACTION_RESULT.SUCCESS);
 		} else {
-			if (actionDoer.avatar == null) {
-				//Instantiate a new character avatar
-				actionDoer.CreateNewAvatar();
-			}
-			actionDoer.avatar.SetTarget (targetLocation);
-			actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS, () => ActionDone(TASK_ACTION_RESULT.SUCCESS));
+			//if (actionDoer.avatar == null) {
+			//	//Instantiate a new character avatar
+			//	actionDoer.CreateNewAvatar();
+			//}
+			//actionDoer.avatar.SetTarget (targetLocation);
+			//actionDoer.avatar.StartPath(PATHFINDING_MODE.MAJOR_ROADS, () => ActionDone(TASK_ACTION_RESULT.SUCCESS));
 		}
 	}
 }

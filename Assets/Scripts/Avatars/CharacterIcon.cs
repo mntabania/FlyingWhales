@@ -252,6 +252,13 @@ public class CharacterIcon : MonoBehaviour {
                 UIManager.Instance.characterInfoUI.SetAttackButtonState(false);
                 return;
             }
+        } else if (UIManager.Instance.characterInfoUI.isWaitingForJoinBattleTarget) {
+            CharacterAction joinBattleAction = _character.characterObject.currentState.GetAction(ACTION_TYPE.JOIN_BATTLE);
+            if (joinBattleAction.CanBeDone() && joinBattleAction.CanBeDoneBy(UIManager.Instance.characterInfoUI.currentlyShowingCharacter)) { //TODO: Change this checker to relationship status checking instead of just faction
+                UIManager.Instance.characterInfoUI.currentlyShowingCharacter.actionData.AssignAction(joinBattleAction);
+                UIManager.Instance.characterInfoUI.SetJoinBattleButtonState(false);
+                return;
+            }
         }
         UIManager.Instance.ShowCharacterInfo(_character);
     }
@@ -260,9 +267,9 @@ public class CharacterIcon : MonoBehaviour {
         PathfindingManager.Instance.RemoveAgent(_aiPath);
     }
     private void OnTriggerEnter2D(Collider2D other) {
-        if (_character.currentAction != null) {
-            if (other.tag == "Character" && _character.currentAction.actionType == ACTION_TYPE.ATTACK) {
-                AttackAction attackAction = _character.currentAction as AttackAction;
+        if (_character.actionData.currentAction != null) {
+            if (other.tag == "Character" && _character.actionData.currentAction.actionType == ACTION_TYPE.ATTACK) {
+                AttackAction attackAction = _character.actionData.currentAction as AttackAction;
                 CharacterIcon enemy = other.GetComponent<CharacterClick>().icon;
                 if (attackAction.characterObj.character.id == enemy.character.id) {
                     _character.actionData.DoAction();

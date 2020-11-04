@@ -1,0 +1,1 @@
+{"monsterName":"Slime","type":0,"category":0,"level":1,"experienceDrop":25,"maxHP":150,"maxSP":10,"attackPower":55,"speed":7,"pDef":5,"mDef":0,"dodgeChance":0.0,"hitChance":0.0,"critChance":0.0,"skills":[],"skillNames":[],"elementChanceWeaknesses":[{"element":1,"chance":10.0}],"elementChanceResistances":[]}

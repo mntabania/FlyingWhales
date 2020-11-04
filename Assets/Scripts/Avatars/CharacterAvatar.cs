@@ -110,11 +110,11 @@ public class CharacterAvatar : PooledObject{
     //    if (other is EdgeCollider2D) {
     //        CharacterAvatar otherAvatar = other.GetComponent<CharacterAvatar>();
     //        Debug.Log(this.mainCharacter.name + " collided with " + otherAvatar.mainCharacter.name + "'s " + other.GetType().ToString());
-    //        ICombatInitializer combatant1 = mainCharacter;
+    //        Character combatant1 = mainCharacter;
     //        if (mainCharacter.party != null) {
     //            combatant1 = mainCharacter.party;
     //        }
-    //        ICombatInitializer combatant2 = otherAvatar.mainCharacter;
+    //        Character combatant2 = otherAvatar.mainCharacter;
     //        if (otherAvatar.mainCharacter.party != null) {
     //            combatant2 = otherAvatar.mainCharacter.party;
     //        }
@@ -135,7 +135,7 @@ public class CharacterAvatar : PooledObject{
     public void AddNewCharacter(ECS.Character character) {
         if (!_characters.Contains(character)) {
             _characters.Add(character);
-            character.SetAvatar(this);
+            //character.SetAvatar(this);
             if (UIManager.Instance.characterInfoUI.IsCharacterInfoShowing(character)) {
                 this.SetHighlightState(true);
             }
@@ -143,7 +143,7 @@ public class CharacterAvatar : PooledObject{
     }
     public void RemoveCharacter(ECS.Character character) {
         _characters.Remove(character);
-        character.SetAvatar(null);
+        //character.SetAvatar(null);
 		if(_characters.Count <= 0){
 			DestroyObject ();
 		}
@@ -195,13 +195,13 @@ public class CharacterAvatar : PooledObject{
                     leftLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "left_location_party");
                     leftLog.AddToFillers(_mainCharacter.party, _mainCharacter.party.name, LOG_IDENTIFIER.PARTY_1);
                     leftLog.AddToFillers(this.specificLocation.tileLocation.landmarkOnTile, this.specificLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                    leftLog.AddToFillers(null, _mainCharacter.currentAction.GetLeaveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                    leftLog.AddToFillers(null, _mainCharacter.actionData.currentAction.GetLeaveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
                     leftLog.AddToFillers(targetLocation, targetLocation.locationName, LOG_IDENTIFIER.LANDMARK_2);
                 } else {
                     leftLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "left_location");
                     leftLog.AddToFillers(_mainCharacter, _mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     leftLog.AddToFillers(this.specificLocation.tileLocation.landmarkOnTile, this.specificLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                    leftLog.AddToFillers(null, _mainCharacter.currentAction.GetLeaveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                    leftLog.AddToFillers(null, _mainCharacter.actionData.currentAction.GetLeaveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
                     leftLog.AddToFillers(targetLocation, targetLocation.locationName, LOG_IDENTIFIER.LANDMARK_2);
                 }
                 this.specificLocation.tileLocation.landmarkOnTile.AddHistory(leftLog);
@@ -264,12 +264,12 @@ public class CharacterAvatar : PooledObject{
                 _isTravelling = false;
                 AddCharactersToLocation(targetLocation);
                 _specificLocation = targetLocation; //set location as the target location, in case the target location is a landmark
-                if (_mainCharacter.currentAction == null) {
+                if (_mainCharacter.actionData.currentAction == null) {
                     throw new Exception(_mainCharacter.name + "'s task is null!");
                 }
 				if (this.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
                     Log arriveLog = null;
-                    if (_mainCharacter.currentAction is MoveTo) {
+                    if (_mainCharacter.actionData.currentAction is MoveTo) {
                         arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "visit_location");
                         if (_mainCharacter.party != null) {
                             arriveLog.AddToFillers(_mainCharacter.party, _mainCharacter.party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -282,12 +282,12 @@ public class CharacterAvatar : PooledObject{
                             arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location_party");
                             arriveLog.AddToFillers(_mainCharacter.party, _mainCharacter.party.name, LOG_IDENTIFIER.PARTY_1);
                             arriveLog.AddToFillers(this.specificLocation.tileLocation.landmarkOnTile, this.specificLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                            arriveLog.AddToFillers(null, _mainCharacter.currentAction.GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                            arriveLog.AddToFillers(null, _mainCharacter.actionData.currentAction.GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
                         } else {
                             arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
                             arriveLog.AddToFillers(_mainCharacter, _mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                             arriveLog.AddToFillers(this.specificLocation.tileLocation.landmarkOnTile, this.specificLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                            arriveLog.AddToFillers(null, _mainCharacter.currentAction.GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+                            arriveLog.AddToFillers(null, _mainCharacter.actionData.currentAction.GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
                         }
                     }
                     this.specificLocation.tileLocation.landmarkOnTile.AddHistory(arriveLog);
@@ -303,9 +303,9 @@ public class CharacterAvatar : PooledObject{
 				queuedAction = null;
 				return;
 			}
-			if(_characters.Count > 0){
-				_characters[0].DestroyAvatar(); //Destroy this avatar once it reaches it's destination
-			}
+			//if(_characters.Count > 0){
+			//	_characters[0].DestroyAvatar(); //Destroy this avatar once it reaches it's destination
+			//}
 		}else{
 			if(queuedAction != null){
 				queuedAction ();
@@ -343,7 +343,7 @@ public class CharacterAvatar : PooledObject{
     }
 	public void InstantDestroyAvatar(){
 		for (int i = 0; i < _characters.Count; i++) {
-			_characters[i].SetAvatar (null);
+			//_characters[i].SetAvatar (null);
 		}
 		_characters.Clear ();
 		DestroyObject ();
@@ -352,30 +352,32 @@ public class CharacterAvatar : PooledObject{
 		this.specificLocation.tileLocation.SetRoadState(true);
     }
     protected void RemoveCharactersFromLocation(ILocation location) {
-		if(_characters[0].party == null){
-			location.RemoveCharacterFromLocation(_characters[0]);
-//			for (int i = 0; i < _characters.Count; i++) {
-//				ECS.Character currCharacter = _characters[i];
-//				location.RemoveCharacterFromLocation(currCharacter);
-//			}
-		}else{
-			location.RemoveCharacterFromLocation(_characters[0].party);
-		}
-        
-		UIManager.Instance.UpdateHexTileInfo();
+        location.RemoveCharacterFromLocation(_characters[0]);
+//		if(_characters[0].party == null){
+//			location.RemoveCharacterFromLocation(_characters[0]);
+////			for (int i = 0; i < _characters.Count; i++) {
+////				ECS.Character currCharacter = _characters[i];
+////				location.RemoveCharacterFromLocation(currCharacter);
+////			}
+//		} else {
+//            location.RemoveCharacterFromLocation(_characters[0].party);
+//        }
+
+        UIManager.Instance.UpdateHexTileInfo();
         UIManager.Instance.UpdateLandmarkInfo();
     }
 	protected void AddCharactersToLocation(ILocation location) {
         _specificLocation = location;
-        if (_characters[0].party == null){
-			location.AddCharacterToLocation(_characters[0]);
-//			for (int i = 0; i < _characters.Count; i++) {
-//				ECS.Character currCharacter = _characters[i];
-//				location.AddCharacterToLocation(currCharacter, startCombatOnReachLocation);
-//			}
-		}else{
-			location.AddCharacterToLocation(_characters[0].party);
-		}
+        location.AddCharacterToLocation(_characters[0]);
+//        if (_characters[0].party == null){
+//			location.AddCharacterToLocation(_characters[0]);
+////			for (int i = 0; i < _characters.Count; i++) {
+////				ECS.Character currCharacter = _characters[i];
+////				location.AddCharacterToLocation(currCharacter, startCombatOnReachLocation);
+////			}
+//		}else{
+//			location.AddCharacterToLocation(_characters[0].party);
+//		}
 
 		UIManager.Instance.UpdateHexTileInfo();
         UIManager.Instance.UpdateLandmarkInfo();

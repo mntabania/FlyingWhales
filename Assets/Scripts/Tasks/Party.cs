@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using ECS;
 
-public class Party: IEncounterable, ICombatInitializer {
+public class Party: IEncounterable {
 
     //public delegate void OnPartyFull(Party party);
     //public OnPartyFull onPartyFull;
@@ -72,7 +73,7 @@ public class Party: IEncounterable, ICombatInitializer {
         get { return _followers; }
     }
     public CharacterAction currentAction {
-        get { return _partyLeader.currentAction; }
+        get { return _partyLeader.actionData.currentAction; }
 	}
 	public List<ECS.Character> prisoners {
 		get { return _prisoners; }
@@ -103,9 +104,9 @@ public class Party: IEncounterable, ICombatInitializer {
     //public Dictionary<MATERIAL, int> materialInventory {
     //    get { return _materialInventory; }
     //}
-    public CharacterAvatar avatar {
-        get { return _partyLeader.avatar; }
-    }
+    //public CharacterAvatar avatar {
+    //    get { return _partyLeader.avatar; }
+    //}
 	public bool isInCombat{
 		get { return _isInCombat; }
 	}
@@ -137,7 +138,7 @@ public class Party: IEncounterable, ICombatInitializer {
         _civiliansByRace = new Dictionary<RACE, int>();
 
         //Debug.Log(partyLeader.name + " has created " + _name);
-        partyLeader.specificLocation.ReplaceCharacterAtLocation(partyLeader, this);
+        //partyLeader.specificLocation.ReplaceCharacterAtLocation(partyLeader, this);
 
         //partyLeader.specificLocation.AddCharacterToLocation (this);
         //partyLeader.specificLocation.RemoveCharacterFromLocation(partyLeader);
@@ -160,9 +161,9 @@ public class Party: IEncounterable, ICombatInitializer {
     }
 	public void SetIsDefeated(bool state){
 		_isDefeated = state;
-		for (int i = 0; i < _partyMembers.Count; i++) {
-			_partyMembers [i].SetIsDefeated (state);
-		}
+		//for (int i = 0; i < _partyMembers.Count; i++) {
+			//_partyMembers [i].SetIsDefeated (state);
+		//}
 	}
     #region Party Management
     /*
@@ -174,17 +175,17 @@ public class Party: IEncounterable, ICombatInitializer {
 				member.party.DisbandParty ();
 				Debug.Log ("DISBANDING " + member.party.name + " before adding " + member.name + " to " + _name);
 			}else{
-				if (member.avatar != null) {
-					member.avatar.RemoveCharacter(member);
-				}
+				//if (member.avatar != null) {
+				//	member.avatar.RemoveCharacter(member);
+				//}
 			}
             _partyMembers.Add(member);
             //CreateRelationshipsForNewMember(member);
 			if(member.id != _partyLeader.id){
 				_followers.Add (member);
-				if(_partyLeader.avatar != null){
-					_partyLeader.avatar.AddNewCharacter (member);
-				}
+				//if(_partyLeader.avatar != null){
+				//	_partyLeader.avatar.AddNewCharacter (member);
+				//}
 			}
             member.specificLocation.RemoveCharacterFromLocation(member);//Remove member from specific location, since it is already included in the party
             member.SetParty(this);
@@ -201,9 +202,9 @@ public class Party: IEncounterable, ICombatInitializer {
     public virtual void RemovePartyMember(ECS.Character member, bool forDeath = false) {
         _partyMembers.Remove(member);
 		_followers.Remove (member);
-        if(member.avatar != null) {
-			member.avatar.RemoveCharacter(member);
-        }
+   //     if(member.avatar != null) {
+			//member.avatar.RemoveCharacter(member);
+   //     }
 
         member.SetParty(null);
 		//member.SetCurrentTask(null);
@@ -290,7 +291,7 @@ public class Party: IEncounterable, ICombatInitializer {
 		while(_partyMembers.Count > 0){
 			RemovePartyMember (_partyMembers [0]);
 		}
-		this.specificLocation.RemoveCharacterFromLocation (this);
+		//this.specificLocation.RemoveCharacterFromLocation (this);
     }
     #endregion
 
@@ -364,14 +365,14 @@ public class Party: IEncounterable, ICombatInitializer {
     //public virtual void StartEncounter(Party encounteredBy){}
     //   #endregion
 
-    #region ICombatInitializer
+    #region Character
     //public virtual void ReturnResults(object result) { }
     //public virtual bool InitializeCombat(){
     //	if(isDefeated){
     //		return false;
     //	}
     //	if(_partyLeader.faction == null){
-    //		ICombatInitializer enemy = this.specificLocation.GetCombatEnemy (this);
+    //		Character enemy = this.specificLocation.GetCombatEnemy (this);
     //		if(enemy != null){
     //			ECS.CombatPrototype combat = new ECS.CombatPrototype (this, enemy, this.specificLocation);
     //			combat.AddCharacters (ECS.SIDES.A, this._partyMembers);
@@ -387,7 +388,7 @@ public class Party: IEncounterable, ICombatInitializer {
     //		return false;
     //	}else{
     //		if(_partyLeader.role != null && _partyLeader.role.roleType == CHARACTER_ROLE.WARLORD){
-    //			ICombatInitializer enemy = this.specificLocation.GetCombatEnemy (this);
+    //			Character enemy = this.specificLocation.GetCombatEnemy (this);
     //			if(enemy != null){
     //				ECS.CombatPrototype combat = new ECS.CombatPrototype (this, enemy, this.specificLocation);
     //				combat.AddCharacters (ECS.SIDES.A, this._partyMembers);
@@ -405,17 +406,18 @@ public class Party: IEncounterable, ICombatInitializer {
     //		return false;
     //	}
     //}
-    public virtual bool IsHostileWith(ICombatInitializer combatInitializer) {
+    public virtual bool IsHostileWith(Character combatInitializer) {
         if (this.faction == null) {
             return true; //this party has no faction
         }
         //Check here if the combatInitializer is hostile with this character, if yes, return true
         Faction factionOfEnemy = null;
-        if (combatInitializer is ECS.Character) {
-            factionOfEnemy = (combatInitializer as ECS.Character).faction;
-        } else if (combatInitializer is Party) {
-            factionOfEnemy = (combatInitializer as Party).faction;
-        }
+        factionOfEnemy = combatInitializer.faction;
+        //if (combatInitializer is ECS.Character) {
+        //    factionOfEnemy = (combatInitializer as ECS.Character).faction;
+        //} else if (combatInitializer is Party) {
+        //    factionOfEnemy = (combatInitializer as Party).faction;
+        //}
         if (factionOfEnemy != null) {
             if (factionOfEnemy.id == this.faction.id) {
                 return false; //characters are of same faction

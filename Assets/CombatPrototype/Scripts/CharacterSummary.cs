@@ -55,14 +55,14 @@ namespace ECS{
                     classInfoLbl.text += ", ";
                 }
             }
-            classInfoLbl.text += "\n";
-            classInfoLbl.text += "[b]Strength %:[/b] " + character.characterClass.strPercentage.ToString() + "\n";
-			classInfoLbl.text += "[b]Intelligence %:[/b] " + character.characterClass.intPercentage.ToString() + "\n";
-			classInfoLbl.text += "[b]Agility %:[/b] " + character.characterClass.agiPercentage.ToString() + "\n";
-			classInfoLbl.text += "[b]HP %:[/b] " + character.characterClass.hpPercentage.ToString() + "\n";
-            classInfoLbl.text += "[b]Dodge Rate:[/b] " + character.characterClass.dodgeRate.ToString() + "\n";
-            classInfoLbl.text += "[b]Parry Rate:[/b] " + character.characterClass.parryRate.ToString() + "\n";
-            classInfoLbl.text += "[b]Block Rate:[/b] " + character.characterClass.blockRate.ToString();
+            //classInfoLbl.text += "\n";
+            classInfoLbl.text += "[b]Strength %:[/b] " + character.characterClass.strWeightAllocation.ToString() + "\n";
+            classInfoLbl.text += "[b]Intelligence %:[/b] " + character.characterClass.intWeightAllocation.ToString() + "\n";
+            classInfoLbl.text += "[b]Agility %:[/b] " + character.characterClass.agiWeightAllocation.ToString() + "\n";
+            classInfoLbl.text += "[b]Vitality %:[/b] " + character.characterClass.vitWeightAllocation.ToString() + "\n";
+            //         classInfoLbl.text += "[b]Dodge Rate:[/b] " + character.characterClass.dodgeRate.ToString() + "\n";
+            //         classInfoLbl.text += "[b]Parry Rate:[/b] " + character.characterClass.parryRate.ToString() + "\n";
+            //         classInfoLbl.text += "[b]Block Rate:[/b] " + character.characterClass.blockRate.ToString();
 
             bodyPartsInfoLbl.text = string.Empty;
             bodyPartsInfoLbl.text += "[b]Body Parts:[/b]";
@@ -112,16 +112,16 @@ namespace ECS{
 				Item currItem = character.equippedItems[i];
 				itemsInfoLbl.text += "\n[b]" + "[url= " + i.ToString() + "]" + currItem.itemName + "[/url]" + "[/b] ";
 				itemsInfoLbl.text += " (";
-				itemsInfoLbl.text += "Durability: " + currItem.currDurability.ToString() + "/" + currItem.durability.ToString();
+				//itemsInfoLbl.text += "Durability: " + currItem.currDurability.ToString() + "/" + currItem.durability.ToString();
                 if(currItem.itemType == ITEM_TYPE.ARMOR) {
                     Armor armor = (Armor)currItem;
                     itemsInfoLbl.text += ", Body part: " + armor.bodyPartAttached.name;
-                    for (int j = 0; j < armor.attributes.Count; j++) {
-                        itemsInfoLbl.text += armor.attributes[j].ToString();
-                        if(j + 1 < armor.attributes.Count) {
-                            itemsInfoLbl.text += ", ";
-                        }
-                    }
+                    //for (int j = 0; j < armor.attributes.Count; j++) {
+                    //    itemsInfoLbl.text += armor.attributes[j].ToString();
+                    //    if(j + 1 < armor.attributes.Count) {
+                    //        itemsInfoLbl.text += ", ";
+                    //    }
+                    //}
                 } else if(currItem.itemType == ITEM_TYPE.WEAPON) {
                     Weapon weapon = (Weapon)currItem;
 					itemsInfoLbl.text += ", Body part:";
@@ -129,12 +129,12 @@ namespace ECS{
 						itemsInfoLbl.text += " " + weapon.bodyPartsAttached[j].name;
 					}
                     itemsInfoLbl.text += ", Weapon Power: " + weapon.weaponPower.ToString();
-                    for (int j = 0; j < weapon.attributes.Count; j++) {
-                        itemsInfoLbl.text += weapon.attributes[j].ToString();
-                        if (j + 1 < weapon.attributes.Count) {
-                            itemsInfoLbl.text += ", ";
-                        }
-                    }
+                    //for (int j = 0; j < weapon.attributes.Count; j++) {
+                    //    itemsInfoLbl.text += weapon.attributes[j].ToString();
+                    //    if (j + 1 < weapon.attributes.Count) {
+                    //        itemsInfoLbl.text += ", ";
+                    //    }
+                    //}
                 }
                     
             }

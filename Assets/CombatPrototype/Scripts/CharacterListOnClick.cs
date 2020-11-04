@@ -11,11 +11,11 @@ namespace ECS{
 				string id = url.Substring (0, url.IndexOf ('_'));
 				int idToUse = int.Parse (id);
                 //Debug.Log("Clicked " + url);
-				if(url.Contains("_sideA")){
-                    CombatPrototypeUI.Instance.SetCharacterAsSelected(CombatManager.Instance.combat.charactersSideA[idToUse]);
-				}else if(url.Contains("_sideB")){
-					CombatPrototypeUI.Instance.SetCharacterAsSelected(CombatManager.Instance.combat.charactersSideB[idToUse]);
-                }
+				//if(url.Contains("_sideA")){
+    //                CombatPrototypeUI.Instance.SetCharacterAsSelected(CombatManager.Instance.combat.charactersSideA[idToUse]);
+				//}else if(url.Contains("_sideB")){
+				//	CombatPrototypeUI.Instance.SetCharacterAsSelected(CombatManager.Instance.combat.charactersSideB[idToUse]);
+    //            }
 			}
 		}
 	}

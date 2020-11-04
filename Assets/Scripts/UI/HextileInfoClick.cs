@@ -27,13 +27,13 @@ public class HextileInfoClick : MonoBehaviour {
    //                 UIManager.Instance.ShowQuestInfo(quest);
    //             }
 			//}
-            else if (url.Contains("_party")) {
-				HexTile hextile = UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile;
-				Party party = hextile.GetPartyAtLocationByLeaderID(idToUse);
-				if(party != null){
-					UIManager.Instance.ShowCharacterInfo(party.partyLeader);
-				}
-			}
+   //         else if (url.Contains("_party")) {
+			//	HexTile hextile = UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile;
+			//	Party party = hextile.GetPartyAtLocationByLeaderID(idToUse);
+			//	if(party != null){
+			//		UIManager.Instance.ShowCharacterInfo(party.partyLeader);
+			//	}
+			//}
         }
 	}
 }

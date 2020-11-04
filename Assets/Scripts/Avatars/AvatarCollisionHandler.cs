@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using ECS;
 
 public class AvatarCollisionHandler : MonoBehaviour {
 
@@ -16,14 +17,14 @@ public class AvatarCollisionHandler : MonoBehaviour {
         //if (other is EdgeCollider2D) {
         CharacterAvatar otherAvatar = other.GetComponent<AvatarCollisionHandler>().parentAvatar;
         //Debug.Log(parentAvatar.mainCharacter.name + " collided with " + otherAvatar.mainCharacter.name + "'s " + other.GetType().ToString());
-        ICombatInitializer combatant1 = parentAvatar.mainCharacter;
-        if (parentAvatar.mainCharacter.party != null) {
-            combatant1 = parentAvatar.mainCharacter.party;
-        }
-        ICombatInitializer combatant2 = otherAvatar.mainCharacter;
-        if (otherAvatar.mainCharacter.party != null) {
-            combatant2 = otherAvatar.mainCharacter.party;
-        }
+        Character combatant1 = parentAvatar.mainCharacter;
+        //if (parentAvatar.mainCharacter.party != null) {
+        //    combatant1 = parentAvatar.mainCharacter.party;
+        //}
+        Character combatant2 = otherAvatar.mainCharacter;
+        //if (otherAvatar.mainCharacter.party != null) {
+        //    combatant2 = otherAvatar.mainCharacter.party;
+        //}
         Messenger.Broadcast(Signals.COLLIDED_WITH_CHARACTER, combatant1, combatant2);
         //}
     }

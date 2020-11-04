@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine.UI;
+using ECS;
 
 public class HextileInfoUI : UIMenu {
 
@@ -67,21 +68,31 @@ public class HextileInfoUI : UIMenu {
 		text += "\n<b>Characters: </b> ";
 		if (currentlyShowingHexTile.charactersAtLocation.Count > 0) {
 			for (int i = 0; i < currentlyShowingHexTile.charactersAtLocation.Count; i++) {
-				if (currentlyShowingHexTile.charactersAtLocation[i] is ECS.Character) {
-					ECS.Character currChar = (ECS.Character)currentlyShowingHexTile.charactersAtLocation [i];
-					text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
-					if (currChar.currentAction != null) {
-						//if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
-						//	OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
-						//	text += " (" + currQuest.urlName + ")";
-						//} else {
-							text += " (" + currChar.currentAction.actionData.actionName.ToString () + ")";
-						//}
-					}
-				} else if (currentlyShowingHexTile.charactersAtLocation[i] is Party) {
-					Party currParty = (Party)currentlyShowingHexTile.charactersAtLocation [i];
-					text += "\n" + currParty.urlName + " - " + (currParty.currentAction != null ? currParty.currentAction.ToString () : "NONE");
-				}
+                Character currChar = currentlyShowingHexTile.charactersAtLocation[i];
+                text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString() : "NONE");
+                if (currChar.actionData.currentAction != null) {
+                    //if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
+                    //	OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
+                    //	text += " (" + currQuest.urlName + ")";
+                    //} else {
+                    text += " (" + currChar.actionData.currentAction.actionData.actionName.ToString() + ")";
+                    //}
+                }
+    //            if (currentlyShowingHexTile.charactersAtLocation[i] is ECS.Character) {
+				//	Character currChar = currentlyShowingHexTile.charactersAtLocation [i];
+				//	text += "\n" + currChar.urlName + " - " + (currChar.characterClass != null ? currChar.characterClass.className : "NONE") + "/" + (currChar.role != null ? currChar.role.roleType.ToString () : "NONE");
+				//	if (currChar.actionData.currentAction != null) {
+				//		//if (currChar.currentTask.taskType == TASK_TYPE.QUEST) {
+				//		//	OldQuest.Quest currQuest = (OldQuest.Quest)currChar.currentTask;
+				//		//	text += " (" + currQuest.urlName + ")";
+				//		//} else {
+				//			text += " (" + currChar.actionData.currentAction.actionData.actionName.ToString () + ")";
+				//		//}
+				//	}
+				//} else if (currentlyShowingHexTile.charactersAtLocation[i] is Party) {
+				//	Party currParty = (Party)currentlyShowingHexTile.charactersAtLocation [i];
+				//	text += "\n" + currParty.urlName + " - " + (currParty.currentAction != null ? currParty.currentAction.ToString () : "NONE");
+				//}
 			}
 		} else {
 			text += "NONE";

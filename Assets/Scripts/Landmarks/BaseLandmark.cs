@@ -24,12 +24,12 @@ public class BaseLandmark : ILocation, TaskCreator {
     //protected int _totalDurability;
     protected List<TECHNOLOGY> _technologiesOnLandmark;
     protected Dictionary<TECHNOLOGY, bool> _technologies; //list of technologies and whether or not the landmark has that type of technology
-    protected LandmarkObject _landmarkVisual;
+    protected LandmarkObject _landmarkObject;
     protected List<Character> _prisoners; //list of prisoners on landmark
     protected List<Log> _history;
     protected int _combatHistoryID;
     protected Dictionary<int, Combat> _combatHistory;
-    protected List<ICombatInitializer> _charactersAtLocation;
+    protected List<Character> _charactersAtLocation;
     protected List<Item> _itemsInLandmark;
     protected Dictionary<Character, GameDate> _characterTraces; //Lasts for 60 days
     protected List<LANDMARK_TAG> _landmarkTags;
@@ -90,8 +90,8 @@ public class BaseLandmark : ILocation, TaskCreator {
     public Dictionary<TECHNOLOGY, bool> technologies {
         get { return _technologies; }
     }
-    public LandmarkObject landmarkVisual {
-        get { return _landmarkVisual; }
+    public LandmarkObject landmarkObject {
+        get { return _landmarkObject; }
     }
 	public List<Character> prisoners {
 		get { return _prisoners; }
@@ -102,7 +102,7 @@ public class BaseLandmark : ILocation, TaskCreator {
 	public Dictionary<int, Combat> combatHistory {
 		get { return _combatHistory; }
 	}
-    public List<ICombatInitializer> charactersAtLocation {
+    public List<Character> charactersAtLocation {
         get { return _charactersAtLocation; }
     }
 	public HexTile tileLocation{
@@ -144,9 +144,6 @@ public class BaseLandmark : ILocation, TaskCreator {
     //public int horizontalBlocked {
     //    get { return _horizontalBlocked; }
     //}
-    public List<Character> charactersWithHomeOnLandmark {
-        get { return _charactersWithHomeOnLandmark; }
-    }
     #endregion
 
     public BaseLandmark() {
@@ -157,7 +154,7 @@ public class BaseLandmark : ILocation, TaskCreator {
         _history = new List<Log>();
         _combatHistory = new Dictionary<int, Combat>();
         _combatHistoryID = 0;
-        _charactersAtLocation = new List<ICombatInitializer>();
+        _charactersAtLocation = new List<Character>();
         _itemsInLandmark = new List<Item>();
         _characterTraces = new Dictionary<Character, GameDate>();
         //_totalDurability = landmarkData.hitPoints;
@@ -437,7 +434,7 @@ public class BaseLandmark : ILocation, TaskCreator {
          */
     public Character CreateNewCharacter(RACE raceOfChar, CHARACTER_ROLE charRole, string className, bool determineAction = true) {
         //RACE raceOfChar = GetRaceBasedOnProportion();
-        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, Utilities.GetRandomGender(), 0, _owner);
+        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(charRole, className, raceOfChar, _owner);
         newCharacter.SetHome(this);
         //if (reduceCivilians) {
         //    AdjustCivilians(raceOfChar, -1);
@@ -447,12 +444,13 @@ public class BaseLandmark : ILocation, TaskCreator {
         this.AddCharacterToLocation(newCharacter);
         this.AddCharacterHomeOnLandmark(newCharacter);
         newCharacter.icon.SetPosition(this.tileLocation.transform.position);
-        //if (charRole != CHARACTER_ROLE.FOLLOWER) {
-        //    //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
-        //    if (determineAction) {
-        //        newCharacter.DetermineAction();
-        //    }
-        //}
+        if (charRole != CHARACTER_ROLE.FOLLOWER) {
+            //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
+            if (determineAction) {
+                newCharacter.DetermineAction();
+            }
+        }
+        Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
     /*
@@ -485,7 +483,7 @@ public class BaseLandmark : ILocation, TaskCreator {
      Create a new character, given a character setup name.
          */
     public Character CreateNewCharacter(RACE raceOfChar, string setupName, bool reduceCivilians = true, bool determineAction = true) {
-        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(setupName, Utilities.GetRandomGender(), 0, _owner);
+        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(setupName, _owner);
         //newCharacter.AssignRole(charRole);
         //newCharacter.SetFaction(_owner);
         newCharacter.SetHome(this);
@@ -499,12 +497,12 @@ public class BaseLandmark : ILocation, TaskCreator {
         this.AddCharacterToLocation(newCharacter);
         this.AddCharacterHomeOnLandmark(newCharacter);
         newCharacter.icon.SetPosition(this.tileLocation.transform.position);
-        //if (newCharacter.role.roleType != CHARACTER_ROLE.FOLLOWER) {
-        //    //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
-        //    if (determineAction) {
-        //        newCharacter.DetermineAction();
-        //    }
-        //}
+        if (newCharacter.role.roleType != CHARACTER_ROLE.FOLLOWER) {
+            //newCharacter.CreateNewParty(); //Automatically create a new party lead by this new character.
+            if (determineAction) {
+                newCharacter.DetermineAction();
+            }
+        }
         //UIManager.Instance.UpdateFactionSummary();
         return newCharacter;
     }
@@ -521,18 +519,21 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
 	public Character GetCharacterAtLocationByID(int id, bool includeTraces = false){
 		for (int i = 0; i < _charactersAtLocation.Count; i++) {
-			if(_charactersAtLocation[i]	is Character){
-				if(((Character)_charactersAtLocation[i]).id == id){
-					return (Character)_charactersAtLocation [i];
-				}
-			}else if(_charactersAtLocation[i] is Party){
-				Party party = (Party)_charactersAtLocation [i];
-				for (int j = 0; j < party.partyMembers.Count; j++) {
-					if(party.partyMembers[j].id == id){
-						return party.partyMembers [j];
-					}
-				}
-			}
+            if (_charactersAtLocation[i].id == id) {
+                return _charactersAtLocation[i];
+            }
+            //if (_charactersAtLocation[i]	is Character){
+			//	if(((Character)_charactersAtLocation[i]).id == id){
+			//		return (Character)_charactersAtLocation [i];
+			//	}
+			//}else if(_charactersAtLocation[i] is Party){
+			//	Party party = (Party)_charactersAtLocation [i];
+			//	for (int j = 0; j < party.partyMembers.Count; j++) {
+			//		if(party.partyMembers[j].id == id){
+			//			return party.partyMembers [j];
+			//		}
+			//	}
+			//}
 		}
 		if(includeTraces){
 			foreach (Character character in _characterTraces.Keys) {
@@ -543,16 +544,16 @@ public class BaseLandmark : ILocation, TaskCreator {
 		}
 		return null;
 	}
-	public Party GetPartyAtLocationByLeaderID(int id){
-		for (int i = 0; i < _charactersAtLocation.Count; i++) {
-			if(_charactersAtLocation[i]	is Party){
-				if(((Party)_charactersAtLocation[i]).partyLeader.id == id){
-					return (Party)_charactersAtLocation [i];
-				}
-			}
-		}
-		return null;
-	}
+	//public Party GetPartyAtLocationByLeaderID(int id){
+	//	for (int i = 0; i < _charactersAtLocation.Count; i++) {
+	//		if(_charactersAtLocation[i]	is Party){
+	//			if(((Party)_charactersAtLocation[i]).partyLeader.id == id){
+	//				return (Party)_charactersAtLocation [i];
+	//			}
+	//		}
+	//	}
+	//	return null;
+	//}
 	public Character GetPrisonerByID(int id){
 		for (int i = 0; i < _prisoners.Count; i++) {
 			if (_prisoners [i].id == id){
@@ -578,95 +579,92 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
     #endregion
 
-    #region Party
-    public List<Party> GetPartiesOnLandmark() {
-        List<Party> parties = new List<Party>();
-        for (int i = 0; i < _location.charactersAtLocation.Count; i++) {
-			if(_location.charactersAtLocation[i] is Party){
-				parties.Add((Party)_location.charactersAtLocation[i]);
-			}
-        }
-        return parties;
-    }
-    #endregion
+   // #region Party
+   // public List<Party> GetPartiesOnLandmark() {
+   //     List<Party> parties = new List<Party>();
+   //     for (int i = 0; i < _location.charactersAtLocation.Count; i++) {
+			//if(_location.charactersAtLocation[i] is Party){
+			//	parties.Add((Party)_location.charactersAtLocation[i]);
+			//}
+   //     }
+   //     return parties;
+   // }
+   // #endregion
 
     #region Location
-    public void AddCharacterToLocation(ICombatInitializer character) {
+    public void AddCharacterToLocation(Character character) {
         if (!_charactersAtLocation.Contains(character)) {
             _charactersAtLocation.Add(character);
-            if (character is Character) {
-                Character currChar = character as Character;
-				this.tileLocation.RemoveCharacterFromLocation(currChar);
-                currChar.SetSpecificLocation(this);
-#if !WORLD_CREATION_TOOL
-                _landmarkVisual.OnCharacterEnteredLandmark(currChar);
-#endif
-            } else if (character is Party) {
-                Party currParty = character as Party;
-				this.tileLocation.RemoveCharacterFromLocation(currParty);
-                currParty.SetSpecificLocation(this);
-            }
+            character.SetSpecificLocation(this);
+    //        if (character is Character) {
+    //            Character currChar = character as Character;
+				//this.tileLocation.RemoveCharacterFromLocation(currChar);
+    //            currChar.SetSpecificLocation(this);
+    //        } else if (character is Party) {
+    //            Party currParty = character as Party;
+				//this.tileLocation.RemoveCharacterFromLocation(currParty);
+    //            currParty.SetSpecificLocation(this);
+    //        }
             if (!_hasScheduledCombatCheck) {
                 ScheduleCombatCheck();
             }
         }
     }
-    public void RemoveCharacterFromLocation(ICombatInitializer character) {
+    public void RemoveCharacterFromLocation(Character character) {
         _charactersAtLocation.Remove(character);
-        if (character is Character) {
-            Character currChar = character as Character;
-			currChar.SetSpecificLocation(null);
-#if !WORLD_CREATION_TOOL
-            _landmarkVisual.OnCharacterExitedLandmark(currChar);
-#endif
-        } else if (character is Party) {
-            Party currParty = character as Party;
-			currParty.SetSpecificLocation(null);
-        }
+        character.SetSpecificLocation(null);
+   //     if (character is Character) {
+   //         Character currChar = character as Character;
+			//currChar.SetSpecificLocation(null);
+   //     } else if (character is Party) {
+   //         Party currParty = character as Party;
+			//currParty.SetSpecificLocation(null);
+   //     }
         if (_charactersAtLocation.Count == 0 && _hasScheduledCombatCheck) {
             UnScheduleCombatCheck();
         }
     }
-    public void ReplaceCharacterAtLocation(ICombatInitializer characterToReplace, ICombatInitializer characterToAdd) {
+    public void ReplaceCharacterAtLocation(Character characterToReplace, Character characterToAdd) {
         if (_charactersAtLocation.Contains(characterToReplace)) {
             int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(characterToReplace);
             _charactersAtLocation.Insert(indexOfCharacterToReplace, characterToAdd);
             _charactersAtLocation.Remove(characterToReplace);
-            if (characterToAdd is Character) {
-                Character currChar = characterToAdd as Character;
-				this.tileLocation.RemoveCharacterFromLocation(currChar);
-                currChar.SetSpecificLocation(this);
-            } else if (characterToAdd is Party) {
-                Party currParty = characterToAdd as Party;
-				this.tileLocation.RemoveCharacterFromLocation(currParty);
-                currParty.SetSpecificLocation(this);
-            }
+            characterToAdd.SetSpecificLocation(this);
+    //        if (characterToAdd is Character) {
+    //            Character currChar = characterToAdd as Character;
+				//this.tileLocation.RemoveCharacterFromLocation(currChar);
+    //            currChar.SetSpecificLocation(this);
+    //        } else if (characterToAdd is Party) {
+    //            Party currParty = characterToAdd as Party;
+				//this.tileLocation.RemoveCharacterFromLocation(currParty);
+    //            currParty.SetSpecificLocation(this);
+    //        }
             if (!_hasScheduledCombatCheck) {
                 ScheduleCombatCheck();
             }
         }
     }
-    public int CharactersCount(bool includeHostile = false) {
-        int count = 0;
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-			if (includeHostile && this._owner != null) {
-				if(_charactersAtLocation[i].faction == null){
-					continue;
-				}else{
-					FactionRelationship fr = this._owner.GetRelationshipWith (_charactersAtLocation [i].faction);
-					if(fr != null && fr.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
-						continue;
-					}
-				}
-			}
-            if (_charactersAtLocation[i] is Party) {
-                count += ((Party)_charactersAtLocation[i]).partyMembers.Count;
-            } else {
-                count += 1;
-            }
-        }
-        return count;
-    }
+   // public int CharactersCount(bool includeHostile = false) {
+   //     int count = 0;
+   //     for (int i = 0; i < _charactersAtLocation.Count; i++) {
+			//if (includeHostile && this._owner != null) {
+			//	if(_charactersAtLocation[i].faction == null){
+			//		continue;
+			//	}else{
+			//		FactionRelationship fr = this._owner.GetRelationshipWith (_charactersAtLocation [i].faction);
+			//		if(fr != null && fr.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
+			//			continue;
+			//		}
+			//	}
+			//}
+   //         if (_charactersAtLocation[i] is Party) {
+   //             count += ((Party)_charactersAtLocation[i]).partyMembers.Count;
+   //         } else {
+   //             count += 1;
+   //         }
+   //     }
+   //     return count;
+   // }
     #endregion
 
     #region Combat
@@ -697,36 +695,36 @@ public class BaseLandmark : ILocation, TaskCreator {
         ContinueDailyActions();
     }
     public void PairUpCombats() {
-        List<ICombatInitializer> combatInitializers = GetCharactersByCombatPriority();
+        List<Character> combatInitializers = GetCharactersByCombatPriority();
         if (combatInitializers != null) {
             for (int i = 0; i < combatInitializers.Count; i++) {
-                ICombatInitializer currInitializer = combatInitializers[i];
-                Debug.Log("Finding combat pair for " + currInitializer.mainCharacter.name);
+                Character currInitializer = combatInitializers[i];
+                Debug.Log("Finding combat pair for " + currInitializer.name);
                 if (currInitializer.isInCombat) {
                     continue; //this current group is already in combat, skip it
                 }
                 //- If there are hostile parties in combat stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-                List<ICombatInitializer> combatGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.COMBAT, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
+                List<Character> combatGroups = new List<Character>(GetGroupsBasedOnStance(STANCE.COMBAT, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
                 if (combatGroups.Count > 0) {
-                    ICombatInitializer chosenEnemy = combatGroups[Random.Range(0, combatGroups.Count)];
+                    Character chosenEnemy = combatGroups[Random.Range(0, combatGroups.Count)];
                     StartCombatBetween(currInitializer, chosenEnemy);
                     continue; //the attacking group has found an enemy! skip to the next group
                 }
 
                 //Otherwise, if there are hostile parties in neutral stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-                List<ICombatInitializer> neutralGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.NEUTRAL, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
+                List<Character> neutralGroups = new List<Character>(GetGroupsBasedOnStance(STANCE.NEUTRAL, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
                 if (neutralGroups.Count > 0) {
-                    ICombatInitializer chosenEnemy = neutralGroups[Random.Range(0, neutralGroups.Count)];
+                    Character chosenEnemy = neutralGroups[Random.Range(0, neutralGroups.Count)];
                     StartCombatBetween(currInitializer, chosenEnemy);
                     continue; //the attacking group has found an enemy! skip to the next group
                 }
 
                 //- Otherwise, if there are hostile parties in stealthy stance who are not engaged in combat, the attacking character will attempt to initiate combat with one of them at random.
-                List<ICombatInitializer> stealthGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.STEALTHY, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
+                List<Character> stealthGroups = new List<Character>(GetGroupsBasedOnStance(STANCE.STEALTHY, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
                 if (stealthGroups.Count > 0) {
                     //The chance of initiating combat is 35%
                     if (Random.Range(0, 100) < 35) {
-                        ICombatInitializer chosenEnemy = stealthGroups[Random.Range(0, stealthGroups.Count)];
+                        Character chosenEnemy = stealthGroups[Random.Range(0, stealthGroups.Count)];
                         StartCombatBetween(currInitializer, chosenEnemy);
                         continue; //the attacking group has found an enemy! skip to the next group
                     }
@@ -734,7 +732,7 @@ public class BaseLandmark : ILocation, TaskCreator {
             }
         }
     }
-    public List<ICombatInitializer> GetCharactersByCombatPriority() {
+    public List<Character> GetCharactersByCombatPriority() {
         //if (_charactersAtLocation.Count <= 0) {
         //    return null;
         //}
@@ -743,7 +741,7 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
     public bool HasCombatInitializers() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currChar = _charactersAtLocation[i];
+            Character currChar = _charactersAtLocation[i];
             //if (currChar.currentAction != null && currChar.currentAction.combatPriority > 0) {
             //    return true;
             //}
@@ -752,9 +750,9 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
     public bool HasHostilities() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currItem = _charactersAtLocation[i];
+            Character currItem = _charactersAtLocation[i];
             for (int j = 0; j < _charactersAtLocation.Count; j++) {
-                ICombatInitializer otherItem = _charactersAtLocation[j];
+                Character otherItem = _charactersAtLocation[j];
                 if (currItem != otherItem) {
                     if (currItem.IsHostileWith(otherItem)) {
                         return true; //there are characters with hostilities
@@ -766,16 +764,16 @@ public class BaseLandmark : ILocation, TaskCreator {
     }
     public bool HasHostileCharactersWith(Character character) {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currItem = _charactersAtLocation[i];
+            Character currItem = _charactersAtLocation[i];
             if (currItem == character) {
                 continue; //skip
             }
-            Faction factionOfItem = null;
-            if (currItem is Character) {
-                factionOfItem = (currItem as Character).faction;
-            } else if (currItem is Party) {
-                factionOfItem = (currItem as Party).faction;
-            }
+            Faction factionOfItem = currItem.faction;
+            //if (currItem is Character) {
+            //    factionOfItem = (currItem as Character).faction;
+            //} else if (currItem is Party) {
+            //    factionOfItem = (currItem as Party).faction;
+            //}
             if (factionOfItem == null || character.faction == null) {
                 return true;
             } else {
@@ -810,13 +808,13 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         if (!withFactionOnly) {
             for (int i = 0; i < _charactersAtLocation.Count; i++) {
-                ICombatInitializer currItem = _charactersAtLocation[i];
-                Faction factionOfItem = null;
-                if (currItem is Character) {
-                    factionOfItem = (currItem as Character).faction;
-                } else if (currItem is Party) {
-                    factionOfItem = (currItem as Party).faction;
-                }
+                Character currItem = _charactersAtLocation[i];
+                Faction factionOfItem = currItem.faction;
+                //if (currItem is Character) {
+                //    factionOfItem = (currItem as Character).faction;
+                //} else if (currItem is Party) {
+                //    factionOfItem = (currItem as Party).faction;
+                //}
                 if (factionOfItem == null || faction == null) {
                     return true;
                 } else {
@@ -832,10 +830,10 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         return false;
     }
-    public List<ICombatInitializer> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, ICombatInitializer except = null) {
-        List<ICombatInitializer> groups = new List<ICombatInitializer>();
+    public List<Character> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, Character except = null) {
+        List<Character> groups = new List<Character>();
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currGroup = _charactersAtLocation[i];
+            Character currGroup = _charactersAtLocation[i];
             if (notInCombatOnly) {
                 if (currGroup.isInCombat) {
                     continue; //skip
@@ -850,52 +848,55 @@ public class BaseLandmark : ILocation, TaskCreator {
         }
         return groups;
     }
-    public void StartCombatBetween(ICombatInitializer combatant1, ICombatInitializer combatant2) {
+    public void StartCombatBetween(Character combatant1, Character combatant2) {
         Combat combat = new Combat(this);
         combatant1.SetIsInCombat(true);
         combatant2.SetIsInCombat(true);
-        string combatant1Name = string.Empty;
-        string combatant2Name = string.Empty;
-        if (combatant1 is Party) {
-            combatant1Name = (combatant1 as Party).name;
-            combat.AddCharacters(SIDES.A, (combatant1 as Party).partyMembers);
-        } else {
-            combatant1Name = (combatant1 as Character).name;
-            combat.AddCharacter(SIDES.A, combatant1 as Character);
-        }
-        if (combatant2 is Party) {
-            combatant2Name = (combatant2 as Party).name;
-            combat.AddCharacters(SIDES.B, (combatant2 as Party).partyMembers);
-        } else {
-            combatant2Name = (combatant2 as Character).name;
-            combat.AddCharacter(SIDES.B, combatant2 as Character);
-        }
+        string combatant1Name = combatant1.name;
+        string combatant2Name = combatant2.name;
+        combat.AddCharacter(SIDES.A, combatant1);
+        combat.AddCharacter(SIDES.B, combatant2);
+
+        //if (combatant1 is Party) {
+        //    combatant1Name = (combatant1 as Party).name;
+        //    combat.AddCharacters(SIDES.A, (combatant1 as Party).partyMembers);
+        //} else {
+        //    combatant1Name = (combatant1 as Character).name;
+        //    combat.AddCharacter(SIDES.A, combatant1 as Character);
+        //}
+        //if (combatant2 is Party) {
+        //    combatant2Name = (combatant2 as Party).name;
+        //    combat.AddCharacters(SIDES.B, (combatant2 as Party).partyMembers);
+        //} else {
+        //    combatant2Name = (combatant2 as Character).name;
+        //    combat.AddCharacter(SIDES.B, combatant2 as Character);
+        //}
         Log combatLog = new Log(GameManager.Instance.Today(), "General", "Combat", "start_combat");
         combatLog.AddToFillers(combatant1, combatant1Name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         combatLog.AddToFillers(combat, " fought with ", LOG_IDENTIFIER.COMBAT);
         combatLog.AddToFillers(combatant2, combatant2Name, LOG_IDENTIFIER.TARGET_CHARACTER);
         AddHistory(combatLog);
-        combatant1.mainCharacter.AddHistory(combatLog);
-        combatant2.mainCharacter.AddHistory(combatLog);
+        combatant1.AddHistory(combatLog);
+        combatant2.AddHistory(combatLog);
         Debug.Log("Starting combat between " + combatant1Name + " and  " + combatant2Name);
 
         //this.specificLocation.SetCurrentCombat(combat);
         MultiThreadPool.Instance.AddToThreadPool(combat);
     }
     public void ContinueDailyActions() {
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currItem = _charactersAtLocation[i];
-            if (!currItem.isInCombat) {
-                currItem.ContinueDailyAction();
-            }
-        }
+        //for (int i = 0; i < _charactersAtLocation.Count; i++) {
+        //    Character currItem = _charactersAtLocation[i];
+        //    if (!currItem.isInCombat) {
+        //        currItem.ContinueDailyAction();
+        //    }
+        //}
     }
     #endregion
 
     #region Utilities
     public void SetLandmarkObject(LandmarkObject obj) {
-        _landmarkVisual = obj;
-        _landmarkVisual.SetLandmark(this);
+        _landmarkObject = obj;
+        _landmarkObject.SetLandmark(this);
     }
     internal int GetTechnologyCount() {
         int count = 0;
@@ -971,32 +972,26 @@ public class BaseLandmark : ILocation, TaskCreator {
 
     #region Items
     private void SpawnInitialLandmarkItems() {
-        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_specificLandmarkType);
-        for (int i = 0; i < data.itemData.Length; i++) {
-            LandmarkItemData currItemData = data.itemData[i];
-            Item createdItem = ItemManager.Instance.CreateNewItemInstance(currItemData.itemName);
-            if (ItemManager.Instance.IsLootChest(createdItem)) {
-                //chosen item is a loot crate, generate a random item
-                string[] words = createdItem.itemName.Split(' ');
-                int tier = System.Int32.Parse(words[1]);
-                if (createdItem.itemName.Contains("Armor")) {
-                    createdItem = ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.ARMOR);
-                } else if (createdItem.itemName.Contains("Weapon")) {
-                    createdItem = ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.WEAPON);
-                }
-                QUALITY equipmentQuality = GetEquipmentQuality();
-                if (createdItem.itemType == ITEM_TYPE.ARMOR) {
-                    ((Armor)createdItem).SetQuality(equipmentQuality);
-                } else if (createdItem.itemType == ITEM_TYPE.WEAPON) {
-                    ((Weapon)createdItem).SetQuality(equipmentQuality);
-                }
-            } else {
-                //only set as unlimited if not from loot chest, since gear from loot chests are not unlimited
-                createdItem.SetIsUnlimited(currItemData.isUnlimited);
-            }
-            createdItem.SetExploreWeight(currItemData.exploreWeight);
-            AddItemInLandmark(createdItem);
-        }
+        //LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_specificLandmarkType);
+        //for (int i = 0; i < data.itemData.Length; i++) {
+        //    LandmarkItemData currItemData = data.itemData[i];
+        //    Item createdItem = ItemManager.Instance.CreateNewItemInstance(currItemData.itemName);
+        //    if (ItemManager.Instance.IsLootChest(createdItem)) {
+        //        //chosen item is a loot crate, generate a random item
+        //        string[] words = createdItem.itemName.Split(' ');
+        //        int tier = System.Int32.Parse(words[1]);
+        //        if (createdItem.itemName.Contains("Armor")) {
+        //            createdItem = ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.ARMOR);
+        //        } else if (createdItem.itemName.Contains("Weapon")) {
+        //            createdItem = ItemManager.Instance.GetRandomTier(tier, ITEM_TYPE.WEAPON);
+        //        }
+        //    } else {
+        //        //only set as unlimited if not from loot chest, since gear from loot chests are not unlimited
+        //        createdItem.SetIsUnlimited(currItemData.isUnlimited);
+        //    }
+        //    //createdItem.SetExploreWeight(currItemData.exploreWeight);
+        //    AddItemInLandmark(createdItem);
+        //}
     }
     private QUALITY GetEquipmentQuality() {
         int crudeChance = 30;
@@ -1035,27 +1030,28 @@ public class BaseLandmark : ILocation, TaskCreator {
             }
         }
     }
-    private WeightedDictionary<Item> GetExploreItemWeights() {
-        WeightedDictionary<Item> itemWeights = new WeightedDictionary<Item>();
-        for (int i = 0; i < _itemsInLandmark.Count; i++) {
-            Item currItem = _itemsInLandmark[i];
-            itemWeights.AddElement(currItem, currItem.exploreWeight);
-        }
-        return itemWeights;
-    }
+    //private WeightedDictionary<Item> GetExploreItemWeights() {
+    //    WeightedDictionary<Item> itemWeights = new WeightedDictionary<Item>();
+    //    for (int i = 0; i < _itemsInLandmark.Count; i++) {
+    //        Item currItem = _itemsInLandmark[i];
+    //        itemWeights.AddElement(currItem, currItem.exploreWeight);
+    //    }
+    //    return itemWeights;
+    //}
 
-	public void SpawnItemInLandmark(string itemName, int exploreWeight, bool isUnlimited){
-		Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
-		item.exploreWeight = exploreWeight;
-		item.isUnlimited = isUnlimited;
-		AddItemInLandmark (item);
-	}
-	public void SpawnItemInLandmark(Item item, int exploreWeight, bool isUnlimited){
-		Item newItem = item.CreateNewCopy();
-		newItem.exploreWeight = exploreWeight;
-		newItem.isUnlimited = isUnlimited;
-		AddItemInLandmark (newItem);
-	}
+	//public void SpawnItemInLandmark(string itemName, int exploreWeight, bool isUnlimited){
+	//	Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
+	//	item.exploreWeight = exploreWeight;
+	//	item.isUnlimited = isUnlimited;
+	//	AddItemInLandmark (item);
+	//}
+
+	//public void SpawnItemInLandmark(Item item, int exploreWeight, bool isUnlimited){
+	//	Item newItem = item.CreateNewCopy();
+    //  newItem.exploreWeight = exploreWeight;
+	//	newItem.isUnlimited = isUnlimited;
+	//	AddItemInLandmark (newItem);
+	//}
 	public Item SpawnItemInLandmark(string itemName){
 		Item item = ItemManager.Instance.CreateNewItemInstance (itemName);
 		AddItemInLandmark (item);

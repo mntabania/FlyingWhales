@@ -10,9 +10,9 @@ public class CharacterClick : MonoBehaviour {
     //        MouseDown();
     //    }
     //}
-    private void OnMouseDown() {
-        MouseDown();
-    }
+    //private void OnMouseDown() {
+    //    MouseDown();
+    //}
     private void MouseDown() {
         if (UIManager.Instance.IsMouseOnUI()) {
             return;

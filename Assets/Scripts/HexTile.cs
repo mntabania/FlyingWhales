@@ -83,7 +83,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     //Landmark
     private BaseLandmark _landmarkOnTile = null;
 
-    protected List<ICombatInitializer> _charactersAtLocation = new List<ICombatInitializer>(); //List of characters/party on landmark
+    protected List<Character> _charactersAtLocation = new List<Character>(); //List of characters/party on landmark
 
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
 
@@ -146,7 +146,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public GameObject clickHighlightGO {
         get { return _clickHighlightGO; }
     }
-    public List<ICombatInitializer> charactersAtLocation {
+    public List<Character> charactersAtLocation {
         get { return _charactersAtLocation; }
     }
     public HexTile tileLocation {
@@ -1299,12 +1299,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         text += "[b]Characters in landmark: [/b]";
         if(_landmarkOnTile.charactersAtLocation.Count > 0) {
             for (int i = 0; i < _landmarkOnTile.charactersAtLocation.Count; i++) {
-                ICombatInitializer currObj = _landmarkOnTile.charactersAtLocation[i];
-                if (currObj is Party) {
-                    text += "\n" + ((Party)currObj).name;
-                } else if (currObj is Character) {
-                    text += "\n" + ((Character)currObj).name;
-                }
+                Character currObj = _landmarkOnTile.charactersAtLocation[i];
+                text += "\n" + currObj.name;
+                //if (currObj is Party) {
+                //    text += "\n" + ((Party)currObj).name;
+                //} else if (currObj is Character) {
+                //    text += "\n" + ((Character)currObj).name;
+                //}
             }
         } else {
             text += "NONE";
@@ -1313,12 +1314,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         text += "\n[b]Characters in tile: [/b]";
         if (_charactersAtLocation.Count > 0) {
             for (int i = 0; i < _charactersAtLocation.Count; i++) {
-                ICombatInitializer currObj = _charactersAtLocation[i];
-                if (currObj is Party) {
-                    text += "\n" + ((Party)currObj).name;
-                } else if (currObj is Character) {
-                    text += "\n" + ((Character)currObj).name;
-                }
+                Character currObj = _charactersAtLocation[i];
+                text += "\n" + currObj.name;
+                //if (currObj is Party) {
+                //    text += "\n" + ((Party)currObj).name;
+                //} else if (currObj is Character) {
+                //    text += "\n" + ((Character)currObj).name;
+                //}
             }
         } else {
             text += "NONE";
@@ -1335,46 +1337,49 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Characters
-	public void AddCharacterToLocation(ICombatInitializer character) {
+	public void AddCharacterToLocation(Character character) {
 		if (!_charactersAtLocation.Contains(character)) {
 			_charactersAtLocation.Add(character);
-			if(character is Character){
-                Character currChar = character as Character;
-                currChar.SetSpecificLocation(this);
-			}else if(character is Party){
-                Party currParty = character as Party;
-                currParty.SetSpecificLocation(this);
-			}
+            character.SetSpecificLocation(this);
+            //if (character is Character){
+            //  Character currChar = character as Character;
+            //  currChar.SetSpecificLocation(this);
+			//}else if(character is Party){
+            //  Party currParty = character as Party;
+            //  currParty.SetSpecificLocation(this);
+			//}
             if (!_hasScheduledCombatCheck) {
                 ScheduleCombatCheck();
             }
         }
 	}
-	public void RemoveCharacterFromLocation(ICombatInitializer character) {
+	public void RemoveCharacterFromLocation(Character character) {
 		_charactersAtLocation.Remove(character);
-		if(character is Character){
-            Character currChar = character as Character;
-            currChar.SetSpecificLocation(null);
-        } else if(character is Party){
-            Party currParty = character as Party;
-            currParty.SetSpecificLocation(null);
-		}
+        character.SetSpecificLocation(null);
+  //      if (character is Character){
+  //          Character currChar = character as Character;
+  //          currChar.SetSpecificLocation(null);
+  //      } else if(character is Party){
+  //          Party currParty = character as Party;
+  //          currParty.SetSpecificLocation(null);
+		//}
         if(_charactersAtLocation.Count == 0 && _hasScheduledCombatCheck) {
             UnScheduleCombatCheck();
         }
 	}
-    public void ReplaceCharacterAtLocation(ICombatInitializer characterToReplace, ICombatInitializer characterToAdd) {
+    public void ReplaceCharacterAtLocation(Character characterToReplace, Character characterToAdd) {
         if (_charactersAtLocation.Contains(characterToReplace)) {
             int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(characterToReplace);
             _charactersAtLocation.Insert(indexOfCharacterToReplace, characterToAdd);
             _charactersAtLocation.Remove(characterToReplace);
-            if (characterToAdd is Character) {
-                Character currChar = characterToAdd as Character;
-                currChar.SetSpecificLocation(this);
-            } else if (characterToAdd is Party) {
-                Party currParty = characterToAdd as Party;
-                currParty.SetSpecificLocation(this);
-            }
+            characterToAdd.SetSpecificLocation(this);
+            //if (characterToAdd is Character) {
+            //    Character currChar = characterToAdd as Character;
+            //    currChar.SetSpecificLocation(this);
+            //} else if (characterToAdd is Party) {
+            //    Party currParty = characterToAdd as Party;
+            //    currParty.SetSpecificLocation(this);
+            //}
             if (!_hasScheduledCombatCheck) {
                 ScheduleCombatCheck();
             }
@@ -1382,42 +1387,45 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public Character GetCharacterAtLocationByID(int id, bool includeTraces = false){
 		for (int i = 0; i < _charactersAtLocation.Count; i++) {
-			if(_charactersAtLocation[i]	is Character){
-				if(((Character)_charactersAtLocation[i]).id == id){
-					return (Character)_charactersAtLocation [i];
-				}
-			}else if(_charactersAtLocation[i] is Party){
-				Party party = (Party)_charactersAtLocation [i];
-				for (int j = 0; j < party.partyMembers.Count; j++) {
-					if(party.partyMembers[j].id == id){
-						return party.partyMembers [j];
-					}
-				}
-			}
+            if (_charactersAtLocation[i].id == id) {
+                return _charactersAtLocation[i];
+            }
+            //if (_charactersAtLocation[i]	is Character){
+			//	if(((Character)_charactersAtLocation[i]).id == id){
+			//		return (Character)_charactersAtLocation [i];
+			//	}
+			//}else if(_charactersAtLocation[i] is Party){
+			//	Party party = (Party)_charactersAtLocation [i];
+			//	for (int j = 0; j < party.partyMembers.Count; j++) {
+			//		if(party.partyMembers[j].id == id){
+			//			return party.partyMembers [j];
+			//		}
+			//	}
+			//}
 		}
 		return null;
 	}
-	public Party GetPartyAtLocationByLeaderID(int id){
-		for (int i = 0; i < _charactersAtLocation.Count; i++) {
-			if(_charactersAtLocation[i]	is Party){
-				if(((Party)_charactersAtLocation[i]).partyLeader.id == id){
-					return (Party)_charactersAtLocation [i];
-				}
-			}
-		}
-		return null;
-	}
-	public int CharactersCount(bool includeHostile = false){
-		    int count = 0;
-		    for (int i = 0; i < _charactersAtLocation.Count; i++) {
-			    if(_charactersAtLocation[i]	is Party){
-				    count += ((Party)_charactersAtLocation [i]).partyMembers.Count;
-			    }else {
-				    count += 1;
-			    }
-		    }
-		    return count;
-	    }
+	//public Party GetPartyAtLocationByLeaderID(int id){
+	//	for (int i = 0; i < _charactersAtLocation.Count; i++) {
+	//		if(_charactersAtLocation[i]	is Party){
+	//			if(((Party)_charactersAtLocation[i]).partyLeader.id == id){
+	//				return (Party)_charactersAtLocation [i];
+	//			}
+	//		}
+	//	}
+	//	return null;
+	//}
+	//public int CharactersCount(bool includeHostile = false){
+	//	int count = 0;
+	//	for (int i = 0; i < _charactersAtLocation.Count; i++) {
+	//		if(_charactersAtLocation[i]	is Party){
+	//			count += ((Party)_charactersAtLocation [i]).partyMembers.Count;
+	//		}else {
+	//			count += 1;
+	//		}
+	//	}
+	//	return count;
+	//}
     #endregion
 
     #region Combat
@@ -1441,36 +1449,36 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         ContinueDailyActions();
     }
     public void PairUpCombats() {
-        List<ICombatInitializer> combatInitializers = GetCharactersByCombatPriority();
+        List<Character> combatInitializers = GetCharactersByCombatPriority();
         if (combatInitializers != null) {
             for (int i = 0; i < combatInitializers.Count; i++) {
-                ICombatInitializer currInitializer = combatInitializers[i];
-                Debug.Log("Finding combat pair for " + currInitializer.mainCharacter.name);
+                Character currInitializer = combatInitializers[i];
+                Debug.Log("Finding combat pair for " + currInitializer.name);
                 if (currInitializer.isInCombat) {
                     continue; //this current group is already in combat, skip it
                 }
                 //- If there are hostile parties in combat stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-                List<ICombatInitializer> combatGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.COMBAT, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
+                List<Character> combatGroups = new List<Character>(GetGroupsBasedOnStance(STANCE.COMBAT, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
                 if (combatGroups.Count > 0) {
-                    ICombatInitializer chosenEnemy = combatGroups[Random.Range(0, combatGroups.Count)];
+                    Character chosenEnemy = combatGroups[Random.Range(0, combatGroups.Count)];
                     StartCombatBetween(currInitializer, chosenEnemy);
                     continue; //the attacking group has found an enemy! skip to the next group
                 }
 
                 //Otherwise, if there are hostile parties in neutral stance who are not engaged in combat, the attacking character will initiate combat with one of them at random
-                List<ICombatInitializer> neutralGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.NEUTRAL, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
+                List<Character> neutralGroups = new List<Character>(GetGroupsBasedOnStance(STANCE.NEUTRAL, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
                 if (neutralGroups.Count > 0) {
-                    ICombatInitializer chosenEnemy = neutralGroups[Random.Range(0, neutralGroups.Count)];
+                    Character chosenEnemy = neutralGroups[Random.Range(0, neutralGroups.Count)];
                     StartCombatBetween(currInitializer, chosenEnemy);
                     continue; //the attacking group has found an enemy! skip to the next group
                 }
 
                 //- Otherwise, if there are hostile parties in stealthy stance who are not engaged in combat, the attacking character will attempt to initiate combat with one of them at random.
-                List<ICombatInitializer> stealthGroups = new List<ICombatInitializer>(GetGroupsBasedOnStance(STANCE.STEALTHY, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
+                List<Character> stealthGroups = new List<Character>(GetGroupsBasedOnStance(STANCE.STEALTHY, true, currInitializer).Where(x => x.IsHostileWith(currInitializer)));
                 if (stealthGroups.Count > 0) {
                     //The chance of initiating combat is 35%
                     if (Random.Range(0, 100) < 35) {
-                        ICombatInitializer chosenEnemy = stealthGroups[Random.Range(0, stealthGroups.Count)];
+                        Character chosenEnemy = stealthGroups[Random.Range(0, stealthGroups.Count)];
                         StartCombatBetween(currInitializer, chosenEnemy);
                         continue; //the attacking group has found an enemy! skip to the next group
                     }
@@ -1478,7 +1486,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             }
         }
     }
-    public List<ICombatInitializer> GetCharactersByCombatPriority() {
+    public List<Character> GetCharactersByCombatPriority() {
         //if (_charactersAtLocation.Count <= 0) {
         //    return null;
         //}
@@ -1487,7 +1495,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public bool HasCombatInitializers() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currChar = _charactersAtLocation[i];
+            Character currChar = _charactersAtLocation[i];
             //if (currChar.currentAction.combatPriority > 0) {
             //    return true;
             //}
@@ -1496,9 +1504,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public bool HasHostilities() {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currItem = _charactersAtLocation[i];
+            Character currItem = _charactersAtLocation[i];
             for (int j = 0; j < _charactersAtLocation.Count; j++) {
-                ICombatInitializer otherItem = _charactersAtLocation[j];
+                Character otherItem = _charactersAtLocation[j];
                 if(currItem != otherItem) {
                     if (currItem.IsHostileWith(otherItem)) {
                         return true; //there are characters with hostilities
@@ -1510,16 +1518,16 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public bool HasHostileCharactersWith(Character character) {
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currItem = _charactersAtLocation[i];
+            Character currItem = _charactersAtLocation[i];
             if (currItem == character) {
                 continue; //skip
             }
-            Faction factionOfItem = null;
-            if (currItem is Character) {
-                factionOfItem = (currItem as Character).faction;
-            } else if (currItem is Party) {
-                factionOfItem = (currItem as Party).faction;
-            }
+            Faction factionOfItem = currItem.faction;
+            //if (currItem is Character) {
+            //    factionOfItem = (currItem as Character).faction;
+            //} else if (currItem is Party) {
+            //    factionOfItem = (currItem as Party).faction;
+            //}
             if (factionOfItem == null || character.faction == null) {
                 return true;
             } else {
@@ -1540,13 +1548,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
         if (!withFactionOnly) { //only check characters if with faction only is false
             for (int i = 0; i < _charactersAtLocation.Count; i++) {
-                ICombatInitializer currItem = _charactersAtLocation[i];
-                Faction factionOfItem = null;
-                if (currItem is Character) {
-                    factionOfItem = (currItem as Character).faction;
-                } else if (currItem is Party) {
-                    factionOfItem = (currItem as Party).faction;
-                }
+                Character currItem = _charactersAtLocation[i];
+                Faction factionOfItem = currItem.faction;
+                //if (currItem is Character) {
+                //    factionOfItem = (currItem as Character).faction;
+                //} else if (currItem is Party) {
+                //    factionOfItem = (currItem as Party).faction;
+                //}
                 if (factionOfItem == null) {
                     return true;
                 } else {
@@ -1563,10 +1571,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         
         return false;
     }
-    public List<ICombatInitializer> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, ICombatInitializer except = null) {
-        List<ICombatInitializer> groups = new List<ICombatInitializer>();
+    public List<Character> GetGroupsBasedOnStance(STANCE stance, bool notInCombatOnly, Character except = null) {
+        List<Character> groups = new List<Character>();
         for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currGroup = _charactersAtLocation[i];
+            Character currGroup = _charactersAtLocation[i];
             if (notInCombatOnly) {
                 if (currGroup.isInCombat) {
                     continue; //skip
@@ -1581,28 +1589,31 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
         return groups;
     }
-    public void StartCombatBetween(ICombatInitializer combatant1, ICombatInitializer combatant2) {
+    public void StartCombatBetween(Character combatant1, Character combatant2) {
         Combat combat = new Combat(this);
         combatant1.SetIsInCombat(true);
         combatant2.SetIsInCombat(true);
-        if (combatant1 is Party) {
-            combat.AddCharacters(SIDES.A, (combatant1 as Party).partyMembers);
-        } else {
-            combat.AddCharacter(SIDES.A, combatant1 as Character);
-        }
-        if (combatant2 is Party) {
-            combat.AddCharacters(SIDES.B, (combatant2 as Party).partyMembers);
-        } else {
-            combat.AddCharacter(SIDES.B, combatant2 as Character);
-        }
+        combat.AddCharacter(SIDES.A, combatant1);
+        combat.AddCharacter(SIDES.B, combatant2);
+
+        //if (combatant1 is Party) {
+        //    combat.AddCharacters(SIDES.A, (combatant1 as Party).partyMembers);
+        //} else {
+        //    combat.AddCharacter(SIDES.A, combatant1 as Character);
+        //}
+        //if (combatant2 is Party) {
+        //    combat.AddCharacters(SIDES.B, (combatant2 as Party).partyMembers);
+        //} else {
+        //    combat.AddCharacter(SIDES.B, combatant2 as Character);
+        //}
         //this.specificLocation.SetCurrentCombat(combat);
         MultiThreadPool.Instance.AddToThreadPool(combat);
     }
     public void ContinueDailyActions() {
-        for (int i = 0; i < _charactersAtLocation.Count; i++) {
-            ICombatInitializer currItem = _charactersAtLocation[i];
-            currItem.ContinueDailyAction();
-        }
+        //for (int i = 0; i < _charactersAtLocation.Count; i++) {
+        //    Character currItem = _charactersAtLocation[i];
+        //    currItem.ContinueDailyAction();
+        //}
     }
     #endregion
 

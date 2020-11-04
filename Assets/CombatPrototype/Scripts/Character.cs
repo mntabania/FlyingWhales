@@ -6,61 +6,81 @@ using System.IO;
 using System;
 
 namespace ECS {
-//	[System.Serializable]
-	public class Character : TaskCreator, ICombatInitializer {
+    public class Character : TaskCreator, ICharacter {
         public delegate void OnCharacterDeath();
         public OnCharacterDeath onCharacterDeath;
 
-		public delegate void OnImprisonCharacter();
-		public OnImprisonCharacter onImprisonCharacter;
+        public delegate void OnImprisonCharacter();
+        public OnImprisonCharacter onImprisonCharacter;
 
         public delegate void DailyAction();
         public DailyAction onDailyAction;
 
-        [SerializeField] private string _name;
+        private string _name;
         private int _id;
-		private GENDER _gender;
+        private GENDER _gender;
         //[System.NonSerialized] private CharacterType _characterType; //Base Character Type(For Traits)
-        [System.NonSerialized] private List<Trait>	_traits;
+        [System.NonSerialized] private List<Trait> _traits;
         private List<TRAIT> _allTraits;
-		private List<CharacterTag>	_tags;
-		internal List<STATUS_EFFECT> statusEffects;
+        private List<CharacterTag> _tags;
+        internal List<STATUS_EFFECT> statusEffects;
         private Dictionary<Character, Relationship> _relationships;
-		private const int MAX_FOLLOWERS = 4;
+        private const int MAX_FOLLOWERS = 4;
 
-		//Stats
-		[SerializeField] private int _currentHP;
-		[SerializeField] private int _maxHP;
-		[SerializeField] private int _strength;
-		[SerializeField] private int _intelligence;
-		[SerializeField] private int _agility;
-		[SerializeField] private int _currentRow;
-		private SIDES _currentSide;
-		private int _baseMaxHP;
-		private int _baseStrength;
-		private int _baseIntelligence;
-		private int _baseAgility;
-		private int _fixedMaxHP;
-		private StatsModifierPercentage _statsModifierPercentage;
+        //Stats
+        private SIDES _currentSide;
+        private int _currentHP;
+        private int _maxHP;
+        private int _strength;
+        private int _intelligence;
+        private int _agility;
+        private int _vitality;
+        private int _currentRow;
+        private int _baseMaxHP;
+        private int _baseStrength;
+        private int _baseIntelligence;
+        private int _baseAgility;
+        private int _baseVitality;
+        private int _fixedMaxHP;
+        private int _bonusStrength;
+        private int _bonusIntelligence;
+        private int _bonusAgility;
+        private int _bonusVitality;
+        private int _level;
+        private int _experience;
+        private int _maxExperience;
+        private int _sp;
+        private int _maxSP;
+        private int _bonusPDef;
+        private int _bonusMDef;
+        private float _bonusPDefPercent;
+        private float _bonusMDefPercent;
+        private float _critChance;
+        private float _critDamage;
+        private Dictionary<ELEMENT, float> _elementalWeaknesses;
+        private Dictionary<ELEMENT, float> _elementalResistances;
+        private Weapon _equippedWeapon;
+        private CharacterBattleTracker _battleTracker;
+        private CharacterBattleOnlyTracker _battleOnlyTracker;
 
-		//Skills
-		private List<Skill> _skills;
+        //Skills
+        private List<Skill> _skills;
 
-		[NonSerialized] private CharacterClass _characterClass;
-		private RaceSetting _raceSetting;
-		private CharacterRole _role;
-		private Faction _faction;
-		private Party _party;
+        private CharacterClass _characterClass;
+        private RaceSetting _raceSetting;
+        private CharacterRole _role;
+        private Faction _faction;
+        private Party _party;
         private QuestData _questData;
-        private CharacterActionQueue<CharacterAction> _actionQueue;
-		//private CharacterAction _currentAction;
+        //private CharacterActionQueue<CharacterAction> _actionQueue;
+        //private CharacterAction _currentAction;
         private ILocation _specificLocation;
-		private Region _currentRegion;
-		private CharacterAvatar _avatar;
+        private Region _currentRegion;
+        //private CharacterAvatar _avatar;
 
-		[SerializeField] private List<BodyPart> _bodyParts;
-		[SerializeField] private List<Item> _equippedItems;
-		[SerializeField] private List<Item> _inventory;
+        private List<BodyPart> _bodyParts;
+        private List<Item> _equippedItems;
+        private List<Item> _inventory;
 
         //Character Icon
         private CharacterIcon _icon;
@@ -68,43 +88,44 @@ namespace ECS {
         //Character Portrait
         private PortraitSettings _portraitSettings;
 
-		private Color _characterColor;
-		private string _characterColorCode;
-		private bool _isDead;
-		private bool _isFainted;
-		private bool _isPrisoner;
+        private Color _characterColor;
+        private string _characterColorCode;
+        private bool _isDead;
+        private bool _isFainted;
+        private bool _isPrisoner;
         private bool _isFollower;
-		private bool _isDefeated;
+        private bool _isDefeated;
         private bool _isIdle; //can't do action, needs will not deplete
-		private object _isPrisonerOf;
-		private BaseLandmark _home;
+        private bool _doesNotTakePrisoners;
+        private bool _cannotBeTakenAsPrisoner;
+        private object _isPrisonerOf;
+        private BaseLandmark _home;
         private BaseLandmark _lair;
-		private List<Log> _history;
-		//private int _combatHistoryID;
-		private List<Character> _prisoners;
-		private List<Character> _followers;
-		private Character _isFollowerOf;
-		private bool _doesNotTakePrisoners;
-		private bool _cannotBeTakenAsPrisoner;
+        //private int _combatHistoryID;
+        private List<Character> _prisoners;
+        private List<Character> _followers;
+        private List<Log> _history;
+        private Character _isFollowerOf;
 
-        private Dictionary<RACE, int> _civiliansByRace;
 
-		internal int actRate;
-		internal Combat currentCombat;
-		internal Dictionary<int, Combat> combatHistory;
+        //private Dictionary<RACE, int> _civiliansByRace;
 
-		private float _equippedWeaponPower;
+        private Combat _currentCombat;
+        private int _actRate;
+        internal Dictionary<int, Combat> combatHistory;
+
+        private float _equippedWeaponPower;
         private int _gold;
         private int _prestige;
 
-		private Action _currentFunction;
-		private bool _isInCombat;
+        //private Action _currentFunction;
+        private bool _isInCombat;
 
         //When the character should have a next action it should do after it's current one.
         //private CharacterTask nextTaskToDo;
-		private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
-		private Dictionary<Character, List<string>> _traceInfo;
-		//private WeightedDictionary<CharacterTask> actionWeights;
+        private List<BaseLandmark> _exploredLandmarks; //Currently only storing explored landmarks that were explored for the last 6 months
+        private Dictionary<Character, List<string>> _traceInfo;
+        //private WeightedDictionary<CharacterTask> actionWeights;
 
         private ActionData _actionData;
         private CharacterObj _characterObject;
@@ -118,51 +139,51 @@ namespace ECS {
         public string firstName {
             get { return name.Split(' ')[0]; }
         }
-		public string name{
-			get { return this._name; }
-		}
-		public string coloredName{
-			get { return "<color=" + '"' + this._characterColorCode + '"' + ">" + this._name; }
-		}
-		public string urlName{
-			get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + this._name + "</link>"; }
-		}
-		public string coloredUrlName{
-			get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + "]" + "<color=" + this._characterColorCode + ">" + this._name + "</link>"; }
-		}
-		public string prisonerName{
-			get { return "<link=" + '"' + this._id.ToString() + "_prisoner" + '"' + ">" + this._name + "</link>"; }
-		}
-		public int id {
+        public string name {
+            get { return this._name; }
+        }
+        public string coloredName {
+            get { return "<color=" + '"' + this._characterColorCode + '"' + ">" + this._name; }
+        }
+        public string urlName {
+            get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + this._name + "</link>"; }
+        }
+        public string coloredUrlName {
+            get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + "]" + "<color=" + this._characterColorCode + ">" + this._name + "</link>"; }
+        }
+        public string prisonerName {
+            get { return "<link=" + '"' + this._id.ToString() + "_prisoner" + '"' + ">" + this._name + "</link>"; }
+        }
+        public int id {
             get { return _id; }
         }
-		public GENDER gender{
-			get { return _gender; }
-		}
-		public List<Trait> traits {
+        public GENDER gender {
+            get { return _gender; }
+        }
+        public List<Trait> traits {
             get { return _traits; }
         }
-		public List<CharacterTag> tags {
-			get { return _tags; }
-		}
-		public Dictionary<Character, Relationship> relationships {
+        public List<CharacterTag> tags {
+            get { return _tags; }
+        }
+        public Dictionary<Character, Relationship> relationships {
             get { return _relationships; }
         }
-		public CharacterClass characterClass{
-			get { return this._characterClass; }
-		}
-		public RaceSetting raceSetting {
-			get { return _raceSetting; }
-		}
-		public CharacterRole role {
-			get { return _role; }
-		}
-		public Faction faction {
-			get { return _faction; }
-		}
-		public Party party {
-			get { return _party; }
-		}
+        public CharacterClass characterClass {
+            get { return this._characterClass; }
+        }
+        public RaceSetting raceSetting {
+            get { return _raceSetting; }
+        }
+        public CharacterRole role {
+            get { return _role; }
+        }
+        public Faction faction {
+            get { return _faction; }
+        }
+        public Party party {
+            get { return _party; }
+        }
         public QuestData questData {
             get { return _questData; }
         }
@@ -172,166 +193,167 @@ namespace ECS {
         public QuestPhase currentQuestPhase {
             get { return _questData.GetQuestPhase(); }
         }
-        public CharacterAction currentAction {
-			get { return _actionData.currentAction; }
-		}
+        //public CharacterAction currentAction {
+        //    get { return _actionData.currentAction; }
+        //}
         public ILocation specificLocation {
             get {
-    //            ILocation loc = null;
-				//loc = (party == null ? ((_isFollowerOf == null || _isFollowerOf.isDead) ? _specificLocation : _isFollowerOf.specificLocation) : party.specificLocation);
+                //            ILocation loc = null;
+                //loc = (party == null ? ((_isFollowerOf == null || _isFollowerOf.isDead) ? _specificLocation : _isFollowerOf.specificLocation) : party.specificLocation);
                 return GetSpecificLocation();
             }
         }
-		public HexTile currLocation{
-			get { return (this.specificLocation != null ? this.specificLocation.tileLocation : null); }
-		}
-		public Region currentRegion{
-			get { return (_party == null ? _currentRegion : _party.currentRegion); }
-		}
-		public CharacterAvatar avatar{
-			get { return _avatar; }
-		}
-		public List<BodyPart> bodyParts{
-			get { return this._bodyParts; }
-		}
-		public List<Item> equippedItems {
-			get { return this._equippedItems; }
-		}
-		public List<Item> inventory{
-			get { return this._inventory; }
-		}
-		public List<Skill> skills{
-			get { return this._skills; }
-		}
-		public int currentRow{
-			get { return this._currentRow; }
-		}
-		public SIDES currentSide{
-			get { return this._currentSide; }
-		}
-		public bool isDead{
-			get { return this._isDead; }
-		}
-		public bool isFainted{
-			get { return this._isFainted; }
-		}
-		public bool isPrisoner{
-			get { return this._isPrisoner; }
-		}
-		public bool isFollower {
+        public HexTile currLocation {
+            get { return (this.specificLocation != null ? this.specificLocation.tileLocation : null); }
+        }
+        public Region currentRegion {
+            get { return (_party == null ? _currentRegion : _party.currentRegion); }
+        }
+        //public CharacterAvatar avatar{
+        //	get { return _avatar; }
+        //}
+        public List<BodyPart> bodyParts {
+            get { return this._bodyParts; }
+        }
+        public List<Item> equippedItems {
+            get { return this._equippedItems; }
+        }
+        public List<Item> inventory {
+            get { return this._inventory; }
+        }
+        public List<Skill> skills {
+            get { return this._skills; }
+        }
+        public int currentRow {
+            get { return this._currentRow; }
+        }
+        public SIDES currentSide {
+            get { return this._currentSide; }
+        }
+        public bool isDead {
+            get { return this._isDead; }
+        }
+        public bool isFainted {
+            get { return this._isFainted; }
+        }
+        public bool isPrisoner {
+            get { return this._isPrisoner; }
+        }
+        public bool isFollower {
             get { return _isFollower; }
         }
-		public int strength {
-			get { return _strength + (int)((float)_strength * _statsModifierPercentage.strPercentage); }
-		}
-		public int baseStrength {
-			get { return _baseStrength; }
-		}
-		public int intelligence {
-			get { return _intelligence + (int)((float)_intelligence * _statsModifierPercentage.intPercentage); }
-		}
-		public int baseIntelligence {
-			get { return _baseIntelligence; }
-		}
-		public int agility {
-			get { return _agility + (int)((float)_agility * _statsModifierPercentage.agiPercentage); }
-		}
-		public int baseAgility {
-			get { return _baseAgility; }
-		}
-		public int currentHP{
-			get { return this._currentHP; }
-		}
-		public int maxHP {
-			get { return this._maxHP; }
-		}
-		public int baseMaxHP {
-			get { return _baseMaxHP; }
-		}
-		public StatsModifierPercentage statsModifierPercentage {
-			get { return _statsModifierPercentage; }
-		}
-		public int dodgeRate {
-			get { return characterClass.dodgeRate + _equippedItems.Sum(x => x.bonusDodgeRate); }
-		}
-		public int parryRate {
-			get { return characterClass.parryRate + _equippedItems.Sum(x => x.bonusParryRate); }
-		}
-		public int blockRate {
-			get { return characterClass.blockRate + _equippedItems.Sum(x => x.bonusBlockRate); }
-		}
-		public Color characterColor {
-			get { return _characterColor; }
-		}
-		public string characterColorCode {
-			get { return _characterColorCode; }
-		}
-		public BaseLandmark home {
+        public int strength {
+            get { return _strength + _bonusStrength; }
+        }
+        public int baseStrength {
+            get { return _baseStrength; }
+        }
+        public int intelligence {
+            get { return _intelligence + _bonusIntelligence; }
+        }
+        public int baseIntelligence {
+            get { return _baseIntelligence; }
+        }
+        public int agility {
+            get { return _agility + _bonusAgility; }
+        }
+        public int baseAgility {
+            get { return _baseAgility; }
+        }
+        public int vitality {
+            get { return _vitality + _bonusVitality; }
+        }
+        public int baseVitality {
+            get { return _baseVitality; }
+        }
+        public int currentHP {
+            get { return this._currentHP; }
+        }
+        public int maxHP {
+            get { return this._maxHP; }
+        }
+        public int baseMaxHP {
+            get { return _baseMaxHP; }
+        }
+        //public int dodgeRate {
+        //	get { return characterClass.dodgeRate + _equippedItems.Sum(x => x.bonusDodgeRate); }
+        //}
+        //public int parryRate {
+        //	get { return characterClass.parryRate + _equippedItems.Sum(x => x.bonusParryRate); }
+        //}
+        //public int blockRate {
+        //	get { return characterClass.blockRate + _equippedItems.Sum(x => x.bonusBlockRate); }
+        //}
+        public Color characterColor {
+            get { return _characterColor; }
+        }
+        public string characterColorCode {
+            get { return _characterColorCode; }
+        }
+        public BaseLandmark home {
             get { return _home; }
         }
-		public BaseLandmark lair {
+        public BaseLandmark lair {
             get { return _lair; }
         }
-		public float remainingHP { //Percentage of remaining HP this character has
-            get { return (float)currentHP / (float)maxHP; }
+        public float remainingHP { //Percentage of remaining HP this character has
+            get { return (float) currentHP / (float) maxHP; }
         }
-		public int remainingHPPercent {
-            get { return (int)(remainingHP * 100); }
+        public int remainingHPPercent {
+            get { return (int) (remainingHP * 100); }
         }
-		public List<Log> history{
-			get { return this._history; }
-		}
-		public float characterPower{
-			get { return (float)_currentHP + (float)((_strength + _intelligence + _agility) * 2) + _equippedWeaponPower;}
-		}
-		public float equippedWeaponPower{
-			get { return _equippedWeaponPower; }
-		}
-		public List<Character> prisoners{
-			get { return this._prisoners; }
-		}
-		public List<Character> followers{
-			get { return this._followers; }
-		}
-		public object isPrisonerOf{
-			get { return this._isPrisonerOf; }
-		}
-		public int gold {
+        public List<Log> history {
+            get { return this._history; }
+        }
+        public float characterPower {
+            get { return (float) _currentHP + (float) ((strength + intelligence + agility) * 2) + _equippedWeaponPower; }
+        }
+        public float equippedWeaponPower {
+            get { return _equippedWeaponPower; }
+        }
+        public List<Character> prisoners {
+            get { return this._prisoners; }
+        }
+        public List<Character> followers {
+            get { return this._followers; }
+        }
+        public object isPrisonerOf {
+            get { return this._isPrisonerOf; }
+        }
+        public int gold {
             get { return _gold; }
         }
-		public int prestige {
+        public int prestige {
             get { return _prestige; }
-		}
-		public bool isDefeated {
-			get {
-				return _isDefeated; 
-			}
-		}
-        public int civilians {
-            get { 
-				if(_civiliansByRace == null){
-					return 0;
-				}
-				return _civiliansByRace.Sum(x => x.Value); 
-			}
         }
-		public Dictionary<RACE, int> civiliansByRace{
-			get { return _civiliansByRace; }
-		}
-		public List<BaseLandmark> exploredLandmarks {
-			get { return _exploredLandmarks; }
-		}
-		public bool isInCombat{
-			get {
-				if(_party != null){
-					return _party.isInCombat;
-				}
-				return _isInCombat; 
-			}
-		}
-		public Action currentFunction{
-			get { return _currentFunction; }
-		}
+        //public bool isDefeated {
+        //	get { return _isDefeated; }
+        //}
+        //public int civilians {
+        //    get {
+        //        if (_civiliansByRace == null) {
+        //            return 0;
+        //        }
+        //        return _civiliansByRace.Sum(x => x.Value);
+        //    }
+        //}
+        //public Dictionary<RACE, int> civiliansByRace {
+        //    get { return _civiliansByRace; }
+        //}
+        public List<BaseLandmark> exploredLandmarks {
+            get { return _exploredLandmarks; }
+        }
+        public bool isInCombat {
+            get {
+                if (_party != null) {
+                    return _party.isInCombat;
+                }
+                return _isInCombat;
+            }
+        }
+        //public Action currentFunction{
+        //	get { return _currentFunction; }
+        //}
         public bool isFactionless {
             get { return faction == null; }
         }
@@ -342,36 +364,33 @@ namespace ECS {
                 } else {
                     return Mathf.Max(0, MAX_FOLLOWERS - (party.partyMembers.Count - 1));
                 }
-                
+
             }
         }
-		public Character isFollowerOf{
-			get { return _isFollowerOf; }
-		}
-		public Character mainCharacter{
-			get { return this; }
-		}
-		public int numOfCharacters{
-			get { return 1; }
-		}
-		public bool doesNotTakePrisoners{
-			get { return (_party == null ? characterDoesNotTakePrisoners : _party.doesNotTakePrisoners); }
-		}
-		public bool characterDoesNotTakePrisoners{
-			get { return _doesNotTakePrisoners; }
-		}
-		public bool cannotBeTakenAsPrisoner{
-			get { return _cannotBeTakenAsPrisoner; }
-		}
-		public Dictionary<Character, List<string>> traceInfo{
-			get { return _traceInfo; }
-		}
-		public COMBAT_INTENT combatIntent{
-			get {
+        public Character isFollowerOf {
+            get { return _isFollowerOf; }
+        }
+        //public int numOfCharacters{
+        //	get { return 1; }
+        //}
+        public bool doesNotTakePrisoners {
+            get { return (_party == null ? characterDoesNotTakePrisoners : _party.doesNotTakePrisoners); }
+        }
+        public bool characterDoesNotTakePrisoners {
+            get { return _doesNotTakePrisoners; }
+        }
+        public bool cannotBeTakenAsPrisoner {
+            get { return _cannotBeTakenAsPrisoner; }
+        }
+        public Dictionary<Character, List<string>> traceInfo {
+            get { return _traceInfo; }
+        }
+        public COMBAT_INTENT combatIntent {
+            get {
                 return COMBAT_INTENT.KILL; //TODO: Change this when task is changed to action
                 //return (_currentAction == null ? COMBAT_INTENT.DEFEAT : _currentAction.currentState.combatIntent);
             }
-		}
+        }
         public ActionData actionData {
             get { return _actionData; }
         }
@@ -387,137 +406,153 @@ namespace ECS {
         public PortraitSettings portraitSettings {
             get { return _portraitSettings; }
         }
+        public int level {
+            get { return _level; }
+        }
+        public int currentSP {
+            get { return _sp; }
+        }
+        public int maxSP {
+            get { return _maxSP; }
+        }
+        public int experience {
+            get { return _experience; }
+        }
+        public int maxExperience {
+            get { return _maxExperience; }
+        }
+        public float critChance {
+            get { return _critChance; }
+        }
+        public float critDamage {
+            get { return _critDamage; }
+        }
+        public Dictionary<ELEMENT, float> elementalWeaknesses {
+            get { return _elementalWeaknesses; }
+        }
+        public Dictionary<ELEMENT, float> elementalResistances {
+            get { return _elementalResistances; }
+        }
+        public Combat currentCombat {
+            get { return _currentCombat; }
+            set { _currentCombat = value; }
+        }
+        public int actRate {
+            get { return _actRate; }
+            set { _actRate = value; }
+        }
+        public Weapon equippedWeapon {
+            get { return _equippedWeapon; }
+        }
+        public CharacterBattleTracker battleTracker {
+            get { return _battleTracker; }
+        }
+        public CharacterBattleOnlyTracker battleOnlyTracker {
+            get { return _battleOnlyTracker; }
+        }
         #endregion
 
-        public Character(CharacterSetup baseSetup, GENDER gender, int statAllocationBonus = 0) : this() {
+        public Character(CharacterSetup baseSetup) {
             _id = Utilities.SetID(this);
 			_characterClass = baseSetup.characterClass.CreateNewCopy();
 			_raceSetting = baseSetup.raceSetting.CreateNewCopy();
-            _gender = gender;
+			_gender = Utilities.GetRandomGender();
             _name = RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender);
+            _traits = new List<Trait> ();
+			_tags = new List<CharacterTag> ();
             _relationships = new Dictionary<Character, Relationship>();
-            _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait();
-            GenerateSetupTags(baseSetup);
-            GenerateRaceTags();
-            AllocateStatPoints(statAllocationBonus);
-            EquipPreEquippedItems(baseSetup);
-
-            _strength = _baseStrength;
-            _agility = _baseAgility;
-            _intelligence = _baseIntelligence;
-            _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
-
-            _equippedItems = new List<Item>();
-            _inventory = new List<Item>();
-            _skills = GetGeneralSkills();
-            _skills.AddRange(GetBodyPartSkills());
-
-            AdjustMaxHP(_baseMaxHP);
-        }
-
-        public Character(CharacterSaveData data) : this(){
-            _id = Utilities.SetID(this, data.id);
-            CharacterSetup baseSetup = CombatManager.Instance.GetBaseCharacterSetup(data.className, data.race);
-            _characterClass = baseSetup.characterClass.CreateNewCopy();
-            _raceSetting = baseSetup.raceSetting.CreateNewCopy();
-            _gender = data.gender;
-            _name = data.name;
-            _traits = new List<Trait>();
-            _tags = new List<CharacterTag>();
-            //LoadRelationships(data.relationshipsData);
-            _portraitSettings = data.portraitSettings;
-            GenerateSetupTags(baseSetup);
-            GenerateRaceTags();
-            AllocateStatPoints(0); //TODO: change to what save data is
-            EquipPreEquippedItems(baseSetup);
-
-            _strength = _baseStrength;
-            _agility = _baseAgility;
-            _intelligence = _baseIntelligence;
-            _bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
-
-            _equippedItems = new List<Item>();
-            _inventory = new List<Item>();
-            _skills = GetGeneralSkills();
-            _skills.AddRange(GetBodyPartSkills());
-
-            AdjustMaxHP(_baseMaxHP);
-        }
-
-        public Character() {
-            _traits = new List<Trait>();
-            _tags = new List<CharacterTag>();
-            _exploredLandmarks = new List<BaseLandmark>();
-            statusEffects = new List<STATUS_EFFECT>();
-            _isDead = false;
-            _isFainted = false;
-            _isPrisoner = false;
-            _isDefeated = false;
-            _doesNotTakePrisoners = false;
-            _cannotBeTakenAsPrisoner = false;
+			_exploredLandmarks = new List<BaseLandmark> ();
+			statusEffects = new List<STATUS_EFFECT>();
+			_isDead = false;
+			_isFainted = false;
+			_isPrisoner = false;
+			//_isDefeated = false;
+			_doesNotTakePrisoners = false;
+			_cannotBeTakenAsPrisoner = false;
             _isIdle = false;
-            _traceInfo = new Dictionary<Character, List<string>>();
-            _isPrisonerOf = null;
-            _prisoners = new List<Character>();
-            _history = new List<Log>();
-            _followers = new List<Character>();
-            _isFollowerOf = null;
-            _statsModifierPercentage = new StatsModifierPercentage();
+			_traceInfo = new Dictionary<Character, List<string>> ();
+			_isPrisonerOf = null;
+			_prisoners = new List<Character> ();
+			_history = new List<Log> ();
+			_followers = new List<Character> ();
+			_isFollowerOf = null;
             _questData = new QuestData(this);
-            _actionQueue = new CharacterActionQueue<CharacterAction>();
-            previousActions = new Dictionary<CharacterTask, string>();
+            //_actionQueue = new CharacterActionQueue<CharacterAction>();
+            _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(gender);
+			previousActions = new Dictionary<CharacterTask, string> ();
             _actionData = new ActionData(this);
+            _level = 0;
+            _experience = 0;
+            _elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
+            _elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
+            _battleTracker = new CharacterBattleTracker();
+            _battleOnlyTracker = new CharacterBattleOnlyTracker();
 
-            
-            GetRandomCharacterColor();
+            GenerateRaceTags();
+            GenerateSetupTags(baseSetup);
 
-            currentCombat = null;
-            combatHistory = new Dictionary<int, Combat>();
-#if !WORLD_CREATION_TOOL
+            AllocateStatPoints (10);
+            LevelUp();
+            //GenerateTraits();
+			_bodyParts = new List<BodyPart>(_raceSetting.bodyParts);
+
+			_equippedItems = new List<Item> ();
+			_inventory = new List<Item> ();
+			_skills = GetGeneralSkills();
+			//_skills.AddRange (GetBodyPartSkills ());
+
+            EquipPreEquippedItems (baseSetup);
+			GetRandomCharacterColor ();
+
+			currentCombat = null;
+			combatHistory = new Dictionary<int, Combat> ();
+			//_combatHistoryID = 0;
+
             _characterObject = ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.CHARACTER, "CharacterObject") as CharacterObj;
             _characterObject.SetCharacter(this);
             //ConstructResourceInventory();
-#endif
-            Messenger.AddListener<Region>("RegionDeath", RegionDeath);
-            Messenger.AddListener<List<Region>>("RegionPsytoxin", RegionPsytoxin);
+
+            Messenger.AddListener<Region> ("RegionDeath", RegionDeath);
+			Messenger.AddListener<List<Region>> ("RegionPsytoxin", RegionPsytoxin);
             Messenger.AddListener(Signals.HOUR_ENDED, EverydayAction);
             Messenger.AddListener<StructureObj, int>("CiviliansDeath", CiviliansDiedReduceSanity);
-            Messenger.AddListener<ECS.Character>(Signals.CHARACTER_REMOVED, RemoveRelationshipWith);
+            //ConstructMaterialInventory();
+
         }
 
-        private void AllocateStatPoints(int statAllocationBonus){
-			_baseMaxHP = _raceSetting.baseHP;
-			_baseStrength = _raceSetting.baseStr;
-			_baseAgility = _raceSetting.baseAgi;
-			_baseIntelligence = _raceSetting.baseInt;
+		private void AllocateStatPoints(int statAllocation){
+            _baseStrength = 0;
+            _baseIntelligence = 0;
+            _baseAgility = 0;
+            _baseVitality = 0;
 
 			WeightedDictionary<string> statWeights = new WeightedDictionary<string> ();
-			statWeights.AddElement ("strength", _raceSetting.strWeightAllocation);
-			statWeights.AddElement ("intelligence", _raceSetting.intWeightAllocation);
-			statWeights.AddElement ("agility", _raceSetting.agiWeightAllocation);
-			statWeights.AddElement ("hp", _raceSetting.hpWeightAllocation);
+			statWeights.AddElement ("strength", (int) _characterClass.strWeightAllocation);
+			statWeights.AddElement ("intelligence", (int) _characterClass.intWeightAllocation);
+			statWeights.AddElement ("agility", (int) _characterClass.agiWeightAllocation);
+			statWeights.AddElement ("vitality", (int) _characterClass.vitWeightAllocation);
 
 			if(statWeights.GetTotalOfWeights() > 0){
 				string chosenStat = string.Empty;
-				int totalStatAllocation = _raceSetting.statAllocationPoints + statAllocationBonus;
-				for (int i = 0; i < totalStatAllocation; i++) {
+				for (int i = 0; i < statAllocation; i++) {
 					chosenStat = statWeights.PickRandomElementGivenWeights ();
 					if (chosenStat == "strength") {
-						_baseStrength += 5;
+						_baseStrength += 1;
 					}else if (chosenStat == "intelligence") {
-						_baseIntelligence += 5;
+						_baseIntelligence += 1;
 					}else if (chosenStat == "agility") {
-						_baseAgility += 5;
-					}else if (chosenStat == "hp") {
-						_baseMaxHP += 50;
+						_baseAgility += 1;
+					}else if (chosenStat == "vitality") {
+						_baseVitality += 1;
 					}
 				}
 			}
 
-			_baseMaxHP += (int)((float)_baseMaxHP * (_characterClass.hpPercentage / 100f));
-			_baseStrength += (int)((float)_baseStrength * (_characterClass.strPercentage / 100f));
-			_baseAgility += (int)((float)_baseAgility * (_characterClass.agiPercentage / 100f));
-			_baseIntelligence += (int)((float)_baseIntelligence * (_characterClass.intPercentage / 100f));
+			//_baseMaxHP += (int)((float)_baseMaxHP * (_characterClass.hpPercentage / 100f));
+			//_baseStrength += (int)((float)_baseStrength * (_characterClass.strPercentage / 100f));
+			//_baseAgility += (int)((float)_baseAgility * (_characterClass.agiPercentage / 100f));
+			//_baseIntelligence += (int)((float)_baseIntelligence * (_characterClass.intPercentage / 100f));
+            
 		}
 		//Check if the body parts of this character has the attribute necessary and quantity
 		internal bool HasAttribute(IBodyPart.ATTRIBUTE attribute, int quantity){
@@ -569,39 +604,89 @@ namespace ECS {
 		internal void EnableDisableSkills(Combat combat){
 			bool isAllAttacksInRange = true;
 			bool isAttackInRange = false;
+
+            //Body part skills / general skills
 			for (int i = 0; i < this._skills.Count; i++) {
 				Skill skill = this._skills [i];
 				skill.isEnabled = true;
 
-				for (int j = 0; j < skill.skillRequirements.Length; j++) {
-					SkillRequirement skillRequirement = skill.skillRequirements [j];
-					if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
-						skill.isEnabled = false;
-						break;
-					}
-				}
-				if(!skill.isEnabled){
-					continue;
-				}
-				if(skill is AttackSkill){
+                for (int j = 0; j < skill.skillRequirements.Length; j++) {
+                    SkillRequirement skillRequirement = skill.skillRequirements[j];
+                    if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
+                        skill.isEnabled = false;
+                        break;
+                    }
+                }
+                if (!skill.isEnabled) {
+                    continue;
+                }
+                if (skill is AttackSkill){
+                    AttackSkill attackSkill = skill as AttackSkill;
+                    if(attackSkill.spCost > _sp) {
+                        skill.isEnabled = false;
+                        continue;
+                    }
 					isAttackInRange = combat.HasTargetInRangeForSkill (skill, this);
 					if(!isAttackInRange){
 						isAllAttacksInRange = false;
 						skill.isEnabled = false;
 						continue;
 					}
-				}else if (skill is FleeSkill){
-//					skill.isEnabled = false;
-//					continue;
-					if(this.currentHP >= (this.maxHP / 2)){
-						skill.isEnabled = false;
-						continue;
-					}
-				}
-			}
+				} else if (skill is FleeSkill) {
+                    //					skill.isEnabled = false;
+                    //					continue;
+                    if (this.currentHP >= (this.maxHP / 2)) {
+                        skill.isEnabled = false;
+                        continue;
+                    }
+                }
+            }
+
+            //Character class skills
+            if(_equippedWeapon != null) {
+                for (int i = 0; i < _level; i++) {
+                    for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
+                        Skill skill = _characterClass.skillsPerLevel[i][j];
+                        skill.isEnabled = true;
+
+                        //Check for allowed weapon types
+                        for (int k = 0; k < skill.allowedWeaponTypes.Length; k++) {
+                            if (!skill.allowedWeaponTypes.Contains(_equippedWeapon.weaponType)) {
+                                skill.isEnabled = false;
+                                continue;
+                            }
+                        }
+
+                        //for (int k = 0; k < skill.skillRequirements.Length; k++) {
+                        //    SkillRequirement skillRequirement = skill.skillRequirements[k];
+                        //    if (!HasAttribute(skillRequirement.attributeRequired, skillRequirement.itemQuantity)) {
+                        //        skill.isEnabled = false;
+                        //        break;
+                        //    }
+                        //}
+                        //if (!skill.isEnabled) {
+                        //    continue;
+                        //}
+                        if (skill is AttackSkill) {
+                            AttackSkill attackSkill = skill as AttackSkill;
+                            if (attackSkill.spCost > _sp) {
+                                skill.isEnabled = false;
+                                continue;
+                            }
+                            isAttackInRange = combat.HasTargetInRangeForSkill(skill, this);
+                            if (!isAttackInRange) {
+                                isAllAttacksInRange = false;
+                                skill.isEnabled = false;
+                                continue;
+                            }
+                        }
+                    }
+                }
+
+            }
 
 
-			for (int i = 0; i < this._skills.Count; i++) {
+            for (int i = 0; i < this._skills.Count; i++) {
 				Skill skill = this._skills [i];
 				if(skill is MoveSkill){
 					skill.isEnabled = true;
@@ -617,7 +702,7 @@ namespace ECS {
 							bool hasEnemyOnLeft = false;
 							if(combat.charactersSideA.Contains(this)){
 								for (int j = 0; j < combat.charactersSideB.Count; j++) {
-									Character enemy = combat.charactersSideB [j];
+									ICharacter enemy = combat.charactersSideB [j];
 									if(enemy.currentRow < this._currentRow){
 										hasEnemyOnLeft = true;
 										break;
@@ -625,7 +710,7 @@ namespace ECS {
 								}
 							}else{
 								for (int j = 0; j < combat.charactersSideA.Count; j++) {
-									Character enemy = combat.charactersSideA [j];
+                                    ICharacter enemy = combat.charactersSideA [j];
 									if(enemy.currentRow < this._currentRow){
 										hasEnemyOnLeft = true;
 										break;
@@ -644,7 +729,7 @@ namespace ECS {
 							bool hasEnemyOnRight = false;
 							if(combat.charactersSideA.Contains(this)){
 								for (int j = 0; j < combat.charactersSideB.Count; j++) {
-									Character enemy = combat.charactersSideB [j];
+                                    ICharacter enemy = combat.charactersSideB [j];
 									if(enemy.currentRow > this._currentRow){
 										hasEnemyOnRight = true;
 										break;
@@ -652,7 +737,7 @@ namespace ECS {
 								}
 							}else{
 								for (int j = 0; j < combat.charactersSideA.Count; j++) {
-									Character enemy = combat.charactersSideA [j];
+                                    ICharacter enemy = combat.charactersSideA [j];
 									if(enemy.currentRow > this._currentRow){
 										hasEnemyOnRight = true;
 										break;
@@ -668,16 +753,16 @@ namespace ECS {
 				}
 			}
 		}
-		//Changes row number of this character
-		internal void SetRowNumber(int rowNumber){
+        //Changes row number of this character
+        public void SetRowNumber(int rowNumber){
 			this._currentRow = rowNumber;
 		}
 		//Changes character's side
-		internal void SetSide(SIDES side){
+		public void SetSide(SIDES side){
 			this._currentSide = side;
 		}
-		//Adjust current HP based on specified paramater, but HP must not go below 0
-		internal void AdjustHP(int amount){
+        //Adjust current HP based on specified paramater, but HP must not go below 0
+        public void AdjustHP(int amount){
             int previous = this._currentHP;
 			this._currentHP += amount;
 			this._currentHP = Mathf.Clamp(this._currentHP, 0, _maxHP);
@@ -689,31 +774,30 @@ namespace ECS {
                     FaintOrDeath();
                 }
             }
-
 		}
 		internal void SetHP(int amount){
 			this._currentHP = amount;
 		}
 		private string GetFaintOrDeath(){
             return "die";
-			//WeightedDictionary<string> faintDieDict = new WeightedDictionary<string> ();
-			//int faintWeight = 100;
-			//int dieWeight = 50;
-			//if(HasTrait(TRAIT.GRITTY)){
-			//	faintWeight += 50;
-			//}
-			//if(HasTrait(TRAIT.ROBUST)){
-			//	faintWeight += 50;
-			//}
-			//if(HasTrait(TRAIT.FRAGILE)){
-			//	dieWeight += 50;
-			//}
-			//faintDieDict.AddElement ("faint", 100);
-			//faintDieDict.AddElement ("die", 50);
+			WeightedDictionary<string> faintDieDict = new WeightedDictionary<string> ();
+			int faintWeight = 100;
+			int dieWeight = 50;
+			if(HasTrait(TRAIT.GRITTY)){
+				faintWeight += 50;
+			}
+			if(HasTrait(TRAIT.ROBUST)){
+				faintWeight += 50;
+			}
+			if(HasTrait(TRAIT.FRAGILE)){
+				dieWeight += 50;
+			}
+			faintDieDict.AddElement ("faint", 100);
+			faintDieDict.AddElement ("die", 50);
 
-			//return faintDieDict.PickRandomElementGivenWeights ();
+			return faintDieDict.PickRandomElementGivenWeights ();
 		}
-		internal void FaintOrDeath(){
+		public void FaintOrDeath(){
 			string pickedWeight = GetFaintOrDeath ();
 			if(pickedWeight == "faint"){
 				if(this.currentCombat == null){
@@ -757,7 +841,7 @@ namespace ECS {
 			}
 		}
 		//Character's death
-		internal void Death(ICombatInitializer killer = null){
+		internal void Death(Character killer = null){
 			if(!_isDead){
 				_isDead = true;
 				Messenger.RemoveListener<Region> ("RegionDeath", RegionDeath);
@@ -821,13 +905,13 @@ namespace ECS {
 				if(_isFollower){
 					SetFollowerState (false);
 				}
-                if (_avatar != null) {
-                    if (_avatar.mainCharacter.id == this.id) {
-                        DestroyAvatar();
-                    } else {
-                        _avatar.RemoveCharacter(this); //if the character has an avatar, remove it from the list of characters
-                    }
-                }
+                //if (_avatar != null) {
+                //    if (_avatar.mainCharacter.id == this.id) {
+                //        DestroyAvatar();
+                //    } else {
+                //        _avatar.RemoveCharacter(this); //if the character has an avatar, remove it from the list of characters
+                //    }
+                //}
 
                 if (_isPrisoner){
 					PrisonerDeath ();
@@ -873,32 +957,32 @@ namespace ECS {
 		internal void AddBodyPart(BodyPart bodyPart) {
 			bodyParts.Add(bodyPart);
 		}
-		internal IBodyPart GetBodyPartForWeapon(Weapon weapon) {
-			List<IBodyPart> allBodyParts = new List<IBodyPart>();
-			for (int i = 0; i < bodyParts.Count; i++) {
-				BodyPart currBodyPart = bodyParts[i];
-				allBodyParts.Add(currBodyPart);
-				for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
-					allBodyParts.Add(currBodyPart.secondaryBodyParts[j]);
-				}
-			}
-			for (int i = 0; i < allBodyParts.Count; i++) {
-				IBodyPart currBodyPart = allBodyParts[i];
-				bool meetsRequirements = true;
-				//check if currBodyPart meets the weapons requirements
-				for (int j = 0; j < weapon.equipRequirements.Count; j++) {
-					IBodyPart.ATTRIBUTE currReq = weapon.equipRequirements[j];
-					if (!currBodyPart.HasUnusedAttribute(currReq)) {
-						meetsRequirements = false;
-						break;
-					}
-				}
-				if (meetsRequirements) {
-					return currBodyPart;
-				}
-			}
-			return null;
-		}
+		//internal IBodyPart GetBodyPartForWeapon(Weapon weapon) {
+		//	List<IBodyPart> allBodyParts = new List<IBodyPart>();
+		//	for (int i = 0; i < bodyParts.Count; i++) {
+		//		BodyPart currBodyPart = bodyParts[i];
+		//		allBodyParts.Add(currBodyPart);
+		//		for (int j = 0; j < currBodyPart.secondaryBodyParts.Count; j++) {
+		//			allBodyParts.Add(currBodyPart.secondaryBodyParts[j]);
+		//		}
+		//	}
+		//	for (int i = 0; i < allBodyParts.Count; i++) {
+		//		IBodyPart currBodyPart = allBodyParts[i];
+		//		bool meetsRequirements = true;
+		//		//check if currBodyPart meets the weapons requirements
+		//		for (int j = 0; j < ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements.Count; j++) {
+		//			IBodyPart.ATTRIBUTE currReq = ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements[j];
+		//			if (!currBodyPart.HasUnusedAttribute(currReq)) {
+		//				meetsRequirements = false;
+		//				break;
+		//			}
+		//		}
+		//		if (meetsRequirements) {
+		//			return currBodyPart;
+		//		}
+		//	}
+		//	return null;
+		//}
 		internal IBodyPart GetBodyPartForArmor(Armor armor) {
 			IBodyPart.ATTRIBUTE neededAttribute = Utilities.GetNeededAttributeForArmor(armor);
 			for (int i = 0; i < bodyParts.Count; i++) {
@@ -923,7 +1007,15 @@ namespace ECS {
 					return true;
 				}
 			}
-			return false;
+            for (int i = 0; i < _level; i++) {
+                for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
+                    Skill skill = _characterClass.skillsPerLevel[i][j];
+                    if (skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.BODY_PART) {
+                        return true;
+                    }
+                }
+            }
+            return false;
 		}
 		internal bool HasActivatableWeaponSkill(){
 			for (int i = 0; i < this._skills.Count; i++) {
@@ -932,7 +1024,15 @@ namespace ECS {
 					return true;
 				}
 			}
-			return false;
+            for (int i = 0; i < _level; i++) {
+                for (int j = 0; j < _characterClass.skillsPerLevel[i].Length; j++) {
+                    Skill skill = _characterClass.skillsPerLevel[i][j];
+                    if (skill.isEnabled && skill.skillCategory == SKILL_CATEGORY.WEAPON) {
+                        return true;
+                    }
+                }
+            }
+            return false;
 		}
 		#endregion
 
@@ -952,16 +1052,15 @@ namespace ECS {
 			if(newItem.owner == null){
 				OwnItem (newItem);
 			}
-#if !WORLD_CREATION_TOOL
             Log obtainLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "obtain_item");
             obtainLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            obtainLog.AddToFillers(null, item.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
+            obtainLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
             AddHistory(obtainLog);
 			if (specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
                 (specificLocation as BaseLandmark).AddHistory(obtainLog);
             }
-#endif
-            Messenger.Broadcast(Signals.ITEM_OBTAINED, newItem, this);
+
+            Messenger.Broadcast(Signals.OBTAIN_ITEM, this, newItem);
             newItem.OnItemPutInInventory(this);
         }
 		internal void ThrowItem(Item item, bool addInLandmark = true){
@@ -970,7 +1069,7 @@ namespace ECS {
 			}
 			item.SetPossessor (null);
 			this._inventory.Remove (item);
-			item.exploreWeight = 15;
+			//item.exploreWeight = 15;
 			if(addInLandmark){
 				ILocation location = specificLocation;
 				if(location != null && location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
@@ -978,8 +1077,8 @@ namespace ECS {
 					landmark.AddItemInLandmark(item);
 				}
 			}
-            Messenger.Broadcast(Signals.ITEM_THROWN, item, this);
-        }
+
+		}
         internal void DropItem(Item item) {
             ThrowItem(item);
             ILocation location = specificLocation;
@@ -1034,7 +1133,7 @@ namespace ECS {
 			if(ItemManager.Instance.allItems.ContainsKey(itemName)){
 				if (itemType == ITEM_TYPE.WEAPON) {
 					Weapon weapon = ItemManager.Instance.CreateNewItemInstance(itemName) as Weapon;
-					weapon.ConstructSkillsList ();
+					//weapon.ConstructSkillsList ();
 					TryEquipWeapon(weapon);
 				} else if (itemType == ITEM_TYPE.ARMOR) {
                     Armor armor = ItemManager.Instance.CreateNewItemInstance(itemName) as Armor;
@@ -1046,7 +1145,7 @@ namespace ECS {
             if (ItemManager.Instance.allItems.ContainsKey(itemName)) {
                 if (itemType.ToLower() == "weapon") {
                     Weapon weapon = ItemManager.Instance.CreateNewItemInstance(itemName) as Weapon;
-                    weapon.ConstructSkillsList();
+                    //weapon.ConstructSkillsList();
                     TryEquipWeapon(weapon);
                 }
                 else if (itemType.ToLower() == "armor") {
@@ -1070,13 +1169,10 @@ namespace ECS {
 				hasEquipped = TryEquipArmor(armor);
 			}
             if (hasEquipped) {
-#if !WORLD_CREATION_TOOL
                 Log equipLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "equip_item");
                 equipLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                equipLog.AddToFillers(null, item.nameWithQuality, LOG_IDENTIFIER.ITEM_1);
+                equipLog.AddToFillers(null, item.itemName, LOG_IDENTIFIER.ITEM_1);
                 AddHistory(equipLog);
-#endif
-                Messenger.Broadcast(Signals.ITEM_EQUIPPED, item, this);
             }
             return hasEquipped;
 		}
@@ -1088,8 +1184,7 @@ namespace ECS {
 				UnequipArmor ((Armor)item);
 			}
 			RemoveEquippedItem(item);
-            Messenger.Broadcast(Signals.ITEM_UNEQUIPPED, item, this);
-        }
+		}
 		//Unown an item making the owner of it null, if successfully unowned, return true, otherwise, return false
 		internal bool UnownItem(Item item){
 			if(item.owner.id == this._id){
@@ -1108,8 +1203,8 @@ namespace ECS {
 		}
 		//Try to equip a weapon to a body part of this character and add it to the list of items this character have
 		internal bool TryEquipWeapon(Weapon weapon){
-			for (int j = 0; j < weapon.equipRequirements.Count; j++) {
-				IBodyPart.ATTRIBUTE currReq = weapon.equipRequirements[j];
+			for (int j = 0; j < ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements.Count; j++) {
+				IBodyPart.ATTRIBUTE currReq = ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements[j];
 				if(!AttachWeaponToBodyPart(weapon, currReq)){
 					DetachWeaponFromBodyParts (weapon);
 					return false;
@@ -1122,16 +1217,16 @@ namespace ECS {
 			}
 			AddEquippedItem(newWeapon);
 			newWeapon.SetPossessor (this);
-			newWeapon.ResetDurability();
+			//newWeapon.ResetDurability();
 //			weapon.SetOwner(this);
 			if(newWeapon.owner == null){
 				OwnItem (newWeapon);
 			}
 			_equippedWeaponPower += newWeapon.weaponPower;
-
-			for (int i = 0; i < newWeapon.skills.Count; i++) {
-				this._skills.Add (newWeapon.skills [i]);
-			}
+            _equippedWeapon = newWeapon;
+			//for (int i = 0; i < newWeapon.skills.Count; i++) {
+			//	this._skills.Add (newWeapon.skills [i]);
+			//}
 
 			//          Debug.Log(this.name + " equipped " + weapon.itemName + " to " + bodyPart.bodyPart.ToString());
 			//StreamingAssetsUI.Instance.UpdateCharacterSummary(this);
@@ -1152,8 +1247,8 @@ namespace ECS {
 			return false;
 		}
 		private void DetachWeaponFromBodyParts(Weapon weapon){
-			for (int i = 0; i < weapon.equipRequirements.Count; i++) {
-				IBodyPart.ATTRIBUTE req = weapon.equipRequirements [i];
+			for (int i = 0; i < ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements.Count; i++) {
+				IBodyPart.ATTRIBUTE req = ItemManager.Instance.weaponTypeData[weapon.weaponType].equipRequirements[i];
 				for (int j = 0; j < weapon.bodyPartsAttached.Count; j++) {
 					if(weapon.bodyPartsAttached[j].DettachItem(weapon, req)){
 						break;
@@ -1164,9 +1259,9 @@ namespace ECS {
 		//Unequips weapon of a character
 		private void UnequipWeapon(Weapon weapon) {
 			DetachWeaponFromBodyParts (weapon);
-			for (int i = 0; i < weapon.skills.Count; i++) {
-				this._skills.Remove (weapon.skills [i]);
-			}
+			//for (int i = 0; i < weapon.skills.Count; i++) {
+			//	this._skills.Remove (weapon.skills [i]);
+			//}
 			_equippedWeaponPower -= weapon.weaponPower;
 		}
 		//Try to equip an armor to a body part of this character and add it to the list of items this character have
@@ -1184,7 +1279,7 @@ namespace ECS {
 			//			armor.bodyPartAttached = bodyPart;
 			AddEquippedItem(newArmor);
 			newArmor.SetPossessor (this);
-			newArmor.ResetDurability();
+			//newArmor.ResetDurability();
 //			armor.SetOwner(this);
 			if(newArmor.owner == null){
 				OwnItem (newArmor);
@@ -1252,23 +1347,23 @@ namespace ECS {
 			}
 			return weapons;
 		}
-		internal bool HasEquipmentOfType(EQUIPMENT_TYPE equipmentType, IBodyPart.ATTRIBUTE attribute) {
-			for (int i = 0; i < equippedItems.Count; i++) {
-				Item currItem = equippedItems[i];
-				if(currItem.itemType == ITEM_TYPE.ARMOR) {
-					Armor armor = (Armor)currItem;
-					if ((EQUIPMENT_TYPE)armor.armorType == equipmentType && (armor.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
-						return true;
-					}
-				} else if (currItem.itemType == ITEM_TYPE.WEAPON) {
-					Weapon weapon = (Weapon)currItem;
-					if ((EQUIPMENT_TYPE)weapon.weaponType == equipmentType && (weapon.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
-						return true;
-					}
-				}
-			}
-			return false;
-		}
+		//internal bool HasEquipmentOfType(EQUIPMENT_TYPE equipmentType, IBodyPart.ATTRIBUTE attribute) {
+		//	for (int i = 0; i < equippedItems.Count; i++) {
+		//		Item currItem = equippedItems[i];
+		//		if(currItem.itemType == ITEM_TYPE.ARMOR) {
+		//			Armor armor = (Armor)currItem;
+		//			if ((EQUIPMENT_TYPE)armor.armorType == equipmentType && (armor.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
+		//				return true;
+		//			}
+		//		} else if (currItem.itemType == ITEM_TYPE.WEAPON) {
+		//			Weapon weapon = (Weapon)currItem;
+		//			if ((EQUIPMENT_TYPE)weapon.weaponType == equipmentType && (weapon.attributes.Contains(attribute) || attribute == IBodyPart.ATTRIBUTE.NONE)) {
+		//				return true;
+		//			}
+		//		}
+		//	}
+		//	return false;
+		//}
         internal bool HasEquipmentOfType(EQUIPMENT_TYPE equipmentType) {
             for (int i = 0; i < equippedItems.Count; i++) {
                 Item currItem = equippedItems[i];
@@ -1406,16 +1501,31 @@ namespace ECS {
 			return null;
 		}
         private void AddItemBonuses(Item item) {
-            AdjustMaxHP(item.bonusMaxHP);
-            this._strength += item.bonusStrength;
-            this._intelligence += item.bonusIntelligence;
-            this._agility += item.bonusAgility;
+            if(item.itemType == ITEM_TYPE.ARMOR) {
+                Armor armor = (Armor) item;
+                _bonusPDef += armor.pDef;
+                _bonusMDef += armor.mDef;
+                _bonusPDefPercent += (armor.prefix.bonusPDefPercent + armor.suffix.bonusPDefPercent);
+                _bonusMDefPercent += (armor.prefix.bonusMDefPercent + armor.suffix.bonusMDefPercent);
+            }
+            //AdjustMaxHP(item.bonusMaxHP);
+            //AdjustBonusStrength(item.bonusStrength);
+            //AdjustBonusIntelligence(item.bonusIntelligence);
+            //AdjustBonusAgility(item.bonusAgility);
+            //AdjustBonusVitality(item.bonusVitality);
         }
         private void RemoveItemBonuses(Item item) {
-            AdjustMaxHP(-item.bonusMaxHP);
-            this._strength -= item.bonusStrength;
-            this._intelligence -= item.bonusIntelligence;
-            this._agility -= item.bonusAgility;
+            if (item.itemType == ITEM_TYPE.ARMOR) {
+                Armor armor = (Armor) item;
+                _bonusPDef -= armor.pDef;
+                _bonusMDef -= armor.mDef;
+                _bonusPDefPercent -= (armor.prefix.bonusPDefPercent + armor.suffix.bonusPDefPercent);
+                _bonusMDefPercent -= (armor.prefix.bonusMDefPercent + armor.suffix.bonusMDefPercent);
+            }
+            //AdjustMaxHP(-item.bonusMaxHP);
+            //AdjustBonusStrength(-item.bonusStrength);
+            //AdjustBonusIntelligence(-item.bonusIntelligence);
+            //AdjustBonusVitality(-item.bonusVitality);
         }
         #endregion
 
@@ -1491,73 +1601,59 @@ namespace ECS {
 		}
 		#endregion
 
-		#region Stats
-		internal void SetAgility (int amount){
-			this._agility = amount;
-		}
-		internal void AdjustAgility (int amount){
-			this._agility += amount;
-		}        
-        #endregion
-
 		#region Roles
 		public void AssignRole(CHARACTER_ROLE role) {
             bool wasRoleChanged = false;
 			if(_role != null){
 				_role.ChangedRole ();
-#if !WORLD_CREATION_TOOL
                 Log roleChangeLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "change_role");
                 roleChangeLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 AddHistory(roleChangeLog);
-#endif
                 wasRoleChanged = true;
             }
 			switch (role) {
-		        //case CHARACTER_ROLE.CHIEFTAIN:
-			       // _role = new Chieftain(this);
-			       // break;
-		        //case CHARACTER_ROLE.VILLAGE_HEAD:
-			       // _role = new VillageHead(this);
-			       // break;
-		        //case CHARACTER_ROLE.WARLORD:
-			       // _role = new Warlord(this);
-			       // break;
+		        case CHARACTER_ROLE.CHIEFTAIN:
+			        _role = new Chieftain(this);
+			        break;
+		        case CHARACTER_ROLE.VILLAGE_HEAD:
+			        _role = new VillageHead(this);
+			        break;
+		        case CHARACTER_ROLE.WARLORD:
+			        _role = new Warlord(this);
+			        break;
 		        case CHARACTER_ROLE.HERO:
 			        _role = new Hero(this);
 			        break;
-          //      case CHARACTER_ROLE.WORKER:
-          //          _role = new Worker(this);
-          //          break;
-		        //case CHARACTER_ROLE.TAMED_BEAST:
-			       // _role = new TamedBeast(this);
-			       // break;
-          //      case CHARACTER_ROLE.ANCIENT_VAMPIRE:
-          //          _role = new AncientVampire(this);
-          //          break;
-		        //case CHARACTER_ROLE.CRATER_BEAST:
-			       // _role = new CraterBeast(this);
-			       // break;
-		        //case CHARACTER_ROLE.SLYX:
-			       // _role = new Slyx(this);
-			       // break;
+                case CHARACTER_ROLE.WORKER:
+                    _role = new Worker(this);
+                    break;
+		        case CHARACTER_ROLE.TAMED_BEAST:
+			        _role = new TamedBeast(this);
+			        break;
+                case CHARACTER_ROLE.ANCIENT_VAMPIRE:
+                    _role = new AncientVampire(this);
+                    break;
+		        case CHARACTER_ROLE.CRATER_BEAST:
+			        _role = new CraterBeast(this);
+			        break;
+		        case CHARACTER_ROLE.SLYX:
+			        _role = new Slyx(this);
+			        break;
 		        case CHARACTER_ROLE.VILLAIN:
 			        _role = new Villain(this);
 			        break;
-                case CHARACTER_ROLE.CIVILIAN:
-                    _role = new Civilian(this);
+                case CHARACTER_ROLE.FOLLOWER:
+                    _role = new Follower(this);
                     break;
-                //case CHARACTER_ROLE.FOLLOWER:
-                //    _role = new Follower(this);
-                //    break;
-                //case CHARACTER_ROLE.HERMIT:
-                //    _role = new Hermit(this);
-                //    break;
-                //case CHARACTER_ROLE.BANDIT:
-                //    _role = new Bandit(this);
-                //    break;
-                //case CHARACTER_ROLE.BEAST:
-                //    _role = new Beast(this);
-                //    break;
+                case CHARACTER_ROLE.HERMIT:
+                    _role = new Hermit(this);
+                    break;
+                case CHARACTER_ROLE.BANDIT:
+                    _role = new Bandit(this);
+                    break;
+                case CHARACTER_ROLE.BEAST:
+                    _role = new Beast(this);
+                    break;
                 default:
 		            break;
 			}
@@ -1573,16 +1669,15 @@ namespace ECS {
 
 //			AssignRole(role);
 			if(_raceSetting.tags.Contains(CHARACTER_TAG.SAPIENT)){
-				CHARACTER_ROLE roleToCreate = CHARACTER_ROLE.HERO;
+				CHARACTER_ROLE roleToCreate = CHARACTER_ROLE.WORKER;
 				WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
 				if (characterRoleProductionDictionary.GetTotalOfWeights () > 0) {
 					roleToCreate = characterRoleProductionDictionary.PickRandomElementGivenWeights ();
 				}
 				AssignRole(roleToCreate);
+			}else{
+				AssignRole (CHARACTER_ROLE.TAMED_BEAST);
 			}
-   //         else{
-			//	AssignRole (CHARACTER_ROLE.TAMED_BEAST);
-			//}
 		}
 		#endregion
 
@@ -1670,12 +1765,10 @@ namespace ECS {
 		public void AddTrait(Trait trait){
 			trait.AssignCharacter(this);
 			_traits.Add(trait);
-			AddTraitBonuses (trait);
 		}
 		public void RemoveTrait(Trait trait){
 			trait.AssignCharacter(null);
 			_traits.Remove(trait);
-			RemoveTraitBonuses (trait);
 		}
         private TRAIT GenerateCharismaTrait() {
             int chance = UnityEngine.Random.Range(0, 100);
@@ -1754,20 +1847,6 @@ namespace ECS {
 				}
 			}
 			return false;
-		}
-		private void AddTraitBonuses(Trait trait){
-			_statsModifierPercentage.intPercentage += trait.statsModifierPercentage.intPercentage;
-			_statsModifierPercentage.strPercentage += trait.statsModifierPercentage.strPercentage;
-			_statsModifierPercentage.agiPercentage += trait.statsModifierPercentage.agiPercentage;
-			_statsModifierPercentage.hpPercentage += trait.statsModifierPercentage.hpPercentage;
-			RecomputeMaxHP ();
-		}
-		private void RemoveTraitBonuses(Trait trait){
-			_statsModifierPercentage.intPercentage -= trait.statsModifierPercentage.intPercentage;
-			_statsModifierPercentage.strPercentage -= trait.statsModifierPercentage.strPercentage;
-			_statsModifierPercentage.agiPercentage -= trait.statsModifierPercentage.agiPercentage;
-			_statsModifierPercentage.hpPercentage -= trait.statsModifierPercentage.hpPercentage;
-			RecomputeMaxHP ();
 		}
         #endregion
 
@@ -1883,13 +1962,11 @@ namespace ECS {
         }
 		public void AddCharacterTag(CharacterTag tag){
 			_tags.Add(tag);
-			AddCharacterTagBonuses (tag);
 			tag.Initialize ();
 		}
 		public bool RemoveCharacterTag(CharacterTag tag){
 			if(_tags.Remove(tag)){
 				tag.OnRemoveTag();
-				RemoveCharacterTagBonuses (tag);
 				return true;
 			}
 			return false;
@@ -1903,20 +1980,6 @@ namespace ECS {
             }
 			return false;
         }
-        private void AddCharacterTagBonuses(CharacterTag tag){
-			_statsModifierPercentage.intPercentage += tag.statsModifierPercentage.intPercentage;
-			_statsModifierPercentage.strPercentage += tag.statsModifierPercentage.strPercentage;
-			_statsModifierPercentage.agiPercentage += tag.statsModifierPercentage.agiPercentage;
-			_statsModifierPercentage.hpPercentage += tag.statsModifierPercentage.hpPercentage;
-			RecomputeMaxHP ();
-		}
-		private void RemoveCharacterTagBonuses(CharacterTag tag){
-			_statsModifierPercentage.intPercentage -= tag.statsModifierPercentage.intPercentage;
-			_statsModifierPercentage.strPercentage -= tag.statsModifierPercentage.strPercentage;
-			_statsModifierPercentage.agiPercentage -= tag.statsModifierPercentage.agiPercentage;
-			_statsModifierPercentage.hpPercentage -= tag.statsModifierPercentage.hpPercentage;
-			RecomputeMaxHP ();
-		}
 		public bool HasTags(CHARACTER_TAG[] tagsToHave, bool mustHaveAll = false, bool includeParty = false){
 			if(!includeParty){
 				return DoesHaveTags (this, tagsToHave, mustHaveAll);
@@ -2078,7 +2141,6 @@ namespace ECS {
         #region Faction
         public void SetFaction(Faction faction) {
 			_faction = faction;
-            Messenger.Broadcast<Character>(Signals.FACTION_SET, this);
 		}
 		#endregion
 
@@ -2225,18 +2287,6 @@ namespace ECS {
         public bool IsHealthFull() {
             return _currentHP >= _maxHP;
         }
-        internal void AdjustMaxHP(int amount) {
-            this._fixedMaxHP += amount;
-            //			this._maxHP = this._maxHP + (int)((float)this._maxHP * _statsModifierPercentage.hpPercentage);
-            RecomputeMaxHP();
-        }
-        private void RecomputeMaxHP() {
-            int previousMaxHP = this._maxHP;
-            this._maxHP = this._fixedMaxHP + (int) ((float) this._fixedMaxHP * _statsModifierPercentage.hpPercentage);
-            if (this._currentHP > this._maxHP || this._currentHP == previousMaxHP) {
-                this._currentHP = this._maxHP;
-            }
-        }
         #endregion
 
         #region Avatar
@@ -2278,14 +2328,14 @@ namespace ECS {
 //                }
 //            }
         }
-		public void SetAvatar(CharacterAvatar avatar) {
-			_avatar = avatar;
-		}
-		public void DestroyAvatar() {
-			if(_avatar != null) {
-				_avatar.InstantDestroyAvatar();
-            }
-        }
+		//public void SetAvatar(CharacterAvatar avatar) {
+		//	_avatar = avatar;
+		//}
+		//public void DestroyAvatar() {
+		//	if(_avatar != null) {
+		//		_avatar.InstantDestroyAvatar();
+  //          }
+  //      }
 		internal void GoToLocation(ILocation targetLocation, PATHFINDING_MODE pathfindingMode, Action doneAction = null){
             if (specificLocation == targetLocation) {
                 //action doer is already at the target location
@@ -2415,22 +2465,6 @@ namespace ECS {
         #endregion
 
         #region Utilities
-        public void ChangeGender(GENDER gender) {
-            _gender = gender;
-            Messenger.Broadcast(Signals.GENDER_CHANGED, this, gender);
-        }
-        public void ChangeRace(RACE race) {
-            //TODO: Change data as needed
-            ECS.CharacterSetup setup = ECS.CombatManager.Instance.GetBaseCharacterSetup(_characterClass.className, race);
-            _characterClass = setup.characterClass.CreateNewCopy();
-            _raceSetting = setup.raceSetting.CreateNewCopy();
-        }
-        public void ChangeClass(string className) {
-            //TODO: Change data as needed
-            ECS.CharacterSetup setup = ECS.CombatManager.Instance.GetBaseCharacterSetup(className, _raceSetting.race);
-            _characterClass = setup.characterClass.CreateNewCopy();
-            _raceSetting = setup.raceSetting.CreateNewCopy();
-        }
 		public void SetName(string newName){
 			_name = newName;
 		}
@@ -2572,16 +2606,13 @@ namespace ECS {
         public void AddNewRelationship(Character relWith, Relationship relationship) {
             if (!_relationships.ContainsKey(relWith)) {
                 _relationships.Add(relWith, relationship);
-                Messenger.Broadcast<Relationship>(Signals.RELATIONSHIP_CREATED, relationship);
             } else {
                 throw new Exception(this.name + " already has a relationship with " + relWith.name + ", but something is trying to create a new one!");
             }
         }
         public void RemoveRelationshipWith(Character relWith) {
             if (_relationships.ContainsKey(relWith)) {
-                Relationship rel = _relationships[relWith];
                 _relationships.Remove(relWith);
-                Messenger.Broadcast<Relationship>(Signals.RELATIONSHIP_REMOVED, rel);
             }
         }
         public Relationship GetRelationshipWith(Character character) {
@@ -2589,25 +2620,6 @@ namespace ECS {
                 return _relationships[character];
             }
             return null;
-        }
-        public bool AlreadyHasRelationshipStatus(CHARACTER_RELATIONSHIP relStat) {
-            foreach (KeyValuePair<Character, Relationship> kvp in relationships) {
-                if (kvp.Value.HasStatus(relStat)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public void LoadRelationships(List<RelationshipSaveData> data) {
-            _relationships = new Dictionary<Character, Relationship>();
-            for (int i = 0; i < data.Count; i++) {
-                RelationshipSaveData currData = data[i];
-                Character otherCharacter = CharacterManager.Instance.GetCharacterByID(currData.targetCharacterID);
-                Relationship rel = new Relationship(this, otherCharacter);
-                rel.AddRelationshipStatus(currData.relationshipStatuses);
-                _relationships.Add(otherCharacter, rel);
-
-            }
         }
         #endregion
 
@@ -2655,9 +2667,9 @@ namespace ECS {
                     ((BaseLandmark)_isPrisonerOf).AddHistory(becomePrisonerLog);
                 }
 
-                if (_avatar != null && _avatar.mainCharacter.id == this.id) {
-                    DestroyAvatar();
-                }
+                //if (_avatar != null && _avatar.mainCharacter.id == this.id) {
+                //    DestroyAvatar();
+                //}
 
                 Unfaint ();
 
@@ -2777,8 +2789,8 @@ namespace ECS {
 		}
 		#endregion
 
-		#region ICombatInitializer
-		public bool IsHostileWith(ICombatInitializer combatInitializer){
+		#region Character
+		public bool IsHostileWith(Character character){
             if (this.faction == null) {
                 return true; //this character has no faction
             }
@@ -2786,12 +2798,13 @@ namespace ECS {
             //    return true;
             //}
             //Check here if the combatInitializer is hostile with this character, if yes, return true
-            Faction factionOfEnemy = null;
-            if(combatInitializer is Character) {
-                factionOfEnemy = (combatInitializer as Character).faction;
-            }else if(combatInitializer is Party) {
-                factionOfEnemy = (combatInitializer as Party).faction;
-            }
+            Faction factionOfEnemy = character.faction;
+            
+            //if (combatInitializer is Character) {
+            //    factionOfEnemy = (combatInitializer as Character).faction;
+            //}else if(combatInitializer is Party) {
+            //    factionOfEnemy = (combatInitializer as Party).faction;
+            //}
             if(factionOfEnemy != null) {
                 if(factionOfEnemy.id == this.faction.id) {
                     return false; //characters are of same faction
@@ -2806,25 +2819,25 @@ namespace ECS {
             }
 			
 		}
-		public void ReturnCombatResults(Combat combat){
-            this.SetIsInCombat(false);
-			if (this.isDefeated) {
+		//public void ReturnCombatResults(Combat combat){
+  //          this.SetIsInCombat(false);
+		//	if (this.isDefeated) {
                 
-            } else{
-                //this character won the combat, continue his/her current action if any
-                if (currentFunction != null) {
-                    currentFunction();
-                    SetCurrentFunction(null);
-                }
-                //if (avatar != null && avatar.isMovementPaused) {
-                //    avatar.ResumeMovement();
-                //}
-			}
-            SetIsDefeated(false);
-        }
-		public void SetIsDefeated(bool state){
-			_isDefeated = state;
-		}
+  //          } else{
+  //              //this character won the combat, continue his/her current action if any
+  //              if (currentFunction != null) {
+  //                  currentFunction();
+  //                  SetCurrentFunction(null);
+  //              }
+  //              //if (avatar != null && avatar.isMovementPaused) {
+  //              //    avatar.ResumeMovement();
+  //              //}
+		//	}
+  //          SetIsDefeated(false);
+  //      }
+		//public void SetIsDefeated(bool state){
+		//	_isDefeated = state;
+		//}
         //public void AdjustCivilians(Dictionary<RACE, int> civilians) {
         //    foreach (KeyValuePair<RACE, int> kvp in civilians) {
         //        AdjustCivilians(kvp.Key, kvp.Value);
@@ -2865,39 +2878,39 @@ namespace ECS {
             //}
             return STANCE.NEUTRAL;
         }
-        public void ContinueDailyAction() {
-            if (!isInCombat) {
-                if (currentAction != null) {
-                    //if (avatar != null && avatar.isTravelling) {
-                    //    return;
-                    //}
-                    //currentAction.PerformTask();
-                }
-            }
-        }
-        public bool CanInitiateCombat() {
-            //if (currentAction.combatPriority > 0) {
-            //    return true;
-            //}
-            return false;
-        }
+        //public void ContinueDailyAction() {
+        //    if (!isInCombat) {
+        //        if (actionData.currentAction != null) {
+        //            //if (avatar != null && avatar.isTravelling) {
+        //            //    return;
+        //            //}
+        //            //currentAction.PerformTask();
+        //        }
+        //    }
+        //}
+        //public bool CanInitiateCombat() {
+        //    //if (currentAction.combatPriority > 0) {
+        //    //    return true;
+        //    //}
+        //    return false;
+        //}
         #endregion
 
 		#region Combat Handlers
 		public void SetIsInCombat (bool state){
 			_isInCombat = state;
 		}
-		public void SetCurrentFunction (Action function){
-			if(_party != null){
-				_party.SetCurrentFunction (() => function ());
-			}else{
-				_currentFunction = function;
-			}
-		}
-		#endregion
+        //public void SetCurrentFunction(Action function) {
+        //    if (_party != null) {
+        //        _party.SetCurrentFunction(() => function());
+        //    } else {
+        //        _currentFunction = function;
+        //    }
+        //}
+        #endregion
 
-		#region Landmarks
-		public void AddExploredLandmark(BaseLandmark landmark){
+        #region Landmarks
+        public void AddExploredLandmark(BaseLandmark landmark){
 			_exploredLandmarks.Add(landmark); //did not add checking if landmark is already in list, since I want to allow duplicates
             //schedule removal of landmark after 6 months
             GameDate expiration = GameManager.Instance.Today();
@@ -3012,12 +3025,12 @@ namespace ECS {
         #endregion
 
         #region Action Queue
-        public void AddActionToQueue(CharacterAction action) {
-            _actionQueue.Enqueue(action);
-        }
-        public void InsertActionToQueue(CharacterAction action, int index) {
-            _actionQueue.Enqueue(action, index);
-        }
+        //public void AddActionToQueue(CharacterAction action) {
+        //    _actionQueue.Enqueue(action);
+        //}
+        //public void InsertActionToQueue(CharacterAction action, int index) {
+        //    _actionQueue.Enqueue(action, index);
+        //}
         public bool DoesSatisfiesPrerequisite(IPrerequisite prerequisite) {
             if(prerequisite.prerequisiteType == PREREQUISITE.RESOURCE) {
                 ResourcePrerequisite resourcePrerequisite = prerequisite as ResourcePrerequisite;
@@ -3041,30 +3054,118 @@ namespace ECS {
         }
         #endregion
 
-        //private void GenerateRoamingBehaviour() {
-        //    List<Region> exclude = new List<Region>();
-        //    exclude.Add(this.specificLocation.tileLocation.region);
-        //    exclude.AddRange(this.specificLocation.tileLocation.region.adjacentRegionsViaRoad); //eliminate the adjacent regions of the region this character
-        //    List<BaseLandmark> allSettlements = LandmarkManager.Instance.GetLandmarksOfType(BASE_LANDMARK_TYPE.SETTLEMENT, exclude);
-        //    Dictionary<BaseLandmark, List<List<BaseLandmark>>> choices = new Dictionary<BaseLandmark, List<List<BaseLandmark>>>();
-        //    for (int i = 0; i < allSettlements.Count; i++) {
-        //        BaseLandmark currLandmark = allSettlements[i];
-        //        List<List<BaseLandmark>> allPaths = PathGenerator.Instance.GetAllLandmarkPaths(this.specificLocation as BaseLandmark, currLandmark);
-        //        if (allPaths.Count > 0) {
-        //            choices.Add(currLandmark, allPaths);
-        //        }
-        //    }
-        //    if (choices.Count > 0) {
-        //        BaseLandmark chosenLandmark = choices.Keys.ElementAt(UnityEngine.Random.Range(0, choices.Keys.Count));
-        //        List<List<BaseLandmark>> pathChoices = choices[chosenLandmark];
-        //        List<BaseLandmark> chosenPath = pathChoices[UnityEngine.Random.Range(0, pathChoices.Count)];
-        //        //TODO: queue go to location of each landmark in path
-        //    }
-        //}
-        #region Portrait Settings
-        public void SetPortraitSettings(PortraitSettings settings) {
-            _portraitSettings = settings;
+        #region RPG
+        public void LevelUp() {
+            if(_level < CharacterManager.Instance.maxLevel) {
+                _level += 1;
+                _experience = 0;
+                _strength += _baseStrength;
+                _agility += _baseAgility;
+                _intelligence += _baseIntelligence;
+                _vitality += _baseVitality;
+                RecomputeMaxHP();
+                RecomputeMaxExperience();
+                RecomputeMaxSP();
+                //Reset to full health and sp
+                _currentHP = _maxHP;
+                _sp = _maxSP;
+            }
+        }
+        public void OnCharacterClassChange() {
+            AllocateStatPoints(10);
+            RecomputeMaxHP();
+            RecomputeMaxSP();
+            if(_currentHP > _maxHP) {
+                _currentHP = _maxHP;
+            }
+            if (_sp > _maxSP) {
+                _sp = _maxSP;
+            }
+        }
+        public void AdjustBonusStrength(int amount) {
+            _bonusStrength += amount;
+        }
+        public void AdjustBonusAgility(int amount) {
+            _bonusAgility += amount;
+        }
+        public void AdjustBonusIntelligence(int amount) {
+            _bonusIntelligence += amount;
+        }
+        public void AdjustBonusVitality(int amount) {
+            _bonusVitality += amount;
+        }
+        public void AdjustExperience(int amount) {
+            _experience += amount;
+            if(_experience >= _maxExperience) {
+                LevelUp();
+            }
+        }
+        public void AdjustElementalWeakness(ELEMENT element, float amount) {
+            _elementalWeaknesses[element] += amount;
+        }
+        public void AdjustElementalResistance(ELEMENT element, float amount) {
+            _elementalResistances[element] += amount;
+        }
+        public void AdjustSP(int amount) {
+            _sp += amount;
+            _sp = Mathf.Clamp(_sp, 0, _maxSP);
+        }
+        public void AdjustCritChance(float amount) {
+            _critChance += amount;
+            _critChance = Mathf.Clamp(_critChance, 0f, 100f);
+        }
+        public void AdjustCritDamage(float amount) {
+            _critDamage += amount;
+        }
+        private void RecomputeMaxHP() {
+            this._fixedMaxHP = 10 + (Mathf.CeilToInt(_characterClass.hpModifier * ((Mathf.Pow((float) _level, 1.1f)) / 1.3f)));
+            int previousMaxHP = this._maxHP;
+            this._maxHP = this._fixedMaxHP + (int) ((float) this._fixedMaxHP * ((float) vitality / 100f));
+            if (this._currentHP > this._maxHP || this._currentHP == previousMaxHP) {
+                this._currentHP = this._maxHP;
+            }
+        }
+        private void RecomputeMaxExperience() {
+            _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float) _level, 1.25f)) / 1.1f));
+        }
+        private void RecomputeMaxSP() {
+            _maxSP = 10 + Mathf.CeilToInt(_characterClass.spModifier * ((float) _level / 1.25f));
+        }
+        public int GetPDef(ICharacter enemy) {
+            float levelDiff = (float) (enemy.level - level);
+            return (int)((((float) (_bonusPDef + (strength + (vitality * 2)))) * (1f + (_bonusPDefPercent / 100f))) * (1f + ((levelDiff < 0 ? 0: levelDiff) / 100f)));
+        }
+        public int GetMDef(ICharacter enemy) {
+            float levelDiff = (float) (enemy.level - level);
+            return (int) ((((float) (_bonusMDef + (intelligence + (vitality * 2)))) * (1f + (_bonusMDefPercent / 100f))) * (1f + ((levelDiff < 0 ? 0 : levelDiff) / 100f)));
+        }
+        public void ResetToFullHP() {
+            AdjustHP(_maxHP);
+        }
+        public void ResetToFullSP() {
+            AdjustSP(_maxSP);
         }
         #endregion
+
+        private void GenerateRoamingBehaviour() {
+            List<Region> exclude = new List<Region>();
+            exclude.Add(this.specificLocation.tileLocation.region);
+            exclude.AddRange(this.specificLocation.tileLocation.region.adjacentRegionsViaRoad); //eliminate the adjacent regions of the region this character
+            List<BaseLandmark> allSettlements = LandmarkManager.Instance.GetLandmarksOfType(BASE_LANDMARK_TYPE.SETTLEMENT, exclude);
+            Dictionary<BaseLandmark, List<List<BaseLandmark>>> choices = new Dictionary<BaseLandmark, List<List<BaseLandmark>>>();
+            for (int i = 0; i < allSettlements.Count; i++) {
+                BaseLandmark currLandmark = allSettlements[i];
+                List<List<BaseLandmark>> allPaths = PathGenerator.Instance.GetAllLandmarkPaths(this.specificLocation as BaseLandmark, currLandmark);
+                if (allPaths.Count > 0) {
+                    choices.Add(currLandmark, allPaths);
+                }
+            }
+            if (choices.Count > 0) {
+                BaseLandmark chosenLandmark = choices.Keys.ElementAt(UnityEngine.Random.Range(0, choices.Keys.Count));
+                List<List<BaseLandmark>> pathChoices = choices[chosenLandmark];
+                List<BaseLandmark> chosenPath = pathChoices[UnityEngine.Random.Range(0, pathChoices.Count)];
+                //TODO: queue go to location of each landmark in path
+            }
+        }
     }
 }

@@ -141,12 +141,13 @@ public class ConsoleMenu : UIMenu {
                 CombatRoom currRoom = allCombatRooms[i];
                 log += "\n Room at " + currRoom.location.locationName + ": ";
                 for (int j = 0; j < currRoom.combatants.Count; j++) {
-                    ICombatInitializer currCombatant = currRoom.combatants[j];
-                    if (currCombatant is Party) {
-                        log += "\n" + (currCombatant as Party).name;
-                    } else if (currCombatant is Character) {
-                        log += "\n" + (currCombatant as Character).name;
-                    }
+                    Character currCombatant = currRoom.combatants[j];
+                    log += "\n" + currCombatant.name;
+                    //if (currCombatant is Party) {
+                    //    log += "\n" + (currCombatant as Party).name;
+                    //} else if (currCombatant is Character) {
+                    //    log += "\n" + (currCombatant as Character).name;
+                    //}
                 }
                 log += "\n";
             }

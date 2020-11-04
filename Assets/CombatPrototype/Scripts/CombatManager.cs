@@ -19,7 +19,7 @@ namespace ECS {
 
 		private List<Color> unusedColors;
 		private List<Color> usedColors;
-        private Dictionary<ICombatInitializer, CombatRoom> _combatRooms;
+        private Dictionary<Character, CombatRoom> _combatRooms;
 
         private void Awake() {
             Instance = this;
@@ -32,8 +32,8 @@ namespace ECS {
             //ConstructCharacterColors ();
             //			ConstructAttributeSkills ();
             //NewCombat();
-            //_combatRooms = new Dictionary<ICombatInitializer, CombatRoom>();
-            //Messenger.AddListener<ICombatInitializer, ICombatInitializer>(Signals.COLLIDED_WITH_CHARACTER, CheckForCombat);
+            //_combatRooms = new Dictionary<Character, CombatRoom>();
+            //Messenger.AddListener<Character, Character>(Signals.COLLIDED_WITH_CHARACTER, CheckForCombat);
         }
         private void ConstructBaseCharacters() {
             string path = Utilities.dataPath + "CharacterSetups/";
@@ -120,14 +120,24 @@ namespace ECS {
    //             currDeadCharacter.Death ();
 			//}
             while(combat.charactersSideA.Count > 0) {
-                Character character = combat.charactersSideA[0];
-                CharacterContinuesAction(character);
-                combat.RemoveCharacter(SIDES.A, character);
+                ICharacter icharacter = combat.charactersSideA[0];
+                if (icharacter is Character) {
+                    Character character = icharacter as Character;
+                    CharacterContinuesAction(character);
+                }
+                icharacter.ResetToFullHP();
+                icharacter.ResetToFullSP();
+                combat.RemoveCharacter(SIDES.A, icharacter);
             }
             while (combat.charactersSideB.Count > 0) {
-                Character character = combat.charactersSideB[0];
-                CharacterContinuesAction(character);
-                combat.RemoveCharacter(SIDES.B, character);
+                ICharacter icharacter = combat.charactersSideB[0];
+                if (icharacter is Character) {
+                    Character character = icharacter as Character;
+                    CharacterContinuesAction(character);
+                }
+                icharacter.ResetToFullHP();
+                icharacter.ResetToFullSP();
+                combat.RemoveCharacter(SIDES.B, icharacter);
             }
             //Prisoner or Leave to Die
             //List<ECS.Character> winningCharacters = null;
@@ -229,152 +239,150 @@ namespace ECS {
             //}
         }
 
-		private void CheckDefeatedPartyPrisoners(List<ECS.Character> winningCharacters, List<ECS.Character> prisoners){
-			WeightedDictionary<string> weights = new WeightedDictionary<string> ();
-			string pickedWeight = string.Empty;
-			int takePrisonerWeight = 50;
-			int releaseWeight = 100;
-			int killWeight = 10;
-			if(winningCharacters[0].party != null){
-				if(winningCharacters[0].party.partyLeader.HasTrait(TRAIT.RUTHLESS)){
-					killWeight += 500;
-				}
-				if(winningCharacters[0].party.partyLeader.HasTrait(TRAIT.BENEVOLENT)){
-					releaseWeight += 500;
-				}
-				if(winningCharacters[0].party.partyLeader.HasTrait(TRAIT.PACIFIST)){
-					killWeight -= 100;
-					if(killWeight < 0){
-						killWeight = 0;
-					}
-				}
-			}else{
-				if(winningCharacters[0].HasTrait(TRAIT.RUTHLESS)){
-					killWeight += 500;
-				}
-				if(winningCharacters[0].HasTrait(TRAIT.BENEVOLENT)){
-					releaseWeight += 500;
-				}
-				if(winningCharacters[0].HasTrait(TRAIT.PACIFIST)){
-					killWeight -= 100;
-					if(killWeight < 0){
-						killWeight = 0;
-					}
-				}
-			}
+		//private void CheckDefeatedPartyPrisoners(List<ECS.Character> winningCharacters, List<ECS.Character> prisoners){
+		//	WeightedDictionary<string> weights = new WeightedDictionary<string> ();
+		//	string pickedWeight = string.Empty;
+		//	int takePrisonerWeight = 50;
+		//	int releaseWeight = 100;
+		//	int killWeight = 10;
+		//	if(winningCharacters[0].party != null){
+		//		if(winningCharacters[0].party.partyLeader.HasTrait(TRAIT.RUTHLESS)){
+		//			killWeight += 500;
+		//		}
+		//		if(winningCharacters[0].party.partyLeader.HasTrait(TRAIT.BENEVOLENT)){
+		//			releaseWeight += 500;
+		//		}
+		//		if(winningCharacters[0].party.partyLeader.HasTrait(TRAIT.PACIFIST)){
+		//			killWeight -= 100;
+		//			if(killWeight < 0){
+		//				killWeight = 0;
+		//			}
+		//		}
+		//	}else{
+		//		if(winningCharacters[0].HasTrait(TRAIT.RUTHLESS)){
+		//			killWeight += 500;
+		//		}
+		//		if(winningCharacters[0].HasTrait(TRAIT.BENEVOLENT)){
+		//			releaseWeight += 500;
+		//		}
+		//		if(winningCharacters[0].HasTrait(TRAIT.PACIFIST)){
+		//			killWeight -= 100;
+		//			if(killWeight < 0){
+		//				killWeight = 0;
+		//			}
+		//		}
+		//	}
 
-			weights.AddElement ("prisoner", takePrisonerWeight);
-			weights.AddElement ("release", releaseWeight);
+		//	weights.AddElement ("prisoner", takePrisonerWeight);
+		//	weights.AddElement ("release", releaseWeight);
 
-			while(prisoners.Count > 0) {
-				if(prisoners[0].faction != null){
-					if(winningCharacters[0].faction != null){
-						if (prisoners [0].faction.id == winningCharacters [0].faction.id) {
-							prisoners [0].ReleasePrisoner ();
-							continue;
-						} else {
-							FactionRelationship fr = prisoners [0].faction.GetRelationshipWith (winningCharacters [0].faction);
-							if(fr != null && fr.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
-								killWeight += 200;
-							}
-						}
-					}else{
-						killWeight += 200;
-					}
-				}else{
-					killWeight += 200;
-				}
+		//	while(prisoners.Count > 0) {
+		//		if(prisoners[0].faction != null){
+		//			if(winningCharacters[0].faction != null){
+		//				if (prisoners [0].faction.id == winningCharacters [0].faction.id) {
+		//					prisoners [0].ReleasePrisoner ();
+		//					continue;
+		//				} else {
+		//					FactionRelationship fr = prisoners [0].faction.GetRelationshipWith (winningCharacters [0].faction);
+		//					if(fr != null && fr.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
+		//						killWeight += 200;
+		//					}
+		//				}
+		//			}else{
+		//				killWeight += 200;
+		//			}
+		//		}else{
+		//			killWeight += 200;
+		//		}
 
-				if (winningCharacters [0].party != null){
-					if (winningCharacters [0].party.partyLeader.raceSetting.race != prisoners [0].raceSetting.race && winningCharacters [0].party.partyLeader.HasTrait (TRAIT.RACIST)) {
-						killWeight += 100;
-					}
-				}else{
-					if (winningCharacters [0].raceSetting.race != prisoners [0].raceSetting.race && winningCharacters [0].HasTrait (TRAIT.RACIST)) {
-						killWeight += 100;
-					}
-				}
+		//		if (winningCharacters [0].party != null){
+		//			if (winningCharacters [0].party.partyLeader.raceSetting.race != prisoners [0].raceSetting.race && winningCharacters [0].party.partyLeader.HasTrait (TRAIT.RACIST)) {
+		//				killWeight += 100;
+		//			}
+		//		}else{
+		//			if (winningCharacters [0].raceSetting.race != prisoners [0].raceSetting.race && winningCharacters [0].HasTrait (TRAIT.RACIST)) {
+		//				killWeight += 100;
+		//			}
+		//		}
 
-				weights.ChangeElement ("kill", killWeight);
-				pickedWeight = weights.PickRandomElementGivenWeights ();
-				if(pickedWeight == "prisoner"){
-					if (winningCharacters [0].party != null) {
-						prisoners [0].TransferPrisoner (winningCharacters [0].party);
-					}else{
-						prisoners [0].TransferPrisoner (winningCharacters [0]);
-					}
-				}else if(pickedWeight == "kill"){
-                    if (winningCharacters[0].party != null) {
-                        prisoners[0].Death(winningCharacters[0].party);
-                    } else {
-                        prisoners[0].Death(winningCharacters[0]);
-                    }
-				}else if(pickedWeight == "release"){
-					prisoners [0].ReleasePrisoner ();
-				}
-			}
-		}
+		//		weights.ChangeElement ("kill", killWeight);
+		//		pickedWeight = weights.PickRandomElementGivenWeights ();
+		//		if(pickedWeight == "prisoner"){
+		//			if (winningCharacters [0].party != null) {
+		//				prisoners [0].TransferPrisoner (winningCharacters [0].party);
+		//			}else{
+		//				prisoners [0].TransferPrisoner (winningCharacters [0]);
+		//			}
+		//		}else if(pickedWeight == "kill"){
+  //                  if (winningCharacters[0].party != null) {
+  //                      prisoners[0].Death(winningCharacters[0].party);
+  //                  } else {
+  //                      prisoners[0].Death(winningCharacters[0]);
+  //                  }
+		//		}else if(pickedWeight == "release"){
+		//			prisoners [0].ReleasePrisoner ();
+		//		}
+		//	}
+		//}
 
         #region Roads Combat
-        private void CheckForCombat(ICombatInitializer character1, ICombatInitializer character2) {
-            if (character1.IsHostileWith(character2)) { //if the 2 characters are hostile with each other
-                if (character1.CanInitiateCombat() || character2.CanInitiateCombat()) { //can either of the characters initiate combat? (Have combat priorities)
-                    //if at least 1 character can initiate combat and the 2 characters are hostile with each other, create a combat room
-                    //if either of the characters already have a combat room, have the other join their room instead
-                    if (HasCombatRoom(character1) && HasCombatRoom(character2)) {
-                        CombatRoom char1Room = GetCombatRoom(character1);
-                        CombatRoom char2Room = GetCombatRoom(character2);
-                        if (char1Room != char2Room) {
-                            throw new System.Exception(character1.mainCharacter.name + " and " + character2.mainCharacter.name + " already have different combat rooms!");
-                        } else {
-                            Debug.Log(character1.mainCharacter.name + " is already in the same combat room as " + character2.mainCharacter.name);
-                            return;
-                        }
-                    }
-                    if (HasCombatRoom(character1)) {
-                        //make character 2 join character 1 combat room
-                        CombatRoom char1CombatRoom = GetCombatRoom(character1);
-                        char1CombatRoom.AddCombatant(character2);
-                    } else if (HasCombatRoom(character2)) {
-                        //make character 1 join character 2 combat room
-                        CombatRoom char2CombatRoom = GetCombatRoom(character2);
-                        char2CombatRoom.AddCombatant(character1);
-                    } else {
-                        //none of the 2 have combat rooms, create a new one
-                        CreateNewCombatRoomFor(character1, character2);
-                    }
-                }
-            }
-            
-
-        }
-        private CombatRoom CreateNewCombatRoomFor(ICombatInitializer attacker, ICombatInitializer defender) {
-            CombatRoom newCombatRoom = new CombatRoom(attacker, defender, defender.mainCharacter.specificLocation);
-            Debug.Log("Created a new combat room for " + attacker.mainCharacter.name + " and " + defender.mainCharacter.name);
-            return newCombatRoom;
-        }
-        public bool HasCombatRoom(ICombatInitializer combatant) {
+        //private void CheckForCombat(Character character1, Character character2) {
+        //    if (character1.IsHostileWith(character2)) { //if the 2 characters are hostile with each other
+        //        if (character1.CanInitiateCombat() || character2.CanInitiateCombat()) { //can either of the characters initiate combat? (Have combat priorities)
+        //            //if at least 1 character can initiate combat and the 2 characters are hostile with each other, create a combat room
+        //            //if either of the characters already have a combat room, have the other join their room instead
+        //            if (HasCombatRoom(character1) && HasCombatRoom(character2)) {
+        //                CombatRoom char1Room = GetCombatRoom(character1);
+        //                CombatRoom char2Room = GetCombatRoom(character2);
+        //                if (char1Room != char2Room) {
+        //                    throw new System.Exception(character1.mainCharacter.name + " and " + character2.mainCharacter.name + " already have different combat rooms!");
+        //                } else {
+        //                    Debug.Log(character1.mainCharacter.name + " is already in the same combat room as " + character2.mainCharacter.name);
+        //                    return;
+        //                }
+        //            }
+        //            if (HasCombatRoom(character1)) {
+        //                //make character 2 join character 1 combat room
+        //                CombatRoom char1CombatRoom = GetCombatRoom(character1);
+        //                char1CombatRoom.AddCombatant(character2);
+        //            } else if (HasCombatRoom(character2)) {
+        //                //make character 1 join character 2 combat room
+        //                CombatRoom char2CombatRoom = GetCombatRoom(character2);
+        //                char2CombatRoom.AddCombatant(character1);
+        //            } else {
+        //                //none of the 2 have combat rooms, create a new one
+        //                CreateNewCombatRoomFor(character1, character2);
+        //            }
+        //        }
+        //    }
+        //}
+        //private CombatRoom CreateNewCombatRoomFor(Character attacker, Character defender) {
+        //    CombatRoom newCombatRoom = new CombatRoom(attacker, defender, defender.mainCharacter.specificLocation);
+        //    Debug.Log("Created a new combat room for " + attacker.mainCharacter.name + " and " + defender.mainCharacter.name);
+        //    return newCombatRoom;
+        //}
+        public bool HasCombatRoom(Character combatant) {
             return _combatRooms.ContainsKey(combatant);
         }
-        public CombatRoom GetCombatRoom(ICombatInitializer other) {
+        public CombatRoom GetCombatRoom(Character other) {
             if (_combatRooms.ContainsKey(other)) {
                 return _combatRooms[other];
             }
             return null;
         }
-        public void SetCombatantCombatRoom(ICombatInitializer combatant, CombatRoom combatRoom) {
+        public void SetCombatantCombatRoom(Character combatant, CombatRoom combatRoom) {
             if (!_combatRooms.ContainsKey(combatant)) {
                 _combatRooms.Add(combatant, combatRoom);
             } else {
                 _combatRooms[combatant] = combatRoom;
             }
         }
-        public void RemoveCombatant(ICombatInitializer combatant) {
+        public void RemoveCombatant(Character combatant) {
             _combatRooms.Remove(combatant);
         }
         public List<CombatRoom> GetAllRoadCombats() {
             List<CombatRoom> combatRooms = new List<CombatRoom>();
-            foreach (KeyValuePair<ICombatInitializer, CombatRoom> kvp in _combatRooms) {
+            foreach (KeyValuePair<Character, CombatRoom> kvp in _combatRooms) {
                 if (!combatRooms.Contains(kvp.Value)) {
                     combatRooms.Add(kvp.Value);
                 }
@@ -385,8 +393,8 @@ namespace ECS {
             character.actionData.SetIsHalted(false);
             character.icon.OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
             character.icon.SetMovementState(GameManager.Instance.isPaused);
-            if (character.currentAction != null) {
-                if (character.currentAction.actionType == ACTION_TYPE.ATTACK || character.currentAction.actionType == ACTION_TYPE.JOIN_BATTLE) {
+            if (character.actionData.currentAction != null) {
+                if (character.actionData.currentAction.actionType == ACTION_TYPE.ATTACK || character.actionData.currentAction.actionType == ACTION_TYPE.JOIN_BATTLE) {
                     character.actionData.EndAction();
                 }
             }

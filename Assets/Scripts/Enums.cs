@@ -91,7 +91,7 @@ public enum PATHFINDING_MODE{
     PASSABLE,
     PASSABLE_REGION_ONLY,
     REGION_ISLAND_CONNECTION,
-    AREA_ONLY,
+
 }
 
 public enum GENDER{
@@ -160,47 +160,47 @@ public enum MATERIAL_CATEGORY{
 	MEAT,
 	LEATHER,
 }
-//public enum ROLE{
-//	UNTRAINED,
-//	FOODIE, //Farming or Hunting
-//	GATHERER, //Lumberyard or Quarry
-//	MINER, 
-//	TRADER,
-//	SPY,
-//	GUARDIAN,
-//	ENVOY,
-//	GENERAL,
-//	GOVERNOR,
-//	KING,
-//	EXPANDER,
-//	RAIDER,
-//	REINFORCER,
-//	REBEL,
-//    EXTERMINATOR,
-//    SCOURGE,
-//    HEALER,
-//	PROVOKER,
-//	MISSIONARY,
-//	ABDUCTOR,
-//    LYCANTHROPE,
-//	INVESTIGATOR,
-//	THIEF,
-//    WITCH,
-//    ADVENTURER,
-//	RELIEVER,
-//	INTERCEPTER,
-//	RANGER,
-//    MILITARY_ALLIANCE_OFFICER,
-//	TREATYOFFICER,
-//	TRIBUTER,
-//	INSTIGATOR,
-//    GRAND_CHANCELLOR,
-//    GRAND_MARSHAL,
-//    QUEEN,
-//    CROWN_PRINCE,
-//	CARAVAN,
-//	REFUGEE,
-//}
+public enum ROLE{
+	UNTRAINED,
+	FOODIE, //Farming or Hunting
+	GATHERER, //Lumberyard or Quarry
+	MINER, 
+	TRADER,
+	SPY,
+	GUARDIAN,
+	ENVOY,
+	GENERAL,
+	GOVERNOR,
+	KING,
+	EXPANDER,
+	RAIDER,
+	REINFORCER,
+	REBEL,
+    EXTERMINATOR,
+    SCOURGE,
+    HEALER,
+	PROVOKER,
+	MISSIONARY,
+	ABDUCTOR,
+    LYCANTHROPE,
+	INVESTIGATOR,
+	THIEF,
+    WITCH,
+    ADVENTURER,
+	RELIEVER,
+	INTERCEPTER,
+	RANGER,
+    MILITARY_ALLIANCE_OFFICER,
+	TREATYOFFICER,
+	TRIBUTER,
+	INSTIGATOR,
+    GRAND_CHANCELLOR,
+    GRAND_MARSHAL,
+    QUEEN,
+    CROWN_PRINCE,
+	CARAVAN,
+	REFUGEE,
+}
 
 public enum KINGDOM_TYPE {
 	BARBARIC_TRIBE,
@@ -775,9 +775,7 @@ public enum LANDMARK_TYPE {
     INN,
     PUB,
     TEMPLE,
-    HUNTING_GROUNDS,
-    ELVEN_HOUSES,
-    HUMAN_HOUSES,
+    HUNTING_GROUNDS
 }
 public enum WEIGHTED_ACTION_REQS {
     NONE,
@@ -879,23 +877,22 @@ public enum TECHNOLOGY {
 }
 public enum CHARACTER_ROLE {
     NONE,
-    //CHIEFTAIN,
-    //WARLORD,
+    CHIEFTAIN,
+    WARLORD,
     HERO,
     //ADVENTURER,
- //   COLONIST,
- //   VILLAGE_HEAD,
- //   WORKER,
-	//TAMED_BEAST,
-	//BANDIT,
- //   ANCIENT_VAMPIRE,
-	//CRATER_BEAST,
-	//SLYX,
+    COLONIST,
+    VILLAGE_HEAD,
+    WORKER,
+	TAMED_BEAST,
+	BANDIT,
+    ANCIENT_VAMPIRE,
+	CRATER_BEAST,
+	SLYX,
 	VILLAIN,
-    CIVILIAN,
-    //FOLLOWER,
-    //HERMIT,
-    //BEAST,
+    FOLLOWER,
+    HERMIT,
+    BEAST,
 }
 public enum CHARACTER_CLASS {
     CLASSLESS,
@@ -911,7 +908,8 @@ public enum CHARACTER_CLASS {
     BATTLEMAGE,
     ARCANIST,
     SCOUT,
-    NIGHTBLADE
+    NIGHTBLADE,
+    WARRIOR,
 }
 public enum CHARACTER_PRODUCTION_CAP {
     CITY_COUNT,
@@ -1269,31 +1267,17 @@ public enum STATE{
 }
 
 public enum CHARACTER_RELATIONSHIP{
+	RIVAL,
 	FRIEND,
-    MENTOR,
-    STUDENT,
-    FATHER,
-    MOTHER,
-    BROTHER,
-    SISTER,
-    SON,
-    DAUGHTER,
-    LOVER,
-    HUSBAND,
-    WIFE,
-    ENEMY,
-    RIVAL
-    //RIVAL,
-	//FRIEND,
-	//ENEMY,
-	//SIBLING,
-	//PARENT,
-	//CHILD,
-	//LOVER,
-	//EX_LOVER,
-	//APPRENTICE,
-	//MENTOR,
-	//ACQUAINTANCE,
+	ENEMY,
+	SIBLING,
+	PARENT,
+	CHILD,
+	LOVER,
+	EX_LOVER,
+	APPRENTICE,
+	MENTOR,
+	ACQUAINTANCE,
 }
 
 public enum CHARACTER_RELATIONSHIP_CATEGORY{
@@ -1363,8 +1347,7 @@ public enum ACTION_FILTER_CONDITION {
 public enum ACTION_FILTER {
     HERO,
     VILLAIN,
-    RUINED,
-    CIVILIAN
+    RUINED
 }
 
 public enum SPECIFIC_OBJECT_TYPE {
@@ -1393,9 +1376,7 @@ public enum SPECIFIC_OBJECT_TYPE {
     INN,
     PUB,
     TEMPLE,
-    HUNTING_GROUNDS,
-    ELVEN_HOUSES,
-    HUMAN_HOUSES,
+    HUNTING_GROUNDS
 }
 
 public enum PREREQUISITE {
@@ -1421,7 +1402,42 @@ public enum LEVEL {
     LOW
 }
 
-public enum AREA_TYPE {
-    ELVEN_SETTLEMENT,
-    HUMAN_SETTLEMENT,
+public enum ELEMENT {
+    NONE,
+    FIRE,
+}
+
+public enum MONSTER_TYPE {
+    SLIME,
+    BEAST,
+    FLORAL,
+    INSECT,
+    HUMANOID,
+    DEMON,
+}
+
+public enum MONSTER_CATEGORY {
+    NORMAL,
+    BOSS,
+}
+
+public enum ATTACK_CATEGORY {
+    PHYSICAL,
+    MAGICAL,
+}
+
+public enum WEAPON_PREFIX {
+    NONE,
+}
+
+public enum WEAPON_SUFFIX {
+    NONE,
+}
+
+public enum ARMOR_PREFIX {
+    NONE,
+}
+
+public enum ARMOR_SUFFIX {
+    NONE,
 }

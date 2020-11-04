@@ -2,6 +2,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine.UI;
+using ECS;
 
 public class CombatLogsUI : UIMenu {
 
@@ -52,9 +53,16 @@ public class CombatLogsUI : UIMenu {
 			if(i > 0){
 				text += "\n";
 			}
-			ECS.Character character = _currentlyShowingCombat.characterSideACopy [i];
-			string currLog = character.urlName + "(" + (character.characterClass != null ? character.characterClass.className : "NONE") + "-" + (character.role != null ? character.role.roleType.ToString () : "NONE") + ")";
-			text += currLog;
+			ICharacter icharacter = _currentlyShowingCombat.characterSideACopy [i];
+            string currLog = string.Empty;
+            if(icharacter is Character) {
+                Character character = icharacter as Character;
+                currLog = character.urlName + "(" + (character.characterClass != null ? character.characterClass.className : "NONE") + "-" + (character.role != null ? character.role.roleType.ToString() : "NONE") + ")";
+            } else {
+                Monster monster = icharacter as Monster;
+                currLog = monster.name;
+            }
+            text += currLog;
 		}
 		sideALbl.text = text;
 		//sideAScrollView.ResetPosition();
@@ -65,9 +73,16 @@ public class CombatLogsUI : UIMenu {
 			if(i > 0){
 				text += "\n";
 			}
-			ECS.Character character = _currentlyShowingCombat.characterSideBCopy [i];
-			string currLog = character.urlName + "(" + (character.characterClass != null ? character.characterClass.className : "NONE") + "-" + (character.role != null ? character.role.roleType.ToString () : "NONE") + ")";
-			text += currLog;
+            ICharacter icharacter = _currentlyShowingCombat.characterSideBCopy [i];
+            string currLog = string.Empty;
+            if (icharacter is Character) {
+                Character character = icharacter as Character;
+                currLog = character.urlName + "(" + (character.characterClass != null ? character.characterClass.className : "NONE") + "-" + (character.role != null ? character.role.roleType.ToString() : "NONE") + ")";
+            } else {
+                Monster monster = icharacter as Monster;
+                currLog = monster.name;
+            }
+            text += currLog;
 		}
 		sideBLbl.text = text;
 		//sideBScrollView.ResetPosition();

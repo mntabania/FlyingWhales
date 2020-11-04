@@ -87,6 +87,7 @@ public class CharacterInfoUI : UIMenu {
         //RepositionHistoryScrollView();
         UpdateCharacterInfo();
         UpdateAllHistoryInfo();
+        SetAttackButtonState(false);
     }
     public override void OpenMenu() {
         base.OpenMenu();
@@ -158,8 +159,8 @@ public class CharacterInfoUI : UIMenu {
         //text += currentlyShowingCharacter.id;
         text += "<b>Specific Location: </b>" + (currentlyShowingCharacter.specificLocation != null ? currentlyShowingCharacter.specificLocation.locationName : "NONE");
         text += "\n<b>Current Action: </b>";
-        if (currentlyShowingCharacter.currentAction != null) {
-            text += currentlyShowingCharacter.currentAction.actionData.actionName.ToString() + " ";
+        if (currentlyShowingCharacter.actionData.currentAction != null) {
+            text += currentlyShowingCharacter.actionData.currentAction.actionData.actionName.ToString() + " ";
             //for (int i = 0; i < currentlyShowingCharacter.currentAction.alignments.Count; i++) {
             //    ACTION_ALIGNMENT currAlignment = currentlyShowingCharacter.currentAction.alignments[i];
             //    text += currAlignment.ToString();
@@ -215,10 +216,14 @@ public class CharacterInfoUI : UIMenu {
 
     private void UpdateStatInfo() {
         string text = string.Empty;
-        text += "<b>HP: </b>" + currentlyShowingCharacter.currentHP.ToString() + "/" + currentlyShowingCharacter.maxHP.ToString();
+        text += "<b>Lvl: </b>" + currentlyShowingCharacter.level.ToString() + "/" + CharacterManager.Instance.maxLevel.ToString();
+        text += ", <b>Exp: </b>" + currentlyShowingCharacter.experience.ToString() + "/" + currentlyShowingCharacter.maxExperience.ToString();
+        text += "\n<b>HP: </b>" + currentlyShowingCharacter.currentHP.ToString() + "/" + currentlyShowingCharacter.maxHP.ToString();
+        text += ", <b>SP: </b>" + currentlyShowingCharacter.currentSP.ToString() + "/" + currentlyShowingCharacter.maxSP.ToString();
         text += "\n<b>Str: </b>" + currentlyShowingCharacter.strength.ToString();
-        text += "\n<b>Int: </b>" + currentlyShowingCharacter.intelligence.ToString();
+        text += ", <b>Int: </b>" + currentlyShowingCharacter.intelligence.ToString();
         text += "\n<b>Agi: </b>" + currentlyShowingCharacter.agility.ToString();
+        text += ", <b>Vit: </b>" + currentlyShowingCharacter.vitality.ToString();
         statInfoLbl.text = text;
     }
     private void UpdateTraitInfo() {
@@ -387,15 +392,15 @@ public class CharacterInfoUI : UIMenu {
     }
     #endregion
 
-    public void CenterCameraOnCharacter() {
-        GameObject centerOn = null;
-        if (currentlyShowingCharacter.avatar != null) {
-            centerOn = currentlyShowingCharacter.avatar.specificLocation.tileLocation.gameObject;
-        } else {
-            centerOn = currentlyShowingCharacter.currLocation.gameObject;
-        }
-        CameraMove.Instance.CenterCameraOn(centerOn);
-    }
+    //public void CenterCameraOnCharacter() {
+    //    GameObject centerOn = null;
+    //    if (currentlyShowingCharacter.avatar != null) {
+    //        centerOn = currentlyShowingCharacter.avatar.specificLocation.tileLocation.gameObject;
+    //    } else {
+    //        centerOn = currentlyShowingCharacter.currLocation.gameObject;
+    //    }
+    //    CameraMove.Instance.CenterCameraOn(centerOn);
+    //}
 
     public bool IsCharacterInfoShowing(ECS.Character character) {
         return (isShowing && currentlyShowingCharacter == character);

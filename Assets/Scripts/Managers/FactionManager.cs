@@ -283,11 +283,12 @@ public class FactionManager : MonoBehaviour {
          */
     private void CreateInitialFactionCharacters(Faction faction, Settlement settlement) {
         int numOfCharacters = Random.Range(1, 3); //Generate 1 to 3 characters in each Village with civilians, limit class based on technologies known by its Faction.
-        WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(settlement);
+        //WeightedDictionary<CHARACTER_CLASS> characterClassProductionDictionary = LandmarkManager.Instance.GetCharacterClassProductionDictionary(settlement);
         WeightedDictionary<CHARACTER_ROLE> characterRoleProductionDictionary = LandmarkManager.Instance.GetCharacterRoleProductionDictionary();
         for (int i = 0; i < numOfCharacters; i++) {
-            CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
-			CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
+            //CHARACTER_CLASS chosenClass = characterClassProductionDictionary.PickRandomElementGivenWeights();
+            CHARACTER_CLASS chosenClass = CHARACTER_CLASS.WARRIOR;
+            CHARACTER_ROLE chosenRole = characterRoleProductionDictionary.PickRandomElementGivenWeights();
 			ECS.Character newChar = settlement.CreateNewCharacter(faction.race, chosenRole, Utilities.NormalizeString(chosenClass.ToString()));
 			//Initial Character tags
 			newChar.AssignInitialTags();

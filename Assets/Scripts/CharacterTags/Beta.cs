@@ -20,9 +20,9 @@ public class Beta : CharacterTag {
         if (character.party != null) {
             return; //this character is already in a party
         }
-        List<ICombatInitializer> charactersAtLocation = new List<ICombatInitializer>(character.specificLocation.charactersAtLocation);
+        List<Character> charactersAtLocation = new List<Character>(character.specificLocation.charactersAtLocation);
         for (int i = 0; i < charactersAtLocation.Count; i++) {
-            ECS.Character currCharacter = charactersAtLocation[i].mainCharacter;
+            ECS.Character currCharacter = charactersAtLocation[i];
             if (currCharacter.HasTag(CHARACTER_TAG.ALPHA) && currCharacter.GetCurrentStance() == STANCE.NEUTRAL 
                 && !currCharacter.isInCombat && (currCharacter.party == null || !currCharacter.party.isFull) && currCharacter.id != character.id) {
                 if (ShouldJoinParty(currCharacter)) {

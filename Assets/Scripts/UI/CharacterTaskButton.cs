@@ -32,14 +32,14 @@ public class CharacterTaskButton : MonoBehaviour {
 			return;
 		}
 		if (!task.needsSpecificTarget) {
-			if (character.avatar != null && character.avatar.isMovingToHex) {
-				character.avatar.SetQueuedAction (() => ClickAction ());
-				UIManager.Instance.HidePlayerActions ();
-				return;
-			}
-			if (character.currentAction != null) {
-				//character.currentAction.SetIsHalted (true);
-			}
+			//if (character.avatar != null && character.avatar.isMovingToHex) {
+			//	character.avatar.SetQueuedAction (() => ClickAction ());
+			//	UIManager.Instance.HidePlayerActions ();
+			//	return;
+			//}
+			//if (character.actionData.currentAction != null) {
+			//  character.currentAction.SetIsHalted (true);
+			//}
 		}
 
 		if(!task.needsSpecificTarget){

@@ -57,7 +57,7 @@ public class VampiricEmbrace : CharacterTask {
 	public override bool CanBeDone (Character character, ILocation location){
 		if(location.tileLocation.landmarkOnTile != null){
 			for (int j = 0; j < location.tileLocation.landmarkOnTile.charactersAtLocation.Count; j++) {
-				ECS.Character possibleCharacter = location.tileLocation.landmarkOnTile.charactersAtLocation[j].mainCharacter;
+				ECS.Character possibleCharacter = location.tileLocation.landmarkOnTile.charactersAtLocation[j];
 				if(possibleCharacter.id != character.id && CanMeetRequirements(possibleCharacter)){
 					return true;
 				}

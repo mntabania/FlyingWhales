@@ -24,7 +24,7 @@ public class ProclaimSuccessor : CharacterTask {
         if (character.faction != null && character.faction is Tribe) { //If character is part of a faction and there are no Successor tag for any character of the faction
             if ((character.faction as Tribe).successor == null) {
                 for (int i = 0; i < location.charactersAtLocation.Count; i++) {
-                    ECS.Character currCharacter = location.charactersAtLocation[i].mainCharacter;
+                    ECS.Character currCharacter = location.charactersAtLocation[i];
                     if (CanMeetRequirements(currCharacter)) {
                         return true;
                     }

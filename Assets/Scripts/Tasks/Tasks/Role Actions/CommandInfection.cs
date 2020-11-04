@@ -101,15 +101,17 @@ public class CommandInfection : CharacterTask {
 				if(landmark.charactersAtLocation.Count > 0){
 					int landmarkWeight = 0;
 					for (int j = 0; j < landmark.charactersAtLocation.Count; j++) {
-						if(landmark.charactersAtLocation[j] is Party){
-							Party party = (Party)landmark.charactersAtLocation [j];
-							for (int k = 0; k < party.partyMembers.Count; k++) {
-								landmarkWeight += CharacterWeight (party.partyMembers [k]);
-							}
-						}else if(landmark.charactersAtLocation[j] is Character){
-							Character currCharacter = (Character)landmark.charactersAtLocation [j];
-							landmarkWeight += CharacterWeight (currCharacter);
-						}
+                        Character currCharacter = landmark.charactersAtLocation[j];
+                        landmarkWeight += CharacterWeight(currCharacter);
+      //                  if (landmark.charactersAtLocation[j] is Party){
+						//	Party party = (Party)landmark.charactersAtLocation [j];
+						//	for (int k = 0; k < party.partyMembers.Count; k++) {
+						//		landmarkWeight += CharacterWeight (party.partyMembers [k]);
+						//	}
+						//}else if(landmark.charactersAtLocation[j] is Character){
+						//	Character currCharacter = (Character)landmark.charactersAtLocation [j];
+						//	landmarkWeight += CharacterWeight (currCharacter);
+						//}
 					}
 					_landmarkWeights.AddElement (landmark, landmarkWeight);
 				}

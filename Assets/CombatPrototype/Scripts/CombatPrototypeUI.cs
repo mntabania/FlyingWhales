@@ -78,10 +78,10 @@ namespace ECS{
                 labelToUpdate = sideBCharactersLbl;
                 sideText = "_sideB";
             }
-            List<ECS.Character> charactersFromSide = CombatManager.Instance.combat.GetCharactersOnSide(side);
+            List<ICharacter> charactersFromSide = CombatManager.Instance.combat.GetCharactersOnSide(side);
             labelToUpdate.text = string.Empty;
             for (int i = 0; i < charactersFromSide.Count; i++) {
-                ECS.Character currCharacter = charactersFromSide[i];
+                ICharacter currCharacter = charactersFromSide[i];
 				labelToUpdate.text += "[url=" + i.ToString() + sideText + "]" + currCharacter.name + "[/url]\n";
             }
         }
@@ -110,14 +110,14 @@ namespace ECS{
         }
 
         public void ResetSimulation() {
-			while (CombatManager.Instance.combat.charactersSideA.Count > 0) {
-				CombatManager.Instance.ReturnCharacterColorToPool (CombatManager.Instance.combat.charactersSideA[0].characterColor);
-				CombatManager.Instance.combat.charactersSideA.RemoveAt (0);
-			}
-			while (CombatManager.Instance.combat.charactersSideB.Count > 0) {
-				CombatManager.Instance.ReturnCharacterColorToPool (CombatManager.Instance.combat.charactersSideB[0].characterColor);
-				CombatManager.Instance.combat.charactersSideB.RemoveAt (0);
-			}
+			//while (CombatManager.Instance.combat.charactersSideA.Count > 0) {
+			//	CombatManager.Instance.ReturnCharacterColorToPool (CombatManager.Instance.combat.charactersSideA[0].characterColor);
+			//	CombatManager.Instance.combat.charactersSideA.RemoveAt (0);
+			//}
+			//while (CombatManager.Instance.combat.charactersSideB.Count > 0) {
+			//	CombatManager.Instance.ReturnCharacterColorToPool (CombatManager.Instance.combat.charactersSideB[0].characterColor);
+			//	CombatManager.Instance.combat.charactersSideB.RemoveAt (0);
+			//}
 			CombatManager.Instance.NewCombat ();
 			ClearCombatLogs();
 //            CombatPrototypeManager.Instance.combat.charactersSideA.Clear();

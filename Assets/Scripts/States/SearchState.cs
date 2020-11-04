@@ -64,7 +64,7 @@ public class SearchState : State {
 		bool hasBeenFound = false;
 		string itemName = (string)searchingFor;
         for (int i = 0; i < _targetLandmark.charactersAtLocation.Count; i++) {
-			ECS.Character currCharacter = _targetLandmark.charactersAtLocation[i].mainCharacter;
+			ECS.Character currCharacter = _targetLandmark.charactersAtLocation[i];
 			if (currCharacter.HasItem(itemName)) {
 				hasBeenFound = true;
                 //Each day while he is in Search State, if the character with the Heirloom Necklace is in the location then he would successfully perform the action and end the Search State.
@@ -89,7 +89,7 @@ public class SearchState : State {
 		bool hasBeenFound = false;
 		string tagName = (string)searchingFor;
 		for (int i = 0; i < _targetLandmark.charactersAtLocation.Count; i++) {
-			ECS.Character currCharacter = _targetLandmark.charactersAtLocation[i].mainCharacter;
+			ECS.Character currCharacter = _targetLandmark.charactersAtLocation[i];
 			if (currCharacter.HasTag(tagName, true)) {
 				hasBeenFound = true;
 				if (_afterFindingAction != null) {
@@ -109,24 +109,24 @@ public class SearchState : State {
     private void SearchForItemInLandmark() {
 		bool hasBeenFound = false;
 		string itemName = searchingFor as string;
-		for (int i = 0; i < _targetLandmark.itemsInLandmark.Count; i++) {
-			ECS.Item item = _targetLandmark.itemsInLandmark[i];
-			if (item.itemName == itemName) {
-				int chance = UnityEngine.Random.Range(0, 100);
-				if (chance < item.collectChance) {
-					//_assignedCharacter.AddHistory ("Found a " + (string)_searchingFor + "!");
-					//_targetLandmark.AddHistory (_assignedCharacter.name +  " found a " + (string)_searchingFor + "!");
-					hasBeenFound = true;
-					_targetLandmark.RemoveItemInLandmark(item);
-					_assignedCharacter.PickupItem(item);
-					if (_afterFindingAction != null) {
-						_afterFindingAction();
-					}
-					parentTask.EndTask(TASK_STATUS.SUCCESS);
-					break;
-				}
-			}
-		}
+		//for (int i = 0; i < _targetLandmark.itemsInLandmark.Count; i++) {
+		//	ECS.Item item = _targetLandmark.itemsInLandmark[i];
+		//	if (item.itemName == itemName) {
+		//		int chance = UnityEngine.Random.Range(0, 100);
+		//		if (chance < item.collectChance) {
+		//			//_assignedCharacter.AddHistory ("Found a " + (string)_searchingFor + "!");
+		//			//_targetLandmark.AddHistory (_assignedCharacter.name +  " found a " + (string)_searchingFor + "!");
+		//			hasBeenFound = true;
+		//			_targetLandmark.RemoveItemInLandmark(item);
+		//			_assignedCharacter.PickupItem(item);
+		//			if (_afterFindingAction != null) {
+		//				_afterFindingAction();
+		//			}
+		//			parentTask.EndTask(TASK_STATUS.SUCCESS);
+		//			break;
+		//		}
+		//	}
+		//}
 		if(!hasBeenFound){
 			CheckTraces (itemName, "item");
 		} else {

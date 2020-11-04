@@ -26,26 +26,33 @@ public class InfectState : State {
 //			_assignedCharacter.SetCurrentFunction (() => InfectPsytoxinToLandmark ());
 //		}
 		for (int i = 0; i < _targetLandmark.charactersAtLocation.Count; i++) {
-			if(_targetLandmark.charactersAtLocation[i] is Party){
-				Party party = (Party)_targetLandmark.charactersAtLocation [i];
-				for (int j = 0; j < party.partyMembers.Count; j++) {
-					ECS.Character character = party.partyMembers [j];
-					if(!character.HasTag(CHARACTER_TAG.SEVERE_PSYTOXIN)){
-						//if(character.role != null && (character.role.roleType == CHARACTER_ROLE.SLYX || character.role.roleType == CHARACTER_ROLE.CRATER_BEAST)){
-						//	continue;
-						//}
-						InfectPsytoxin (character);
-					}
-				}
-			}else if(_targetLandmark.charactersAtLocation[i] is ECS.Character){
-				ECS.Character character = (ECS.Character) _targetLandmark.charactersAtLocation[i];
-				if(!character.HasTag(CHARACTER_TAG.SEVERE_PSYTOXIN)){
-					//if(character.role != null && (character.role.roleType == CHARACTER_ROLE.SLYX || character.role.roleType == CHARACTER_ROLE.CRATER_BEAST)){
-					//	continue;
-					//}
-					InfectPsytoxin (character);
-				}
-			}
+            ECS.Character character = _targetLandmark.charactersAtLocation[i];
+            if (!character.HasTag(CHARACTER_TAG.SEVERE_PSYTOXIN)) {
+                if (character.role != null && (character.role.roleType == CHARACTER_ROLE.SLYX || character.role.roleType == CHARACTER_ROLE.CRATER_BEAST)) {
+                    continue;
+                }
+                InfectPsytoxin(character);
+            }
+   //         if (_targetLandmark.charactersAtLocation[i] is Party){
+			//	Party party = (Party)_targetLandmark.charactersAtLocation [i];
+			//	for (int j = 0; j < party.partyMembers.Count; j++) {
+			//		ECS.Character character = party.partyMembers [j];
+			//		if(!character.HasTag(CHARACTER_TAG.SEVERE_PSYTOXIN)){
+			//			if(character.role != null && (character.role.roleType == CHARACTER_ROLE.SLYX || character.role.roleType == CHARACTER_ROLE.CRATER_BEAST)){
+			//				continue;
+			//			}
+			//			InfectPsytoxin (character);
+			//		}
+			//	}
+			//}else if(_targetLandmark.charactersAtLocation[i] is ECS.Character){
+			//	ECS.Character character = (ECS.Character) _targetLandmark.charactersAtLocation[i];
+			//	if(!character.HasTag(CHARACTER_TAG.SEVERE_PSYTOXIN)){
+			//		if(character.role != null && (character.role.roleType == CHARACTER_ROLE.SLYX || character.role.roleType == CHARACTER_ROLE.CRATER_BEAST)){
+			//			continue;
+			//		}
+			//		InfectPsytoxin (character);
+			//	}
+			//}
 		}
 		_assignedCharacter.Death ();
 		Log destructLog = new Log(GameManager.Instance.Today(), "CharacterTasks", "CommandInfection", "self_destruct");

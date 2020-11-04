@@ -6,6 +6,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using ECS;
 
 //[System.Serializable]
 public class CharacterTask {
@@ -256,7 +257,7 @@ public class CharacterTask {
         return null;
     }
     protected virtual WeightedDictionary<ECS.Character> GetCharacterTargetWeights(ECS.Character character) { return new WeightedDictionary<ECS.Character>(); }
-    public virtual bool HasHostilitiesBecauseOfTask(ICombatInitializer other) { return false; }
+    public virtual bool HasHostilitiesBecauseOfTask(Character other) { return false; }
     #endregion
 
     protected void ScheduleTaskEnd(int days, TASK_STATUS result) {

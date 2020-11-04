@@ -98,7 +98,7 @@ public class Pillage : CharacterTask {
                 }
             }
             for (int j = 0; j < landmark.charactersAtLocation.Count; j++) {
-                ECS.Character currChar = landmark.charactersAtLocation[j].mainCharacter;
+                ECS.Character currChar = landmark.charactersAtLocation[j];
                 if (currChar.id != character.id) {
                     if (currChar.IsHostileWith(character)) {
                         weight -= 10; //For each Hostile characters in the landmark: -10
