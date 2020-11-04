@@ -296,6 +296,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
         UtilityScripts.Utilities.DestroyChildren(charactersScrollView.content);
         _characterItems.Clear();
 
+        bool hasAliveMember = false;
         //Angels should not show in the characters list of faction in UI
         //https://trello.com/c/SGow0hA0/2234-angels-on-list
         for (int i = 0; i < activeFaction.characters.Count; i++) {
@@ -309,8 +310,15 @@ public class FactionInfoUIV2 : MonoBehaviour {
                 if(currCharacter.isLycanthrope) {
                     currCharacter = currCharacter.lycanData.activeForm;
                 }
+                if (!currCharacter.isDead) {
+                    hasAliveMember = true;
+                }
                 CreateNewCharacterItem(currCharacter, false);
             }
+        }
+        if (!hasAliveMember) {
+            //If all faction members is dead, should auto toggle off the hide dead toggle, meaning all faction members even the dead ones, will be shown
+            aliveToggle.isOn = false;
         }
         //OrderCharacterItems();
     }

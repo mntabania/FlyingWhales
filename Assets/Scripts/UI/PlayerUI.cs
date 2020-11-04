@@ -582,6 +582,7 @@ public class PlayerUI : BaseMonoBehaviour {
     public void ToggleVillagersTab(bool isOn) {
         if (isOn) {
             FactionInfoHubUI.Instance.Open();
+            FactionInfoHubUI.Instance.ShowMembers();
             //OpenVillagersList();
         } else {
             FactionInfoHubUI.Instance.Close();

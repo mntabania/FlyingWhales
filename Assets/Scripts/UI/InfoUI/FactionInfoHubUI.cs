@@ -16,6 +16,7 @@ public class FactionInfoHubUI : MonoBehaviour {
     [Header("General")]
     [SerializeField] private GameObject parentPanelGO;
     [SerializeField] private Button closeBtn;
+    [SerializeField] private RuinarchToggle membersToggle;
 
     [Header("Faction Scroll Snap")]
     [SerializeField] private GameObject factionItemPrefab;
@@ -113,6 +114,9 @@ public class FactionInfoHubUI : MonoBehaviour {
     public void Close() {
         parentPanelGO.SetActive(false);
     }
+    public void ShowMembers() {
+        membersToggle.isOn = true;
+    }
     public void OnClickClose() {
         PlayerUI.Instance.SetVillagerTabIsOn(false);
     }
@@ -151,8 +155,6 @@ public class FactionInfoHubUI : MonoBehaviour {
         factionScrollSnap.GoToScreen(index);
     }
     #endregion
-
-
 
     #region Listeners
     private void OnFactionCreated(Faction faction) {
