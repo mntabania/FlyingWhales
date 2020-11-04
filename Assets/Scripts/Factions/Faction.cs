@@ -431,15 +431,14 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
         }
     }
-    //public bool HasAMemberThatIsAPartyLeader(PARTY_QUEST_TYPE partyType) {
-    //    for (int i = 0; i < characters.Count; i++) {
-    //        Character member = characters[i];
-    //        if (member.partyComponent.hasParty && member.partyComponent.currentParty.IsLeader(member) && member.partyComponent.currentParty.partyType == partyType) {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
+    public bool HasMemberThatMeetCriteria(Func<Character, bool> criteria) {
+        for (int i = 0; i < characters.Count; i++) {
+            if (criteria.Invoke(characters[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Utilities
