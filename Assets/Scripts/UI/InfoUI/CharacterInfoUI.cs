@@ -395,7 +395,7 @@ public class CharacterInfoUI : InfoUIBase {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 info += $"\n{trait.GetTestingData(activeCharacter)}";
 #endif
-                UIManager.Instance.ShowSmallInfo(info);    
+                UIManager.Instance.ShowSmallInfo(info, autoReplaceText:false);    
             }
         }
     }
@@ -408,7 +408,7 @@ public class CharacterInfoUI : InfoUIBase {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 info += $"\n{trait.GetTestingData(activeCharacter)}";
 #endif
-                UIManager.Instance.ShowSmallInfo(info);    
+                UIManager.Instance.ShowSmallInfo(info, autoReplaceText:false);    
             }
         }
     }

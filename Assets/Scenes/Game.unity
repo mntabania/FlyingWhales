@@ -125860,11 +125860,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: GeneralConfirmationWithVisual
       objectReference: {fileID: 0}
-    - target: {fileID: 5427893099512573031, guid: 8550405a61e2d7b4db84a14a7c674ebe,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8550405a61e2d7b4db84a14a7c674ebe, type: 3}
 --- !u!114 &5428478582642600942 stripped
