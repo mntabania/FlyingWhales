@@ -207,6 +207,10 @@ public static class Signals {
     /// Parameters: Character criminal, CRIME_TYPE crimeType, Character accuser
     /// </summary>
     public static string CHARACTER_ACCUSED_OF_CRIME = "OnCharacterAccusedOfCrime";
+    /// <summary>
+    /// Parameters: Character character
+    /// </summary>
+    public static string CHARACTER_CHANGED_NAME = "OnCharacterChangedName";
     #endregion
 
     #region UI
@@ -317,6 +321,10 @@ public static class Signals {
     /// Parameters string fileToLoad
     /// </summary>
     public static string LOAD_SAVE_FILE = "OnLoadFileConfirmed";
+    /// <summary>
+    /// Parameters (Log)
+    /// </summary>
+    public static string LOG_MENTIONING_CHARACTER_UPDATED = "LogMentioningCharacterUpdated";
     #endregion
 
     #region Quest Signals

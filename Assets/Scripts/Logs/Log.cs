@@ -51,15 +51,15 @@ public struct Log {
             AddTag(LOG_TAG.Work);
         }
     }
-    public Log(string id, GameDate date, string logText, string category, string key, string file, string involvedObjects, List<LOG_TAG> providedTags, string rawText) {
+    public Log(string id, GameDate date, string logText, string category, string key, string file, string involvedObjects, List<LOG_TAG> providedTags, string rawText, List<LogFillerStruct> fillers = null) {
         persistentID = id;
         this.category = category;
-        this.file = key;
-        this.key = file;
+        this.file = file;
+        this.key = key;
         gameDate = date;
         _logText = logText;
         actionID = string.Empty;
-        fillers = null;
+        this.fillers = fillers;
         tags = new List<LOG_TAG>();
         hasValue = true;
         hasBeenFinalized = true;
@@ -157,6 +157,9 @@ public struct Log {
     #endregion
 
     #region Text
+    public void ResetText() {
+        _logText = LocalizationManager.Instance.GetLocalizedValue(category, file, key);
+    }
     public void FinalizeText() {
         _logText = UtilityScripts.Utilities.LogReplacer(_logText, fillers);
         rawText = UtilityScripts.Utilities.RemoveRichText(_logText);
@@ -167,6 +170,7 @@ public struct Log {
     #region Addition
     public void AddLogToDatabase() {
         DatabaseManager.Instance.mainSQLDatabase.InsertLog(this);
+        Messenger.Broadcast(Signals.LOG_ADDED, this);
     }
     #endregion
 

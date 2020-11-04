@@ -468,6 +468,9 @@ public static class Extensions {
             case JOB_TYPE.SEEK_SHELTER:
                 priority = 1040;
                 break;
+            case JOB_TYPE.APPREHEND:
+                priority = 1030;
+                break;
             case JOB_TYPE.SCREAM:
                 priority = 1020;
                 break;
@@ -539,7 +542,6 @@ public static class Extensions {
             case JOB_TYPE.RESTRAIN:
                 priority = 970;
                 break;
-            case JOB_TYPE.APPREHEND:
             case JOB_TYPE.REPORT_CRIME:
                 //case JOB_TYPE.BURY:
                 priority = 870;

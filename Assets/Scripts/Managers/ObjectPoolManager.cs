@@ -23,6 +23,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     public List<InterruptHolder> interruptPool { get; private set; }
     public List<Party> partyPool { get; private set; }
     public List<GoapThread> goapThreadPool { get; private set; }
+    private List<LogDatabaseThread> _logDatabaseThreadPool;
 
     private void Awake() {
         Instance = this;
@@ -53,6 +54,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructInterruptPool();
         ConstructPartyPool();
         ConstructGoapThreadPool();
+        ConstructLogDatabaseThreadPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -294,6 +296,28 @@ public class ObjectPoolManager : BaseMonoBehaviour {
             return data;
         }
         return new GoapThread();
+    }
+    #endregion
+    
+    #region Database Thread
+    private void ConstructLogDatabaseThreadPool() {
+        _logDatabaseThreadPool = new List<LogDatabaseThread>();
+    }
+    public LogDatabaseThread CreateNewLogDatabaseThread() {
+        LogDatabaseThread data = GetLogDatabaseThreadFromPool();
+        return data;
+    }
+    public void ReturnLogDatabaseThreadToPool(LogDatabaseThread data) {
+        data.Reset();
+        _logDatabaseThreadPool.Add(data);
+    }
+    private LogDatabaseThread GetLogDatabaseThreadFromPool() {
+        if (_logDatabaseThreadPool.Count > 0) {
+            LogDatabaseThread data = _logDatabaseThreadPool[0];
+            _logDatabaseThreadPool.RemoveAt(0);
+            return data;
+        }
+        return new LogDatabaseThread();
     }
     #endregion
 

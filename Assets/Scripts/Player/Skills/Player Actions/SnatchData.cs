@@ -146,6 +146,14 @@ public class SnatchData : PlayerAction {
                 if (targetCharacter.isDead) {
                     return false;
                 }
+                if (!(targetCharacter is Summon)) {
+                    //if character is not a monster, check if it is still considered a villager
+                    //if it is not then do not allow snatch, since we do not allow non-villagers to be unseized on
+                    //the defiler or prison anyway.
+                    if (!targetCharacter.isNormalCharacter) {
+                        return false;
+                    }
+                }
             }
             return true;
         }

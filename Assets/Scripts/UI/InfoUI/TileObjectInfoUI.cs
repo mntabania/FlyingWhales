@@ -44,6 +44,7 @@ public class TileObjectInfoUI : InfoUIBase {
         base.Initialize();
         Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateLogsFromSignal);
         Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateLogsFromSignal);
+        Messenger.AddListener<Character>(Signals.LOG_MENTIONING_CHARACTER_UPDATED, OnLogMentioningCharacterUpdated);
         Messenger.AddListener<TileObject, Character>(Signals.ADD_TILE_OBJECT_USER, UpdateUsersFromSignal);
         Messenger.AddListener<TileObject, Character>(Signals.REMOVE_TILE_OBJECT_USER, UpdateUsersFromSignal);
         Messenger.AddListener<TileObject, Trait>(Signals.TILE_OBJECT_TRAIT_ADDED, UpdateTraitsFromSignal);
@@ -206,6 +207,12 @@ public class TileObjectInfoUI : InfoUIBase {
     #region Listeners
     private void UpdateLogsFromSignal(Log log) {
         if(isShowing && log.IsInvolved(activeTileObject)) {
+            UpdateLogs();
+        }
+    }
+    private void OnLogMentioningCharacterUpdated(Character character) {
+        if (isShowing) {
+            //update history regardless of character because updated character might be referenced in this objects logs
             UpdateLogs();
         }
     }

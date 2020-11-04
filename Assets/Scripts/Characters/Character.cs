@@ -1765,6 +1765,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _gender = gender;
     }
     public void SetName(string newName) {
+        string previousName = _name;
+        
         _name = newName;
         string[] split = _name.Split(' '); 
         _firstName = split[0];
@@ -1772,6 +1774,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             _surName = split[1];    
         }
         RandomNameGenerator.RemoveNameAsAvailable(gender, race, newName);
+        if (!string.IsNullOrEmpty(previousName)) {
+            //if previous name wasn't blank, then it means that the name was changed.
+            Messenger.Broadcast(Signals.CHARACTER_CHANGED_NAME, this);    
+        }
     }
     public void SetFirstAndLastName(string firstName, string lastName) {
         _firstName = firstName;
