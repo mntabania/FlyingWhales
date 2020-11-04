@@ -19,17 +19,17 @@ public class FactionInfoHubUI : MonoBehaviour {
 
     [Header("Faction Scroll Snap")]
     [SerializeField] private GameObject factionItemPrefab;
-    [SerializeField] private GameObject factionItemPaginationPrefab;
+    //[SerializeField] private GameObject factionItemPaginationPrefab;
     [SerializeField] private HorizontalScrollSnap factionScrollSnap;
     [SerializeField] private Transform factionScrollSnapContent;
-    [SerializeField] private Transform factionScrollSnapPagination;
-    [SerializeField] private ToggleGroup factionScrollSnapPaginationGroup;
+    //[SerializeField] private Transform factionScrollSnapPagination;
+    //[SerializeField] private ToggleGroup factionScrollSnapPaginationGroup;
 
     [Header("Faction Info UI V2")]
     [SerializeField] private FactionInfoUIV2 factionInfoUI;
 
     public List<FactionItem> factionItems;
-    private List<GameObject> factionPaginationGOs;
+    //private List<GameObject> factionPaginationGOs;
 
     //private int lastIndex = 0;
 
@@ -44,7 +44,7 @@ public class FactionInfoHubUI : MonoBehaviour {
     }
     void Start() {
         factionItems = new List<FactionItem>();
-        factionPaginationGOs = new List<GameObject>();
+        //factionPaginationGOs = new List<GameObject>();
     }
     void OnEnable() {
         
@@ -75,8 +75,8 @@ public class FactionInfoHubUI : MonoBehaviour {
     private IEnumerator RepopulateFactions() { //IEnumerator
         //int currentPage = factionScrollSnap.CurrentPage;
         UtilityScripts.Utilities.DestroyChildren(factionScrollSnapContent);
-        UtilityScripts.Utilities.DestroyChildren(factionScrollSnapPagination);
-        factionPaginationGOs.Clear();
+        //UtilityScripts.Utilities.DestroyChildren(factionScrollSnapPagination);
+        //factionPaginationGOs.Clear();
         factionItems.Clear();
         //yield return null;
         for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
@@ -197,7 +197,7 @@ public class FactionInfoHubUI : MonoBehaviour {
             FactionItem item = factionItems[index];
             ObjectPoolManager.Instance.DestroyObject(item.gameObject);
             factionItems.RemoveAt(index);
-            DestroyFactionItemPaginationInIndex(index);
+            //DestroyFactionItemPaginationInIndex(index);
         }
     }
     private bool HasFactionItem(Faction faction) {
@@ -234,13 +234,13 @@ public class FactionInfoHubUI : MonoBehaviour {
         }
     }
     private void CreateFactionItemPagination() {
-        GameObject go = Instantiate(factionItemPaginationPrefab, Vector3.zero, Quaternion.identity, factionScrollSnapPagination);
-        go.GetComponent<Toggle>().group = factionScrollSnapPaginationGroup;
-        factionPaginationGOs.Add(go);
+        //GameObject go = Instantiate(factionItemPaginationPrefab, Vector3.zero, Quaternion.identity, factionScrollSnapPagination);
+        //go.GetComponent<Toggle>().group = factionScrollSnapPaginationGroup;
+        //factionPaginationGOs.Add(go);
     }
     private void DestroyFactionItemPaginationInIndex(int index) {
-        Destroy(factionPaginationGOs[index]);
-        factionPaginationGOs.RemoveAt(index);
+        //Destroy(factionPaginationGOs[index]);
+        //factionPaginationGOs.RemoveAt(index);
     }
     #endregion
 

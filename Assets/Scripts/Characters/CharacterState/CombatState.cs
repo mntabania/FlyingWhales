@@ -467,7 +467,6 @@ public class CombatState : CharacterState {
                     }
                 }
             }
-            
         }
         for (int i = 0; i < stateComponent.owner.combatComponent.avoidInRange.Count; i++) {
             IPointOfInterest poi = stateComponent.owner.combatComponent.avoidInRange[i];

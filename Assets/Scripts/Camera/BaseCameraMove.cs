@@ -124,7 +124,7 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
                         originMousePos = Input.mousePosition;
                         hasReachedThreshold = true;
                     }
-                    if (originMousePos !=  Input.mousePosition) { //check if the mouse has moved position from the origin, only then will it be considered dragging
+                    if (originMousePos !=  Input.mousePosition && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI) { //check if the mouse has moved position from the origin, only then will it be considered dragging
                         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Drag_Clicked);
                         isDragging = true;
                     }

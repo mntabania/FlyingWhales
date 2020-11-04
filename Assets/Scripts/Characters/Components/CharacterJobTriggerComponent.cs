@@ -2972,14 +2972,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Snatch
-    public void CreateSnatchJob(Character targetCharacter, LocationGridTile targetLocation, LocationStructure structure) {
+    public bool CreateSnatchJob(Character targetCharacter, LocationGridTile targetLocation, LocationStructure structure) {
 	    if (owner.jobQueue.HasJob(JOB_TYPE.SNATCH, targetCharacter) == false) {
 		    owner.behaviourComponent.SetIsSnatching(true);
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SNATCH, INTERACTION_TYPE.DROP, targetCharacter, owner);
 		    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { structure, targetLocation });
-		    owner.jobQueue.AddJobInQueue(job);
 		    owner.logComponent.PrintLogIfActive($"{owner.name} will do snatch job towards {targetCharacter.name}. Will drop at {structure.name}, ({targetLocation.localPlace.ToString()})");
-	    }
+            return owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
     }
     #endregion
 
