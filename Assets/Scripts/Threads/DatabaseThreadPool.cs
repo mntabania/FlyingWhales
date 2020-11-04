@@ -11,67 +11,52 @@ public class DatabaseThreadPool : BaseMonoBehaviour {
 
     private static readonly object THREAD_LOCKER = new object();
 
-    private Queue<string> functionsToBeRunInThread;
-    // private Queue<string> functionsToBeResolved;
+    private Queue<LogDatabaseThread> functionsToBeRunInThread;
+    private Queue<LogDatabaseThread> functionsToBeResolved;
 
     private Thread newThread;
-    //private ManualResetEventSlim exitHandle = new ManualResetEventSlim();
     private bool isRunning;
 
     void Awake() {
         Instance = this;
-        this.isRunning = true;
+        isRunning = true;
 
-        functionsToBeRunInThread = new Queue<string>();
-        // functionsToBeResolved = new Queue<string>();
+        functionsToBeRunInThread = new Queue<LogDatabaseThread>();
+        functionsToBeResolved = new Queue<LogDatabaseThread>();
 
-        // newThread = new Thread(RunThread);
-        // newThread.IsBackground = true;
-        // newThread.Start();
+        newThread = new Thread(RunThread) { IsBackground = true };
+        newThread.Start();
     }
     protected override void OnDestroy() {
-        this.isRunning = false;
+        isRunning = false;
         functionsToBeRunInThread.Clear();
-        // functionsToBeResolved.Clear();
+        functionsToBeResolved.Clear();
         base.OnDestroy();
         Instance = null;
     }
 
-    // void LateUpdate() {
-    //     if (this.functionsToBeResolved.Count > 0) {
-    //         string action = this.functionsToBeResolved.Dequeue();
-    //         
-    //     }
-    // }
-
-    public void AddToThreadPool(string multiThread) {
+    void LateUpdate() {
+        if (functionsToBeResolved.Count > 0) {
+            LogDatabaseThread action = functionsToBeResolved.Dequeue();
+            action.FinishMultithread();
+            ObjectPoolManager.Instance.ReturnLogDatabaseThreadToPool(action);
+        }
+    }
+    public void AddToThreadPool(LogDatabaseThread multiThread) {
         functionsToBeRunInThread.Enqueue(multiThread);
     }
 
     private void RunThread() {
-        // while (isRunning) { // && !exitHandle.Wait(20)
-        //     if (this.functionsToBeRunInThread.Count > 0) {
-        //         //Thread.Sleep(20);
-        //         string newFunction = this.functionsToBeRunInThread.Dequeue();
-        //         if (newFunction != null) {
-        //             lock (THREAD_LOCKER) {
-        //                 if (DatabaseManager.Instance != null && DatabaseManager.Instance.mainSQLDatabase != null) {
-        //                     DatabaseManager.Instance.mainSQLDatabase.ExecuteInsertCommand(newFunction);
-        //                 }
-        //             }
-        //             // this.functionsToBeResolved.Enqueue(newFunction);
-        //         }
-        //     }
-        // }
+        while (isRunning) {
+            if (functionsToBeRunInThread.Count > 0) {
+                LogDatabaseThread newFunction = functionsToBeRunInThread.Dequeue();
+                if (newFunction != null) {
+                    lock (THREAD_LOCKER) {
+                        newFunction.DoMultithread();
+                    }
+                }
+                functionsToBeResolved.Enqueue(newFunction);
+            }
+        }
     }
-    private void Stop() {
-        ////exitHandle.Set();
-        //exitHandle.Dispose();
-        //exitHandle = null;
-        newThread.Join();
-    }
-    // void OnDestroy() {
-    //     this.isRunning = false;
-    //     //Stop();
-    // }
 }

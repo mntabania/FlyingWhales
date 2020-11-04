@@ -52,6 +52,7 @@ public class MonsterInfoUI : InfoUIBase {
         base.Initialize();
         Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateHistory);
         Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
+        Messenger.AddListener<Character>(Signals.LOG_MENTIONING_CHARACTER_UPDATED, OnLogMentioningCharacterUpdated);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_STACKED, UpdateTraitsFromSignal);
@@ -306,6 +307,12 @@ public class MonsterInfoUI : InfoUIBase {
     }
     private void UpdateAllHistoryInfo() {
         logsWindow.UpdateAllHistoryInfo();
+    }
+    private void OnLogMentioningCharacterUpdated(Character character) {
+        if (isShowing) {
+            //update history regardless of character because updated character might be referenced in this characters logs
+            UpdateAllHistoryInfo();
+        }
     }
     #endregion   
 

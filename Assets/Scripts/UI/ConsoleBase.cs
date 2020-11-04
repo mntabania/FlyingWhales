@@ -93,7 +93,8 @@ public class ConsoleBase : InfoUIBase {
             {"/set_party_state", SwitchPartyState },
             {"/raid", StartRaid },
             {"/save_db", SaveDatabaseInMemory},
-            {"/find_object", FindTileObject}
+            {"/find_object", FindTileObject},
+            {"/change_name", ChangeName}
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1087,6 +1088,24 @@ public class ConsoleBase : InfoUIBase {
             job.CancelJob(false);
             AddSuccessMessage($"Cancelled job {jobParameterString} of {character.name}");
         }
+    }
+    private void ChangeName(string[] parameters) {
+        if (parameters.Length != 2) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of ChangeName");
+            return;
+        }
+        string nameParameterString = parameters[0];
+        string newName = parameters[1];
+        Character character = CharacterManager.Instance.GetCharacterByName(nameParameterString);
+        if (character != null) {
+            string previousName = character.name;
+            character.SetName(newName);
+            AddSuccessMessage($"Successfully set name of {previousName} to {character.name}");
+        } else {
+            AddErrorMessage($"Could not find character named {nameParameterString}");
+        }
+
     }
     #endregion
 

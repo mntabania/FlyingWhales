@@ -1,4 +1,5 @@
-﻿using Inner_Maps.Location_Structures;
+﻿using System;
+using Inner_Maps.Location_Structures;
 using Logs;
 using UnityEngine.Assertions;
 
@@ -20,13 +21,39 @@ public struct LogFillerStruct {
         this.value = value;
         this.identifier = identifier;
     }
-        
-        
+    public LogFillerStruct(string formattedLogFillerString, LOG_IDENTIFIER identifier) {
+        this.identifier = identifier;
+        string[] items = formattedLogFillerString.Split('|');
+        if (items.Length == 1) {
+            //assume that filler is only a string value
+            value = items[0];
+            type = null;
+            objPersistentID = string.Empty;
+        } else if (items.Length == 3) {
+            //filler has all 3 values (type, value, and Persistent ID)
+            string typeStr = items[0];
+            type = Type.GetType(typeStr);
+            value = items[1];
+            objPersistentID = items[2];
+        } else {
+            throw new Exception($"Log Filler could not be constructed from provided string {formattedLogFillerString}. Identifier {identifier}");
+        }
+    }
+
     public object GetObjectForFiller() {
         if (type != null && !string.IsNullOrEmpty(objPersistentID)) {
             return DatabaseManager.Instance.GetObjectFromDatabase(type, objPersistentID);
         }
         return null;
+    }
+    private bool GetNameForObject(out string name) {
+        object fillerObj = GetObjectForFiller();
+        if (fillerObj is ILogFiller logFiller) {
+            name = logFiller.name;
+            return true;
+        }
+        name = string.Empty;
+        return false;
     }
     public string GetLinkText() {
         Assert.IsNotNull(type, $"Filler {this.ToString()} is trying to create a link tag, but it shouldn't since it doesn't have an object attached to it.");
@@ -47,6 +74,12 @@ public struct LogFillerStruct {
             return value.Replace("'", "''");
         } else {
             return $"{type}|{value.Replace("'", "''")}|{objPersistentID}";    
+        }
+    }
+    public void ForceUpdateValueBasedOnConnectedObject() {
+        //update value of filler in case name of object has changed
+        if (GetNameForObject(out var name)) {
+            value = name;
         }
     }
     public override string ToString() {
