@@ -8,7 +8,7 @@ using Quests.Steps;
 using UnityEngine;
 namespace Tutorial {
     public class ChaosOrbsTutorial : BonusTutorial {
-        public ChaosOrbsTutorial() : base("Chaos Orbs", TutorialManager.Tutorial.Chaos_Orbs_Tutorial) { }
+        public ChaosOrbsTutorial() : base("Mana Orbs", TutorialManager.Tutorial.Chaos_Orbs_Tutorial) { }
 
         #region Criteria
         protected override void ConstructCriteria() {
@@ -59,12 +59,11 @@ namespace Tutorial {
             TutorialManager.Instance.StartCoroutine(DelayedChaosOrbTooltip());
         }
         private IEnumerator DelayedChaosOrbTooltip() {
-            yield return new WaitForSeconds(1f);
-            PlayerUI.Instance.ShowGeneralConfirmation("Chaos Orbs",
-                "You start a playthrough with limited amount of Mana. " +
-                "The primary way of gaining more Mana is by finding Chaos Orbs. " +
-                $"These are Mana-filled orbs that are produced by Villagers whenever they perform criminal acts. " +
-                "They also produce these when they cry so try to make them miserable."
+            yield return UtilityScripts.GameUtilities.waitFor1Second;
+            PlayerUI.Instance.ShowGeneralConfirmation("Mana Orbs",
+                $"A {UtilityScripts.Utilities.ColorizeAction("Mana Orb")} has been produced by a Villager! Hover over these magical orbs of chaotic energy to gain more Mana. " +
+                $"These are produced by Villagers whenever they perform {UtilityScripts.Utilities.ColorizeAction("criminal acts")}. " +
+                $"They also produce these {UtilityScripts.Utilities.ColorizeAction("when they cry")} so try to make them miserable."
             );
         }
         private bool IsChaosOrbSelected(GameObject gameObject) {

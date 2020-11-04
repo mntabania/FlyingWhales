@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 public class AutoAbsorbChaosOrb : PassiveSkill {
-    public override string name => "Expired Chaos Orbs are auto absorbed";
+    public override string name => "Expired Mana Orbs are auto absorbed";
     public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Auto_Absorb_Chaos_Orb;
     
     public override void ActivateSkill() {

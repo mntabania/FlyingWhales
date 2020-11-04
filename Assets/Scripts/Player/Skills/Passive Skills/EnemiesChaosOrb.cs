@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 public class EnemiesChaosOrb : PassiveSkill {
-    public override string name => "Chaos Orbs on become Enemies or Rivals";
+    public override string name => "Mana Orbs on become Enemies or Rivals";
     public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Enemies_Chaos_Orb;
     
     public override void ActivateSkill() {

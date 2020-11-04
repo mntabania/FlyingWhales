@@ -26,7 +26,7 @@ public class PlayerManager : BaseMonoBehaviour {
     [Header("Intervention Ability Tiers")]
     [FormerlySerializedAs("interventionAbilityTiers")] [SerializeField] private InterventionAbilityTierDictionary spellTiers;
 
-    [Header("Chaos Orbs")] 
+    [Header("Mana Orbs")] 
     [SerializeField] private GameObject chaosOrbPrefab;
 
     private bool _hasWinCheckTimer;
@@ -232,7 +232,7 @@ public class PlayerManager : BaseMonoBehaviour {
     //}
     #endregion
 
-    #region Chaos Orbs
+    #region Mana Orbs
     public List<ChaosOrb> availableChaosOrbs;
     public void CreateChaosOrbFromSave(Vector3 worldPos, Region region) {
         GameObject chaosOrbGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(chaosOrbPrefab.name, Vector3.zero, Quaternion.identity, region.innerMap.objectsParent);
@@ -268,7 +268,7 @@ public class PlayerManager : BaseMonoBehaviour {
                     if (actionNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL || actionNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || 
                          actionNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT || actionNode.associatedJobType == JOB_TYPE.TRIGGER_FLAW) {
                         //If in case associated job is null, just check job type. Nasty side effect of relying on this checking is other jobs that use the TRIGGER_FLAW job type
-                        //will also not create Chaos Orbs if that job uses Assault or Knockout. So it would be ideal that the above checking should always be used.
+                        //will also not create Mana Orbs if that job uses Assault or Knockout. So it would be ideal that the above checking should always be used.
                         //This only serves as a failsafe.
                         return;
                     }
@@ -298,7 +298,7 @@ public class PlayerManager : BaseMonoBehaviour {
                         break;
                 }
                 if(orbsToCreate != 0) {
-                    character.logComponent.PrintLogIfActive($"{character.name} performed a crime of type {crimeType.ToString()}. Expelling {orbsToCreate.ToString()} Chaos Orbs.");
+                    character.logComponent.PrintLogIfActive($"{character.name} performed a crime of type {crimeType.ToString()}. Expelling {orbsToCreate.ToString()} Mana Orbs.");
                     Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, character.marker.transform.position, orbsToCreate, character.currentRegion.innerMap);
                 }
             }    
