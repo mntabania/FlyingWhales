@@ -220,6 +220,17 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         #endregion
+        
+        #region Destruction
+        public override void OnParentStructureDestroyed() {
+            base.OnParentStructureDestroyed();
+            Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
+            if (currentBrainwashTarget != null && currentBrainwashTarget.interruptComponent.isInterrupted && 
+                currentBrainwashTarget.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Being_Brainwashed) {
+                currentBrainwashTarget.interruptComponent.ForceEndNonSimultaneousInterrupt();
+            }
+        }
+        #endregion
     }
 }
 
