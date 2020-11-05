@@ -372,6 +372,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.AddListener(Signals.TICK_ENDED, PerTickMovement);
         Messenger.AddListener<IIntel>(Signals.ACTIVE_INTEL_SET, OnActiveIntelSet);
         Messenger.AddListener(Signals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     private void RemoveListeners() {
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
@@ -384,6 +385,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
         Messenger.RemoveListener<IIntel>(Signals.ACTIVE_INTEL_SET, OnActiveIntelSet);
         Messenger.RemoveListener(Signals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+    }
+    private void OnCharacterChangedName(Character p_character) {
+        if (p_character == character) {
+            UpdateName();
+        }
     }
     private void OnCharacterGainedTrait(Character characterThatGainedTrait, Trait trait) {
         if (characterThatGainedTrait == this.character) {
