@@ -66,6 +66,9 @@ public class MonsterInfoUI : InfoUIBase {
         Messenger.AddListener<Character>(Signals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
         
+        statusTraitsEventLbl.SetShouldColorHighlight(false);
+        normalTraitsEventLbl.SetShouldColorHighlight(false);
+        
         logsWindow.Initialize();
         ConstructCombatModes();
     }

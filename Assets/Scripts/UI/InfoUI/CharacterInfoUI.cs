@@ -120,7 +120,9 @@ public class CharacterInfoUI : InfoUIBase {
         homeRegionEventLbl.SetOnClickAction(OnClickHomeLocation);
         houseEventLbl.SetOnClickAction(OnClickHomeStructure);
         partyEventLbl.SetOnClickAction(OnClickParty);
-        opinionsEventLabel.SetHighlightChecker(o => false);
+        opinionsEventLabel.SetShouldColorHighlight(false);
+        statusTraitsEventLbl.SetShouldColorHighlight(false);
+        normalTraitsEventLbl.SetShouldColorHighlight(false);
 
         moodMeter.ResetMarks();
         moodMeter.AddMark(EditableValuesManager.Instance.criticalMoodHighThreshold/100f, Color.red);

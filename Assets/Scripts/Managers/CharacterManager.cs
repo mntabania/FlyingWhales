@@ -98,6 +98,11 @@ public class CharacterManager : BaseMonoBehaviour {
     public Color undeadNameColor;
     public Color normalNameColor;
 
+    private string _summonNameColorHex;
+    private string _demonNameColorHex;
+    private string _undeadNameColorHex;
+    private string _normalNameColorHex;
+
     private Dictionary<string, DeadlySin> deadlySins { get; set; }
     private Dictionary<EMOTION, Emotion> emotionData { get; set; }
     private List<Emotion> allEmotions { get; set; }
@@ -352,7 +357,12 @@ public class CharacterManager : BaseMonoBehaviour {
         //_allCharacterAvatars = new List<CharacterAvatar>();
     }
 
-    public void Initialize() {
+    public void Initialize() { 
+        _summonNameColorHex = ColorUtility.ToHtmlStringRGB(summonNameColor);
+        _demonNameColorHex = ColorUtility.ToHtmlStringRGB(demonNameColor);
+        _undeadNameColorHex = ColorUtility.ToHtmlStringRGB(undeadNameColor);
+        _normalNameColorHex = ColorUtility.ToHtmlStringRGB(normalNameColor);
+
         classManager.Initialize();
         CreateDeadlySinsData();
         defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
@@ -669,6 +679,30 @@ public class CharacterManager : BaseMonoBehaviour {
             }
         }
         return normalNameColor;
+    }
+    public string GetCharacterNameColorHex(Character character) {
+        if(character != null) {
+            if (character.minion != null) {
+                return _demonNameColorHex;
+            } else if (character.faction == FactionManager.Instance.undeadFaction) {
+                return _undeadNameColorHex;
+            } else if (character.faction == FactionManager.Instance.neutralFaction) {
+                return _summonNameColorHex;
+            }
+        }
+        return _normalNameColorHex;
+    }
+    public string GetCharacterNameColorHexForLogs(Character character) {
+        if(character != null) {
+            if (character.minion != null) {
+                return _demonNameColorHex;
+            } else if (character.faction == FactionManager.Instance.undeadFaction) {
+                return _undeadNameColorHex;
+            } else if (character.faction == FactionManager.Instance.neutralFaction) {
+                return _summonNameColorHex;
+            }
+        }
+        return "f8ed43";
     }
     #endregion
 

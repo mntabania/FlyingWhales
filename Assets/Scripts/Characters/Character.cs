@@ -627,7 +627,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private void OnCharacterChangedName(Character p_character) {
-        UpdateInterruptLogsBasedOnUpdatedCharacter(p_character);
+        if (p_character != this) {
+            UpdateInterruptLogsBasedOnUpdatedCharacter(p_character);    
+        }
     }
     private void UpdateInterruptLogsBasedOnUpdatedCharacter(Character p_character) {
         if (interruptComponent.isInterrupted) {
@@ -1762,6 +1764,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void RenameCharacter(string p_firstName, string p_lastName) {
         SetFirstAndLastName(p_firstName, p_lastName);
+        UpdateInterruptLogsBasedOnUpdatedCharacter(this); //had to do this since signal order can be inconsistent and the UI Update could happen before the actual logs were updated.
         Messenger.Broadcast(Signals.CHARACTER_CHANGED_NAME, this);
     }
     private string GetDefaultRaceClassName() {
@@ -2047,8 +2050,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private string GetFirstNameWithColor() {
         if(CharacterManager.Instance != null) {
-            Color color = CharacterManager.Instance.GetCharacterNameColor(this);
-            return $"<color=#{ColorUtility.ToHtmlStringRGB(color)}>{_firstName}</color>";
+            string color = CharacterManager.Instance.GetCharacterNameColorHex(this);
+            return $"<color=#{color}>{_firstName}</color>";
         }
         return firstName;
     }
