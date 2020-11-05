@@ -15,9 +15,9 @@ public class Evangelize : GoapAction {
     }
     
     #region Overrides
-    // protected override void ConstructBasePreconditionsAndEffects() {
-    //     AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR), HasCultistKit);
-    // }
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR), HasCultistKit);
+    }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Evangelize Success", goapNode);
@@ -64,11 +64,11 @@ public class Evangelize : GoapAction {
     }
     #endregion
     
-    // #region Preconditions
-    // private bool HasCultistKit(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
-    //     return actor.HasItem("Cultist Kit");
-    // }
-    // #endregion
+    #region Preconditions
+    private bool HasCultistKit(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
+        return actor.HasItem("Cultist Kit");
+    }
+    #endregion
 
     #region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData, JobQueueItem job) {
@@ -166,7 +166,7 @@ public class Evangelize : GoapAction {
             //     goapNode, targetCharacter, goapNode.actor, targetCharacter, targetCharacter.faction, REACTION_STATUS.WITNESSED, goapNode.actor.traitContainer.GetNormalTrait<Criminal>("Criminal"));
             targetCharacter.assumptionComponent.CreateAndReactToNewAssumption(goapNode.actor, goapNode.actor, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);
         }
-        
+        goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.CULTIST_KIT);
     }
     #endregion
 
