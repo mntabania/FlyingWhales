@@ -90,28 +90,32 @@ public class CrimeManager : BaseMonoBehaviour {
             Messenger.Broadcast(Signals.CHARACTER_ACCUSED_OF_CRIME, criminal, crimeType, witness);
         }
 
-        if (!existingCrimeData.IsWitness(witness)) {
-            existingCrimeData.AddWitness(witness);
+        ProcessWitnessCrime(witness, existingCrimeData);
+    }
+    private void ProcessWitnessCrime(Character p_witness, CrimeData p_crimeData) {
+        if (!p_crimeData.IsWitness(p_witness)) {
+            p_crimeData.AddWitness(p_witness);
 
             bool willDecideWantedOrNot = false;
-            if (witness.isNormalCharacter && witness.faction != null && witness.faction.isMajorNonPlayer) {
-                if(witness.isFactionLeader || witness.isSettlementRuler) {
-                    if (!existingCrimeData.IsWantedBy(witness.faction)) {
+            if (p_witness.isNormalCharacter && p_witness.faction != null && p_witness.faction.isMajorNonPlayer) {
+                if (p_witness.isFactionLeader || p_witness.isSettlementRuler) {
+                    if (!p_crimeData.IsWantedBy(p_witness.faction)) {
                         //Decide whether to switch to wanted by the faction or not
                         willDecideWantedOrNot = true;
-                        WantedOrNotDecisionMaking(witness, criminal, witness.faction, existingCrimeData, crimeSeverity);
+                        WantedOrNotDecisionMaking(p_witness, p_crimeData.criminal, p_witness.faction, p_crimeData, p_crimeData.crimeSeverity);
                     }
                 }
             }
             if (!willDecideWantedOrNot) {
-                if (!existingCrimeData.isRemoved) {
-                    if (!witness.crimeComponent.IsReported(existingCrimeData)) {
-                        witness.jobComponent.TryCreateReportCrimeJob(criminal, target, existingCrimeData, existingCrimeData.crime);
+                if (!p_crimeData.isRemoved) {
+                    if (!p_witness.crimeComponent.IsReported(p_crimeData)) {
+                        p_witness.jobComponent.TryCreateReportCrimeJob(p_crimeData.criminal, p_crimeData.target, p_crimeData, p_crimeData.crime);
                     }
                 }
             }
         }
     }
+
     //Returns true if wanted, false if not
     public bool WantedOrNotDecisionMaking(Character authority, Character criminal, Faction authorityFaction, CrimeData crimeData, CRIME_SEVERITY crimeSeverity) {
         string opinionLabel = authority.relationshipContainer.GetOpinionLabel(criminal);
@@ -279,9 +283,19 @@ public class CrimeManager : BaseMonoBehaviour {
                         }
                     }
 
-
-                    if (ShouldCreateCrimeStatus(finalCrimeSeverity)) {
-                        MakeCharacterACriminal(crimeType, finalCrimeSeverity, crime, witness, actor, target, targetFaction, reactionStatus, existingCriminalTrait);
+                    //Witness should check if the actor already has an active crime data against the target with same crime type
+                    //If actor already has one, the witness should not create another crime data against the actor, he must only be added to the witness list
+                    //Example: If actor attacked character B (Assault crime), then character A witnessed it, character A will create a crime data that "actor did an assault crime against character B"
+                    //Now, if actor attacked character B again while still having the assault crime against him, and character C witnessed it, instead of creating another crime data that "actor did an assault crime against character B"
+                    //Character C will just be added as a witness to the crime data that character A previously created since that crime is still active
+                    //The reason for this is so that we can reduce the number of crime data created if it is just the same crime against the same person
+                    CrimeData existingActiveCrimeData = actor.crimeComponent.GetActiveCrimeData(target, crimeType);
+                    if(existingActiveCrimeData != null) {
+                        ProcessWitnessCrime(witness, existingActiveCrimeData);
+                    } else {
+                        if (ShouldCreateCrimeStatus(finalCrimeSeverity)) {
+                            MakeCharacterACriminal(crimeType, finalCrimeSeverity, crime, witness, actor, target, targetFaction, reactionStatus, existingCriminalTrait);
+                        }
                     }
                 }
             }

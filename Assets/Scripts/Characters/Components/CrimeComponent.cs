@@ -98,6 +98,15 @@ public class CrimeComponent : CharacterComponent {
         }
         return null;
     }
+    public CrimeData GetActiveCrimeData(IPointOfInterest p_target, CRIME_TYPE p_crimeType) {
+        for (int i = 0; i < activeCrimes.Count; i++) {
+            CrimeData data = activeCrimes[i];
+            if (data.target == p_target && data.crimeType == p_crimeType) {
+                return data;
+            }
+        }
+        return null;
+    }
     public CrimeData AddCrime(CRIME_TYPE crimeType, CRIME_SEVERITY crimeSeverity, ICrimeable crime, Character criminal, Criminal criminalTrait, IPointOfInterest target, Faction targetFaction, REACTION_STATUS reactionStatus) {
         CrimeData newData = new CrimeData(crimeType, crimeSeverity, crime, criminal, target, targetFaction);
         activeCrimes.Add(newData);
