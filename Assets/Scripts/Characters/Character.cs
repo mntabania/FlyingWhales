@@ -479,21 +479,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, ForceCancelAllJobsTargetingPOIExceptSelf);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
-        //Messenger.AddListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnActionPerformed);
         Messenger.AddListener<InterruptHolder>(Signals.INTERRUPT_STARTED, OnInterruptStarted);
         Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.AddListener<IPointOfInterest>(Signals.BEFORE_SEIZING_POI, OnBeforeSeizingPOI);
-        //Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
-        //Messenger.AddListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
         Messenger.AddListener<IPointOfInterest>(Signals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
         Messenger.AddListener<IPointOfInterest, Character>(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.AddListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
         Messenger.AddListener<Faction, Character>(Signals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
-        //Messenger.AddListener<LocationGridTile, int>(Signals.INCREASE_THREAT_THAT_SEES_TILE, IncreaseThreatThatSeesTile);
-
-        //Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
+        Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+        
         needsComponent.SubscribeToSignals();
         jobComponent.SubscribeToListeners();
         stateAwarenessComponent.SubscribeSignals();
@@ -518,22 +514,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, ForceCancelAllJobsTargetingPOIExceptSelf);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
-        //Messenger.RemoveListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnActionPerformed);
         Messenger.RemoveListener<InterruptHolder>(Signals.INTERRUPT_STARTED, OnInterruptStarted);
         Messenger.RemoveListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.RemoveListener<IPointOfInterest>(Signals.BEFORE_SEIZING_POI, OnBeforeSeizingPOI);
-        //Messenger.RemoveListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
-        //Messenger.RemoveListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
-        //Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
-        //Messenger.RemoveListener<Character>(Signals.CHARACTER_NO_LONGER_MISSING, OnCharacterNoLongerMissing);
         Messenger.RemoveListener<IPointOfInterest>(Signals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
         Messenger.RemoveListener<IPointOfInterest, Character>(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.RemoveListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
         Messenger.RemoveListener<Faction, Character>(Signals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
-        //Messenger.RemoveListener<LocationGridTile, int>(Signals.INCREASE_THREAT_THAT_SEES_TILE, IncreaseThreatThatSeesTile);
-        //Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
+        Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+
         needsComponent.UnsubscribeToSignals();
         jobComponent.UnsubscribeListeners();
         stateAwarenessComponent.UnsubscribeSignals();
@@ -548,33 +539,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Listeners
-    private void OnCharacterExitedArea(NPCSettlement npcSettlement, Character character) {
-        if (character.id == id) {
-            //Clear terrifying characters of this character if he/she leaves the npcSettlement
-            //marker.ClearTerrifyingObjects();
-        } else {
-            if (!marker) {
-                throw new Exception($"Marker of {name} is null!");
-            }
-            //remove the character that left the npcSettlement from anyone elses list of terrifying characters.
-            //if (marker.terrifyingObjects.Count > 0) {
-            //    if (character.IsInOwnParty()) {
-            //        marker.RemoveTerrifyingObject(character);
-            //        if (character.ownParty.isCarryingAnyPOI) {
-            //            marker.RemoveTerrifyingObject(character.ownParty.carriedPOI);
-            //        }
-            //    } else {
-            //        marker.RemoveTerrifyingObject(character.currentParty.owner);
-            //        if (character.currentParty.isCarryingAnyPOI) {
-            //            marker.RemoveTerrifyingObject(character.currentParty.carriedPOI);
-            //        }
-            //    }
-            //    //for (int i = 0; i < party.characters.Count; i++) {
-            //    //    marker.RemoveTerrifyingObject(party.characters[i]);
-            //    //}
-            //}
-        }
-    }
     private void OnStopCurrentActionTargetingPOI(IPointOfInterest poi) {
         if(currentActionNode != null && currentActionNode.poiTarget == poi) {
             StopCurrentActionNode();
@@ -593,16 +557,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             } else if (poi is TileObject tileObject) {
                 if (marker.IsPOIInVision(tileObject)) {
-                    PlayerManager.Instance.player.threatComponent.AdjustThreat(amount);
-                }
-            }
-        }
-    }
-    private void IncreaseThreatThatSeesTile(LocationGridTile tile, int amount) {
-        if (faction != null && faction.isMajorNonPlayerOrVagrant && marker && gridTileLocation != null && gridTileLocation.parentMap.region == tile.parentMap.region) {
-            if(gridTileLocation.structure == tile.structure || (!gridTileLocation.structure.isInterior && !tile.structure.isInterior)) {
-                float distance = Vector2.Distance(tile.centeredWorldLocation, gridTileLocation.centeredWorldLocation);
-                if (distance <= 5f) {
                     PlayerManager.Instance.player.threatComponent.AdjustThreat(amount);
                 }
             }
@@ -659,6 +613,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         log.AddToFillers(null, homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
         log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+    }
+    private void OnTraitableGainedTrait(ITraitable p_traitable, Trait p_trait) {
+        if (p_trait is Burning burning) {
+            if (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.PERFORMING && 
+                currentActionNode.poiTarget == p_traitable && currentActionNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
+                //Stop eating object that has been set on fire. And gain burning too.
+                //https://trello.com/c/xDiItiDG/2026-ignite-food-vegetable-while-being-eaten-didnt-ignite
+                StopCurrentActionNode(reason: "Object is burning");
+                traitContainer.AddTrait(this, "Burning", out var addedTrait, bypassElementalChance: true);
+                (addedTrait as Burning)?.SetSourceOfBurning(burning.sourceOfBurning, this);   
+            }
+        }
     }
     #endregion
 

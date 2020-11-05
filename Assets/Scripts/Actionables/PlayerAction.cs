@@ -30,6 +30,7 @@ public class PlayerAction : SpellData {
             IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
         }
         base.ActivateAbility(targetPOI);
+        Messenger.Broadcast(Signals.PLAYER_ACTION_EXECUTED_TOWARDS_POI, this, targetPOI);
     }
     #endregion  
 

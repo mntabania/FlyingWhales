@@ -494,6 +494,10 @@ public static class Signals {
     /// </summary>
     public static string PLAYER_ACTION_ACTIVATED = "OnPlayerActionActivated";
     /// <summary>
+    /// Parameters: PlayerAction executedAction, IPointOfInterest targetObject
+    /// </summary>
+    public static string PLAYER_ACTION_EXECUTED_TOWARDS_POI = "OnPlayerActionExecutedTowardsPOI";
+    /// <summary>
     /// Parameters: IIntel setIntel
     /// </summary>
     public static string ACTIVE_INTEL_SET = "OnPlayerActiveIntelSet";
