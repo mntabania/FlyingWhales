@@ -371,6 +371,17 @@ namespace Databases.SQLDatabase {
             dataReader.Close();
             return default;
         }
+        public Log GetFullLogWithPersistentID(string persistentID) {
+            SQLiteCommand command = _dbConnection.CreateCommand();
+            command.CommandType = CommandType.Text;
+            command.CommandText = $"SELECT {_fullLogsFields} FROM Logs WHERE persistentID = '{persistentID}'";
+            IDataReader dataReader = command.ExecuteReader();
+            while (dataReader.Read()) {
+                return ConvertToFullLog(dataReader);
+            }
+            dataReader.Close();
+            return default;
+        }
         public void SetLogIntelState(string persistentID, bool isIntel) {
             SQLiteCommand command = _dbConnection.CreateCommand();
             command.CommandType = CommandType.Text;

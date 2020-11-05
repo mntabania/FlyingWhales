@@ -14,6 +14,8 @@ public class PlayerNotificationItem : PooledObject {
     public int tickShown { get; private set; }
     public string fromActionID { get; private set; }
     public string logPersistentID { get; private set; }
+
+    private string _involvedObjects;
     
     [SerializeField] private TextMeshProUGUI logLbl;
     [SerializeField] private TextMeshProUGUI dateLbl;
@@ -27,33 +29,38 @@ public class PlayerNotificationItem : PooledObject {
 
     private Action<PlayerNotificationItem> onDestroyAction;
     private bool _adjustHeightOnEnable;
+    
     private void OnEnable() {
         if (_adjustHeightOnEnable) {
             StartCoroutine(InstantHeight());
             _adjustHeightOnEnable = false;
         }
     }
-    public void Initialize(in Log log, Action<PlayerNotificationItem> onDestroyAction = null) {
+    public void Initialize(Log log, Action<PlayerNotificationItem> onDestroyAction = null) {
         logPersistentID = log.persistentID;
         tickShown = GameManager.Instance.Today().tick;
         dateLbl.text = log.gameDate.ConvertToTime();    
         logLbl.text = log.logText;
         fromActionID = log.actionID;
+        _involvedObjects = log.allInvolvedObjectIDs;
         _bg.sprite = log.IsImportant() ? _importantSprite : _normalSprite;
         this.onDestroyAction = onDestroyAction;
         _logsTagButton.SetTags(log.tags);
         Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemovedFromDatabase);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
-    public void Initialize(in Log log, int tick, Action<PlayerNotificationItem> onDestroyAction = null) {
+    public void Initialize(Log log, int tick, Action<PlayerNotificationItem> onDestroyAction = null) {
         logPersistentID = log.persistentID;
         tickShown = tick;
         dateLbl.text = log.gameDate.ConvertToTime();
         logLbl.text = log.logText;
         fromActionID = log.actionID;
+        _involvedObjects = log.allInvolvedObjectIDs;
         _bg.sprite = log.IsImportant() ? _importantSprite : _normalSprite;
         this.onDestroyAction = onDestroyAction;
         _logsTagButton.SetTags(log.tags);
         Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemovedFromDatabase);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     public void SetHoverPosition(UIHoverPosition hoverPosition) {
         _hoverPosition = hoverPosition;
@@ -114,6 +121,15 @@ public class PlayerNotificationItem : PooledObject {
             DeleteNotification();
         }
     }
+    private void OnCharacterChangedName(Character character) {
+        if (_involvedObjects.Contains(character.persistentID)) {
+            Log log = DatabaseManager.Instance.mainSQLDatabase.GetFullLogWithPersistentID(logPersistentID);
+            if (log.hasValue) {
+                log.TryUpdateLogAfterRename(character);
+                logLbl.text = log.logText;
+            }
+        }
+    }
     #endregion
 
     #region Object Pool
@@ -126,6 +142,7 @@ public class PlayerNotificationItem : PooledObject {
         fromActionID = string.Empty;
         logPersistentID = string.Empty;
         Messenger.RemoveListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemovedFromDatabase);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     #endregion
 }
