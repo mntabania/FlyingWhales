@@ -1052,7 +1052,11 @@ public class ReactionComponent : CharacterComponent {
                                     } else {
                                         if(!isResponsibleForRestrained && !isResponsibleForEnsnared && !isResponsibleForFrozen && !isResponsibleForUnconscious) {
                                             if (!disguisedTarget.defaultCharacterTrait.HasReactedToThis(disguisedActor)) {
-                                                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);
+                                                if (GameUtilities.RollChance(35)) {
+                                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);    
+                                                } else {
+                                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);  
+                                                }
                                             }
                                         }
                                     }
