@@ -121,6 +121,7 @@ public class RaidBehaviour : CharacterBehaviourComponent {
             Character resident = settlement.residents[i];
             if (character != resident
                 && !resident.isDead
+                && !resident.isBeingSeized
                 && resident.gridTileLocation != null
                 && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                 && resident.gridTileLocation.IsPartOfSettlement(settlement)

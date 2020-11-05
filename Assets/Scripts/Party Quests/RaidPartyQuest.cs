@@ -119,6 +119,7 @@ public class RaidPartyQuest : PartyQuest {
         for (int i = 0; i < settlement.residents.Count; i++) {
             Character resident = settlement.residents[i];
             if (!resident.isDead
+                && !resident.isBeingSeized
                 && resident.gridTileLocation != null
                 && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                 && resident.gridTileLocation.IsPartOfSettlement(settlement)
