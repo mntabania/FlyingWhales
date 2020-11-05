@@ -64,6 +64,7 @@ public class MonsterInfoUI : InfoUIBase {
         Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<Character>(Signals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
         
         logsWindow.Initialize();
         ConstructCombatModes();
@@ -144,6 +145,12 @@ public class MonsterInfoUI : InfoUIBase {
     }
     private void UpdatePortrait() {
         characterPortrait.GeneratePortrait(_activeMonster);
+    }
+    private void OnCharacterChangedName(Character p_character) {
+        if (isShowing) {
+            //update all basic info regardless of character since changed character might be referenced in active characters thought bubble.
+            UpdateBasicInfo();    
+        }
     }
     public void UpdateBasicInfo() {
         nameLbl.text = _activeMonster.firstNameWithColor;

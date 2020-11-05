@@ -487,6 +487,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
         Messenger.AddListener<Faction, Character>(Signals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
         Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
         
         needsComponent.SubscribeToSignals();
         jobComponent.SubscribeToListeners();
@@ -522,6 +523,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
         Messenger.RemoveListener<Faction, Character>(Signals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
         Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
 
         needsComponent.UnsubscribeToSignals();
         jobComponent.UnsubscribeListeners();
@@ -622,6 +624,22 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 traitContainer.AddTrait(this, "Burning", out var addedTrait, bypassElementalChance: true);
                 (addedTrait as Burning)?.SetSourceOfBurning(burning.sourceOfBurning, this);   
             }
+        }
+    }
+    private void OnCharacterChangedName(Character p_character) {
+        UpdateInterruptLogsBasedOnUpdatedCharacter(p_character);
+    }
+    private void UpdateInterruptLogsBasedOnUpdatedCharacter(Character p_character) {
+        if (interruptComponent.isInterrupted) {
+            interruptComponent.thoughtBubbleLog.TryUpdateLogAfterRename(p_character);
+        }
+        if (currentActionNode != null) {
+            currentActionNode.thoughtBubbleLog.TryUpdateLogAfterRename(p_character);
+            currentActionNode.thoughtBubbleMovingLog.TryUpdateLogAfterRename(p_character);
+            currentActionNode.descriptionLog.TryUpdateLogAfterRename(p_character);
+        }
+        if (deathLog.hasValue) {
+            deathLog.TryUpdateLogAfterRename(p_character);
         }
     }
     #endregion

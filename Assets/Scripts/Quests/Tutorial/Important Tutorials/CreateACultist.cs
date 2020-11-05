@@ -96,7 +96,7 @@ namespace Tutorial {
         private void OnCompleteBrainwash() {
             PlayerUI.Instance.ShowGeneralConfirmation("Cultist",
                 $"{UtilityScripts.Utilities.ColorizeAction("Cultists")} are secretly aligned with your cause. They won't be under your control for the most " +
-                "part but they will perform special actions to assist you. Depending on your Archetype, you may also instruct them to evangelize, spread rumor, place traps or snatch other Villagers. " +
+                "part but they will perform special actions to assist you. Depending on your Archetype, you may also instruct them to preach, spread rumor, place traps or snatch other Villagers. " +
                 "A Cultist may eventually even become a Cult Leader!");
         }
         #endregion
