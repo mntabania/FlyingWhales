@@ -17,12 +17,11 @@ public class CharacterInfoUI : InfoUIBase {
     [Header("Basic Info")]
     [SerializeField] private CharacterPortrait characterPortrait;
     [SerializeField] private TextMeshProUGUI nameLbl;
-    [SerializeField] private TextMeshProUGUI lvlClassLbl;
-    [SerializeField] private TextMeshProUGUI plansLbl;
+    [SerializeField] private TextMeshProUGUI subLbl;
+    [SerializeField] private TextMeshProUGUI actionLbl;
     [SerializeField] private TextMeshProUGUI partyLbl;
     [SerializeField] private EventLabel partyEventLbl;
     [SerializeField] private LogItem plansLblLogItem;
-    [SerializeField] private GameObject leaderIcon;
 
     [Space(10)] [Header("Location")]
     [SerializeField] private TextMeshProUGUI factionLbl;
@@ -255,13 +254,13 @@ public class CharacterInfoUI : InfoUIBase {
         characterPortrait.GeneratePortrait(_activeCharacter);
     }
     public void UpdateBasicInfo() {
-        nameLbl.text = _activeCharacter.visuals.GetNameplateName();
-        lvlClassLbl.text = _activeCharacter.raceClassName;
+        nameLbl.text = _activeCharacter.firstNameWithColor;
+        subLbl.text = _activeCharacter.characterClass.className;
         // leaderIcon.SetActive(_activeCharacter.isFactionLeader || _activeCharacter.isSettlementRuler);
         UpdateThoughtBubble();
     }
     public void UpdateThoughtBubble() {
-        plansLbl.text = activeCharacter.visuals.GetThoughtBubble();
+        actionLbl.text = activeCharacter.visuals.GetThoughtBubble();
         // if (log != null) {
         //     plansLblLogItem.SetLog(log);
         // }
@@ -1233,6 +1232,12 @@ public class CharacterInfoUI : InfoUIBase {
         if (activeCharacter.partyComponent.hasParty) {
             UIManager.Instance.ShowPartyInfo(activeCharacter.partyComponent.currentParty);
         }
+    }
+    #endregion
+
+    #region Rename
+    public void OnClickRenameButton() {
+        Messenger.Broadcast(Signals.EDIT_CHARACTER_NAME, activeCharacter.persistentID, activeCharacter.firstName);
     }
     #endregion
 }

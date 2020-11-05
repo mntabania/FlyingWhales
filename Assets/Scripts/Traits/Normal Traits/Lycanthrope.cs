@@ -303,7 +303,7 @@ namespace Traits {
         private void CreateLycanthropeForm() {
             lycanthropeForm = CharacterManager.Instance.CreateNewLimboSummon(SUMMON_TYPE.Wolf, faction: FactionManager.Instance.neutralFaction);
             lycanthropeForm.ConstructInitialGoapAdvertisementActions();
-            lycanthropeForm.SetName(originalForm.name);
+            lycanthropeForm.SetFirstAndLastName(originalForm.firstName, originalForm.surName);
         }
 
         public void Transform(Character character) {

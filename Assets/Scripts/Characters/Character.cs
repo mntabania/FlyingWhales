@@ -15,13 +15,13 @@ using JetBrains.Annotations;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyQuestTarget, IGatheringTarget, ISavable {
     private int _id;
-    private string _name;
+    private string _name; //FOR DELETION: Must delete after build on Nov. 6, 2020. This will change save data that is why deletion must occur after build
     private string _firstName;
     private string _surName;
     protected bool _isDead;
     private GENDER _gender;
     private CharacterClass _characterClass;
-    private RaceSetting _raceSetting;
+    private RaceData _raceSetting;
     private Faction _faction;
     private Minion _minion;
     private LocationStructure _currentStructure; //what structure is this character currently in.
@@ -139,8 +139,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public override string relatableName => _firstName;
     public override int id => _id;
     public override GENDER gender => _gender;
-    public string fullname => $"{_firstName} {_surName}";
+    public string fullName => $"{_firstName} {_surName}";
     public string firstName => _firstName;
+    public string firstNameWithColor => GetFirstNameWithColor();
     public string surName => _surName;
     public string nameWithID => name;
     public bool isDead => _isDead;
@@ -185,7 +186,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public RACE race => _raceSetting.race;
     public JOB_OWNER ownerType => JOB_OWNER.CHARACTER;
     public CharacterClass characterClass => _characterClass;
-    public RaceSetting raceSetting => _raceSetting;
+    public RaceData raceSetting => _raceSetting;
     public Faction faction => _faction;
     public Faction factionOwner => _faction;
     public Minion minion => _minion;
@@ -264,7 +265,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _gender = gender;
         AssignClass(className, true);
         AssignRace(race, true);
-        SetName(RandomNameGenerator.GenerateRandomName(_raceSetting.race, _gender));
         SetSexuality(sexuality);
         visuals = new CharacterVisuals(this);
         visuals.Initialize();
@@ -278,7 +278,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _gender = gender;
         AssignClass(className, true);
         AssignRace(race, true);
-        SetName(RandomNameGenerator.GenerateRandomName(_raceSetting.race, _gender));
         GenerateSexuality();
         visuals = new CharacterVisuals(this);
         visuals.Initialize();
@@ -356,8 +355,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         planner = new GoapPlanner(this);
         visuals = new CharacterVisuals(this, data);
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
-        RaceSetting rs = RaceManager.Instance.racesDictionary[data.race.ToString()];
-        _raceSetting = rs.CreateNewCopy();
+        _raceSetting = RaceManager.Instance.GetRaceData(data.race);
         CreateTraitContainer();
 
         persistentID = data.persistentID;
@@ -1693,8 +1691,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     traitContainer.RemoveTrait(this, _raceSetting.traitNames[i]); //Remove traits from race
                 }
             }
-            RaceSetting rs = RaceManager.Instance.racesDictionary[race.ToString()];
-            _raceSetting = rs.CreateNewCopy();
+            _raceSetting = RaceManager.Instance.GetRaceData(race);
             if (!isInitial) {
                 OnUpdateRace();
                 Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, this);
@@ -1730,25 +1727,24 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void ChangeGender(GENDER gender) {
         _gender = gender;
     }
-    public void SetName(string newName) {
-        string previousName = _name;
-        
-        _name = newName;
-        string[] split = _name.Split(' '); 
-        _firstName = split[0];
+    public void SetRandomName() {
+        string newName = RandomNameGenerator.GenerateRandomName(race, gender);
+        string[] split = newName.Split(' '); 
+        string firstName = split[0];
+        string surName = string.Empty;
         if (split.Length > 1) {
-            _surName = split[1];    
+            surName = split[1];    
         }
-        RandomNameGenerator.RemoveNameAsAvailable(gender, race, newName);
-        if (!string.IsNullOrEmpty(previousName)) {
-            //if previous name wasn't blank, then it means that the name was changed.
-            Messenger.Broadcast(Signals.CHARACTER_CHANGED_NAME, this);    
-        }
+        SetFirstAndLastName(firstName, surName);
     }
-    public void SetFirstAndLastName(string firstName, string lastName) {
-        _firstName = firstName;
-        _surName = lastName;
-        RandomNameGenerator.RemoveNameAsAvailable(gender, race, fullname);
+    public void SetFirstAndLastName(string p_firstName, string p_lastName) {
+        _firstName = p_firstName;
+        _surName = p_lastName;
+        RandomNameGenerator.RemoveNameAsAvailable(gender, race, fullName);
+    }
+    public void RenameCharacter(string p_firstName, string p_lastName) {
+        SetFirstAndLastName(p_firstName, p_lastName);
+        Messenger.Broadcast(Signals.CHARACTER_CHANGED_NAME, this);
     }
     private string GetDefaultRaceClassName() {
         if(race == RACE.DEMON) {
@@ -2030,6 +2026,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetIsPreplaced(bool state) {
         isPreplaced = state;
+    }
+    private string GetFirstNameWithColor() {
+        if(CharacterManager.Instance != null) {
+            Color color = CharacterManager.Instance.GetCharacterNameColor(this);
+            return $"<color=#{ColorUtility.ToHtmlStringRGB(color)}>{_firstName}</color>";
+        }
+        return firstName;
     }
     #endregion    
 

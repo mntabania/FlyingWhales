@@ -103,3 +103,5 @@ public class GameObjectListStorage : SerializableDictionary.Storage<List<GameObj
 public class MonsterSettingListStorage : SerializableDictionary.Storage<List<MonsterSetting>> { }
 [System.Serializable]
 public class TileObjectSettingListStorage : SerializableDictionary.Storage<List<ItemSetting>> { }
+[System.Serializable]
+public class RaceDataDictionary : SerializableDictionary<RACE, RaceData> { }

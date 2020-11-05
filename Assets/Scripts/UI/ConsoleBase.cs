@@ -1100,7 +1100,7 @@ public class ConsoleBase : InfoUIBase {
         Character character = CharacterManager.Instance.GetCharacterByName(nameParameterString);
         if (character != null) {
             string previousName = character.name;
-            character.SetName(newName);
+            character.SetFirstAndLastName(newName, character.surName);
             AddSuccessMessage($"Successfully set name of {previousName} to {character.name}");
         } else {
             AddErrorMessage($"Could not find character named {nameParameterString}");

@@ -100,3 +100,5 @@ public class ElementalDamageDataDictionaryPropertyDrawer : SerializableDictionar
 public class MonsterTypeListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileObjectSettingListStorage))]
 public class TileObjectTypeListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
+[CustomPropertyDrawer(typeof(RaceDataDictionary))]
+public class RaceDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }

@@ -92,6 +92,12 @@ public class CharacterManager : BaseMonoBehaviour {
     public Sprite webbedEffect;
     public Sprite stakeEffect;
 
+    [Header("Character Name Colors")]
+    public Color summonNameColor;
+    public Color demonNameColor;
+    public Color undeadNameColor;
+    public Color normalNameColor;
+
     private Dictionary<string, DeadlySin> deadlySins { get; set; }
     private Dictionary<EMOTION, Emotion> emotionData { get; set; }
     private List<Emotion> allEmotions { get; set; }
@@ -358,12 +364,14 @@ public class CharacterManager : BaseMonoBehaviour {
         ConstructEmotionData();
         ConstructCharacterBehaviours();
         Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        Messenger.AddListener<string, string>(Signals.RENAME_CHARACTER, OnRenameCharacter);
     }
 
     #region Characters
     public Character CreateNewLimboCharacter(RACE race, string className, GENDER gender, Faction faction = null,
     NPCSettlement homeLocation = null, LocationStructure homeStructure = null) {
         Character newCharacter = new Character(className, race, gender);
+        newCharacter.SetRandomName();
         newCharacter.SetIsLimboCharacter(true);
         newCharacter.Initialize();
         if (faction != null) {
@@ -389,6 +397,7 @@ public class CharacterManager : BaseMonoBehaviour {
     public Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null,
         BaseSettlement homeLocation = null, Region homeRegion = null, LocationStructure homeStructure = null) {
         Character newCharacter = new Character(className, race, gender);
+        newCharacter.SetRandomName();
         newCharacter.Initialize();
         if (faction != null) {
             if (!faction.JoinFaction(newCharacter, isInitial: true)) {
@@ -420,6 +429,7 @@ public class CharacterManager : BaseMonoBehaviour {
     public Character CreateNewCharacter(string className, RACE race, GENDER gender, SEXUALITY sexuality, Faction faction = null,
         NPCSettlement homeLocation = null, LocationStructure homeStructure = null) {
         Character newCharacter = new Character(className, race, gender, sexuality);
+        newCharacter.SetRandomName();
         newCharacter.Initialize();
         if (faction != null) {
             if (!faction.JoinFaction(newCharacter, isInitial: true)) {
@@ -452,8 +462,7 @@ public class CharacterManager : BaseMonoBehaviour {
     }
     public Character CreateNewCharacter(PreCharacterData data, string className, Faction faction = null, NPCSettlement homeLocation = null, LocationStructure homeStructure = null) {
         Character newCharacter = new Character(className, data.race, data.gender, data.sexuality, data.id);
-        newCharacter.SetName(data.name);
-        
+        newCharacter.SetFirstAndLastName(data.firstName, data.surName);
         newCharacter.Initialize();
         if (faction != null) {
             if (!faction.JoinFaction(newCharacter, isInitial: true)) {
@@ -624,7 +633,7 @@ public class CharacterManager : BaseMonoBehaviour {
         target.marker.PlayAnimation("Raise Dead");
         yield return new WaitForSeconds(0.7f);
         Summon summon = CreateNewSummon(SUMMON_TYPE.Skeleton, faction, homeRegion: target.homeRegion, className: target.characterClass.className);
-        summon.SetName(target.fullname);
+        summon.SetFirstAndLastName(target.firstName, target.surName);
         summon.CreateMarker();
         LocationGridTile tile = target.gridTileLocation;
         if (target.grave != null) {
@@ -648,6 +657,18 @@ public class CharacterManager : BaseMonoBehaviour {
             }
         }
         return characters;
+    }
+    public Color GetCharacterNameColor(Character character) {
+        if(character != null) {
+            if (character.minion != null) {
+                return demonNameColor;
+            } else if (character.faction == FactionManager.Instance.undeadFaction) {
+                return undeadNameColor;
+            } else if (character.faction == FactionManager.Instance.neutralFaction) {
+                return summonNameColor;
+            }
+        }
+        return normalNameColor;
     }
     #endregion
 
@@ -716,6 +737,7 @@ public class CharacterManager : BaseMonoBehaviour {
     #region Summons
     public Summon CreateNewLimboSummon(SUMMON_TYPE summonType, Faction faction = null, NPCSettlement homeLocation = null, LocationStructure homeStructure = null, string className = "") {
         Summon newCharacter = CreateNewSummonClassFromType(summonType, className);
+        newCharacter.SetFirstAndLastName(newCharacter.raceClassName, string.Empty);
         newCharacter.Initialize();
         if (faction == null || !faction.JoinFaction(newCharacter, isInitial: true)) {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, isInitial: true);
@@ -743,6 +765,7 @@ public class CharacterManager : BaseMonoBehaviour {
     public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, BaseSettlement homeLocation = null,
         Region homeRegion = null, LocationStructure homeStructure = null, string className = "", bool bypassIdeologyChecking = false) {
         Summon newCharacter = CreateNewSummonClassFromType(summonType, className);
+        newCharacter.SetFirstAndLastName(newCharacter.raceClassName, string.Empty);
         newCharacter.Initialize();
         if (faction == null || !faction.JoinFaction(newCharacter, bypassIdeologyChecking: bypassIdeologyChecking, isInitial: true)) {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, bypassIdeologyChecking: bypassIdeologyChecking, isInitial: true);
@@ -1245,6 +1268,13 @@ public class CharacterManager : BaseMonoBehaviour {
         //        otherCharacter.ReactToCrime(action, ref hasRelationshipDegraded);
         //    }
         //}
+    }
+    private void OnRenameCharacter(string characterPersistentID, string newName) {
+        if (!string.IsNullOrEmpty(newName)) {
+            //Only rename character if there is a new name to be set, if there is not do not change name
+            Character character = GetCharacterByPersistentID(characterPersistentID);
+            character?.RenameCharacter(newName, character.surName);
+        }
     }
     #endregion
 

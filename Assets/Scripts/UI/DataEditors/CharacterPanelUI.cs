@@ -289,17 +289,18 @@ public class CharacterPanelUI : MonoBehaviour {
         CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(path));
         return currentClass;
     }
-    private RaceSetting GetRace(string raceName) {
-        string path = $"{UtilityScripts.Utilities.dataPath}RaceSettings/{raceName}.json";
-        RaceSetting currentRace = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(path));
-        return currentRace;
+    private RaceData GetRace(string raceName) {
+        //string path = $"{UtilityScripts.Utilities.dataPath}RaceSettings/{raceName}.json";
+        //RaceData currentRace = JsonUtility.FromJson<RaceData>(System.IO.File.ReadAllText(path));
+        //return currentRace;
+        return null;
     }
-    private void AllocateStats(RaceSetting raceSetting) {
+    private void AllocateStats(RaceData raceSetting) {
         //_singleAttackPower = raceSetting.attackPowerModifier;
         //_singleSpeed = raceSetting.speedModifier;
         //_singleHP = raceSetting.hpModifier;
     }
-    private void LevelUp(int level, CharacterClass characterClass, RaceSetting raceSetting) {
+    private void LevelUp(int level, CharacterClass characterClass, RaceData raceSetting) {
         int multiplier = level - 1;
         if(multiplier < 0) {
             multiplier = 0;
@@ -380,7 +381,7 @@ public class CharacterPanelUI : MonoBehaviour {
     }
     private void ClassChange(int index) {
         CharacterClass characterClass = GetClass(classOptions.options[index].text);
-        RaceSetting race = GetRace(raceOptions.options[raceOptions.value].text);
+        RaceData race = GetRace(raceOptions.options[raceOptions.value].text);
         int level = int.Parse(levelInput.text);
         if (level < 1) {
             level = 1;
@@ -398,7 +399,7 @@ public class CharacterPanelUI : MonoBehaviour {
     }
     private void RaceChange(int index) {
         CharacterClass characterClass = GetClass(classOptions.options[classOptions.value].text);
-        RaceSetting race = GetRace(raceOptions.options[index].text);
+        RaceData race = GetRace(raceOptions.options[index].text);
         int level = int.Parse(levelInput.text);
         if (level < 1) {
             level = 1;

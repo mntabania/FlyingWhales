@@ -16,9 +16,11 @@ public class MonsterInfoUI : InfoUIBase {
     [Header("Basic Info")]
     [SerializeField] private CharacterPortrait characterPortrait;
     [SerializeField] private TextMeshProUGUI nameLbl;
-    [SerializeField] private TextMeshProUGUI lvlClassLbl;
+    [SerializeField] private TextMeshProUGUI subLbl;
     [SerializeField] private TextMeshProUGUI plansLbl;
     [SerializeField] private LogItem plansLblLogItem;
+    [SerializeField] private Image raceIcon;
+
 
     [Space(10)] [Header("Logs")] 
     [SerializeField] private LogsWindow logsWindow;
@@ -144,8 +146,8 @@ public class MonsterInfoUI : InfoUIBase {
         characterPortrait.GeneratePortrait(_activeMonster);
     }
     public void UpdateBasicInfo() {
-        nameLbl.text = _activeMonster.visuals.GetNameplateName();
-        lvlClassLbl.text = _activeMonster.raceClassName;
+        nameLbl.text = _activeMonster.firstNameWithColor;
+        subLbl.text = _activeMonster.characterClass.className;
         UpdateThoughtBubble();
     }
     public void UpdateThoughtBubble() {
@@ -443,6 +445,12 @@ public class MonsterInfoUI : InfoUIBase {
         UIManager.Instance.characterInfoUI.activeCharacter.combatComponent.SetCombatMode(combatMode);
         Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, activeMonster as IPlayerActionTarget);
         UIManager.Instance.customDropdownList.Close();
+    }
+    #endregion
+
+    #region Rename
+    public void OnClickRenameButton() {
+        Messenger.Broadcast(Signals.EDIT_CHARACTER_NAME, activeMonster.persistentID, activeMonster.firstName);
     }
     #endregion
 }

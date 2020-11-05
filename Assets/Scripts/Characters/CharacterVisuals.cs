@@ -191,20 +191,7 @@ public class CharacterVisuals {
     #endregion
 
     #region UI
-    public string GetNameplateName() {
-        string name = _owner.firstName + " - " + _owner.raceClassName;
-        // if(_owner.isSettlementRuler || _owner.isFactionLeader) {
-        //     name = $"{name} {UtilityScripts.Utilities.LeaderIcon()}";
-        // }
-        return name;
-    }
     public string GetThoughtBubble() {
-        // if (_owner.minion != null) {
-        //     return string.Empty;
-        // }
-        //if (_owner.overrideThoughts.Count > 0) {
-        //    return _owner.overrideThoughts[0];
-        //}
         if (_owner.isDead) {
             if (_owner.deathLog.hasValue) {
                 return _owner.deathLog.logText;

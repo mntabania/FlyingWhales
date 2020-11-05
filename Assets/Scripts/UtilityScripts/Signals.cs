@@ -211,6 +211,8 @@ public static class Signals {
     /// Parameters: Character character
     /// </summary>
     public static string CHARACTER_CHANGED_NAME = "OnCharacterChangedName";
+    public static string RENAME_CHARACTER = "OnRenameCharacter";
+    public static string UPDATED_CHARACTER_DATA = "OnUpdatedCharacterData";
     #endregion
 
     #region UI
@@ -325,6 +327,7 @@ public static class Signals {
     /// Parameters (Log)
     /// </summary>
     public static string LOG_MENTIONING_CHARACTER_UPDATED = "LogMentioningCharacterUpdated";
+    public static string EDIT_CHARACTER_NAME = "OnEditCharacterName";
     #endregion
 
     #region Quest Signals
