@@ -185,6 +185,7 @@ namespace Locations.Settlements {
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
                 if (resident.gridTileLocation != null
+                    && !resident.isBeingSeized
                     && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                     && resident.IsInHomeSettlement()) {
                     return true;
@@ -196,6 +197,7 @@ namespace Locations.Settlements {
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
                 if (!resident.isDead
+                    && !resident.isBeingSeized
                     && resident.gridTileLocation != null
                     && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                     && resident.gridTileLocation.IsPartOfSettlement(this)) {
@@ -218,6 +220,7 @@ namespace Locations.Settlements {
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
                 if (!resident.isDead
+                    && !resident.isBeingSeized
                     && resident.gridTileLocation != null
                     && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                     && resident.gridTileLocation.IsPartOfSettlement(this)) {
@@ -263,6 +266,7 @@ namespace Locations.Settlements {
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
                 if (!resident.isDead
+                    && !resident.isBeingSeized
                     && resident.gridTileLocation != null
                     && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                     && resident.gridTileLocation.IsPartOfSettlement(this)
@@ -287,6 +291,7 @@ namespace Locations.Settlements {
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
                 if (character != resident
+                    && !resident.isBeingSeized
                     && !resident.isDead
                     && resident.gridTileLocation != null
                     && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap

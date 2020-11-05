@@ -610,6 +610,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         for (int i = 0; i < residents.Count; i++) {
             Character resident = residents[i];
             if(resident.canPerform && !resident.isDead 
+                && !resident.isBeingSeized
                 && resident.gridTileLocation != null 
                 && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                 && resident.gridTileLocation.IsPartOfSettlement(this)) {
