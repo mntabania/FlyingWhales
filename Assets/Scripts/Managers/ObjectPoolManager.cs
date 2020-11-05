@@ -45,8 +45,6 @@ public class ObjectPoolManager : BaseMonoBehaviour {
             CreateNewPool(currPrefab, currPrefab.name, 0, true, true, false); //50    
         }
 
-        
-        
         ConstructGoapNodes();
         ConstructOpinionDataPool();
         ConstructTraitRemoveSchedulePool();
