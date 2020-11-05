@@ -2635,3 +2635,7 @@ MonoBehaviour:
         type: 3}
   webbedEffect: {fileID: 21300000, guid: b1c5464425860584ab1a0bad4f0de369, type: 3}
   stakeEffect: {fileID: 21300000, guid: 87ce134795f668b409001e3d605ebe27, type: 3}
+  summonNameColor: {r: 1, g: 0.3137255, b: 0.23921569, a: 1}
+  demonNameColor: {r: 0.972549, g: 0.6627451, b: 0.96862745, a: 1}
+  undeadNameColor: {r: 0.5372549, g: 0.5372549, b: 0.5372549, a: 1}
+  normalNameColor: {r: 0.972549, g: 0.88235295, b: 0.6627451, a: 1}

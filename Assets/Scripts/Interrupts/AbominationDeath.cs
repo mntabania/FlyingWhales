@@ -19,7 +19,7 @@ namespace Interrupts {
             interruptHolder.actor.SetDestroyMarkerOnDeath(true);
             interruptHolder.actor.Death("Abomination Germ", interrupt: this);
             Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Abomination, FactionManager.Instance.neutralFaction);
-            summon.SetName(interruptHolder.actor.name);
+            summon.SetName(interruptHolder.actor.fullName);
             interruptHolder.actor.deathLog.AddInvolvedObjectManual(summon.persistentID);
             CharacterManager.Instance.PlaceSummon(summon, gridTileLocation);
 

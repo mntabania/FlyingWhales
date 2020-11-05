@@ -32,7 +32,10 @@ public class FactionInfoUIV2 : MonoBehaviour {
 
     [Space(10)]
     [Header("Crimes")]
-    [SerializeField] private TextMeshProUGUI crimesLbl;
+    [SerializeField] private TextMeshProUGUI infractionCrimesLbl;
+    [SerializeField] private TextMeshProUGUI misdemeanourCrimesLbl;
+    [SerializeField] private TextMeshProUGUI seriousCrimesLbl;
+    [SerializeField] private TextMeshProUGUI heinousCrimesLbl;
 
     [Space(10)]
     [Header("Logs")]
@@ -265,11 +268,26 @@ public class FactionInfoUIV2 : MonoBehaviour {
 
     #region Crimes
     private void UpdateCrimes() {
-        crimesLbl.text = string.Empty;
+        infractionCrimesLbl.text = string.Empty;
+        misdemeanourCrimesLbl.text = string.Empty;
+        seriousCrimesLbl.text = string.Empty;
+        heinousCrimesLbl.text = string.Empty;
+
+        TextMeshProUGUI crimeLbl = null;
         foreach (KeyValuePair<CRIME_TYPE, CRIME_SEVERITY> item in activeFaction.factionType.crimes) {
             string crimeType = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(item.Key.ToString());
-            string crimeSeverity = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(item.Value.ToString());
-            crimesLbl.text += $"<sprite=\"Text_Sprites\" name=\"Arrow_Icon\">   {crimeType}: {crimeSeverity}\n";
+            if (item.Value == CRIME_SEVERITY.Infraction) {
+                crimeLbl = infractionCrimesLbl;
+            } else if (item.Value == CRIME_SEVERITY.Misdemeanor) {
+                crimeLbl = misdemeanourCrimesLbl;
+            } else if (item.Value == CRIME_SEVERITY.Serious) {
+                crimeLbl = seriousCrimesLbl;
+            } else if (item.Value == CRIME_SEVERITY.Heinous) {
+                crimeLbl = heinousCrimesLbl;
+            }
+            if(crimeLbl != null) {
+                crimeLbl.text += $"<sprite=\"Text_Sprites\" name=\"Arrow_Icon\">   {crimeType}\n";
+            }
         }
     }
     #endregion

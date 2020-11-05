@@ -96,7 +96,7 @@ public class SmallSpider : Summon {
         
         //create giant spider
         Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Giant_Spider, targetFaction, settlement, region, home);
-        summon.SetName(name);
+        summon.SetName(fullName);
         if (ogTerritories.Count > 0) {
             for (int i = 0; i < ogTerritories.Count; i++) {
                 summon.AddTerritory(ogTerritories[i]);    

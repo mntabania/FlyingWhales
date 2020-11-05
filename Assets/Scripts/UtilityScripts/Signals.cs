@@ -207,6 +207,8 @@ public static class Signals {
     /// Parameters: Character criminal, CRIME_TYPE crimeType, Character accuser
     /// </summary>
     public static string CHARACTER_ACCUSED_OF_CRIME = "OnCharacterAccusedOfCrime";
+    public static string RENAME_CHARACTER = "OnRenameCharacter";
+    public static string UPDATED_CHARACTER_DATA = "OnUpdatedCharacterData";
     #endregion
 
     #region UI
@@ -317,6 +319,7 @@ public static class Signals {
     /// Parameters string fileToLoad
     /// </summary>
     public static string LOAD_SAVE_FILE = "OnLoadFileConfirmed";
+    public static string EDIT_CHARACTER_NAME = "OnEditCharacterName";
     #endregion
 
     #region Quest Signals

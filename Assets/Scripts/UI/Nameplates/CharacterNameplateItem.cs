@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Traits;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CharacterNameplateItem : NameplateItem<Character> {
 
@@ -11,62 +12,41 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     [SerializeField] private GameObject arrivedIcon;
     [SerializeField] private GameObject restrainedIcon;
     [SerializeField] private GameObject leaderIcon;
+    [SerializeField] private Image raceIcon;
 
-    public Character character { get; private set; }
     public bool isActive { get; private set; }
 
+    public Character character { get; private set; }
+
     private void OnEnable() {
-        Messenger.AddListener(Signals.TICK_ENDED, UpdateText);
-        // Messenger.AddListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnSetAsFactionLeader);
-        // Messenger.AddListener<Faction, ILeader>(Signals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
-        // Messenger.AddListener<Character, Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnSetAsSettlementRuler);
-        // Messenger.AddListener<NPCSettlement, Character>(Signals.ON_SETTLEMENT_RULER_REMOVED, OnSettlementRulerRemoved);
+        Messenger.AddListener(Signals.TICK_ENDED, UpdateAllTextsAndIcon);
         if (character != null) {
-            UpdateText();
-            // UpdateLeaderIcon();
+            UpdateAllTextsAndIcon();
         }
     }
     private void OnDisable() {
-        Messenger.RemoveListener(Signals.TICK_ENDED, UpdateText);
-        // Messenger.RemoveListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnSetAsFactionLeader);
-        // Messenger.RemoveListener<Faction, ILeader>(Signals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
-        // Messenger.RemoveListener<Character, Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnSetAsSettlementRuler);
-        // Messenger.RemoveListener<NPCSettlement, Character>(Signals.ON_SETTLEMENT_RULER_REMOVED, OnSettlementRulerRemoved);
+        Messenger.RemoveListener(Signals.TICK_ENDED, UpdateAllTextsAndIcon);
     }
     
     #region Overrides
     public override void SetObject(Character character) {
         base.SetObject(character);
         this.character = character;
-        mainLbl.text = character.visuals.GetNameplateName();
-        subLbl.text = character.raceClassName;
-        // UpdateLeaderIcon();
         portrait.GeneratePortrait(character);
-        // UpdateStatusIcons();
-        UpdateText();
+        UpdateAllTextsAndIcon();
     }
     public override void UpdateObject(Character character) {
         base.UpdateObject(character);
         this.character = character;
-        mainLbl.text = character.visuals.GetNameplateName();
-        subLbl.text = character.raceClassName;
-        // UpdateLeaderIcon();
         portrait.GeneratePortrait(character);
-        // UpdateStatusIcons();
-        UpdateText();
+        UpdateAllTextsAndIcon();
     }
     public override void OnHoverEnter() {
         portrait.SetHoverHighlightState(true);
-        //if (character != null && character.minion != null) {
-        //    UIManager.Instance.ShowMinionCardTooltip(character.minion);
-        //}
         base.OnHoverEnter();
     }
     public override void OnHoverExit() {
         portrait.SetHoverHighlightState(false);
-        //if (character != null && character.minion != null) {
-        //    UIManager.Instance.HideMinionCardTooltip();
-        //}
         base.OnHoverExit();
     }
     public override void Reset() {
@@ -93,65 +73,33 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         SetSupportingLabelState(false);
     }
 
-    private void UpdateStatusIcons() {
-        // if (character.carryComponent.masterCharacter.avatar.isTravellingOutside) {
-        //     //character is travelling outside
-        //     travellingIcon.SetActive(true);
-        //     arrivedIcon.SetActive(false);
-        //     restrainedIcon.SetActive(false);
-        // } else if (!character.isAtHomeRegion) {
-        //     //character is at another location other than his/her home region
-        //     travellingIcon.SetActive(false);
-        //     arrivedIcon.SetActive(true);
-        //     restrainedIcon.SetActive(false);
-        // } else if (character.traitContainer.HasTrait("Restrained")) {
-        //     //character is restrained
-        //     travellingIcon.SetActive(false);
-        //     arrivedIcon.SetActive(false);
-        //     restrainedIcon.SetActive(true);
-        // } else {
-        //     travellingIcon.SetActive(false);
-        //     arrivedIcon.SetActive(false);
-        //     restrainedIcon.SetActive(false);
-        // }
-    }
-
     public void SetPortraitInteractableState(bool state) {
         portrait.ignoreInteractions = !state;
     }
 
     #region Sub Text
-    private void UpdateText() {
-        mainLbl.text = character.visuals.GetNameplateName();
+    private void UpdateAllTextsAndIcon() {
+        UpdateMainAndActionText();
+        UpdateSubTextAndIcon();
+    }
+    private void UpdateMainAndActionText() {
+        mainLbl.text = character.firstNameWithColor;
         supportingLbl.text = character.visuals.GetThoughtBubble();
         SetSupportingLabelState(true);
+    }
+    private void UpdateSubTextAndIcon() {
+        if(character is Summon) {
+            subLbl.gameObject.SetActive(false);
+        } else {
+            subLbl.text = character.characterClass.className;
+            raceIcon.sprite = character.raceSetting.nameplateIcon;
+            raceIcon.gameObject.SetActive(character.raceSetting.nameplateIcon != null);
+            subLbl.gameObject.SetActive(true);
+        }
     }
     #endregion
 
     #region Leader Icon
-    // private void UpdateLeaderIcon() {
-    //     leaderIcon.SetActive(character.isFactionLeader || character.isSettlementRuler);
-    // }
-    // private void OnSetAsFactionLeader(Character character, ILeader previousLeader) {
-    //     if (character == this.character || previousLeader == this.character) {
-    //         UpdateLeaderIcon();
-    //     }
-    // }
-    // private void OnFactionLeaderRemoved(Faction faction, ILeader previousLeader) {
-    //     if (previousLeader == this.character) {
-    //         UpdateLeaderIcon();
-    //     }
-    // }
-    // private void OnSetAsSettlementRuler(Character character, Character previousRuler) {
-    //     if (character == this.character || previousRuler == this.character) {
-    //         UpdateLeaderIcon();
-    //     }
-    // }
-    // private void OnSettlementRulerRemoved(NPCSettlement settlement, Character previousLeader) {
-    //     if (previousLeader == this.character) {
-    //         UpdateLeaderIcon();
-    //     }
-    // }
     public void OnHoverLeaderIcon() {
         string message = string.Empty;
         if (character.isSettlementRuler) {

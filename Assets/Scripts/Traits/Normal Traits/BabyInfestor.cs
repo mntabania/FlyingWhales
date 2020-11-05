@@ -26,7 +26,7 @@ namespace Traits {
             if (sourcePOI is Summon summon) {
                 if(summon.adultSummonType != SUMMON_TYPE.None) {
                     Character adult = CharacterManager.Instance.CreateNewSummon(summon.adultSummonType, summon.faction, summon.homeSettlement, summon.homeRegion, summon.homeStructure);
-                    adult.SetName(summon.name);
+                    adult.SetName(summon.fullName);
                     adult.CreateMarker();
                     adult.InitialCharacterPlacement(summon.gridTileLocation);
                     adult.ClearTerritory();

@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 7975538
+    totalSpriteSurfaceArea: 8017869
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -106,6 +106,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5767b2c2db928c446b1558b601f40b9f, type: 3}
   - {fileID: 21300000, guid: b54566c2a94fb6b428dd81e65d59e65d, type: 3}
   - {fileID: 21300000, guid: febd7bc28a21ea044a06f7266d76b729, type: 3}
+  - {fileID: 21300000, guid: 8f8f62e29fa6aeb4d80d8917d11cd38d, type: 3}
   - {fileID: 21300000, guid: 3b5634e2dfad1964c8eb70354f6f1bbf, type: 3}
   - {fileID: 21300000, guid: c64b78f22828268438108c40fb8107c4, type: 3}
   - {fileID: 21300000, guid: ee742b033228c0e44a37da98b48b6277, type: 3}
@@ -126,6 +127,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 369021931454c8a42977c57b5ef4bc1d, type: 3}
   - {fileID: 21300000, guid: fb10f4935a328d1419578994df66cbc5, type: 3}
   - {fileID: 21300000, guid: 488a4da384bb75c47a50881df2203771, type: 3}
+  - {fileID: 21300000, guid: ddcd21b3576f26846a7eb43fc5c5fbb4, type: 3}
   - {fileID: 21300000, guid: c82033c36c6745a429fc00aae9ea3954, type: 3}
   - {fileID: 21300000, guid: 9cd696d31c2c8534b8a5ec2a949c43fa, type: 3}
   - {fileID: 21300000, guid: c2ef68e33150b744d82714e8a7ec4675, type: 3}
@@ -133,6 +135,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: efb07f147e2237f458d34d04d84ea7d1, type: 3}
   - {fileID: 21300000, guid: c869c324f4724ff488b16ee73c03bdda, type: 3}
   - {fileID: 21300000, guid: 71b24524d8efa374fb0dfdbbb6ca93e7, type: 3}
+  - {fileID: 21300000, guid: cd0588246650a3c4cba6672092069088, type: 3}
   - {fileID: 21300000, guid: 158ed33437206f14795f9c95156e63b8, type: 3}
   - {fileID: 21300000, guid: 80fa0354e1c272e45afa309a84e7f8bd, type: 3}
   - {fileID: 21300000, guid: 83628754d95d00745b0e62cbdefb8ee0, type: 3}
@@ -348,6 +351,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: cbe635ce0bb70c34cbaf2c1b0d60455a, type: 3}
   - {fileID: 21300000, guid: f9ddf8ce0ba0595419a58730fbc42b74, type: 3}
   - {fileID: 21300000, guid: 0fd91ade51874484293a63d7f8b0bccd, type: 3}
+  - {fileID: 21300000, guid: d98e12ee0d2153e49b2f29484c61268d, type: 3}
   - {fileID: 21300000, guid: 7a73c2ee8ecab1b49b0a16715afcee6a, type: 3}
   - {fileID: 21300000, guid: cf4a07fe10de7fe4f9c10d5431585e6c, type: 3}
   - {fileID: 21300000, guid: 78db681f8586d404db68e5023e213627, type: 3}
@@ -428,6 +432,7 @@ SpriteAtlas:
   - event_active_button_clicked
   - icon_monster
   - White_square
+  - icon_human
   - 4x_button_clicked
   - minion_scroll_button_down_invalid
   - Icon-Puppetmaster-1
@@ -448,6 +453,7 @@ SpriteAtlas:
   - 1x_button_clicked
   - Icon_Intel
   - world_options_container
+  - rename_button_clicked
   - faction_ui_resident_crown
   - 8-Wind
   - world_button_hover
@@ -455,6 +461,7 @@ SpriteAtlas:
   - FilterPanel
   - minion_tab_items_disabled
   - intel_row_hover
+  - icon_elf
   - button_psychopathdetail_default
   - agent_action_button_clicked
   - 1x_button_hover
@@ -670,6 +677,7 @@ SpriteAtlas:
   - button_invade_hover
   - text_scroll_bg
   - minion_tab_skill_hover
+  - rename_button_default
   - Choose World
   - nameplate_residents
   - traveller_hover

@@ -11,7 +11,7 @@ namespace Factions.Faction_Types {
         // public readonly List<StructureSetting> neededStructures;
         public readonly List<string> combatantClasses;
         public readonly List<string> civilianClasses;
-        public readonly Dictionary<CRIME_TYPE, CRIME_SEVERITY> crimes;
+        public readonly Dictionary<CRIME_TYPE, CRIME_SEVERITY> crimes; //FOR RESTRUCTURE: data must be Dictionary<CRIME_SEVERITY, List<CRIME_TYPE>>. Must restructure after build on Nov. 6, 2020. This will change save data that is why deletion must occur after build
         public bool hasCrimes { get; protected set; }
 
         #region getters
