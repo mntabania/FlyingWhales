@@ -815,6 +815,17 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         }
         return false;
     }
+    private bool HasActiveMemberThatMustDoCriticalNeedsRecovery() {
+        for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
+            Character member = membersThatJoinedQuest[i];
+            if (IsMemberActive(member)) {
+                if (member.needsComponent.isStarving || member.needsComponent.isExhausted || member.needsComponent.isSulking) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public bool HasActiveMemberThatJoinedQuest() {
         for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
             Character member = membersThatJoinedQuest[i];
@@ -870,6 +881,21 @@ public class Party : ILogFiller, ISavable, IJobOwner {
                 currentQuest.EndQuest("Members are incapacitated");
             }
         }
+    }
+    public bool HasMemberThatJoinedQuestThatIsInRangeOfCharacterThatConsidersCrimeTypeACrime(Character character, CRIME_TYPE crimeType) {
+        for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
+            Character member = membersThatJoinedQuest[i];
+            if (character != member && member.canWitness) {
+                bool isInVision = character.marker && character.marker.IsPOIInVision(member);
+                if (isInVision) {
+                    CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(member, character, character, crimeType);
+                    if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
     #endregion
 
