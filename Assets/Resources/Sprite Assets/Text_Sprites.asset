@@ -155,7 +155,7 @@ MonoBehaviour:
     m_GlyphRect:
       m_X: 86
       m_Y: 104
-      m_Width: 24
+      m_Width: 23
       m_Height: 24
     m_Scale: 1
     m_AtlasIndex: 0
@@ -234,7 +234,7 @@ MonoBehaviour:
       m_HorizontalAdvance: 24
     m_GlyphRect:
       m_X: 86
-      m_Y: 80
+      m_Y: 79
       m_Width: 24
       m_Height: 24
     m_Scale: 1
@@ -362,7 +362,7 @@ MonoBehaviour:
       m_HorizontalAdvance: 23
     m_GlyphRect:
       m_X: 32
-      m_Y: 56
+      m_Y: 55
       m_Width: 23
       m_Height: 24
     m_Scale: 1

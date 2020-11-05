@@ -44,6 +44,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _factionEmblems:
+  - {fileID: 21300000, guid: 58f4bc47b92ebcf46abb889d279c49d0, type: 3}
+  - {fileID: 21300000, guid: fe5aa51f15750bb4ebeef118fca6a9dc, type: 3}
+  - {fileID: 21300000, guid: ef3beb77cf16b8f44be9a6ff170cfe1e, type: 3}
+  - {fileID: 21300000, guid: 00b9da234def6304a8f2f1274620aaf1, type: 3}
+  - {fileID: 21300000, guid: 5f3d28b704191b24295bac294c059db6, type: 3}
+  - {fileID: 21300000, guid: 0a7d6ebcca0c5404a84707f8d12dbc17, type: 3}
+  - {fileID: 21300000, guid: d0b4c59b008a22847b121d1f390c4a6d, type: 3}
+  - {fileID: 21300000, guid: 9323f853f49ca1a479de38b11d2a07fe, type: 3}
+  - {fileID: 21300000, guid: d54dde1856dc3554bb4214aaf03dc3f7, type: 3}
+  - {fileID: 21300000, guid: 41e527f67fe2a504d85ec47293bc9d9f, type: 3}
+  - {fileID: 21300000, guid: af114870cabcb834bac29fb12dcc5310, type: 3}
+  - {fileID: 21300000, guid: 51f70be037d6abc4f880ffd071dd890b, type: 3}
+  - {fileID: 21300000, guid: a1f3452b490aec84094a7bb254d7347b, type: 3}
+  - {fileID: 21300000, guid: f887bd4a523688e49a7849ec7271a52e, type: 3}
+  - {fileID: 21300000, guid: 06b34dc92f4995749849ed33bf859540, type: 3}
+  - {fileID: 21300000, guid: 16edff66cd1094f4f886e5aea8e38cf1, type: 3}
+  - {fileID: 21300000, guid: e7c9bb91e8852d246841d5c47fdc53ee, type: 3}
+  - {fileID: 21300000, guid: 41b5e8148621ea8449080d18cbf08536, type: 3}
   - {fileID: 21300000, guid: c050c3f585c7ca84493e5ccf35c939f7, type: 3}
   - {fileID: 21300000, guid: eacc0e79510daf84a80ae8a35e2f0a77, type: 3}
   - {fileID: 21300000, guid: ef02c953443b42a4cac1e4500036e9e9, type: 3}
@@ -51,13 +69,14 @@ MonoBehaviour:
   - {fileID: 21300000, guid: a47bd4df720d07043b0db5b9058df34c, type: 3}
   - {fileID: 21300000, guid: 05fa35e1c002cfb4882f1995aa47c30c, type: 3}
   - {fileID: 21300000, guid: cdfd57df9346abe41bcb7203c449fd45, type: 3}
-  wildMonsterFactionEmblem: {fileID: 21300000, guid: 9af2d419485d6ae478889d6d915d2266,
+  wildMonsterFactionEmblem: {fileID: 21300000, guid: 67eb1a6ecaa5d904388a8d3ab682a5a9,
     type: 3}
-  vagrantFactionEmblem: {fileID: 21300000, guid: 9af2d419485d6ae478889d6d915d2266,
+  vagrantFactionEmblem: {fileID: 21300000, guid: b92aa6a0b47c4564db87f64b62ac741b,
     type: 3}
-  disguisedFactionEmblem: {fileID: 21300000, guid: 9af2d419485d6ae478889d6d915d2266,
+  disguisedFactionEmblem: {fileID: 21300000, guid: b43cba364dfc0ab4f9375b6d4fc912ad,
     type: 3}
-  undeadFactionEmblem: {fileID: 21300000, guid: 9af2d419485d6ae478889d6d915d2266,
+  undeadFactionEmblem: {fileID: 21300000, guid: af9e77ec504100c4783154a77e7491c0,
     type: 3}
-  playerFactionEmblem: {fileID: 21300000, guid: 6e5b3a5ba6344b547a8e1503e7b0040a,
+  playerFactionEmblem: {fileID: 21300000, guid: b43cba364dfc0ab4f9375b6d4fc912ad,
     type: 3}
+  cultFactionEmblem: {fileID: 21300000, guid: 54569c2c5213b5e4ab5a1ee42e943161, type: 3}

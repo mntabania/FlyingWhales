@@ -26,8 +26,9 @@ public class FactionManager : BaseMonoBehaviour {
     [SerializeField] private Sprite disguisedFactionEmblem;
     [SerializeField] private Sprite undeadFactionEmblem;
     [SerializeField] private Sprite playerFactionEmblem;
+    [SerializeField] private Sprite cultFactionEmblem;
     
-    private List<Sprite> usedEmblems = new List<Sprite>();
+    private List<Sprite> _usedEmblems = new List<Sprite>();
 
     public readonly string[] exclusiveIdeologyTraitRequirements = new string[] { "Worker", "Combatant", "Royalty" };
     public readonly FACTION_IDEOLOGY[][] categorizedFactionIdeologies = new FACTION_IDEOLOGY[][] { 
@@ -110,33 +111,48 @@ public class FactionManager : BaseMonoBehaviour {
         Faction newFaction = new Faction(factionType);
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         newFaction.SetIsMajorFaction(true);
-        if (factionType == FACTION_TYPE.Demons) {
-            newFaction.SetEmblem(playerFactionEmblem);
-            //NOTE: This is always reserved!
-            newFaction.SetPathfindingTag(2);
-            newFaction.SetPathfindingDoorTag(3);
-        } else if (factionType == FACTION_TYPE.Undead) {
-            newFaction.SetEmblem(undeadFactionEmblem);
-            //NOTE: This is always reserved!
-            newFaction.SetPathfindingTag(4);
-            newFaction.SetPathfindingDoorTag(5);
-        } else {
-            newFaction.SetEmblem(GenerateFactionEmblem(newFaction));
-            if (newFaction.isMajorNonPlayer) {
-                //claim new tags per new MAJOR faction.
-                newFaction.SetPathfindingTag(InnerMapManager.Instance.ClaimNextTag());
-                newFaction.SetPathfindingDoorTag(InnerMapManager.Instance.ClaimNextTag());    
-            }
-        }
+        DetermineFactionEmblem(newFaction);
+        DetermineFactionPathfindingTags(newFaction);
         CreateRelationshipsForFaction(newFaction);
         if (!string.IsNullOrEmpty(factionName)) {
             newFaction.SetName(factionName);
         }
-        
         if (!newFaction.isPlayerFaction) {
             Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
         }
         return newFaction;
+    }
+    private void DetermineFactionEmblem(Faction faction) {
+        FACTION_TYPE factionType = faction.factionType.type;
+        if (factionType == FACTION_TYPE.Demons) {
+            faction.SetEmblem(playerFactionEmblem);
+        } else if (factionType == FACTION_TYPE.Undead) {
+            faction.SetEmblem(undeadFactionEmblem);
+        } else if (factionType == FACTION_TYPE.Demon_Cult && 
+                   DatabaseManager.Instance.factionDatabase.allFactionsList.Count(f => f.factionType.type == FACTION_TYPE.Demon_Cult) == 1) {
+            //only set cult faction emblem on first cult faction.
+            faction.SetEmblem(cultFactionEmblem);
+        } else {
+            faction.SetEmblem(GetRandomFactionEmblem(faction));
+        }
+    }
+    private void DetermineFactionPathfindingTags(Faction faction) {
+        FACTION_TYPE factionType = faction.factionType.type;
+        if (factionType == FACTION_TYPE.Demons) {
+            //NOTE: This is always reserved!
+            faction.SetPathfindingTag(2);
+            faction.SetPathfindingDoorTag(3);
+        } else if (factionType == FACTION_TYPE.Undead) {
+            //NOTE: This is always reserved!
+            faction.SetPathfindingTag(4);
+            faction.SetPathfindingDoorTag(5);
+        } else {
+            if (faction.isMajorNonPlayer) {
+                //claim new tags per new MAJOR faction.
+                faction.SetPathfindingTag(InnerMapManager.Instance.ClaimNextTag());
+                faction.SetPathfindingDoorTag(InnerMapManager.Instance.ClaimNextTag());    
+            }
+        }
     }
     private Faction CreateUndeadFaction() {
         Faction undead = CreateNewFaction(FACTION_TYPE.Undead, "Undead");
@@ -183,54 +199,42 @@ public class FactionManager : BaseMonoBehaviour {
     #endregion
 
     #region Emblem
-    /*
-     * Generate an emblem for a kingdom.
-     * This will return a sprite and set that sprite as used.
-     * Will return an error if there are no more available emblems.
-     * */
-    internal Sprite GenerateFactionEmblem(Faction faction) {
-        if(usedEmblems.Count == _factionEmblems.Count) {
-            usedEmblems.Clear();
+    private Sprite GetRandomFactionEmblem(Faction faction) {
+        if(_usedEmblems.Count == _factionEmblems.Count) {
+            _usedEmblems.Clear();
         }
         for (int i = 0; i < _factionEmblems.Count; i++) {
             Sprite currSprite = _factionEmblems[i];
-            if (usedEmblems.Contains(currSprite)) {
+            if (_usedEmblems.Contains(currSprite)) {
                 continue;
             }
-            usedEmblems.Add(currSprite);
+            _usedEmblems.Add(currSprite);
             return currSprite;
         }
         throw new System.Exception($"There are no more emblems for faction: {faction.name}");
     }
-    public Sprite GetFactionEmblem(int emblemIndex) {
-        return _factionEmblems[emblemIndex];
-        //for (int i = 0; i < _emblemBGs.Count; i++) {
-        //    EmblemBG currBG = _emblemBGs[i];
-        //    if (currBG.id.Equals(emblemID)) {
-        //        return currBG;
-        //    }
-        //}
-        //throw new System.Exception("There is no emblem bg with id " + emblemID);
-    }
-    public Sprite GetFactionEmblem(string name) {
-        if (wildMonsterFactionEmblem.name == name) {
+    public Sprite GetFactionEmblem(SaveDataFaction p_data) {
+        if (p_data.factionType.type == FACTION_TYPE.Wild_Monsters) {
             return wildMonsterFactionEmblem;
         }
-        if (vagrantFactionEmblem.name == name) {
+        if (p_data.factionType.type == FACTION_TYPE.Vagrants) {
             return vagrantFactionEmblem;
         }
-        if (disguisedFactionEmblem.name == name) {
+        if (p_data.factionType.type == FACTION_TYPE.Disguised) {
             return disguisedFactionEmblem;
         }
-        if (undeadFactionEmblem.name == name) {
+        if (p_data.factionType.type == FACTION_TYPE.Undead) {
             return undeadFactionEmblem;
         }
-        if (playerFactionEmblem.name == name) {
+        if (p_data.factionType.type == FACTION_TYPE.Demons) {
             return playerFactionEmblem;
+        }
+        if (p_data.emblemName == cultFactionEmblem.name) {
+            return cultFactionEmblem;
         }
         for (int i = 0; i < _factionEmblems.Count; i++) {
             Sprite emblem = _factionEmblems[i];
-            if (emblem.name == name) {
+            if (emblem.name == p_data.emblemName) {
                 return emblem;
             }
         }
