@@ -61,6 +61,7 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private RelationshipFilterItem[] relationFilterItems;
     [SerializeField] private GameObject relationFiltersGO;
     [SerializeField] private Toggle allRelationshipFiltersToggle;
+    [SerializeField] private EventLabel opinionsEventLabel;
     
     [Space(10)] [Header("Mood")] 
     [SerializeField] private MarkedMeter moodMeter;
@@ -107,9 +108,9 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<Character, Character>(Signals.OPINION_REMOVED, OnOpinionChanged);
         Messenger.AddListener<Character, Character, string>(Signals.OPINION_INCREASED, OnOpinionChanged);
         Messenger.AddListener<Character, Character, string>(Signals.OPINION_DECREASED, OnOpinionChanged);
-
         Messenger.AddListener<Character>(Signals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
         Messenger.AddListener<MoodComponent>(Signals.MOOD_SUMMARY_MODIFIED, OnMoodModified);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
 
         //normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
         relationshipNamesEventLbl.SetOnClickAction(OnClickCharacter);
@@ -119,6 +120,9 @@ public class CharacterInfoUI : InfoUIBase {
         homeRegionEventLbl.SetOnClickAction(OnClickHomeLocation);
         houseEventLbl.SetOnClickAction(OnClickHomeStructure);
         partyEventLbl.SetOnClickAction(OnClickParty);
+        opinionsEventLabel.SetShouldColorHighlight(false);
+        statusTraitsEventLbl.SetShouldColorHighlight(false);
+        normalTraitsEventLbl.SetShouldColorHighlight(false);
 
         moodMeter.ResetMarks();
         moodMeter.AddMark(EditableValuesManager.Instance.criticalMoodHighThreshold/100f, Color.red);
@@ -252,6 +256,12 @@ public class CharacterInfoUI : InfoUIBase {
     }
     private void UpdatePortrait() {
         characterPortrait.GeneratePortrait(_activeCharacter);
+    }
+    private void OnCharacterChangedName(Character p_character) {
+        if (isShowing) {
+            //update all basic info regardless of character since changed character might be referenced in active characters thought bubble.
+            UpdateBasicInfo();    
+        }
     }
     public void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.firstNameWithColor;

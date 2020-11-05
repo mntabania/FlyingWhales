@@ -196,7 +196,7 @@ public class CharacterVisuals {
             if (_owner.deathLog.hasValue) {
                 return _owner.deathLog.logText;
             } else {
-                return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> has died.";    
+                return $"<b>{GetCharacterNameWithIconAndColor()}</b> has died.";    
             }
         }
         //Interrupt
@@ -216,24 +216,24 @@ public class CharacterVisuals {
         }
         //fleeing
         if (_owner.marker && _owner.marker.hasFleePath) {
-            return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> is fleeing.";
+            return $"<b>{GetCharacterNameWithIconAndColor()}</b> is fleeing.";
         }
 
         //Travelling
         Character masterCharacter = _owner.carryComponent.masterCharacter;
         if (masterCharacter.marker && masterCharacter.marker.destinationTile != null && masterCharacter.marker.isMoving && masterCharacter.marker.pathfindingAI.currentPath != null) {
-            return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> is going to {_owner.carryComponent.masterCharacter.marker.destinationTile.structure.GetNameRelativeTo(_owner)}.";
+            return $"<b>{GetCharacterNameWithIconAndColor()}</b> is going to {_owner.carryComponent.masterCharacter.marker.destinationTile.structure.GetNameRelativeTo(_owner)}.";
         }
 
         //Default - Do nothing/Idle
         if (_owner.currentStructure != null) {
-            return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> is in {_owner.currentStructure.GetNameRelativeTo(_owner)}.";
+            return $"<b>{GetCharacterNameWithIconAndColor()}</b> is in {_owner.currentStructure.GetNameRelativeTo(_owner)}.";
         }
 
         if(_owner.minion != null && !_owner.minion.isSummoned) {
-            return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> is unsummoned.";
+            return $"<b>{GetCharacterNameWithIconAndColor()}</b> is unsummoned.";
         }
-        return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> is in {_owner.currentRegion?.name}.";
+        return $"<b>{GetCharacterNameWithIconAndColor()}</b> is in {_owner.currentRegion?.name}.";
         
     }
     public string GetCharacterStringIcon() {
@@ -253,7 +253,7 @@ public class CharacterVisuals {
     }
     public string GetCharacterNameWithIconAndColor() {
         string icon = GetCharacterStringIcon();
-        string characterName = UtilityScripts.Utilities.ColorizeName(_owner.name);
+        string characterName = UtilityScripts.Utilities.ColorizeName(_owner.name, CharacterManager.Instance.GetCharacterNameColorHexForLogs(_owner));
         return $"{icon}{characterName}";
     }
     public string GetRelationshipSummary(Character character) {

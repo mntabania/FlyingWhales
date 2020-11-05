@@ -17,6 +17,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
 
     private int lastHoveredLinkIndex = -1;
     private bool isHighlighting;
+    private bool _shouldColorHighlight = true;
 
     public System.Func<object, bool> shouldBeHighlightedChecker;
     public System.Action<object> onClickAction;
@@ -154,6 +155,9 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
     public void SetHighlightChecker(System.Func<object, bool> shouldBeHighlightedChecker) {
         this.shouldBeHighlightedChecker = shouldBeHighlightedChecker;
     }
+    public void SetShouldColorHighlight(bool state) {
+        _shouldColorHighlight = state;
+    }
     private bool ShouldBeHighlighted(object obj) {
         if (shouldBeHighlightedChecker != null) {
             return shouldBeHighlightedChecker.Invoke(obj);
@@ -248,16 +252,72 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
             hoverOutAction?.Invoke();
         }
     }
+
+    private Color32 originalColor;
+    
     private void HighlightLink(TMP_LinkInfo linkInfo) {
-        string oldText = $"{linkInfo.GetLinkText()}";
-        string newText = $"<u>{oldText}</u>";
-        text.SetText(text.text.Replace(oldText, newText));
+        // string oldText = $"{linkInfo.GetLinkText()}";
+        // string newText = $"<u>{oldText}</u>";
+        // text.SetText(text.text.Replace(oldText, newText));
+
+        if (_shouldColorHighlight) {
+            // Iterate through each of the characters of the word.
+            for (int i = 0; i < linkInfo.linkTextLength; i++) {
+                int characterIndex = linkInfo.linkTextfirstCharacterIndex + i;
+
+                // Get the index of the material / sub text object used by this character.
+                int meshIndex = text.textInfo.characterInfo[characterIndex].materialReferenceIndex;
+
+                int vertexIndex = text.textInfo.characterInfo[characterIndex].vertexIndex;
+
+                // Get a reference to the vertex color
+                Color32[] vertexColors = text.textInfo.meshInfo[meshIndex].colors32;
+                originalColor = vertexColors[vertexIndex + 0];
+            
+                Color32 c = Color.white; //vertexColors[vertexIndex + 0].Tint(0.75f);
+
+                vertexColors[vertexIndex + 0] = c;
+                vertexColors[vertexIndex + 1] = c;
+                vertexColors[vertexIndex + 2] = c;
+                vertexColors[vertexIndex + 3] = c;
+            }
+
+            // Update Geometry
+            text.UpdateVertexData(TMP_VertexDataUpdateFlags.All);    
+        }
+
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Link);
     }
     private void UnhighlightLink(TMP_LinkInfo linkInfo) {
-        string oldText = $"{linkInfo.GetLinkText()}";
-        string newText = $"<u>{oldText}</u>";
-        text.SetText(text.text.Replace(newText, oldText));
+        // string oldText = $"{linkInfo.GetLinkText()}";
+        // string newText = $"<u>{oldText}</u>";
+        // text.SetText(text.text.Replace(newText, oldText));
+
+        if (_shouldColorHighlight) {
+            // Iterate through each of the characters of the word.
+            for (int i = 0; i < linkInfo.linkTextLength; i++) {
+                int characterIndex = linkInfo.linkTextfirstCharacterIndex + i;
+
+                // Get the index of the material / sub text object used by this character.
+                int meshIndex = text.textInfo.characterInfo[characterIndex].materialReferenceIndex;
+
+                int vertexIndex = text.textInfo.characterInfo[characterIndex].vertexIndex;
+
+                // Get a reference to the vertex color
+                Color32[] vertexColors = text.textInfo.meshInfo[meshIndex].colors32;
+
+                Color32 c = originalColor; //vertexColors[vertexIndex + 0].Tint(1.33333f);
+
+                vertexColors[vertexIndex + 0] = c;
+                vertexColors[vertexIndex + 1] = c;
+                vertexColors[vertexIndex + 2] = c;
+                vertexColors[vertexIndex + 3] = c;
+            }
+
+            // Update Geometry
+            text.UpdateVertexData(TMP_VertexDataUpdateFlags.All);
+        }
+        
         InputManager.Instance.RevertToPreviousCursor();
     }
     public void HoverOutAction() {

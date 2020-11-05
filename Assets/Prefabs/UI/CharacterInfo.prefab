@@ -5319,6 +5319,7 @@ MonoBehaviour:
   - {fileID: 5165276838832734471}
   relationFiltersGO: {fileID: 4047853609482909476}
   allRelationshipFiltersToggle: {fileID: 6034665907973215542}
+  opinionsEventLabel: {fileID: 114155747922170936}
   moodMeter: {fileID: 114066573960450394}
   moodSummary: {fileID: 114256098162381262}
   energyMeter: {fileID: 114761126927332286}

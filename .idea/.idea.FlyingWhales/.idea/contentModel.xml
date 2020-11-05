@@ -1243,7 +1243,6 @@
             <e p="Minion.cs" t="Include" />
             <e p="PreCharacterData.cs" t="Include" />
             <e p="PreCharacterRelationship.cs" t="Include" />
-            <e p="RaceSetting.cs" t="Include" />
           </e>
           <e p="Combat" t="Include">
             <e p="Projectile.cs" t="Include" />
@@ -2746,6 +2745,7 @@
             </e>
             <e p="PlayerSkillLoadout.cs" t="Include" />
             <e p="PlayerSkillTree.cs" t="Include" />
+            <e p="RaceData.cs" t="Include" />
           </e>
           <e p="Serializable Dictionaries" t="Include">
             <e p="SerializableDictionaries.cs" t="Include" />
@@ -3099,6 +3099,7 @@
               <e p="MinionListUI.cs" t="Include" />
               <e p="OptionsMenu.cs" t="Include" />
               <e p="PopupMenuBase.cs" t="Include" />
+              <e p="RenameCharacterWindowUI.cs" t="Include" />
               <e p="SmallInfoWithVisual.cs" t="Include" />
               <e p="SpellListUI.cs" t="Include" />
               <e p="SummonListUI.cs" t="Include" />

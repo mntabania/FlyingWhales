@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Inner_Maps.Location_Structures;
 using Logs;
 using UnityEngine;
 
@@ -141,7 +142,7 @@ public struct Log {
          return false;
     }
     public bool IsInvolved(ILogFiller obj) {
-        return allInvolvedObjectIDs.Contains(obj.persistentID);
+        return !string.IsNullOrEmpty(allInvolvedObjectIDs) && allInvolvedObjectIDs.Contains(obj.persistentID);
     }
     private void AddInvolvedObject(string persistentID) {
         allInvolvedObjectIDs = $"{allInvolvedObjectIDs}|{persistentID}|";
@@ -193,6 +194,34 @@ public struct Log {
                 AddTag(tags[i]);
             }    
         }
+    }
+    #endregion
+
+    #region Updates
+    public void TryUpdateLogAfterRename(Character updatedCharacter) {
+        if (IsInvolved(updatedCharacter)) {
+            for (int i = 0; i < fillers.Count; i++) {
+                LogFillerStruct logFiller = fillers[i];
+                if (logFiller.objPersistentID == updatedCharacter.persistentID) {
+                    logFiller.ForceUpdateValueBasedOnConnectedObject();
+                    fillers[i] = logFiller;
+                }
+            }
+            ResetText();
+            FinalizeText();
+        }
+    }
+    public void ReEvaluateWholeText() {
+        for (int i = 0; i < fillers.Count; i++) {
+            LogFillerStruct logFiller = fillers[i];
+            if (logFiller.type != null && (logFiller.type == typeof(LocationStructure) || logFiller.type.IsSubclassOf(typeof(LocationStructure)))) {
+                continue; //Do not update structure names because it is okay for them to be inaccurate. 
+            }
+            logFiller.ForceUpdateValueBasedOnConnectedObject();
+            fillers[i] = logFiller;
+        }
+        ResetText();
+        FinalizeText();
     }
     #endregion
 

@@ -487,6 +487,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
         Messenger.AddListener<Faction, Character>(Signals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
         Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
         
         needsComponent.SubscribeToSignals();
         jobComponent.SubscribeToListeners();
@@ -522,6 +523,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
         Messenger.RemoveListener<Faction, Character>(Signals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
         Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
 
         needsComponent.UnsubscribeToSignals();
         jobComponent.UnsubscribeListeners();
@@ -622,6 +624,24 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 traitContainer.AddTrait(this, "Burning", out var addedTrait, bypassElementalChance: true);
                 (addedTrait as Burning)?.SetSourceOfBurning(burning.sourceOfBurning, this);   
             }
+        }
+    }
+    private void OnCharacterChangedName(Character p_character) {
+        if (p_character != this) {
+            UpdateInterruptLogsBasedOnUpdatedCharacter(p_character);    
+        }
+    }
+    private void UpdateInterruptLogsBasedOnUpdatedCharacter(Character p_character) {
+        if (interruptComponent.isInterrupted) {
+            interruptComponent.thoughtBubbleLog.TryUpdateLogAfterRename(p_character);
+        }
+        if (currentActionNode != null) {
+            currentActionNode.thoughtBubbleLog.TryUpdateLogAfterRename(p_character);
+            currentActionNode.thoughtBubbleMovingLog.TryUpdateLogAfterRename(p_character);
+            currentActionNode.descriptionLog.TryUpdateLogAfterRename(p_character);
+        }
+        if (deathLog.hasValue) {
+            deathLog.TryUpdateLogAfterRename(p_character);
         }
     }
     #endregion
@@ -1744,6 +1764,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void RenameCharacter(string p_firstName, string p_lastName) {
         SetFirstAndLastName(p_firstName, p_lastName);
+        UpdateInterruptLogsBasedOnUpdatedCharacter(this); //had to do this since signal order can be inconsistent and the UI Update could happen before the actual logs were updated.
         Messenger.Broadcast(Signals.CHARACTER_CHANGED_NAME, this);
     }
     private string GetDefaultRaceClassName() {
@@ -2029,8 +2050,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private string GetFirstNameWithColor() {
         if(CharacterManager.Instance != null) {
-            Color color = CharacterManager.Instance.GetCharacterNameColor(this);
-            return $"<color=#{ColorUtility.ToHtmlStringRGB(color)}>{_firstName}</color>";
+            string color = CharacterManager.Instance.GetCharacterNameColorHex(this);
+            return $"<color=#{color}>{_firstName}</color>";
         }
         return firstName;
     }

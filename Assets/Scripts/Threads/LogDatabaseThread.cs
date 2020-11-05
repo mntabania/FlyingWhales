@@ -24,16 +24,7 @@ public class LogDatabaseThread : Multithread {
         List<Log> logs = DatabaseManager.Instance.mainSQLDatabase.GetFullLogsMentioning(character.persistentID);
         for (int i = 0; i < logs.Count; i++) {
             Log log = logs[i];
-            for (int j = 0; j < log.fillers.Count; j++) {
-                LogFillerStruct logFiller = log.fillers[j];
-                if (logFiller.type != null && (logFiller.type == typeof(LocationStructure) || logFiller.type.IsSubclassOf(typeof(LocationStructure)))) {
-                    continue; //Do not update structure names because it is okay for them to be inaccurate. 
-                }
-                logFiller.ForceUpdateValueBasedOnConnectedObject();
-                log.fillers[j] = logFiller;
-            }
-            log.ResetText();
-            log.FinalizeText();
+            log.ReEvaluateWholeText();
             DatabaseManager.Instance.mainSQLDatabase.InsertLog(log);
         }
     }
