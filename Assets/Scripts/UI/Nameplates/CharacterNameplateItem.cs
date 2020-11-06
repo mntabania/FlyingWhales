@@ -84,7 +84,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         UpdateSubTextAndIcon();
     }
     private void UpdateMainAndActionText() {
-        mainLbl.text = character.firstNameWithColor;
+        mainLbl.text = $"<b>{character.firstNameWithColor}</b>";
         supportingLbl.text = character.visuals.GetThoughtBubble();
         SetSupportingLabelState(true);
     }
