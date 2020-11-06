@@ -922,7 +922,7 @@ public class CombatComponent : CharacterComponent {
                         key = "Berserked";
                         break;
                     case JOB_TYPE.BRAWL:
-                        key = "Brawl";
+                        key = "Snapped";
                         break;
                     case JOB_TYPE.DESTROY:
                         if(target is Guitar guitar && guitar.IsOwnedBy(owner)) {
@@ -944,6 +944,9 @@ public class CombatComponent : CharacterComponent {
                         if (owner is Troll) {
                             key = "Abduct";
                         }
+                        break;
+                    case JOB_TYPE.KIDNAP_RAID:
+                        key = "Raid";
                         break;
                 }
             } else {

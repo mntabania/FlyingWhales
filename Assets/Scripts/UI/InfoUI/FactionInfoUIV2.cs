@@ -36,6 +36,9 @@ public class FactionInfoUIV2 : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI misdemeanourCrimesLbl;
     [SerializeField] private TextMeshProUGUI seriousCrimesLbl;
     [SerializeField] private TextMeshProUGUI heinousCrimesLbl;
+    [SerializeField] private ScrollRect crimesScrollRect;
+    [SerializeField] private RectTransform crimesScrollRectTransform;
+
     //[SerializeField] private RectTransform[] crimesTransform;
 
     [Space(10)]
@@ -290,6 +293,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
                 crimeLbl.text += $"<sprite=\"Text_Sprites\" name=\"Arrow_Icon\">   {crimeType}\n";
             }
         }
+        crimesScrollRectTransform.ForceUpdateRectTransforms();
         //for (int i = 0; i < crimesTransform.Length; i++) {
         //    crimesTransform[i].ForceUpdateRectTransforms();
         //}
@@ -560,6 +564,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     #region Utilities
     private void ResetScrollPositions() {
         charactersScrollView.verticalNormalizedPosition = 1;
+        crimesScrollRect.verticalNormalizedPosition = 1;
         //locationsScrollView.verticalNormalizedPosition = 1;
         logsWindow.ResetScrollPosition();
     }
