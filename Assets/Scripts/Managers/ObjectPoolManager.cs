@@ -24,7 +24,6 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     public List<Party> _partyPool { get; private set; }
     public List<GoapThread> _goapThreadPool { get; private set; }
     private List<LogDatabaseThread> _logDatabaseThreadPool;
-    private List<GoapActionInvalidity> _goapActionInvalidityPool;
 
     private void Awake() {
         Instance = this;
