@@ -66,6 +66,16 @@ public class ExtractItem : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
+        if(target is TileObject && target.gridTileLocation != null && target.gridTileLocation.structure.settlementLocation != null && target.gridTileLocation.structure.settlementLocation.owner != null) {
+            Faction targetFaction = target.gridTileLocation.structure.settlementLocation.owner;
+            if(actor.faction != null && actor.faction.IsHostileWith(targetFaction)) {
+                //Do not extract if object is at hostile settlement
+                costLog += $" +2000(Location of target is in hostile faction of actor)";
+                actor.logComponent.AppendCostLog(costLog);
+                return 2000;
+            }
+        }
+        
         int cost = 250;
         costLog += $" +{cost}(Initial)";
         actor.logComponent.AppendCostLog(costLog);

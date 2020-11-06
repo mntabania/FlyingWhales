@@ -156,7 +156,7 @@ public class MonsterInfoUI : InfoUIBase {
         }
     }
     public void UpdateBasicInfo() {
-        nameLbl.text = _activeMonster.firstNameWithColor;
+        nameLbl.text = $"<b>{_activeMonster.firstNameWithColor}</b>";
         subLbl.text = _activeMonster.characterClass.className;
         UpdateThoughtBubble();
     }

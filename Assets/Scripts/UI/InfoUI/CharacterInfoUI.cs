@@ -265,7 +265,7 @@ public class CharacterInfoUI : InfoUIBase {
         }
     }
     public void UpdateBasicInfo() {
-        nameLbl.text = _activeCharacter.firstNameWithColor;
+        nameLbl.text = $"<b>{_activeCharacter.firstNameWithColor}</b>";
         UpdateSubTextAndIcon();
         // leaderIcon.SetActive(_activeCharacter.isFactionLeader || _activeCharacter.isSettlementRuler);
         UpdateThoughtBubble();
