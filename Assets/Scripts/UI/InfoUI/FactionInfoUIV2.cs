@@ -272,6 +272,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
 
     #region Crimes
     private void UpdateCrimes() {
+        crimesScrollRect.gameObject.SetActive(false);
         infractionCrimesLbl.text = string.Empty;
         misdemeanourCrimesLbl.text = string.Empty;
         seriousCrimesLbl.text = string.Empty;
@@ -293,6 +294,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
                 crimeLbl.text += $"<sprite=\"Text_Sprites\" name=\"Arrow_Icon\">   {crimeType}\n";
             }
         }
+        crimesScrollRect.gameObject.SetActive(true);
         //crimesScrollRectTransform.ForceUpdateRectTransforms();
         //Canvas.ForceUpdateCanvases();
         //for (int i = 0; i < crimesTransform.Length; i++) {

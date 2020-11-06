@@ -46,10 +46,11 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8017869
+    totalSpriteSurfaceArea: 8028317
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: 21300000, guid: c92b580040acb0446ba26ac7cac0be09, type: 3}
   - {fileID: 21300000, guid: 87bb45208dd227c4692921a192026acb, type: 3}
   - {fileID: 21300000, guid: 2914eb20255e070448ce2bab92c250a6, type: 3}
   - {fileID: 21300000, guid: 8009a150b91f2e0498d612333aa68aa2, type: 3}
@@ -376,6 +377,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 8947dcff354178f448810bd6e8a25e23, type: 3}
   - {fileID: 21300000, guid: 4b8d1dffc5017a54fb1390535f3b11c9, type: 3}
   m_PackedSpriteNamesToIndex:
+  - arrow_faction_disabled
   - assault_icon
   - footprint_icon
   - Transition-Arrow-Clicked
