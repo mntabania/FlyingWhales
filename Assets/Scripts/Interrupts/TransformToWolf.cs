@@ -22,9 +22,20 @@ namespace Interrupts {
             return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
         }
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
-            Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, interruptHolder.actor.marker.transform.position, 1, interruptHolder.actor.currentRegion.innerMap);
-            interruptHolder.actor.lycanData.TurnToWolf();
+            Character actor = interruptHolder.actor;
+            if(actor.marker && actor.currentRegion != null) {
+                Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, actor.marker.transform.position, 1, actor.currentRegion.innerMap);
+            }
+            if (actor.isLycanthrope) {
+                actor.lycanData.TurnToWolf();
+            } else {
+                actor.traitContainer.RemoveTrait(actor, "Transforming");
+            }
             return base.ExecuteInterruptEndEffect(interruptHolder);
+        }
+        public override bool OnForceEndInterrupt(InterruptHolder interruptHolder) {
+            interruptHolder.actor.traitContainer.RemoveTrait(interruptHolder.actor, "Transforming");
+            return base.OnForceEndInterrupt(interruptHolder);
         }
         public override string ReactionToActor(Character actor, IPointOfInterest target,
             Character witness,
