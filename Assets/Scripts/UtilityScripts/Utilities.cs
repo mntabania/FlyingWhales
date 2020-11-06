@@ -276,7 +276,7 @@ namespace UtilityScripts {
                         if(obj != null) {
                             if (obj is Character character) {
                                 wordToReplace = $"{wordToReplace}{character.visuals.GetCharacterStringIcon()}" +
-                                                $"{ColorizeName($"<b><link={logFiller.GetLinkText()}>{logFiller.value}</link></b>", CharacterManager.Instance.GetCharacterNameColorHexForLogs(character))}";
+                                                $"{ColorizeName($"<b><link={logFiller.GetLinkText()}>{logFiller.value}</link></b>", CharacterManager.Instance.GetCharacterNameColorHex(character))}";
                             } else {
                                 wordToReplace = $"{wordToReplace}{ColorizeName($"<b><link={logFiller.GetLinkText()}>{logFiller.value}</link></b>")}";    
                             }
@@ -307,7 +307,7 @@ namespace UtilityScripts {
                         if (obj != null) {
                             wordToReplace = $"<b><link={logFiller.GetLinkText()}>{logFiller.value}</link></b>";
                             if (obj is Character c) {
-                                wordToReplace = ColorizeName(wordToReplace, CharacterManager.Instance.GetCharacterNameColorHexForLogs(c));
+                                wordToReplace = ColorizeName(wordToReplace, CharacterManager.Instance.GetCharacterNameColorHex(c));
                             } else if (obj is TileObject || obj is Faction) {
                                 wordToReplace = ColorizeName(wordToReplace);
                             }
@@ -512,7 +512,7 @@ namespace UtilityScripts {
                         if(logFiller.obj != null) {
                             if (logFiller.obj is Character character) {
                                 wordToReplace = $"{wordToReplace}{character.visuals.GetCharacterStringIcon()}" +
-                                                $"{ColorizeName($"<b><link={i}>{logFiller.value}</link></b>", CharacterManager.Instance.GetCharacterNameColorHexForLogs(character))}";
+                                                $"{ColorizeName($"<b><link={i}>{logFiller.value}</link></b>", CharacterManager.Instance.GetCharacterNameColorHex(character))}";
                             } else {
                                 wordToReplace = $"{wordToReplace}{ColorizeName($"<b><link={i}>{logFiller.value}</link></b>")}";    
                             }
@@ -542,7 +542,7 @@ namespace UtilityScripts {
                         if (logFiller.obj != null) {
                             wordToReplace = $"<b><link={i}>{logFiller.value}</link></b>";
                             if (logFiller.obj is Character c) {
-                                wordToReplace = ColorizeName(wordToReplace, CharacterManager.Instance.GetCharacterNameColorHexForLogs(c));
+                                wordToReplace = ColorizeName(wordToReplace, CharacterManager.Instance.GetCharacterNameColorHex(c));
                             } else if (logFiller.obj is TileObject || logFiller.obj is Faction) {
                                 wordToReplace = ColorizeName(wordToReplace);
                             }

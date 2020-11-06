@@ -22,6 +22,7 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI partyLbl;
     [SerializeField] private EventLabel partyEventLbl;
     [SerializeField] private LogItem plansLblLogItem;
+    [SerializeField] private Image raceIcon;
 
     [Space(10)] [Header("Location")]
     [SerializeField] private TextMeshProUGUI factionLbl;
@@ -265,9 +266,19 @@ public class CharacterInfoUI : InfoUIBase {
     }
     public void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.firstNameWithColor;
-        subLbl.text = _activeCharacter.characterClass.className;
+        UpdateSubTextAndIcon();
         // leaderIcon.SetActive(_activeCharacter.isFactionLeader || _activeCharacter.isSettlementRuler);
         UpdateThoughtBubble();
+    }
+    private void UpdateSubTextAndIcon() {
+        if (_activeCharacter is Summon) {
+            subLbl.gameObject.SetActive(false);
+        } else {
+            subLbl.text = _activeCharacter.characterClass.className;
+            raceIcon.sprite = _activeCharacter.raceSetting.nameplateIcon;
+            raceIcon.gameObject.SetActive(_activeCharacter.raceSetting.nameplateIcon != null);
+            subLbl.gameObject.SetActive(true);
+        }
     }
     public void UpdateThoughtBubble() {
         actionLbl.text = activeCharacter.visuals.GetThoughtBubble();
@@ -1248,6 +1259,19 @@ public class CharacterInfoUI : InfoUIBase {
     #region Rename
     public void OnClickRenameButton() {
         Messenger.Broadcast(Signals.EDIT_CHARACTER_NAME, activeCharacter.persistentID, activeCharacter.firstName);
+    }
+    #endregion
+
+    #region Race Icon
+    public void OnHoverRaceIcon() {
+        if(activeCharacter == null) {
+            return;
+        }
+        string message = GameUtilities.GetNormalizedSingularRace(activeCharacter.race);
+        UIManager.Instance.ShowSmallInfo(message);
+    }
+    public void OnHoverExitRaceIcon() {
+        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 }

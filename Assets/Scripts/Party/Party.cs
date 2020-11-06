@@ -808,8 +808,12 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             if (IsMemberActive(member)) {
                 if(member.needsComponent.isTired || member.needsComponent.isExhausted || member.needsComponent.isBored || member.needsComponent.isSulking) {
                     return true;
-                } else if((member.needsComponent.isHungry || member.needsComponent.isStarving) && !cannotProduceFoodThisRestPeriod) {
-                    return true;
+                } else {
+                    if (!member.traitContainer.HasTrait("Vampire")) {
+                        if ((member.needsComponent.isHungry || member.needsComponent.isStarving) && !cannotProduceFoodThisRestPeriod) {
+                            return true;
+                        }
+                    }
                 }
             }
         }

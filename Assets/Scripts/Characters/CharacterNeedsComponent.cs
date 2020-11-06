@@ -1172,22 +1172,23 @@ public class CharacterNeedsComponent : CharacterComponent {
             return false;
         }
         if (owner.traitContainer.HasTrait("Vampire")) {
-            //Vampires should only eat in an active party if he is starving or if there is no party members that can see him
-            bool shouldEat = false;
-            if (!isStarving) {
-                if (owner.partyComponent.isMemberThatJoinedQuest) {
-                    CRIME_SEVERITY severity = owner.partyComponent.currentParty.partyFaction.GetCrimeSeverity(owner, owner, CRIME_TYPE.Vampire);
-                    if (severity == CRIME_SEVERITY.None || severity == CRIME_SEVERITY.Unapplicable) {
-                        //If party faction does not consider vampire a crime, vampire can eat
-                        shouldEat = true;
-                    }
-                }
-            } else {
-                shouldEat = true;
-            }
-            if (!shouldEat) {
-                return false;
-            }
+            ////Vampires should only eat in an active party if he is starving or if there is no party members that can see him
+            //bool shouldEat = false;
+            //if (!isStarving) {
+            //    if (owner.partyComponent.isMemberThatJoinedQuest) {
+            //        CRIME_SEVERITY severity = owner.partyComponent.currentParty.partyFaction.GetCrimeSeverity(owner, owner, CRIME_TYPE.Vampire);
+            //        if (severity == CRIME_SEVERITY.None || severity == CRIME_SEVERITY.Unapplicable) {
+            //            //If party faction does not consider vampire a crime, vampire can eat
+            //            shouldEat = true;
+            //        }
+            //    }
+            //} else {
+            //    shouldEat = true;
+            //}
+            //if (!shouldEat) {
+            //    return false;
+            //}
+            return false;
         }
         if (isStarving) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
