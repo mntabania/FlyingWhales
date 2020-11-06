@@ -13,16 +13,6 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
         }
-
-        #region Overrides
-        public override bool TryStopAction(INTERACTION_TYPE action, Character actor, IPointOfInterest target, ref GoapActionInvalidity goapActionInvalidity) {
-            if (action == INTERACTION_TYPE.STEAL || action == INTERACTION_TYPE.KNOCKOUT_CHARACTER) {
-                goapActionInvalidity.isInvalid = true;
-                goapActionInvalidity.stateName = "Target Missing"; //TODO: provide log instead.
-            }
-            return false;
-        }
-        #endregion
     }
 }
 
