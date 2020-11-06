@@ -633,7 +633,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private void UpdateInterruptLogsBasedOnUpdatedCharacter(Character p_character) {
         if (interruptComponent.isInterrupted) {
-            interruptComponent.thoughtBubbleLog.TryUpdateLogAfterRename(p_character);
+            //had to force update because for some reason involved objects are empty during this point
+            //TODO: Find out why!
+            interruptComponent.thoughtBubbleLog.TryUpdateLogAfterRename(p_character, true);
         }
         if (currentActionNode != null) {
             currentActionNode.thoughtBubbleLog.TryUpdateLogAfterRename(p_character);
@@ -643,6 +645,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (deathLog.hasValue) {
             deathLog.TryUpdateLogAfterRename(p_character);
         }
+        stateComponent.currentState?.thoughtBubbleLog.TryUpdateLogAfterRename(p_character, true);
     }
     #endregion
 
