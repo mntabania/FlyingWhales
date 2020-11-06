@@ -328,6 +328,10 @@ public static class Signals {
     /// </summary>
     public static string LOG_MENTIONING_CHARACTER_UPDATED = "LogMentioningCharacterUpdated";
     public static string EDIT_CHARACTER_NAME = "OnEditCharacterName";
+    /// <summary>
+    /// Parameters (IIntel intel)
+    /// </summary>
+    public static string INTEL_LOG_UPDATED = "OnIntelLogUpdated";
     #endregion
 
     #region Quest Signals

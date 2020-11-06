@@ -199,7 +199,7 @@ public struct Log {
     #endregion
 
     #region Updates
-    public void TryUpdateLogAfterRename(Character updatedCharacter, bool force = false) {
+    public bool TryUpdateLogAfterRename(Character updatedCharacter, bool force = false) {
         if (IsInvolved(updatedCharacter) || force) {
             if (fillers != null) {
                 for (int i = 0; i < fillers.Count; i++) {
@@ -211,8 +211,10 @@ public struct Log {
                 }
                 ResetText();
                 FinalizeText();
+                return true;
             }
         }
+        return false;
     }
     public void ReEvaluateWholeText() {
         for (int i = 0; i < fillers.Count; i++) {

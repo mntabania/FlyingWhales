@@ -22,18 +22,37 @@ public class IntelItem : MonoBehaviour {
         otherClickActions = new List<System.Action>();
         ClearClickActions();
         SetClickedState(false);
+        UpdateIntelText();
         if (intel != null) {
-            infoLbl.text = intel.log.logText;
             shareToggle.interactable = true;
             shareToggle.gameObject.SetActive(true);
             // logItem.SetLog(intel.log);
         } else {
-            infoLbl.text = "";
             shareToggle.interactable = false;
             shareToggle.gameObject.SetActive(false);
             // logItem.SetLog(null);
         }
+        Messenger.AddListener<IIntel>(Signals.INTEL_LOG_UPDATED, OnIntelLogUpdated);
     }
+
+    #region Listeners
+    private void OnIntelLogUpdated(IIntel p_intel) {
+        if (intel == p_intel) {
+            UpdateIntelText();
+        }
+    }
+    #endregion
+
+    #region Text
+    private void UpdateIntelText() {
+        if (intel != null) {
+            infoLbl.text = intel.log.logText;
+        } else {
+            infoLbl.text = "";
+        }
+    }
+    #endregion
+    
     public void SetClickAction(OnClickAction clickAction) {
         onClickAction = clickAction;
     }
@@ -49,7 +68,6 @@ public class IntelItem : MonoBehaviour {
             otherClickActions[i]();
         }
     }
-
     public void ClearClickActions() {
         onClickAction = null;
         otherClickActions.Clear();
