@@ -1,1 +1,1 @@
-{"items":[{"key":"Invalid","value":"%00@ failed to do %111%."},{"key":"Invalid_Stealth","value":"%00@ failed to do %111% because there are witnesses around."}]}
+{"items":[{"key":"Invalid","value":"%00@ failed to do %111%."},{"key":"Invalid_with_reason","value":"%00@ failed to do %111%. Reason: %112%."},{"key":"Invalid_Stealth","value":"%00@ failed to do %111% because there are witnesses around."},{"key":"target_inactive","value":"Target is inactive"},{"key":"target_carried","value":"Target is being carried"}]}

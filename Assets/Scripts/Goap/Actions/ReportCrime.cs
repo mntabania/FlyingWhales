@@ -52,8 +52,10 @@ public class ReportCrime : GoapAction {
             Character targetCharacter = poiTarget as Character;
             if (targetCharacter.carryComponent.IsNotBeingCarried() == false) {
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "target_carried";
             } else if (!targetCharacter.canWitness) {
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "target_inactive";
             }
         }
         return goapActionInvalidity;
