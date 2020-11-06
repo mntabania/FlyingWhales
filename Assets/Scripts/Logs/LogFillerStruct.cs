@@ -1,6 +1,7 @@
 ﻿using System;
 using Inner_Maps.Location_Structures;
 using Logs;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 [System.Serializable]
@@ -23,21 +24,28 @@ public struct LogFillerStruct {
     }
     public LogFillerStruct(string formattedLogFillerString, LOG_IDENTIFIER identifier) {
         this.identifier = identifier;
-        string[] items = formattedLogFillerString.Split('|');
-        if (items.Length == 1) {
+        if (identifier == LOG_IDENTIFIER.STRING_1 || identifier == LOG_IDENTIFIER.STRING_2) {
             //assume that filler is only a string value
-            value = items[0];
+            value = formattedLogFillerString;
             type = null;
             objPersistentID = string.Empty;
-        } else if (items.Length == 3) {
-            //filler has all 3 values (type, value, and Persistent ID)
-            string typeStr = items[0];
-            type = Type.GetType(typeStr);
-            value = items[1];
-            objPersistentID = items[2];
         } else {
-            throw new Exception($"Log Filler could not be constructed from provided string {formattedLogFillerString}. Identifier {identifier}");
-        }
+            string stringToSplit = formattedLogFillerString; 
+            string[] items = stringToSplit.Split('|');
+            if (items.Length == 3) {
+                //filler has all 3 values (type, value, and Persistent ID)
+                string typeStr = items[0];
+                type = Type.GetType(typeStr);
+                value = items[1];
+                objPersistentID = items[2];
+            } else {
+                //assume that filler is only a string value
+                value = items[0];
+                type = null;
+                objPersistentID = string.Empty;
+            }    
+        } 
+        
     }
 
     public object GetObjectForFiller() {

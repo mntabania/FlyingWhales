@@ -239,7 +239,7 @@ public class CharacterVisuals {
     public string GetCharacterStringIcon() {
         if (!_owner.isNormalCharacter) {
             if (_owner.characterClass.className == "Necromancer") {
-                return UtilityScripts.Utilities.VillagerIcon();        
+                return UtilityScripts.Utilities.UndeadIcon();        
             } else if (_owner.faction != null && _owner.faction.isPlayerFaction) {
                 return UtilityScripts.Utilities.DemonIcon();
             } else if (_owner.faction != null && _owner.faction.factionType.type == FACTION_TYPE.Undead) {

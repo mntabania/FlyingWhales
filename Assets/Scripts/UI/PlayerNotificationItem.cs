@@ -127,6 +127,9 @@ public class PlayerNotificationItem : PooledObject {
             if (log.hasValue) {
                 log.TryUpdateLogAfterRename(character);
                 logLbl.text = log.logText;
+                if (gameObject.activeInHierarchy) {
+                    StartCoroutine(InstantHeight());
+                }
             }
         }
     }

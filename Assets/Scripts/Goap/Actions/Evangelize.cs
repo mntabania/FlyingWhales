@@ -89,7 +89,8 @@ public class Evangelize : GoapAction {
         int success = 50;
         int fail = 50;
 
-        int opinion = targetCharacter.relationshipContainer.GetOpinionData(goapNode.actor).totalOpinion;
+        
+        int opinion = targetCharacter.relationshipContainer.GetTotalOpinion(goapNode.actor);
         if (opinion > 0) {
             success += opinion;
         } else if (opinion < 0) {

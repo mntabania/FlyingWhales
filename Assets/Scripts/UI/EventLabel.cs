@@ -272,14 +272,17 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
 
                 // Get a reference to the vertex color
                 Color32[] vertexColors = text.textInfo.meshInfo[meshIndex].colors32;
-                originalColor = vertexColors[vertexIndex + 0];
+                if (vertexColors.Length > 0) {
+                    originalColor = vertexColors[vertexIndex + 0];
             
-                Color32 c = Color.white; //vertexColors[vertexIndex + 0].Tint(0.75f);
+                    Color32 c = Color.white; //vertexColors[vertexIndex + 0].Tint(0.75f);
 
-                vertexColors[vertexIndex + 0] = c;
-                vertexColors[vertexIndex + 1] = c;
-                vertexColors[vertexIndex + 2] = c;
-                vertexColors[vertexIndex + 3] = c;
+                    vertexColors[vertexIndex + 0] = c;
+                    vertexColors[vertexIndex + 1] = c;
+                    vertexColors[vertexIndex + 2] = c;
+                    vertexColors[vertexIndex + 3] = c;
+                    
+                }
             }
 
             // Update Geometry
@@ -306,12 +309,14 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                 // Get a reference to the vertex color
                 Color32[] vertexColors = text.textInfo.meshInfo[meshIndex].colors32;
 
-                Color32 c = originalColor; //vertexColors[vertexIndex + 0].Tint(1.33333f);
+                if (vertexColors.Length > 0) {
+                    Color32 c = originalColor; //vertexColors[vertexIndex + 0].Tint(1.33333f);
 
-                vertexColors[vertexIndex + 0] = c;
-                vertexColors[vertexIndex + 1] = c;
-                vertexColors[vertexIndex + 2] = c;
-                vertexColors[vertexIndex + 3] = c;
+                    vertexColors[vertexIndex + 0] = c;
+                    vertexColors[vertexIndex + 1] = c;
+                    vertexColors[vertexIndex + 2] = c;
+                    vertexColors[vertexIndex + 3] = c;
+                }
             }
 
             // Update Geometry

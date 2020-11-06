@@ -450,7 +450,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.combatComponent.ClearHostilesInRange(false);
             character.combatComponent.ClearAvoidInRange(false);
         }
-        if (trait is Cultist) {
+        if (trait is Cultist || trait is Necromancer) {
             UpdateName();
         }
         UpdateAnimation();
