@@ -293,7 +293,8 @@ public class FactionInfoUIV2 : MonoBehaviour {
                 crimeLbl.text += $"<sprite=\"Text_Sprites\" name=\"Arrow_Icon\">   {crimeType}\n";
             }
         }
-        crimesScrollRectTransform.ForceUpdateRectTransforms();
+        //crimesScrollRectTransform.ForceUpdateRectTransforms();
+        //Canvas.ForceUpdateCanvases();
         //for (int i = 0; i < crimesTransform.Length; i++) {
         //    crimesTransform[i].ForceUpdateRectTransforms();
         //}
@@ -323,6 +324,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
         _characterItems.Clear();
 
         bool hasAliveMember = false;
+        bool hasMember = false;
         //Angels should not show in the characters list of faction in UI
         //https://trello.com/c/SGow0hA0/2234-angels-on-list
         for (int i = 0; i < activeFaction.characters.Count; i++) {
@@ -339,10 +341,11 @@ public class FactionInfoUIV2 : MonoBehaviour {
                 if (!currCharacter.isDead) {
                     hasAliveMember = true;
                 }
+                hasMember = true;
                 CreateNewCharacterItem(currCharacter, false);
             }
         }
-        if (!hasAliveMember) {
+        if (!hasAliveMember && hasMember) {
             //If all faction members is dead, should auto toggle off the hide dead toggle, meaning all faction members even the dead ones, will be shown
             aliveToggle.isOn = false;
         }

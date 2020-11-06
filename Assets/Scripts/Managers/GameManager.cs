@@ -123,6 +123,7 @@ public class GameManager : MonoBehaviour {
         if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
             UIManager.Instance.ShowStartDemoScreen();
         }
+        Canvas.ForceUpdateCanvases();
     }
     public void LoadProgression(){
         _gameHasStarted = true;
@@ -130,6 +131,7 @@ public class GameManager : MonoBehaviour {
         lastProgressionBeforePausing = "paused";
         SchedulingManager.Instance.StartScheduleCalls ();
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyDown);
+        Canvas.ForceUpdateCanvases();
     }
     public GameDate Today() {
         return new GameDate(today.month, today.day, today.year, today.tick);
