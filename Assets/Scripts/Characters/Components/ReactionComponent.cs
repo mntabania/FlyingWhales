@@ -82,7 +82,7 @@ public class ReactionComponent : CharacterComponent {
             debugLog = $"{debugLog}{owner.name} is reacting to a copy of himself/herself";
             debugLog = $"{debugLog}Surprise interrupt and Fight response";
             owner.combatComponent.Fight(targetCharacter, CombatManager.Hostility);
-            owner.interruptComponent.TriggerInterrupt(INTERRUPT.Surprised, targetCharacter, reason: Surprised.Copycat_Reason);
+            owner.interruptComponent.TriggerInterrupt(INTERRUPT.Surprised, targetCharacter, reason: Shocked.Copycat_Reason);
         } else {
             ReactTo(targetCharacter, ref debugLog);
             return;
@@ -1055,7 +1055,7 @@ public class ReactionComponent : CharacterComponent {
                                                 if (GameUtilities.RollChance(35)) {
                                                     actor.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);    
                                                 } else {
-                                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);  
+                                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter, reason: "someone they know is in a bind");  
                                                 }
                                             }
                                         }

@@ -133,7 +133,7 @@ public class RememberFallen : GoapAction {
     #region Effects
     public void PreRememberSuccess(ActualGoapNode goapNode) {
         Tombstone tombstone = goapNode.poiTarget as Tombstone;
-        goapNode.descriptionLog.AddToFillers(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        goapNode.descriptionLog.AddToFillers(tombstone.character, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }

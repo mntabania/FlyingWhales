@@ -1,1 +1,9 @@
-{"items":[{"key":"effect","value":"%00@ froze in shock."},{"key":"thought_bubble","value":"%00@ is freezing in shock."}]}
+{
+  "items": [
+    { "key": "effect", "value": "%00@ froze in shock! Reason: %111%." },
+    {
+      "key": "thought_bubble",
+      "value": "%00@ is freezing in shock! Reason: %111%."
+    }
+  ]
+}
