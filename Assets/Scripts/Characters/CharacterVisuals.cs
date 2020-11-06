@@ -191,25 +191,12 @@ public class CharacterVisuals {
     #endregion
 
     #region UI
-    public string GetNameplateName() {
-        string name = _owner.firstName + " - " + _owner.raceClassName;
-        // if(_owner.isSettlementRuler || _owner.isFactionLeader) {
-        //     name = $"{name} {UtilityScripts.Utilities.LeaderIcon()}";
-        // }
-        return name;
-    }
     public string GetThoughtBubble() {
-        // if (_owner.minion != null) {
-        //     return string.Empty;
-        // }
-        //if (_owner.overrideThoughts.Count > 0) {
-        //    return _owner.overrideThoughts[0];
-        //}
         if (_owner.isDead) {
             if (_owner.deathLog.hasValue) {
                 return _owner.deathLog.logText;
             } else {
-                return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> has died.";    
+                return $"<b>{GetCharacterNameWithIconAndColor()}</b> has died.";    
             }
         }
         //Interrupt
@@ -229,30 +216,30 @@ public class CharacterVisuals {
         }
         //fleeing
         if (_owner.marker && _owner.marker.hasFleePath) {
-            return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> is fleeing.";
+            return $"<b>{GetCharacterNameWithIconAndColor()}</b> is fleeing.";
         }
 
         //Travelling
         Character masterCharacter = _owner.carryComponent.masterCharacter;
         if (masterCharacter.marker && masterCharacter.marker.destinationTile != null && masterCharacter.marker.isMoving && masterCharacter.marker.pathfindingAI.currentPath != null) {
-            return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> is going to {_owner.carryComponent.masterCharacter.marker.destinationTile.structure.GetNameRelativeTo(_owner)}.";
+            return $"<b>{GetCharacterNameWithIconAndColor()}</b> is going to {_owner.carryComponent.masterCharacter.marker.destinationTile.structure.GetNameRelativeTo(_owner)}.";
         }
 
         //Default - Do nothing/Idle
         if (_owner.currentStructure != null) {
-            return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> is in {_owner.currentStructure.GetNameRelativeTo(_owner)}.";
+            return $"<b>{GetCharacterNameWithIconAndColor()}</b> is in {_owner.currentStructure.GetNameRelativeTo(_owner)}.";
         }
 
         if(_owner.minion != null && !_owner.minion.isSummoned) {
-            return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> is unsummoned.";
+            return $"<b>{GetCharacterNameWithIconAndColor()}</b> is unsummoned.";
         }
-        return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> is in {_owner.currentRegion?.name}.";
+        return $"<b>{GetCharacterNameWithIconAndColor()}</b> is in {_owner.currentRegion?.name}.";
         
     }
     public string GetCharacterStringIcon() {
         if (!_owner.isNormalCharacter) {
             if (_owner.characterClass.className == "Necromancer") {
-                return UtilityScripts.Utilities.VillagerIcon();        
+                return UtilityScripts.Utilities.UndeadIcon();        
             } else if (_owner.faction != null && _owner.faction.isPlayerFaction) {
                 return UtilityScripts.Utilities.DemonIcon();
             } else if (_owner.faction != null && _owner.faction.factionType.type == FACTION_TYPE.Undead) {
@@ -266,7 +253,7 @@ public class CharacterVisuals {
     }
     public string GetCharacterNameWithIconAndColor() {
         string icon = GetCharacterStringIcon();
-        string characterName = UtilityScripts.Utilities.ColorizeName(_owner.name);
+        string characterName = _owner.firstNameWithColor; //UtilityScripts.Utilities.ColorizeName(_owner.name, CharacterManager.Instance.GetCharacterNameColorHexForLogs(_owner));
         return $"{icon}{characterName}";
     }
     public string GetRelationshipSummary(Character character) {
@@ -281,7 +268,6 @@ public class CharacterVisuals {
         } else {
             return $"{_owner.visuals.GetCharacterNameWithIconAndColor()} doesn't have a relationship with {character.visuals.GetCharacterNameWithIconAndColor()}\n";
         }
-        return string.Empty;
     }
     private string GetOpinionText(int number) {
         if (number < 0) {

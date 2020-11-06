@@ -11,7 +11,7 @@ namespace Interrupts {
             duration = 1;
             //isSimulateneous = true;
             shouldStopMovement = false;
-            interruptIconString = GoapActionStateDB.No_Icon;
+            interruptIconString = GoapActionStateDB.Lycan_Icon;
             logTags = new[] {LOG_TAG.Combat, LOG_TAG.Crimes};
         }
 

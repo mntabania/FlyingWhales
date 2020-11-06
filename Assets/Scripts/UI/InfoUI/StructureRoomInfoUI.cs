@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using TMPro;
@@ -14,6 +15,10 @@ public class StructureRoomInfoUI : InfoUIBase {
     public StructureRoom activeRoom { get; private set; }
 
     #region Overrides
+    internal override void Initialize() {
+        base.Initialize();
+        Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+    }
     public override void CloseMenu() {
         base.CloseMenu();
         if(activeRoom != null) {
@@ -33,6 +38,14 @@ public class StructureRoomInfoUI : InfoUIBase {
     }
     #endregion
 
+    #region Listeners
+    private void OnStructureDestroyed(LocationStructure p_structure) {
+        if (isShowing && activeRoom != null && p_structure.rooms.Contains(activeRoom)) {
+            CloseMenu();
+        }
+    }
+    #endregion
+    
     public void UpdateInfo() {
         if(activeRoom == null) {
             return;

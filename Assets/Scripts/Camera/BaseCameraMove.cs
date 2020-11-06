@@ -69,6 +69,12 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
         Messenger.AddListener<bool>(Signals.EDGE_PANNING_TOGGLED, AllowEdgePanning);
     }
     #endregion
+
+    #region Listeners
+    private void AllowEdgePanning(bool state) {
+        allowEdgePanning = state;
+    }
+    #endregion
     
     #region Movement
     protected void ArrowKeysMovement() {
@@ -124,7 +130,7 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
                         originMousePos = Input.mousePosition;
                         hasReachedThreshold = true;
                     }
-                    if (originMousePos !=  Input.mousePosition && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI) { //check if the mouse has moved position from the origin, only then will it be considered dragging
+                    if (originMousePos !=  Input.mousePosition && (PlayerManager.Instance.player == null || !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI)) { //check if the mouse has moved position from the origin, only then will it be considered dragging
                         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Drag_Clicked);
                         isDragging = true;
                     }
@@ -198,9 +204,6 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
             transform.position = newPos;
             Messenger.Broadcast(Signals.CAMERA_MOVED_BY_PLAYER, newPos);
         }
-    }
-    public void AllowEdgePanning(bool state) {
-        allowEdgePanning = state;
     }
     #endregion
 

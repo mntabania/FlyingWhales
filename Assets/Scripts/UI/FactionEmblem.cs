@@ -49,7 +49,7 @@ public class FactionEmblem : MonoBehaviour, IPointerClickHandler{
                 emblemImage.sprite = faction.emblem;
             }    
         } else {
-            if (faction == null || !faction.isMajorFaction) {
+            if (faction == null || faction.factionType.type == FACTION_TYPE.Wild_Monsters) {
                 this.gameObject.SetActive(false);   
             } else {
                 this.gameObject.SetActive(true);

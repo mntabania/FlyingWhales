@@ -14,7 +14,7 @@ public class PreCharacterData {
     public Dictionary<int, PreCharacterRelationship> relationships { get; set; }
     public bool hasBeenSpawned { get; set; }
 
-    public string name => $"{firstName} {surName}";
+    public string fullName => $"{firstName} {surName}";
     
     public PreCharacterData() {
         relationships = new Dictionary<int, PreCharacterRelationship>();

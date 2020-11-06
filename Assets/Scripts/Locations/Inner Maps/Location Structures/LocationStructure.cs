@@ -887,6 +887,12 @@ namespace Inner_Maps.Location_Structures {
                     tile.genericTileObject.AdjustHP(-tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
                 }
             }
+            if (rooms != null) {
+                for (int i = 0; i < rooms.Length; i++) {
+                    StructureRoom room = rooms[i];
+                    room.OnParentStructureDestroyed();
+                }
+            }
             AfterStructureDestruction();
         }
         protected virtual void AfterStructureDestruction() {

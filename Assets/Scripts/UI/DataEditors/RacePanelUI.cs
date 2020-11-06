@@ -141,15 +141,15 @@ public class RacePanelUI : MonoBehaviour {
         }
     }
     private void SaveRaceJson(string path) {
-        RaceSetting newRace = new RaceSetting();
+        //RaceData newRace = new RaceData();
 
-        newRace.SetDataFromRacePanelUI();
+        //newRace.SetDataFromRacePanelUI();
 
-        string jsonString = JsonUtility.ToJson(newRace);
+        //string jsonString = JsonUtility.ToJson(newRace);
 
-        System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
-        writer.WriteLine(jsonString);
-        writer.Close();
+        //System.IO.StreamWriter writer = new System.IO.StreamWriter(path, false);
+        //writer.WriteLine(jsonString);
+        //writer.Close();
 
 #if UNITY_EDITOR
         //Re-import the file to update the reference in the editor
@@ -159,20 +159,20 @@ public class RacePanelUI : MonoBehaviour {
     }
 
     private void LoadRace() {
-#if UNITY_EDITOR
-        string filePath = EditorUtility.OpenFilePanel("Select Race",
-            $"{UtilityScripts.Utilities.dataPath}RaceSettings/", "json");
+//#if UNITY_EDITOR
+//        string filePath = EditorUtility.OpenFilePanel("Select Race",
+//            $"{UtilityScripts.Utilities.dataPath}RaceSettings/", "json");
 
-        if (!string.IsNullOrEmpty(filePath)) {
-            string dataAsJson = File.ReadAllText(filePath);
+//        if (!string.IsNullOrEmpty(filePath)) {
+//            string dataAsJson = File.ReadAllText(filePath);
 
-            RaceSetting raceSetting = JsonUtility.FromJson<RaceSetting>(dataAsJson);
-            ClearData();
-            LoadRaceDataToUI(raceSetting);
-        }
-#endif
+//            RaceData raceSetting = JsonUtility.FromJson<RaceData>(dataAsJson);
+//            ClearData();
+//            LoadRaceDataToUI(raceSetting);
+//        }
+//#endif
     }
-    private void LoadRaceDataToUI(RaceSetting raceSetting) {
+    private void LoadRaceDataToUI(RaceData raceSetting) {
         raceOptions.value = GetDropdownIndex(raceOptions, raceSetting.race.ToString());
         attackMultiplierInput.text = raceSetting.attackMultiplier.ToString();
         hpMultiplierInput.text = raceSetting.hpMultiplier.ToString();

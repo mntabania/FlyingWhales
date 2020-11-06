@@ -7,7 +7,7 @@ using UnityEngine;
 public class PlaceBlueprint : GoapAction {
 
     public PlaceBlueprint() : base(INTERACTION_TYPE.PLACE_BLUEPRINT) {
-        actionIconString = GoapActionStateDB.Work_Icon;
+        actionIconString = GoapActionStateDB.Blueprint_Icon;
         showNotification = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };

@@ -9,7 +9,7 @@ public class Poison : GoapAction {
 
     public Poison() : base(INTERACTION_TYPE.POISON) {
         //this.goapName = "Poison Table";
-        actionIconString = GoapActionStateDB.Hostile_Icon;
+        actionIconString = GoapActionStateDB.Poison_Icon;
         //_isStealthAction = true;
         //SetIsStealth(true);
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };

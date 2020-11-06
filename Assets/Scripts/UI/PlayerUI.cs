@@ -183,7 +183,7 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
 
         //currencies
-        Messenger.AddListener<int>(Signals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
+        Messenger.AddListener<int, int>(Signals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         InitialUpdateVillagerListCharacterItems();
         InitializeIntel();
         // UpdateIntel();
@@ -367,7 +367,7 @@ public class PlayerUI : BaseMonoBehaviour {
     }
 
     #region Mana
-    private void OnManaAdjusted(int adjustedAmount) {
+    private void OnManaAdjusted(int adjustedAmount, int mana) {
         UpdateMana();
         ShowManaAdjustEffect(adjustedAmount);
         DoManaPunchEffect();
@@ -582,6 +582,7 @@ public class PlayerUI : BaseMonoBehaviour {
     public void ToggleVillagersTab(bool isOn) {
         if (isOn) {
             FactionInfoHubUI.Instance.Open();
+            FactionInfoHubUI.Instance.ShowMembers();
             //OpenVillagersList();
         } else {
             FactionInfoHubUI.Instance.Close();

@@ -808,7 +808,22 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             if (IsMemberActive(member)) {
                 if(member.needsComponent.isTired || member.needsComponent.isExhausted || member.needsComponent.isBored || member.needsComponent.isSulking) {
                     return true;
-                } else if((member.needsComponent.isHungry || member.needsComponent.isStarving) && !cannotProduceFoodThisRestPeriod) {
+                } else {
+                    if (!member.traitContainer.HasTrait("Vampire")) {
+                        if ((member.needsComponent.isHungry || member.needsComponent.isStarving) && !cannotProduceFoodThisRestPeriod) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    private bool HasActiveMemberThatMustDoCriticalNeedsRecovery() {
+        for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
+            Character member = membersThatJoinedQuest[i];
+            if (IsMemberActive(member)) {
+                if (member.needsComponent.isStarving || member.needsComponent.isExhausted || member.needsComponent.isSulking) {
                     return true;
                 }
             }
@@ -870,6 +885,21 @@ public class Party : ILogFiller, ISavable, IJobOwner {
                 currentQuest.EndQuest("Members are incapacitated");
             }
         }
+    }
+    public bool HasMemberThatJoinedQuestThatIsInRangeOfCharacterThatConsidersCrimeTypeACrime(Character character, CRIME_TYPE crimeType) {
+        for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
+            Character member = membersThatJoinedQuest[i];
+            if (character != member && member.canWitness) {
+                bool isInVision = character.marker && character.marker.IsPOIInVision(member);
+                if (isInVision) {
+                    CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(member, character, character, crimeType);
+                    if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
     #endregion
 

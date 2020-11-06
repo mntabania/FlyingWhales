@@ -20,9 +20,10 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     public List<OpinionData> opinionDataPool { get; private set; }
     public List<TraitRemoveSchedule> traitRemoveSchedulePool { get; private set; }
     public List<CombatData> combatDataPool { get; private set; }
-    public List<InterruptHolder> interruptPool { get; private set; }
-    public List<Party> partyPool { get; private set; }
-    public List<GoapThread> goapThreadPool { get; private set; }
+    public List<InterruptHolder> _interruptPool { get; private set; }
+    public List<Party> _partyPool { get; private set; }
+    public List<GoapThread> _goapThreadPool { get; private set; }
+    private List<LogDatabaseThread> _logDatabaseThreadPool;
 
     private void Awake() {
         Instance = this;
@@ -44,8 +45,6 @@ public class ObjectPoolManager : BaseMonoBehaviour {
             CreateNewPool(currPrefab, currPrefab.name, 0, true, true, false); //50    
         }
 
-        
-        
         ConstructGoapNodes();
         ConstructOpinionDataPool();
         ConstructTraitRemoveSchedulePool();
@@ -53,6 +52,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructInterruptPool();
         ConstructPartyPool();
         ConstructGoapThreadPool();
+        ConstructLogDatabaseThreadPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -230,7 +230,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
 
     #region Interrupts
     private void ConstructInterruptPool() {
-        interruptPool = new List<InterruptHolder>();
+        _interruptPool = new List<InterruptHolder>();
     }
     public InterruptHolder CreateNewInterrupt() {
         InterruptHolder data = GetInterruptFromPool();
@@ -241,12 +241,12 @@ public class ObjectPoolManager : BaseMonoBehaviour {
             return;
         }
         data.Reset();
-        interruptPool.Add(data);
+        _interruptPool.Add(data);
     }
     private InterruptHolder GetInterruptFromPool() {
-        if (interruptPool.Count > 0) {
-            InterruptHolder data = interruptPool[0];
-            interruptPool.RemoveAt(0);
+        if (_interruptPool.Count > 0) {
+            InterruptHolder data = _interruptPool[0];
+            _interruptPool.RemoveAt(0);
             return data;
         }
         return new InterruptHolder();
@@ -255,7 +255,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
 
     #region Party
     private void ConstructPartyPool() {
-        partyPool = new List<Party>();
+        _partyPool = new List<Party>();
     }
     public Party CreateNewParty() {
         Party data = GetPartyFromPool();
@@ -263,12 +263,12 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     }
     public void ReturnPartyToPool(Party data) {
         data.Reset();
-        partyPool.Add(data);
+        _partyPool.Add(data);
     }
     private Party GetPartyFromPool() {
-        if (partyPool.Count > 0) {
-            Party data = partyPool[0];
-            partyPool.RemoveAt(0);
+        if (_partyPool.Count > 0) {
+            Party data = _partyPool[0];
+            _partyPool.RemoveAt(0);
             return data;
         }
         return new Party();
@@ -277,7 +277,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
 
     #region Goap Thread
     private void ConstructGoapThreadPool() {
-        goapThreadPool = new List<GoapThread>();
+        _goapThreadPool = new List<GoapThread>();
     }
     public GoapThread CreateNewGoapThread() {
         GoapThread data = GetGoapThreadFromPool();
@@ -285,15 +285,37 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     }
     public void ReturnGoapThreadToPool(GoapThread data) {
         data.Reset();
-        goapThreadPool.Add(data);
+        _goapThreadPool.Add(data);
     }
     private GoapThread GetGoapThreadFromPool() {
-        if (goapThreadPool.Count > 0) {
-            GoapThread data = goapThreadPool[0];
-            goapThreadPool.RemoveAt(0);
+        if (_goapThreadPool.Count > 0) {
+            GoapThread data = _goapThreadPool[0];
+            _goapThreadPool.RemoveAt(0);
             return data;
         }
         return new GoapThread();
+    }
+    #endregion
+    
+    #region Database Thread
+    private void ConstructLogDatabaseThreadPool() {
+        _logDatabaseThreadPool = new List<LogDatabaseThread>();
+    }
+    public LogDatabaseThread CreateNewLogDatabaseThread() {
+        LogDatabaseThread data = GetLogDatabaseThreadFromPool();
+        return data;
+    }
+    public void ReturnLogDatabaseThreadToPool(LogDatabaseThread data) {
+        data.Reset();
+        _logDatabaseThreadPool.Add(data);
+    }
+    private LogDatabaseThread GetLogDatabaseThreadFromPool() {
+        if (_logDatabaseThreadPool.Count > 0) {
+            LogDatabaseThread data = _logDatabaseThreadPool[0];
+            _logDatabaseThreadPool.RemoveAt(0);
+            return data;
+        }
+        return new LogDatabaseThread();
     }
     #endregion
 
@@ -313,10 +335,14 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         traitRemoveSchedulePool = null;
         combatDataPool?.Clear();
         combatDataPool = null;
-        interruptPool?.Clear();
-        interruptPool = null;
-        goapThreadPool?.Clear();
-        goapThreadPool = null;
+        _interruptPool?.Clear();
+        _interruptPool = null;
+        _goapThreadPool?.Clear();
+        _goapThreadPool = null;
+        _partyPool?.Clear();
+        _partyPool = null;
+        _logDatabaseThreadPool?.Clear();
+        _logDatabaseThreadPool = null;
         base.OnDestroy();
         Instance = null;
     }

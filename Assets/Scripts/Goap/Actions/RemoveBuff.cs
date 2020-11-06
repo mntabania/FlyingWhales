@@ -7,7 +7,7 @@ using UtilityScripts;
 public class RemoveBuff : GoapAction {
     public RemoveBuff() : base(INTERACTION_TYPE.REMOVE_BUFF) {
         doesNotStopTargetCharacter = true;
-        actionIconString = GoapActionStateDB.Stealth_Icon;
+        actionIconString = GoapActionStateDB.Cult_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         isNotificationAnIntel = true;
@@ -15,9 +15,6 @@ public class RemoveBuff : GoapAction {
     }
     
     #region Overrides
-    // protected override void ConstructBasePreconditionsAndEffects() {
-    //     AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR), HasCultistKit);
-    // }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Remove Buff Success", goapNode);
@@ -36,12 +33,6 @@ public class RemoveBuff : GoapAction {
         if(otherData != null && otherData.Length == 1 && otherData[0] is StringOtherData stringOtherData) {
             log.AddToFillers(null, stringOtherData.str, LOG_IDENTIFIER.STRING_1);
         }
-    }
-    #endregion
-
-    #region Preconditions
-    private bool HasCultistKit(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
-        return actor.HasItem("Cultist Kit");
     }
     #endregion
 

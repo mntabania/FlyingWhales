@@ -6,9 +6,6 @@ using Traits;
 namespace Interrupts {
     public class Surprised : Interrupt {
 
-        public const string Copycat_Reason = "Saw a copycat";
-        public const string Witness_Reason = "Witnessed something surprising";
-        
         public Surprised() : base(INTERRUPT.Surprised) {
             duration = 3;
             doesStopCurrentAction = true;

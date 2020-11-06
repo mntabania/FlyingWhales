@@ -5,7 +5,7 @@ using UnityEngine.Assertions;
 public class BuildVampireCastle : GoapAction {
 
     public BuildVampireCastle() : base(INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE) {
-        actionIconString = GoapActionStateDB.Build_Icon;
+        actionIconString = GoapActionStateDB.Found_Icon;
         showNotification = true;
         advertisedBy = new[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };

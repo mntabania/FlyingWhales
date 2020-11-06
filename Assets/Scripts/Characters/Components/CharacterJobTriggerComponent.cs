@@ -2941,14 +2941,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool TryCreateEvangelizeJob(Character target, out JobQueueItem producedJob) {
 	    //create predetermined plan and job
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EVANGELIZE, INTERACTION_TYPE.EVANGELIZE, target, owner);
-	    List<JobNode> jobNodes = new List<JobNode>();
-	    ActualGoapNode evangelizeNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.EVANGELIZE], owner, target, null, 0);
-	    jobNodes.Add(new SingleJobNode(evangelizeNode));
-	    
-	    GoapPlan goapPlan = new GoapPlan(jobNodes, target);
-	    goapPlan.SetDoNotRecalculate(true);
-	    job.SetCannotBePushedBack(true);
-	    job.SetAssignedPlan(goapPlan);
+	    // List<JobNode> jobNodes = new List<JobNode>();
+	    // ActualGoapNode evangelizeNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.EVANGELIZE], owner, target, null, 0);
+	    // jobNodes.Add(new SingleJobNode(evangelizeNode));
+	    //
+	    // GoapPlan goapPlan = new GoapPlan(jobNodes, target);
+	    // goapPlan.SetDoNotRecalculate(true);
+	    // job.SetCannotBePushedBack(true);
+	    // job.SetAssignedPlan(goapPlan);
 	    
 	    producedJob = job;
 	    return true;
@@ -2957,14 +2957,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         //create predetermined plan and job
         if(!owner.jobQueue.HasJob(JOB_TYPE.EVANGELIZE, target)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EVANGELIZE, INTERACTION_TYPE.EVANGELIZE, target, owner);
-            List<JobNode> jobNodes = new List<JobNode>();
-            ActualGoapNode evangelizeNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.EVANGELIZE], owner, target, null, 0);
-            jobNodes.Add(new SingleJobNode(evangelizeNode));
-
-            GoapPlan goapPlan = new GoapPlan(jobNodes, target);
-            goapPlan.SetDoNotRecalculate(true);
-            job.SetCannotBePushedBack(true);
-            job.SetAssignedPlan(goapPlan);
+            // List<JobNode> jobNodes = new List<JobNode>();
+            // ActualGoapNode evangelizeNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.EVANGELIZE], owner, target, null, 0);
+            // jobNodes.Add(new SingleJobNode(evangelizeNode));
+            //
+            // GoapPlan goapPlan = new GoapPlan(jobNodes, target);
+            // goapPlan.SetDoNotRecalculate(true);
+            // job.SetCannotBePushedBack(true);
+            // job.SetAssignedPlan(goapPlan);
             return owner.jobQueue.AddJobInQueue(job);
         }
         return false;

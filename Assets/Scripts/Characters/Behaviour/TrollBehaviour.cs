@@ -111,10 +111,10 @@ public class TrollBehaviour : CharacterBehaviourComponent {
                 Character chosenCharacter = null;
                 TrollCauldron cauldron = null;
                 if (character.homeSettlement != null) {
-                    chosenCharacter = character.homeSettlement.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && x.isBeingCarriedBy == null && x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD));
+                    chosenCharacter = character.homeSettlement.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD));
                     cauldron = character.homeStructure.GetTileObjectOfType<TrollCauldron>(TILE_OBJECT_TYPE.TROLL_CAULDRON);
                 } else if (character.homeStructure != null) {
-                    chosenCharacter = character.homeStructure.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && x.isBeingCarriedBy == null && x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD));
+                    chosenCharacter = character.homeStructure.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD));
                     cauldron = character.homeStructure.GetTileObjectOfType<TrollCauldron>(TILE_OBJECT_TYPE.TROLL_CAULDRON);
                 }
                 if (chosenCharacter != null && cauldron != null) {

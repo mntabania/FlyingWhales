@@ -32,7 +32,7 @@ public class ActionItem : PooledObject {
         gameObject.SetActive(true);
         Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
         Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
-        Messenger.AddListener<int>(Signals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
+        Messenger.AddListener<int, int>(Signals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
     }
     public void SetInteractable(bool state) {
         button.interactable = state;
@@ -120,7 +120,7 @@ public class ActionItem : PooledObject {
 	    // coverImg.DOFillAmount(0f, 0.2f).OnComplete(() => SetCooldownState(false));
 	    Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
     }
-    private void OnPlayerAdjustedMana(int adjusted) {
+    private void OnPlayerAdjustedMana(int adjusted, int mana) {
         UpdateInteractableState();
     }
     #endregion
@@ -140,6 +140,6 @@ public class ActionItem : PooledObject {
 		Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
 		Messenger.RemoveListener<SpellData>(Signals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
 		Messenger.RemoveListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
-        Messenger.RemoveListener<int>(Signals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
+        Messenger.RemoveListener<int, int>(Signals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
     }
 }

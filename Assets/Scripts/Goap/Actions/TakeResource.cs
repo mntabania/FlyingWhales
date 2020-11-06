@@ -18,29 +18,12 @@ public class TakeResource : GoapAction {
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.TAKE_POI, GOAP_EFFECT_TARGET.ACTOR));
-        // AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.TAKE_WOOD, GOAP_EFFECT_TARGET.ACTOR));
-        // AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.TAKE_STONE, GOAP_EFFECT_TARGET.ACTOR));
-        // AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.TAKE_METAL, GOAP_EFFECT_TARGET.ACTOR));
     }
     protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData) {
         List<GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
         if(target is ResourcePile) {
             ResourcePile pile = target as ResourcePile;
             ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_POI, conditionKey = pile.name, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
-            // switch (pile.providedResource) {
-            //     case RESOURCE.FOOD:
-            //         ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_FOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
-            //         break;
-            //     case RESOURCE.WOOD:
-            //         ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_WOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
-            //         break;
-            //     case RESOURCE.STONE:
-            //         ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_STONE, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
-            //         break;
-            //     case RESOURCE.METAL:
-            //         ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_METAL, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
-            //         break;
-            // }
         } 
         //NOTE: UNCOMMENT THIS IF WE WANT CHARACTERS TO TAKE FOOD FROM OTHER TABLES
         //else if (target is Table) {
@@ -143,16 +126,7 @@ public class TakeResource : GoapAction {
             if (poiTarget.gridTileLocation == null && poiTarget.isBeingCarriedBy != actor) {
                 return false;
             }
-            //if (actor.ownParty.isCarryingAnyPOI) {
-            //    return false;
-            //}
             return true;
-            //if (poiTarget is ResourcePile) {
-            //    ResourcePile pile = poiTarget as ResourcePile;
-            //    if (pile.resourceInPile > 0) {
-            //        return true;
-            //    }
-            //}
         }
         return false;
     }
@@ -162,32 +136,7 @@ public class TakeResource : GoapAction {
     public void PreTakeSuccess(ActualGoapNode goapNode) {
         ResourcePile resourcePile = goapNode.poiTarget as ResourcePile;
         Assert.IsNotNull(resourcePile);
-        int takenResource;
-        if (goapNode.otherData != null && goapNode.otherData.Length == 1) {
-            OtherData otherData = goapNode.otherData[0];
-            if (otherData is IntOtherData intOtherData) {
-                takenResource = intOtherData.integer;    
-            } else if (otherData is TileObjectRecipeOtherData tileObjectRecipeOtherData) {
-                TileObjectRecipe recipe = tileObjectRecipeOtherData.recipe;
-                takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);
-            } else {
-                //set amount just to prevent errors.
-                takenResource = 10;
-            }
-        } else {
-            if (goapNode.associatedJob is GoapPlanJob job && job.targetPOI is TileObject tileObject && !job.jobType.IsFullnessRecovery()) {
-                TileObjectData data = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
-                if (data != null && data.craftRecipes != null) {
-                    TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);
-                    takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);    
-                } else {
-                    //set amount just to prevent errors.
-                    takenResource = Mathf.Min(20, resourcePile.resourceInPile);
-                }
-            } else {
-                takenResource = Mathf.Min(20, resourcePile.resourceInPile);    
-            }
-        }
+        int takenResource = GetNeededResource(goapNode.associatedJob, goapNode.otherData, resourcePile);
         
         if (takenResource > resourcePile.resourceInPile) {
             takenResource = resourcePile.resourceInPile;
@@ -198,33 +147,7 @@ public class TakeResource : GoapAction {
     public void AfterTakeSuccess(ActualGoapNode goapNode) {
         ResourcePile resourcePile = goapNode.poiTarget as ResourcePile;
         Assert.IsNotNull(resourcePile);
-        int takenResource;
-        if (goapNode.otherData != null && goapNode.otherData.Length == 1) {
-            OtherData otherData = goapNode.otherData[0];
-            if (otherData is IntOtherData intOtherData) {
-                takenResource = intOtherData.integer;    
-            } else if (otherData is TileObjectRecipeOtherData tileObjectRecipeOtherData) {
-                TileObjectRecipe recipe = tileObjectRecipeOtherData.recipe;
-                takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);
-            } else {
-                //set amount just to prevent errors.
-                takenResource = 10;
-            }
-        } else {
-            if (goapNode.associatedJob is GoapPlanJob job && job.targetPOI is TileObject tileObject && !job.jobType.IsFullnessRecovery()) {
-                TileObjectData data = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
-                if (data != null && data.craftRecipes != null) {
-                    TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);
-                    takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);    
-                } else {
-                    //set amount just to prevent errors.
-                    takenResource = Mathf.Min(20, resourcePile.resourceInPile);
-                }
-            } else {
-                takenResource = Mathf.Min(20, resourcePile.resourceInPile);    
-            }
-        }
-        
+        int takenResource = GetNeededResource(goapNode.associatedJob, goapNode.otherData, resourcePile);
         if (takenResource > resourcePile.resourceInPile) {
             takenResource = resourcePile.resourceInPile;
         }
@@ -262,9 +185,6 @@ public class TakeResource : GoapAction {
         if (pile.isBeingCarriedBy == null || pile.isBeingCarriedBy != carrier) {
             ResourcePile newPile = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(pile.tileObjectType);
             newPile.SetResourceInPile(amount);
-            //newPile.SetGridTileLocation(pile.gridTileLocation);
-            //newPile.gridTileLocation.structure.location.AddAwareness(newPile);
-            //newPile.SetGridTileLocation(null);
 
             //This can be made into a function in the IPointOfInterest interface
             newPile.SetGridTileLocation(pile.gridTileLocation);
@@ -297,14 +217,23 @@ public class TakeResource : GoapAction {
                 takenResource = 10;
             }
         } else {
-            if (jobQueueItem is GoapPlanJob job && job.targetPOI is TileObject tileObject && !job.jobType.IsFullnessRecovery()) {
-                TileObjectData data = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
-                if (data != null && data.craftRecipes != null) {
+            if (jobQueueItem is GoapPlanJob job) {
+                if (job.jobType == JOB_TYPE.DARK_RITUAL || job.jobType == JOB_TYPE.EVANGELIZE) {
+                    //if job is dark ritual, assume that take resource is for a cultist kit, this isn't ideal, but cannot think of another solution at the moment.
+                    TileObjectData data = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT);
                     TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);
-                    takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);    
+                    takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);
+                } else if (job.targetPOI is TileObject tileObject && !job.jobType.IsFullnessRecovery()) {
+                    TileObjectData data = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
+                    if (data != null && data.craftRecipes != null) {
+                        TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);
+                        takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);    
+                    } else {
+                        //set amount just to prevent errors.
+                        takenResource = Mathf.Min(20, resourcePile.resourceInPile);
+                    }    
                 } else {
-                    //set amount just to prevent errors.
-                    takenResource = Mathf.Min(20, resourcePile.resourceInPile);
+                    takenResource = Mathf.Min(20, resourcePile.resourceInPile);    
                 }
             } else {
                 takenResource = Mathf.Min(20, resourcePile.resourceInPile);    

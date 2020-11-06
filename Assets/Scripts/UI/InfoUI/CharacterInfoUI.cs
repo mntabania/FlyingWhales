@@ -17,12 +17,12 @@ public class CharacterInfoUI : InfoUIBase {
     [Header("Basic Info")]
     [SerializeField] private CharacterPortrait characterPortrait;
     [SerializeField] private TextMeshProUGUI nameLbl;
-    [SerializeField] private TextMeshProUGUI lvlClassLbl;
-    [SerializeField] private TextMeshProUGUI plansLbl;
+    [SerializeField] private TextMeshProUGUI subLbl;
+    [SerializeField] private TextMeshProUGUI actionLbl;
     [SerializeField] private TextMeshProUGUI partyLbl;
     [SerializeField] private EventLabel partyEventLbl;
     [SerializeField] private LogItem plansLblLogItem;
-    [SerializeField] private GameObject leaderIcon;
+    [SerializeField] private Image raceIcon;
 
     [Space(10)] [Header("Location")]
     [SerializeField] private TextMeshProUGUI factionLbl;
@@ -62,6 +62,7 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private RelationshipFilterItem[] relationFilterItems;
     [SerializeField] private GameObject relationFiltersGO;
     [SerializeField] private Toggle allRelationshipFiltersToggle;
+    [SerializeField] private EventLabel opinionsEventLabel;
     
     [Space(10)] [Header("Mood")] 
     [SerializeField] private MarkedMeter moodMeter;
@@ -91,6 +92,7 @@ public class CharacterInfoUI : InfoUIBase {
         base.Initialize();
         Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateHistory);
         Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
+        Messenger.AddListener<Character>(Signals.LOG_MENTIONING_CHARACTER_UPDATED, OnLogMentioningCharacterUpdated);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_STACKED, UpdateTraitsFromSignal);
@@ -107,9 +109,9 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<Character, Character>(Signals.OPINION_REMOVED, OnOpinionChanged);
         Messenger.AddListener<Character, Character, string>(Signals.OPINION_INCREASED, OnOpinionChanged);
         Messenger.AddListener<Character, Character, string>(Signals.OPINION_DECREASED, OnOpinionChanged);
-
         Messenger.AddListener<Character>(Signals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
         Messenger.AddListener<MoodComponent>(Signals.MOOD_SUMMARY_MODIFIED, OnMoodModified);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
 
         //normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
         relationshipNamesEventLbl.SetOnClickAction(OnClickCharacter);
@@ -119,6 +121,9 @@ public class CharacterInfoUI : InfoUIBase {
         homeRegionEventLbl.SetOnClickAction(OnClickHomeLocation);
         houseEventLbl.SetOnClickAction(OnClickHomeStructure);
         partyEventLbl.SetOnClickAction(OnClickParty);
+        opinionsEventLabel.SetShouldColorHighlight(false);
+        statusTraitsEventLbl.SetShouldColorHighlight(false);
+        normalTraitsEventLbl.SetShouldColorHighlight(false);
 
         moodMeter.ResetMarks();
         moodMeter.AddMark(EditableValuesManager.Instance.criticalMoodHighThreshold/100f, Color.red);
@@ -253,14 +258,30 @@ public class CharacterInfoUI : InfoUIBase {
     private void UpdatePortrait() {
         characterPortrait.GeneratePortrait(_activeCharacter);
     }
+    private void OnCharacterChangedName(Character p_character) {
+        if (isShowing) {
+            //update all basic info regardless of character since changed character might be referenced in active characters thought bubble.
+            UpdateBasicInfo();    
+        }
+    }
     public void UpdateBasicInfo() {
-        nameLbl.text = _activeCharacter.visuals.GetNameplateName();
-        lvlClassLbl.text = _activeCharacter.raceClassName;
+        nameLbl.text = $"<b>{_activeCharacter.firstNameWithColor}</b>";
+        UpdateSubTextAndIcon();
         // leaderIcon.SetActive(_activeCharacter.isFactionLeader || _activeCharacter.isSettlementRuler);
         UpdateThoughtBubble();
     }
+    private void UpdateSubTextAndIcon() {
+        if (_activeCharacter is Summon) {
+            subLbl.gameObject.SetActive(false);
+        } else {
+            subLbl.text = _activeCharacter.characterClass.className;
+            raceIcon.sprite = _activeCharacter.raceSetting.nameplateIcon;
+            raceIcon.gameObject.SetActive(_activeCharacter.raceSetting.nameplateIcon != null);
+            subLbl.gameObject.SetActive(true);
+        }
+    }
     public void UpdateThoughtBubble() {
-        plansLbl.text = activeCharacter.visuals.GetThoughtBubble();
+        actionLbl.text = activeCharacter.visuals.GetThoughtBubble();
         // if (log != null) {
         //     plansLblLogItem.SetLog(log);
         // }
@@ -438,6 +459,12 @@ public class CharacterInfoUI : InfoUIBase {
     #region History
     private void UpdateHistory(Log log) {
         if (isShowing && log.IsInvolved(_activeCharacter)) {
+            UpdateAllHistoryInfo();
+        }
+    }
+    private void OnLogMentioningCharacterUpdated(Character character) {
+        if (isShowing) {
+            //update history regardless of character because updated character might be referenced in this characters logs
             UpdateAllHistoryInfo();
         }
     }
@@ -1226,6 +1253,25 @@ public class CharacterInfoUI : InfoUIBase {
         if (activeCharacter.partyComponent.hasParty) {
             UIManager.Instance.ShowPartyInfo(activeCharacter.partyComponent.currentParty);
         }
+    }
+    #endregion
+
+    #region Rename
+    public void OnClickRenameButton() {
+        Messenger.Broadcast(Signals.EDIT_CHARACTER_NAME, activeCharacter.persistentID, activeCharacter.firstName);
+    }
+    #endregion
+
+    #region Race Icon
+    public void OnHoverRaceIcon() {
+        if(activeCharacter == null) {
+            return;
+        }
+        string message = GameUtilities.GetNormalizedSingularRace(activeCharacter.race);
+        UIManager.Instance.ShowSmallInfo(message);
+    }
+    public void OnHoverExitRaceIcon() {
+        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 }

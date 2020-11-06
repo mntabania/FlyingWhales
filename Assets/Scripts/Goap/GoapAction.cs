@@ -343,14 +343,24 @@ public class GoapAction {
             AddFillersToLog(ref log, node);
             log.AddLogToDatabase();
         } else {
+            string reason = goapActionInvalidity.reason;
+            string reasonText = null;
             string key = "Invalid";
             if (isInvalidStealth) {
                 key = "Invalid_Stealth";
+            } else if (!string.IsNullOrEmpty(reason)) {
+                if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", "Generic", reason)) {
+                    reasonText = LocalizationManager.Instance.GetLocalizedValue("GoapAction", "Generic", reason);
+                    key = "Invalid_with_reason";
+                }
             }
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Generic", key, providedTags: LOG_TAG.Work);
             log.AddToFillers(node.actor, node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(node.poiTarget, node.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(goapType.ToString()), LOG_IDENTIFIER.STRING_1);
+            if(!string.IsNullOrEmpty(reasonText) && key == "Invalid_with_reason") {
+                log.AddToFillers(null, reasonText, LOG_IDENTIFIER.STRING_2);
+            }
             log.AddLogToDatabase();
         }
     }
@@ -458,10 +468,18 @@ public class GoapAction {
 public struct GoapActionInvalidity {
     public bool isInvalid;
     public string stateName;
+    public string reason;
 
     public GoapActionInvalidity(bool isInvalid, string stateName) {
         this.isInvalid = isInvalid;
         this.stateName = stateName;
+        reason = null;
+    }
+    public bool IsReasonForCancellation() {
+        if (!string.IsNullOrEmpty(reason)) {
+            return reason == "target_carried" || reason == "target_inactive";
+        }
+        return false;
     }
 }
 public struct GoapEffectConditionTypeAndTargetType {

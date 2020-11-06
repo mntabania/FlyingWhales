@@ -372,6 +372,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.AddListener(Signals.TICK_ENDED, PerTickMovement);
         Messenger.AddListener<IIntel>(Signals.ACTIVE_INTEL_SET, OnActiveIntelSet);
         Messenger.AddListener(Signals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     private void RemoveListeners() {
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
@@ -384,6 +385,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
         Messenger.RemoveListener<IIntel>(Signals.ACTIVE_INTEL_SET, OnActiveIntelSet);
         Messenger.RemoveListener(Signals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+    }
+    private void OnCharacterChangedName(Character p_character) {
+        if (p_character == character) {
+            UpdateName();
+        }
     }
     private void OnCharacterGainedTrait(Character characterThatGainedTrait, Trait trait) {
         if (characterThatGainedTrait == this.character) {
@@ -443,7 +450,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.combatComponent.ClearHostilesInRange(false);
             character.combatComponent.ClearAvoidInRange(false);
         }
-        if (trait is Cultist) {
+        if (trait is Cultist || trait is Necromancer) {
             UpdateName();
         }
         UpdateAnimation();
@@ -1383,7 +1390,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Profiler.EndSample();
     }
     public bool IsPOIInVision(IPointOfInterest poi) {
-        return (poi is TileObject tileObject && inVisionTileObjects.Contains(tileObject)) || (poi is Character character && inVisionCharacters.Contains(character));
+        return (poi is Character character && inVisionCharacters.Contains(character)) || (poi is TileObject tileObject && inVisionTileObjects.Contains(tileObject));
     }
     #endregion
 

@@ -7,7 +7,7 @@ using UtilityScripts;
 
 public class Evangelize : GoapAction {
     public Evangelize() : base(INTERACTION_TYPE.EVANGELIZE) {
-        actionIconString = GoapActionStateDB.Pray_Icon;
+        actionIconString = GoapActionStateDB.Cult_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         isNotificationAnIntel = true;
@@ -15,9 +15,9 @@ public class Evangelize : GoapAction {
     }
     
     #region Overrides
-    // protected override void ConstructBasePreconditionsAndEffects() {
-    //     AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR), HasCultistKit);
-    // }
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR), HasCultistKit);
+    }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Evangelize Success", goapNode);
@@ -64,11 +64,11 @@ public class Evangelize : GoapAction {
     }
     #endregion
     
-    // #region Preconditions
-    // private bool HasCultistKit(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
-    //     return actor.HasItem("Cultist Kit");
-    // }
-    // #endregion
+    #region Preconditions
+    private bool HasCultistKit(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
+        return actor.HasItem("Cultist Kit");
+    }
+    #endregion
 
     #region Requirements
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData, JobQueueItem job) {
@@ -89,7 +89,8 @@ public class Evangelize : GoapAction {
         int success = 50;
         int fail = 50;
 
-        int opinion = targetCharacter.relationshipContainer.GetOpinionData(goapNode.actor).totalOpinion;
+        
+        int opinion = targetCharacter.relationshipContainer.GetTotalOpinion(goapNode.actor);
         if (opinion > 0) {
             success += opinion;
         } else if (opinion < 0) {
@@ -166,7 +167,7 @@ public class Evangelize : GoapAction {
             //     goapNode, targetCharacter, goapNode.actor, targetCharacter, targetCharacter.faction, REACTION_STATUS.WITNESSED, goapNode.actor.traitContainer.GetNormalTrait<Criminal>("Criminal"));
             targetCharacter.assumptionComponent.CreateAndReactToNewAssumption(goapNode.actor, goapNode.actor, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);
         }
-        
+        goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.CULTIST_KIT);
     }
     #endregion
 

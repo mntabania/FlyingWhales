@@ -207,6 +207,12 @@ public static class Signals {
     /// Parameters: Character criminal, CRIME_TYPE crimeType, Character accuser
     /// </summary>
     public static string CHARACTER_ACCUSED_OF_CRIME = "OnCharacterAccusedOfCrime";
+    /// <summary>
+    /// Parameters: Character character
+    /// </summary>
+    public static string CHARACTER_CHANGED_NAME = "OnCharacterChangedName";
+    public static string RENAME_CHARACTER = "OnRenameCharacter";
+    public static string UPDATED_CHARACTER_DATA = "OnUpdatedCharacterData";
     #endregion
 
     #region UI
@@ -317,6 +323,15 @@ public static class Signals {
     /// Parameters string fileToLoad
     /// </summary>
     public static string LOAD_SAVE_FILE = "OnLoadFileConfirmed";
+    /// <summary>
+    /// Parameters (Log)
+    /// </summary>
+    public static string LOG_MENTIONING_CHARACTER_UPDATED = "LogMentioningCharacterUpdated";
+    public static string EDIT_CHARACTER_NAME = "OnEditCharacterName";
+    /// <summary>
+    /// Parameters (IIntel intel)
+    /// </summary>
+    public static string INTEL_LOG_UPDATED = "OnIntelLogUpdated";
     #endregion
 
     #region Quest Signals
@@ -428,7 +443,7 @@ public static class Signals {
     /// </summary>
     public static string MINION_UNASSIGNED_PLAYER_LANDMARK = "OnMinionUnassignedFromPlayerLandmark";
     /// <summary>
-    /// parameters (int)
+    /// parameters (int adjustedAmount, int newMana)
     /// </summary>
     public static string PLAYER_ADJUSTED_MANA = "OnPlayerAdjustedMana";
     /// <summary>
@@ -485,6 +500,10 @@ public static class Signals {
     /// Parameters: PlayerAction activatedAction
     /// </summary>
     public static string PLAYER_ACTION_ACTIVATED = "OnPlayerActionActivated";
+    /// <summary>
+    /// Parameters: PlayerAction executedAction, IPointOfInterest targetObject
+    /// </summary>
+    public static string PLAYER_ACTION_EXECUTED_TOWARDS_POI = "OnPlayerActionExecutedTowardsPOI";
     /// <summary>
     /// Parameters: IIntel setIntel
     /// </summary>

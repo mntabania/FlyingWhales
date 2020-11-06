@@ -7,7 +7,6 @@ public class StonePile : ResourcePile {
 
     public StonePile() : base(RESOURCE.STONE) {
         Initialize(TILE_OBJECT_TYPE.STONE_PILE, false);
-        traitContainer.RemoveTrait(this, "Flammable");
         SetResourceInPile(100);
     }
     public StonePile(SaveDataTileObject data) : base(data, RESOURCE.STONE) { }

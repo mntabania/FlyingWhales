@@ -15,13 +15,13 @@ using JetBrains.Annotations;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyQuestTarget, IGatheringTarget, ISavable {
     private int _id;
-    private string _name;
+    private string _name; //FOR DELETION: Must delete after build on Nov. 6, 2020. This will change save data that is why deletion must occur after build
     private string _firstName;
     private string _surName;
     protected bool _isDead;
     private GENDER _gender;
     private CharacterClass _characterClass;
-    private RaceSetting _raceSetting;
+    private RaceData _raceSetting;
     private Faction _faction;
     private Minion _minion;
     private LocationStructure _currentStructure; //what structure is this character currently in.
@@ -139,8 +139,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public override string relatableName => _firstName;
     public override int id => _id;
     public override GENDER gender => _gender;
-    public string fullname => $"{_firstName} {_surName}";
+    public string fullName => $"{_firstName} {_surName}";
     public string firstName => _firstName;
+    public string firstNameWithColor => GetFirstNameWithColor();
     public string surName => _surName;
     public string nameWithID => name;
     public bool isDead => _isDead;
@@ -185,7 +186,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public RACE race => _raceSetting.race;
     public JOB_OWNER ownerType => JOB_OWNER.CHARACTER;
     public CharacterClass characterClass => _characterClass;
-    public RaceSetting raceSetting => _raceSetting;
+    public RaceData raceSetting => _raceSetting;
     public Faction faction => _faction;
     public Faction factionOwner => _faction;
     public Minion minion => _minion;
@@ -264,7 +265,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _gender = gender;
         AssignClass(className, true);
         AssignRace(race, true);
-        SetName(RandomNameGenerator.GenerateRandomName(_raceSetting.race, _gender));
         SetSexuality(sexuality);
         visuals = new CharacterVisuals(this);
         visuals.Initialize();
@@ -278,7 +278,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _gender = gender;
         AssignClass(className, true);
         AssignRace(race, true);
-        SetName(RandomNameGenerator.GenerateRandomName(_raceSetting.race, _gender));
         GenerateSexuality();
         visuals = new CharacterVisuals(this);
         visuals.Initialize();
@@ -356,8 +355,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         planner = new GoapPlanner(this);
         visuals = new CharacterVisuals(this, data);
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
-        RaceSetting rs = RaceManager.Instance.racesDictionary[data.race.ToString()];
-        _raceSetting = rs.CreateNewCopy();
+        _raceSetting = RaceManager.Instance.GetRaceData(data.race);
         CreateTraitContainer();
 
         persistentID = data.persistentID;
@@ -479,21 +477,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, ForceCancelAllJobsTargetingPOIExceptSelf);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
-        //Messenger.AddListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnActionPerformed);
         Messenger.AddListener<InterruptHolder>(Signals.INTERRUPT_STARTED, OnInterruptStarted);
         Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.AddListener<IPointOfInterest>(Signals.BEFORE_SEIZING_POI, OnBeforeSeizingPOI);
-        //Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
-        //Messenger.AddListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
         Messenger.AddListener<IPointOfInterest>(Signals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
         Messenger.AddListener<IPointOfInterest, Character>(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.AddListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
         Messenger.AddListener<Faction, Character>(Signals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
-        //Messenger.AddListener<LocationGridTile, int>(Signals.INCREASE_THREAT_THAT_SEES_TILE, IncreaseThreatThatSeesTile);
-
-        //Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
+        Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        
         needsComponent.SubscribeToSignals();
         jobComponent.SubscribeToListeners();
         stateAwarenessComponent.SubscribeSignals();
@@ -518,22 +513,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, ForceCancelAllJobsTargetingPOIExceptSelf);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
-        //Messenger.RemoveListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnActionPerformed);
         Messenger.RemoveListener<InterruptHolder>(Signals.INTERRUPT_STARTED, OnInterruptStarted);
         Messenger.RemoveListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.RemoveListener<IPointOfInterest>(Signals.BEFORE_SEIZING_POI, OnBeforeSeizingPOI);
-        //Messenger.RemoveListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
-        //Messenger.RemoveListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
-        //Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
-        //Messenger.RemoveListener<Character>(Signals.CHARACTER_NO_LONGER_MISSING, OnCharacterNoLongerMissing);
         Messenger.RemoveListener<IPointOfInterest>(Signals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
         Messenger.RemoveListener<IPointOfInterest, Character>(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
         Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.RemoveListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
         Messenger.RemoveListener<Faction, Character>(Signals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
-        //Messenger.RemoveListener<LocationGridTile, int>(Signals.INCREASE_THREAT_THAT_SEES_TILE, IncreaseThreatThatSeesTile);
-        //Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
+        Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+
         needsComponent.UnsubscribeToSignals();
         jobComponent.UnsubscribeListeners();
         stateAwarenessComponent.UnsubscribeSignals();
@@ -548,33 +539,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Listeners
-    private void OnCharacterExitedArea(NPCSettlement npcSettlement, Character character) {
-        if (character.id == id) {
-            //Clear terrifying characters of this character if he/she leaves the npcSettlement
-            //marker.ClearTerrifyingObjects();
-        } else {
-            if (!marker) {
-                throw new Exception($"Marker of {name} is null!");
-            }
-            //remove the character that left the npcSettlement from anyone elses list of terrifying characters.
-            //if (marker.terrifyingObjects.Count > 0) {
-            //    if (character.IsInOwnParty()) {
-            //        marker.RemoveTerrifyingObject(character);
-            //        if (character.ownParty.isCarryingAnyPOI) {
-            //            marker.RemoveTerrifyingObject(character.ownParty.carriedPOI);
-            //        }
-            //    } else {
-            //        marker.RemoveTerrifyingObject(character.currentParty.owner);
-            //        if (character.currentParty.isCarryingAnyPOI) {
-            //            marker.RemoveTerrifyingObject(character.currentParty.carriedPOI);
-            //        }
-            //    }
-            //    //for (int i = 0; i < party.characters.Count; i++) {
-            //    //    marker.RemoveTerrifyingObject(party.characters[i]);
-            //    //}
-            //}
-        }
-    }
     private void OnStopCurrentActionTargetingPOI(IPointOfInterest poi) {
         if(currentActionNode != null && currentActionNode.poiTarget == poi) {
             StopCurrentActionNode();
@@ -593,16 +557,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             } else if (poi is TileObject tileObject) {
                 if (marker.IsPOIInVision(tileObject)) {
-                    PlayerManager.Instance.player.threatComponent.AdjustThreat(amount);
-                }
-            }
-        }
-    }
-    private void IncreaseThreatThatSeesTile(LocationGridTile tile, int amount) {
-        if (faction != null && faction.isMajorNonPlayerOrVagrant && marker && gridTileLocation != null && gridTileLocation.parentMap.region == tile.parentMap.region) {
-            if(gridTileLocation.structure == tile.structure || (!gridTileLocation.structure.isInterior && !tile.structure.isInterior)) {
-                float distance = Vector2.Distance(tile.centeredWorldLocation, gridTileLocation.centeredWorldLocation);
-                if (distance <= 5f) {
                     PlayerManager.Instance.player.threatComponent.AdjustThreat(amount);
                 }
             }
@@ -659,6 +613,39 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         log.AddToFillers(null, homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
         log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+    }
+    private void OnTraitableGainedTrait(ITraitable p_traitable, Trait p_trait) {
+        if (p_trait is Burning burning) {
+            if (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.PERFORMING && 
+                currentActionNode.poiTarget == p_traitable && currentActionNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
+                //Stop eating object that has been set on fire. And gain burning too.
+                //https://trello.com/c/xDiItiDG/2026-ignite-food-vegetable-while-being-eaten-didnt-ignite
+                StopCurrentActionNode(reason: "Object is burning");
+                traitContainer.AddTrait(this, "Burning", out var addedTrait, bypassElementalChance: true);
+                (addedTrait as Burning)?.SetSourceOfBurning(burning.sourceOfBurning, this);   
+            }
+        }
+    }
+    private void OnCharacterChangedName(Character p_character) {
+        if (p_character != this) {
+            UpdateInterruptLogsBasedOnUpdatedCharacter(p_character);    
+        }
+    }
+    private void UpdateInterruptLogsBasedOnUpdatedCharacter(Character p_character) {
+        if (interruptComponent.isInterrupted) {
+            //had to force update because for some reason involved objects are empty during this point
+            //TODO: Find out why!
+            interruptComponent.thoughtBubbleLog.TryUpdateLogAfterRename(p_character, true);
+        }
+        if (currentActionNode != null) {
+            currentActionNode.thoughtBubbleLog.TryUpdateLogAfterRename(p_character);
+            currentActionNode.thoughtBubbleMovingLog.TryUpdateLogAfterRename(p_character);
+            currentActionNode.descriptionLog.TryUpdateLogAfterRename(p_character);
+        }
+        if (deathLog.hasValue) {
+            deathLog.TryUpdateLogAfterRename(p_character);
+        }
+        stateComponent.currentState?.thoughtBubbleLog.TryUpdateLogAfterRename(p_character, true);
     }
     #endregion
 
@@ -1727,8 +1714,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     traitContainer.RemoveTrait(this, _raceSetting.traitNames[i]); //Remove traits from race
                 }
             }
-            RaceSetting rs = RaceManager.Instance.racesDictionary[race.ToString()];
-            _raceSetting = rs.CreateNewCopy();
+            _raceSetting = RaceManager.Instance.GetRaceData(race);
             if (!isInitial) {
                 OnUpdateRace();
                 Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, this);
@@ -1764,19 +1750,25 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void ChangeGender(GENDER gender) {
         _gender = gender;
     }
-    public void SetName(string newName) {
-        _name = newName;
-        string[] split = _name.Split(' '); 
-        _firstName = split[0];
+    public void SetRandomName() {
+        string newName = RandomNameGenerator.GenerateRandomName(race, gender);
+        string[] split = newName.Split(' '); 
+        string firstName = split[0];
+        string surName = string.Empty;
         if (split.Length > 1) {
-            _surName = split[1];    
+            surName = split[1];    
         }
-        RandomNameGenerator.RemoveNameAsAvailable(gender, race, newName);
+        SetFirstAndLastName(firstName, surName);
     }
-    public void SetFirstAndLastName(string firstName, string lastName) {
-        _firstName = firstName;
-        _surName = lastName;
-        RandomNameGenerator.RemoveNameAsAvailable(gender, race, fullname);
+    public void SetFirstAndLastName(string p_firstName, string p_lastName) {
+        _firstName = p_firstName;
+        _surName = p_lastName;
+        RandomNameGenerator.RemoveNameAsAvailable(gender, race, fullName);
+    }
+    public void RenameCharacter(string p_firstName, string p_lastName) {
+        SetFirstAndLastName(p_firstName, p_lastName);
+        UpdateInterruptLogsBasedOnUpdatedCharacter(this); //had to do this since signal order can be inconsistent and the UI Update could happen before the actual logs were updated.
+        Messenger.Broadcast(Signals.CHARACTER_CHANGED_NAME, this);
     }
     private string GetDefaultRaceClassName() {
         if(race == RACE.DEMON) {
@@ -2058,6 +2050,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetIsPreplaced(bool state) {
         isPreplaced = state;
+    }
+    private string GetFirstNameWithColor() {
+        if(CharacterManager.Instance != null) {
+            string color = CharacterManager.Instance.GetCharacterNameColorHex(this);
+            return $"<color=#{color}>{_firstName}</color>";
+        }
+        return firstName;
     }
     #endregion    
 

@@ -45,7 +45,7 @@ namespace Inner_Maps.Location_Structures {
         #endregion
         
         #region Initialization
-        public void Initialize() {
+        private void Initialize() {
             ConstructDefaultActions();
         }
         #endregion
@@ -113,6 +113,10 @@ namespace Inner_Maps.Location_Structures {
         public virtual bool CanUnseizeCharacterInRoom(Character character) {
             return true;
         }
+        #endregion
+
+        #region Destruction
+        public virtual void OnParentStructureDestroyed() { }
         #endregion
     }
 }

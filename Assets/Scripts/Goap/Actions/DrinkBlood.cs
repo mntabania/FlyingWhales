@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 using UtilityScripts;
+using Inner_Maps;
 
 public class DrinkBlood : GoapAction {
 
@@ -41,6 +42,40 @@ public class DrinkBlood : GoapAction {
         //    cost = UtilityScripts.Utilities.Rng.Next(0, 11);
         //    costLog += $" +{cost}(Critical Mood)";
         //}
+        if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
+            if (actor.partyComponent.isActiveMember) {
+                if (!(target is Animal)) {
+                    CRIME_SEVERITY severity = actor.partyComponent.currentParty.partyFaction.GetCrimeSeverity(actor, actor, CRIME_TYPE.Vampire);
+                    if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
+                        //Should not target non-animals if party faction considers Vampire a crime
+                        costLog += $" +2000(Active Party, target is not animal and party faction considers crime)";
+                        actor.logComponent.AppendCostLog(costLog);
+                        return 2000;
+                    }
+                } else {
+                    if (!actor.needsComponent.isStarving) {
+                        //Should not target animals if actor is not starvinf
+                        costLog += $" +2000(Active Party, target is animal and actor is not starving)";
+                        actor.logComponent.AppendCostLog(costLog);
+                        return 2000;
+                    }
+                }
+                if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null
+                    && actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
+                    LocationGridTile centerGridTileOfActor = actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
+                    float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
+                    int distanceToCheck = (InnerMapManager.BuildingSpotSize.x * 2) * 3;
+
+                    if (distance > distanceToCheck) {
+                        //target is at structure that character is avoiding
+                        costLog += $" +2000(Active Party, Location of target too far from actor)";
+                        actor.logComponent.AppendCostLog(costLog);
+                        return 2000;
+                    }
+                }
+            }
+        }
         if (target is Character targetCharacter) {
             if (targetCharacter.traitContainer.HasTrait("Vampire")) {
                 cost += 2000;

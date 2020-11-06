@@ -11,7 +11,7 @@ public class ReportCrime : GoapAction {
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
 
     public ReportCrime() : base(INTERACTION_TYPE.REPORT_CRIME) {
-        actionIconString = GoapActionStateDB.Social_Icon;
+        actionIconString = GoapActionStateDB.Report_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         // doesNotStopTargetCharacter = true;
@@ -52,8 +52,10 @@ public class ReportCrime : GoapAction {
             Character targetCharacter = poiTarget as Character;
             if (targetCharacter.carryComponent.IsNotBeingCarried() == false) {
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "target_carried";
             } else if (!targetCharacter.canWitness) {
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "target_inactive";
             }
         }
         return goapActionInvalidity;

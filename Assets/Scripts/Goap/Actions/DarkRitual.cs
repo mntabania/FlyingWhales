@@ -2,16 +2,16 @@
 
 public class DarkRitual : GoapAction {
     public DarkRitual() : base(INTERACTION_TYPE.DARK_RITUAL) {
-        actionIconString = GoapActionStateDB.Magic_Icon;
+        actionIconString = GoapActionStateDB.Cult_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         logTags = new[] {LOG_TAG.Work, LOG_TAG.Life_Changes};
     }
     
     #region Overrides
-    // protected override void ConstructBasePreconditionsAndEffects() {
-    //     AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR), HasCultistKit);
-    // }
+    protected override void ConstructBasePreconditionsAndEffects() {
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR), HasCultistKit);
+    }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Ritual Success", goapNode);
@@ -73,7 +73,7 @@ public class DarkRitual : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, target, otherData, job);
         if (satisfied) {
-            return target.gridTileLocation != null && actor.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT);
+            return target.gridTileLocation != null;
         }
         return false;
     }

@@ -975,7 +975,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
     }
     private IPointOfInterest GetStealCorpseTarget() {
         Region region = _owner.region;
-        List<IPointOfInterest> choices = null;
+        Faction factionOwner = _owner.owner;
+        WeightedDictionary<IPointOfInterest> targetWeights = null;
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             Character target = region.charactersAtLocation[i];
             IPointOfInterest targetPOI = target;
@@ -983,20 +984,31 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
                 targetPOI = target.grave;
             }
             if (target.isDead && targetPOI.gridTileLocation != null && targetPOI.mapObjectVisual) {
+
                 if (targetPOI.gridTileLocation.structure.settlementLocation == _owner) {
                     //If the target is inside this settlement, only take corpse those corpses that are not in the cult temple
                     //We should not take corpses from our own settlement that are already in the Cult Temple
                     if (targetPOI.gridTileLocation.structure.structureType != STRUCTURE_TYPE.CULT_TEMPLE) {
-                        if (choices == null) { choices = new List<IPointOfInterest>(); }
-                        choices.Add(targetPOI);
+                        if (targetWeights == null) { targetWeights = new WeightedDictionary<IPointOfInterest>(); }
+                        targetWeights.AddElement(targetPOI, 50);
                     }
                 } else {
-                    if (choices == null) { choices = new List<IPointOfInterest>(); }
-                    choices.Add(targetPOI);
+                    Faction targetLocationFactionOwner = targetPOI.gridTileLocation.structure.settlementLocation?.owner;
+                    int weight = 50;
+                    if(factionOwner != null && targetLocationFactionOwner != null && factionOwner.IsHostileWith(targetLocationFactionOwner)) {
+                        //Corpses that are inside the settlement of a hostile faction should be less likely to be targeted
+                        weight = 10;
+                    }
+
+                    if (targetWeights == null) { targetWeights = new WeightedDictionary<IPointOfInterest>(); }
+                    targetWeights.AddElement(targetPOI, weight);
                 }
             }
         }
-        return CollectionUtilities.GetRandomElement(choices);
+        if(targetWeights != null && targetWeights.Count > 0) {
+            return targetWeights.PickRandomElementGivenWeights();
+        }
+        return null;
     }
     #endregion
 

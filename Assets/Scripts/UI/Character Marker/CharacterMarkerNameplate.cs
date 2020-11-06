@@ -89,7 +89,7 @@ public class CharacterMarkerNameplate : PooledObject {
     #region Name
     public void UpdateName() {
         string icon = _parentMarker.character.visuals.GetCharacterStringIcon();
-        string characterName = UtilityScripts.Utilities.ColorizeName(_parentMarker.character.name);
+        string characterName = _parentMarker.character.firstNameWithColor; //UtilityScripts.Utilities.ColorizeName(_parentMarker.character.name);
         nameLbl.text = $"{icon}{characterName}";
     }
     #endregion

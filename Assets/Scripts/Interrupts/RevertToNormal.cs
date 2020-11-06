@@ -22,15 +22,25 @@ namespace Interrupts {
             return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
         }
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
-            interruptHolder.actor.lycanData.RevertToNormal();
-            if (!interruptHolder.actor.lycanData.isMaster && GameUtilities.RollChance(25)) { //25
-                //chance to master
-                interruptHolder.actor.lycanData.SetIsMaster(true);
-                Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Revert To Normal", "mastered");
-                log.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToDatabase();
+            Character actor = interruptHolder.actor;
+            if (actor.isLycanthrope) {
+                actor.lycanData.RevertToNormal();
+                if (!actor.lycanData.isMaster && GameUtilities.RollChance(25)) { //25
+                    //chance to master
+                    actor.lycanData.SetIsMaster(true);
+                    Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Revert To Normal", "mastered");
+                    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddLogToDatabase();
+                }
+            } else {
+                actor.traitContainer.RemoveTrait(actor, "Transforming");
             }
+
             return base.ExecuteInterruptEndEffect(interruptHolder);
+        }
+        public override bool OnForceEndInterrupt(InterruptHolder interruptHolder) {
+            interruptHolder.actor.traitContainer.RemoveTrait(interruptHolder.actor, "Transforming");
+            return base.OnForceEndInterrupt(interruptHolder);
         }
         public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
             string response = base.ReactionToActor(actor, target, witness, interrupt, status);

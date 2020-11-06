@@ -29,7 +29,7 @@ public class Minion {
         character.SetMinion(this);
         //character.StartingLevel();
         if (!keepData) {
-            character.SetName(RandomNameGenerator.GenerateMinionName());
+            character.SetFirstAndLastName(RandomNameGenerator.GenerateMinionName(), string.Empty);
         }
         // RemoveInvalidPlayerActions();
         character.needsComponent.SetFullnessForcedTick(0);

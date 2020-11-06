@@ -154,6 +154,22 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         #endregion
+        
+        #region Destruction
+        public override void OnParentStructureDestroyed() {
+            base.OnParentStructureDestroyed();
+            Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
+            if (currentTortureTarget != null && currentTortureTarget.interruptComponent.isInterrupted && 
+                currentTortureTarget.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Being_Tortured) {
+                currentTortureTarget.interruptComponent.ForceEndNonSimultaneousInterrupt();
+                currentTortureTarget.traitContainer.RemoveTrait(currentTortureTarget, "Restrained");
+            }
+            if (_particleEffect != null) {
+                _particleEffect.StopEmission();
+                _particleEffect = null;
+            }
+        }
+        #endregion
     }
 }
 

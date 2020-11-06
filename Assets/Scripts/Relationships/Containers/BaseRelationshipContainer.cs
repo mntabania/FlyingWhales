@@ -17,11 +17,13 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         relationships = new Dictionary<int, IRelationshipData>();
         charactersWithOpinion = new List<Character>();
         Messenger.AddListener<Character>(Signals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     public BaseRelationshipContainer(SaveDataBaseRelationshipContainer data) {
         relationships = new Dictionary<int, IRelationshipData>(data.relationships);
         charactersWithOpinion = SaveUtilities.ConvertIDListToCharacters(data.charactersWithOpinion);
         Messenger.AddListener<Character>(Signals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
 
     #region Adding
@@ -442,13 +444,19 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         return GetTotalOpinion(target.id);
     }
     public int GetTotalOpinion(int id) {
-        return relationships[id].opinions.totalOpinion;
+        if (HasRelationshipWith(id)) {
+            return relationships[id].opinions?.totalOpinion ?? 0;    
+        }
+        return 0;
     }
     public OpinionData GetOpinionData(Character target) {
         return GetOpinionData(target.id);
     }
     public OpinionData GetOpinionData(int id) {
-        return relationships[id].opinions;
+        if (HasRelationshipWith(id)) {
+            return relationships[id].opinions;    
+        }
+        return null;
     }
     public string GetOpinionLabel(Character target) {
         return GetOpinionLabel(target.id);
@@ -710,6 +718,15 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             return true;
         }
         return false;
+    }
+    #endregion
+
+    #region Listeners
+    private void OnCharacterChangedName(Character character) {
+        if (HasRelationshipWith(character)) {
+            IRelationshipData relationshipData = GetRelationshipDataWith(character);
+            relationshipData.SetTargetName(character.name);
+        }
     }
     #endregion
 }

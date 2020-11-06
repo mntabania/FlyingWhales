@@ -21,7 +21,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
 
     [Space(10)]
     [Header("Locations")]
-    [SerializeField] private ScrollRect locationsScrollView;
+    [SerializeField] private Transform locationsTransform;
     [SerializeField] private GameObject settlementNameplatePrefab;
     private List<SettlementNameplateItem> locationItems;
 
@@ -32,7 +32,14 @@ public class FactionInfoUIV2 : MonoBehaviour {
 
     [Space(10)]
     [Header("Crimes")]
-    [SerializeField] private TextMeshProUGUI crimesLbl;
+    [SerializeField] private TextMeshProUGUI infractionCrimesLbl;
+    [SerializeField] private TextMeshProUGUI misdemeanourCrimesLbl;
+    [SerializeField] private TextMeshProUGUI seriousCrimesLbl;
+    [SerializeField] private TextMeshProUGUI heinousCrimesLbl;
+    [SerializeField] private ScrollRect crimesScrollRect;
+    [SerializeField] private RectTransform crimesScrollRectTransform;
+
+    //[SerializeField] private RectTransform[] crimesTransform;
 
     [Space(10)]
     [Header("Logs")]
@@ -176,7 +183,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
 
     #region Locations
     private void UpdateOwnedLocations() {
-        UtilityScripts.Utilities.DestroyChildren(locationsScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(locationsTransform);
         locationItems.Clear();
         for (int i = 0; i < activeFaction.ownedSettlements.Count; i++) {
             BaseSettlement ownedSettlement = activeFaction.ownedSettlements[i];
@@ -184,7 +191,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
         }
     }
     private void CreateNewSettlementItem(BaseSettlement settlement) {
-        GameObject characterGO = UIManager.Instance.InstantiateUIObject(settlementNameplatePrefab.name, locationsScrollView.content);
+        GameObject characterGO = UIManager.Instance.InstantiateUIObject(settlementNameplatePrefab.name, locationsTransform);
         SettlementNameplateItem item = characterGO.GetComponent<SettlementNameplateItem>();
         item.SetObject(settlement);
         item.SetAsButton();
@@ -265,12 +272,34 @@ public class FactionInfoUIV2 : MonoBehaviour {
 
     #region Crimes
     private void UpdateCrimes() {
-        crimesLbl.text = string.Empty;
+        crimesScrollRect.gameObject.SetActive(false);
+        infractionCrimesLbl.text = string.Empty;
+        misdemeanourCrimesLbl.text = string.Empty;
+        seriousCrimesLbl.text = string.Empty;
+        heinousCrimesLbl.text = string.Empty;
+
+        TextMeshProUGUI crimeLbl = null;
         foreach (KeyValuePair<CRIME_TYPE, CRIME_SEVERITY> item in activeFaction.factionType.crimes) {
             string crimeType = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(item.Key.ToString());
-            string crimeSeverity = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(item.Value.ToString());
-            crimesLbl.text += $"<sprite=\"Text_Sprites\" name=\"Arrow_Icon\">   {crimeType}: {crimeSeverity}\n";
+            if (item.Value == CRIME_SEVERITY.Infraction) {
+                crimeLbl = infractionCrimesLbl;
+            } else if (item.Value == CRIME_SEVERITY.Misdemeanor) {
+                crimeLbl = misdemeanourCrimesLbl;
+            } else if (item.Value == CRIME_SEVERITY.Serious) {
+                crimeLbl = seriousCrimesLbl;
+            } else if (item.Value == CRIME_SEVERITY.Heinous) {
+                crimeLbl = heinousCrimesLbl;
+            }
+            if(crimeLbl != null) {
+                crimeLbl.text += $"<sprite=\"Text_Sprites\" name=\"Arrow_Icon\">   {crimeType}\n";
+            }
         }
+        crimesScrollRect.gameObject.SetActive(true);
+        //crimesScrollRectTransform.ForceUpdateRectTransforms();
+        //Canvas.ForceUpdateCanvases();
+        //for (int i = 0; i < crimesTransform.Length; i++) {
+        //    crimesTransform[i].ForceUpdateRectTransforms();
+        //}
     }
     #endregion
 
@@ -296,6 +325,8 @@ public class FactionInfoUIV2 : MonoBehaviour {
         UtilityScripts.Utilities.DestroyChildren(charactersScrollView.content);
         _characterItems.Clear();
 
+        bool hasAliveMember = false;
+        bool hasMember = false;
         //Angels should not show in the characters list of faction in UI
         //https://trello.com/c/SGow0hA0/2234-angels-on-list
         for (int i = 0; i < activeFaction.characters.Count; i++) {
@@ -309,8 +340,16 @@ public class FactionInfoUIV2 : MonoBehaviour {
                 if(currCharacter.isLycanthrope) {
                     currCharacter = currCharacter.lycanData.activeForm;
                 }
+                if (!currCharacter.isDead) {
+                    hasAliveMember = true;
+                }
+                hasMember = true;
                 CreateNewCharacterItem(currCharacter, false);
             }
+        }
+        if (!hasAliveMember && hasMember) {
+            //If all faction members is dead, should auto toggle off the hide dead toggle, meaning all faction members even the dead ones, will be shown
+            aliveToggle.isOn = false;
         }
         //OrderCharacterItems();
     }
@@ -530,7 +569,8 @@ public class FactionInfoUIV2 : MonoBehaviour {
     #region Utilities
     private void ResetScrollPositions() {
         charactersScrollView.verticalNormalizedPosition = 1;
-        locationsScrollView.verticalNormalizedPosition = 1;
+        crimesScrollRect.verticalNormalizedPosition = 1;
+        //locationsScrollView.verticalNormalizedPosition = 1;
         logsWindow.ResetScrollPosition();
     }
     private void OnInspectAll() {

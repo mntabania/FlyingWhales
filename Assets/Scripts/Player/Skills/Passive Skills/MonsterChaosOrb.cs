@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 public class MonsterChaosOrb : PassiveSkill {
-    public override string name => "Chaos Orbs on Monster Death";
+    public override string name => "Mana Orbs on Monster Death";
     public override PASSIVE_SKILL passiveSkill => PASSIVE_SKILL.Monster_Chaos_Orb;
     
     public override void ActivateSkill() {

@@ -32,7 +32,7 @@ public class LandmarkCharacterItem : PooledObject {
     private void UpdateInfo() {
         portrait.GeneratePortrait(character);
         nameLbl.text = character.name;
-        subLbl.text = character.raceClassName;
+        subLbl.text = character.characterClass.className;
     }
 
     public void ShowItemInfo() {

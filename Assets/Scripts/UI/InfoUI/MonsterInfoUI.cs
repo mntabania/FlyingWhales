@@ -16,9 +16,11 @@ public class MonsterInfoUI : InfoUIBase {
     [Header("Basic Info")]
     [SerializeField] private CharacterPortrait characterPortrait;
     [SerializeField] private TextMeshProUGUI nameLbl;
-    [SerializeField] private TextMeshProUGUI lvlClassLbl;
+    [SerializeField] private TextMeshProUGUI subLbl;
     [SerializeField] private TextMeshProUGUI plansLbl;
     [SerializeField] private LogItem plansLblLogItem;
+    [SerializeField] private Image raceIcon;
+
 
     [Space(10)] [Header("Logs")] 
     [SerializeField] private LogsWindow logsWindow;
@@ -52,6 +54,7 @@ public class MonsterInfoUI : InfoUIBase {
         base.Initialize();
         Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateHistory);
         Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
+        Messenger.AddListener<Character>(Signals.LOG_MENTIONING_CHARACTER_UPDATED, OnLogMentioningCharacterUpdated);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_STACKED, UpdateTraitsFromSignal);
@@ -61,6 +64,10 @@ public class MonsterInfoUI : InfoUIBase {
         Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<Character>(Signals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        
+        statusTraitsEventLbl.SetShouldColorHighlight(false);
+        normalTraitsEventLbl.SetShouldColorHighlight(false);
         
         logsWindow.Initialize();
         ConstructCombatModes();
@@ -142,9 +149,15 @@ public class MonsterInfoUI : InfoUIBase {
     private void UpdatePortrait() {
         characterPortrait.GeneratePortrait(_activeMonster);
     }
+    private void OnCharacterChangedName(Character p_character) {
+        if (isShowing) {
+            //update all basic info regardless of character since changed character might be referenced in active characters thought bubble.
+            UpdateBasicInfo();    
+        }
+    }
     public void UpdateBasicInfo() {
-        nameLbl.text = _activeMonster.visuals.GetNameplateName();
-        lvlClassLbl.text = _activeMonster.raceClassName;
+        nameLbl.text = $"<b>{_activeMonster.firstNameWithColor}</b>";
+        subLbl.text = _activeMonster.characterClass.className;
         UpdateThoughtBubble();
     }
     public void UpdateThoughtBubble() {
@@ -307,6 +320,12 @@ public class MonsterInfoUI : InfoUIBase {
     private void UpdateAllHistoryInfo() {
         logsWindow.UpdateAllHistoryInfo();
     }
+    private void OnLogMentioningCharacterUpdated(Character character) {
+        if (isShowing) {
+            //update history regardless of character because updated character might be referenced in this characters logs
+            UpdateAllHistoryInfo();
+        }
+    }
     #endregion   
 
     #region Listeners
@@ -436,6 +455,12 @@ public class MonsterInfoUI : InfoUIBase {
         UIManager.Instance.characterInfoUI.activeCharacter.combatComponent.SetCombatMode(combatMode);
         Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, activeMonster as IPlayerActionTarget);
         UIManager.Instance.customDropdownList.Close();
+    }
+    #endregion
+
+    #region Rename
+    public void OnClickRenameButton() {
+        Messenger.Broadcast(Signals.EDIT_CHARACTER_NAME, activeMonster.persistentID, activeMonster.firstName);
     }
     #endregion
 }

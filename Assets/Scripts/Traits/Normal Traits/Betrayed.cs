@@ -29,7 +29,7 @@ namespace Traits {
                 return;
             }
             Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.neutralFaction, null, character.homeRegion);
-            ghost.SetName(character.name);
+            ghost.SetFirstAndLastName(character.firstName, character.surName);
             (ghost as Ghost).SetBetrayedBy(responsibleCharacter);
             CharacterManager.Instance.PlaceSummon(ghost, character.gridTileLocation);
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", this.name, "spawn_ghost", null, LOG_TAG.Social, LOG_TAG.Life_Changes);

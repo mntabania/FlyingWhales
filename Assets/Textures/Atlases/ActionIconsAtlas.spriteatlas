@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 6b88faf7d1b6b4c41a84ee00017c671f, type: 3}
-    totalSpriteSurfaceArea: 198660
+    totalSpriteSurfaceArea: 244860
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -53,14 +53,19 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 8abf9ac056a94364ca1ba402b951f22d, type: 3}
   - {fileID: 21300000, guid: 019388d01ffc1134bbfed1d2f413e19e, type: 3}
   - {fileID: 21300000, guid: 95f79231f93a3f0499e46aa40e19fcef, type: 3}
+  - {fileID: 21300000, guid: 647a6c51b6df42c409cdc769b59225c1, type: 3}
   - {fileID: 21300000, guid: f73219a174dca49489ec11e6d5c62e46, type: 3}
+  - {fileID: 21300000, guid: 696a0eb140f6a0f4cb05306674b041db, type: 3}
   - {fileID: 21300000, guid: 557556c1d415afd4dac2052d3c7d4836, type: 3}
   - {fileID: 21300000, guid: bc7f90f1b9be3404485e4de86fff5b35, type: 3}
+  - {fileID: 21300000, guid: 93a1c8129d5193745a9a2004322741c4, type: 3}
   - {fileID: 21300000, guid: b4f2c5f24d7b89045aac39d116bfb8c2, type: 3}
   - {fileID: 21300000, guid: 5a786d93d2807cf40b59d2f8e2175578, type: 3}
+  - {fileID: 21300000, guid: 55a003e3eb3f78b46a9f11be331d54b1, type: 3}
   - {fileID: 21300000, guid: d7d4d5448e2a2604c95aad638d97ddd4, type: 3}
   - {fileID: 21300000, guid: 339bc535661850c4eb9c442d35ce27e8, type: 3}
   - {fileID: 21300000, guid: 1605f245bccd651418a6da868ce4c504, type: 3}
+  - {fileID: 21300000, guid: 85a7eff5d0dd2244290842cde463e7bb, type: 3}
   - {fileID: 21300000, guid: 40a05016a0c63df4a9cec8988924ab11, type: 3}
   - {fileID: 21300000, guid: e46f0a460945f654384cefc0e6c410a6, type: 3}
   - {fileID: 21300000, guid: 0d63b4565c710da43ad864486aed4127, type: 3}
@@ -68,14 +73,17 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b8a1dfc70f25b144fbbad2ea3892376b, type: 3}
   - {fileID: 21300000, guid: 79ef18e73e833ce41ab51b998163d5ee, type: 3}
   - {fileID: 21300000, guid: 28f8c9f7d1cd3b34d9b092f15c276d8e, type: 3}
+  - {fileID: 21300000, guid: df5474484b3a7f94fa07b1bbbba26db7, type: 3}
   - {fileID: 21300000, guid: cf39aa580a482b743bbf80920ec0814c, type: 3}
   - {fileID: 21300000, guid: b53ae4d8efa07034fab7abae49e4a756, type: 3}
   - {fileID: 21300000, guid: bee8aa795ec3e18458fce4bf84697bf8, type: 3}
   - {fileID: 21300000, guid: c015668983091ca4983942f51044d8bd, type: 3}
   - {fileID: 21300000, guid: 926c1799cbb535247b4995e06413c418, type: 3}
   - {fileID: 21300000, guid: d0440b2a2239fdc4d9c82c807fb76a59, type: 3}
+  - {fileID: 21300000, guid: 2767033a3ce1cb343ae5a14147503175, type: 3}
   - {fileID: 21300000, guid: a37c8faae3749b943b722a020c453f46, type: 3}
   - {fileID: 21300000, guid: 1cce23fa43f5f8d4098a394573311fa6, type: 3}
+  - {fileID: 21300000, guid: 58ccbf4bb5536fc44ab51686d544ee85, type: 3}
   - {fileID: 21300000, guid: 8f376b7b2ce182042be10ffc0f1a307b, type: 3}
   - {fileID: 21300000, guid: b6fc588bdc1dda14a9e12c28752c9654, type: 3}
   - {fileID: 21300000, guid: 966231cba479ae54e9c349f1adcca162, type: 3}
@@ -83,9 +91,11 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 8d39531c7a7c13a44bd46ffc73a27fb9, type: 3}
   - {fileID: 21300000, guid: 1334b33ccc7ae9445a18c4f79537d649, type: 3}
   - {fileID: 21300000, guid: 5a6c315d820be4a47be6b608d557c894, type: 3}
+  - {fileID: 21300000, guid: 9c6dddbddf07dd0448e759efb0ae0db4, type: 3}
   - {fileID: 21300000, guid: 8978630eb6a2ee0478d7faa0bc8b5839, type: 3}
   - {fileID: 21300000, guid: 5395d83e70672be4484df767e840dd66, type: 3}
   - {fileID: 21300000, guid: 7d8bb54ee481ae448bd0c3866adc496f, type: 3}
+  - {fileID: 21300000, guid: bf98ec5e0da2d4d46b7dfb673086cade, type: 3}
   - {fileID: 21300000, guid: 4a350f5e5db0b524b8f529b0332d1359, type: 3}
   - {fileID: 21300000, guid: f521dc0fe05fcd841adca17c3297d6b1, type: 3}
   - {fileID: 21300000, guid: a0bf001f1e836dd4fb26d8cdbda6577a, type: 3}
@@ -97,14 +107,19 @@ SpriteAtlas:
   - action_icon_mock
   - action_icon_repair
   - action_icon_hostile
+  - action_icon_trap
   - stealth
+  - action_icon_gossip
   - action_icon_fish
   - action_icon_clean
+  - action_icon_cult
   - flee
   - action_icon_eat
+  - action_icon_butcher
   - action_icon_sick
   - action_icon_heartbreak
   - entertain
+  - action_icon_poison
   - action_icon_magic
   - pray
   - action_icon_cowering
@@ -112,14 +127,17 @@ SpriteAtlas:
   - action_icon_bury
   - action_icon_hurt
   - action_icon_chop
+  - action_icon_found
   - first_aid
   - action_icon_anger
   - action_icon_build
   - action_icon_mine
   - action_icon_douse
   - action_icon_work
+  - action_icon_divine
   - action_icon_haul
   - action_icon_cure
+  - action_icon_report
   - drink
   - flirt
   - action_icon_approval
@@ -127,9 +145,11 @@ SpriteAtlas:
   - action_icon_sad
   - action_icon_party
   - action_icon_social
+  - action_icon_blueprint
   - action_icon_happy
   - drink_blood
   - restrain
+  - action_icon_lycan
   - action_icon_joy
   - action_icon_watch
   - action_icon_sleep
