@@ -145,7 +145,8 @@ public struct Log {
         return !string.IsNullOrEmpty(allInvolvedObjectIDs) && allInvolvedObjectIDs.Contains(obj.persistentID);
     }
     private void AddInvolvedObject(string persistentID) {
-        allInvolvedObjectIDs = $"{allInvolvedObjectIDs}|{persistentID}|";
+        string currentVal = allInvolvedObjectIDs;
+        allInvolvedObjectIDs = $"{currentVal}|{persistentID}|";
     }
     /// <summary>
     /// Manually add an involved object. This is usually needed
@@ -198,17 +199,19 @@ public struct Log {
     #endregion
 
     #region Updates
-    public void TryUpdateLogAfterRename(Character updatedCharacter) {
-        if (IsInvolved(updatedCharacter)) {
-            for (int i = 0; i < fillers.Count; i++) {
-                LogFillerStruct logFiller = fillers[i];
-                if (logFiller.objPersistentID == updatedCharacter.persistentID) {
-                    logFiller.ForceUpdateValueBasedOnConnectedObject();
-                    fillers[i] = logFiller;
+    public void TryUpdateLogAfterRename(Character updatedCharacter, bool force = false) {
+        if (IsInvolved(updatedCharacter) || force) {
+            if (fillers != null) {
+                for (int i = 0; i < fillers.Count; i++) {
+                    LogFillerStruct logFiller = fillers[i];
+                    if (logFiller.objPersistentID == updatedCharacter.persistentID) {
+                        logFiller.ForceUpdateValueBasedOnConnectedObject();
+                        fillers[i] = logFiller;
+                    }
                 }
+                ResetText();
+                FinalizeText();
             }
-            ResetText();
-            FinalizeText();
         }
     }
     public void ReEvaluateWholeText() {
