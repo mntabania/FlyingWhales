@@ -11,7 +11,7 @@ namespace Interrupts {
             duration = 6;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
-            interruptIconString = GoapActionStateDB.No_Icon;
+            interruptIconString = GoapActionStateDB.Lycan_Icon;
             isIntel = true;
             logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Crimes, LOG_TAG.Player};
         }

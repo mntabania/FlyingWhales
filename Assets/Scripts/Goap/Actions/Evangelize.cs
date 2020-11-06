@@ -7,7 +7,7 @@ using UtilityScripts;
 
 public class Evangelize : GoapAction {
     public Evangelize() : base(INTERACTION_TYPE.EVANGELIZE) {
-        actionIconString = GoapActionStateDB.Pray_Icon;
+        actionIconString = GoapActionStateDB.Cult_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         isNotificationAnIntel = true;

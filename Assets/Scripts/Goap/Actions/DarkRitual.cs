@@ -2,7 +2,7 @@
 
 public class DarkRitual : GoapAction {
     public DarkRitual() : base(INTERACTION_TYPE.DARK_RITUAL) {
-        actionIconString = GoapActionStateDB.Magic_Icon;
+        actionIconString = GoapActionStateDB.Cult_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         logTags = new[] {LOG_TAG.Work, LOG_TAG.Life_Changes};

@@ -8,7 +8,7 @@ using Traits;
 public class Butcher : GoapAction {
 
     public Butcher() : base(INTERACTION_TYPE.BUTCHER) {
-        actionIconString = GoapActionStateDB.Hostile_Icon;
+        actionIconString = GoapActionStateDB.Butcher_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.KOBOLD, RACE.TROLL };

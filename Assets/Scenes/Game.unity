@@ -95270,6 +95270,16 @@ MonoBehaviour:
     - Party
     - Heartbroken
     - Injured
+    - Gossip
+    - Blueprint
+    - Cult
+    - Butcher
+    - Trap
+    - Lycan
+    - Poison
+    - Report
+    - Found
+    - Divine
     m_values:
     - {fileID: 21300000, guid: 5a786d93d2807cf40b59d2f8e2175578, type: 3}
     - {fileID: 21300000, guid: 95f79231f93a3f0499e46aa40e19fcef, type: 3}
@@ -95314,6 +95324,16 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 1334b33ccc7ae9445a18c4f79537d649, type: 3}
     - {fileID: 21300000, guid: 339bc535661850c4eb9c442d35ce27e8, type: 3}
     - {fileID: 21300000, guid: 79ef18e73e833ce41ab51b998163d5ee, type: 3}
+    - {fileID: 21300000, guid: 696a0eb140f6a0f4cb05306674b041db, type: 3}
+    - {fileID: 21300000, guid: 9c6dddbddf07dd0448e759efb0ae0db4, type: 3}
+    - {fileID: 21300000, guid: 93a1c8129d5193745a9a2004322741c4, type: 3}
+    - {fileID: 21300000, guid: 55a003e3eb3f78b46a9f11be331d54b1, type: 3}
+    - {fileID: 21300000, guid: 647a6c51b6df42c409cdc769b59225c1, type: 3}
+    - {fileID: 21300000, guid: bf98ec5e0da2d4d46b7dfb673086cade, type: 3}
+    - {fileID: 21300000, guid: 85a7eff5d0dd2244290842cde463e7bb, type: 3}
+    - {fileID: 21300000, guid: 58ccbf4bb5536fc44ab51686d544ee85, type: 3}
+    - {fileID: 21300000, guid: df5474484b3a7f94fa07b1bbbba26db7, type: 3}
+    - {fileID: 21300000, guid: 2767033a3ce1cb343ae5a14147503175, type: 3}
 --- !u!1 &1682166116
 GameObject:
   m_ObjectHideFlags: 0
@@ -104540,7 +104560,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1810423187
 RectTransform:
   m_ObjectHideFlags: 0

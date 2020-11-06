@@ -10,7 +10,7 @@ public class ShareInformation : GoapAction {
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
 
     public ShareInformation() : base(INTERACTION_TYPE.SHARE_INFORMATION) {
-        actionIconString = GoapActionStateDB.Social_Icon;
+        actionIconString = GoapActionStateDB.Gossip_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         doesNotStopTargetCharacter = true;

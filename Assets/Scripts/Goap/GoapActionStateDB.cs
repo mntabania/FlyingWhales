@@ -46,6 +46,16 @@ public static class GoapActionStateDB {
     public static string Party_Icon = "Party";
     public static string Heartbroken_Icon = "Heartbroken";
     public static string Injured_Icon = "Injured";
+    public static string Gossip_Icon = "Gossip";
+    public static string Blueprint_Icon = "Blueprint";
+    public static string Cult_Icon = "Cult";
+    public static string Butcher_Icon = "Butcher";
+    public static string Trap_Icon = "Trap";
+    public static string Lycan_Icon = "Lycan";
+    public static string Poison_Icon = "Poison";
+    public static string Report_Icon = "Report";
+    public static string Found_Icon = "Found";
+    public static string Divine_Icon = "Divine";
 
 
     public static string GetStateResult(INTERACTION_TYPE goapType, string stateName) {
