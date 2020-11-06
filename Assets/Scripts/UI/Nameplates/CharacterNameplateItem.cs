@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 using UnityEngine.UI;
+using UtilityScripts;
 
 public class CharacterNameplateItem : NameplateItem<Character> {
 
@@ -111,6 +112,16 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         UIManager.Instance.ShowSmallInfo(message);
     }
     public void OnHoverExitLeaderIcon() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
+
+    #region Race Icon
+    public void OnHoverRaceIcon() {
+        string message = GameUtilities.GetNormalizedSingularRace(character.race);
+        UIManager.Instance.ShowSmallInfo(message);
+    }
+    public void OnHoverExitRaceIcon() {
         UIManager.Instance.HideSmallInfo();
     }
     #endregion

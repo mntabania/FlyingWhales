@@ -692,18 +692,6 @@ public class CharacterManager : BaseMonoBehaviour {
         }
         return _normalNameColorHex;
     }
-    public string GetCharacterNameColorHexForLogs(Character character) {
-        if(character != null) {
-            if (character.minion != null) {
-                return _demonNameColorHex;
-            } else if (character.faction == FactionManager.Instance.undeadFaction) {
-                return _undeadNameColorHex;
-            } else if (character.faction == FactionManager.Instance.neutralFaction) {
-                return _summonNameColorHex;
-            }
-        }
-        return "f8ed43";
-    }
     #endregion
 
     #region Character Class Manager

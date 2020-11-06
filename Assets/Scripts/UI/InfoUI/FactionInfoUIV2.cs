@@ -21,7 +21,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
 
     [Space(10)]
     [Header("Locations")]
-    [SerializeField] private ScrollRect locationsScrollView;
+    [SerializeField] private Transform locationsTransform;
     [SerializeField] private GameObject settlementNameplatePrefab;
     private List<SettlementNameplateItem> locationItems;
 
@@ -36,6 +36,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI misdemeanourCrimesLbl;
     [SerializeField] private TextMeshProUGUI seriousCrimesLbl;
     [SerializeField] private TextMeshProUGUI heinousCrimesLbl;
+    //[SerializeField] private RectTransform[] crimesTransform;
 
     [Space(10)]
     [Header("Logs")]
@@ -179,7 +180,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
 
     #region Locations
     private void UpdateOwnedLocations() {
-        UtilityScripts.Utilities.DestroyChildren(locationsScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(locationsTransform);
         locationItems.Clear();
         for (int i = 0; i < activeFaction.ownedSettlements.Count; i++) {
             BaseSettlement ownedSettlement = activeFaction.ownedSettlements[i];
@@ -187,7 +188,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
         }
     }
     private void CreateNewSettlementItem(BaseSettlement settlement) {
-        GameObject characterGO = UIManager.Instance.InstantiateUIObject(settlementNameplatePrefab.name, locationsScrollView.content);
+        GameObject characterGO = UIManager.Instance.InstantiateUIObject(settlementNameplatePrefab.name, locationsTransform);
         SettlementNameplateItem item = characterGO.GetComponent<SettlementNameplateItem>();
         item.SetObject(settlement);
         item.SetAsButton();
@@ -289,6 +290,9 @@ public class FactionInfoUIV2 : MonoBehaviour {
                 crimeLbl.text += $"<sprite=\"Text_Sprites\" name=\"Arrow_Icon\">   {crimeType}\n";
             }
         }
+        //for (int i = 0; i < crimesTransform.Length; i++) {
+        //    crimesTransform[i].ForceUpdateRectTransforms();
+        //}
     }
     #endregion
 
@@ -556,7 +560,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     #region Utilities
     private void ResetScrollPositions() {
         charactersScrollView.verticalNormalizedPosition = 1;
-        locationsScrollView.verticalNormalizedPosition = 1;
+        //locationsScrollView.verticalNormalizedPosition = 1;
         logsWindow.ResetScrollPosition();
     }
     private void OnInspectAll() {

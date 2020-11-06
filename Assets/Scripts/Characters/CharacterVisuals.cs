@@ -253,7 +253,7 @@ public class CharacterVisuals {
     }
     public string GetCharacterNameWithIconAndColor() {
         string icon = GetCharacterStringIcon();
-        string characterName = UtilityScripts.Utilities.ColorizeName(_owner.name, CharacterManager.Instance.GetCharacterNameColorHexForLogs(_owner));
+        string characterName = _owner.firstNameWithColor; //UtilityScripts.Utilities.ColorizeName(_owner.name, CharacterManager.Instance.GetCharacterNameColorHexForLogs(_owner));
         return $"{icon}{characterName}";
     }
     public string GetRelationshipSummary(Character character) {
@@ -268,7 +268,6 @@ public class CharacterVisuals {
         } else {
             return $"{_owner.visuals.GetCharacterNameWithIconAndColor()} doesn't have a relationship with {character.visuals.GetCharacterNameWithIconAndColor()}\n";
         }
-        return string.Empty;
     }
     private string GetOpinionText(int number) {
         if (number < 0) {
