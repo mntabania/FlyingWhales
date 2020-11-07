@@ -15,6 +15,7 @@ using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UtilityScripts;
 using UnityEngine.Assertions;
+using Locations.Settlements;
 
 public class CharacterMarker : MapObjectVisual<Character> {
     public Character character { get; private set; }
@@ -1739,7 +1740,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     LocationGridTile neighbourCenter = neighbour.GetCenterLocationGridTile();
                     if (character.movementComponent.HasPathTo(neighbourCenter)) {
                         if(neighbourCenter.structure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-                            if(character.currentStructure.settlementLocation == null || neighbour.settlementOnTile == null || neighbour.settlementOnTile != character.currentStructure.settlementLocation) {
+                            BaseSettlement settlement = null;
+                            character.gridTileLocation?.IsPartOfSettlement(out settlement);
+                            if(settlement == null || neighbour.settlementOnTile == null || neighbour.settlementOnTile != settlement) {
                                 hexInWildernessForFlee.Add(neighbour);
                             }
                         }

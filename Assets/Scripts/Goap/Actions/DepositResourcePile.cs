@@ -186,7 +186,7 @@ public class DepositResourcePile : GoapAction {
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
-            if (poiTarget.gridTileLocation.structure.settlementLocation != null) {
+            if (poiTarget.gridTileLocation.IsPartOfSettlement()) {
                 // if (poiTarget.gridTileLocation.structure == actor.homeSettlement.mainStorage) {
                 //     return false;
                 // }

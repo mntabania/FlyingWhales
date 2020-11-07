@@ -73,7 +73,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
     public bool isHidden => false;
     public LocationStructure currentStructure => gridTileLocation?.structure;
-    public BaseSettlement currentSettlement => gridTileLocation?.structure.settlementLocation;
+    public BaseSettlement currentSettlement {
+        get {
+            BaseSettlement settlement = null;
+            gridTileLocation?.IsPartOfSettlement(out settlement);
+            return settlement;
+        }
+    }
     public BaseMapObjectVisual mapObjectVisual => mapVisual;
     public virtual string neutralizer => string.Empty;
     public virtual Character[] users { //array of characters, currently using the tile object

@@ -95,7 +95,7 @@ public class Eat : GoapAction {
                     cost += 2000;
                     costLog += $" +{cost}(Travelling but not starving)";
                 } 
-            } else if (table.gridTileLocation != null && table.structureLocation.settlementLocation != null && table.structureLocation.settlementLocation == actor.homeSettlement) {
+            } else if (table.gridTileLocation != null && table.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)) {
                 if (table.structureLocation == actor.homeStructure) {
                     cost = UtilityScripts.Utilities.Rng.Next(20, 36);
                     costLog += $" +{cost}(Table is in actor's home)";

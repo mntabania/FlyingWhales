@@ -1874,7 +1874,10 @@ public class ReactionComponent : CharacterComponent {
                         log = $"{log}\n-Reactor will react to crime";
                         Faction targetFaction = objectHit.factionOwner;
                         if(targetFaction == null) {
-                            targetFaction = objectHit.gridTileLocation?.structure.settlementLocation?.owner;
+                            BaseSettlement settlement = null;
+                            if(objectHit.gridTileLocation != null && objectHit.gridTileLocation.IsPartOfSettlement(out settlement)) {
+                                targetFaction = settlement.owner;
+                            }
                         }
                         if (targetFaction == null) {
                             targetFaction = reactor.faction;

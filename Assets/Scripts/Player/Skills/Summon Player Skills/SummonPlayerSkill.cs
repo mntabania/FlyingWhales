@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 
 public class SummonPlayerSkill : SpellData {
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SUMMON; } }
@@ -18,11 +19,14 @@ public class SummonPlayerSkill : SpellData {
         Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, PlayerManager.Instance.player.playerFaction, homeRegion: targetTile.parentMap.region as Region, className: className);
         summon.OnSummonAsPlayerMonster();
         CharacterManager.Instance.PlaceSummon(summon, targetTile);
-        if (targetTile.structure?.settlementLocation != null && 
-            targetTile.structure.settlementLocation.locationType != LOCATION_TYPE.VILLAGE) {
+
+        BaseSettlement settlement = null;
+        if (targetTile.IsPartOfSettlement(out settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE) {
             summon.MigrateHomeStructureTo(targetTile.structure);	
         } else {
-            summon.AddTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);    
+            if (targetTile.collectionOwner.isPartOfParentRegionMap) {
+                summon.AddTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);
+            }
         }
         summon.jobQueue.CancelAllJobs();
         Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summon);
