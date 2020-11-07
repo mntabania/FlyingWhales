@@ -461,7 +461,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// <summary>
     /// Make this character subscribe to signals that we never want to remove.
     /// </summary>
-    private void SubscribeToPermanentSignals() {
+    public void SubscribeToPermanentSignals() {
         //had to make name change signal permanent because it is possible for the player to change the name of
         //this characters killer, and we still want to update this character's death log if that happens. 
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
@@ -6189,7 +6189,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //only subscribe to listeners if character is not dead, this is because we expect that dead characters are not listening to any of the normal signals
             SubscribeToSignals();
         }
-        SubscribeToPermanentSignals();
+        if (minion == null) {
+            SubscribeToPermanentSignals();    
+        }
     }
     public void LoadCurrentlyDoingAction() {
         if (marker) {
