@@ -100,7 +100,7 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
             gridTileLocation.CreateSeamlessEdgesForSelfAndNeighbours();
         }
     }
-    public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {
+    public void OnHitByAttackFrom(Character characterThatAttacked, CombatState combatStateOfAttacker, ref string attackSummary) {
         if (characterThatAttacked == null) {
             return;
         }

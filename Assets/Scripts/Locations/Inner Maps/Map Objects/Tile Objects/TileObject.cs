@@ -570,7 +570,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //     demonicStructure.AdjustHP(amount);
         // }
     }
-    public void OnHitByAttackFrom(Character characterThatAttacked, CombatState combat, ref string attackSummary) {
+    public void OnHitByAttackFrom(Character characterThatAttacked, CombatState combatStateOfAttacker, ref string attackSummary) {
         if (characterThatAttacked == null) {
             return;
         }
@@ -587,7 +587,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (characterThatAttacked.marker) {
             for (int i = 0; i < characterThatAttacked.marker.inVisionCharacters.Count; i++) {
                 Character inVision = characterThatAttacked.marker.inVisionCharacters[i];
-                inVision.reactionComponent.ReactToCombat(combat, this);
+                inVision.reactionComponent.ReactToCombat(combatStateOfAttacker, this);
                 inVision.needsComponent.WakeUpFromNoise();
             }
         }

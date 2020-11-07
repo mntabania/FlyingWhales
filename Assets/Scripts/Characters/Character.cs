@@ -454,9 +454,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         marker.InitialPlaceMarkerAt(tile); //since normal characters are already placed in their areas.
         //AddInitialAwareness();
         SubscribeToSignals();
+        SubscribeToPermanentSignals();
     }
 
     #region Signals
+    /// <summary>
+    /// Make this character subscribe to signals that we never want to remove.
+    /// </summary>
+    private void SubscribeToPermanentSignals() {
+        //had to make name change signal permanent because it is possible for the player to change the name of
+        //this characters killer, and we still want to update this character's death log if that happens. 
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+    }
     public virtual void SubscribeToSignals() {
         if (minion != null) {
             logComponent.PrintLogErrorIfActive($"{name} is a minion and has subscribed to the signals!");
@@ -487,7 +496,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
         Messenger.AddListener<Faction, Character>(Signals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
         Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        
         
         needsComponent.SubscribeToSignals();
         jobComponent.SubscribeToListeners();
@@ -523,7 +532,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
         Messenger.RemoveListener<Faction, Character>(Signals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
         Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
 
         needsComponent.UnsubscribeToSignals();
         jobComponent.UnsubscribeListeners();
@@ -628,10 +636,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private void OnCharacterChangedName(Character p_character) {
         if (p_character != this) {
-            UpdateInterruptLogsBasedOnUpdatedCharacter(p_character);    
+            UpdateCurrentLogsBasedOnUpdatedCharacter(p_character);    
         }
     }
-    private void UpdateInterruptLogsBasedOnUpdatedCharacter(Character p_character) {
+    private void UpdateCurrentLogsBasedOnUpdatedCharacter(Character p_character) {
         if (interruptComponent.isInterrupted) {
             //had to force update because for some reason involved objects are empty during this point
             //TODO: Find out why!
@@ -1767,7 +1775,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void RenameCharacter(string p_firstName, string p_lastName) {
         SetFirstAndLastName(p_firstName, p_lastName);
-        UpdateInterruptLogsBasedOnUpdatedCharacter(this); //had to do this since signal order can be inconsistent and the UI Update could happen before the actual logs were updated.
+        UpdateCurrentLogsBasedOnUpdatedCharacter(this); //had to do this since signal order can be inconsistent and the UI Update could happen before the actual logs were updated.
         Messenger.Broadcast(Signals.CHARACTER_CHANGED_NAME, this);
     }
     private string GetDefaultRaceClassName() {
@@ -2399,16 +2407,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Combat Handlers
-    //public void SetCombatCharacter(CombatCharacter combatCharacter) {
-    //    _currentCombatCharacter = combatCharacter;
-    //}
     /// <summary>
     /// This character was hit by an attack.
     /// </summary>
     /// <param name="characterThatAttacked">The character that attacked this.</param>
-    /// <param name="combat">The combat state that the attacker is in.</param>
+    /// <param name="combatStateOfAttacker">The combat state that the attacker is in.</param>
     /// <param name="attackSummary">reference log of what happened.</param>
-    public void OnHitByAttackFrom(Character characterThatAttacked, CombatState combat, ref string attackSummary) {
+    public void OnHitByAttackFrom(Character characterThatAttacked, CombatState combatStateOfAttacker, ref string attackSummary) {
         // CombatManager.Instance.CreateHitEffectAt(this, elementalType);
         if(characterThatAttacked == null) {
             return;
@@ -2416,37 +2421,23 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (currentHP <= 0) {
             return; //if hp is already 0, do not deal damage
         }
-
-        //If someone is attacked, relationship should deteriorate
-        //TODO: SAVE THE allCharactersThatDegradeRel list so when loaded they will not be able to degrade rel again
-        Character responsibleCharacter = null;
-        if (combat != null) {
-            if (combat.currentClosestHostile == this) {
-                //Do not set as responsible character for unconscious trait if character is hit unintentionally
-                //So, only set responsible character if currentClosestHostile is this character, meaning, this character is really the target
-                responsibleCharacter = characterThatAttacked;
-                //if (!state.allCharactersThatDegradedRel.Contains(this)) {
-                //    RelationshipManager.Instance.RelationshipDegradation(characterThatAttacked, this);
-                //    state.AddCharacterThatDegradedRel(this);
-                //}
-            }
-        }
+        
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
         AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true);
         attackSummary += $"\nDealt damage {stateComponent.owner.combatComponent.attack}";
 
-        //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
+        //If the hostile reaches 0 hp, evaluate if he/she dies, get knock out, or get injured
         if (currentHP <= 0) {
             attackSummary += $"\n{name}'s hp has reached 0.";
             if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
-                traitContainer.AddTrait(this, "Unconscious", responsibleCharacter);
+                traitContainer.AddTrait(this, "Unconscious", GetCharacterResponsibleForUnconsciousness(characterThatAttacked, combatStateOfAttacker));
             } else {
                 if (!isDead) {
                     string deathReason = "attacked";
                     if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
                         deathReason = "accidental_attacked";
                     }
-                    Death(deathReason, responsibleCharacter: responsibleCharacter);
+                    Death(deathReason, responsibleCharacter: characterThatAttacked);
                 }
             }
         } else {
@@ -2454,18 +2445,29 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //https://trello.com/c/qxXVulZl/1126-each-non-lethal-attack-has-a-15-chance-of-making-target-unconscious
             if(GameUtilities.RollChance(15)) {
                 if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
-                    traitContainer.AddTrait(this, "Unconscious", responsibleCharacter);
+                    traitContainer.AddTrait(this, "Unconscious", GetCharacterResponsibleForUnconsciousness(characterThatAttacked, combatStateOfAttacker));
                 }
             }
         }
         if (characterThatAttacked.marker) {
             for (int i = 0; i < characterThatAttacked.marker.inVisionCharacters.Count; i++) {
                 Character inVision = characterThatAttacked.marker.inVisionCharacters[i];
-                inVision.reactionComponent.ReactToCombat(combat, this);
+                inVision.reactionComponent.ReactToCombat(combatStateOfAttacker, this);
                 inVision.needsComponent.WakeUpFromNoise();
             }
         }
         Messenger.Broadcast(Signals.CHARACTER_WAS_HIT, this, characterThatAttacked);
+    }
+    private Character GetCharacterResponsibleForUnconsciousness(Character characterThatAttacked, CombatState combatStateOfAttacker) {
+        Character responsibleCharacter = null;
+        if (combatStateOfAttacker != null) {
+            if (combatStateOfAttacker.currentClosestHostile == this) {
+                //attacker will only be responsible for unconscious trait, if he/she attacked this character on purpose.
+                //this is so that the attacker can still try to take a Remove Status Unconscious job targeting this character
+                responsibleCharacter = characterThatAttacked;
+            }
+        }
+        return responsibleCharacter;
     }
     #endregion
 
@@ -5939,6 +5941,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             logComponent.PrintLogIfActive($"{name} died of {cause}");
             Log localDeathLog;
             if (!_deathLog.hasValue) {
+                if (cause == "attacked" && responsibleCharacter == null) {
+                    logComponent.PrintLogErrorIfActive($"{name} died, and reason was attacked, but no responsible character was provided!");
+                }
                 localDeathLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", providedTags: LOG_TAG.Life_Changes);
                 localDeathLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (responsibleCharacter != null) {
