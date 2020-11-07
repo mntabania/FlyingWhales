@@ -21,17 +21,20 @@ public class MineBehaviour : CharacterBehaviourComponent {
         LocationGridTile targetTile = character.behaviourComponent.targetMiningTile;
         if (targetTile == null) {
             HexTile nearestCaveTile = GetNearestCaveTile(character);
-            if (nearestCaveTile != null) {
+            if (nearestCaveTile != null && nearestCaveTile.locationGridTiles != null && nearestCaveTile.locationGridTiles.Count > 0) {
                 List<LocationGridTile> tileChoices = nearestCaveTile.locationGridTiles.Where(x => x.isOccupied == false && x.structure.structureType == STRUCTURE_TYPE.CAVE).ToList();
                 targetTile = CollectionUtilities.GetRandomElement(tileChoices);
             } else {
-                Cave cave = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CAVE) as Cave;
-                Assert.IsNotNull(cave, $"Cave in mine behaviour of {character} is null");
-                targetTile = CollectionUtilities.GetRandomElement(cave.unoccupiedTiles);
+                if(character.currentRegion != null) {
+                    Cave cave = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CAVE) as Cave;
+                    //Assert.IsNotNull(cave, $"Cave in mine behaviour of {character} is null");
+                    if(cave != null && cave.unoccupiedTiles != null && cave.unoccupiedTiles.Count > 0) {
+                        targetTile = CollectionUtilities.GetRandomElement(cave.unoccupiedTiles);
+                    }
+                }
             }
             character.behaviourComponent.SetTargetMiningTile(targetTile);
         }
-
         // if (character.movementComponent.HasPathTo(character.behaviourComponent.targetMiningTile)) {
         //     character.behaviourComponent.SetCurrentMiningPath(null);
         //     Debug.Log($"Has Path for {character.name} towards {character.behaviourComponent.targetMiningTile}!");
