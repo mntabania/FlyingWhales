@@ -586,7 +586,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private void SpawnRevenant(Character responsibleCharacter, LocationGridTile deathTile) {
-        BaseSettlement homeSettlement = deathTile.structure.settlementLocation;
+        BaseSettlement homeSettlement = null;
+        deathTile.IsPartOfSettlement(out homeSettlement);
         Region homeRegion = deathTile.structure.region;
 
         if(homeSettlement == null) {
@@ -2048,10 +2049,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetHasRisen(bool state) {
         hasRisen = state;
-    }
-    public bool IsAtTerritory() {
-        HexTile hex = hexTileLocation;
-        return territories.Count > 0 && hex != null && territories.Contains(hex);
     }
     public bool IsInDanger() {
         return traitContainer.HasTrait("Restrained") && !IsInHomeSettlement();
@@ -5611,17 +5608,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool HasTerritory() {
         return territories.Count > 0;
     }
-    public bool IsInTerritory() {
-        if (gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            return territories.Contains(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
-        }
-        return false;
-    }
     public bool IsTerritory(HexTile hex) {
         if(territories.Count > 0) {
             return territories.Contains(hex);
         }
         return false;
+    }
+    public bool IsInTerritory() {
+        HexTile hex = hexTileLocation;
+        return territories.Count > 0 && hex != null && territories.Contains(hex);
     }
     public LocationGridTile GetRandomLocationGridTileWithPath() {
         LocationGridTile chosenTile = null;

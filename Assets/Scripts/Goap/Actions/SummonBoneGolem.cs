@@ -34,7 +34,7 @@ public class SummonBoneGolem : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             //Only advertise summon of bone golem if cult altar is in cult temple and is inside the home settlement of actors
-            return poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.CULT_TEMPLE && poiTarget.gridTileLocation.structure.settlementLocation == actor.homeSettlement;
+            return poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.CULT_TEMPLE && poiTarget.gridTileLocation.IsPartOfSettlement(actor.homeSettlement);
         }
         return false;
     }
@@ -68,7 +68,7 @@ public class SummonBoneGolem : GoapAction {
                                         target = targetCorpse.grave;
                                     }
                                     if (target.gridTileLocation == null || target.mapObjectVisual == null || target.isBeingCarriedBy != null || target.isBeingSeized || target.gridTileLocation.structure.structureType != STRUCTURE_TYPE.CULT_TEMPLE
-                                        || target.gridTileLocation.structure.settlementLocation == null || target.gridTileLocation.structure.settlementLocation != node.actor.homeSettlement) {
+                                        || !target.gridTileLocation.IsPartOfSettlement(node.actor.homeSettlement)) {
                                         invalidity.isInvalid = true;
                                         break;
                                     }

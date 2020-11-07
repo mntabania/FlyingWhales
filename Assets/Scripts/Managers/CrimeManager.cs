@@ -7,6 +7,7 @@ using Traits;
 using Interrupts;
 using Crime_System;
 using UtilityScripts;
+using Locations.Settlements;
 
 public class CrimeManager : BaseMonoBehaviour {
     public static CrimeManager Instance;
@@ -201,11 +202,12 @@ public class CrimeManager : BaseMonoBehaviour {
                     }
                 } else if (target is TileObject targetTileObject && !targetTileObject.IsOwnedBy(actor)) {
                     //added checking for gridTileLocation because targetTileObject could've been destroyed already. 
-                    LocationStructure structureLocation = targetTileObject.gridTileLocation != null ? targetTileObject.structureLocation : targetTileObject.previousTile.structure;
-                    if(structureLocation != null) {
-                        if (structureLocation.settlementLocation != null
-                        && (structureLocation.settlementLocation.locationType == LOCATION_TYPE.VILLAGE)) {
-                            return CRIME_SEVERITY.Misdemeanor;
+                    if(targetTileObject.gridTileLocation != null) {
+                        BaseSettlement settlement = null;
+                        if (targetTileObject.gridTileLocation.IsPartOfSettlement(out settlement)) {
+                            if(settlement.locationType == LOCATION_TYPE.VILLAGE) {
+                                return CRIME_SEVERITY.Misdemeanor;
+                            }
                         }
                     }
                 }

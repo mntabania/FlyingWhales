@@ -83,36 +83,39 @@ public class DragonBehaviour : CharacterBehaviourComponent {
                         dragon.SetVillageTargetStructure();
                     }
                     if(dragon.targetStructure != null) {
-                        log += $"\n-Has target village: " + dragon.targetStructure.settlementLocation.name;
-                        if (character.currentStructure.settlementLocation == dragon.targetStructure.settlementLocation) {
-                            log += $"\n-Character is already in target settlement";
-                            Character target = character.currentStructure.settlementLocation.GetRandomAliveResidentInsideSettlement();
-                            if (target != null) {
-                                log += $"\n-Chosen target is {target.name}";
-                                character.combatComponent.Fight(target, CombatManager.Hostility);
-                                return true;
-                            } else {
-                                log += $"\n-No target character, will attack area";
-                                LocationStructure randomStructure = character.currentStructure.settlementLocation.GetRandomStructure();
-                                LocationGridTile randomTile = randomStructure.GetRandomTile();
-                                character.combatComponent.Fight(randomTile.genericTileObject, CombatManager.Hostility);
-                                return true;
-                            }
-                        } else {
-                            log += $"\n-Character is not in target settlement, go to it";
-                            if(dragon.targetStructure.settlementLocation != null) {
-                                LocationStructure targetStructure = dragon.targetStructure.settlementLocation.GetRandomStructure();
-                                if(targetStructure != null) {
-                                    LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
-                                    if(character.jobComponent.CreateGoToJob(targetTile, out producedJob)) {
+                        BaseSettlement targetSettlement = dragon.targetStructure.settlementLocation;
+                        if(targetSettlement != null) {
+                            log += $"\n-Has target village: " + targetSettlement.name;
+                            if (character.gridTileLocation != null) {
+                                if (character.gridTileLocation.IsPartOfSettlement(targetSettlement)) {
+                                    log += $"\n-Character is already in target settlement";
+                                    Character target = targetSettlement.GetRandomAliveResidentInsideSettlement();
+                                    if (target != null) {
+                                        log += $"\n-Chosen target is {target.name}";
+                                        character.combatComponent.Fight(target, CombatManager.Hostility);
                                         return true;
+                                    } else {
+                                        log += $"\n-No target character, will attack area";
+                                        LocationStructure randomStructure = targetSettlement.GetRandomStructure();
+                                        LocationGridTile randomTile = randomStructure.GetRandomTile();
+                                        character.combatComponent.Fight(randomTile.genericTileObject, CombatManager.Hostility);
+                                        return true;
+                                    }
+                                } else {
+                                    log += $"\n-Character is not in target settlement, go to it";
+                                    LocationStructure targetStructure = targetSettlement.GetRandomStructure();
+                                    if (targetStructure != null) {
+                                        LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
+                                        if (character.jobComponent.CreateGoToJob(targetTile, out producedJob)) {
+                                            return true;
+                                        }
                                     }
                                 }
                             }
-                            log += $"\n-Cannot go to target settlement, roam";
-                            character.jobComponent.TriggerRoamAroundStructure(out producedJob);
-                            return true;
                         }
+                        log += $"\n-Cannot go to target settlement, roam";
+                        character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                        return true;
                     } else {
                         log += $"\n-Still no target village, roam";
                         character.jobComponent.TriggerRoamAroundTile(out producedJob);
@@ -123,8 +126,4 @@ public class DragonBehaviour : CharacterBehaviourComponent {
         }
 		return false;
 	}
-
-    private void OnArriveAtLeaveWorldTargetTile(Dragon dragon) {
-
-    }
 }

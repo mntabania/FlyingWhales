@@ -446,11 +446,11 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
     #region Judge Prisoner
     public void TryCreateJudgePrisoner(Character target) {
 		if (target.traitContainer.HasTrait("Restrained") && target.traitContainer.HasTrait("Criminal")
-		    && target.currentStructure.settlementLocation is NPCSettlement
-		    && target.currentStructure.settlementLocation == _owner
+            && target.gridTileLocation != null
+		    && target.gridTileLocation.IsPartOfSettlement(_owner)
             && _owner.owner != null) {
-            NPCSettlement npcSettlement = target.currentStructure.settlementLocation as NPCSettlement;
-            if(npcSettlement.prison == target.currentStructure && !npcSettlement.HasJob(JOB_TYPE.JUDGE_PRISONER, target)) {
+            NPCSettlement npcSettlement = _owner as NPCSettlement;
+            if(npcSettlement != null && npcSettlement.prison == target.currentStructure && !npcSettlement.HasJob(JOB_TYPE.JUDGE_PRISONER, target)) {
                 if (!target.HasJobTargetingThis(JOB_TYPE.JUDGE_PRISONER)) {
                     if (target.crimeComponent.IsWantedBy(_owner.owner)) {
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.JUDGE_CHARACTER, target, _owner);
@@ -985,7 +985,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
             }
             if (target.isDead && targetPOI.gridTileLocation != null && targetPOI.mapObjectVisual) {
 
-                if (targetPOI.gridTileLocation.structure.settlementLocation == _owner) {
+                if (targetPOI.gridTileLocation.IsPartOfSettlement(_owner)) {
                     //If the target is inside this settlement, only take corpse those corpses that are not in the cult temple
                     //We should not take corpses from our own settlement that are already in the Cult Temple
                     if (targetPOI.gridTileLocation.structure.structureType != STRUCTURE_TYPE.CULT_TEMPLE) {
@@ -993,7 +993,11 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
                         targetWeights.AddElement(targetPOI, 50);
                     }
                 } else {
-                    Faction targetLocationFactionOwner = targetPOI.gridTileLocation.structure.settlementLocation?.owner;
+                    BaseSettlement settlement = null;
+                    Faction targetLocationFactionOwner = null;
+                    if (targetPOI.gridTileLocation.IsPartOfSettlement(out settlement)) {
+                        targetLocationFactionOwner = settlement.owner;
+                    }
                     int weight = 50;
                     if(factionOwner != null && targetLocationFactionOwner != null && factionOwner.IsHostileWith(targetLocationFactionOwner)) {
                         //Corpses that are inside the settlement of a hostile faction should be less likely to be targeted

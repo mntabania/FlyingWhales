@@ -4,6 +4,7 @@ using UnityEngine;
 using Traits;
 using Inner_Maps;
 using UtilityScripts;
+using Locations.Settlements;
 
 public class Drink : GoapAction {
 
@@ -25,9 +26,10 @@ public class Drink : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
-        if(target.gridTileLocation != null && target.gridTileLocation.structure.settlementLocation != null && target.gridTileLocation.structure.settlementLocation.owner != null) {
-            Faction targetFaction = target.gridTileLocation.structure.settlementLocation.owner;
-            if(actor.faction != null && actor.faction.IsHostileWith(targetFaction)) {
+        BaseSettlement settlement = null;
+        if(target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(out settlement)) {
+            Faction targetFaction = settlement.owner;
+            if(actor.faction != null && targetFaction != null && actor.faction.IsHostileWith(targetFaction)) {
                 //Do not drink on hostile faction's taverns
                 costLog += $" +2000(Location of target is in hostile faction of actor)";
                 actor.logComponent.AppendCostLog(costLog);

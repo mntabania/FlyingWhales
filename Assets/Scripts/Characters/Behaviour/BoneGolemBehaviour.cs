@@ -13,7 +13,7 @@ public class BoneGolemBehaviour : CharacterBehaviourComponent {
         priority = 8;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-        if (character.isAtHomeStructure || character.IsInHomeSettlement() || character.IsAtTerritory()) {
+        if (character.isAtHomeStructure || character.IsInHomeSettlement() || character.IsInTerritory()) {
             Character hostile = GetFirstHostileIntruder(character);
             if(hostile != null) {
                 character.combatComponent.Fight(hostile, CombatManager.Hostility);

@@ -45,7 +45,7 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                                 chosenTileObject = tileObject;
                             }
                             if (chosenTileObject != null) {
-                                character.combatComponent.Fight(chosenTileObject, CombatManager.Hostility);
+                                character.combatComponent.Fight(chosenTileObject, CombatManager.Clear_Demonic_Intrusion);
                                 return true;
                             } else {
                                 log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
@@ -202,7 +202,7 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                             chosenTileObject = tileObject;
                         }
                         if (chosenTileObject != null) {
-                            character.combatComponent.Fight(chosenTileObject, CombatManager.Hostility);
+                            character.combatComponent.Fight(chosenTileObject, CombatManager.Clear_Demonic_Intrusion);
                             return true;
                         } else {
                             log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
