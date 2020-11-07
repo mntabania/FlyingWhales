@@ -6189,6 +6189,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //only subscribe to listeners if character is not dead, this is because we expect that dead characters are not listening to any of the normal signals
             SubscribeToSignals();
         }
+        SubscribeToPermanentSignals();
     }
     public void LoadCurrentlyDoingAction() {
         if (marker) {
