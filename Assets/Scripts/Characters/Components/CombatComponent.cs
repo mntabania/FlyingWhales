@@ -913,7 +913,7 @@ public class CombatComponent : CharacterComponent {
                         key = "Butcher";
                         break;
                     case JOB_TYPE.APPREHEND:
-                        key = "Apprehend";
+                        key = CombatManager.Apprehend;
                         break;
                     case JOB_TYPE.RITUAL_KILLING:
                         key = "Ritual Killing";
@@ -942,11 +942,11 @@ public class CombatComponent : CharacterComponent {
                         break;
                     case JOB_TYPE.CAPTURE_CHARACTER:
                         if (owner is Troll) {
-                            key = "Abduct";
+                            key = CombatManager.Abduct;
                         }
                         break;
                     case JOB_TYPE.KIDNAP_RAID:
-                        key = "Raid";
+                        key = CombatManager.Raid;
                         break;
                 }
             } else {
@@ -957,10 +957,103 @@ public class CombatComponent : CharacterComponent {
                             key = "Anger_Target";
                         }
                     }
+                } else if (key == CombatManager.Hostility) {
+                    key = GetHostilityReason(target, combatData);
+                } else if (key == CombatManager.Retaliation) {
+                    key = GetRetaliationReason(target, combatData);
                 }
             }
         }
         return key;
+    }
+    private string GetRetaliationReason(IPointOfInterest target, CombatData combatData) {
+        //Get reason of the target towards this character to know why target attacked this character in the first place
+        //Because if the reason is Retaliation we assume that the target attacked this character first
+        if(target is Character targetCharacter) {
+            string reason = targetCharacter.combatComponent.GetCombatLogKeyReason(owner);
+            if(!string.IsNullOrEmpty(reason)) {
+                if(reason == CombatManager.Apprehend) {
+                    return CombatManager.Resisting_Arrest;
+                } else if (reason == CombatManager.Abduct) {
+                    return CombatManager.Resisting_Abduction;
+                }
+            }
+        }
+        return CombatManager.Defending_Self;
+    }
+    private string GetHostilityReason(IPointOfInterest target, CombatData combatData) {
+        Character targetCharacter = target as Character;
+        if (owner.partyComponent.isMemberThatJoinedQuest) {
+            PartyQuest quest = owner.partyComponent.currentParty.currentQuest;
+            if(quest is RaidPartyQuest raidQuest && raidQuest.targetSettlement != null) {
+                if(targetCharacter != null) {
+                    if(targetCharacter.homeSettlement == raidQuest.targetSettlement) {
+                        return CombatManager.Raid;
+                    }
+                } else if (target is TileObject) {
+                    if(target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(raidQuest.targetSettlement)) {
+                        return CombatManager.Raid;
+                    }
+                }
+            }
+        }
+        if (targetCharacter != null) {
+            if(owner.IsInHomeSettlement()) {
+                if(targetCharacter.homeSettlement != owner.homeSettlement) {
+                    return CombatManager.Defending_Territory;
+                }
+            } else if (owner.IsInTerritory()) {
+                if (!targetCharacter.IsTerritory(owner.hexTileLocation)) {
+                    return CombatManager.Defending_Territory;
+                }
+            }
+        }
+        if(owner.faction != null) {
+            if(owner.faction == FactionManager.Instance.neutralFaction) {
+                return CombatManager.Feral_Monster;
+            } else if (owner.faction == FactionManager.Instance.undeadFaction) {
+                return CombatManager.Hostile_Undead;
+            }
+        }
+
+        if(targetCharacter != null) {
+            if (owner.minion != null && targetCharacter.faction != null && targetCharacter.faction.isMajorNonPlayer) {
+                if (combatData.isLethal) {
+                    return CombatManager.Slaying_Villager;
+                } else {
+                    return CombatManager.Incapacitating_Villager;
+                }
+            }
+            if (targetCharacter.minion != null) {
+                if (combatData.isLethal) {
+                    return CombatManager.Slaying_Demon;
+                } else {
+                    return CombatManager.Incapacitating_Demon;
+                }
+            }
+            if(targetCharacter.faction != null) {
+                if (targetCharacter.faction == FactionManager.Instance.vagrantFaction) {
+                    return CombatManager.Fighting_Vagrant;
+                } else if (targetCharacter.faction == FactionManager.Instance.neutralFaction) {
+                    if (combatData.isLethal) {
+                        return CombatManager.Slaying_Monster;
+                    } else {
+                        return CombatManager.Incapacitating_Monster;
+                    }
+                } else if (targetCharacter.faction == FactionManager.Instance.undeadFaction) {
+                    if (combatData.isLethal) {
+                        return CombatManager.Slaying_Undead;
+                    } else {
+                        return CombatManager.Incapacitating_Undead;
+                    }
+                }
+                if (owner.faction != null && owner.faction.IsHostileWith(targetCharacter.faction)) {
+                    return CombatManager.Warring_Factions;
+                }
+            }
+        }
+        //default is still Hostility
+        return CombatManager.Hostility;
     }
     #endregion
 

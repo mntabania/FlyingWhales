@@ -17,15 +17,17 @@ public class CombatManager : BaseMonoBehaviour {
     public const int pursueDuration = 4;
     public const string Hostility = "Hostility", Retaliation = "Retaliation", Berserked = "Berserked", Action = "Action",
         Threatened = "Threatened", Anger = "Anger", Join_Combat = "Join Combat", Drunk = "Drunk", Rage = "Rage", Demon_Kill = "Demon Kill", Dig = "Dig",
-        Avoiding_Witnesses = "Avoiding Witnesses", Encountered_Hostile = "Encountered Hostile", Clear_Demonic_Intrusion = "Clear_Demonic_Intrusion";
+        Avoiding_Witnesses = "Avoiding Witnesses", Encountered_Hostile = "Encountered Hostile", Clear_Demonic_Intrusion = "Clear_Demonic_Intrusion", Abduct = "Abduct", Apprehend = "Apprehend";
 
     //Hostility reasons
     public const string Raid = "Raid", Warring_Factions = "Warring_Factions",
-        Slaying_Monster = "Slaying_Monster", Slaying_Undead = "Slaying_Undead", Fighting_Vagrant = "Fighting_Vagrant", Feral_Monster = "Feral_Monster",
-        Hostile_Undead = "Hostile_Undead", Brawl = "Brawl";
+        Slaying_Monster = "Slaying_Monster", Slaying_Undead = "Slaying_Undead", Slaying_Demon = "Slaying_Demon", Slaying_Villager = "Slaying_Villager",
+        Incapacitating_Monster = "Incapacitating_Monster", Incapacitating_Undead = "Incapacitating_Undead", Incapacitating_Demon = "Incapacitating_Demon", Incapacitating_Villager = "Incapacitating_Villager",
+        Fighting_Vagrant = "Fighting_Vagrant", Feral_Monster = "Feral_Monster",
+        Hostile_Undead = "Hostile_Undead", Defending_Territory = "Defending_Territory";
 
     //Retaliation reasons
-    public const string Resisting_Arrest = "Resisting_Arrest", Resisting_Abduction = "Resisting_Abduction", Defending_Territory = "Defending_Territory", Defending_Self = "Defending_Self";
+    public const string Resisting_Arrest = "Resisting_Arrest", Resisting_Abduction = "Resisting_Abduction", Defending_Self = "Defending_Self";
 
 
 
