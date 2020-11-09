@@ -20,13 +20,18 @@ public class Steal : GoapAction {
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, GOAP_EFFECT_TARGET.ACTOR));
 
     }
-    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData) {
-        List <GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
+    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+        List<GoapEffect> ee = ObjectPoolManager.Instance.CreateNewExpectedEffectsList();
+        List<GoapEffect> baseEE = base.GetExpectedEffects(actor, target, otherData, out isOverridden);
+        if(baseEE != null && baseEE.Count > 0) {
+            ee.AddRange(baseEE);
+        }
         TileObject item = target as TileObject;
         ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = item.name, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
         if (actor.traitContainer.HasTrait("Kleptomaniac")) {
-            ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
+            ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
         }
+        isOverridden = true;
         return ee;
     }
     public override void Perform(ActualGoapNode goapNode) {

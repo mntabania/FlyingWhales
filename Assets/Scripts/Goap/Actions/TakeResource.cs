@@ -19,17 +19,23 @@ public class TakeResource : GoapAction {
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.TAKE_POI, GOAP_EFFECT_TARGET.ACTOR));
     }
-    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData) {
-        List<GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
-        if(target is ResourcePile) {
+    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+        if (target is ResourcePile) {
+            List<GoapEffect> ee = ObjectPoolManager.Instance.CreateNewExpectedEffectsList();
+            List<GoapEffect> baseEE = base.GetExpectedEffects(actor, target, otherData, out isOverridden);
+            if (baseEE != null && baseEE.Count > 0) {
+                ee.AddRange(baseEE);
+            }
             ResourcePile pile = target as ResourcePile;
             ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_POI, conditionKey = pile.name, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
+            isOverridden = true;
+            return ee;
         } 
         //NOTE: UNCOMMENT THIS IF WE WANT CHARACTERS TO TAKE FOOD FROM OTHER TABLES
         //else if (target is Table) {
         //    ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
         //}
-        return ee;
+        return base.GetExpectedEffects(actor, target, otherData, out isOverridden);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);

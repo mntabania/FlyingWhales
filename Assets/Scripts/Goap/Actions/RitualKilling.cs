@@ -38,18 +38,22 @@ public class RitualKilling : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData) {
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
         if (target is Character) {
+            List<Precondition> baseP = base.GetPreconditions(actor, target, otherData, out isOverridden);
+            List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
+            p.AddRange(baseP);
+
             Character targetCharacter = target as Character;
-            List<Precondition> p = new List<Precondition>();
             if (actor.homeStructure == targetCharacter.currentStructure) {
                 p.Add(atHomePrecondition);
             } else {
                 p.Add(notAtHomePrecondition);
             }
+            isOverridden = true;
             return p;
         }
-        return base.GetPreconditions(actor, target, otherData);
+        return base.GetPreconditions(actor, target, otherData, out isOverridden);
     }
     //public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
     //    GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);

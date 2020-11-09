@@ -25,6 +25,19 @@ public class DrinkBlood : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Lethargic", target = GOAP_EFFECT_TARGET.TARGET });
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, GOAP_EFFECT_TARGET.ACTOR));
     }
+    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+        if (actor.traitContainer.HasTrait("Vampire")) {
+            List<GoapEffect> ee = ObjectPoolManager.Instance.CreateNewExpectedEffectsList();
+            List<GoapEffect> baseEE = base.GetExpectedEffects(actor, target, otherData, out isOverridden);
+            if (baseEE != null && baseEE.Count > 0) {
+                ee.AddRange(baseEE);
+            }
+            ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
+            isOverridden = true;
+            return ee;
+        }
+        return base.GetExpectedEffects(actor, target, otherData, out isOverridden);
+    }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Drink Success", goapNode);

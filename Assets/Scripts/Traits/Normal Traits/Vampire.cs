@@ -33,7 +33,7 @@ namespace Traits {
             canBeTriggered = true;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED_SELF, INTERACTION_TYPE.DISPEL };
             awareCharacters = new List<Character>();
-            AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Expected_Effect_Trait);
+            //AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Expected_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Before_Start_Flee);
             AddTraitOverrideFunctionIdentifier(TraitManager.After_Exiting_Combat);
@@ -124,11 +124,11 @@ namespace Traits {
             }
             return base.TriggerFlaw(character);
         }
-        public override void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref List<GoapEffect> effects) {
-            if (action == INTERACTION_TYPE.DRINK_BLOOD) {
-                effects.Add(new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
-            }
-        }
+        //public override void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref List<GoapEffect> effects) {
+        //    if (action == INTERACTION_TYPE.DRINK_BLOOD) {
+        //        effects.Add(new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
+        //    }
+        //}
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Character targetCharacter && targetCharacter.advertisedActions.Contains(INTERACTION_TYPE.DRINK_BLOOD) && characterThatWillDoJob.needsComponent.isStarving) {
                 if (!characterThatWillDoJob.relationshipContainer.IsFriendsWith(targetCharacter) &&

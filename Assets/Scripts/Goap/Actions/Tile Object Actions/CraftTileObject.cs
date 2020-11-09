@@ -20,7 +20,7 @@ public class CraftTileObject : GoapAction {
     //protected override void ConstructBasePreconditionsAndEffects() {
     //    AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasSupply);
     //}
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData) {
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
         if(target is TileObject tileObject) {
             TileObjectRecipe recipe = default;
             if (otherData != null && otherData.Length == 1) {
@@ -32,7 +32,9 @@ public class CraftTileObject : GoapAction {
                     data.TryGetPossibleRecipe(actor.currentRegion, out recipe);
                 }
             }
-            List<Precondition> p = new List<Precondition>();
+            List<Precondition> baseP = base.GetPreconditions(actor, target, otherData, out isOverridden);
+            List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
+            p.AddRange(baseP);
             if (recipe.hasValue) {
                 for (int i = 0; i < recipe.ingredients.Length; i++) {
                     TileObjectRecipeIngredient ingredient = recipe.ingredients[i];
@@ -48,9 +50,10 @@ public class CraftTileObject : GoapAction {
                     }
                 }    
             }
+            isOverridden = true;
             return p;
         }
-        return base.GetPreconditions(actor, target, otherData);
+        return base.GetPreconditions(actor, target, otherData, out isOverridden);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);

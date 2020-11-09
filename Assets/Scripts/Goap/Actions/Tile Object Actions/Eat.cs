@@ -22,13 +22,16 @@ public class Eat : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.STAMINA_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData) {
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
         if (target is Table) { // || target is FoodPile
-            List<Precondition> p = new List<Precondition>(base.GetPreconditions(actor, target, otherData));
+            List<Precondition> baseP = base.GetPreconditions(actor, target, otherData, out isOverridden);
+            List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
+            p.AddRange(baseP);
             p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile" /*+ (int)otherData[0]*/, false, GOAP_EFFECT_TARGET.TARGET), HasFood));
+            isOverridden = true;
             return p;
         }
-        return base.GetPreconditions(actor, target, otherData);
+        return base.GetPreconditions(actor, target, otherData, out isOverridden);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);

@@ -24,6 +24,8 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     public List<Party> _partyPool { get; private set; }
     public List<GoapThread> _goapThreadPool { get; private set; }
     private List<LogDatabaseThread> _logDatabaseThreadPool;
+    private List<List<GoapEffect>> _expectedEffectsListPool;
+    private List<List<Precondition>> _preconditionsListPool;
 
     private void Awake() {
         Instance = this;
@@ -53,6 +55,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructPartyPool();
         ConstructGoapThreadPool();
         ConstructLogDatabaseThreadPool();
+        ConstructExpectedEffectsListPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -274,6 +277,28 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         return new Party();
     }
     #endregion
+    
+    #region Database Thread
+    private void ConstructLogDatabaseThreadPool() {
+        _logDatabaseThreadPool = new List<LogDatabaseThread>();
+    }
+    public LogDatabaseThread CreateNewLogDatabaseThread() {
+        LogDatabaseThread data = GetLogDatabaseThreadFromPool();
+        return data;
+    }
+    public void ReturnLogDatabaseThreadToPool(LogDatabaseThread data) {
+        data.Reset();
+        _logDatabaseThreadPool.Add(data);
+    }
+    private LogDatabaseThread GetLogDatabaseThreadFromPool() {
+        if (_logDatabaseThreadPool.Count > 0) {
+            LogDatabaseThread data = _logDatabaseThreadPool[0];
+            _logDatabaseThreadPool.RemoveAt(0);
+            return data;
+        }
+        return new LogDatabaseThread();
+    }
+    #endregion
 
     #region Goap Thread
     private void ConstructGoapThreadPool() {
@@ -296,26 +321,48 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         return new GoapThread();
     }
     #endregion
-    
-    #region Database Thread
-    private void ConstructLogDatabaseThreadPool() {
-        _logDatabaseThreadPool = new List<LogDatabaseThread>();
+
+    #region Goap Action Expected Effects
+    private void ConstructExpectedEffectsListPool() {
+        _expectedEffectsListPool = new List<List<GoapEffect>>();
     }
-    public LogDatabaseThread CreateNewLogDatabaseThread() {
-        LogDatabaseThread data = GetLogDatabaseThreadFromPool();
+    public List<GoapEffect> CreateNewExpectedEffectsList() {
+        List<GoapEffect> data = GetExpectedEffectsListFromPool();
         return data;
     }
-    public void ReturnLogDatabaseThreadToPool(LogDatabaseThread data) {
-        data.Reset();
-        _logDatabaseThreadPool.Add(data);
+    public void ReturnExpectedEffectsListToPool(List<GoapEffect> data) {
+        data.Clear();
+        _expectedEffectsListPool.Add(data);
     }
-    private LogDatabaseThread GetLogDatabaseThreadFromPool() {
-        if (_logDatabaseThreadPool.Count > 0) {
-            LogDatabaseThread data = _logDatabaseThreadPool[0];
-            _logDatabaseThreadPool.RemoveAt(0);
+    private List<GoapEffect> GetExpectedEffectsListFromPool() {
+        if (_expectedEffectsListPool.Count > 0) {
+            List<GoapEffect> data = _expectedEffectsListPool[0];
+            _expectedEffectsListPool.RemoveAt(0);
             return data;
         }
-        return new LogDatabaseThread();
+        return new List<GoapEffect>();
+    }
+    #endregion
+
+    #region Goap Action Preconditions
+    private void ConstructPreconditionListPool() {
+        _preconditionsListPool = new List<List<Precondition>>();
+    }
+    public List<Precondition> CreateNewPreconditionsList() {
+        List<Precondition> data = GetPreconditionsListFromPool();
+        return data;
+    }
+    public void ReturnPreconditionsListToPool(List<Precondition> data) {
+        data.Clear();
+        _preconditionsListPool.Add(data);
+    }
+    private List<Precondition> GetPreconditionsListFromPool() {
+        if (_preconditionsListPool.Count > 0) {
+            List<Precondition> data = _preconditionsListPool[0];
+            _preconditionsListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<Precondition>();
     }
     #endregion
 
@@ -343,6 +390,8 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _partyPool = null;
         _logDatabaseThreadPool?.Clear();
         _logDatabaseThreadPool = null;
+        _expectedEffectsListPool?.Clear();
+        _expectedEffectsListPool = null;
         base.OnDestroy();
         Instance = null;
     }

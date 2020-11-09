@@ -22,7 +22,7 @@ public class TraitManager : BaseMonoBehaviour {
     public const string Execute_Pre_Effect_Trait = "Execute_Pre_Effect_Trait";
     public const string Execute_Per_Tick_Effect_Trait = "Execute_Pre_Effect_Trait";
     public const string Execute_After_Effect_Trait = "Execute_Pre_Effect_Trait";
-    public const string Execute_Expected_Effect_Trait = "Execute_Expected_Effect_Trait";
+    //public const string Execute_Expected_Effect_Trait = "Execute_Expected_Effect_Trait";
     public const string Start_Perform_Trait = "Start_Perform_Trait";
     public const string Death_Trait = "Death_Trait";
     public const string Tick_Ended_Trait = "Tick_Ended_Trait";

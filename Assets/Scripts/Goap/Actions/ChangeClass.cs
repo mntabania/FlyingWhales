@@ -16,12 +16,18 @@ public class ChangeClass : GoapAction {
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.CHANGE_CLASS, GOAP_EFFECT_TARGET.ACTOR));
     }
-    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData) {
-        List<GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
-        if(otherData != null && otherData.Length > 0) {
+    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+        if (otherData != null && otherData.Length > 0) {
+            List<GoapEffect> ee = ObjectPoolManager.Instance.CreateNewExpectedEffectsList();
+            List<GoapEffect> baseEE = base.GetExpectedEffects(actor, target, otherData, out isOverridden);
+            if (baseEE != null && baseEE.Count > 0) {
+                ee.AddRange(baseEE);
+            }
             ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.CHANGE_CLASS, conditionKey = (string) otherData[0].obj, target = GOAP_EFFECT_TARGET.ACTOR });
+            isOverridden = true;
+            return ee;
         }
-        return ee;
+        return base.GetExpectedEffects(actor, target, otherData, out isOverridden);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);

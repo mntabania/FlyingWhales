@@ -21,8 +21,12 @@ public class ExtractItem : GoapAction {
         //AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Ice", false, GOAP_EFFECT_TARGET.ACTOR));
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_POI, GOAP_EFFECT_TARGET.ACTOR));
     }
-    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData) {
-        List<GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
+    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+        List<GoapEffect> ee = ObjectPoolManager.Instance.CreateNewExpectedEffectsList();
+        List<GoapEffect> baseEE = base.GetExpectedEffects(actor, target, otherData, out isOverridden);
+        if (baseEE != null && baseEE.Count > 0) {
+            ee.AddRange(baseEE);
+        }
         if (target.traitContainer.HasTrait("Wet")) {
             ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Water Flask", false, GOAP_EFFECT_TARGET.ACTOR));
         }
@@ -32,6 +36,7 @@ public class ExtractItem : GoapAction {
         if (target.traitContainer.HasTrait("Frozen") || target is SnowMound) {
             ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Ice", false, GOAP_EFFECT_TARGET.ACTOR));
         }
+        isOverridden = true;
         return ee;
     }
     //protected override void ConstructBasePreconditionsAndEffects() {
