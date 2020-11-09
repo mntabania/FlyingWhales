@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
 using Locations.Tile_Features;
@@ -8,8 +9,7 @@ using Traits;
 
 public class TakeShelter : GoapAction {
 
-    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
-
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.INDIRECT;
     public TakeShelter() : base(INTERACTION_TYPE.TAKE_SHELTER) {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
         actionIconString = GoapActionStateDB.Cowering_Icon;
@@ -22,7 +22,7 @@ public class TakeShelter : GoapAction {
     #region Overrides
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         OtherData[] otherData = node.otherData;
-        if (otherData != null && otherData.Length == 1) {
+        if (otherData != null && otherData.Length == 2) {
             if (otherData[0].obj is LocationStructure) {
                 return otherData[0].obj as LocationStructure;
             } 
@@ -32,26 +32,14 @@ public class TakeShelter : GoapAction {
     public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
         base.AddFillersToLog(ref log, node);
         OtherData[] otherData = node.otherData;
-        if (otherData != null && otherData.Length >= 1) {
-            if (otherData[0].obj is LocationStructure) {
-                LocationStructure structure = otherData[0].obj as LocationStructure; 
+        if (otherData != null && otherData.Length == 2) {
+            if (otherData[0].obj is LocationStructure structure) {
                 log.AddToFillers(structure, structure.GetNameRelativeTo(node.actor), LOG_IDENTIFIER.LANDMARK_1);
+            }
+            if (otherData[1] is StringOtherData stringOtherData) {
+                log.AddToFillers(null, stringOtherData.str, LOG_IDENTIFIER.STRING_1);
             } 
         }
-        string traits = string.Empty;
-        if (node.actor.traitContainer.HasTrait("Freezing")) {
-            traits += "Freezing"; 
-        }
-        if (node.actor.traitContainer.HasTrait("Overheating")) {
-            if(traits != string.Empty) {
-                traits += " and ";
-            }
-            traits += "Overheating";
-        }
-        if (traits != string.Empty) {
-            log.AddToFillers(null, traits, LOG_IDENTIFIER.STRING_1);
-        }
-
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);

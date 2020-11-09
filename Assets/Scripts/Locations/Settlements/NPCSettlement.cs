@@ -150,8 +150,13 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void LoadResidents(SaveDataBaseSettlement data) {
         if(data.residents != null) {
             for (int i = 0; i < data.residents.Count; i++) {
-                Character resident = CharacterManager.Instance.GetCharacterByPersistentID(data.residents[i]);
-                residents.Add(resident);
+                var residentData = data.residents[i];
+                Character resident = CharacterManager.Instance.GetCharacterByPersistentID(residentData);
+                if (resident != null) {
+                    residents.Add(resident);    
+                } else {
+                    Debug.LogWarning($"{name} is trying to load a null resident with id {residentData}!");
+                }
             }
         }
     }

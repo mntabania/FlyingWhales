@@ -440,6 +440,7 @@ namespace Traits {
                 originalForm.traitContainer.RemoveTrait(originalForm, "Lycanthrope");
                 RevertToNormal();
             }
+            lycanthropeForm.homeSettlement?.RemoveResident(lycanthropeForm);
             lycanthropeForm.faction?.LeaveFaction(lycanthropeForm);
             CharacterManager.Instance.RemoveLimboCharacter(lycanthropeForm);
             originalForm.SetLycanthropeData(null);
