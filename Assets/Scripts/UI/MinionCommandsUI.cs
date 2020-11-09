@@ -19,7 +19,7 @@ public class MinionCommandsUI : MonoBehaviour {
             UIManager.Instance.HideSmallInfo();
             UIManager.Instance.PositionTooltip(gameObject, rt, rt);
             gameObject.SetActive(true);
-            Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
+            Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyPressed);
         } else {
             targetPOI = null;
         }
@@ -27,7 +27,7 @@ public class MinionCommandsUI : MonoBehaviour {
     public void HideUI() {
         gameObject.SetActive(false);
         this.targetPOI = null;
-        Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
+        Messenger.RemoveListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyPressed);
     }
     private void OnKeyPressed(KeyCode keyCode) {
         if (keyCode == KeyCode.Mouse0 && UIManager.Instance.IsMouseOnUI() == false) {

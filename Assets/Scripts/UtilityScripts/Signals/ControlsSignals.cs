@@ -1,0 +1,16 @@
+﻿public static class ControlsSignals {
+    /// <summary>
+    /// Parameters: Camera, float amount
+    /// </summary>
+    public static string CAMERA_ZOOM_CHANGED = "OnCameraZoomChanged";
+    public static string CAMERA_MOVED_BY_PLAYER = "CameraMovedByPlayer";
+    /// <summary>
+    /// Parameters: ISelectable clickedObject
+    /// </summary>
+    public static string SELECTABLE_LEFT_CLICKED = "SelectableLeftClicked";
+    /// <summary>
+    /// Parameters: KeyCode (Pressed Key)
+    /// </summary>
+    public static string KEY_DOWN = "OnKeyDown";
+    public static string ZOOM_WORLD_MAP_CAMERA = "OnZoomWorldMapCamera";
+}

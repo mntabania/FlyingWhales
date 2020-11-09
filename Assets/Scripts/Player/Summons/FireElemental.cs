@@ -17,11 +17,11 @@ public class FireElemental : Summon {
     }
     public override void SubscribeToSignals() {
         base.SubscribeToSignals();
-        Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
     public override void UnsubscribeSignals() {
         base.UnsubscribeSignals();
-        Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        Messenger.RemoveListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
     private void OnCharacterFinishedAction(ActualGoapNode goapNode) {
         if (goapNode.actor == this && goapNode.action.goapType == INTERACTION_TYPE.STAND) {

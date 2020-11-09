@@ -77,7 +77,7 @@ public class CombatComponent : CharacterComponent {
         } else {
             if (owner.combatComponent.isInCombat) {
                 log += "\n-Character is already in combat, determining combat action to do";
-                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
+                Messenger.Broadcast(CharacterSignals.DETERMINE_COMBAT_REACTION, owner);
             } else {
                 log += "\n-Character is not in combat, will add Combat job if there is a hostile or avoid in range";
                 if (hostilesInRange.Count > 0 || avoidInRange.Count > 0) {

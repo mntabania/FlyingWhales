@@ -56,9 +56,9 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
         protected set {
             _target = value;
             if (_target == null) {
-                Messenger.RemoveListener<GameObject>(Signals.POOLED_OBJECT_DESTROYED, OnPooledObjectDestroyed);
+                Messenger.RemoveListener<GameObject>(ObjectPoolSignals.POOLED_OBJECT_DESTROYED, OnPooledObjectDestroyed);
             } else {
-                Messenger.AddListener<GameObject>(Signals.POOLED_OBJECT_DESTROYED, OnPooledObjectDestroyed);
+                Messenger.AddListener<GameObject>(ObjectPoolSignals.POOLED_OBJECT_DESTROYED, OnPooledObjectDestroyed);
             }
         }
     }
@@ -66,7 +66,7 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
     #region Initialization
     public virtual void Initialize() {
         AllowEdgePanning(SettingsManager.Instance.settings.useEdgePanning);
-        Messenger.AddListener<bool>(Signals.EDGE_PANNING_TOGGLED, AllowEdgePanning);
+        Messenger.AddListener<bool>(SettingsSignals.EDGE_PANNING_TOGGLED, AllowEdgePanning);
     }
     #endregion
 
@@ -90,7 +90,7 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
                 } else {
                     transform.Translate(targetPos);
                 }
-                Messenger.Broadcast(Signals.CAMERA_MOVED_BY_PLAYER, targetPos);
+                Messenger.Broadcast(ControlsSignals.CAMERA_MOVED_BY_PLAYER, targetPos);
             }
         }
 
@@ -103,7 +103,7 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
                 } else {
                     transform.Translate(targetPos);
                 }
-                Messenger.Broadcast(Signals.CAMERA_MOVED_BY_PLAYER, targetPos);
+                Messenger.Broadcast(ControlsSignals.CAMERA_MOVED_BY_PLAYER, targetPos);
             }
         }
     }
@@ -142,7 +142,7 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
         if (isDragging) {
             Vector3 difference = (targetCamera.ScreenToWorldPoint(Input.mousePosition))- targetCamera.transform.position;
             targetCamera.transform.position = dragOrigin-difference;
-            Messenger.Broadcast(Signals.CAMERA_MOVED_BY_PLAYER, difference);
+            Messenger.Broadcast(ControlsSignals.CAMERA_MOVED_BY_PLAYER, difference);
             if (Input.GetMouseButtonUp(2)) {
                 ResetDragValues();
                 InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
@@ -199,10 +199,10 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
         if (allowSmoothCameraFollow) {
             Vector3 pos = newPos - transform.position;
             transform.DOBlendableMoveBy(pos, smoothFollowSpeed);
-            Messenger.Broadcast(Signals.CAMERA_MOVED_BY_PLAYER, pos);
+            Messenger.Broadcast(ControlsSignals.CAMERA_MOVED_BY_PLAYER, pos);
         } else {
             transform.position = newPos;
-            Messenger.Broadcast(Signals.CAMERA_MOVED_BY_PLAYER, newPos);
+            Messenger.Broadcast(ControlsSignals.CAMERA_MOVED_BY_PLAYER, newPos);
         }
     }
     #endregion
@@ -355,7 +355,7 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
         if(threatEffect != null) {
             threatEffect.OnZoomCamera(camera);
         }
-        Messenger.Broadcast(Signals.CAMERA_ZOOM_CHANGED, camera, amount);
+        Messenger.Broadcast(ControlsSignals.CAMERA_ZOOM_CHANGED, camera, amount);
     }
     #endregion
     

@@ -35,7 +35,7 @@ public class SeizeComponent {
         if (seizedPOI == null) {
             poi.isBeingCarriedBy?.UncarryPOI();
             if (poi.gridTileLocation != null) {
-                Messenger.Broadcast(Signals.BEFORE_SEIZING_POI, poi);
+                Messenger.Broadcast(CharacterSignals.BEFORE_SEIZING_POI, poi);
                 seizedPOI = poi;
                 _seizedPOISprite = poi.mapObjectVisual.GetSeizeSprite(poi);
                 poi.mapObjectVisual.SetVisual(_seizedPOISprite);
@@ -47,7 +47,7 @@ public class SeizeComponent {
                 }
                 _seizedPOIVisionTriggerState = poi.mapObjectVisual.visionTrigger.mainCollider.enabled;
                 poi.OnSeizePOI();
-                Messenger.Broadcast(Signals.ON_SEIZE_POI, poi);
+                Messenger.Broadcast(CharacterSignals.ON_SEIZE_POI, poi);
                 //if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 //} else {
                 //    poi.gridTileLocation.structure.RemovePOI(poi);
@@ -72,11 +72,11 @@ public class SeizeComponent {
     // }
     private void PrepareToUnseize() {
         isPreparingToBeUnseized = true;
-        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnReceiveKeyCodeSignal);
+        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnReceiveKeyCodeSignal);
     }
     private void DoneUnseize() {
         isPreparingToBeUnseized = false;
-        Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnReceiveKeyCodeSignal);
+        Messenger.RemoveListener<KeyCode>(ControlsSignals.KEY_DOWN, OnReceiveKeyCodeSignal);
     }
     private void OnReceiveKeyCodeSignal(KeyCode keyCode) {
         if(keyCode == KeyCode.Mouse0) {
@@ -117,12 +117,12 @@ public class SeizeComponent {
         _seizedCharacterVisionVotes = 0;
         _seizedPOIVisionTriggerState = false;
         _seizedPOIColor = Color.white;
-        Messenger.Broadcast(Signals.ON_UNSEIZE_POI, seizedPOI);
+        Messenger.Broadcast(CharacterSignals.ON_UNSEIZE_POI, seizedPOI);
         seizedPOI = null;
         //PlayerUI.Instance.HideSeizedObjectUI();
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         if (prevSeizedPOI is IPlayerActionTarget playerActionTarget) {
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, playerActionTarget);
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, playerActionTarget);
         }
         return true;
     }

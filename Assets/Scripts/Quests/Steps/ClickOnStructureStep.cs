@@ -11,10 +11,10 @@ namespace Quests.Steps {
             _validityChecker = validityChecker;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, CheckForCompletion);
+            Messenger.AddListener<ISelectable>(ControlsSignals.SELECTABLE_LEFT_CLICKED, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, CheckForCompletion);
+            Messenger.RemoveListener<ISelectable>(ControlsSignals.SELECTABLE_LEFT_CLICKED, CheckForCompletion);
         }
 
         #region Listeners

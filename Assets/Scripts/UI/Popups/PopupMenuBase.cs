@@ -5,11 +5,11 @@ public abstract class PopupMenuBase : MonoBehaviour {
     public bool isShowing { get; private set; }
     private void OnEnable() {
         isShowing = true;
-        Messenger.Broadcast(Signals.POPUP_MENU_OPENED, this);
+        Messenger.Broadcast(UISignals.POPUP_MENU_OPENED, this);
     }
     private void OnDisable() {
         isShowing = false;
-        Messenger.Broadcast(Signals.POPUP_MENU_CLOSED, this);
+        Messenger.Broadcast(UISignals.POPUP_MENU_CLOSED, this);
     }
 
     public virtual void Open() {

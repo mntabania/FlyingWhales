@@ -64,12 +64,12 @@ public class CharacterVisuals {
 
     #region Listeners
     public void SubscribeListeners() {
-        Messenger.AddListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnSetAsFactionLeader);
-        Messenger.AddListener<Character, Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnSetAsSettlementRuler);
+        Messenger.AddListener<Character, ILeader>(CharacterSignals.ON_SET_AS_FACTION_LEADER, OnSetAsFactionLeader);
+        Messenger.AddListener<Character, Character>(CharacterSignals.ON_SET_AS_SETTLEMENT_RULER, OnSetAsSettlementRuler);
     }
     public void UnsubscribeListeners() {
-        Messenger.RemoveListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnSetAsFactionLeader);
-        Messenger.RemoveListener<Character, Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnSetAsSettlementRuler);
+        Messenger.RemoveListener<Character, ILeader>(CharacterSignals.ON_SET_AS_FACTION_LEADER, OnSetAsFactionLeader);
+        Messenger.RemoveListener<Character, Character>(CharacterSignals.ON_SET_AS_SETTLEMENT_RULER, OnSetAsSettlementRuler);
     }
     private void OnSetAsFactionLeader(Character character, ILeader previousLeader) {
         if (character == _owner) {

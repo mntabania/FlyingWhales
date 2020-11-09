@@ -64,10 +64,10 @@ namespace Tutorial {
 
         #region Demons Tab
         private void OnTopMostDemonTab() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Demons Tab");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Demons Tab");
         }
         private void OnNoLongerTopMostDemonTab() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Demons Tab");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Demons Tab");
         }
         #endregion
     }

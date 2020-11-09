@@ -140,7 +140,7 @@ namespace Settings {
         }
         public void OnToggleEdgePanning(bool isOn) {
             _settings.useEdgePanning = isOn;
-            Messenger.Broadcast(Signals.EDGE_PANNING_TOGGLED, isOn);
+            Messenger.Broadcast(SettingsSignals.EDGE_PANNING_TOGGLED, isOn);
         }
         #endregion
         
@@ -222,18 +222,18 @@ namespace Settings {
         #region Audio
         public void OnMusicVolumeChanged(float volume) {
             _settings.musicVolume = volume;
-            Messenger.Broadcast(Signals.MUSIC_VOLUME_CHANGED, volume);
+            Messenger.Broadcast(SettingsSignals.MUSIC_VOLUME_CHANGED, volume);
         }
         public void OnMasterVolumeChanged(float volume) {
             _settings.masterVolume = volume;
-            Messenger.Broadcast(Signals.MASTER_VOLUME_CHANGED, volume);
+            Messenger.Broadcast(SettingsSignals.MASTER_VOLUME_CHANGED, volume);
         }
         #endregion
 
         #region Tutorials
         public void OnToggleSkipTutorials(bool state) {
             _settings.skipTutorials = state;
-            Messenger.Broadcast(Signals.ON_SKIP_TUTORIALS_CHANGED, state);
+            Messenger.Broadcast(SettingsSignals.ON_SKIP_TUTORIALS_CHANGED, state);
         }
         #endregion
 

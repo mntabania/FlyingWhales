@@ -17,6 +17,6 @@ public class BiomeWorldOptionItem : MonoBehaviour {
         title.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(biome.ToString());
     }
     public void OnToggle(bool state) {
-        Messenger.Broadcast(Signals.BIOME_WORLD_OPTION_ITEM_CLICKED, biome, state);
+        Messenger.Broadcast(UISignals.BIOME_WORLD_OPTION_ITEM_CLICKED, biome, state);
     }
 }

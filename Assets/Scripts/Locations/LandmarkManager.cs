@@ -90,7 +90,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
         // location.UpdateBuildSprites();
         allLandmarks.Add(newLandmark);
-        Messenger.Broadcast(Signals.LANDMARK_CREATED, newLandmark);
+        Messenger.Broadcast(LandmarkSignals.LANDMARK_CREATED, newLandmark);
         return newLandmark;
     }
     public void DestroyLandmarkOnTile(HexTile tile) {
@@ -103,7 +103,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         tile.RemoveLandmarkVisuals();
         tile.RemoveLandmarkOnTile();
         allLandmarks.Remove(landmarkOnTile);
-        Messenger.Broadcast(Signals.LANDMARK_DESTROYED, landmarkOnTile, tile);
+        Messenger.Broadcast(LandmarkSignals.LANDMARK_DESTROYED, landmarkOnTile, tile);
     }
     public BaseLandmark LoadLandmarkOnTile(HexTile location, BaseLandmark landmark) {
         BaseLandmark newLandmark = location.LoadLandmark(landmark);
@@ -265,7 +265,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         if (tiles != null) {
             newNpcSettlement.AddTileToSettlement(tiles);    
         }
-        Messenger.Broadcast(Signals.AREA_CREATED, newNpcSettlement);
+        Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newNpcSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newNpcSettlement);
         newNpcSettlement.Initialize();
         return newNpcSettlement;
@@ -277,14 +277,14 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             HexTile tile = tiles[i];
             newNpcSettlement.AddTileToSettlement(tile);
         }
-        Messenger.Broadcast(Signals.AREA_CREATED, newNpcSettlement);
+        Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newNpcSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newNpcSettlement);
         return newNpcSettlement;
     }
     public PlayerSettlement CreateNewPlayerSettlement(params HexTile[] tiles) {
         PlayerSettlement newPlayerSettlement = new PlayerSettlement();
         newPlayerSettlement.AddTileToSettlement(tiles);
-        Messenger.Broadcast(Signals.AREA_CREATED, newPlayerSettlement);
+        Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newPlayerSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newPlayerSettlement);
         return newPlayerSettlement;
     }
@@ -297,7 +297,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             newPlayerSettlement.AddTileToSettlement(tile);
         }
 
-        Messenger.Broadcast(Signals.AREA_CREATED, newPlayerSettlement);
+        Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newPlayerSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newPlayerSettlement);
         return newPlayerSettlement;
     }

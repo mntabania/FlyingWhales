@@ -8,7 +8,6 @@ namespace Inner_Maps.Location_Structures {
         
         public LocationStructureObject structureObj {get; private set;}
         public HashSet<Character> currentAttackers { get; }
-        // public int activeSnatchJobs { get; private set; }
         
         #region Getters
         public override Vector2 selectableSize => structureObj.size;
@@ -36,7 +35,7 @@ namespace Inner_Maps.Location_Structures {
             base.AfterStructureDestruction();
             hexTile.RemoveCorruption();
             CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
@@ -54,26 +53,12 @@ namespace Inner_Maps.Location_Structures {
 
         #region Listeners
         protected override void SubscribeListeners() {
-            Messenger.AddListener<IPointOfInterest, int>(Signals.OBJECT_DAMAGED, OnObjectDamaged);
-            Messenger.AddListener<IPointOfInterest, int>(Signals.OBJECT_REPAIRED, OnObjectRepaired);
-            // Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnSnatcherAddedJobToQueue);
-            // Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);
+            Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         protected override void UnsubscribeListeners() {
-            Messenger.RemoveListener<IPointOfInterest, int>(Signals.OBJECT_DAMAGED, OnObjectDamaged);
-            Messenger.RemoveListener<IPointOfInterest, int>(Signals.OBJECT_REPAIRED, OnObjectRepaired);
-            // Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnSnatcherAddedJobToQueue);
-            // Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);
-        }
-        private void OnSnatcherAddedJobToQueue(JobQueueItem job, Character character) {
-            if (job.jobType == JOB_TYPE.SNATCH && DoesSnatchJobTargetThisStructure(job)) {
-                // activeSnatchJobs++;
-            }
-        }
-        private void OnSnatchJobRemoved(JobQueueItem job, Character character) {
-            if (job.jobType == JOB_TYPE.SNATCH && DoesSnatchJobTargetThisStructure(job)) {
-                // activeSnatchJobs--;
-            }
+            Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         private bool DoesSnatchJobTargetThisStructure(JobQueueItem job) {
             if (job is GoapPlanJob goapPlanJob) {
@@ -160,16 +145,16 @@ namespace Inner_Maps.Location_Structures {
             if (!currentAttackers.Contains(attacker)) {
                 bool wasEmptyBeforeAdding = currentAttackers.Count == 0;
                 currentAttackers.Add(attacker);
-                Messenger.Broadcast(Signals.CHARACTER_ATTACKED_DEMONIC_STRUCTURE, attacker, this);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, attacker, this);
                 if (wasEmptyBeforeAdding) {
-                    Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+                    Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
                 }
             }
         }
         public void RemoveAttacker(Character attacker) {
             currentAttackers.Remove(attacker);
             if (currentAttackers.Count == 0) {
-                Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+                Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
             }
         }
         private void OnCharacterEndedState(Character character, CharacterState characterState) {

@@ -56,7 +56,7 @@ public class CharacterState {
         CreateStartStateLog();
         CreateThoughtBubbleLog();
         DoMovementBehavior();
-        Messenger.Broadcast(Signals.CHARACTER_STARTED_STATE, stateComponent.owner, this);
+        Messenger.Broadcast(CharacterSignals.CHARACTER_STARTED_STATE, stateComponent.owner, this);
         ProcessInVisionPOIsOnStartState();
         //if(startStateAction != null) {
         //    startStateAction();
@@ -122,7 +122,7 @@ public class CharacterState {
     //This is called on ExitCurrentState function in CharacterStateComponent after all exit processing is finished
     public virtual void AfterExitingState() {
         stateComponent.owner.marker.UpdateActionIcon();
-        Messenger.Broadcast(Signals.CHARACTER_ENDED_STATE, stateComponent.owner, this);
+        Messenger.Broadcast(CharacterSignals.CHARACTER_ENDED_STATE, stateComponent.owner, this);
     }
     //public virtual bool CanResumeState() {
     //    return true;
@@ -144,7 +144,7 @@ public class CharacterState {
             stateComponent.owner.SetCurrentJob(null);
         }
         //StopStatePerTick();
-        Messenger.Broadcast(Signals.CHARACTER_PAUSED_STATE, stateComponent.owner, this);
+        Messenger.Broadcast(CharacterSignals.CHARACTER_PAUSED_STATE, stateComponent.owner, this);
     }
     /// <summary>
     /// Resumes the state and its movement behavior

@@ -41,9 +41,9 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
         base.PlaceObjectAt(tile);
         RandomizeDirection();
         _expiryKey = SchedulingManager.Instance.AddEntry(_locustSwarm.expiryDate, Expire, this);
-        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
-        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
-        Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+        Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
+        Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
         if (GameManager.Instance.isPaused) {
             _movement.Pause();
             StartCoroutine(PlayParticleCoroutineWhenGameIsPaused());
@@ -68,9 +68,9 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
         DOTween.Kill(this);
         DOTween.Kill(transform);
         _objsInRange.Clear();
-        Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
-        Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
-        Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+        Messenger.RemoveListener<bool>(UISignals.PAUSED, OnGamePaused);
+        Messenger.RemoveListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.RemoveListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
     }
     #endregion
 

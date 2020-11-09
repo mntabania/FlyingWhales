@@ -48,7 +48,7 @@ public class Tombstone : TileObject {
         if (character.race == RACE.HUMANS || character.race == RACE.ELVES) {
             AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
         }
-        Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
+        Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
@@ -76,7 +76,7 @@ public class Tombstone : TileObject {
             }
             character.DestroyMarker();
         }
-        Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
+        Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
     }
     public void SetRespawnCorpseOnDestroy(bool state) {
         _respawnCorpseOnDestroy = state;

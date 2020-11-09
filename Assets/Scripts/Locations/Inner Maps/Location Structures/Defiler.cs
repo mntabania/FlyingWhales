@@ -28,11 +28,11 @@ namespace Inner_Maps.Location_Structures {
         #region Listeners
         protected override void SubscribeListeners() {
             base.SubscribeListeners();
-            Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+            Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         }
         protected override void UnsubscribeListeners() {
             base.UnsubscribeListeners();
-            Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+            Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         }
         private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
             if (structure == this && character.isNormalCharacter && IsTilePartOfARoom(character.gridTileLocation, out var room) && room is DefilerRoom defilerRoom && defilerRoom.skeleton == null) {

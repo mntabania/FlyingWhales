@@ -70,8 +70,8 @@ public class InterruptComponent : CharacterComponent {
                 owner.currentJob?.StopJobNotDrop();
             }
             ExecuteStartInterrupt(currentInterrupt, actionThatTriggered);
-            Messenger.Broadcast(Signals.INTERRUPT_STARTED, currentInterrupt);
-            Messenger.Broadcast(Signals.UPDATE_THOUGHT_BUBBLE, owner);
+            Messenger.Broadcast(InterruptSignals.INTERRUPT_STARTED, currentInterrupt);
+            Messenger.Broadcast(UISignals.UPDATE_THOUGHT_BUBBLE, owner);
 
             if (currentInterrupt.interrupt.duration <= 0) {
                 AddEffectLog(currentInterrupt);
@@ -208,7 +208,7 @@ public class InterruptComponent : CharacterComponent {
         currentDuration = 0;
         if(!owner.isDead && owner.canPerform) {
             if (owner.combatComponent.isInCombat) {
-                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
+                Messenger.Broadcast(CharacterSignals.DETERMINE_COMBAT_REACTION, owner);
             } else {
                 if (owner.combatComponent.hostilesInRange.Count > 0 || owner.combatComponent.avoidInRange.Count > 0) {
                     if (owner.jobQueue.HasJob(JOB_TYPE.COMBAT) == false) {
@@ -232,7 +232,7 @@ public class InterruptComponent : CharacterComponent {
         if (owner.marker) {
             owner.marker.UpdateActionIcon();
         }
-        Messenger.Broadcast(Signals.INTERRUPT_FINISHED, finishedInterrupt.type, owner);
+        Messenger.Broadcast(CharacterSignals.INTERRUPT_FINISHED, finishedInterrupt.type, owner);
     }
     private void CreateThoughtBubbleLog(Interrupt interrupt) {
         if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", currentInterrupt.name, "thought_bubble")) {

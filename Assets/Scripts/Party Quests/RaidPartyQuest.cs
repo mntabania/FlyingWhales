@@ -35,9 +35,9 @@ public class RaidPartyQuest : PartyQuest {
         base.OnAssignedPartySwitchedState(fromState, toState);
         if(toState == PARTY_STATE.Working) {
             StartRaidTimer();
-            Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
         } else if (fromState == PARTY_STATE.Working) {
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
         }
     }
     public override string GetPartyQuestTextInLog() {
@@ -91,7 +91,7 @@ public class RaidPartyQuest : PartyQuest {
                 }
             }
         } else {
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
         }
     }
     private void ProcessRaidOrDisbandment() {
@@ -157,7 +157,7 @@ public class RaidPartyQuest : PartyQuest {
                 targetSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(subData.targetSettlement);
             }
             if(assignedParty != null && assignedParty.isActive && assignedParty.partyState == PARTY_STATE.Working) {
-                Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
+                Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
             }
             //if (!string.IsNullOrEmpty(subData.waitingArea)) {
             //    waitingArea = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.waitingArea);

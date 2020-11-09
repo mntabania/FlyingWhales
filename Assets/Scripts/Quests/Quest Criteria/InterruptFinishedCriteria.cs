@@ -10,10 +10,10 @@ namespace Quests {
         }
         
         public override void Enable() {
-            Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, OnInterruptFinished);
+            Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, OnInterruptFinished);
         }
         public override void Disable() {
-            Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, OnInterruptFinished);
+            Messenger.RemoveListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, OnInterruptFinished);
         }
         
         private void OnInterruptFinished(INTERRUPT interrupt, Character actor) {

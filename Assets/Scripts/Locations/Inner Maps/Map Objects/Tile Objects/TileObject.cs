@@ -223,7 +223,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual void OnDestroyPOI() {
         //DisableGameObject();
         previousTile?.parentMap.region.RemovePendingAwareness(this);
-        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
+        Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         OnRemoveTileObject(null, previousTile);
         DestroyMapVisualGameObject();
         SetPOIState(POI_STATE.INACTIVE);
@@ -232,15 +232,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 UnoccupyTiles(objData.occupiedSize, previousTile);
             }
         }
-        Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
+        Messenger.Broadcast(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
         UnsubscribeListeners();
     }
     public void OnDiscardCarriedObject() {
         //DisableGameObject();
-        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
+        Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         DestroyMapVisualGameObject();
         SetPOIState(POI_STATE.INACTIVE);
-        Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
+        Messenger.Broadcast(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
         UnsubscribeListeners();
     }
     public virtual void OnPlacePOI() {
@@ -397,10 +397,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     /// </summary>
     public virtual void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
         // Debug.Log(GameManager.Instance.TodayLogString() + "Tile Object " + this.name + " has been removed");
-        Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this, removedBy, removedFrom);
+        Messenger.Broadcast(GridTileSignals.TILE_OBJECT_REMOVED, this, removedBy, removedFrom);
         if (mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
             //if object is unbuilt, and it was removed, stop checking for invalidity.
-            Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
+            Messenger.RemoveListener(TileObjectSignals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
         } else if (mapObjectState == MAP_OBJECT_STATE.BUILT) {
             removedFrom?.parentMap.region.RemoveTileObjectInRegion(this);
         }
@@ -452,7 +452,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public virtual void ActivateTileObject() {
         //Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_POI, this as IPointOfInterest, 5);
-        Messenger.Broadcast(Signals.TILE_OBJECT_ACTIVATED, this);
+        Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_ACTIVATED, this);
     }
     //public virtual void OnTileObjectAddedToInventoryOf(Character inventoryOwner) { }
     public virtual void OnTileObjectDroppedBy(Character inventoryOwner, LocationGridTile tile) { }
@@ -565,16 +565,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             }
         }
         if (amount < 0) {
-            Messenger.Broadcast(Signals.OBJECT_DAMAGED, this as IPointOfInterest, amount);
+            Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_DAMAGED, this, amount);
         } else if (amount > 0) {
-            Messenger.Broadcast(Signals.OBJECT_REPAIRED, this as IPointOfInterest, amount);
+            Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_REPAIRED, this, amount);
         }
         if (currentHP == maxHP) {
-            Messenger.Broadcast(Signals.OBJECT_FULLY_REPAIRED, this as IPointOfInterest);
-        } 
-        // if (isPreplaced && tile != null && tile.structure is DemonicStructure demonicStructure) {
-        //     demonicStructure.AdjustHP(amount);
-        // }
+            Messenger.Broadcast(TileObjectSignals.TILE_OBJECT_FULLY_REPAIRED, this);
+        }
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState combatStateOfAttacker, ref string attackSummary) {
         if (characterThatAttacked == null) {
@@ -610,7 +607,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (UIManager.Instance.tileObjectInfoUI.isShowing && UIManager.Instance.tileObjectInfoUI.activeTileObject == this) {
             UIManager.Instance.tileObjectInfoUI.CloseMenu();
         }
-        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
+        Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         //Messenger.Broadcast(Signals.ON_SEIZE_TILE_OBJECT, this);
         //OnRemoveTileObject(null, gridTileLocation, false, false);
         gridTileLocation.structure.RemovePOIWithoutDestroying(this);
@@ -621,7 +618,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 UnoccupyTiles(objData.occupiedSize, previousTile);
             }
         }
-        Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
+        Messenger.Broadcast(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
         UnsubscribeListeners();
     }
     public void OnUnseizePOI(LocationGridTile tileLocation) {
@@ -705,7 +702,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         // if (GameManager.Instance.gameHasStarted == false) { //only update owners on initialization.
         //     UpdateOwners();
         // }
-        Messenger.Broadcast(Signals.TILE_OBJECT_PLACED, this, tile);
+        Messenger.Broadcast(GridTileSignals.TILE_OBJECT_PLACED, this, tile);
     }
     private bool HasSlotSettings() {
         return ReferenceEquals(mapVisual.usedSprite, null) == false
@@ -819,7 +816,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             if (!HasUnoccupiedSlot()) {
                 SetPOIState(POI_STATE.INACTIVE);
             }
-            Messenger.Broadcast(Signals.ADD_TILE_OBJECT_USER, this, newUser);
+            Messenger.Broadcast(TileObjectSignals.ADD_TILE_OBJECT_USER, this, newUser);
         }
     }
     public virtual bool RemoveUser(Character user) {
@@ -828,7 +825,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             user.SetTileObjectLocation(null);
             slot.StopUsing();
             SetPOIState(POI_STATE.ACTIVE);
-            Messenger.Broadcast(Signals.REMOVE_TILE_OBJECT_USER, this, user);
+            Messenger.Broadcast(TileObjectSignals.REMOVE_TILE_OBJECT_USER, this, user);
             return true;
         }
         return false;
@@ -1055,7 +1052,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         SetPOIState(POI_STATE.INACTIVE);
         AddAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
         UnsubscribeListeners();
-        Messenger.AddListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
+        Messenger.AddListener(TileObjectSignals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
         if (gridTileLocation != null) {
             //remove tile object from region count.
             gridTileLocation.parentMap.region.RemoveTileObjectInRegion(this);    
@@ -1064,10 +1061,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     protected virtual void OnSetObjectAsBuilding() {
         mapVisual.SetVisualAlpha(128f / 255f);
         SetSlotAlpha(128f / 255f);
-        Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
+        Messenger.RemoveListener(TileObjectSignals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
     }
     protected virtual void OnSetObjectAsBuilt(){
-        Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
+        Messenger.RemoveListener(TileObjectSignals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
         mapVisual.SetVisualAlpha(255f / 255f);
         SetSlotAlpha(255f / 255f);
         SetPOIState(POI_STATE.ACTIVE);
@@ -1083,8 +1080,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     private void CheckUnbuiltObjectValidity() {
         if (allExistingJobsTargetingThis.Count <= 0) {
             //unbuilt object is no longer valid, remove it
-            Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
-            Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING,  this as IPointOfInterest);
+            Messenger.RemoveListener(TileObjectSignals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
+            Messenger.Broadcast(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING,  this as IPointOfInterest);
             List<JobQueueItem> jobs = new List<JobQueueItem>(allJobsTargetingThis);
             jobs.AddRange(allExistingJobsTargetingThis);
             for (int i = 0; i < jobs.Count; i++) {
@@ -1157,12 +1154,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public void AddPlayerAction(SPELL_TYPE action) {
         if (actions.Contains(action) == false) {
             actions.Add(action);
-            Messenger.Broadcast(Signals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
+            Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
         }
     }
     public void RemovePlayerAction(SPELL_TYPE action) {
         if (actions.Remove(action)) {
-            Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+            Messenger.Broadcast(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
         }
     }
     public void ClearPlayerActions() {

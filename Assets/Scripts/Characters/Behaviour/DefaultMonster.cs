@@ -53,7 +53,7 @@ public class DefaultMonster : CharacterBehaviourComponent {
                                     log += "\n-Late Night or After Midnight, 40% chance to Sleep";
                                     int sleepRoll = UnityEngine.Random.Range(0, 100);
                                     log += $"\n-Roll: {sleepRoll.ToString()}";
-                                    if (roll < 40) {
+                                    if (sleepRoll < 40) {
                                         hasAddedJob = summon.jobComponent.TriggerMonsterSleep(out producedJob);
                                     }
                                 } else {

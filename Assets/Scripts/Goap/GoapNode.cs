@@ -143,7 +143,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         actor.SetCurrentActionNode(this, job, plan);
         // CreateThoughtBubbleLog(targetStructure);
         //parentPlan?.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
-        Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
+        Messenger.Broadcast(JobSignals.CHARACTER_DOING_ACTION, actor, this);
         actor.marker.UpdateActionIcon();
         action.OnActionStarted(this);
         //poiTarget.AddTargettedByAction(this);
@@ -450,7 +450,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             baseMapObject.OnManipulatedBy(actor);
         }
         action.Perform(this);
-        Messenger.Broadcast(Signals.ACTION_PERFORMED, this);
+        Messenger.Broadcast(JobSignals.ACTION_PERFORMED, this);
     }
     public void ActionInterruptedWhilePerforming(bool shouldDoAfterEffect) {
         string log =
@@ -488,7 +488,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         }
         //Assert.IsNotNull(job, $"{actor.name} was interrupted when performing {action.goapName} but, in this process his/her current job is null!");
         job?.CancelJob(false);
-        Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, this);
+        Messenger.Broadcast(JobSignals.CHARACTER_FINISHED_ACTION, this);
     }
     public void ActionResult(GoapActionState actionState) {
         string result = GoapActionStateDB.GetStateResult(action.goapType, actionState.name);
@@ -538,7 +538,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         //        actor.GoapActionResult(result, this);
         //    }
         //}
-        Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, this);
+        Messenger.Broadcast(JobSignals.CHARACTER_FINISHED_ACTION, this);
         //parentPlan?.OnActionInPlanFinished(actor, this, result);
     }
     public void StopActionNode(bool shouldDoAfterEffect) {

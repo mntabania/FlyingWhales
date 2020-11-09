@@ -698,7 +698,7 @@ namespace Inner_Maps {
             } else if (IsPassable() && !isPassablePreviously) {
                 structure.AddPassableTile(this);
             }
-            Messenger.Broadcast(Signals.OBJECT_PLACED_ON_TILE, this, poi);
+            Messenger.Broadcast(GridTileSignals.OBJECT_PLACED_ON_TILE, this, poi);
         }
         public void LoadObjectHere(IPointOfInterest poi) {
             bool isPassablePreviously = IsPassable();
@@ -718,7 +718,7 @@ namespace Inner_Maps {
             } else if (IsPassable() && !isPassablePreviously) {
                 structure.AddPassableTile(this);
             }
-            Messenger.Broadcast(Signals.OBJECT_PLACED_ON_TILE, this, poi);
+            Messenger.Broadcast(GridTileSignals.OBJECT_PLACED_ON_TILE, this, poi);
         }
         public IPointOfInterest RemoveObjectHere(Character removedBy) {
             if (objHere != null) {
@@ -732,8 +732,8 @@ namespace Inner_Maps {
                     removedObj.OnDestroyPOI();
                 }
                 SetTileState(Tile_State.Empty);
-                Messenger.Broadcast(Signals.STOP_CURRENT_ACTION_TARGETING_POI, removedObj);
-                Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
+                Messenger.Broadcast(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, removedObj);
+                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
                 return removedObj;
             }
             return null;
@@ -749,7 +749,7 @@ namespace Inner_Maps {
                     tileObject.OnRemoveTileObject(null, gridTile, false, false);
                 }
                 removedObj.SetPOIState(POI_STATE.INACTIVE);
-                Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
+                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
                 return removedObj;
             }
             return null;
@@ -766,8 +766,8 @@ namespace Inner_Maps {
                     removedTileObj.DestroyMapVisualGameObject();
                 }
                 removedObj.SetPOIState(POI_STATE.INACTIVE);
-                Messenger.Broadcast(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, removedObj, remover);
-                Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
+                Messenger.Broadcast(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, removedObj, remover);
+                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
                 return removedObj;
             }
             return null;
@@ -1327,7 +1327,7 @@ namespace Inner_Maps {
                     }
                 }
             }
-            Messenger.Broadcast(Signals.ACTION_PERFORMED_ON_TILE_TRAITABLES, this, callback);
+            Messenger.Broadcast(GridTileSignals.ACTION_PERFORMED_ON_TILE_TRAITABLES, this, callback);
         }
         public List<IPointOfInterest> GetPOIsOnTile() {
             List<IPointOfInterest> pois = new List<IPointOfInterest>();

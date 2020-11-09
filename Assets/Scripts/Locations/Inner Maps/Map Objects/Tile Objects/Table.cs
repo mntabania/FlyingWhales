@@ -275,14 +275,14 @@ public class Table : TileObject {
         storedResources[RESOURCE.FOOD] += amount;
         storedResources[RESOURCE.FOOD] = Mathf.Clamp(storedResources[RESOURCE.FOOD], 0, maxResourceValues[RESOURCE.FOOD]);
         if (gridTileLocation != null && structureLocation is Dwelling) {
-            Messenger.Broadcast(Signals.FOOD_IN_DWELLING_CHANGED, this);   
+            Messenger.Broadcast(StructureSignals.FOOD_IN_DWELLING_CHANGED, this);   
         }
     }
     public void SetFood(int amount) {
         storedResources[RESOURCE.FOOD] = amount;
         storedResources[RESOURCE.FOOD] = Mathf.Clamp(storedResources[RESOURCE.FOOD], 0, maxResourceValues[RESOURCE.FOOD]);
         if (gridTileLocation != null && structureLocation is Dwelling) {
-            Messenger.Broadcast(Signals.FOOD_IN_DWELLING_CHANGED, this);   
+            Messenger.Broadcast(StructureSignals.FOOD_IN_DWELLING_CHANGED, this);   
         }
     }
     #endregion

@@ -29,11 +29,11 @@ namespace Events.World_Events {
         
         public override void InitializeEvent() {
             Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
-            Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-            Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
+            Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+            Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
             // Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, OnInterruptFinished);
-            Messenger.AddListener<Character>(Signals.CHARACTER_MARKER_DESTROYED, OnMarkerDestroyed);
-            Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterChangedClass);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_MARKER_DESTROYED, OnMarkerDestroyed);
+            Messenger.AddListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterChangedClass);
         }
 
         #region Listeners

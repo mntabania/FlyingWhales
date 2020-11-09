@@ -51,10 +51,10 @@ namespace Tutorial {
         
         #region World Map
         private void OnTopMostWorldMap() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "ToggleMapBtn");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "ToggleMapBtn");
         }
         private void OnNoLongerTopMostWorldMap() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "ToggleMapBtn");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "ToggleMapBtn");
         }
         #endregion
         

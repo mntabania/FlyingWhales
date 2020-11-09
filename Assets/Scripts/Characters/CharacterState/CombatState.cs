@@ -95,9 +95,9 @@ public class CombatState : CharacterState {
             stateComponent.owner.gatheringComponent.currentGathering.RemoveAttendee(stateComponent.owner);
         }
         //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, stateComponent.character, "combat");
-        Messenger.AddListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
-        Messenger.AddListener<Character>(Signals.UPDATE_MOVEMENT_STATE, OnUpdateMovementState);
-        Messenger.AddListener<Character>(Signals.START_FLEE, OnCharacterStartFleeing);
+        Messenger.AddListener<Character>(CharacterSignals.DETERMINE_COMBAT_REACTION, DetermineReaction);
+        Messenger.AddListener<Character>(CharacterSignals.UPDATE_MOVEMENT_STATE, OnUpdateMovementState);
+        Messenger.AddListener<Character>(CharacterSignals.START_FLEE, OnCharacterStartFleeing);
         base.StartState();
         //if (stateComponent.character.currentActionNode is Assault && !stateComponent.character.currentActionNode.isPerformingActualAction) {
         //    stateComponent.character.currentActionNode.Perform(); //this is for when a character will assault a target, but his/her attack range is less than his/her vision range. (Because end reached distance of assault action is set to attack range)
@@ -123,9 +123,9 @@ public class CombatState : CharacterState {
         stateComponent.owner.marker.visionCollider.VoteToFilterVision();
         stateComponent.owner.logComponent.PrintLogIfActive(
             $"Ending combat state for {stateComponent.owner.name}");
-        Messenger.RemoveListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
-        Messenger.RemoveListener<Character>(Signals.UPDATE_MOVEMENT_STATE, OnUpdateMovementState);
-        Messenger.RemoveListener<Character>(Signals.START_FLEE, OnCharacterStartFleeing);
+        Messenger.RemoveListener<Character>(CharacterSignals.DETERMINE_COMBAT_REACTION, DetermineReaction);
+        Messenger.RemoveListener<Character>(CharacterSignals.UPDATE_MOVEMENT_STATE, OnUpdateMovementState);
+        Messenger.RemoveListener<Character>(CharacterSignals.START_FLEE, OnCharacterStartFleeing);
         
         if (stateComponent.owner.isNormalCharacter) {
             List<LocationStructure> avoidStructures = new List<LocationStructure>(stateComponent.owner.movementComponent.structuresToAvoid);
@@ -599,7 +599,7 @@ public class CombatState : CharacterState {
                 }
             }
 
-            Messenger.Broadcast(Signals.START_FLEE, stateComponent.owner);
+            Messenger.Broadcast(CharacterSignals.START_FLEE, stateComponent.owner);
         }
     }
     private string GetAvoidReason(IPointOfInterest objToAvoid) {

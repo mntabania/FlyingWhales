@@ -54,12 +54,12 @@ namespace Tutorial {
         public override void Activate() {
             base.Activate();
             Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
-            Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
+            Messenger.AddListener<Log>(UISignals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
         }
         public override void Deactivate() {
             base.Deactivate();
             Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
-            Messenger.RemoveListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
+            Messenger.RemoveListener<Log>(UISignals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
         }
         private void OnLogRemoved(Log log) {
             if (log.IsInvolved(_targetCharacter) && log.key.Equals("contracted_zombie")) {

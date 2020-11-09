@@ -32,11 +32,11 @@ namespace Tutorial {
         #region Activation
         public override void Activate() {
             base.Activate();
-            Messenger.AddListener(Signals.CHAOS_ORB_DESPAWNED, CheckForFailure);
+            Messenger.AddListener(PlayerSignals.CHAOS_ORB_DESPAWNED, CheckForFailure);
         }
         public override void Deactivate() {
             base.Deactivate();
-            Messenger.RemoveListener(Signals.CHAOS_ORB_DESPAWNED, CheckForFailure);
+            Messenger.RemoveListener(PlayerSignals.CHAOS_ORB_DESPAWNED, CheckForFailure);
         }
         #endregion
 

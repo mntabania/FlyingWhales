@@ -82,7 +82,7 @@ public class SnatchData : PlayerAction {
                 log.AddToFillers(structure, structure.nameplateName, LOG_IDENTIFIER.LANDMARK_1);
                 log.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-                Messenger.Broadcast(Signals.FORCE_RELOAD_PLAYER_ACTIONS);
+                Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
                 base.ActivateAbility(targetCharacter); //this is so that mana/charges/cooldown can be activated after picking structure to bring to
             }
         }
@@ -93,15 +93,6 @@ public class SnatchData : PlayerAction {
             if (!CharacterManager.Instance.allCharacters.Any(CanDoSnatch)) {
                 return false;
             }
-            // if(PlayerSkillManager.Instance.selectedArchetype == PLAYER_ARCHETYPE.Lich) {
-            //     if (!CharacterManager.Instance.allCharacters.Any(CanDoSnatch)) {
-            //         return false;
-            //     }
-            // } else {
-            //     if (!PlayerManager.Instance.player.playerFaction.characters.Any(CanDoSnatch)) {
-            //         return false;
-            //     }
-            // }
             if (targetCharacter is Summon) {
                 return PlayerManager.Instance.player.playerSettlement.HasAvailableKennelForSnatch();
             } else {
@@ -114,7 +105,7 @@ public class SnatchData : PlayerAction {
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
         if (!CharacterManager.Instance.allCharacters.Any(CanDoSnatch)) {
-            reasons += "You have no available Snatchers,";
+            reasons += "You have no available Snatchers \n(NOTE: Cultists in an active quest cannot be instructed),";
         }
         if (targetCharacter is Summon) {
             if (!PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.KENNEL)) {
@@ -174,43 +165,16 @@ public class SnatchData : PlayerAction {
                 }
             }
         }
-        // if(PlayerSkillManager.Instance.selectedArchetype == PLAYER_ARCHETYPE.Lich) {
-        //     for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-        //         Character snatcher = CharacterManager.Instance.allCharacters[i];
-        //         if (CanDoSnatch(snatcher)) {
-        //             float dist = Vector2.Distance(snatcher.worldPosition, targetCharacter.worldPosition);
-        //             if (nearest == null || dist < nearestDist) {
-        //                 nearest = snatcher;
-        //                 nearestDist = dist;
-        //             }
-        //         }
-        //     }
-        // } else {
-        //     for (int i = 0; i < PlayerManager.Instance.player.playerFaction.characters.Count; i++) {
-        //         Character snatcher = PlayerManager.Instance.player.playerFaction.characters[i];
-        //         if (CanDoSnatch(snatcher)) {
-        //             float dist = Vector2.Distance(snatcher.worldPosition, targetCharacter.worldPosition);
-        //             if (nearest == null || dist < nearestDist) {
-        //                 nearest = snatcher;
-        //                 nearestDist = dist;
-        //             }
-        //         }
-        //     }
-        // }
         return nearest;
     }
     private static bool CanDoSnatch(Character character) {
         //Snatch is no longer exclusive to those characters that has SnatcherBehaviour
-        //Cultists can no snatch if archetype is Lich
         if (character.isDead) {
             return false;
         }
         if (character.traitContainer.HasTrait("Cultist", "Snatcher")) {
-            return !character.behaviourComponent.isCurrentlySnatching && character.canPerform;
+            return !character.behaviourComponent.isCurrentlySnatching && character.canPerform && !character.partyComponent.isActiveMember;
         } 
-        //else if (character.behaviourComponent.HasBehaviour(typeof(SnatcherBehaviour))) {
-        //    return !character.behaviourComponent.isCurrentlySnatching && character.canPerform;
-        //}
         return false;
     }
 }

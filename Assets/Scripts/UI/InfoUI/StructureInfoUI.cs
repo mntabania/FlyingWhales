@@ -29,8 +29,8 @@ public class StructureInfoUI : InfoUIBase {
     #region Overrides
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener<Character, LocationStructure>(Signals.ADDED_STRUCTURE_RESIDENT, UpdateResidentsFromSignal);
-        Messenger.AddListener<Character, LocationStructure>(Signals.REMOVED_STRUCTURE_RESIDENT, UpdateResidentsFromSignal);
+        Messenger.AddListener<Character, LocationStructure>(StructureSignals.ADDED_STRUCTURE_RESIDENT, UpdateResidentsFromSignal);
+        Messenger.AddListener<Character, LocationStructure>(StructureSignals.REMOVED_STRUCTURE_RESIDENT, UpdateResidentsFromSignal);
     }
     public override void CloseMenu() {
         base.CloseMenu();

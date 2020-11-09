@@ -21,7 +21,7 @@ public class FoundCultData : PlayerAction {
         if (targetPOI is Character character) {
             character.MigrateHomeStructureTo(null);
             character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Faction, character);
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, targetPOI as IPlayerActionTarget);
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, targetPOI as IPlayerActionTarget);
             if (!character.currentRegion.IsRegionVillageCapacityReached()) {
                 HexTile targetTile = character.currentRegion.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
                 if(targetTile != null) {

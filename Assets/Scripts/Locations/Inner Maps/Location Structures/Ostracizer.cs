@@ -112,12 +112,12 @@ namespace Inner_Maps.Location_Structures {
             _isLearnSpellInCooldown = true;
             GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(6));
             _cooldownScheduleKey = SchedulingManager.Instance.AddEntry(dueDate, CooldownFinished, this);
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         private void CooldownFinished() {
             _cooldownScheduleKey = string.Empty;
             _isLearnSpellInCooldown = false;
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         #endregion
     }

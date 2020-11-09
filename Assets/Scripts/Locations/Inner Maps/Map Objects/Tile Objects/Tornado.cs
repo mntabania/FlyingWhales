@@ -41,7 +41,7 @@ public class Tornado : MovingTileObject {
     }
     public override void Expire() {
         base.Expire();
-        Messenger.Broadcast<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);
+        Messenger.Broadcast<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);
     }
     public override string ToString() {
         return $"Tornado {id.ToString()}";

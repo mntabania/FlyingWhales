@@ -24,7 +24,7 @@ public class PathfindingManager : BaseMonoBehaviour {
         _allAgents = new List<CharacterAIPath>();
     }
     void Start() {
-        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
+        Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
     }
     public void RescanGrid(GridGraph graph) {
         AstarPath.active.Scan(graph);

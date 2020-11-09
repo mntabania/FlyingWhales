@@ -86,7 +86,7 @@ public class Bed : TileObject {
             //        Character currUser = bedUsers[i];
             //    }
             //}
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "bed is burning");
+            Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "bed is burning");
         }
     }
     public virtual bool CanBeReplaced() {
@@ -114,7 +114,7 @@ public class Bed : TileObject {
                 }
                 //disable the character's marker
                 character.marker.SetVisualState(false);
-                Messenger.Broadcast(Signals.ADD_TILE_OBJECT_USER, GetBase(), character);
+                Messenger.Broadcast(TileObjectSignals.ADD_TILE_OBJECT_USER, GetBase(), character);
                 break;
             }
         }
@@ -138,7 +138,7 @@ public class Bed : TileObject {
                     LocationGridTile gridTile = character.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
                     character.marker.PlaceMarkerAt(gridTile);
                 }
-                Messenger.Broadcast(Signals.REMOVE_TILE_OBJECT_USER, GetBase(), character);
+                Messenger.Broadcast(TileObjectSignals.REMOVE_TILE_OBJECT_USER, GetBase(), character);
                 return true;
             }
         }

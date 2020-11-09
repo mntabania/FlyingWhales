@@ -18,8 +18,8 @@ public class PopupMessageBox : InfoUIBase{
     }
 
     internal override void Initialize() {
-        Messenger.AddListener<string, bool>(Signals.SHOW_POPUP_MESSAGE, ShowMessage);
-        Messenger.AddListener(Signals.HIDE_POPUP_MESSAGE, HideMessage);
+        Messenger.AddListener<string, bool>(UISignals.SHOW_POPUP_MESSAGE, ShowMessage);
+        Messenger.AddListener(UISignals.HIDE_POPUP_MESSAGE, HideMessage);
     }
 
     private void ShowMessage(string message, bool autoHide) {

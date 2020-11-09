@@ -42,7 +42,7 @@ namespace Tutorial {
         }
         public override void Activate() {
             base.Activate();
-            Messenger.Broadcast(Signals.UPDATE_BUILD_LIST);
+            Messenger.Broadcast(UISignals.UPDATE_BUILD_LIST);
         }
 
         #region Step Completion Actions
@@ -68,46 +68,46 @@ namespace Tutorial {
         
         #region Build Structure Button
         private void OnTopMostBuildStructure() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Build Structure");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Build Structure");
         }
         private void OnNoLongerTopMostBuildStructure() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Build Structure");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Build Structure");
         }
         #endregion
         
         #region Choose Kennel
         private void OnTopMostKennel() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Kennel");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Kennel");
         }
         private void OnNoLongerTopMostKennel() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Kennel");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Kennel");
         }
         #endregion
         
         #region Seize Montser
         private void OnTopMostSeizeMonster() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Seize Monster");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Seize Monster");
         }
         private void OnNoLongerTopMostSeizeMonster() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Seize Monster");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Seize Monster");
         }
         #endregion
         
         #region Breed Monster
         private void OnTopMostBreedMonster() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Breed Monster");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Breed Monster");
         }
         private void OnNoLongerTopMostBreedMonster() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Breed Monster");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Breed Monster");
         }
         #endregion
         
         #region Build Tab
         private void OnTopMostBuildTab() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Build Tab");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Build Tab");
         }
         private void OnNoLongerTopMostBuildTab() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Build Tab");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Build Tab");
         }
         #endregion
     }

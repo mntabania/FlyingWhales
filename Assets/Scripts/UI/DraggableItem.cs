@@ -109,10 +109,10 @@ public class DragObject : MonoBehaviour {
 
     private void SetParentItem(IDragParentItem parentItem) {
         _parentItem = parentItem;
-        Messenger.Broadcast(Signals.DRAG_OBJECT_CREATED, this);
+        Messenger.Broadcast(UISignals.DRAG_OBJECT_CREATED, this);
     }
 
     public void OnDestroy() {
-        Messenger.Broadcast(Signals.DRAG_OBJECT_DESTROYED, this);
+        Messenger.Broadcast(UISignals.DRAG_OBJECT_DESTROYED, this);
     }
 }

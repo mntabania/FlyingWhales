@@ -79,11 +79,11 @@ public class AudioManager : MonoBehaviour {
         }
     }
     private void OnDestroy() {
-        Messenger.RemoveListener<float>(Signals.MASTER_VOLUME_CHANGED, SetMasterVolume);
-        Messenger.RemoveListener<float>(Signals.MUSIC_VOLUME_CHANGED, SetMusicVolume);
-        Messenger.RemoveListener<RuinarchButton>(Signals.BUTTON_CLICKED, OnButtonClicked);
-        Messenger.RemoveListener<RuinarchToggle>(Signals.TOGGLE_CLICKED, OnToggleClicked);
-        Messenger.RemoveListener<string>(Signals.STARTED_LOADING_SCENE, OnSceneStartedLoading);
+        Messenger.RemoveListener<float>(SettingsSignals.MASTER_VOLUME_CHANGED, SetMasterVolume);
+        Messenger.RemoveListener<float>(SettingsSignals.MUSIC_VOLUME_CHANGED, SetMusicVolume);
+        Messenger.RemoveListener<RuinarchButton>(UISignals.BUTTON_CLICKED, OnButtonClicked);
+        Messenger.RemoveListener<RuinarchToggle>(UISignals.TOGGLE_CLICKED, OnToggleClicked);
+        Messenger.RemoveListener<string>(UISignals.STARTED_LOADING_SCENE, OnSceneStartedLoading);
     }
     private void Start() {
         SetMasterVolume(SettingsManager.Instance.settings.masterVolume);
@@ -92,29 +92,29 @@ public class AudioManager : MonoBehaviour {
 
     #region Initialization
     private void Initialize() {
-        Messenger.MarkAsPermanent(Signals.MASTER_VOLUME_CHANGED);
-        Messenger.MarkAsPermanent(Signals.MUSIC_VOLUME_CHANGED);
-        Messenger.MarkAsPermanent(Signals.BUTTON_CLICKED);
-        Messenger.MarkAsPermanent(Signals.TOGGLE_CLICKED);
-        Messenger.MarkAsPermanent(Signals.STARTED_LOADING_SCENE);
+        Messenger.MarkAsPermanent(SettingsSignals.MASTER_VOLUME_CHANGED);
+        Messenger.MarkAsPermanent(SettingsSignals.MUSIC_VOLUME_CHANGED);
+        Messenger.MarkAsPermanent(UISignals.BUTTON_CLICKED);
+        Messenger.MarkAsPermanent(UISignals.TOGGLE_CLICKED);
+        Messenger.MarkAsPermanent(UISignals.STARTED_LOADING_SCENE);
         
-        Messenger.AddListener<float>(Signals.MASTER_VOLUME_CHANGED, SetMasterVolume);
-        Messenger.AddListener<float>(Signals.MUSIC_VOLUME_CHANGED, SetMusicVolume);
-        Messenger.AddListener<RuinarchButton>(Signals.BUTTON_CLICKED, OnButtonClicked);
-        Messenger.AddListener<RuinarchToggle>(Signals.TOGGLE_CLICKED, OnToggleClicked);
-        Messenger.AddListener<string>(Signals.STARTED_LOADING_SCENE, OnSceneStartedLoading);
+        Messenger.AddListener<float>(SettingsSignals.MASTER_VOLUME_CHANGED, SetMasterVolume);
+        Messenger.AddListener<float>(SettingsSignals.MUSIC_VOLUME_CHANGED, SetMusicVolume);
+        Messenger.AddListener<RuinarchButton>(UISignals.BUTTON_CLICKED, OnButtonClicked);
+        Messenger.AddListener<RuinarchToggle>(UISignals.TOGGLE_CLICKED, OnToggleClicked);
+        Messenger.AddListener<string>(UISignals.STARTED_LOADING_SCENE, OnSceneStartedLoading);
     }
     public void OnGameLoaded() {
-        Messenger.AddListener<Quest>(Signals.QUEST_SHOWN, OnQuestShown);
-        Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_COMPLETED, OnQuestStepCompleted);
-        Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_FAILED, OnQuestStepFailed);
-        Messenger.AddListener(Signals.START_THREAT_EFFECT, OnStartThreatEffect);
-        Messenger.AddListener(Signals.STOP_THREAT_EFFECT, OnStopThreatEffect);
-        Messenger.AddListener<IIntel>(Signals.PLAYER_OBTAINED_INTEL, OnObtainIntel);
-        Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntel);
-        Messenger.AddListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, WorldSelectableLeftClicked);
-        Messenger.AddListener<Quest>(Signals.QUEST_ACTIVATED, OnQuestActivated);
-        Messenger.AddListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
+        Messenger.AddListener<Quest>(UISignals.QUEST_SHOWN, OnQuestShown);
+        Messenger.AddListener<QuestStep>(PlayerQuestSignals.QUEST_STEP_COMPLETED, OnQuestStepCompleted);
+        Messenger.AddListener<QuestStep>(PlayerQuestSignals.QUEST_STEP_FAILED, OnQuestStepFailed);
+        Messenger.AddListener(PlayerSignals.START_THREAT_EFFECT, OnStartThreatEffect);
+        Messenger.AddListener(PlayerSignals.STOP_THREAT_EFFECT, OnStopThreatEffect);
+        Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_OBTAINED_INTEL, OnObtainIntel);
+        Messenger.AddListener(UISignals.ON_OPEN_SHARE_INTEL, OnOpenShareIntel);
+        Messenger.AddListener<ISelectable>(ControlsSignals.SELECTABLE_LEFT_CLICKED, WorldSelectableLeftClicked);
+        Messenger.AddListener<Quest>(PlayerQuestSignals.QUEST_ACTIVATED, OnQuestActivated);
+        Messenger.AddListener<Quest>(PlayerQuestSignals.QUEST_DEACTIVATED, OnQuestDeactivated);
         // SetCameraParent(InnerMapCameraMove.Instance);
     }
     public void OnLoadoutSelected() {

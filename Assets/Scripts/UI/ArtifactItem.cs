@@ -14,7 +14,7 @@ public class ArtifactItem : PooledObject {
     public void SetArtifact(ARTIFACT_TYPE artifact) {
         this.artifact = artifact;
         UpdateData();
-        Messenger.AddListener<ARTIFACT_TYPE>(Signals.PLAYER_NO_ACTIVE_ARTIFACT, OnPlayerNoActiveArtifact);
+        Messenger.AddListener<ARTIFACT_TYPE>(PlayerSignals.PLAYER_NO_ACTIVE_ARTIFACT, OnPlayerNoActiveArtifact);
     }
 
     private void UpdateData() {
@@ -37,6 +37,6 @@ public class ArtifactItem : PooledObject {
     public override void Reset() {
         base.Reset();
         artifact = ARTIFACT_TYPE.None;
-        Messenger.RemoveListener<ARTIFACT_TYPE>(Signals.PLAYER_NO_ACTIVE_ARTIFACT, OnPlayerNoActiveArtifact);
+        Messenger.RemoveListener<ARTIFACT_TYPE>(PlayerSignals.PLAYER_NO_ACTIVE_ARTIFACT, OnPlayerNoActiveArtifact);
     }
 }

@@ -34,39 +34,37 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	#region Listeners
 	public void SubscribeToListeners() {
 		Messenger.AddListener(Signals.HOUR_STARTED, HourlyJobActions);
-		Messenger.AddListener<ResourcePile>(Signals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChanged);
-		Messenger.AddListener<IPointOfInterest, int>(Signals.OBJECT_DAMAGED, OnObjectDamaged);
-		Messenger.AddListener<IPointOfInterest>(Signals.OBJECT_FULLY_REPAIRED, OnObjectFullyRepaired);
-		Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
-		Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
-		Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-		Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-		Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
-		Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
-		Messenger.AddListener<Table>(Signals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
-		Messenger.AddListener<NPCSettlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
-		Messenger.AddListener<Character, IPointOfInterest>(Signals.CHARACTER_SAW, OnCharacterSaw);
-		// Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
-		Messenger.AddListener<NPCSettlement>(Signals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
-		Messenger.AddListener<BurningSource>(Signals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
+		Messenger.AddListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChanged);
+		Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnTileObjectDamaged);
+		Messenger.AddListener<TileObject>(TileObjectSignals.TILE_OBJECT_FULLY_REPAIRED, OnTileObjectFullyRepaired);
+		Messenger.AddListener<TileObject, LocationGridTile>(GridTileSignals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
+		Messenger.AddListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+		Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+		Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+		Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
+		Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+		Messenger.AddListener<Table>(StructureSignals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
+		Messenger.AddListener<NPCSettlement, bool>(SettlementSignals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
+		Messenger.AddListener<Character, IPointOfInterest>(CharacterSignals.CHARACTER_SAW, OnCharacterSaw);
+		Messenger.AddListener<NPCSettlement>(SettlementSignals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
+		Messenger.AddListener<BurningSource>(InnerMapSignals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
 		Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
 	}
 	public void UnsubscribeListeners() {
 		Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
-		Messenger.RemoveListener<ResourcePile>(Signals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChanged);
-		Messenger.RemoveListener<IPointOfInterest, int>(Signals.OBJECT_DAMAGED, OnObjectDamaged);
-		Messenger.RemoveListener<IPointOfInterest>(Signals.OBJECT_FULLY_REPAIRED, OnObjectFullyRepaired);
-		Messenger.RemoveListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
-		Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
-		Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-		Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-		Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
-		Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
-		Messenger.RemoveListener<Table>(Signals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
-		Messenger.RemoveListener<NPCSettlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
-		// Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
-		Messenger.RemoveListener<NPCSettlement>(Signals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
-		Messenger.RemoveListener<BurningSource>(Signals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
+		Messenger.RemoveListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChanged);
+		Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnTileObjectDamaged);
+		Messenger.RemoveListener<TileObject>(TileObjectSignals.TILE_OBJECT_FULLY_REPAIRED, OnTileObjectFullyRepaired);
+		Messenger.RemoveListener<TileObject, LocationGridTile>(GridTileSignals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
+		Messenger.RemoveListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+		Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+		Messenger.RemoveListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+		Messenger.RemoveListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
+		Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+		Messenger.RemoveListener<Table>(StructureSignals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
+		Messenger.RemoveListener<NPCSettlement, bool>(SettlementSignals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
+		Messenger.RemoveListener<NPCSettlement>(SettlementSignals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
+		Messenger.RemoveListener<BurningSource>(InnerMapSignals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
 	}
 	private void OnGameLoaded() {
 		Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
@@ -89,29 +87,26 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	private void OnResourceInPileChanged(ResourcePile resourcePile) {
 		if (resourcePile.gridTileLocation != null && resourcePile.structureLocation == _owner.mainStorage) {
 			CheckResource(resourcePile.providedResource);
-			Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
+			Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
 			TryCreateCombineStockpile(resourcePile);
 		}
 	}
-	private void OnObjectDamaged(IPointOfInterest poi, int amount) {
-		Assert.IsTrue(poi is TileObject); // || poi is SpecialToken
-		TileObject tileObject = poi as TileObject;
-		if (poi.gridTileLocation != null && poi.gridTileLocation.IsPartOfSettlement(_owner) && tileObject.tileObjectType.CanBeRepaired()) {
-			TryCreateRepairTileObjectJob(poi);
+	private void OnTileObjectDamaged(TileObject tileObject, int amount) {
+		if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.IsPartOfSettlement(_owner) && tileObject.tileObjectType.CanBeRepaired()) {
+			TryCreateRepairTileObjectJob(tileObject);
 		}
 	}
-	private void OnObjectFullyRepaired(IPointOfInterest poi) {
-		Assert.IsTrue(poi is TileObject); // || poi is SpecialToken
-		if (poi.gridTileLocation != null && poi.gridTileLocation.IsPartOfSettlement(_owner)) {
+	private void OnTileObjectFullyRepaired(TileObject tileObject) {
+		if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.IsPartOfSettlement(_owner)) {
 			//cancel existing repair job
-			Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.REPAIR, poi);
+			Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.REPAIR, tileObject as IPointOfInterest);
 		}
 	}
 	private void OnTileObjectPlaced(TileObject tileObject, LocationGridTile tile) {
 		if (tileObject is ResourcePile resourcePile) {
 			if (resourcePile.resourceInPile > 0) {
-				Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.HAUL, resourcePile as IPointOfInterest);
-				Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
+				Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.HAUL, resourcePile as IPointOfInterest);
+				Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
 				if (tile.IsPartOfSettlement(_owner)) {
 					if (_owner.mainStorage == resourcePile.structureLocation) {
 						CheckResource(resourcePile.providedResource);
@@ -354,8 +349,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		} else {
 			ResourcePile pile = _owner.mainStorage.GetResourcePileObjectWithLowestCount<T>(false);
 			Assert.IsNotNull(pile, $"{_owner.name} is trying to cancel produce resource {resource.ToString()}, but could not find any pile that produces {resource.ToString()}");
-			Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, jobType, pile as IPointOfInterest);
-			Messenger.Broadcast(Signals.CHECK_UNBUILT_OBJECT_VALIDITY);
+			Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, jobType, pile as IPointOfInterest);
+			Messenger.Broadcast(TileObjectSignals.CHECK_UNBUILT_OBJECT_VALIDITY);
 		}
 	}
 	private void TriggerProduceResource<T>(RESOURCE resourceType, JOB_TYPE jobType) where T : ResourcePile {
@@ -397,27 +392,16 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	#endregion
 
 	#region Repair
-	private void TryCreateRepairTileObjectJob(IPointOfInterest target) {
+	private void TryCreateRepairTileObjectJob(TileObject target) {
 		if (_owner.HasJob(JOB_TYPE.REPAIR, target) == false) {
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR, target, _owner);
 			job.SetCanTakeThisJobChecker(JobManager.Can_Take_Repair);
 			job.SetStillApplicableChecker(JobManager.Repair_Applicability);
 			if (target is TileObject tileObject) {
 				job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] {TileObjectDB.GetTileObjectData(tileObject.tileObjectType).repairCost});	
-			} 
-			// else if (target is SpecialToken) {
-			// 	SpecialToken specialToken = target as SpecialToken;
-			// 	job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] {
-			// 		TokenManager.Instance.itemData[specialToken.specialTokenType].craftCost
-			// 	});
-			// }
-			
+			}
 			_owner.AddToAvailableJobs(job);
 		}
-	}
-	private bool IsRepairJobStillValid(IPointOfInterest target) {
-		return target.currentHP < target.maxHP && target.gridTileLocation != null 
-		                                       && target.gridTileLocation.IsPartOfSettlement(_owner);
 	}
 	#endregion
 

@@ -40,14 +40,14 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
         miscsSkillSlotItems = new GroupedSkillSlotItems();
         loadoutChoices = new List<SPELL_TYPE>();
 
-        Messenger.AddListener<SkillSlotItem, PLAYER_ARCHETYPE>(Signals.SKILL_SLOT_ITEM_CLICKED, OnClickSkillSlotItem);
-        Messenger.AddListener(Signals.START_GAME_AFTER_LOADOUT_SELECT, OnStartGameAfterLoadoutSelect);
+        Messenger.AddListener<SkillSlotItem, PLAYER_ARCHETYPE>(UISignals.SKILL_SLOT_ITEM_CLICKED, OnClickSkillSlotItem);
+        Messenger.AddListener(UISignals.START_GAME_AFTER_LOADOUT_SELECT, OnStartGameAfterLoadoutSelect);
 
         spellsTab.isOn = true;
     }
     public void OnDestroy() {
-        Messenger.RemoveListener<SkillSlotItem, PLAYER_ARCHETYPE>(Signals.SKILL_SLOT_ITEM_CLICKED, OnClickSkillSlotItem);
-        Messenger.RemoveListener(Signals.START_GAME_AFTER_LOADOUT_SELECT, OnStartGameAfterLoadoutSelect);
+        Messenger.RemoveListener<SkillSlotItem, PLAYER_ARCHETYPE>(UISignals.SKILL_SLOT_ITEM_CLICKED, OnClickSkillSlotItem);
+        Messenger.RemoveListener(UISignals.START_GAME_AFTER_LOADOUT_SELECT, OnStartGameAfterLoadoutSelect);
     }
 
     #region General

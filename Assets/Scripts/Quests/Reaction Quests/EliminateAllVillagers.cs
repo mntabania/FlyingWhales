@@ -23,7 +23,7 @@ namespace Quests {
                 new QuestStepCollection(_eliminateVillagerStep),
             };
             
-            Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
+            Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyPressed);
         }
         private void OnKeyPressed(KeyCode keyCode) {
             if (keyCode == KeyCode.Tab) {

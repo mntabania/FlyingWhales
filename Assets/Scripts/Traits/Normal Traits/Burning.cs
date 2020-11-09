@@ -57,7 +57,7 @@ namespace Traits {
             sourceOfBurning?.AddObjectOnFire(owner);
             Messenger.AddListener(Signals.TICK_ENDED, PerTickEnded);
             if (addTo is Character) {
-                Messenger.AddListener<Character>(Signals.CHARACTER_MARKER_EXPIRED, OnCharacterMarkerExpired);
+                Messenger.AddListener<Character>(CharacterSignals.CHARACTER_MARKER_EXPIRED, OnCharacterMarkerExpired);
             }
         }
         #endregion
@@ -81,7 +81,7 @@ namespace Traits {
                     winterRose.WinterRoseEffect();
                 } else {
                     //Will not reprocess if winter rose since it will be destroyed anyway
-                    Messenger.Broadcast(Signals.REPROCESS_POI, poi);
+                    Messenger.Broadcast(CharacterSignals.REPROCESS_POI, poi);
                 }
             } else if (addedTo is StructureWallObject structureWallObject) {
                 burningEffect = GameManager.Instance.CreateParticleEffectAt(structureWallObject, PARTICLE_EFFECT.Burning);
@@ -92,7 +92,7 @@ namespace Traits {
             }
             Messenger.AddListener(Signals.TICK_ENDED, PerTickEnded);
             if (addedTo is Character) {
-                Messenger.AddListener<Character>(Signals.CHARACTER_MARKER_EXPIRED, OnCharacterMarkerExpired);
+                Messenger.AddListener<Character>(CharacterSignals.CHARACTER_MARKER_EXPIRED, OnCharacterMarkerExpired);
             }
             
             base.OnAddTrait(addedTo);
@@ -104,7 +104,7 @@ namespace Traits {
             SetSourceOfBurning(null, removedFrom);
             Messenger.RemoveListener(Signals.TICK_ENDED, PerTickEnded);
             if (removedFrom is Character) {
-                Messenger.RemoveListener<Character>(Signals.CHARACTER_MARKER_EXPIRED, OnCharacterMarkerExpired);
+                Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_MARKER_EXPIRED, OnCharacterMarkerExpired);
             }
             if (burningEffect) {
                 ObjectPoolManager.Instance.DestroyObject(burningEffect);
@@ -256,9 +256,9 @@ namespace Traits {
         public void SetDouser(Character character) {
             douser = character;
             if (douser == null) {
-                Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+                Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
             } else {
-                Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+                Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
             }
         }
         private void OnJobRemovedFromCharacter(JobQueueItem jqi, Character character) {

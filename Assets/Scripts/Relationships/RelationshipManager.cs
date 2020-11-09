@@ -210,7 +210,7 @@ public class RelationshipManager : BaseMonoBehaviour {
             rel1.relationshipProcessor?.OnRelationshipRemoved(rel1, rel2, rel);
             rel2.relationshipContainer.RemoveRelationship(rel1, pair);
             rel2.relationshipProcessor?.OnRelationshipRemoved(rel2, rel1, pair);
-            Messenger.Broadcast(Signals.RELATIONSHIP_REMOVED, rel1, rel, rel2);
+            Messenger.Broadcast(CharacterSignals.RELATIONSHIP_REMOVED, rel1, rel, rel2);
         }
     }
     #endregion

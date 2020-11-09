@@ -41,7 +41,7 @@ namespace Traits {
             //if (trait.hasOnEnterGridTile) {
             //    traitable.traitContainer.AddOnEnterGridTileTrait(trait);
             //}
-            Messenger.Broadcast(Signals.TRAITABLE_GAINED_TRAIT, traitable, trait);
+            Messenger.Broadcast(TraitSignals.TRAITABLE_GAINED_TRAIT, traitable, trait);
         }
         protected void DefaultProcessOnRemoveTrait(ITraitable traitable, Trait trait, Character removedBy) {
             // traitable.traitContainer.RemoveScheduleTicket(trait.name, bySchedule);
@@ -63,7 +63,7 @@ namespace Traits {
             //if (trait.hasOnEnterGridTile) {
             //    traitable.traitContainer.RemoveOnEnterGridTileTrait(trait);
             //}
-            Messenger.Broadcast(Signals.TRAITABLE_LOST_TRAIT, traitable, trait, removedBy);
+            Messenger.Broadcast(TraitSignals.TRAITABLE_LOST_TRAIT, traitable, trait, removedBy);
         }
         protected bool DefaultProcessOnStackStatus(ITraitable traitable, Status status, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
             int duration = overrideDuration;

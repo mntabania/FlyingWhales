@@ -32,7 +32,7 @@ public abstract class ResourcePile : TileObject {
     }
     public virtual void AdjustResourceInPile(int adjustment) {
         AdjustResource(providedResource, adjustment);
-        Messenger.Broadcast(Signals.RESOURCE_IN_PILE_CHANGED, this);
+        Messenger.Broadcast(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, this);
         if (resourceInPile <= 0) {
             if(gridTileLocation != null && isBeingCarriedBy == null) {
                 gridTileLocation.structure.RemovePOI(this);
@@ -59,7 +59,7 @@ public abstract class ResourcePile : TileObject {
     #region Overrides
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
-        Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.DESTROY, this as IPointOfInterest);
+        Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.DESTROY, this as IPointOfInterest);
     }
     protected override void OnSetObjectAsUnbuilt() {
         base.OnSetObjectAsUnbuilt();

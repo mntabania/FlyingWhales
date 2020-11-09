@@ -3177,7 +3177,33 @@
             <e p="RectDrawer.cs" t="Include" />
             <e p="ReflectiveEnumerator.cs" t="Include" />
             <e p="SerializableDictionary.cs" t="Include" />
-            <e p="Signals.cs" t="Include" />
+            <e p="Signals" t="Include">
+              <e p="CharacterSignals.cs" t="Include" />
+              <e p="ControlsSignals.cs" t="Include" />
+              <e p="FactionSignals.cs" t="Include" />
+              <e p="GridTileSignals.cs" t="Include" />
+              <e p="HexTileSignals.cs" t="Include" />
+              <e p="InnerMapSignals.cs" t="Include" />
+              <e p="InterruptSignals.cs" t="Include" />
+              <e p="JobSignals.cs" t="Include" />
+              <e p="LandmarkSignals.cs" t="Include" />
+              <e p="MonsterSignals.cs" t="Include" />
+              <e p="ObjectPoolSignals.cs" t="Include" />
+              <e p="ParticleSignals.cs" t="Include" />
+              <e p="PartySignals.cs" t="Include" />
+              <e p="PlayerQuestSignals.cs" t="Include" />
+              <e p="PlayerSignals.cs" t="Include" />
+              <e p="RegionSignals.cs" t="Include" />
+              <e p="SettingsSignals.cs" t="Include" />
+              <e p="SettlementSignals.cs" t="Include" />
+              <e p="Signals.cs" t="Include" />
+              <e p="SpellSignals.cs" t="Include" />
+              <e p="StructureSignals.cs" t="Include" />
+              <e p="TileObjectSignals.cs" t="Include" />
+              <e p="TraitSignals.cs" t="Include" />
+              <e p="UISignals.cs" t="Include" />
+              <e p="WorldEventSignals.cs" t="Include" />
+            </e>
             <e p="SortingLayerExposer.cs" t="Include" />
             <e p="TestingUtilities.cs" t="Include" />
             <e p="TextTyper.cs" t="Include" />

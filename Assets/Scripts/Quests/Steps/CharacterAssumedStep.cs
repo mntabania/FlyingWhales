@@ -14,10 +14,10 @@ namespace Quests.Steps {
             _assumerValidityChecker = assumerValidityChecker;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<Character, Character, IPointOfInterest>(Signals.CHARACTER_ASSUMED, CheckCompletion);
+            Messenger.AddListener<Character, Character, IPointOfInterest>(JobSignals.CHARACTER_ASSUMED, CheckCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<Character, Character, IPointOfInterest>(Signals.CHARACTER_ASSUMED, CheckCompletion);
+            Messenger.RemoveListener<Character, Character, IPointOfInterest>(JobSignals.CHARACTER_ASSUMED, CheckCompletion);
         }
 
         #region Listeners

@@ -30,7 +30,7 @@ public class PlayerAction : SpellData {
             IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
         }
         base.ActivateAbility(targetPOI);
-        Messenger.Broadcast(Signals.PLAYER_ACTION_EXECUTED_TOWARDS_POI, this, targetPOI);
+        Messenger.Broadcast(SpellSignals.PLAYER_ACTION_EXECUTED_TOWARDS_POI, this, targetPOI);
     }
     #endregion  
 
@@ -44,7 +44,7 @@ public class PlayerAction : SpellData {
         } else if (target is StructureRoom room) {
             ActivateAbility(room);
         }
-        Messenger.Broadcast(Signals.PLAYER_ACTION_ACTIVATED, this);
+        Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ACTIVATED, this);
 	}
     public bool CanPerformAbilityTo(IPlayerActionTarget target) {
         if (target is IPointOfInterest targetPOI) {

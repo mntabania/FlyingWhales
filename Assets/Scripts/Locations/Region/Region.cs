@@ -499,13 +499,13 @@ public class Region : ISavable, ILogFiller {
     public void LoadCharacterHere(Character character) {
         charactersAtLocation.Add(character);
         character.SetRegionLocation(this);
-        Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
+        Messenger.Broadcast(RegionSignals.CHARACTER_ENTERED_REGION, character, this);
     }
     public void AddCharacterToLocation(Character character, LocationGridTile tileOverride = null, bool isInitial = false) {
         character.SetRegionLocation(this);
         if (!charactersAtLocation.Contains(character)) {
             charactersAtLocation.Add(character);
-            Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
+            Messenger.Broadcast(RegionSignals.CHARACTER_ENTERED_REGION, character, this);
         }
     }
     public void RemoveCharacterFromLocation(Character character) {
@@ -515,7 +515,7 @@ public class Region : ISavable, ILogFiller {
             //     features[i].OnRemoveCharacterFromRegion(this, character);
             // }
             character.SetRegionLocation(null);
-            Messenger.Broadcast(Signals.CHARACTER_EXITED_REGION, character, this);
+            Messenger.Broadcast(RegionSignals.CHARACTER_EXITED_REGION, character, this);
         }
     }
     //public void RemoveCharacterFromLocation(Party party) {

@@ -91,9 +91,9 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         GoToRandomTileInRadius();
         _expiryKey = SchedulingManager.Instance.AddEntry(_tornado.expiryDate, Expire, this);
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
-        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
-        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
-        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
+        Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
+        Messenger.AddListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
         isSpawned = true;
 
         if (GameManager.Instance.isPaused) {
@@ -158,9 +158,9 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _damagablesInTornado.Clear();
         ClearTornadoParticle();
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
-        Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
-        Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
-        Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
+        Messenger.RemoveListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.RemoveListener<bool>(UISignals.PAUSED, OnGamePaused);
+        Messenger.RemoveListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
     }
     #endregion
     

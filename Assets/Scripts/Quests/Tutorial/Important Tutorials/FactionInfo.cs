@@ -84,64 +84,64 @@ namespace Tutorial {
         
         #region Info Tab
         private void OnTopMostInfo() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "CharacterInfo_Info");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "CharacterInfo_Info");
         }
         private void OnNoLongerTopMostInfo() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "CharacterInfo_Info");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "CharacterInfo_Info");
         }
         #endregion
         
         #region Faction Info Tab
         private void OnTopMostFactionInfo() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Faction Overview");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Faction Overview");
         }
         private void OnNoLongerTopMostFactionInfo() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Faction Overview");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Faction Overview");
         }
         #endregion
         
         #region Mood Tab
         private void OnTopMostCharacters() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Faction Characters");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Faction Characters");
         }
         private void OnNoLongerTopMostCharacters() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Faction Characters");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Faction Characters");
         }
         #endregion
         
         #region Locations Tab
         private void OnTopMostLocations() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Faction Owned Locations");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Faction Owned Locations");
         }
         private void OnNoLongerTopMostLocations() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Faction Owned Locations");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Faction Owned Locations");
         }
         #endregion
         
         #region Relations Tab
         private void OnTopMostRelations() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Faction Relations");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Faction Relations");
         }
         private void OnNoLongerTopMostRelations() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Faction Relations");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Faction Relations");
         }
         #endregion
         
         #region Crimes Tab
         private void OnTopMostCrimes() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Faction Crimes");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Faction Crimes");
         }
         private void OnNoLongerTopMostCrimes() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Faction Crimes");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Faction Crimes");
         }
         #endregion
         
         #region Logs Tab
         private void OnTopMostLogs() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Faction Logs");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Faction Logs");
         }
         private void OnNoLongerTopMostLogs() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Faction Logs");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Faction Logs");
         }
         #endregion
     }

@@ -29,12 +29,12 @@ public class TravelLine : MonoBehaviour {
 
     public void Initialize() {
         _currentTick = 0;
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_CLOSED, OnMenuClosed);
     }
     private void OnDestroy() {
-        Messenger.RemoveListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.RemoveListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.RemoveListener<InfoUIBase>(UISignals.MENU_OPENED, OnMenuOpened);
+        Messenger.RemoveListener<InfoUIBase>(UISignals.MENU_CLOSED, OnMenuClosed);
     }
     public void SetCharacter(Character character) {
         _character = character;

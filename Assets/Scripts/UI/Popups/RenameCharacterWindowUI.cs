@@ -13,7 +13,7 @@ public class RenameCharacterWindowUI : MonoBehaviour {
     private string _characterCurrentName;
 
     void Start() {
-        Messenger.AddListener<string, string>(Signals.EDIT_CHARACTER_NAME, OnListenedEditCharacterName);
+        Messenger.AddListener<string, string>(UISignals.EDIT_CHARACTER_NAME, OnListenedEditCharacterName);
     }
 
     #region Listeners
@@ -43,7 +43,7 @@ public class RenameCharacterWindowUI : MonoBehaviour {
 
     #region Button Clicks
     public void OnClickConfirmButton() {
-        Messenger.Broadcast(Signals.RENAME_CHARACTER, _characterPersistentID, inputField.text);
+        Messenger.Broadcast(CharacterSignals.RENAME_CHARACTER, _characterPersistentID, inputField.text);
         ShowHideWindow(false);
     }
     #endregion

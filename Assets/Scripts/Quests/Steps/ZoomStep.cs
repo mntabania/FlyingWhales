@@ -8,11 +8,11 @@ namespace Quests.Steps {
         
         public ZoomStep(string stepDescription = "Zoom in and out") : base(stepDescription) { }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<Camera, float>(Signals.CAMERA_ZOOM_CHANGED, OnCameraZoom);
+            Messenger.AddListener<Camera, float>(ControlsSignals.CAMERA_ZOOM_CHANGED, OnCameraZoom);
         }
         
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<Camera, float>(Signals.CAMERA_ZOOM_CHANGED, OnCameraZoom);
+            Messenger.RemoveListener<Camera, float>(ControlsSignals.CAMERA_ZOOM_CHANGED, OnCameraZoom);
         }
         
         private void OnCameraZoom(Camera camera, float amount) {

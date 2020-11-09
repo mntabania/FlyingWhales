@@ -22,8 +22,8 @@ namespace Quests.Special_Popups {
                     new IsAtTime(new[] {GameManager.Instance.GetTicksBasedOnHour(13)}), 
                 }    
             );
-            Messenger.AddListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, OnSelectableLeftClicked);
-            Messenger.AddListener<Character>(Signals.AWAKEN_DRAGON, OnDragonAwakened);
+            Messenger.AddListener<ISelectable>(ControlsSignals.SELECTABLE_LEFT_CLICKED, OnSelectableLeftClicked);
+            Messenger.AddListener<Character>(MonsterSignals.AWAKEN_DRAGON, OnDragonAwakened);
         }
         protected override bool HasMetAllCriteria() {
             bool hasMetCriteria = base.HasMetAllCriteria();
@@ -48,7 +48,7 @@ namespace Quests.Special_Popups {
 
         #region Activation
         public override void Activate() {
-            Messenger.RemoveListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, OnSelectableLeftClicked);
+            Messenger.RemoveListener<ISelectable>(ControlsSignals.SELECTABLE_LEFT_CLICKED, OnSelectableLeftClicked);
             PlayerUI.Instance.ShowGeneralConfirmation("A Dragon", 
                 $"There is a {UtilityScripts.Utilities.ColorizeAction("sleeping dragon")} in this region. It has been hibernating for hundreds of years. " +
                 $"If you manage to {UtilityScripts.Utilities.ColorizeAction("awaken")} it, it may assist you in wiping out the village.", 
@@ -59,7 +59,7 @@ namespace Quests.Special_Popups {
         public override void Deactivate() {
             base.Deactivate();
             StopCheckingCriteria();
-            Messenger.RemoveListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, OnSelectableLeftClicked);
+            Messenger.RemoveListener<ISelectable>(ControlsSignals.SELECTABLE_LEFT_CLICKED, OnSelectableLeftClicked);
         }
         #endregion
     }

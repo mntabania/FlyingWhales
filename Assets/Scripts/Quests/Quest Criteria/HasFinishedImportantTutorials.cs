@@ -6,11 +6,11 @@ namespace Quests {
             if (TutorialManager.Instance.hasCompletedImportantTutorials) {
                 SetCriteriaAsMet();
             } else {
-                Messenger.AddListener(Signals.FINISHED_IMPORTANT_TUTORIALS, SetCriteriaAsMet);    
+                Messenger.AddListener(PlayerQuestSignals.FINISHED_IMPORTANT_TUTORIALS, SetCriteriaAsMet);    
             }
         }
         public override void Disable() {
-            Messenger.RemoveListener(Signals.FINISHED_IMPORTANT_TUTORIALS, SetCriteriaAsMet);
+            Messenger.RemoveListener(PlayerQuestSignals.FINISHED_IMPORTANT_TUTORIALS, SetCriteriaAsMet);
         }
     }
 }

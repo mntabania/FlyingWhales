@@ -30,7 +30,7 @@ namespace Tutorial {
         }
         public override void Activate() {
             base.Activate();
-            Messenger.Broadcast(Signals.UPDATE_BUILD_LIST);
+            Messenger.Broadcast(UISignals.UPDATE_BUILD_LIST);
 
         }
         protected override void ConstructSteps() {
@@ -85,46 +85,46 @@ namespace Tutorial {
         
         #region Build Structure Button
         private void OnTopMostBuildStructure() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Build Structure");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Build Structure");
         }
         private void OnNoLongerTopMostBuildStructure() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Build Structure");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Build Structure");
         }
         #endregion
         
         #region The Eye
         private void OnTopMostTheEye() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Eye");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Eye");
         }
         private void OnNoLongerTopMostTheEye() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Eye");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Eye");
         }
         #endregion
         
         #region Store Intel
         private void OnTopMostStoreIntel() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Store Intel Button");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Store Intel Button");
         }
         private void OnNoLongerTopMostStoreIntel() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Store Intel Button");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Store Intel Button");
         }
         #endregion
         
         #region Intel Tab
         private void OnTopMostIntelTab() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Intel Tab");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Intel Tab");
         }
         private void OnNoLongerTopMostIntelTab() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Intel Tab");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Intel Tab");
         }
         #endregion
         
         #region Build Tab
         private void OnTopMostBuildTab() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Build Tab");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Build Tab");
         }
         private void OnNoLongerTopMostBuildTab() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Build Tab");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Build Tab");
         }
         #endregion
     }

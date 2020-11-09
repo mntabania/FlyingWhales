@@ -564,6 +564,7 @@ public static class Extensions {
             case JOB_TYPE.SNATCH:
             case JOB_TYPE.VAMPIRIC_EMBRACE:
             case JOB_TYPE.IMPRISON_BLOOD_SOURCE:
+            case JOB_TYPE.SPREAD_RUMOR:
                 priority = 830;
                 break;
             case JOB_TYPE.BURY:
@@ -655,11 +656,6 @@ public static class Extensions {
             case JOB_TYPE.VISIT_FRIEND:
             case JOB_TYPE.VISIT_DIFFERENT_REGION:
                 priority = 280;
-                break;
-            case JOB_TYPE.SPREAD_RUMOR:
-                //case JOB_TYPE.CONFIRM_RUMOR:
-                //case JOB_TYPE.SHARE_NEGATIVE_INFO:
-                priority = 270;
                 break;
             case JOB_TYPE.OBTAIN_PERSONAL_ITEM:
             case JOB_TYPE.ABDUCT:

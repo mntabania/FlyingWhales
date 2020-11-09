@@ -112,18 +112,18 @@ public class Player : ILeader, IObjectManipulator {
         //goap
         // Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
         // Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
 
         //minions
-        Messenger.AddListener<Minion, BaseLandmark>(Signals.MINION_ASSIGNED_PLAYER_LANDMARK, OnMinionAssignedToPlayerLandmark);
-        Messenger.AddListener<Minion, BaseLandmark>(Signals.MINION_UNASSIGNED_PLAYER_LANDMARK, OnMinionUnassignedFromPlayerLandmark);
-        Messenger.AddListener<Minion>(Signals.SUMMON_MINION, OnSummonMinion);
-        Messenger.AddListener<Minion>(Signals.UNSUMMON_MINION, OnUnsummonMinion);
+        Messenger.AddListener<Minion, BaseLandmark>(PlayerSignals.MINION_ASSIGNED_PLAYER_LANDMARK, OnMinionAssignedToPlayerLandmark);
+        Messenger.AddListener<Minion, BaseLandmark>(PlayerSignals.MINION_UNASSIGNED_PLAYER_LANDMARK, OnMinionUnassignedFromPlayerLandmark);
+        Messenger.AddListener<Minion>(SpellSignals.SUMMON_MINION, OnSummonMinion);
+        Messenger.AddListener<Minion>(SpellSignals.UNSUMMON_MINION, OnUnsummonMinion);
 
-        Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
-        Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
+        Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
     }
     #endregion
 
@@ -216,12 +216,12 @@ public class Player : ILeader, IObjectManipulator {
     public void AddMinion(Minion minion) {
         if (!minions.Contains(minion)) {
             minions.Add(minion);
-            Messenger.Broadcast(Signals.PLAYER_GAINED_MINION, minion);
+            Messenger.Broadcast(PlayerSignals.PLAYER_GAINED_MINION, minion);
         }
     }
     public void RemoveMinion(Minion minion) {
         if (minions.Remove(minion)) {
-            Messenger.Broadcast(Signals.PLAYER_LOST_MINION, minion);
+            Messenger.Broadcast(PlayerSignals.PLAYER_LOST_MINION, minion);
         }
     }
     private void OnSummonMinion(Minion minion) {
@@ -253,7 +253,7 @@ public class Player : ILeader, IObjectManipulator {
 
     #region Win/Lose Conditions
     private void AddWinListener() {
-        Messenger.AddListener<Faction>(Signals.FACTION_LEADER_DIED, OnFactionLeaderDied);
+        Messenger.AddListener<Faction>(FactionSignals.FACTION_LEADER_DIED, OnFactionLeaderDied);
     }
     private void OnFactionLeaderDied(Faction faction) {
         List<Faction> allUndestroyedFactions = FactionManager.Instance.allFactions.Where(
@@ -274,15 +274,15 @@ public class Player : ILeader, IObjectManipulator {
             currentActivePlayerSpell = action;
             if (currentActivePlayerSpell == null) {
                 UIManager.Instance.SetTempDisableShowInfoUI(false); //allow UI clicks again after active spell has been set to null
-                Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
+                Messenger.RemoveListener<KeyCode>(ControlsSignals.KEY_DOWN, OnSpellCast);
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
                 previousActiveAction.UnhighlightAffectedTiles();
                 UIManager.Instance.HideSmallInfo(); //This is to hide the invalid messages.
-                Messenger.Broadcast(Signals.PLAYER_NO_ACTIVE_SPELL, previousActiveAction);
+                Messenger.Broadcast(SpellSignals.PLAYER_NO_ACTIVE_SPELL, previousActiveAction);
             } else {
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
-                Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
-                Messenger.Broadcast(Signals.PLAYER_SET_ACTIVE_SPELL, currentActivePlayerSpell);
+                Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnSpellCast);
+                Messenger.Broadcast(SpellSignals.PLAYER_SET_ACTIVE_SPELL, currentActivePlayerSpell);
             }
         }
     }
@@ -366,12 +366,12 @@ public class Player : ILeader, IObjectManipulator {
             if (allIntel.Count > PlayerDB.MAX_INTEL) {
                 RemoveIntel(allIntel[0]);
             }
-            Messenger.Broadcast(Signals.PLAYER_OBTAINED_INTEL, newIntel);
+            Messenger.Broadcast(PlayerSignals.PLAYER_OBTAINED_INTEL, newIntel);
         }
     }
     private void RemoveIntel(IIntel intel) {
         if (allIntel.Remove(intel)) {
-            Messenger.Broadcast(Signals.PLAYER_REMOVED_INTEL, intel);
+            Messenger.Broadcast(PlayerSignals.PLAYER_REMOVED_INTEL, intel);
             intel.OnIntelRemoved();
         }
     }
@@ -390,17 +390,17 @@ public class Player : ILeader, IObjectManipulator {
         if(previousIntel != null) {
             IntelItem intelItem = PlayerUI.Instance.GetIntelItemWithIntel(previousIntel);
             intelItem?.SetClickedState(false);
-            Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnIntelCast);
+            Messenger.RemoveListener<KeyCode>(ControlsSignals.KEY_DOWN, OnIntelCast);
             InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         }
         if (currentActiveIntel != null) {
-            Messenger.Broadcast(Signals.ACTIVE_INTEL_SET, currentActiveIntel);
+            Messenger.Broadcast(PlayerSignals.ACTIVE_INTEL_SET, currentActiveIntel);
             IntelItem intelItem = PlayerUI.Instance.GetIntelItemWithIntel(currentActiveIntel);
             intelItem?.SetClickedState(true);
             InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
-            Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnIntelCast);
+            Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnIntelCast);
         } else {
-            Messenger.Broadcast(Signals.ACTIVE_INTEL_REMOVED);
+            Messenger.Broadcast(PlayerSignals.ACTIVE_INTEL_REMOVED);
         }
     }
     private void OnIntelCast(KeyCode keyCode) {
@@ -523,10 +523,10 @@ public class Player : ILeader, IObjectManipulator {
     }
     
     private void ShowNotification(Log log) {
-        Messenger.Broadcast(Signals.SHOW_PLAYER_NOTIFICATION, log);
+        Messenger.Broadcast(UISignals.SHOW_PLAYER_NOTIFICATION, log);
     }
     private void ShowNotification(IIntel intel) {
-        Messenger.Broadcast(Signals.SHOW_INTEL_NOTIFICATION, intel);
+        Messenger.Broadcast(UISignals.SHOW_INTEL_NOTIFICATION, intel);
     }
     #endregion
 
@@ -534,18 +534,18 @@ public class Player : ILeader, IObjectManipulator {
     private void AddSummon(Summon summon) {
         if (!summons.Contains(summon)) {
             summons.Add(summon);
-            Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, summon);
+            Messenger.Broadcast(PlayerSignals.PLAYER_GAINED_SUMMON, summon);
         }
     }
     private void RemoveSummon(Summon summon) {
         if (summons.Remove(summon)) {
-            Messenger.Broadcast(Signals.PLAYER_LOST_SUMMON, summon);
+            Messenger.Broadcast(PlayerSignals.PLAYER_LOST_SUMMON, summon);
         }
     }
     private void OnCharacterDied(Character character) {
         if (character.faction == playerFaction && character is Summon summon) {
             // RemoveSummon(summon);
-            Messenger.Broadcast(Signals.PLAYER_LOST_SUMMON, summon);
+            Messenger.Broadcast(PlayerSignals.PLAYER_LOST_SUMMON, summon);
         }
     }
     #endregion
@@ -557,12 +557,12 @@ public class Player : ILeader, IObjectManipulator {
             ARTIFACT_TYPE previousActiveArtifact = currentActiveArtifact;
             currentActiveArtifact = artifact;
             if (currentActiveArtifact == ARTIFACT_TYPE.None) {
-                Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnArtifactCast);
+                Messenger.RemoveListener<KeyCode>(ControlsSignals.KEY_DOWN, OnArtifactCast);
                 InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
-                Messenger.Broadcast(Signals.PLAYER_NO_ACTIVE_ARTIFACT, previousActiveArtifact);
+                Messenger.Broadcast(PlayerSignals.PLAYER_NO_ACTIVE_ARTIFACT, previousActiveArtifact);
             } else {
                 InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Check);
-                Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnArtifactCast);
+                Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnArtifactCast);
             }
         }
     }
@@ -658,8 +658,8 @@ public class Player : ILeader, IObjectManipulator {
     public void AdjustMana(int amount) {
         mana += amount;
         mana = Mathf.Clamp(mana, 0, EditableValuesManager.Instance.maximumMana);
-        Messenger.Broadcast(Signals.PLAYER_ADJUSTED_MANA, amount, mana);
-        Messenger.Broadcast(Signals.FORCE_RELOAD_PLAYER_ACTIONS);
+        Messenger.Broadcast(PlayerSignals.PLAYER_ADJUSTED_MANA, amount, mana);
+        Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
     }
     public int GetManaCostForInterventionAbility(SPELL_TYPE ability) {
         int tier = PlayerManager.Instance.GetSpellTier(ability);
@@ -710,12 +710,12 @@ public class Player : ILeader, IObjectManipulator {
             TILE_OBJECT_TYPE previousActiveItem = currentActiveItem;
             currentActiveItem = item;
             if (currentActiveItem == TILE_OBJECT_TYPE.NONE) {
-                Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnItemCast);
+                Messenger.RemoveListener<KeyCode>(ControlsSignals.KEY_DOWN, OnItemCast);
                 InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
-                Messenger.Broadcast(Signals.PLAYER_NO_ACTIVE_ITEM, previousActiveItem);
+                Messenger.Broadcast(PlayerSignals.PLAYER_NO_ACTIVE_ITEM, previousActiveItem);
             } else {
                 InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Check);
-                Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnItemCast);
+                Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnItemCast);
             }
         }
     }

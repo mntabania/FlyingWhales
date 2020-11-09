@@ -130,16 +130,16 @@ public class SpellData : IPlayerSkill {
         return CanPerformAbilityTowards(hex);
     }
     protected void IncreaseThreatForEveryCharacterThatSeesPOI(IPointOfInterest poi, int amount) {
-        Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_POI, poi, amount);
+        Messenger.Broadcast(CharacterSignals.INCREASE_THREAT_THAT_SEES_POI, poi, amount);
     }
     //protected void IncreaseThreatThatSeesTile(LocationGridTile targetTile, int amount) {
     //    Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_TILE, targetTile, amount);
     //}
     public void OnLoadSpell() {
-        Messenger.Broadcast(Signals.CHARGES_ADJUSTED, this);
+        Messenger.Broadcast(PlayerSignals.CHARGES_ADJUSTED, this);
         if (hasCooldown) {
             if((hasCharges && charges < maxCharges) || currentCooldownTick < cooldown) {
-                Messenger.Broadcast(Signals.SPELL_COOLDOWN_STARTED, this);
+                Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_STARTED, this);
                 Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
             }
         }
@@ -160,17 +160,17 @@ public class SpellData : IPlayerSkill {
         //PlayerManager.Instance.player.threatComponent.AdjustThreat(20);
 
         if (category == SPELL_CATEGORY.PLAYER_ACTION) {
-            Messenger.Broadcast(Signals.ON_EXECUTE_PLAYER_ACTION, this as PlayerAction);
+            Messenger.Broadcast(SpellSignals.ON_EXECUTE_PLAYER_ACTION, this as PlayerAction);
         } else if (category == SPELL_CATEGORY.AFFLICTION) {
-            Messenger.Broadcast(Signals.ON_EXECUTE_AFFLICTION, this);
+            Messenger.Broadcast(SpellSignals.ON_EXECUTE_AFFLICTION, this);
         } else if (category == SPELL_CATEGORY.SPELL || category == SPELL_CATEGORY.MINION || category == SPELL_CATEGORY.SUMMON) {
-            Messenger.Broadcast(Signals.ON_EXECUTE_SPELL, this);
+            Messenger.Broadcast(SpellSignals.ON_EXECUTE_SPELL, this);
         }
     }
     private void StartCooldown() {
         if (hasCooldown && currentCooldownTick == cooldown) {
             SetCurrentCooldownTick(0);
-            Messenger.Broadcast(Signals.SPELL_COOLDOWN_STARTED, this);
+            Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_STARTED, this);
             Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
         }
     }
@@ -183,8 +183,8 @@ public class SpellData : IPlayerSkill {
                 AdjustCharges(1);
             }
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
-            Messenger.Broadcast(Signals.SPELL_COOLDOWN_FINISHED, this);
-            Messenger.Broadcast(Signals.FORCE_RELOAD_PLAYER_ACTIONS);
+            Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_FINISHED, this);
+            Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
 
             if(hasCharges && charges < maxCharges) {
                 StartCooldown();
@@ -208,7 +208,7 @@ public class SpellData : IPlayerSkill {
     }
     public void AdjustCharges(int amount) {
         charges += amount;
-        Messenger.Broadcast(Signals.CHARGES_ADJUSTED, this);
+        Messenger.Broadcast(PlayerSignals.CHARGES_ADJUSTED, this);
 
         if(charges < maxCharges) {
             StartCooldown();

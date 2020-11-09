@@ -363,30 +363,30 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Listeners
     private void AddListeners() {
-        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
-        Messenger.AddListener<Character>(Signals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
+        Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
+        Messenger.AddListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
         Messenger.AddListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
-        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
-        Messenger.AddListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
+        Messenger.AddListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
+        Messenger.AddListener<IPointOfInterest>(CharacterSignals.REPROCESS_POI, ReprocessPOI);
         Messenger.AddListener(Signals.TICK_ENDED, PerTickMovement);
-        Messenger.AddListener<IIntel>(Signals.ACTIVE_INTEL_SET, OnActiveIntelSet);
-        Messenger.AddListener(Signals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.AddListener<IIntel>(PlayerSignals.ACTIVE_INTEL_SET, OnActiveIntelSet);
+        Messenger.AddListener(PlayerSignals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     private void RemoveListeners() {
-        Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
-        Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
-        Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
-        Messenger.RemoveListener<Character>(Signals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
+        Messenger.RemoveListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.RemoveListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.RemoveListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
+        Messenger.RemoveListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
         Messenger.RemoveListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
-        Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
-        Messenger.RemoveListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
+        Messenger.RemoveListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
+        Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.REPROCESS_POI, ReprocessPOI);
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
-        Messenger.RemoveListener<IIntel>(Signals.ACTIVE_INTEL_SET, OnActiveIntelSet);
-        Messenger.RemoveListener(Signals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.RemoveListener<IIntel>(PlayerSignals.ACTIVE_INTEL_SET, OnActiveIntelSet);
+        Messenger.RemoveListener(PlayerSignals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     private void OnCharacterChangedName(Character p_character) {
         if (p_character == character) {
@@ -555,7 +555,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             PooledObject pooledObject = pooledObjects[i];
             ObjectPoolManager.Instance.DestroyObject(pooledObject);
         }
-        Messenger.Broadcast(Signals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
+        Messenger.Broadcast(CharacterSignals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
         visionCollider.Reset();
         GameObject.Destroy(visionTrigger.gameObject);
         visionTrigger = null;
@@ -1066,11 +1066,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 if (_previousHexTileLocation == null || (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap &&
                     _previousHexTileLocation != character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
                     if (_previousHexTileLocation != null) {
-                        Messenger.Broadcast(Signals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
+                        Messenger.Broadcast(CharacterSignals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
                     }
                     if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                         _previousHexTileLocation = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-                        Messenger.Broadcast(Signals.CHARACTER_ENTERED_HEXTILE, character, _previousHexTileLocation); //character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner
+                        Messenger.Broadcast(CharacterSignals.CHARACTER_ENTERED_HEXTILE, character, _previousHexTileLocation); //character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner
                     } else {
                         _previousHexTileLocation = null;
                     }
@@ -1230,7 +1230,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
             //character.AddAwareness(poi);
             OnAddPOIAsInVisionRange(poi);
-            Messenger.Broadcast(Signals.CHARACTER_SAW, character, poi);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_SAW, character, poi);
         }
     }
     public bool RemovePOIFromInVisionRange(IPointOfInterest poi) {
@@ -1244,7 +1244,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 Character target = poi as Character;
                 inVisionCharacters.Remove(target);
                 target.defaultCharacterTrait.RemoveCharacterThatHasReactedToThis(character);
-                Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_VISION, character, target);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_REMOVED_FROM_VISION, character, target);
             } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                 inVisionTileObjects.Remove(poi as TileObject);
             }
@@ -1950,7 +1950,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private void Expire() {
         Debug.Log($"{character.name}'s marker has expired.");
         character.ForceCancelAllJobsTargetingThisCharacter(false);
-        Messenger.Broadcast(Signals.CHARACTER_MARKER_EXPIRED, character);
+        Messenger.Broadcast(CharacterSignals.CHARACTER_MARKER_EXPIRED, character);
         character.DestroyMarker();
     }
     #endregion

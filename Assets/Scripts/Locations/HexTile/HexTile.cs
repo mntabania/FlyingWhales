@@ -839,14 +839,14 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
             }
         }
         MouseOver();
-        Messenger.Broadcast(Signals.TILE_LEFT_CLICKED, this);
+        Messenger.Broadcast(HexTileSignals.HEXTILE_LEFT_CLICKED, this);
     }
     private void RightClick() {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() ||
             GameManager.Instance.gameHasStarted == false) {
             return;
         }
-        Messenger.Broadcast(Signals.TILE_RIGHT_CLICKED, this);
+        Messenger.Broadcast(HexTileSignals.HEXTILE_RIGHT_CLICKED, this);
     }
     private void MouseOver() {
         if (UIManager.Instance.initialWorldSetupMenu.isPickingPortal) {
@@ -868,7 +868,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         if (GameManager.showAllTilesTooltip) {
             ShowTileInfo();    
         }
-        Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
+        Messenger.Broadcast(HexTileSignals.HEXTILE_HOVERED_OVER, this);
     }
     private void MouseExit() {
         if (UIManager.Instance.initialWorldSetupMenu.isPickingPortal) {
@@ -886,7 +886,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         if (GameManager.showAllTilesTooltip) {
             UIManager.Instance.HideSmallInfo();    
         }
-        Messenger.Broadcast(Signals.TILE_HOVERED_OUT, this);
+        Messenger.Broadcast(HexTileSignals.HEXTILE_HOVERED_OUT, this);
     }
     private void DoubleLeftClick() {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || 
@@ -897,7 +897,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         //     InnerMapManager.Instance.TryShowLocationMap(region);
         //     InnerMapCameraMove.Instance.CenterCameraOnTile(this);
         // }
-        Messenger.Broadcast(Signals.TILE_DOUBLE_CLICKED, this);
+        Messenger.Broadcast(HexTileSignals.HEXTILE_DOUBLE_CLICKED, this);
     }
     public void PointerClick(BaseEventData bed) {
         PointerEventData ped = bed as PointerEventData;
@@ -1253,8 +1253,8 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
 
     #region Listeners
     private void SubscribeListeners() {    
-        Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnStructurePlaced);
-        Messenger.AddListener<LocationStructure, InnerMapHexTile>(Signals.STRUCTURE_OBJECT_REMOVED, OnStructureRemoved);
+        Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_OBJECT_PLACED, OnStructurePlaced);
+        Messenger.AddListener<LocationStructure, InnerMapHexTile>(StructureSignals.STRUCTURE_OBJECT_REMOVED, OnStructureRemoved);
     }
     private void OnStructurePlaced(LocationStructure structure) {
         if (innerMapHexTile != null && innerMapHexTile == structure.occupiedHexTile) {
@@ -1342,12 +1342,12 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     public void AddPlayerAction(SPELL_TYPE action) {
         if (actions.Contains(action) == false) {
             actions.Add(action);
-            Messenger.Broadcast(Signals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
+            Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
         }
     }
     public void RemovePlayerAction(SPELL_TYPE action) {
         if (actions.Remove(action)) {
-            Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+            Messenger.Broadcast(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
         }
     }
     public void ClearPlayerActions() {

@@ -12,12 +12,12 @@ namespace Quests.Steps {
         }
         
         protected override void SubscribeListeners() {
-            Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
-            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         }
 
         #region Completion

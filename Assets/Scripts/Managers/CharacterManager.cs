@@ -373,8 +373,8 @@ public class CharacterManager : BaseMonoBehaviour {
         rumorWorthyActions = new List<string>() { Make_Love, Steal, Poison_Food, Place_Trap, Flirt, Transform_To_Wolf, Drink_Blood };
         ConstructEmotionData();
         ConstructCharacterBehaviours();
-        Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
-        Messenger.AddListener<string, string>(Signals.RENAME_CHARACTER, OnRenameCharacter);
+        Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        Messenger.AddListener<string, string>(CharacterSignals.RENAME_CHARACTER, OnRenameCharacter);
     }
 
     #region Characters
@@ -503,13 +503,13 @@ public class CharacterManager : BaseMonoBehaviour {
     public void AddNewCharacter(Character character, bool broadcastSignal = true) {
         DatabaseManager.Instance.characterDatabase.AddCharacter(character);
         if (broadcastSignal) {
-            Messenger.Broadcast(Signals.CHARACTER_CREATED, character);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_CREATED, character);
         }
     }
     public void RemoveCharacter(Character character, bool broadcastSignal = true) {
         if (DatabaseManager.Instance.characterDatabase.RemoveCharacter(character)) {
             if (broadcastSignal) {
-                Messenger.Broadcast(Signals.CHARACTER_REMOVED, character);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_REMOVED, character);
             }
         }
     }
@@ -1395,7 +1395,7 @@ public class CharacterManager : BaseMonoBehaviour {
             necromancerInTheWorld = character;
             if (necromancerInTheWorld != null) {
                 hasSpawnedNecromancerOnce = true;
-                Messenger.Broadcast(Signals.NECROMANCER_SPAWNED, necromancerInTheWorld);
+                Messenger.Broadcast(CharacterSignals.NECROMANCER_SPAWNED, necromancerInTheWorld);
             }
         }
         

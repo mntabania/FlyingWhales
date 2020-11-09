@@ -116,7 +116,7 @@ public class Cry : GoapAction {
             goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
         }
         // goapNode.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, goapNode.actor, "feeling sad");
-        Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, goapNode.actor.marker.transform.position, 2, goapNode.actor.currentRegion.innerMap);
+        Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, goapNode.actor.marker.transform.position, 2, goapNode.actor.currentRegion.innerMap);
     }
     #endregion
 

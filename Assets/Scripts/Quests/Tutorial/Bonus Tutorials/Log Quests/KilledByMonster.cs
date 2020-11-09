@@ -44,13 +44,13 @@ namespace Tutorial {
         #region Activation
         public override void Activate() {
             base.Activate();
-            Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
-            Messenger.AddListener<Character>(Signals.CHARACTER_MARKER_DESTROYED, OnCharacterMarkerDestroyed);
+            Messenger.AddListener<Log>(UISignals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_MARKER_DESTROYED, OnCharacterMarkerDestroyed);
         }
         public override void Deactivate() {
             base.Deactivate();
-            Messenger.RemoveListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_MARKER_DESTROYED, OnCharacterMarkerDestroyed);
+            Messenger.RemoveListener<Log>(UISignals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_MARKER_DESTROYED, OnCharacterMarkerDestroyed);
             _targetCharacter = null;
         }
         

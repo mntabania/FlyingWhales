@@ -48,8 +48,8 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         MoveToRandomDirection();
         _expiryKey = SchedulingManager.Instance.AddEntry(owner.expiryDate, Expire, this);
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
-        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
-        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
+        Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         isSpawned = true;
 
         if (GameManager.Instance.isPaused) {
@@ -186,8 +186,8 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
             SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);
         }
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
-        Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
-        Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.RemoveListener<bool>(UISignals.PAUSED, OnGamePaused);
+        Messenger.RemoveListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         owner.Expire();
         StartCoroutine(DestroyCoroutine());
     }

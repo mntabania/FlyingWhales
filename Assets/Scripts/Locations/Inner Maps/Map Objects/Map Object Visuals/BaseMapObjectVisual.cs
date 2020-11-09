@@ -173,10 +173,10 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         }
     }
     void OnEnable() {
-        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
+        Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
     }
     void OnDisable() {
-        Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
+        Messenger.RemoveListener<bool>(UISignals.PAUSED, OnGamePaused);
     }
     public override void BeforeDestroyActions() {
         base.BeforeDestroyActions();

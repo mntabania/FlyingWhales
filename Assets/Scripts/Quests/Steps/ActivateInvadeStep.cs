@@ -3,10 +3,10 @@
         public ActivateInvadeStep(string stepDescription = "Click on Invade") 
             : base(stepDescription) { }
         protected override void SubscribeListeners() {
-            Messenger.AddListener(Signals.INVADE_ACTIVATED, Complete);
+            Messenger.AddListener(PlayerSignals.INVADE_ACTIVATED, Complete);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener(Signals.INVADE_ACTIVATED, Complete);
+            Messenger.RemoveListener(PlayerSignals.INVADE_ACTIVATED, Complete);
         }
     }
 }

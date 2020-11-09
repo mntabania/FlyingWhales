@@ -52,18 +52,17 @@ public class FactionInfoUI : InfoUIBase {
         base.Initialize();
         _characterItems = new List<CharacterNameplateItem>();
         locationItems = new List<SettlementNameplateItem>();
-        Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
-        Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
-        Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
-        Messenger.AddListener<Faction, BaseSettlement>(Signals.FACTION_OWNED_SETTLEMENT_ADDED, OnFactionSettlementAdded);
-        Messenger.AddListener<Faction, BaseSettlement>(Signals.FACTION_OWNED_SETTLEMENT_REMOVED, OnFactionSettlementRemoved);
-        Messenger.AddListener<FactionRelationship>(Signals.FACTION_RELATIONSHIP_CHANGED, OnFactionRelationshipChanged);
-        Messenger.AddListener<Faction>(Signals.FACTION_ACTIVE_CHANGED, OnFactionActiveChanged);
-        Messenger.AddListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnFactionLeaderChanged);
-        Messenger.AddListener<Faction, ILeader>(Signals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
-        Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateHistory);
-        Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
-        Messenger.AddListener<Faction>(Signals.FACTION_IDEOLOGIES_CHANGED, OnFactionIdeologiesChanged);
+        Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
+        Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
+        Messenger.AddListener<Faction, BaseSettlement>(FactionSignals.FACTION_OWNED_SETTLEMENT_ADDED, OnFactionSettlementAdded);
+        Messenger.AddListener<Faction, BaseSettlement>(FactionSignals.FACTION_OWNED_SETTLEMENT_REMOVED, OnFactionSettlementRemoved);
+        Messenger.AddListener<FactionRelationship>(FactionSignals.FACTION_RELATIONSHIP_CHANGED, OnFactionRelationshipChanged);
+        Messenger.AddListener<Faction>(FactionSignals.FACTION_ACTIVE_CHANGED, OnFactionActiveChanged);
+        Messenger.AddListener<Character, ILeader>(CharacterSignals.ON_SET_AS_FACTION_LEADER, OnFactionLeaderChanged);
+        Messenger.AddListener<Faction, ILeader>(CharacterSignals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
+        Messenger.AddListener<Log>(UISignals.LOG_ADDED, UpdateHistory);
+        Messenger.AddListener<Log>(UISignals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
+        Messenger.AddListener<Faction>(FactionSignals.FACTION_IDEOLOGIES_CHANGED, OnFactionIdeologiesChanged);
         logsWindow.Initialize();
     }
     public override void OpenMenu() {
@@ -266,12 +265,6 @@ public class FactionInfoUI : InfoUIBase {
         charactersScrollView.verticalNormalizedPosition = 1;
         locationsScrollView.verticalNormalizedPosition = 1;
         logsWindow.ResetScrollPosition();
-    }
-    private void OnInspectAll() {
-        if (isShowing && activeFaction != null) {
-            UpdateAllCharacters();
-            //UpdateHiddenUI();
-        }
     }
     public void ShowFactionTestingInfo() {
         string summary = $"Faction Type: {activeFaction.factionType.type.ToString()}";

@@ -142,7 +142,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                 }
 
                 if (broadcastSignal) {
-                    Messenger.Broadcast(Signals.CHARACTER_ADDED_TO_FACTION, character, this);
+                    Messenger.Broadcast(FactionSignals.CHARACTER_ADDED_TO_FACTION, character, this);
                 }
             }
             return true;
@@ -155,7 +155,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                 SetLeader(null); //so a new leader can be set if the leader is ever removed from the list of characters of this faction
             }
             character.SetFaction(null);
-            Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_FACTION, character, this);
+            Messenger.Broadcast(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, character, this);
             return true;
         }
         return false;
@@ -165,7 +165,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             characters.Add(character);
             character.SetFaction(this);
             if (isPlayerFaction && character is Summon summon) {
-                Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, summon);
+                Messenger.Broadcast(PlayerSignals.PLAYER_GAINED_SUMMON, summon);
             }
             return true;
         }
@@ -192,9 +192,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                 }
             }
             if (newLeader is Character character) {
-                Messenger.Broadcast(Signals.ON_SET_AS_FACTION_LEADER, character, prevLeader);
+                Messenger.Broadcast(CharacterSignals.ON_SET_AS_FACTION_LEADER, character, prevLeader);
             } else if (newLeader == null) {
-                Messenger.Broadcast(Signals.ON_FACTION_LEADER_REMOVED, this, prevLeader);
+                Messenger.Broadcast(CharacterSignals.ON_FACTION_LEADER_REMOVED, this, prevLeader);
             }
         }
     }
@@ -443,22 +443,22 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
 
     #region Utilities
     private void AddListeners() {
-        Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
-        Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_REMOVED, OnCharacterRemoved);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_MISSING, OnCharacterMissing);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
     }
     private void RemoveListeners() {
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_REMOVED, OnCharacterRemoved);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_MISSING, OnCharacterMissing);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
-        Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.RemoveListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
     }
     private void SetFactionColor(Color color) {
         factionColor = color;
@@ -494,7 +494,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             return; //ignore change
         }
         isActive = state;
-        Messenger.Broadcast(Signals.FACTION_ACTIVE_CHANGED, this);
+        Messenger.Broadcast(FactionSignals.FACTION_ACTIVE_CHANGED, this);
     }
     public string GetRaceText() {
         return $"{UtilityScripts.GameUtilities.GetNormalizedRaceAdjective(race)} Faction";
@@ -610,12 +610,12 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public void AddToOwnedSettlements(BaseSettlement settlement) {
         if (!ownedSettlements.Contains(settlement)) {
             ownedSettlements.Add(settlement);
-            Messenger.Broadcast(Signals.FACTION_OWNED_SETTLEMENT_ADDED, this, settlement);
+            Messenger.Broadcast(FactionSignals.FACTION_OWNED_SETTLEMENT_ADDED, this, settlement);
         }
     }
     public void RemoveFromOwnedSettlements(BaseSettlement settlement) {
         if (ownedSettlements.Remove(settlement)) {
-            Messenger.Broadcast(Signals.FACTION_OWNED_SETTLEMENT_REMOVED, this, settlement);
+            Messenger.Broadcast(FactionSignals.FACTION_OWNED_SETTLEMENT_REMOVED, this, settlement);
         }
     }
     public bool HasOwnedRegionWithLandmarkType(LANDMARK_TYPE type) {

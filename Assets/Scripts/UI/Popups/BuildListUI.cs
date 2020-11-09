@@ -35,12 +35,12 @@ public class BuildListUI : PopupMenuBase {
 
     #region Listeners
     private void SubscribeListeners() {
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
     }
     private void UnsubscribeListeners() {
-        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.RemoveListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.RemoveListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
     }
     private void OnInnerMapOpened(Region region) {
         UpdateBuildList();
@@ -52,7 +52,7 @@ public class BuildListUI : PopupMenuBase {
 
     public void Initialize() {
         PopulateBuildingList();
-        Messenger.AddListener(Signals.UPDATE_BUILD_LIST, UpdateBuildList);
+        Messenger.AddListener(UISignals.UPDATE_BUILD_LIST, UpdateBuildList);
         buildToggle.interactable = true;
     }
     

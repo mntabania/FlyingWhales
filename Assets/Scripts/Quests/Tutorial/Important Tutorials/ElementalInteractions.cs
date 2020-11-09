@@ -80,55 +80,55 @@ namespace Tutorial {
 
         #region Spell Tab
         private void OnTopMostSpellTab() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Spells Tab");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Spells Tab");
         }
         private void OnNoLongerTopMostSpellTab() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Spells Tab");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Spells Tab");
         }
         #endregion
 
         #region Rain Spell
         private void OnTopMostRainSpell() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Rain");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Rain");
         }
         private void OnNoLongerTopMostRainSpell() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Rain");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Rain");
         }
         #endregion
 
         #region Splash Poison
         private void OnTopMostSplashPoison() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Splash Poison");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Splash Poison");
         }
         private void OnNoLongerTopMostSplashPoison() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Splash Poison");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Splash Poison");
         }
         #endregion
 
         #region Wind Blast
         private void OnTopMostWindBlast() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Wind Blast");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Wind Blast");
         }
         private void OnNoLongerTopMostWindBlast() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Wind Blast");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Wind Blast");
         }
         #endregion
         
         #region Lightning
         private void OnTopMostLightning() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Lightning");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Lightning");
         }
         private void OnNoLongerTopMosLightning() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Lightning");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Lightning");
         }
         #endregion
         
         #region Meteor
         private void OnTopMostMeteor() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Meteor");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Meteor");
         }
         private void OnNoLongerTopMostMeteor() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Meteor");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Meteor");
         }
         #endregion
     }

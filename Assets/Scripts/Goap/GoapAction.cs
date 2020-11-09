@@ -58,7 +58,7 @@ public class GoapAction {
     #region States
     public void SetState(string stateName, ActualGoapNode actionNode) {
         actionNode.OnActionStateSet(stateName);
-        Messenger.Broadcast(Signals.AFTER_ACTION_STATE_SET, stateName, actionNode);
+        Messenger.Broadcast(JobSignals.AFTER_ACTION_STATE_SET, stateName, actionNode);
     }
     #endregion
 

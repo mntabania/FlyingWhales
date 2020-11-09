@@ -21,9 +21,9 @@ namespace Ruinarch.Custom_UI {
         protected override void OnEnable() {
             base.OnEnable();
             if (Application.isPlaying) {
-                Messenger.AddListener<string>(Signals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
-                Messenger.AddListener<string>(Signals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
-                Messenger.AddListener<string>(Signals.HOTKEY_CLICK, OnReceiveHotKeyClick);
+                Messenger.AddListener<string>(UISignals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
+                Messenger.AddListener<string>(UISignals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
+                Messenger.AddListener<string>(UISignals.HOTKEY_CLICK, OnReceiveHotKeyClick);
                 //Also added instance checker because there are buttons used in tools
                 if (InputManager.Instance != null && InputManager.Instance.ShouldBeHighlighted(this)) {
                     StartGlow();
@@ -33,9 +33,9 @@ namespace Ruinarch.Custom_UI {
         protected override void OnDisable() {
             base.OnDisable();
             if (Application.isPlaying) {
-                Messenger.RemoveListener<string>(Signals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
-                Messenger.RemoveListener<string>(Signals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
-                Messenger.RemoveListener<string>(Signals.HOTKEY_CLICK, OnReceiveHotKeyClick);
+                Messenger.RemoveListener<string>(UISignals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
+                Messenger.RemoveListener<string>(UISignals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
+                Messenger.RemoveListener<string>(UISignals.HOTKEY_CLICK, OnReceiveHotKeyClick);
                 HideGlow();
             }
         }
@@ -46,7 +46,7 @@ namespace Ruinarch.Custom_UI {
             base.OnPointerClick(eventData);
             if (!IsInteractable())
                 return;
-            Messenger.Broadcast(Signals.BUTTON_CLICKED, this);
+            Messenger.Broadcast(UISignals.BUTTON_CLICKED, this);
         }
         #endregion
 
@@ -77,7 +77,7 @@ namespace Ruinarch.Custom_UI {
             if (name == buttonName) {
                 if (IsInteractable()) {
                     onClick?.Invoke();
-                    Messenger.Broadcast(Signals.BUTTON_CLICKED, this); 
+                    Messenger.Broadcast(UISignals.BUTTON_CLICKED, this); 
                 }
             }
         }

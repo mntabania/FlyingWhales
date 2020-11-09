@@ -120,9 +120,9 @@ public class Minion {
             // dead.AddCharacterResponsibleForTrait(responsibleCharacter);
             // character.traitContainer.AddTrait(character, dead, gainedFromDoing: deathFromAction);
             // PlayerManager.Instance.player.RemoveMinion(this);
-            Messenger.Broadcast(Signals.CHARACTER_DEATH, character);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, character);
 
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character as IPointOfInterest, "target is already dead");
+            Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character as IPointOfInterest, "target is already dead");
             character.behaviourComponent.OnDeath();
             character.jobQueue.CancelAllJobs();
             // StopInvasionProtocol(PlayerManager.Instance.player.currentNpcSettlementBeingInvaded);
@@ -214,7 +214,7 @@ public class Minion {
 
         SubscribeListeners();
         SetIsSummoned(true);
-        Messenger.Broadcast(Signals.SUMMON_MINION, this);
+        Messenger.Broadcast(SpellSignals.SUMMON_MINION, this);
     }
     private void Unsummon() {
         if(character.currentHP < 0) {
@@ -248,8 +248,8 @@ public class Minion {
         spellData.SetCooldown(cooldown);
         spellData.SetCurrentCooldownTick(0);
 
-        Messenger.Broadcast(Signals.SPELL_COOLDOWN_STARTED, spellData);
-        Messenger.Broadcast(Signals.UNSUMMON_MINION, this);
+        Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_STARTED, spellData);
+        Messenger.Broadcast(SpellSignals.UNSUMMON_MINION, this);
     }
     private void UnsummonedHPRecovery() {
         this.character.AdjustHP(7, ELEMENTAL_TYPE.Normal);
@@ -259,7 +259,7 @@ public class Minion {
             //minion can be summoned again
             spellData.SetCooldown(-1);
             spellData.SetCharges(1);
-            Messenger.Broadcast(Signals.SPELL_COOLDOWN_FINISHED, spellData);
+            Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_FINISHED, spellData);
             Messenger.RemoveListener(Signals.TICK_STARTED, UnsummonedHPRecovery);
         }
     }
@@ -280,19 +280,19 @@ public class Minion {
     private void SubscribeListeners() {
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
-        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
-        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character.ForceCancelAllJobsTargetingPOI);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CAN_PERFORM_AGAIN, OnCharacterCanPerformAgain);
+        Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+        Messenger.AddListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character.ForceCancelAllJobsTargetingPOI);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_PERFORM_AGAIN, OnCharacterCanPerformAgain);
         character.religionComponent.SubscribeListeners();
     }
     private void UnSubscribeListeners() {
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
-        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
-        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character.ForceCancelAllJobsTargetingPOI);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_PERFORM_AGAIN, OnCharacterCanPerformAgain);
+        Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+        Messenger.RemoveListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character.ForceCancelAllJobsTargetingPOI);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_PERFORM_AGAIN, OnCharacterCanPerformAgain);
         character.religionComponent.UnsubscribeListeners();
     }
     private void OnCharacterStartedState(Character characterThatStartedState, CharacterState state) {

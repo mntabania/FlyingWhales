@@ -18,8 +18,8 @@
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is Character character) {
                 _owner = character;
-                Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnActionStarted);
-                Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+                Messenger.AddListener<Character, ActualGoapNode>(JobSignals.CHARACTER_DOING_ACTION, OnActionStarted);
+                Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
             }
         }
         #endregion
@@ -30,8 +30,8 @@
             if (addedTo is Character character) {
                 _owner = character;
                 character.behaviourComponent.AddBehaviourComponent(typeof(TendFarmBehaviour));
-                Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnActionStarted);
-                Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+                Messenger.AddListener<Character, ActualGoapNode>(JobSignals.CHARACTER_DOING_ACTION, OnActionStarted);
+                Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
@@ -44,8 +44,8 @@
                 }
 
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(TendFarmBehaviour));
-                Messenger.RemoveListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnActionStarted);
-                Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+                Messenger.RemoveListener<Character, ActualGoapNode>(JobSignals.CHARACTER_DOING_ACTION, OnActionStarted);
+                Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
                 character.homeSettlement?.settlementJobTriggerComponent.CheckIfFarmShouldBeTended(false);
             }
         }

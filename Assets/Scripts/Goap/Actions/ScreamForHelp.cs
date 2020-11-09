@@ -30,7 +30,7 @@ public class ScreamForHelp : GoapAction {
 
     #region State Effects
     public void PerTickScreamSuccess(ActualGoapNode goapNode) {
-        Messenger.Broadcast(Signals.SCREAM_FOR_HELP, goapNode.actor);
+        Messenger.Broadcast(JobSignals.SCREAM_FOR_HELP, goapNode.actor);
     }
     public void AfterScreamSuccess(ActualGoapNode goapNode) {
 

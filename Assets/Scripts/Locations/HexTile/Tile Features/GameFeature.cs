@@ -56,7 +56,7 @@ namespace Locations.Tile_Features {
         public override void OnRemoveFeature(HexTile tile) {
             base.OnRemoveFeature(tile);
             Messenger.RemoveListener(Signals.HOUR_STARTED, TryGeneratePerHour);
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
             if (ownedAnimals != null) {
                 ownedAnimals.Clear();
                 ownedAnimals = null;    
@@ -80,7 +80,7 @@ namespace Locations.Tile_Features {
         private void RemoveOwnedAnimal(Animal animal) {
             if (ownedAnimals.Remove(animal)) {
                 if (ownedAnimals.Count == 0) {
-                    Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);    
+                    Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);    
                 }
                 if (ownedAnimals.Count < MaxAnimals && isGeneratingPerHour == false) {
                     //owned animals is less than max, and is not yet generating, start generation
@@ -92,7 +92,7 @@ namespace Locations.Tile_Features {
         private void AddOwnedAnimal(Animal animal) {
             ownedAnimals.Add(animal);
             if (ownedAnimals.Count == 1) {
-                Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);   
+                Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);   
             }
             if (ownedAnimals.Count >= MaxAnimals) { 
                 //owned animals is at max, stop hourly generation

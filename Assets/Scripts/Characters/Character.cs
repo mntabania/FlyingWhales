@@ -464,7 +464,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SubscribeToPermanentSignals() {
         //had to make name change signal permanent because it is possible for the player to change the name of
         //this characters killer, and we still want to update this character's death log if that happens. 
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     public virtual void SubscribeToSignals() {
         if (minion != null) {
@@ -474,28 +474,28 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return;
         }
         hasSubscribedToSignals = true; //This is done so there will be no duplication of listening to signals
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnOtherCharacterDied);
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
         Messenger.AddListener(Signals.DAY_STARTED, DailyGoapProcesses);
-        Messenger.AddListener<Character>(Signals.STARTED_TRAVELLING_IN_WORLD, OnLeaveArea);
-        Messenger.AddListener<Character>(Signals.FINISHED_TRAVELLING_IN_WORLD, OnArrivedAtArea);
-        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingPOI);
-        Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelAllJobsOfTypeTargetingPOI);
-        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, ForceCancelAllJobsTargetingPOIExceptSelf);
-        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
-        Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnActionPerformed);
-        Messenger.AddListener<InterruptHolder>(Signals.INTERRUPT_STARTED, OnInterruptStarted);
-        Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
-        Messenger.AddListener<IPointOfInterest>(Signals.BEFORE_SEIZING_POI, OnBeforeSeizingPOI);
-        Messenger.AddListener<IPointOfInterest>(Signals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
-        Messenger.AddListener<IPointOfInterest, Character>(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
-        Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
-        Messenger.AddListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
-        Messenger.AddListener<Faction, Character>(Signals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
-        Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+        Messenger.AddListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnLeaveArea);
+        Messenger.AddListener<Character>(CharacterSignals.FINISHED_TRAVELLING_IN_WORLD, OnArrivedAtArea);
+        Messenger.AddListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingPOI);
+        Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(CharacterSignals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelAllJobsOfTypeTargetingPOI);
+        Messenger.AddListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, ForceCancelAllJobsTargetingPOIExceptSelf);
+        Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+        Messenger.AddListener<ActualGoapNode>(JobSignals.ACTION_PERFORMED, OnActionPerformed);
+        Messenger.AddListener<InterruptHolder>(InterruptSignals.INTERRUPT_STARTED, OnInterruptStarted);
+        Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
+        Messenger.AddListener<IPointOfInterest>(CharacterSignals.BEFORE_SEIZING_POI, OnBeforeSeizingPOI);
+        Messenger.AddListener<IPointOfInterest>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
+        Messenger.AddListener<IPointOfInterest, Character>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
+        Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+        Messenger.AddListener<IPointOfInterest, int>(CharacterSignals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
+        Messenger.AddListener<Faction, Character>(FactionSignals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
+        Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
         
         
         needsComponent.SubscribeToSignals();
@@ -510,28 +510,28 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return;
         }
         hasSubscribedToSignals = false; //This is done so there will be no duplication of listening to signals
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnOtherCharacterDied);
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyGoapProcesses);
-        Messenger.RemoveListener<Character>(Signals.STARTED_TRAVELLING_IN_WORLD, OnLeaveArea);
-        Messenger.RemoveListener<Character>(Signals.FINISHED_TRAVELLING_IN_WORLD, OnArrivedAtArea);
-        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingPOI);
-        Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelAllJobsOfTypeTargetingPOI);
-        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, ForceCancelAllJobsTargetingPOIExceptSelf);
-        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
-        Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnActionPerformed);
-        Messenger.RemoveListener<InterruptHolder>(Signals.INTERRUPT_STARTED, OnInterruptStarted);
-        Messenger.RemoveListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
-        Messenger.RemoveListener<IPointOfInterest>(Signals.BEFORE_SEIZING_POI, OnBeforeSeizingPOI);
-        Messenger.RemoveListener<IPointOfInterest>(Signals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
-        Messenger.RemoveListener<IPointOfInterest, Character>(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
-        Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
-        Messenger.RemoveListener<IPointOfInterest, int>(Signals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
-        Messenger.RemoveListener<Faction, Character>(Signals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
-        Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+        Messenger.RemoveListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnLeaveArea);
+        Messenger.RemoveListener<Character>(CharacterSignals.FINISHED_TRAVELLING_IN_WORLD, OnArrivedAtArea);
+        Messenger.RemoveListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingPOI);
+        Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(CharacterSignals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelAllJobsOfTypeTargetingPOI);
+        Messenger.RemoveListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, ForceCancelAllJobsTargetingPOIExceptSelf);
+        Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+        Messenger.RemoveListener<ActualGoapNode>(JobSignals.ACTION_PERFORMED, OnActionPerformed);
+        Messenger.RemoveListener<InterruptHolder>(InterruptSignals.INTERRUPT_STARTED, OnInterruptStarted);
+        Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
+        Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.BEFORE_SEIZING_POI, OnBeforeSeizingPOI);
+        Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, OnStopCurrentActionTargetingPOI);
+        Messenger.RemoveListener<IPointOfInterest, Character>(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, OnStopCurrentActionTargetingPOIExceptActor);
+        Messenger.RemoveListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+        Messenger.RemoveListener<IPointOfInterest, int>(CharacterSignals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
+        Messenger.RemoveListener<Faction, Character>(FactionSignals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
+        Messenger.RemoveListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
 
         needsComponent.UnsubscribeToSignals();
         jobComponent.UnsubscribeListeners();
@@ -708,7 +708,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         ObjectPoolManager.Instance.DestroyObject(marker);
         SetCharacterMarker(null);
         Debug.Log($"{name}'s marker has been destroyed!");
-        Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
+        Messenger.Broadcast(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
         if (PlayerManager.Instance.player.seizeComponent.seizedPOI == this) {
             throw new Exception($"{name} is seized by the player but its marker was destroyed! Refer to call stack to find out what destroyed it.");
         }
@@ -730,7 +730,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private void SetCharacterMarker(CharacterMarker marker) {
         this.marker = marker;
         if (marker == null) {
-            Messenger.Broadcast(Signals.CHARACTER_MARKER_DESTROYED, this);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_MARKER_DESTROYED, this);
         }
     }
     public virtual void PerTickDuringMovement() {
@@ -825,7 +825,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (!isInitial) {
             homeSettlement?.UpdateAbleJobsOfResident(this);
             OnUpdateCharacterClass();
-            Messenger.Broadcast(Signals.CHARACTER_CLASS_CHANGE, this, previousClass, _characterClass);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_CLASS_CHANGE, this, previousClass, _characterClass);
         }
         combatComponent.UpdateElementalType();
     }
@@ -1326,7 +1326,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         OnChangeFaction(prevFaction, newFaction);
         // UpdateItemFactionOwner();
         if (_faction != null) {
-            Messenger.Broadcast(Signals.FACTION_SET, this);
+            Messenger.Broadcast(FactionSignals.FACTION_SET, this);
         }
         return true;
     }
@@ -1575,10 +1575,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         if (broadcast) {
             if (newStructure != null) {
-                Messenger.Broadcast(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, this, newStructure);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, this, newStructure);
             }
             if (previousStructure != null) {
-                Messenger.Broadcast(Signals.CHARACTER_LEFT_STRUCTURE, this, previousStructure);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_LEFT_STRUCTURE, this, previousStructure);
             }
         }
         // Debug.Log($"Set current structure location of {name} to {newStructure}");
@@ -1655,7 +1655,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (carryComponent.IsCurrentlyPartOf(travellingCharacter)) {
             //CheckApprehendRelatedJobsOnLeaveLocatio1n();
             //CancelOrUnassignRemoveTraitRelatedJobs();
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, this as IPointOfInterest, "");
+            Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, this as IPointOfInterest, "");
             CancelAllJobsExceptForCurrent(false);
             //marker.ClearTerrifyingObjects();
             needsComponent.OnCharacterLeftLocation(currentRegion);
@@ -1726,7 +1726,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             _raceSetting = RaceManager.Instance.GetRaceData(race);
             if (!isInitial) {
                 OnUpdateRace();
-                Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, this);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_CHANGED_RACE, this);
             }
             return true;
         }
@@ -1777,7 +1777,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void RenameCharacter(string p_firstName, string p_lastName) {
         SetFirstAndLastName(p_firstName, p_lastName);
         UpdateCurrentLogsBasedOnUpdatedCharacter(this); //had to do this since signal order can be inconsistent and the UI Update could happen before the actual logs were updated.
-        Messenger.Broadcast(Signals.CHARACTER_CHANGED_NAME, this);
+        Messenger.Broadcast(CharacterSignals.CHARACTER_CHANGED_NAME, this);
     }
     private string GetDefaultRaceClassName() {
         if(race == RACE.DEMON) {
@@ -1932,7 +1932,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (canCombat != combatState) {
             canCombat = combatState;
             if (canCombat == false) {
-                Messenger.Broadcast(Signals.CHARACTER_CAN_NO_LONGER_COMBAT, this);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_NO_LONGER_COMBAT, this);
             }
             //if (canCombat && marker) {
             //    marker.ClearTerrifyingObjects();
@@ -2453,7 +2453,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 inVision.needsComponent.WakeUpFromNoise();
             }
         }
-        Messenger.Broadcast(Signals.CHARACTER_WAS_HIT, this, characterThatAttacked);
+        Messenger.Broadcast(CharacterSignals.CHARACTER_WAS_HIT, this, characterThatAttacked);
     }
     private Character GetCharacterResponsibleForUnconsciousness(Character characterThatAttacked, CombatState combatStateOfAttacker) {
         Character responsibleCharacter = null;
@@ -2486,7 +2486,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //they should still be able to react to the elements
             currentHP += amount;
             currentHP = Mathf.Clamp(currentHP, 0, maxHP);
-            Messenger.Broadcast(Signals.CHARACTER_ADJUSTED_HP, this, amount, source);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_ADJUSTED_HP, this, amount, source);
             if (marker && showHPBar) {
                 if (marker.hpBarGO.activeSelf) {
                     marker.UpdateHP(this);
@@ -2512,7 +2512,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 responsibleCharacter, etp);
         } else {
             //hp was increased
-            Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RECOVER_HP, this as IPointOfInterest);
+            Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RECOVER_HP, this as IPointOfInterest);
         }
         if (triggerDeath && currentHP <= 0) {
             if(source != null && source != this) {
@@ -2633,7 +2633,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
             if (broadcast) {
-                Messenger.Broadcast(Signals.CHARACTER_MIGRATED_HOME, this, previousHome, newHomeSettlement);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_MIGRATED_HOME, this, previousHome, newHomeSettlement);
             }
             return true;
         }
@@ -2865,11 +2865,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #region Minion
     public void SetMinion(Minion minion) {
         if (_minion != null && minion == null) {
-            Messenger.Broadcast(Signals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, this);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, this);
             moodComponent.OnCharacterNoLongerMinionOrSummon();
             Assert.IsTrue(moodComponent.executeMoodChangeEffects);
         } else if (_minion == null && minion != null) {
-            Messenger.Broadcast(Signals.CHARACTER_BECOMES_MINION_OR_SUMMON, this);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_BECOMES_MINION_OR_SUMMON, this);
             moodComponent.OnCharacterBecomeMinionOrSummon();
             Assert.IsFalse(moodComponent.executeMoodChangeEffects);
         }
@@ -3395,14 +3395,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (!items.Contains(item)) {
             items.Add(item);
             //item.OnTileObjectAddedToInventoryOf(this);
-            Messenger.Broadcast(Signals.CHARACTER_OBTAINED_ITEM, item, this);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_OBTAINED_ITEM, item, this);
             return true;
         }
         return false;
     }
     private bool RemoveItem(TileObject item) {
         if (items.Remove(item)) {
-            Messenger.Broadcast(Signals.CHARACTER_LOST_ITEM, item, this);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_LOST_ITEM, item, this);
             return true;
         }
         return false;
@@ -3435,7 +3435,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         TileObject item = items[index];
         if (item != null) {
             items.RemoveAt(index);
-            Messenger.Broadcast(Signals.CHARACTER_LOST_ITEM, item, this);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_LOST_ITEM, item, this);
             return true;
         }
         return false;
@@ -4216,7 +4216,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     }
                     log = $"{log}\n - Action's preconditions are all satisfied, doing action...";
                     logComponent.PrintLogIfActive(log);
-                    Messenger.Broadcast(Signals.CHARACTER_WILL_DO_PLAN, this, plan);
+                    Messenger.Broadcast(JobSignals.CHARACTER_WILL_DO_PLAN, this, plan);
                     currentNode.DoAction(currentTopPrioJob, plan);
                 }
             } else {
@@ -4449,7 +4449,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         if(result == InteractionManager.Goap_State_Success) {
             log += "\nPlan is setting next action to be done...";
-            Messenger.Broadcast(Signals.CHARACTER_DID_ACTION_SUCCESSFULLY, this, actionNode);
+            Messenger.Broadcast(JobSignals.CHARACTER_DID_ACTION_SUCCESSFULLY, this, actionNode);
             plan.SetNextNode();
             if (plan.currentNode == null) {
                 log += "\nThis action is the end of plan.";
@@ -4464,7 +4464,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 //    forceRemoveJobInQueue = false;
                 //}
                 job.SetFinishedSuccessfully(true);
-                Messenger.Broadcast(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, this, job);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, this, job);
                 
                 //this means that this is the end goal so end this plan now
                 job.ForceCancelJob(false);
@@ -4898,7 +4898,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         RevertFromWerewolfForm();
 
         minion?.OnSeize();
-        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
+        Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         //ForceCancelAllJobsTargettingThisCharacter();
         //marker.ClearTerrifyingObjects();
         needsComponent.OnCharacterLeftLocation(currentRegion);
@@ -4917,7 +4917,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //marker.collisionTrigger.SetCollidersState(false);
             marker.OnSeize();
             DisableMarker();
-            Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
+            Messenger.Broadcast(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
         }
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStartedWhileSeized);
         //List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Destroy_Map_Visual_Trait);
@@ -4954,7 +4954,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         tileLocation.structure.OnCharacterUnSeizedHere(this);
         needsComponent.CheckExtremeNeeds();
         if (isDead) {
-            Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.BURY, this as IPointOfInterest);
+            Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.BURY, this as IPointOfInterest);
             jobComponent.TriggerBuryMe();    
         }
 
@@ -5325,7 +5325,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         canMoveValue++;
         if (couldNotMoveBefore && canMove) {
             //character could not move before adjustment, but can move after adjustment
-            Messenger.Broadcast(Signals.CHARACTER_CAN_MOVE_AGAIN, this);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_MOVE_AGAIN, this);
         }
     }
     public void DecreaseCanMove() {
@@ -5333,7 +5333,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         canMoveValue--;
         if (couldMoveBefore && canMove == false) {
             //character could move before adjustment, but cannot move after adjustment
-            Messenger.Broadcast(Signals.CHARACTER_CAN_NO_LONGER_MOVE, this);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, this);
         }
     }
     public void IncreaseCanBeAttacked() {
@@ -5347,7 +5347,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         canPerformValue++;
         if (couldNotPerformBefore && canPerform) {
             //character could not perform before adjustment, but can perform after adjustment
-            Messenger.Broadcast(Signals.CHARACTER_CAN_PERFORM_AGAIN, this);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_PERFORM_AGAIN, this);
         }
     }
     public void DecreaseCanPerform() {
@@ -5355,7 +5355,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         canPerformValue--;
         if (couldPerformBefore && canPerform == false) {
             //character could perform before adjustment, but cannot perform after adjustment
-            Messenger.Broadcast(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, this);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, this);
         }
     }
     public void IncreaseCanTakeJobs() {
@@ -5378,7 +5378,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// <param name="state">Should this character be allied with the player.</param>
     public void SetIsAlliedWithPlayer(bool state) {
         _isAlliedWithPlayer = state;
-        Messenger.Broadcast(Signals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, this);
+        Messenger.Broadcast(CharacterSignals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, this);
     }
     #endregion
 
@@ -5523,12 +5523,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void AddPlayerAction(SPELL_TYPE action) {
         if (actions.Contains(action) == false) {
             actions.Add(action);
-            Messenger.Broadcast(Signals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
+            Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
         }
     }
     public void RemovePlayerAction(SPELL_TYPE action) {
         if (actions.Remove(action)) {
-            Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+            Messenger.Broadcast(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
         }
     }
     public void ClearPlayerActions() {
@@ -5575,7 +5575,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (territories.Contains(tile) == false) {
             territories.Add(tile);
             HexTile firstTerritory = territories[0];
-            Messenger.Broadcast(Signals.BECOME_A_TERRITORY, tile, this);
             if(firstTerritory.region != homeRegion) {
                 if(homeRegion != null) {
                     homeRegion.RemoveResident(this);
@@ -5723,10 +5722,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             needsComponent.SetHasCancelledSleepSchedule(false);
             needsComponent.ResetSleepTicks();
             ConstructDefaultActions();
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
+            Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
             //MigrateHomeTo(null);
             //AddInitialAwareness(gloomhollow);
-            Messenger.Broadcast(Signals.CHARACTER_RETURNED_TO_LIFE, this);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_RETURNED_TO_LIFE, this);
             return true;
         }
         return false;
@@ -5798,7 +5797,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //if (jobQueue.jobsInQueue.Count > 0) {
             //    jobQueue.CancelAllJobs();
             //}
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, GoapPlanJob.Target_Already_Dead_Reason);
+            Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, GoapPlanJob.Target_Already_Dead_Reason);
             
             behaviourComponent.OnDeath();
             jobQueue.CancelAllJobs();
@@ -5959,8 +5958,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
             SetDeathLog(localDeathLog);
             deathStr = localDeathLog.logText;
-            Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, this);
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
 
             //for (int i = 0; i < traitContainer.allTraits.Count; i++) {
             //    if (traitContainer.allTraits[i].OnAfterDeath(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers)) {

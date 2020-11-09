@@ -37,7 +37,7 @@ public class HexTileBiomeEffectTrigger {
                 Messenger.AddListener(Signals.HOUR_STARTED, TryFreezeWetObjects);
                 break;
             case BIOMES.DESERT:
-                Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, TryRemoveFreezing);
+                Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, TryRemoveFreezing);
                 break;
             case BIOMES.FOREST:
                 break;
@@ -52,7 +52,7 @@ public class HexTileBiomeEffectTrigger {
                 Messenger.RemoveListener(Signals.HOUR_STARTED, TryFreezeWetObjects);
                 break;
             case BIOMES.DESERT:
-                Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, TryRemoveFreezing);
+                Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, TryRemoveFreezing);
                 break;
             case BIOMES.FOREST:
                 break;
@@ -62,7 +62,7 @@ public class HexTileBiomeEffectTrigger {
 
     #region Snow
     private void TryFreezeWetObjects() {
-        Messenger.Broadcast(Signals.FREEZE_WET_OBJECTS_IN_TILE, _hexTile);
+        Messenger.Broadcast(HexTileSignals.FREEZE_WET_OBJECTS_IN_TILE, _hexTile);
     }
     #endregion
     

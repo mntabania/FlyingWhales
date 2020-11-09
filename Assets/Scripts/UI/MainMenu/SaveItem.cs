@@ -55,7 +55,7 @@ public class SaveItem : MonoBehaviour {
     
     
     private void OnConfirmLoad() {
-        Messenger.Broadcast(Signals.LOAD_SAVE_FILE, path);
+        Messenger.Broadcast(UISignals.LOAD_SAVE_FILE, path);
     }
     public void OnClickDelete() {
         if (MainMenuUI.Instance != null) {
@@ -67,7 +67,7 @@ public class SaveItem : MonoBehaviour {
     private void OnConfirmDelete() {
         File.Delete(path);
         Destroy(gameObject);
-        Messenger.Broadcast(Signals.SAVE_FILE_DELETED, path);
+        Messenger.Broadcast(UISignals.SAVE_FILE_DELETED, path);
     }
     private void OnDestroy() {
         path = string.Empty;

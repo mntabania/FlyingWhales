@@ -23,7 +23,7 @@ namespace Quests.Steps {
         }
 
         public void Activate() {
-            Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_COMPLETED, OnTutorialStepCompleted);
+            Messenger.AddListener<QuestStep>(PlayerQuestSignals.QUEST_STEP_COMPLETED, OnTutorialStepCompleted);
             for (int i = 0; i < steps.Count; i++) {
                 QuestStep step = steps[i];
                 step.Activate();
@@ -34,7 +34,7 @@ namespace Quests.Steps {
             _onCollectionActivatedAction?.Invoke();
         }
         public void Deactivate() {
-            Messenger.RemoveListener<QuestStep>(Signals.QUEST_STEP_COMPLETED, OnTutorialStepCompleted);
+            Messenger.RemoveListener<QuestStep>(PlayerQuestSignals.QUEST_STEP_COMPLETED, OnTutorialStepCompleted);
             DeactivateTopMostIncompleteStep();
             for (int i = 0; i < steps.Count; i++) {
                 QuestStep step = steps[i];
@@ -64,7 +64,7 @@ namespace Quests.Steps {
         }
         private void CompleteStepCollection() {
             isComplete = true;
-            Messenger.Broadcast(Signals.STEP_COLLECTION_COMPLETED, this);
+            Messenger.Broadcast(PlayerQuestSignals.STEP_COLLECTION_COMPLETED, this);
         }
         #endregion
 

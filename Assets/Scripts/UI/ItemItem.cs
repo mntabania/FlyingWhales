@@ -14,7 +14,7 @@ public class ItemItem : PooledObject {
     public void SetItem(TILE_OBJECT_TYPE item) {
         this.item = item;
         UpdateData();
-        Messenger.AddListener<TILE_OBJECT_TYPE>(Signals.PLAYER_NO_ACTIVE_ITEM, OnPlayerNoActiveItem);
+        Messenger.AddListener<TILE_OBJECT_TYPE>(PlayerSignals.PLAYER_NO_ACTIVE_ITEM, OnPlayerNoActiveItem);
     }
 
     private void UpdateData() {
@@ -37,6 +37,6 @@ public class ItemItem : PooledObject {
     public override void Reset() {
         base.Reset();
         item = TILE_OBJECT_TYPE.NONE;
-        Messenger.RemoveListener<TILE_OBJECT_TYPE>(Signals.PLAYER_NO_ACTIVE_ITEM, OnPlayerNoActiveItem);
+        Messenger.RemoveListener<TILE_OBJECT_TYPE>(PlayerSignals.PLAYER_NO_ACTIVE_ITEM, OnPlayerNoActiveItem);
     }
 }
