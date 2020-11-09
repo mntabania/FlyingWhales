@@ -98,10 +98,17 @@ public class CrimeComponent : CharacterComponent {
         }
         return null;
     }
-    public CrimeData GetActiveCrimeData(IPointOfInterest p_target, CRIME_TYPE p_crimeType) {
+    public CrimeData GetExistingActiveCrimeData(IPointOfInterest p_target, CRIME_TYPE p_crimeType) {
         for (int i = 0; i < activeCrimes.Count; i++) {
             CrimeData data = activeCrimes[i];
-            if (data.target == p_target && data.crimeType == p_crimeType) {
+            if (p_crimeType == CRIME_TYPE.Vampire || p_crimeType == CRIME_TYPE.Werewolf) {
+                //if crime is vampirism or lycanthropy return any crime data that has the same crime type,
+                //since it should not matter what action is the crime when it comes to vampirism and lycanthropy
+                //https://trello.com/c/Qq71y3X5/2799-dev-only-one-vampire-crime-should-be-active-even-if-he-drinks-blood-on-multiple-people
+                if (data.crimeType == p_crimeType) {
+                    return data;
+                }
+            } else if (data.target == p_target && data.crimeType == p_crimeType) {
                 return data;
             }
         }

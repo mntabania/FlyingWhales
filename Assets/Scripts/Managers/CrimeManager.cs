@@ -291,7 +291,8 @@ public class CrimeManager : BaseMonoBehaviour {
                     //Now, if actor attacked character B again while still having the assault crime against him, and character C witnessed it, instead of creating another crime data that "actor did an assault crime against character B"
                     //Character C will just be added as a witness to the crime data that character A previously created since that crime is still active
                     //The reason for this is so that we can reduce the number of crime data created if it is just the same crime against the same person
-                    CrimeData existingActiveCrimeData = actor.crimeComponent.GetActiveCrimeData(target, crimeType);
+                    //Additional note: also added case if crime is Vampire/Werewolf, crime data should return any crime of the same crime type
+                    CrimeData existingActiveCrimeData = actor.crimeComponent.GetExistingActiveCrimeData(target, crimeType);
                     if(existingActiveCrimeData != null) {
                         ProcessWitnessCrime(witness, existingActiveCrimeData);
                     } else {
