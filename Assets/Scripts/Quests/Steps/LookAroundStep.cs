@@ -10,10 +10,10 @@ namespace Quests.Steps {
         public LookAroundStep(string stepDescription = "Look Around") : base(stepDescription) { }
         
         protected override void SubscribeListeners() {
-            Messenger.AddListener<Vector3>(Signals.CAMERA_MOVED_BY_PLAYER, CheckForCompletion);
+            Messenger.AddListener<Vector3>(ControlsSignals.CAMERA_MOVED_BY_PLAYER, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<Vector3>(Signals.CAMERA_MOVED_BY_PLAYER, CheckForCompletion);
+            Messenger.RemoveListener<Vector3>(ControlsSignals.CAMERA_MOVED_BY_PLAYER, CheckForCompletion);
         }
 
 

@@ -90,28 +90,28 @@ public class CharacterInfoUI : InfoUIBase {
 
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateHistory);
-        Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
-        Messenger.AddListener<Character>(Signals.LOG_MENTIONING_CHARACTER_UPDATED, OnLogMentioningCharacterUpdated);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, UpdateTraitsFromSignal);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, UpdateTraitsFromSignal);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_STACKED, UpdateTraitsFromSignal);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
-        Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
-        Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_CREATED, OnRelationshipChanged);
-        Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_TYPE_ADDED, OnRelationshipChanged);
-        Messenger.AddListener<Character, Character>(Signals.OPINION_ADDED, OnOpinionChanged);
-        Messenger.AddListener<Character, Character>(Signals.OPINION_REMOVED, OnOpinionChanged);
-        Messenger.AddListener<Character, Character, string>(Signals.OPINION_INCREASED, OnOpinionChanged);
-        Messenger.AddListener<Character, Character, string>(Signals.OPINION_DECREASED, OnOpinionChanged);
-        Messenger.AddListener<Character>(Signals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
-        Messenger.AddListener<MoodComponent>(Signals.MOOD_SUMMARY_MODIFIED, OnMoodModified);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.AddListener<Log>(UISignals.LOG_ADDED, UpdateHistory);
+        Messenger.AddListener<Log>(UISignals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
+        Messenger.AddListener<Character>(UISignals.LOG_MENTIONING_CHARACTER_UPDATED, OnLogMentioningCharacterUpdated);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_STACKED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener(UISignals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
+        Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
+        Messenger.AddListener<Relatable, Relatable>(CharacterSignals.RELATIONSHIP_CREATED, OnRelationshipChanged);
+        Messenger.AddListener<Relatable, Relatable>(CharacterSignals.RELATIONSHIP_TYPE_ADDED, OnRelationshipChanged);
+        Messenger.AddListener<Character, Character>(CharacterSignals.OPINION_ADDED, OnOpinionChanged);
+        Messenger.AddListener<Character, Character>(CharacterSignals.OPINION_REMOVED, OnOpinionChanged);
+        Messenger.AddListener<Character, Character, string>(CharacterSignals.OPINION_INCREASED, OnOpinionChanged);
+        Messenger.AddListener<Character, Character, string>(CharacterSignals.OPINION_DECREASED, OnOpinionChanged);
+        Messenger.AddListener<Character>(UISignals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
+        Messenger.AddListener<MoodComponent>(CharacterSignals.MOOD_SUMMARY_MODIFIED, OnMoodModified);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
 
         //normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
         relationshipNamesEventLbl.SetOnClickAction(OnClickCharacter);
@@ -966,7 +966,7 @@ public class CharacterInfoUI : InfoUIBase {
             }
             PlayerUI.Instance.ShowGeneralConfirmation("Trigger Flaw Failed", log);
         }
-        Messenger.Broadcast(Signals.FLAW_TRIGGERED_BY_PLAYER, trait);
+        Messenger.Broadcast(SpellSignals.FLAW_TRIGGERED_BY_PLAYER, trait);
     }
     private bool CanActivateTriggerFlaw(string traitName) {
         Trait trait = activeCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
@@ -1212,7 +1212,7 @@ public class CharacterInfoUI : InfoUIBase {
     private void OnClickChooseCombatMode(string mode) {
         COMBAT_MODE combatMode = (COMBAT_MODE) System.Enum.Parse(typeof(COMBAT_MODE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(mode));
         UIManager.Instance.characterInfoUI.activeCharacter.combatComponent.SetCombatMode(combatMode);
-        Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, activeCharacter as IPlayerActionTarget);
+        Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, activeCharacter as IPlayerActionTarget);
         UIManager.Instance.customDropdownList.Close();
         PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.CHANGE_COMBAT_MODE).OnExecuteSpellActionAffliction();
     }
@@ -1258,7 +1258,7 @@ public class CharacterInfoUI : InfoUIBase {
 
     #region Rename
     public void OnClickRenameButton() {
-        Messenger.Broadcast(Signals.EDIT_CHARACTER_NAME, activeCharacter.persistentID, activeCharacter.firstName);
+        Messenger.Broadcast(UISignals.EDIT_CHARACTER_NAME, activeCharacter.persistentID, activeCharacter.firstName);
     }
     #endregion
 

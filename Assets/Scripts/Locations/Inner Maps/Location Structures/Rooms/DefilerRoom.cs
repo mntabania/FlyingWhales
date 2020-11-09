@@ -25,11 +25,11 @@ namespace Inner_Maps.Location_Structures {
                 skeleton = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataDefilerRoom.skeletonID) as Summon;
             }
             if (currentBrainwashTarget != null && skeleton == null) {
-                Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
+                Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
             }
             if (skeleton != null) {
                 //if skeleton is not null then, listen for drop job to be finished
-                Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+                Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
             }
         }
         public override void LoadAdditionalReferences(SaveDataStructureRoom saveDataStructureRoom) {
@@ -147,16 +147,16 @@ namespace Inner_Maps.Location_Structures {
             currentBrainwashTarget = chosenTarget;
             currentBrainwashTarget.interruptComponent.ForceEndNonSimultaneousInterrupt();
             currentBrainwashTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Brainwashed, currentBrainwashTarget);
-            Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         private void BrainwashDone() {
             currentBrainwashTarget = null;
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         private void CheckIfBrainwashFinished(INTERRUPT interrupt, Character chosenTarget) {
             if (interrupt == INTERRUPT.Being_Brainwashed && chosenTarget == currentBrainwashTarget) {
-                Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
+                Messenger.RemoveListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
             
                 DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
                 door?.Open();
@@ -195,13 +195,13 @@ namespace Inner_Maps.Location_Structures {
                     job.SetCannotBePushedBack(true);
                     skeleton.jobQueue.AddJobInQueue(job);
                     
-                    Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+                    Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
                 }                
             }
         }
         private void OnJobRemovedFromCharacter(JobQueueItem job, Character character) {
             if (character == skeleton && job.jobType == JOB_TYPE.MOVE_CHARACTER) {
-                Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+                Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
                 //close door
                 DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
                 door?.Close();
@@ -224,7 +224,7 @@ namespace Inner_Maps.Location_Structures {
         #region Destruction
         public override void OnParentStructureDestroyed() {
             base.OnParentStructureDestroyed();
-            Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
+            Messenger.RemoveListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
             if (currentBrainwashTarget != null && currentBrainwashTarget.interruptComponent.isInterrupted && 
                 currentBrainwashTarget.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Being_Brainwashed) {
                 currentBrainwashTarget.interruptComponent.ForceEndNonSimultaneousInterrupt();

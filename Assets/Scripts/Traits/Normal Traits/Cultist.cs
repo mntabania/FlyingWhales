@@ -56,7 +56,7 @@ namespace Traits {
                     FactionManager.Instance.undeadFaction.SetRelationshipFor(PlayerManager.Instance.player.playerFaction, FACTION_RELATIONSHIP_STATUS.Friendly);
                 }
                 
-                Messenger.Broadcast(Signals.CHECK_IF_PLAYER_WINS);
+                Messenger.Broadcast(PlayerSignals.CHECK_IF_PLAYER_WINS);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {

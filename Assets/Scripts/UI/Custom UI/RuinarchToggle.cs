@@ -23,14 +23,14 @@ namespace Ruinarch.Custom_UI {
             base.OnEnable();
             if (Application.isPlaying) {
                 if (shineEffect != null) {
-                    Messenger.AddListener<string>(Signals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
-                    Messenger.AddListener<string>(Signals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
+                    Messenger.AddListener<string>(UISignals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
+                    Messenger.AddListener<string>(UISignals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
                     if (InputManager.Instance.ShouldBeHighlighted(this)) {
                         StartGlow();
                     }
                 }
-                Messenger.AddListener<string>(Signals.HOTKEY_CLICK, OnReceiveHotKeyClick);
-                Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_ACTIVATED, OnQuestStepActivated);
+                Messenger.AddListener<string>(UISignals.HOTKEY_CLICK, OnReceiveHotKeyClick);
+                Messenger.AddListener<QuestStep>(PlayerQuestSignals.QUEST_STEP_ACTIVATED, OnQuestStepActivated);
                 FireToggleShownSignal();
             }
         }
@@ -38,19 +38,19 @@ namespace Ruinarch.Custom_UI {
             base.OnDisable();
             if (Application.isPlaying) {
                 if (shineEffect != null) {
-                    Messenger.RemoveListener<string>(Signals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
-                    Messenger.RemoveListener<string>(Signals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
+                    Messenger.RemoveListener<string>(UISignals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
+                    Messenger.RemoveListener<string>(UISignals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
                     HideGlow();    
                 }
-                Messenger.RemoveListener<string>(Signals.HOTKEY_CLICK, OnReceiveHotKeyClick);
-                Messenger.RemoveListener<QuestStep>(Signals.QUEST_STEP_ACTIVATED, OnQuestStepActivated);
+                Messenger.RemoveListener<string>(UISignals.HOTKEY_CLICK, OnReceiveHotKeyClick);
+                Messenger.RemoveListener<QuestStep>(PlayerQuestSignals.QUEST_STEP_ACTIVATED, OnQuestStepActivated);
             }
         }
         #endregion
         
         public override void OnPointerClick(PointerEventData eventData) {
             base.OnPointerClick(eventData);
-            Messenger.Broadcast(Signals.TOGGLE_CLICKED, this);    
+            Messenger.Broadcast(UISignals.TOGGLE_CLICKED, this);    
         }
         
         #region Shine
@@ -78,7 +78,7 @@ namespace Ruinarch.Custom_UI {
             if (name == buttonName) {
                 if (interactable) {
                     isOn = !isOn;    
-                    Messenger.Broadcast(Signals.TOGGLE_CLICKED, this); 
+                    Messenger.Broadcast(UISignals.TOGGLE_CLICKED, this); 
                 }
             }
         }
@@ -86,7 +86,7 @@ namespace Ruinarch.Custom_UI {
 
         #region Signals
         public void FireToggleShownSignal() {
-            Messenger.Broadcast(Signals.TOGGLE_SHOWN, this);
+            Messenger.Broadcast(UISignals.TOGGLE_SHOWN, this);
         }
         private void OnQuestStepActivated(QuestStep questStep) {
             if (questStep is ToggleTurnedOnStep turnedOnStep) {

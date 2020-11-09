@@ -3,10 +3,10 @@
         public ShareIntelStep(string stepDescription = "Share Intel") 
             : base(stepDescription) { }
         protected override void SubscribeListeners() {
-            Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, Complete);
+            Messenger.AddListener(UISignals.ON_OPEN_SHARE_INTEL, Complete);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener(Signals.ON_OPEN_SHARE_INTEL, Complete);
+            Messenger.RemoveListener(UISignals.ON_OPEN_SHARE_INTEL, Complete);
         }
     }
 }

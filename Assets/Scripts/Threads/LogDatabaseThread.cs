@@ -14,7 +14,7 @@ public class LogDatabaseThread : Multithread {
     }
     public override void FinishMultithread() {
         base.FinishMultithread();
-        Messenger.Broadcast(Signals.LOG_MENTIONING_CHARACTER_UPDATED, _character);
+        Messenger.Broadcast(UISignals.LOG_MENTIONING_CHARACTER_UPDATED, _character);
     }
     public void Reset() {
         _character = null;

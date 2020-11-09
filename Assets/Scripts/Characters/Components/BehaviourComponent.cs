@@ -153,7 +153,7 @@ public class BehaviourComponent : CharacterComponent {
         if (wasRemoved) {
             // Debug.Log($"{owner.name} removed character behaviour {component}");
             component.OnRemoveBehaviourFromCharacter(owner);
-            Messenger.Broadcast(Signals.CHARACTER_REMOVED_BEHAVIOUR, owner, component);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, owner, component);
         }
         return wasRemoved;
     }
@@ -611,10 +611,10 @@ public class BehaviourComponent : CharacterComponent {
     
     #region De-Mood
     public void OnBecomeDeMooder() {
-        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDeMoodJobFinished);
+        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDeMoodJobFinished);
     }
     public void OnNoLongerDeMooder() {
-        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDeMoodJobFinished);
+        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDeMoodJobFinished);
     }
     private void CheckIfDeMoodJobFinished(Character character, GoapPlanJob job) {
         if (character == owner && job.jobType == JOB_TYPE.DECREASE_MOOD) {
@@ -652,10 +652,10 @@ public class BehaviourComponent : CharacterComponent {
 
     #region Disabler
     public void OnBecomeDisabler() {
-        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDisablerJobFinished);
+        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDisablerJobFinished);
     }
     public void OnNoLongerDisabler() {
-        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDisablerJobFinished);
+        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDisablerJobFinished);
     }
     private void CheckIfDisablerJobFinished(Character character, GoapPlanJob job) {
         if (character == owner && job.jobType == JOB_TYPE.DISABLE) {
@@ -679,11 +679,11 @@ public class BehaviourComponent : CharacterComponent {
         previousInvaderToFollow?.behaviourComponent.RemoveFollower();
         if (invaderToFollow != null) {
             invaderToFollow.behaviourComponent.AddFollower();
-            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, CheckIfInvaderToFollowDied);
-            Messenger.AddListener<Character>(Signals.START_FLEE, OnCharacterStartedFleeing);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, CheckIfInvaderToFollowDied);
+            Messenger.AddListener<Character>(CharacterSignals.START_FLEE, OnCharacterStartedFleeing);
         } else {
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, CheckIfInvaderToFollowDied);
-            Messenger.RemoveListener<Character>(Signals.START_FLEE, OnCharacterStartedFleeing);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, CheckIfInvaderToFollowDied);
+            Messenger.RemoveListener<Character>(CharacterSignals.START_FLEE, OnCharacterStartedFleeing);
         }
     }
     private void OnCharacterStartedFleeing(Character character) {
@@ -717,16 +717,16 @@ public class BehaviourComponent : CharacterComponent {
         nest = tile;
     }
     public void OnBecomeAbductor() {
-        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfMonsterAte);
-        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnAbductorAddedJobToQueue);
-        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnAbductorRemovedJobFromQueue);
-        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnAbductorFinishedJobSuccessfully);
+        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfMonsterAte);
+        Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnAbductorAddedJobToQueue);
+        Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnAbductorRemovedJobFromQueue);
+        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnAbductorFinishedJobSuccessfully);
     }
     public void OnNoLongerAbductor() {
-        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfMonsterAte);
-        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnAbductorAddedJobToQueue);
-        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnAbductorRemovedJobFromQueue);
-        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnAbductorFinishedJobSuccessfully);
+        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfMonsterAte);
+        Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnAbductorAddedJobToQueue);
+        Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnAbductorRemovedJobFromQueue);
+        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnAbductorFinishedJobSuccessfully);
     }
     private void OnAbductorFinishedJobSuccessfully(Character character, GoapPlanJob job) {
         if (character == owner && job.jobType == JOB_TYPE.MONSTER_ABDUCT && job.targetPOI is Character targetCharacter) {
@@ -820,12 +820,12 @@ public class BehaviourComponent : CharacterComponent {
         currentArsonCooldown++;
     }
     public void OnBecomeArsonist() {
-        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfArsonistDidBurn);
-        Messenger.AddListener<Character>(Signals.START_FLEE, OnArsonistStartedFleeing);
+        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfArsonistDidBurn);
+        Messenger.AddListener<Character>(CharacterSignals.START_FLEE, OnArsonistStartedFleeing);
     }
     public void OnNoLongerArsonist() {
-        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfArsonistDidBurn);
-        Messenger.RemoveListener<Character>(Signals.START_FLEE, OnArsonistStartedFleeing);
+        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfArsonistDidBurn);
+        Messenger.RemoveListener<Character>(CharacterSignals.START_FLEE, OnArsonistStartedFleeing);
     }
     private void CheckIfArsonistDidBurn(Character character, GoapPlanJob job) {
         if (character == owner && job.jobType == JOB_TYPE.ARSON) {
@@ -881,12 +881,12 @@ public class BehaviourComponent : CharacterComponent {
         isCurrentlySnatching = state;
     }
     public void OnBecomeSnatcher() {
-        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnSnatcherAddedJobToQueue);
-        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);   
+        Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnSnatcherAddedJobToQueue);
+        Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);   
     }
     public void OnNoLongerSnatcher() {
-        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnSnatcherAddedJobToQueue);
-        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);   
+        Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnSnatcherAddedJobToQueue);
+        Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);   
     }
     private void OnSnatcherAddedJobToQueue(JobQueueItem job, Character character) {
         if (character == owner && job.jobType == JOB_TYPE.SNATCH && character.combatComponent.combatMode != COMBAT_MODE.Defend) {
@@ -907,12 +907,12 @@ public class BehaviourComponent : CharacterComponent {
 
     #region Cultist
     public void OnBecomeCultist() {
-        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnCultistSnatchAddedJobToQueue);
-        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnCultistSnatchJobRemoved);   
+        Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnCultistSnatchAddedJobToQueue);
+        Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnCultistSnatchJobRemoved);   
     }
     public void OnNoLongerCultist() {
-        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnCultistSnatchAddedJobToQueue);
-        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnCultistSnatchJobRemoved);   
+        Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnCultistSnatchAddedJobToQueue);
+        Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnCultistSnatchJobRemoved);   
     }
     private void OnCultistSnatchAddedJobToQueue(JobQueueItem job, Character character) {
         if (character == owner && job.jobType == JOB_TYPE.SNATCH && character.combatComponent.combatMode != COMBAT_MODE.Defend) {
@@ -930,10 +930,10 @@ public class BehaviourComponent : CharacterComponent {
 
     #region Dazed
     public void OnBecomeDazed() {
-        Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
-        Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnDazedCharacterCanNoLongerPerform);
-        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnDazedCharacterStartedState);
+        Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+        Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnDazedCharacterCanNoLongerPerform);
+        Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnDazedCharacterStartedState);
     }
     private void OnCharacterEnteredHexTile(Character character, HexTile tile) {
         if (character == owner) {
@@ -960,10 +960,10 @@ public class BehaviourComponent : CharacterComponent {
         }
     }
     public void OnNoLongerDazed() {
-        Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
-        Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnDazedCharacterCanNoLongerPerform);
-        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnDazedCharacterStartedState);
+        Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+        Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnDazedCharacterCanNoLongerPerform);
+        Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnDazedCharacterStartedState);
     }
     #endregion
 

@@ -88,7 +88,7 @@ public class CrimeManager : BaseMonoBehaviour {
             //addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_2);
             addLog.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFrom(criminal, addLog);
-            Messenger.Broadcast(Signals.CHARACTER_ACCUSED_OF_CRIME, criminal, crimeType, witness);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_ACCUSED_OF_CRIME, criminal, crimeType, witness);
         }
 
         ProcessWitnessCrime(witness, existingCrimeData);
@@ -493,10 +493,10 @@ public class CrimeData : ISavable {
 
     #region Listeners
     private void SubscribeToListeners() {
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
     }
     private void UnsubscribeFromListeners() {
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
     }
     private void OnCharacterDied(Character character) {
         if (isRemoved) {

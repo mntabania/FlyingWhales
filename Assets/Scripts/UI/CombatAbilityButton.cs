@@ -12,19 +12,12 @@ public class CombatAbilityButton : MonoBehaviour {
     public Image activeAbilityImage;
     public Image coverImage;
 
-    void OnDestroy() {
-        if (Messenger.eventTable.ContainsKey(Signals.COMBAT_ABILITY_UPDATE_BUTTON)) {
-            Messenger.RemoveListener<CombatAbility>(Signals.COMBAT_ABILITY_UPDATE_BUTTON, OnCombatAbilityUpdateButton);
-        }
-    }
-
     public void SetCombatAbility(CombatAbility ability) {
         this.ability = ability;
         if(ability != null) {
             buttonImage.sprite = PlayerManager.Instance.GetCombatAbilitySprite(ability.name);
         }
         UpdateInteractableState();
-        Messenger.AddListener<CombatAbility>(Signals.COMBAT_ABILITY_UPDATE_BUTTON, OnCombatAbilityUpdateButton);
     }
     public void UpdateInteractableState() {
         button.interactable = ability != null && ability != PlayerManager.Instance.player.currentActiveCombatAbility && !ability.IsInCooldown();

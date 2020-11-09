@@ -99,13 +99,13 @@ namespace Archetype {
             if (spells == null) { return; }
             if (!spells.Contains(type)) {
                 spells.Add(type);
-                Messenger.Broadcast(Signals.PLAYER_GAINED_SPELL, type);
+                Messenger.Broadcast(SpellSignals.PLAYER_GAINED_SPELL, type);
             }
         }
         public bool RemoveSpell(SPELL_TYPE type) {
             if (spells == null) { return false; }
             if (spells.Remove(type)) {
-                Messenger.Broadcast(Signals.PLAYER_LOST_SPELL, type);
+                Messenger.Broadcast(SpellSignals.PLAYER_LOST_SPELL, type);
                 return true;
             }
             return false;

@@ -147,43 +147,43 @@ public class PlayerUI : BaseMonoBehaviour {
         minionList.Initialize();
         summonList.Initialize();
 
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.AddListener(Signals.UPDATED_CURRENCIES, UpdateUI);
-        Messenger.AddListener<IIntel>(Signals.PLAYER_OBTAINED_INTEL, OnIntelObtained);
-        Messenger.AddListener<IIntel>(Signals.PLAYER_REMOVED_INTEL, OnIntelRemoved);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener(PlayerSignals.UPDATED_CURRENCIES, UpdateUI);
+        Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_OBTAINED_INTEL, OnIntelObtained);
+        Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_REMOVED_INTEL, OnIntelRemoved);
 
-        Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
-        Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
+        Messenger.AddListener(UISignals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
+        Messenger.AddListener(UISignals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
         
-        Messenger.AddListener<SPELL_TYPE>(Signals.PLAYER_GAINED_SPELL, OnGainSpell);
-        Messenger.AddListener<SPELL_TYPE>(Signals.PLAYER_LOST_SPELL, OnLostSpell);
+        Messenger.AddListener<SPELL_TYPE>(SpellSignals.PLAYER_GAINED_SPELL, OnGainSpell);
+        Messenger.AddListener<SPELL_TYPE>(SpellSignals.PLAYER_LOST_SPELL, OnLostSpell);
     }
 
     public void InitializeAfterGameLoaded() {
         //Kill Count UI
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CREATED, AddedNewCharacter);
-        Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
-        Messenger.AddListener<Character, Character>(Signals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
-        Messenger.AddListener(Signals.THREAT_UPDATED, OnThreatUpdated);
-        Messenger.AddListener<int>(Signals.THREAT_INCREASED, OnThreatIncreased);
-        Messenger.AddListener(Signals.THREAT_RESET, OnThreatReset);
-        Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
-        Messenger.AddListener<IPointOfInterest>(Signals.ON_UNSEIZE_POI, OnUnseizePOI);
-        Messenger.AddListener<Character>(Signals.NEW_VILLAGER_ARRIVED, OnAddNewCharacter);
-        Messenger.AddListener<Character>(Signals.NECROMANCER_SPAWNED, OnNecromancerSpawned);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CREATED, AddedNewCharacter);
+        Messenger.AddListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
+        Messenger.AddListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
+        Messenger.AddListener(PlayerSignals.THREAT_UPDATED, OnThreatUpdated);
+        Messenger.AddListener<int>(PlayerSignals.THREAT_INCREASED, OnThreatIncreased);
+        Messenger.AddListener(PlayerSignals.THREAT_RESET, OnThreatReset);
+        Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
+        Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_UNSEIZE_POI, OnUnseizePOI);
+        Messenger.AddListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnAddNewCharacter);
+        Messenger.AddListener<Character>(CharacterSignals.NECROMANCER_SPAWNED, OnNecromancerSpawned);
 
         //key presses
-        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
+        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyPressed);
 
         //currencies
-        Messenger.AddListener<int, int>(Signals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
+        Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         InitialUpdateVillagerListCharacterItems();
         InitializeIntel();
         // UpdateIntel();
@@ -497,7 +497,7 @@ public class PlayerUI : BaseMonoBehaviour {
     public void ShowPlayerIntels(bool state) {
         intelContainer.SetActive(state);
         if (state) {
-            Messenger.Broadcast(Signals.INTEL_MENU_OPENED);    
+            Messenger.Broadcast(UISignals.INTEL_MENU_OPENED);    
         }
         //RectTransform rt = UIManager.Instance.playerNotifGO.transform as RectTransform;
         //Vector3 previousPos = rt.anchoredPosition;
@@ -847,7 +847,7 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     private void ShowSpells() {
         spellsContainerGO.SetActive(true);
-        Messenger.Broadcast(Signals.SPELLS_MENU_SHOWN);
+        Messenger.Broadcast(UISignals.SPELLS_MENU_SHOWN);
     }
     private void HideSpells() {
         spellsContainerGO.SetActive(false);

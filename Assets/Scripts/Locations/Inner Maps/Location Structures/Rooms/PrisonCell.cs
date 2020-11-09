@@ -30,14 +30,14 @@ namespace Inner_Maps.Location_Structures {
                 skeleton = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveData.skeletonID) as Summon;
             }
             if (currentTortureTarget != null && skeleton == null) {
-                Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
-                Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+                Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
+                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
                 LocationGridTile centerTile = GetCenterTile();
                 _particleEffect = GameManager.Instance.CreateParticleEffectAt(centerTile.worldLocation, centerTile.parentMap, PARTICLE_EFFECT.Torture_Cloud).GetComponent<AutoDestroyParticle>();
             }
             if (skeleton != null) {
                 //if skeleton is not null then, listen for drop job to be finished
-                Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+                Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
             }
         }
         public override void LoadAdditionalReferences(SaveDataStructureRoom saveDataStructureRoom) {
@@ -78,14 +78,14 @@ namespace Inner_Maps.Location_Structures {
         private void StartTorture(Character target) {
             currentTortureTarget = target;
             currentTortureTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Tortured, currentTortureTarget);
-            Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
             LocationGridTile centerTile = GetCenterTile();
             _particleEffect = GameManager.Instance.CreateParticleEffectAt(centerTile.worldLocation, centerTile.parentMap, PARTICLE_EFFECT.Torture_Cloud).GetComponent<AutoDestroyParticle>();
         }
         private void StopTorture() {
             currentTortureTarget = null;
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         private void CheckIfTortureInterruptFinished(INTERRUPT interrupt, Character character) {
             if (character == currentTortureTarget && interrupt == INTERRUPT.Being_Tortured) {
@@ -95,7 +95,7 @@ namespace Inner_Maps.Location_Structures {
                 TortureChambers tortureChamber = parentStructure as TortureChambers;
                 Assert.IsNotNull(tortureChamber, $"Parent structure of torture room is not torture chamber! {parentStructure?.ToString() ?? "Null"}");
                 
-                Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
+                Messenger.RemoveListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
                 character.traitContainer.AddTrait(character, "Restrained");
                 Prisoner prisonerTrait = character.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
                 if (prisonerTrait != null) {
@@ -128,12 +128,12 @@ namespace Inner_Maps.Location_Structures {
                 });
                 skeleton.jobQueue.AddJobInQueue(job);
                 
-                Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+                Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
             }
         }
         private void OnJobRemovedFromCharacter(JobQueueItem job, Character character) {
             if (character == skeleton && job.jobType == JOB_TYPE.MOVE_CHARACTER) {
-                Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+                Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
                 //close door
                 DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
                 door?.Close();
@@ -158,7 +158,7 @@ namespace Inner_Maps.Location_Structures {
         #region Destruction
         public override void OnParentStructureDestroyed() {
             base.OnParentStructureDestroyed();
-            Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
+            Messenger.RemoveListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
             if (currentTortureTarget != null && currentTortureTarget.interruptComponent.isInterrupted && 
                 currentTortureTarget.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Being_Tortured) {
                 currentTortureTarget.interruptComponent.ForceEndNonSimultaneousInterrupt();

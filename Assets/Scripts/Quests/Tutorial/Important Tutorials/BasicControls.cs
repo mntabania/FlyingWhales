@@ -109,14 +109,14 @@ namespace Tutorial {
                 "Controlling Time", stepItem.hoverPosition);
         }
         private void OnTopMostUnpause() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "1x");
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "2x");
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "4x");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "1x");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "2x");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "4x");
         }
         private void OnNopLongerTopMostUnpause() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "1x");
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "2x");
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "4x");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "1x");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "2x");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "4x");
         }
         #endregion
     }

@@ -184,24 +184,24 @@ public class LandmarkCharacterItem : PooledObject {
     }
 
     private void OnEnable() {
-        Messenger.AddListener<Character>(Signals.STARTED_TRAVELLING_IN_WORLD, OnCharacterStartedTravellingOutside);
-        Messenger.AddListener<Character>(Signals.FINISHED_TRAVELLING_IN_WORLD, OnCharacterDoneTravellingOutside);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnTraitAdded);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnTraitRemoved);
+        Messenger.AddListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnCharacterStartedTravellingOutside);
+        Messenger.AddListener<Character>(CharacterSignals.FINISHED_TRAVELLING_IN_WORLD, OnCharacterDoneTravellingOutside);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnTraitAdded);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, OnTraitRemoved);
     }
 
     private void OnDisable() {
-        if (Messenger.eventTable.ContainsKey(Signals.STARTED_TRAVELLING_IN_WORLD)) {
-            Messenger.RemoveListener<Character>(Signals.STARTED_TRAVELLING_IN_WORLD, OnCharacterStartedTravellingOutside);
+        if (Messenger.eventTable.ContainsKey(CharacterSignals.STARTED_TRAVELLING_IN_WORLD)) {
+            Messenger.RemoveListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnCharacterStartedTravellingOutside);
         }
-        if (Messenger.eventTable.ContainsKey(Signals.FINISHED_TRAVELLING_IN_WORLD)) {
-            Messenger.RemoveListener<Character>(Signals.FINISHED_TRAVELLING_IN_WORLD, OnCharacterDoneTravellingOutside);
+        if (Messenger.eventTable.ContainsKey(CharacterSignals.FINISHED_TRAVELLING_IN_WORLD)) {
+            Messenger.RemoveListener<Character>(CharacterSignals.FINISHED_TRAVELLING_IN_WORLD, OnCharacterDoneTravellingOutside);
         }
-        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_CHANGED_RACE)) {
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
+        if (Messenger.eventTable.ContainsKey(CharacterSignals.CHARACTER_CHANGED_RACE)) {
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         }
-        Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnTraitAdded);
-        Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnTraitRemoved);
+        Messenger.RemoveListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnTraitAdded);
+        Messenger.RemoveListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, OnTraitRemoved);
     }
 }

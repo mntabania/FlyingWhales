@@ -57,7 +57,7 @@ public class MainMenuUI : MonoBehaviour {
         //Set current save data to null everytime this is loaded, this is so that the previous save file is not loaded if new game was clicked
         SaveManager.Instance.saveCurrentProgressManager.SetCurrentSaveDataPath(string.Empty); 
         UpdateButtonStates();
-        Messenger.AddListener<string>(Signals.SAVE_FILE_DELETED, OnSaveFileDeleted);
+        Messenger.AddListener<string>(UISignals.SAVE_FILE_DELETED, OnSaveFileDeleted);
     }
     public void ShowMenuButtons() {
         titleTween.OnValueChangedAnimation(true);
@@ -118,7 +118,7 @@ public class MainMenuUI : MonoBehaviour {
     }
     private void OnConfirmDelete(string path) {
         File.Delete(path);
-        Messenger.Broadcast(Signals.SAVE_FILE_DELETED, path);
+        Messenger.Broadcast(UISignals.SAVE_FILE_DELETED, path);
     }
 
     #region Load Game

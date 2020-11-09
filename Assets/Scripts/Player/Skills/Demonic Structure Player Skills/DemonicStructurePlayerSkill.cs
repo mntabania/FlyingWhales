@@ -35,7 +35,7 @@ public class DemonicStructurePlayerSkill : SpellData {
         targetHex.StartCorruption();
         LandmarkManager.Instance.PlaceBuiltStructureForSettlement(targetHex.settlementOnTile, targetHex.region.innerMap, targetHex, structureType, RESOURCE.NONE);
         targetHex.landmarkOnTile?.OnFinishedBuilding();
-        Messenger.Broadcast(Signals.UPDATE_BUILD_LIST);
+        Messenger.Broadcast(UISignals.UPDATE_BUILD_LIST);
     }
     
     public override void HighlightAffectedTiles(LocationGridTile tile) {

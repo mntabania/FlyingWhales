@@ -27,7 +27,7 @@ public class DragonBehaviour : CharacterBehaviourComponent {
                     if(UIManager.Instance.monsterInfoUI.isShowing && UIManager.Instance.monsterInfoUI.activeMonster == dragon) {
                         UIManager.Instance.monsterInfoUI.CloseMenu();
                     }
-                    Messenger.Broadcast(Signals.DRAGON_LEFT_WORLD, character, currentRegion);
+                    Messenger.Broadcast(MonsterSignals.DRAGON_LEFT_WORLD, character, currentRegion);
                 } else {
                     dragon.jobComponent.CreateGoToJob(dragon.gridTileLocation.GetNearestEdgeTileFromThis(), out producedJob);
                 }

@@ -151,7 +151,7 @@ public class NameplateItem<T> : PooledObject, INameplateItem {
         if (button.gameObject.activeSelf) {
             if(eventData.button == PointerEventData.InputButton.Left) {
                 onClickNameplate?.Invoke(obj);
-                Messenger.Broadcast(Signals.NAMEPLATE_CLICKED, mainLbl.text);
+                Messenger.Broadcast(UISignals.NAMEPLATE_CLICKED, mainLbl.text);
             } else if (eventData.button == PointerEventData.InputButton.Right) {
                 onRightClickNameplate?.Invoke(obj);
             }

@@ -16,7 +16,7 @@ public class FollowerComponent : MonoBehaviour {
         transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
         this.targetTransform = target;
         this.onReachTarget = onReachTarget;
-        Messenger.AddListener<GameObject>(Signals.POOLED_OBJECT_DESTROYED, OnPooledObjectDestroyed);
+        Messenger.AddListener<GameObject>(ObjectPoolSignals.POOLED_OBJECT_DESTROYED, OnPooledObjectDestroyed);
     }
 
     private void FixedUpdate() {

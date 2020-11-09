@@ -48,7 +48,7 @@ namespace Quests {
         }
         public virtual void Deactivate() {
             isActivated = false;
-            Messenger.Broadcast(Signals.QUEST_DEACTIVATED, this);
+            Messenger.Broadcast(PlayerQuestSignals.QUEST_DEACTIVATED, this);
         }
         #endregion
 

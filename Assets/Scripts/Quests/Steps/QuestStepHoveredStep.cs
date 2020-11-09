@@ -14,12 +14,12 @@ namespace Quests.Steps {
         }
         
         protected override void SubscribeListeners() {
-            Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_HOVERED, OnQuestStepHovered);
-            Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_HOVERED_OUT, OnQuestStepHoveredOut);
+            Messenger.AddListener<QuestStep>(PlayerQuestSignals.QUEST_STEP_HOVERED, OnQuestStepHovered);
+            Messenger.AddListener<QuestStep>(PlayerQuestSignals.QUEST_STEP_HOVERED_OUT, OnQuestStepHoveredOut);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<QuestStep>(Signals.QUEST_STEP_HOVERED, OnQuestStepHovered);
-            Messenger.RemoveListener<QuestStep>(Signals.QUEST_STEP_HOVERED_OUT, OnQuestStepHoveredOut);
+            Messenger.RemoveListener<QuestStep>(PlayerQuestSignals.QUEST_STEP_HOVERED, OnQuestStepHovered);
+            Messenger.RemoveListener<QuestStep>(PlayerQuestSignals.QUEST_STEP_HOVERED_OUT, OnQuestStepHoveredOut);
         }
 
         private void OnQuestStepHovered(QuestStep step) {

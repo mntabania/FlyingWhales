@@ -59,7 +59,7 @@ namespace Quests.Steps {
         /// </summary>
         public void Activate() {
             SubscribeListeners();
-            Messenger.Broadcast(Signals.QUEST_STEP_ACTIVATED, this);
+            Messenger.Broadcast(PlayerQuestSignals.QUEST_STEP_ACTIVATED, this);
         }
         #endregion
 
@@ -73,7 +73,7 @@ namespace Quests.Steps {
             if (isCompleted) { return; }
             isCompleted = true;
             onCompleteAction?.Invoke();
-            Messenger.Broadcast(Signals.QUEST_STEP_COMPLETED, this);
+            Messenger.Broadcast(PlayerQuestSignals.QUEST_STEP_COMPLETED, this);
         }
         public QuestStep SetCompleteAction(System.Action onCompleteAction) {
             this.onCompleteAction = onCompleteAction;
@@ -83,7 +83,7 @@ namespace Quests.Steps {
 
         #region Fail
         public void FailStep() {
-            Messenger.Broadcast(Signals.QUEST_STEP_FAILED, this);
+            Messenger.Broadcast(PlayerQuestSignals.QUEST_STEP_FAILED, this);
         }
         #endregion
 
@@ -98,11 +98,11 @@ namespace Quests.Steps {
         }
         public void ExecuteHoverAction(QuestStepItem item) {
             onHoverOverAction?.Invoke(item);
-            Messenger.Broadcast(Signals.QUEST_STEP_HOVERED, this);
+            Messenger.Broadcast(PlayerQuestSignals.QUEST_STEP_HOVERED, this);
         }
         public void ExecuteHoverOutAction() {
             onHoverOutAction?.Invoke();
-            Messenger.Broadcast(Signals.QUEST_STEP_HOVERED_OUT, this);
+            Messenger.Broadcast(PlayerQuestSignals.QUEST_STEP_HOVERED_OUT, this);
         }
         #endregion
         

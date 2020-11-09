@@ -50,7 +50,7 @@ namespace Traits {
             base.LoadTraitOnLoadTraitContainer(addTo);
             traitable = addTo;
             if (addTo is Character character) {
-                Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+                Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
                 _overheatingEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Overheating);
             }
         }
@@ -61,7 +61,7 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             traitable = addedTo;
             if (addedTo is Character character) {
-                Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+                Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
                 _overheatingEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Overheating);
             }
         }
@@ -84,7 +84,7 @@ namespace Traits {
                 if (character.trapStructure.forcedStructure == currentShelterStructure) {
                     character.trapStructure.SetForcedStructure(null);
                 }
-                Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+                Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
             }
         }
         public override void OnInitiateMapObjectVisual(ITraitable traitable) {

@@ -161,12 +161,12 @@ public class SlotItem : MonoBehaviour {
         }
     }
     private void AddListeners() {
-        Messenger.AddListener<DragObject>(Signals.DRAG_OBJECT_CREATED, OnDragObjectCreated);
-        Messenger.AddListener<DragObject>(Signals.DRAG_OBJECT_DESTROYED, OnDragObjectDestroyed);
+        Messenger.AddListener<DragObject>(UISignals.DRAG_OBJECT_CREATED, OnDragObjectCreated);
+        Messenger.AddListener<DragObject>(UISignals.DRAG_OBJECT_DESTROYED, OnDragObjectDestroyed);
     }
     private void RemoveListeners() {
-        Messenger.RemoveListener<DragObject>(Signals.DRAG_OBJECT_CREATED, OnDragObjectCreated);
-        Messenger.RemoveListener<DragObject>(Signals.DRAG_OBJECT_DESTROYED, OnDragObjectDestroyed);
+        Messenger.RemoveListener<DragObject>(UISignals.DRAG_OBJECT_CREATED, OnDragObjectCreated);
+        Messenger.RemoveListener<DragObject>(UISignals.DRAG_OBJECT_DESTROYED, OnDragObjectDestroyed);
     }
     private void OnDragObjectCreated(DragObject obj) {
         if (dropZone != null && dropZone.isEnabled && neededType != null && IsObjectValidForSlot(obj.parentItem.associatedObj)) {

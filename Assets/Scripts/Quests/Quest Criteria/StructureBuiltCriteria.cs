@@ -9,10 +9,10 @@ namespace Quests {
         }
         
         public override void Enable() {
-            Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, CheckCriteria);
+            Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_OBJECT_PLACED, CheckCriteria);
         }
         public override void Disable() {
-            Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, CheckCriteria);
+            Messenger.RemoveListener<LocationStructure>(StructureSignals.STRUCTURE_OBJECT_PLACED, CheckCriteria);
         }
         
         

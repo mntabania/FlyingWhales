@@ -170,9 +170,9 @@ namespace Traits {
                 isLiving = state;
                 if (isLiving) {
                     owner.marker.SetMarkerColor(Color.grey);
-                    Messenger.AddListener<Character, Character>(Signals.CHARACTER_WAS_HIT, OnCharacterHit);
+                    Messenger.AddListener<Character, Character>(CharacterSignals.CHARACTER_WAS_HIT, OnCharacterHit);
                 } else {
-                    Messenger.RemoveListener<Character, Character>(Signals.CHARACTER_WAS_HIT, OnCharacterHit);
+                    Messenger.RemoveListener<Character, Character>(CharacterSignals.CHARACTER_WAS_HIT, OnCharacterHit);
                     owner.marker.SetMarkerColor(Color.white);
                 }
             }

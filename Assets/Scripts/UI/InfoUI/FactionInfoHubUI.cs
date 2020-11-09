@@ -105,7 +105,7 @@ public class FactionInfoHubUI : MonoBehaviour {
         }
     }
     private void InitializeUI() {
-        Messenger.AddListener<Faction>(Signals.FACTION_CREATED, OnFactionCreated);
+        Messenger.AddListener<Faction>(FactionSignals.FACTION_CREATED, OnFactionCreated);
     }
 
     public void Open() {

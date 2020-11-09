@@ -153,12 +153,12 @@ public class CharacterNeedsComponent : CharacterComponent {
     public void SubscribeToSignals() {
         Messenger.AddListener(Signals.TICK_STARTED, DecreaseNeeds);
         Messenger.AddListener(Signals.HOUR_STARTED, PerHour);
-        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
+        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
     }
     public void UnsubscribeToSignals() {
         Messenger.RemoveListener(Signals.TICK_STARTED, DecreaseNeeds);
         Messenger.RemoveListener(Signals.HOUR_STARTED, PerHour);
-        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
+        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
     }
     public void DailyGoapProcesses() {
         hasForcedFullness = false;

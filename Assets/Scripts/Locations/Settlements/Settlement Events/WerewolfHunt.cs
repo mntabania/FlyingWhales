@@ -16,12 +16,12 @@
         }
         
         private void SubscribeListeners() {
-            Messenger.AddListener<Character, CRIME_TYPE, Character>(Signals.CHARACTER_ACCUSED_OF_CRIME, OnCharacterAccusedOfCrime);
-            Messenger.AddListener<Faction>(Signals.FACTION_CRIMES_CHANGED, OnFactionCrimesChanged);
+            Messenger.AddListener<Character, CRIME_TYPE, Character>(CharacterSignals.CHARACTER_ACCUSED_OF_CRIME, OnCharacterAccusedOfCrime);
+            Messenger.AddListener<Faction>(FactionSignals.FACTION_CRIMES_CHANGED, OnFactionCrimesChanged);
         }
         private void UnsubscribeListeners() {
-            Messenger.RemoveListener<Character, CRIME_TYPE, Character>(Signals.CHARACTER_ACCUSED_OF_CRIME, OnCharacterAccusedOfCrime);
-            Messenger.RemoveListener<Faction>(Signals.FACTION_CRIMES_CHANGED, OnFactionCrimesChanged);
+            Messenger.RemoveListener<Character, CRIME_TYPE, Character>(CharacterSignals.CHARACTER_ACCUSED_OF_CRIME, OnCharacterAccusedOfCrime);
+            Messenger.RemoveListener<Faction>(FactionSignals.FACTION_CRIMES_CHANGED, OnFactionCrimesChanged);
         }
         
         #region Overrides

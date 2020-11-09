@@ -30,9 +30,9 @@ public class ActionItem : PooledObject {
         actionImg.sprite = PlayerUI.Instance.playerActionsIconDictionary[playerAction.type];
         actionLbl.text = playerAction.GetLabelName(playerActionTarget);
         gameObject.SetActive(true);
-        Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
-        Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
-        Messenger.AddListener<int, int>(Signals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
+        Messenger.AddListener<SpellData>(SpellSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
+        Messenger.AddListener<SpellData>(SpellSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
+        Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
     }
     public void SetInteractable(bool state) {
         button.interactable = state;
@@ -138,8 +138,8 @@ public class ActionItem : PooledObject {
 		SetCooldownState(false);
 		SetInteractable(true);
 		Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
-		Messenger.RemoveListener<SpellData>(Signals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
-		Messenger.RemoveListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
-        Messenger.RemoveListener<int, int>(Signals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
+		Messenger.RemoveListener<SpellData>(SpellSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
+		Messenger.RemoveListener<SpellData>(SpellSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
+        Messenger.RemoveListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
     }
 }

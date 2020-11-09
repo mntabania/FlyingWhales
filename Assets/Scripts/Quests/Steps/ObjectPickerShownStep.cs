@@ -6,10 +6,10 @@
             _neededIdentifier = neededIdentifier;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<string>(Signals.OBJECT_PICKER_SHOWN, CheckForCompletion);
+            Messenger.AddListener<string>(UISignals.OBJECT_PICKER_SHOWN, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<string>(Signals.OBJECT_PICKER_SHOWN, CheckForCompletion);
+            Messenger.RemoveListener<string>(UISignals.OBJECT_PICKER_SHOWN, CheckForCompletion);
         }
 
         #region Listeners

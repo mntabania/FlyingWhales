@@ -6,10 +6,10 @@ namespace Quests.Steps {
             _validityChecker = validityChecker;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<object, string, IPointOfInterest>(Signals.LOG_HISTORY_OBJECT_CLICKED, CheckForCompletion);
+            Messenger.AddListener<object, string, IPointOfInterest>(UISignals.LOG_HISTORY_OBJECT_CLICKED, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<object, string, IPointOfInterest>(Signals.LOG_HISTORY_OBJECT_CLICKED, CheckForCompletion);
+            Messenger.RemoveListener<object, string, IPointOfInterest>(UISignals.LOG_HISTORY_OBJECT_CLICKED, CheckForCompletion);
         }
 
         #region Listeners

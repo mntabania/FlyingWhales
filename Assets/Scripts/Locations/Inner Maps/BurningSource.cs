@@ -18,7 +18,7 @@ public class BurningSource {
         id = UtilityScripts.Utilities.SetID(this);
         objectsOnFire = new List<ITraitable>();
         _poisOnFireCount = 0;
-        Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
+        Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
         DatabaseManager.Instance.burningSourceDatabase.Register(this);
     }
     public void AddObjectOnFire(ITraitable traitable) {
@@ -50,8 +50,8 @@ public class BurningSource {
         }
     }
     private void SetAsInactive() {
-        Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
-        Messenger.Broadcast(Signals.BURNING_SOURCE_INACTIVE, this);
+        Messenger.RemoveListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
+        Messenger.Broadcast(InnerMapSignals.BURNING_SOURCE_INACTIVE, this);
         DatabaseManager.Instance.burningSourceDatabase.UnRegister(this);
     }
     

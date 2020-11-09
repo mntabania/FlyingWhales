@@ -42,7 +42,7 @@ public class HexTileSpellsComponent {
         this.owner = owner;
         earthquakeTileObjects = new List<IPointOfInterest>();
         pendingEarthquakeTileObjects = new List<IPointOfInterest>();
-        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
+        Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
     }
 
     #region Loading

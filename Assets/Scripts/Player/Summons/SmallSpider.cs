@@ -14,15 +14,12 @@ public class SmallSpider : Summon {
     public bool shouldGrowUpOnUnSeize { get; private set; }
 
     public SmallSpider() : base(SUMMON_TYPE.Small_Spider, ClassName, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
-        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
         combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
     public SmallSpider(string className) : base(SUMMON_TYPE.Small_Spider, className, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
-        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
         combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
     public SmallSpider(SaveDataSmallSpider data) : base(data) {
-        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
         combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
         growUpDate = data.growUpDate;
         shouldGrowUpOnUnSeize = data.shouldGrowUpOnUnSeize;
@@ -96,7 +93,9 @@ public class SmallSpider : Summon {
         
         //create giant spider
         Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Giant_Spider, targetFaction, settlement, region, home);
-        summon.SetFirstAndLastName(firstName, surName);
+        if (!this.isUsingDefaultName) {
+            summon.SetFirstAndLastName(firstName, surName);    
+        }
         if (ogTerritories.Count > 0) {
             for (int i = 0; i < ogTerritories.Count; i++) {
                 summon.AddTerritory(ogTerritories[i]);    

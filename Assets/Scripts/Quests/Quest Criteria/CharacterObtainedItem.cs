@@ -7,10 +7,10 @@
         }
         
         public override void Enable() {
-            Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_OBTAINED_ITEM, OnCharacterObtainedItem);
+            Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_OBTAINED_ITEM, OnCharacterObtainedItem);
         }
         public override void Disable() {
-            Messenger.RemoveListener<TileObject, Character>(Signals.CHARACTER_OBTAINED_ITEM, OnCharacterObtainedItem);
+            Messenger.RemoveListener<TileObject, Character>(CharacterSignals.CHARACTER_OBTAINED_ITEM, OnCharacterObtainedItem);
         }
 
         private void OnCharacterObtainedItem(TileObject tileObject, Character character) {

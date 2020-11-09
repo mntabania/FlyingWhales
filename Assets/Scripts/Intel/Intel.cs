@@ -18,7 +18,7 @@ public class ActionIntel : IIntel, IDisposable {
     public ActionIntel(ActualGoapNode node) {
         this.node = node;
         DatabaseManager.Instance.mainSQLDatabase.SetLogIntelState(log.persistentID, true);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     public ActionIntel(SaveDataActionIntel data) {
         node = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.node);
@@ -26,13 +26,13 @@ public class ActionIntel : IIntel, IDisposable {
     public void OnIntelRemoved() {
         //set is intel in database to false, so that it can be overwritten.
         DatabaseManager.Instance.mainSQLDatabase.SetLogIntelState(log.persistentID, false);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
 
     #region Listeners
     private void OnCharacterChangedName(Character p_character) {
         if (node.descriptionLog.TryUpdateLogAfterRename(p_character)) {
-            Messenger.Broadcast(Signals.INTEL_LOG_UPDATED, this as IIntel);    
+            Messenger.Broadcast(UISignals.INTEL_LOG_UPDATED, this as IIntel);    
         }
     }
     #endregion
@@ -77,7 +77,7 @@ public class InterruptIntel : IIntel, IDisposable {
         //interruptHolder.SetDisguisedTarget(interrupt.disguisedTarget);
 
         DatabaseManager.Instance.mainSQLDatabase.SetLogIntelState(log.persistentID, true);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     public InterruptIntel(SaveDataInterruptIntel data) {
         interruptHolder = DatabaseManager.Instance.interruptDatabase.GetInterruptByPersistentID(data.interruptHolder);
@@ -85,13 +85,13 @@ public class InterruptIntel : IIntel, IDisposable {
     public void OnIntelRemoved() {
         //set is intel in database to false, so that it can be overwritten.
         DatabaseManager.Instance.mainSQLDatabase.SetLogIntelState(log.persistentID, false);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     
     #region Listeners
     private void OnCharacterChangedName(Character p_character) {
         if (interruptHolder.effectLog.TryUpdateLogAfterRename(p_character)) {
-            Messenger.Broadcast(Signals.INTEL_LOG_UPDATED, this as IIntel);    
+            Messenger.Broadcast(UISignals.INTEL_LOG_UPDATED, this as IIntel);    
         }
     }
     #endregion

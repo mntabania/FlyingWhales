@@ -69,7 +69,7 @@ namespace Events.World_Events {
                             Debug.Log($"Spawned new villager {newCharacter.name} at {edgeTile}");
                             newCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
                             newCharacter.jobComponent.PlanReturnHomeUrgent();
-                            Messenger.Broadcast(Signals.NEW_VILLAGER_ARRIVED, newCharacter);
+                            Messenger.Broadcast(WorldEventSignals.NEW_VILLAGER_ARRIVED, newCharacter);
 
                             debugLog = $"{debugLog}\nNew character {newCharacter.name} was spawned.";
 

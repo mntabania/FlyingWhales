@@ -21,12 +21,12 @@ namespace Quests.Steps {
             _isToggleValid = isToggleValid;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<RuinarchToggle>(Signals.TOGGLE_CLICKED, CheckForCompletion);
-            Messenger.AddListener<RuinarchToggle>(Signals.TOGGLE_SHOWN, CheckForCompletion);
+            Messenger.AddListener<RuinarchToggle>(UISignals.TOGGLE_CLICKED, CheckForCompletion);
+            Messenger.AddListener<RuinarchToggle>(UISignals.TOGGLE_SHOWN, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<RuinarchToggle>(Signals.TOGGLE_CLICKED, CheckForCompletion);
-            Messenger.RemoveListener<RuinarchToggle>(Signals.TOGGLE_SHOWN, CheckForCompletion);
+            Messenger.RemoveListener<RuinarchToggle>(UISignals.TOGGLE_CLICKED, CheckForCompletion);
+            Messenger.RemoveListener<RuinarchToggle>(UISignals.TOGGLE_SHOWN, CheckForCompletion);
         }
 
         #region Listeners

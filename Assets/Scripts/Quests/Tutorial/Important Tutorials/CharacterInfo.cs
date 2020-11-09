@@ -76,37 +76,37 @@ namespace Tutorial {
 
         #region Info Tab
         private void OnTopMostInfo() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "CharacterInfo_Info");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "CharacterInfo_Info");
         }
         private void OnNoLongerTopMostInfo() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "CharacterInfo_Info");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "CharacterInfo_Info");
         }
         #endregion
         
         #region Mood Tab
         private void OnTopMostMood() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "CharacterInfo_Mood");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "CharacterInfo_Mood");
         }
         private void OnNoLongerTopMostMood() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "CharacterInfo_Mood");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "CharacterInfo_Mood");
         }
         #endregion
         
         #region Relations Tab
         private void OnTopMostRelations() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "CharacterInfo_Relations");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "CharacterInfo_Relations");
         }
         private void OnNoLongerTopMostRelations() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "CharacterInfo_Relations");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "CharacterInfo_Relations");
         }
         #endregion
         
         #region Logs Tab
         private void OnTopMostLogs() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "CharacterInfo_Logs");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "CharacterInfo_Logs");
         }
         private void OnNoLongerTopMostLogs() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "CharacterInfo_Logs");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "CharacterInfo_Logs");
         }
         #endregion
     }

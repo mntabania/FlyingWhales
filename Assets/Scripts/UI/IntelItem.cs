@@ -32,7 +32,7 @@ public class IntelItem : MonoBehaviour {
             shareToggle.gameObject.SetActive(false);
             // logItem.SetLog(null);
         }
-        Messenger.AddListener<IIntel>(Signals.INTEL_LOG_UPDATED, OnIntelLogUpdated);
+        Messenger.AddListener<IIntel>(UISignals.INTEL_LOG_UPDATED, OnIntelLogUpdated);
     }
 
     #region Listeners

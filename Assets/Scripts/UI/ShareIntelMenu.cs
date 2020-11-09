@@ -28,7 +28,7 @@ public class ShareIntelMenu : PopupMenuBase {
         UIManager.Instance.Pause();
         UIManager.Instance.SetSpeedTogglesState(false);
 
-        Messenger.Broadcast(Signals.ON_OPEN_SHARE_INTEL);
+        Messenger.Broadcast(UISignals.ON_OPEN_SHARE_INTEL);
 
         this.targetCharacter = targetCharacter;
         this.actor = actor;
@@ -61,7 +61,7 @@ public class ShareIntelMenu : PopupMenuBase {
         base.Close();
         UIManager.Instance.SetSpeedTogglesState(true);
         GameManager.Instance.SetPausedState(wasPausedOnOpen);
-        Messenger.Broadcast(Signals.ON_CLOSE_SHARE_INTEL);
+        Messenger.Broadcast(UISignals.ON_CLOSE_SHARE_INTEL);
     }
 
     private void ReactToIntel(IIntel intel) {

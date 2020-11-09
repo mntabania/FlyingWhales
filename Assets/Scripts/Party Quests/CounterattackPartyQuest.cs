@@ -29,7 +29,7 @@ public class CounterattackPartyQuest : PartyQuest {
     public override void OnWaitTimeOver() {
         base.OnWaitTimeOver();
         if (targetStructure is DemonicStructure demonicStructure) {
-            Messenger.Broadcast(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, assignedParty.membersThatJoinedQuest, demonicStructure);
+            Messenger.Broadcast(PartySignals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, assignedParty.membersThatJoinedQuest, demonicStructure);
         }
         for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
             Character member = assignedParty.membersThatJoinedQuest[i];

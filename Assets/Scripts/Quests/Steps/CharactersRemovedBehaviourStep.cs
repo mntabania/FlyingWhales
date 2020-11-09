@@ -33,10 +33,10 @@ namespace Quests.Steps {
             }
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<Character, CharacterBehaviourComponent>(Signals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
+            Messenger.AddListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<Character, CharacterBehaviourComponent>(Signals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
+            Messenger.RemoveListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
             // Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         }
 
@@ -45,7 +45,7 @@ namespace Quests.Steps {
             if (_targets.Contains(character) && behaviourComponent == _behaviourType) {
                 _targets.Remove(character);
                 objectsToCenter.Remove(character);
-                Messenger.Broadcast(Signals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
+                Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
                 if (_targets.Count == 0) {
                     Complete();    
                 }

@@ -83,7 +83,7 @@ public class BaseLandmark {
     /// <param name="minion">The minion that was assigned.</param>
     public virtual void OnMinionAssigned(Minion minion) {
         if (this.specificLandmarkType.IsPlayerLandmark()) {
-            Messenger.Broadcast(Signals.MINION_ASSIGNED_PLAYER_LANDMARK, minion, this);
+            Messenger.Broadcast(PlayerSignals.MINION_ASSIGNED_PLAYER_LANDMARK, minion, this);
         }
     }
     /// <summary>
@@ -92,7 +92,7 @@ public class BaseLandmark {
     /// <param name="minion">The minion that was unassigned.</param>
     public virtual void OnMinionUnassigned(Minion minion) {
         if (this.specificLandmarkType.IsPlayerLandmark()) {
-            Messenger.Broadcast(Signals.MINION_UNASSIGNED_PLAYER_LANDMARK, minion, this);
+            Messenger.Broadcast(PlayerSignals.MINION_UNASSIGNED_PLAYER_LANDMARK, minion, this);
         }
     }
     #endregion

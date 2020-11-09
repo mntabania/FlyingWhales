@@ -337,7 +337,7 @@ namespace Traits {
             lycanthropeForm.needsComponent.ResetStaminaMeter();
             lycanthropeForm.needsComponent.ResetHopeMeter();
             lycanthropeForm.traitContainer.AddTrait(lycanthropeForm, "Transitioning");
-            Messenger.Broadcast(Signals.ON_SWITCH_FROM_LIMBO, originalForm, lycanthropeForm);
+            Messenger.Broadcast(CharacterSignals.ON_SWITCH_FROM_LIMBO, originalForm, lycanthropeForm);
         }
 
         public void RevertToNormal() {
@@ -356,7 +356,7 @@ namespace Traits {
             PutToLimbo(lycanthropeForm);
             ReleaseFromLimbo(originalForm, tile, homeRegion);
             lycanthropeForm.traitContainer.RemoveTrait(lycanthropeForm, "Transitioning");
-            Messenger.Broadcast(Signals.ON_SWITCH_FROM_LIMBO, lycanthropeForm, originalForm);
+            Messenger.Broadcast(CharacterSignals.ON_SWITCH_FROM_LIMBO, lycanthropeForm, originalForm);
         }
 
         private void PutToLimbo(Character form) {
@@ -372,7 +372,7 @@ namespace Traits {
             if (form.trapStructure.IsTrappedInHex()) {
                 form.trapStructure.ResetAllTrapHexes();
             }
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, form as IPointOfInterest, "");
+            Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, form as IPointOfInterest, "");
             if (form.carryComponent.isBeingCarriedBy != null) {
                 form.carryComponent.masterCharacter.UncarryPOI(form);
             }

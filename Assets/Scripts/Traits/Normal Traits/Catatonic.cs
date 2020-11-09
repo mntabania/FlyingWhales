@@ -45,7 +45,7 @@ namespace Traits {
             if (addTo is Character character) {
                 owner = character;
                 Messenger.AddListener(Signals.HOUR_STARTED, CheckRemovalChance);
-                Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+                Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
         }
         #endregion
@@ -58,14 +58,14 @@ namespace Traits {
                 //owner.AdjustMoodValue(-15, this);
                 // owner.needsComponent.AdjustDoNotGetBored(1);
                 Messenger.AddListener(Signals.HOUR_STARTED, CheckRemovalChance);
-                Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+                Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (sourceCharacter is Character) {
                 // owner.needsComponent.AdjustDoNotGetBored(-1);
                 Messenger.RemoveListener(Signals.HOUR_STARTED, CheckRemovalChance);
-                Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+                Messenger.RemoveListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }

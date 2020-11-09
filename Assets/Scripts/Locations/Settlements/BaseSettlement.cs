@@ -627,8 +627,8 @@ namespace Locations.Settlements {
 
         #region Fire
         private void StartListeningForFires() {
-            Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-            Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
+            Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+            Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
         }
         private void OnTraitableLostTrait(ITraitable traitable, Trait trait, Character removedBy) {
             //added checker for null so that if an object has been destroyed and lost the burning trait, it will still be removed from the list

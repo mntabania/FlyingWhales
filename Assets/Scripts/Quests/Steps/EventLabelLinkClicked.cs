@@ -10,10 +10,10 @@ namespace Quests.Steps {
             _eventLblName = eventLblName;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<EventLabel>(Signals.EVENT_LABEL_LINK_CLICKED, CheckForCompletion);
+            Messenger.AddListener<EventLabel>(UISignals.EVENT_LABEL_LINK_CLICKED, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<EventLabel>(Signals.EVENT_LABEL_LINK_CLICKED, CheckForCompletion);
+            Messenger.RemoveListener<EventLabel>(UISignals.EVENT_LABEL_LINK_CLICKED, CheckForCompletion);
         }
 
         #region Listeners

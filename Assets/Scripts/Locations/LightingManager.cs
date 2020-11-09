@@ -43,8 +43,8 @@ public class LightingManager : BaseMonoBehaviour {
 
     public void Initialize() {
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
-        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
-        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
+        Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         ComputeLightingValues();
         // SetGlobalLightIntensity(_brightestIntensity);
         // UpdateAllLightsBasedOnTimeOfDay(GameManager.Instance.Today());
@@ -56,7 +56,7 @@ public class LightingManager : BaseMonoBehaviour {
             SetCurrentLightState(Light_State.Dark);
             SetGlobalLightIntensity(_darkestIntensity);
         }
-        Messenger.Broadcast(Signals.INSTANT_UPDATE_INNER_MAP_LIGHT, currentGlobalLightState); //update other lights based on target light state
+        Messenger.Broadcast(InnerMapSignals.INSTANT_UPDATE_INNER_MAP_LIGHT, currentGlobalLightState); //update other lights based on target light state
     }
    
     private void OnTickEnded() {
@@ -81,7 +81,7 @@ public class LightingManager : BaseMonoBehaviour {
             //transitioning
             Light_State targetLightState = currentGlobalLightState == Light_State.Dark ? Light_State.Bright : Light_State.Dark;
             _transitioningTo = targetLightState;
-            Messenger.Broadcast(Signals.UPDATE_INNER_MAP_LIGHT, targetLightState); //update other lights based on target light state
+            Messenger.Broadcast(InnerMapSignals.UPDATE_INNER_MAP_LIGHT, targetLightState); //update other lights based on target light state
             var targetIntensity = currentGlobalLightState == Light_State.Dark ? _brightestIntensity : _darkestIntensity;
             _currentTween = DOTween.To(SetGlobalLightIntensity, _globalLight.intensity, targetIntensity, 
                 _darkToLightTickDifference * GameManager.Instance.GetTickSpeed(PROGRESSION_SPEED.X1)).OnComplete(OnDoneTransition);

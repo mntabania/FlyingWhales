@@ -3,12 +3,12 @@ namespace Quests {
     public class ChaosOrbSpawned : QuestCriteria {
 
         public override void Enable() {
-            Messenger.AddListener(Signals.CHAOS_ORB_SPAWNED, SetCriteriaAsMet);
-            Messenger.AddListener(Signals.CHAOS_ORB_DESPAWNED, CheckIfUnMet);
+            Messenger.AddListener(PlayerSignals.CHAOS_ORB_SPAWNED, SetCriteriaAsMet);
+            Messenger.AddListener(PlayerSignals.CHAOS_ORB_DESPAWNED, CheckIfUnMet);
         }
         public override void Disable() {
-            Messenger.RemoveListener(Signals.CHAOS_ORB_SPAWNED, SetCriteriaAsMet);
-            Messenger.RemoveListener(Signals.CHAOS_ORB_DESPAWNED, CheckIfUnMet);
+            Messenger.RemoveListener(PlayerSignals.CHAOS_ORB_SPAWNED, SetCriteriaAsMet);
+            Messenger.RemoveListener(PlayerSignals.CHAOS_ORB_DESPAWNED, CheckIfUnMet);
         }
 
         private void CheckIfUnMet() {

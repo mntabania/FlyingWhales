@@ -119,7 +119,7 @@ public class GameManager : MonoBehaviour {
         SchedulingManager.Instance.StartScheduleCalls ();
         Messenger.Broadcast(Signals.DAY_STARTED); //for the first day
         Messenger.Broadcast(Signals.MONTH_START); //for the first month
-        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyDown);
+        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyDown);
         if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
             UIManager.Instance.ShowStartDemoScreen();
         }
@@ -130,7 +130,7 @@ public class GameManager : MonoBehaviour {
         UIManager.Instance.Pause();
         lastProgressionBeforePausing = "paused";
         SchedulingManager.Instance.StartScheduleCalls ();
-        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyDown);
+        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyDown);
         Canvas.ForceUpdateCanvases();
     }
     public GameDate Today() {
@@ -151,7 +151,7 @@ public class GameManager : MonoBehaviour {
         }
         if (this.isPaused != isPaused) {
             this.isPaused = isPaused;
-            Messenger.Broadcast(Signals.PAUSED, isPaused);
+            Messenger.Broadcast(UISignals.PAUSED, isPaused);
         }
 	}
     private void StoreLastProgressionBeforePausing() {
@@ -189,7 +189,7 @@ public class GameManager : MonoBehaviour {
         }
 		this.progressionSpeed = speed;
         //CombatManager.Instance.updateIntervals = this.progressionSpeed / (float) CombatManager.Instance.numOfCombatActionPerDay;
-        Messenger.Broadcast(Signals.PROGRESSION_SPEED_CHANGED, progressionSpeed);
+        Messenger.Broadcast(UISignals.PROGRESSION_SPEED_CHANGED, progressionSpeed);
 	}
     /// <summary>
     /// Get how many seconds in realtime a tick is.
@@ -213,7 +213,7 @@ public class GameManager : MonoBehaviour {
             Messenger.Broadcast(Signals.HOUR_STARTED);
         }
         Messenger.Broadcast(Signals.TICK_STARTED);
-        Messenger.Broadcast(Signals.UPDATE_UI);
+        Messenger.Broadcast(UISignals.UPDATE_UI);
     }
     private void TickEnded(){
         Messenger.Broadcast(Signals.TICK_ENDED);
@@ -223,11 +223,11 @@ public class GameManager : MonoBehaviour {
             today.tick = 1;
             DayStarted(false);
         }
-        Messenger.Broadcast(Signals.UPDATE_UI);
+        Messenger.Broadcast(UISignals.UPDATE_UI);
     }
     public void SetTick(int amount) {
         today.tick = amount;
-        Messenger.Broadcast(Signals.UPDATE_UI);
+        Messenger.Broadcast(UISignals.UPDATE_UI);
     }
     private void DayStarted(bool broadcastUI = true) {
         today.day += 1;
@@ -243,7 +243,7 @@ public class GameManager : MonoBehaviour {
             Messenger.Broadcast(Signals.MONTH_START);
         }
         if (broadcastUI) {
-            Messenger.Broadcast(Signals.UPDATE_UI);
+            Messenger.Broadcast(UISignals.UPDATE_UI);
         }
     }
     public static string ConvertTickToTime(int tick, string timeSeparator = ":") {

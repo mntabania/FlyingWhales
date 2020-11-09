@@ -87,7 +87,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
 
         AddMember(partyCreator);
         partySettlement.AddParty(this);
-        Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+        Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         DatabaseManager.Instance.partyDatabase.AddParty(this);
 
@@ -116,7 +116,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         jobBoard.InitializeFromSaveData(data.jobBoard);
 
         if (partyName != string.Empty) {
-            Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+            Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
             Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
             DatabaseManager.Instance.partyDatabase.AddParty(this);
         }
@@ -544,23 +544,23 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     }
     private void OnAcceptQuest(PartyQuest quest) {
         if(quest.partyQuestType == PARTY_QUEST_TYPE.Exploration || quest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
-            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDeath);
-            Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerMove);
-            Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerPerform);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDeath);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerMove);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerPerform);
         }
     }
     private void OnAcceptQuestFromSaveData(PartyQuest quest) {
         if (quest.partyQuestType == PARTY_QUEST_TYPE.Exploration || quest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
-            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDeath);
-            Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerMove);
-            Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerPerform);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDeath);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerMove);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerPerform);
         }
     }
     private void OnDropQuest(PartyQuest quest) {
         if (quest.partyQuestType == PARTY_QUEST_TYPE.Exploration || quest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDeath);
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerMove);
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerPerform);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDeath);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerMove);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerPerform);
         }
         if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
             Messenger.RemoveListener(Signals.HOUR_STARTED, WaitingPerHour);
@@ -621,7 +621,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             RemoveMemberThatJoinedQuest(membersThatJoinedQuest[0], false, shouldDropQuest);
         }
         membersThatJoinedQuest.Clear();
-        Messenger.Broadcast(Signals.CLEAR_MEMBERS_THAT_JOINED_QUEST, this);
+        Messenger.Broadcast(PartySignals.CLEAR_MEMBERS_THAT_JOINED_QUEST, this);
     }
     public bool RemoveMemberThatJoinedQuest(Character character, bool broadcastSignal = true, bool shouldDropQuest = true) {
         if (membersThatJoinedQuest.Remove(character)) {
@@ -640,7 +640,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         character.movementComponent.SetEnableDigging(true);
         character.traitContainer.AddTrait(character, "Travelling");
         character.behaviourComponent.AddBehaviourComponent(currentQuest.relatedBehaviour);
-        Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY_QUEST, this, character);
+        Messenger.Broadcast(PartySignals.CHARACTER_JOINED_PARTY_QUEST, this, character);
     }
     private void OnRemoveMemberThatJoinedQuest(Character character, bool broadcastSignal) {
         character.movementComponent.SetEnableDigging(false);
@@ -654,27 +654,27 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             currentQuest.OnRemoveMemberThatJoinedQuest(character);
         }
         if (broadcastSignal) {
-            Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY_QUEST, this, character);
+            Messenger.Broadcast(PartySignals.CHARACTER_LEFT_PARTY_QUEST, this, character);
         }
     }
     private void OnAddMember(Character character) {
         character.partyComponent.SetCurrentParty(this);
         character.behaviourComponent.AddBehaviourComponent(typeof(PartyBehaviour));
-        Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY, this, character);
+        Messenger.Broadcast(PartySignals.CHARACTER_JOINED_PARTY, this, character);
     }
     private void OnRemoveMember(Character character) {
         character.partyComponent.SetCurrentParty(null);
         character.behaviourComponent.RemoveBehaviourComponent(typeof(PartyBehaviour));
         character.jobQueue.CancelAllPartyJobs();
         RemoveMemberThatJoinedQuest(character);
-        Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, this, character);
+        Messenger.Broadcast(PartySignals.CHARACTER_LEFT_PARTY, this, character);
     }
     private void OnRemoveMemberOnDisband(Character character) {
         character.partyComponent.SetCurrentParty(null);
         character.behaviourComponent.RemoveBehaviourComponent(typeof(PartyBehaviour));
         character.jobQueue.CancelAllPartyJobs();
         RemoveMemberThatJoinedQuest(character);
-        Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY_DISBAND, this, character);
+        Messenger.Broadcast(PartySignals.CHARACTER_LEFT_PARTY_DISBAND, this, character);
     }
     private List<Character> GetActiveMembers() {
         _activeMembers.Clear();
@@ -924,7 +924,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             //unassign party from quest when they disband, if any.
             currentQuest.EndQuest("Party disbanded");
         }
-        Messenger.Broadcast(Signals.DISBAND_PARTY, this);
+        Messenger.Broadcast(PartySignals.DISBAND_PARTY, this);
         DestroyParty();
     }
     #endregion
@@ -1099,7 +1099,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         ForceCancelAllJobsImmediately();
         forcedCancelJobsOnTickEnded.Clear();
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
-        Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+        Messenger.RemoveListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
             Messenger.RemoveListener(Signals.HOUR_STARTED, WaitingPerHour);
         }

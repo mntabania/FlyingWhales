@@ -100,7 +100,7 @@ public class ConsoleBase : InfoUIBase {
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         //Messenger.AddListener(Signals.TICK_ENDED, CheckForWrongCharacterData);
-        Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
+        Messenger.AddListener<Character, ActualGoapNode>(JobSignals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
 #endif
         InitializeMinion();
     }
@@ -283,7 +283,7 @@ public class ConsoleBase : InfoUIBase {
     #region Listeners
     private void OnCharacterDoingAction(Character character, ActualGoapNode actionNode) {
         if (typesSubscribedTo.Contains(actionNode.goapType)) {
-            Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION,
+            Messenger.Broadcast<string, int, UnityAction>(UISignals.SHOW_DEVELOPER_NOTIFICATION,
                 $"{character.name} is doing {actionNode.goapType}",
                 100, () => UIManager.Instance.ShowCharacterInfo(character, true));
             UIManager.Instance.Pause();

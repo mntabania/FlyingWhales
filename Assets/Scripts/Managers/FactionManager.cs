@@ -71,7 +71,7 @@ public class FactionManager : BaseMonoBehaviour {
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         SetNeutralFaction(newFaction);
         CreateRelationshipsForFaction(newFaction);
-        Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+        Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
     }
     public void CreateVagrantFaction() {
         Faction newFaction = new Faction(FACTION_TYPE.Vagrants);
@@ -82,7 +82,7 @@ public class FactionManager : BaseMonoBehaviour {
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         SetVagrantFaction(newFaction);
         CreateRelationshipsForFaction(newFaction);
-        Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+        Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
     }
     public void CreateDisguisedFaction() {
         Faction newFaction = new Faction(FACTION_TYPE.Disguised);
@@ -93,7 +93,7 @@ public class FactionManager : BaseMonoBehaviour {
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         SetDisguisedFaction(newFaction);
         CreateRelationshipsForFaction(newFaction);
-        Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+        Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
     }
     private void SetNeutralFaction(Faction faction) {
         neutralFaction = faction;
@@ -118,7 +118,7 @@ public class FactionManager : BaseMonoBehaviour {
             newFaction.SetName(factionName);
         }
         if (!newFaction.isPlayerFaction) {
-            Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+            Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
         }
         return newFaction;
     }
@@ -180,7 +180,7 @@ public class FactionManager : BaseMonoBehaviour {
         }
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         if (!newFaction.isPlayerFaction) {
-            Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+            Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
         }
         return newFaction;
     }

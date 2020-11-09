@@ -17,7 +17,7 @@ public class StructureRoomInfoUI : InfoUIBase {
     #region Overrides
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+        Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
     }
     public override void CloseMenu() {
         base.CloseMenu();

@@ -67,7 +67,7 @@ namespace Traits {
             owner.jobQueue.CancelAllJobs();
             owner.movementComponent.SetEnableDigging(true);
             owner.movementComponent.SetAvoidSettlements(true);
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
@@ -86,7 +86,7 @@ namespace Traits {
             CharacterManager.Instance.SetNecromancerInTheWorld(null);
             owner.movementComponent.SetEnableDigging(false);
             owner.movementComponent.SetAvoidSettlements(false);
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
         }
         #endregion
 

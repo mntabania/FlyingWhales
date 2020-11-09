@@ -6,10 +6,10 @@ namespace Quests.Steps {
             _flawToTrigger = flawToTrigger;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<Trait>(Signals.FLAW_TRIGGERED_BY_PLAYER, CheckForCompletion);
+            Messenger.AddListener<Trait>(SpellSignals.FLAW_TRIGGERED_BY_PLAYER, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<Trait>(Signals.FLAW_TRIGGERED_BY_PLAYER, CheckForCompletion);
+            Messenger.RemoveListener<Trait>(SpellSignals.FLAW_TRIGGERED_BY_PLAYER, CheckForCompletion);
         }
 
         private void CheckForCompletion(Trait trait) {

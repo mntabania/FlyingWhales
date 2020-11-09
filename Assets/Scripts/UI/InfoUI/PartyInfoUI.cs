@@ -36,15 +36,15 @@ public class PartyInfoUI : InfoUIBase {
     #region Overrides
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateLogsFromSignal);
-        Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateLogsFromSignal);
-        Messenger.AddListener<Party, Character>(Signals.CHARACTER_JOINED_PARTY, UpdateMembersFromSignal);
-        Messenger.AddListener<Party, Character>(Signals.CHARACTER_LEFT_PARTY, UpdateMembersFromSignal);
-        Messenger.AddListener<Party, Character>(Signals.CHARACTER_JOINED_PARTY_QUEST, UpdateMembersFromSignal);
-        Messenger.AddListener<Party, Character>(Signals.CHARACTER_LEFT_PARTY_QUEST, UpdateMembersFromSignal);
-        Messenger.AddListener<Party>(Signals.CLEAR_MEMBERS_THAT_JOINED_QUEST, UpdateMembersFromSignal);
+        Messenger.AddListener<Log>(UISignals.LOG_ADDED, UpdateLogsFromSignal);
+        Messenger.AddListener<Log>(UISignals.LOG_IN_DATABASE_UPDATED, UpdateLogsFromSignal);
+        Messenger.AddListener<Party, Character>(PartySignals.CHARACTER_JOINED_PARTY, UpdateMembersFromSignal);
+        Messenger.AddListener<Party, Character>(PartySignals.CHARACTER_LEFT_PARTY, UpdateMembersFromSignal);
+        Messenger.AddListener<Party, Character>(PartySignals.CHARACTER_JOINED_PARTY_QUEST, UpdateMembersFromSignal);
+        Messenger.AddListener<Party, Character>(PartySignals.CHARACTER_LEFT_PARTY_QUEST, UpdateMembersFromSignal);
+        Messenger.AddListener<Party>(PartySignals.CLEAR_MEMBERS_THAT_JOINED_QUEST, UpdateMembersFromSignal);
 
-        Messenger.AddListener<Party>(Signals.DISBAND_PARTY, UpdateMembersFromSignal);
+        Messenger.AddListener<Party>(PartySignals.DISBAND_PARTY, UpdateMembersFromSignal);
 
         homeSettlementNameplate.SetAsButton();
         homeSettlementNameplate.ClearAllOnClickActions();

@@ -87,7 +87,7 @@ public class SkillTreeSelector : MonoBehaviour {
             PlayerManager.Instance.player.playerFaction.SetRelationshipFor(FactionManager.Instance.undeadFaction, FACTION_RELATIONSHIP_STATUS.Friendly);
         }
         SaveManager.Instance.currentSaveDataPlayer.SetMoreLoadoutOptions(moreLoadoutOptionsToggle.isOn);
-        Messenger.Broadcast(Signals.START_GAME_AFTER_LOADOUT_SELECT);
+        Messenger.Broadcast(UISignals.START_GAME_AFTER_LOADOUT_SELECT);
         GameManager.Instance.StartProgression();
         UIManager.Instance.initialWorldSetupMenu.Hide();
         
@@ -97,7 +97,7 @@ public class SkillTreeSelector : MonoBehaviour {
     }
     public void LoadLoadout(PLAYER_ARCHETYPE archetype) {
         PlayerSkillManager.Instance.SetSelectedArchetype(archetype);
-        Messenger.Broadcast(Signals.START_GAME_AFTER_LOADOUT_SELECT);
+        Messenger.Broadcast(UISignals.START_GAME_AFTER_LOADOUT_SELECT);
         GameManager.Instance.LoadProgression();
         UIManager.Instance.initialWorldSetupMenu.Hide();
 

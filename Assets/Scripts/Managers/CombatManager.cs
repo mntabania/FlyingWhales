@@ -178,7 +178,7 @@ public class CombatManager : BaseMonoBehaviour {
     public void PoisonExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible) {
         StartCoroutine(PoisonExplosionCoroutine(target, targetTile, stacks, characterResponsible));
         if (characterResponsible == null) {
-            Messenger.Broadcast(Signals.POISON_EXPLOSION_TRIGGERED_BY_PLAYER, target);    
+            Messenger.Broadcast(PlayerSignals.POISON_EXPLOSION_TRIGGERED_BY_PLAYER, target);    
         }
     }
     private IEnumerator PoisonExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible) {
@@ -260,7 +260,7 @@ public class CombatManager : BaseMonoBehaviour {
     }
     public void ChainElectricDamage(ITraitable traitable, int damage, Character characterResponsible, ITraitable origin) {
         if (characterResponsible == null) {
-            Messenger.Broadcast(Signals.ELECTRIC_CHAIN_TRIGGERED_BY_PLAYER);
+            Messenger.Broadcast(PlayerSignals.ELECTRIC_CHAIN_TRIGGERED_BY_PLAYER);
         }
 
         if (traitable.gridTileLocation != null && !traitable.gridTileLocation.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
@@ -409,7 +409,7 @@ public class CombatManager : BaseMonoBehaviour {
             vapor.OnPlacePOI();
             vapor.SetStacks(stacks);
             if (responsibleCharacter == null) {
-                Messenger.Broadcast(Signals.VAPOR_FROM_WIND_TRIGGERED_BY_PLAYER);    
+                Messenger.Broadcast(PlayerSignals.VAPOR_FROM_WIND_TRIGGERED_BY_PLAYER);    
             }
         }
         if (target is DesertRose desertRose) {

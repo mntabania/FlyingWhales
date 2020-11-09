@@ -73,7 +73,7 @@ public class FactionIdeologyComponent {
         changeRelationsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.FACTION_1);
         changeRelationsLog.AddLogToDatabase();
         
-        Messenger.Broadcast(Signals.FACTION_IDEOLOGIES_CHANGED, owner);
-        Messenger.Broadcast(Signals.FACTION_CRIMES_CHANGED, owner);
+        Messenger.Broadcast(FactionSignals.FACTION_IDEOLOGIES_CHANGED, owner);
+        Messenger.Broadcast(FactionSignals.FACTION_CRIMES_CHANGED, owner);
     }
 }

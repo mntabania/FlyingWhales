@@ -29,7 +29,7 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
         //pick tile to place portal.
         configureLoadoutBtnGO.gameObject.SetActive(false);
         pickPortalMessage.gameObject.SetActive(true);
-        Messenger.AddListener<HexTile>(Signals.TILE_LEFT_CLICKED, OnTileLeftClicked);
+        Messenger.AddListener<HexTile>(HexTileSignals.HEXTILE_LEFT_CLICKED, OnTileLeftClicked);
         
         pickPortalMessage.anchoredPosition = new Vector2(0f, -110);
         pickPortalMessage.DOAnchorPosY(110f, 0.5f).SetEase(Ease.OutBack);
@@ -42,7 +42,7 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
     private void PlacePortal(HexTile hexTile) {
         Debug.Log($"Placed portal at {hexTile}");
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
-        Messenger.RemoveListener<HexTile>(Signals.TILE_LEFT_CLICKED, OnTileLeftClicked);
+        Messenger.RemoveListener<HexTile>(HexTileSignals.HEXTILE_LEFT_CLICKED, OnTileLeftClicked);
         
         hexTile.SetElevation(ELEVATION.PLAIN);
         LandmarkManager.Instance.CreateNewLandmarkOnTile(hexTile, LANDMARK_TYPE.THE_PORTAL);

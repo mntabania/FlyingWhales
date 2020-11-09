@@ -261,7 +261,7 @@ namespace Inner_Maps {
             worldKnownDemonicStructures = new List<LocationStructure>();
             mapObjectFactory = new MapVisualFactory();
             InnerMapCameraMove.Instance.Initialize();
-            Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyDown);
+            Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyDown);
         }
         /// <summary>
         /// Try and show the npcSettlement map of an npcSettlement. If it does not have one, this will generate one instead.
@@ -278,7 +278,7 @@ namespace Inner_Maps {
             location.innerMap.Open();
             currentlyShowingMap = location.innerMap;
             currentlyShowingLocation = location;
-            Messenger.Broadcast(Signals.LOCATION_MAP_OPENED, location);
+            Messenger.Broadcast(RegionSignals.REGION_MAP_OPENED, location);
 
             if (centerCameraOnMapCenter) {
                 InnerMapCameraMove.Instance.JustCenterCamera(instantCenter);
@@ -294,7 +294,7 @@ namespace Inner_Maps {
             currentlyShowingMap = null;
             currentlyShowingLocation = null;
             // PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
-            Messenger.Broadcast(Signals.LOCATION_MAP_CLOSED, closedLocation);
+            Messenger.Broadcast(RegionSignals.REGION_MAP_CLOSED, closedLocation);
             return closedLocation;
         }
         public void OnCreateInnerMap(InnerTileMap newMap) {

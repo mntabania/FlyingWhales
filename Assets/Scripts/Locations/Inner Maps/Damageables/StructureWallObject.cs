@@ -84,9 +84,9 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
         }
 
         if (amount < 0) {
-            Messenger.Broadcast(Signals.WALL_DAMAGED, this, amount);
+            Messenger.Broadcast(StructureSignals.WALL_DAMAGED, this, amount);
         } else if (amount > 0) {
-            Messenger.Broadcast(Signals.WALL_REPAIRED, this, amount);
+            Messenger.Broadcast(StructureSignals.WALL_REPAIRED, this, amount);
         }
         
         _visual.UpdateWallAssets(this);

@@ -18,8 +18,8 @@ public class CultistsListUI : PopupMenuBase {
         if (PlayerManager.Instance.player.playerSkillComponent.CanBuildDemonicStructure(SPELL_TYPE.DEFILER)) {
             //if they can activate cultist toggle
             cultistsToggle.gameObject.SetActive(true);
-            Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
-            Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnCharacterRemovedTrait);
+            Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
+            Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, OnCharacterRemovedTrait);
         }
         else {
             //else deactivate it

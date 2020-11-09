@@ -1980,7 +1980,7 @@ public class ReactionComponent : CharacterComponent {
             disguisedCharacter = character;
             if (disguisedCharacter != null) {
                 owner.visuals.UpdateAllVisuals(owner);
-                Messenger.Broadcast(Signals.CHARACTER_DISGUISED, owner, character);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_DISGUISED, owner, character);
             } else {
                 owner.visuals.UpdateAllVisuals(owner);
                 if (!owner.isDead && owner.marker) {

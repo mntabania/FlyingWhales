@@ -38,7 +38,7 @@ namespace Databases.SQLDatabase {
                 LOG_IDENTIFIER identifier = _allLogIdentifiersExceptNone[i];
                 _fullLogsFields = $"{_fullLogsFields}, {identifier.ToString()}";
             }
-            Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterNameUpdated);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterNameUpdated);
         }
         
         #region Clean Up
@@ -54,7 +54,7 @@ namespace Databases.SQLDatabase {
             ReleaseUnmanagedResources();
             if (disposing) {
                 //release managed resources here
-                Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterNameUpdated);
+                Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterNameUpdated);
             }
             Debug.Log("Ruinarch SQL database has been disposed.");
         }
@@ -396,7 +396,7 @@ namespace Databases.SQLDatabase {
             command.CommandText = $"UPDATE 'Logs' SET involvedObjects = '{log.allInvolvedObjectIDs}' WHERE persistentID = '{log.persistentID}'";
             command.ExecuteNonQuery();
             command.Dispose();
-            Messenger.Broadcast(Signals.LOG_IN_DATABASE_UPDATED, log);
+            Messenger.Broadcast(UISignals.LOG_IN_DATABASE_UPDATED, log);
             Debug.Log($"Set involved objects of log {log.persistentID} to {log.allInvolvedObjectIDs}");
         }
         private void DeleteOldestLog() {
@@ -423,7 +423,7 @@ namespace Databases.SQLDatabase {
             command.ExecuteNonQuery();
             command.Dispose();
             //Fire signal that log was deleted.
-            Messenger.Broadcast(Signals.LOG_REMOVED_FROM_DATABASE, deletedLog);
+            Messenger.Broadcast(UISignals.LOG_REMOVED_FROM_DATABASE, deletedLog);
             
         }
         public List<Log> GetFullLogsMentioning(string persistentID) {

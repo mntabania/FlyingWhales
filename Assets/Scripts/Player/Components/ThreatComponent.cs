@@ -21,11 +21,11 @@ public class ThreatComponent {
         isDecreasingThreatPerHour = false;
         // Messenger.AddListener(Signals.HOUR_STARTED, PerHour);
         // Messenger.AddListener(Signals.START_THREAT_EFFECT, OnStartThreatEffect);
-        Messenger.AddListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
+        Messenger.AddListener<Quest>(PlayerQuestSignals.QUEST_DEACTIVATED, OnQuestDeactivated);
     }
     public ThreatComponent() {
         isDecreasingThreatPerHour = false;
-        Messenger.AddListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
+        Messenger.AddListener<Quest>(PlayerQuestSignals.QUEST_DEACTIVATED, OnQuestDeactivated);
     }
     public void SetPlayer(Player player) {
         this.player = player;
@@ -55,16 +55,16 @@ public class ThreatComponent {
         
         if (amount > 0) {
             OnThreatIncreased();
-            Messenger.Broadcast(Signals.THREAT_INCREASED, amount);
+            Messenger.Broadcast(PlayerSignals.THREAT_INCREASED, amount);
         } else if (amount < 0) {
             OnThreatDecreased();
         }
 
         if (justReachedMax) {
             OnMaxThreat();
-            Messenger.Broadcast(Signals.THREAT_MAXED_OUT);
+            Messenger.Broadcast(PlayerSignals.THREAT_MAXED_OUT);
         }
-        Messenger.Broadcast(Signals.THREAT_UPDATED);
+        Messenger.Broadcast(PlayerSignals.THREAT_UPDATED);
     }
     // public void AdjustThreatPerHour(int amount) {
     //     threatPerHour += amount;
@@ -97,18 +97,18 @@ public class ThreatComponent {
             //if divine intervention quest has finished and there is no other active divine intervention
             //then reset threat to 50.
             threat = 50;
-            Messenger.Broadcast(Signals.THREAT_UPDATED);
-            Messenger.Broadcast(Signals.STOP_THREAT_EFFECT);
+            Messenger.Broadcast(PlayerSignals.THREAT_UPDATED);
+            Messenger.Broadcast(PlayerSignals.STOP_THREAT_EFFECT);
         }
     }
     private void OnThreatDecreased() {
         if (threat <= 0) {
             isDecreasingThreatPerHour = false;
-            Messenger.Broadcast(Signals.THREAT_UPDATED);
+            Messenger.Broadcast(PlayerSignals.THREAT_UPDATED);
             // Messenger.Broadcast(Signals.THREAT_RESET);
             Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseThreatPerHour);
         }
-        Messenger.Broadcast(Signals.STOP_THREAT_EFFECT);
+        Messenger.Broadcast(PlayerSignals.STOP_THREAT_EFFECT);
     }
     // private void ResetThreatAfterHours(int hours) {
     //     GameDate dueDate = GameManager.Instance.Today();
@@ -155,8 +155,8 @@ public class ThreatComponent {
             angel.behaviourComponent.SetIsAttackingDemonicStructure(true, CharacterManager.Instance.currentDemonicStructureTargetOfAngels);
             characters.Add(angel);
         }
-        Messenger.Broadcast(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, characters);
-        Messenger.Broadcast(Signals.START_THREAT_EFFECT);
+        Messenger.Broadcast(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, characters);
+        Messenger.Broadcast(PlayerSignals.START_THREAT_EFFECT);
     }
 
     #region Save

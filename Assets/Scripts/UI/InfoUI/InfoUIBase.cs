@@ -22,13 +22,13 @@ public abstract class InfoUIBase : MonoBehaviour {
     
     #region virtuals
     internal virtual void Initialize() {
-        Messenger.AddListener<InfoUIBase>(Signals.BEFORE_MENU_OPENED, BeforeMenuOpens);
-        Messenger.AddListener<PlayerAction>(Signals.ON_EXECUTE_PLAYER_ACTION, OnExecutePlayerAction);
-        Messenger.AddListener<IPlayerActionTarget>(Signals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
-        Messenger.AddListener(Signals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
-        Messenger.AddListener<SPELL_TYPE, IPlayerActionTarget>(Signals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
-        Messenger.AddListener<SPELL_TYPE, IPlayerActionTarget>(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
-        Messenger.AddListener(Signals.HIDE_MENUS, OnReceiveHideMenuSignal);
+        Messenger.AddListener<InfoUIBase>(UISignals.BEFORE_MENU_OPENED, BeforeMenuOpens);
+        Messenger.AddListener<PlayerAction>(SpellSignals.ON_EXECUTE_PLAYER_ACTION, OnExecutePlayerAction);
+        Messenger.AddListener<IPlayerActionTarget>(SpellSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
+        Messenger.AddListener(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
+        Messenger.AddListener<SPELL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
+        Messenger.AddListener<SPELL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
+        Messenger.AddListener(UISignals.HIDE_MENUS, OnReceiveHideMenuSignal);
         _toggles = GetComponentsInChildren<RuinarchToggle>(true);
     }
     private void OnReceiveHideMenuSignal() {
@@ -37,7 +37,7 @@ public abstract class InfoUIBase : MonoBehaviour {
         }
     }
     public virtual void OpenMenu() {
-        Messenger.Broadcast(Signals.BEFORE_MENU_OPENED, this);
+        Messenger.Broadcast(UISignals.BEFORE_MENU_OPENED, this);
         isShowing = true;
         bool wasShowingBefore = gameObject.activeSelf;
         this.gameObject.SetActive(true);
@@ -56,7 +56,7 @@ public abstract class InfoUIBase : MonoBehaviour {
             openMenuAction();
             openMenuAction = null;
         }
-        Messenger.Broadcast(Signals.MENU_OPENED, this);
+        Messenger.Broadcast(UISignals.MENU_OPENED, this);
         
         UIManager.Instance.poiTestingUI.HideUI();
         UIManager.Instance.minionCommandsUI.HideUI();
@@ -74,7 +74,7 @@ public abstract class InfoUIBase : MonoBehaviour {
     public virtual void CloseMenu() {
         isShowing = false;
         this.gameObject.SetActive(false);
-        Messenger.Broadcast(Signals.MENU_CLOSED, this);
+        Messenger.Broadcast(UISignals.MENU_CLOSED, this);
     }
     public virtual void SetData(object data) {
         _data = data;

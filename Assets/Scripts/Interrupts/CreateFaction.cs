@@ -43,14 +43,14 @@ namespace Interrupts {
             //create relationships
             FactionManager.Instance.RerollFactionRelationships(faction, interruptHolder.actor, true);
             
-            Messenger.Broadcast(Signals.FACTION_CRIMES_CHANGED, faction);
+            Messenger.Broadcast(FactionSignals.FACTION_CRIMES_CHANGED, faction);
 
             overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Create Faction", "character_create_faction", null, LOG_TAG.Life_Changes);
             overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
             overrideEffectLog.AddToFillers(interruptHolder.actor.currentRegion, interruptHolder.actor.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
 
-            Messenger.Broadcast(Signals.CREATE_FACTION_INTERRUPT, faction, interruptHolder.actor);
+            Messenger.Broadcast(FactionSignals.CREATE_FACTION_INTERRUPT, faction, interruptHolder.actor);
             return true;
         }
         #endregion

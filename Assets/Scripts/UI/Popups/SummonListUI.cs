@@ -28,10 +28,10 @@ public class SummonListUI : PopupMenuBase {
     }
     public void Initialize() {
         _summonPlayerSkillItems = new List<SummonMinionPlayerSkillNameplateItem>();
-        Messenger.AddListener<Summon>(Signals.PLAYER_GAINED_SUMMON, OnGainSummon);
-        Messenger.AddListener<Summon>(Signals.PLAYER_LOST_SUMMON, OnLostSummon);
-        Messenger.AddListener<SPELL_TYPE>(Signals.ADDED_PLAYER_SUMMON_SKILL, OnGainPlayerSummonSkill);
-        Messenger.AddListener<SpellData>(Signals.CHARGES_ADJUSTED, OnChargesAdjusted);
+        Messenger.AddListener<Summon>(PlayerSignals.PLAYER_GAINED_SUMMON, OnGainSummon);
+        Messenger.AddListener<Summon>(PlayerSignals.PLAYER_LOST_SUMMON, OnLostSummon);
+        Messenger.AddListener<SPELL_TYPE>(SpellSignals.ADDED_PLAYER_SUMMON_SKILL, OnGainPlayerSummonSkill);
+        Messenger.AddListener<SpellData>(PlayerSignals.CHARGES_ADJUSTED, OnChargesAdjusted);
     }
     public void UpdateList() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {

@@ -228,7 +228,7 @@ namespace Tutorial {
             } else {
                 SaveManager.Instance.currentSaveDataPlayer.AddBonusTutorialAsCompleted(tutorial.tutorialType);    
             }
-            Messenger.Broadcast(Signals.TUTORIAL_QUEST_COMPLETED, tutorial);
+            Messenger.Broadcast(PlayerQuestSignals.TUTORIAL_QUEST_COMPLETED, tutorial);
             DeactivateTutorial(tutorial);
             if (IsBonusTutorial(tutorial) == false) {
                 CheckIfAllTutorialsCompleted();    
@@ -242,7 +242,7 @@ namespace Tutorial {
                     "Villagers fight amongst each other by making them do various crimes, " +
                     "or figure out how to turn someone into a Necromancer. Good luck!");    
                 hasCompletedImportantTutorials = true;
-                Messenger.Broadcast(Signals.FINISHED_IMPORTANT_TUTORIALS);
+                Messenger.Broadcast(PlayerQuestSignals.FINISHED_IMPORTANT_TUTORIALS);
             }
         }
         #endregion

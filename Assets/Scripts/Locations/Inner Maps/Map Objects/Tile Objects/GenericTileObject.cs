@@ -29,7 +29,7 @@ public class GenericTileObject : TileObject {
 
     #region Override
     public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
-        Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this as TileObject, removedBy, removedFrom, destroyTileSlots);
+        Messenger.Broadcast(GridTileSignals.TILE_OBJECT_REMOVED, this as TileObject, removedBy, removedFrom, destroyTileSlots);
         if (hasCreatedSlots && destroyTileSlots) {
             DestroyTileSlots();
         }
@@ -245,7 +245,7 @@ public class GenericTileObject : TileObject {
             blueprintExpiryDate = blueprintExpiryDate.AddTicks(GameManager.ticksPerHour);
             _expiryKey = SchedulingManager.Instance.AddEntry(blueprintExpiryDate, ExpireBlueprint, this);
         } else {
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, this as IPointOfInterest, "", JOB_TYPE.BUILD_BLUEPRINT);
+            Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, this as IPointOfInterest, "", JOB_TYPE.BUILD_BLUEPRINT);
             ObjectPoolManager.Instance.DestroyObject(blueprintOnTile);
             blueprintOnTile = null;
             _expiryKey = string.Empty;    

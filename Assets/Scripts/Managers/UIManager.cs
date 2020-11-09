@@ -148,9 +148,8 @@ public class UIManager : BaseMonoBehaviour {
     }
     private void Start() {
         //openedPopups = new List<PopupMenuBase>();
-        Messenger.AddListener<bool>(Signals.PAUSED, UpdateSpeedToggles);
-        Messenger.AddListener(Signals.UPDATE_UI, UpdateUI);
-        Messenger.AddListener(Signals.INSPECT_ALL, UpdateInteractableInfoUI);
+        Messenger.AddListener<bool>(UISignals.PAUSED, UpdateSpeedToggles);
+        Messenger.AddListener(UISignals.UPDATE_UI, UpdateUI);
     }
     private void Update() {
         if (isHoveringTile) {
@@ -174,34 +173,34 @@ public class UIManager : BaseMonoBehaviour {
         }
         openedPopups = new List<PopupMenuBase>();
         questUI.Initialize();
-        Messenger.AddListener(Signals.HIDE_MENUS, HideMenus);
-        Messenger.AddListener<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, ShowDeveloperNotification);
-        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.AddListener(UISignals.HIDE_MENUS, HideMenus);
+        Messenger.AddListener<string, int, UnityAction>(UISignals.SHOW_DEVELOPER_NOTIFICATION, ShowDeveloperNotification);
+        Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
 
-        Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OVER, OnHoverOverTile);
-        Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OUT, OnHoverOutTile);
+        Messenger.AddListener<HexTile>(HexTileSignals.HEXTILE_HOVERED_OVER, OnHoverOverTile);
+        Messenger.AddListener<HexTile>(HexTileSignals.HEXTILE_HOVERED_OUT, OnHoverOutTile);
         
-        Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
-        Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
+        Messenger.AddListener(UISignals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
+        Messenger.AddListener(UISignals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
  
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
 
-        Messenger.AddListener<IIntel>(Signals.SHOW_INTEL_NOTIFICATION, ShowPlayerNotification);
-        Messenger.AddListener<Log>(Signals.SHOW_PLAYER_NOTIFICATION, ShowPlayerNotification);
+        Messenger.AddListener<IIntel>(UISignals.SHOW_INTEL_NOTIFICATION, ShowPlayerNotification);
+        Messenger.AddListener<Log>(UISignals.SHOW_PLAYER_NOTIFICATION, ShowPlayerNotification);
 
-        Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
-        Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
+        Messenger.AddListener(UISignals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
+        Messenger.AddListener(UISignals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
         
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnUIMenuOpened);
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnUIMenuClosed);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnUIMenuOpened);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_CLOSED, OnUIMenuClosed);
         
-        Messenger.AddListener<PopupMenuBase>(Signals.POPUP_MENU_OPENED, OnPopupMenuOpened);
-        Messenger.AddListener<PopupMenuBase>(Signals.POPUP_MENU_CLOSED, OnPopupMenuClosed);
+        Messenger.AddListener<PopupMenuBase>(UISignals.POPUP_MENU_OPENED, OnPopupMenuOpened);
+        Messenger.AddListener<PopupMenuBase>(UISignals.POPUP_MENU_CLOSED, OnPopupMenuClosed);
         
-        Messenger.AddListener<IPointOfInterest>(Signals.UPDATE_POI_LOGS_UI, TryUpdatePOILog);
-        Messenger.AddListener<Faction>(Signals.UPDATE_FACTION_LOGS_UI, TryUpdateFactionLog);
+        Messenger.AddListener<IPointOfInterest>(UISignals.UPDATE_POI_LOGS_UI, TryUpdatePOILog);
+        Messenger.AddListener<Faction>(UISignals.UPDATE_FACTION_LOGS_UI, TryUpdateFactionLog);
 
         //notification area
         notificationSearchField.onValueChanged.AddListener(OnEndNotificationSearchEdit);
@@ -343,7 +342,7 @@ public class UIManager : BaseMonoBehaviour {
     public void PauseByPlayer() {
         Pause();
         // Debug.Log("Game was paused by player.");
-        Messenger.Broadcast(Signals.PAUSED_BY_PLAYER);
+        Messenger.Broadcast(UISignals.PAUSED_BY_PLAYER);
     }
     public void Pause() {
         GameManager.Instance.SetPausedState(true);
@@ -779,7 +778,7 @@ public class UIManager : BaseMonoBehaviour {
 
         objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker, title, onHoverAction,
             onHoverExitAction, identifier, showCover, layer, portraitGetter, asButton, shouldShowConfirmationWindowOnPick);
-        Messenger.Broadcast(Signals.OBJECT_PICKER_SHOWN, identifier);
+        Messenger.Broadcast(UISignals.OBJECT_PICKER_SHOWN, identifier);
         //Pause();
         //SetSpeedTogglesState(false);
     }
@@ -799,7 +798,7 @@ public class UIManager : BaseMonoBehaviour {
     #region For Testing
     public void SetUIState(bool state) {
         this.gameObject.SetActive(state);
-        Messenger.Broadcast(Signals.UI_STATE_SET);
+        Messenger.Broadcast(UISignals.UI_STATE_SET);
     }
     public void DateHover() {
         ShowSmallInfo($"Day: {GameManager.Instance.continuousDays.ToString()} Tick: {GameManager.Instance.Today().tick.ToString()}");

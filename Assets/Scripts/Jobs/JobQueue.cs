@@ -97,7 +97,7 @@ public class JobQueue {
 
         job.OnAddJobToQueue();
         job.originalOwner?.OnJobAddedToCharacterJobQueue(job, owner);
-        Messenger.Broadcast(Signals.JOB_ADDED_TO_QUEUE, job, owner);
+        Messenger.Broadcast(JobSignals.JOB_ADDED_TO_QUEUE, job, owner);
         //if(quest != null) {
         //    quest.OnAddJob(job);
         //}
@@ -148,7 +148,7 @@ public class JobQueue {
     }
     public bool RemoveJobInQueue(JobQueueItem job, bool shouldDoAfterEffect = true, string reason = "") {
         if (jobsInQueue.Remove(job)) {
-            Messenger.Broadcast(Signals.JOB_REMOVED_FROM_QUEUE, job, owner);
+            Messenger.Broadcast(JobSignals.JOB_REMOVED_FROM_QUEUE, job, owner);
             owner.combatComponent.OnJobRemovedFromQueue(job);
             job.UnassignJob(shouldDoAfterEffect, reason);
             string ownerName = owner.name;

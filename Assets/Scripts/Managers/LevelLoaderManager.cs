@@ -31,7 +31,7 @@ public class LevelLoaderManager : MonoBehaviour {
 
     public void LoadLevel(string sceneName, bool updateSceneProgress = false) {
         _progressBar.value = 0f;
-        Messenger.Broadcast(Signals.STARTED_LOADING_SCENE, sceneName);
+        Messenger.Broadcast(UISignals.STARTED_LOADING_SCENE, sceneName);
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         isLoadingNewScene = true;
         StartCoroutine(LoadLevelAsynchronously(sceneName, updateSceneProgress));

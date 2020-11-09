@@ -35,7 +35,7 @@ public class MonsterInvadeGathering : Gathering {
     }
     protected override void OnWaitTimeOver() {
         base.OnWaitTimeOver();
-        Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+        Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
     }
     //protected override void OnAddMember(Character member) {
     //    base.OnAddMember(member);
@@ -47,8 +47,8 @@ public class MonsterInvadeGathering : Gathering {
     //}
     protected override void OnDisbandGathering() {
         base.OnDisbandGathering();
-        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_ENTERED_HEXTILE)) {
-            Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+        if (Messenger.eventTable.ContainsKey(CharacterSignals.CHARACTER_ENTERED_HEXTILE)) {
+            Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         }
     }
     protected override void OnSetHost() {
@@ -121,7 +121,7 @@ public class MonsterInvadeGathering : Gathering {
                 hexForJoining = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.hexForJoining);
             }
             if (isWaitTimeOver && !isDisbanded) {
-                Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+                Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
             }
         }
     }

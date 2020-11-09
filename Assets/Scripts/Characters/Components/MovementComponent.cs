@@ -65,7 +65,7 @@ public class MovementComponent : CharacterComponent {
         if (owner.marker) {
             SetMovementState();
             owner.marker.pathfindingAI.speed = GetSpeed();
-            Messenger.Broadcast(Signals.UPDATE_MOVEMENT_STATE, owner);
+            Messenger.Broadcast(CharacterSignals.UPDATE_MOVEMENT_STATE, owner);
         }
         //Debug.Log("Updated speed of " + character.name + ". New speed is: " + pathfindingAI.speed.ToString());
     }
@@ -219,7 +219,7 @@ public class MovementComponent : CharacterComponent {
             owner.marker.pathfindingAI.ClearAllCurrentPathData();
         }
 
-        Messenger.Broadcast(Signals.STARTED_TRAVELLING_IN_WORLD, owner);
+        Messenger.Broadcast(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, owner);
 
         FinishTravellingToRegion(doneAction);
     }
@@ -257,7 +257,7 @@ public class MovementComponent : CharacterComponent {
         owner.EnableMarker();
         SetTargetRegionToTravelInWorld(null);
 
-        Messenger.Broadcast(Signals.FINISHED_TRAVELLING_IN_WORLD, owner);
+        Messenger.Broadcast(CharacterSignals.FINISHED_TRAVELLING_IN_WORLD, owner);
 
         if (doneAction != null) {
             doneAction();

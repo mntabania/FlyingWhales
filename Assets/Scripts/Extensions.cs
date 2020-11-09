@@ -657,8 +657,6 @@ public static class Extensions {
                 priority = 280;
                 break;
             case JOB_TYPE.SPREAD_RUMOR:
-                //case JOB_TYPE.CONFIRM_RUMOR:
-                //case JOB_TYPE.SHARE_NEGATIVE_INFO:
                 priority = 270;
                 break;
             case JOB_TYPE.OBTAIN_PERSONAL_ITEM:
