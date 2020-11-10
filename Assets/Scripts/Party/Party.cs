@@ -545,22 +545,22 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     private void OnAcceptQuest(PartyQuest quest) {
         if(quest.partyQuestType == PARTY_QUEST_TYPE.Exploration || quest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
             Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDeath);
-            Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerMove);
-            Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerPerform);
+            Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
+            Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerMove);
         }
     }
     private void OnAcceptQuestFromSaveData(PartyQuest quest) {
         if (quest.partyQuestType == PARTY_QUEST_TYPE.Exploration || quest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
             Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDeath);
-            Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerMove);
-            Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerPerform);
+            Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
+            Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerMove);
         }
     }
     private void OnDropQuest(PartyQuest quest) {
         if (quest.partyQuestType == PARTY_QUEST_TYPE.Exploration || quest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDeath);
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerMove);
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerPerform);
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerPerform);
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerMove);
         }
         if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
             Messenger.RemoveListener(Signals.HOUR_STARTED, WaitingPerHour);
