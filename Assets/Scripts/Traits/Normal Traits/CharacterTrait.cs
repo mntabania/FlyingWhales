@@ -99,7 +99,7 @@ namespace Traits {
         
         #region Overrides
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-            if (targetPOI is TileObject item && characterThatWillDoJob.canMove) {
+            if (targetPOI is TileObject item && characterThatWillDoJob.limiterComponent.canMove) {
                 //if(item is Heirloom) {
                 //    Debug.Log("sdfsdf");
                 //}
@@ -168,7 +168,7 @@ namespace Traits {
                 }
             }
             if(targetPOI is Character targetCharacter) {
-                if (characterThatWillDoJob.canMove && characterThatWillDoJob.canPerform) {
+                if (characterThatWillDoJob.limiterComponent.canMove && characterThatWillDoJob.limiterComponent.canPerform) {
                     if (!targetCharacter.isDead) {
                         if (!targetCharacter.isNormalCharacter) {
                             string opinionLabel = characterThatWillDoJob.relationshipContainer.GetOpinionLabel(targetCharacter);
@@ -216,7 +216,7 @@ namespace Traits {
                                     }
                                 }
                             }
-                            if ((!targetCharacter.canPerform || !targetCharacter.canMove) && !owner.combatComponent.isInCombat && owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
+                            if ((!targetCharacter.limiterComponent.canPerform || !targetCharacter.limiterComponent.canMove) && !owner.combatComponent.isInCombat && owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
                                 if (owner.partyComponent.currentParty.currentQuest is RaidPartyQuest raidParty
                                     && targetCharacter.homeSettlement == raidParty.targetSettlement
                                     && (targetCharacter.faction == null || owner.faction == null || owner.faction.IsHostileWith(targetCharacter.faction))) {
@@ -325,7 +325,7 @@ namespace Traits {
             //        }
             //    } else { 
             //        //character is not dead
-            //        // if (targetCharacter.canMove == false || targetCharacter.canWitness == false) {
+            //        // if (targetCharacter.canMove == false || targetCharacter.limiterComponent.canWitness == false) {
             //        //     if (characterThatWillDoJob.jobComponent.TryTriggerFeed(targetCharacter) == false) {
             //        //         if (characterThatWillDoJob.jobComponent.TryTriggerMoveCharacterTirednessRecovery(targetCharacter) == false) {
             //        //             characterThatWillDoJob.jobComponent.TryTriggerMoveCharacterHappinessRecovery(targetCharacter);

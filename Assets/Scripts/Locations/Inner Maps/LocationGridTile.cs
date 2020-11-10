@@ -605,7 +605,7 @@ namespace Inner_Maps {
                 TriggerSnareTrap(character);
             }
             if (isCorrupted) {
-                if(!character.isDead && character.canMove && character.canPerform) {
+                if(!character.isDead && character.limiterComponent.canMove && character.limiterComponent.canPerform) {
                     if (!character.movementComponent.hasMovedOnCorruption) {
                         //Corrupted hexes should also be avoided
                         //https://trello.com/c/6WJtivlY/1274-fleeing-should-not-go-to-corrupted-structures

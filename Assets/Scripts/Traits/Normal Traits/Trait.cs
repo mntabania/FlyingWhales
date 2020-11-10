@@ -158,7 +158,7 @@ namespace Traits {
             int manaCost = EditableValuesManager.Instance.triggerFlawManaCost;
 
             return canBeTriggered && PlayerManager.Instance.player.mana >= manaCost
-                && character.canPerform
+                && character.limiterComponent.canPerform
                 //&& !character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER) //disabled characters cannot be triggered
                 && !character.traitContainer.HasTrait("Blessed")
                 && !character.carryComponent.masterCharacter.movementComponent.isTravellingInWorld; //characters travelling outside cannot be triggered
@@ -177,7 +177,7 @@ namespace Traits {
             if (character.traitContainer.HasTrait("Blessed")) {
                 reasons.Add("Blessed characters cannot be targeted by Trigger Flaw.");
             }
-            if (!character.canPerform) {
+            if (!character.limiterComponent.canPerform) {
                 reasons.Add("Characters that cannot perform cannot be targeted by Trigger Flaw.");
             }
             return reasons;

@@ -39,8 +39,8 @@ public class NonActionEventsComponent : CharacterComponent {
             disguisedTarget = target.reactionComponent.disguisedCharacter;
         }
         if (target.isDead
-            || !disguisedActor.canWitness
-            || !disguisedTarget.canWitness
+            || !disguisedActor.limiterComponent.canWitness
+            || !disguisedTarget.limiterComponent.canWitness
             || disguisedActor is Summon
             || disguisedTarget is Summon) {
             return false;
@@ -204,7 +204,7 @@ public class NonActionEventsComponent : CharacterComponent {
             strLog += "\nInsult: -30, Praise: +30";
         }
 
-        if (!disguisedActor.isSociable) {
+        if (!disguisedActor.limiterComponent.isSociable) {
             chatWeights.AddWeightToElement(Warm_Chat, -20);
             chatWeights.AddWeightToElement(Awkward_Chat, 20);
             chatWeights.AddWeightToElement(Argument, 20);
@@ -212,7 +212,7 @@ public class NonActionEventsComponent : CharacterComponent {
             chatWeights.AddWeightToElement(Praise, -20);
             strLog += "\n\nActor is unsociable";
         }
-        if (!disguisedTarget.isSociable) {
+        if (!disguisedTarget.limiterComponent.isSociable) {
             chatWeights.AddWeightToElement(Warm_Chat, -20);
             chatWeights.AddWeightToElement(Awkward_Chat, 20);
             chatWeights.AddWeightToElement(Argument, 20);
@@ -466,7 +466,7 @@ public class NonActionEventsComponent : CharacterComponent {
                 return "ugly";
             }
         }
-        if (!disguisedTarget.isSociable) {
+        if (!disguisedTarget.limiterComponent.isSociable) {
             owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Rebuffed courtship", -8, "engaged in disastrous flirting");
             target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", -12, "engaged in disastrous flirting");
             return "unsociable";

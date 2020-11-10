@@ -185,7 +185,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.IN_PLACE) {
             targetTile = actor.gridTileLocation;
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.NEARBY) {
-            if (actor.canMove && !actor.movementComponent.isStationary) {
+            if (actor.limiterComponent.canMove && !actor.movementComponent.isStationary) {
                 List<LocationGridTile> choices = action.NearbyLocationGetter(this) ?? actor.gridTileLocation.GetTilesInRadius(3, includeImpassable: false);
                 if (choices != null && choices.Count > 0) {
                     targetTile = choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];
@@ -327,7 +327,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         Assert.IsNotNull(actor.currentRegion, $"Current region of {actor.name} is null when trying to perform {action.name} with job {job.jobType.ToString()}");
         //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
         if (actor.currentRegion != targetTile.structure.region) { //different core locations
-            if (actor.movementComponent.MoveToAnotherRegion(targetTile.structure.region, () => CheckAndMoveToDoAction(job)) == false || !actor.canMove) {
+            if (actor.movementComponent.MoveToAnotherRegion(targetTile.structure.region, () => CheckAndMoveToDoAction(job)) == false || !actor.limiterComponent.canMove) {
                 //character cannot exit region.
                 return false;
             }
@@ -338,7 +338,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     actor.PerformGoapAction();
                 } else {
                     if ((action.canBePerformedEvenIfPathImpossible == false && 
-                        !actor.movementComponent.HasPathTo(targetTile)) || !actor.canMove) {
+                        !actor.movementComponent.HasPathTo(targetTile)) || !actor.limiterComponent.canMove) {
                         return false;
                     }
                     actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
@@ -349,7 +349,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     actor.PerformGoapAction();
                 } else {
                     if ((action.canBePerformedEvenIfPathImpossible == false && 
-                        !actor.movementComponent.HasPathTo(targetPOIToGoTo.gridTileLocation)) || !actor.canMove) {
+                        !actor.movementComponent.HasPathTo(targetPOIToGoTo.gridTileLocation)) || !actor.limiterComponent.canMove) {
                         return false;
                     }
                     actor.marker.GoToPOI(targetPOIToGoTo, OnArriveAtTargetLocation);
@@ -428,7 +428,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     if (targetCharacter.currentActionNode != null) {
                         targetCharacter.StopCurrentActionNode(false);
                     }
-                    targetCharacter.DecreaseCanMove();
+                    targetCharacter.limiterComponent.DecreaseCanMove();
                     InnerMapManager.Instance.FaceTarget(targetCharacter, actor);
                 }
                 targetCharacter.AdjustNumOfActionsBeingPerformedOnThis(1);
@@ -474,7 +474,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     if (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.isPaused) {
                         targetCharacter.stateComponent.currentState.ResumeState();
                     }
-                    targetCharacter.IncreaseCanMove();
+                    targetCharacter.limiterComponent.IncreaseCanMove();
                 }
                 targetCharacter.AdjustNumOfActionsBeingPerformedOnThis(-1);
             }
@@ -507,7 +507,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     if (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.isPaused) {
                         targetCharacter.stateComponent.currentState.ResumeState();
                     }
-                    targetCharacter.IncreaseCanMove();
+                    targetCharacter.limiterComponent.IncreaseCanMove();
                 }
                 targetCharacter.AdjustNumOfActionsBeingPerformedOnThis(-1);
             }

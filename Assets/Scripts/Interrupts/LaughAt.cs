@@ -16,7 +16,7 @@ namespace Interrupts {
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Character targetCharacter = interruptHolder.target as Character;
-            if (targetCharacter.canWitness) {
+            if (targetCharacter.limiterComponent.canWitness) {
                 targetCharacter.traitContainer.AddTrait(targetCharacter, "Ashamed");
                 return true;
             }

@@ -206,7 +206,7 @@ public class InterruptComponent : CharacterComponent {
         Interrupt finishedInterrupt = currentInterrupt.interrupt;
         SetNonSimultaneousInterrupt(null);
         currentDuration = 0;
-        if(!owner.isDead && owner.canPerform) {
+        if(!owner.isDead && owner.limiterComponent.canPerform) {
             if (owner.combatComponent.isInCombat) {
                 Messenger.Broadcast(CharacterSignals.DETERMINE_COMBAT_REACTION, owner);
             } else {

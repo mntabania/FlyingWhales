@@ -45,6 +45,7 @@ public class JobBoard {
         return false;
     }
     private void OnJobRemovedFromAvailableJobs(JobQueueItem job) {
+        Messenger.Broadcast(JobSignals.JOB_REMOVED_FROM_JOB_BOARD, job, this);
         JobManager.Instance.OnFinishJob(job);
     }
     public int GetNumberOfJobsWith(JOB_TYPE type) {

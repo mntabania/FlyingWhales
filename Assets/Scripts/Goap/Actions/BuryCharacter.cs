@@ -36,7 +36,7 @@ public class BuryCharacter : GoapAction {
     public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
         if (goapNode.associatedJobType == JOB_TYPE.BURY_IN_ACTIVE_PARTY) {
             Character actor = goapNode.actor;
-            if (actor.canMove && !actor.movementComponent.isStationary) {
+            if (actor.limiterComponent.canMove && !actor.movementComponent.isStationary) {
                 List<LocationGridTile> choices = actor.gridTileLocation.GetTilesInRadius(3, includeImpassable: false);
                 if (choices != null && choices.Count > 0) {
                     return choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];

@@ -351,10 +351,10 @@ public class MonsterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nDo Not Get Tired: " + activeMonster.needsComponent.doNotGetTired.ToString())}";
         summary = $"{summary}{("\nDo Not Get Bored: " + activeMonster.needsComponent.doNotGetBored.ToString())}";
         summary = $"{summary}{("\nDo Not Recover HP: " + activeMonster.doNotRecoverHP.ToString())}";
-        summary = $"{summary}{("\nCan Move: " + activeMonster.canMove)}";
-        summary = $"{summary}{("\nCan Witness: " + activeMonster.canWitness)}";
-        summary = $"{summary}{("\nCan Be Attacked: " + activeMonster.canBeAttacked)}";
-        summary = $"{summary}{("\nCan Perform: " + activeMonster.canPerform)}";
+        summary = $"{summary}{("\nCan Move: " + activeMonster.limiterComponent.canMove)}";
+        summary = $"{summary}{("\nCan Witness: " + activeMonster.limiterComponent.canWitness)}";
+        summary = $"{summary}{("\nCan Be Attacked: " + activeMonster.limiterComponent.canBeAttacked)}";
+        summary = $"{summary}{("\nCan Perform: " + activeMonster.limiterComponent.canPerform)}";
         //summary = $"{summary}{("\nIs Missing: " + activeMonster.isMissing)}";
         summary = $"{summary}{("\nIs Running: " + activeMonster.movementComponent.isRunning)}";
         summary = $"{summary}{("\nPOI State: " + activeMonster.state.ToString())}";

@@ -149,7 +149,7 @@ public class KnockoutCharacter : GoapAction {
                 if (crime.associatedJobType != JOB_TYPE.APPREHEND && crime.associatedJobType != JOB_TYPE.RESTRAIN) {
                     //since there is no drink blood job (it uses fullness recovery), to check if job is from drink blood, just check if the associated job type is knockout
                     //since knockout will only ever be used for fullness recovery if it is for Drinking Blood 
-                    bool isDrinkBloodJob = crime.associatedJobType.IsFullnessRecovery(); 
+                    bool isDrinkBloodJob = crime.associatedJobType.IsFullnessRecoveryTypeJob(); 
                     if (isDrinkBloodJob || crime.associatedJobType == JOB_TYPE.IMPRISON_BLOOD_SOURCE) {
                         return CRIME_TYPE.Vampire;
                     } else {

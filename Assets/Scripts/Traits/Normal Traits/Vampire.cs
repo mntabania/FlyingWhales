@@ -207,7 +207,7 @@ namespace Traits {
             return data;
         }
         public override bool PerTickOwnerMovement() {
-            if (dislikedBeingVampire && GameUtilities.RollChance(1) && _owner.currentJob != null && _owner.currentJob.jobType.IsFullnessRecovery()) { //1
+            if (dislikedBeingVampire && GameUtilities.RollChance(1) && _owner.currentJob != null && _owner.currentJob.jobType.IsFullnessRecoveryTypeJob()) { //1
                 _owner.currentJob.ForceCancelJob(false, "Resisted Hunger");
                 _owner.traitContainer.AddTrait(_owner, "Ashamed");
                 _owner.traitContainer.AddTrait(_owner, "Fasting");

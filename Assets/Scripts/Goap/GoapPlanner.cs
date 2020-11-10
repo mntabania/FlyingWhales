@@ -127,8 +127,8 @@ public class GoapPlanner {
                 //This means that the created plan is a recalculated plan
                 goapThread.createdPlan.SetIsBeingRecalculated(false);
             }
-            if (!owner.canPerform) {
-                int canPerformValue = owner.GetCanPerformValue();
+            if (!owner.limiterComponent.canPerform) {
+                int canPerformValue = owner.limiterComponent.canPerformValue;
                 if(canPerformValue == -1 && owner.traitContainer.HasTrait("Paralyzed")) {
                     //If the owner is paralyzed and the only reason he cannot perform is because of that paralyzed, the plan must not be scrapped
                 } else {
@@ -157,10 +157,16 @@ public class GoapPlanner {
                 if (owner.trapStructure.IsTrappedInHex()) {
                     owner.trapStructure.ResetAllTrapHexes();
                 }
-            }
-            if(jobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
-                if (owner.partyComponent.hasParty) {
-                    owner.partyComponent.currentParty.SetCannotProduceFoodThisRestPeriod(true);
+                if (owner.partyComponent.isActiveMember) {
+                    if (owner.partyComponent.currentParty.startedTrueRestingState) {
+                        if (jobType.IsFullnessRecoveryTypeJob()) {
+                            owner.traitContainer.AddTrait(owner, "Abstain Fullness");
+                        } else if (jobType.IsTirednessRecoveryTypeJob()) {
+                            owner.traitContainer.AddTrait(owner, "Abstain Tiredness");
+                        } else if (jobType.IsHappinessRecoveryTypeJob()) {
+                            owner.traitContainer.AddTrait(owner, "Abstain Happiness");
+                        }
+                    }
                 }
             }
             if (goapThread.recalculationPlan == null) {

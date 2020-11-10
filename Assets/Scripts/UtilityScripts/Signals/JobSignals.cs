@@ -24,4 +24,5 @@
     /// Parameters: Character assumer, Character target, IPointOfInterest poi
     /// </summary>
     public static string CHARACTER_ASSUMED = "OnCharacterAssumed";
+    public static string JOB_REMOVED_FROM_JOB_BOARD = "OnJobRemovedFromJobBoard";
 }
