@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Traits;
 
 public class CounterattackPartyQuest : PartyQuest {
 
@@ -74,6 +75,12 @@ public class CounterattackPartyQuest : PartyQuest {
     //        member.traitContainer.RemoveTrait(member, "Fervor");
     //    }
     //}
+    public override void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {
+        base.OnAssignedPartySwitchedState(fromState, toState);
+        if (toState == PARTY_STATE.Working) {
+            CultistBetrayalProcessing();
+        }
+    }
     #endregion
 
     #region General
@@ -93,6 +100,38 @@ public class CounterattackPartyQuest : PartyQuest {
     //        waitingArea = targetStructure.settlementLocation.GetAPlainAdjacentHextile();
     //    }
     //}
+    private void CultistBetrayalProcessing() {
+        if(assignedParty != null) {
+            List<Character> membersAlliedWithPlayer = ObjectPoolManager.Instance.CreateNewCharactersList();
+            for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
+                Character member = assignedParty.membersThatJoinedQuest[i];
+                if (member.isAlliedWithPlayer) {
+                    membersAlliedWithPlayer.Add(member);
+                }
+            }
+            for (int i = 0; i < membersAlliedWithPlayer.Count; i++) {
+                Character memberAlliedWithPlayer = membersAlliedWithPlayer[i];
+                MembersAreBetrayedByThis(memberAlliedWithPlayer);
+                memberAlliedWithPlayer.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Party, memberAlliedWithPlayer, "Betrayed party members");
+            }
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(membersAlliedWithPlayer);
+        }
+    }
+    private void MembersAreBetrayedByThis(Character character) {
+        if (assignedParty != null) {
+            for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
+                Character member = assignedParty.membersThatJoinedQuest[i];
+                if (member != character && !member.isAlliedWithPlayer) {
+                    Betrayed betrayed = member.traitContainer.GetTraitOrStatus<Betrayed>("Betrayed");
+                    if(betrayed != null) {
+                        betrayed.AddCharacterResponsibleForTrait(character);
+                    } else {
+                        member.traitContainer.AddTrait(member, "Betrayed", characterResponsible: character);
+                    }
+                }
+            }
+        }
+    }
     #endregion
 
     #region Loading

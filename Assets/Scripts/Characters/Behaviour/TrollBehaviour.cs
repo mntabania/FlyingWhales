@@ -46,7 +46,7 @@ public class TrollBehaviour : CharacterBehaviourComponent {
                                 }
                                 if (potentialCharacter.traitContainer.HasTrait("Unconscious")) {
                                     Unconscious unconsciousTrait = potentialCharacter.traitContainer.GetTraitOrStatus<Unconscious>("Unconscious");
-                                    if (unconsciousTrait.responsibleCharacter == character) {
+                                    if (unconsciousTrait.IsResponsibleForTrait(character)) {
                                         chosenCharacter = potentialCharacter;
                                         break;
                                     }

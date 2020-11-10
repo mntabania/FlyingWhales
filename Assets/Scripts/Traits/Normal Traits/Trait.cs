@@ -216,9 +216,13 @@ namespace Traits {
             }
         }
         public bool IsResponsibleForTrait(Character character) {
+            if(character == null) {
+                return false;
+            }
             if (responsibleCharacter == character) {
                 return true;
-            } else if (responsibleCharacters != null) {
+            }
+            if (responsibleCharacters != null) {
                 return responsibleCharacters.Contains(character);
             }
             return false;

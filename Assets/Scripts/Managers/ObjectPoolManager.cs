@@ -26,6 +26,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     private List<LogDatabaseThread> _logDatabaseThreadPool;
     private List<List<GoapEffect>> _expectedEffectsListPool;
     private List<List<Precondition>> _preconditionsListPool;
+    private List<List<Character>> _characterListPool;
 
     private void Awake() {
         Instance = this;
@@ -56,6 +57,8 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructGoapThreadPool();
         ConstructLogDatabaseThreadPool();
         ConstructExpectedEffectsListPool();
+        ConstructPreconditionListPool();
+        ConstructCharacterListPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -366,6 +369,28 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     }
     #endregion
 
+    #region Characters
+    private void ConstructCharacterListPool() {
+        _characterListPool = new List<List<Character>>();
+    }
+    public List<Character> CreateNewCharactersList() {
+        List<Character> data = GetCharactersListFromPool();
+        return data;
+    }
+    public void ReturnCharactersListToPool(List<Character> data) {
+        data.Clear();
+        _characterListPool.Add(data);
+    }
+    private List<Character> GetCharactersListFromPool() {
+        if (_characterListPool.Count > 0) {
+            List<Character> data = _characterListPool[0];
+            _characterListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<Character>();
+    }
+    #endregion
+
     protected override void OnDestroy() {
         if (allObjectPools != null) {
             foreach (KeyValuePair<string,EZObjectPool> pool in allObjectPools) {
@@ -392,6 +417,10 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _logDatabaseThreadPool = null;
         _expectedEffectsListPool?.Clear();
         _expectedEffectsListPool = null;
+        _preconditionsListPool?.Clear();
+        _preconditionsListPool = null;
+        _characterListPool?.Clear();
+        _characterListPool = null;
         base.OnDestroy();
         Instance = null;
     }
