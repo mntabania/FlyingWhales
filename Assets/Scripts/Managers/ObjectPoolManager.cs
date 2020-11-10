@@ -56,6 +56,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructGoapThreadPool();
         ConstructLogDatabaseThreadPool();
         ConstructExpectedEffectsListPool();
+        ConstructPreconditionListPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {

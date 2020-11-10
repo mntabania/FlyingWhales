@@ -2929,6 +2929,7 @@
             <e p="AreaPickerItem.cs" t="Include" />
             <e p="ArtifactItem.cs" t="Include" />
             <e p="AttackPickerItem.cs" t="Include" />
+            <e p="BiolabUIView.cs" t="Include" />
             <e p="BiomeWorldOptionItem.cs" t="Include" />
             <e p="BottomNotification.cs" t="Include" />
             <e p="Button Clicks" t="Include">
