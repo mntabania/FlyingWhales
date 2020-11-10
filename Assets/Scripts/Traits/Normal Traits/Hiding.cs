@@ -49,7 +49,7 @@ namespace Traits {
 			Messenger.AddListener(Signals.HOUR_STARTED, CoweringCheck);
 		}
 		private void CoweringCheck() {
-			if (_owner.canPerform == false) { return; }
+			if (_owner.limiterComponent.canPerform == false) { return; }
 			string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} is rolling for cower.";
 			int roll = Random.Range(0, 100);
 			int chance = 50;

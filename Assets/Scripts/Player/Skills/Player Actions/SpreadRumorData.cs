@@ -26,7 +26,7 @@ public class SpreadRumorData : PlayerAction {
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
         if (canPerform) {
-            if (targetCharacter.canPerform == false) {
+            if (targetCharacter.limiterComponent.canPerform == false) {
                 return false;
             }
             if (targetCharacter.jobQueue.HasJob(JOB_TYPE.SPREAD_RUMOR)) {
@@ -38,7 +38,7 @@ public class SpreadRumorData : PlayerAction {
     }
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter); 
-        if (targetCharacter.canPerform == false) {
+        if (targetCharacter.limiterComponent.canPerform == false) {
             reasons = $"{reasons}Cannot be used while target is incapacitated,";
         }
         if (targetCharacter.jobQueue.HasJob(JOB_TYPE.SPREAD_RUMOR)) {

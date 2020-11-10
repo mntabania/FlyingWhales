@@ -228,7 +228,7 @@ public class MoodComponent : CharacterComponent {
 	}
 	private void CheckForMajorMentalBreak() {
 		IncreaseMajorMentalBreakChance();
-		if (owner.canPerform && isInMinorMentalBreak == false && isInMajorMentalBreak == false) {
+		if (owner.limiterComponent.canPerform && isInMinorMentalBreak == false && isInMajorMentalBreak == false) {
 			float roll = Random.Range(0f, 100f);
 			Debug.Log(
 				$"<color=green>{GameManager.Instance.TodayLogString()}{owner.name} is checking for <b>MAJOR</b> mental break. Roll is <b>{roll.ToString(CultureInfo.InvariantCulture)}</b>. Chance is <b>{currentCriticalMoodEffectChance.ToString(CultureInfo.InvariantCulture)}</b></color>");
@@ -377,7 +377,7 @@ public class MoodComponent : CharacterComponent {
 	#region Minor Mental Break
 	// private void CheckForMinorMentalBreak() {
 	// 	IncreaseMinorMentalBreakChance();
-	// 	if (owner.canPerform && _isInMinorMentalBreak == false && _isInMajorMentalBreak == false) {
+	// 	if (owner.limiterComponent.canPerform && _isInMinorMentalBreak == false && _isInMajorMentalBreak == false) {
 	// 		float roll = Random.Range(0f, 100f);
 	// 		Debug.Log(
 	// 			$"<color=green>{GameManager.Instance.TodayLogString()}{owner.name} is checking for <b>MINOR</b> mental break. Roll is <b>{roll.ToString(CultureInfo.InvariantCulture)}</b>. Chance is <b>{currentLowMoodEffectChance.ToString(CultureInfo.InvariantCulture)}</b></color>");

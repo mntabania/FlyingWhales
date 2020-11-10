@@ -108,7 +108,7 @@ public class DrinkBlood : GoapAction {
                     return cost;
                 }
             }
-            if (targetCharacter.canPerform && targetCharacter.canMove) {
+            if (targetCharacter.limiterComponent.canPerform && targetCharacter.limiterComponent.canMove) {
                 cost += 80;
                 costLog += " +80(Can Perform and Move)";
             }
@@ -195,7 +195,7 @@ public class DrinkBlood : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         if (actionInvalidity.isInvalid == false) {
             Character targetCharacter = poiTarget as Character;
-            if (targetCharacter.canMove && targetCharacter.canPerform/*|| targetCharacter.canWitness || targetCharacter.IsAvailable() == false*/) {
+            if (targetCharacter.limiterComponent.canMove && targetCharacter.limiterComponent.canPerform/*|| targetCharacter.limiterComponent.canWitness || targetCharacter.IsAvailable() == false*/) {
                 actionInvalidity.isInvalid = true;
                 actionInvalidity.stateName = "Drink Fail";
             }

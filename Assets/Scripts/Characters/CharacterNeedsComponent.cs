@@ -494,7 +494,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         doNotGetTired = Math.Max(doNotGetTired, 0);
     }
     public bool PlanTirednessRecoveryActions() {
-        if (!owner.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
+        if (!owner.limiterComponent.canPerform) { //character.doNotDisturb > 0 || !character.limiterComponent.canWitness
             return false;
         }
         if (this.isExhausted) {
@@ -518,7 +518,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         return false;
     }
     private bool PlanTirednessRecoveryActionsWhileInActiveParty() {
-        if (!owner.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
+        if (!owner.limiterComponent.canPerform) { //character.doNotDisturb > 0 || !character.limiterComponent.canWitness
             return false;
         }
         if (isExhausted) {
@@ -584,7 +584,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         return false;
     }
     public void PlanScheduledTirednessRecovery() {
-        if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.Today().tick >= tirednessForcedTick && owner.canPerform && doNotGetTired <= 0) {
+        if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.Today().tick >= tirednessForcedTick && owner.limiterComponent.canPerform && doNotGetTired <= 0) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
                 JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_NORMAL;
                 if (isExhausted) {
@@ -597,7 +597,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         }
         //If a character current sleep ticks is less than the default, this means that the character already started sleeping but was awaken midway that is why he/she did not finish the allotted sleeping time
         //When this happens, make sure to queue tiredness recovery again so he can finish the sleeping time
-        else if ((hasCancelledSleepSchedule || currentSleepTicks < CharacterManager.Instance.defaultSleepTicks) && owner.canPerform) {
+        else if ((hasCancelledSleepSchedule || currentSleepTicks < CharacterManager.Instance.defaultSleepTicks) && owner.limiterComponent.canPerform) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
                 JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_NORMAL;
                 if (isExhausted) {
@@ -618,6 +618,11 @@ public class CharacterNeedsComponent : CharacterComponent {
         return PlanTirednessRecoveryBase(jobType, shouldSetScheduleJobID);
     }
     private GoapPlanJob PlanTirednessRecoveryBase(JOB_TYPE jobType, bool shouldSetScheduleJobID) {
+        if (!owner.limiterComponent.canDoTirednessRecovery) {
+            //No matter what, if character has the limiter "cannot do tiredness recovery", he will not do tiredness recovery
+            owner.logComponent.PrintLogIfActive($"\n{owner.name} is cannot do tiredness recovery");
+            return null;
+        }
         //No matter what happens, we do not allow characters to sleep if they are burning/poisoned because it does not make sense
         if (owner.traitContainer.HasTrait("Burning", "Poisoned")) {
             owner.logComponent.PrintLogIfActive($"\n{owner.name} is poisoned or burning will not plan tiredness recovery...");
@@ -782,16 +787,16 @@ public class CharacterNeedsComponent : CharacterComponent {
         doNotGetBored = Math.Max(doNotGetBored, 0);
     }
     // public bool CanPlanScheduledHappinessRecovery() {
-    //     if (!hasForcedHappiness && happinessForcedTick != 0 && GameManager.Instance.currentTick >= happinessForcedTick && owner.canPerform && doNotGetBored <= 0) {
+    //     if (!hasForcedHappiness && happinessForcedTick != 0 && GameManager.Instance.currentTick >= happinessForcedTick && owner.limiterComponent.canPerform && doNotGetBored <= 0) {
     //         return true;
     //     }
-    //     if (!hasForcedSecondHappiness && happinessSecondForcedTick != 0 && GameManager.Instance.currentTick >= happinessSecondForcedTick && owner.canPerform && doNotGetBored <= 0) {
+    //     if (!hasForcedSecondHappiness && happinessSecondForcedTick != 0 && GameManager.Instance.currentTick >= happinessSecondForcedTick && owner.limiterComponent.canPerform && doNotGetBored <= 0) {
     //         return true;
     //     }
     //     return false;
     // }
     public void PlanScheduledSecondHappinessRecovery() {
-        if (!hasForcedSecondHappiness && happinessSecondForcedTick != 0 && GameManager.Instance.currentTick >= happinessSecondForcedTick && owner.canPerform && doNotGetBored <= 0) {
+        if (!hasForcedSecondHappiness && happinessSecondForcedTick != 0 && GameManager.Instance.currentTick >= happinessSecondForcedTick && owner.limiterComponent.canPerform && doNotGetBored <= 0) {
             hasForcedSecondHappiness = true;
             if (!owner.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
                 PlanHappinessRecoveryActions();
@@ -812,7 +817,12 @@ public class CharacterNeedsComponent : CharacterComponent {
         return PlanHappinessRecoveryBase();
     }
     private bool PlanHappinessRecoveryBase() {
-        if (!owner.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
+        if (!owner.limiterComponent.canDoHappinessRecovery) {
+            //No matter what, if character has the limiter "cannot do happiness recovery", he will not do happiness recovery
+            owner.logComponent.PrintLogIfActive($"\n{owner.name} is cannot do happiness recovery");
+            return false;
+        }
+        if (!owner.limiterComponent.canPerform) { //character.doNotDisturb > 0 || !character.limiterComponent.canWitness
             return false;
         }
         // if (isBored || isSulking) {
@@ -1060,7 +1070,7 @@ public class CharacterNeedsComponent : CharacterComponent {
             //Now, when a character becomes Nocturnal, after becoming a Vampire, the schedule will be on Early Night, not After Midnight
             return;
         }
-        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.currentTick >= fullnessForcedTick && owner.canPerform && doNotGetHungry <= 0) {
+        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.currentTick >= fullnessForcedTick && owner.limiterComponent.canPerform && doNotGetHungry <= 0) {
             hasForcedFullness = true;
             //if (owner.traitContainer.HasTrait("Vampire")) {
             //    TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
@@ -1086,7 +1096,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         }
     }
     public bool PlanFullnessRecoveryActions() {
-        if (!owner.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
+        if (!owner.limiterComponent.canPerform) { //character.doNotDisturb > 0 || !character.limiterComponent.canWitness
             return false;
         }
         if (owner.traitContainer.HasTrait("Vampire")) {
@@ -1130,7 +1140,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         return false;
     }
     public bool PlanFullnessRecoveryActionsVampire() {
-        if (!owner.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
+        if (!owner.limiterComponent.canPerform) { //character.doNotDisturb > 0 || !character.limiterComponent.canWitness
             return false;
         }
         if (isStarving) {
@@ -1165,30 +1175,29 @@ public class CharacterNeedsComponent : CharacterComponent {
         return false;
     }
     private bool PlanFullnessRecoveryActionsWhileInActiveParty() {
-        if (!owner.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
+        if (!owner.limiterComponent.canPerform) { //character.doNotDisturb > 0 || !character.limiterComponent.canWitness
             return false;
         }
         if (owner.traitContainer.HasTrait("Fasting")) {
             return false;
         }
         if (owner.traitContainer.HasTrait("Vampire")) {
-            ////Vampires should only eat in an active party if he is starving or if there is no party members that can see him
-            //bool shouldEat = false;
-            //if (!isStarving) {
-            //    if (owner.partyComponent.isMemberThatJoinedQuest) {
-            //        CRIME_SEVERITY severity = owner.partyComponent.currentParty.partyFaction.GetCrimeSeverity(owner, owner, CRIME_TYPE.Vampire);
-            //        if (severity == CRIME_SEVERITY.None || severity == CRIME_SEVERITY.Unapplicable) {
-            //            //If party faction does not consider vampire a crime, vampire can eat
-            //            shouldEat = true;
-            //        }
-            //    }
-            //} else {
-            //    shouldEat = true;
-            //}
-            //if (!shouldEat) {
-            //    return false;
-            //}
-            return false;
+            //Vampires should only eat in an active party if he is starving or if there is no party members that can see him
+            bool shouldEat = false;
+            if (!isStarving) {
+                if (owner.partyComponent.isMemberThatJoinedQuest) {
+                    CRIME_SEVERITY severity = owner.partyComponent.currentParty.partyFaction.GetCrimeSeverity(owner, owner, CRIME_TYPE.Vampire);
+                    if (severity == CRIME_SEVERITY.None || severity == CRIME_SEVERITY.Unapplicable) {
+                        //If party faction does not consider vampire a crime, vampire can eat
+                        shouldEat = true;
+                    }
+                }
+            } else {
+                shouldEat = true;
+            }
+            if (!shouldEat) {
+                return false;
+            }
         }
         if (isStarving) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
@@ -1238,6 +1247,11 @@ public class CharacterNeedsComponent : CharacterComponent {
         return PlanFullnessRecoveryBase(jobType);
     }
     private GoapPlanJob PlanFullnessRecoveryBase(JOB_TYPE jobType) {
+        if (!owner.limiterComponent.canDoFullnessRecovery) {
+            //No matter what, if character has the limiter "cannot do fullness recovery", he will not do fullness recovery
+            owner.logComponent.PrintLogIfActive($"\n{owner.name} is cannot do fullness recovery");
+            return null;
+        }
         //No matter what happens if the character is burning, he/she wil not trigger fullness recovery
         if (owner.traitContainer.HasTrait("Burning")) {
             owner.logComponent.PrintLogIfActive($"\n{owner.name} is burning will not plan fullness recovery...");

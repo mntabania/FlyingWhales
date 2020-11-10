@@ -12,9 +12,10 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     public string partyName { get; private set; }
     public PARTY_STATE partyState { get; private set; }
     //public int takeQuestSchedule { get; private set; }
-    public int restSchedule { get; private set; }
+    //public int restSchedule { get; private set; }
     //public int endRestSchedule { get; private set; }
-    public bool hasRested { get; private set; }
+    //public bool hasRested { get; private set; }
+    public bool startedTrueRestingState { get; private set; } //True resting state starts when party already has a campfire
     public bool isDisbanded { get; private set; }
     public bool hasChangedTargetDestination { get; private set; }
     public int perHourElapsedInWaiting { get; private set; }
@@ -33,7 +34,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     public List<Character> members { get; private set; }
     public List<Character> membersThatJoinedQuest { get; private set; }
 
-    public bool cannotProduceFoodThisRestPeriod { get; private set; }
+    //public bool cannotProduceFoodThisRestPeriod { get; private set; }
     //public bool hasStartedAcceptingQuests { get; private set; }
     public GameDate nextQuestCheckDate { get; private set; }
 
@@ -74,7 +75,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         partySettlement = partyCreator.homeSettlement;
         partyFaction = partyCreator.faction;
         isDisbanded = false;
-        hasRested = true;
+        //hasRested = true;
         canAcceptQuests = true;
         perHourElapsedInWaiting = 0;
         forcedCancelJobsOnTickEnded.Clear();
@@ -82,13 +83,15 @@ public class Party : ILogFiller, ISavable, IJobOwner {
 
         SetPartyState(PARTY_STATE.None);
         //SetTakeQuestSchedule();
-        SetRestSchedule();
+        //SetRestSchedule();
         //SetEndRestSchedule();
 
         AddMember(partyCreator);
         partySettlement.AddParty(this);
         Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
+        Messenger.AddListener<JobQueueItem, JobBoard>(JobSignals.JOB_REMOVED_FROM_JOB_BOARD, OnJobRemovedFromJobBoard);
         DatabaseManager.Instance.partyDatabase.AddParty(this);
 
         ScheduleNextDateToCheckQuest();
@@ -99,11 +102,12 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         partyName = data.partyName;
         partyState = data.partyState;
         //takeQuestSchedule = data.takeQuestSchedule;
-        restSchedule = data.restSchedule;
+        //restSchedule = data.restSchedule;
         //endRestSchedule = data.endRestSchedule;
-        hasRested = data.hasRested;
+        //hasRested = data.hasRested;
+        startedTrueRestingState = data.startedTrueRestingState;
         isDisbanded = data.isDisbanded;
-        cannotProduceFoodThisRestPeriod = data.cannotProduceFoodThisRestPeriod;
+        //cannotProduceFoodThisRestPeriod = data.cannotProduceFoodThisRestPeriod;
         hasChangedTargetDestination = data.hasChangedTargetDestination;
         perHourElapsedInWaiting = data.perHourElapsedInWaiting;
         waitingEndDate = data.waitingEndDate;
@@ -118,6 +122,8 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         if (partyName != string.Empty) {
             Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
             Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
+            Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
+            Messenger.AddListener<JobQueueItem, JobBoard>(JobSignals.JOB_REMOVED_FROM_JOB_BOARD, OnJobRemovedFromJobBoard);
             DatabaseManager.Instance.partyDatabase.AddParty(this);
         }
         if (!isDisbanded) {
@@ -133,13 +139,17 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         OnMeetingPlaceDestroyed(structure);
     }
     private void OnTickEnded() {
-        if (isActive) {
-            PerTickEndedWhileActive();
-            PerTickEndedInMovingState();
-        } else {
-            PerTickEndedWhileInactive();
-        }
         ProcessForcedCancelJobsOnTickEnded();
+    }
+    private void OnHourStarted() {
+        if (isActive) {
+            //This arrangement of calls is intended
+            //The waiting state call is last so that if the party decided to switch to moving state while in waiting state, it will not immediately check the PerHourInMovingState
+            //it will instead wait for 1 hour before calling the PerHourInMovingState because of this arrangement
+            PerHourInRestingState();
+            PerHourInMovingState();
+            PerHourInWaitingState();
+        }
     }
     private void OnCharacterDeath(Character character) {
         CharacterDies(character);
@@ -150,19 +160,24 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     private void OnCharacterNoLongerPerform(Character character) {
         CharacterNoLongerPerform(character);
     }
+    private void OnJobRemovedFromJobBoard(JobQueueItem p_job, JobBoard p_jobBoard) {
+        if(jobBoard == p_jobBoard) {
+            JobRemovedFromJobBoard(p_job);
+        }
+    }
     #endregion
 
     #region General
     //private void SetTakeQuestSchedule() {
     //    takeQuestSchedule = GameManager.GetRandomTickFromTimeInWords(TIME_IN_WORDS.MORNING);
     //}
-    private void SetRestSchedule() {
-        if (GameUtilities.RollChance(50)) {
-            restSchedule = GameManager.GetRandomTickFromTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
-        } else {
-            restSchedule = GameManager.GetRandomTickFromTimeInWords(TIME_IN_WORDS.AFTER_MIDNIGHT);
-        }
-    }
+    //private void SetRestSchedule() {
+    //    if (GameUtilities.RollChance(50)) {
+    //        restSchedule = GameManager.GetRandomTickFromTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
+    //    } else {
+    //        restSchedule = GameManager.GetRandomTickFromTimeInWords(TIME_IN_WORDS.AFTER_MIDNIGHT);
+    //    }
+    //}
     //private void SetEndRestSchedule() {
     //    endRestSchedule = GameManager.GetRandomTicokFromTimeInWords(TIME_IN_WORDS.MORNING);
     //}
@@ -211,9 +226,9 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         SchedulingManager.Instance.AddEntry(nextQuestCheckDate, TryAcceptQuest, null);
     }
     private void PerTickEndedWhileActive() {
-        if (restSchedule == GameManager.Instance.currentTick && partyState != PARTY_STATE.Resting) {
-            hasRested = false;
-        }
+        //if (restSchedule == GameManager.Instance.currentTick && partyState != PARTY_STATE.Resting) {
+        //    hasRested = false;
+        //}
     }
     private LocationStructure GetStructureToCheckFromSettlement(BaseSettlement settlement) {
         LocationStructure structure = settlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
@@ -234,9 +249,9 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             SetHasChangedTargetDestination(true);
         }
     }
-    public void SetCannotProduceFoodThisRestPeriod(bool state) {
-        cannotProduceFoodThisRestPeriod = state;
-    }
+    //public void SetCannotProduceFoodThisRestPeriod(bool state) {
+    //    cannotProduceFoodThisRestPeriod = state;
+    //}
     public void SetHasChangedTargetDestination(bool state) {
         hasChangedTargetDestination = state;
     }
@@ -304,22 +319,20 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         StartWaitTimer();
     }
     private void OnSwitchFromWaitingState(PARTY_STATE prevState) {
-        if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
-            Messenger.RemoveListener(Signals.HOUR_STARTED, WaitingPerHour);
-        }
     }
     private void StartWaitTimer() {
         perHourElapsedInWaiting = 0;
-        Messenger.AddListener(Signals.HOUR_STARTED, WaitingPerHour);
         waitingEndDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(5));
         SchedulingManager.Instance.AddEntry(waitingEndDate, WaitingEndedDecisionMaking, this);
     }
-    private void WaitingPerHour() {
-        //Every hour after 2 hours, we must check if the members that joined is already enough so that the party will start the quest immediately, so we do not need to wait for the end of waiting period if the minimum party size of the quest is already met
-        perHourElapsedInWaiting++;
-        if(perHourElapsedInWaiting > 2) {
-            if (isActive && membersThatJoinedQuest.Count >= currentQuest.minimumPartySize) {
-                WaitingEndedDecisionMaking();
+    private void PerHourInWaitingState() {
+        if (partyState == PARTY_STATE.Waiting) {
+            //Every hour after 2 hours, we must check if the members that joined is already enough so that the party will start the quest immediately, so we do not need to wait for the end of waiting period if the minimum party size of the quest is already met
+            perHourElapsedInWaiting++;
+            if (perHourElapsedInWaiting > 2) {
+                if (isActive && membersThatJoinedQuest.Count >= currentQuest.minimumPartySize) {
+                    WaitingEndedDecisionMaking();
+                }
             }
         }
     }
@@ -391,19 +404,22 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     }
     private void OnSwitchFromMovingState(PARTY_STATE prevState) {
     }
-    private void PerTickEndedInMovingState() {
-        if(!hasRested && partyState == PARTY_STATE.Moving) {
-            SetPartyState(PARTY_STATE.Resting);
+    private void PerHourInMovingState() {
+        if (partyState == PARTY_STATE.Moving) {
+            if (HasActiveMemberThatMustDoCriticalNeedsRecovery()) {
+                SetPartyState(PARTY_STATE.Resting);
+            }
         }
     }
     #endregion
 
     #region Resting State
     private void OnSwitchToRestingState(PARTY_STATE prevState) {
-        hasRested = true;
+        //hasRested = true;
+        SetStartedTrueRestingState(false);
         targetRestingTavern = null;
         targetCamp = null;
-        cannotProduceFoodThisRestPeriod = false;
+        //cannotProduceFoodThisRestPeriod = false;
         FindNearbyTavernOrCamp();
         if(targetRestingTavern == null && targetCamp == null) {
             //No tavern and camp found, this means that the party is near their home settlement and the target destination is the home settlement, so instead of camping, the party will just go home
@@ -412,18 +428,18 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             if(targetCamp != null) {
                 //If the party will rest in a camp, add jobs to create a campfire and produce food for camp
                 _jobComponent.CreateBuildCampfireJob(JOB_TYPE.BUILD_CAMP);
-                _jobComponent.CreateProduceFoodForCampJob();
+                //Removed creating produce food for camp because right now we already have a food pile created after building a camp
+                //_jobComponent.CreateProduceFoodForCampJob();
+            } else if (targetRestingTavern != null) {
+                //If party decided on tavern instead of a camp, started true resting state must be switched on so that it will 
+                SetStartedTrueRestingState(true);
             }
-            Messenger.AddListener(Signals.HOUR_STARTED, RestingPerHour);
         }
     }
     private void OnSwitchFromRestingState(PARTY_STATE prevState) {
-        if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
-            Messenger.RemoveListener(Signals.HOUR_STARTED, RestingPerHour);
-        }
     }
-    private void RestingPerHour() {
-        if (isActive) {
+    private void PerHourInRestingState() {
+        if (partyState == PARTY_STATE.Resting && startedTrueRestingState) {
             if (!HasActiveMemberThatMustDoNeedsRecovery()) {
                 //Messenger.RemoveListener(Signals.HOUR_STARTED, RestingPerHour); //Removed this because there is already a call on OnSwitchFromRestingState
                 SetPartyState(PARTY_STATE.Moving);
@@ -485,6 +501,9 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     //public void SetFoodProducer(Character character) {
     //    foodProducer = character;
     //}
+    private void SetStartedTrueRestingState(bool p_state) {
+        startedTrueRestingState = p_state;
+    }
     #endregion
 
     #region Working State
@@ -561,12 +580,6 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDeath);
             Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerMove);
             Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerPerform);
-        }
-        if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
-            Messenger.RemoveListener(Signals.HOUR_STARTED, WaitingPerHour);
-        }
-        if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
-            Messenger.RemoveListener(Signals.HOUR_STARTED, RestingPerHour);
         }
         //Every time a quest is dropped, always clear out the party jobs
         ForceCancelAllJobs();
@@ -699,7 +712,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         return count;
     }
     public bool IsMemberActive(Character character) {
-        if (character.canMove && character.carryComponent.IsNotBeingCarried() && !character.isBeingSeized) {
+        if (character.limiterComponent.canMove && character.carryComponent.IsNotBeingCarried() && !character.isBeingSeized) {
             bool isActive = false;
             if(partyState == PARTY_STATE.Waiting) {
                 if(meetingPlace != null && !meetingPlace.hasBeenDestroyed && meetingPlace.passableTiles.Count > 0) {
@@ -806,14 +819,10 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
             Character member = membersThatJoinedQuest[i];
             if (IsMemberActive(member)) {
-                if(member.needsComponent.isTired || member.needsComponent.isExhausted || member.needsComponent.isBored || member.needsComponent.isSulking) {
+                if (((member.needsComponent.isStarving || member.needsComponent.isHungry) && member.limiterComponent.canDoFullnessRecovery)
+                    || ((member.needsComponent.isExhausted || member.needsComponent.isTired) && member.limiterComponent.canDoTirednessRecovery)
+                    || ((member.needsComponent.isSulking || member.needsComponent.isBored) && member.limiterComponent.canDoHappinessRecovery)) {
                     return true;
-                } else {
-                    if (!member.traitContainer.HasTrait("Vampire")) {
-                        if ((member.needsComponent.isHungry || member.needsComponent.isStarving) && !cannotProduceFoodThisRestPeriod) {
-                            return true;
-                        }
-                    }
                 }
             }
         }
@@ -823,7 +832,9 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
             Character member = membersThatJoinedQuest[i];
             if (IsMemberActive(member)) {
-                if (member.needsComponent.isStarving || member.needsComponent.isExhausted || member.needsComponent.isSulking) {
+                if ((member.needsComponent.isStarving && member.limiterComponent.canDoFullnessRecovery) 
+                    || (member.needsComponent.isExhausted && member.limiterComponent.canDoTirednessRecovery)
+                    || (member.needsComponent.isSulking && member.limiterComponent.canDoHappinessRecovery)) {
                     return true;
                 }
             }
@@ -889,7 +900,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     public bool HasMemberThatJoinedQuestThatIsInRangeOfCharacterThatConsidersCrimeTypeACrime(Character character, CRIME_TYPE crimeType) {
         for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
             Character member = membersThatJoinedQuest[i];
-            if (character != member && member.canWitness) {
+            if (character != member && member.limiterComponent.canWitness) {
                 bool isInVision = character.marker && character.marker.IsPOIInVision(member);
                 if (isInVision) {
                     CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(member, character, character, crimeType);
@@ -981,16 +992,15 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         if (!string.IsNullOrEmpty(data.partyFaction)) {
             partyFaction = FactionManager.Instance.GetFactionByPersistentID(data.partyFaction);
         }
-
-        if ((targetRestingTavern != null || targetCamp != null) && partyState == PARTY_STATE.Resting) {
-            Messenger.AddListener(Signals.HOUR_STARTED, RestingPerHour);
-        } else if (partyState == PARTY_STATE.Waiting) {
-            Messenger.AddListener(Signals.HOUR_STARTED, WaitingPerHour);
-        }
     }
     #endregion
 
     #region IJobOwner
+    private void JobRemovedFromJobBoard(JobQueueItem job) {
+        if(job.jobType == JOB_TYPE.BUILD_CAMP) {
+            SetStartedTrueRestingState(true);
+        }
+    }
     public void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) {
         //RemoveFromAvailableJobs(job);
     }
@@ -1078,8 +1088,8 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         partyName = string.Empty;
         partyState = PARTY_STATE.None;
         //takeQuestSchedule = -1;
-        restSchedule = -1;
-        hasRested = false;
+        //restSchedule = -1;
+        //hasRested = false;
         partySettlement = null;
         partyFaction = null;
         targetRestingTavern = null;
@@ -1089,7 +1099,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         meetingPlace = null;
         //campSetter = null;
         //foodProducer = null;
-        cannotProduceFoodThisRestPeriod = false;
+        //cannotProduceFoodThisRestPeriod = false;
         hasChangedTargetDestination = false;
         canAcceptQuests = false;
         perHourElapsedInWaiting = 0;
@@ -1099,13 +1109,9 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         ForceCancelAllJobsImmediately();
         forcedCancelJobsOnTickEnded.Clear();
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
+        Messenger.RemoveListener<JobQueueItem, JobBoard>(JobSignals.JOB_REMOVED_FROM_JOB_BOARD, OnJobRemovedFromJobBoard);
         Messenger.RemoveListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
-        if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
-            Messenger.RemoveListener(Signals.HOUR_STARTED, WaitingPerHour);
-        }
-        if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
-            Messenger.RemoveListener(Signals.HOUR_STARTED, RestingPerHour);
-        }
         DatabaseManager.Instance.partyDatabase.RemoveParty(this);
     }
     #endregion
@@ -1118,11 +1124,12 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public string partyName;
     public PARTY_STATE partyState;
     //public int takeQuestSchedule;
-    public int restSchedule;
+    //public int restSchedule;
     //public int endRestSchedule;
-    public bool hasRested;
+    //public bool hasRested;
+    public bool startedTrueRestingState;
     public bool isDisbanded;
-    public bool cannotProduceFoodThisRestPeriod;
+    //public bool cannotProduceFoodThisRestPeriod;
     public bool hasChangedTargetDestination;
     public int perHourElapsedInWaiting;
     public string partySettlement;
@@ -1159,11 +1166,12 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
         partyName = data.partyName;
         partyState = data.partyState;
         //takeQuestSchedule = data.takeQuestSchedule;
-        restSchedule = data.restSchedule;
+        //restSchedule = data.restSchedule;
         //endRestSchedule = data.endRestSchedule;
-        hasRested = data.hasRested;
+        //hasRested = data.hasRested;
+        startedTrueRestingState = data.startedTrueRestingState;
         isDisbanded = data.isDisbanded;
-        cannotProduceFoodThisRestPeriod = data.cannotProduceFoodThisRestPeriod;
+        //cannotProduceFoodThisRestPeriod = data.cannotProduceFoodThisRestPeriod;
         hasChangedTargetDestination = data.hasChangedTargetDestination;
         perHourElapsedInWaiting = data.perHourElapsedInWaiting;
         partySettlement = data.partySettlement.persistentID;

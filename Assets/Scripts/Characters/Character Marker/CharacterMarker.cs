@@ -441,7 +441,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         string gainTraitSummary =
             $"{GameManager.Instance.TodayLogString()}{characterThatGainedTrait.name} has <color=green>gained</color> trait <b>{trait.name}</b>";
        
-        if (!characterThatGainedTrait.canPerform) {
+        if (!characterThatGainedTrait.limiterComponent.canPerform) {
             if (character.combatComponent.isInCombat) {
                 characterThatGainedTrait.stateComponent.ExitCurrentState();
                 gainTraitSummary += "\nGained trait hinders performance, and characters current state is combat, exiting combat state.";
@@ -469,7 +469,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
 
             //Only remove hostile in range from non lethal combat if target specifically becomes: Unconscious, Zapped or Restrained.
-            //if (!otherCharacter.canPerform) {
+            //if (!otherCharacter.limiterComponent.canPerform) {
             if (character.combatComponent.IsLethalCombatForTarget(otherCharacter) == false) {
                 if (otherCharacter.traitContainer.HasTrait("Unconscious", "Paralyzed", "Restrained")) {
                     if (character.combatComponent.hostilesInRange.Contains(otherCharacter)) {
@@ -791,7 +791,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     /// <param name="force">Should this object be forced to rotate?</param>
     public override void LookAt(Vector3 target, bool force = false) {
         if (!force) {
-            if (!character.canPerform || !character.canMove) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+            if (!character.limiterComponent.canPerform || !character.limiterComponent.canMove) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
                 return;
             }
         }
@@ -808,7 +808,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     /// <param name="force">Should this object be forced to rotate?</param>
     public override void Rotate(Quaternion target, bool force = false) {
         if (!force) {
-            if (!character.canPerform || !character.canMove) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+            if (!character.limiterComponent.canPerform || !character.limiterComponent.canMove) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
                 return;
             }
         }
@@ -922,12 +922,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
         } else {
             ResetBlood();
             if (character.numOfActionsBeingPerformedOnThis > 0) {
-                if ((character.canMove == false || (!character.canPerform && !character.canWitness)) && (!character.traitContainer.HasTrait("Hibernating", "Stoned") || (!(character is Golem) && !(character is Troll)))) {
+                if ((character.limiterComponent.canMove == false || (!character.limiterComponent.canPerform && !character.limiterComponent.canWitness)) && (!character.traitContainer.HasTrait("Hibernating", "Stoned") || (!(character is Golem) && !(character is Troll)))) {
                     PlaySleepGround();
                 } else {
                     PlayIdle();
                 }
-            } else if ((character.canMove == false || (!character.canPerform && !character.canWitness)) && (!character.traitContainer.HasTrait("Hibernating", "Stoned") || (!(character is Golem) && !(character is Troll)))) {
+            } else if ((character.limiterComponent.canMove == false || (!character.limiterComponent.canPerform && !character.limiterComponent.canWitness)) && (!character.traitContainer.HasTrait("Hibernating", "Stoned") || (!(character is Golem) && !(character is Troll)))) {
                 PlaySleepGround();
             } else if (isMoving) {
                 //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
@@ -1341,7 +1341,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Profiler.BeginSample($"{character.name} ProcessAllUnprocessedVisionPOIs");
         string log = $"{character.name} tick ended! Processing all unprocessed in visions...";
         if (unprocessedVisionPOIs.Count > 0) {
-            if (!character.isDead && character.reactionComponent.disguisedCharacter == null /* && character.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
+            if (!character.isDead && character.reactionComponent.disguisedCharacter == null /* && character.limiterComponent.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
                     if (poi.mapObjectVisual == null) {
@@ -1439,7 +1439,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //        Character character = poi as Character;
     //        if (isLethal == false && character.canBeAtttacked == false) {
     //            //if combat intent is not lethal and the target cannot be attacked, then do not allow target to be added as a hostile,
-    //            //otherwise ignore canBeAttacked value
+    //            //otherwise ignore limiterComponent.canBeAttacked value
     //            return false;
     //        }
     //        return !character.isDead && !this.character.isFollowingPlayerInstruction &&
@@ -1772,7 +1772,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     public void OnFleePathComputed(Path path) {
-        if (character == null || !character.canPerform || !character.canMove) {
+        if (character == null || !character.limiterComponent.canPerform || !character.limiterComponent.canMove) {
             return; //this is for cases that the character is no longer in a combat state, but the pathfinding thread returns a flee path
         }
         arrivalAction = OnFinishedTraversingFleePath;

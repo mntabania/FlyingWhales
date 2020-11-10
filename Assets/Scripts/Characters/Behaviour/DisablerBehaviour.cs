@@ -115,7 +115,7 @@ public class DisablerBehaviour : CharacterBehaviourComponent {
         List<Character> choices = null;
         for (int i = 0; i < disabler.behaviourComponent.invaderToFollow.marker.inVisionCharacters.Count; i++) {
             Character inVisionCharacter = disabler.behaviourComponent.invaderToFollow.marker.inVisionCharacters[i];
-            if (inVisionCharacter != disabler && inVisionCharacter.canMove) {
+            if (inVisionCharacter != disabler && inVisionCharacter.limiterComponent.canMove) {
                 if (choices == null) {
                     choices = new List<Character>();
                 }

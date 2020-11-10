@@ -767,7 +767,7 @@ public class BehaviourComponent : CharacterComponent {
     public bool AlreadyHasAbductedVictimAtNest(out Character target) {
         for (int i = 0; i < nest.charactersHere.Count; i++) {
             Character character = nest.charactersHere[i];
-            if (character.canMove == false) {
+            if (character.limiterComponent.canMove == false) {
                 target = character;
                 return true;
             }

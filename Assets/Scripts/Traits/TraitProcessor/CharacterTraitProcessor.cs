@@ -56,19 +56,28 @@ namespace Traits {
 
         private void ApplyStatusEffects(Character character, Status status) {
             if (status.hindersWitness) {
-                character.DecreaseCanWitness();
+                character.limiterComponent.DecreaseCanWitness();
             }
             if (status.hindersMovement) {
-                character.DecreaseCanMove();
+                character.limiterComponent.DecreaseCanMove();
             }
             if (status.hindersAttackTarget) {
-                character.DecreaseCanBeAttacked();
+                character.limiterComponent.DecreaseCanBeAttacked();
             }
             if (status.hindersPerform) {
-                character.DecreaseCanPerform();
+                character.limiterComponent.DecreaseCanPerform();
             }
             if (status.hindersSocials) {
-                character.DecreaseSociable();
+                character.limiterComponent.DecreaseSociable();
+            }
+            if (status.hindersFullnessRecovery) {
+                character.limiterComponent.DecreaseCanDoFullnessRecovery();
+            }
+            if (status.hindersHappinessRecovery) {
+                character.limiterComponent.DecreaseCanDoHappinessRecovery();
+            }
+            if (status.hindersTirednessRecovery) {
+                character.limiterComponent.DecreaseCanDoTirednessRecovery();
             }
         }
         private void ApplyTraitEffects(Character character, Trait trait) {
@@ -184,19 +193,28 @@ namespace Traits {
 
         private void UnapplyStatusEffects(Character character, Status status) {
             if (status.hindersWitness) {
-                character.IncreaseCanWitness();
+                character.limiterComponent.IncreaseCanWitness();
             }
             if (status.hindersMovement) {
-                character.IncreaseCanMove();
+                character.limiterComponent.IncreaseCanMove();
             }
             if (status.hindersAttackTarget) {
-                character.IncreaseCanBeAttacked();
+                character.limiterComponent.IncreaseCanBeAttacked();
             }
             if (status.hindersPerform) {
-                character.IncreaseCanPerform();
+                character.limiterComponent.IncreaseCanPerform();
             }
             if (status.hindersSocials) {
-                character.IncreaseSociable();
+                character.limiterComponent.IncreaseSociable();
+            }
+            if (status.hindersFullnessRecovery) {
+                character.limiterComponent.IncreaseCanDoFullnessRecovery();
+            }
+            if (status.hindersHappinessRecovery) {
+                character.limiterComponent.IncreaseCanDoHappinessRecovery();
+            }
+            if (status.hindersTirednessRecovery) {
+                character.limiterComponent.IncreaseCanDoTirednessRecovery();
             }
         }
         public void UnapplyTraitEffects(Character character, Trait trait) {

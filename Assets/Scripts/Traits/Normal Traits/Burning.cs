@@ -70,7 +70,7 @@ namespace Traits {
                 burningEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Burning, false);
                 if (poi is Character character) {
                     character.AdjustDoNotRecoverHP(1);
-                    if(character.canMove && character.canWitness && character.canPerform) {
+                    if(character.limiterComponent.canMove && character.limiterComponent.canWitness && character.limiterComponent.canPerform) {
                         CreateJobsOnEnterVisionBasedOnTrait(character, character);
                     }
                     CharacterBurningProcess(character);

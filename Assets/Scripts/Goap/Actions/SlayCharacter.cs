@@ -58,7 +58,7 @@ public class SlayCharacter : GoapAction {
 
     #region Preconditions
     private bool TargetCannotMove(Character actor, IPointOfInterest target, object[] otherData) {
-        return (target as Character).canMove == false;
+        return (target as Character).limiterComponent.canMove == false;
     }
     #endregion
 
@@ -66,7 +66,7 @@ public class SlayCharacter : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
-            return actor != poiTarget && !(poiTarget as Character).canPerform;
+            return actor != poiTarget && !(poiTarget as Character).limiterComponent.canPerform;
         }
         return false;
     }

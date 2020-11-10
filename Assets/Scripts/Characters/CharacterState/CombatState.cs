@@ -155,7 +155,7 @@ public class CombatState : CharacterState {
         base.AfterExitingState();
         if (!stateComponent.owner.isDead) {
             //TEMPORARILY REMOVED THIS UNTIL FURTHER NOTICE
-            if (isBeingApprehended && stateComponent.owner.traitContainer.HasTrait("Criminal") && stateComponent.owner.canPerform && stateComponent.owner.canMove) { //!stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+            if (isBeingApprehended && stateComponent.owner.traitContainer.HasTrait("Criminal") && stateComponent.owner.limiterComponent.canPerform && stateComponent.owner.limiterComponent.canMove) { //!stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
                 if (!stateComponent.owner.traitContainer.HasTrait("Berserked")) {
                     HexTile chosenHex = stateComponent.owner.currentRegion.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
                     if (chosenHex != null) {
@@ -581,7 +581,7 @@ public class CombatState : CharacterState {
                 stateComponent.owner.logComponent.PrintLogIfActive(log);
                 return;
             }
-            if (stateComponent.owner.canMove == false) {
+            if (stateComponent.owner.limiterComponent.canMove == false) {
                 log = $"{log}\nCannot move, not fleeing";
                 stateComponent.owner.logComponent.PrintLogIfActive(log);
                 return;
@@ -790,7 +790,7 @@ public class CombatState : CharacterState {
                     if (damageable == currentClosestHostile) {
                         //When the target is hit and it is still alive, add hostile
                         if ((hitCharacter.combatComponent.combatMode == COMBAT_MODE.Defend ||
-                            hitCharacter.combatComponent.combatMode == COMBAT_MODE.Aggressive) && hitCharacter.canPerform) {
+                            hitCharacter.combatComponent.combatMode == COMBAT_MODE.Aggressive) && hitCharacter.limiterComponent.canPerform) {
                             hitCharacter.combatComponent.FightOrFlight(stateComponent.owner, CombatManager.Retaliation, isLethal: stateComponent.owner.combatComponent.IsLethalCombatForTarget(hitCharacter));
                         }
                     }

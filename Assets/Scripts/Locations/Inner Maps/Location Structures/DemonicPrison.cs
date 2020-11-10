@@ -26,13 +26,13 @@ namespace Inner_Maps.Location_Structures {
         private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
             if (structure == this && character.isNormalCharacter) {
                 character.trapStructure.SetForcedStructure(this);
-                character.DecreaseCanTakeJobs();
+                character.limiterComponent.DecreaseCanTakeJobs();
             }
         }
         private void OnCharacterLeftStructure(Character character, LocationStructure structure) {
             if (structure == this && character.isNormalCharacter) {
                 character.trapStructure.SetForcedStructure(null);
-                character.IncreaseCanTakeJobs();
+                character.limiterComponent.IncreaseCanTakeJobs();
             }
         }
     }

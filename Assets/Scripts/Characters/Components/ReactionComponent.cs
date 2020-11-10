@@ -562,7 +562,7 @@ public class ReactionComponent : CharacterComponent {
             debugLog = $"{debugLog}\n-Is dazed do not react!";
             return;
         }
-        if(disguisedTarget is Dragon dragon && (!disguisedTarget.canMove || !disguisedTarget.canPerform) && actor.isNormalCharacter) {
+        if(disguisedTarget is Dragon dragon && (!disguisedTarget.limiterComponent.canMove || !disguisedTarget.limiterComponent.canPerform) && actor.isNormalCharacter) {
             debugLog = $"{debugLog}\n-Target is dragon and Actor is normal character, will wary if has not yet wary";
             if (!dragon.charactersThatAreWary.Contains(actor)) {
                 debugLog = $"{debugLog}\n-Will wary to dragon";
@@ -588,14 +588,14 @@ public class ReactionComponent : CharacterComponent {
         if (isHostile) {
             debugLog = $"{debugLog}\n-Target is hostile";
             if(actor.currentJob != null && actor.currentActionNode != null && actor.currentActionNode.avoidCombat && actor.currentActionNode.actionStatus == ACTION_STATUS.STARTED
-                && !targetCharacter.isDead && targetCharacter.canPerform) {
+                && !targetCharacter.isDead && targetCharacter.limiterComponent.canPerform) {
                 actor.currentJob.CancelJob(false);
                 actor.combatComponent.Flight(targetCharacter, CombatManager.Encountered_Hostile);
             }
             if(disguisedActor is Troll && disguisedTarget.isNormalCharacter && disguisedActor.homeStructure != null && !targetCharacter.isDead) {
                 debugLog = $"{debugLog}\n-Actor is a Troll and target is a Villager and actor has a home structure";
                 if (targetCharacter.currentStructure != disguisedActor.homeStructure) {
-                    if(!targetCharacter.canPerform || !targetCharacter.canMove) {
+                    if(!targetCharacter.limiterComponent.canPerform || !targetCharacter.limiterComponent.canMove) {
                         debugLog += "\n-Target cannot perform/move";
                         if (!actor.combatComponent.isInCombat) {
                             debugLog += "\n-Actor is not in combat, will try to bring target back to home";
@@ -771,7 +771,7 @@ public class ReactionComponent : CharacterComponent {
                             debugLog =
                                 $"{debugLog}\n-Chat did not trigger, will now trigger Flirt if Character is Sexually Compatible with Target and Character is Unfaithful, or Target is Lover or Affair, or Character has no Lover and character is sociable.";
                             if (RelationshipManager.IsSexuallyCompatibleOneSided(disguisedActor, disguisedTarget) && 
-                                disguisedActor.relationshipContainer.IsFamilyMember(disguisedTarget) == false && disguisedActor.isSociable) {
+                                disguisedActor.relationshipContainer.IsFamilyMember(disguisedTarget) == false && disguisedActor.limiterComponent.isSociable) {
                                 
                                 if (disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
                                     || disguisedActor.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER) == -1
@@ -890,7 +890,7 @@ public class ReactionComponent : CharacterComponent {
                         debugLog = $"{debugLog}\n-Character and Target are with the same faction or npcSettlement";
                         if (disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget)) {
                             debugLog = $"{debugLog}\n-Character considers Target as Enemy or Rival";
-                            if ((!targetCharacter.canMove || !targetCharacter.canPerform) && 
+                            if ((!targetCharacter.limiterComponent.canMove || !targetCharacter.limiterComponent.canPerform) && 
                                 !targetCharacter.defaultCharacterTrait.HasReactedToThis(owner) && !targetCharacter.traitContainer.HasTrait("Resting")) {
                                 debugLog = $"{debugLog}\n-Target can neither move or perform and actor has not yet reacted to target.";
                                 // if (disguisedActor.moodComponent.moodState == MOOD_STATE.Bad || disguisedActor.moodComponent.moodState == MOOD_STATE.Critical) {
@@ -1097,7 +1097,7 @@ public class ReactionComponent : CharacterComponent {
                     }
                     
                     //nocturnal
-                    if (targetCharacter.canPerform && !targetCharacter.partyComponent.isMemberThatJoinedQuest && !disguisedTarget.crimeComponent.IsCrimeAlreadyWitnessedBy(disguisedActor, CRIME_TYPE.Vampire)) {
+                    if (targetCharacter.limiterComponent.canPerform && !targetCharacter.partyComponent.isMemberThatJoinedQuest && !disguisedTarget.crimeComponent.IsCrimeAlreadyWitnessedBy(disguisedActor, CRIME_TYPE.Vampire)) {
                         debugLog = $"{debugLog}\n-Target can perform and not an active member of a party that has a quest and has not yet witnessed a vampire crime of actor";
                         TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
                         if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
@@ -1628,7 +1628,7 @@ public class ReactionComponent : CharacterComponent {
                     log.AddLogToDatabase();
                 }
             }
-            if(targetTileObject.tileObjectType.IsTileObjectAnItem() && !actor.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, targetTileObject) && targetTileObject.Advertises(INTERACTION_TYPE.PICK_UP) && actor.canMove) {
+            if(targetTileObject.tileObjectType.IsTileObjectAnItem() && !actor.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, targetTileObject) && targetTileObject.Advertises(INTERACTION_TYPE.PICK_UP) && actor.limiterComponent.canMove) {
                 //NOTE: Added checker if character can move, so that Paralyzed characters will not try to pick up items
                 actor.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, targetTileObject);
             }
@@ -1750,7 +1750,7 @@ public class ReactionComponent : CharacterComponent {
             //Minions or Summons cannot react to objects
             return;
         }
-        if(owner.isDead || !owner.canPerform) {
+        if(owner.isDead || !owner.limiterComponent.canPerform) {
             return;
         }
         string log = $"{reactor.name} is reacting to combat of {attacker.name} against {poiHit.nameWithID}";

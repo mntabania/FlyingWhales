@@ -208,7 +208,7 @@ public class CombatComponent : CharacterComponent {
         string debugLog = $"FIGHT or FLIGHT response of {owner.name} against {target.nameWithID}";
         //return new CombatReaction(COMBAT_REACTION.Flight);
 
-        if (!owner.canPerform || !owner.canMove) {
+        if (!owner.limiterComponent.canPerform || !owner.limiterComponent.canMove) {
             debugLog += "\n-Character cannot move/perform, will not fight or flight";
             owner.logComponent.PrintLogIfActive(debugLog);
             return new CombatReaction(COMBAT_REACTION.None);
@@ -581,7 +581,7 @@ public class CombatComponent : CharacterComponent {
             return;
         }
         if (hostilesInRange.Count > 0) {
-            if (owner.canMove) {
+            if (owner.limiterComponent.canMove) {
                 for (int i = 0; i < hostilesInRange.Count; i++) {
                     IPointOfInterest hostile = hostilesInRange[i];
                     if (owner.marker.IsPOIInVision(hostile)) {
@@ -818,7 +818,7 @@ public class CombatComponent : CharacterComponent {
 
     #region Avoid
     private bool AddAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true, string reason = "") {
-        if (owner.canMove) {
+        if (owner.limiterComponent.canMove) {
         //if (!poi.isDead && !poi.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
             if (!avoidInRange.Contains(poi)) {
                 avoidInRange.Add(poi);

@@ -614,7 +614,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public bool HasCanPerformOrAliveResidentInsideSettlement() {
         for (int i = 0; i < residents.Count; i++) {
             Character resident = residents[i];
-            if(resident.canPerform && !resident.isDead 
+            if(resident.limiterComponent.canPerform && !resident.isDead 
                 && !resident.isBeingSeized
                 && resident.gridTileLocation != null 
                 && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
@@ -823,7 +823,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 if(owner != null 
                    && target.gridTileLocation != null 
                    && target.gridTileLocation.IsPartOfSettlement(this)
-                   && target.canPerform && target.canMove
+                   && target.limiterComponent.canPerform && target.limiterComponent.canMove
                    //&& target.traitContainer.HasTrait("Unconscious") == false
                    && target.isDead == false
                    && target.combatComponent.combatMode != COMBAT_MODE.Passive) {

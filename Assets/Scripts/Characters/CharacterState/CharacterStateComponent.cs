@@ -32,7 +32,7 @@ public class CharacterStateComponent : CharacterComponent {
     //If the character is not in a state right now, this simply starts a new state instead of switching
     public CharacterState SwitchToState(CHARACTER_STATE state, IPointOfInterest targetPOI = null, int durationOverride = -1) {
         //Cannot switch state is has negative disabler
-        if(!owner.canPerform) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+        if(!owner.limiterComponent.canPerform) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
             return null;
         }
         //Before switching character must end current action first because once a character is in a state in cannot make plans
@@ -123,7 +123,7 @@ public class CharacterStateComponent : CharacterComponent {
     }
     private void PerTickCurrentState() {
         if(currentState != null && !currentState.isPaused && !currentState.isDone) {
-            if(!owner.canPerform) {
+            if(!owner.limiterComponent.canPerform) {
                 ExitCurrentState();
                 return;
             }

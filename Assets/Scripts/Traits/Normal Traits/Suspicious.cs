@@ -17,7 +17,7 @@ namespace Traits {
 
         #region Overrides
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-            if (characterThatWillDoJob.canPerform && characterThatWillDoJob.canMove && !characterThatWillDoJob.isDead && !characterThatWillDoJob.isAlliedWithPlayer && targetPOI is TileObject objectToBeInspected) {
+            if (characterThatWillDoJob.limiterComponent.canPerform && characterThatWillDoJob.limiterComponent.canMove && !characterThatWillDoJob.isDead && !characterThatWillDoJob.isAlliedWithPlayer && targetPOI is TileObject objectToBeInspected) {
                 if (objectToBeInspected.lastManipulatedBy is Player) {
                     //Must not destroy even if suspicious if the tile object is edible and character is starving
                     if ((!objectToBeInspected.traitContainer.HasTrait("Edible") || !characterThatWillDoJob.needsComponent.isStarving) && !(objectToBeInspected is Heirloom)) {

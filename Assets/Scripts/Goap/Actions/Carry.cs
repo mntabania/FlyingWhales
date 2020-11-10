@@ -57,7 +57,7 @@ public class Carry : GoapAction {
             //because when you try to carry a character that can move, it will knock it out first so that it cannot move, the character will end up attacking the other character which we do not want because we use this on paralyzed characters only
             //We do not unnecessary fighting because it will lead to criminality which we do not intended to do in this case
             if (target is Character targetCharacter) {
-                if (targetCharacter.canMove) {
+                if (targetCharacter.limiterComponent.canMove) {
                     costLog += $" +2000(Move Character, target can move again)";
                     actor.logComponent.AppendCostLog(costLog);
                     return 2000;
@@ -110,7 +110,7 @@ public class Carry : GoapAction {
     #region Precondition
     private bool TargetCannotMove(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
         if(target is Character) {
-            return (target as Character).canMove == false;
+            return (target as Character).limiterComponent.canMove == false;
         }
         return true;
     }
