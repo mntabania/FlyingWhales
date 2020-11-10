@@ -56,6 +56,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructGoapThreadPool();
         ConstructLogDatabaseThreadPool();
         ConstructExpectedEffectsListPool();
+        ConstructPreconditionListPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -96,7 +97,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     
     public void DestroyObject(PooledObject pooledObject) {
         PooledObject[] pooledObjects = pooledObject.GetComponents<PooledObject>();
-        Messenger.Broadcast(Signals.POOLED_OBJECT_DESTROYED, pooledObject.gameObject);
+        Messenger.Broadcast(ObjectPoolSignals.POOLED_OBJECT_DESTROYED, pooledObject.gameObject);
         pooledObject.BeforeDestroyActions();
         for (int i = 0; i < pooledObjects.Length; i++) {
             pooledObjects[i].BeforeDestroyActions();
@@ -109,7 +110,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     }
     public void DestroyObject(GameObject gameObject) {
         PooledObject[] pooledObjects = gameObject.GetComponents<PooledObject>();
-        Messenger.Broadcast(Signals.POOLED_OBJECT_DESTROYED, gameObject);
+        Messenger.Broadcast(ObjectPoolSignals.POOLED_OBJECT_DESTROYED, gameObject);
         for (int i = 0; i < pooledObjects.Length; i++) {
             pooledObjects[i].BeforeDestroyActions();
         }
@@ -392,6 +393,8 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _logDatabaseThreadPool = null;
         _expectedEffectsListPool?.Clear();
         _expectedEffectsListPool = null;
+        _preconditionsListPool?.Clear();
+        _preconditionsListPool = null;
         base.OnDestroy();
         Instance = null;
     }
