@@ -43,7 +43,7 @@ public class LimiterComponent : CharacterComponent {
         canMoveValue++;
         if (couldNotMoveBefore && canMove) {
             //character could not move before adjustment, but can move after adjustment
-            Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_MOVE_AGAIN, this);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_MOVE_AGAIN, owner);
         }
     }
     public void DecreaseCanMove() {
@@ -51,7 +51,7 @@ public class LimiterComponent : CharacterComponent {
         canMoveValue--;
         if (couldMoveBefore && canMove == false) {
             //character could move before adjustment, but cannot move after adjustment
-            Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, this);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, owner);
         }
     }
     public void IncreaseCanBeAttacked() {
@@ -65,7 +65,7 @@ public class LimiterComponent : CharacterComponent {
         canPerformValue++;
         if (couldNotPerformBefore && canPerform) {
             //character could not perform before adjustment, but can perform after adjustment
-            Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_PERFORM_AGAIN, this);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_PERFORM_AGAIN, owner);
         }
     }
     public void DecreaseCanPerform() {
@@ -73,7 +73,7 @@ public class LimiterComponent : CharacterComponent {
         canPerformValue--;
         if (couldPerformBefore && canPerform == false) {
             //character could perform before adjustment, but cannot perform after adjustment
-            Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, this);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, owner);
         }
     }
     public void IncreaseCanTakeJobs() {
