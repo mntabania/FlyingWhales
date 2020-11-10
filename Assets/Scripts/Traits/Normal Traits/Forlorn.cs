@@ -33,7 +33,7 @@ namespace Traits {
         public override bool OnCollideWith(IPointOfInterest collidedWith, IPointOfInterest owner) {
             if (collidedWith is Character) {
                 Character target = collidedWith as Character;
-                if (target.needsComponent.HasNeeds()) {
+                if (target.needsComponent.HasNeeds() && !target.isDead) {
                     this.owner.StartSpiritPossession(target);
                 }
             }

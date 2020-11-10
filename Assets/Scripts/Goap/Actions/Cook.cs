@@ -56,7 +56,10 @@ public class Cook : GoapAction {
         Character actor = node.actor;
         OtherData[] otherData = node.otherData;
         if (otherData != null && otherData.Length == 1 && otherData[0].obj is TileObject tileObject) {
-            return tileObject.structureLocation;
+            if(tileObject.gridTileLocation != null) {
+                return tileObject.structureLocation;
+            }
+            return null;
         }
         return base.GetTargetStructure(node);
     }

@@ -953,7 +953,7 @@ public class CombatComponent : CharacterComponent {
                 if(key == CombatManager.Anger) {
                     if (owner.traitContainer.HasTrait("Angry")) {
                         Trait trait = owner.traitContainer.GetTraitOrStatus<Trait>("Angry");
-                        if(trait.IsResponsibleForTrait(target)) {
+                        if(trait.IsResponsibleForTrait(target as Character)) {
                             key = "Anger_Target";
                         }
                     }
