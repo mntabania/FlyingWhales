@@ -1,16 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Plague.Fatality;
 using Plague.Transmission;
 using UnityEngine;
 
 namespace Traits {
     public class Plagued : Status {
 
+        public interface IPlaguedListener {
+            void PerTickMovement(Character character);
+        }
+        
         public IPointOfInterest owner { get; private set; } //poi that has the poison
+        private readonly List<FATALITY> _fatalities;
+        
+        // private readonly int pukeChance = 4;
+        // private readonly int septicChance = 1;
 
-        private readonly int pukeChance = 4;
-        private readonly int septicChance = 1;
-
+        private System.Action<Character> _perTickMovement;
+        private System.Action<Character> _perTickMovement;
+        private System.Action<Character> _perTickMovement;
+        
         public Plagued() {
             name = "Plagued";
             description = "Has a terrible and virulent disease.";
@@ -20,6 +30,7 @@ namespace Traits {
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER };
             mutuallyExclusive = new string[] { "Robust" };
             moodEffect = -4;
+            _fatalities = new List<FATALITY>();
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Pre_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
         }
@@ -41,29 +52,33 @@ namespace Traits {
             }
         }
         public override bool PerTickOwnerMovement() {
-            //NOTE: This is a wrong probability computation for floats - FIND A SOLUTION
-            //float pukeRoll = Random.Range(0f, 100f);
-            //float septicRoll = Random.Range(0f, 100f);
-            int pukeRoll = Random.Range(0, 100);
-            int septicRoll = Random.Range(0, 100);
-            bool hasCreatedJob = false;
-            if (pukeRoll < pukeChance) {
-                //do puke action
-                if (owner is Character character) {
-                    if(character.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)*/) {
-                        return hasCreatedJob;
-                    }
-                    return character.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, owner, "Plague");
-                }
-            } else if (septicRoll < septicChance) {
-                if (owner is Character character) {
-                    if (character.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)*/) {
-                        return hasCreatedJob;
-                    }
-                    return character.interruptComponent.TriggerInterrupt(INTERRUPT.Septic_Shock, owner);
-                }
+            if (owner is Character character) {
+                _perTickMovement?.Invoke(character);    
             }
-            return hasCreatedJob;
+            // //NOTE: This is a wrong probability computation for floats - FIND A SOLUTION
+            // //float pukeRoll = Random.Range(0f, 100f);
+            // //float septicRoll = Random.Range(0f, 100f);
+            // int pukeRoll = Random.Range(0, 100);
+            // int septicRoll = Random.Range(0, 100);
+            // bool hasCreatedJob = false;
+            // if (pukeRoll < pukeChance) {
+            //     //do puke action
+            //     if (owner is Character character) {
+            //         if(character.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)*/) {
+            //             return hasCreatedJob;
+            //         }
+            //         return character.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, owner, "Plague");
+            //     }
+            // } else if (septicRoll < septicChance) {
+            //     if (owner is Character character) {
+            //         if (character.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)*/) {
+            //             return hasCreatedJob;
+            //         }
+            //         return character.interruptComponent.TriggerInterrupt(INTERRUPT.Septic_Shock, owner);
+            //     }
+            // }
+            // return hasCreatedJob;
+            return false;
         }
         public override void ExecuteActionPreEffects(INTERACTION_TYPE action, ActualGoapNode p_actionNode) {
             base.ExecuteActionPreEffects(action, p_actionNode);
@@ -92,7 +107,25 @@ namespace Traits {
             return p_actionNode.target;
         }
         #endregion
-        
+
+        #region Fatalities
+        public void AddFatality(Fatality fatality) {
+            if (!_fatalities.Contains(fatality.fatalityType)) {
+                _fatalities.Add(fatality.fatalityType);
+                SubscribeToPerTickMovement(fatality);
+            }
+        }
+        #endregion
+
+        #region Events
+        private void SubscribeToPerTickMovement(IPlaguedListener plaguedListener) {
+            _perTickMovement += plaguedListener.PerTickMovement;
+        }
+        private void UnsubscribeToPerTickMovement(IPlaguedListener plaguedListener) {
+            _perTickMovement -= plaguedListener.PerTickMovement;
+        }
+        #endregion
+
     }
 
 }

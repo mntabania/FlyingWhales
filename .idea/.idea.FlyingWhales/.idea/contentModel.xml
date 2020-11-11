@@ -2296,6 +2296,12 @@
             <e p="SpacialObject.cs" t="Include" />
           </e>
           <e p="Plague" t="Include">
+            <e p="Fatality" t="Include">
+              <e p="Fatality.cs" t="Include" />
+              <e p="HeartAttack.cs" t="Include" />
+              <e p="Pneumonia.cs" t="Include" />
+              <e p="SepticShock.cs" t="Include" />
+            </e>
             <e p="Transmission" t="Include">
               <e p="AirborneTransmission.cs" t="Include" />
               <e p="CombatRateTransmission.cs" t="Include" />
