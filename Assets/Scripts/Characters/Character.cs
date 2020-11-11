@@ -15,7 +15,6 @@ using JetBrains.Annotations;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyQuestTarget, IGatheringTarget, ISavable {
     private int _id;
-    private string _name; //FOR DELETION: Must delete after build on Nov. 6, 2020. This will change save data that is why deletion must occur after build
     private string _firstName;
     private string _surName;
     protected bool _isDead;
@@ -90,14 +89,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Necromancer necromancerTrait { get; protected set; }
     public POI_STATE state { get; private set; }
 
-    //limiters
-    public int canWitnessValue { get; private set; }//if this is >= 0 then character can witness events
-    public int canMoveValue { get; private set; } //if this is >= 0 then character can move
-    public int canBeAttackedValue { get; private set; } //if this is >= 0 then character can be attacked
-    public int canPerformValue { get; private set; }//if this is >= 0 then character can perform
-    public int canTakeJobsValue { get; private set; }//if this is >= 0 then character can take jobs
-    public int sociableValue { get; private set; } //if this is >= 0 then character wants to socialize
-
     //misc
     public bool raisedFromDeadAsSkeleton { get; private set; }
     public Tombstone grave { get; private set; }
@@ -130,6 +121,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public TileObjectComponent tileObjectComponent { get; private set; }
     public CrimeComponent crimeComponent { get; private set; }
     public ReligionComponent religionComponent { get; private set; }
+    public LimiterComponent limiterComponent { get; private set; }
 
     #region getters / setters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
@@ -153,12 +145,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isFactionless => faction == null || FactionManager.Instance.neutralFaction == faction;
     public bool isSettlementRuler => ruledSettlement != null;
     public bool isHidden => reactionComponent.isHidden;
-    public bool canWitness => canWitnessValue >= 0;
-    public bool canMove => canMoveValue >= 0;
-    public bool canBeAttacked => canBeAttackedValue >= 0;
-    public bool canPerform => canPerformValue >= 0;
-    public bool canTakeJobs => canTakeJobsValue >= 0;
-    public bool isSociable => sociableValue >= 0;
     public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
     public bool isLycanthrope => lycanData != null;
     public bool isInWerewolfForm => isLycanthrope && lycanData.isInWerewolfForm;
@@ -334,6 +320,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         tileObjectComponent = new TileObjectComponent(); tileObjectComponent.SetOwner(this);
         crimeComponent = new CrimeComponent(); crimeComponent.SetOwner(this);
         religionComponent = new ReligionComponent(); religionComponent.SetOwner(this);
+        limiterComponent = new LimiterComponent(); limiterComponent.SetOwner(this);
 
         needsComponent.ResetSleepTicks();
     }
@@ -360,7 +347,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         persistentID = data.persistentID;
         _id = data.id;
-        _name = data.name;
         _firstName = data.firstName;
         _surName = data.surName;
         _isDead = data.isDead;
@@ -387,12 +373,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         hasRisen = data.hasRisen;
         interestedItemNames = data.interestedItemNames;
         state = data.state;
-        canWitnessValue = data.canWitnessValue;
-        canMoveValue = data.canMoveValue;
-        canBeAttackedValue = data.canBeAttackedValue;
-        canPerformValue = data.canPerformValue;
-        canTakeJobsValue = data.canTakeJobsValue;
-        sociableValue = data.sociableValue;
         raisedFromDeadAsSkeleton = data.raisedFromDeadAsSkeleton;
         previousClassName = data.previousClassName;
         isPreplaced = data.isPreplaced;
@@ -419,6 +399,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         tileObjectComponent = data.tileObjectComponent.Load(); tileObjectComponent.SetOwner(this);
         crimeComponent = data.crimeComponent.Load(); crimeComponent.SetOwner(this);
         religionComponent = data.religionComponent.Load(); religionComponent.SetOwner(this);
+        limiterComponent = data.limiterComponent.Load(); limiterComponent.SetOwner(this);
 
         if (data.hasMinion) {
             _minion = data.minion.Load(this);
@@ -1295,7 +1276,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    //If a party has no path to do action and the job that has no path is a party job, leave party
         //    partyComponent.currentParty.RemoveMember(this);
         //}
-        if(gridTileLocation != null && canMove) {
+        if(gridTileLocation != null && limiterComponent.canMove) {
             //If this character cannot do job or action because he has no path but the reason why he has no path is beacuse he has no grid location, do not trigger fall back jobs
             if (job.jobType == JOB_TYPE.RETURN_PORTAL || job.jobType == JOB_TYPE.RETURN_TERRITORY) {
                 //interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
@@ -1940,7 +1921,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private bool CanCharacterReact(IPointOfInterest targetPOI = null) {
-        if (!canWitness || !canPerform) {
+        if (!limiterComponent.canWitness || !limiterComponent.canPerform) {
             return false; //this character cannot witness
         }
         if (interruptComponent.isInterrupted) {
@@ -1996,7 +1977,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public virtual bool IsValidCombatTargetFor(IPointOfInterest source) {
-        return isDead == false /*&& (canPerform || canMove)*/ && marker != null 
+        return isDead == false /*&& (limiterComponent.canPerform || canMove)*/ && marker != null 
                 && gridTileLocation != null && source.gridTileLocation != null && (source is Character character && character.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation)); //traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false
     }
     public void SetHasUnresolvedCrime(bool state) {
@@ -2044,9 +2025,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    public int GetCanPerformValue() {
-        return canPerformValue;
-    }
     public void SetHasRisen(bool state) {
         hasRisen = state;
     }
@@ -2068,7 +2046,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #region History/Logs
     public virtual void OnActionPerformed(ActualGoapNode node) {
         ///Moved all needed checking <see cref="CharacterManager.OnActionStateSet(GoapAction, GoapActionState)"/>
-        if (isDead || !canWitness) {
+        if (isDead || !limiterComponent.canWitness) {
             return;
         }
         //if (node.action.goapType == INTERACTION_TYPE.WATCH) {
@@ -2100,7 +2078,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //ThisCharacterWatchEvent(null, action, state);
     }
     public virtual void OnInterruptStarted(InterruptHolder interruptHolder) {
-        if (isDead || !canWitness) {
+        if (isDead || !limiterComponent.canWitness) {
             return;
         }
         if (interruptHolder.actor == this) {
@@ -2153,7 +2131,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //This is a temporary fix for berserk behaviour where in the berserked character can add hostiles even when cannot witness
         //I did this because the cannot witness part affects all traits that has cannot witness, like Frozen
         //Ex: Even when Frozen, the character can add hostiles/combat job which is not suppose to happen
-        // if (canPerform && traitContainer.HasTrait("Berserked")) {
+        // if (limiterComponent.canPerform && traitContainer.HasTrait("Berserked")) {
         //     Berserked berserked = traitContainer.GetNormalTrait<Berserked>("Berserked");
         //     berserked.BerserkCombat(target, this);
         // }
@@ -2161,7 +2139,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    traitContainer.statuses[i].OnSeePOIEvenCannotWitness(target, this);
         //}
 
-        if (!canWitness) {
+        if (!limiterComponent.canWitness) {
             return;
         }
         //if (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.STARTED && currentActionNode.isStealth) {
@@ -2238,7 +2216,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void ThisCharacterSawAction(ActualGoapNode action) {
-        if (!canWitness) {
+        if (!limiterComponent.canWitness) {
             return;
         }
         reactionComponent.ReactTo(action, REACTION_STATUS.WITNESSED);
@@ -2284,7 +2262,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    return memories;
     //}
     //public void ThisCharacterWitnessedEvent(ActualGoapNode witnessedEvent) {
-    //    //if (isDead || !canWitness) {
+    //    //if (isDead || !limiterComponent.canWitness) {
     //    //    return;
     //    //}
     //    if (faction != witnessedEvent.actor.faction && //only check faction relationship if involved characters are of different factions
@@ -2975,7 +2953,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //If there is no npcSettlement, it means that there is no inner map, so character must not do goap actions, jobs, and plans
         //characters that cannot witness, cannot plan actions.
         //minion == null &&
-        return !isDead && numOfActionsBeingPerformedOnThis <= 0 && canPerform
+        return !isDead && numOfActionsBeingPerformedOnThis <= 0 && limiterComponent.canPerform
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE  
             && (jobQueue.jobsInQueue.Count <= 0 || behaviourComponent.GetHighestBehaviourPriority() > jobQueue.jobsInQueue[0].priority)
             && (carryComponent.masterCharacter.movementComponent.isTravellingInWorld == false)
@@ -2990,7 +2968,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             invalidReason = $"Actions being performed on this is {numOfActionsBeingPerformedOnThis.ToString()}.";
             return false;
         }
-        if (!canPerform) {
+        if (!limiterComponent.canPerform) {
             invalidReason = "Character cannot perform";
             return false;
         }
@@ -3049,7 +3027,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public bool CanPerformEndTickJobs() {
-        bool canPerformEndTickJobs = !isDead && numOfActionsBeingPerformedOnThis <= 0 /*&& canWitness*/
+        bool canPerformEndTickJobs = !isDead && numOfActionsBeingPerformedOnThis <= 0 /*&& limiterComponent.canWitness*/
          && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0 
          && carryComponent.masterCharacter.movementComponent.isTravellingInWorld == false && (marker && !marker.hasFleePath) 
          && stateComponent.currentState == null && carryComponent.IsNotBeingCarried() && !interruptComponent.isInterrupted; //minion == null && doNotDisturb <= 0 
@@ -4440,7 +4418,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             SetCurrentActionNode(null, null, null);
         }
 
-        if (isDead || !canPerform) {
+        if (isDead || !limiterComponent.canPerform) {
             log += $"\n{name} is dead or cannot perform! Do not do GoapActionResult, automatically CancelJob";
             logComponent.PrintLogIfActive(log);
             job.CancelJob(false);
@@ -4811,7 +4789,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     private void HeardAScream(Character characterThatScreamed) {
-        if(!canPerform || !canWitness) {
+        if(!limiterComponent.canPerform || !limiterComponent.canWitness) {
             //Do not react to scream if character has disabler trait
             return;
         }
@@ -5313,63 +5291,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //public static implicit operator Relatable(Character d) => d.currentAlterEgo;
     #endregion
 
-    #region Limiters
-    public void IncreaseCanWitness() {
-        canWitnessValue++;
-    }
-    public void DecreaseCanWitness() {
-        canWitnessValue--;
-    }
-    public void IncreaseCanMove() {
-        bool couldNotMoveBefore = canMove == false;
-        canMoveValue++;
-        if (couldNotMoveBefore && canMove) {
-            //character could not move before adjustment, but can move after adjustment
-            Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_MOVE_AGAIN, this);
-        }
-    }
-    public void DecreaseCanMove() {
-        bool couldMoveBefore = canMove;
-        canMoveValue--;
-        if (couldMoveBefore && canMove == false) {
-            //character could move before adjustment, but cannot move after adjustment
-            Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_NO_LONGER_MOVE, this);
-        }
-    }
-    public void IncreaseCanBeAttacked() {
-        canBeAttackedValue++;
-    }
-    public void DecreaseCanBeAttacked() {
-        canBeAttackedValue--;
-    }
-    public void IncreaseCanPerform() {
-        bool couldNotPerformBefore = canPerform == false;
-        canPerformValue++;
-        if (couldNotPerformBefore && canPerform) {
-            //character could not perform before adjustment, but can perform after adjustment
-            Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_PERFORM_AGAIN, this);
-        }
-    }
-    public void DecreaseCanPerform() {
-        bool couldPerformBefore = canPerform;
-        canPerformValue--;
-        if (couldPerformBefore && canPerform == false) {
-            //character could perform before adjustment, but cannot perform after adjustment
-            Messenger.Broadcast(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, this);
-        }
-    }
-    public void IncreaseCanTakeJobs() {
-        canTakeJobsValue++;
-    }
-    public void DecreaseCanTakeJobs() {
-        canTakeJobsValue--;
-    }
-    public void IncreaseSociable() {
-        sociableValue++;
-    }
-    public void DecreaseSociable() {
-        sociableValue--;
-    }
+    #region Player Alliance
     /// <summary>
     /// Set whether this character is allied with the player outside the faction system.
     /// i.e. when we want that character to be considered as an ally to the player, but don't want to
@@ -6233,12 +6155,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //Example: perform value in saved data = 3, when a trait is loaded and it increases perform value the value will become 4
         //Now it is already inconsistent since the saved value is not the same as the loaded value now
         //So we must bring back the value to the saved one so that the character state when loaded is the same
-        canWitnessValue = data.canWitnessValue;
-        canMoveValue = data.canMoveValue;
-        canBeAttackedValue = data.canBeAttackedValue;
-        canPerformValue = data.canPerformValue;
-        canTakeJobsValue = data.canTakeJobsValue;
-        sociableValue = data.sociableValue;
+        limiterComponent.ApplyDataFromSave(data.limiterComponent);
         moodComponent.SetSaveDataMoodComponent(data.moodComponent);
 
         if (traitContainer.HasTrait("Character Trait")) {

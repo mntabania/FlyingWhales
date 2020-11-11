@@ -33,7 +33,7 @@ public class Sing : GoapAction {
             costLog += " +2000(Times Played > 5)";
         }
 
-        if (actor.traitContainer.HasTrait("Music Hater") || !actor.isSociable || actor.marker.HasEnemyOrRivalInVision()) {
+        if (actor.traitContainer.HasTrait("Music Hater") || !actor.limiterComponent.isSociable || actor.marker.HasEnemyOrRivalInVision()) {
             cost += 2000;
             costLog += " +2000 (Actor is Music Hater or is Unsociable or has Enemy/Rival in vision)";
         }

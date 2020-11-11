@@ -173,7 +173,7 @@ public class SnatchData : PlayerAction {
             return false;
         }
         if (character.traitContainer.HasTrait("Cultist", "Snatcher")) {
-            return !character.behaviourComponent.isCurrentlySnatching && character.canPerform && !character.partyComponent.isActiveMember;
+            return !character.behaviourComponent.isCurrentlySnatching && character.limiterComponent.canPerform && !character.partyComponent.isActiveMember;
         } 
         return false;
     }

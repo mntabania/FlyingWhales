@@ -159,7 +159,7 @@ namespace Traits {
         #endregion
         
         private void PerHourEffect() {
-            if (owner.canPerform && owner.canMove && !owner.isDead && owner != null 
+            if (owner.limiterComponent.canPerform && owner.limiterComponent.canMove && !owner.isDead && owner != null 
                 && owner.marker != null && owner.marker.inVisionTileObjects.Count > 0
                 && !owner.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.DESTROY) && Random.Range(0, 100) < 8) {
                 List<TileObject> choices = owner.marker.inVisionTileObjects

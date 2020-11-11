@@ -16,7 +16,7 @@
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {
                 _owner = character;
-                if (character.canMove && character.canPerform && character.isDead == false 
+                if (character.limiterComponent.canMove && character.limiterComponent.canPerform && character.isDead == false 
                     && character.stateComponent.currentState is CombatState == false) {
                     //Automatically add invisible trait if character meets criteria
                     character.traitContainer.AddTrait(character, "Invisible");

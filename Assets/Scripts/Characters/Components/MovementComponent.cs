@@ -187,7 +187,7 @@ public class MovementComponent : CharacterComponent {
         return false;
     }
     private void TravelToAnotherRegion(Region targetRegion, Action doneAction = null) {
-        if(!owner.canPerform || !owner.canMove || owner.isDead) {
+        if(!owner.limiterComponent.canPerform || !owner.limiterComponent.canMove || owner.isDead) {
             return;
         }
         StartTravellingToRegion(targetRegion, doneAction);

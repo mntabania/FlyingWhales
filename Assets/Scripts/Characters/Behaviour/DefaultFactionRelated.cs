@@ -52,7 +52,7 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
             }
             if (character.traitContainer.HasTrait("Betrayed") && character.faction.leader != null) {
                 Betrayed betrayed = character.traitContainer.GetTraitOrStatus<Betrayed>("Betrayed");
-                if(betrayed.responsibleCharacter == character.faction.leader) {
+                if(betrayed.IsResponsibleForTrait(character.faction.leader as Character)) {
                     leaveFactionChance += 30;
                 }
             }

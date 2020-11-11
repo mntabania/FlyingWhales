@@ -10,7 +10,6 @@ using Traits;
 public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public string persistentID { get; set; }
     public int id;
-    public string name;
     public string firstName;
     public string surName;
     public bool isDead;
@@ -54,12 +53,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public List<string> interestedItemNames;
 
     public POI_STATE state;
-    public int canWitnessValue;
-    public int canMoveValue;
-    public int canBeAttackedValue;
-    public int canPerformValue;
-    public int canTakeJobsValue;
-    public int sociableValue;
 
     public bool raisedFromDeadAsSkeleton;
 
@@ -113,6 +106,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataTileObjectComponent tileObjectComponent;
     public SaveDataCrimeComponent crimeComponent;
     public SaveDataReligionComponent religionComponent;
+    public SaveDataLimiterComponent limiterComponent;
 
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
@@ -121,7 +115,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public override void Save(Character data) {
         persistentID = data.persistentID;
         id = data.id;
-        name = data.name;
         firstName = data.firstName;
         surName = data.surName;
         isDead = data.isDead;
@@ -151,12 +144,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         hasRisen = data.hasRisen;
         interestedItemNames = data.interestedItemNames;
         state = data.state;
-        canWitnessValue = data.canWitnessValue;
-        canMoveValue = data.canMoveValue;
-        canBeAttackedValue = data.canBeAttackedValue;
-        canPerformValue = data.canPerformValue;
-        canTakeJobsValue = data.canTakeJobsValue;
-        sociableValue = data.sociableValue;
         raisedFromDeadAsSkeleton = data.raisedFromDeadAsSkeleton;
         previousClassName = data.previousClassName;
         isPreplaced = data.isPreplaced;
@@ -193,9 +180,10 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         gatheringComponent = new SaveDataGatheringComponent(); gatheringComponent.Save(data.gatheringComponent);
         tileObjectComponent = new SaveDataTileObjectComponent(); tileObjectComponent.Save(data.tileObjectComponent);
         crimeComponent = new SaveDataCrimeComponent(); crimeComponent.Save(data.crimeComponent);
-        religionComponent = new SaveDataReligionComponent(); religionComponent.Save(data.religionComponent);            
+        religionComponent = new SaveDataReligionComponent(); religionComponent.Save(data.religionComponent);
+        limiterComponent = new SaveDataLimiterComponent(); limiterComponent.Save(data.limiterComponent);
 
-        if(data.currentJob != null && data.currentJob.jobType != JOB_TYPE.NONE) {
+        if (data.currentJob != null && data.currentJob.jobType != JOB_TYPE.NONE) {
             currentJob = data.currentJob.persistentID;
             SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.currentJob);
         }

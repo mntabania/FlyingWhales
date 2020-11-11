@@ -229,7 +229,7 @@ public class TakeResource : GoapAction {
                     TileObjectData data = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT);
                     TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);
                     takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);
-                } else if (job.targetPOI is TileObject tileObject && !job.jobType.IsFullnessRecovery()) {
+                } else if (job.targetPOI is TileObject tileObject && !job.jobType.IsFullnessRecoveryTypeJob()) {
                     TileObjectData data = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
                     if (data != null && data.craftRecipes != null) {
                         TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);

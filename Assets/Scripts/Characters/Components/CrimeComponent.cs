@@ -288,7 +288,7 @@ public class CrimeComponent : CharacterComponent {
             for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
                 Character inVision = owner.marker.inVisionCharacters[i];
                 if (inVision != owner && except != inVision) {
-                    if (!owner.IsHostileWith(inVision) && inVision.canWitness) {
+                    if (!owner.IsHostileWith(inVision) && inVision.limiterComponent.canWitness) {
                         CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(inVision, owner, owner, crimeType);
                         if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
                             return true;

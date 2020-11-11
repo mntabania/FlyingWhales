@@ -414,6 +414,33 @@ public static class Extensions {
                 return false;
         }
     }
+    public static bool IsFullnessRecoveryTypeJob(this JOB_TYPE type) {
+        switch (type) {
+            case JOB_TYPE.FULLNESS_RECOVERY_URGENT:
+            case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
+            case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool IsTirednessRecoveryTypeJob(this JOB_TYPE type) {
+        switch (type) {
+            case JOB_TYPE.ENERGY_RECOVERY_URGENT:
+            case JOB_TYPE.ENERGY_RECOVERY_NORMAL:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool IsHappinessRecoveryTypeJob(this JOB_TYPE type) {
+        switch (type) {
+            case JOB_TYPE.HAPPINESS_RECOVERY:
+                return true;
+            default:
+                return false;
+        }
+    }
     public static int GetJobTypePriority(this JOB_TYPE jobType) {
         int priority = 0;
         switch (jobType) {
@@ -828,16 +855,6 @@ public static class Extensions {
                 return false;
             default:
                 return true;
-        }
-    }
-    public static bool IsFullnessRecovery(this JOB_TYPE type) {
-        switch (type) {
-            case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
-            case JOB_TYPE.FULLNESS_RECOVERY_URGENT:
-            case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
-                return true;
-            default:
-                return false;
         }
     }
     #endregion

@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8028317
+    totalSpriteSurfaceArea: 8029761
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -342,6 +342,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 7207985ebad35f742a421c612fc154e0, type: 3}
   - {fileID: 21300000, guid: 43b7576e594784744bf34dbe39c5e101, type: 3}
   - {fileID: 21300000, guid: 6966896ef38dc67438774d813e16a8be, type: 3}
+  - {fileID: 21300000, guid: 221aed6e34f8dd14badfba2f2d317c18, type: 3}
   - {fileID: 21300000, guid: b0e98f6e5eb8c424ab82432343bba225, type: 3}
   - {fileID: 21300000, guid: 1c0d578e62658cb41889305f732afc6e, type: 3}
   - {fileID: 21300000, guid: b7df3a8ed9e668f4b893d56e8b8f19da, type: 3}
@@ -669,6 +670,7 @@ SpriteAtlas:
   - loadout_button_hover
   - tab_active
   - spell_list_button_default
+  - icon_plague
   - 4x_button_hover
   - minion_icon_spy
   - notification_container

@@ -556,7 +556,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (!owner.isNormalCharacter) {
             return;
         }
-		if ((owner.canMove == false && 
+		if ((owner.limiterComponent.canMove == false && 
 		     owner.traitContainer.HasTrait("Exhausted", "Starving", "Sulking"))
             || (owner.traitContainer.HasTrait("Restrained") && owner.currentStructure.structureType != STRUCTURE_TYPE.PRISON)) {
 			hasStartedScreamCheck = true;
@@ -578,7 +578,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		// - character is no longer exhausted, starving or sulking and
 		// - character is no longer restrained or
 		// - character is still restrained, but is at prison.
-		if (((owner.canMove || isNotNeedy) && (isNotRestrained || isRestrainedButInPrison)) 
+		if (((owner.limiterComponent.canMove || isNotNeedy) && (isNotRestrained || isRestrainedButInPrison)) 
 		    || owner.gridTileLocation == null || owner.isDead) {
 			hasStartedScreamCheck = false;
 			Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyScreamCheck);
@@ -586,7 +586,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void HourlyScreamCheck() {
-		if (owner.canPerform == true) {
+		if (owner.limiterComponent.canPerform == true) {
 			return;
 		}
         if (owner.needsComponent.isExhausted) {
@@ -595,7 +595,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
 		string summary = $"{owner.name} is checking for scream.";
 		int chance = 50;
-		if (owner.canMove == false && 
+		if (owner.limiterComponent.canMove == false && 
 		    owner.traitContainer.HasTrait("Starving", "Sulking")) { //"Exhausted", 
             chance = 75;
 		}
@@ -613,7 +613,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	// private void CheckIfStopInterruptFinished(INTERRUPT interrupt, Character character) {
 	// 	if (character == _owner && interrupt == INTERRUPT.Stopped) {
 	// 		Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfStopInterruptFinished);
-	// 		if (_owner.canPerform) {
+	// 		if (_owner.limiterComponent.canPerform) {
 	// 			TriggerFleeHome();	
 	// 		}
 	// 	}

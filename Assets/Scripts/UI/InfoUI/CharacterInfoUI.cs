@@ -521,11 +521,11 @@ public class CharacterInfoUI : InfoUIBase {
         summary = $"{summary} {"Do Not Get Tired: " + activeCharacter.needsComponent.doNotGetTired.ToString()}";
         summary = $"{summary} {"Do Not Get Bored: " + activeCharacter.needsComponent.doNotGetBored.ToString()}";
         summary = $"{summary} {"Do Not Recover HP: " + activeCharacter.doNotRecoverHP.ToString()}";
-        summary = $"{summary} {"Can Move: " + activeCharacter.canMove.ToString()}";
-        summary = $"{summary} {"Can Witness: " + activeCharacter.canWitness.ToString()}";
-        summary = $"{summary} {"Can Be Attacked: " + activeCharacter.canBeAttacked.ToString()}";
-        summary = $"{summary} {"Can Perform: " + activeCharacter.canPerform.ToString()}";
-        summary = $"{summary} {"Is Sociable: " + activeCharacter.isSociable.ToString()}";
+        summary = $"{summary} {"Can Move: " + activeCharacter.limiterComponent.canMove.ToString()}";
+        summary = $"{summary} {"Can Witness: " + activeCharacter.limiterComponent.canWitness.ToString()}";
+        summary = $"{summary} {"Can Be Attacked: " + activeCharacter.limiterComponent.canBeAttacked.ToString()}";
+        summary = $"{summary} {"Can Perform: " + activeCharacter.limiterComponent.canPerform.ToString()}";
+        summary = $"{summary} {"Is Sociable: " + activeCharacter.limiterComponent.isSociable.ToString()}";
         summary = $"{summary} {"Is Running: " + activeCharacter.movementComponent.isRunning.ToString()}";
         summary = $"{summary} {"POI State: " + activeCharacter.state.ToString()}";
         summary = $"{summary} {"Personal Religion: " + activeCharacter.religionComponent.religion.ToString()}";

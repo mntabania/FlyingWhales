@@ -18,7 +18,7 @@ namespace Traits {
         #region Overrides
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Character targetCharacter) {
-                if(targetCharacter.canPerform) {
+                if(targetCharacter.limiterComponent.canPerform) {
                     int chance = UnityEngine.Random.Range(0, 100);
                     if (chance < 4) {
                         if (targetCharacter.relationshipContainer.HasEnemyCharacter() && !characterThatWillDoJob.relationshipContainer.IsEnemiesWith(targetCharacter)) {

@@ -10,6 +10,9 @@ namespace Traits {
         public bool hindersAttackTarget; //if a character has this trait, and this is true, then he/she cannot be attacked
         public bool hindersPerform; //if a character has this trait, and this is true, then he/she cannot perform
         public bool hindersSocials; //if a character has this trait, and this is true, then he/she does not want to talk
+        public bool hindersFullnessRecovery; //if a character has this trait, and this is true, then he/she cannot do fullness recovery
+        public bool hindersHappinessRecovery; //if a character has this trait, and this is true, then he/she cannot do happiness recovery
+        public bool hindersTirednessRecovery; //if a character has this trait, and this is true, then he/she cannot do tiredness recovery
         public bool isStacking;
         public int stackLimit;
         public float stackModifier;

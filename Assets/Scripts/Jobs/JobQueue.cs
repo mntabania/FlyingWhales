@@ -24,11 +24,11 @@ public class JobQueue {
     #endregion
     
     public bool AddJobInQueue(JobQueueItem job) { //, bool processLogicForPersonalJob = true
-        if (!owner.canPerform) {
+        if (!owner.limiterComponent.canPerform) {
             //We are only checking the jobs that has an assigned plan because we already have a handle for jobs that goes through multithread in ReceivePlanFromGoapThread
             //Adding job in queue with assigned plan means that the job has fixes steps and will not go to the multithread anymore to get a plan
             if(job is GoapPlanJob goapPlanJob && goapPlanJob.assignedPlan != null) {
-                int canPerformValue = owner.GetCanPerformValue();
+                int canPerformValue = owner.limiterComponent.canPerformValue;
                 if (canPerformValue == -1 && owner.traitContainer.HasTrait("Paralyzed")) {
                     //If the owner is paralyzed and the only reason he cannot perform is because of that paralyzed, the plan must not be scrapped
                 } else {
@@ -37,7 +37,7 @@ public class JobQueue {
                 }
             }
         }
-        if (job.jobType.IsFullnessRecovery() && owner.traitContainer.HasTrait("Fasting")) {
+        if (job.jobType.IsFullnessRecoveryTypeJob() && owner.traitContainer.HasTrait("Fasting")) {
             //If character is fasting, prevent any fullness recovery job from being added.
             return false;
         }

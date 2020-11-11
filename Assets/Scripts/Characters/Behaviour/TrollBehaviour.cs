@@ -40,13 +40,13 @@ public class TrollBehaviour : CharacterBehaviourComponent {
                     for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
                         Character potentialCharacter = character.marker.inVisionCharacters[i];
                         if (potentialCharacter.isNormalCharacter) {
-                            if (!potentialCharacter.canPerform || !potentialCharacter.canMove) {
+                            if (!potentialCharacter.limiterComponent.canPerform || !potentialCharacter.limiterComponent.canMove) {
                                 if (characterThatCanBeKidnapped == null) {
                                     characterThatCanBeKidnapped = potentialCharacter;
                                 }
                                 if (potentialCharacter.traitContainer.HasTrait("Unconscious")) {
                                     Unconscious unconsciousTrait = potentialCharacter.traitContainer.GetTraitOrStatus<Unconscious>("Unconscious");
-                                    if (unconsciousTrait.responsibleCharacter == character) {
+                                    if (unconsciousTrait.IsResponsibleForTrait(character)) {
                                         chosenCharacter = potentialCharacter;
                                         break;
                                     }
@@ -130,9 +130,9 @@ public class TrollBehaviour : CharacterBehaviourComponent {
             if (roll < 50) {
                 Character chosenCharacter = null;
                 if (character.homeSettlement != null) {
-                    chosenCharacter = character.homeSettlement.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && x.isBeingCarriedBy == null && !x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
+                    chosenCharacter = character.homeSettlement.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && !x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
                 } else if (character.homeStructure != null) {
-                    chosenCharacter = character.homeStructure.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && x.isBeingCarriedBy == null && !x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
+                    chosenCharacter = character.homeStructure.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && !x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
                 }
                 if (chosenCharacter != null) {
                     log += $"\n-Chosen character: " + chosenCharacter.name;

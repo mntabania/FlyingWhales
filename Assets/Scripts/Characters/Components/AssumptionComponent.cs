@@ -21,7 +21,7 @@ public class AssumptionComponent : CharacterComponent {
             //Example: If A already assumed that B murdered C, A will never assume that B murdered C again
             return;
         }
-        if (!owner.canWitness) {
+        if (!owner.limiterComponent.canWitness) {
             //Cannot assume cannot witness characters
             return;
         }
