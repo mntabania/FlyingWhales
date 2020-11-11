@@ -139,6 +139,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.CAVE:
             case STRUCTURE_TYPE.DEFILER:
             case STRUCTURE_TYPE.RUINED_ZOO:
+            case STRUCTURE_TYPE.BIOLAB:
                 return true;
             default:
                 return false;
