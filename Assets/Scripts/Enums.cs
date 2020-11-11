@@ -227,6 +227,7 @@ public enum LANDMARK_TYPE {
     ANCIENT_GRAVEYARD = 63,
     TEMPLE = 64,
     RUINED_ZOO = 65,
+    BIOLAB = 66,
 }
 public enum CHARACTER_ROLE {
     NONE,
@@ -578,6 +579,11 @@ public enum INTERRUPT {
     Shed_Pelt,
     Become_Cult_Leader,
     Evaluate_Cultist_Affiliation,
+    Heart_Attack,
+    Stroke,
+    Total_Organ_Failure,
+    Sneeze,
+    Pneumonia,
 }
 
 public enum TRAIT_TYPE {
@@ -669,6 +675,7 @@ public enum STRUCTURE_TYPE {
     RUINED_ZOO = 44,
     VAMPIRE_CASTLE = 45,
     CULT_TEMPLE = 46,
+    BIOLAB = 47,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
@@ -960,7 +967,7 @@ public enum SPELL_TYPE { NONE = 0, LYCANTHROPY = 1, KLEPTOMANIA = 2, VAMPIRISM =
     REVENANT = 147,
     SNATCH = 148,
     SACRIFICE = 149, REPAIR = 150, EVANGELIZE = 151, SPREAD_RUMOR = 152,
-    FOUND_CULT = 153, BONE_GOLEM = 154,
+    FOUND_CULT = 153, BONE_GOLEM = 154, BIOLAB = 155,
 }
 //public enum INTERVENTION_ABILITY_TYPE { NONE, AFFLICTION, SPELL, }
 public enum SPELL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON }
