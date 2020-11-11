@@ -579,6 +579,11 @@ public enum INTERRUPT {
     Shed_Pelt,
     Become_Cult_Leader,
     Evaluate_Cultist_Affiliation,
+    Heart_Attack,
+    Stroke,
+    Total_Organ_Failure,
+    Sneeze,
+    Pneumonia,
 }
 
 public enum TRAIT_TYPE {
