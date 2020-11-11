@@ -8,9 +8,6 @@ public class StartupManager : MonoBehaviour {
 	public MapGenerator mapGenerator;
     public Initializer initializer;
 
-    void Awake() {
-        Messenger.Cleanup();
-    }
     void Start(){
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
         Messenger.AddListener(UISignals.START_GAME_AFTER_LOADOUT_SELECT, OnLoadoutSelected);

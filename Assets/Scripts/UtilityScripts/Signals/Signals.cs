@@ -10,7 +10,8 @@ public static class Signals {
     public static string DAY_STARTED = "OnDayStart";
     public static string MONTH_START = "OnMonthStart";
     public static string GAME_LOADED = "OnGameLoaded";
-    
+    public static string CLEAN_UP_MEMORY = "OnCleanUpMemory";
+
     public static readonly Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {
         { HOUR_STARTED, new[] {
             new SignalMethod() { methodName = "HourlyJobActions", objectType = typeof(NPCSettlement) },

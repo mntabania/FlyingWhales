@@ -671,7 +671,7 @@ public class ReactionComponent : CharacterComponent {
                         debugLog = $"{debugLog}\n-{actor.jobQueue.jobsInQueue[0].jobType}";
                     }
                     
-                    if (targetCharacter.defaultCharacterTrait.hasBeenAbductedByWildMonster && disguisedActor.faction.factionType.type == FACTION_TYPE.Wild_Monsters) {
+                    if (targetCharacter.defaultCharacterTrait.hasBeenAbductedByWildMonster && disguisedActor.faction?.factionType.type == FACTION_TYPE.Wild_Monsters) {
                         debugLog = $"{debugLog}\nActor is a wild monster and target has been abducted by a wild monster, did not trigger Fight or Flight response.";
                         return;
                     }

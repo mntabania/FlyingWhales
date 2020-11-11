@@ -118,7 +118,7 @@ public class CharacterClassManager : BaseMonoBehaviour {
     //}
     //private string DefaultClassIdlePlan(Character character) {
     //    string log = "Default Class Idle Plan for " + character.name;
-    //    if (character.faction.id != FactionManager.Instance.neutralFaction.id) {
+    //    if (character.faction.id.factionType.type != FACTION_TYPE.Wild_Monsters.id) {
     //        log += "\n-" + character.name + " has a faction";
     //        if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME && character.currentStructure == character.homeStructure) {
     //            log += "\n-" + character.name + " is in home structure and just returned home";

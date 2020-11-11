@@ -105,7 +105,7 @@ public class CombatState : CharacterState {
         //stateComponent.character.StopCurrentActionNode(false);
         stateComponent.owner.UncarryPOI(); //Drop characters when entering combat
         // if(stateComponent.character is SeducerSummon) { //If succubus/incubus enters a combat, automatically change its faction to the player faction if faction is still disguised
-        //     if(stateComponent.character.faction == FactionManager.Instance.disguisedFaction) {
+        //     if(stateComponent.character.faction?.factionType.type == FACTION_TYPE.Disguised) {
         //         stateComponent.character.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
         //     }
         // }

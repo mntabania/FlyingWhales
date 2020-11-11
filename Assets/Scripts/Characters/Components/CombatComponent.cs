@@ -1009,9 +1009,9 @@ public class CombatComponent : CharacterComponent {
             }
         }
         if(owner.faction != null) {
-            if(owner.faction == FactionManager.Instance.neutralFaction) {
+            if(owner.faction.factionType.type == FACTION_TYPE.Wild_Monsters) {
                 return CombatManager.Feral_Monster;
-            } else if (owner.faction == FactionManager.Instance.undeadFaction) {
+            } else if (owner.faction.factionType.type == FACTION_TYPE.Undead) {
                 return CombatManager.Hostile_Undead;
             }
         }
@@ -1032,15 +1032,15 @@ public class CombatComponent : CharacterComponent {
                 }
             }
             if(targetCharacter.faction != null) {
-                if (targetCharacter.faction == FactionManager.Instance.vagrantFaction) {
+                if (targetCharacter.faction.factionType.type == FACTION_TYPE.Vagrants) {
                     return CombatManager.Fighting_Vagrant;
-                } else if (targetCharacter.faction == FactionManager.Instance.neutralFaction) {
+                } else if (targetCharacter.faction.factionType.type == FACTION_TYPE.Wild_Monsters) {
                     if (combatData.isLethal) {
                         return CombatManager.Slaying_Monster;
                     } else {
                         return CombatManager.Incapacitating_Monster;
                     }
-                } else if (targetCharacter.faction == FactionManager.Instance.undeadFaction) {
+                } else if (targetCharacter.faction.factionType.type == FACTION_TYPE.Undead) {
                     if (combatData.isLethal) {
                         return CombatManager.Slaying_Undead;
                     } else {
