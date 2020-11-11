@@ -16,6 +16,7 @@ public class PlagueDisease : ISingletonPattern {
     public static PlagueDisease Instance {
         get {
             if(_Instance == null) { _Instance = new PlagueDisease(); }
+
             return _Instance;
         }
     }
