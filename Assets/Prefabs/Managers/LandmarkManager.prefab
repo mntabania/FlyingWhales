@@ -856,6 +856,27 @@ MonoBehaviour:
     monsterGenerationChance: 0
     monsterGenerationSetting: {fileID: 0}
     itemGenerationSetting: {fileID: 0}
+  - landmarkTypeString: Biolab
+    landmarkType: 66
+    buildDuration: 0
+    description: A Biolab
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 382cdf824169deb4b93c92af23186e93,
+      type: 3}
+    biomeTileSprites:
+      m_keys: 
+      m_values: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 0919fe3d152887f46a5152e78ab4f9dd, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 9100000, guid: b447470680d718740b7ffef6eda52099, type: 2}
+      overrideLandmarkPortrait: {fileID: 0}
+    humansLandmarkTileSprites: []
+    elvenLandmarkTileSprites: []
+    monsterGenerationChance: 0
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   areaData:
   - locationType: 0
     baseAreaType: 0

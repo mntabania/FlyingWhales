@@ -84538,6 +84538,10 @@ MonoBehaviour:
       structureType: 44
       hasValue: 0
       isCorrupted: 0
+    - resource: 4
+      structureType: 47
+      hasValue: 0
+      isCorrupted: 0
     m_values:
     - data:
       - {fileID: 1052932554014340, guid: 128f887a5cf7a32458e387f1a5ac6f12, type: 3}
@@ -84651,6 +84655,8 @@ MonoBehaviour:
       - {fileID: 1113093889188924, guid: 03eb6a1ff19727d498dffbbe4bab784c, type: 3}
     - data:
       - {fileID: 1113093889188924, guid: b9a44a528d8d4a642826b4ccf26d21a5, type: 3}
+    - data:
+      - {fileID: 1052932554014340, guid: c7e2edde9ed2b774187ce2939ba69da9, type: 3}
   individualStructurePrefabs:
     m_keys:
     - resource: 2
