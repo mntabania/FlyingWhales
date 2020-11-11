@@ -1195,6 +1195,7 @@
               <e p="CrimeComponent.cs" t="Include" />
               <e p="GatheringComponent.cs" t="Include" />
               <e p="InterruptComponent.cs" t="Include" />
+              <e p="LimiterComponent.cs" t="Include" />
               <e p="LogComponent.cs" t="Include" />
               <e p="MoodComponent.cs" t="Include" />
               <e p="MovementComponent.cs" t="Include" />
@@ -1450,7 +1451,6 @@
               <e p="CarryCorpse.cs" t="Include" />
               <e p="CarryRestrained.cs" t="Include" />
               <e p="ChangeClass.cs" t="Include" />
-              <e p="ChatCharacter.cs" t="Include" />
               <e p="CleanseTile.cs" t="Include" />
               <e p="Cook.cs" t="Include" />
               <e p="CounterattackAction.cs" t="Include" />
@@ -2294,6 +2294,15 @@
             <e p="PriorityQueue.cs" t="Include" />
             <e p="RuinarchGridGraph.cs" t="Include" />
             <e p="SpacialObject.cs" t="Include" />
+          </e>
+          <e p="Plague" t="Include">
+            <e p="Transmission" t="Include">
+              <e p="AirborneTransmission.cs" t="Include" />
+              <e p="CombatRateTransmission.cs" t="Include" />
+              <e p="ConsumptionTransmission.cs" t="Include" />
+              <e p="PhysicalContactTransmission.cs" t="Include" />
+              <e p="Transmission.cs" t="Include" />
+            </e>
           </e>
           <e p="Player" t="Include">
             <e p="Archetypes" t="Include">

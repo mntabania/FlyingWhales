@@ -446,7 +446,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                 poiTarget.CancelRemoveStatusFeedAndRepairJobsTargetingThis();
             }
         }
-        if (action.actionCategory != ACTION_CATEGORY.INDIRECT && poiTarget is BaseMapObject baseMapObject) {
+        if ((action.actionCategory == ACTION_CATEGORY.DIRECT || action.actionCategory == ACTION_CATEGORY.CONSUME) && poiTarget is BaseMapObject baseMapObject) {
             baseMapObject.OnManipulatedBy(actor);
         }
         action.Perform(this);

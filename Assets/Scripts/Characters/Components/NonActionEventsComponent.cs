@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Plague.Transmission;
 using UnityEngine;
 using Traits;
 using UnityEngine.Assertions;
@@ -343,6 +344,10 @@ public class NonActionEventsComponent : CharacterComponent {
                 target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", opinionValue);
             }
 
+            if (owner.traitContainer.HasTrait("Plagued")) {
+                AirborneTransmission.Instance.Transmit(owner, target, 1);
+            }
+            
             GameDate dueDate = GameManager.Instance.Today();
             overrideLog = GameManager.CreateNewLog(dueDate, "Interrupt", "Chat", result, providedTags: LOG_TAG.Social);
             overrideLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -350,21 +355,7 @@ public class NonActionEventsComponent : CharacterComponent {
             //owner.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
             owner.SetIsConversing(true);
             target.SetIsConversing(true);
-
-            Traits.Plagued ownerPlague = null;
-            Traits.Plagued targetPlague = null;
-            if (owner.traitContainer.HasTrait("Plagued")) {
-                ownerPlague = owner.traitContainer.GetTraitOrStatus<Traits.Plagued>("Plagued");
-            }
-            if (target.traitContainer.HasTrait("Plagued")) {
-                targetPlague = target.traitContainer.GetTraitOrStatus<Traits.Plagued>("Plagued");
-            }
-            if (ownerPlague != null && targetPlague == null) {
-                ownerPlague.ChatInfection(target);
-            }
-            if (targetPlague != null && ownerPlague == null) {
-                targetPlague.ChatInfection(owner);
-            }
+            
             dueDate.AddTicks(2);
             SchedulingManager.Instance.AddEntry(dueDate, () => owner.SetIsConversing(false), owner);
             SchedulingManager.Instance.AddEntry(dueDate, () => target.SetIsConversing(false), target);
@@ -427,6 +418,11 @@ public class NonActionEventsComponent : CharacterComponent {
         }
         if (!disguisedActor.IsHostileWith(disguisedTarget)) {
             string result = TriggerFlirtCharacter(target);
+            
+            if (owner.traitContainer.HasTrait("Plagued")) {
+                AirborneTransmission.Instance.Transmit(owner, target, 1);
+            }
+            
             GameDate dueDate = GameManager.Instance.Today();
             overrideLog = GameManager.CreateNewLog(dueDate, "Interrupt", "Flirt", result, providedTags: LOG_TAG.Social);
             overrideLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

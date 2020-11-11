@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Plague.Transmission;
 using UnityEngine;
 
 namespace Traits {
@@ -19,7 +20,7 @@ namespace Traits {
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER };
             mutuallyExclusive = new string[] { "Robust" };
             moodEffect = -4;
-            AddTraitOverrideFunctionIdentifier(TraitManager.Execute_After_Effect_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Pre_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
         }
 
@@ -39,24 +40,6 @@ namespace Traits {
                 owner = poi;
             }
         }
-        //public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
-        //    if (removedFrom is Character character) {
-        //        character.needsComponent.AdjustStaminaDecreaseRate(10);
-        //    }
-        //    base.OnRemoveTrait(removedFrom, removedBy);
-        //}
-        // protected override void OnChangeLevel() {
-        //     if (level == 1) {
-        //         pukeChance = 5f;
-        //         septicChance = 0.5f;
-        //     } else if (level == 2) {
-        //         pukeChance = 7f;
-        //         septicChance = 1f;
-        //     } else {
-        //         pukeChance = 9f;
-        //         septicChance = 1.5f;
-        //     }
-        // }
         public override bool PerTickOwnerMovement() {
             //NOTE: This is a wrong probability computation for floats - FIND A SOLUTION
             //float pukeRoll = Random.Range(0f, 100f);
@@ -82,89 +65,34 @@ namespace Traits {
             }
             return hasCreatedJob;
         }
-        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
-            base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
-            if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT || goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
-                IPointOfInterest target;
-                IPointOfInterest infector;
-                int chance;
-                if (TryGetTargetAndInfectorAndChance(goapNode, out target, out infector, out chance)) { //this is necessary so that this function can determine which of the characters is infecting the other
-                    int roll = Random.Range(0, 100);
-                    if (roll < chance) {
-                        //target will be infected with plague
-                        if (!target.traitContainer.HasTrait("Plagued")) {
-                            if (target is Character targetCharacter) {
-                                targetCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, target);
-                            } else if (target.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                                target.traitContainer.AddTrait(target, "Plagued", overrideDuration: GameManager.Instance.GetTicksBasedOnHour(12));
-                            }
-                        }
-                        //else {
-                        //    target.traitContainer.AddTrait(target, "Plagued");
-                        //}
+        public override void ExecuteActionPreEffects(INTERACTION_TYPE action, ActualGoapNode p_actionNode) {
+            base.ExecuteActionPreEffects(action, p_actionNode);
+            IPointOfInterest otherObject = GetOtherObjectInAction(p_actionNode);
+            switch (p_actionNode.action.actionCategory) {
+                case ACTION_CATEGORY.CONSUME:
+                    if (!otherObject.traitContainer.HasTrait("Plagued")) {
+                        ConsumptionTransmission.Instance.Transmit(owner, otherObject, 1);    
                     }
-                }
+                    break;
+                case ACTION_CATEGORY.DIRECT:
+                    if (!otherObject.traitContainer.HasTrait("Plagued") && otherObject is Character) {
+                        PhysicalContactTransmission.Instance.Transmit(owner, otherObject, 1);    
+                    }
+                    break;
+                case ACTION_CATEGORY.VERBAL:
+                    AirborneTransmission.Instance.Transmit(owner, null, 1);
+                    break;
+                    
             }
+        }
+        private IPointOfInterest GetOtherObjectInAction(ActualGoapNode p_actionNode) {
+            if (p_actionNode.actor != this.owner) {
+                return p_actionNode.actor;
+            }
+            return p_actionNode.target;
         }
         #endregion
-
-        private bool TryGetTargetAndInfectorAndChance(ActualGoapNode goapNode, out IPointOfInterest target, out IPointOfInterest infector, out int chance) {
-            chance = 0;
-            if (goapNode.actor == owner) {
-                target = goapNode.poiTarget;
-                infector = goapNode.actor;
-            } else {
-                target = goapNode.actor;
-                infector = goapNode.poiTarget;
-            }
-            if(owner != null) {
-                if (owner.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                    //if (goapNode.poiTarget == owner) {
-                    //    if (goapNode.goapType == INTERACTION_TYPE.CARRY || goapNode.goapType == INTERACTION_TYPE.CARRY_CORPSE || goapNode.goapType == INTERACTION_TYPE.INVITE) {
-                    //        chance = 50;
-                    //        return true;
-                    //    }
-                    //}
-                    if (goapNode.action.goapType == INTERACTION_TYPE.DRINK_BLOOD) {
-                        chance = 100;
-                        return true;
-                    }
-                    if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT || goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
-                        chance = 25;
-                        return true;
-                    }
-                } else if (owner.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                    if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
-                        chance = 20;
-                    } else if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
-                        chance = 100;
-                    }
-                }
-            }
-            return true;
-        }
-
-        public void ChatInfection(Character target) {
-            if(UnityEngine.Random.Range(0, 100) < 16) {
-                target.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, target);
-            }
-        }
-        public int GetCarryInfectChance() {
-            return 25;
-        }
-
-        //private int GetInfectChanceForAction(INTERACTION_TYPE type) {
-        //    switch (type) {
-        //        case INTERACTION_TYPE.CHAT_CHARACTER:
-        //            return GetChatInfectChance();
-        //        case INTERACTION_TYPE.MAKE_LOVE:
-        //            return GetMakeLoveInfectChance();
-        //        case INTERACTION_TYPE.CARRY:
-        //            return GetCarryInfectChance();
-        //        default:
-        //            return 0;
-        //    }
-        //}
+        
     }
 
 }

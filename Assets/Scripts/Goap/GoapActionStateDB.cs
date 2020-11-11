@@ -102,9 +102,6 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.PLAY_GUITAR, new[]{
             new StateNameAndDuration(){ name = "Play Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(60) },
         } },
-        {INTERACTION_TYPE.CHAT_CHARACTER, new[]{
-            new StateNameAndDuration(){ name = "Chat Success", status = InteractionManager.Goap_State_Success, duration = 0 },
-        } },
         {INTERACTION_TYPE.RETURN_HOME, new[]{
             new StateNameAndDuration(){ name = "Return Home Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },

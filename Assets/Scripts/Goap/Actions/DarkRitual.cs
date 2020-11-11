@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 public class DarkRitual : GoapAction {
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.VERBAL;
     public DarkRitual() : base(INTERACTION_TYPE.DARK_RITUAL) {
         actionIconString = GoapActionStateDB.Cult_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
