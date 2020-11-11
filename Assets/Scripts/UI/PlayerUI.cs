@@ -255,10 +255,10 @@ public class PlayerUI : BaseMonoBehaviour {
         //CheckIfAllCharactersWipedOut();
     }
     private void OnCharacterAddedToFaction(Character character, Faction faction) {
-        //if (faction == FactionManager.Instance.neutralFaction) {
+        //if (faction?.factionType.type == FACTION_TYPE.Wild_Monsters) {
         //    TransferCharacterFromActiveToInactive(character);
         //} else 
-        if (faction.isPlayerFaction || faction == FactionManager.Instance.undeadFaction) {
+        if (faction.isPlayerFaction || faction?.factionType.type == FACTION_TYPE.Undead) {
             OnCharacterBecomesMinionOrSummon(character);
         } else {
             TransferCharacterFromInactiveToActive(character);

@@ -672,9 +672,9 @@ public class CharacterManager : BaseMonoBehaviour {
         if(character != null) {
             if (character.minion != null) {
                 return demonNameColor;
-            } else if (character.faction == FactionManager.Instance.undeadFaction) {
+            } else if (character.faction?.factionType.type == FACTION_TYPE.Undead) {
                 return undeadNameColor;
-            } else if (character.faction == FactionManager.Instance.neutralFaction) {
+            } else if (character.faction?.factionType.type == FACTION_TYPE.Wild_Monsters) {
                 return summonNameColor;
             }
         }
@@ -684,9 +684,9 @@ public class CharacterManager : BaseMonoBehaviour {
         if(character != null) {
             if (character.minion != null) {
                 return _demonNameColorHex;
-            } else if (character.faction == FactionManager.Instance.undeadFaction) {
+            } else if (character.faction?.factionType.type == FACTION_TYPE.Undead) {
                 return _undeadNameColorHex;
-            } else if (character.faction == FactionManager.Instance.neutralFaction) {
+            } else if (character.faction?.factionType.type == FACTION_TYPE.Wild_Monsters) {
                 return _summonNameColorHex;
             }
         }

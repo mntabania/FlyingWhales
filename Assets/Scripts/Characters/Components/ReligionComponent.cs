@@ -30,7 +30,7 @@
         }
     }
     private void OnCharacterFactionSet(Character character) {
-        if (character == owner && character.faction != null && character.faction.factionType.type == FACTION_TYPE.Undead) {
+        if (character == owner && character.faction?.factionType.type == FACTION_TYPE.Undead) {
             SetReligion(RELIGION.None);
         }
     }
