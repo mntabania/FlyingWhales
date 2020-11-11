@@ -1721,6 +1721,20 @@
               <e p="PoisonTableIntel.cs" t="Include" />
             </e>
           </e>
+          <e p="Interfaces" t="Include">
+            <e p="ICrimeable.cs" t="Include" />
+            <e p="IDwelling.cs" t="Include" />
+            <e p="IJobOwner.cs" t="Include" />
+            <e p="ILeader.cs" t="Include" />
+            <e p="IObjectManipulator.cs" t="Include" />
+            <e p="IPartyTarget.cs" t="Include" />
+            <e p="IPlayerSkill.cs" t="Include" />
+            <e p="IPointOfInterest.cs" t="Include" />
+            <e p="IReactable.cs" t="Include" />
+            <e p="ISavable.cs" t="Include" />
+            <e p="ISingletonPattern.cs" t="Include" />
+            <e p="ITraitable.cs" t="Include" />
+          </e>
           <e p="Interrupts" t="Include">
             <e p="AbominationDeath.cs" t="Include" />
             <e p="Accident.cs" t="Include" />
@@ -2219,6 +2233,7 @@
             <e p="BezierCurveManager.cs" t="Include" />
             <e p="CharacterClassManager.cs" t="Include" />
             <e p="CharacterManager.cs" t="Include" />
+            <e p="CleanUpMemoryManager.cs" t="Include" />
             <e p="CombatManager.cs" t="Include" />
             <e p="CrimeManager.cs" t="Include" />
             <e p="DatabaseManager.cs" t="Include" />
@@ -2249,19 +2264,6 @@
             <e p="UIManager.cs" t="Include" />
             <e p="WorldConfigManager.cs" t="Include" />
             <e p="WorldEventManager.cs" t="Include" />
-          </e>
-          <e p="Models" t="Include">
-            <e p="ICrimeable.cs" t="Include" />
-            <e p="IDwelling.cs" t="Include" />
-            <e p="IJobOwner.cs" t="Include" />
-            <e p="ILeader.cs" t="Include" />
-            <e p="IObjectManipulator.cs" t="Include" />
-            <e p="IPartyTarget.cs" t="Include" />
-            <e p="IPlayerSkill.cs" t="Include" />
-            <e p="IPointOfInterest.cs" t="Include" />
-            <e p="IReactable.cs" t="Include" />
-            <e p="ISavable.cs" t="Include" />
-            <e p="ITraitable.cs" t="Include" />
           </e>
           <e p="Party" t="Include">
             <e p="Party.cs" t="Include" />
@@ -2295,15 +2297,6 @@
             <e p="RuinarchGridGraph.cs" t="Include" />
             <e p="SpacialObject.cs" t="Include" />
           </e>
-          <e p="Plague" t="Include">
-            <e p="Transmission" t="Include">
-              <e p="AirborneTransmission.cs" t="Include" />
-              <e p="CombatRateTransmission.cs" t="Include" />
-              <e p="ConsumptionTransmission.cs" t="Include" />
-              <e p="PhysicalContactTransmission.cs" t="Include" />
-              <e p="Transmission.cs" t="Include" />
-            </e>
-          </e>
           <e p="Player" t="Include">
             <e p="Archetypes" t="Include">
               <e p="Lich.cs" t="Include" />
@@ -2325,13 +2318,33 @@
               <e p="Taunt.cs" t="Include" />
             </e>
             <e p="Components" t="Include">
+              <e p="PlagueComponent.cs" t="Include" />
               <e p="PlayerSkillComponent.cs" t="Include" />
+              <e p="SeizeComponent.cs" t="Include" />
               <e p="ThreatComponent.cs" t="Include" />
+            </e>
+            <e p="Plague Related Scripts" t="Include">
+              <e p="Fatality" t="Include">
+                <e p="Fatality.cs" t="Include" />
+                <e p="HeartAttack.cs" t="Include" />
+                <e p="Pneumonia.cs" t="Include" />
+                <e p="SepticShock.cs" t="Include" />
+                <e p="Stroke.cs" t="Include" />
+                <e p="TotalOrganFailure.cs" t="Include" />
+              </e>
+              <e p="PlagueDisease.cs" t="Include" />
+              <e p="PlagueLifespan.cs" t="Include" />
+              <e p="Transmission" t="Include">
+                <e p="AirborneTransmission.cs" t="Include" />
+                <e p="CombatRateTransmission.cs" t="Include" />
+                <e p="ConsumptionTransmission.cs" t="Include" />
+                <e p="PhysicalContactTransmission.cs" t="Include" />
+                <e p="Transmission.cs" t="Include" />
+              </e>
             </e>
             <e p="Player.cs" t="Include" />
             <e p="PlayerDB.cs" t="Include" />
             <e p="PlayerSkillTreeNode.cs" t="Include" />
-            <e p="SeizeComponent.cs" t="Include" />
             <e p="Skills" t="Include">
               <e p="Afflictions" t="Include">
                 <e p="Agoraphobia.cs" t="Include" />

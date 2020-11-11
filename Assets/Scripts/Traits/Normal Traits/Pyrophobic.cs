@@ -26,9 +26,9 @@ namespace Traits {
         }
 
         #region Loading
-        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            SaveDataPyrophobic saveDataPyrophobic = saveDataTrait as SaveDataPyrophobic;
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
+            SaveDataPyrophobic saveDataPyrophobic = p_saveDataTrait as SaveDataPyrophobic;
             Assert.IsNotNull(saveDataPyrophobic);
             for (int i = 0; i < saveDataPyrophobic.seenBurningSources.Count; i++) {
                 string burningSourceID = saveDataPyrophobic.seenBurningSources[i];

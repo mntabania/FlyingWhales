@@ -50,9 +50,9 @@ namespace Traits {
             Debug.Assert(saveDataPoisoned != null, nameof(saveDataPoisoned) + " != null");
             isVenomous = saveDataPoisoned.isVenomous;
         }
-        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            SaveDataPoisoned saveDataPoisoned = saveDataTrait as SaveDataPoisoned;
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
+            SaveDataPoisoned saveDataPoisoned = p_saveDataTrait as SaveDataPoisoned;
             Assert.IsNotNull(saveDataPoisoned);
             awareCharacters.AddRange(SaveUtilities.ConvertIDListToCharacters(saveDataPoisoned.awareCharacterIDs));
         }

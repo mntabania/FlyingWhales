@@ -35,9 +35,9 @@ namespace Traits {
                 owner = addTo as Character;
             }
         }
-        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            SaveDataPrisoner saveDataPrisoner = saveDataTrait as SaveDataPrisoner;
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
+            SaveDataPrisoner saveDataPrisoner = p_saveDataTrait as SaveDataPrisoner;
             Assert.IsNotNull(saveDataPrisoner);
             if (!string.IsNullOrEmpty(saveDataPrisoner.prisonerOfFaction)) {
                 prisonerOfFaction = FactionManager.Instance.GetFactionByPersistentID(saveDataPrisoner.prisonerOfFaction);

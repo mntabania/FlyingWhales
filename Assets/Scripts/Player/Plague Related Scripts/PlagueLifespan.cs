@@ -32,7 +32,7 @@ public class PlagueLifespan {
     public void SetMonsterInfectionTimeInHours(int p_hours) {
         _monsterInfectionTimeInHours = p_hours;
     }
-    public void SetundeadInfectionTimeInHours(int p_hours) {
+    public void SetUndeadInfectionTimeInHours(int p_hours) {
         _undeadInfectionTimeInHours = p_hours;
     }
     public void SetSapientInfectionTimeInHours(RACE p_race, int p_hours) {

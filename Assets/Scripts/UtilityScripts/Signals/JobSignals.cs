@@ -1,5 +1,5 @@
 ﻿public static class JobSignals {
-    public static string ACTION_PERFORMED = "OnActionPerformed";
+    public static string STARTED_PERFORMING_ACTION = "OnActionPerformed";
     public static string SCREAM_FOR_HELP = "OnScreamForHelp"; //Parameters (Character characterThatScreamed)
     public static string CHARACTER_WILL_DO_PLAN = "OnCharacterRecievedPlan"; //Parameters (Character, GoapPlan)
     public static string CHARACTER_DID_ACTION_SUCCESSFULLY = "OnCharacterDidActionSuccessfully"; //Parameters (Character, ActualGoapNode)

@@ -67,4 +67,9 @@
     public static string POISON_EXPLOSION_TRIGGERED_BY_PLAYER = "OnPoisonExplosionTriggeredByPlayer";
     public static string ELECTRIC_CHAIN_TRIGGERED_BY_PLAYER = "OnElectricChainTriggeredByPlayer";
     public static string VAPOR_FROM_WIND_TRIGGERED_BY_PLAYER = "OnVaporFromWindTriggeredByPlayer";
+
+    /// <summary>
+    /// Parameters: Fatality
+    /// </summary>
+    public static string ADDED_PLAGUED_DISEASE_FATALITY = "AddedPlaguedDiseaseFatality";
 }

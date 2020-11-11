@@ -1082,3 +1082,7 @@ public enum SETTLEMENT_EVENT {
 public enum RELIGION {
     None, Demon_Worship, Divine_Worship, Nature_Worship
 }
+
+public enum FATALITY {
+    Septic_Shock, Heart_Attack, Stroke, Total_Organ_Failure, Pneumonia
+}

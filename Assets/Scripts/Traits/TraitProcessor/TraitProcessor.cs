@@ -16,7 +16,7 @@ namespace Traits {
             ApplyPOITraitInteractions(traitable, trait);
             //traitable.traitContainer.SwitchOnTrait(trait.name);
             trait.OnAddTrait(traitable);
-
+            
             int duration = overrideDuration;
             if (duration == -1) { duration = trait.ticksDuration; } //if no override duration was given(-1), then use the default trait duration
             GameDate removeDate = default;

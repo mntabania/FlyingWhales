@@ -52,9 +52,9 @@ namespace Traits {
         #endregion
         
         #region Loading
-        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            SaveDataHemophobic saveData = saveDataTrait as SaveDataHemophobic;
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
+            SaveDataHemophobic saveData = p_saveDataTrait as SaveDataHemophobic;
             Assert.IsNotNull(saveData);
             knownVampires.AddRange(SaveUtilities.ConvertIDListToCharacters(saveData.knownVampires));
         }

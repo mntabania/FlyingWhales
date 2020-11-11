@@ -442,15 +442,6 @@ public class SaveDataCurrentProgress {
                 item.Value.LoadSecondWaveInstancedTrait(saveData);    
             }
         }
-        //if (objectHub.ContainsKey(OBJECT_TYPE.Trait)){
-        //    if(objectHub[OBJECT_TYPE.Trait] is SaveDataTraitHub hub) {
-        //        Dictionary<string, SaveDataTrait> saveDataTraits = hub.hub;
-        //        foreach (SaveDataTrait data in saveDataTraits.Values) {
-        //            Trait trait = DatabaseManager.Instance.traitDatabase.GetTraitByPersistentID(data.persistentID);
-        //            trait.LoadSecondWaveInstancedTrait(data);
-        //        }
-        //    }
-        //}
     }
     public void LoadCharactersCurrentAction() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {

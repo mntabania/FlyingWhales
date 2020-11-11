@@ -54,9 +54,9 @@ namespace Traits {
         }
 
         #region Loading
-        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            SaveDataCharacterTrait saveDataCharacterTrait = saveDataTrait as SaveDataCharacterTrait;
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
+            SaveDataCharacterTrait saveDataCharacterTrait = p_saveDataTrait as SaveDataCharacterTrait;
             Assert.IsNotNull(saveDataCharacterTrait);
             alreadyInspectedTileObjects = SaveUtilities.ConvertIDListToTileObjects(saveDataCharacterTrait.alreadyInspectedTileObjects);
             charactersAlreadySawForHope.AddRange(SaveUtilities.ConvertIDListToCharacters(saveDataCharacterTrait.charactersAlreadySawForHope));
