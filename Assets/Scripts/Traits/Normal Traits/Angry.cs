@@ -36,9 +36,9 @@ namespace Traits {
         }
 
         #region Loading
-        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            SaveDataAngry dataTrait = saveDataTrait as SaveDataAngry;
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
+            SaveDataAngry dataTrait = p_saveDataTrait as SaveDataAngry;
             Assert.IsNotNull(dataTrait);
             _responsibleCharactersStack.AddRange(SaveUtilities.ConvertIDListToCharacters(dataTrait.characterIDs));
         }

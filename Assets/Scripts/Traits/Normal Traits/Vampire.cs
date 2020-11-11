@@ -230,9 +230,9 @@ namespace Traits {
             isTraversingUnwalkableAsBat = saveDataVampire.isTraversingUnwalkableAsBat;
             hasAlreadyBecomeVampireLord = saveDataVampire.hasAlreadyBecomeVampireLord;
         }
-        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            SaveDataVampire saveDataVampire = saveDataTrait as SaveDataVampire;
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
+            SaveDataVampire saveDataVampire = p_saveDataTrait as SaveDataVampire;
             Assert.IsNotNull(saveDataVampire);
             awareCharacters.AddRange(SaveUtilities.ConvertIDListToCharacters(saveDataVampire.awareCharacters));
         }

@@ -42,8 +42,8 @@ namespace Traits {
             damage = data.damage;
             hasInflictedDamage = data.hasInflictedDamage;
         }
-        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadSecondWaveInstancedTrait(saveDataTrait);
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
             if (!hasInflictedDamage) {
                 GameDate dueDate = GameManager.Instance.Today().AddTicks(1);
                 SchedulingManager.Instance.AddEntry(dueDate, () => InflictDamage(traitable), traitable);

@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Plague.Fatality;
 using Plague.Transmission;
-using UnityEngine;
-
+using UnityEngine.Assertions;
 namespace Traits {
     public class Plagued : Status {
 
@@ -13,15 +11,11 @@ namespace Traits {
             void CharacterStartedPerformingAction(Character p_character);
         }
         
-        public IPointOfInterest owner { get; private set; } //poi that has the poison
-        private readonly List<FATALITY> _fatalities;
-        
-        // private readonly int pukeChance = 4;
-        // private readonly int septicChance = 1;
-
         private System.Action<Character> _perTickMovement;
         private System.Action<Character, Trait> _characterGainedTrait;
         private System.Action<Character> _characterStartedPerformingAction;
+        
+        public IPointOfInterest owner { get; private set; } //poi that has the poison
 
         public Plagued() {
             name = "Plagued";
@@ -32,7 +26,6 @@ namespace Traits {
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER };
             mutuallyExclusive = new string[] { "Robust" };
             moodEffect = -4;
-            _fatalities = new List<FATALITY>();
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Pre_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
         }
@@ -45,6 +38,13 @@ namespace Traits {
                 if (poi is Character) {
                     Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
                     Messenger.AddListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnStartedPerformingAction);    
+                }
+                Messenger.AddListener<Fatality>(PlayerSignals.ADDED_PLAGUED_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
+                for (int i = 0; i < PlagueDisease.Instance.activeFatalities.Count; i++) {
+                    Fatality fatality = PlagueDisease.Instance.activeFatalities[i];
+                    SubscribeToPerTickMovement(fatality);
+                    SubscribeToCharacterGainedTrait(fatality);
+                    SubscribeToCharacterStartedPerformingAction(fatality);
                 }
             }
         }
@@ -59,13 +59,17 @@ namespace Traits {
                     Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
                     Messenger.AddListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnStartedPerformingAction);    
                 }
+                Messenger.AddListener<Fatality>(PlayerSignals.ADDED_PLAGUED_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            if (removedFrom is Character) {
-                Messenger.RemoveListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-                Messenger.RemoveListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnStartedPerformingAction);    
+            if (removedFrom is IPointOfInterest) {
+                if (removedFrom is Character) {
+                    Messenger.RemoveListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+                    Messenger.RemoveListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnStartedPerformingAction);    
+                }
+                Messenger.RemoveListener<Fatality>(PlayerSignals.ADDED_PLAGUED_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
             }
         }
         public override bool PerTickOwnerMovement() {
@@ -104,19 +108,14 @@ namespace Traits {
 
         #region Fatalities
         public void AddFatality(Fatality fatality) {
-            if (!_fatalities.Contains(fatality.fatalityType)) {
-                _fatalities.Add(fatality.fatalityType);
-                SubscribeToPerTickMovement(fatality);
-                SubscribeToCharacterGainedTrait(fatality);
-                SubscribeToCharacterStartedPerformingAction(fatality);
-            }
+            SubscribeToPerTickMovement(fatality);
+            SubscribeToCharacterGainedTrait(fatality);
+            SubscribeToCharacterStartedPerformingAction(fatality);
         }
         public void RemoveFatality(Fatality fatality) {
-            if (_fatalities.Remove(fatality.fatalityType)) {
-                UnsubscribeToPerTickMovement(fatality);
-                UnsubscribeToCharacterGainedTrait(fatality);
-                UnsubscribeToCharacterStartedPerformingAction(fatality);
-            }
+            UnsubscribeToPerTickMovement(fatality);
+            UnsubscribeToCharacterGainedTrait(fatality);
+            UnsubscribeToCharacterStartedPerformingAction(fatality);
         }
         #endregion
 
@@ -142,6 +141,9 @@ namespace Traits {
         #endregion
 
         #region Listeners
+        private void OnPlagueDiseaseFatalityAdded(Fatality p_fatality) {
+            AddFatality(p_fatality);
+        }
         private void OnTraitableGainedTrait(ITraitable p_traitable, Trait p_trait) {
             //TODO: Might be a better way to trigger that the character that owns this has gained a trait, rather than listening to a signal and filtering results
             if (p_traitable == owner && owner is Character character) {
@@ -156,5 +158,5 @@ namespace Traits {
         }
         #endregion
     }
-
 }
+

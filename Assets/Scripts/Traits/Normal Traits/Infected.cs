@@ -43,9 +43,9 @@ namespace Traits {
             Assert.IsNotNull(saveDataInfected);
             _hasAlreadyDied = saveDataInfected.hasAlreadyDied;
         }
-        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            SaveDataInfected saveDataInfected = saveDataTrait as SaveDataInfected;
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
+            SaveDataInfected saveDataInfected = p_saveDataTrait as SaveDataInfected;
             Assert.IsNotNull(saveDataInfected);
             SetIsLiving(saveDataInfected.isLiving);
         }
