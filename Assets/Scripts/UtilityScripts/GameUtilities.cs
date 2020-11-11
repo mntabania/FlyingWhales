@@ -344,6 +344,15 @@ namespace UtilityScripts {
             int roll = UnityEngine.Random.Range(0, 100);
             return roll < chance;
         }
+        /// <summary>
+        /// Roll a chance. This rolls from 0f - 100f.
+        /// </summary>
+        /// <param name="chance">The chance for this to return true.</param>
+        /// <returns>Whether or not the given chance was met.</returns>
+        public static bool RollChance(float chance) {
+            float roll = UnityEngine.Random.Range(0f, 100f);
+            return roll < chance;
+        }
         public static List<HexTile> GetHexTilesGivenCoordinates(List<Point> coordinates, HexTile[,] map) {
             List<HexTile> tiles = new List<HexTile>();
             for (int i = 0; i < coordinates.Count; i++) {

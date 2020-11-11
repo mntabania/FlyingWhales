@@ -8,7 +8,9 @@ namespace Traits {
     public class Plagued : Status {
 
         public interface IPlaguedListener {
-            void PerTickMovement(Character character);
+            void PerTickMovement(Character p_character);
+            void CharacterGainedTrait(Character p_character, Trait p_gainedTrait);
+            void CharacterStartedPerformingAction(Character p_character);
         }
         
         public IPointOfInterest owner { get; private set; } //poi that has the poison
@@ -18,9 +20,9 @@ namespace Traits {
         // private readonly int septicChance = 1;
 
         private System.Action<Character> _perTickMovement;
-        private System.Action<Character> _perTickMovement;
-        private System.Action<Character> _perTickMovement;
-        
+        private System.Action<Character, Trait> _characterGainedTrait;
+        private System.Action<Character> _characterStartedPerformingAction;
+
         public Plagued() {
             name = "Plagued";
             description = "Has a terrible and virulent disease.";
@@ -40,6 +42,10 @@ namespace Traits {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is IPointOfInterest poi) {
                 owner = poi;
+                if (poi is Character) {
+                    Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+                    Messenger.AddListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnStartedPerformingAction);    
+                }
             }
         }
         #endregion
@@ -49,35 +55,23 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is IPointOfInterest poi) {
                 owner = poi;
+                if (poi is Character) {
+                    Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+                    Messenger.AddListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnStartedPerformingAction);    
+                }
+            }
+        }
+        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+            base.OnRemoveTrait(removedFrom, removedBy);
+            if (removedFrom is Character) {
+                Messenger.RemoveListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+                Messenger.RemoveListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnStartedPerformingAction);    
             }
         }
         public override bool PerTickOwnerMovement() {
             if (owner is Character character) {
                 _perTickMovement?.Invoke(character);    
             }
-            // //NOTE: This is a wrong probability computation for floats - FIND A SOLUTION
-            // //float pukeRoll = Random.Range(0f, 100f);
-            // //float septicRoll = Random.Range(0f, 100f);
-            // int pukeRoll = Random.Range(0, 100);
-            // int septicRoll = Random.Range(0, 100);
-            // bool hasCreatedJob = false;
-            // if (pukeRoll < pukeChance) {
-            //     //do puke action
-            //     if (owner is Character character) {
-            //         if(character.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)*/) {
-            //             return hasCreatedJob;
-            //         }
-            //         return character.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, owner, "Plague");
-            //     }
-            // } else if (septicRoll < septicChance) {
-            //     if (owner is Character character) {
-            //         if (character.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)*/) {
-            //             return hasCreatedJob;
-            //         }
-            //         return character.interruptComponent.TriggerInterrupt(INTERRUPT.Septic_Shock, owner);
-            //     }
-            // }
-            // return hasCreatedJob;
             return false;
         }
         public override void ExecuteActionPreEffects(INTERACTION_TYPE action, ActualGoapNode p_actionNode) {
@@ -113,6 +107,15 @@ namespace Traits {
             if (!_fatalities.Contains(fatality.fatalityType)) {
                 _fatalities.Add(fatality.fatalityType);
                 SubscribeToPerTickMovement(fatality);
+                SubscribeToCharacterGainedTrait(fatality);
+                SubscribeToCharacterStartedPerformingAction(fatality);
+            }
+        }
+        public void RemoveFatality(Fatality fatality) {
+            if (_fatalities.Remove(fatality.fatalityType)) {
+                UnsubscribeToPerTickMovement(fatality);
+                UnsubscribeToCharacterGainedTrait(fatality);
+                UnsubscribeToCharacterStartedPerformingAction(fatality);
             }
         }
         #endregion
@@ -124,8 +127,34 @@ namespace Traits {
         private void UnsubscribeToPerTickMovement(IPlaguedListener plaguedListener) {
             _perTickMovement -= plaguedListener.PerTickMovement;
         }
+        private void SubscribeToCharacterGainedTrait(IPlaguedListener plaguedListener) {
+            _characterGainedTrait += plaguedListener.CharacterGainedTrait;
+        }
+        private void UnsubscribeToCharacterGainedTrait(IPlaguedListener plaguedListener) {
+            _characterGainedTrait -= plaguedListener.CharacterGainedTrait;
+        }
+        private void SubscribeToCharacterStartedPerformingAction(IPlaguedListener plaguedListener) {
+            _characterStartedPerformingAction += plaguedListener.CharacterStartedPerformingAction;
+        }
+        private void UnsubscribeToCharacterStartedPerformingAction(IPlaguedListener plaguedListener) {
+            _characterStartedPerformingAction -= plaguedListener.CharacterStartedPerformingAction;
+        }
         #endregion
 
+        #region Listeners
+        private void OnTraitableGainedTrait(ITraitable p_traitable, Trait p_trait) {
+            //TODO: Might be a better way to trigger that the character that owns this has gained a trait, rather than listening to a signal and filtering results
+            if (p_traitable == owner && owner is Character character) {
+                _characterGainedTrait?.Invoke(character, p_trait);
+            }
+        }
+        private void OnStartedPerformingAction(ActualGoapNode p_actualGoapNode) {
+            //TODO: Might be a better way to trigger that the character that owns this has started performing an action, rather than listening to a signal and filtering results
+            if (p_actualGoapNode.actor == owner && owner is Character character) {
+                _characterStartedPerformingAction?.Invoke(character);
+            }
+        }
+        #endregion
     }
 
 }

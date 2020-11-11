@@ -450,7 +450,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             baseMapObject.OnManipulatedBy(actor);
         }
         action.Perform(this);
-        Messenger.Broadcast(JobSignals.ACTION_PERFORMED, this);
+        Messenger.Broadcast(JobSignals.STARTED_PERFORMING_ACTION, this);
     }
     public void ActionInterruptedWhilePerforming(bool shouldDoAfterEffect) {
         string log =

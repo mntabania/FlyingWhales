@@ -1,14 +1,19 @@
-﻿using Traits;
+﻿using UnityEngine;
+using UtilityScripts;
+
 namespace Plague.Fatality {
     public class Pneumonia : Fatality {
         
         public override FATALITY fatalityType => FATALITY.Pneumonia;
         
-        public override void StartListeningForTrigger() {
-            throw new System.NotImplementedException();
-        }
         protected override void ActivateFatality(Character p_character) {
-            throw new System.NotImplementedException();
+            //TODO: Trigger Pneumonia Interrupt
+            Debug.Log("Activated Pneumonia Fatality");
+        }
+        public override void PerTickMovement(Character p_character) {
+            if (GameUtilities.RollChance(0.5f)) {
+                ActivateFatality(p_character);
+            }
         }
     }
 }

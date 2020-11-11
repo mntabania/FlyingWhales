@@ -4,13 +4,12 @@ namespace Plague.Fatality {
 
         public abstract FATALITY fatalityType { get; }
         
-        public abstract void StartListeningForTrigger();
         protected abstract void ActivateFatality(Character p_character);
         
         #region Plagued.IPlaguedListener Implementation
-        public void PerTickMovement(Character character) {
-            throw new System.NotImplementedException();
-        }
+        public virtual void PerTickMovement(Character p_character) { }
+        public virtual void CharacterGainedTrait(Character p_character, Trait p_gainedTrait) { }
+        public virtual void CharacterStartedPerformingAction(Character p_character) { }
         #endregion
     }
 }

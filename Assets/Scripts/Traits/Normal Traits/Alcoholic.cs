@@ -42,7 +42,7 @@ namespace Traits {
                 owner = addedTo as Character;
             }
             Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
-            Messenger.AddListener<ActualGoapNode>(JobSignals.ACTION_PERFORMED, OnPerformAction);
+            Messenger.AddListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnPerformAction);
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
@@ -50,13 +50,13 @@ namespace Traits {
                 owner = character;
                 if (!character.isDead) {
                     Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
-                    Messenger.AddListener<ActualGoapNode>(JobSignals.ACTION_PERFORMED, OnPerformAction);
+                    Messenger.AddListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnPerformAction);
                 }
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
-            Messenger.RemoveListener<ActualGoapNode>(JobSignals.ACTION_PERFORMED, OnPerformAction);
+            Messenger.RemoveListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnPerformAction);
             base.OnRemoveTrait(removedFrom, removedBy);
         }
         public override string TriggerFlaw(Character character) {

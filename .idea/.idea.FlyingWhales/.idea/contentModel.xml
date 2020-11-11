@@ -2301,6 +2301,8 @@
               <e p="HeartAttack.cs" t="Include" />
               <e p="Pneumonia.cs" t="Include" />
               <e p="SepticShock.cs" t="Include" />
+              <e p="Stroke.cs" t="Include" />
+              <e p="TotalOrganFailure.cs" t="Include" />
             </e>
             <e p="Transmission" t="Include">
               <e p="AirborneTransmission.cs" t="Include" />
