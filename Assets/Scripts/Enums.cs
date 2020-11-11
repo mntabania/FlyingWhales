@@ -257,6 +257,7 @@ public enum ACTION_CATEGORY {
     DIRECT,
     INDIRECT,
     CONSUME,
+    VERBAL,
 }
 public enum ACTION_RESULT {
     SUCCESS,
@@ -331,7 +332,6 @@ public enum INTERACTION_TYPE {
     EAT = 12,
     DAYDREAM = 13,
     PLAY_GUITAR = 14,
-    CHAT_CHARACTER = 15,
     DRINK = 16,
     SLEEP_OUTSIDE = 17,
     REMOVE_POISON = 18,

@@ -5,8 +5,7 @@ using Traits;
 
 public class ScreamForHelp : GoapAction {
 
-    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
-
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.VERBAL;
     public ScreamForHelp() : base(INTERACTION_TYPE.SCREAM_FOR_HELP) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Shock_Icon;

@@ -6,6 +6,7 @@ using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class Evangelize : GoapAction {
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.VERBAL;
     public Evangelize() : base(INTERACTION_TYPE.EVANGELIZE) {
         actionIconString = GoapActionStateDB.Cult_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };

@@ -7,6 +7,7 @@ using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Logs;
+using Plague.Transmission;
 using Traits;
 
 public class GoapAction {
@@ -530,74 +531,6 @@ public struct GoapEffect {
     public override string ToString() {
         return $"{conditionType.ToString()} - {conditionKey} - {target.ToString()}";
     }
-    //public string conditionString() {
-    //    if(conditionKey is string) {
-    //        return conditionKey.ToString();
-    //    } else if (conditionKey is int) {
-    //        return conditionKey.ToString();
-    //    } else if (conditionKey is Character) {
-    //        return (conditionKey as Character).name;
-    //    } else if (conditionKey is NPCSettlement) {
-    //        return (conditionKey as NPCSettlement).name;
-    //    } else if (conditionKey is Region) {
-    //        return (conditionKey as Region).name;
-    //    } else if (conditionKey is SpecialToken) {
-    //        return (conditionKey as SpecialToken).name;
-    //    } else if (conditionKey is IPointOfInterest) {
-    //        return (conditionKey as IPointOfInterest).name;
-    //    }
-    //    return string.Empty;
-    //}
-    //public string conditionKeyToString() {
-    //    if (conditionKey is string) {
-    //        return (string)conditionKey;
-    //    } else if (conditionKey is int) {
-    //        return ((int)conditionKey).ToString();
-    //    } else if (conditionKey is Character) {
-    //        return (conditionKey as Character).id.ToString();
-    //    } else if (conditionKey is NPCSettlement) {
-    //        return (conditionKey as NPCSettlement).id.ToString();
-    //    } else if (conditionKey is Region) {
-    //        return (conditionKey as Region).id.ToString();
-    //    } else if (conditionKey is SpecialToken) {
-    //        return (conditionKey as SpecialToken).id.ToString();
-    //    } else if (conditionKey is IPointOfInterest) {
-    //        return (conditionKey as IPointOfInterest).id.ToString();
-    //    }
-    //    return string.Empty;
-    //}
-    //public string conditionKeyTypeString() {
-    //    if (conditionKey is string) {
-    //        return "string";
-    //    } else if (conditionKey is int) {
-    //        return "int";
-    //    } else if (conditionKey is Character) {
-    //        return "character";
-    //    } else if (conditionKey is NPCSettlement) {
-    //        return "npcSettlement";
-    //    } else if (conditionKey is Region) {
-    //        return "region";
-    //    } else if (conditionKey is SpecialToken) {
-    //        return "item";
-    //    } else if (conditionKey is IPointOfInterest) {
-    //        return "poi";
-    //    }
-    //    return string.Empty;
-    //}
-
-    //public override bool Equals(object obj) {
-    //    if (obj is GoapEffect) {
-    //        GoapEffect otherEffect = (GoapEffect)obj;
-    //        if (otherEffect.conditionType == conditionType) {
-    //            if (string.IsNullOrEmpty(conditionString())) {
-    //                return true;
-    //            } else {
-    //                return otherEffect.conditionString() == conditionString();
-    //            }
-    //        }
-    //    }
-    //    return base.Equals(obj);
-    //}
 }
 
 [System.Serializable]

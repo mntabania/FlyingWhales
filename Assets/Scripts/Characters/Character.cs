@@ -12,6 +12,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Profiling;
 using UtilityScripts;
 using JetBrains.Annotations;
+using Plague.Transmission;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyQuestTarget, IGatheringTarget, ISavable {
     private int _id;
@@ -2430,6 +2431,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 inVision.reactionComponent.ReactToCombat(combatStateOfAttacker, this);
                 inVision.needsComponent.WakeUpFromNoise();
             }
+        }
+        if (characterThatAttacked.traitContainer.HasTrait("Plagued")) {
+            CombatRateTransmission.Instance.Transmit(characterThatAttacked, this, 1);
         }
         Messenger.Broadcast(CharacterSignals.CHARACTER_WAS_HIT, this, characterThatAttacked);
     }
