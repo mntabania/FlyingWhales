@@ -133,7 +133,7 @@ public class Invite : GoapAction {
 
                     actor.relationshipContainer.AdjustOpinion(actor, targetCharacter, "Base", -3, "rejected sexual advances");
                     actor.traitContainer.AddTrait(actor, "Annoyed");
-                    if (actor.faction == FactionManager.Instance.disguisedFaction) {
+                    if (actor.faction?.factionType.type == FACTION_TYPE.Disguised) {
                         actor.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
                         if (targetCharacter.marker && !targetCharacter.marker.HasUnprocessedPOI(actor)) {
                             targetCharacter.marker.AddUnprocessedPOI(actor);

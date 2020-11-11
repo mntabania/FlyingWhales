@@ -44,8 +44,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
 
     #region getters/setters
     public bool isDestroyed => characters.Count <= 0;
-    public bool isMajorOrVagrant => isMajorFaction || this == FactionManager.Instance.vagrantFaction;
-    public bool isMajorNonPlayerOrVagrant => isMajorNonPlayer || this == FactionManager.Instance.vagrantFaction;
+    public bool isMajorOrVagrant => isMajorFaction || this.factionType.type == FACTION_TYPE.Vagrants;
+    public bool isMajorNonPlayerOrVagrant => isMajorNonPlayer || this.factionType.type == FACTION_TYPE.Vagrants;
     public bool isMajorNonPlayer => isMajorFaction && !isPlayerFaction;
     public bool isNonMajorOrPlayer => !isMajorFaction || isPlayerFaction;
     public JobTriggerComponent jobTriggerComponent => factionJobTriggerComponent;

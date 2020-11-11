@@ -46,7 +46,7 @@ public class LevelLoaderManager : MonoBehaviour {
         }
         GC.Collect();
         yield return null;
-        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName);
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
         asyncOperation.allowSceneActivation = false;
         
         while (asyncOperation.progress < 0.9f) {

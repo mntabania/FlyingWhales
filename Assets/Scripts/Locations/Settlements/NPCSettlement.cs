@@ -238,7 +238,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 for (int i = 0; i < residents.Count; i++) {
                     Character resident = residents[i];
                     if (resident != character && resident.faction != faction) {
-                        if(resident.faction != null && (resident.faction.isMajorNonPlayer || resident.faction == FactionManager.Instance.undeadFaction)) {
+                        if(resident.faction != null && (resident.faction.isMajorNonPlayer || resident.faction.factionType.type == FACTION_TYPE.Undead)) {
                             areThereOtherResidentsThatIsInAMajorOrUndeadFaction = true;
                             break;
                         }

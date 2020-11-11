@@ -67,7 +67,6 @@ public class OptionsMenu : PopupMenuBase {
     private void Abandon() {
         DOTween.Clear(true);
         SaveManager.Instance.savePlayerManager.SavePlayerData();
-        Messenger.Cleanup();
         LevelLoaderManager.Instance.UpdateLoadingInfo(string.Empty);
         LevelLoaderManager.Instance.LoadLevel("MainMenu", true);
     }
@@ -77,7 +76,6 @@ public class OptionsMenu : PopupMenuBase {
     /// </summary>
     public void LoadSave() {
         DOTween.Clear(true);
-        Messenger.Cleanup();
         LevelLoaderManager.Instance.SetLoadingState(true);
         AudioManager.Instance.TransitionToLoading();
         LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing data...");

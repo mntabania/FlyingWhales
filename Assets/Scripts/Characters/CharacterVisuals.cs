@@ -242,7 +242,7 @@ public class CharacterVisuals {
                 return UtilityScripts.Utilities.UndeadIcon();        
             } else if (_owner.faction != null && _owner.faction.isPlayerFaction) {
                 return UtilityScripts.Utilities.DemonIcon();
-            } else if (_owner.faction != null && _owner.faction.factionType.type == FACTION_TYPE.Undead) {
+            } else if (_owner.faction?.factionType.type == FACTION_TYPE.Undead) {
                 return UtilityScripts.Utilities.UndeadIcon();
             }
             return UtilityScripts.Utilities.MonsterIcon();

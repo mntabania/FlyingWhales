@@ -46,6 +46,7 @@ public class Player : ILeader, IObjectManipulator {
     public SeizeComponent seizeComponent { get; }
     public ThreatComponent threatComponent { get; }
     public PlayerSkillComponent playerSkillComponent { get; }
+    public PlagueComponent plagueComponent { get; }
 
     #region getters/setters
     public int id => -645;
@@ -257,7 +258,7 @@ public class Player : ILeader, IObjectManipulator {
     }
     private void OnFactionLeaderDied(Faction faction) {
         List<Faction> allUndestroyedFactions = FactionManager.Instance.allFactions.Where(
-            x => x != FactionManager.Instance.neutralFaction
+            x => x.factionType.type != FACTION_TYPE.Wild_Monsters
             && !x.isPlayerFaction
             && x.isActive && !x.isDestroyed).ToList();
         if (allUndestroyedFactions.Count == 0) {

@@ -172,14 +172,14 @@ public class FactionInfoHubUI : MonoBehaviour {
     #region Faction Item
     private FactionItem AddFactionItem(Faction faction) {
         if (!HasFactionItem(faction)) {
-            //if(faction.factionType.type == FACTION_TYPE.Vagrants || faction.factionType.type == FACTION_TYPE.Undead) {
+            //if(faction?.factionType.type == FACTION_TYPE.Vagrants || faction?.factionType.type == FACTION_TYPE.Undead) {
             //    lastIndex++;
             //}
             FactionItem factionItem = CreateFactionItem(faction);
             CreateFactionItemPagination();
             factionItems.Add(factionItem);
 
-            //if (faction.factionType.type != FACTION_TYPE.Vagrants && faction.factionType.type != FACTION_TYPE.Undead) {
+            //if (faction?.factionType.type != FACTION_TYPE.Vagrants && faction?.factionType.type != FACTION_TYPE.Undead) {
             //    int index = factionItems.Count - lastIndex;
             //    factionItems.Insert(index, factionItem);
             //} else {

@@ -153,7 +153,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// Is this character a normal character?
     /// Characters that are not monsters or minions.
     /// </summary>
-    public bool isNormalCharacter => (this is Summon) == false && minion == null && faction != FactionManager.Instance.undeadFaction;
+    public bool isNormalCharacter => (this is Summon) == false && minion == null && faction?.factionType.type != FACTION_TYPE.Undead;
     public bool isNormalAndNotAlliedWithPlayer => isNormalCharacter && !faction.isPlayerFaction && !isAlliedWithPlayer;
     public bool isNormalEvenLycanAndNotAlliedWithPlayer => (isNormalCharacter || isLycanthrope) && necromancerTrait == null && !faction.isPlayerFaction && !isAlliedWithPlayer;
 
@@ -238,7 +238,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return _currentStructure;
         }
     }
-    public bool isVagrant => faction != null && faction == FactionManager.Instance.vagrantFaction;
+    public bool isVagrant => faction != null && faction?.factionType.type == FACTION_TYPE.Vagrants;
     /// <summary>
     /// Is the character part of the neutral faction? or no faction?
     /// </summary>
@@ -1320,10 +1320,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return true;
     }
     private void OnChangeFaction(Faction prevFaction, Faction newFaction) {
-        if(prevFaction != null && prevFaction == FactionManager.Instance.undeadFaction) {
+        if(prevFaction?.factionType.type == FACTION_TYPE.Undead) {
             behaviourComponent.RemoveBehaviourComponent(typeof(UndeadBehaviour));
         }
-        if (newFaction != null && newFaction == FactionManager.Instance.undeadFaction) {
+        if (newFaction?.factionType.type == FACTION_TYPE.Undead) {
             behaviourComponent.AddBehaviourComponent(typeof(UndeadBehaviour));
         }
         // Debug.Log($"{name} changed faction from {prevFaction?.name ?? "Null"} to {newFaction?.name ?? "Null"}");
@@ -5060,7 +5060,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
         if(faction != otherCharacter.faction){
-            if (faction != null && faction.isMajorOrVagrant && otherCharacter.traitContainer.HasTrait("Transitioning") && otherCharacter.faction != null && otherCharacter.faction != FactionManager.Instance.neutralFaction) {
+            if (faction != null && faction.isMajorOrVagrant && otherCharacter.traitContainer.HasTrait("Transitioning") && otherCharacter.faction?.factionType.type != FACTION_TYPE.Wild_Monsters) {
                 //Non transitioning characters will not attack transitioning characters as long as the transitioning character is not from monster faction, if they are, non transitioning characters will still attack
                 return false;
             }

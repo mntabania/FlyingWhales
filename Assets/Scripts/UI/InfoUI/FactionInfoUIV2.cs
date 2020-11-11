@@ -247,7 +247,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
 
         foreach (KeyValuePair<Faction, FactionRelationship> keyValuePair in activeFaction.relationships) {
             if (keyValuePair.Key.factionType.type != FACTION_TYPE.Wild_Monsters && keyValuePair.Key.factionType.type != FACTION_TYPE.Disguised) {
-                // if (keyValuePair.Key == FactionManager.Instance.undeadFaction && keyValuePair.Key.leader == null) {
+                // if (keyValuePair.Key?.factionType.type == FACTION_TYPE.Undead && keyValuePair.Key.leader == null) {
                 //     //Only add Undead faction in Relations once it gains a Faction Leader
                 //     continue;
                 // }

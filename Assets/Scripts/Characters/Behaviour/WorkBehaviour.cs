@@ -139,7 +139,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
     private bool PlanWorkActions(Character character, out JobQueueItem producedJob) {
         if (character.limiterComponent.canTakeJobs) {
             //NOTE: ONLY ADDED FACTION CHECKING BECAUSE OF BUG THAT VAGRANTS ARE STILL PART OF A VILLAGE
-            if (character.isAtHomeRegion && character.homeSettlement != null && character.homeSettlement.owner == character.faction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
+            if (character.isAtHomeRegion && character.homeSettlement != null && character.homeSettlement.owner == character.faction) { //&& this.faction.id.factionType.type != FACTION_TYPE.Wild_Monsters.id
                 //check npcSettlement job queue, if it has any jobs that target an object that is in view of the character
                 JobQueueItem jobToAssign = character.homeSettlement.GetFirstJobBasedOnVision(character);
                 if (jobToAssign != null) {

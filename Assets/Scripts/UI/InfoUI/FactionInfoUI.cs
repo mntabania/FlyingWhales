@@ -235,7 +235,7 @@ public class FactionInfoUI : InfoUIBase {
 
         foreach (KeyValuePair<Faction, FactionRelationship> keyValuePair in activeFaction.relationships) {
             if (keyValuePair.Key.isActive) {
-                if(keyValuePair.Key == FactionManager.Instance.undeadFaction && keyValuePair.Key.leader == null) {
+                if(keyValuePair.Key.factionType.type == FACTION_TYPE.Undead && keyValuePair.Key.leader == null) {
                     //Only add Undead faction in Relations once it gains a Faction Leader
                     continue;
                 }
