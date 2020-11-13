@@ -54,8 +54,11 @@ public class CharacterManager : BaseMonoBehaviour {
         Dragon_Behaviour = "Dragon Behaviour",
         Troll_Behaviour = "Troll Behaviour",
         Snatcher_Behaviour = "Snatcher Behaviour",
-        Bone_Golem_Behaviour = "Bone Golem Behaviour";
-        
+        Bone_Golem_Behaviour = "Bone Golem Behaviour",
+        Pest_Behaviour = "Pest Behaviour",
+        Rat_Behaviour = "Rat Behaviour";
+
+
 
     public const int MAX_HISTORY_LOGS = 300;
     public const int VISION_RANGE = 8;
@@ -344,6 +347,20 @@ public class CharacterManager : BaseMonoBehaviour {
                 typeof(DefaultExtraCatcher),
             }
         },
+        { Pest_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(PestBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Rat_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(RatBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
     };
 
     #region getters/setters
@@ -609,9 +626,6 @@ public class CharacterManager : BaseMonoBehaviour {
 
             if(poi != null) {
                 FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(tileObjectType);
-                if (poi.traitContainer.HasTrait("Infected")) {
-                    foodPile.traitContainer.AddTrait(foodPile, "Infected");
-                }
                 if (poi.traitContainer.HasTrait("Abomination Germ")) {
                     //transfer abomination germ to created food pile
                     foodPile.traitContainer.AddTrait(foodPile, "Abomination Germ");

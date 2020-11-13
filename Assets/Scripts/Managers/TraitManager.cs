@@ -48,7 +48,7 @@ public class TraitManager : BaseMonoBehaviour {
         "Webbed", "Cultist", "Stealthy", "Invisible", "Noxious Wanderer", "DeMooder", "Defender", "Invader", "Disabler", "Infestor",
         "Abductor", "Arsonist", "Hibernating", "Baby Infestor", "Tower", "Mighty", "Stoned", "Transforming", "Subterranean", "Petrasol",
         "Snatcher", "Agitated", "Hunting", "Chained Electric", "Prisoner", "Hemophiliac", "Hemophobic", "Burning At Stake",
-        "Lycanphiliac", "Lycanphobic", "Interesting"
+        "Lycanphiliac", "Lycanphobic", "Interesting", "Pest",
 
     };
 
@@ -76,12 +76,11 @@ public class TraitManager : BaseMonoBehaviour {
     public List<string> unhiddenTraitsNotStatuses { get; private set; }
 
     public List<string> removeStatusTraits = new List<string> {
-        "Unconscious", "Injured", "Poisoned", "Plagued",
-        "Infected", "Freezing", "Frozen", "Burning",
+        "Unconscious", "Injured", "Poisoned", "Plagued", "Freezing", "Frozen", "Burning",
         "Ensnared"
     };
     public List<string> specialIllnessTraits = new List<string> {
-        "Poisoned", "Plagued", "Infected"
+        "Poisoned", "Plagued"
     };
 
     //This is for instanced traits that do not have unique data

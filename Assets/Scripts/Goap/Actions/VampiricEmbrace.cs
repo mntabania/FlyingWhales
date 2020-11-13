@@ -153,7 +153,6 @@ public class VampiricEmbrace : GoapAction {
                 }
 
                 targetCharacter.traitContainer.RemoveStatusAndStacks(targetCharacter, "Injured");
-                targetCharacter.traitContainer.RemoveStatusAndStacks(targetCharacter, "Infected");
                 targetCharacter.traitContainer.RemoveStatusAndStacks(targetCharacter, "Plagued");
 
                 if (targetCharacter.traitContainer.AddTrait(targetCharacter, "Vampire", actor)) {

@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 891be410796e8554eafb2611643cc64f, type: 3}
-    totalSpriteSurfaceArea: 3390310
+    totalSpriteSurfaceArea: 3402854
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -290,6 +290,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 0654d4bd9682b194eb1bb75fe48d4716, type: 3}
   - {fileID: 21300000, guid: 6bacb8bd4f3ec954a940598485382ad0, type: 3}
   - {fileID: 21300000, guid: 815519bddcb4aad47ab2af8b83324dfb, type: 3}
+  - {fileID: 21300000, guid: 24b73dbd41dbd1f459072d0dcf1f4314, type: 3}
   - {fileID: 21300000, guid: dfc0dadde54370f469219a045b6f4d6d, type: 3}
   - {fileID: 21300000, guid: 9d587aedde59e4e45885cde1e5758b37, type: 3}
   - {fileID: 21300000, guid: 8fa4fffd3cbe7df4f9f11d6a933cfc81, type: 3}
@@ -568,6 +569,7 @@ SpriteAtlas:
   - male_elf_hair6
   - TheNeedle
   - M-AngelA
+  - Head
   - female_human_head5
   - tempest
   - female_human_hair11

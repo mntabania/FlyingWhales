@@ -62,6 +62,7 @@ public enum RACE{
     ANGEL = 32,
     WURM = 33,
     REVENANT = 34,
+    RAT = 35,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -967,7 +968,7 @@ public enum SPELL_TYPE { NONE = 0, LYCANTHROPY = 1, KLEPTOMANIA = 2, VAMPIRISM =
     REVENANT = 147,
     SNATCH = 148,
     SACRIFICE = 149, REPAIR = 150, EVANGELIZE = 151, SPREAD_RUMOR = 152,
-    FOUND_CULT = 153, BONE_GOLEM = 154, BIOLAB = 155,
+    FOUND_CULT = 153, BONE_GOLEM = 154, BIOLAB = 155, RAT = 156, PLAGUED_RAT = 157,
 }
 //public enum INTERVENTION_ABILITY_TYPE { NONE, AFFLICTION, SPELL, }
 public enum SPELL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON }
@@ -1012,6 +1013,7 @@ public enum SUMMON_TYPE {
     Dragon,
     Troll,
     Bone_Golem,
+    Rat,
 }
 public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb, Heart_Of_The_Wind, Gorgon_Eye }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }

@@ -125,13 +125,13 @@ public class CharacterPanelUI : MonoBehaviour {
         //    }
         //}
 
-        List<string> races = new List<string>();
-        string path3 = $"{UtilityScripts.Utilities.dataPath}RaceSettings/";
-        foreach (string file in Directory.GetFiles(path3, "*.json")) {
-            races.Add(Path.GetFileNameWithoutExtension(file));
-        }
+        //List<string> races = new List<string>();
+        //string path3 = $"{UtilityScripts.Utilities.dataPath}RaceSettings/";
+        //foreach (string file in Directory.GetFiles(path3, "*.json")) {
+        //    races.Add(Path.GetFileNameWithoutExtension(file));
+        //}
 
-        raceOptions.AddOptions(races);
+        //raceOptions.AddOptions(races);
         //combatAttributeOptions.AddOptions(combatAttributes);
         //weaponOptions.AddOptions(weapons);
         genderOptions.AddOptions(genders.ToList());

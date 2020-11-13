@@ -298,6 +298,34 @@ public class SheepData : SummonPlayerSkill {
         className = "Sheep";
     }
 }
+public class RatData : SummonPlayerSkill {
+    public override SPELL_TYPE type => SPELL_TYPE.RAT;
+    public override string name => "Rat";
+    public override string description => "Rat";
+    public RatData() {
+        summonType = SUMMON_TYPE.Rat;
+        race = RACE.RAT;
+        className = "Rat";
+    }
+}
+public class PlaguedRatData : SummonPlayerSkill {
+    public override SPELL_TYPE type => SPELL_TYPE.PLAGUED_RAT;
+    public override string name => "Plagued Rat";
+    public override string description => "Plagued Rat";
+    public PlaguedRatData() {
+        summonType = SUMMON_TYPE.Rat;
+        race = RACE.RAT;
+        className = "Rat";
+    }
+
+    #region Overrides
+    protected override void AfterSummoning(Summon summon) {
+        base.AfterSummoning(summon);
+        summon.traitContainer.AddTrait(summon, "Plagued");
+        summon.traitContainer.AddTrait(summon, "Plague Reservoir");
+    }
+    #endregion
+}
 public class SludgeData : SummonPlayerSkill {
     public override SPELL_TYPE type => SPELL_TYPE.SLUDGE;
     public override string name => "Sludge";

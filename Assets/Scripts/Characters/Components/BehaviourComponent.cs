@@ -69,7 +69,10 @@ public class BehaviourComponent : CharacterComponent {
     
     //snatcher
     public bool isCurrentlySnatching;
-    
+
+    //pest
+    public List<HexTile> pestVillageTarget { get; private set; }
+
     //private COMBAT_MODE combatModeBeforeHarassRaidInvade;
     public COMBAT_MODE combatModeBeforeAttackingDemonicStructure { get; private set; }
 
@@ -967,6 +970,12 @@ public class BehaviourComponent : CharacterComponent {
     }
     #endregion
 
+    #region Pest
+    public void SetPestVillageTarget(List<HexTile> targets) {
+        pestVillageTarget = targets;
+    }
+    #endregion
+
     #region Loading
     public void LoadReferences(SaveDataBehaviourComponent data) {
         if (!string.IsNullOrEmpty(data.attackVillageTarget)) {
@@ -1021,6 +1030,13 @@ public class BehaviourComponent : CharacterComponent {
             for (int i = 0; i < data.arsonVillageTarget.Count; i++) {
                 HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.arsonVillageTarget[i]);
                 arsonVillageTarget.Add(hex);
+            }
+        }
+        if (data.pestVillageTarget != null) {
+            pestVillageTarget = new List<HexTile>();
+            for (int i = 0; i < data.pestVillageTarget.Count; i++) {
+                HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.pestVillageTarget[i]);
+                pestVillageTarget.Add(hex);
             }
         }
         if (data.currentBehaviourComponents != null) {
@@ -1085,6 +1101,8 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
     //snatcher
     public bool isCurrentlySnatching;
 
+    //pest
+    public List<string> pestVillageTarget;
 
     public COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
 
@@ -1157,6 +1175,12 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
             arsonVillageTarget = new List<string>();
             for (int i = 0; i < data.arsonVillageTarget.Count; i++) {
                 arsonVillageTarget.Add(data.arsonVillageTarget[i].persistentID);
+            }
+        }
+        if (data.pestVillageTarget != null) {
+            pestVillageTarget = new List<string>();
+            for (int i = 0; i < data.pestVillageTarget.Count; i++) {
+                pestVillageTarget.Add(data.pestVillageTarget[i].persistentID);
             }
         }
     }

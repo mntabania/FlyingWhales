@@ -2,6 +2,8 @@
 using Plague.Fatality;
 using Plague.Transmission;
 using UnityEngine.Assertions;
+using UnityEngine;
+
 namespace Traits {
     public class Plagued : Status {
 
@@ -17,6 +19,8 @@ namespace Traits {
         
         public IPointOfInterest owner { get; private set; } //poi that has the poison
 
+        private GameObject _infectedEffectGO;
+
         public Plagued() {
             name = "Plagued";
             description = "Has a terrible and virulent disease.";
@@ -28,6 +32,8 @@ namespace Traits {
             moodEffect = -4;
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Pre_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }
 
         #region Loading
@@ -35,6 +41,7 @@ namespace Traits {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is IPointOfInterest poi) {
                 owner = poi;
+                _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Infected, false);
                 if (poi is Character) {
                     Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
                     Messenger.AddListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnStartedPerformingAction);    
@@ -55,6 +62,7 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is IPointOfInterest poi) {
                 owner = poi;
+                _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Infected, false);
                 if (poi is Character) {
                     Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
                     Messenger.AddListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnStartedPerformingAction);    
@@ -64,17 +72,24 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
+            if (_infectedEffectGO) {
+                ObjectPoolManager.Instance.DestroyObject(_infectedEffectGO);
+                _infectedEffectGO = null;
+            }
             if (removedFrom is IPointOfInterest) {
                 if (removedFrom is Character) {
                     Messenger.RemoveListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-                    Messenger.RemoveListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnStartedPerformingAction);    
+                    Messenger.RemoveListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnStartedPerformingAction);
                 }
                 Messenger.RemoveListener<Fatality>(PlayerSignals.ADDED_PLAGUED_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
             }
         }
         public override bool PerTickOwnerMovement() {
+            if(owner.traitContainer.HasTrait("Plague Reservoir")) {
+                return false;
+            }
             if (owner is Character character) {
-                _perTickMovement?.Invoke(character);    
+                _perTickMovement?.Invoke(character);
             }
             return false;
         }
@@ -98,13 +113,29 @@ namespace Traits {
                     
             }
         }
+        public override void OnInitiateMapObjectVisual(ITraitable traitable) {
+            if (traitable is Character character) {
+                if (_infectedEffectGO) {
+                    ObjectPoolManager.Instance.DestroyObject(_infectedEffectGO);
+                    _infectedEffectGO = null;
+                }
+                _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Infected, false);
+            }
+        }
+        public override void OnDestroyMapObjectVisual(ITraitable traitable) {
+            if (_infectedEffectGO) {
+                ObjectPoolManager.Instance.DestroyObject(_infectedEffectGO);
+                _infectedEffectGO = null;
+            }
+        }
+        #endregion
+
         private IPointOfInterest GetOtherObjectInAction(ActualGoapNode p_actionNode) {
             if (p_actionNode.actor != this.owner) {
                 return p_actionNode.actor;
             }
             return p_actionNode.target;
         }
-        #endregion
 
         #region Fatalities
         public void AddFatality(Fatality fatality) {
