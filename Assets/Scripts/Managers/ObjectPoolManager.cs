@@ -471,6 +471,10 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _preconditionsListPool = null;
         _characterListPool?.Clear();
         _characterListPool = null;
+        _hexTileListPool?.Clear();
+        _hexTileListPool = null;
+        _structureListPool?.Clear();
+        _structureListPool = null;
         base.OnDestroy();
         Instance = null;
     }

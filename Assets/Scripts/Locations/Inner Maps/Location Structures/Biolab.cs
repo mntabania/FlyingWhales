@@ -26,6 +26,10 @@ namespace Inner_Maps.Location_Structures {
             ReplenishPlaguedRatChargeWith3MaxCharges();
             ScheduleReplenishOfPlaguedRatCharge();
         }
+        public override void ConstructDefaultActions() {
+            base.ConstructDefaultActions();
+            AddPlayerAction(SPELL_TYPE.UPGRADE);
+        }
         #endregion
 
         #region Plagued Rat
