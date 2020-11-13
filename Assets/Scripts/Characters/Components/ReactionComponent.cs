@@ -1353,6 +1353,9 @@ public class ReactionComponent : CharacterComponent {
                 }
             }
         }
+        if(actor.traitContainer.HasTrait("Infected") && targetTileObject.traitContainer.HasTrait("Edible")) {
+            actor.jobComponent.CreateEatJob(targetTileObject);
+        }
         if (!actor.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to objects
             return;

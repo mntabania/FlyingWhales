@@ -355,6 +355,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.METAL_PILE:
             case TILE_OBJECT_TYPE.STONE_PILE:
             case TILE_OBJECT_TYPE.WOOD_PILE:
+            case TILE_OBJECT_TYPE.TABLE:
                 return true;
             default:
                 return tileObjectType.IsTileObjectAnItem();

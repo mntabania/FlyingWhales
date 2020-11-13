@@ -372,14 +372,6 @@ public class DrinkBlood : GoapAction {
 
         actor.needsComponent.AdjustFullness(34f);
         actor.needsComponent.AdjustHappiness(13.3f);
-
-        Infected infectedTarget = goapNode.poiTarget.traitContainer.GetTraitOrStatus<Infected>("Infected");
-        infectedTarget?.InfectTarget(actor);
-
-        if(goapNode.poiTarget is Character targetCharacter) {
-            Infected infectedActor = actor.traitContainer.GetTraitOrStatus<Infected>("Infected");
-            infectedActor?.InfectTarget(targetCharacter);
-        }
     }
     public void AfterDrinkSuccess(ActualGoapNode goapNode) {
         //poiTarget.SetPOIState(POI_STATE.ACTIVE);

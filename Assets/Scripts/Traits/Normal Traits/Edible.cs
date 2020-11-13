@@ -44,11 +44,6 @@ namespace Traits {
             if (action == INTERACTION_TYPE.EAT) {
                 goapNode.actor.needsComponent.AdjustFullness(8.5f);
                 //goapNode.actor.needsComponent.AdjustStamina(2f);
-                if (!goapNode.actor.traitContainer.HasTrait("Infected")) {
-                    if (owner.traitContainer.HasTrait("Infected")) {
-                        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Infected");
-                    }
-                }
                 if(owner is Table) {
                     goapNode.actor.needsComponent.AdjustHappiness(0.83f);
                     owner.AdjustResource(RESOURCE.FOOD, -1);

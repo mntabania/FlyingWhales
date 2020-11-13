@@ -130,12 +130,6 @@ public class FeedSelf : GoapAction {
             Character actor = goapNode.actor;
 
             targetCharacter.needsComponent.AdjustFullness(34f);
-
-            Infected infectedTarget = targetCharacter.traitContainer.GetTraitOrStatus<Infected>("Infected");
-            infectedTarget?.InfectTarget(actor);
-
-            Infected infectedActor = actor.traitContainer.GetTraitOrStatus<Infected>("Infected");
-            infectedActor?.InfectTarget(targetCharacter);
         }
     }
     public void AfterFeedSuccess(ActualGoapNode goapNode) {

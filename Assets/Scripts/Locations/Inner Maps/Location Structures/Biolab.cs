@@ -1,51 +1,62 @@
 ﻿using System.Collections.Generic;
+using System;
 using UnityEngine;
+using UnityEngine.Assertions;
+using Inner_Maps.Location_Structures;
+
 namespace Inner_Maps.Location_Structures {
     public class Biolab : DemonicStructure {
         //public override Vector2 selectableSize { get; }
-
+        public GameDate replenishDate { get; private set; }
+        
         public Biolab(Region location) : base(STRUCTURE_TYPE.BIOLAB, location) {
             //selectableSize = new Vector2(10f, 10f);
         }
         public Biolab(Region location, SaveDataLocationStructure data) : base(location, data) {
             //selectableSize = new Vector2(10f, 10f);
+            SaveDataBiolab savedBiolab = data as SaveDataBiolab;
+            Assert.IsNotNull(savedBiolab);
+            replenishDate = savedBiolab.replenishDate;
+            SchedulingManager.Instance.AddEntry(replenishDate, ProcessReplenishingOfPlaguedRatCharge, null);
         }
 
-        //    #region Overrides
-        //    public override void OnCharacterUnSeizedHere(Character character) {
-        //        base.OnCharacterUnSeizedHere(character);
-        //        if (character.gridTileLocation != null && IsTilePartOfARoom(character.gridTileLocation, out var room)) {
-        //            DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
-        //            door?.Close();
-        //            if (character.partyComponent.hasParty) {
-        //                //We remove the character from the party quest if he is put in the defiler so he will not dig out of it and do the quest
-        //                character.partyComponent.currentParty.RemoveMemberThatJoinedQuest(character);
-        //            }
-        //        }
-        //    }
-        //    #endregion
+        #region Overrides
+        public override void OnBuiltNewStructure() {
+            base.OnBuiltNewStructure();
+            ReplenishPlaguedRatChargeWith3MaxCharges();
+            ScheduleReplenishOfPlaguedRatCharge();
+        }
+        #endregion
 
-        //    #region Listeners
-        //    protected override void SubscribeListeners() {
-        //        base.SubscribeListeners();
-        //        Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-        //    }
-        //    protected override void UnsubscribeListeners() {
-        //        base.UnsubscribeListeners();
-        //        Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-        //    }
-        //    private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
-        //        if (structure == this && character.isNormalCharacter && IsTilePartOfARoom(character.gridTileLocation, out var room) && room is DefilerRoom defilerRoom && defilerRoom.skeleton == null) {
-        //            DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
-        //            door?.Close();
-        //        }
-        //    }
-        //    #endregion
-
-        //    #region Rooms
-        //    protected override StructureRoom CreteNewRoomForStructure(List<LocationGridTile> tilesInRoom) {
-        //        return new DefilerRoom(tilesInRoom);
-        //    }
-        //    #endregion
+        #region Plagued Rat
+        private void ScheduleReplenishOfPlaguedRatCharge() {
+            replenishDate = GameManager.Instance.Today().AddDays(3);
+            SchedulingManager.Instance.AddEntry(replenishDate, ProcessReplenishingOfPlaguedRatCharge, null);
+        }
+        private void ProcessReplenishingOfPlaguedRatCharge() {
+            if(!hasBeenDestroyed && tiles.Count > 0) {
+                ReplenishPlaguedRatChargeWith3MaxCharges();
+                ScheduleReplenishOfPlaguedRatCharge();
+            }
+        }
+        private void ReplenishPlaguedRatChargeWith3MaxCharges() {
+            SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(SPELL_TYPE.PLAGUED_RAT);
+            if(summonPlayerSkill.charges < 3) {
+                PlayerManager.Instance.player.playerSkillComponent.AddCharges(SPELL_TYPE.PLAGUED_RAT, 1);
+            }
+        }
+        #endregion
     }
 }
+
+#region Save Data
+public class SaveDataBiolab : SaveDataDemonicStructure {
+    public GameDate replenishDate;
+
+    public override void Save(LocationStructure structure) {
+        base.Save(structure);
+        Biolab biolab = structure as Biolab;
+        replenishDate = biolab.replenishDate;
+    }
+}
+#endregion

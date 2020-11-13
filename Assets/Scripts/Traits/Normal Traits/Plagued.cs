@@ -11,6 +11,8 @@ namespace Traits {
         private readonly int pukeChance = 4;
         private readonly int septicChance = 1;
 
+        private GameObject _infectedEffectGO;
+
         public Plagued() {
             name = "Plagued";
             description = "Has a terrible and virulent disease.";
@@ -22,6 +24,8 @@ namespace Traits {
             moodEffect = -4;
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Pre_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }
 
         #region Loading
@@ -29,6 +33,7 @@ namespace Traits {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is IPointOfInterest poi) {
                 owner = poi;
+                _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Infected, false);
             }
         }
         #endregion
@@ -38,9 +43,20 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is IPointOfInterest poi) {
                 owner = poi;
+                _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Infected, false);
+            }
+        }
+        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+            base.OnRemoveTrait(removedFrom, removedBy);
+            if (_infectedEffectGO) {
+                ObjectPoolManager.Instance.DestroyObject(_infectedEffectGO);
+                _infectedEffectGO = null;
             }
         }
         public override bool PerTickOwnerMovement() {
+            if(owner.traitContainer.HasTrait("Plague Reservoir")) {
+                return false;
+            }
             //NOTE: This is a wrong probability computation for floats - FIND A SOLUTION
             //float pukeRoll = Random.Range(0f, 100f);
             //float septicRoll = Random.Range(0f, 100f);
@@ -85,14 +101,29 @@ namespace Traits {
                     
             }
         }
+        public override void OnInitiateMapObjectVisual(ITraitable traitable) {
+            if (traitable is Character character) {
+                if (_infectedEffectGO) {
+                    ObjectPoolManager.Instance.DestroyObject(_infectedEffectGO);
+                    _infectedEffectGO = null;
+                }
+                _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Infected, false);
+            }
+        }
+        public override void OnDestroyMapObjectVisual(ITraitable traitable) {
+            if (_infectedEffectGO) {
+                ObjectPoolManager.Instance.DestroyObject(_infectedEffectGO);
+                _infectedEffectGO = null;
+            }
+        }
+        #endregion
+
         private IPointOfInterest GetOtherObjectInAction(ActualGoapNode p_actionNode) {
             if (p_actionNode.actor != this.owner) {
                 return p_actionNode.actor;
             }
             return p_actionNode.target;
         }
-        #endregion
-        
     }
 
 }

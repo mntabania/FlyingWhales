@@ -15,6 +15,8 @@ public class SummonPlayerSkill : SpellData {
     public SummonPlayerSkill() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
     }
+
+    #region Overrides
     public override void ActivateAbility(LocationGridTile targetTile) {
         Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, PlayerManager.Instance.player.playerFaction, homeRegion: targetTile.parentMap.region as Region, className: className);
         summon.OnSummonAsPlayerMonster();
@@ -29,6 +31,7 @@ public class SummonPlayerSkill : SpellData {
             }
         }
         summon.jobQueue.CancelAllJobs();
+        AfterSummoning(summon);
         Messenger.Broadcast(PlayerSignals.PLAYER_PLACED_SUMMON, summon);
         // Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, summon);
         base.ActivateAbility(targetTile);
@@ -38,6 +41,7 @@ public class SummonPlayerSkill : SpellData {
         CharacterManager.Instance.PlaceSummon(summon, targetTile);
         //summon.behaviourComponent.AddBehaviourComponent(typeof(DefaultMinion));
         spawnedCharacter = summon;
+        AfterSummoning(summon);
         Messenger.Broadcast(PlayerSignals.PLAYER_PLACED_SUMMON, summon);
         base.ActivateAbility(targetTile, ref spawnedCharacter);
     }
@@ -69,4 +73,11 @@ public class SummonPlayerSkill : SpellData {
         }
         return false;
     }
+    #endregion
+
+    #region Virtuals
+    protected virtual void AfterSummoning(Summon summon) {
+        //What happens after summoning this monster
+    }
+    #endregion
 }
