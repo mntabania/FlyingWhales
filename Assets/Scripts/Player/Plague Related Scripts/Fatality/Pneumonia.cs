@@ -4,10 +4,10 @@ using UtilityScripts;
 namespace Plague.Fatality {
     public class Pneumonia : Fatality {
         
-        public override FATALITY fatalityType => FATALITY.Pneumonia;
+        public override PLAGUE_FATALITY fatalityType => PLAGUE_FATALITY.Pneumonia;
         
         protected override void ActivateFatality(Character p_character) {
-            //TODO: Trigger Pneumonia Interrupt
+            p_character.interruptComponent.TriggerInterrupt(INTERRUPT.Pneumonia, p_character);
             Debug.Log("Activated Pneumonia Fatality");
         }
         public override void PerTickMovement(Character p_character) {

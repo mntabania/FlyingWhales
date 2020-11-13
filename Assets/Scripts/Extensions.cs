@@ -242,6 +242,17 @@ public static class Extensions {
                 return false;
         }
     }
+    public static bool IsRestingAction(this INTERACTION_TYPE p_type) {
+        switch (p_type) {
+            case INTERACTION_TYPE.SLEEP:
+            case INTERACTION_TYPE.SLEEP_OUTSIDE:
+            case INTERACTION_TYPE.NAP:
+            case INTERACTION_TYPE.NARCOLEPTIC_NAP:
+                return true;
+            default:
+                return false;
+        }
+    }
     #endregion
 
     #region State

@@ -3,10 +3,10 @@ using UnityEngine;
 using UtilityScripts;
 namespace Plague.Fatality {
     public class Stroke : Fatality {
-        public override FATALITY fatalityType => FATALITY.Stroke;
+        public override PLAGUE_FATALITY fatalityType => PLAGUE_FATALITY.Stroke;
         
         protected override void ActivateFatality(Character p_character) {
-            //TODO: Stroke interrupt
+            p_character.interruptComponent.TriggerInterrupt(INTERRUPT.Stroke, p_character);
             Debug.Log("Activated Stroke Fatality");    
         }
         

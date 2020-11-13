@@ -14,6 +14,13 @@ public class PlagueComponent {
     public PlagueComponent(SaveDataPlagueComponent p_component) {
         _plaguePoints = p_component.plaguePoints;
     }
+
+    #region Plague Points
+    public void AdjustPlaguePoints(int amount) {
+        _plaguePoints += amount;
+        Messenger.Broadcast(PlayerSignals.UPDATED_PLAGUE_POINTS, _plaguePoints);
+    }
+    #endregion
 }
 
 [System.Serializable]

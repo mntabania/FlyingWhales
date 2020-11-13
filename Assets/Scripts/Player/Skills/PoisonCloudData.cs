@@ -4,6 +4,8 @@ using System.Linq;
 using Inner_Maps;
 using Traits;
 using UnityEngine;
+using UtilityScripts;
+
 public class PoisonCloudData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.POISON_CLOUD;
     public override string name => "Poison Cloud";
@@ -16,11 +18,7 @@ public class PoisonCloudData : SpellData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
-        PoisonCloud poisonCloud = new PoisonCloud();
-        poisonCloud.SetExpiryDate(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(Random.Range(2, 6))));
-        poisonCloud.SetGridTileLocation(targetTile);
-        poisonCloud.OnPlacePOI();
-        poisonCloud.SetStacks(5);
+        InnerMapManager.Instance.SpawnPoisonCloud(targetTile, 5, GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(GameUtilities.RandomBetweenTwoNumbers(2, 5))));
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }

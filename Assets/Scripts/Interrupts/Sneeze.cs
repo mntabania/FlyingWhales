@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Traits;
+using Plague.Transmission;
 
 namespace Interrupts {
     public class Sneeze : Interrupt {
@@ -12,12 +13,20 @@ namespace Interrupts {
         }
 
         #region Overrides
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+            Character actor = interruptHolder.actor;
+            if (actor.traitContainer.HasTrait("Plagued")) {
+                AirborneTransmission.Instance.Transmit(actor, null, 1);
+                return true;
+            }
+            return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
+        }
         //public override string ReactionToActor(Character actor, IPointOfInterest target,
         //    Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
         //    string response = base.ReactionToActor(actor, target, witness, interrupt, status);
-            
+
         //    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
-            
+
         //    string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
         //    if (opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Friend ||
         //        opinionLabel == RelationshipManager.Close_Friend) {
@@ -37,7 +46,7 @@ namespace Interrupts {
         //        //When a resident has been witnessed to die due to Septic Shock, the Settlement will be flagged as Plagued
         //        settlement.SetIsPlagued(true);
         //    }
-            
+
         //    return response;
         //}
         #endregion

@@ -6,6 +6,7 @@ using System;
 using Traits;
 using Inner_Maps;
 using UnityEngine.Assertions;
+using UtilityScripts;
 
 public class CombatManager : BaseMonoBehaviour {
     public static CombatManager Instance;
@@ -395,11 +396,7 @@ public class CombatManager : BaseMonoBehaviour {
         if (target.traitContainer.HasTrait("Poisoned")) {
             int stacks = target.traitContainer.stacks["Poisoned"];
             target.traitContainer.RemoveStatusAndStacks(target, "Poisoned");
-            PoisonCloud poisonCloud = new PoisonCloud();
-            poisonCloud.SetExpiryDate(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(UnityEngine.Random.Range(2, 6))));
-            poisonCloud.SetGridTileLocation(target.gridTileLocation);
-            poisonCloud.OnPlacePOI();
-            poisonCloud.SetStacks(stacks);
+            InnerMapManager.Instance.SpawnPoisonCloud(target.gridTileLocation, stacks, GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(GameUtilities.RandomBetweenTwoNumbers(2, 5))));
         }
         if (target.traitContainer.HasTrait("Wet")) {
             int stacks = target.traitContainer.stacks["Wet"];
