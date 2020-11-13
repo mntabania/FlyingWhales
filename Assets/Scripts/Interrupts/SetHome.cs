@@ -245,7 +245,8 @@ namespace Interrupts {
 
                                 log += "\n-Set a random structure-less Area as its Territory and make character go there";
                                 HexTile hex = currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.isCorrupted);
-                                actor.ClearTerritory();
+                                if (hex != null) {
+                                    actor.ClearTerritory();
                                     actor.AddTerritory(hex);
                                     log += "\n-Territory found: " + hex.tileName;
                                     actor.logComponent.PrintLogIfActive(log);

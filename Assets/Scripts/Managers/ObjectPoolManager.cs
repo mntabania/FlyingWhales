@@ -63,6 +63,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructPreconditionListPool();
         ConstructCharacterListPool();
         ConstructHexTileListPool();
+        ConstructStructureListPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
