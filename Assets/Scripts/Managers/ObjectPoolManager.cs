@@ -423,7 +423,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _structureListPool = new List<List<LocationStructure>>();
     }
     public List<LocationStructure> CreateNewStructuresList() {
-        List<LocationStructure> data = GetLocationStructuresListFromPool();
+        List<LocationStructure> data = GetStructuresListFromPool();
         return data;
     }
     public void ReturnStructuresListToPool(List<LocationStructure> data) {

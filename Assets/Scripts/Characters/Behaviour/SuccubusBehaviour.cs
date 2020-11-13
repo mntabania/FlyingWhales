@@ -50,7 +50,7 @@ public class SuccubusBehaviour : CharacterBehaviourComponent {
                 int roll = UnityEngine.Random.Range(0, 100);
                 log += "\nRoll: " + roll;
                 if (roll < 1) {
-                    Character targetCharacter = character.currentRegion.GetRandomCharacterThatMeetCriteria(character => !character.isDead && character.isNormalCharacter && character.gender == GENDER.FEMALE);
+                    Character targetCharacter = character.currentRegion.GetRandomCharacterThatMeetCriteria(c => !c.isDead && c.isNormalCharacter && c.gender == GENDER.FEMALE);
                     if (targetCharacter != null) {
                         log += $"\n-Target for disguise is: " + targetCharacter.name;
                         if (character.currentRegion.GetRandomCharacterThatMeetCriteria((c) => CanTargetCharacterForMakeLove(character, c)) != null) {
