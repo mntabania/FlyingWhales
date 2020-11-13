@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UtilityScripts;
+using Inner_Maps;
 
 public class PoisonVent : TileObject {
 
@@ -54,10 +56,7 @@ public class PoisonVent : TileObject {
 
     #region Production
     private void ProducePoisonCloud() {
-        PoisonCloud poisonCloud = new PoisonCloud();
-        poisonCloud.SetGridTileLocation(gridTileLocation);
-        poisonCloud.OnPlacePOI();
-        poisonCloud.SetStacks(Random.Range(2, 9));
+        InnerMapManager.Instance.SpawnPoisonCloud(gridTileLocation, GameUtilities.RandomBetweenTwoNumbers(2, 8));
     }
     #endregion
 }

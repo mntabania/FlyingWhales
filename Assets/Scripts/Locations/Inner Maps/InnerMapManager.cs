@@ -898,7 +898,23 @@ namespace Inner_Maps {
             return claimedTag;
         }
         #endregion
-        
+
+        #region Moving Tile Objects
+        public void SpawnPoisonCloud(LocationGridTile gridTileLocation, int stacks) {
+            PoisonCloud poisonCloud = new PoisonCloud();
+            poisonCloud.SetGridTileLocation(gridTileLocation);
+            poisonCloud.OnPlacePOI();
+            poisonCloud.SetStacks(stacks);
+        }
+        public void SpawnPoisonCloud(LocationGridTile gridTileLocation, int stacks, GameDate expiryDate) {
+            PoisonCloud poisonCloud = new PoisonCloud();
+            poisonCloud.SetExpiryDate(expiryDate);
+            poisonCloud.SetGridTileLocation(gridTileLocation);
+            poisonCloud.OnPlacePOI();
+            poisonCloud.SetStacks(stacks);
+        }
+        #endregion
+
         protected override void OnDestroy() {
             Debug.Log("Cleaning up inner maps...");
             if (innerMaps != null) {

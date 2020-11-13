@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 using Inner_Maps;
+using UtilityScripts;
 
 public class SpawnPoisonCloud : GoapAction {
 
@@ -39,11 +40,7 @@ public class SpawnPoisonCloud : GoapAction {
 
     #region State Effects
     public void AfterSpawnSuccess(ActualGoapNode goapNode) {
-        PoisonCloud poisonCloud = new PoisonCloud();
-        poisonCloud.SetExpiryDate(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(Random.Range(2, 6))));
-        poisonCloud.SetGridTileLocation(goapNode.actor.gridTileLocation);
-        poisonCloud.OnPlacePOI();
-        poisonCloud.SetStacks(UnityEngine.Random.Range(3, 9));
+        InnerMapManager.Instance.SpawnPoisonCloud(goapNode.actor.gridTileLocation, GameUtilities.RandomBetweenTwoNumbers(3, 8), GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(GameUtilities.RandomBetweenTwoNumbers(2, 5))));
     }
     #endregion
 

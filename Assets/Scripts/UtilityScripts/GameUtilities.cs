@@ -345,13 +345,19 @@ namespace UtilityScripts {
             return roll < chance;
         }
         /// <summary>
-        /// Roll a chance. This rolls from 0f - 100f.
+        /// Roll a chance. This rolls from 0f - 1000f.
         /// </summary>
         /// <param name="chance">The chance for this to return true.</param>
         /// <returns>Whether or not the given chance was met.</returns>
         public static bool RollChance(float chance) {
-            float roll = UnityEngine.Random.Range(0f, 100f);
+            chance *= 100f;
+            int roll = UnityEngine.Random.Range(0, 10000);
             return roll < chance;
+        }
+        public static int RandomBetweenTwoNumbers(int p_min, int p_max) {
+            //+1 because max range in Random.Range is exclusive
+            int roll = UnityEngine.Random.Range(p_min, p_max + 1);
+            return roll;
         }
         public static List<HexTile> GetHexTilesGivenCoordinates(List<Point> coordinates, HexTile[,] map) {
             List<HexTile> tiles = new List<HexTile>();

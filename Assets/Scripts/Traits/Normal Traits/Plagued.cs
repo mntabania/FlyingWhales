@@ -13,6 +13,7 @@ namespace Traits {
             void PerTickMovement(Character p_character);
             void CharacterGainedTrait(Character p_character, Trait p_gainedTrait);
             void CharacterStartedPerformingAction(Character p_character);
+            void CharacterDonePerformingAction(Character p_character, ActualGoapNode p_actionPerformed);
             void HourStarted(Character p_character, int numberOfHours);
         }
 
@@ -20,6 +21,7 @@ namespace Traits {
         private System.Action<Character, Trait> _characterGainedTrait;
         private System.Action<Character> _characterStartedPerformingAction;
         private System.Action<Character, int> _hourStarted;
+        private System.Action<Character, ActualGoapNode> _characterDonePerformingAction;
 
         public IPointOfInterest owner { get; private set; } //poi that has the poison
 
@@ -44,6 +46,8 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Hour_Started_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Start_Perform_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Execute_After_Effect_Trait);
         }
 
         #region Loading
@@ -60,7 +64,6 @@ namespace Traits {
                 _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Infected, false);
                 if (poi is Character) {
                     Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-                    Messenger.AddListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnStartedPerformingAction);    
                 }
                 Messenger.AddListener<Fatality>(PlayerSignals.ADDED_PLAGUE_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
                 Messenger.AddListener<PlagueSymptom>(PlayerSignals.ADDED_PLAGUE_DISEASE_SYMPTOM, OnPlagueDiseaseSymptomAdded);
@@ -84,7 +87,6 @@ namespace Traits {
                 _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Infected, false);
                 if (poi is Character) {
                     Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-                    Messenger.AddListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnStartedPerformingAction);    
                 }
                 Messenger.AddListener<Fatality>(PlayerSignals.ADDED_PLAGUE_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
                 Messenger.AddListener<PlagueSymptom>(PlayerSignals.ADDED_PLAGUE_DISEASE_SYMPTOM, OnPlagueDiseaseSymptomAdded);
@@ -107,7 +109,6 @@ namespace Traits {
             if (removedFrom is IPointOfInterest) {
                 if (removedFrom is Character) {
                     Messenger.RemoveListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-                    Messenger.RemoveListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnStartedPerformingAction);
                 }
                 Messenger.RemoveListener<Fatality>(PlayerSignals.ADDED_PLAGUE_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
                 Messenger.RemoveListener<PlagueSymptom>(PlayerSignals.ADDED_PLAGUE_DISEASE_SYMPTOM, OnPlagueDiseaseSymptomAdded);
@@ -172,6 +173,18 @@ namespace Traits {
                 _hourStarted?.Invoke(character, _numberOfHoursPassed);
             }
         }
+        public override bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
+            if (node.actor == owner && owner is Character character) {
+                _characterStartedPerformingAction?.Invoke(character);
+            }
+            return base.OnStartPerformGoapAction(node, ref willStillContinueAction);
+        }
+        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
+            if (goapNode.actor == owner && owner is Character character) {
+                _characterDonePerformingAction?.Invoke(character, goapNode);
+            }
+            base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
+        }
         #endregion
 
         #region Fatalities
@@ -198,12 +211,13 @@ namespace Traits {
             SubscribeToCharacterGainedTrait(p_plaguedListener);
             SubscribeToCharacterStartedPerformingAction(p_plaguedListener);
             SubscribeToHourStarted(p_plaguedListener);
+            SubscribeToCharacterDonePerformingAction(p_plaguedListener);
         }
         private void UnsubscribeToAllPlagueListenerEvents(IPlaguedListener p_plaguedListener) {
             UnsubscribeToPerTickMovement(p_plaguedListener);
             UnsubscribeToCharacterGainedTrait(p_plaguedListener);
             UnsubscribeToCharacterStartedPerformingAction(p_plaguedListener);
-            UnsubscribeToHourStarted(p_plaguedListener);
+            UnsubscribeToCharacterDonePerformingAction(p_plaguedListener);
         }
         private void SubscribeToPerTickMovement(IPlaguedListener plaguedListener) {
             _perTickMovement += plaguedListener.PerTickMovement;
@@ -229,6 +243,12 @@ namespace Traits {
         private void UnsubscribeToHourStarted(IPlaguedListener p_plaguedListener) {
             _hourStarted -= p_plaguedListener.HourStarted;
         }
+        private void SubscribeToCharacterDonePerformingAction(IPlaguedListener p_plaguedListener) {
+            _characterDonePerformingAction += p_plaguedListener.CharacterDonePerformingAction;
+        }
+        private void UnsubscribeToCharacterDonePerformingAction(IPlaguedListener p_plaguedListener) {
+            _characterDonePerformingAction -= p_plaguedListener.CharacterDonePerformingAction;
+        }
         #endregion
 
         #region Listeners
@@ -242,12 +262,6 @@ namespace Traits {
             //TODO: Might be a better way to trigger that the character that owns this has gained a trait, rather than listening to a signal and filtering results
             if (p_traitable == owner && owner is Character character) {
                 _characterGainedTrait?.Invoke(character, p_trait);
-            }
-        }
-        private void OnStartedPerformingAction(ActualGoapNode p_actualGoapNode) {
-            //TODO: Might be a better way to trigger that the character that owns this has started performing an action, rather than listening to a signal and filtering results
-            if (p_actualGoapNode.actor == owner && owner is Character character) {
-                _characterStartedPerformingAction?.Invoke(character);
             }
         }
         #endregion
