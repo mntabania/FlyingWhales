@@ -14,8 +14,8 @@ public class CultistBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.homeSettlement == null && !character.currentRegion.IsRegionVillageCapacityReached() && character.faction != null && 
             character.faction.factionType.type == FACTION_TYPE.Demon_Cult && character.characterClass.className == "Cult Leader") {
-            HexTile targetTile = character.currentRegion.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
-            if(targetTile != null) {
+            HexTile targetTile = character.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
+            if (targetTile != null) {
                 StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, character.faction.factionType.mainResource, true);
                 List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
                 GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);

@@ -70,7 +70,7 @@ namespace Interrupts {
                 //Character is a monster
                 log += "\n-Character is a monster";
                 log += "\n-Find an unoccupied Special Structure within the region and randomly select one. Clear out Territory data if it has one.";
-                LocationStructure chosenHomeStructure = currentRegion.GetRandomUnoccupiedSpecialStructure();
+                LocationStructure chosenHomeStructure = currentRegion.GetRandomStructureThatMeetCriteria(currStructure => !currStructure.IsOccupied() && currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0);
                 if (chosenHomeStructure != null) {
                     actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                     log += "\n-Special Structure found: " + chosenHomeStructure.ToString();
@@ -81,7 +81,7 @@ namespace Interrupts {
                 if (!actor.HasTerritory()) {
                     if (UnityEngine.Random.Range(0, 2) == 0) {
                         log += "\n-Getting structureless hex tile in current region: " + currentRegion.name;
-                        HexTile hex = currentRegion.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
+                        HexTile hex = currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
                         if (hex != null) {
                             actor.AddTerritory(hex);
                             log += "\n-Hex tile found: " + hex.tileName;
@@ -139,7 +139,7 @@ namespace Interrupts {
                         }
                         if (!actor.HasTerritory()) {
                             log += "\n-Character has no territory";
-                            HexTile hex = currentRegion.GetRandomNoStructureUncorruptedPlainHex();
+                            HexTile hex = currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.isCorrupted);
                             if (hex != null) {
                                 actor.AddTerritory(hex);
                                 log += "\n-Territory found: " + hex.tileName;
@@ -244,9 +244,8 @@ namespace Interrupts {
                                 }
 
                                 log += "\n-Set a random structure-less Area as its Territory and make character go there";
-                                HexTile hex = currentRegion.GetRandomNoStructureUncorruptedPlainHex();
-                                if (hex != null) {
-                                    actor.ClearTerritory();
+                                HexTile hex = currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.isCorrupted);
+                                actor.ClearTerritory();
                                     actor.AddTerritory(hex);
                                     log += "\n-Territory found: " + hex.tileName;
                                     actor.logComponent.PrintLogIfActive(log);
@@ -264,8 +263,8 @@ namespace Interrupts {
                 if (roll < 35) {
                     if(actor.isFactionLeader && !actor.faction.HasOwnedSettlement() && actor.currentRegion != null && !actor.currentRegion.IsRegionVillageCapacityReached()) {
                         log += $"\n-Find new village";
-                        HexTile targetTile = actor.currentRegion.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
-                        if(targetTile != null) {
+                        HexTile targetTile = actor.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
+                        if (targetTile != null) {
                             StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, actor.faction.factionType.mainResource, actor.faction.factionType.usesCorruptedStructures); //character.faction.factionType.mainResource
                             List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
                             GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
@@ -281,7 +280,7 @@ namespace Interrupts {
                 if (roll < 3) {
                     if (actor.isFactionLeader && !actor.faction.HasOwnedSettlement() && actor.currentRegion != null && !actor.currentRegion.IsRegionVillageCapacityReached()) {
                         log += $"\n-Find new village";
-                        HexTile targetTile = actor.currentRegion.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
+                        HexTile targetTile = actor.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
                         if (targetTile != null) {
                             StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, actor.faction.factionType.mainResource, actor.faction.factionType.usesCorruptedStructures); //character.faction.factionType.mainResource
                             List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
@@ -382,7 +381,7 @@ namespace Interrupts {
                 }
 
                 log += "\n-Set a random structure-less Area as its Territory and make character go there";
-                HexTile hex = currentRegion.GetRandomNoStructureUncorruptedPlainHex();
+                HexTile hex = currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.isCorrupted);
                 if (hex != null) {
                     actor.ClearTerritory();
                     actor.AddTerritory(hex);
@@ -442,8 +441,8 @@ namespace Interrupts {
             if(adjacentRegions != null) {
                 while (adjacentRegions.Count > 0) {
                     Region chosenAdjacentRegion = adjacentRegions[UnityEngine.Random.Range(0, adjacentRegions.Count)];
-                    HexTile hex = chosenAdjacentRegion.GetRandomNoStructureUncorruptedPlainHex();
-                    if (hex != null) {
+                    HexTile hex = chosenAdjacentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.isCorrupted);
+            if (hex != null) {
                         return hex;
                     } else {
                         adjacentRegions.Remove(chosenAdjacentRegion);

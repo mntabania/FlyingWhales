@@ -13,7 +13,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
         producedJob = null;
         log += $"\n-{character.name} is wanderer";
         if (!character.HasTerritory() && character.currentRegion != null) {
-            HexTile initialTerritory = character.currentRegion.GetRandomNoStructureUncorruptedPlainHex();
+            HexTile initialTerritory = character.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.isCorrupted);
             if (initialTerritory != null) {
                 character.AddTerritory(initialTerritory);
             } else {
