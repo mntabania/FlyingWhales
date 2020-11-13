@@ -3,7 +3,7 @@ using Traits;
 namespace Plague.Fatality {
     public abstract class Fatality : Plagued.IPlaguedListener {
 
-        public abstract FATALITY fatalityType { get; }
+        public abstract PLAGUE_FATALITY fatalityType { get; }
         
         protected abstract void ActivateFatality(Character p_character);
         
@@ -11,21 +11,22 @@ namespace Plague.Fatality {
         public virtual void PerTickMovement(Character p_character) { }
         public virtual void CharacterGainedTrait(Character p_character, Trait p_gainedTrait) { }
         public virtual void CharacterStartedPerformingAction(Character p_character) { }
+        public virtual void HourStarted(Character p_character, int p_numOfHoursPassed) { }
         #endregion
     }
-    
+
     public static class FatalityExtensions{
-        public static int GetFatalityCost(this FATALITY fatality) {
+        public static int GetFatalityCost(this PLAGUE_FATALITY fatality) {
             switch (fatality) {
-                case FATALITY.Septic_Shock:
+                case PLAGUE_FATALITY.Septic_Shock:
                     return 30;
-                case FATALITY.Heart_Attack:
+                case PLAGUE_FATALITY.Heart_Attack:
                     return 30;
-                case FATALITY.Stroke:
+                case PLAGUE_FATALITY.Stroke:
                     return 30;
-                case FATALITY.Total_Organ_Failure:
+                case PLAGUE_FATALITY.Total_Organ_Failure:
                     return 30;
-                case FATALITY.Pneumonia:
+                case PLAGUE_FATALITY.Pneumonia:
                     return 30;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(fatality), fatality, null);

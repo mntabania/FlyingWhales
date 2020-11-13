@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using Plague.Fatality;
+using Plague.Symptom;
 using Plague.Transmission;
 using UnityEngine.Assertions;
 using UnityEngine;
+using Traits;
 
 namespace Traits {
     public class Plagued : Status {
@@ -11,15 +13,22 @@ namespace Traits {
             void PerTickMovement(Character p_character);
             void CharacterGainedTrait(Character p_character, Trait p_gainedTrait);
             void CharacterStartedPerformingAction(Character p_character);
+            void HourStarted(Character p_character, int numberOfHours);
         }
-        
+
         private System.Action<Character> _perTickMovement;
         private System.Action<Character, Trait> _characterGainedTrait;
         private System.Action<Character> _characterStartedPerformingAction;
-        
+        private System.Action<Character, int> _hourStarted;
+
         public IPointOfInterest owner { get; private set; } //poi that has the poison
 
+        private int _numberOfHoursPassed;
         private GameObject _infectedEffectGO;
+
+        #region getters
+        public int numberOfHoursPassed => _numberOfHoursPassed;
+        #endregion
 
         public Plagued() {
             name = "Plagued";
@@ -34,9 +43,16 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Hour_Started_Trait);
         }
 
         #region Loading
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
+            SaveDataPlagued saveDataPlagued = saveDataTrait as SaveDataPlagued;
+            Assert.IsNotNull(saveDataPlagued);
+            _numberOfHoursPassed = saveDataPlagued.numberOfHoursPassed;
+        }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is IPointOfInterest poi) {
@@ -46,12 +62,15 @@ namespace Traits {
                     Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
                     Messenger.AddListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnStartedPerformingAction);    
                 }
-                Messenger.AddListener<Fatality>(PlayerSignals.ADDED_PLAGUED_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
+                Messenger.AddListener<Fatality>(PlayerSignals.ADDED_PLAGUE_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
+                Messenger.AddListener<PlagueSymptom>(PlayerSignals.ADDED_PLAGUE_DISEASE_SYMPTOM, OnPlagueDiseaseSymptomAdded);
                 for (int i = 0; i < PlagueDisease.Instance.activeFatalities.Count; i++) {
                     Fatality fatality = PlagueDisease.Instance.activeFatalities[i];
-                    SubscribeToPerTickMovement(fatality);
-                    SubscribeToCharacterGainedTrait(fatality);
-                    SubscribeToCharacterStartedPerformingAction(fatality);
+                    AddFatality(fatality);
+                }
+                for (int i = 0; i < PlagueDisease.Instance.activeSymptoms.Count; i++) {
+                    PlagueSymptom symptom = PlagueDisease.Instance.activeSymptoms[i];
+                    AddSymptom(symptom);
                 }
             }
         }
@@ -67,7 +86,16 @@ namespace Traits {
                     Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
                     Messenger.AddListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnStartedPerformingAction);    
                 }
-                Messenger.AddListener<Fatality>(PlayerSignals.ADDED_PLAGUED_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
+                Messenger.AddListener<Fatality>(PlayerSignals.ADDED_PLAGUE_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
+                Messenger.AddListener<PlagueSymptom>(PlayerSignals.ADDED_PLAGUE_DISEASE_SYMPTOM, OnPlagueDiseaseSymptomAdded);
+                for (int i = 0; i < PlagueDisease.Instance.activeFatalities.Count; i++) {
+                    Fatality fatality = PlagueDisease.Instance.activeFatalities[i];
+                    AddFatality(fatality);
+                }
+                for (int i = 0; i < PlagueDisease.Instance.activeSymptoms.Count; i++) {
+                    PlagueSymptom symptom = PlagueDisease.Instance.activeSymptoms[i];
+                    AddSymptom(symptom);
+                }
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
@@ -81,7 +109,16 @@ namespace Traits {
                     Messenger.RemoveListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
                     Messenger.RemoveListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnStartedPerformingAction);
                 }
-                Messenger.RemoveListener<Fatality>(PlayerSignals.ADDED_PLAGUED_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
+                Messenger.RemoveListener<Fatality>(PlayerSignals.ADDED_PLAGUE_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
+                Messenger.RemoveListener<PlagueSymptom>(PlayerSignals.ADDED_PLAGUE_DISEASE_SYMPTOM, OnPlagueDiseaseSymptomAdded);
+                for (int i = 0; i < PlagueDisease.Instance.activeFatalities.Count; i++) {
+                    Fatality fatality = PlagueDisease.Instance.activeFatalities[i];
+                    RemoveFatality(fatality);
+                }
+                for (int i = 0; i < PlagueDisease.Instance.activeSymptoms.Count; i++) {
+                    PlagueSymptom symptom = PlagueDisease.Instance.activeSymptoms[i];
+                    RemoveSymptom(symptom);
+                }
             }
         }
         public override bool PerTickOwnerMovement() {
@@ -128,29 +165,46 @@ namespace Traits {
                 _infectedEffectGO = null;
             }
         }
+        public override void OnHourStarted(ITraitable traitable) {
+            base.OnHourStarted(traitable);
+            _numberOfHoursPassed++;
+            if (traitable is Character character) {
+                _hourStarted?.Invoke(character, _numberOfHoursPassed);
+            }
+        }
         #endregion
 
-        private IPointOfInterest GetOtherObjectInAction(ActualGoapNode p_actionNode) {
-            if (p_actionNode.actor != this.owner) {
-                return p_actionNode.actor;
-            }
-            return p_actionNode.target;
-        }
-
         #region Fatalities
-        public void AddFatality(Fatality fatality) {
-            SubscribeToPerTickMovement(fatality);
-            SubscribeToCharacterGainedTrait(fatality);
-            SubscribeToCharacterStartedPerformingAction(fatality);
+        public void AddFatality(Fatality p_fatality) {
+            SubscribeToAllPlagueListenerEvents(p_fatality);
         }
-        public void RemoveFatality(Fatality fatality) {
-            UnsubscribeToPerTickMovement(fatality);
-            UnsubscribeToCharacterGainedTrait(fatality);
-            UnsubscribeToCharacterStartedPerformingAction(fatality);
+        public void RemoveFatality(Fatality p_fatality) {
+            UnsubscribeToAllPlagueListenerEvents(p_fatality);
+        }
+        #endregion
+
+        #region Symptoms
+        public void AddSymptom(PlagueSymptom p_symptom) {
+            SubscribeToAllPlagueListenerEvents(p_symptom);
+        }
+        public void RemoveSymptom(PlagueSymptom p_symptom) {
+            UnsubscribeToAllPlagueListenerEvents(p_symptom);
         }
         #endregion
 
         #region Events
+        private void SubscribeToAllPlagueListenerEvents(IPlaguedListener p_plaguedListener) {
+            SubscribeToPerTickMovement(p_plaguedListener);
+            SubscribeToCharacterGainedTrait(p_plaguedListener);
+            SubscribeToCharacterStartedPerformingAction(p_plaguedListener);
+            SubscribeToHourStarted(p_plaguedListener);
+        }
+        private void UnsubscribeToAllPlagueListenerEvents(IPlaguedListener p_plaguedListener) {
+            UnsubscribeToPerTickMovement(p_plaguedListener);
+            UnsubscribeToCharacterGainedTrait(p_plaguedListener);
+            UnsubscribeToCharacterStartedPerformingAction(p_plaguedListener);
+            UnsubscribeToHourStarted(p_plaguedListener);
+        }
         private void SubscribeToPerTickMovement(IPlaguedListener plaguedListener) {
             _perTickMovement += plaguedListener.PerTickMovement;
         }
@@ -169,11 +223,20 @@ namespace Traits {
         private void UnsubscribeToCharacterStartedPerformingAction(IPlaguedListener plaguedListener) {
             _characterStartedPerformingAction -= plaguedListener.CharacterStartedPerformingAction;
         }
+        private void SubscribeToHourStarted(IPlaguedListener p_plaguedListener) {
+            _hourStarted += p_plaguedListener.HourStarted;
+        }
+        private void UnsubscribeToHourStarted(IPlaguedListener p_plaguedListener) {
+            _hourStarted -= p_plaguedListener.HourStarted;
+        }
         #endregion
 
         #region Listeners
         private void OnPlagueDiseaseFatalityAdded(Fatality p_fatality) {
             AddFatality(p_fatality);
+        }
+        private void OnPlagueDiseaseSymptomAdded(PlagueSymptom p_symptom) {
+            AddSymptom(p_symptom);
         }
         private void OnTraitableGainedTrait(ITraitable p_traitable, Trait p_trait) {
             //TODO: Might be a better way to trigger that the character that owns this has gained a trait, rather than listening to a signal and filtering results
@@ -188,6 +251,24 @@ namespace Traits {
             }
         }
         #endregion
+
+        private IPointOfInterest GetOtherObjectInAction(ActualGoapNode p_actionNode) {
+            if (p_actionNode.actor != this.owner) {
+                return p_actionNode.actor;
+            }
+            return p_actionNode.target;
+        }
     }
 }
 
+#region Save Data
+public class SaveDataPlagued : SaveDataTrait {
+    public int numberOfHoursPassed;
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Plagued plagued = trait as Plagued;
+        Assert.IsNotNull(plagued);
+        numberOfHoursPassed = plagued.numberOfHoursPassed;
+    }
+}
+#endregion

@@ -5,9 +5,9 @@ using UtilityScripts;
 namespace Plague.Fatality {
     public class HeartAttack : Fatality {
         
-        public override FATALITY fatalityType => FATALITY.Heart_Attack;
+        public override PLAGUE_FATALITY fatalityType => PLAGUE_FATALITY.Heart_Attack;
         protected override void ActivateFatality(Character p_character) {
-            //TODO: Heart attack interrupt
+            p_character.interruptComponent.TriggerInterrupt(INTERRUPT.Heart_Attack, p_character);
             Debug.Log("Activated Heart Attack Fatality");
         }
         public override void CharacterGainedTrait(Character p_character, Trait p_gainedTrait) {

@@ -1091,7 +1091,9 @@ public enum SETTLEMENT_EVENT {
 public enum RELIGION {
     None, Demon_Worship, Divine_Worship, Nature_Worship
 }
-
-public enum FATALITY {
+public enum PLAGUE_FATALITY {
     Septic_Shock, Heart_Attack, Stroke, Total_Organ_Failure, Pneumonia
+}
+public enum PLAGUE_SYMPTOM {
+    Paralysis, Vomiting, Lethargy, Seizure, Insomnia, Poison_Cloud, Monster_Scent, Sneezing, Depression, Hunger_Pangs,
 }

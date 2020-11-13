@@ -71,5 +71,12 @@
     /// <summary>
     /// Parameters: Fatality
     /// </summary>
-    public static string ADDED_PLAGUED_DISEASE_FATALITY = "AddedPlaguedDiseaseFatality";
+    public static string ADDED_PLAGUE_DISEASE_FATALITY = "AddedPlagueDiseaseFatality";
+
+    /// <summary>
+    /// Parameters: Plague Symptom
+    /// </summary>
+    public static string ADDED_PLAGUE_DISEASE_SYMPTOM = "AddedPlagueDiseaseSymptom";
+
+    public static string UPDATED_PLAGUE_POINTS = "UpdatedPlaguePoints";
 }
