@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using Interrupts;
+using Inner_Maps.Location_Structures;
 
 public class ObjectPoolManager : BaseMonoBehaviour {
 
@@ -27,6 +28,8 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     private List<List<GoapEffect>> _expectedEffectsListPool;
     private List<List<Precondition>> _preconditionsListPool;
     private List<List<Character>> _characterListPool;
+    private List<List<HexTile>> _hexTileListPool;
+    private List<List<LocationStructure>> _structureListPool;
 
     private void Awake() {
         Instance = this;
@@ -59,6 +62,8 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructExpectedEffectsListPool();
         ConstructPreconditionListPool();
         ConstructCharacterListPool();
+        ConstructHexTileListPool();
+        ConstructStructureListPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -390,6 +395,51 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         return new List<Character>();
     }
     #endregion
+
+    #region HexTiles
+    private void ConstructHexTileListPool() {
+        _hexTileListPool = new List<List<HexTile>>();
+    }
+    public List<HexTile> CreateNewHexTilesList() {
+        List<HexTile> data = GetHexTilesListFromPool();
+        return data;
+    }
+    public void ReturnHexTilesListToPool(List<HexTile> data) {
+        data.Clear();
+        _hexTileListPool.Add(data);
+    }
+    private List<HexTile> GetHexTilesListFromPool() {
+        if (_hexTileListPool.Count > 0) {
+            List<HexTile> data = _hexTileListPool[0];
+            _hexTileListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<HexTile>();
+    }
+    #endregion
+
+    #region Structures
+    private void ConstructStructureListPool() {
+        _structureListPool = new List<List<LocationStructure>>();
+    }
+    public List<LocationStructure> CreateNewStructuresList() {
+        List<LocationStructure> data = GetLocationStructuresListFromPool();
+        return data;
+    }
+    public void ReturnStructuresListToPool(List<LocationStructure> data) {
+        data.Clear();
+        _structureListPool.Add(data);
+    }
+    private List<LocationStructure> GetStructuresListFromPool() {
+        if (_structureListPool.Count > 0) {
+            List<LocationStructure> data = _structureListPool[0];
+            _structureListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<LocationStructure>();
+    }
+    #endregion
+
 
     protected override void OnDestroy() {
         if (allObjectPools != null) {

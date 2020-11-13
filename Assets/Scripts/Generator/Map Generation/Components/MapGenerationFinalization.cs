@@ -373,7 +373,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			for (int i = 0; i < artifactCount; i++) {
 				if (artifactChoices.Count == 0) { break; }
 				Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
-				LocationStructure specialStructure = randomRegion.GetRandomSpecialStructure();
+				LocationStructure specialStructure = randomRegion.GetRandomStructureThatMeetCriteria(currStructure => currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0);
 				if (specialStructure != null) {
 					ARTIFACT_TYPE randomArtifact = CollectionUtilities.GetRandomElement(artifactChoices);
 					Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(randomArtifact);

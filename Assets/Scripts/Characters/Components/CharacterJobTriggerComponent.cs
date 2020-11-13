@@ -1974,7 +1974,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 chosenRegion = adjacentRegions[UnityEngine.Random.Range(0, adjacentRegions.Count)];
             }
             if(chosenRegion != null) {
-                HexTile hex = chosenRegion.GetRandomPlainHex();
+                HexTile hex = chosenRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN);
                 if(hex != null) {
                     LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(hex.locationGridTiles);
                     if (owner.gridTileLocation != null && owner.movementComponent.HasPathToEvenIfDiffRegion(chosenTile)) {

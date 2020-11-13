@@ -255,6 +255,6 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
         return chosenHex;
     }
     private HexTile GetNoStructurePlainHexInRegion(Region region) {
-        return region.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
+        return region.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
     }
 }
