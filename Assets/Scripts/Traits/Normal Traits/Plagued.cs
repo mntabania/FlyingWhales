@@ -176,6 +176,14 @@ namespace Traits {
         public override bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
             if (node.actor == owner && owner is Character character) {
                 _characterStartedPerformingAction?.Invoke(character);
+
+                //If character can no longer do happiness recovery and the action that is starting is a happiness recovery type job, character should no longer continue doing the job
+                if(node.associatedJobType.IsHappinessRecoveryTypeJob() && !character.limiterComponent.canDoHappinessRecovery) {
+                    willStillContinueAction = false;
+                } else if (node.associatedJobType.IsTirednessRecoveryTypeJob() && !character.limiterComponent.canDoTirednessRecovery) {
+                    willStillContinueAction = false;
+                }
+                return true;
             }
             return base.OnStartPerformGoapAction(node, ref willStillContinueAction);
         }
