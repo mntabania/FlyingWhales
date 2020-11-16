@@ -224,7 +224,7 @@ public class CombatComponent : CharacterComponent {
             owner.logComponent.PrintLogIfActive(debugLog);
             return new CombatReaction(COMBAT_REACTION.Flight);
         }
-        if (owner.traitContainer.HasTrait("Berserked") || owner is Summon || owner.characterClass.className == "Zombie" || owner.race == RACE.DEMON) {
+        if (owner.traitContainer.HasTrait("Berserked") || owner is Summon || owner.characterClass.IsZombie() || owner.race == RACE.DEMON) {
             debugLog += "\n-Character is berserked/monster/zombie/demon";
             debugLog += "\n-FIGHT";
             owner.logComponent.PrintLogIfActive(debugLog);

@@ -309,7 +309,7 @@ public class BehaviourComponent : CharacterComponent {
         }
     }
     public void UpdateDefaultBehaviourSet() {
-        if (owner.isNormalCharacter || owner.characterClass.className == "Zombie") {
+        if (owner.isNormalCharacter || owner.characterClass.IsZombie()) {
             if(owner.homeSettlement != null) {
                 owner.SetIsWanderer(false);
             } else {

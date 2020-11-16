@@ -11,7 +11,7 @@ public class UndeadChaosOrb : PassiveSkill {
     private void OnCharacterDied(Character character) {
         if (character.faction?.factionType.type == FACTION_TYPE.Undead && character.marker != null) {
             bool shouldCreateChaosOrbs = true;
-            if (character.characterClass.className == "Zombie") {
+            if (character.characterClass.IsZombie()) {
                 //Note: add chance to create chaos orbs when character is Zombie, because this passive skill can become OP
                 //if chaos orbs are created every time a Zombie dies since Zombies can reanimate, then die again.
                 shouldCreateChaosOrbs = GameUtilities.RollChance(35);

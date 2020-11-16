@@ -1966,7 +1966,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return true;
     }
     public bool IsAble() {
-        return !isDead && characterClass.className != "Zombie"; //!traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+        return !isDead && !characterClass.IsZombie(); //!traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
     }
     public void SetTileObjectLocation(TileObject tileObject) {
         tileObjectLocation = tileObject;
@@ -2509,7 +2509,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             } else {
                 Death();
             }
-        } else if (amount < 0 && IsHealthCriticallyLow() && traitContainer.HasTrait("Coward", "Vampire") && traitContainer.HasTrait("Berserked") == false && characterClass.className != "Zombie") { //do not make berserked characters trigger flight
+        } else if (amount < 0 && IsHealthCriticallyLow() && traitContainer.HasTrait("Coward", "Vampire") && traitContainer.HasTrait("Berserked") == false && !characterClass.IsZombie()) { //do not make berserked characters trigger flight
             bool willflight = true;
             if (traitContainer.HasTrait("Vampire") && crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
                 willflight = false;
@@ -5587,7 +5587,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             : Raise(this, onRaisedFromDeadAction, faction, race, className));
     }
     private IEnumerator Raise(Character target, Action<Character> onReturnToLifeAction, Faction faction, RACE race, string className) {
-        if (className == "Zombie") {
+        if (className.Contains("Zombie")) {
             LocationGridTile tile = grave != null ? grave.gridTileLocation : target.gridTileLocation;
             GameManager.Instance.CreateParticleEffectAt(tile, PARTICLE_EFFECT.Zombie_Transformation);
             yield return new WaitForSeconds(5f);

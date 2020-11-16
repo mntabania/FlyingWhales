@@ -48,7 +48,7 @@ public class PlagueLifespan {
         }
         return -1;
     }
-    public int GetLifespanOfPlagueOn(IPointOfInterest p_poi) {
+    public int GetLifespanInHoursOfPlagueOn(IPointOfInterest p_poi) {
         if(p_poi is Character character) {
             if(character.faction?.factionType.type == FACTION_TYPE.Wild_Monsters) {
                 return _monsterInfectionTimeInHours;
@@ -59,6 +59,13 @@ public class PlagueLifespan {
             }
         } else if (p_poi is TileObject tileObject) {
             return _tileObjectInfectionTimeInHours;
+        }
+        return -1;
+    }
+    public int GetLifespanInTicksOfPlagueOn(IPointOfInterest p_poi) {
+        int lifespanInHours = GetLifespanInHoursOfPlagueOn(p_poi);
+        if(lifespanInHours != -1) {
+            return GameManager.Instance.GetTicksBasedOnHour(lifespanInHours);
         }
         return -1;
     }

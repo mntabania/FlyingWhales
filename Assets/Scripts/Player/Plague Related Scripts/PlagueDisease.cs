@@ -27,6 +27,16 @@ public class PlagueDisease : ISingletonPattern {
     }
     public PlagueDisease() {
         Initialize();
+        AddAndInitializeSymptom(PLAGUE_SYMPTOM.Sneezing);
+        AddAndInitializeSymptom(PLAGUE_SYMPTOM.Poison_Cloud);
+        AddAndInitializeSymptom(PLAGUE_SYMPTOM.Depression);
+        AddAndInitializeSymptom(PLAGUE_SYMPTOM.Hunger_Pangs);
+        AddAndInitializeSymptom(PLAGUE_SYMPTOM.Insomnia);
+        AddAndInitializeSymptom(PLAGUE_SYMPTOM.Lethargy);
+        AddAndInitializeSymptom(PLAGUE_SYMPTOM.Monster_Scent);
+        AddAndInitializeSymptom(PLAGUE_SYMPTOM.Paralysis);
+        AddAndInitializeSymptom(PLAGUE_SYMPTOM.Seizure);
+        AddAndInitializeSymptom(PLAGUE_SYMPTOM.Vomiting);
     }
 
     #region ISingletonPattern

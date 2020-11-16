@@ -12,14 +12,14 @@ namespace Traits {
         public interface IPlaguedListener {
             void PerTickMovement(Character p_character);
             void CharacterGainedTrait(Character p_character, Trait p_gainedTrait);
-            void CharacterStartedPerformingAction(Character p_character);
+            void CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action);
             void CharacterDonePerformingAction(Character p_character, ActualGoapNode p_actionPerformed);
             void HourStarted(Character p_character, int numberOfHours);
         }
 
         private System.Action<Character> _perTickMovement;
         private System.Action<Character, Trait> _characterGainedTrait;
-        private System.Action<Character> _characterStartedPerformingAction;
+        private System.Action<Character, ActualGoapNode> _characterStartedPerformingAction;
         private System.Action<Character, int> _hourStarted;
         private System.Action<Character, ActualGoapNode> _characterDonePerformingAction;
 
@@ -29,6 +29,7 @@ namespace Traits {
         private GameObject _infectedEffectGO;
 
         #region getters
+        public override bool isPersistent => true;
         public int numberOfHoursPassed => _numberOfHoursPassed;
         #endregion
 
@@ -141,12 +142,15 @@ namespace Traits {
                     }
                     break;
                 case ACTION_CATEGORY.DIRECT:
-                    if (!otherObject.traitContainer.HasTrait("Plagued") && otherObject is Character) {
+                    if (!otherObject.traitContainer.HasTrait("Plagued")) {
                         PhysicalContactTransmission.Instance.Transmit(owner, otherObject, 1);    
                     }
                     break;
                 case ACTION_CATEGORY.VERBAL:
-                    AirborneTransmission.Instance.Transmit(owner, null, 1);
+                    if(p_actionNode.actor == owner) {
+                        //Only transmit verbally if the plagued character is the actor of the action
+                        AirborneTransmission.Instance.Transmit(owner, null, 1);
+                    }
                     break;
                     
             }
@@ -169,25 +173,42 @@ namespace Traits {
         public override void OnHourStarted(ITraitable traitable) {
             base.OnHourStarted(traitable);
             _numberOfHoursPassed++;
+            if (owner.traitContainer.HasTrait("Plague Reservoir")) {
+                return;
+            }
             if (traitable is Character character) {
                 _hourStarted?.Invoke(character, _numberOfHoursPassed);
             }
         }
         public override bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
+            if (owner.traitContainer.HasTrait("Plague Reservoir")) {
+                return false;
+            }
             if (node.actor == owner && owner is Character character) {
-                _characterStartedPerformingAction?.Invoke(character);
+                if(_characterStartedPerformingAction != null) {
+                    _characterStartedPerformingAction.Invoke(character, node);
 
-                //If character can no longer do happiness recovery and the action that is starting is a happiness recovery type job, character should no longer continue doing the job
-                if(node.associatedJobType.IsHappinessRecoveryTypeJob() && !character.limiterComponent.canDoHappinessRecovery) {
-                    willStillContinueAction = false;
-                } else if (node.associatedJobType.IsTirednessRecoveryTypeJob() && !character.limiterComponent.canDoTirednessRecovery) {
-                    willStillContinueAction = false;
+                    //If character can no longer do happiness recovery and the action that is starting is a happiness recovery type job, character should no longer continue doing the job
+                    if (node.associatedJobType.IsHappinessRecoveryTypeJob() && !character.limiterComponent.canDoHappinessRecovery) {
+                        if (node.actor.jobQueue.jobsInQueue.Count > 0) {
+                            node.actor.jobQueue.jobsInQueue[0].CancelJob(false);
+                        }
+                        willStillContinueAction = false;
+                    } else if (node.associatedJobType.IsTirednessRecoveryTypeJob() && !character.limiterComponent.canDoTirednessRecovery) {
+                        if (node.actor.jobQueue.jobsInQueue.Count > 0) {
+                            node.actor.jobQueue.jobsInQueue[0].CancelJob(false);
+                        }
+                        willStillContinueAction = false;
+                    }
+                    return true;
                 }
-                return true;
             }
             return base.OnStartPerformGoapAction(node, ref willStillContinueAction);
         }
         public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
+            if (owner.traitContainer.HasTrait("Plague Reservoir")) {
+                return;
+            }
             if (goapNode.actor == owner && owner is Character character) {
                 _characterDonePerformingAction?.Invoke(character, goapNode);
             }
@@ -267,6 +288,9 @@ namespace Traits {
             AddSymptom(p_symptom);
         }
         private void OnTraitableGainedTrait(ITraitable p_traitable, Trait p_trait) {
+            if (owner.traitContainer.HasTrait("Plague Reservoir")) {
+                return;
+            }
             //TODO: Might be a better way to trigger that the character that owns this has gained a trait, rather than listening to a signal and filtering results
             if (p_traitable == owner && owner is Character character) {
                 _characterGainedTrait?.Invoke(character, p_trait);
