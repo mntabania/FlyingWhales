@@ -69,7 +69,7 @@ public class Dragon : Summon {
         Messenger.RemoveListener(Signals.TICK_STARTED, TryLeaveWorld);
     }
     private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass newClass) {
-        if (character == this && newClass.className == "Zombie") {
+        if (character == this && newClass.IsZombie()) {
             //when dragon becomes a zombie it should no longer try to leave the world, because if it does it will become permanently passive.
             Messenger.RemoveListener(Signals.TICK_STARTED, TryLeaveWorld);
         }

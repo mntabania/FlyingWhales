@@ -1100,3 +1100,6 @@ public enum PLAGUE_SYMPTOM {
 public enum PLAGUE_TRANSMISSION {
     Airborne, Consumption, Physical_Contact, Combat
 }
+public enum PLAGUE_DEATH_EFFECT {
+    Explosion, Zombie, Mana_Generator, Haunted_Spirits,
+}

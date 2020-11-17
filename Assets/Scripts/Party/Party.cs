@@ -787,7 +787,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     private void CancelAllTirednessRecoveryJobsOfMembers() {
         for (int i = 0; i < members.Count; i++) {
             Character member = members[i];
-            if (member.currentActionNode != null && member.currentJob != null && InteractionManager.Instance.IsActionTirednessRecovery(member.currentActionNode.action)) {
+            if (member.currentActionNode != null && member.currentJob != null && member.currentActionNode.action.goapType.IsRestingAction()) {
                 member.currentJob.CancelJob();
             }
             member.jobQueue.CancelAllJobs(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT);

@@ -45,6 +45,9 @@ public class Tombstone : TileObject {
         character.DisableMarker();
         character.marker.TryCancelExpiry();
         character.SetGrave(this);
+        if(character.traitContainer.HasTrait("Plagued")) {
+            traitContainer.AddTrait(this, "Plagued", overrideDuration: PlagueDisease.Instance.lifespan.GetLifespanInTicksOfPlagueOn(this));
+        }
         if (character.race == RACE.HUMANS || character.race == RACE.ELVES) {
             AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
         }

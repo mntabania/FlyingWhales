@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Plague.Fatality;
 using Plague.Symptom;
 using Traits;
+using Plague.Death_Effect;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -12,6 +13,7 @@ public class PlagueDisease : ISingletonPattern {
     private PlagueLifespan _lifespan;
     private List<Fatality> _activeFatalities;
     private List<PlagueSymptom> _activeSymptoms;
+    private PlagueDeathEffect _activeDeathEffect;
     private int _activeCases;
     private int _deaths;
     private int _recoveries;
@@ -21,6 +23,7 @@ public class PlagueDisease : ISingletonPattern {
     public PlagueLifespan lifespan => _lifespan;
     public List<Fatality> activeFatalities => _activeFatalities;
     public List<PlagueSymptom> activeSymptoms => _activeSymptoms;
+    public PlagueDeathEffect activeDeathEffect => _activeDeathEffect;
     public int activeCases => _activeCases;
     public int deaths => _deaths;
     public int recoveries => _recoveries;
@@ -45,6 +48,7 @@ public class PlagueDisease : ISingletonPattern {
         _lifespan = new PlagueLifespan();
         _activeFatalities = new List<Fatality>();
         _activeSymptoms = new List<PlagueSymptom>();
+        _activeDeathEffect = null;
         _transmissionLevels = new Dictionary<PLAGUE_TRANSMISSION, int>() {
             {PLAGUE_TRANSMISSION.Airborne, 0},
             {PLAGUE_TRANSMISSION.Consumption, 1},
@@ -56,6 +60,11 @@ public class PlagueDisease : ISingletonPattern {
         Messenger.AddListener(Signals.CLEAN_UP_MEMORY, CleanUpAndRemoveCleanUpListener);
     }
     public void CleanUpAndRemoveCleanUpListener() {
+        _activeFatalities.Clear();
+        _activeFatalities = null;
+        _activeSymptoms.Clear();
+        _activeSymptoms = null;
+        _activeDeathEffect = null;
         _Instance = null;
         Messenger.RemoveListener(Signals.CLEAN_UP_MEMORY, CleanUpAndRemoveCleanUpListener);
     }
@@ -169,4 +178,32 @@ public class PlagueDisease : ISingletonPattern {
         }
     }
     #endregion
+    
+    #region Death Effect
+    public void SetNewPlagueDeathEffectAndUnsetPrev(PLAGUE_DEATH_EFFECT p_deathEffectType) {
+        UnseteDeathEffect();
+        PlagueDeathEffect deathEffect = CreateNewPlagueDeathEffectInstance(p_deathEffectType);
+        _activeDeathEffect = deathEffect;
+        Messenger.Broadcast(PlayerSignals.SET_PLAGUE_DEATH_EFFECT, _activeDeathEffect);
+    }
+    private void UnseteDeathEffect() {
+        if(_activeDeathEffect != null) {
+            Messenger.Broadcast(PlayerSignals.UNSET_PLAGUE_DEATH_EFFECT, _activeDeathEffect);
+            _activeDeathEffect = null;
+        }
+    }
+    private PlagueDeathEffect CreateNewPlagueDeathEffectInstance(PLAGUE_DEATH_EFFECT p_deathEffectType) {
+        string typeString = p_deathEffectType.ToString();
+        var typeName = $"Plague.Death_Effect.{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(typeString)}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        Type type = Type.GetType(typeName);
+        if (type != null) {
+            PlagueDeathEffect data = Activator.CreateInstance(type) as PlagueDeathEffect;
+            Assert.IsNotNull(data);
+            return data;
+        } else {
+            throw new Exception($"No plague death effect class of type {p_deathEffectType}");
+        }
+    }
+    #endregion
+
 }

@@ -25,7 +25,7 @@ public class CharacterVisuals {
     public Vector2 selectableSize { get; private set; }
     public string classToUseForVisuals {
         get {
-            if (_owner.characterClass.className == "Zombie") {
+            if (_owner.characterClass.IsZombie()) {
                 //if character class is a zombie, then use previous class for any visuals to use
                 //this is so we do not need to create special sprites and special cases for every race that can become a zombie
                 if (!string.IsNullOrEmpty(_owner.previousClassName)) {

@@ -113,7 +113,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			if (character.interruptComponent.isInterrupted &&
 			           character.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Narcoleptic_Attack) {
 				//Don't do anything
-			} else if (character.currentActionNode != null && character.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING && InteractionManager.Instance.IsActionTirednessRecovery(character.currentActionNode.action)) {
+			} else if (character.currentActionNode != null && character.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING && character.currentActionNode.action.goapType.IsRestingAction()) {
 				character.CancelAllJobsExceptForCurrent();
 			} else {
 				character.jobQueue.CancelAllJobs();

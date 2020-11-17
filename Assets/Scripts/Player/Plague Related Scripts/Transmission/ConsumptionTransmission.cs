@@ -5,7 +5,7 @@ namespace Plague.Transmission {
         protected override int GetTransmissionRate(int level) {
             switch (level) {
                 case 1:
-                    return 0;
+                    return 20;
                 case 2:
                     return 20;
                 case 3:

@@ -11,9 +11,11 @@ namespace Plague.Symptom {
             p_character.traitContainer.AddTrait(p_character, "Depressed");
             Debug.Log("Activated Depression Symptom");
         }
-        public override void CharacterStartedPerformingAction(Character p_character) {
-            if (GameUtilities.RollChance(15)) {
-                ActivateSymptom(p_character);
+        public override void CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action) {
+            if (p_action.associatedJobType.IsHappinessRecoveryTypeJob()) {
+                if (GameUtilities.RollChance(15)) {
+                    ActivateSymptom(p_character);
+                }
             }
         }
     }

@@ -631,6 +631,9 @@ public class CharacterManager : BaseMonoBehaviour {
                     foodPile.traitContainer.AddTrait(foodPile, "Abomination Germ");
                     poi.traitContainer.RemoveStatusAndStacks(poi, "Abomination Germ");
                 }
+                if (poi.traitContainer.HasTrait("Plagued")) {
+                    foodPile.traitContainer.AddTrait(foodPile, "Plagued", overrideDuration: PlagueDisease.Instance.lifespan.GetLifespanInTicksOfPlagueOn(foodPile));
+                }
 
                 if (deadCharacter != null && createLog) {
                     //add log if food pile came from character

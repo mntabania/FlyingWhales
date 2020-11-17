@@ -228,6 +228,9 @@ public class CharacterClass {
         }
         return false;
     }
+    public bool IsZombie() {
+        return className.Contains("Zombie");
+    }
     public bool CanDoJob(JOB_TYPE jobType) {
         return priorityJobs.Contains(jobType) || ableJobs.Contains(jobType) || secondaryJobs.Contains(jobType);
     }

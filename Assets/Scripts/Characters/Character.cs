@@ -775,9 +775,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         visuals.UpdateAllVisuals(this);
         //minion?.SetAssignedDeadlySinName(_characterClass.className);
         UpdateCanCombatState();
-        if (previousClassName == "Necromancer") {
-            traitContainer.RemoveTrait(this, "Necromancer");
-        }
+        //if (previousClassName == "Necromancer") {
+        //    traitContainer.RemoveTrait(this, "Necromancer");
+        //}
         if (_characterClass.className == "Hero") {
             //Reference: https://www.notion.so/ruinarch/Hero-9697369ffca6410296f852f295ee0090
             traitContainer.RemoveAllTraitsByType(this, TRAIT_TYPE.FLAW);
@@ -786,9 +786,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
             traitContainer.AddTrait(this, "Blessed");
-        } else if (_characterClass.className == "Necromancer") {
-            traitContainer.AddTrait(this, "Necromancer");
-        }
+        } 
+        //else if (_characterClass.className == "Necromancer") {
+        //    traitContainer.AddTrait(this, "Necromancer");
+        //}
     }
     public void AssignClass(CharacterClass characterClass, bool isInitial = false) {
         CharacterClass previousClass = _characterClass;
@@ -1966,7 +1967,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return true;
     }
     public bool IsAble() {
-        return !isDead && characterClass.className != "Zombie"; //!traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+        return !isDead && !characterClass.IsZombie(); //!traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
     }
     public void SetTileObjectLocation(TileObject tileObject) {
         tileObjectLocation = tileObject;
@@ -2509,7 +2510,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             } else {
                 Death();
             }
-        } else if (amount < 0 && IsHealthCriticallyLow() && traitContainer.HasTrait("Coward", "Vampire") && traitContainer.HasTrait("Berserked") == false && characterClass.className != "Zombie") { //do not make berserked characters trigger flight
+        } else if (amount < 0 && IsHealthCriticallyLow() && traitContainer.HasTrait("Coward", "Vampire") && traitContainer.HasTrait("Berserked") == false && !characterClass.IsZombie()) { //do not make berserked characters trigger flight
             bool willflight = true;
             if (traitContainer.HasTrait("Vampire") && crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
                 willflight = false;
@@ -5587,7 +5588,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             : Raise(this, onRaisedFromDeadAction, faction, race, className));
     }
     private IEnumerator Raise(Character target, Action<Character> onReturnToLifeAction, Faction faction, RACE race, string className) {
-        if (className == "Zombie") {
+        if (className.Contains("Zombie")) {
             LocationGridTile tile = grave != null ? grave.gridTileLocation : target.gridTileLocation;
             GameManager.Instance.CreateParticleEffectAt(tile, PARTICLE_EFFECT.Zombie_Transformation);
             yield return new WaitForSeconds(5f);
@@ -5888,11 +5889,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, this);
             Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
 
-            //for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-            //    if (traitContainer.allTraits[i].OnAfterDeath(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers)) {
-            //        i--;
-            //    }
-            //}
+            List<Trait> afterDeathTraitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.After_Death);
+            if (afterDeathTraitOverrideFunctions != null) {
+                for (int i = 0; i < afterDeathTraitOverrideFunctions.Count; i++) {
+                    Trait trait = afterDeathTraitOverrideFunctions[i];
+                    trait.AfterDeath(this);
+                }
+            }
         }
     }
     public void SetDeathLog(Log log) {

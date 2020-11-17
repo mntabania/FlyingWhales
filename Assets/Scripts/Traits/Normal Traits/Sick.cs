@@ -64,7 +64,7 @@ namespace Traits {
             float pukeRoll = Random.Range(0f, 100f);
             if (pukeRoll < pukeChance) {
                 //do puke action
-                if (owner.characterClass.className == "Zombie") {
+                if (owner.characterClass.IsZombie()) {
                     return false;
                 }
                 return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, owner, "Sick");
