@@ -916,21 +916,23 @@ namespace Inner_Maps {
         #endregion
 
         protected override void OnDestroy() {
-            Debug.Log("Cleaning up inner maps...");
-            if (innerMaps != null) {
-                for (int i = 0; i < innerMaps.Count; i++) {
-                    InnerTileMap innerTileMap = innerMaps[i];
-                    pathfinder.data.RemoveGraph(innerTileMap.pathfindingGraph);    
-                    innerTileMap?.CleanUp();
+            if (Application.isPlaying) {
+                Debug.Log("Cleaning up inner maps...");
+                if (innerMaps != null) {
+                    for (int i = 0; i < innerMaps.Count; i++) {
+                        InnerTileMap innerTileMap = innerMaps[i];
+                        pathfinder.data.RemoveGraph(innerTileMap.pathfindingGraph);    
+                        innerTileMap?.CleanUp();
+                    }
+                    innerMaps?.Clear();    
                 }
-                innerMaps?.Clear();    
+                Destroy(pathfinder);
+                structurePrefabs?.Clear();
+                tileObjectSlotSettings?.Clear();
+                wallResourceAssets?.Clear();
+                base.OnDestroy();
+                Instance = null;    
             }
-            Destroy(pathfinder);
-            structurePrefabs?.Clear();
-            tileObjectSlotSettings?.Clear();
-            wallResourceAssets?.Clear();
-            base.OnDestroy();
-            Instance = null;
         }
     }
 }

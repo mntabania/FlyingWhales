@@ -26,6 +26,28 @@ namespace Plague.Death_Effect {
             //}
             Debug.Log("Activated Haunted Spirits Effect");
         }
+        public override int GetNextLevelUpgradeCost() {
+            switch (_level) {
+                case 1:
+                    return 20;
+                case 2:
+                    return 40;
+                default:
+                    return -1; //Max Level
+            }
+        }
+        public override string GetCurrentEffectDescription() {
+            switch (_level) {
+                case 1:
+                    return "1 Random Spirit";
+                case 2:
+                    return "2 Random Spirits";
+                case 3:
+                    return "3 Random Spirits";
+                default:
+                    return string.Empty;
+            }
+        }
         public override void OnDeath(Character p_character) {
             ActivateEffect(p_character);
         }

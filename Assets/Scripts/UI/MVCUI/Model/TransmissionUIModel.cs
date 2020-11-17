@@ -15,9 +15,13 @@ public class TransmissionUIModel : MVCUIModel
 	public Button btnCombatUpgrade;
 
 	public RuinarchText txtAirBorneCost;
+	public RuinarchText txtAirBorneRate;
 	public RuinarchText txtConsumptionCost;
+	public RuinarchText txtConsumptionRate;
 	public RuinarchText txtDirectContactCost;
+	public RuinarchText txtDirectContactRate;
 	public RuinarchText txtCombatUpgradeCost;
+	public RuinarchText txtCombatRate;
 
 	private void OnEnable()
 	{

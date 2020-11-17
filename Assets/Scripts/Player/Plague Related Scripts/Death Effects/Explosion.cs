@@ -23,6 +23,28 @@ namespace Plague.Death_Effect {
             }
             Debug.Log("Activated Explosion Death Effect");
         }
+        public override int GetNextLevelUpgradeCost() {
+            switch (_level) {
+                case 1:
+                    return 15;
+                case 2:
+                    return 30;
+                default:
+                    return -1; //Max Level
+            }
+        }
+        public override string GetCurrentEffectDescription() {
+            switch (_level) {
+                case 1:
+                    return "Ignite";
+                case 2:
+                    return "Fire Blast";
+                case 3:
+                    return "Meteor";
+                default:
+                    return string.Empty;
+            }
+        }
         public override void OnDeath(Character p_character) {
             ActivateEffect(p_character);
         }

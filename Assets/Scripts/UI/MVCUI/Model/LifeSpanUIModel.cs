@@ -16,6 +16,17 @@ public class LifeSpanUIModel : MVCUIModel
 	public Button btnMonstersUpgrade;
 	public Button btnUndeadUpgrade;
 
+	public RuinarchText txtTileObjectCost;
+	public RuinarchText txtTileObjectInfectionTime;
+	public RuinarchText txtElvesCost;
+	public RuinarchText txtElvesInfectionTime;
+	public RuinarchText txtHumansCost;
+	public RuinarchText txtHumansInfectionTime;
+	public RuinarchText txtMonstersCost;
+	public RuinarchText txtMonstersInfectionTime;
+	public RuinarchText txtUndeadCost;
+	public RuinarchText txtUndeadInfectionTime;
+	
 	private void OnEnable()
 	{
 		btnObjectsUpgrade.onClick.AddListener(ClickObjectsUpgrade);

@@ -10,6 +10,7 @@ public class PlagueComponent {
     #endregion
 
     public PlagueComponent() {
+        _plaguePoints = 1000;
     }
     public PlagueComponent(SaveDataPlagueComponent p_component) {
         _plaguePoints = p_component.plaguePoints;

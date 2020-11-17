@@ -26,6 +26,7 @@ public class SaveDataPlayerGame : SaveData<Player> {
     public SaveDataSeizeComponent seizeComponent;
     public SaveDataThreatComponent threatComponent;
     public SaveDataPlayerSkillComponent playerSkillComponent;
+    public SaveDataPlagueComponent plagueComponent;
 
     #region Overrides
     public override void Save() {
@@ -92,6 +93,9 @@ public class SaveDataPlayerGame : SaveData<Player> {
 
         playerSkillComponent = new SaveDataPlayerSkillComponent();
         playerSkillComponent.Save(player.playerSkillComponent);
+        
+        plagueComponent = new SaveDataPlagueComponent();
+        plagueComponent.Save(player.plagueComponent);
     }
     public override Player Load() {
         Player player = new Player(this);

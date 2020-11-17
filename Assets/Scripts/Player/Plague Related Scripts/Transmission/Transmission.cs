@@ -5,9 +5,11 @@ namespace Plague.Transmission {
         private static readonly Lazy<T> Lazy = new Lazy<T>(() => Activator.CreateInstance(typeof(T), true) as T);
         public static T Instance => Lazy.Value;
 
-        protected abstract int GetTransmissionRate(int level);
-        public abstract void Transmit(IPointOfInterest p_infector, IPointOfInterest p_target, int p_transmissionLvl);
+        public abstract PLAGUE_TRANSMISSION transmissionType { get; }
         
+        protected abstract int GetTransmissionRate(int level);
+        public abstract int GetTransmissionNextLevelCost(int p_currentLevel); 
+        public abstract void Transmit(IPointOfInterest p_infector, IPointOfInterest p_target, int p_transmissionLvl);
         protected void TryTransmitToSingleTarget(IPointOfInterest p_infector, IPointOfInterest p_target, int p_transmissionLvl) {
             int chance = GetTransmissionRate(p_transmissionLvl);
             if (GameUtilities.RollChance(chance)) {

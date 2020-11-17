@@ -14,6 +14,15 @@ public class OnDeathUIModel : MVCUIModel
 	public Button btnMana2_3Upgrade;
 	public Button btnRandomSpirit_1Upgrade;
 
+	public RuinarchText txtIgniteUpgradeCost;
+	public RuinarchText txtIgniteEffect;
+	public RuinarchText txtWalkerZombieUpgradeCost;
+	public RuinarchText txtWalkerZombieEffect;
+	public RuinarchText txtMana2_3UpgradeCost;
+	public RuinarchText txtMana2_3Effect;
+	public RuinarchText txtRandomSpirit_1UpgradeCost;
+	public RuinarchText txtRandomSpirit_1Effect;
+	
 	private void OnEnable()
 	{
 		btnIgniteUpgrade.onClick.AddListener(ClickIgniteUpgrade);

@@ -173,7 +173,7 @@ public class UIManager : BaseMonoBehaviour {
         }
         openedPopups = new List<PopupMenuBase>();
         questUI.Initialize();
-        Messenger.AddListener(UISignals.HIDE_MENUS, HideMenus);
+        _biolabUIController.Init(OnCloseBiolabUI);
         Messenger.AddListener<string, int, UnityAction>(UISignals.SHOW_DEVELOPER_NOTIFICATION, ShowDeveloperNotification);
         Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
 
@@ -237,38 +237,6 @@ public class UIManager : BaseMonoBehaviour {
     private void OnGameLoaded() {
         UpdateUI();
         returnToWorldBtn.gameObject.SetActive(WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial);
-    }
-    private void HideMenus() {
-        // poiTestingUI.HideUI();
-        // minionCommandsUI.HideUI();
-        // customDropdownList.Close();
-        // if (characterInfoUI.isShowing) {
-        //     characterInfoUI.CloseMenu();
-        // }
-        // if (factionInfoUI.isShowing) {
-        //     factionInfoUI.CloseMenu();
-        // }
-        // if (regionInfoUI.isShowing) {
-        //     regionInfoUI.CloseMenu();
-        // }
-        // if (tileObjectInfoUI.isShowing) {
-        //     tileObjectInfoUI.CloseMenu();
-        // }
-        // if (objectPicker.gameObject.activeSelf) {
-        //     HideObjectPicker();
-        // }
-        // if (PlayerUI.Instance.isShowingKillSummary) {
-        //     PlayerUI.Instance.HideKillSummary();
-        // }
-        // if (PlayerUI.Instance.isShowingMinionList) {
-        //     PlayerUI.Instance.HideMinionList();
-        // }
-        // if (hexTileInfoUI.isShowing) {
-        //     hexTileInfoUI.CloseMenu();
-        // }
-        // if (structureInfoUI.isShowing) {
-        //     structureInfoUI.CloseMenu();
-        // }
     }
     private void UpdateUI() {
         dateLbl.SetText(
@@ -1677,6 +1645,18 @@ public class UIManager : BaseMonoBehaviour {
             }
         }
         return null;
+    }
+    #endregion
+
+    #region Biolab UI
+    [Header("Biolab")] 
+    [SerializeField] private BiolabUIController _biolabUIController;
+    public void ShowBiolabUI() {
+        Pause();
+        _biolabUIController.Open();
+    }
+    private void OnCloseBiolabUI() {
+        ResumeLastProgressionSpeed();
     }
     #endregion
 }

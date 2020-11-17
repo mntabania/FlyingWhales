@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using Ruinarch.Custom_UI;
@@ -28,9 +29,8 @@ namespace Ruinarch {
         [Header("Buttons")] 
         public Sprite buttonGlowImage;
         
-        public List<string> buttonsToHighlight { get; private set; }
-        public GameObject lastClickedObject { get; private set; }
-        
+        public HashSet<string> buttonsToHighlight { get; private set; }
+
         public enum Cursor_Type {
             None, Default, Target, Drag_Hover, Drag_Clicked, Check, Cross, Link
         }
@@ -253,17 +253,30 @@ namespace Ruinarch {
 
         #region Initialization
         private void Initialize() {
-            buttonsToHighlight = new List<string>();
+            buttonsToHighlight = new HashSet<string>();
             Messenger.MarkAsPermanent(UISignals.SHOW_SELECTABLE_GLOW);
             Messenger.MarkAsPermanent(UISignals.HIDE_SELECTABLE_GLOW);
+            Messenger.MarkAsPermanent(UISignals.TOGGLE_SHOWN);
             Messenger.AddListener<string>(UISignals.SHOW_SELECTABLE_GLOW, OnReceiveHighlightSignal);
             Messenger.AddListener<string>(UISignals.HIDE_SELECTABLE_GLOW, OnReceiveUnHighlightSignal);
+            Messenger.AddListener<RuinarchToggle>(UISignals.TOGGLE_SHOWN, OnToggleShown);
+            Messenger.AddListener<RuinarchButton>(UISignals.BUTTON_SHOWN, OnButtonShown);
         }
         private void OnReceiveHighlightSignal(string name) {
             buttonsToHighlight.Add(name);
         }
         private void OnReceiveUnHighlightSignal(string name) {
             buttonsToHighlight.Remove(name);
+        }
+        private void OnToggleShown(RuinarchToggle toggle) {
+            if (buttonsToHighlight.Contains(toggle.name)) {
+                toggle.StartGlow();
+            }
+        }
+        private void OnButtonShown(RuinarchButton button) {
+            if (buttonsToHighlight.Contains(button.name)) {
+                button.StartGlow();
+            }
         }
         #endregion
 

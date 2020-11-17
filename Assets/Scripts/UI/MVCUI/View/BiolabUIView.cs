@@ -8,11 +8,11 @@ public class BiolabUIView : MVCUIView
 
 	public interface IListener
 	{
-		void OnTransmissionTabClicked();
-		void OnLifeSpanTabClicked();
-		void OnFatalityTabClicked();
-		void OnSymptomsTabClicked();
-		void OnOnDeathClicked();
+		void OnTransmissionTabClicked(bool isOn);
+		void OnLifeSpanTabClicked(bool isOn);
+		void OnFatalityTabClicked(bool isOn);
+		void OnSymptomsTabClicked(bool isOn);
+		void OnOnDeathClicked(bool isOn);
 		void OnCloseClicked();
 	}
 	#endregion
@@ -50,7 +50,7 @@ public class BiolabUIView : MVCUIView
 		return UIModel.tabPrent;
 	}
 
-	public void SetActivaCases(string p_activeCasesCount) {
+	public void SetActiveCases(string p_activeCasesCount) {
 		UIModel.txtActiveCasesValue.text = p_activeCasesCount;
 	}
 	public void SetDeathCases(string p_deathCount)

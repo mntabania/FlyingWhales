@@ -90,10 +90,10 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if (addedTo is IPointOfInterest poi) {
-                owner = poi;
+            if (addedTo is IPointOfInterest addedToPOI) {
+                owner = addedToPOI;
                 _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Infected, false);
-                if (poi is Character) {
+                if (addedToPOI is Character) {
                     Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
                 }
                 Messenger.AddListener<Fatality>(PlayerSignals.ADDED_PLAGUE_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
@@ -109,6 +109,7 @@ namespace Traits {
                     PlagueSymptom symptom = PlagueDisease.Instance.activeSymptoms[i];
                     AddSymptom(symptom);
                 }
+                PlagueDisease.Instance.UpdateActiveCasesOnPOIGainedPlagued(addedToPOI);
                 AddDeathEffect(PlagueDisease.Instance.activeDeathEffect);
             }
         }
@@ -118,7 +119,7 @@ namespace Traits {
                 ObjectPoolManager.Instance.DestroyObject(_infectedEffectGO);
                 _infectedEffectGO = null;
             }
-            if (removedFrom is IPointOfInterest) {
+            if (removedFrom is IPointOfInterest removedFromPOI) {
                 if (removedFrom is Character) {
                     Messenger.RemoveListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
                 }
@@ -135,6 +136,7 @@ namespace Traits {
                     PlagueSymptom symptom = PlagueDisease.Instance.activeSymptoms[i];
                     RemoveSymptom(symptom);
                 }
+                PlagueDisease.Instance.UpdateActiveCasesAndRecoveriesOnPOILostPlagued(removedFromPOI);
                 RemoveDeathEffect(PlagueDisease.Instance.activeDeathEffect);
             }
         }

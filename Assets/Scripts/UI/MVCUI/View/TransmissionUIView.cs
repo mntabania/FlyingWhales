@@ -10,7 +10,7 @@ public class TransmissionUIView : MVCUIView
 	{
 		void OnAirBorneUpgradeClicked();
 		void OnConsumptionUpgradeClicked();
-		void OnDirectContactUpgradeClicked();
+		void OnPhysicalContactUpgradeClicked();
 		void OnCombatUpgradeClicked();
 	}
 	#endregion
@@ -43,24 +43,56 @@ public class TransmissionUIView : MVCUIView
 	}
 	#endregion
 
-	public void UpdateAirbornePrice(string p_newPrice) 
-	{
+	public void UpdateAirbornePrice(string p_newPrice) {
 		UIModel.txtAirBorneCost.text = p_newPrice;
 	}
+	public void UpdateAirborneRate(string p_rate) {
+		UIModel.txtAirBorneRate.text = p_rate;
+	}
+	public void UpdateAirborneRateButtonInteractable(bool p_interactable) {
+		UIModel.btnAirBorneUpgrade.interactable = p_interactable;
+	}
+	public void UpdateAirbornePriceState(bool p_state) {
+		UIModel.txtAirBorneCost.gameObject.SetActive(p_state);
+	}
 
-	public void UpdateConsumptionPrice(string p_newPrice)
-	{
+	public void UpdateConsumptionPrice(string p_newPrice) {
 		UIModel.txtConsumptionCost.text = p_newPrice;
 	}
-
-	public void UpdateDirectContactPrice(string p_newPrice)
-	{
-		UIModel.txtDirectContactCost.text = p_newPrice;
+	public void UpdateConsumptionRate(string p_rate) {
+		UIModel.txtConsumptionRate.text = p_rate;
+	}
+	public void UpdateConsumptionButtonInteractable(bool p_interactable) {
+		UIModel.btnConsumptionUpgrade.interactable = p_interactable;
+	}
+	public void UpdateConsumptionPriceState(bool p_state) {
+		UIModel.txtConsumptionCost.gameObject.SetActive(p_state);
 	}
 
-	public void UpdateCombatPrice(string p_newPrice)
-	{
+	public void UpdatePhysicalContactPrice(string p_newPrice) {
+		UIModel.txtDirectContactCost.text = p_newPrice;
+	}
+	public void UpdatePhysicalContactRate(string p_rate) {
+		UIModel.txtDirectContactRate.text = p_rate;
+	}
+	public void UpdatePhysicalContactRateButtonInteractable(bool p_interactable) {
+		UIModel.btnDirectContactUpgrade.interactable = p_interactable;
+	}
+	public void UpdatePhysicalContactPriceState(bool p_state) {
+		UIModel.txtDirectContactCost.gameObject.SetActive(p_state);
+	}
+	
+	public void UpdateCombatPrice(string p_newPrice) {
 		UIModel.txtCombatUpgradeCost.text = p_newPrice;
+	}
+	public void UpdateCombatRate(string p_rate) {
+		UIModel.txtCombatRate.text = p_rate;
+	}
+	public void UpdateCombatRateButtonInteractable(bool p_interactable) {
+		UIModel.btnCombatUpgrade.interactable = p_interactable;
+	}
+	public void UpdateCombatRatePriceState(bool p_state) {
+		UIModel.txtCombatUpgradeCost.gameObject.SetActive(p_state);
 	}
 
 
@@ -69,7 +101,7 @@ public class TransmissionUIView : MVCUIView
 	{
 		UIModel.onAirBorneUpgradeClicked += p_listener.OnAirBorneUpgradeClicked;
 		UIModel.onConsumptionUpgradeClicked += p_listener.OnConsumptionUpgradeClicked;
-		UIModel.onDirectContactUpgradeClicked += p_listener.OnDirectContactUpgradeClicked;
+		UIModel.onDirectContactUpgradeClicked += p_listener.OnPhysicalContactUpgradeClicked;
 		UIModel.onCombatUpgradeClicked += p_listener.OnCombatUpgradeClicked;
 	}
 
@@ -77,7 +109,7 @@ public class TransmissionUIView : MVCUIView
 	{
 		UIModel.onAirBorneUpgradeClicked -= p_listener.OnAirBorneUpgradeClicked;
 		UIModel.onConsumptionUpgradeClicked -= p_listener.OnConsumptionUpgradeClicked;
-		UIModel.onDirectContactUpgradeClicked -= p_listener.OnDirectContactUpgradeClicked;
+		UIModel.onDirectContactUpgradeClicked -= p_listener.OnPhysicalContactUpgradeClicked;
 		UIModel.onCombatUpgradeClicked -= p_listener.OnCombatUpgradeClicked;
 	}
 	#endregion

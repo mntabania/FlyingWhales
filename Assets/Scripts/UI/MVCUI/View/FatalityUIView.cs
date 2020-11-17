@@ -63,4 +63,54 @@ public class FatalityUIView : MVCUIView
 		UIModel.onPneumoniaUpgradeClicked -= p_listener.OnPneumoniaUpgradeClicked;
 	}
 	#endregion
+
+	public void UpdateSepticShockUpgradeButtonInteractable(bool p_interactable) {
+		UIModel.btnSepticShockUpgrade.interactable = p_interactable;
+	}
+	public void UpdateSepticShockCostState(bool p_state) {
+		UIModel.txtSepticShockCost.gameObject.SetActive(p_state);
+	}
+	public void UpdateSepticShockCost(string p_cost) {
+		UIModel.txtSepticShockCost.text = p_cost;
+	}
+	
+	public void UpdateHeartAttackUpgradeButtonInteractable(bool p_interactable) {
+		UIModel.btnHeartAttackUpgrade.interactable = p_interactable;
+	}
+	public void UpdateHeartAttackCostState(bool p_state) {
+		UIModel.txtHeartAttackCost.gameObject.SetActive(p_state);
+	}
+	public void UpdateHeartAttackCost(string p_cost) {
+		UIModel.txtHeartAttackCost.text = p_cost;
+	}
+	
+	public void UpdateStrokeUpgradeButtonInteractable(bool p_interactable) {
+		UIModel.btnStrokeUpgrade.interactable = p_interactable;
+	}
+	public void UpdateStrokeCostState(bool p_state) {
+		UIModel.txtStrokeCost.gameObject.SetActive(p_state);
+	}
+	public void UpdateStrokeCost(string p_cost) {
+		UIModel.txtStrokeCost.text = p_cost;
+	}
+	
+	public void UpdateTotalOrganFailureUpgradeButtonInteractable(bool p_interactable) {
+		UIModel.btnTotalOrganFailureUpgrade.interactable = p_interactable;
+	}
+	public void UpdateTotalOrganFailureCostState(bool p_state) {
+		UIModel.txtTotalOrganFailureCost.gameObject.SetActive(p_state);
+	}
+	public void UpdateTotalOrganFailureCost(string p_cost) {
+		UIModel.txtTotalOrganFailureCost.text = p_cost;
+	}
+	
+	public void UpdatePneumoniaUpgradeButtonInteractable(bool p_interactable) {
+		UIModel.btnPneumoniaUpgrade.interactable = p_interactable;
+	}
+	public void UpdatePneumoniaCostState(bool p_state) {
+		UIModel.txtPneumoniaCost.gameObject.SetActive(p_state);
+	}
+	public void UpdatePneumoniaCost(string p_cost) {
+		UIModel.txtPneumoniaCost.text = p_cost;
+	}
 }

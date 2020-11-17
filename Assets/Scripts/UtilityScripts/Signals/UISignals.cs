@@ -23,7 +23,6 @@
     public static string MENU_CLOSED = "OnMenuClosed"; //Parameters (UIMenu closedMenu)
     public static string INTERACTION_MENU_OPENED = "OnInteractionMenuOpened"; //Parameters ()
     public static string INTERACTION_MENU_CLOSED = "OnInteractionMenuClosed"; //Parameters ()
-    public static string HIDE_MENUS = "HideMenus";
     public static string DRAG_OBJECT_CREATED = "OnDragObjectCreated"; //Parameters (DragObject obj)
     public static string DRAG_OBJECT_DESTROYED = "OnDragObjectDestroyed"; //Parameters (DragObject obj)
     public static string SHOW_INTEL_NOTIFICATION = "ShowIntelNotification"; //Parameters (Intel)
@@ -124,4 +123,5 @@
     /// Parameters (QuestStep)
     /// </summary>
     public static string UPDATE_QUEST_STEP_ITEM = "UpdateQuestStepItem";
+    public static string BUTTON_SHOWN = "OnButtonShown";
 }

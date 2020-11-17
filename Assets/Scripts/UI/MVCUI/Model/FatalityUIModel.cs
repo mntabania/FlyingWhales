@@ -16,6 +16,12 @@ public class FatalityUIModel : MVCUIModel
 	public Button btnTotalOrganFailureUpgrade;
 	public Button btnPneumoniaUpgrade;
 
+	public RuinarchText txtSepticShockCost;
+	public RuinarchText txtHeartAttackCost;
+	public RuinarchText txtStrokeCost;
+	public RuinarchText txtTotalOrganFailureCost;
+	public RuinarchText txtPneumoniaCost;
+	
 	private void OnEnable()
 	{
 		btnSepticShockUpgrade.onClick.AddListener(ClickSepticShockUpgrade);

@@ -1,0 +1,105 @@
+﻿using UnityEngine;
+using Ruinarch.MVCFramework;
+using System;
+using Plague.Fatality;
+
+public class FatalityUIController : MVCUIController, FatalityUIView.IListener
+{
+	[SerializeField]
+	private FatalityUIModel m_fatalityUIModel;
+	private FatalityUIView m_fatalityUIView;
+
+	//Call this function to Instantiate the UI, on the callback you can call initialization code for the said UI
+	[ContextMenu("Instantiate UI")]
+	public override void InstantiateUI()
+	{
+		FatalityUIView.Create(_canvas, m_fatalityUIModel, (p_ui) => {
+			m_fatalityUIView = p_ui;
+			m_fatalityUIView.Subscribe(this);
+			InitUI(p_ui.UIModel, p_ui);
+		});
+	}
+	public override void ShowUI() {
+		base.ShowUI();
+		UpdateAllFatalityData();
+	}
+	private void UpdateAllFatalityData() {
+		UpdateSepticShockData();
+        UpdateHeartAttackData();
+        UpdateStrokeData();
+        UpdateTotalOrganFailureData();
+        UpdatePneumoniaData();
+	}
+
+	#region FatalityUIView.IListener implementation
+	public void OnSepticShockUpgradeClicked() {
+		PayForFatality(PLAGUE_FATALITY.Septic_Shock);
+		PlagueDisease.Instance.AddAndInitializeFatality(PLAGUE_FATALITY.Septic_Shock);
+		UpdateAllFatalityData();
+	}
+	public void OnHeartAttackUpgradeClicked() {
+		PayForFatality(PLAGUE_FATALITY.Heart_Attack);
+		PlagueDisease.Instance.AddAndInitializeFatality(PLAGUE_FATALITY.Heart_Attack);
+		UpdateAllFatalityData();
+	}
+	public void OnStrokeUpgradeClicked() {
+		PayForFatality(PLAGUE_FATALITY.Stroke);
+		PlagueDisease.Instance.AddAndInitializeFatality(PLAGUE_FATALITY.Stroke);
+		UpdateAllFatalityData();
+	}
+	public void OnTotalOrganFailureUpgradeClicked() {
+		PayForFatality(PLAGUE_FATALITY.Total_Organ_Failure);
+		PlagueDisease.Instance.AddAndInitializeFatality(PLAGUE_FATALITY.Total_Organ_Failure);
+		UpdateAllFatalityData();
+	}
+	public void OnPneumoniaUpgradeClicked() {
+		PayForFatality(PLAGUE_FATALITY.Pneumonia);
+		PlagueDisease.Instance.AddAndInitializeFatality(PLAGUE_FATALITY.Pneumonia);
+		UpdateAllFatalityData();
+	}
+	#endregion
+	
+	private void UpdateSepticShockData() {
+		bool hasUnlockedFatality = PlagueDisease.Instance.IsFatalityActive(PLAGUE_FATALITY.Septic_Shock);
+		m_fatalityUIView.UpdateSepticShockCost(PLAGUE_FATALITY.Septic_Shock.GetFatalityCost().ToString());
+		m_fatalityUIView.UpdateSepticShockCostState(!hasUnlockedFatality);
+		m_fatalityUIView.UpdateSepticShockUpgradeButtonInteractable(!hasUnlockedFatality && !PlagueDisease.Instance.HasActivatedMaxFatalities() && CanAffordSymptom(PLAGUE_FATALITY.Septic_Shock));
+	}
+	private void UpdateHeartAttackData() {
+		bool hasUnlockedFatality = PlagueDisease.Instance.IsFatalityActive(PLAGUE_FATALITY.Heart_Attack);
+		m_fatalityUIView.UpdateHeartAttackCost(PLAGUE_FATALITY.Heart_Attack.GetFatalityCost().ToString());
+		m_fatalityUIView.UpdateHeartAttackCostState(!hasUnlockedFatality);
+		m_fatalityUIView.UpdateHeartAttackUpgradeButtonInteractable(!hasUnlockedFatality && !PlagueDisease.Instance.HasActivatedMaxFatalities() && CanAffordSymptom(PLAGUE_FATALITY.Heart_Attack));
+	}
+	private void UpdateStrokeData() {
+		bool hasUnlockedFatality = PlagueDisease.Instance.IsFatalityActive(PLAGUE_FATALITY.Stroke);
+		m_fatalityUIView.UpdateStrokeCost(PLAGUE_FATALITY.Stroke.GetFatalityCost().ToString());
+		m_fatalityUIView.UpdateStrokeCostState(!hasUnlockedFatality);
+		m_fatalityUIView.UpdateStrokeUpgradeButtonInteractable(!hasUnlockedFatality && !PlagueDisease.Instance.HasActivatedMaxFatalities() && CanAffordSymptom(PLAGUE_FATALITY.Stroke));
+	}
+	private void UpdateTotalOrganFailureData() {
+		bool hasUnlockedFatality = PlagueDisease.Instance.IsFatalityActive(PLAGUE_FATALITY.Total_Organ_Failure);
+		m_fatalityUIView.UpdateTotalOrganFailureCost(PLAGUE_FATALITY.Total_Organ_Failure.GetFatalityCost().ToString());
+		m_fatalityUIView.UpdateTotalOrganFailureCostState(!hasUnlockedFatality);
+		m_fatalityUIView.UpdateTotalOrganFailureUpgradeButtonInteractable(!hasUnlockedFatality && !PlagueDisease.Instance.HasActivatedMaxFatalities() && CanAffordSymptom(PLAGUE_FATALITY.Total_Organ_Failure));
+	}
+	private void UpdatePneumoniaData() {
+		bool hasUnlockedFatality = PlagueDisease.Instance.IsFatalityActive(PLAGUE_FATALITY.Pneumonia);
+		m_fatalityUIView.UpdatePneumoniaCost(PLAGUE_FATALITY.Pneumonia.GetFatalityCost().ToString());
+		m_fatalityUIView.UpdatePneumoniaCostState(!hasUnlockedFatality);
+		m_fatalityUIView.UpdatePneumoniaUpgradeButtonInteractable(!hasUnlockedFatality && !PlagueDisease.Instance.HasActivatedMaxFatalities() && CanAffordSymptom(PLAGUE_FATALITY.Pneumonia));
+	}
+
+	private void PayForFatality(PLAGUE_FATALITY p_fatalityType) {
+		if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
+			PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(-p_fatalityType.GetFatalityCost());
+		}
+	}
+	private bool CanAffordSymptom(PLAGUE_FATALITY p_fatalityType) {
+		if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
+			return PlayerManager.Instance.player.plagueComponent.plaguePoints >= p_fatalityType.GetFatalityCost();
+		} else {
+			return true;
+		}
+	}
+}
