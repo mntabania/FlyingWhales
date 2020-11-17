@@ -6,14 +6,14 @@ using Inner_Maps.Location_Structures;
 
 namespace Inner_Maps.Location_Structures {
     public class Biolab : DemonicStructure {
-        //public override Vector2 selectableSize { get; }
+        public override Vector2 selectableSize { get; }
         public GameDate replenishDate { get; private set; }
         
         public Biolab(Region location) : base(STRUCTURE_TYPE.BIOLAB, location) {
-            //selectableSize = new Vector2(10f, 10f);
+            selectableSize = new Vector2(10f, 10f);
         }
         public Biolab(Region location, SaveDataLocationStructure data) : base(location, data) {
-            //selectableSize = new Vector2(10f, 10f);
+            selectableSize = new Vector2(10f, 10f);
             SaveDataBiolab savedBiolab = data as SaveDataBiolab;
             Assert.IsNotNull(savedBiolab);
             replenishDate = savedBiolab.replenishDate;

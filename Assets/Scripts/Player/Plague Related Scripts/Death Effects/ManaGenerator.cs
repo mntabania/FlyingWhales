@@ -23,6 +23,28 @@ namespace Plague.Death_Effect {
             }
             Debug.Log("Activated Mana Generator Effect");
         }
+        public override int GetNextLevelUpgradeCost() {
+            switch (_level) {
+                case 1:
+                    return 15;
+                case 2:
+                    return 30;
+                default:
+                    return -1; //Max Level
+            }
+        }
+        public override string GetCurrentEffectDescription() {
+            switch (_level) {
+                case 1:
+                    return "1 Mana";
+                case 2:
+                    return "2-3 Mana";
+                case 3:
+                    return "3-5 Mana";
+                default:
+                    return string.Empty;
+            }
+        }
         public override void OnDeath(Character p_character) {
             ActivateEffect(p_character);
         }

@@ -74,6 +74,7 @@ public class Player : ILeader, IObjectManipulator {
         seizeComponent = new SeizeComponent();
         threatComponent = new ThreatComponent(this);
         playerSkillComponent = new PlayerSkillComponent(this);
+        plagueComponent = new PlagueComponent();
         //ConstructAllInterventionAbilitySlots();
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
         AddListeners();
@@ -87,6 +88,7 @@ public class Player : ILeader, IObjectManipulator {
         seizeComponent = data.seizeComponent.Load();
         threatComponent = data.threatComponent.Load();
         playerSkillComponent = data.playerSkillComponent.Load();
+        plagueComponent = new PlagueComponent(data.plagueComponent);
 
         threatComponent.SetPlayer(this);
         playerSkillComponent.SetPlayer(this);

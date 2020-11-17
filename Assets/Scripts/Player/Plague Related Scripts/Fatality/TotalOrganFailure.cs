@@ -6,12 +6,14 @@ namespace Plague.Fatality {
         
         protected override void ActivateFatality(Character p_character) {
             p_character.interruptComponent.TriggerInterrupt(INTERRUPT.Total_Organ_Failure, p_character);
-            Debug.Log("Activated Total Organ Failure Fatality");
+            PlagueDisease.Instance.UpdateDeathsOnCharacterDied(p_character);
         }
-        public override void CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action) {
-            if (GameUtilities.RollChance(1)) {
+        public override bool CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action) {
+            if (GameUtilities.RollChance(1)) { //1
                 ActivateFatality(p_character);
+                return false;
             }
+            return true;
         }
     }
 }

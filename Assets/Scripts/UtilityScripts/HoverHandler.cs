@@ -50,7 +50,7 @@ public class HoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     }
 
 
-    public void SetOnHoverAction(UnityAction e) {
+    public void SetOnHoverOverAction(UnityAction e) {
         onHoverOverAction.RemoveAllListeners();
         onHoverOverAction.AddListener(e);
     }
@@ -58,11 +58,17 @@ public class HoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         onHoverExitAction.RemoveAllListeners();
         onHoverExitAction.AddListener(e);
     }
-    public void AddOnHoverAction(UnityAction e) {
+    public void AddOnHoverOverAction(UnityAction e) {
         onHoverOverAction.AddListener(e);
     }
     public void AddOnHoverOutAction(UnityAction e) {
         onHoverExitAction.AddListener(e);
+    }
+    public void RemoveOnHoverOverAction(UnityAction e) {
+        onHoverOverAction.RemoveListener(e);
+    }
+    public void RemoveOnHoverOutAction(UnityAction e) {
+        onHoverExitAction.RemoveListener(e);
     }
 
     void Update() {
@@ -72,17 +78,23 @@ public class HoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     }
 
     public void ShowSmallInfoString(string message) {
-        UIManager.Instance.ShowSmallInfo(message, tooltipHeader);
+        if (UIManager.Instance != null) {
+            UIManager.Instance.ShowSmallInfo(message, tooltipHeader);    
+        }
     }
     public void HideSmallInfoString() {
-        UIManager.Instance.HideSmallInfo();
+        if (UIManager.Instance != null) {
+            UIManager.Instance.HideSmallInfo();    
+        }
     }
 
     public void ShowSmallInfoInSpecificPosition(string message) {
-        if (tooltipPos != null) {
-            UIManager.Instance.ShowSmallInfo(message, tooltipPos, tooltipHeader);
-        } else {
-            UIManager.Instance.ShowSmallInfo(message, tooltipHeader);
+        if (UIManager.Instance != null) {
+            if (tooltipPos != null) {
+                UIManager.Instance.ShowSmallInfo(message, tooltipPos, tooltipHeader);
+            } else {
+                UIManager.Instance.ShowSmallInfo(message, tooltipHeader);
+            }    
         }
     }
 }

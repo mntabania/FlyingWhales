@@ -6,10 +6,11 @@ namespace Plague.Fatality {
         
         protected override void ActivateFatality(Character p_character) {
             p_character.interruptComponent.TriggerInterrupt(INTERRUPT.Septic_Shock, p_character);
+            PlagueDisease.Instance.UpdateDeathsOnCharacterDied(p_character);
         }
         public override void CharacterGainedTrait(Character p_character, Trait p_gainedTrait) {
             if (p_gainedTrait.name == "Starving") {
-                if (GameUtilities.RollChance(5)) {
+                if (GameUtilities.RollChance(5)) {//5
                     ActivateFatality(p_character);
                 }
             }

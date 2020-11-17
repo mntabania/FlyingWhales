@@ -358,7 +358,7 @@ public class PlayerUI : BaseMonoBehaviour {
             regionNameTopMenuText.text = location.name;
             regionNameTopMenuGO.SetActive(true);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            regionNameHoverHandler.SetOnHoverAction(() => TestingUtilities.ShowLocationInfo(location.coreTile.region));
+            regionNameHoverHandler.SetOnHoverOverAction(() => TestingUtilities.ShowLocationInfo(location.coreTile.region));
             regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
 #endif
         } else {
@@ -1102,6 +1102,15 @@ public class PlayerUI : BaseMonoBehaviour {
         } else {
             _buildListUI.Close();
         }
+    }
+    #endregion
+
+    #region Plague
+    public void ShowPlaguePointsGainedEffect(int adjustmentAmount, Vector3 worldPos) {
+        var text = $"<color=#FE4D60>+{adjustmentAmount.ToString()}P</color>";
+        Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(InnerMapCameraMove.Instance.camera, worldPos);
+        GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", screenPos, Quaternion.identity, transform, true);
+        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(0f, 50f));
     }
     #endregion
 }
