@@ -49,7 +49,6 @@ public class BiolabUIView : MVCUIView
 	public Transform GetTabParentTransform() {
 		return UIModel.tabPrent;
 	}
-
 	public void SetActiveCases(string p_activeCasesCount) {
 		UIModel.txtActiveCasesValue.text = p_activeCasesCount;
 	}
@@ -68,6 +67,9 @@ public class BiolabUIView : MVCUIView
 	public void SetPlaguePoints(string p_plaguePoints)
 	{
 		UIModel.txtPlaguePoints.text = p_plaguePoints;
+	}
+	public void SetTransmissionTabIsOnWithoutNotify(bool p_isOn) {
+		UIModel.btnTransmissionTab.SetIsOnWithoutNotify(p_isOn);
 	}
 	#endregion
 
