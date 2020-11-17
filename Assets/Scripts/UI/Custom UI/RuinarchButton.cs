@@ -45,10 +45,10 @@ namespace Ruinarch.Custom_UI {
 
         #region Pointer Clicks
         public override void OnPointerClick(PointerEventData eventData) {
-            base.OnPointerClick(eventData);
             if (!IsInteractable())
                 return;
             Messenger.Broadcast(UISignals.BUTTON_CLICKED, this);
+            base.OnPointerClick(eventData);
         }
         #endregion
 

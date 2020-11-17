@@ -14,15 +14,15 @@ namespace Tutorial {
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new CharacterGainedTrait("Infected", trait => trait.responsibleCharacter != null || trait.gainedFromDoing != null)
-                    .SetOnMeetAction(OnCharacterInfected),
+                // new CharacterGainedTrait("Infected", trait => trait.responsibleCharacter != null || trait.gainedFromDoing != null)
+                //     .SetOnMeetAction(OnCharacterInfected),
                 // new IsAtTime(new [] {
                 //     GameManager.Instance.GetTicksBasedOnHour(7),
                 //     GameManager.Instance.GetTicksBasedOnHour(13),
                 //     GameManager.Instance.GetTicksBasedOnHour(19)
                 // })
             };
-            Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
+            // Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
         }
         private void OnHourStarted() {
             GameDate today = GameManager.Instance.Today();

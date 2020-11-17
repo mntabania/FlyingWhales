@@ -47,6 +47,7 @@ public class GeneralConfirmation : PopupMenuBase {
         if (onClickOK != null) {
             generalConfirmationButton.onClick.AddListener(onClickOK.Invoke);
         }
+        transform.SetAsLastSibling();
         TweenIn();
     }
     

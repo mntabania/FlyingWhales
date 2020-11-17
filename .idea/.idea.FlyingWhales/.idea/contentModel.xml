@@ -569,7 +569,6 @@
         </e>
         <e p="Ignore" t="Include">
           <e p="Test Scripts" t="Include">
-            <e p="BiolabUITester.cs" t="Include" />
             <e p="CollisionLayerTester.cs" t="Include" />
             <e p="DelegateTester.cs" t="Include" />
             <e p="LineOfSightTester.cs" t="Include" />
@@ -2675,6 +2674,7 @@
             </e>
             <e p="Tutorial" t="Include">
               <e p="Bonus Tutorials" t="Include">
+                <e p="BiolabTutorial.cs" t="Include" />
                 <e p="BonusTutorial.cs" t="Include" />
                 <e p="ChaosOrbsTutorial.cs" t="Include" />
                 <e p="Log Quests" t="Include">
@@ -2826,6 +2826,7 @@
             <e p="RacePortraitAssets.cs" t="Include" />
           </e>
           <e p="Testing Scripts" t="Include">
+            <e p="BiolabUITester.cs" t="Include" />
             <e p="ProjectileTester.cs" t="Include" />
           </e>
           <e p="Threads" t="Include">

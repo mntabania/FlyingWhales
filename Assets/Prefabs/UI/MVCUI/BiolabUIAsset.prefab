@@ -413,7 +413,7 @@ GameObject:
   - component: {fileID: 3660873280555502016}
   - component: {fileID: 4807473136197661087}
   m_Layer: 5
-  m_Name: Death Effects
+  m_Name: Death Effects_Tab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -632,7 +632,7 @@ GameObject:
   - component: {fileID: 4936369446796462224}
   - component: {fileID: 4542849647619469524}
   m_Layer: 5
-  m_Name: Symptoms
+  m_Name: Symptoms_Tab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -717,7 +717,7 @@ GameObject:
   - component: {fileID: 2224474163288518047}
   - component: {fileID: 8136644441694816334}
   m_Layer: 5
-  m_Name: Transmission
+  m_Name: Transmission_Tab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1727,7 +1727,7 @@ GameObject:
   - component: {fileID: 6419537096048458266}
   - component: {fileID: 2144594052429638927}
   m_Layer: 5
-  m_Name: Lifespan
+  m_Name: Lifespan_Tab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3198,7 +3198,7 @@ GameObject:
   - component: {fileID: 1603696700265715773}
   - component: {fileID: 3702370633880693347}
   m_Layer: 5
-  m_Name: Fatality
+  m_Name: Fatality_Tab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
