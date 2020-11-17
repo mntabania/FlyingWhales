@@ -28,10 +28,10 @@ public class PlagueLifespan {
         _sapientInfectionTimeInHours = new Dictionary<RACE, int>();
 
         SetTileObjectLifespanInHoursByLevel(1);
-        SetMonsterInfectionTimeInHours(1);
-        SetUndeadInfectionTimeInHours(1);
-        SetSapientInfectionTimeInHours(RACE.HUMANS, 1);
-        SetSapientInfectionTimeInHours(RACE.ELVES, 1);
+        SetMonsterInfectionTimeInHours(-1);
+        SetUndeadInfectionTimeInHours(-1);
+        SetSapientInfectionTimeInHours(RACE.HUMANS, 24);
+        SetSapientInfectionTimeInHours(RACE.ELVES, 24);
     }
 
     #region Tile Object Lifespan

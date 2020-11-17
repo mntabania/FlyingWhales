@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Ruinarch.MVCFramework;
 using System;
+using UnityEngine.UI;
 
 public class OnDeathUIView : MVCUIView
 {
@@ -60,4 +61,64 @@ public class OnDeathUIView : MVCUIView
 		UIModel.onRandomSpirit_1UpgradeClicked -= p_listener.OnRandomSpirit_1UpgradeClicked;
 	}
 	#endregion
+
+	private RuinarchText GetCostTextToUpdate(PLAGUE_DEATH_EFFECT p_deathEffect) {
+		switch (p_deathEffect) {
+			case PLAGUE_DEATH_EFFECT.Explosion:
+				return UIModel.txtIgniteUpgradeCost;
+			case PLAGUE_DEATH_EFFECT.Zombie:
+				return UIModel.txtWalkerZombieUpgradeCost;
+			case PLAGUE_DEATH_EFFECT.Mana_Generator:
+				return UIModel.txtMana2_3UpgradeCost;
+			case PLAGUE_DEATH_EFFECT.Haunted_Spirits:
+				return UIModel.txtRandomSpirit_1UpgradeCost;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(p_deathEffect), p_deathEffect, null);
+		}
+	}
+	private RuinarchText GetEffectTextToUpdate(PLAGUE_DEATH_EFFECT p_deathEffect) {
+		switch (p_deathEffect) {
+			case PLAGUE_DEATH_EFFECT.Explosion:
+				return UIModel.txtIgniteEffect;
+			case PLAGUE_DEATH_EFFECT.Zombie:
+				return UIModel.txtWalkerZombieEffect;
+			case PLAGUE_DEATH_EFFECT.Mana_Generator:
+				return UIModel.txtMana2_3Effect;
+			case PLAGUE_DEATH_EFFECT.Haunted_Spirits:
+				return UIModel.txtRandomSpirit_1Effect;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(p_deathEffect), p_deathEffect, null);
+		}
+	}
+	private Button GetDeathEffectUpgradeButton(PLAGUE_DEATH_EFFECT p_deathEffect) {
+		switch (p_deathEffect) {
+			case PLAGUE_DEATH_EFFECT.Explosion:
+				return UIModel.btnIgniteUpgrade;
+			case PLAGUE_DEATH_EFFECT.Zombie:
+				return UIModel.btnWalkerZombieUpgrade;
+			case PLAGUE_DEATH_EFFECT.Mana_Generator:
+				return UIModel.btnMana2_3Upgrade;
+			case PLAGUE_DEATH_EFFECT.Haunted_Spirits:
+				return UIModel.btnRandomSpirit_1Upgrade;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(p_deathEffect), p_deathEffect, null);
+		}
+	}
+	
+	public void UpdateDeathEffectCost(PLAGUE_DEATH_EFFECT p_deathEffect, string p_cost) {
+		RuinarchText txt = GetCostTextToUpdate(p_deathEffect);
+		txt.text = p_cost;
+	}
+	public void UpdateDeathEffectCostState(PLAGUE_DEATH_EFFECT p_deathEffect, bool p_state) {
+		RuinarchText txt = GetCostTextToUpdate(p_deathEffect);
+		txt.gameObject.SetActive(p_state);
+	}
+	public void UpdateDeathEffectUpgradeButtonInteractable(PLAGUE_DEATH_EFFECT p_deathEffect, bool p_interactable) {
+		Button button = GetDeathEffectUpgradeButton(p_deathEffect);
+		button.interactable = p_interactable;
+	}
+	public void UpdateDeathEffectDescription(PLAGUE_DEATH_EFFECT p_deathEffect, string p_effect) {
+		RuinarchText txt = GetEffectTextToUpdate(p_deathEffect);
+		txt.text = p_effect;
+	}
 }

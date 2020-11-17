@@ -109,7 +109,7 @@ namespace Traits {
                     PlagueSymptom symptom = PlagueDisease.Instance.activeSymptoms[i];
                     AddSymptom(symptom);
                 }
-                PlagueDisease.Instance.OnPOIGainedPlagued(addedToPOI);
+                PlagueDisease.Instance.UpdateActiveCasesOnPOIGainedPlagued(addedToPOI);
                 AddDeathEffect(PlagueDisease.Instance.activeDeathEffect);
             }
         }
@@ -136,7 +136,7 @@ namespace Traits {
                     PlagueSymptom symptom = PlagueDisease.Instance.activeSymptoms[i];
                     RemoveSymptom(symptom);
                 }
-                PlagueDisease.Instance.OnPOILostPlagued(removedFromPOI);
+                PlagueDisease.Instance.UpdateActiveCasesAndRecoveriesOnPOILostPlagued(removedFromPOI);
                 RemoveDeathEffect(PlagueDisease.Instance.activeDeathEffect);
             }
         }

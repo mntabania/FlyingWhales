@@ -17,10 +17,12 @@ public class BiolabUIController : MVCUIController, BiolabUIView.IListener
 
 	private Action onCloseBiolabUI;
 
-	public void Init(Action p_onCloseBiolabUI) {
+	public void Init(Action p_onCloseBiolabUI = null) {
 		InstantiateUI();
 		HideUI();
-		onCloseBiolabUI += p_onCloseBiolabUI;
+		if (p_onCloseBiolabUI != null) {
+			onCloseBiolabUI += p_onCloseBiolabUI;	
+		}
 	}
 	
 	public void Open() {

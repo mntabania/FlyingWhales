@@ -135,13 +135,13 @@ public class PlagueDisease : ISingletonPattern {
     #endregion
 
     #region Misc Data
-    public void OnPOILostPlagued(IPointOfInterest p_poi) {
+    public void UpdateActiveCasesAndRecoveriesOnPOILostPlagued(IPointOfInterest p_poi) {
         if (p_poi is Character character && character.isNotSummonAndDemon) {
             _activeCases--;
             _recoveries++;
         }
     }
-    public void OnPOIGainedPlagued(IPointOfInterest p_poi) {
+    public void UpdateActiveCasesOnPOIGainedPlagued(IPointOfInterest p_poi) {
         if (p_poi is Character character && character.isNotSummonAndDemon) {
             _activeCases++;
         }
@@ -203,6 +203,13 @@ public class PlagueDisease : ISingletonPattern {
         } else {
             throw new Exception($"No plague death effect class of type {p_deathEffectType}");
         }
+    }
+    public bool HasMaxDeathEffect() {
+        return _activeDeathEffect != null;
+    }
+    public bool IsDeathEffectActive(PLAGUE_DEATH_EFFECT p_deathEffect, out PlagueDeathEffect deathEffect) {
+        deathEffect = _activeDeathEffect;
+        return _activeDeathEffect.deathEffectType == p_deathEffect;
     }
     #endregion
 

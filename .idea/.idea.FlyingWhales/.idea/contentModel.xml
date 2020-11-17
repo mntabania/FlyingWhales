@@ -569,6 +569,7 @@
         </e>
         <e p="Ignore" t="Include">
           <e p="Test Scripts" t="Include">
+            <e p="BiolabUITester.cs" t="Include" />
             <e p="CollisionLayerTester.cs" t="Include" />
             <e p="DelegateTester.cs" t="Include" />
             <e p="LineOfSightTester.cs" t="Include" />
@@ -2332,6 +2333,13 @@
               <e p="ThreatComponent.cs" t="Include" />
             </e>
             <e p="Plague Related Scripts" t="Include">
+              <e p="Death Effects" t="Include">
+                <e p="Explosion.cs" t="Include" />
+                <e p="HauntedSpirits.cs" t="Include" />
+                <e p="ManaGenerator.cs" t="Include" />
+                <e p="PlagueDeathEffect.cs" t="Include" />
+                <e p="Zombie.cs" t="Include" />
+              </e>
               <e p="Fatality" t="Include">
                 <e p="Fatality.cs" t="Include" />
                 <e p="HeartAttack.cs" t="Include" />
@@ -2911,6 +2919,7 @@
               <e p="MusicLover.cs" t="Include" />
               <e p="Narcoleptic.cs" t="Include" />
               <e p="Necromancer.cs" t="Include" />
+              <e p="NightZombie.cs" t="Include" />
               <e p="Nocturnal.cs" t="Include" />
               <e p="NoxiousWanderer.cs" t="Include" />
               <e p="Overheating.cs" t="Include" />
@@ -2945,6 +2954,7 @@
               <e p="Vampire.cs" t="Include" />
               <e p="Venomous.cs" t="Include" />
               <e p="Vigilant.cs" t="Include" />
+              <e p="WalkerZombie.cs" t="Include" />
               <e p="Webbed.cs" t="Include" />
               <e p="Wet.cs" t="Include" />
               <e p="Withdrawal.cs" t="Include" />

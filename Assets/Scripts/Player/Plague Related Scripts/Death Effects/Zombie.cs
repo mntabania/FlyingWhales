@@ -24,6 +24,28 @@ namespace Plague.Death_Effect {
             }
             Debug.Log("Activated Zombie Effect");
         }
+        public override int GetNextLevelUpgradeCost() {
+            switch (_level) {
+                case 1:
+                    return 30;
+                case 2:
+                    return 50;
+                default:
+                    return -1; //Max Level
+            }
+        }
+        public override string GetCurrentEffectDescription() {
+            switch (_level) {
+                case 1:
+                    return "Walker Zombie";
+                case 2:
+                    return "Night Zombie";
+                case 3:
+                    return "Variety Zombie";
+                default:
+                    return string.Empty;
+            }
+        }
         public override void OnDeath(Character p_character) {
             ActivateEffect(p_character);
         }
