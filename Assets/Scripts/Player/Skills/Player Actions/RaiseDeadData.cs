@@ -32,18 +32,18 @@ public class RaiseDeadData : PlayerAction {
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (!targetCharacter.isDead || !targetCharacter.carryComponent.IsNotBeingCarried() || targetCharacter.marker == null) {
+        if (!targetCharacter.isDead || !targetCharacter.carryComponent.IsNotBeingCarried() || targetCharacter.marker == null || targetCharacter.characterClass.IsZombie()) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);
     }
-    //public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
-    //    string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter); 
-    //    if (targetCharacter.traitContainer.HasTrait("Infected")) {
-    //        reasons += $"Cannot use Raise Dead on Infected Villagers,";
-    //    }
-    //    return reasons;
-    //}
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.characterClass.IsZombie()) {
+            reasons += $"Cannot use Raise Dead on Zombie Villagers,";
+        }
+        return reasons;
+    }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {
         if(tileObject is Tombstone tombstone) {
             return CanPerformAbilityTowards(tombstone.character);

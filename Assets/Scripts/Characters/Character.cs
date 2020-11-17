@@ -775,9 +775,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         visuals.UpdateAllVisuals(this);
         //minion?.SetAssignedDeadlySinName(_characterClass.className);
         UpdateCanCombatState();
-        if (previousClassName == "Necromancer") {
-            traitContainer.RemoveTrait(this, "Necromancer");
-        }
+        //if (previousClassName == "Necromancer") {
+        //    traitContainer.RemoveTrait(this, "Necromancer");
+        //}
         if (_characterClass.className == "Hero") {
             //Reference: https://www.notion.so/ruinarch/Hero-9697369ffca6410296f852f295ee0090
             traitContainer.RemoveAllTraitsByType(this, TRAIT_TYPE.FLAW);
@@ -786,9 +786,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
             traitContainer.AddTrait(this, "Blessed");
-        } else if (_characterClass.className == "Necromancer") {
-            traitContainer.AddTrait(this, "Necromancer");
-        }
+        } 
+        //else if (_characterClass.className == "Necromancer") {
+        //    traitContainer.AddTrait(this, "Necromancer");
+        //}
     }
     public void AssignClass(CharacterClass characterClass, bool isInitial = false) {
         CharacterClass previousClass = _characterClass;
@@ -5888,11 +5889,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, this);
             Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
 
-            //for (int i = 0; i < traitContainer.allTraits.Count; i++) {
-            //    if (traitContainer.allTraits[i].OnAfterDeath(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers)) {
-            //        i--;
-            //    }
-            //}
+            List<Trait> afterDeathTraitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.After_Death);
+            if (afterDeathTraitOverrideFunctions != null) {
+                for (int i = 0; i < afterDeathTraitOverrideFunctions.Count; i++) {
+                    Trait trait = afterDeathTraitOverrideFunctions[i];
+                    trait.AfterDeath(this);
+                }
+            }
         }
     }
     public void SetDeathLog(Log log) {

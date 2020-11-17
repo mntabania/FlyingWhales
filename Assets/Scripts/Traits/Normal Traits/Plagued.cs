@@ -2,6 +2,7 @@
 using Plague.Fatality;
 using Plague.Symptom;
 using Plague.Transmission;
+using Plague.Death_Effect;
 using UnityEngine.Assertions;
 using UnityEngine;
 using Traits;
@@ -17,11 +18,16 @@ namespace Traits {
             void HourStarted(Character p_character, int numberOfHours);
         }
 
+        public interface IPlagueDeathListener {
+            void OnDeath(Character p_character); 
+        }
+
         private System.Action<Character> _perTickMovement;
         private System.Action<Character, Trait> _characterGainedTrait;
         private System.Action<Character, ActualGoapNode> _characterStartedPerformingAction;
         private System.Action<Character, int> _hourStarted;
         private System.Action<Character, ActualGoapNode> _characterDonePerformingAction;
+        private System.Action<Character> _characterDeath;
 
         public IPointOfInterest owner { get; private set; } //poi that has the poison
 
@@ -49,6 +55,7 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Hour_Started_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Start_Perform_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_After_Effect_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.After_Death);
         }
 
         #region Loading
@@ -91,6 +98,9 @@ namespace Traits {
                 }
                 Messenger.AddListener<Fatality>(PlayerSignals.ADDED_PLAGUE_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
                 Messenger.AddListener<PlagueSymptom>(PlayerSignals.ADDED_PLAGUE_DISEASE_SYMPTOM, OnPlagueDiseaseSymptomAdded);
+                Messenger.AddListener<PlagueDeathEffect>(PlayerSignals.SET_PLAGUE_DEATH_EFFECT, OnSetPlagueDeathEffect);
+                Messenger.AddListener<PlagueDeathEffect>(PlayerSignals.UNSET_PLAGUE_DEATH_EFFECT, OnUnsetPlagueDeathEffect);
+
                 for (int i = 0; i < PlagueDisease.Instance.activeFatalities.Count; i++) {
                     Fatality fatality = PlagueDisease.Instance.activeFatalities[i];
                     AddFatality(fatality);
@@ -99,6 +109,7 @@ namespace Traits {
                     PlagueSymptom symptom = PlagueDisease.Instance.activeSymptoms[i];
                     AddSymptom(symptom);
                 }
+                AddDeathEffect(PlagueDisease.Instance.activeDeathEffect);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
@@ -113,6 +124,9 @@ namespace Traits {
                 }
                 Messenger.RemoveListener<Fatality>(PlayerSignals.ADDED_PLAGUE_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
                 Messenger.RemoveListener<PlagueSymptom>(PlayerSignals.ADDED_PLAGUE_DISEASE_SYMPTOM, OnPlagueDiseaseSymptomAdded);
+                Messenger.RemoveListener<PlagueDeathEffect>(PlayerSignals.SET_PLAGUE_DEATH_EFFECT, OnSetPlagueDeathEffect);
+                Messenger.RemoveListener<PlagueDeathEffect>(PlayerSignals.UNSET_PLAGUE_DEATH_EFFECT, OnUnsetPlagueDeathEffect);
+
                 for (int i = 0; i < PlagueDisease.Instance.activeFatalities.Count; i++) {
                     Fatality fatality = PlagueDisease.Instance.activeFatalities[i];
                     RemoveFatality(fatality);
@@ -121,6 +135,7 @@ namespace Traits {
                     PlagueSymptom symptom = PlagueDisease.Instance.activeSymptoms[i];
                     RemoveSymptom(symptom);
                 }
+                RemoveDeathEffect(PlagueDisease.Instance.activeDeathEffect);
             }
         }
         public override bool PerTickOwnerMovement() {
@@ -214,6 +229,9 @@ namespace Traits {
             }
             base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
         }
+        public override void AfterDeath(Character character) {
+            _characterDeath?.Invoke(character);
+        }
         #endregion
 
         #region Fatalities
@@ -231,6 +249,19 @@ namespace Traits {
         }
         public void RemoveSymptom(PlagueSymptom p_symptom) {
             UnsubscribeToAllPlagueListenerEvents(p_symptom);
+        }
+        #endregion
+
+        #region Death Effect
+        public void AddDeathEffect(PlagueDeathEffect p_deathEffect) {
+            if(p_deathEffect != null) {
+                SubscribeToDeathEffect(p_deathEffect);
+            }
+        }
+        public void RemoveDeathEffect(PlagueDeathEffect p_deathEffect) {
+            if (p_deathEffect != null) {
+                UnsubscribeToDeathEffect(p_deathEffect);
+            }
         }
         #endregion
 
@@ -278,6 +309,12 @@ namespace Traits {
         private void UnsubscribeToCharacterDonePerformingAction(IPlaguedListener p_plaguedListener) {
             _characterDonePerformingAction -= p_plaguedListener.CharacterDonePerformingAction;
         }
+        private void SubscribeToDeathEffect(IPlagueDeathListener p_plaguedDeathListener) {
+            _characterDeath += p_plaguedDeathListener.OnDeath;
+        }
+        private void UnsubscribeToDeathEffect(IPlagueDeathListener p_plaguedDeathListener) {
+            _characterDeath -= p_plaguedDeathListener.OnDeath;
+        }
         #endregion
 
         #region Listeners
@@ -286,6 +323,12 @@ namespace Traits {
         }
         private void OnPlagueDiseaseSymptomAdded(PlagueSymptom p_symptom) {
             AddSymptom(p_symptom);
+        }
+        private void OnSetPlagueDeathEffect(PlagueDeathEffect p_deathEffect) {
+            AddDeathEffect(p_deathEffect);
+        }
+        private void OnUnsetPlagueDeathEffect(PlagueDeathEffect p_deathEffect) {
+            RemoveDeathEffect(p_deathEffect);
         }
         private void OnTraitableGainedTrait(ITraitable p_traitable, Trait p_trait) {
             if (owner.traitContainer.HasTrait("Plague Reservoir")) {

@@ -190,6 +190,7 @@ namespace Traits {
             return name;
         }
         protected virtual string GetDescriptionInUI() { return description; }
+        public virtual void AfterDeath(Character character) { }
         #endregion
 
         #region Utilities

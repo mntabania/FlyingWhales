@@ -78,5 +78,11 @@
     /// </summary>
     public static string ADDED_PLAGUE_DISEASE_SYMPTOM = "AddedPlagueDiseaseSymptom";
 
+    /// <summary>
+    /// Parameters: Plague Death Effect
+    /// </summary>
+    public static string SET_PLAGUE_DEATH_EFFECT = "SetPlagueDeathEffect";
+    public static string UNSET_PLAGUE_DEATH_EFFECT = "UnsetPlagueDeathEffect";
+
     public static string UPDATED_PLAGUE_POINTS = "UpdatedPlaguePoints";
 }

@@ -1097,3 +1097,6 @@ public enum PLAGUE_FATALITY {
 public enum PLAGUE_SYMPTOM {
     Paralysis, Vomiting, Lethargy, Seizure, Insomnia, Poison_Cloud, Monster_Scent, Sneezing, Depression, Hunger_Pangs,
 }
+public enum PLAGUE_DEATH_EFFECT {
+    Explosion, Zombie, Mana_Generator, Haunted_Spirits,
+}
