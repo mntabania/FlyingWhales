@@ -202,6 +202,9 @@ public class UIManager : BaseMonoBehaviour {
         Messenger.AddListener<IPointOfInterest>(UISignals.UPDATE_POI_LOGS_UI, TryUpdatePOILog);
         Messenger.AddListener<Faction>(UISignals.UPDATE_FACTION_LOGS_UI, TryUpdateFactionLog);
 
+        Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+
+
         //notification area
         notificationSearchField.onValueChanged.AddListener(OnEndNotificationSearchEdit);
         notificationFilters = CollectionUtilities.GetEnumValues<LOG_TAG>().ToList();
@@ -1016,6 +1019,14 @@ public class UIManager : BaseMonoBehaviour {
     public void UpdateStructureInfo() {
         if (structureInfoUI.isShowing) {
             structureInfoUI.UpdateStructureInfoUI();
+        }
+    }
+    private void OnStructureDestroyed(LocationStructure structure) {
+        CheckStructureInfoForClosure(structure);
+    }
+    private void CheckStructureInfoForClosure(LocationStructure structure) {
+        if(structureInfoUI.isShowing && structureInfoUI.activeStructure == structure) {
+            structureInfoUI.CloseMenu();
         }
     }
     #endregion

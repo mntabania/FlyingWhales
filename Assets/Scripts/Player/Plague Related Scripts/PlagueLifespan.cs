@@ -109,6 +109,7 @@ public class PlagueLifespan {
         }
     }
     #endregion
+
     public int GetLifespanInHoursOfPlagueOn(IPointOfInterest p_poi) {
         if(p_poi is Character character) {
             if(character.faction?.factionType.type == FACTION_TYPE.Wild_Monsters) {

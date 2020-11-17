@@ -17,7 +17,7 @@ namespace Plague.Symptom {
     }
 
     public static class PlagueSymptomExtensions{
-        public static int GetFatalityCost(this PLAGUE_SYMPTOM p_symptom) {
+        public static int GetSymptomCost(this PLAGUE_SYMPTOM p_symptom) {
             switch (p_symptom) {
                 case PLAGUE_SYMPTOM.Paralysis:
                     return 30;

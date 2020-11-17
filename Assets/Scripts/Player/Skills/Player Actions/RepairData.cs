@@ -31,5 +31,13 @@ public class RepairData : PlayerAction {
         }
         return canPerform;
     }
+    public override bool IsValid(IPlayerActionTarget target) {
+        if (target is LocationStructure structure) {
+            if (structure.hasBeenDestroyed || structure.tiles.Count <= 0) {
+                return false;
+            }
+        }
+        return base.IsValid(target);
+    }
     #endregion
 }
