@@ -13,6 +13,14 @@ public class OnDeathUIView : MVCUIView
 		void OnWalkerZombieUpgradeClicked();
 		void OnMana2_3UpgradeClicked();
 		void OnRandomSpirit_1UpgradeClicked();
+		void OnIgniteHoveredOver(UIHoverPosition hoverPosition);
+		void OnWalkerZombieHoveredOver(UIHoverPosition hoverPosition);
+		void OnManaHoveredOver(UIHoverPosition hoverPosition);
+		void OnSpiritHoveredOver(UIHoverPosition hoverPosition);
+		void OnIgniteHoveredOut();
+		void OnWalkerZombieHoveredOut();
+		void OnManaHoveredOut();
+		void OnSpiritHoveredOut();
 	}
 	#endregion
 	#region MVC Properties and functions to override
@@ -51,6 +59,14 @@ public class OnDeathUIView : MVCUIView
 		UIModel.onWalkerZombieUpgradeClicked += p_listener.OnWalkerZombieUpgradeClicked;
 		UIModel.onMana2_3UpgradeClicked += p_listener.OnMana2_3UpgradeClicked;
 		UIModel.onRandomSpirit_1UpgradeClicked += p_listener.OnRandomSpirit_1UpgradeClicked;
+		UIModel.onIgniteHoveredOver += p_listener.OnIgniteHoveredOver;
+		UIModel.onWalkerZombieHoveredOver += p_listener.OnWalkerZombieHoveredOver;
+		UIModel.onManaHoveredOver += p_listener.OnManaHoveredOver;
+		UIModel.onSpiritHoveredOver += p_listener.OnSpiritHoveredOver;
+		UIModel.onIgniteHoveredOut += p_listener.OnIgniteHoveredOut;
+		UIModel.onWalkerZombieHoveredOut += p_listener.OnWalkerZombieHoveredOut;
+		UIModel.onManaHoveredOut += p_listener.OnManaHoveredOut;
+		UIModel.onSpiritHoveredOut += p_listener.OnSpiritHoveredOut;
 	}
 
 	public void Unsubscribe(IListener p_listener)
@@ -59,6 +75,14 @@ public class OnDeathUIView : MVCUIView
 		UIModel.onWalkerZombieUpgradeClicked -= p_listener.OnWalkerZombieUpgradeClicked;
 		UIModel.onMana2_3UpgradeClicked -= p_listener.OnMana2_3UpgradeClicked;
 		UIModel.onRandomSpirit_1UpgradeClicked -= p_listener.OnRandomSpirit_1UpgradeClicked;
+		UIModel.onIgniteHoveredOver -= p_listener.OnIgniteHoveredOver;
+		UIModel.onWalkerZombieHoveredOver -= p_listener.OnWalkerZombieHoveredOver;
+		UIModel.onManaHoveredOver -= p_listener.OnManaHoveredOver;
+		UIModel.onSpiritHoveredOver -= p_listener.OnSpiritHoveredOver;
+		UIModel.onIgniteHoveredOut -= p_listener.OnIgniteHoveredOut;
+		UIModel.onWalkerZombieHoveredOut -= p_listener.OnWalkerZombieHoveredOut;
+		UIModel.onManaHoveredOut -= p_listener.OnManaHoveredOut;
+		UIModel.onSpiritHoveredOut -= p_listener.OnSpiritHoveredOut;
 	}
 	#endregion
 

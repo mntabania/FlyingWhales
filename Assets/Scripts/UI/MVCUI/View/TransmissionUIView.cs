@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Ruinarch.MVCFramework;
 using System;
+using UnityEngine.UI;
 
 public class TransmissionUIView : MVCUIView
 {
@@ -12,6 +13,14 @@ public class TransmissionUIView : MVCUIView
 		void OnConsumptionUpgradeClicked();
 		void OnPhysicalContactUpgradeClicked();
 		void OnCombatUpgradeClicked();
+		void OnAirBorneHoveredOver(UIHoverPosition p_hoverPosition);
+		void OnConsumptionHoveredOver(UIHoverPosition p_hoverPosition);
+		void OnPhysicalContactHoveredOver(UIHoverPosition p_hoverPosition);
+		void OnCombatHoveredOver(UIHoverPosition p_hoverPosition);
+		void OnAirBorneHoveredOut();
+		void OnConsumptionHoveredOut();
+		void OnPhysicalContactHoveredOut();
+		void OnCombatHoveredOut();
 	}
 	#endregion
 	#region MVC Properties and functions to override
@@ -43,56 +52,78 @@ public class TransmissionUIView : MVCUIView
 	}
 	#endregion
 
-	public void UpdateAirbornePrice(string p_newPrice) {
-		UIModel.txtAirBorneCost.text = p_newPrice;
+	private RuinarchText GetTransmissionCostText(PLAGUE_TRANSMISSION p_transmissionType) {
+		switch (p_transmissionType) {
+			case PLAGUE_TRANSMISSION.Airborne:
+				return UIModel.txtAirBorneCost;
+			case PLAGUE_TRANSMISSION.Consumption:
+				return UIModel.txtConsumptionCost;
+			case PLAGUE_TRANSMISSION.Physical_Contact:
+				return UIModel.txtDirectContactCost;
+			case PLAGUE_TRANSMISSION.Combat:
+				return UIModel.txtCombatUpgradeCost;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(p_transmissionType), p_transmissionType, null);
+		}
 	}
-	public void UpdateAirborneRate(string p_rate) {
-		UIModel.txtAirBorneRate.text = p_rate;
+	private RuinarchText GetTransmissionRateText(PLAGUE_TRANSMISSION p_transmissionType) {
+		switch (p_transmissionType) {
+			case PLAGUE_TRANSMISSION.Airborne:
+				return UIModel.txtAirBorneRate;
+			case PLAGUE_TRANSMISSION.Consumption:
+				return UIModel.txtConsumptionRate;
+			case PLAGUE_TRANSMISSION.Physical_Contact:
+				return UIModel.txtDirectContactRate;
+			case PLAGUE_TRANSMISSION.Combat:
+				return UIModel.txtCombatRate;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(p_transmissionType), p_transmissionType, null);
+		}
 	}
-	public void UpdateAirborneRateButtonInteractable(bool p_interactable) {
-		UIModel.btnAirBorneUpgrade.interactable = p_interactable;
+	private Button GetTransmissionUpgradeButton(PLAGUE_TRANSMISSION p_transmissionType) {
+		switch (p_transmissionType) {
+			case PLAGUE_TRANSMISSION.Airborne:
+				return UIModel.btnAirBorneUpgrade;
+			case PLAGUE_TRANSMISSION.Consumption:
+				return UIModel.btnConsumptionUpgrade;
+			case PLAGUE_TRANSMISSION.Physical_Contact:
+				return UIModel.btnDirectContactUpgrade;
+			case PLAGUE_TRANSMISSION.Combat:
+				return UIModel.btnCombatUpgrade;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(p_transmissionType), p_transmissionType, null);
+		}
 	}
-	public void UpdateAirbornePriceState(bool p_state) {
-		UIModel.txtAirBorneCost.gameObject.SetActive(p_state);
+	private GameObject GetCostPlagueIcon(PLAGUE_TRANSMISSION p_transmissionType) {
+		switch (p_transmissionType) {
+			case PLAGUE_TRANSMISSION.Airborne:
+				return UIModel.airBorneCostImagePlagueIcon;
+			case PLAGUE_TRANSMISSION.Consumption:
+				return UIModel.consumptionCostPlagueIcon;
+			case PLAGUE_TRANSMISSION.Physical_Contact:
+				return UIModel.directContactCostPlagueIcon;
+			case PLAGUE_TRANSMISSION.Combat:
+				return UIModel.combatCostPlagueIcon;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(p_transmissionType), p_transmissionType, null);
+		}
 	}
 
-	public void UpdateConsumptionPrice(string p_newPrice) {
-		UIModel.txtConsumptionCost.text = p_newPrice;
+	public void UpdateTransmissionCost(PLAGUE_TRANSMISSION p_transmissionType, string p_newCost) {
+		RuinarchText txtCost = GetTransmissionCostText(p_transmissionType);
+		txtCost.text = p_newCost;
 	}
-	public void UpdateConsumptionRate(string p_rate) {
-		UIModel.txtConsumptionRate.text = p_rate;
+	public void UpdateTransmissionCostPlagueIcon(PLAGUE_TRANSMISSION p_transmissionType, bool state) {
+		GameObject iconGO = GetCostPlagueIcon(p_transmissionType);
+		iconGO.SetActive(state);
 	}
-	public void UpdateConsumptionButtonInteractable(bool p_interactable) {
-		UIModel.btnConsumptionUpgrade.interactable = p_interactable;
+	public void UpdateTransmissionRate(PLAGUE_TRANSMISSION p_transmissionType, string p_newRate) {
+		RuinarchText txtRate = GetTransmissionRateText(p_transmissionType);
+		txtRate.text = p_newRate;
 	}
-	public void UpdateConsumptionPriceState(bool p_state) {
-		UIModel.txtConsumptionCost.gameObject.SetActive(p_state);
-	}
-
-	public void UpdatePhysicalContactPrice(string p_newPrice) {
-		UIModel.txtDirectContactCost.text = p_newPrice;
-	}
-	public void UpdatePhysicalContactRate(string p_rate) {
-		UIModel.txtDirectContactRate.text = p_rate;
-	}
-	public void UpdatePhysicalContactRateButtonInteractable(bool p_interactable) {
-		UIModel.btnDirectContactUpgrade.interactable = p_interactable;
-	}
-	public void UpdatePhysicalContactPriceState(bool p_state) {
-		UIModel.txtDirectContactCost.gameObject.SetActive(p_state);
-	}
-	
-	public void UpdateCombatPrice(string p_newPrice) {
-		UIModel.txtCombatUpgradeCost.text = p_newPrice;
-	}
-	public void UpdateCombatRate(string p_rate) {
-		UIModel.txtCombatRate.text = p_rate;
-	}
-	public void UpdateCombatRateButtonInteractable(bool p_interactable) {
-		UIModel.btnCombatUpgrade.interactable = p_interactable;
-	}
-	public void UpdateCombatRatePriceState(bool p_state) {
-		UIModel.txtCombatUpgradeCost.gameObject.SetActive(p_state);
+	public void UpdateTransmissionUpgradeButtonInteractable(PLAGUE_TRANSMISSION p_transmissionType, bool p_state) {
+		Button button = GetTransmissionUpgradeButton(p_transmissionType);
+		button.interactable = p_state;
 	}
 
 
@@ -103,6 +134,14 @@ public class TransmissionUIView : MVCUIView
 		UIModel.onConsumptionUpgradeClicked += p_listener.OnConsumptionUpgradeClicked;
 		UIModel.onDirectContactUpgradeClicked += p_listener.OnPhysicalContactUpgradeClicked;
 		UIModel.onCombatUpgradeClicked += p_listener.OnCombatUpgradeClicked;
+		UIModel.onAirBorneHoveredOver += p_listener.OnAirBorneHoveredOver;
+		UIModel.onConsumptionHoveredOver += p_listener.OnConsumptionHoveredOver;
+		UIModel.onDirectContactHoveredOver += p_listener.OnPhysicalContactHoveredOver;
+		UIModel.onCombatHoveredOver += p_listener.OnCombatHoveredOver;
+		UIModel.onAirBorneHoveredOut += p_listener.OnAirBorneHoveredOut;
+		UIModel.onConsumptionHoveredOut += p_listener.OnConsumptionHoveredOut;
+		UIModel.onDirectContactHoveredOut += p_listener.OnPhysicalContactHoveredOut;
+		UIModel.onCombatHoveredOut += p_listener.OnCombatHoveredOut;
 	}
 
 	public void Unsubscribe(IListener p_listener)
@@ -111,6 +150,14 @@ public class TransmissionUIView : MVCUIView
 		UIModel.onConsumptionUpgradeClicked -= p_listener.OnConsumptionUpgradeClicked;
 		UIModel.onDirectContactUpgradeClicked -= p_listener.OnPhysicalContactUpgradeClicked;
 		UIModel.onCombatUpgradeClicked -= p_listener.OnCombatUpgradeClicked;
+		UIModel.onAirBorneHoveredOver -= p_listener.OnAirBorneHoveredOver;
+		UIModel.onConsumptionHoveredOver -= p_listener.OnConsumptionHoveredOver;
+		UIModel.onDirectContactHoveredOver -= p_listener.OnPhysicalContactHoveredOver;
+		UIModel.onCombatHoveredOver -= p_listener.OnCombatHoveredOver;
+		UIModel.onAirBorneHoveredOut -= p_listener.OnAirBorneHoveredOut;
+		UIModel.onConsumptionHoveredOut -= p_listener.OnConsumptionHoveredOut;
+		UIModel.onDirectContactHoveredOut -= p_listener.OnPhysicalContactHoveredOut;
+		UIModel.onCombatHoveredOut -= p_listener.OnCombatHoveredOut;
 	}
 	#endregion
 }

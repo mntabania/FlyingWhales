@@ -66,6 +66,14 @@ public class OnDeathUIController : MVCUIController, OnDeathUIView.IListener
 		SetOrUpgradeDeathEffect(PLAGUE_DEATH_EFFECT.Haunted_Spirits);
 		UpdateAllDeathEffects();
 	}
+	public void OnIgniteHoveredOver(UIHoverPosition hoverPosition) { }
+	public void OnWalkerZombieHoveredOver(UIHoverPosition hoverPosition) { }
+	public void OnManaHoveredOver(UIHoverPosition hoverPosition) { }
+	public void OnSpiritHoveredOver(UIHoverPosition hoverPosition) { }
+	public void OnIgniteHoveredOut() { }
+	public void OnWalkerZombieHoveredOut() { }
+	public void OnManaHoveredOut() { }
+	public void OnSpiritHoveredOut() { }
 	#endregion
 
 	private void SetOrUpgradeDeathEffect(PLAGUE_DEATH_EFFECT p_deathEffect) {
@@ -92,7 +100,7 @@ public class OnDeathUIController : MVCUIController, OnDeathUIView.IListener
 			return true;	
 		}
 	}
-	private static int GetUnlockOrUpgradeCost(PLAGUE_DEATH_EFFECT p_deathEffect) {
+	private int GetUnlockOrUpgradeCost(PLAGUE_DEATH_EFFECT p_deathEffect) {
 		int cost;
 		if (PlagueDisease.Instance.activeDeathEffect != null) {
 			cost = PlagueDisease.Instance.activeDeathEffect.GetNextLevelUpgradeCost();

@@ -358,7 +358,7 @@ public class PlayerUI : BaseMonoBehaviour {
             regionNameTopMenuText.text = location.name;
             regionNameTopMenuGO.SetActive(true);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            regionNameHoverHandler.SetOnHoverAction(() => TestingUtilities.ShowLocationInfo(location.coreTile.region));
+            regionNameHoverHandler.SetOnHoverOverAction(() => TestingUtilities.ShowLocationInfo(location.coreTile.region));
             regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
 #endif
         } else {

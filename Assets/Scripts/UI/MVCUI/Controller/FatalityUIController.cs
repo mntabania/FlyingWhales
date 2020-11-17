@@ -57,7 +57,24 @@ public class FatalityUIController : MVCUIController, FatalityUIView.IListener
 		PlagueDisease.Instance.AddAndInitializeFatality(PLAGUE_FATALITY.Pneumonia);
 		UpdateAllFatalityData();
 	}
+	public void OnSepticShockHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip(PLAGUE_FATALITY.Septic_Shock, hoverPosition); }
+	public void OnSepticShockHoveredOut() { HideTooltip(); }
+	public void OnHeartAttackHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip(PLAGUE_FATALITY.Heart_Attack, hoverPosition); }
+	public void OnHeartAttackHoveredOut() { HideTooltip(); }
+	public void OnStrokeHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip(PLAGUE_FATALITY.Stroke, hoverPosition); }
+	public void OnStrokeHoveredOut() { HideTooltip(); }
+	public void OnTotalOrganFailureHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip(PLAGUE_FATALITY.Total_Organ_Failure, hoverPosition); }
+	public void OnTotalOrganFailureHoveredOut() { HideTooltip(); }
+	public void OnPneumoniaHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip(PLAGUE_FATALITY.Pneumonia, hoverPosition); }
+	public void OnPneumoniaHoveredOut() { HideTooltip(); }
 	#endregion
+
+	private void ShowTooltip(PLAGUE_FATALITY p_fatalityType, UIHoverPosition p_hoverPosition) {
+		if (UIManager.Instance != null) { UIManager.Instance.ShowSmallInfo(p_fatalityType.GetFatalityTooltip(), p_hoverPosition, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(p_fatalityType.ToString())); }
+	}
+	private void HideTooltip() {
+		if (UIManager.Instance != null) { UIManager.Instance.HideSmallInfo(); }
+	}
 	
 	private void UpdateSepticShockData() {
 		bool hasUnlockedFatality = PlagueDisease.Instance.IsFatalityActive(PLAGUE_FATALITY.Septic_Shock);

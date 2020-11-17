@@ -20,6 +20,26 @@ public class SymptomsUIView : MVCUIView
 		void OnSneezingUpgradeClicked();
 		void OnDepressionUpgradeClicked();
 		void OnHungerPangsUpgradeClicked();
+		void OnHoverOverParalysis(UIHoverPosition p_hoverPosition);
+		void OnHoverOverVomiting(UIHoverPosition p_hoverPosition);
+		void OnHoverOverLethargy(UIHoverPosition p_hoverPosition);
+		void OnHoverOverSeizures(UIHoverPosition p_hoverPosition);
+		void OnHoverOverInsomnia(UIHoverPosition p_hoverPosition);
+		void OnHoverOverPoisonCloud(UIHoverPosition p_hoverPosition);
+		void OnHoverOverMonsterScent(UIHoverPosition p_hoverPosition);
+		void OnHoverOverSneezing(UIHoverPosition p_hoverPosition);
+		void OnHoverOverDepression(UIHoverPosition p_hoverPosition);
+		void OnHoverOverHungerPangs(UIHoverPosition p_hoverPosition);
+		void OnHoverOutParalysis();
+		void OnHoverOutVomiting();
+		void OnHoverOutLethargy();
+		void OnHoverOutSeizures();
+		void OnHoverOutInsomnia();
+		void OnHoverOutPoisonCloud();
+		void OnHoverOutMonsterScent();
+		void OnHoverOutSneezing();
+		void OnHoverOutDepression();
+		void OnHoverOutHungerPangs();
 	}
 	#endregion
 	#region MVC Properties and functions to override
@@ -64,6 +84,26 @@ public class SymptomsUIView : MVCUIView
 		UIModel.onSneezingUpgradeClicked += p_listener.OnSneezingUpgradeClicked;
 		UIModel.onDepressionUpgradeClicked += p_listener.OnDepressionUpgradeClicked;
 		UIModel.onHungerPangsUpgradeClicked += p_listener.OnHungerPangsUpgradeClicked;
+		UIModel.onParalysisHoveredOver += p_listener.OnHoverOverParalysis;
+		UIModel.onVomitingHoveredOver += p_listener.OnHoverOverVomiting;
+		UIModel.onLethargyHoveredOver += p_listener.OnHoverOverLethargy;
+		UIModel.onSeizuresHoveredOver += p_listener.OnHoverOverSeizures;
+		UIModel.onInsomniaHoveredOver += p_listener.OnHoverOverInsomnia;
+		UIModel.onPoisonCloudHoveredOver += p_listener.OnHoverOverPoisonCloud;
+		UIModel.onMonsterScentHoveredOver += p_listener.OnHoverOverMonsterScent;
+		UIModel.onSneezingHoveredOver += p_listener.OnHoverOverSneezing;
+		UIModel.onDepressionHoveredOver += p_listener.OnHoverOverDepression;
+		UIModel.onHungerPangsHoveredOver += p_listener.OnHoverOverHungerPangs;
+		UIModel.onParalysisHoveredOut += p_listener.OnHoverOutParalysis;
+		UIModel.onVomitingHoveredOut += p_listener.OnHoverOutVomiting;
+		UIModel.onLethargyHoveredOut += p_listener.OnHoverOutLethargy;
+		UIModel.onSeizuresHoveredOut += p_listener.OnHoverOutSeizures;
+		UIModel.onInsomniaHoveredOut += p_listener.OnHoverOutInsomnia;
+		UIModel.onPoisonCloudHoveredOut += p_listener.OnHoverOutPoisonCloud;
+		UIModel.onMonsterScentHoveredOut += p_listener.OnHoverOutMonsterScent;
+		UIModel.onSneezingHoveredOut += p_listener.OnHoverOutSneezing;
+		UIModel.onDepressionHoveredOut += p_listener.OnHoverOutDepression;
+		UIModel.onHungerPangsHoveredOut += p_listener.OnHoverOutHungerPangs;
 	}
 
 	public void Unsubscribe(IListener p_listener)
@@ -78,6 +118,26 @@ public class SymptomsUIView : MVCUIView
 		UIModel.onSneezingUpgradeClicked -= p_listener.OnSneezingUpgradeClicked;
 		UIModel.onDepressionUpgradeClicked -= p_listener.OnDepressionUpgradeClicked;
 		UIModel.onHungerPangsUpgradeClicked -= p_listener.OnHungerPangsUpgradeClicked;
+		UIModel.onParalysisHoveredOver -= p_listener.OnHoverOverParalysis;
+		UIModel.onVomitingHoveredOver -= p_listener.OnHoverOverVomiting;
+		UIModel.onLethargyHoveredOver -= p_listener.OnHoverOverLethargy;
+		UIModel.onSeizuresHoveredOver -= p_listener.OnHoverOverSeizures;
+		UIModel.onInsomniaHoveredOver -= p_listener.OnHoverOverInsomnia;
+		UIModel.onPoisonCloudHoveredOver -= p_listener.OnHoverOverPoisonCloud;
+		UIModel.onMonsterScentHoveredOver -= p_listener.OnHoverOverMonsterScent;
+		UIModel.onSneezingHoveredOver -= p_listener.OnHoverOverSneezing;
+		UIModel.onDepressionHoveredOver -= p_listener.OnHoverOverDepression;
+		UIModel.onHungerPangsHoveredOver -= p_listener.OnHoverOverHungerPangs;
+		UIModel.onParalysisHoveredOut -= p_listener.OnHoverOutParalysis;
+		UIModel.onVomitingHoveredOut -= p_listener.OnHoverOutVomiting;
+		UIModel.onLethargyHoveredOut -= p_listener.OnHoverOutLethargy;
+		UIModel.onSeizuresHoveredOut -= p_listener.OnHoverOutSeizures;
+		UIModel.onInsomniaHoveredOut -= p_listener.OnHoverOutInsomnia;
+		UIModel.onPoisonCloudHoveredOut -= p_listener.OnHoverOutPoisonCloud;
+		UIModel.onMonsterScentHoveredOut -= p_listener.OnHoverOutMonsterScent;
+		UIModel.onSneezingHoveredOut -= p_listener.OnHoverOutSneezing;
+		UIModel.onDepressionHoveredOut -= p_listener.OnHoverOutDepression;
+		UIModel.onHungerPangsHoveredOut -= p_listener.OnHoverOutHungerPangs;
 	}
 	#endregion
 

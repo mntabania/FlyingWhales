@@ -13,6 +13,16 @@ public class FatalityUIView : MVCUIView
 		void OnStrokeUpgradeClicked();
 		void OnTotalOrganFailureUpgradeClicked();
 		void OnPneumoniaUpgradeClicked();
+		void OnSepticShockHoveredOver(UIHoverPosition hoverPosition);
+		void OnSepticShockHoveredOut();
+		void OnHeartAttackHoveredOver(UIHoverPosition hoverPosition);
+		void OnHeartAttackHoveredOut();
+		void OnStrokeHoveredOver(UIHoverPosition hoverPosition);
+		void OnStrokeHoveredOut();
+		void OnTotalOrganFailureHoveredOver(UIHoverPosition hoverPosition);
+		void OnTotalOrganFailureHoveredOut();
+		void OnPneumoniaHoveredOver(UIHoverPosition hoverPosition);
+		void OnPneumoniaHoveredOut();
 	}
 	#endregion
 	#region MVC Properties and functions to override
@@ -45,22 +55,40 @@ public class FatalityUIView : MVCUIView
 	#endregion
 
 	#region Subscribe/Unsubscribe for IListener
-	public void Subscribe(IListener p_listener)
-	{
+	public void Subscribe(IListener p_listener) {
 		UIModel.onSepticShockUpgradeClicked += p_listener.OnSepticShockUpgradeClicked;
 		UIModel.onHeartAttackUpgradeClicked += p_listener.OnHeartAttackUpgradeClicked;
 		UIModel.onStrokeUpgradeClicked += p_listener.OnStrokeUpgradeClicked;
 		UIModel.onTotalOrganFailureUpgradeClicked += p_listener.OnTotalOrganFailureUpgradeClicked;
 		UIModel.onPneumoniaUpgradeClicked += p_listener.OnPneumoniaUpgradeClicked;
+		UIModel.onSepticShockHoveredOver += p_listener.OnSepticShockHoveredOver;
+		UIModel.onSepticShockHoveredOut += p_listener.OnSepticShockHoveredOut;
+		UIModel.onHeartAttackHoveredOver += p_listener.OnHeartAttackHoveredOver;
+		UIModel.onHeartAttackHoveredOut += p_listener.OnHeartAttackHoveredOut;
+		UIModel.onStrokeHoveredOver += p_listener.OnStrokeHoveredOver;
+		UIModel.onStrokeHoveredOut += p_listener.OnStrokeHoveredOut;
+		UIModel.onTotalOrganFailureHoveredOver += p_listener.OnTotalOrganFailureHoveredOver;
+		UIModel.onTotalOrganFailureHoveredOut += p_listener.OnTotalOrganFailureHoveredOut;
+		UIModel.onPneumoniaHoveredOver += p_listener.OnPneumoniaHoveredOver;
+		UIModel.onPneumoniaHoveredOut += p_listener.OnPneumoniaHoveredOut;
 	}
 
-	public void Unsubscribe(IListener p_listener)
-	{
+	public void Unsubscribe(IListener p_listener) {
 		UIModel.onSepticShockUpgradeClicked -= p_listener.OnSepticShockUpgradeClicked;
 		UIModel.onHeartAttackUpgradeClicked -= p_listener.OnHeartAttackUpgradeClicked;
 		UIModel.onStrokeUpgradeClicked -= p_listener.OnStrokeUpgradeClicked;
 		UIModel.onTotalOrganFailureUpgradeClicked -= p_listener.OnTotalOrganFailureUpgradeClicked;
 		UIModel.onPneumoniaUpgradeClicked -= p_listener.OnPneumoniaUpgradeClicked;
+		UIModel.onSepticShockHoveredOver -= p_listener.OnSepticShockHoveredOver;
+		UIModel.onSepticShockHoveredOut -= p_listener.OnSepticShockHoveredOut;
+		UIModel.onHeartAttackHoveredOver -= p_listener.OnHeartAttackHoveredOver;
+		UIModel.onHeartAttackHoveredOut -= p_listener.OnHeartAttackHoveredOut;
+		UIModel.onStrokeHoveredOver -= p_listener.OnStrokeHoveredOver;
+		UIModel.onStrokeHoveredOut -= p_listener.OnStrokeHoveredOut;
+		UIModel.onTotalOrganFailureHoveredOver -= p_listener.OnTotalOrganFailureHoveredOver;
+		UIModel.onTotalOrganFailureHoveredOut -= p_listener.OnTotalOrganFailureHoveredOut;
+		UIModel.onPneumoniaHoveredOver -= p_listener.OnPneumoniaHoveredOver;
+		UIModel.onPneumoniaHoveredOut -= p_listener.OnPneumoniaHoveredOut;
 	}
 	#endregion
 

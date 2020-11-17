@@ -21,66 +21,79 @@ public class TransmissionUIController : MVCUIController, TransmissionUIView.ILis
 	}
 	public override void ShowUI() {
 		base.ShowUI();
-		UpdateTransmissionData();
-	}
-	private void UpdateTransmissionData() {
-		UpdateAirborneTransmissionData();
-		UpdateConsumptionTransmissionData();
-		UpdatePhysicalContactTransmissionData();
-		UpdateCombatTransmissionData();
-	}
-	private void UpdateAirborneTransmissionData() {
-		m_transmissionUIView.UpdateAirbornePrice(AirborneTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne)).ToString());
-		m_transmissionUIView.UpdateAirborneRate(PlagueDisease.Instance.GetTransmissionRateDescription(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne)));
-		bool isMaxLevel = PlagueDisease.Instance.IsMaxLevel(PLAGUE_TRANSMISSION.Airborne);
-		m_transmissionUIView.UpdateAirborneRateButtonInteractable(!isMaxLevel && CanAffordUpgrade(PLAGUE_TRANSMISSION.Airborne));
-		m_transmissionUIView.UpdateAirbornePriceState(!isMaxLevel);
-	}
-	private void UpdateConsumptionTransmissionData() {
-		m_transmissionUIView.UpdateConsumptionPrice(ConsumptionTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Consumption)).ToString());
-		m_transmissionUIView.UpdateConsumptionRate(PlagueDisease.Instance.GetTransmissionRateDescription(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Consumption)));
-		bool isMaxLevel = PlagueDisease.Instance.IsMaxLevel(PLAGUE_TRANSMISSION.Consumption);
-		m_transmissionUIView.UpdateConsumptionButtonInteractable(!isMaxLevel && CanAffordUpgrade(PLAGUE_TRANSMISSION.Consumption));
-		m_transmissionUIView.UpdateConsumptionPriceState(!isMaxLevel);
-	}
-	private void UpdatePhysicalContactTransmissionData() {
-		m_transmissionUIView.UpdatePhysicalContactPrice(PhysicalContactTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Physical_Contact)).ToString());
-		m_transmissionUIView.UpdatePhysicalContactRate(PlagueDisease.Instance.GetTransmissionRateDescription(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Physical_Contact)));
-		bool isMaxLevel = PlagueDisease.Instance.IsMaxLevel(PLAGUE_TRANSMISSION.Physical_Contact);
-		m_transmissionUIView.UpdatePhysicalContactRateButtonInteractable(!isMaxLevel && CanAffordUpgrade(PLAGUE_TRANSMISSION.Physical_Contact));
-		m_transmissionUIView.UpdatePhysicalContactPriceState(!isMaxLevel);
-	}
-	private void UpdateCombatTransmissionData() {
-		m_transmissionUIView.UpdateCombatPrice(CombatRateTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Combat)).ToString());
-		m_transmissionUIView.UpdateCombatRate(PlagueDisease.Instance.GetTransmissionRateDescription(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Combat)));
-		bool isMaxLevel = PlagueDisease.Instance.IsMaxLevel(PLAGUE_TRANSMISSION.Combat);
-		m_transmissionUIView.UpdateCombatRateButtonInteractable(!isMaxLevel && CanAffordUpgrade(PLAGUE_TRANSMISSION.Combat));
-		m_transmissionUIView.UpdateCombatRatePriceState(!isMaxLevel);
+		UpdateAllTransmissionData();
 	}
 
 	#region TransmissionUIView.IListener implementation
 	public void OnAirBorneUpgradeClicked() {
 		PayForUpgrade(PLAGUE_TRANSMISSION.Airborne);
 		PlagueDisease.Instance.UpgradeTransmissionLevel(PLAGUE_TRANSMISSION.Airborne);
-		UpdateAirborneTransmissionData();
+		UpdateAllTransmissionData();
 	}
 	public void OnConsumptionUpgradeClicked() {
 		PayForUpgrade(PLAGUE_TRANSMISSION.Consumption);
 		PlagueDisease.Instance.UpgradeTransmissionLevel(PLAGUE_TRANSMISSION.Consumption);
-		UpdateConsumptionTransmissionData();
+		UpdateAllTransmissionData();
 	}
 	
 	public void OnPhysicalContactUpgradeClicked() {
 		PayForUpgrade(PLAGUE_TRANSMISSION.Physical_Contact);
 		PlagueDisease.Instance.UpgradeTransmissionLevel(PLAGUE_TRANSMISSION.Physical_Contact);
-		UpdatePhysicalContactTransmissionData();
+		UpdateAllTransmissionData();
 	}
 	public void OnCombatUpgradeClicked() {
 		PayForUpgrade(PLAGUE_TRANSMISSION.Combat);
 		PlagueDisease.Instance.UpgradeTransmissionLevel(PLAGUE_TRANSMISSION.Combat);
-		UpdateCombatTransmissionData();
+		UpdateAllTransmissionData();
 	}
+	public void OnAirBorneHoveredOver(UIHoverPosition p_hoverPosition) { ShowTooltip(PLAGUE_TRANSMISSION.Airborne, p_hoverPosition); }
+	public void OnConsumptionHoveredOver(UIHoverPosition p_hoverPosition) { ShowTooltip(PLAGUE_TRANSMISSION.Consumption, p_hoverPosition); }
+	public void OnPhysicalContactHoveredOver(UIHoverPosition p_hoverPosition) { ShowTooltip(PLAGUE_TRANSMISSION.Physical_Contact, p_hoverPosition); }
+	public void OnCombatHoveredOver(UIHoverPosition p_hoverPosition) { ShowTooltip(PLAGUE_TRANSMISSION.Combat, p_hoverPosition); }
+	public void OnAirBorneHoveredOut() { HideTooltip(); }
+	public void OnConsumptionHoveredOut() { HideTooltip(); }
+	public void OnPhysicalContactHoveredOut() { HideTooltip(); }
+	public void OnCombatHoveredOut() { HideTooltip(); }
 	#endregion
+	
+	private void ShowTooltip(PLAGUE_TRANSMISSION p_transmissionType, UIHoverPosition p_hoverPosition) {
+		if (UIManager.Instance != null) { UIManager.Instance.ShowSmallInfo(p_transmissionType.GetTransmissionTooltip(), p_hoverPosition, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(p_transmissionType.ToString())); }
+	}
+	private void HideTooltip() {
+		if (UIManager.Instance != null) { UIManager.Instance.HideSmallInfo(); }
+	}
+	
+	private void UpdateAllTransmissionData() {
+		UpdateTransmissionData(PLAGUE_TRANSMISSION.Airborne);
+		UpdateTransmissionData(PLAGUE_TRANSMISSION.Consumption);
+		UpdateTransmissionData(PLAGUE_TRANSMISSION.Physical_Contact);
+		UpdateTransmissionData(PLAGUE_TRANSMISSION.Combat);
+	}
+	 
+	private void UpdateTransmissionData(PLAGUE_TRANSMISSION p_transmissionType) {
+		int nextLevelCost = GetTransmissionUpgradeCost(p_transmissionType);
+		m_transmissionUIView.UpdateTransmissionRate(p_transmissionType, PlagueDisease.Instance.GetTransmissionRateDescription(PlagueDisease.Instance.GetTransmissionLevel(p_transmissionType)));
+		bool isMaxLevel = PlagueDisease.Instance.IsMaxLevel(p_transmissionType);
+		bool canTransmissionBeUpgraded = !isMaxLevel && (!PlagueDisease.Instance.HasMaxTransmissions() || PlagueDisease.Instance.IsTransmissionActive(p_transmissionType));
+		m_transmissionUIView.UpdateTransmissionUpgradeButtonInteractable(p_transmissionType, canTransmissionBeUpgraded && CanAffordUpgrade(p_transmissionType));
+		m_transmissionUIView.UpdateTransmissionCost(p_transmissionType, isMaxLevel ? "MAX" : nextLevelCost.ToString());
+		m_transmissionUIView.UpdateTransmissionCostPlagueIcon(p_transmissionType, !isMaxLevel);
+	}
+	private int GetTransmissionUpgradeCost(PLAGUE_TRANSMISSION p_transmissionType) {
+		switch (p_transmissionType) {
+			case PLAGUE_TRANSMISSION.Airborne:
+				return AirborneTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne));
+			case PLAGUE_TRANSMISSION.Consumption:
+				return ConsumptionTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Consumption));
+			case PLAGUE_TRANSMISSION.Physical_Contact:
+				return PhysicalContactTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Physical_Contact));
+			case PLAGUE_TRANSMISSION.Combat:
+				return CombatRateTransmission.Instance.GetTransmissionNextLevelCost(PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Combat));
+			default:
+				throw new ArgumentOutOfRangeException(nameof(p_transmissionType), p_transmissionType, null);
+		}
+	}
+	
 
 	private void PayForUpgrade(PLAGUE_TRANSMISSION p_transmissionType) {
 		int upgradeCost;

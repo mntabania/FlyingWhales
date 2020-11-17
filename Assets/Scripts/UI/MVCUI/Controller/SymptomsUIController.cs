@@ -94,6 +94,26 @@ public class SymptomsUIController : MVCUIController, SymptomsUIView.IListener
 		PlagueDisease.Instance.AddAndInitializeSymptom(PLAGUE_SYMPTOM.Hunger_Pangs);
 		UpdateAllSymptomsData();
 	}
+	public void OnHoverOverParalysis(UIHoverPosition p_hoverPosition) { ShowTooltip(PLAGUE_SYMPTOM.Paralysis, p_hoverPosition); }
+	public void OnHoverOverVomiting(UIHoverPosition p_hoverPosition) { ShowTooltip(PLAGUE_SYMPTOM.Vomiting, p_hoverPosition); }
+	public void OnHoverOverLethargy(UIHoverPosition p_hoverPosition) { ShowTooltip(PLAGUE_SYMPTOM.Lethargy, p_hoverPosition); }
+	public void OnHoverOverSeizures(UIHoverPosition p_hoverPosition) { ShowTooltip(PLAGUE_SYMPTOM.Seizure, p_hoverPosition); }
+	public void OnHoverOverInsomnia(UIHoverPosition p_hoverPosition) { ShowTooltip(PLAGUE_SYMPTOM.Insomnia, p_hoverPosition); }
+	public void OnHoverOverPoisonCloud(UIHoverPosition p_hoverPosition) { ShowTooltip(PLAGUE_SYMPTOM.Poison_Cloud, p_hoverPosition); }
+	public void OnHoverOverMonsterScent(UIHoverPosition p_hoverPosition) { ShowTooltip(PLAGUE_SYMPTOM.Monster_Scent, p_hoverPosition); }
+	public void OnHoverOverSneezing(UIHoverPosition p_hoverPosition) { ShowTooltip(PLAGUE_SYMPTOM.Sneezing, p_hoverPosition); }
+	public void OnHoverOverDepression(UIHoverPosition p_hoverPosition) { ShowTooltip(PLAGUE_SYMPTOM.Depression, p_hoverPosition); }
+	public void OnHoverOverHungerPangs(UIHoverPosition p_hoverPosition) { ShowTooltip(PLAGUE_SYMPTOM.Hunger_Pangs, p_hoverPosition); }
+	public void OnHoverOutParalysis() { HideTooltip(); }
+	public void OnHoverOutVomiting() { HideTooltip(); }
+	public void OnHoverOutLethargy() { HideTooltip(); }
+	public void OnHoverOutSeizures() { HideTooltip(); }
+	public void OnHoverOutInsomnia() { HideTooltip(); }
+	public void OnHoverOutPoisonCloud() { HideTooltip(); }
+	public void OnHoverOutMonsterScent() { HideTooltip(); }
+	public void OnHoverOutSneezing() { HideTooltip(); }
+	public void OnHoverOutDepression() { HideTooltip(); }
+	public void OnHoverOutHungerPangs() { HideTooltip(); }
 	#endregion
 
 	private void PayForSymptom(PLAGUE_SYMPTOM p_symptomType) {
@@ -107,5 +127,11 @@ public class SymptomsUIController : MVCUIController, SymptomsUIView.IListener
 		} else {
 			return true;
 		}
+	}
+	private void ShowTooltip(PLAGUE_SYMPTOM p_symptomType, UIHoverPosition p_hoverPosition) {
+		if (UIManager.Instance != null) { UIManager.Instance.ShowSmallInfo(p_symptomType.GetSymptomTooltip(), p_hoverPosition, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(p_symptomType.ToString())); }
+	}
+	private void HideTooltip() {
+		if (UIManager.Instance != null) { UIManager.Instance.HideSmallInfo(); }
 	}
 }

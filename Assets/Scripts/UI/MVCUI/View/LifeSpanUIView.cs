@@ -13,6 +13,16 @@ public class LifeSpanUIView : MVCUIView
 		void OnHumansUpgradeClicked();
 		void OnMonstersUpgradeClicked();
 		void OnUndeadUpgradeClicked();
+		void OnObjectsHoveredOver(UIHoverPosition hoverPosition);
+		void OnElvesHoveredOver(UIHoverPosition hoverPosition);
+		void OnHumansHoveredOver(UIHoverPosition hoverPosition);
+		void OnMonstersHoveredOver(UIHoverPosition hoverPosition);
+		void OnUndeadHoveredOver(UIHoverPosition hoverPosition);
+		void OnObjectsHoveredOut();
+		void OnElvesHoveredOut();
+		void OnHumansHoveredOut();
+		void OnMonstersHoveredOut();
+		void OnUndeadHoveredOut();
 	}
 	#endregion
 	#region MVC Properties and functions to override
@@ -52,6 +62,16 @@ public class LifeSpanUIView : MVCUIView
 		UIModel.onHumansUpgradeClicked += p_listener.OnHumansUpgradeClicked;
 		UIModel.onMonstersUpgradeClicked += p_listener.OnMonstersUpgradeClicked;
 		UIModel.onUndeadUpgradeClicked += p_listener.OnUndeadUpgradeClicked;
+		UIModel.onObjectsHoveredOver += p_listener.OnObjectsHoveredOver;
+		UIModel.onElvesHoveredOver += p_listener.OnElvesHoveredOver;
+		UIModel.onHumansHoveredOver += p_listener.OnHumansHoveredOver;
+		UIModel.onMonstersHoveredOver += p_listener.OnMonstersHoveredOver;
+		UIModel.onUndeadHoveredOver += p_listener.OnUndeadHoveredOver;
+		UIModel.onObjectsHoveredOut += p_listener.OnObjectsHoveredOut;
+		UIModel.onElvesHoveredOut += p_listener.OnElvesHoveredOut;
+		UIModel.onHumansHoveredOut += p_listener.OnHumansHoveredOut;
+		UIModel.onMonstersHoveredOut += p_listener.OnMonstersHoveredOut;
+		UIModel.onUndeadHoveredOut += p_listener.OnUndeadHoveredOut;
 	}
 
 	public void Unsubscribe(IListener p_listener)
@@ -61,6 +81,16 @@ public class LifeSpanUIView : MVCUIView
 		UIModel.onHumansUpgradeClicked -= p_listener.OnHumansUpgradeClicked;
 		UIModel.onMonstersUpgradeClicked -= p_listener.OnMonstersUpgradeClicked;
 		UIModel.onUndeadUpgradeClicked -= p_listener.OnUndeadUpgradeClicked;
+		UIModel.onObjectsHoveredOver -= p_listener.OnObjectsHoveredOver;
+		UIModel.onElvesHoveredOver -= p_listener.OnElvesHoveredOver;
+		UIModel.onHumansHoveredOver -= p_listener.OnHumansHoveredOver;
+		UIModel.onMonstersHoveredOver -= p_listener.OnMonstersHoveredOver;
+		UIModel.onUndeadHoveredOver -= p_listener.OnUndeadHoveredOver;
+		UIModel.onObjectsHoveredOut -= p_listener.OnObjectsHoveredOut;
+		UIModel.onElvesHoveredOut -= p_listener.OnElvesHoveredOut;
+		UIModel.onHumansHoveredOut -= p_listener.OnHumansHoveredOut;
+		UIModel.onMonstersHoveredOut -= p_listener.OnMonstersHoveredOut;
+		UIModel.onUndeadHoveredOut -= p_listener.OnUndeadHoveredOut;
 	}
 	#endregion
 	

@@ -73,7 +73,24 @@ public class LifeSpanUIController : MVCUIController, LifeSpanUIView.IListener
 		
 		UpdateUndeadInfectionTimeData();
 	}
+	public void OnObjectsHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip("Objects", "How long the Plague lasts on objects.", hoverPosition); }
+	public void OnElvesHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip("Elves", "How long the Plague lasts on Elves.", hoverPosition); }
+	public void OnHumansHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip("Humans", "How long the Plague lasts on Humans.", hoverPosition); }
+	public void OnMonstersHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip("Monsters", "How long the Plague lasts on Monsters.", hoverPosition); }
+	public void OnUndeadHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip("Undead", "How long the Plague lasts on Undead.", hoverPosition); }
+	public void OnObjectsHoveredOut() { HideTooltip(); }
+	public void OnElvesHoveredOut() { HideTooltip(); }
+	public void OnHumansHoveredOut() { HideTooltip(); }
+	public void OnMonstersHoveredOut() { HideTooltip(); }
+	public void OnUndeadHoveredOut() { HideTooltip(); }
 	#endregion
+	
+	private void ShowTooltip(string p_lifespanHeader, string p_lifespanDescription, UIHoverPosition p_hoverPosition) {
+		if (UIManager.Instance != null) { UIManager.Instance.ShowSmallInfo(p_lifespanDescription, p_hoverPosition, p_lifespanHeader); }
+	}
+	private void HideTooltip() {
+		if (UIManager.Instance != null) { UIManager.Instance.HideSmallInfo(); }
+	}
 
 	private bool CanAffordUpgrade(int cost) {
 		if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {

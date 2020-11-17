@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using Plague.Fatality;
 using Plague.Symptom;
-using Traits;
 using Plague.Death_Effect;
 using UnityEngine;
 using UnityEngine.Assertions;
+using System.Linq;
 
 public class PlagueDisease : ISingletonPattern {
     private static PlagueDisease _Instance;
@@ -176,6 +176,21 @@ public class PlagueDisease : ISingletonPattern {
             _transmissionLevels[p_transmissionType]++;
             Debug.Log($"Upgraded {p_transmissionType.ToString()} to level {_transmissionLevels[p_transmissionType].ToString()}");
         }
+    }
+    public bool HasMaxTransmissions() {
+        int activeTransmissions = 0;
+        foreach (var transmissions in _transmissionLevels) {
+            if (transmissions.Value > 0) {
+                activeTransmissions++;
+            }
+        }
+        return activeTransmissions >= 3;
+    }
+    public bool IsTransmissionActive(PLAGUE_TRANSMISSION p_transmissionType) {
+        if (_transmissionLevels.ContainsKey(p_transmissionType)) {
+            return _transmissionLevels[p_transmissionType] > 0;
+        }
+        return false;
     }
     #endregion
     
