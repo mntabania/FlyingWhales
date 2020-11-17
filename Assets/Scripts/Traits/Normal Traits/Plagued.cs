@@ -13,7 +13,7 @@ namespace Traits {
         public interface IPlaguedListener {
             void PerTickMovement(Character p_character);
             void CharacterGainedTrait(Character p_character, Trait p_gainedTrait);
-            void CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action);
+            bool CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action);
             void CharacterDonePerformingAction(Character p_character, ActualGoapNode p_actionPerformed);
             void HourStarted(Character p_character, int numberOfHours);
         }
@@ -24,7 +24,7 @@ namespace Traits {
 
         private System.Action<Character> _perTickMovement;
         private System.Action<Character, Trait> _characterGainedTrait;
-        private System.Action<Character, ActualGoapNode> _characterStartedPerformingAction;
+        private System.Func<Character, ActualGoapNode, bool> _characterStartedPerformingAction;
         private System.Action<Character, int> _hourStarted;
         private System.Action<Character, ActualGoapNode> _characterDonePerformingAction;
         private System.Action<Character> _characterDeath;
@@ -93,8 +93,20 @@ namespace Traits {
             if (addedTo is IPointOfInterest addedToPOI) {
                 owner = addedToPOI;
                 _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Infected, false);
-                if (addedToPOI is Character) {
+                if (addedToPOI is Character character) {
                     Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+                    if (character.isNormalCharacter) {
+                        PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(5, character);    
+                    } else {
+                        if (character is Summon summon) {
+                            if (summon.summonType != SUMMON_TYPE.Rat) {
+                                PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(1, character);
+                            }
+                        } else {
+                            PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(1, character);
+                        }
+                    }
+                    
                 }
                 Messenger.AddListener<Fatality>(PlayerSignals.ADDED_PLAGUE_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
                 Messenger.AddListener<PlagueSymptom>(PlayerSignals.ADDED_PLAGUE_DISEASE_SYMPTOM, OnPlagueDiseaseSymptomAdded);
@@ -203,7 +215,7 @@ namespace Traits {
             }
             if (node.actor == owner && owner is Character character) {
                 if(_characterStartedPerformingAction != null) {
-                    _characterStartedPerformingAction.Invoke(character, node);
+                    willStillContinueAction = _characterStartedPerformingAction.Invoke(character, node);
 
                     //If character can no longer do happiness recovery and the action that is starting is a happiness recovery type job, character should no longer continue doing the job
                     if (node.associatedJobType.IsHappinessRecoveryTypeJob() && !character.limiterComponent.canDoHappinessRecovery) {
@@ -232,6 +244,9 @@ namespace Traits {
             base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
         }
         public override void AfterDeath(Character character) {
+            if (character.characterClass.className != "Zombie") {
+                PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(2, character);    
+            }
             _characterDeath?.Invoke(character);
         }
         #endregion

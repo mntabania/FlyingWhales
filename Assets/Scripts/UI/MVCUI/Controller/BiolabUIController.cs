@@ -39,7 +39,7 @@ public class BiolabUIController : MVCUIController, BiolabUIView.IListener
 	public override void ShowUI() {
 		base.ShowUI();
 		UpdateTopMenuSummary();
-		ShowUI(transmissionUIController);
+		// ShowUI(transmissionUIController);
 	}
 	public override void HideUI() {
 		base.HideUI();

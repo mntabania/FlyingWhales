@@ -10,7 +10,13 @@ namespace Plague.Symptom {
         #region Plagued.IPlaguedListener
         public virtual void PerTickMovement(Character p_character) { }
         public virtual void CharacterGainedTrait(Character p_character, Trait p_gainedTrait) { }
-        public virtual void CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action) { }
+        /// <summary>
+        /// Listener for when a character starts performing an action
+        /// </summary>
+        /// <param name="p_character">The actor.</param>
+        /// <param name="p_action">The action to be performed.</param>
+        /// <returns>Whether or not the action will proceed after this.</returns>
+        public virtual bool CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action) { return true; }
         public virtual void CharacterDonePerformingAction(Character p_character, ActualGoapNode p_actionPerformed) { }
         public virtual void HourStarted(Character p_character, int p_numOfHoursPassed) { }
         #endregion

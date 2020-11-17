@@ -146,6 +146,12 @@ public class PlagueDisease : ISingletonPattern {
             _activeCases++;
         }
     }
+    public void UpdateDeathsOnCharacterDied(Character p_character) {
+        if (p_character.isNotSummonAndDemon) {
+            _activeCases--;
+            _deaths++;
+        }
+    }
     #endregion
 
     #region Transmission

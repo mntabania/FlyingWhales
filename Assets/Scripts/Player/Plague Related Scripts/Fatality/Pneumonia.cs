@@ -8,10 +8,10 @@ namespace Plague.Fatality {
         
         protected override void ActivateFatality(Character p_character) {
             p_character.interruptComponent.TriggerInterrupt(INTERRUPT.Pneumonia, p_character);
-            Debug.Log("Activated Pneumonia Fatality");
+            PlagueDisease.Instance.UpdateDeathsOnCharacterDied(p_character);
         }
         public override void PerTickMovement(Character p_character) {
-            if (GameUtilities.RollChance(0.5f)) {
+            if (GameUtilities.RollChance(0.5f)) { //0.5f
                 ActivateFatality(p_character);
             }
         }

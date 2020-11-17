@@ -21,6 +21,10 @@ public class PlagueComponent {
         _plaguePoints += amount;
         Messenger.Broadcast(PlayerSignals.UPDATED_PLAGUE_POINTS, _plaguePoints);
     }
+    public void GainPlaguePointFromCharacter(int amount, Character p_character) {
+        AdjustPlaguePoints(amount);
+        PlayerUI.Instance.ShowPlaguePointsGainedEffect(amount, p_character.worldPosition);
+    }
     #endregion
 }
 
