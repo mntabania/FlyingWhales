@@ -28,7 +28,6 @@ public abstract class InfoUIBase : MonoBehaviour {
         Messenger.AddListener(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
         Messenger.AddListener<SPELL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
         Messenger.AddListener<SPELL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
-        Messenger.AddListener(UISignals.HIDE_MENUS, OnReceiveHideMenuSignal);
         _toggles = GetComponentsInChildren<RuinarchToggle>(true);
     }
     private void OnReceiveHideMenuSignal() {

@@ -1,7 +1,7 @@
 ﻿using Coffee.UIExtensions;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
+
 namespace Ruinarch.Custom_UI {
     public class RuinarchButton : UnityEngine.UI.Button {
         
@@ -10,12 +10,14 @@ namespace Ruinarch.Custom_UI {
         #region Monobehaviours
         protected override void Awake() {
             base.Awake();
-            shineEffect = GetComponent<UIShiny>();
-            if (shineEffect == null) {
-                shineEffect = targetGraphic.gameObject.GetComponent<UIShiny>();
-            }
-            if (shineEffect != null) {
-                shineEffect.Stop();
+            if (Application.isPlaying) {
+                shineEffect = GetComponent<UIShiny>();
+                if (shineEffect == null) {
+                    shineEffect = targetGraphic.gameObject.GetComponent<UIShiny>();
+                }
+                if (shineEffect != null) {
+                    shineEffect.Stop();
+                }
             }
         }
         protected override void OnEnable() {
@@ -24,7 +26,7 @@ namespace Ruinarch.Custom_UI {
                 Messenger.AddListener<string>(UISignals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
                 Messenger.AddListener<string>(UISignals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
                 Messenger.AddListener<string>(UISignals.HOTKEY_CLICK, OnReceiveHotKeyClick);
-                //Also added instance checker because there are buttons used in tools
+                Messenger.Broadcast(UISignals.BUTTON_SHOWN, this);
                 if (InputManager.Instance != null && InputManager.Instance.ShouldBeHighlighted(this)) {
                     StartGlow();
                 }
@@ -51,7 +53,7 @@ namespace Ruinarch.Custom_UI {
         #endregion
 
         #region Shine
-        private void StartGlow() {
+        public void StartGlow() {
             if (shineEffect != null) {
                 shineEffect.Play();
             }

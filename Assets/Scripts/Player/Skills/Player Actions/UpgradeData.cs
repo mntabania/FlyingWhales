@@ -16,7 +16,7 @@ public class UpgradeData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(LocationStructure structure) {
         if (structure is Biolab biolab) {
-            //TODO: Show Biolab Upgrade UI
+            UIManager.Instance.ShowBiolabUI();
         }
         base.ActivateAbility(structure);
     }

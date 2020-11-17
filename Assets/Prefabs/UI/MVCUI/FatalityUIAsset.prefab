@@ -3274,7 +3274,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -7, y: -102.81}
+  m_AnchoredPosition: {x: -7, y: 0}
   m_SizeDelta: {x: 464, y: 563.37146}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &7068294210750814049
@@ -3345,3 +3345,8 @@ MonoBehaviour:
   btnStrokeUpgrade: {fileID: 2175716464096407149}
   btnTotalOrganFailureUpgrade: {fileID: 2175716464497762794}
   btnPneumoniaUpgrade: {fileID: 2175716463547941349}
+  txtSepticShockCost: {fileID: 2175716463544251612}
+  txtHeartAttackCost: {fileID: 2175716463574787923}
+  txtStrokeCost: {fileID: 2175716463649731253}
+  txtTotalOrganFailureCost: {fileID: 2175716464466874483}
+  txtPneumoniaCost: {fileID: 2175716464120963229}

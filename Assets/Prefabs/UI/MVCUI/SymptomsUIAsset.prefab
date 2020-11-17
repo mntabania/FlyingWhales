@@ -73,6 +73,16 @@ MonoBehaviour:
   btnSneezingUpgrade: {fileID: 5767517131638231384}
   btnDepressionUpgrade: {fileID: 5767517132719665477}
   btnHungerUpgrade: {fileID: 5767517131943881445}
+  txtParalysisCost: {fileID: 7209311990187275460}
+  txtVomitingCost: {fileID: 5767517132113844894}
+  txtLethargyCost: {fileID: 5767517132777390570}
+  txtSeizuresCost: {fileID: 5767517131537385049}
+  txtInsomniaCost: {fileID: 5767517133483000040}
+  txtPoisonCloudCost: {fileID: 5767517132706226563}
+  txtMonsterScentCost: {fileID: 5767517132742447218}
+  txtSneezingCost: {fileID: 5767517133123123477}
+  txtDepressionCost: {fileID: 5767517131700487057}
+  txtHungerCost: {fileID: 5767517133223799556}
 --- !u!1 &5767517131501158446
 GameObject:
   m_ObjectHideFlags: 0
@@ -5479,7 +5489,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -7, y: -102.81}
+  m_AnchoredPosition: {x: -7, y: 0}
   m_SizeDelta: {x: 464, y: 563.37146}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &7209311988247524371

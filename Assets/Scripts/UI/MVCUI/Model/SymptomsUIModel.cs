@@ -25,6 +25,17 @@ public class SymptomsUIModel : MVCUIModel
 	public Button btnSneezingUpgrade;
 	public Button btnDepressionUpgrade;
 	public Button btnHungerUpgrade;
+	
+	public RuinarchText txtParalysisCost;
+	public RuinarchText txtVomitingCost;
+	public RuinarchText txtLethargyCost;
+	public RuinarchText txtSeizuresCost;
+	public RuinarchText txtInsomniaCost;
+	public RuinarchText txtPoisonCloudCost;
+	public RuinarchText txtMonsterScentCost;
+	public RuinarchText txtSneezingCost;
+	public RuinarchText txtDepressionCost;
+	public RuinarchText txtHungerCost;
 
 	private void OnEnable()
 	{
@@ -81,26 +92,26 @@ public class SymptomsUIModel : MVCUIModel
 
 	void ClickPoisonCloudUpgrade()
 	{
-		onParalysisUpgradeClicked?.Invoke();
+		onPoisonCloudUpgradeClicked?.Invoke();
 	}
 
 	void ClickMonsterScentUpgrade()
 	{
-		onVomitingUpgradeClicked?.Invoke();
+		onMonsterScentUpgradeClicked?.Invoke();
 	}
 	void ClickSneezingUpgrade()
 	{
-		onLethargyUpgradeClicked?.Invoke();
+		onSneezingUpgradeClicked?.Invoke();
 	}
 
 	void ClickDepressionUpgrade()
 	{
-		onSeizuresUpgradeClicked?.Invoke();
+		onDepressionUpgradeClicked?.Invoke();
 	}
 
 	void ClickHungerPangsUpgrade()
 	{
-		onInsomniaUpgradeClicked?.Invoke();
+		onHungerPangsUpgradeClicked?.Invoke();
 	}
 	#endregion
 }

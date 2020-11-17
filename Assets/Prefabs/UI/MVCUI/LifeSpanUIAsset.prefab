@@ -68,6 +68,16 @@ MonoBehaviour:
   btnHumansUpgrade: {fileID: 5244534033339740397}
   btnMonstersUpgrade: {fileID: 5244534034061272949}
   btnUndeadUpgrade: {fileID: 5244534033691898356}
+  txtTileObjectCost: {fileID: 5244534033893782196}
+  txtTileObjectInfectionTime: {fileID: 5244534033184698790}
+  txtElvesCost: {fileID: 5244534033529875204}
+  txtElvesInfectionTime: {fileID: 5244534033717950324}
+  txtHumansCost: {fileID: 5244534032976549081}
+  txtHumansInfectionTime: {fileID: 5244534033375810497}
+  txtMonstersCost: {fileID: 5244534033870064635}
+  txtMonstersInfectionTime: {fileID: 5244534033674244400}
+  txtUndeadCost: {fileID: 5244534033901163265}
+  txtUndeadInfectionTime: {fileID: 5244534033997461492}
 --- !u!1 &5244534032751022636
 GameObject:
   m_ObjectHideFlags: 0
@@ -738,8 +748,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 225, y: 0}
-  m_SizeDelta: {x: 110.556274, y: 0}
+  m_AnchoredPosition: {x: 200.1, y: 0}
+  m_SizeDelta: {x: 135.50092, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &5244534033184698789
 CanvasRenderer:
@@ -768,7 +778,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 99 Hours
+  m_text: 999 Hours
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 44b0e75cf1a2d2246a2de46e846fa57d, type: 2}
   m_sharedMaterial: {fileID: 21554341954933024, guid: 44b0e75cf1a2d2246a2de46e846fa57d,
@@ -1105,8 +1115,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 225, y: 0}
-  m_SizeDelta: {x: 110.556274, y: 0}
+  m_AnchoredPosition: {x: 200.1, y: 0}
+  m_SizeDelta: {x: 135.50092, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &5244534033375810496
 CanvasRenderer:
@@ -1135,7 +1145,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 99 Hours
+  m_text: 999 Hours
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 44b0e75cf1a2d2246a2de46e846fa57d, type: 2}
   m_sharedMaterial: {fileID: 21554341954933024, guid: 44b0e75cf1a2d2246a2de46e846fa57d,
@@ -1574,8 +1584,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 225, y: 0}
-  m_SizeDelta: {x: 110.556274, y: 0}
+  m_AnchoredPosition: {x: 200.1, y: 0}
+  m_SizeDelta: {x: 135.50092, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &5244534033674244415
 CanvasRenderer:
@@ -1604,7 +1614,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 99 Hours
+  m_text: 999 Hours
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 44b0e75cf1a2d2246a2de46e846fa57d, type: 2}
   m_sharedMaterial: {fileID: 21554341954933024, guid: 44b0e75cf1a2d2246a2de46e846fa57d,
@@ -1962,8 +1972,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 225, y: 0}
-  m_SizeDelta: {x: 110.556274, y: 0}
+  m_AnchoredPosition: {x: 200.1, y: 0}
+  m_SizeDelta: {x: 135.50092, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &5244534033717950323
 CanvasRenderer:
@@ -1992,7 +2002,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 99 Hours
+  m_text: 999 Hours
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 44b0e75cf1a2d2246a2de46e846fa57d, type: 2}
   m_sharedMaterial: {fileID: 21554341954933024, guid: 44b0e75cf1a2d2246a2de46e846fa57d,
@@ -2942,8 +2952,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 225, y: 0}
-  m_SizeDelta: {x: 110.556274, y: 0}
+  m_AnchoredPosition: {x: 200.1, y: 0}
+  m_SizeDelta: {x: 135.50092, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &5244534033997461491
 CanvasRenderer:
@@ -2972,7 +2982,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 99 Hours
+  m_text: 999 Hours
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 44b0e75cf1a2d2246a2de46e846fa57d, type: 2}
   m_sharedMaterial: {fileID: 21554341954933024, guid: 44b0e75cf1a2d2246a2de46e846fa57d,
@@ -4017,6 +4027,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -7, y: -102.81}
+  m_AnchoredPosition: {x: -7, y: 0}
   m_SizeDelta: {x: 464, y: 563.37146}
   m_Pivot: {x: 0.5, y: 0.5}

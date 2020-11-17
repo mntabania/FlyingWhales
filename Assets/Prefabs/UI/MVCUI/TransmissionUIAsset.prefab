@@ -206,8 +206,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 22
-  m_fontSizeBase: 22
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1354,8 +1354,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 22
-  m_fontSizeBase: 22
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1672,9 +1672,13 @@ MonoBehaviour:
   btnDirectContactUpgrade: {fileID: 3205700560824775060}
   btnCombatUpgrade: {fileID: 5510936887761750713}
   txtAirBorneCost: {fileID: 1854416051690484126}
+  txtAirBorneRate: {fileID: 3745319827832098864}
   txtConsumptionCost: {fileID: 7308042924716413537}
+  txtConsumptionRate: {fileID: 8770203983454289397}
   txtDirectContactCost: {fileID: 5157489783061113510}
+  txtDirectContactRate: {fileID: 6643527726417994649}
   txtCombatUpgradeCost: {fileID: 8635315915972405326}
+  txtCombatRate: {fileID: 7313570154688405528}
 --- !u!1 &5498618604912289029
 GameObject:
   m_ObjectHideFlags: 0
@@ -2244,8 +2248,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 22
-  m_fontSizeBase: 22
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3088,7 +3092,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -7, y: -102.81}
+  m_AnchoredPosition: {x: -7, y: 0}
   m_SizeDelta: {x: 464, y: 563.37146}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &9214056621491946939
@@ -3184,8 +3188,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 22
-  m_fontSizeBase: 22
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
