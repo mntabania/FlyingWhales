@@ -8,7 +8,11 @@ namespace Plague.Death_Effect {
         protected abstract void ActivateEffect(Character p_character);
         public abstract int GetNextLevelUpgradeCost();
         public abstract string GetCurrentEffectDescription();
-        
+
+        #region getters
+        public int level => _level;
+        #endregion
+
         public PlagueDeathEffect() {
             _level = 1;
         }
@@ -19,6 +23,9 @@ namespace Plague.Death_Effect {
 
         public void AdjustLevel(int amount) {
             _level += amount;
+        }
+        public void SetLevel(int amount) {
+            _level = amount;
         }
     }
 

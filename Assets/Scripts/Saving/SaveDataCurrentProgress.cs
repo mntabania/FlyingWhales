@@ -30,6 +30,10 @@ public class SaveDataCurrentProgress {
     //Player
     public SaveDataPlayerGame playerSave;
 
+    //Plague
+    public bool hasPlagueDisease;
+    public SaveDataPlagueDisease savedPlagueDisease;
+
     //Pool of all saved objects
     public Dictionary<OBJECT_TYPE, BaseSaveDataHub> objectHub;
 
@@ -177,6 +181,13 @@ public class SaveDataCurrentProgress {
                     yield return null;    
                 }   
             }
+        }
+    }
+    public void SavePlagueDisease() {
+        hasPlagueDisease = PlagueDisease.HasInstance();
+        if (hasPlagueDisease) {
+            savedPlagueDisease = new SaveDataPlagueDisease();
+            savedPlagueDisease.Save();
         }
     }
     #endregion
@@ -359,6 +370,11 @@ public class SaveDataCurrentProgress {
     }
     public Player LoadPlayer() {
         return playerSave.Load();
+    }
+    public void LoadPlagueDisease() {
+        if (hasPlagueDisease) {
+            new PlagueDisease(savedPlagueDisease);
+        }
     }
     #endregion
 

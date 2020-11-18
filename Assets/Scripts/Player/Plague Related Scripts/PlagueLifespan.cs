@@ -17,12 +17,19 @@ public class PlagueLifespan {
     public int tileObjectInfectionTimeInHours => _tileObjectInfectionTimeInHours;
     public int monsterInfectionTimeInHours => _monsterInfectionTimeInHours;
     public int undeadInfectionTimeInHours => _undeadInfectionTimeInHours;
+    public Dictionary<RACE, int> sapientInfectionTimeInHours => _sapientInfectionTimeInHours;
     #endregion
-    
+
     public PlagueLifespan() {
         Initialize();
     }
-    
+    public PlagueLifespan(SaveDataPlagueLifespan p_data) {
+        _tileObjectInfectionTimeInHours = p_data.tileObjectInfectionTimeInHours;
+        _monsterInfectionTimeInHours = p_data.monsterInfectionTimeInHours;
+        _undeadInfectionTimeInHours = p_data.undeadInfectionTimeInHours;
+        _sapientInfectionTimeInHours = p_data.sapientInfectionTimeInHours;
+    }
+
     private void Initialize() {
         //Default Data
         _sapientInfectionTimeInHours = new Dictionary<RACE, int>();
@@ -254,5 +261,24 @@ public class PlagueLifespan {
             return GameManager.Instance.GetTicksBasedOnHour(lifespanInHours);
         }
         return -1;
+    }
+}
+
+[System.Serializable]
+public class SaveDataPlagueLifespan : SaveData<PlagueLifespan> {
+    public int tileObjectInfectionTimeInHours;
+    public int monsterInfectionTimeInHours;
+    public int undeadInfectionTimeInHours;
+    public Dictionary<RACE, int> sapientInfectionTimeInHours;
+
+    public override void Save(PlagueLifespan p_data) {
+        tileObjectInfectionTimeInHours = p_data.tileObjectInfectionTimeInHours;
+        monsterInfectionTimeInHours = p_data.monsterInfectionTimeInHours;
+        undeadInfectionTimeInHours = p_data.undeadInfectionTimeInHours;
+        sapientInfectionTimeInHours = p_data.sapientInfectionTimeInHours;
+    }
+    public override PlagueLifespan Load() {
+        PlagueLifespan component = new PlagueLifespan(this);
+        return component;
     }
 }

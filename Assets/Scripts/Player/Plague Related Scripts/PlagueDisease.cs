@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using System.Linq;
 
-public class PlagueDisease : ISingletonPattern {
+public class PlagueDisease : ISingletonPattern, ISavable {
     private static PlagueDisease _Instance;
 
     private PlagueLifespan _lifespan;
@@ -18,8 +18,11 @@ public class PlagueDisease : ISingletonPattern {
     private int _deaths;
     private int _recoveries;
     private Dictionary<PLAGUE_TRANSMISSION, int> _transmissionLevels;
-    
+
     #region getters
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Plague_Disease;
+    public Type serializedData => typeof(SaveDataPlagueDisease);
+    public string persistentID => "-1"; //No ID needed since this is a singleton
     public PlagueLifespan lifespan => _lifespan;
     public List<Fatality> activeFatalities => _activeFatalities;
     public List<PlagueSymptom> activeSymptoms => _activeSymptoms;
@@ -27,19 +30,54 @@ public class PlagueDisease : ISingletonPattern {
     public int activeCases => _activeCases;
     public int deaths => _deaths;
     public int recoveries => _recoveries;
+    public Dictionary<PLAGUE_TRANSMISSION, int> transmissionLevels => _transmissionLevels;
     #endregion
 
     //Singleton pattern
     public static PlagueDisease Instance {
         get {
             if(_Instance == null) { _Instance = new PlagueDisease(); }
-
             return _Instance;
         }
     }
     
     public PlagueDisease() {
         Initialize();
+    }
+    public PlagueDisease(SaveDataPlagueDisease p_data) {
+        _lifespan = p_data.lifespan.Load();
+
+        _activeFatalities = new List<Fatality>();
+        if (p_data.activeFatalities.Count > 0) {
+            for (int i = 0; i < p_data.activeFatalities.Count; i++) {
+                Fatality fatality = CreateNewFatalityInstance(p_data.activeFatalities[i]);
+                _activeFatalities.Add(fatality);
+            }
+        }
+
+        _activeSymptoms = new List<PlagueSymptom>();
+        if (p_data.activeSymptoms.Count > 0) {
+            for (int i = 0; i < p_data.activeSymptoms.Count; i++) {
+                PlagueSymptom symptom = CreateNewSymptomInstance(p_data.activeSymptoms[i]);
+                _activeSymptoms.Add(symptom);
+            }
+        }
+
+        if (p_data.hasDeathEffect) {
+            PlagueDeathEffect deathEffect = CreateNewPlagueDeathEffectInstance(p_data.activeDeathEffect);
+            _activeDeathEffect = deathEffect;
+            _activeDeathEffect.SetLevel(p_data.activeDeathEffectLevel);
+        } else {
+            _activeDeathEffect = null;
+        }
+
+        _activeCases = p_data.activeCases;
+        _deaths = p_data.deaths;
+        _recoveries = p_data.recoveries;
+        _transmissionLevels = p_data.transmissionLevels;
+
+        //Once save data has been loaded, set this as the Instance
+        _Instance = this;
     }
 
     #region ISingletonPattern
@@ -67,6 +105,9 @@ public class PlagueDisease : ISingletonPattern {
         _activeDeathEffect = null;
         _Instance = null;
         Messenger.RemoveListener(Signals.CLEAN_UP_MEMORY, CleanUpAndRemoveCleanUpListener);
+    }
+    public static bool HasInstance() {
+        return _Instance != null;
     }
     #endregion
 
@@ -234,4 +275,68 @@ public class PlagueDisease : ISingletonPattern {
     }
     #endregion
 
+}
+
+[System.Serializable]
+public class SaveDataPlagueDisease : SaveData<PlagueDisease> {
+    public SaveDataPlagueLifespan lifespan;
+    public List<PLAGUE_FATALITY> activeFatalities;
+    public List<PLAGUE_SYMPTOM> activeSymptoms;
+    public bool hasDeathEffect;
+    public PLAGUE_DEATH_EFFECT activeDeathEffect;
+    public int activeDeathEffectLevel;
+    public int activeCases;
+    public int deaths;
+    public int recoveries;
+    public Dictionary<PLAGUE_TRANSMISSION, int> transmissionLevels;
+
+    #region Overrides
+    public override void Save() {
+        base.Save();
+        PlagueDisease p_data = PlagueDisease.Instance;
+        lifespan = new SaveDataPlagueLifespan();
+        lifespan.Save();
+
+        if(p_data.activeFatalities.Count > 0) {
+            activeFatalities = new List<PLAGUE_FATALITY>();
+            for (int i = 0; i < p_data.activeFatalities.Count; i++) {
+                activeFatalities.Add(p_data.activeFatalities[i].fatalityType);
+            }
+        }
+
+        if (p_data.activeSymptoms.Count > 0) {
+            activeSymptoms = new List<PLAGUE_SYMPTOM>();
+            for (int i = 0; i < p_data.activeSymptoms.Count; i++) {
+                activeSymptoms.Add(p_data.activeSymptoms[i].symptomType);
+            }
+        }
+
+        hasDeathEffect = p_data.activeDeathEffect != null;
+        if (hasDeathEffect) {
+            activeDeathEffect = p_data.activeDeathEffect.deathEffectType;
+            activeDeathEffectLevel = p_data.activeDeathEffect.level;
+        }
+
+        activeCases = p_data.activeCases;
+        deaths = p_data.deaths;
+        recoveries = p_data.recoveries;
+        transmissionLevels = p_data.transmissionLevels;
+    }
+    public override PlagueDisease Load() {
+        PlagueDisease plagueDisease = new PlagueDisease(this);
+        return plagueDisease;
+    }
+    #endregion
+
+    #region Clean Up
+    public void CleanUp() {
+        lifespan = null;
+        activeFatalities.Clear();
+        activeFatalities = null;
+        activeSymptoms.Clear();
+        activeSymptoms = null;
+        transmissionLevels.Clear();
+        transmissionLevels = null;
+    }
+    #endregion
 }

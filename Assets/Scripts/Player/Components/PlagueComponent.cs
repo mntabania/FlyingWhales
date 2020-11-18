@@ -36,7 +36,7 @@ public class SaveDataPlagueComponent : SaveData<PlagueComponent> {
         plaguePoints = p_component.plaguePoints;
     }
     public override PlagueComponent Load() {
-        PlagueComponent component = new PlagueComponent();
+        PlagueComponent component = new PlagueComponent(this);
         return component;
     }
 }

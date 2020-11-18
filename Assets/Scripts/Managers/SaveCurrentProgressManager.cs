@@ -60,6 +60,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         currentSaveDataProgress.SaveDate();
         currentSaveDataProgress.SaveWorldSettings();
         currentSaveDataProgress.SavePlayer();
+        currentSaveDataProgress.SavePlagueDisease();
         yield return null;
         yield return StartCoroutine(currentSaveDataProgress.SaveFactionsCoroutine());
         yield return StartCoroutine(currentSaveDataProgress.SaveCharactersCoroutine());
