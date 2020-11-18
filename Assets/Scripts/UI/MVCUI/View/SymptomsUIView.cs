@@ -2,6 +2,7 @@
 using Ruinarch.MVCFramework;
 using System;
 using Ruinarch.Custom_UI;
+using TMPro;
 using UnityEngine.UI;
 
 public class SymptomsUIView : MVCUIView
@@ -193,6 +194,32 @@ public class SymptomsUIView : MVCUIView
 				throw new ArgumentOutOfRangeException(nameof(p_symptomType), p_symptomType, null);
 		}
 	}
+	private TextMeshProUGUI GetSymptomUpgradeBtnText(PLAGUE_SYMPTOM p_symptomType) {
+		switch (p_symptomType) {
+			case PLAGUE_SYMPTOM.Paralysis:
+				return UIModel.txtParalysisUpgrade;
+			case PLAGUE_SYMPTOM.Vomiting:
+				return UIModel.txtVomitingUpgrade;
+			case PLAGUE_SYMPTOM.Lethargy:
+				return UIModel.txtLethargyUpgrade;
+			case PLAGUE_SYMPTOM.Seizure:
+				return UIModel.txtSeizuresUpgrade;
+			case PLAGUE_SYMPTOM.Insomnia:
+				return UIModel.txtInsomniaUpgrade;
+			case PLAGUE_SYMPTOM.Poison_Cloud:
+				return UIModel.txtPoisonCloudUpgrade;
+			case PLAGUE_SYMPTOM.Monster_Scent:
+				return UIModel.txtMonsterScenetUpgrade;
+			case PLAGUE_SYMPTOM.Sneezing:
+				return UIModel.txtSneezingUpgrade;
+			case PLAGUE_SYMPTOM.Depression:
+				return UIModel.txtDepressionUpgrade;
+			case PLAGUE_SYMPTOM.Hunger_Pangs:
+				return UIModel.txtHungerUpgrade;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(p_symptomType), p_symptomType, null);
+		}
+	}
 
 	public void UpdateSymptomCost(PLAGUE_SYMPTOM p_symptom, string p_cost) {
 		RuinarchText txt = GetCostTextToUpdate(p_symptom);
@@ -205,5 +232,7 @@ public class SymptomsUIView : MVCUIView
 	public void UpdateSymptomUpgradeButtonInteractable(PLAGUE_SYMPTOM p_symptom, bool p_interactable) {
 		Button button = GetSymptomUpgradeBtn(p_symptom);
 		button.interactable = p_interactable;
+		TextMeshProUGUI text = GetSymptomUpgradeBtnText(p_symptom);
+		text.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
 	}
 }

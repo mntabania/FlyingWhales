@@ -50,6 +50,13 @@ public class RuinarchText : TextMeshProUGUI {
             if (text.Contains("cooldown")) {
                 text = text.Replace("cooldown", $"{UtilityScripts.Utilities.CooldownIcon()}cooldown");
             }    
+            //undead
+            if (text.Contains("Undead")) {
+                text = text.Replace("Undead", $"{UtilityScripts.Utilities.UndeadIcon()}Undead");
+            }
+            if (text.Contains("undead")) {
+                text = text.Replace("undead", $"{UtilityScripts.Utilities.UndeadIcon()}undead");
+            }    
         }
         
         base.SetText(text);

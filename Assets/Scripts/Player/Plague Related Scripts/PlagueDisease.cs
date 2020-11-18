@@ -271,7 +271,7 @@ public class PlagueDisease : ISingletonPattern, ISavable {
     }
     public bool IsDeathEffectActive(PLAGUE_DEATH_EFFECT p_deathEffect, out PlagueDeathEffect deathEffect) {
         deathEffect = _activeDeathEffect;
-        return _activeDeathEffect.deathEffectType == p_deathEffect;
+        return _activeDeathEffect != null && _activeDeathEffect.deathEffectType == p_deathEffect;
     }
     #endregion
 

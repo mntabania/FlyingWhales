@@ -6,7 +6,9 @@ namespace Ruinarch.Custom_UI {
     public class RuinarchButton : UnityEngine.UI.Button {
         
         private UIShiny shineEffect;
-
+        private System.Action _onHoverOverAction;
+        private System.Action _onHoverOutAction;
+        
         #region Monobehaviours
         protected override void Awake() {
             base.Awake();
@@ -49,8 +51,39 @@ namespace Ruinarch.Custom_UI {
                 return;
             Messenger.Broadcast(UISignals.BUTTON_CLICKED, this);
             base.OnPointerClick(eventData);
+            if (!IsActive() || !IsInteractable())
+                return;
+            _onHoverOverAction?.Invoke();
         }
         #endregion
+
+        #region Hover
+        public override void OnPointerEnter(PointerEventData eventData) {
+            base.OnPointerEnter(eventData);
+            if (!IsActive() || !IsInteractable())
+                return;
+            _onHoverOverAction?.Invoke();
+        }
+        public override void OnPointerExit(PointerEventData eventData) {
+            base.OnPointerExit(eventData);
+            if (!IsActive() || !IsInteractable())
+                return;
+            _onHoverOutAction?.Invoke();
+        }
+        public void AddHoverOverAction(System.Action p_hoverOverAction) {
+            _onHoverOverAction += p_hoverOverAction;
+        }
+        public void AddHoverOutAction(System.Action p_hoverOutAction) {
+            _onHoverOutAction += p_hoverOutAction;
+        }
+        public void RemoveHoverOverAction(System.Action p_hoverOverAction) {
+            _onHoverOverAction -= p_hoverOverAction;
+        }
+        public void RemoveHoverOutAction(System.Action p_hoverOutAction) {
+            _onHoverOutAction -= p_hoverOutAction;
+        }
+        #endregion
+        
 
         #region Shine
         public void StartGlow() {

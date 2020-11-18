@@ -1107,10 +1107,10 @@ public class PlayerUI : BaseMonoBehaviour {
 
     #region Plague
     public void ShowPlaguePointsGainedEffect(int adjustmentAmount, Vector3 worldPos) {
-        var text = $"<color=#FE4D60>+{adjustmentAmount.ToString()}P</color>";
+        var text = $"<color=#FE4D60>+{adjustmentAmount.ToString()}{UtilityScripts.Utilities.PlagueIcon()}</color>";
         Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(InnerMapCameraMove.Instance.camera, worldPos);
         GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", screenPos, Quaternion.identity, transform, true);
-        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(0f, 50f));
+        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(0f, 50f), true);
     }
     #endregion
 }

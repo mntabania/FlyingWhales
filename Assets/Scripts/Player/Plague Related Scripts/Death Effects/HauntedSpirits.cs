@@ -48,6 +48,16 @@ namespace Plague.Death_Effect {
                     return string.Empty;
             }
         }
+        public override string GetCurrentEffectTooltip() {
+            switch (_level) {
+                case 1:
+                case 2:
+                case 3:
+                    return "Plagued victims spawn random Spirits when they die";
+                default:
+                    return string.Empty;
+            }
+        }
         public override void OnDeath(Character p_character) {
             ActivateEffect(p_character);
         }

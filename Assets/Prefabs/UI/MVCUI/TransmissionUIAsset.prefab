@@ -2096,6 +2096,10 @@ MonoBehaviour:
   btnConsumptionUpgrade: {fileID: 2197601554333819810}
   btnDirectContactUpgrade: {fileID: 3205700560824775060}
   btnCombatUpgrade: {fileID: 5510936887761750713}
+  txtAirBorneUpgrade: {fileID: 7693642744111977244}
+  txtConsumptionUpgrade: {fileID: 1082663236190060345}
+  txtDirectContactUpgrade: {fileID: 849721594927209752}
+  txtCombatUpgrade: {fileID: 4938051468283025566}
   txtAirBorneCost: {fileID: 1854416051690484126}
   txtAirBorneRate: {fileID: 3745319827832098864}
   txtConsumptionCost: {fileID: 7308042924716413537}

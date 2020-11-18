@@ -66,15 +66,27 @@ public class OnDeathUIController : MVCUIController, OnDeathUIView.IListener
 		SetOrUpgradeDeathEffect(PLAGUE_DEATH_EFFECT.Haunted_Spirits);
 		UpdateAllDeathEffects();
 	}
-	public void OnIgniteHoveredOver(UIHoverPosition hoverPosition) { }
-	public void OnWalkerZombieHoveredOver(UIHoverPosition hoverPosition) { }
-	public void OnManaHoveredOver(UIHoverPosition hoverPosition) { }
-	public void OnSpiritHoveredOver(UIHoverPosition hoverPosition) { }
-	public void OnIgniteHoveredOut() { }
-	public void OnWalkerZombieHoveredOut() { }
-	public void OnManaHoveredOut() { }
-	public void OnSpiritHoveredOut() { }
+	public void OnIgniteHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip(PLAGUE_DEATH_EFFECT.Explosion, hoverPosition); }
+	public void OnWalkerZombieHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip(PLAGUE_DEATH_EFFECT.Zombie, hoverPosition); }
+	public void OnManaHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip(PLAGUE_DEATH_EFFECT.Mana_Generator, hoverPosition); }
+	public void OnSpiritHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip(PLAGUE_DEATH_EFFECT.Haunted_Spirits, hoverPosition); }
+	public void OnIgniteHoveredOut() { HideTooltip(); }
+	public void OnWalkerZombieHoveredOut() { HideTooltip(); }
+	public void OnManaHoveredOut() { HideTooltip(); }
+	public void OnSpiritHoveredOut() { HideTooltip(); }
 	#endregion
+	
+	private void ShowTooltip(PLAGUE_DEATH_EFFECT p_deathEffect, UIHoverPosition p_hoverPosition) {
+		if (UIManager.Instance != null) {
+			if (PlagueDisease.Instance.IsDeathEffectActive(p_deathEffect, out var deathEffect)) {
+				UIManager.Instance.ShowSmallInfo(deathEffect.GetCurrentEffectTooltip(), p_hoverPosition, 
+					deathEffect.GetCurrentEffectDescription());	
+			}
+		}
+	}
+	private void HideTooltip() {
+		if (UIManager.Instance != null) { UIManager.Instance.HideSmallInfo(); }
+	}
 
 	private void SetOrUpgradeDeathEffect(PLAGUE_DEATH_EFFECT p_deathEffect) {
 		if (PlagueDisease.Instance.activeDeathEffect != null) {

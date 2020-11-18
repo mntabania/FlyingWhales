@@ -1,5 +1,6 @@
 ﻿using Ruinarch.MVCFramework;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 public class TransmissionUIModel : MVCUIModel
@@ -23,6 +24,11 @@ public class TransmissionUIModel : MVCUIModel
 	public Button btnConsumptionUpgrade;
 	public Button btnDirectContactUpgrade;
 	public Button btnCombatUpgrade;
+	
+	public TextMeshProUGUI txtAirBorneUpgrade;
+	public TextMeshProUGUI txtConsumptionUpgrade;
+	public TextMeshProUGUI txtDirectContactUpgrade;
+	public TextMeshProUGUI txtCombatUpgrade;
 
 	public RuinarchText txtAirBorneCost;
 	public RuinarchText txtAirBorneRate;

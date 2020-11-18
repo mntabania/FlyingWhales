@@ -3786,6 +3786,10 @@ MonoBehaviour:
   btnWalkerZombieUpgrade: {fileID: 543817646426112432}
   btnMana2_3Upgrade: {fileID: 543817646657107034}
   btnRandomSpirit_1Upgrade: {fileID: 543817646205421453}
+  txtIgniteUpgrade: {fileID: 543817645827887544}
+  txtWalkerZombieUpgrade: {fileID: 543817647799287484}
+  txtMana2_3Upgrade: {fileID: 543817646655931873}
+  txtRandomSpirit_1Upgrade: {fileID: 543817647274677749}
   txtIgniteUpgradeCost: {fileID: 543817646843429076}
   txtIgniteEffect: {fileID: 4202388723992739870}
   txtWalkerZombieUpgradeCost: {fileID: 543817646072724444}

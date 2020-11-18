@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Ruinarch.MVCFramework;
 using System;
+using TMPro;
 using UnityEngine.UI;
 
 public class TransmissionUIView : MVCUIView
@@ -108,6 +109,20 @@ public class TransmissionUIView : MVCUIView
 				throw new ArgumentOutOfRangeException(nameof(p_transmissionType), p_transmissionType, null);
 		}
 	}
+	private TextMeshProUGUI GetTransmissionUpgradeText(PLAGUE_TRANSMISSION p_transmissionType) {
+		switch (p_transmissionType) {
+			case PLAGUE_TRANSMISSION.Airborne:
+				return UIModel.txtAirBorneUpgrade;
+			case PLAGUE_TRANSMISSION.Consumption:
+				return UIModel.txtConsumptionUpgrade;
+			case PLAGUE_TRANSMISSION.Physical_Contact:
+				return UIModel.txtDirectContactUpgrade;
+			case PLAGUE_TRANSMISSION.Combat:
+				return UIModel.txtCombatUpgrade;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(p_transmissionType), p_transmissionType, null);
+		}
+	}
 
 	public void UpdateTransmissionCost(PLAGUE_TRANSMISSION p_transmissionType, string p_newCost) {
 		RuinarchText txtCost = GetTransmissionCostText(p_transmissionType);
@@ -121,9 +136,11 @@ public class TransmissionUIView : MVCUIView
 		RuinarchText txtRate = GetTransmissionRateText(p_transmissionType);
 		txtRate.text = p_newRate;
 	}
-	public void UpdateTransmissionUpgradeButtonInteractable(PLAGUE_TRANSMISSION p_transmissionType, bool p_state) {
+	public void UpdateTransmissionUpgradeButtonInteractable(PLAGUE_TRANSMISSION p_transmissionType, bool p_interactable) {
 		Button button = GetTransmissionUpgradeButton(p_transmissionType);
-		button.interactable = p_state;
+		button.interactable = p_interactable;
+		TextMeshProUGUI text = GetTransmissionUpgradeText(p_transmissionType);
+		text.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
 	}
 
 

@@ -1,5 +1,6 @@
 ﻿using Ruinarch.MVCFramework;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 public class SymptomsUIModel : MVCUIModel
@@ -47,6 +48,17 @@ public class SymptomsUIModel : MVCUIModel
 	public Button btnSneezingUpgrade;
 	public Button btnDepressionUpgrade;
 	public Button btnHungerUpgrade;
+	
+	public TextMeshProUGUI txtParalysisUpgrade;
+	public TextMeshProUGUI txtVomitingUpgrade;
+	public TextMeshProUGUI txtLethargyUpgrade;
+	public TextMeshProUGUI txtSeizuresUpgrade;
+	public TextMeshProUGUI txtInsomniaUpgrade;
+	public TextMeshProUGUI txtPoisonCloudUpgrade;
+	public TextMeshProUGUI txtMonsterScenetUpgrade;
+	public TextMeshProUGUI txtSneezingUpgrade;
+	public TextMeshProUGUI txtDepressionUpgrade;
+	public TextMeshProUGUI txtHungerUpgrade;
 	
 	public RuinarchText txtParalysisCost;
 	public RuinarchText txtVomitingCost;

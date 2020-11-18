@@ -1,5 +1,7 @@
 ﻿using Ruinarch.MVCFramework;
 using System;
+using Ruinarch.Custom_UI;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 public class LifeSpanUIModel : MVCUIModel
@@ -21,12 +23,30 @@ public class LifeSpanUIModel : MVCUIModel
 	public Action onHumansHoveredOut;
 	public Action onMonstersHoveredOut;
 	public Action onUndeadHoveredOut;
+	
+	public Action onObjectsUpgradeBtnHoveredOver;
+	public Action onElvesUpgradeBtnHoveredOver;
+	public Action onHumansUpgradeBtnHoveredOver;
+	public Action onMonstersUpgradeBtnHoveredOver;
+	public Action onUndeadUpgradeBtnHoveredOver;
+	
+	public Action onObjectsUpgradeBtnHoveredOut;
+	public Action onElvesUpgradeBtnHoveredOut;
+	public Action onHumansUpgradeBtnHoveredOut;
+	public Action onMonstersUpgradeBtnHoveredOut;
+	public Action onUndeadUpgradeBtnHoveredOut;
 
-	public Button btnObjectsUpgrade;
-	public Button btnElvesUpgrade;
-	public Button btnHumansUpgrade;
-	public Button btnMonstersUpgrade;
-	public Button btnUndeadUpgrade;
+	public RuinarchButton btnObjectsUpgrade;
+	public RuinarchButton btnElvesUpgrade;
+	public RuinarchButton btnHumansUpgrade;
+	public RuinarchButton btnMonstersUpgrade;
+	public RuinarchButton btnUndeadUpgrade;
+	
+	public TextMeshProUGUI txtObjectsUpgrade;
+	public TextMeshProUGUI txtElvesUpgrade;
+	public TextMeshProUGUI txtHumansUpgrade;
+	public TextMeshProUGUI txtMonstersUpgrade;
+	public TextMeshProUGUI txtUndeadUpgrade;
 
 	public RuinarchText txtTileObjectCost;
 	public RuinarchText txtTileObjectInfectionTime;
@@ -63,6 +83,16 @@ public class LifeSpanUIModel : MVCUIModel
 		monstersHoverHandler.AddOnHoverOutAction(OnHoverOutMonsters);
 		undeadHoverHandler.AddOnHoverOverAction(OnHoverOverUndead);
 		undeadHoverHandler.AddOnHoverOutAction(OnHoverOutUndead);
+		btnObjectsUpgrade.AddHoverOverAction(OnHoverOverObjectsUpgradeBtn);
+		btnElvesUpgrade.AddHoverOverAction(OnHoverOverElvesUpgradeBtn);
+		btnHumansUpgrade.AddHoverOverAction(OnHoverOverHumansUpgradeBtn);
+		btnMonstersUpgrade.AddHoverOverAction(OnHoverOverMonstersUpgradeBtn);
+		btnUndeadUpgrade.AddHoverOverAction(OnHoverOverUndeadUpgradeBtn);
+		btnObjectsUpgrade.AddHoverOutAction(OnHoverOutObjectsUpgradeBtn);
+		btnElvesUpgrade.AddHoverOutAction(OnHoverOutElvesUpgradeBtn);
+		btnHumansUpgrade.AddHoverOutAction(OnHoverOutHumansUpgradeBtn);
+		btnMonstersUpgrade.AddHoverOutAction(OnHoverOutMonstersUpgradeBtn);
+		btnUndeadUpgrade.AddHoverOutAction(OnHoverOutUndeadUpgradeBtn);
 	}
 
 	private void OnDisable() {
@@ -81,24 +111,31 @@ public class LifeSpanUIModel : MVCUIModel
 		monstersHoverHandler.RemoveOnHoverOutAction(OnHoverOutMonsters);
 		undeadHoverHandler.RemoveOnHoverOverAction(OnHoverOverUndead);
 		undeadHoverHandler.RemoveOnHoverOutAction(OnHoverOutUndead);
+		btnObjectsUpgrade.RemoveHoverOverAction(OnHoverOverObjectsUpgradeBtn);
+		btnElvesUpgrade.RemoveHoverOverAction(OnHoverOverElvesUpgradeBtn);
+		btnHumansUpgrade.RemoveHoverOverAction(OnHoverOverHumansUpgradeBtn);
+		btnMonstersUpgrade.RemoveHoverOverAction(OnHoverOverMonstersUpgradeBtn);
+		btnUndeadUpgrade.RemoveHoverOverAction(OnHoverOverUndeadUpgradeBtn);
+		btnObjectsUpgrade.RemoveHoverOutAction(OnHoverOutObjectsUpgradeBtn);
+		btnElvesUpgrade.RemoveHoverOutAction(OnHoverOutElvesUpgradeBtn);
+		btnHumansUpgrade.RemoveHoverOutAction(OnHoverOutHumansUpgradeBtn);
+		btnMonstersUpgrade.RemoveHoverOutAction(OnHoverOutMonstersUpgradeBtn);
+		btnUndeadUpgrade.RemoveHoverOutAction(OnHoverOutUndeadUpgradeBtn);
 	}
 
 	#region Buttons OnClick trigger
 	void ClickObjectsUpgrade() {
 		onObjectsUpgradeClicked?.Invoke();
 	}
-
 	void ClickElvesUpgrade() {
 		onElvesUpgradeClicked?.Invoke();
 	}
 	void ClickHumansUpgrade() {
 		onHumansUpgradeClicked?.Invoke();
 	}
-
 	void ClickMonstersUpgrade() {
 		onMonstersUpgradeClicked?.Invoke();
 	}
-
 	void ClickUndeadUpgrade() {
 		onUndeadUpgradeClicked?.Invoke();
 	}
@@ -134,6 +171,36 @@ public class LifeSpanUIModel : MVCUIModel
 	}
 	void OnHoverOutUndead() {
 		onUndeadHoveredOut?.Invoke();
+	}
+	void OnHoverOverObjectsUpgradeBtn() {
+		onObjectsUpgradeBtnHoveredOver?.Invoke();
+	}
+	void OnHoverOverElvesUpgradeBtn() {
+		onElvesUpgradeBtnHoveredOver?.Invoke();
+	}
+	void OnHoverOverHumansUpgradeBtn() {
+		onHumansUpgradeBtnHoveredOver?.Invoke();
+	}
+	void OnHoverOverMonstersUpgradeBtn() {
+		onMonstersUpgradeBtnHoveredOver?.Invoke();
+	}
+	void OnHoverOverUndeadUpgradeBtn() {
+		onUndeadUpgradeBtnHoveredOver?.Invoke();
+	}
+	void OnHoverOutObjectsUpgradeBtn() {
+		onObjectsUpgradeBtnHoveredOut?.Invoke();
+	}
+	void OnHoverOutElvesUpgradeBtn() {
+		onElvesUpgradeBtnHoveredOut?.Invoke();
+	}
+	void OnHoverOutHumansUpgradeBtn() {
+		onHumansUpgradeBtnHoveredOut?.Invoke();
+	}
+	void OnHoverOutMonstersUpgradeBtn() {
+		onMonstersUpgradeBtnHoveredOut?.Invoke();
+	}
+	void OnHoverOutUndeadUpgradeBtn() {
+		onUndeadUpgradeBtnHoveredOut?.Invoke();
 	}
 	#endregion
 }

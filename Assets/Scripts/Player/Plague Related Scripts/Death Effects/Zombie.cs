@@ -46,6 +46,18 @@ namespace Plague.Death_Effect {
                     return string.Empty;
             }
         }
+        public override string GetCurrentEffectTooltip() {
+            switch (_level) {
+                case 1:
+                    return "Plagued corpses will eventually reanimate as a slow-moving zombie.";
+                case 2:
+                    return "Plagued corpses will keep on reanimating as Night Zombies at dusk and then revert to lifelessness each dawn.";
+                case 3:
+                    return "Upcoming feature!";
+                default:
+                    return string.Empty;
+            }
+        }
         public override void OnDeath(Character p_character) {
             ActivateEffect(p_character);
         }

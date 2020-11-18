@@ -73,6 +73,16 @@ MonoBehaviour:
   btnSneezingUpgrade: {fileID: 5767517131638231384}
   btnDepressionUpgrade: {fileID: 5767517132719665477}
   btnHungerUpgrade: {fileID: 5767517131943881445}
+  txtParalysisUpgrade: {fileID: 7209311989439253811}
+  txtVomitingUpgrade: {fileID: 5767517132402404633}
+  txtLethargyUpgrade: {fileID: 5767517133595325463}
+  txtSeizuresUpgrade: {fileID: 5767517133507223094}
+  txtInsomniaUpgrade: {fileID: 5767517133559712293}
+  txtPoisonCloudUpgrade: {fileID: 5767517131694691533}
+  txtMonsterScenetUpgrade: {fileID: 5767517133522911016}
+  txtSneezingUpgrade: {fileID: 5767517132582881642}
+  txtDepressionUpgrade: {fileID: 5767517132963863009}
+  txtHungerUpgrade: {fileID: 5767517132533885816}
   txtParalysisCost: {fileID: 7209311990187275460}
   txtVomitingCost: {fileID: 5767517132113844894}
   txtLethargyCost: {fileID: 5767517132777390570}

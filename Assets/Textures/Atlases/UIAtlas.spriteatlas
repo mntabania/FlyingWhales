@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8029761
+    totalSpriteSurfaceArea: 8031301
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -249,6 +249,7 @@ SpriteAtlas:
   - {fileID: 7078123920453852532, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: -8236894391047943605, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: 6206799429775631491, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: -5554612431395520410, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: -5934634420481666465, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: 21300000, guid: 9450c3a9507c1e549800df5991839a0e, type: 3}
   - {fileID: 21300000, guid: b5a91dc998b014448be00704f6143f25, type: 3}
@@ -577,6 +578,7 @@ SpriteAtlas:
   - icon_mana
   - icon_cultist
   - icon_chargesB
+  - icon_plague
   - icon_monster
   - dropdown_container
   - active_ability_icon

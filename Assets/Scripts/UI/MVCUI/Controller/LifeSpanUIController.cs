@@ -83,6 +83,36 @@ public class LifeSpanUIController : MVCUIController, LifeSpanUIView.IListener
 	public void OnHumansHoveredOut() { HideTooltip(); }
 	public void OnMonstersHoveredOut() { HideTooltip(); }
 	public void OnUndeadHoveredOut() { HideTooltip(); }
+	public void OnUpgradeBtnObjectsHoveredOver() {
+		m_lifeSpanUIView.UpdateTileObjectInfectionTime($"<color=\"green\">{GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetUpgradedTileObjectInfectionTime())}</color>");
+	}
+	public void OnUpgradeBtnObjectsHoveredOut() {
+		m_lifeSpanUIView.UpdateTileObjectInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.tileObjectInfectionTimeInHours));
+	}
+	public void OnUpgradeBtnElvesHoveredOver() {
+		m_lifeSpanUIView.UpdateElvesInfectionTime($"<color=\"green\">{GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetUpgradedSapientInfectionTime(RACE.ELVES))}</color>");
+	}
+	public void OnUpgradeBtnElvesHoveredOut() {
+		m_lifeSpanUIView.UpdateElvesInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetSapientLifespanOfPlague(RACE.ELVES)));
+	}
+	public void OnUpgradeBtnHumansHoveredOver() {
+		m_lifeSpanUIView.UpdateHumansInfectionTime($"<color=\"green\">{GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetUpgradedSapientInfectionTime(RACE.HUMANS))}</color>");
+	}
+	public void OnUpgradeBtnHumansHoveredOut() {
+		m_lifeSpanUIView.UpdateHumansInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetSapientLifespanOfPlague(RACE.HUMANS)));
+	}
+	public void OnUpgradeBtnMonstersHoveredOver() {
+		m_lifeSpanUIView.UpdateMonstersInfectionTime($"<color=\"green\">{GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetUpgradedMonsterInfectionTime())}</color>");
+	}
+	public void OnUpgradeBtnMonstersHoveredOut() {
+		m_lifeSpanUIView.UpdateMonstersInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.monsterInfectionTimeInHours));
+	}
+	public void OnUpgradeBtnUndeadHoveredOver() {
+		m_lifeSpanUIView.UpdateUndeadInfectionTime($"<color=\"green\">{GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetUpgradedUndeadInfectionTime())}</color>");
+	}
+	public void OnUpgradeBtnUndeadHoveredOut() { 
+		m_lifeSpanUIView.UpdateUndeadInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.undeadInfectionTimeInHours));
+	}
 	#endregion
 	
 	private void ShowTooltip(string p_lifespanHeader, string p_lifespanDescription, UIHoverPosition p_hoverPosition) {

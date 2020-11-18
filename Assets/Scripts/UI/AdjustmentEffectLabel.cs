@@ -9,8 +9,9 @@ using UnityEngine;
 public class AdjustmentEffectLabel : PooledObject {
 
     [SerializeField] private TextMeshProUGUI label;
+    [SerializeField] private GameObject bg;
 
-    public void PlayEffect(string text, Vector2 animationDirection) {
+    public void PlayEffect(string text, Vector2 animationDirection, bool showBG = false) {
         label.text = text;
         label.alpha = 1f;
         label.rectTransform.anchoredPosition = new Vector2(label.rectTransform.anchoredPosition.x + animationDirection.x, label.rectTransform.anchoredPosition.y);
@@ -20,6 +21,8 @@ public class AdjustmentEffectLabel : PooledObject {
         sequence.Join(label.DOFade(0f, 1.2f).SetEase(Ease.InQuint));
         sequence.OnComplete(OnComplete);
         sequence.Play();
+        
+        bg.SetActive(showBG);
     }
 
     private void OnComplete() {

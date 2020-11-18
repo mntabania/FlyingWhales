@@ -47,6 +47,9 @@ TextureImporter:
   - first:
       213: -3053055662445826506
     second: icon_undead
+  - first:
+      213: -5554612431395520410
+    second: icon_plague
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -123,8 +126,8 @@ TextureImporter:
       name: icon_chargesB
       rect:
         serializedVersion: 2
-        x: 32
-        y: 25
+        x: 104
+        y: 97
         width: 21
         height: 31
       alignment: 0
@@ -144,8 +147,8 @@ TextureImporter:
       name: icon_cooldown
       rect:
         serializedVersion: 2
-        x: 56
-        y: 76
+        x: 68
+        y: 70
         width: 23
         height: 26
       alignment: 0
@@ -165,8 +168,8 @@ TextureImporter:
       name: icon_cultist
       rect:
         serializedVersion: 2
-        x: 86
-        y: 104
+        x: 84
+        y: 44
         width: 24
         height: 24
       alignment: 0
@@ -186,8 +189,8 @@ TextureImporter:
       name: icon_demon
       rect:
         serializedVersion: 2
-        x: 86
-        y: 80
+        x: 32
+        y: 16
         width: 24
         height: 24
       alignment: 0
@@ -207,8 +210,8 @@ TextureImporter:
       name: icon_ideology
       rect:
         serializedVersion: 2
-        x: 110
-        y: 114
+        x: 84
+        y: 30
         width: 17
         height: 14
       alignment: 0
@@ -228,8 +231,8 @@ TextureImporter:
       name: icon_leader
       rect:
         serializedVersion: 2
-        x: 32
-        y: 80
+        x: 60
+        y: 22
         width: 24
         height: 22
       alignment: 0
@@ -249,8 +252,8 @@ TextureImporter:
       name: icon_mana
       rect:
         serializedVersion: 2
-        x: 60
-        y: 102
+        x: 32
+        y: 42
         width: 26
         height: 26
       alignment: 0
@@ -270,9 +273,9 @@ TextureImporter:
       name: icon_monster
       rect:
         serializedVersion: 2
-        x: 53
-        y: 32
-        width: 22
+        x: 60
+        y: 44
+        width: 24
         height: 24
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -288,11 +291,32 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
+      name: icon_plague
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 90
+        width: 38
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66083b95c6d0ae2b0800000000000000
+      internalID: -5554612431395520410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
       name: icon_threat
       rect:
         serializedVersion: 2
-        x: 32
-        y: 102
+        x: 40
+        y: 70
         width: 28
         height: 26
       alignment: 0
@@ -312,12 +336,12 @@ TextureImporter:
       name: icon_undead
       rect:
         serializedVersion: 2
-        x: 32
-        y: 56
-        width: 23
+        x: 92
+        y: 72
+        width: 24
         height: 24
-      alignment: 9
-      pivot: {x: 0.47826087, y: 0.5}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -333,12 +357,12 @@ TextureImporter:
       name: icon_villager
       rect:
         serializedVersion: 2
-        x: 32
-        y: 1
-        width: 23
+        x: 0
+        y: 0
+        width: 24
         height: 24
-      alignment: 9
-      pivot: {x: 0.5217391, y: 0.5}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -354,7 +378,7 @@ TextureImporter:
       name: Key_A
       rect:
         serializedVersion: 2
-        x: 0
+        x: 72
         y: 96
         width: 32
         height: 32
@@ -376,7 +400,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 64
+        y: 24
         width: 32
         height: 32
       alignment: 0
@@ -397,7 +421,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 32
+        y: 56
         width: 32
         height: 32
       alignment: 0
@@ -417,8 +441,8 @@ TextureImporter:
       name: Key_W
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
+        x: 40
+        y: 96
         width: 32
         height: 32
       alignment: 0
