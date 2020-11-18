@@ -16,7 +16,6 @@ public static class Signals {
         { HOUR_STARTED, new[] {
             new SignalMethod() { methodName = "HourlyJobActions", objectType = typeof(NPCSettlement) },
             new SignalMethod() { methodName = "DecreaseNeeds", objectType = typeof(Character) },
-            new SignalMethod() { methodName = "PerHour", objectType = typeof(Infected) },
         }},
         { TICK_STARTED, new[] {
             new SignalMethod() { methodName = "CheckSupply", objectType = typeof(WoodPile) },

@@ -12,49 +12,27 @@ public class PestBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n{character.name} is a Pest";
-        TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-        if(currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT || currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-            if(character.behaviourComponent.pestVillageTarget == null) {
-                character.behaviourComponent.SetPestVillageTarget(GetVillageTargetsByPriority(character));
-            }
-            if (character.behaviourComponent.pestVillageTarget != null && character.behaviourComponent.pestVillageTarget.Count > 0) {
-                log += $"\n-Already has village target";
-                BaseSettlement targetSettlement = character.behaviourComponent.pestVillageTarget[0].settlementOnTile;
-                if(targetSettlement != null) {
+        if (character.behaviourComponent.pestVillageTarget == null) {
+            character.behaviourComponent.SetPestVillageTarget(GetVillageTargetsByPriority(character));
+        }
+        if (character.behaviourComponent.pestVillageTarget != null && character.behaviourComponent.pestVillageTarget.Count > 0) {
+            log += $"\n-Already has village target";
+            BaseSettlement targetSettlement = character.behaviourComponent.pestVillageTarget[0].settlementOnTile;
+            if (targetSettlement != null) {
+                if (character.gridTileLocation != null && character.gridTileLocation.IsPartOfSettlement(targetSettlement)) {
+                    return character.jobComponent.CreateRatFullnessRecovery(out producedJob);
+                } else {
                     LocationStructure targetStructure = targetSettlement.GetRandomStructure();
-                    if(targetStructure != null) {
+                    if (targetStructure != null) {
                         LocationGridTile targetTile = targetStructure.GetRandomPassableTile();
-                        if(targetTile != null) {
+                        if (targetTile != null) {
                             return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
                         }
                     }
                 }
             }
-            return character.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_TILE, out producedJob);
-        } else {
-            if (character.behaviourComponent.pestVillageTarget != null) {
-                character.behaviourComponent.SetPestVillageTarget(null);
-            }
-            BaseSettlement settlement = null;
-            if (character.gridTileLocation != null && character.gridTileLocation.IsPartOfSettlement(out settlement)) {
-                int chanceToLeave = 30;
-                if(settlement.locationType == LOCATION_TYPE.VILLAGE) {
-                    chanceToLeave = 60;
-                }
-                if (GameUtilities.RollChance(chanceToLeave)) {
-                    if(character.currentRegion != null) {
-                        HexTile targetHex = character.currentRegion.GetRandomHexThatMeetCriteria(h => h.settlementOnTile == null && h.elevationType != ELEVATION.WATER && h.elevationType != ELEVATION.MOUNTAIN);
-                        if(targetHex != null) {
-                            LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetHex.locationGridTiles);
-                            if (targetTile != null) {
-                                return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
-                            }
-                        }
-                    }
-                }
-            }
-            return character.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_TILE, out producedJob);
         }
+        return character.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_TILE, out producedJob);
     }
     private List<HexTile> GetVillageTargetsByPriority(Character owner) {
         //get settlements in region that have normal characters living there.

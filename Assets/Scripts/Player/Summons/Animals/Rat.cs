@@ -20,7 +20,6 @@ public class Rat : Animal {
     public override void Initialize() {
         base.Initialize();
         combatComponent.SetCombatMode(COMBAT_MODE.Defend);
-        traitContainer.AddTrait(this, "Infected");
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Rat_Behaviour);
     }
     public override void OnSummonAsPlayerMonster() {

@@ -38,7 +38,7 @@ public class TraitManager : BaseMonoBehaviour {
     public static string[] instancedTraitsAndStatuses = new string[] {
         "Restrained", "Injured", "Kleptomaniac", "Lycanthrope", "Vampire",
         "Poisoned", "Resting", "Sick", "Unconscious", "Zapped", "Spooked", "Cannibal", "Lethargic",
-        "Dead", "Unfaithful", "Drunk", "Burning", "Burnt", "Agoraphobic", "Infected", "Music Lover", "Music Hater", 
+        "Dead", "Unfaithful", "Drunk", "Burning", "Burnt", "Agoraphobic", "Music Lover", "Music Hater", 
         "Psychopath", "Plagued", "Vigilant", "Diplomatic", "Wet", "Character Trait", "Nocturnal", "Glutton", 
         "Suspicious", "Narcoleptic", "Hothead", "Inspiring", "Pyrophobic", "Angry", "Alcoholic", "Pessimist", "Lazy", 
         "Coward", "Berserked", "Catatonic", "Griefstricken", "Heartbroken", "Chaste", "Lustful", "Edible", "Paralyzed", 
@@ -49,8 +49,7 @@ public class TraitManager : BaseMonoBehaviour {
         "Webbed", "Cultist", "Stealthy", "Invisible", "Noxious Wanderer", "DeMooder", "Defender", "Invader", "Disabler", "Infestor",
         "Abductor", "Arsonist", "Hibernating", "Baby Infestor", "Tower", "Mighty", "Stoned", "Transforming", "Subterranean", "Petrasol",
         "Snatcher", "Agitated", "Hunting", "Chained Electric", "Prisoner", "Hemophiliac", "Hemophobic", "Burning At Stake",
-        "Lycanphiliac", "Lycanphobic", "Interesting", "Pest", "Night Zombie", "Walker Zombie"
-
+        "Lycanphiliac", "Lycanphobic", "Interesting", "Pest", "Night Zombie", "Walker Zombie", "Plague Reservoir"
     };
 
     //public static string[] unhiddenInstancedTraits = new string[] {

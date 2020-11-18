@@ -321,7 +321,6 @@ public class PlaguedRatData : SummonPlayerSkill {
     #region Overrides
     protected override void AfterSummoning(Summon summon) {
         base.AfterSummoning(summon);
-        summon.traitContainer.AddTrait(summon, "Plagued", overrideDuration: PlagueDisease.Instance.lifespan.GetLifespanInTicksOfPlagueOn(summon));
         summon.traitContainer.AddTrait(summon, "Plague Reservoir");
     }
     #endregion

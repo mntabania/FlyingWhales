@@ -144,7 +144,6 @@ public class CureCharacter : GoapAction {
         } else {
             goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Poisoned", goapNode.actor);
             goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Plagued", goapNode.actor);
-            goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Infected", goapNode.actor);
             goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.HEALING_POTION);
         }
     }
