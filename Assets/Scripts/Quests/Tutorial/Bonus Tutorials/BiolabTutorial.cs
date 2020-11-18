@@ -33,14 +33,13 @@ namespace Tutorial {
                         new ToggleTurnedOnStep("Lifespan_Tab", "Click on the Lifespan Tab")
                             .SetOnTopmostActions(OnTopMostClickLifespan, OnNoLongerTopMostLifespan)
                             .SetCompleteAction(OnCompleteClickLifespan),
-                        new ButtonClickedStep("Objects Lifespan Upgrade Btn", "Upgrade Lifespan on Objects")
+                        new ButtonClickedStep("Plague Upgrade Btn", "Upgrade your Plague once")
                             .SetOnTopmostActions(OnTopMostClickUpgradeObjectsLifespan, OnNoLongerTopMostClickUpgradeObjectsLifespan)
                 ),
                 new QuestStepCollection(
                     new ToggleTurnedOnStep("Monsters Tab", "Click on the Monsters tab")
-                        .SetOnTopmostActions(OnTopMostClickMonstersTab, OnNoLongerTopMostClickMonstersTab)
-                        .SetCompleteAction(OnCompleteClickMonstersTab),
-                    new ExecuteSpellStep(SPELL_TYPE.PLAGUED_RAT, "Summon a Plague Rat near a Village")
+                        .SetOnTopmostActions(OnTopMostClickMonstersTab, OnNoLongerTopMostClickMonstersTab), //.SetCompleteAction(OnCompleteClickMonstersTab)
+                    new ExecuteSpellStep(SPELL_TYPE.PLAGUED_RAT, "Summon a Plague Rat")
                 )
             };
         }
@@ -91,10 +90,10 @@ namespace Tutorial {
             Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Lifespan_Tab");
         }
         private void OnTopMostClickUpgradeObjectsLifespan() {
-            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Objects Upgrade Btn");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Plague Upgrade Btn");
         }
         private void OnNoLongerTopMostClickUpgradeObjectsLifespan() {
-            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Objects Upgrade Btn");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Plague Upgrade Btn");
         }
         private void OnTopMostClickMonstersTab() {
             Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Monsters Tab");
