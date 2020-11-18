@@ -10,7 +10,7 @@ public class PlagueComponent {
     #endregion
 
     public PlagueComponent() {
-        _plaguePoints = 1000;
+        _plaguePoints = 10;
     }
     public PlagueComponent(SaveDataPlagueComponent p_component) {
         _plaguePoints = p_component.plaguePoints;
@@ -23,7 +23,9 @@ public class PlagueComponent {
     }
     public void GainPlaguePointFromCharacter(int amount, Character p_character) {
         AdjustPlaguePoints(amount);
-        PlayerUI.Instance.ShowPlaguePointsGainedEffect(amount, p_character.worldPosition);
+        if (p_character.marker) {
+            PlayerUI.Instance.ShowPlaguePointsGainedEffect(amount, p_character.worldPosition);    
+        }
     }
     #endregion
 }

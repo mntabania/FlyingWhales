@@ -156,6 +156,9 @@ public class WorldMapSave {
     #region Structures
     private SaveDataLocationStructure CreateNewSaveDataFor(LocationStructure structure) {
         if (structure is DemonicStructure) {
+            if (structure is Biolab) {
+                return new SaveDataBiolab();
+            }
             return new SaveDataDemonicStructure();
         } else if (structure is NaturalStructure) {
             if (structure is Cave) {

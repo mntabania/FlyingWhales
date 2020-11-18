@@ -48,7 +48,7 @@ public class PlagueDisease : ISingletonPattern, ISavable {
         _lifespan = p_data.lifespan.Load();
 
         _activeFatalities = new List<Fatality>();
-        if (p_data.activeFatalities.Count > 0) {
+        if (p_data.activeFatalities != null && p_data.activeFatalities.Count > 0) {
             for (int i = 0; i < p_data.activeFatalities.Count; i++) {
                 Fatality fatality = CreateNewFatalityInstance(p_data.activeFatalities[i]);
                 _activeFatalities.Add(fatality);
@@ -56,7 +56,7 @@ public class PlagueDisease : ISingletonPattern, ISavable {
         }
 
         _activeSymptoms = new List<PlagueSymptom>();
-        if (p_data.activeSymptoms.Count > 0) {
+        if (p_data.activeSymptoms != null &&  p_data.activeSymptoms.Count > 0) {
             for (int i = 0; i < p_data.activeSymptoms.Count; i++) {
                 PlagueSymptom symptom = CreateNewSymptomInstance(p_data.activeSymptoms[i]);
                 _activeSymptoms.Add(symptom);
@@ -295,7 +295,7 @@ public class SaveDataPlagueDisease : SaveData<PlagueDisease> {
         base.Save();
         PlagueDisease p_data = PlagueDisease.Instance;
         lifespan = new SaveDataPlagueLifespan();
-        lifespan.Save();
+        lifespan.Save(p_data.lifespan);
 
         if(p_data.activeFatalities.Count > 0) {
             activeFatalities = new List<PLAGUE_FATALITY>();
