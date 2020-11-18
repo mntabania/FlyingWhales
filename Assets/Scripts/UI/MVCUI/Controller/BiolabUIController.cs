@@ -94,9 +94,10 @@ public class BiolabUIController : MVCUIController, BiolabUIView.IListener
 		m_biolabUIView.SetDeathCases(PlagueDisease.Instance.deaths.ToString());
 		m_biolabUIView.SetRecoveriesCases(PlagueDisease.Instance.recoveries.ToString());
 		if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
-			//TODO: Remove dependency with player!
-			m_biolabUIView.SetPlagueRats(PlayerManager.Instance.player.summons.Count(s => s.summonType == SUMMON_TYPE.Rat).ToString());
 			m_biolabUIView.SetPlaguePoints(PlayerManager.Instance.player.plagueComponent.plaguePoints.ToString());	
+		}
+		if (PlayerSkillManager.Instance != null) {
+			m_biolabUIView.SetPlagueRats(PlayerSkillManager.Instance.GetSummonPlayerSkillData(SPELL_TYPE.PLAGUED_RAT).charges.ToString());
 		}
 	}
 	

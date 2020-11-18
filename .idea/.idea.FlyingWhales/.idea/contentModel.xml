@@ -2675,6 +2675,7 @@
             </e>
             <e p="Tutorial" t="Include">
               <e p="Bonus Tutorials" t="Include">
+                <e p="BiolabTutorial.cs" t="Include" />
                 <e p="BonusTutorial.cs" t="Include" />
                 <e p="ChaosOrbsTutorial.cs" t="Include" />
                 <e p="Log Quests" t="Include">

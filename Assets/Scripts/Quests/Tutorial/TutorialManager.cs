@@ -34,7 +34,8 @@ namespace Tutorial {
             Frame_Up,
             Faction_Info,
             Create_A_Cultist,
-            World_Map
+            World_Map,
+            Biolab_Tutorial
         }
 
         /// <summary>
@@ -64,7 +65,8 @@ namespace Tutorial {
             Tutorial.Frame_Up,
             Tutorial.Faction_Info,
             Tutorial.Create_A_Cultist,
-            Tutorial.World_Map
+            Tutorial.World_Map,
+            Tutorial.Biolab_Tutorial
         };
 
         private List<ImportantTutorial> _activeImportantTutorials;
