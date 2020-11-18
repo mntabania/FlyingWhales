@@ -49,19 +49,19 @@ public class PlagueLifespan {
         _tileObjectInfectionTimeInHours = p_hours;
     }
     public void UpgradeTileObjectInfectionTime() {
+        SetTileObjectInfectionTimeInHours(GetUpgradedTileObjectInfectionTime());
+    }
+    public int GetUpgradedTileObjectInfectionTime() {
         switch (_tileObjectInfectionTimeInHours) {
             case 3:
-                SetTileObjectInfectionTimeInHours(6);
-                break;
+                return 6;
             case 6:
-                SetTileObjectInfectionTimeInHours(12);
-                break;
+                return 12;
             case 12:
-                SetTileObjectInfectionTimeInHours(24);
-                break;
+                return 24;
             default:
                 Debug.LogError($"Could not upgrade Tile Object Infection Time: {_tileObjectInfectionTimeInHours.ToString()}");
-                break;
+                return -1;
         }
     }
     public int GetTileObjectInfectionTimeUpgradeCost() {
@@ -95,19 +95,19 @@ public class PlagueLifespan {
         _monsterInfectionTimeInHours = p_hours;
     }
     public void UpgradeMonsterInfectionTime() {
+        SetMonsterInfectionTimeInHours(GetUpgradedMonsterInfectionTime());
+    }
+    public int GetUpgradedMonsterInfectionTime() {
         switch (_monsterInfectionTimeInHours) {
             case -1:
-                SetMonsterInfectionTimeInHours(12);
-                break;
+                return 12;
             case 12:
-                SetMonsterInfectionTimeInHours(24);
-                break;
+                return 24;
             case 24:
-                SetMonsterInfectionTimeInHours(72);
-                break;
+                return 72;
             default:
                 Debug.LogError($"Could not upgrade Monster Infection Time: {_monsterInfectionTimeInHours.ToString()}");
-                break;
+                return -1;
         }
     }
     public int GetMonsterInfectionTimeUpgradeCost() {
@@ -141,19 +141,19 @@ public class PlagueLifespan {
         _undeadInfectionTimeInHours = p_hours;
     }
     public void UpgradeUndeadInfectionTime() {
+        SetUndeadInfectionTimeInHours(GetUpgradedUndeadInfectionTime());
+    }
+    public int GetUpgradedUndeadInfectionTime() {
         switch (_undeadInfectionTimeInHours) {
             case -1:
-                SetUndeadInfectionTimeInHours(12);
-                break;
+                return 12;
             case 12:
-                SetUndeadInfectionTimeInHours(24);
-                break;
+                return 24;
             case 24:
-                SetUndeadInfectionTimeInHours(72);
-                break;
+                return 72;
             default:
                 Debug.LogError($"Could not upgrade Undead Infection Time: {_undeadInfectionTimeInHours.ToString()}");
-                break;
+                return -1;
         }
     }
     public int GetUndeadInfectionTimeUpgradeCost() {
@@ -191,20 +191,20 @@ public class PlagueLifespan {
         }
     }
     public void UpgradeSapientInfectionTime(RACE p_race) {
+        SetSapientInfectionTimeInHours(p_race, GetUpgradedSapientInfectionTime(p_race));
+    }
+    public int GetUpgradedSapientInfectionTime(RACE p_race) {
         int currentDuration = GetSapientLifespanOfPlague(p_race);
         switch (currentDuration) {
             case 24:
-                SetSapientInfectionTimeInHours(p_race, 72);
-                break;
+                return 72;
             case 72:
-                SetSapientInfectionTimeInHours(p_race, 144);
-                break;
+                return 144;
             case 144:
-                SetSapientInfectionTimeInHours(p_race, 240);
-                break;
+                return 240;
             default:
                 Debug.LogError($"Could not upgrade {p_race.ToString()} Sapient Infection Time: {currentDuration.ToString()}");
-                break;
+                return -1;
         }
     }
     public int GetSapientInfectionTimeUpgradeCost(RACE p_race) {

@@ -52,7 +52,7 @@ namespace Plague.Symptom {
         public static string GetSymptomTooltip(this PLAGUE_SYMPTOM p_symptom) {
             switch (p_symptom) {
                 case PLAGUE_SYMPTOM.Paralysis:
-                    return "How long the Plague lasts on objects.";
+                    return "The Plague may eventually render about a quarter of Plague victims paralyzed.";
                 case PLAGUE_SYMPTOM.Vomiting:
                     return "The Plague may sometimes trigger vomiting.";
                 case PLAGUE_SYMPTOM.Lethargy:

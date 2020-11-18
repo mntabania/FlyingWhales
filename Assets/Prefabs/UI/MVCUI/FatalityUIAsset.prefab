@@ -3971,6 +3971,11 @@ MonoBehaviour:
   btnStrokeUpgrade: {fileID: 2175716464096407149}
   btnTotalOrganFailureUpgrade: {fileID: 2175716464497762794}
   btnPneumoniaUpgrade: {fileID: 2175716463547941349}
+  txtSepticShockUpgrade: {fileID: 2175716464272538085}
+  txtHeartAttackUpgrade: {fileID: 2175716464810728041}
+  txtStrokeUpgrade: {fileID: 2175716463895577184}
+  txtTotalOrganFailureUpgrade: {fileID: 2175716463087058897}
+  txtPneumoniaUpgrade: {fileID: 2175716464238370765}
   txtSepticShockCost: {fileID: 2175716463544251612}
   txtHeartAttackCost: {fileID: 2175716463574787923}
   txtStrokeCost: {fileID: 2175716463649731253}

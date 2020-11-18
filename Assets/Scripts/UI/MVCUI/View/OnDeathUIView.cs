@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Ruinarch.MVCFramework;
 using System;
+using TMPro;
 using UnityEngine.UI;
 
 public class OnDeathUIView : MVCUIView
@@ -128,6 +129,20 @@ public class OnDeathUIView : MVCUIView
 				throw new ArgumentOutOfRangeException(nameof(p_deathEffect), p_deathEffect, null);
 		}
 	}
+	private TextMeshProUGUI GetDeathEffectUpgradeText(PLAGUE_DEATH_EFFECT p_deathEffect) {
+		switch (p_deathEffect) {
+			case PLAGUE_DEATH_EFFECT.Explosion:
+				return UIModel.txtIgniteUpgrade;
+			case PLAGUE_DEATH_EFFECT.Zombie:
+				return UIModel.txtWalkerZombieUpgrade;
+			case PLAGUE_DEATH_EFFECT.Mana_Generator:
+				return UIModel.txtMana2_3Upgrade;
+			case PLAGUE_DEATH_EFFECT.Haunted_Spirits:
+				return UIModel.txtRandomSpirit_1Upgrade;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(p_deathEffect), p_deathEffect, null);
+		}
+	}
 	
 	public void UpdateDeathEffectCost(PLAGUE_DEATH_EFFECT p_deathEffect, string p_cost) {
 		RuinarchText txt = GetCostTextToUpdate(p_deathEffect);
@@ -140,6 +155,8 @@ public class OnDeathUIView : MVCUIView
 	public void UpdateDeathEffectUpgradeButtonInteractable(PLAGUE_DEATH_EFFECT p_deathEffect, bool p_interactable) {
 		Button button = GetDeathEffectUpgradeButton(p_deathEffect);
 		button.interactable = p_interactable;
+		TextMeshProUGUI text = GetDeathEffectUpgradeText(p_deathEffect);
+		text.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
 	}
 	public void UpdateDeathEffectDescription(PLAGUE_DEATH_EFFECT p_deathEffect, string p_effect) {
 		RuinarchText txt = GetEffectTextToUpdate(p_deathEffect);

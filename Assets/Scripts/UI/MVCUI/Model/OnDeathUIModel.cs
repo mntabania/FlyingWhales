@@ -1,5 +1,6 @@
 ﻿using Ruinarch.MVCFramework;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 public class OnDeathUIModel : MVCUIModel
@@ -23,6 +24,11 @@ public class OnDeathUIModel : MVCUIModel
 	public Button btnWalkerZombieUpgrade;
 	public Button btnMana2_3Upgrade;
 	public Button btnRandomSpirit_1Upgrade;
+	
+	public TextMeshProUGUI txtIgniteUpgrade;
+	public TextMeshProUGUI txtWalkerZombieUpgrade;
+	public TextMeshProUGUI txtMana2_3Upgrade;
+	public TextMeshProUGUI txtRandomSpirit_1Upgrade;
 
 	public RuinarchText txtIgniteUpgradeCost;
 	public RuinarchText txtIgniteEffect;

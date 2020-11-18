@@ -29,6 +29,9 @@ namespace UtilityScripts {
         public static WaitForSeconds waitFor3Seconds = new WaitForSeconds(3f);
         public static WaitForSeconds waitFor5Seconds = new WaitForSeconds(5f);
         
+        private static readonly Color _grayedOutColor = new Color(106f / 255f, 106f / 255f, 128f / 255f);
+        private static readonly Color _normalColor = new Color(248f / 255f, 225f / 255f, 169f / 255f);
+        
         public static string GetNormalizedSingularRace(RACE race) {
             switch (race) {
                 case RACE.HUMANS:
@@ -367,6 +370,9 @@ namespace UtilityScripts {
                 tiles.Add(tile);
             }
             return tiles;
+        }
+        public static Color GetUpgradeButtonTextColor(bool p_interactable) {
+            return p_interactable ? _normalColor : _grayedOutColor;
         }
     }    
 }

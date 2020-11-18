@@ -94,6 +94,7 @@ public class FatalityUIView : MVCUIView
 
 	public void UpdateSepticShockUpgradeButtonInteractable(bool p_interactable) {
 		UIModel.btnSepticShockUpgrade.interactable = p_interactable;
+		UIModel.txtSepticShockUpgrade.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
 	}
 	public void UpdateSepticShockCostState(bool p_state) {
 		UIModel.txtSepticShockCost.gameObject.SetActive(p_state);
@@ -104,6 +105,7 @@ public class FatalityUIView : MVCUIView
 	
 	public void UpdateHeartAttackUpgradeButtonInteractable(bool p_interactable) {
 		UIModel.btnHeartAttackUpgrade.interactable = p_interactable;
+		UIModel.txtHeartAttackUpgrade.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
 	}
 	public void UpdateHeartAttackCostState(bool p_state) {
 		UIModel.txtHeartAttackCost.gameObject.SetActive(p_state);
@@ -114,6 +116,7 @@ public class FatalityUIView : MVCUIView
 	
 	public void UpdateStrokeUpgradeButtonInteractable(bool p_interactable) {
 		UIModel.btnStrokeUpgrade.interactable = p_interactable;
+		UIModel.txtStrokeUpgrade.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
 	}
 	public void UpdateStrokeCostState(bool p_state) {
 		UIModel.txtStrokeCost.gameObject.SetActive(p_state);
@@ -124,6 +127,7 @@ public class FatalityUIView : MVCUIView
 	
 	public void UpdateTotalOrganFailureUpgradeButtonInteractable(bool p_interactable) {
 		UIModel.btnTotalOrganFailureUpgrade.interactable = p_interactable;
+		UIModel.txtTotalOrganFailureUpgrade.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
 	}
 	public void UpdateTotalOrganFailureCostState(bool p_state) {
 		UIModel.txtTotalOrganFailureCost.gameObject.SetActive(p_state);
@@ -134,6 +138,7 @@ public class FatalityUIView : MVCUIView
 	
 	public void UpdatePneumoniaUpgradeButtonInteractable(bool p_interactable) {
 		UIModel.btnPneumoniaUpgrade.interactable = p_interactable;
+		UIModel.txtPneumoniaUpgrade.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
 	}
 	public void UpdatePneumoniaCostState(bool p_state) {
 		UIModel.txtPneumoniaCost.gameObject.SetActive(p_state);

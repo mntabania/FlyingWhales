@@ -1,5 +1,6 @@
 ﻿using Ruinarch.MVCFramework;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 public class FatalityUIModel : MVCUIModel
@@ -27,6 +28,12 @@ public class FatalityUIModel : MVCUIModel
 	public Button btnStrokeUpgrade;
 	public Button btnTotalOrganFailureUpgrade;
 	public Button btnPneumoniaUpgrade;
+	
+	public TextMeshProUGUI txtSepticShockUpgrade;
+	public TextMeshProUGUI txtHeartAttackUpgrade;
+	public TextMeshProUGUI txtStrokeUpgrade;
+	public TextMeshProUGUI txtTotalOrganFailureUpgrade;
+	public TextMeshProUGUI txtPneumoniaUpgrade;
 
 	public RuinarchText txtSepticShockCost;
 	public RuinarchText txtHeartAttackCost;

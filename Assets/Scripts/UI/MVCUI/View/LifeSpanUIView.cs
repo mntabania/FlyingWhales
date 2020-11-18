@@ -23,6 +23,17 @@ public class LifeSpanUIView : MVCUIView
 		void OnHumansHoveredOut();
 		void OnMonstersHoveredOut();
 		void OnUndeadHoveredOut();
+		
+		void OnUpgradeBtnObjectsHoveredOver();
+		void OnUpgradeBtnElvesHoveredOver();
+		void OnUpgradeBtnHumansHoveredOver();
+		void OnUpgradeBtnMonstersHoveredOver();
+		void OnUpgradeBtnUndeadHoveredOver();
+		void OnUpgradeBtnObjectsHoveredOut();
+		void OnUpgradeBtnElvesHoveredOut();
+		void OnUpgradeBtnHumansHoveredOut();
+		void OnUpgradeBtnMonstersHoveredOut();
+		void OnUpgradeBtnUndeadHoveredOut();
 	}
 	#endregion
 	#region MVC Properties and functions to override
@@ -72,6 +83,16 @@ public class LifeSpanUIView : MVCUIView
 		UIModel.onHumansHoveredOut += p_listener.OnHumansHoveredOut;
 		UIModel.onMonstersHoveredOut += p_listener.OnMonstersHoveredOut;
 		UIModel.onUndeadHoveredOut += p_listener.OnUndeadHoveredOut;
+		UIModel.onObjectsUpgradeBtnHoveredOver += p_listener.OnUpgradeBtnObjectsHoveredOver;
+		UIModel.onElvesUpgradeBtnHoveredOver += p_listener.OnUpgradeBtnElvesHoveredOver;
+		UIModel.onHumansUpgradeBtnHoveredOver += p_listener.OnUpgradeBtnHumansHoveredOver;
+		UIModel.onMonstersUpgradeBtnHoveredOver += p_listener.OnUpgradeBtnMonstersHoveredOver;
+		UIModel.onUndeadUpgradeBtnHoveredOver += p_listener.OnUpgradeBtnUndeadHoveredOver;
+		UIModel.onObjectsUpgradeBtnHoveredOut += p_listener.OnUpgradeBtnObjectsHoveredOut;
+		UIModel.onElvesUpgradeBtnHoveredOut += p_listener.OnUpgradeBtnElvesHoveredOut;
+		UIModel.onHumansUpgradeBtnHoveredOut += p_listener.OnUpgradeBtnHumansHoveredOut;
+		UIModel.onMonstersUpgradeBtnHoveredOut += p_listener.OnUpgradeBtnMonstersHoveredOut;
+		UIModel.onUndeadUpgradeBtnHoveredOut += p_listener.OnUpgradeBtnUndeadHoveredOut;
 	}
 
 	public void Unsubscribe(IListener p_listener)
@@ -91,6 +112,16 @@ public class LifeSpanUIView : MVCUIView
 		UIModel.onHumansHoveredOut -= p_listener.OnHumansHoveredOut;
 		UIModel.onMonstersHoveredOut -= p_listener.OnMonstersHoveredOut;
 		UIModel.onUndeadHoveredOut -= p_listener.OnUndeadHoveredOut;
+		UIModel.onObjectsUpgradeBtnHoveredOver -= p_listener.OnUpgradeBtnObjectsHoveredOver;
+		UIModel.onElvesUpgradeBtnHoveredOver -= p_listener.OnUpgradeBtnElvesHoveredOver;
+		UIModel.onHumansUpgradeBtnHoveredOver -= p_listener.OnUpgradeBtnHumansHoveredOver;
+		UIModel.onMonstersUpgradeBtnHoveredOver -= p_listener.OnUpgradeBtnMonstersHoveredOver;
+		UIModel.onUndeadUpgradeBtnHoveredOver -= p_listener.OnUpgradeBtnUndeadHoveredOver;
+		UIModel.onObjectsUpgradeBtnHoveredOut -= p_listener.OnUpgradeBtnObjectsHoveredOut;
+		UIModel.onElvesUpgradeBtnHoveredOut -= p_listener.OnUpgradeBtnElvesHoveredOut;
+		UIModel.onHumansUpgradeBtnHoveredOut -= p_listener.OnUpgradeBtnHumansHoveredOut;
+		UIModel.onMonstersUpgradeBtnHoveredOut -= p_listener.OnUpgradeBtnMonstersHoveredOut;
+		UIModel.onUndeadUpgradeBtnHoveredOut -= p_listener.OnUpgradeBtnUndeadHoveredOut;
 	}
 	#endregion
 	
@@ -102,6 +133,7 @@ public class LifeSpanUIView : MVCUIView
 	}
 	public void UpdateTileObjectUpgradeButtonInteractable(bool p_interactable) {
 		UIModel.btnObjectsUpgrade.interactable = p_interactable;
+		UIModel.txtObjectsUpgrade.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
 	}
 	public void UpdateTileObjectUpgradePriceState(bool p_state) {
 		UIModel.txtTileObjectCost.gameObject.SetActive(p_state);
@@ -115,6 +147,7 @@ public class LifeSpanUIView : MVCUIView
 	}
 	public void UpdateElvesUpgradeButtonInteractable(bool p_interactable) {
 		UIModel.btnElvesUpgrade.interactable = p_interactable;
+		UIModel.txtElvesUpgrade.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
 	}
 	public void UpdateElvesUpgradePriceState(bool p_state) {
 		UIModel.txtElvesCost.gameObject.SetActive(p_state);
@@ -128,6 +161,7 @@ public class LifeSpanUIView : MVCUIView
 	}
 	public void UpdateHumansUpgradeButtonInteractable(bool p_interactable) {
 		UIModel.btnHumansUpgrade.interactable = p_interactable;
+		UIModel.txtHumansUpgrade.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
 	}
 	public void UpdateHumansUpgradePriceState(bool p_state) {
 		UIModel.txtHumansCost.gameObject.SetActive(p_state);
@@ -141,6 +175,7 @@ public class LifeSpanUIView : MVCUIView
 	}
 	public void UpdateMonstersUpgradeButtonInteractable(bool p_interactable) {
 		UIModel.btnMonstersUpgrade.interactable = p_interactable;
+		UIModel.txtMonstersUpgrade.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
 	}
 	public void UpdateMonstersUpgradePriceState(bool p_state) {
 		UIModel.txtMonstersCost.gameObject.SetActive(p_state);
@@ -154,6 +189,7 @@ public class LifeSpanUIView : MVCUIView
 	}
 	public void UpdateUndeadUpgradeButtonInteractable(bool p_interactable) {
 		UIModel.btnUndeadUpgrade.interactable = p_interactable;
+		UIModel.txtUndeadUpgrade.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
 	}
 	public void UpdateUndeadUpgradePriceState(bool p_state) {
 		UIModel.txtUndeadCost.gameObject.SetActive(p_state);
