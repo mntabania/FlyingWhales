@@ -22,7 +22,7 @@ namespace Inner_Maps.Location_Structures {
             selectableSize = new Vector2(10f, 10f);
             _ownedSummons = new HashSet<Summon>();
         }
-        public Kennel(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public Kennel(Region location, SaveDataDemonicStructure data) : base(location, data) {
             selectableSize = new Vector2(10f, 10f);
             _ownedSummons = new HashSet<Summon>();
         }

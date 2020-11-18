@@ -15,7 +15,7 @@ namespace Inner_Maps.Location_Structures {
             AddStructureTag(STRUCTURE_TAG.Monster_Spawner);
         }
 
-        public MonsterLair(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public MonsterLair(Region location, SaveDataNaturalStructure data) : base(location, data) {
             AddStructureTag(STRUCTURE_TAG.Dangerous);
             AddStructureTag(STRUCTURE_TAG.Treasure);
             AddStructureTag(STRUCTURE_TAG.Monster_Spawner);

@@ -21,7 +21,7 @@ namespace Inner_Maps.Location_Structures {
         public RuinedZoo(Region location) : base(STRUCTURE_TYPE.RUINED_ZOO, location) {
             SetMaxHPAndReset(6000);
         }
-        public RuinedZoo(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public RuinedZoo(Region location, SaveDataManMadeStructure data) : base(location, data) {
             SetMaxHP(6000);
         }
 

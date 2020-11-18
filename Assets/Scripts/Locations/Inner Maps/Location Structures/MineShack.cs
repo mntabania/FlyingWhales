@@ -3,7 +3,7 @@
         public MineShack(Region location) : base(STRUCTURE_TYPE.MINE_SHACK, location) {
             SetMaxHPAndReset(8000);
         }
-        public MineShack(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public MineShack(Region location, SaveDataManMadeStructure data) : base(location, data) {
             SetMaxHP(8000);
         }
     }

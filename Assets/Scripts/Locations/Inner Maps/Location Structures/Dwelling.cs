@@ -20,7 +20,7 @@ namespace Inner_Maps.Location_Structures {
             SetMaxHPAndReset(3500);
         }
 
-        public Dwelling(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public Dwelling(Region location, SaveDataManMadeStructure data) : base(location, data) {
             //residents = new List<Character>();
             maxResidentCapacity = 2;
             SetMaxHP(3500);

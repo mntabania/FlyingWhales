@@ -8,15 +8,17 @@ namespace Inner_Maps.Location_Structures {
     public class Biolab : DemonicStructure {
         public override Vector2 selectableSize { get; }
         public GameDate replenishDate { get; private set; }
-        
+
+        #region getters
+        public override System.Type serializedData => typeof(SaveDataBiolab);
+        #endregion
+
         public Biolab(Region location) : base(STRUCTURE_TYPE.BIOLAB, location) {
             selectableSize = new Vector2(10f, 10f);
         }
-        public Biolab(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public Biolab(Region location, SaveDataBiolab data) : base(location, data) {
             selectableSize = new Vector2(10f, 10f);
-            SaveDataBiolab savedBiolab = data as SaveDataBiolab;
-            Assert.IsNotNull(savedBiolab);
-            replenishDate = savedBiolab.replenishDate;
+            replenishDate = data.replenishDate;
             SchedulingManager.Instance.AddEntry(replenishDate, ProcessReplenishingOfPlaguedRatCharge, null);
         }
 

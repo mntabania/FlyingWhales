@@ -6,7 +6,7 @@ namespace Inner_Maps.Location_Structures {
         public DemonicPrison(Region location) : base(STRUCTURE_TYPE.DEMONIC_PRISON, location){
             selectableSize = new Vector2(10f, 10f);
         }
-        public DemonicPrison(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public DemonicPrison(Region location, SaveDataDemonicStructure data) : base(location, data) {
             selectableSize = new Vector2(10f, 10f);
         }
         

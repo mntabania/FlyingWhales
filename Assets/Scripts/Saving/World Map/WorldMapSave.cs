@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using Databases;
 using Events.World_Events;
 using Inner_Maps.Location_Structures;
@@ -155,16 +156,17 @@ public class WorldMapSave {
 
     #region Structures
     private SaveDataLocationStructure CreateNewSaveDataFor(LocationStructure structure) {
-        if (structure is DemonicStructure) {
-            return new SaveDataDemonicStructure();
-        } else if (structure is NaturalStructure) {
-            if (structure is Cave) {
-                return new SaveDataCave();
-            }
-            return new SaveDataNaturalStructure();
-        } else {
-            return new SaveDataManMadeStructure();
-        }
+        return Activator.CreateInstance(structure.serializedData) as SaveDataLocationStructure;
+        //if (structure is DemonicStructure) {
+        //    return new SaveDataDemonicStructure();
+        //} else if (structure is NaturalStructure) {
+        //    if (structure is Cave) {
+        //        return new SaveDataCave();
+        //    }
+        //    return new SaveDataNaturalStructure();
+        //} else {
+        //    return new SaveDataManMadeStructure();
+        //}
     }
     private void SaveStructures(List<LocationStructure> structures) {
         //structures

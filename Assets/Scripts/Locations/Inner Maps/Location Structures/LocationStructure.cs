@@ -54,11 +54,11 @@ namespace Inner_Maps.Location_Structures {
         public virtual bool isDwelling => false;
         public virtual Vector3 worldPosition { get; protected set; }
         public virtual Vector2 selectableSize => Vector2.zero;
+        public virtual Type serializedData => typeof(SaveDataLocationStructure);
         public LocationStructure currentStructure => this;
         public BaseSettlement currentSettlement => settlementLocation;
         //public Faction owner => settlementLocation != null ? settlementLocation.owner : _owner;
         public OBJECT_TYPE objectType => OBJECT_TYPE.Structure;
-        public Type serializedData => typeof(SaveDataLocationStructure);
         public PARTY_TARGET_DESTINATION_TYPE partyTargetDestinationType => PARTY_TARGET_DESTINATION_TYPE.Structure;
         #endregion
 

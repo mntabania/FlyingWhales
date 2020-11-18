@@ -3,7 +3,7 @@
         public Smithy(Region location) : base(STRUCTURE_TYPE.SMITHY, location) {
             SetMaxHPAndReset(8000);
         }
-        public Smithy(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public Smithy(Region location, SaveDataManMadeStructure data) : base(location, data) {
             SetMaxHP(8000);
         }
     }

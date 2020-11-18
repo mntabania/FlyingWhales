@@ -3,7 +3,7 @@
         public Cemetery(Region location) : base(STRUCTURE_TYPE.CEMETERY, location) {
             wallsAreMadeOf = RESOURCE.WOOD;
         }
-        public Cemetery(Region location, SaveDataLocationStructure data) : base(location, data) { 
+        public Cemetery(Region location, SaveDataManMadeStructure data) : base(location, data) { 
             wallsAreMadeOf = RESOURCE.WOOD;
         }
     }

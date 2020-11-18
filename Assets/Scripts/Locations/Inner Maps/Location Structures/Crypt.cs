@@ -10,7 +10,7 @@ namespace Inner_Maps.Location_Structures {
         public Crypt(Region location) : base(STRUCTURE_TYPE.CRYPT, location){
             selectableSize = new Vector2(10f, 10f);
         }
-        public Crypt(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public Crypt(Region location, SaveDataDemonicStructure data) : base(location, data) {
             selectableSize = new Vector2(10f, 10f);
         }
 

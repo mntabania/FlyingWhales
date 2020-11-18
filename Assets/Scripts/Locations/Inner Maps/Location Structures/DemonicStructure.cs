@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using Inner_Maps;
 using Debug = System.Diagnostics.Debug;
@@ -11,13 +12,14 @@ namespace Inner_Maps.Location_Structures {
         
         #region Getters
         public override Vector2 selectableSize => structureObj.size;
+        public override Type serializedData => typeof(SaveDataDemonicStructure);
         #endregion
-        
+
         protected DemonicStructure(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) {
             SetMaxHPAndReset(3000);
             currentAttackers = new HashSet<Character>();
         }
-        public DemonicStructure(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public DemonicStructure(Region location, SaveDataDemonicStructure data) : base(location, data) {
             currentAttackers = new HashSet<Character>();
         }
 

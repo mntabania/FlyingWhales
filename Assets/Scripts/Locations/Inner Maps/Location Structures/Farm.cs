@@ -7,7 +7,7 @@ namespace Inner_Maps.Location_Structures {
             selectableSize = new Vector2(5f, 5f);
             wallsAreMadeOf = RESOURCE.WOOD;
         }
-        public Farm(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public Farm(Region location, SaveDataManMadeStructure data) : base(location, data) {
             selectableSize = new Vector2(5f, 5f);
             wallsAreMadeOf = RESOURCE.WOOD;
         }

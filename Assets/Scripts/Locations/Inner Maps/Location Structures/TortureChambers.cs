@@ -13,7 +13,7 @@ namespace Inner_Maps.Location_Structures {
             selectableSize = new Vector2(10f, 10f);
             nameWithoutID = "Prison";
         }
-        public TortureChambers(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public TortureChambers(Region location, SaveDataDemonicStructure data) : base(location, data) {
             selectableSize = new Vector2(10f, 10f);
         }
 

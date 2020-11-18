@@ -19,13 +19,17 @@ namespace Inner_Maps.Location_Structures {
         /// </summary>
         public List<InnerMapHexTile> caveHexTiles { get; }
         public override InnerMapHexTile occupiedHexTile => caveHexTiles.Count > 0 ? caveHexTiles[0] : null;
-        
+
+        #region getters
+        public override System.Type serializedData => typeof(SaveDataCave);
+        #endregion
+
         public Cave(Region location) : base(STRUCTURE_TYPE.CAVE, location) {
             resourceYield = GetRandomResourceYield();
             caveHexTiles = new List<InnerMapHexTile>();
         }
 
-        public Cave(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public Cave(Region location, SaveDataCave data) : base(location, data) {
             resourceYield = GetRandomResourceYield();
             caveHexTiles = new List<InnerMapHexTile>();
         }
