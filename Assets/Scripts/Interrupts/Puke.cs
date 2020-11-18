@@ -27,6 +27,10 @@ namespace Interrupts {
             interruptHolder.actor.SetPOIState(POI_STATE.ACTIVE);
             return true;
         }
+        public override bool PerTickInterrupt(InterruptHolder interruptHolder) {
+            interruptHolder.actor.needsComponent.AdjustFullness(-1);
+            return base.PerTickInterrupt(interruptHolder);
+        }
         public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
             string response = base.ReactionToActor(actor, target, witness, interrupt, status);
 

@@ -34,6 +34,10 @@ namespace Interrupts {
             }
             return response;
         }
+        public override bool PerTickInterrupt(InterruptHolder interruptHolder) {
+            interruptHolder.actor.needsComponent.AdjustTiredness(-2);
+            return base.PerTickInterrupt(interruptHolder);
+        }
         #endregion
     }
 }

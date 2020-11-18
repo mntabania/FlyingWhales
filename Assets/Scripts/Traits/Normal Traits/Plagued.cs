@@ -244,6 +244,9 @@ namespace Traits {
             base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
         }
         public override void AfterDeath(Character character) {
+            if (owner.traitContainer.HasTrait("Plague Reservoir")) {
+                return;
+            }
             if (character.characterClass.className != "Zombie") {
                 PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(2, character);    
             }
