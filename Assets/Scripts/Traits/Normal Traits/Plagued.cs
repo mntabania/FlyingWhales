@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Plague.Fatality;
 using Plague.Symptom;
 using Plague.Transmission;
@@ -37,6 +38,7 @@ namespace Traits {
         #region getters
         public override bool isPersistent => true;
         public int numberOfHoursPassed => _numberOfHoursPassed;
+        public override Type serializedData => typeof(SaveDataPlagued);
         #endregion
 
         public Plagued() {
@@ -55,6 +57,7 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Hour_Started_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Start_Perform_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_After_Effect_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.After_Death);
         }
 
@@ -247,10 +250,13 @@ namespace Traits {
             if (owner.traitContainer.HasTrait("Plague Reservoir")) {
                 return;
             }
-            if (character.characterClass.className != "Zombie") {
+            _characterDeath?.Invoke(character);
+        }
+        public override bool OnDeath(Character character) {
+            if (!character.characterClass.IsZombie()) {
                 PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(2, character);    
             }
-            _characterDeath?.Invoke(character);
+            return base.OnDeath(character);
         }
         #endregion
 
