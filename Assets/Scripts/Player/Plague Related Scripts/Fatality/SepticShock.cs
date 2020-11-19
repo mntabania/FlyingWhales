@@ -10,7 +10,7 @@ namespace Plague.Fatality {
         }
         public override void CharacterGainedTrait(Character p_character, Trait p_gainedTrait) {
             if (p_gainedTrait.name == "Starving") {
-                if (GameUtilities.RollChance(5)) {//5
+                if (GameUtilities.RollChance(15)) {//5
                     ActivateFatality(p_character);
                 }
             }
