@@ -107,7 +107,7 @@ public class OnDeathUIController : MVCUIController, OnDeathUIView.IListener
 	private bool CanAffordUnlockOrUpgrade(PLAGUE_DEATH_EFFECT p_deathEffect) {
 		var cost = GetUnlockOrUpgradeCost(p_deathEffect);
 		if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
-			return PlayerManager.Instance.player.plagueComponent.plaguePoints > cost;
+			return PlayerManager.Instance.player.plagueComponent.plaguePoints >= cost;
 		} else {
 			return true;	
 		}

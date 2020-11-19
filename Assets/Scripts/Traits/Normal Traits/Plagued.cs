@@ -7,6 +7,7 @@ using Plague.Death_Effect;
 using UnityEngine.Assertions;
 using UnityEngine;
 using Traits;
+using System.Linq;
 
 namespace Traits {
     public class Plagued : Status {
@@ -23,12 +24,12 @@ namespace Traits {
             void OnDeath(Character p_character); 
         }
 
-        private System.Action<Character> _perTickMovement;
-        private System.Action<Character, Trait> _characterGainedTrait;
-        private System.Func<Character, ActualGoapNode, bool> _characterStartedPerformingAction;
-        private System.Action<Character, int> _hourStarted;
-        private System.Action<Character, ActualGoapNode> _characterDonePerformingAction;
-        private System.Action<Character> _characterDeath;
+        private Action<Character> _perTickMovement;
+        private Action<Character, Trait> _characterGainedTrait;
+        private Func<Character, ActualGoapNode, bool> _characterStartedPerformingAction;
+        private Action<Character, int> _hourStarted;
+        private Action<Character, ActualGoapNode> _characterDonePerformingAction;
+        private Action<Character> _characterDeath;
 
         public IPointOfInterest owner { get; private set; } //poi that has the poison
 
@@ -109,7 +110,6 @@ namespace Traits {
                             PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(1, character);
                         }
                     }
-                    
                 }
                 Messenger.AddListener<Fatality>(PlayerSignals.ADDED_PLAGUE_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
                 Messenger.AddListener<PlagueSymptom>(PlayerSignals.ADDED_PLAGUE_DISEASE_SYMPTOM, OnPlagueDiseaseSymptomAdded);

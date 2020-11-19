@@ -1349,6 +1349,9 @@
           </e>
           <e p="Extensions.cs" t="Include" />
           <e p="Factions" t="Include">
+            <e p="Faction Components" t="Include">
+              <e p="FactionEventDispatcher.cs" t="Include" />
+            </e>
             <e p="Faction Ideologies" t="Include">
               <e p="BoneGolemMakers.cs" t="Include" />
               <e p="DemonWorship.cs" t="Include" />
@@ -1664,6 +1667,7 @@
                 <e p="CanSummonBoneGolem.cs" t="Include" />
                 <e p="CanTakeApprehend.cs" t="Include" />
                 <e p="CanTakeBuryJob.cs" t="Include" />
+                <e p="CanTakeChangeClass.cs" t="Include" />
                 <e p="CanTakeCounterattackJob.cs" t="Include" />
                 <e p="CanTakeExterminateJob.cs" t="Include" />
                 <e p="CanTakeHaulJob.cs" t="Include" />
@@ -2209,11 +2213,13 @@
             <e p="Settlements" t="Include">
               <e p="BaseSettlement.cs" t="Include" />
               <e p="Components" t="Include">
+                <e p="NPCSettlementEventDispatcher.cs" t="Include" />
                 <e p="SettlementJobPriorityComponent.cs" t="Include" />
               </e>
               <e p="NPCSettlement.cs" t="Include" />
               <e p="PlayerSettlement.cs" t="Include" />
               <e p="Settlement Events" t="Include">
+                <e p="Plagued.cs" t="Include" />
                 <e p="SettlementEvent.cs" t="Include" />
                 <e p="VampireHunt.cs" t="Include" />
                 <e p="WerewolfHunt.cs" t="Include" />

@@ -128,6 +128,10 @@ public class TransmissionUIView : MVCUIView
 		RuinarchText txtCost = GetTransmissionCostText(p_transmissionType);
 		txtCost.text = p_newCost;
 	}
+	public void UpdateTransmissionCostState(PLAGUE_TRANSMISSION p_transmissionType, bool p_state) {
+		RuinarchText txtCost = GetTransmissionCostText(p_transmissionType);
+		txtCost.gameObject.SetActive(p_state);
+	}
 	public void UpdateTransmissionCostPlagueIcon(PLAGUE_TRANSMISSION p_transmissionType, bool state) {
 		GameObject iconGO = GetCostPlagueIcon(p_transmissionType);
 		iconGO.SetActive(state);

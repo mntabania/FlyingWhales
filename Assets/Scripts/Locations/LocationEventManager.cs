@@ -19,7 +19,9 @@ public class LocationEventManager {
         _activeEvents = new List<SettlementEvent>();
         for (int i = 0; i < saveData.settlementEvents.Count; i++) {
             SaveDataSettlementEvent saveDataSettlementEvent = saveData.settlementEvents[i];
-            _activeEvents.Add(saveDataSettlementEvent.Load());
+            SettlementEvent settlementEvent = saveDataSettlementEvent.Load();
+            settlementEvent.LoadAdditionalData(location);
+            _activeEvents.Add(settlementEvent);
         }
     }
 
@@ -43,6 +45,9 @@ public class LocationEventManager {
             }
         }
         return false;
+    }
+    public bool HasActiveEvent(SettlementEvent p_settlementEvent) {
+        return activeEvents.Contains(p_settlementEvent);
     }
     private SettlementEvent CreateNewSettlementEvent(SETTLEMENT_EVENT settlementEvent) {
         var typeName = $"Locations.Settlements.Settlement_Events.{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(settlementEvent.ToString())}";

@@ -234,5 +234,8 @@ public class CharacterClass {
     public bool CanDoJob(JOB_TYPE jobType) {
         return priorityJobs.Contains(jobType) || ableJobs.Contains(jobType) || secondaryJobs.Contains(jobType);
     }
+    public bool IsSpecialClass() {
+        return className == "Necromancer" || className == "Hero" || className == "Vampire Lord" || className == "Cult Leader";
+    }
     #endregion
 }

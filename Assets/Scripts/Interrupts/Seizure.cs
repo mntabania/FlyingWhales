@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Traits;
-
+using UtilityScripts;
 namespace Interrupts {
     public class Seizure : Interrupt {
         public Seizure() : base(INTERRUPT.Seizure) {
@@ -14,10 +14,13 @@ namespace Interrupts {
         }
 
         #region Overrides
-        //public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
-        //    interruptHolder.actor.Death("Heatstroke", interrupt: this, _deathLog: interruptHolder.effectLog);
-        //    return true;
-        //}
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+            if (GameUtilities.RollChance(5) && interruptHolder.actor.homeSettlement != null && 
+                Locations.Settlements.Settlement_Events.Plagued.HasMinimumAmountOfPlaguedVillagersForEvent(interruptHolder.actor.homeSettlement)) {
+                interruptHolder.actor.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Plagued);
+            }
+            return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
+        }
         public override string ReactionToActor(Character actor, IPointOfInterest target,
             Character witness,
             InterruptHolder interrupt, REACTION_STATUS status) {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 using Plague.Transmission;
-
+using UtilityScripts;
 namespace Interrupts {
     public class Sneeze : Interrupt {
         public Sneeze() : base(INTERRUPT.Sneeze) {
@@ -18,6 +18,10 @@ namespace Interrupts {
             if (actor.traitContainer.HasTrait("Plagued")) {
                 AirborneTransmission.Instance.Transmit(actor, null, 1);
                 return true;
+            }
+            if (GameUtilities.RollChance(5) && interruptHolder.actor.homeSettlement != null && 
+                Locations.Settlements.Settlement_Events.Plagued.HasMinimumAmountOfPlaguedVillagersForEvent(interruptHolder.actor.homeSettlement)) {
+                interruptHolder.actor.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Plagued);
             }
             return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
         }

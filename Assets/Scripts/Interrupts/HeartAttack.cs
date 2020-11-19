@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Traits;
-
+﻿using UtilityScripts;
 namespace Interrupts {
     public class HeartAttack : Interrupt {
         public HeartAttack() : base(INTERRUPT.Heart_Attack) {
@@ -16,6 +12,10 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
+            if (GameUtilities.RollChance(15) && interruptHolder.actor.homeSettlement != null && 
+                Locations.Settlements.Settlement_Events.Plagued.HasMinimumAmountOfPlaguedVillagersForEvent(interruptHolder.actor.homeSettlement)) {
+                interruptHolder.actor.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Plagued);
+            }
             interruptHolder.actor.Death("Heart Attack", _deathLog: interruptHolder.effectLog, interrupt: this);
             return true;
         }

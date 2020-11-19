@@ -1,10 +1,17 @@
 ﻿using System;
 using UtilityScripts;
 namespace Plague.Transmission {
+
+    public interface IPlagueTransmissionListener {
+        void OnPlagueTransmitted(IPointOfInterest p_target);
+    }
+    
     public abstract class Transmission<T> where T : Transmission<T>, new() {
         private static readonly Lazy<T> Lazy = new Lazy<T>(() => Activator.CreateInstance(typeof(T), true) as T);
         public static T Instance => Lazy.Value;
 
+        private Action<IPointOfInterest> _plagueTransmitted;
+        
         public abstract PLAGUE_TRANSMISSION transmissionType { get; }
         
         protected abstract int GetTransmissionRate(int level);
@@ -36,7 +43,17 @@ namespace Plague.Transmission {
                 log.AddToFillers(p_target, p_target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToDatabase();
             }
+            _plagueTransmitted?.Invoke(p_target);   
         }
+
+        #region Listeners
+        public void SubscribeToTransmission(IPlagueTransmissionListener pPlagueTransmissionListener) {
+            _plagueTransmitted += pPlagueTransmissionListener.OnPlagueTransmitted;
+        }
+        public void UnsubscribeToTransmission(IPlagueTransmissionListener pPlagueTransmissionListener) {
+            _plagueTransmitted -= pPlagueTransmissionListener.OnPlagueTransmitted;
+        }
+        #endregion
     }
 
     public static class TransmissionExtensions {

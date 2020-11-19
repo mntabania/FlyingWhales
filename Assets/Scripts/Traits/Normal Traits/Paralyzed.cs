@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UtilityScripts;
 namespace Traits {
     public class Paralyzed : Status {
 
@@ -32,18 +32,17 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if (addedTo is Character) {
-                owner = addedTo as Character;
-                // owner.CancelAllJobs();
-                //Messenger.AddListener(Signals.TICK_STARTED, CheckParalyzedTrait);
-                //Messenger.AddListener(Signals.HOUR_STARTED, CheckParalyzedTraitPerHour);
+            if (addedTo is Character character) {
+                owner = character;
                 Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+                if (GameUtilities.RollChance(100) && character.homeSettlement != null && //15 
+                    Locations.Settlements.Settlement_Events.Plagued.HasMinimumAmountOfPlaguedVillagersForEvent(character.homeSettlement)) {
+                    character.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Plagued);
+                }
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (owner != null) {
-                //Messenger.RemoveListener(Signals.TICK_STARTED, CheckParalyzedTrait);
-                //Messenger.RemoveListener(Signals.HOUR_STARTED, CheckParalyzedTraitPerHour);
                 Messenger.RemoveListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
@@ -52,10 +51,6 @@ namespace Traits {
             base.OnTickStarted(traitable);
             CheckParalyzedTrait();
         }
-        // public override void OnHourStarted() {
-        //     base.OnHourStarted();
-        //     CheckParalyzedTraitPerHour();
-        // }
         #endregion
         
         private void CheckParalyzedTrait() {

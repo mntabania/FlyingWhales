@@ -7,6 +7,7 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations;
 using Locations.Settlements;
+using Locations.Settlements.Components;
 using Locations.Settlements.Settlement_Types;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -15,6 +16,7 @@ using Traits;
 using Random = UnityEngine.Random;
 
 public class NPCSettlement : BaseSettlement, IJobOwner {
+
     public LocationStructure prison { get; private set; }
     public LocationStructure mainStorage { get; private set; }
     public CityCenter cityCenter { get; private set; }
@@ -34,6 +36,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public GameDate plaguedExpiryDate { get; private set; }
     public SettlementJobTriggerComponent settlementJobTriggerComponent { get; }
     public SettlementClassTracker settlementClassTracker { get; }
+    public NPCSettlementEventDispatcher npcSettlementEventDispatcher { get; }
     public bool hasPeasants { get; private set; }
     public bool hasWorkers { get; private set; }
 
@@ -61,6 +64,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         jobPriorityComponent = new SettlementJobPriorityComponent(this);
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
         settlementClassTracker = new SettlementClassTracker();
+        npcSettlementEventDispatcher = new NPCSettlementEventDispatcher();
         _plaguedExpiryKey = string.Empty;
         _neededObjects = new List<TILE_OBJECT_TYPE>() {
             TILE_OBJECT_TYPE.HEALING_POTION,
@@ -81,6 +85,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         jobPriorityComponent = new SettlementJobPriorityComponent(this);
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
         settlementClassTracker = new SettlementClassTracker(saveData.classTracker);
+        npcSettlementEventDispatcher = new NPCSettlementEventDispatcher();
         _plaguedExpiryKey = string.Empty;
         _neededObjects = new List<TILE_OBJECT_TYPE>(saveData.neededObjects);
     }
@@ -412,6 +417,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         } else {
             Messenger.Broadcast(CharacterSignals.ON_SETTLEMENT_RULER_REMOVED, this, previousRuler);
         }
+        npcSettlementEventDispatcher.ExecuteSettlementRulerChangedEvent(newRuler, this);
     }
     private void CheckForNewRulerDesignation() {
         string debugLog =
@@ -1445,12 +1451,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #endregion
 
     #region Faction
-    public override void SetOwner(Faction owner) {
-        base.SetOwner(owner);
-        if (owner == null) {
+    public override void SetOwner(Faction p_newOwner) {
+        Faction previousOwner = this.owner;
+        base.SetOwner(p_newOwner);
+        if (p_newOwner == null) {
             //if owner of settlement becomes null, then set the settlement as no longer under siege
             SetIsUnderSiege(false);
         }
+        npcSettlementEventDispatcher.ExecuteFactionOwnerChangedEvent(previousOwner, p_newOwner, this);
     }
     #endregion
 
