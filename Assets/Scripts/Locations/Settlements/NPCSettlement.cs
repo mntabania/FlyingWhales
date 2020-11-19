@@ -5,6 +5,7 @@ using System.Linq;
 using Databases;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations;
 using Locations.Settlements;
 using Locations.Settlements.Settlement_Types;
 using UnityEngine;
@@ -27,15 +28,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
 
     //structures
     public List<JobQueueItem> availableJobs { get; }
-    public LocationClassManager classManager { get; }
     public LocationEventManager eventManager { get; private set; }
     public SettlementJobPriorityComponent jobPriorityComponent { get; }
     public SettlementType settlementType { get; private set; }
     public GameDate plaguedExpiryDate { get; private set; }
     public SettlementJobTriggerComponent settlementJobTriggerComponent { get; }
+    public SettlementClassTracker settlementClassTracker { get; }
     public bool hasPeasants { get; private set; }
     public bool hasWorkers { get; private set; }
-    
+
     private readonly Region _region;
     private readonly WeightedDictionary<Character> newRulerDesignationWeights;
     private int newRulerDesignationChance;
@@ -56,10 +57,10 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         ResetNewRulerDesignationChance();
         availableJobs = new List<JobQueueItem>();
-        classManager = new LocationClassManager();
         eventManager = new LocationEventManager(this);
         jobPriorityComponent = new SettlementJobPriorityComponent(this);
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
+        settlementClassTracker = new SettlementClassTracker();
         _plaguedExpiryKey = string.Empty;
         _neededObjects = new List<TILE_OBJECT_TYPE>() {
             TILE_OBJECT_TYPE.HEALING_POTION,
@@ -76,10 +77,10 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         ResetNewRulerDesignationChance();
         availableJobs = new List<JobQueueItem>();
-        classManager = new LocationClassManager();
         // eventManager = new LocationEventManager(this, saveData.eventManager); //loaded event manager at LoadReferences
         jobPriorityComponent = new SettlementJobPriorityComponent(this);
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
+        settlementClassTracker = new SettlementClassTracker(saveData.classTracker);
         _plaguedExpiryKey = string.Empty;
         _neededObjects = new List<TILE_OBJECT_TYPE>(saveData.neededObjects);
     }
@@ -355,7 +356,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
         if (character.homeSettlement == this) {
-            classManager.OnResidentChangeClass(character, previousClass, currentClass);
+            settlementClassTracker.OnResidentChangedClass(previousClass.className, character);
             jobPriorityComponent.ChangeClassResidentResetPrimaryJob(character);
         }
     }
@@ -366,7 +367,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             OnAddResident(character);
             if (character.race == RACE.DEMON || character is Summon) { return true; }
             if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
-                classManager.OnAddResident(character);
                 jobPriorityComponent.OnAddResident(character);    
             }
             return true;
@@ -379,7 +379,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             character.SetHomeSettlement(null);
             OnRemoveResident(character);
             if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
-                classManager.OnRemoveResident(character);
                 jobPriorityComponent.OnRemoveResident(character);
             }
             UnassignJobsTakenBy(character);
@@ -673,6 +672,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void OnAddResident(Character character) {
         eventManager.OnResidentAdded(character);
+        settlementClassTracker.OnResidentAdded(character);
         if(residents.Count == 1 && locationType == LOCATION_TYPE.VILLAGE) {
             //First resident
             ChangeSettlementTypeAccordingTo(character);
@@ -693,6 +693,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void OnRemoveResident(Character character) {
         eventManager.OnResidentRemoved(character);
+        settlementClassTracker.OnResidentRemoved(character);
         UnapplyAbleJobsFromSettlement(character);
         if (character.characterClass.className == "Peasant") {
             UpdateHasPeasants();

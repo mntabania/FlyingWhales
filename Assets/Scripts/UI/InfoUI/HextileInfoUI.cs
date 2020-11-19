@@ -85,10 +85,6 @@ public class HextileInfoUI : InfoUIBase {
         string summary = currentlyShowingHexTile.ToString();
         if (currentlyShowingHexTile.settlementOnTile is NPCSettlement npcSettlement) {
             summary = $"Settlement Ruler: {npcSettlement.ruler?.name ?? "None"}";
-            summary += "\nUnlocked classes:";
-            foreach (var combatantClass in npcSettlement.classManager.combatantClasses) {
-                summary += $"\n\t {combatantClass.Key} - {combatantClass.Value.ToString()}";
-            }
             summary += $"\n{npcSettlement.name} Job Assignments: ";
             summary += npcSettlement.jobPriorityComponent.GetJobAssignments();
         }

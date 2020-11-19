@@ -1341,10 +1341,6 @@
           </e>
           <e p="Enums.cs" t="Include" />
           <e p="Events" t="Include">
-            <e p="Location Events" t="Include">
-              <e p="LocationEvent.cs" t="Include" />
-              <e p="NewResidentEvent.cs" t="Include" />
-            </e>
             <e p="World Events" t="Include">
               <e p="CultLeaderEvent.cs" t="Include" />
               <e p="VillagerMigration.cs" t="Include" />
