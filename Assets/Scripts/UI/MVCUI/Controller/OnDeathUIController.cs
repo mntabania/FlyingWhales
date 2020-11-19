@@ -76,12 +76,18 @@ public class OnDeathUIController : MVCUIController, OnDeathUIView.IListener
 	public void OnSpiritHoveredOut() { HideTooltip(); }
 	#endregion
 	
-	private void ShowTooltip(PLAGUE_DEATH_EFFECT p_deathEffect, UIHoverPosition p_hoverPosition) {
+	private void ShowTooltip(PLAGUE_DEATH_EFFECT p_deathEffectType, UIHoverPosition p_hoverPosition) {
 		if (UIManager.Instance != null) {
-			if (PlagueDisease.Instance.IsDeathEffectActive(p_deathEffect, out var deathEffect)) {
-				UIManager.Instance.ShowSmallInfo(deathEffect.GetCurrentEffectTooltip(), p_hoverPosition, 
-					deathEffect.GetCurrentEffectDescription());	
+			int currentLevel = 0;
+			if (PlagueDisease.Instance.IsDeathEffectActive(p_deathEffectType, out var deathEffect)) {
+				currentLevel = deathEffect.level;
 			}
+			string summary = $"<font=\"Eczar-Medium\"><line-height=100%><size=18>Current Effect:</font>";
+			summary = $"{summary}\n<line-height=70%><size=16>{p_deathEffectType.GetEffectTooltip(currentLevel)}";
+			summary = $"{summary}\n\n<color=\"green\"><font=\"Eczar-Medium\"><line-height=100%><size=18>On Upgrade:</font>";
+			summary = $"{summary}\n<line-height=70%><size=16>{p_deathEffectType.GetEffectTooltip(currentLevel + 1)}";
+			
+			UIManager.Instance.ShowSmallInfo(summary, p_hoverPosition);
 		}
 	}
 	private void HideTooltip() {

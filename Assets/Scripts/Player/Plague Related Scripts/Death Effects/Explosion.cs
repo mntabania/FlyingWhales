@@ -45,8 +45,8 @@ namespace Plague.Death_Effect {
                     return string.Empty;
             }
         }
-        public override string GetCurrentEffectTooltip() {
-            switch (_level) {
+        public virtual string GetEffectTooltip(int p_level) {
+            switch (p_level) {
                 case 1:
                     return "Ignite the character's corpse when it dies.";
                 case 2:
