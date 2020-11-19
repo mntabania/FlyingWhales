@@ -170,18 +170,18 @@ namespace Traits {
             switch (p_actionNode.action.actionCategory) {
                 case ACTION_CATEGORY.CONSUME:
                     if (!otherObject.traitContainer.HasTrait("Plagued")) {
-                        ConsumptionTransmission.Instance.Transmit(owner, otherObject, 1);    
+                        ConsumptionTransmission.Instance.Transmit(owner, otherObject, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Consumption));    
                     }
                     break;
                 case ACTION_CATEGORY.DIRECT:
                     if (!otherObject.traitContainer.HasTrait("Plagued")) {
-                        PhysicalContactTransmission.Instance.Transmit(owner, otherObject, 1);    
+                        PhysicalContactTransmission.Instance.Transmit(owner, otherObject, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Physical_Contact));    
                     }
                     break;
                 case ACTION_CATEGORY.VERBAL:
                     if(p_actionNode.actor == owner) {
                         //Only transmit verbally if the plagued character is the actor of the action
-                        AirborneTransmission.Instance.Transmit(owner, null, 1);
+                        AirborneTransmission.Instance.Transmit(owner, null, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne));
                     }
                     break;
                     

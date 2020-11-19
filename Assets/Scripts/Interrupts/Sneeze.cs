@@ -17,7 +17,7 @@ namespace Interrupts {
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Character actor = interruptHolder.actor;
             if (actor.traitContainer.HasTrait("Plagued")) {
-                AirborneTransmission.Instance.Transmit(actor, null, 1);
+                AirborneTransmission.Instance.Transmit(actor, null, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne));
                 return true;
             }
             return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
