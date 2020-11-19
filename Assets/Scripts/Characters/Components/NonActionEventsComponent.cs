@@ -345,7 +345,7 @@ public class NonActionEventsComponent : CharacterComponent {
             }
 
             if (owner.traitContainer.HasTrait("Plagued")) {
-                AirborneTransmission.Instance.Transmit(owner, target, 1);
+                AirborneTransmission.Instance.Transmit(owner, target, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne));
             }
             
             GameDate dueDate = GameManager.Instance.Today();
@@ -420,7 +420,7 @@ public class NonActionEventsComponent : CharacterComponent {
             string result = TriggerFlirtCharacter(target);
             
             if (owner.traitContainer.HasTrait("Plagued")) {
-                AirborneTransmission.Instance.Transmit(owner, target, 1);
+                AirborneTransmission.Instance.Transmit(owner, target, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne));
             }
             
             GameDate dueDate = GameManager.Instance.Today();

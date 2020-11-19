@@ -5,13 +5,13 @@ namespace Plague.Transmission {
         public override PLAGUE_TRANSMISSION transmissionType => PLAGUE_TRANSMISSION.Physical_Contact;
         protected override int GetTransmissionRate(int level) {
             switch (level) {
-                case 1:
+                case 0:
                     return 0;
-                case 2:
+                case 1:
                     return 10;
-                case 3:
+                case 2:
                     return 20;
-                case 4:
+                case 3:
                     return 35;
                 default:
                     return 0;

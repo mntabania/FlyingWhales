@@ -2435,7 +2435,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
         if (characterThatAttacked.traitContainer.HasTrait("Plagued")) {
-            CombatRateTransmission.Instance.Transmit(characterThatAttacked, this, 1);
+            CombatRateTransmission.Instance.Transmit(characterThatAttacked, this, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Combat));
         }
         Messenger.Broadcast(CharacterSignals.CHARACTER_WAS_HIT, this, characterThatAttacked);
     }
