@@ -8,7 +8,7 @@ public class BuildVampireCastle : GoapAction {
         actionIconString = GoapActionStateDB.Found_Icon;
         showNotification = true;
         advertisedBy = new[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Work};
     }
 

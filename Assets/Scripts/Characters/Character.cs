@@ -1734,7 +1734,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.SHARE_INFORMATION);
             AddAdvertisedAction(INTERACTION_TYPE.REPORT_CRIME);
         }
-        if (race == RACE.HUMANS || race == RACE.ELVES) {
+        if (race.IsSapient()) {
             AddAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
         } else {
             RemoveAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);

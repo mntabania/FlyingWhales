@@ -14,7 +14,7 @@ public class DrinkBlood : GoapAction {
         actionIconString = GoapActionStateDB.Drink_Blood_Icon;
         doesNotStopTargetCharacter = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Crimes, LOG_TAG.Needs};
     }

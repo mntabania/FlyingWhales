@@ -13,7 +13,7 @@ public class PlayGuitar : GoapAction {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         // showNotification = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Needs};
     }

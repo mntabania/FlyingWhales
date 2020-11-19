@@ -13,7 +13,7 @@ public class ReturnHomeLocation : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
         actionIconString = GoapActionStateDB.No_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }
 

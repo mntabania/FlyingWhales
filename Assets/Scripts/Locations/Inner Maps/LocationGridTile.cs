@@ -633,7 +633,7 @@ namespace Inner_Maps {
                         collectionOwner.partOfHextile.hexTileOwner.GetMostImportantStructureOnTile();
                     if(mostImportantStructureOnTile is DemonicStructure demonicStructure) {
                         if (!character.behaviourComponent.isAttackingDemonicStructure 
-                            && character.homeSettlement != null && character.necromancerTrait == null && (character.race == RACE.HUMANS || character.race == RACE.ELVES)
+                            && character.homeSettlement != null && character.necromancerTrait == null && character.race.IsSapient()
                             && character.marker != null && character.carryComponent.IsNotBeingCarried() && character.isAlliedWithPlayer == false
                             && (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue)) 
                             //&& !InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)

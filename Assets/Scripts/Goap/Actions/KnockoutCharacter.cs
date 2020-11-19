@@ -15,7 +15,7 @@ public class KnockoutCharacter : GoapAction {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF,
             RACE.SPIDER, RACE.DRAGON, RACE.GOLEM, RACE.DEMON, RACE.ELEMENTAL, RACE.KOBOLD, RACE.MIMIC, RACE.ABOMINATION,
             RACE.CHICKEN, RACE.SHEEP, RACE.PIG, RACE.NYMPH, RACE.WISP, RACE.SLUDGE, RACE.GHOST, RACE.LESSER_DEMON, RACE.ANGEL, 
-            RACE.TROLL };
+            RACE.TROLL, RACE.RATMAN };
         isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Combat};
     }
@@ -113,7 +113,7 @@ public class KnockoutCharacter : GoapAction {
             
 
             if (node.associatedJobType != JOB_TYPE.APPREHEND || node.associatedJobType != JOB_TYPE.RESTRAIN) {
-                if (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) {
+                if (targetCharacter.race.IsSapient()) {
                     //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Misdemeanor);
                     CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
                 }
@@ -129,7 +129,7 @@ public class KnockoutCharacter : GoapAction {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, targetCharacter, actor, status, node);
             }
             if (node.associatedJobType != JOB_TYPE.APPREHEND || node.associatedJobType != JOB_TYPE.RESTRAIN) {
-                if (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) {
+                if (targetCharacter.race.IsSapient()) {
                     CrimeManager.Instance.ReactToCrime(targetCharacter, actor, target, target.factionOwner, node.crimeType, node, status);
                 }
             }

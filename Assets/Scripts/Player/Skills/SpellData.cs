@@ -116,7 +116,7 @@ public class SpellData : IPlayerSkill {
         //Quick fix only, remove this later
         if (poi is Character) {
             Character targetCharacter = poi as Character;
-            if (targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) {
+            if (!targetCharacter.race.IsSapient()) {
                 return false;
             }
         }

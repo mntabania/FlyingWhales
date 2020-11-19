@@ -48,7 +48,7 @@ public class Tombstone : TileObject {
         if(character.traitContainer.HasTrait("Plagued")) {
             PlagueDisease.Instance.AddPlaguedStatusOnPOIWithLifespanDuration(this);
         }
-        if (character.race == RACE.HUMANS || character.race == RACE.ELVES) {
+        if (character.race.IsSapient()) {
             AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
         }
         Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);

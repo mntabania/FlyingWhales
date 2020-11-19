@@ -1159,7 +1159,7 @@ public class Region : ISavable, ILogFiller {
         for (int i = 0; i < settlementsInRegion.Count; i++) {
             BaseSettlement settlement = settlementsInRegion[i];
             if (settlement is NPCSettlement npcSettlement && 
-                npcSettlement.owner != null && (npcSettlement.owner.race == RACE.ELVES || npcSettlement.owner.race == RACE.HUMANS)) {
+                npcSettlement.owner != null && npcSettlement.owner.race.IsSapient()) {
                 return true;
             }
         }
