@@ -109,6 +109,14 @@ public class JudgeCharacter : GoapAction {
                 debugLog += "\n-Rival: absolve = x0, whip = x0.5, kill = x3, exile = x1.5";
             }
 
+            if (actor.traitContainer.HasTrait("Ruthless")) {
+                absolve *= 0;
+                whip = Mathf.RoundToInt(whip * 0.5f);
+                kill *= 2;
+                exile *= 1;
+                debugLog += "\n-Ruthless judge: absolve = x0, whip = x0.5, kill = x2, exile = x1";
+            }
+
             if(crimeData.crimeType == CRIME_TYPE.Vampire) {
                 if (actor.traitContainer.HasTrait("Hemophobic")) {
                     absolve *= 0;

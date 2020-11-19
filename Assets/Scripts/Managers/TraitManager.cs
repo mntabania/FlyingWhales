@@ -330,13 +330,13 @@ public class TraitManager : BaseMonoBehaviour {
             return new[] { "Inspiring", "Diplomatic", "Fast", "Persuasive", "Optimist", "Robust", "Suspicious", "Vigilant", 
                 "Fireproof", "Music Lover", "Authoritative", "Nocturnal", "Lustful", "Chaste", "Music Hater", "Alcoholic",
                 "Accident Prone", "Evil", "Treacherous", "Lazy", "Pessimist", "Unattractive", "Hothead", "Coward", "Hemophobic", "Hemophiliac",
-                "Lycanphobic", "Lycanphiliac"
+                "Lycanphobic", "Lycanphiliac", "Ruthless"
             };
         } else {
             return new[] { "Inspiring", "Blessed", "Diplomatic", "Fast", "Persuasive", "Optimist", "Robust", "Suspicious", "Vigilant", 
                 "Fireproof", "Music Lover", "Authoritative", "Nocturnal", "Lustful", "Chaste", "Music Hater", "Alcoholic",
                 "Accident Prone", "Evil", "Treacherous", "Lazy", "Pessimist", "Unattractive", "Hothead", "Coward", "Hemophobic", "Hemophiliac",
-                "Lycanphobic", "Lycanphiliac"
+                "Lycanphobic", "Lycanphiliac", "Ruthless"
             };;
         }
     }
