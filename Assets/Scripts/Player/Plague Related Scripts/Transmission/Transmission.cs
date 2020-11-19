@@ -31,10 +31,11 @@ namespace Plague.Transmission {
             if (p_target is Character character) {
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, character);
             } else {
-                p_target.traitContainer.AddTrait(p_target, "Plagued", p_infector as Character, overrideDuration: PlagueDisease.Instance.lifespan.GetLifespanInTicksOfPlagueOn(p_target));
-                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Plagued", "contract");
-                log.AddToFillers(p_target, p_target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToDatabase();
+                if (PlagueDisease.Instance.AddPlaguedStatusOnPOIWithLifespanDuration(p_target)) {
+                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Plagued", "contract");
+                    log.AddToFillers(p_target, p_target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddLogToDatabase();
+                }
             }
         }
     }

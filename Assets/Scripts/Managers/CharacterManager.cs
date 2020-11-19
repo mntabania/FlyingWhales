@@ -632,7 +632,7 @@ public class CharacterManager : BaseMonoBehaviour {
                     poi.traitContainer.RemoveStatusAndStacks(poi, "Abomination Germ");
                 }
                 if (poi.traitContainer.HasTrait("Plagued")) {
-                    foodPile.traitContainer.AddTrait(foodPile, "Plagued", overrideDuration: PlagueDisease.Instance.lifespan.GetLifespanInTicksOfPlagueOn(foodPile));
+                    PlagueDisease.Instance.AddPlaguedStatusOnPOIWithLifespanDuration(foodPile);
                 }
 
                 if (deadCharacter != null && createLog) {

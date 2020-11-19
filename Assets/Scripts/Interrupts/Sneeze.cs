@@ -9,6 +9,7 @@ namespace Interrupts {
         public Sneeze() : base(INTERRUPT.Sneeze) {
             duration = 0;
             interruptIconString = GoapActionStateDB.Shock_Icon;
+            isSimulateneous = true;
             logTags = new[] {LOG_TAG.Life_Changes};
         }
 
