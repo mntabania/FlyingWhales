@@ -756,63 +756,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         UpdatePrison();
         UpdateMainStorage();
-        switch (structure.structureType) {
-            // case STRUCTURE_TYPE.FARM:
-            //     classManager.AddCombatantClass("Druid");
-            //     break;
-            // case STRUCTURE_TYPE.LUMBERYARD:
-            //     classManager.AddCombatantClass("Archer");
-            //     break;
-            // case STRUCTURE_TYPE.CEMETERY:
-            //     classManager.AddCombatantClass("Stalker");
-            //     break;
-            // case STRUCTURE_TYPE.HUNTER_LODGE:
-            //     classManager.AddCombatantClass("Hunter");
-            //     break;
-            // case STRUCTURE_TYPE.PRISON:
-            //     classManager.AddCombatantClass("Knight");
-            //     break;
-            // case STRUCTURE_TYPE.MAGE_QUARTERS:
-            //     classManager.AddCombatantClass("Mage");
-            //     break;
-            // case STRUCTURE_TYPE.APOTHECARY:
-            //     classManager.AddCombatantClass("Shaman");
-            //     break;
-            case STRUCTURE_TYPE.MINE_SHACK:
-                classManager.AddCivilianClass("Miner");
-                break;
-        }
     }
     protected override void OnStructureRemoved(LocationStructure structure) {
         base.OnStructureRemoved(structure);
         UpdatePrison();
         UpdateMainStorage();
-        switch (structure.structureType) {
-            // case STRUCTURE_TYPE.FARM:
-            //     classManager.RemoveCombatantClass("Druid");
-            //     break;
-            // case STRUCTURE_TYPE.LUMBERYARD:
-            //     classManager.RemoveCombatantClass("Archer");
-            //     break;
-            // case STRUCTURE_TYPE.CEMETERY:
-            //     classManager.RemoveCombatantClass("Stalker");
-            //     break;
-            // case STRUCTURE_TYPE.HUNTER_LODGE:
-            //     classManager.RemoveCombatantClass("Hunter");
-            //     break;
-            // case STRUCTURE_TYPE.PRISON:
-            //     classManager.RemoveCombatantClass("Knight");
-            //     break;
-            // case STRUCTURE_TYPE.MAGE_QUARTERS:
-            //     classManager.RemoveCombatantClass("Mage");
-            //     break;
-            // case STRUCTURE_TYPE.APOTHECARY:
-            //     classManager.RemoveCombatantClass("Shaman");
-            //     break;
-            case STRUCTURE_TYPE.ABANDONED_MINE:
-                classManager.RemoveCivilianClass("Miner");
-                break;
-        }
     }
     private void OnCharacterSaw(Character character, IPointOfInterest seenPOI) {
         if (character.homeSettlement == this && character.currentSettlement == this) {
