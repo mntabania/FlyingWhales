@@ -2899,7 +2899,6 @@
               <e p="Hiding.cs" t="Include" />
               <e p="Hothead.cs" t="Include" />
               <e p="Hunting.cs" t="Include" />
-              <e p="Infected.cs" t="Include" />
               <e p="Infestor.cs" t="Include" />
               <e p="Injured.cs" t="Include" />
               <e p="Inspiring.cs" t="Include" />
@@ -2930,6 +2929,7 @@
               <e p="Pessimist.cs" t="Include" />
               <e p="Pest.cs" t="Include" />
               <e p="Petrasol.cs" t="Include" />
+              <e p="Plague Reservoir.cs" t="Include" />
               <e p="Plagued.cs" t="Include" />
               <e p="Poisoned.cs" t="Include" />
               <e p="Prisoner.cs" t="Include" />

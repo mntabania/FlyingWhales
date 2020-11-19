@@ -220,6 +220,32 @@ public class SymptomsUIView : MVCUIView
 				throw new ArgumentOutOfRangeException(nameof(p_symptomType), p_symptomType, null);
 		}
 	}
+	private GameObject GetSymptomUpgradeCheckmark(PLAGUE_SYMPTOM p_symptomType) {
+		switch (p_symptomType) {
+			case PLAGUE_SYMPTOM.Paralysis:
+				return UIModel.checkMarkParalysisUpgrade;
+			case PLAGUE_SYMPTOM.Vomiting:
+				return UIModel.checkMarkVomitingUpgrade;
+			case PLAGUE_SYMPTOM.Lethargy:
+				return UIModel.checkMarkLethargyUpgrade;
+			case PLAGUE_SYMPTOM.Seizure:
+				return UIModel.checkMarkSeizuresUpgrade;
+			case PLAGUE_SYMPTOM.Insomnia:
+				return UIModel.checkMarkInsomniaUpgrade;
+			case PLAGUE_SYMPTOM.Poison_Cloud:
+				return UIModel.checkMarkPoisonCloudUpgrade;
+			case PLAGUE_SYMPTOM.Monster_Scent:
+				return UIModel.checkMarkMonsterScenetUpgrade;
+			case PLAGUE_SYMPTOM.Sneezing:
+				return UIModel.checkMarkSneezingUpgrade;
+			case PLAGUE_SYMPTOM.Depression:
+				return UIModel.checkMarkDepressionUpgrade;
+			case PLAGUE_SYMPTOM.Hunger_Pangs:
+				return UIModel.checkMarkHungerUpgrade;
+			default:
+				throw new ArgumentOutOfRangeException(nameof(p_symptomType), p_symptomType, null);
+		}
+	}
 
 	public void UpdateSymptomCost(PLAGUE_SYMPTOM p_symptom, string p_cost) {
 		RuinarchText txt = GetCostTextToUpdate(p_symptom);
@@ -234,5 +260,9 @@ public class SymptomsUIView : MVCUIView
 		button.interactable = p_interactable;
 		TextMeshProUGUI text = GetSymptomUpgradeBtnText(p_symptom);
 		text.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
+	}
+	public void UpdateSymptomCheckmarkState(PLAGUE_SYMPTOM p_symptom, bool p_state) {
+		GameObject checkMark = GetSymptomUpgradeCheckmark(p_symptom);
+		checkMark.SetActive(p_state);
 	}
 }

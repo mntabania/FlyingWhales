@@ -47,6 +47,12 @@ public class FatalityUIModel : MVCUIModel
 	public HoverHandler totalOrganFailureHoverHandler;
 	public HoverHandler pneumoniaHoverHandler;
 
+	public GameObject checkMarkSepticShockUpgrade;
+	public GameObject checkMarkHeartAttackUpgrade;
+	public GameObject checkMarkStrokeUpgrade;
+	public GameObject checkMarkTotalOrganFailureUpgrade;
+	public GameObject checkMarkPneumoniaUpgrade;
+	
 	public UIHoverPosition hoverPosition;
 	
 	private void OnEnable() {
