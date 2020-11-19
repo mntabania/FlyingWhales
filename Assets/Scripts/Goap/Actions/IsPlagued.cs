@@ -34,8 +34,11 @@
         
         return response;
     }
+    public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
+        return CRIME_TYPE.Plagued;
+    }
     #endregion
-    
+
     #region State Effects
     public void PrePlagueSuccess(ActualGoapNode goapNode) { }
     public void PerTickPlagueSuccess(ActualGoapNode goapNode) { }
