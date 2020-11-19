@@ -93,7 +93,9 @@ namespace Traits {
             }
         }
         private void SetColor(Color color) {
-            owner.marker.SetMarkerColor(color);
+            if (owner.marker) {
+                owner.marker.SetMarkerColor(color);    
+            }
         }
         private void Reanimate() {
             owner.RaiseFromDeath(faction: FactionManager.Instance.undeadFaction, race: owner.race, className: "Walker Zombie");
