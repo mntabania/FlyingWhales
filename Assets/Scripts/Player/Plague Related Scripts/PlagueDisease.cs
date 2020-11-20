@@ -275,6 +275,18 @@ public class PlagueDisease : ISingletonPattern, ISavable {
     }
     #endregion
 
+    #region Plagued Status
+    public bool AddPlaguedStatusOnPOIWithLifespanDuration(IPointOfInterest poi) {
+        //Made this a function because we still need an extra process to know that the character will be affected by plague which is the lifespan
+        //If the lifespan is -1, then the character will not be affected by plague
+        int lifespanInTicks = lifespan.GetLifespanInTicksOfPlagueOn(poi);
+        if(lifespanInTicks != -1) {
+            return poi.traitContainer.AddTrait(poi, "Plagued", overrideDuration: lifespanInTicks);
+        }
+        return false;
+    }
+    #endregion
+
 }
 
 [System.Serializable]

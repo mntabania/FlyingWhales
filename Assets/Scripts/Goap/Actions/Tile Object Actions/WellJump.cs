@@ -9,7 +9,7 @@ public class WellJump : GoapAction {
     public WellJump() : base(INTERACTION_TYPE.WELL_JUMP) {
         actionIconString = GoapActionStateDB.Injured_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Life_Changes};
     }
 

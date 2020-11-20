@@ -12,21 +12,39 @@ public class RatBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n{character.name} is a Rat";
-        if (character.behaviourComponent.pestVillageTarget == null) {
-            character.behaviourComponent.SetPestVillageTarget(GetVillageTargetsByPriority(character));
-        }
-        if (character.behaviourComponent.pestVillageTarget != null && character.behaviourComponent.pestVillageTarget.Count > 0) {
-            log += $"\n-Already has village target";
-            BaseSettlement targetSettlement = character.behaviourComponent.pestVillageTarget[0].settlementOnTile;
-            if (targetSettlement != null) {
-                if (character.gridTileLocation != null && character.gridTileLocation.IsPartOfSettlement(targetSettlement)) {
-                    return character.jobComponent.CreateRatFullnessRecovery(out producedJob);
-                } else {
-                    LocationStructure targetStructure = targetSettlement.GetRandomStructure();
-                    if (targetStructure != null) {
-                        LocationGridTile targetTile = targetStructure.GetRandomPassableTile();
-                        if (targetTile != null) {
-                            return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
+        if (character.behaviourComponent.isPestEatingOnCooldown) {
+            if (character.behaviourComponent.pestVillageTarget != null && character.behaviourComponent.pestVillageTarget.Count > 0) {
+                BaseSettlement targetSettlement = character.behaviourComponent.pestVillageTarget[0].settlementOnTile;
+                if (targetSettlement != null) {
+                    if (character.currentRegion != null) {
+                        HexTile targetHex = character.currentRegion.GetRandomHexThatMeetCriteria(h => h.settlementOnTile == null && h.elevationType != ELEVATION.WATER && h.elevationType != ELEVATION.MOUNTAIN);
+                        if (targetHex != null) {
+                            LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetHex.locationGridTiles);
+                            if (targetTile != null) {
+                                character.behaviourComponent.SetPestVillageTarget(null);
+                                return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            if (character.behaviourComponent.pestVillageTarget == null) {
+                character.behaviourComponent.SetPestVillageTarget(GetVillageTargetsByPriority(character));
+            }
+            if (character.behaviourComponent.pestVillageTarget != null && character.behaviourComponent.pestVillageTarget.Count > 0) {
+                log += $"\n-Already has village target";
+                BaseSettlement targetSettlement = character.behaviourComponent.pestVillageTarget[0].settlementOnTile;
+                if (targetSettlement != null) {
+                    if (character.gridTileLocation != null && character.gridTileLocation.IsPartOfSettlement(targetSettlement)) {
+                        return character.jobComponent.CreateRatFullnessRecovery(out producedJob);
+                    } else {
+                        LocationStructure targetStructure = targetSettlement.GetRandomStructure();
+                        if (targetStructure != null) {
+                            LocationGridTile targetTile = targetStructure.GetRandomPassableTile();
+                            if (targetTile != null) {
+                                return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
+                            }
                         }
                     }
                 }

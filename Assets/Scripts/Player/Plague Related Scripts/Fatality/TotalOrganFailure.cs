@@ -9,7 +9,7 @@ namespace Plague.Fatality {
             PlagueDisease.Instance.UpdateDeathsOnCharacterDied(p_character);
         }
         public override bool CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action) {
-            if (GameUtilities.RollChance(1)) { //1
+            if (GameUtilities.RollChance(2)) { //1
                 ActivateFatality(p_character);
                 return false;
             }

@@ -4,14 +4,14 @@ namespace Plague.Transmission {
         public override PLAGUE_TRANSMISSION transmissionType => PLAGUE_TRANSMISSION.Airborne;
         protected override int GetTransmissionRate(int level) {
             switch (level) {
-                case 1:
+                case 0:
                     return 0;
-                case 2:
-                    return 2;
-                case 3:
-                    return 5;
-                case 4:
+                case 1:
                     return 10;
+                case 2:
+                    return 25;
+                case 3:
+                    return 50;
                 default:
                     return 0;
             }

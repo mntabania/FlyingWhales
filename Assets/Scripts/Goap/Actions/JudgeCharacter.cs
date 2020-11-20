@@ -15,7 +15,7 @@ public class JudgeCharacter : GoapAction {
         actionIconString = GoapActionStateDB.Work_Icon;
         doesNotStopTargetCharacter = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work, LOG_TAG.Life_Changes, LOG_TAG.Crimes};
     }
 
@@ -108,6 +108,14 @@ public class JudgeCharacter : GoapAction {
                 kill *= 3;
                 exile = Mathf.RoundToInt(exile * 1.5f);
                 debugLog += "\n-Rival: absolve = x0, whip = x0.5, kill = x3, exile = x1.5";
+            }
+
+            if (actor.traitContainer.HasTrait("Ruthless")) {
+                absolve *= 0;
+                whip = Mathf.RoundToInt(whip * 0.5f);
+                kill *= 2;
+                exile *= 1;
+                debugLog += "\n-Ruthless judge: absolve = x0, whip = x0.5, kill = x2, exile = x1";
             }
 
             if (crimeData.crimeType == CRIME_TYPE.Plagued && actor.homeSettlement != null) {

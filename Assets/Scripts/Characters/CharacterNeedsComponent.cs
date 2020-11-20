@@ -1506,9 +1506,16 @@ public class CharacterNeedsComponent : CharacterComponent {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{character.name} has finished job {job.ToString()}");
             //after doing an extreme needs type job, check again if the character needs to recover more of that need.
             if (job.jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT) {
+                if (character.traitContainer.HasTrait("Pest") || character is Rat) {
+                    character.behaviourComponent.SetIsPestEatingOnCooldown(true);
+                }
                 PlanFullnessRecoveryActions();
             } else if (job.jobType == JOB_TYPE.ENERGY_RECOVERY_URGENT) {
                 PlanTirednessRecoveryActions();
+            } else if (job.jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL) {
+                if(character.traitContainer.HasTrait("Pest") || character is Rat) {
+                    character.behaviourComponent.SetIsPestEatingOnCooldown(true);
+                }
             }
         }
     }

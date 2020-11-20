@@ -63,6 +63,7 @@ public enum RACE{
     WURM = 33,
     REVENANT = 34,
     RAT = 35,
+    RATMAN = 36,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,

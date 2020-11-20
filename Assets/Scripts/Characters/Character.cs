@@ -1738,7 +1738,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.SHARE_INFORMATION);
             AddAdvertisedAction(INTERACTION_TYPE.REPORT_CRIME);
         }
-        if (race == RACE.HUMANS || race == RACE.ELVES) {
+        if (race.IsSapient()) {
             AddAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
         } else {
             RemoveAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
@@ -1770,7 +1770,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private string GetDefaultRaceClassName() {
         if(race == RACE.DEMON) {
             return $"{characterClass.className} {GameUtilities.GetNormalizedRaceAdjective(race)}";
-        } else if (characterClass.className == "Necromancer") {
+        } else if (characterClass.className == "Necromancer" || characterClass.className == "Ratman") {
             return $"{characterClass.className}";
         }
         return $"{GameUtilities.GetNormalizedRaceAdjective(race)} {characterClass.className}";
@@ -2439,7 +2439,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
         if (characterThatAttacked.traitContainer.HasTrait("Plagued")) {
-            CombatRateTransmission.Instance.Transmit(characterThatAttacked, this, 1);
+            CombatRateTransmission.Instance.Transmit(characterThatAttacked, this, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Combat));
         }
         Messenger.Broadcast(CharacterSignals.CHARACTER_WAS_HIT, this, characterThatAttacked);
     }

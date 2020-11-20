@@ -81,6 +81,17 @@ public class SymptomsUIModel : MVCUIModel
 	public HoverHandler sneezingHoverHandler;
 	public HoverHandler depressionHoverHandler;
 	public HoverHandler hungerHoverHandler;
+	
+	public GameObject checkMarkParalysisUpgrade;
+	public GameObject checkMarkVomitingUpgrade;
+	public GameObject checkMarkLethargyUpgrade;
+	public GameObject checkMarkSeizuresUpgrade;
+	public GameObject checkMarkInsomniaUpgrade;
+	public GameObject checkMarkPoisonCloudUpgrade;
+	public GameObject checkMarkMonsterScenetUpgrade;
+	public GameObject checkMarkSneezingUpgrade;
+	public GameObject checkMarkDepressionUpgrade;
+	public GameObject checkMarkHungerUpgrade;
 
 	public UIHoverPosition tooltipPosition;
 	

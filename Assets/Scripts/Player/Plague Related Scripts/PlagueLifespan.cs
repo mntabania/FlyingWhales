@@ -13,6 +13,8 @@ public class PlagueLifespan {
     private int _undeadInfectionTimeInHours;
     private Dictionary<RACE, int> _sapientInfectionTimeInHours;
 
+    private const int MAX_LEVEL = 4;
+
     #region getters
     public int tileObjectInfectionTimeInHours => _tileObjectInfectionTimeInHours;
     public int monsterInfectionTimeInHours => _monsterInfectionTimeInHours;
@@ -34,7 +36,7 @@ public class PlagueLifespan {
         //Default Data
         _sapientInfectionTimeInHours = new Dictionary<RACE, int>();
 
-        SetTileObjectLifespanInHoursByLevel(1);
+        SetTileObjectInfectionTimeInHours(12);
         SetMonsterInfectionTimeInHours(-1);
         SetUndeadInfectionTimeInHours(-1);
         SetSapientInfectionTimeInHours(RACE.HUMANS, 24);
@@ -42,9 +44,6 @@ public class PlagueLifespan {
     }
 
     #region Tile Object Lifespan
-    public void SetTileObjectLifespanInHoursByLevel(int p_level) {
-        SetTileObjectInfectionTimeInHours(GetTileObjectLifespanInHoursByLevel(p_level));
-    }
     public void SetTileObjectInfectionTimeInHours(int p_hours) {
         _tileObjectInfectionTimeInHours = p_hours;
     }
@@ -52,40 +51,51 @@ public class PlagueLifespan {
         SetTileObjectInfectionTimeInHours(GetUpgradedTileObjectInfectionTime());
     }
     public int GetUpgradedTileObjectInfectionTime() {
-        switch (_tileObjectInfectionTimeInHours) {
+        int level = GetTileObjectLifespanLevelByHours(_tileObjectInfectionTimeInHours);
+        switch (level) {
+            case 1:
+                return GetTileObjectLifespanInHoursByLevel(2);
+            case 2:
+                return GetTileObjectLifespanInHoursByLevel(3);
             case 3:
-                return 6;
-            case 6:
-                return 12;
-            case 12:
-                return 24;
+                return GetTileObjectLifespanInHoursByLevel(4);
             default:
                 Debug.LogError($"Could not upgrade Tile Object Infection Time: {_tileObjectInfectionTimeInHours.ToString()}");
                 return -1;
         }
     }
     public int GetTileObjectInfectionTimeUpgradeCost() {
-        switch (_tileObjectInfectionTimeInHours) {
-            case 3:
+        int level = GetTileObjectLifespanLevelByHours(_tileObjectInfectionTimeInHours);
+        switch (level) {
+            case 1:
                 return 10;
-            case 6:
+            case 2:
                 return 25;
-            case 12:
+            case 3:
                 return 50;
             default:
                 return -1;
         }
     }
     public bool IsTileObjectAtMaxLevel() {
-        return _tileObjectInfectionTimeInHours == 24;
+        return _tileObjectInfectionTimeInHours == GetTileObjectLifespanInHoursByLevel(MAX_LEVEL);
     }
     private int GetTileObjectLifespanInHoursByLevel(int p_level) {
         switch (p_level) {
-            case 1: return 3;
-            case 2: return 6;
-            case 3: return 12;
-            case 4: return 24;
-            default: return 3;
+            case 1: return 12;
+            case 2: return 24;
+            case 3: return 48;
+            case 4: return 72;
+            default: return 12;
+        }
+    }
+    private int GetTileObjectLifespanLevelByHours(int p_hours) {
+        switch (p_hours) {
+            case 12: return 1;
+            case 24: return 2;
+            case 48: return 3;
+            case 72: return 4;
+            default: return 1;
         }
     }
     #endregion
@@ -98,32 +108,34 @@ public class PlagueLifespan {
         SetMonsterInfectionTimeInHours(GetUpgradedMonsterInfectionTime());
     }
     public int GetUpgradedMonsterInfectionTime() {
-        switch (_monsterInfectionTimeInHours) {
-            case -1:
-                return 12;
-            case 12:
-                return 24;
-            case 24:
-                return 72;
+        int level = GetMonsterLifespanLevelByHours(_monsterInfectionTimeInHours);
+        switch (level) {
+            case 1:
+                return GetMonsterLifespanInHoursByLevel(2);
+            case 2:
+                return GetMonsterLifespanInHoursByLevel(3);
+            case 3:
+                return GetMonsterLifespanInHoursByLevel(4);
             default:
                 Debug.LogError($"Could not upgrade Monster Infection Time: {_monsterInfectionTimeInHours.ToString()}");
                 return -1;
         }
     }
     public int GetMonsterInfectionTimeUpgradeCost() {
-        switch (_monsterInfectionTimeInHours) {
-            case -1:
+        int level = GetMonsterLifespanLevelByHours(_monsterInfectionTimeInHours);
+        switch (level) {
+            case 1:
                 return 10;
-            case 12:
+            case 2:
                 return 20;
-            case 24:
+            case 3:
                 return 30;
             default:
                 return -1;
         }
     }
     public bool IsMonstersAtMaxLevel() {
-        return _monsterInfectionTimeInHours == 72;
+        return _monsterInfectionTimeInHours == GetMonsterLifespanInHoursByLevel(MAX_LEVEL);
     }
     private int GetMonsterLifespanInHoursByLevel(int p_level) {
         switch (p_level) {
@@ -132,6 +144,15 @@ public class PlagueLifespan {
             case 3: return 24;
             case 4: return 72;
             default: return -1;
+        }
+    }
+    private int GetMonsterLifespanLevelByHours(int p_hours) {
+        switch (p_hours) {
+            case -1: return 1;
+            case 12: return 2;
+            case 24: return 3;
+            case 72: return 4;
+            default: return 1;
         }
     }
     #endregion
@@ -144,32 +165,34 @@ public class PlagueLifespan {
         SetUndeadInfectionTimeInHours(GetUpgradedUndeadInfectionTime());
     }
     public int GetUpgradedUndeadInfectionTime() {
-        switch (_undeadInfectionTimeInHours) {
-            case -1:
-                return 12;
-            case 12:
-                return 24;
-            case 24:
-                return 72;
+        int level = GetUndeadLifespanLevelByHours(_undeadInfectionTimeInHours);
+        switch (level) {
+            case 1:
+                return GetUndeadLifespanInHoursByLevel(2);
+            case 2:
+                return GetUndeadLifespanInHoursByLevel(3);
+            case 3:
+                return GetUndeadLifespanInHoursByLevel(4);
             default:
                 Debug.LogError($"Could not upgrade Undead Infection Time: {_undeadInfectionTimeInHours.ToString()}");
                 return -1;
         }
     }
     public int GetUndeadInfectionTimeUpgradeCost() {
-        switch (_undeadInfectionTimeInHours) {
-            case -1:
+        int level = GetUndeadLifespanLevelByHours(_undeadInfectionTimeInHours);
+        switch (level) {
+            case 1:
                 return 10;
-            case 12:
+            case 2:
                 return 20;
-            case 24:
+            case 3:
                 return 30;
             default:
                 return -1;
         }
     }
     public bool IsUndeadAtMaxLevel() {
-        return _undeadInfectionTimeInHours == 72;
+        return _undeadInfectionTimeInHours == GetUndeadLifespanInHoursByLevel(MAX_LEVEL);
     }
     private int GetUndeadLifespanInHoursByLevel(int p_level) {
         switch (p_level) {
@@ -178,6 +201,15 @@ public class PlagueLifespan {
             case 3: return 24;
             case 4: return 72;
             default: return -1;
+        }
+    }
+    private int GetUndeadLifespanLevelByHours(int p_hours) {
+        switch (p_hours) {
+            case -1: return 1;
+            case 12: return 2;
+            case 24: return 3;
+            case 72: return 4;
+            default: return 1;
         }
     }
     #endregion
@@ -194,40 +226,42 @@ public class PlagueLifespan {
         SetSapientInfectionTimeInHours(p_race, GetUpgradedSapientInfectionTime(p_race));
     }
     public int GetUpgradedSapientInfectionTime(RACE p_race) {
-        int currentDuration = GetSapientLifespanOfPlague(p_race);
-        switch (currentDuration) {
-            case 24:
-                return 72;
-            case 72:
-                return 144;
-            case 144:
-                return 240;
+        int currentDuration = GetSapientLifespanOfPlagueInHours(p_race);
+        int level = GetSapientLifespanLevelByHours(p_race, currentDuration);
+        switch (level) {
+            case 1:
+                return GetSapientLifespanInHoursByLevel(p_race, 2);
+            case 2:
+                return GetSapientLifespanInHoursByLevel(p_race, 3);
+            case 3:
+                return GetSapientLifespanInHoursByLevel(p_race, 4);
             default:
                 Debug.LogError($"Could not upgrade {p_race.ToString()} Sapient Infection Time: {currentDuration.ToString()}");
                 return -1;
         }
     }
     public int GetSapientInfectionTimeUpgradeCost(RACE p_race) {
-        int currentDuration = GetSapientLifespanOfPlague(p_race);
-        switch (currentDuration) {
-            case 24:
+        int currentDuration = GetSapientLifespanOfPlagueInHours(p_race);
+        int level = GetSapientLifespanLevelByHours(p_race, currentDuration);
+        switch (level) {
+            case 1:
                 return 10;
-            case 72:
+            case 2:
                 return 25;
-            case 144:
+            case 3:
                 return 50;
             default:
                 return -1;
         }
     }
-    public int GetSapientLifespanOfPlague(RACE p_race) {
+    public int GetSapientLifespanOfPlagueInHours(RACE p_race) {
         if (_sapientInfectionTimeInHours.ContainsKey(p_race)) {
             return _sapientInfectionTimeInHours[p_race];
         }
         return -1;
     }
     public bool IsSapientAtMaxLevel(RACE p_race) {
-        return GetSapientLifespanOfPlague(p_race) == 240;
+        return GetSapientLifespanOfPlagueInHours(p_race) == GetSapientLifespanInHoursByLevel(p_race, MAX_LEVEL);
     }
     private int GetSapientLifespanInHoursByLevel(RACE p_race, int p_level) {
         //Note: Since Elves and Humans have the same lifespan right now, do not separate them
@@ -239,6 +273,16 @@ public class PlagueLifespan {
             default: return 24;
         }
     }
+    private int GetSapientLifespanLevelByHours(RACE p_race, int p_hours) {
+        //Note: Since Elves and Humans have the same lifespan right now, do not separate them
+        switch (p_hours) {
+            case 24: return 1;
+            case 72: return 2;
+            case 144: return 3;
+            case 240: return 4;
+            default: return 1;
+        }
+    }
     #endregion
 
     public int GetLifespanInHoursOfPlagueOn(IPointOfInterest p_poi) {
@@ -248,7 +292,7 @@ public class PlagueLifespan {
             } else if (character.faction?.factionType.type == FACTION_TYPE.Undead) {
                 return undeadInfectionTimeInHours;
             } else {
-                return GetSapientLifespanOfPlague(character.race);
+                return GetSapientLifespanOfPlagueInHours(character.race);
             }
         } else if (p_poi is TileObject tileObject) {
             return tileObjectInfectionTimeInHours;

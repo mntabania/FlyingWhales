@@ -60,7 +60,7 @@ public class RaiseDeadData : PlayerAction {
         if(character != null) {
             if (!character.isDead) {
                 return false;
-            } else if (character.race != RACE.HUMANS && character.race != RACE.ELVES) {
+            } else if (!character.race.IsSapient()) {
                 return false;
             }
         }
