@@ -27,7 +27,7 @@ public class Projectile : PooledObject {
     private float _timeAlive;
     
     #region Monobehaviours
-    private void OnDestroy() {
+    protected override void OnDestroy() {
         // Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.RemoveListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);

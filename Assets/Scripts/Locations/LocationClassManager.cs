@@ -27,40 +27,11 @@ public class LocationClassManager {
     public string GetCurrentClassToCreate() {
         return GetClassToCreate(currentIndex);
     }
-    public string GetNextClassToCreate() {
-        int nextIndex = currentIndex + 1;
-        if (nextIndex >= characterClassOrder.Length) {
-            nextIndex = startLoopIndex;
-        }
-        return GetClassToCreate(nextIndex);
-    }
     public void AddCombatantClass(string className) {
         if (combatantClasses.ContainsKey(className) == false) {
             combatantClasses.Add(className, 0);
         }
         combatantClasses[className] += 1;
-    }
-    public void RemoveCombatantClass(string className) {
-        if (combatantClasses.ContainsKey(className)) {
-            combatantClasses[className] -= 1;
-            if (combatantClasses[className] <= 0) {
-                combatantClasses.Remove(className);
-            }
-        }
-    }
-    public void AddCivilianClass(string className) {
-        if (civilianClasses.ContainsKey(className) == false) {
-            civilianClasses.Add(className, 0);
-        }
-        civilianClasses[className] += 1;
-    }
-    public void RemoveCivilianClass(string className) {
-        if (civilianClasses.ContainsKey(className)) {
-            civilianClasses[className] -= 1;
-            if (civilianClasses[className] <= 0) {
-                civilianClasses.Remove(className);
-            }
-        }
     }
     private string GetClassToCreate(int index) {
         string currentClass = characterClassOrder[index];
@@ -287,109 +258,6 @@ public class LocationClassManager {
         LocationClassNumberGuide temp = characterClassGuide[classIdentifier];
         temp.supposedNumber += amount;
         characterClassGuide[classIdentifier] = temp;
-    }
-    private bool DoesCharacterClassFitCurrentClass(Character character) {
-        string className = characterClassOrder[currentIndex];
-        if (className == "Combatant") {
-            return character.traitContainer.HasTrait("Combatant");
-        }
-        else if (className == "Civilian") {
-            return character.characterClass.className == "Miner" || character.characterClass.className == "Peasant" ||
-                   character.characterClass.className == "Craftsman";
-        }
-        else {
-            return character.characterClass.className == className;
-        }
-    }
-    public void LogLocationRequirementsData(string regionName) {
-        string log = $"Location Character Class Requirements Data For {regionName}";
-        foreach (KeyValuePair<string, LocationClassNumberGuide> kvp in characterClassGuide) {
-            log +=
-                $"\n{kvp.Key} - Supposed Number: {kvp.Value.supposedNumber}, Current Number: {kvp.Value.currentNumber}";
-        }
-        Debug.Log(log);
-    }
-    public bool IsClassASurplus(CharacterClass charClass) {
-        string className = charClass.className;
-
-        if (className == "Miner") {
-            LocationClassNumberGuide numberGuide = characterClassGuide["Civilian"];
-            return numberGuide.currentNumber > numberGuide.supposedNumber;
-        }
-        else if (className == "Peasant" || className == "Craftsman") {
-            LocationClassNumberGuide numberGuide = characterClassGuide[className];
-            if (numberGuide.currentNumber > numberGuide.supposedNumber) {
-                return true;
-            }
-            else {
-                numberGuide = characterClassGuide["Civilian"];
-                if (numberGuide.currentNumber > numberGuide.supposedNumber) {
-                    return true;
-                }
-            }
-        }
-        else if (className == "Noble") {
-            LocationClassNumberGuide numberGuide = characterClassGuide[className];
-            if (numberGuide.currentNumber > numberGuide.supposedNumber) {
-                return true;
-            }
-            // else {
-            //     numberGuide = characterClassGuide["Combatant"];
-            //     if (numberGuide.currentNumber > numberGuide.supposedNumber) {
-            //         return true;
-            //     }
-            // }
-        }
-        else if (charClass.IsCombatant()) {
-            LocationClassNumberGuide numberGuide = characterClassGuide["Combatant"];
-            return numberGuide.currentNumber > numberGuide.supposedNumber;
-        }
-        //else {
-        //    LocationClassNumberGuide numberGuide = characterClassGuide[className];
-        //    return numberGuide.currentNumber > numberGuide.supposedNumber;
-        //}
-        return false;
-    }
-    public bool IsClassADeficit(CharacterClass charClass) {
-        string className = charClass.className;
-
-        if (className == "Miner") {
-            LocationClassNumberGuide numberGuide = characterClassGuide["Civilian"];
-            return numberGuide.currentNumber < numberGuide.supposedNumber;
-        }
-        else if (className == "Peasant" || className == "Craftsman") {
-            LocationClassNumberGuide numberGuide = characterClassGuide[className];
-            if (numberGuide.currentNumber < numberGuide.supposedNumber) {
-                return true;
-            }
-            else {
-                numberGuide = characterClassGuide["Civilian"];
-                if (numberGuide.currentNumber < numberGuide.supposedNumber) {
-                    return true;
-                }
-            }
-        }
-        else if (className == "Noble") {
-            LocationClassNumberGuide numberGuide = characterClassGuide[className];
-            if (numberGuide.currentNumber < numberGuide.supposedNumber) {
-                return true;
-            }
-            // else {
-            //     numberGuide = characterClassGuide["Combatant"];
-            //     if (numberGuide.currentNumber < numberGuide.supposedNumber) {
-            //         return true;
-            //     }
-            // }
-        }
-        else if (charClass.IsCombatant()) {
-            LocationClassNumberGuide numberGuide = characterClassGuide["Combatant"];
-            return numberGuide.currentNumber < numberGuide.supposedNumber;
-        }
-        //else {
-        //    LocationClassNumberGuide numberGuide = characterClassGuide[className];
-        //    return numberGuide.currentNumber < numberGuide.supposedNumber;
-        //}
-        return false;
     }
 }
 

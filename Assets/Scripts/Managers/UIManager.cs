@@ -1664,10 +1664,14 @@ public class UIManager : BaseMonoBehaviour {
     [SerializeField] private BiolabUIController _biolabUIController;
     public void ShowBiolabUI() {
         Pause();
+        SetSpeedTogglesState(false);
         _biolabUIController.Open();
+        InputManager.Instance.AllowHotkeys(false);
     }
     private void OnCloseBiolabUI() {
+        SetSpeedTogglesState(true);
         ResumeLastProgressionSpeed();
+        InputManager.Instance.AllowHotkeys(true);
     }
     #endregion
 }

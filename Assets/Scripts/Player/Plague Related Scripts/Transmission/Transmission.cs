@@ -1,10 +1,18 @@
 ﻿using System;
+using UnityEngine;
 using UtilityScripts;
 namespace Plague.Transmission {
+
+    public interface IPlagueTransmissionListener {
+        void OnPlagueTransmitted(IPointOfInterest p_target);
+    }
+    
     public abstract class Transmission<T> where T : Transmission<T>, new() {
         private static readonly Lazy<T> Lazy = new Lazy<T>(() => Activator.CreateInstance(typeof(T), true) as T);
         public static T Instance => Lazy.Value;
 
+        private Action<IPointOfInterest> _plagueTransmitted;
+        
         public abstract PLAGUE_TRANSMISSION transmissionType { get; }
         
         protected abstract int GetTransmissionRate(int level);
@@ -12,6 +20,7 @@ namespace Plague.Transmission {
         public abstract void Transmit(IPointOfInterest p_infector, IPointOfInterest p_target, int p_transmissionLvl);
         protected void TryTransmitToSingleTarget(IPointOfInterest p_infector, IPointOfInterest p_target, int p_transmissionLvl) {
             int chance = GetTransmissionRate(p_transmissionLvl);
+            chance = AdjustTransmissionChancesBasedOnTarget(p_target, chance);
             if (GameUtilities.RollChance(chance)) {
                 Infect(p_infector, p_target);
             }
@@ -21,7 +30,8 @@ namespace Plague.Transmission {
             if (p_infector is Character infector && infector.marker != null) {
                 for (int i = 0; i < infector.marker.inVisionCharacters.Count; i++) {
                     Character inVisionCharacter = infector.marker.inVisionCharacters[i];
-                    if (GameUtilities.RollChance(chance)) {
+                    int chanceForCharacter = AdjustTransmissionChancesBasedOnTarget(inVisionCharacter, chance);
+                    if (GameUtilities.RollChance(chanceForCharacter)) {
                         Infect(p_infector, inVisionCharacter);
                     }
                 }    
@@ -37,7 +47,25 @@ namespace Plague.Transmission {
                     log.AddLogToDatabase();
                 }
             }
+            _plagueTransmitted?.Invoke(p_target);   
         }
+
+        private int AdjustTransmissionChancesBasedOnTarget(IPointOfInterest p_target, int p_baseChance) {
+            int adjustedChance = p_baseChance;
+            if (p_target.traitContainer.HasTrait("Quarantined")) {
+                adjustedChance -= Mathf.FloorToInt(adjustedChance * 0.75f);
+            }
+            return adjustedChance;
+        }
+        
+        #region Listeners
+        public void SubscribeToTransmission(IPlagueTransmissionListener p_PlagueTransmissionListener) {
+            _plagueTransmitted += p_PlagueTransmissionListener.OnPlagueTransmitted;
+        }
+        public void UnsubscribeToTransmission(IPlagueTransmissionListener p_PlagueTransmissionListener) {
+            _plagueTransmitted -= p_PlagueTransmissionListener.OnPlagueTransmitted;
+        }
+        #endregion
     }
 
     public static class TransmissionExtensions {

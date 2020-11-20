@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Locations;
 using Locations.Settlements;
 using UnityEngine.Assertions;
 
@@ -11,6 +12,7 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
     public string rulerID;
     public SaveDataSettlementType settlementType;
     public SaveDataLocationEventManager eventManager;
+    public SaveDataSettlementClassTracker classTracker;
     public List<TILE_OBJECT_TYPE> neededObjects;
     public bool hasTriedToStealCorpse;
     public bool isUnderSiege;
@@ -50,6 +52,9 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
         }
         eventManager = new SaveDataLocationEventManager();
         eventManager.Save(npcSettlement.eventManager);
+        
+        classTracker = new SaveDataSettlementClassTracker();
+        classTracker.Save(npcSettlement.settlementClassTracker);
         
         neededObjects = new List<TILE_OBJECT_TYPE>(npcSettlement.neededObjects);
 

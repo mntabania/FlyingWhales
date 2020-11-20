@@ -41,6 +41,9 @@ namespace Traits {
             //if (trait.hasOnEnterGridTile) {
             //    traitable.traitContainer.AddOnEnterGridTileTrait(trait);
             //}
+            if (traitable is Character character) {
+                character.eventDispatcher.ExecuteCharacterGainedTrait(character, trait);
+            }
             Messenger.Broadcast(TraitSignals.TRAITABLE_GAINED_TRAIT, traitable, trait);
         }
         protected void DefaultProcessOnRemoveTrait(ITraitable traitable, Trait trait, Character removedBy) {
@@ -63,6 +66,9 @@ namespace Traits {
             //if (trait.hasOnEnterGridTile) {
             //    traitable.traitContainer.RemoveOnEnterGridTileTrait(trait);
             //}
+            if (traitable is Character character) {
+                character.eventDispatcher.ExecuteCharacterLostTrait(character, trait, removedBy);
+            }
             Messenger.Broadcast(TraitSignals.TRAITABLE_LOST_TRAIT, traitable, trait, removedBy);
         }
         protected bool DefaultProcessOnStackStatus(ITraitable traitable, Status status, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {

@@ -42,6 +42,9 @@ public static class TileObjectDB {
         { TILE_OBJECT_TYPE.WURM_HOLE, new TileObjectData() {
             maxHP = 1,
         } },
+        { TILE_OBJECT_TYPE.BED_CLINIC, new TileObjectData() {
+            maxHP = 400,
+        } },
         { TILE_OBJECT_TYPE.BED, new TileObjectData() {
             maxHP = 400,
             neededCharacterClass =  new string[] { "Craftsman" },

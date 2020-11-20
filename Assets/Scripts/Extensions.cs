@@ -609,6 +609,7 @@ public static class Extensions {
                 break;
             case JOB_TYPE.BURY:
             case JOB_TYPE.TORTURE:
+            case JOB_TYPE.CHANGE_CLASS:
                 priority = 820;
                 break;
             case JOB_TYPE.PRODUCE_FOOD:
@@ -617,6 +618,7 @@ public static class Extensions {
             case JOB_TYPE.PRODUCE_STONE:
             case JOB_TYPE.PRODUCE_WOOD:
             case JOB_TYPE.MONSTER_BUTCHER:
+            case JOB_TYPE.QUARANTINE:
                 priority = 800;
                 break;
             case JOB_TYPE.CRAFT_OBJECT:

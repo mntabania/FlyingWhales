@@ -342,8 +342,22 @@ public class GoapPlanJob : JobQueueItem {
     public void SetCancelOnDeath(bool state) {
         shouldBeCancelledOnDeath = state;
     }
-    public bool HasOtherData(INTERACTION_TYPE actionType) {
-        return otherData.ContainsKey(actionType);
+    public bool HasOtherData(INTERACTION_TYPE p_actionType) {
+        return otherData.ContainsKey(p_actionType);
+    }
+    public bool HasOtherData(INTERACTION_TYPE p_actionType, object p_obj) {
+        if (otherData.ContainsKey(p_actionType)) {
+            OtherData[] o = otherData[p_actionType];
+            if (o != null) {
+                for (int i = 0; i < o.Length; i++) {
+                    OtherData data = o[i];
+                    if (data.obj == p_obj) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
     public OtherData[] GetOtherData(INTERACTION_TYPE actionType) {
         if (HasOtherData(actionType)) {

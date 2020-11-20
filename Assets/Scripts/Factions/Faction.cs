@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Factions.Faction_Components;
 using UnityEngine;
 using Factions.Faction_Types;
 using Locations.Settlements;
@@ -11,8 +12,6 @@ using UnityEngine.Assertions;
 using Random = UnityEngine.Random;
 
 public class Faction : IJobOwner, ISavable, ILogFiller {
-    
-    public const int MAX_HISTORY_LOGS = 60;
 
     public string persistentID { get; }
     public int id { get; }
@@ -37,10 +36,11 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public int newLeaderDesignationChance { get; private set; }
     public uint pathfindingTag { get; private set; }
     public uint pathfindingDoorTag { get; private set; }
+    public Heirloom factionHeirloom { get; private set; }
+    public FactionEventDispatcher factionEventDispatcher { get; private set; }
     
     private readonly WeightedDictionary<Character> newLeaderDesignationWeights;
-
-    public Heirloom factionHeirloom { get; private set; }
+    
 
     #region getters/setters
     public bool isDestroyed => characters.Count <= 0;
@@ -76,22 +76,20 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         id = UtilityScripts.Utilities.SetID(this);
         SetName(RandomNameGenerator.GenerateKingdomName());
-        // SetEmblem(FactionManager.Instance.GenerateFactionEmblem(this));
         SetFactionColor(UtilityScripts.Utilities.GetColorForFaction());
         SetFactionActiveState(true);
         SetFactionType(_factionType);
-        //factionType = FactionManager.Instance.CreateFactionType(_factionType);
         characters = new List<Character>();
         relationships = new Dictionary<Faction, FactionRelationship>();
         ownedSettlements = new List<BaseSettlement>();
         bannedCharacters = new List<Character>();
-        // history = new List<Log>();
         availableJobs = new List<JobQueueItem>();
         newLeaderDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         ideologyComponent = new FactionIdeologyComponent(this);
         factionJobTriggerComponent = new FactionJobTriggerComponent(this);
         partyQuestBoard = new PartyQuestBoard(this);
+        factionEventDispatcher = new FactionEventDispatcher();
         ResetNewLeaderDesignationChance();
         AddListeners();
     }
@@ -117,10 +115,10 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         relationships = new Dictionary<Faction, FactionRelationship>();
         ownedSettlements = new List<BaseSettlement>();
         bannedCharacters = new List<Character>();
-        // history = new List<Log>();
         availableJobs = new List<JobQueueItem>();
         newLeaderDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
+        factionEventDispatcher = new FactionEventDispatcher();
 
         AddListeners();
     }
@@ -206,6 +204,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             } else if (newLeader == null) {
                 Messenger.Broadcast(CharacterSignals.ON_FACTION_LEADER_REMOVED, this, prevLeader);
             }
+            factionEventDispatcher.ExecuteFactionLeaderChangedEvent(newLeader);
         }
     }
     private void OnCharacterRaceChange(Character character) {
@@ -708,19 +707,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         emblem = sprite;
     }
     #endregion
-    
-    // #region Logs
-    // public void AddHistory(Log log) {
-    //     if (!history.Contains(log)) {
-    //         history.Add(log);
-    //         if (history.Count > MAX_HISTORY_LOGS) {
-    //             history.RemoveAt(0);
-    //         }
-    //         Messenger.Broadcast(Signals.FACTION_LOG_ADDED, this);
-    //     }
-    // }
-    // #endregion
-    
+
     #region Jobs
     public void AddToAvailableJobs(JobQueueItem job, int position = -1) {
         if (position == -1) {
@@ -894,38 +881,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
     }
     #endregion
-
-    //#region Party
-    //public bool HasActiveParty(params PARTY_QUEST_TYPE[] party) {
-    //    for (int i = 0; i < characters.Count; i++) {
-    //        Character factionMember = characters[i];
-    //        if (factionMember.partyComponent.hasParty) {
-    //            for (int j = 0; j < party.Length; j++) {
-    //                PARTY_QUEST_TYPE partyType = party[j];
-    //                if (factionMember.partyComponent.currentParty.partyType == partyType) {
-    //                    return true;
-    //                }
-    //            }
-    //        }
-    //    }
-    //    return false;
-    //}
-    //public bool HasActivePartywithTarget(PARTY_QUEST_TYPE partyType, IPartyQuestTarget target) {
-    //    return GetActivePartywithTarget(partyType, target) != null;
-    //}
-    //public Party GetActivePartywithTarget(PARTY_QUEST_TYPE partyType, IPartyQuestTarget target) {
-    //    for (int i = 0; i < characters.Count; i++) {
-    //        Character factionMember = characters[i];
-    //        if (factionMember.partyComponent.hasParty) {
-    //            Party party = factionMember.partyComponent.currentParty;
-    //            if (party.partyType == partyType && party.target == target) {
-    //                return party;
-    //            }
-    //        }
-    //    }
-    //    return null;
-    //}
-    //#endregion
 
     #region War Declaration
     public void CheckForWar(Faction targetFaction, CRIME_SEVERITY crimeSeverity, Character crimeCommitter, Character crimeTarget, ActualGoapNode crime) {

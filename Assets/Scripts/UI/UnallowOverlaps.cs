@@ -5,7 +5,7 @@ using UnityEngine;
 public class UnallowOverlaps : MonoBehaviour
 {
     public RectTransform rectTransform { get; private set; }
-    public OVERLAP_UI_TAG tag;
+    public new OVERLAP_UI_TAG tag;
 
     private Vector3 _defaultLocalPosition;
 

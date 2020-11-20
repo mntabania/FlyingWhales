@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Characters.Components;
 using Inner_Maps;
 using UnityEngine;
 using Locations.Settlements;
@@ -12,12 +13,13 @@ using UtilityScripts;
 namespace Traits {
     //This trait is present in all characters
     //A dummy trait in order for some jobs to be created
-    public class CharacterTrait : Trait {
+    public class CharacterTrait : Trait, CharacterEventDispatcher.ITraitListener {
         //IMPORTANT NOTE: When the owner of this trait changed its alter ego, this trait will not be present in the alter ego anymore
         //Meaning that he/she cannot do the things specified in here anymore unless he/she switch to the ego which this trait is present
         public List<TileObject> alreadyInspectedTileObjects { get; private set; }
         public List<Character> charactersAlreadySawForHope { get; private set; }
         public HashSet<Character> charactersThatHaveReactedToThis { get; private set; }
+        private Dictionary<Character, List<string>> _traitsFromOtherCharacterThatThisIsAwareOf; 
         public Character owner { get; private set; }
         /// <summary>
         /// Has this character been abducted by the wild monster faction?
@@ -36,6 +38,7 @@ namespace Traits {
 
         #region getters
         public override Type serializedData => typeof(SaveDataCharacterTrait);
+        public Dictionary<Character, List<string>> traitsFromOtherCharacterThatThisIsAwareOf => _traitsFromOtherCharacterThatThisIsAwareOf;
         #endregion
 
         public CharacterTrait() {
@@ -49,6 +52,7 @@ namespace Traits {
             alreadyInspectedTileObjects = new List<TileObject>();
             charactersAlreadySawForHope = new List<Character>();
             charactersThatHaveReactedToThis = new HashSet<Character>();
+            _traitsFromOtherCharacterThatThisIsAwareOf = new Dictionary<Character, List<string>>();
             AddTraitOverrideFunctionIdentifier(TraitManager.Start_Perform_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
@@ -63,6 +67,13 @@ namespace Traits {
             charactersThatHaveReactedToThis = new HashSet<Character>(SaveUtilities.ConvertIDListToCharacters(saveDataCharacterTrait.charactersThatHaveReactedToThis));
             hasBeenAbductedByPlayerMonster = saveDataCharacterTrait.hasBeenAbductedByPlayerMonster;
             hasBeenAbductedByWildMonster = saveDataCharacterTrait.hasBeenAbductedByWildMonster;
+            if (saveDataCharacterTrait.traitsFromOtherCharacterThatThisIsAwareOf != null) {
+                foreach (var kvp in saveDataCharacterTrait.traitsFromOtherCharacterThatThisIsAwareOf) {
+                    Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(kvp.Key);
+                    _traitsFromOtherCharacterThatThisIsAwareOf.Add(character, kvp.Value);
+                    character.eventDispatcher.SubscribeToCharacterLostTrait(this);
+                }    
+            }
         }
         #endregion
         
@@ -286,68 +297,6 @@ namespace Traits {
                     }
                 }
             }
-            //if (targetPOI is Character || targetPOI is Tombstone) {
-            //    Character targetCharacter = null;
-            //    if (targetPOI is Character character) {
-            //        targetCharacter = character;
-            //    } else {
-            //        targetCharacter = (targetPOI as Tombstone).character;
-            //    }
-            //    if (targetCharacter.isDead) {
-            //        Dead deadTrait = targetCharacter.traitContainer.GetNormalTrait<Dead>("Dead");
-            //        if (deadTrait != null && deadTrait.responsibleCharacter != characterThatWillDoJob 
-            //                              && !deadTrait.charactersThatSawThisDead.Contains(characterThatWillDoJob)) {
-            //            deadTrait.AddCharacterThatSawThisDead(characterThatWillDoJob);
-                    
-            //            // Log sawDeadLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "saw_dead");
-            //            // sawDeadLog.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            //            // sawDeadLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            //            // characterThatWillDoJob.logComponent.AddHistory(sawDeadLog);
-            //            // PlayerManager.Instance.player.ShowNotificationFrom(sawDeadLog, characterThatWillDoJob, false);
-            //            //
-            //            //
-            //            // if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER)) {
-            //            //     characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Heartbroken");
-            //            //     bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
-            //            //     //characterThatWillDoJob.needsComponent.AdjustHappiness(-6000);
-            //            //     return hasCreatedJob;
-            //            // } else if (characterThatWillDoJob.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.RELATIVE)) {
-            //            //     characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
-            //            //     bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
-            //            //     //characterThatWillDoJob.needsComponent.AdjustHappiness(-4000);
-            //            //     return hasCreatedJob;
-            //            // } else if (characterThatWillDoJob.RelationshipManager.IsFriendsWith(targetCharacter)) {
-            //            //     characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Griefstricken");
-            //            //     bool hasCreatedJob = CreatePrioritizedShockJob(characterThatWillDoJob);
-            //            //     //characterThatWillDoJob.needsComponent.AdjustHappiness(-2000);
-            //            //     return hasCreatedJob;
-            //            // }
-            //        }
-            //    } else { 
-            //        //character is not dead
-            //        // if (targetCharacter.canMove == false || targetCharacter.limiterComponent.canWitness == false) {
-            //        //     if (characterThatWillDoJob.jobComponent.TryTriggerFeed(targetCharacter) == false) {
-            //        //         if (characterThatWillDoJob.jobComponent.TryTriggerMoveCharacterTirednessRecovery(targetCharacter) == false) {
-            //        //             characterThatWillDoJob.jobComponent.TryTriggerMoveCharacterHappinessRecovery(targetCharacter);
-            //        //         }    
-            //        //     }
-            //        // }
-            //        if (targetCharacter.race == RACE.SKELETON || targetCharacter.characterClass.className == "Zombie") {
-            //            string opinionLabel = characterThatWillDoJob.relationshipContainer.GetOpinionLabel(targetCharacter);
-            //            if (opinionLabel == RelationshipManager.Friend) {
-            //                if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
-            //                    charactersAlreadySawForHope.Add(targetCharacter);
-            //                    characterThatWillDoJob.needsComponent.AdjustHope(-5f);
-            //                }
-            //            } else if (opinionLabel == RelationshipManager.Close_Friend) {
-            //                if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
-            //                    charactersAlreadySawForHope.Add(targetCharacter);
-            //                    characterThatWillDoJob.needsComponent.AdjustHope(-10f);
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         private bool ShouldInspectItem(Character characterThatWillDoJob, TileObject item) {
@@ -387,6 +336,38 @@ namespace Traits {
         public void SetHasBeenAbductedByWildMonster(bool state) {
             hasBeenAbductedByWildMonster = state;
         }
+
+        #region Trait Awareness
+        public void BecomeAwareOfTrait(Character p_character, Trait p_trait) {
+            if (!traitsFromOtherCharacterThatThisIsAwareOf.ContainsKey(p_character)) {
+                traitsFromOtherCharacterThatThisIsAwareOf.Add(p_character, new List<string>());
+                p_character.eventDispatcher.SubscribeToCharacterLostTrait(this);
+            }
+            traitsFromOtherCharacterThatThisIsAwareOf[p_character].Add(p_trait.name);
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} has become aware of {p_character.name}'s trait {p_trait.name}");
+        }
+        public bool IsAwareOfTrait(Character p_character, Trait p_trait) {
+            if (traitsFromOtherCharacterThatThisIsAwareOf.ContainsKey(p_character)) {
+                return traitsFromOtherCharacterThatThisIsAwareOf[p_character].Contains(p_trait.name);
+            }
+            return false;
+        }
+        #endregion
+
+        #region CharacterEventDispatcher.ITraitListener Implementation
+        public void OnCharacterGainedTrait(Character p_character, Trait p_gainedTrait) { }
+        public void OnCharacterLostTrait(Character p_character, Trait p_lostTrait, Character p_removedBy) {
+            if (traitsFromOtherCharacterThatThisIsAwareOf.ContainsKey(p_character)) {
+                if (traitsFromOtherCharacterThatThisIsAwareOf[p_character].Remove(p_lostTrait.name)) {
+                    Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} has lost awareness of {p_character.name}'s trait {p_lostTrait.name} because that trait was removed!");
+                    if (traitsFromOtherCharacterThatThisIsAwareOf[p_character].Count == 0) {
+                        traitsFromOtherCharacterThatThisIsAwareOf.Remove(p_character);
+                        p_character.eventDispatcher.UnsubscribeToCharacterLostTrait(this);    
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }
 
@@ -398,6 +379,7 @@ public class SaveDataCharacterTrait : SaveDataTrait {
     public List<string> charactersThatHaveReactedToThis;
     public bool hasBeenAbductedByPlayerMonster;
     public bool hasBeenAbductedByWildMonster;
+    public Dictionary<string, List<string>> traitsFromOtherCharacterThatThisIsAwareOf;
     
     public override void Save(Trait trait) {
         base.Save(trait);
@@ -408,6 +390,12 @@ public class SaveDataCharacterTrait : SaveDataTrait {
         charactersThatHaveReactedToThis = SaveUtilities.ConvertSavableListToIDs(characterTrait.charactersThatHaveReactedToThis.ToList());
         hasBeenAbductedByPlayerMonster = characterTrait.hasBeenAbductedByPlayerMonster;
         hasBeenAbductedByWildMonster = characterTrait.hasBeenAbductedByWildMonster;
+        traitsFromOtherCharacterThatThisIsAwareOf = new Dictionary<string, List<string>>();
+        foreach (var kvp in characterTrait.traitsFromOtherCharacterThatThisIsAwareOf) {
+            string characterID = kvp.Key.persistentID;
+            List<string> traits = kvp.Value;
+            traitsFromOtherCharacterThatThisIsAwareOf.Add(characterID, traits);
+        }
     }
 }
 #endregion

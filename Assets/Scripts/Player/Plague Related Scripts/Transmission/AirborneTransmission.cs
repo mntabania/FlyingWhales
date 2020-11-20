@@ -7,11 +7,11 @@ namespace Plague.Transmission {
                 case 0:
                     return 0;
                 case 1:
-                    return 5;
-                case 2:
                     return 10;
+                case 2:
+                    return 25;
                 case 3:
-                    return 20;
+                    return 50;
                 default:
                     return 0;
             }

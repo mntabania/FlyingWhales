@@ -17,18 +17,10 @@ namespace Ruinarch {
 
         private CursorMode cursorMode = CursorMode.ForceSoftware;
 
-        private readonly List<System.Action> _leftClickActions = new List<System.Action>();
-        private readonly List<System.Action> _pendingLeftClickActions = new List<System.Action>();
-        private readonly List<System.Action> _rightClickActions = new List<System.Action>();
-
         [Space(10)] 
         [Header("Cursors")] 
         [SerializeField] private CursorTextureDictionary cursors;
-        
-        [Space(10)] 
-        [Header("Buttons")] 
-        public Sprite buttonGlowImage;
-        
+
         public HashSet<string> buttonsToHighlight { get; private set; }
 
         public enum Cursor_Type {
@@ -36,9 +28,8 @@ namespace Ruinarch {
         }
         public Cursor_Type currentCursorType;
         public Cursor_Type previousCursorType;
-        //public PLAYER_ARCHETYPE selectedArchetype { get; private set; } //Need to move this in the future. Not the best way to store the selected archetype from the main menu scene, but for now this will do since we need an object that is carried to the Game scene
         private bool runUpdate;
-        
+        private bool _allowHotKeys = true;
         
         #region Monobehaviours
         private void Awake() {
@@ -127,27 +118,6 @@ namespace Ruinarch {
                             UIManager.Instance.HideSmallInfo(); 
                         } 
                     }
-                } else if (PlayerManager.Instance.player.currentActiveCombatAbility != null) {
-                    // UIManager.Instance.HideSmallInfo();
-                    // CombatAbility ability = PlayerManager.Instance.player.currentActiveCombatAbility;
-                    // if (ability.abilityRadius == 0) {
-                    //     IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
-                    //     if (hoveredPOI != null) {
-                    //         SetCursorTo(ability.CanTarget(hoveredPOI) ? Cursor_Type.Check : Cursor_Type.Cross);
-                    //     }
-                    // } else {
-                    //     LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-                    //     if (hoveredTile != null) {
-                    //         SetCursorTo(Cursor_Type.Check);
-                    //         List<LocationGridTile> highlightTiles = hoveredTile.GetTilesInRadius(ability.abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
-                    //         if (InnerMapManager.Instance.currentlyHighlightedTiles != null) {
-                    //             InnerMapManager.Instance.UnhighlightTiles();
-                    //             InnerMapManager.Instance.HighlightTiles(highlightTiles);
-                    //         } else {
-                    //             InnerMapManager.Instance.HighlightTiles(highlightTiles);
-                    //         }
-                    //     }
-                    // }
                 } else if (PlayerManager.Instance.player.currentActiveIntel != null) {
                     IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
                     if (hoveredPOI != null) {
@@ -247,7 +217,10 @@ namespace Ruinarch {
             if (UIManager.Instance != null && UIManager.Instance.IsObjectPickerOpen()) {
                 return false;
             }
-            return true;
+            return _allowHotKeys;
+        }
+        public void AllowHotkeys(bool p_state) {
+            _allowHotKeys = p_state;
         }
         #endregion
 
