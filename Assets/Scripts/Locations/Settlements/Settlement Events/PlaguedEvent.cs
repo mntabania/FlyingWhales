@@ -28,6 +28,7 @@ namespace Locations.Settlements.Settlement_Events {
             Character leaderThatWillDecide = GetLeaderThatWillDecideResponse(p_settlement);
             DetermineLeaderResponse(leaderThatWillDecide, p_settlement);
             SubscribeListeners(p_settlement);
+            ScheduleEnd(p_settlement);
             p_settlement.settlementClassTracker.AddNeededClass("Druid");
         }
         public override void DeactivateEvent(NPCSettlement p_settlement) {
@@ -64,8 +65,8 @@ namespace Locations.Settlements.Settlement_Events {
         #region Scheduled End
         private void ScheduleEnd(NPCSettlement p_settlement) {
             _endDate = GameManager.Instance.Today();
-            endDate.AddDays(3);
-            _endScheduleTicket = SchedulingManager.Instance.AddEntry(endDate, () => DeactivateEventBySchedule(p_settlement), this);
+            _endDate = _endDate.AddDays(3);
+            _endScheduleTicket = SchedulingManager.Instance.AddEntry(_endDate, () => DeactivateEventBySchedule(p_settlement), this);
         }
         private void RescheduleEnd(NPCSettlement p_settlement) {
             SchedulingManager.Instance.RemoveSpecificEntry(_endScheduleTicket);
@@ -110,7 +111,6 @@ namespace Locations.Settlements.Settlement_Events {
                     response = p_settlement.HasStructure(STRUCTURE_TYPE.APOTHECARY) ? PLAGUE_EVENT_RESPONSE.Quarantine : PLAGUE_EVENT_RESPONSE.Exile;
                 }
             }
-            response = PLAGUE_EVENT_RESPONSE.Quarantine;
             Debug.Log($"{p_leader?.name} set plagued event response in {p_settlement.name} to {response}");
             SetLeaderResponse(response);
             ExecuteEffectsOfLeaderResponseToPlague(response, p_settlement.owner, p_settlement);
