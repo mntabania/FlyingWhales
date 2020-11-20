@@ -2098,6 +2098,7 @@
                   <e p="PoisonFlask.cs" t="Include" />
                   <e p="PoisonVent.cs" t="Include" />
                   <e p="PortalTileObject.cs" t="Include" />
+                  <e p="ProfessionPedestal.cs" t="Include" />
                   <e p="Quicksand.cs" t="Include" />
                   <e p="RackFarmingTools.cs" t="Include" />
                   <e p="RackStaves.cs" t="Include" />

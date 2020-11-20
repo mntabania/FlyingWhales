@@ -83,6 +83,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	private void HourlyJobActions() {
 		CreatePatrolJobs();
 		TryCreateMiningJob();
+		HourlyCheckForNeededCharacterClasses();
 	}
 	private void OnResourceInPileChanged(ResourcePile resourcePile) {
 		if (resourcePile.gridTileLocation != null && resourcePile.structureLocation == _owner.mainStorage) {
@@ -1045,6 +1046,36 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	    if (!_owner.HasJob(JOB_TYPE.QUARANTINE, target)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.QUARANTINE, INTERACTION_TYPE.QUARANTINE, target, _owner);
 		    _owner.AddToAvailableJobs(job);
+	    }
+    }
+    #endregion
+
+    #region Change Class
+    private void HourlyCheckForNeededCharacterClasses() {
+	    if (_owner.settlementClassTracker.neededClasses.Count > 0) {
+		    ProfessionPedestal professionPedestal = _owner.GetFirstTileObjectOfTypeThatMeetCriteria<ProfessionPedestal>(t => t.IsAvailable());
+		    if (professionPedestal != null) {
+			    for (int i = 0; i < _owner.settlementClassTracker.neededClasses.Count; i++) {
+				    string neededClass = _owner.settlementClassTracker.neededClasses[i];
+				    if (ShouldCreateChangeClassJob(neededClass)) {
+					    TriggerChangeClassJob(professionPedestal, neededClass);
+				    }
+			    }    
+		    }
+	    }
+    }
+    private bool ShouldCreateChangeClassJob(string p_className) {
+	    if (_owner.settlementClassTracker.GetCharacterClassPercentage(p_className) <= 15f) {
+		    //if needed class is less than 15% of the village population. Create a change class job
+		    return true;
+	    }
+	    return false;
+    }
+    private void TriggerChangeClassJob(ProfessionPedestal professionPedestal, string className) {
+	    if (!_owner.HasJobWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, className)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, professionPedestal, _owner);
+		    job.AddOtherData(INTERACTION_TYPE.CHANGE_CLASS, new object[] { className });
+		    _owner.AddToAvailableJobs(job);    
 	    }
     }
     #endregion

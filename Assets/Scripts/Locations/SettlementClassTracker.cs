@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
+using System.Linq;
 namespace Locations {
     public class SettlementClassTracker {
         
@@ -57,6 +58,26 @@ namespace Locations {
                 currentClass = UtilityScripts.CollectionUtilities.GetRandomElement(p_faction.factionType.civilianClasses);
             }
             return currentClass;
+        }
+        public float GetCharacterClassPercentage(string p_className) {
+            int classCount = 0;
+            for (int i = 0; i < _currentResidentClasses.Count; i++) {
+                if (currentResidentClasses[i] == p_className) {
+                    classCount++;
+                }
+            }
+            int totalClassCount = _currentResidentClasses.Count;
+            float percentage = (float)classCount / totalClassCount;
+            return percentage * 100f;
+        }
+        public bool HasExcessOfClass(string p_className) {
+            if (neededClasses.Contains(p_className)) {
+                int neededAmount = neededClasses.Count(c => c == p_className);
+                int currentAmount = _currentResidentClasses.Count(c => c == p_className);
+                return currentAmount > neededAmount;
+            }
+            //if class isn't needed, then consider it as excess 
+            return false;
         }
     }
 

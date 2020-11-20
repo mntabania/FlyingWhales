@@ -1018,6 +1018,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return false;
     }
+    public bool HasJobWithOtherData(JOB_TYPE p_jobType, INTERACTION_TYPE p_otherDataType, object p_otherDataObj) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem jobQueueItem = availableJobs[i];
+            if (jobQueueItem.jobType == p_jobType && jobQueueItem is GoapPlanJob goapPlanJob && goapPlanJob.HasOtherData(p_otherDataType, p_otherDataObj)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public bool HasJob(GoapEffect effect, IPointOfInterest target) {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem jqi = availableJobs[i];

@@ -860,7 +860,8 @@ public enum TILE_OBJECT_TYPE {
     PHYLACTERY = 159,
     CULT_CIRCLE = 160,
     CULT_ALTAR = 161,
-    CULT_CROSS = 162
+    CULT_CROSS = 162,
+    PROFESSION_PEDESTAL = 163,
 }
 public enum POI_STATE {
     ACTIVE,
