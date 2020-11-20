@@ -85,12 +85,14 @@ public class Quarantine : GoapAction {
      private BedClinic GetValidBedForActor(Character actor, Character targetCharacter) {
         if (actor.homeSettlement != null) {
             List<LocationStructure> apothecaries = actor.homeSettlement.GetStructuresOfType(STRUCTURE_TYPE.APOTHECARY);
-            for (int i = 0; i < apothecaries.Count; i++) {
-                LocationStructure structure = apothecaries[i];
-                List<BedClinic> beds = structure.GetTileObjectsOfType<BedClinic>(t => t.CanUseBed(targetCharacter));
-                if (beds.Count > 0) {
-                    return beds.First();
-                }
+            if (apothecaries != null) {
+                for (int i = 0; i < apothecaries.Count; i++) {
+                    LocationStructure structure = apothecaries[i];
+                    List<BedClinic> beds = structure.GetTileObjectsOfType<BedClinic>(t => t.CanUseBed(targetCharacter));
+                    if (beds.Count > 0) {
+                        return beds.First();
+                    }
+                }    
             }
         }
         return null;
