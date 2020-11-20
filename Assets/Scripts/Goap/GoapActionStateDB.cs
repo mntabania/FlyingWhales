@@ -640,6 +640,12 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.SUMMON_BONE_GOLEM, new[]{
             new StateNameAndDuration(){ name = "Summon Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
+        {INTERACTION_TYPE.CARRY_PATIENT, new[]{
+            new StateNameAndDuration(){ name = "Carry Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.QUARANTINE, new[]{
+            new StateNameAndDuration(){ name = "Quarantine Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

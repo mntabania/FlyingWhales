@@ -20,13 +20,17 @@ public class LifeSpanUIController : MVCUIController, LifeSpanUIView.IListener
 	}
 	public override void ShowUI() {
 		base.ShowUI();
+		UpdateAllLifespanData();
+	}
+
+	private void UpdateAllLifespanData() {
 		UpdateTileObjectInfectionTimeData();
 		UpdateElvesInfectionTimeData();
 		UpdateHumansInfectionTimeData();
 		UpdateMonstersInfectionTimeData();
 		UpdateUndeadInfectionTimeData();
 	}
-
+	
 	#region LifeSpanUIView.IListener implementation
 	public void OnObjectsUpgradeClicked() {
 		int upgradeCost = PlagueDisease.Instance.lifespan.GetTileObjectInfectionTimeUpgradeCost();
@@ -35,7 +39,7 @@ public class LifeSpanUIController : MVCUIController, LifeSpanUIView.IListener
 		}
 		PlagueDisease.Instance.lifespan.UpgradeTileObjectInfectionTime();
 		
-		UpdateTileObjectInfectionTimeData();
+		UpdateAllLifespanData();
 	}
 	public void OnElvesUpgradeClicked() {
 		int upgradeCost = PlagueDisease.Instance.lifespan.GetSapientInfectionTimeUpgradeCost(RACE.ELVES);
@@ -44,7 +48,7 @@ public class LifeSpanUIController : MVCUIController, LifeSpanUIView.IListener
 		}
 		PlagueDisease.Instance.lifespan.UpgradeSapientInfectionTime(RACE.ELVES);
 		
-		UpdateElvesInfectionTimeData();
+		UpdateAllLifespanData();
 	}
 	public void OnHumansUpgradeClicked() {
 		int upgradeCost = PlagueDisease.Instance.lifespan.GetSapientInfectionTimeUpgradeCost(RACE.HUMANS);
@@ -53,7 +57,7 @@ public class LifeSpanUIController : MVCUIController, LifeSpanUIView.IListener
 		}
 		PlagueDisease.Instance.lifespan.UpgradeSapientInfectionTime(RACE.HUMANS);
 		
-		UpdateHumansInfectionTimeData();
+		UpdateAllLifespanData();
 	}
 	public void OnMonstersUpgradeClicked() {
 		int upgradeCost = PlagueDisease.Instance.lifespan.GetMonsterInfectionTimeUpgradeCost();
@@ -62,7 +66,7 @@ public class LifeSpanUIController : MVCUIController, LifeSpanUIView.IListener
 		}
 		PlagueDisease.Instance.lifespan.UpgradeMonsterInfectionTime();
 		
-		UpdateMonstersInfectionTimeData();
+		UpdateAllLifespanData();
 	}
 	public void OnUndeadUpgradeClicked() {
 		int upgradeCost = PlagueDisease.Instance.lifespan.GetUndeadInfectionTimeUpgradeCost();
@@ -71,7 +75,7 @@ public class LifeSpanUIController : MVCUIController, LifeSpanUIView.IListener
 		}
 		PlagueDisease.Instance.lifespan.UpgradeUndeadInfectionTime();
 		
-		UpdateUndeadInfectionTimeData();
+		UpdateAllLifespanData();
 	}
 	public void OnObjectsHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip("Objects", "How long the Plague lasts on objects.", hoverPosition); }
 	public void OnElvesHoveredOver(UIHoverPosition hoverPosition) { ShowTooltip("Elves", "How long the Plague lasts on Elves.", hoverPosition); }

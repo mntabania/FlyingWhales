@@ -608,18 +608,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	#endregion
-
-	// #region Flee to home
-	// private void CheckIfStopInterruptFinished(INTERRUPT interrupt, Character character) {
-	// 	if (character == _owner && interrupt == INTERRUPT.Stopped) {
-	// 		Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfStopInterruptFinished);
-	// 		if (_owner.limiterComponent.canPerform) {
-	// 			TriggerFleeHome();	
-	// 		}
-	// 	}
-	// }
-	// #endregion
-
+	
 	#region Remove Status
 	private void TryCreateRemoveStatusJob(Trait trait) {
 		if (owner.homeSettlement != null && owner.gridTileLocation != null && owner.gridTileLocation.IsNextToOrPartOfSettlement(owner.homeSettlement)
@@ -3172,6 +3161,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             return true;
         }
         return false;
+    }
+    #endregion
+
+    #region Quarantine
+    public void TriggerQuarantineJob(Character target) {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.QUARANTINE, target)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.QUARANTINE, INTERACTION_TYPE.QUARANTINE, target, owner);
+		    owner.jobQueue.AddJobInQueue(job);
+	    }
     }
     #endregion
 

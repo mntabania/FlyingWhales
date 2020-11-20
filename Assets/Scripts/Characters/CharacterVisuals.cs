@@ -230,6 +230,10 @@ public class CharacterVisuals {
             return $"<b>{GetCharacterNameWithIconAndColor()}</b> is in {_owner.currentStructure.GetNameRelativeTo(_owner)}.";
         }
 
+        if (_owner.traitContainer.HasTrait("Quarantined")) {
+            return $"<b>{GetCharacterNameWithIconAndColor()}</b> is Quarantined.";
+        }
+
         if(_owner.minion != null && !_owner.minion.isSummoned) {
             return $"<b>{GetCharacterNameWithIconAndColor()}</b> is unsummoned.";
         }

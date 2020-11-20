@@ -6,9 +6,9 @@ using Plague.Transmission;
 using UnityEngine;
 using UtilityScripts;
 namespace Locations.Settlements.Settlement_Events {
-    public class Plagued : SettlementEvent, FactionEventDispatcher.IListener, NPCSettlementEventDispatcher.IListener, IPlagueTransmissionListener {
+    public class PlaguedEvent : SettlementEvent, FactionEventDispatcher.IListener, NPCSettlementEventDispatcher.IListener, IPlagueTransmissionListener {
         
-        public override SETTLEMENT_EVENT eventType => SETTLEMENT_EVENT.Plagued;
+        public override SETTLEMENT_EVENT eventType => SETTLEMENT_EVENT.Plagued_Event;
         private PLAGUE_EVENT_RESPONSE _rulerDecision;
         private GameDate _endDate;
         private string _endScheduleTicket;
@@ -18,8 +18,8 @@ namespace Locations.Settlements.Settlement_Events {
         public GameDate endDate => _endDate;
         #endregion
         
-        public Plagued(NPCSettlement location) : base(location) { }
-        public Plagued(SaveDataPlaguedSettlementEvent data) : base(data) {
+        public PlaguedEvent(NPCSettlement location) : base(location) { }
+        public PlaguedEvent(SaveDataPlaguedSettlementEvent data) : base(data) {
             LoadEnd(data.endDate);
             _rulerDecision = data.rulerDecision;
         }
@@ -110,6 +110,7 @@ namespace Locations.Settlements.Settlement_Events {
                     response = p_settlement.HasStructure(STRUCTURE_TYPE.APOTHECARY) ? PLAGUE_EVENT_RESPONSE.Quarantine : PLAGUE_EVENT_RESPONSE.Exile;
                 }
             }
+            response = PLAGUE_EVENT_RESPONSE.Quarantine;
             Debug.Log($"{p_leader?.name} set plagued event response in {p_settlement.name} to {response}");
             SetLeaderResponse(response);
             ExecuteEffectsOfLeaderResponseToPlague(response, p_settlement.owner, p_settlement);
@@ -158,7 +159,7 @@ namespace Locations.Settlements.Settlement_Events {
 
         #region Faction Effects
         private void RevertFactionEffects(Faction p_faction) {
-            if (!p_faction.ownedSettlements.Any(s => s is NPCSettlement npcSettlement && npcSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued))) {
+            if (!p_faction.ownedSettlements.Any(s => s is NPCSettlement npcSettlement && npcSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event))) {
                 //if faction no longer has any plagued settlements, remove plague as crime. Otherwise retain its current value
                 p_faction.factionType.RemoveCrime(CRIME_TYPE.Plagued);    
             }
@@ -229,12 +230,12 @@ namespace Locations.Settlements.Settlement_Events {
         public PLAGUE_EVENT_RESPONSE rulerDecision;
         public override void Save(SettlementEvent data) {
             base.Save(data);
-            Plagued e = data as Plagued;
+            PlaguedEvent e = data as PlaguedEvent;
             endDate = e.endDate;
             rulerDecision = e.rulerDecision;
         }
         public override SettlementEvent Load() {
-            return new Plagued(this);
+            return new PlaguedEvent(this);
         }
     }
 }

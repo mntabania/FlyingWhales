@@ -1039,4 +1039,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
         }
     }
     #endregion
+    
+    #region Quarantine
+    public void TriggerQuarantineJob(Character target) {
+	    if (!_owner.HasJob(JOB_TYPE.QUARANTINE, target)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.QUARANTINE, INTERACTION_TYPE.QUARANTINE, target, _owner);
+		    _owner.AddToAvailableJobs(job);
+	    }
+    }
+    #endregion
 }

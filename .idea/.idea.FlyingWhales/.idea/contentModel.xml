@@ -1191,6 +1191,7 @@
               <e p="BuildStructureComponent.cs" t="Include" />
               <e p="CarryComponent.cs" t="Include" />
               <e p="CharacterComponent.cs" t="Include" />
+              <e p="CharacterEventDispatcher.cs" t="Include" />
               <e p="CharacterFactionComponent.cs" t="Include" />
               <e p="CharacterJobTriggerComponent.cs" t="Include" />
               <e p="CombatComponent.cs" t="Include" />
@@ -1451,6 +1452,7 @@
               <e p="Butcher.cs" t="Include" />
               <e p="Carry.cs" t="Include" />
               <e p="CarryCorpse.cs" t="Include" />
+              <e p="CarryPatient.cs" t="Include" />
               <e p="CarryRestrained.cs" t="Include" />
               <e p="ChangeClass.cs" t="Include" />
               <e p="CleanseTile.cs" t="Include" />
@@ -1530,6 +1532,7 @@
               <e p="PlayCards.cs" t="Include" />
               <e p="Pray.cs" t="Include" />
               <e p="Puke.cs" t="Include" />
+              <e p="Quarantine.cs" t="Include" />
               <e p="Raid.cs" t="Include" />
               <e p="RaiseCorpse.cs" t="Include" />
               <e p="ReadNecronomicon.cs" t="Include" />
@@ -2001,6 +2004,7 @@
                   <e p="BallLightning.cs" t="Include" />
                   <e p="Bandages.cs" t="Include" />
                   <e p="Barrel.cs" t="Include" />
+                  <e p="BaseBed.cs" t="Include" />
                   <e p="Bed.cs" t="Include" />
                   <e p="BedClinic.cs" t="Include" />
                   <e p="BerryShrub.cs" t="Include" />
@@ -2219,7 +2223,7 @@
               <e p="NPCSettlement.cs" t="Include" />
               <e p="PlayerSettlement.cs" t="Include" />
               <e p="Settlement Events" t="Include">
-                <e p="Plagued.cs" t="Include" />
+                <e p="PlaguedEvent.cs" t="Include" />
                 <e p="SettlementEvent.cs" t="Include" />
                 <e p="VampireHunt.cs" t="Include" />
                 <e p="WerewolfHunt.cs" t="Include" />
@@ -2938,6 +2942,7 @@
               <e p="Prisoner.cs" t="Include" />
               <e p="Psychopath.cs" t="Include" />
               <e p="Pyrophobic.cs" t="Include" />
+              <e p="Quarantined.cs" t="Include" />
               <e p="Ravenous.cs" t="Include" />
               <e p="Resting.cs" t="Include" />
               <e p="Restrained.cs" t="Include" />

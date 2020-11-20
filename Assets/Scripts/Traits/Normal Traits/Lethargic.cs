@@ -24,8 +24,8 @@ namespace Traits {
             if (sourceCharacter is Character character) {
                 character.movementComponent.AdjustSpeedModifier(-0.5f);
                 if (GameUtilities.RollChance(5) && character.homeSettlement != null && 
-                    Locations.Settlements.Settlement_Events.Plagued.HasMinimumAmountOfPlaguedVillagersForEvent(character.homeSettlement)) {
-                    character.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Plagued);
+                    Locations.Settlements.Settlement_Events.PlaguedEvent.HasMinimumAmountOfPlaguedVillagersForEvent(character.homeSettlement)) {
+                    character.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Plagued_Event);
                 }
             }
         }

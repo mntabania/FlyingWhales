@@ -805,9 +805,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     #endregion
 
     #region Users
-    public virtual void AddUser(Character newUser) {
+    public virtual bool AddUser(Character newUser) {
         if (users.Contains(newUser)) {
-            return;
+            return true;
         }
         TileObjectSlotItem availableSlot = GetNearestUnoccupiedSlot(newUser);
         if (availableSlot != null) {
@@ -818,6 +818,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             }
             Messenger.Broadcast(TileObjectSignals.ADD_TILE_OBJECT_USER, this, newUser);
         }
+        return true;
     }
     public virtual bool RemoveUser(Character user) {
         TileObjectSlotItem slot = GetSlotUsedBy(user);

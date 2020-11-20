@@ -37,17 +37,37 @@ public class LocationEventManager {
             settlementEvent.DeactivateEvent(_location);
         }
     }
-    public bool HasActiveEvent(SETTLEMENT_EVENT settlementEvent) {
+    public bool HasActiveEvent(SETTLEMENT_EVENT p_settlementEventType) {
         for (int i = 0; i < activeEvents.Count; i++) {
             SettlementEvent e = activeEvents[i];
-            if (e.eventType == settlementEvent) {
+            if (e.eventType == p_settlementEventType) {
                 return true;
             }
         }
         return false;
     }
+    public bool HasActiveEvent<T>(out T p_settlementEvent) where T : SettlementEvent{
+        for (int i = 0; i < activeEvents.Count; i++) {
+            SettlementEvent e = activeEvents[i];
+            if (e is T settlementEvent) {
+                p_settlementEvent = settlementEvent;
+                return true;
+            }
+        }
+        p_settlementEvent = null;
+        return false;
+    }
     public bool HasActiveEvent(SettlementEvent p_settlementEvent) {
         return activeEvents.Contains(p_settlementEvent);
+    }
+    public T GetActiveEvent<T>() where T : SettlementEvent {
+        for (int i = 0; i < activeEvents.Count; i++) {
+            SettlementEvent e = activeEvents[i];
+            if (e is T settlementEvent) {
+                return settlementEvent;
+            }
+        }
+        return null;
     }
     private SettlementEvent CreateNewSettlementEvent(SETTLEMENT_EVENT settlementEvent) {
         var typeName = $"Locations.Settlements.Settlement_Events.{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(settlementEvent.ToString())}";

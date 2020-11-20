@@ -507,6 +507,8 @@ public enum INTERACTION_TYPE {
     DROP_CORPSE = 209,
     CARRY_CORPSE = 210,
     SUMMON_BONE_GOLEM = 211,
+    QUARANTINE,
+    CARRY_PATIENT
 }
 public enum INTERRUPT {
     None,
@@ -874,7 +876,7 @@ public enum GOAP_EFFECT_CONDITION { NONE, REMOVE_TRAIT, HAS_TRAIT, FULLNESS_RECO
         , PRODUCE_FOOD, PRODUCE_WOOD, PRODUCE_STONE, PRODUCE_METAL, DEPOSIT_RESOURCE, REMOVE_REGION_CORRUPTION, CLEAR_REGION_FACTION_OWNER, REGION_OWNED_BY_ACTOR_FACTION, FACTION_QUEST_DURATION_INCREASE
         , FACTION_QUEST_DURATION_DECREASE, DESTROY_REGION_LANDMARK, CHARACTER_TO_MINION, SEARCH
         , HAS_POI, TAKE_POI //The process of "take" in this manner is different from simply carrying the poi. In technicality, since the actor will only get an amount from the poi target, the actor will not carry the whole poi instead he/she will create a new poi with the amount that he/she needs while simultaneously reducing that amount from the poi target
-        , ABSORB_LIFE, RAISE_CORPSE, SUMMON,
+        , ABSORB_LIFE, RAISE_CORPSE, SUMMON, CARRIED_PATIENT
 }
 public enum GOAP_EFFECT_TARGET { ACTOR, TARGET, }
 public enum GOAP_PLAN_STATE { IN_PROGRESS, SUCCESS, FAILED, CANCELLED, }
@@ -1086,7 +1088,7 @@ public enum RELATIONS_FILTER {
 public enum OVERLAP_UI_TAG { Top, Bottom, }
 
 public enum SETTLEMENT_EVENT {
-    Vampire_Hunt, Werewolf_Hunt, Plagued,
+    Vampire_Hunt, Werewolf_Hunt, Plagued_Event,
 }
 public enum RELIGION {
     None, Demon_Worship, Divine_Worship, Nature_Worship
