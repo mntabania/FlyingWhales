@@ -13,7 +13,7 @@ namespace Plague.Symptom {
             Debug.Log("Activated Sneezing Symptom");
         }
         public override void PerTickMovement(Character p_character) {
-            if (GameUtilities.RollChance(1)) {
+            if (GameUtilities.RollChance(1)) { //1
                 ActivateSymptom(p_character);
             }
         }

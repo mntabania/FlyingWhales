@@ -21,17 +21,10 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public const int REGION_VILLAGE_CAPACITY = 3;
     
     [SerializeField] private List<LandmarkData> landmarkData;
-    public List<AreaData> areaData;
-
     public List<BaseLandmark> allLandmarks;
-
     [SerializeField] private GameObject landmarkGO;
-
     private Dictionary<LANDMARK_TYPE, LandmarkData> landmarkDataDict;
-
-    public AreaTypeSpriteDictionary locationPortraits;
-    public List<LocationEvent> locationEventsData { get; private set; }
-
+    
     public STRUCTURE_TYPE[] humanSurvivalStructures { get; private set; }
     public STRUCTURE_TYPE[] humanUtilityStructures { get; private set; }
     public STRUCTURE_TYPE[] humanCombatStructures { get; private set; }
@@ -48,7 +41,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         allLandmarks = new List<BaseLandmark>();
         ConstructLandmarkData();
         LoadLandmarkTypeDictionary();
-        ConstructLocationEventsData();
         ConstructRaceStructureRequirements();
     }
 
@@ -63,11 +55,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     #endregion
 
     #region Landmarks
-    private void ConstructLocationEventsData() {
-        locationEventsData = new List<LocationEvent>() {
-            new NewResidentEvent(),
-        };
-    }
     private void ConstructLandmarkData() {
         for (int i = 0; i < landmarkData.Count; i++) {
             LandmarkData data = landmarkData[i];

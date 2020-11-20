@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Characters.Components;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
@@ -123,6 +124,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CrimeComponent crimeComponent { get; private set; }
     public ReligionComponent religionComponent { get; private set; }
     public LimiterComponent limiterComponent { get; private set; }
+    public CharacterEventDispatcher eventDispatcher { get; }
 
     #region getters / setters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
@@ -323,6 +325,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         crimeComponent = new CrimeComponent(); crimeComponent.SetOwner(this);
         religionComponent = new ReligionComponent(); religionComponent.SetOwner(this);
         limiterComponent = new LimiterComponent(); limiterComponent.SetOwner(this);
+        eventDispatcher = new CharacterEventDispatcher();
 
         needsComponent.ResetSleepTicks();
     }
@@ -402,6 +405,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         crimeComponent = data.crimeComponent.Load(); crimeComponent.SetOwner(this);
         religionComponent = data.religionComponent.Load(); religionComponent.SetOwner(this);
         limiterComponent = data.limiterComponent.Load(); limiterComponent.SetOwner(this);
+        eventDispatcher = new CharacterEventDispatcher();
 
         if (data.hasMinion) {
             _minion = data.minion.Load(this);
@@ -3981,6 +3985,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.EAT_ALIVE);
         AddAdvertisedAction(INTERACTION_TYPE.DECREASE_MOOD);
         AddAdvertisedAction(INTERACTION_TYPE.DISABLE);
+        AddAdvertisedAction(INTERACTION_TYPE.CARRY_PATIENT);
+        AddAdvertisedAction(INTERACTION_TYPE.QUARANTINE);
 
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);

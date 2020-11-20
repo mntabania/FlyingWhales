@@ -317,8 +317,8 @@ namespace Locations.Settlements {
         #endregion
 
         #region Faction
-        public virtual void SetOwner(Faction owner) {
-            this.owner = owner;
+        public virtual void SetOwner(Faction p_newOwner) {
+            this.owner = p_newOwner;
         
             bool isCorrupted = this.owner != null && this.owner.isPlayerFaction;
             for (int i = 0; i < tiles.Count; i++) {

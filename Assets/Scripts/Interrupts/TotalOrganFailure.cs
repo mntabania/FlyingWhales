@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Traits;
-
+using UtilityScripts;
 namespace Interrupts {
     public class TotalOrganFailure : Interrupt {
         public TotalOrganFailure() : base(INTERRUPT.Total_Organ_Failure) {
@@ -16,6 +16,10 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
+            if (GameUtilities.RollChance(15) && interruptHolder.actor.homeSettlement != null && 
+                Locations.Settlements.Settlement_Events.PlaguedEvent.HasMinimumAmountOfPlaguedVillagersForEvent(interruptHolder.actor.homeSettlement)) {
+                interruptHolder.actor.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Plagued_Event);
+            }
             interruptHolder.actor.Death("Total Organ Failure", _deathLog: interruptHolder.effectLog, interrupt: this);
             return true;
         }

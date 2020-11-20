@@ -176,6 +176,6 @@ public class Nap : GoapAction {
     #endregion
 
     private bool CanSleepInBed(Character character, TileObject tileObject) {
-        return (tileObject as Bed).CanSleepInBed(character);
+        return (tileObject as Bed).CanUseBed(character);
     }
 }

@@ -1063,6 +1063,18 @@ public class ReactionComponent : CharacterComponent {
                                 }
                             }
                         }
+                        
+                        //Plagued Settlement Event
+                        if (disguisedActor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event)) {
+                            Lethargic lethargic = disguisedTarget.traitContainer.GetTraitOrStatus<Lethargic>("Lethargic");
+                            if (lethargic != null && !lethargic.IsResponsibleForTrait(disguisedActor) && !disguisedActor.defaultCharacterTrait.IsAwareOfTrait(disguisedActor, lethargic)) {
+                                disguisedActor.defaultCharacterTrait.BecomeAwareOfTrait(disguisedTarget, lethargic);
+                                if (GameUtilities.RollChance(25) && !disguisedActor.relationshipContainer.IsFriendsWith(disguisedTarget)) {
+                                    disguisedActor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_PLAGUED, REACTION_STATUS.WITNESSED);
+                                }
+                            }
+                        }
+                        
                     } else if (disguisedActor.faction != disguisedTarget.faction && disguisedActor.faction != null && disguisedTarget.faction != null) {
                         //https://trello.com/c/Rictd9YD/2569-on-sight-of-restrained-ensnared-frozen-and-unconscious
                         FactionRelationship factionRel = disguisedActor.faction.GetRelationshipWith(disguisedTarget.faction);

@@ -25,36 +25,36 @@
         }
         
         #region Overrides
-        public override void ActivateEvent(NPCSettlement settlement) {
-            for (int i = 0; i < settlement.residents.Count; i++) {
-                Character resident = settlement.residents[i];
+        public override void ActivateEvent(NPCSettlement p_settlement) {
+            for (int i = 0; i < p_settlement.residents.Count; i++) {
+                Character resident = p_settlement.residents[i];
                 AddInterestingItems(resident);
             }
-            settlement.AddNeededItems(TILE_OBJECT_TYPE.PHYLACTERY);
+            p_settlement.AddNeededItems(TILE_OBJECT_TYPE.PHYLACTERY);
             ScheduleEnd();
             SubscribeListeners();
             
             Log log = new Log(GameManager.Instance.Today(), "Settlement Event", "Werewolf Hunt", "started", null, LOG_TAG.Major);
-            log.AddToFillers(settlement, settlement.name, LOG_IDENTIFIER.LANDMARK_1);
-            if (settlement.owner != null) {
-                log.AddInvolvedObjectManual(settlement.owner.persistentID);    
+            log.AddToFillers(p_settlement, p_settlement.name, LOG_IDENTIFIER.LANDMARK_1);
+            if (p_settlement.owner != null) {
+                log.AddInvolvedObjectManual(p_settlement.owner.persistentID);    
             }
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         }
-        public override void DeactivateEvent(NPCSettlement settlement) {
-            for (int i = 0; i < settlement.residents.Count; i++) {
-                Character resident = settlement.residents[i];
+        public override void DeactivateEvent(NPCSettlement p_settlement) {
+            for (int i = 0; i < p_settlement.residents.Count; i++) {
+                Character resident = p_settlement.residents[i];
                 RemoveInterestingItems(resident);
             }
-            settlement.RemoveNeededItems(TILE_OBJECT_TYPE.PHYLACTERY);
+            p_settlement.RemoveNeededItems(TILE_OBJECT_TYPE.PHYLACTERY);
             UnsubscribeListeners();
 
             Log log = new Log(GameManager.Instance.Today(), "Settlement Event", "Werewolf Hunt", "ended", null, LOG_TAG.Major);
-            log.AddToFillers(settlement, settlement.name, LOG_IDENTIFIER.LANDMARK_1);
-            if (settlement.owner != null) {
+            log.AddToFillers(p_settlement, p_settlement.name, LOG_IDENTIFIER.LANDMARK_1);
+            if (p_settlement.owner != null) {
                 //in case when this event ends and a faction no longer owns the settlement that has this event
-                log.AddInvolvedObjectManual(settlement.owner.persistentID);    
+                log.AddInvolvedObjectManual(p_settlement.owner.persistentID);    
             }
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);

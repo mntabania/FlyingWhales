@@ -1,4 +1,6 @@
-﻿public class IsPlagued : GoapAction {
+﻿using Locations.Settlements.Settlement_Events;
+
+public class IsPlagued : GoapAction {
     public IsPlagued() : base(INTERACTION_TYPE.IS_PLAGUED) {
         actionIconString = GoapActionStateDB.Sick_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -19,9 +21,10 @@
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
+        
+        CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
         if (witness.relationshipContainer.IsFriendsWith(actor)) {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status, node);
         } else if (witness.relationshipContainer.IsEnemiesWith(actor)) {
@@ -30,6 +33,10 @@
         } else {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status, node);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status, node);
+        }
+
+        if (witness.homeSettlement.eventManager.HasActiveEvent(out PlaguedEvent plaguedSettlementEvent) && plaguedSettlementEvent.rulerDecision == PLAGUE_EVENT_RESPONSE.Quarantine) {
+            witness.homeSettlement.settlementJobTriggerComponent.TriggerQuarantineJob(actor);
         }
         
         return response;

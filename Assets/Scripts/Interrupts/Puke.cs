@@ -21,6 +21,10 @@ namespace Interrupts {
             overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(interruptHolder.target, interruptHolder.target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             overrideEffectLog.AddToFillers(null, interruptHolder.identifier, LOG_IDENTIFIER.STRING_1);
+            if (GameUtilities.RollChance(5) && interruptHolder.actor.homeSettlement != null && 
+                Locations.Settlements.Settlement_Events.PlaguedEvent.HasMinimumAmountOfPlaguedVillagersForEvent(interruptHolder.actor.homeSettlement)) {
+                interruptHolder.actor.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Plagued_Event);
+            }
             return true;
         }
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
@@ -45,26 +49,9 @@ namespace Interrupts {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
             }
 
-            if (actor.homeSettlement is NPCSettlement npcSettlement && npcSettlement.isPlagued) {
-                if (witness.relationshipContainer.IsFriendsWith(actor)) {
-                    if (GameUtilities.RollChance(15)) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Plague_Hysteria, witness, actor, status);
-                    }
-                } else if ((witness.relationshipContainer.IsFamilyMember(actor) || 
-                           witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR)) && 
-                           !witness.relationshipContainer.HasOpinionLabelWithCharacter(actor, RelationshipManager.Rival)) {
-                    // if Actor is Relative, Lover, Affair and not a Rival
-                    if (GameUtilities.RollChance(15)) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Plague_Hysteria, witness, actor, status);
-                    }
-                } else if (witness.relationshipContainer.HasRelationshipWith(actor) == false || 
-                          witness.relationshipContainer.HasOpinionLabelWithCharacter(actor, RelationshipManager.Acquaintance)) {
-                    if (GameUtilities.RollChance(40)) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Plague_Hysteria, witness, actor, status);
-                    }
-                } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Plague_Hysteria, witness, actor, status);
-                }
+            if (GameUtilities.RollChance(25) && witness.homeSettlement is NPCSettlement npcSettlement && npcSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event) && 
+                !witness.relationshipContainer.IsFriendsWith(actor)) {
+                witness.assumptionComponent.CreateAndReactToNewAssumption(actor, actor, INTERACTION_TYPE.IS_PLAGUED, REACTION_STATUS.WITNESSED);
             }
             return response;
         }
