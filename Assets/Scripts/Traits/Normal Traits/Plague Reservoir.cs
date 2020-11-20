@@ -10,7 +10,6 @@ namespace Traits {
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
-            isHidden = true;
         }
 
         #region Overrides

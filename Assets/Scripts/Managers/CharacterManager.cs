@@ -56,7 +56,8 @@ public class CharacterManager : BaseMonoBehaviour {
         Snatcher_Behaviour = "Snatcher Behaviour",
         Bone_Golem_Behaviour = "Bone Golem Behaviour",
         Pest_Behaviour = "Pest Behaviour",
-        Rat_Behaviour = "Rat Behaviour";
+        Rat_Behaviour = "Rat Behaviour",
+        Ratman_Behaviour = "Ratman Behaviour";
 
 
 
@@ -358,6 +359,13 @@ public class CharacterManager : BaseMonoBehaviour {
             new []{
                 typeof(MovementProcessing),
                 typeof(RatBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Ratman_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(RatmanBehaviour),
                 typeof(DefaultExtraCatcher),
             }
         },

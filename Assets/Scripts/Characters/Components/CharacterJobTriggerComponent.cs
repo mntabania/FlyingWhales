@@ -2450,6 +2450,20 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    producedJob = job;
 	    return true;
     }
+    public bool TriggerTorture(Character targetCharacter, out JobQueueItem producedJob) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TORTURE, INTERACTION_TYPE.TORTURE, targetCharacter, owner);
+        producedJob = job;
+        return true;
+    }
+    public bool TriggerBirthRatman(out JobQueueItem producedJob) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.BIRTH_RATMAN, owner, owner);
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
+    }
     #endregion
 
     #region Arson

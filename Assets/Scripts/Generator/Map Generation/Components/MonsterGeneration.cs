@@ -78,10 +78,15 @@ public class MonsterGeneration : MapGenerationComponent {
 		//}
 		return summon;
 	}
-	#endregion
-	
+    private void CreateCharacter(RACE race, string className, GENDER gender, BaseSettlement settlementOnTile, LocationStructure structure, Faction faction = null) {
+        Character character = CharacterManager.Instance.CreateNewCharacter(className, race, gender, faction ?? FactionManager.Instance.neutralFaction, settlementOnTile, settlementOnTile.region, structure);
+        LocationGridTile targetTile = CollectionUtilities.GetRandomElement(structure.passableTiles);
+        character.CreateMarker();
+        character.InitialCharacterPlacement(targetTile);
+    }
+    #endregion
 
-	private IEnumerator RegionalMonsterGeneration() {
+    private IEnumerator RegionalMonsterGeneration() {
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
 			if (region.regionFeatureComponent.HasFeature<TeemingFeature>()) {
@@ -175,19 +180,23 @@ public class MonsterGeneration : MapGenerationComponent {
 			for (int i = 0; i < allLandmarks.Count; i++) {
 				BaseLandmark landmark = allLandmarks[i];
 				if (landmark.specificLandmarkType != LANDMARK_TYPE.CAVE) {
-					LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-					LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmark.specificLandmarkType);
-					if (landmarkData.monsterGenerationSetting != null) {
-						WeightedDictionary<MonsterSetting> monsterChoices = landmarkData.monsterGenerationSetting.GetMonsterChoicesForBiome(landmark.tileLocation.biomeType);
-						if (monsterChoices != null && GameUtilities.RollChance(landmarkData.monsterGenerationChance)) {
-							MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
-							int randomAmount = randomMonsterSetting.minMaxRange.Random();
-							for (int k = 0; k < randomAmount; k++) {
-								CreateMonster(randomMonsterSetting.monsterType, landmark.tileLocation.settlementOnTile, landmark, structure);	
-							}
-							yield return null;
-						}
-					}
+                    LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+                    if (landmark.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR && GenerateRatmen(structure)) {
+                        //Ratmen has been generated
+                    } else {
+                        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmark.specificLandmarkType);
+                        if (landmarkData.monsterGenerationSetting != null) {
+                            WeightedDictionary<MonsterSetting> monsterChoices = landmarkData.monsterGenerationSetting.GetMonsterChoicesForBiome(landmark.tileLocation.biomeType);
+                            if (monsterChoices != null && GameUtilities.RollChance(landmarkData.monsterGenerationChance)) {
+                                MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
+                                int randomAmount = randomMonsterSetting.minMaxRange.Random();
+                                for (int k = 0; k < randomAmount; k++) {
+                                    CreateMonster(randomMonsterSetting.monsterType, landmark.tileLocation.settlementOnTile, landmark, structure);
+                                }
+                                yield return null;
+                            }
+                        }
+                    }
 				}
 			}	
 		}
@@ -304,13 +313,17 @@ public class MonsterGeneration : MapGenerationComponent {
 								//if cave already has occupants, then do not generate monsters for that cave
 								continue;
 							}
-							if (GameUtilities.RollChance(caveData.monsterGenerationChance)) {
-								MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
-								int randomAmount = randomMonsterSetting.minMaxRange.Random();
-								for (int l = 0; l < randomAmount; l++) {
-									CreateMonster(randomMonsterSetting.monsterType, cave.unoccupiedTiles.ToList(), cave);	
-								}	
-							}
+                            if (GenerateRatmen(cave)) {
+                                //Ratmen has bee generated
+                            } else {
+                                if (GameUtilities.RollChance(caveData.monsterGenerationChance)) {
+                                    MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
+                                    int randomAmount = randomMonsterSetting.minMaxRange.Random();
+                                    for (int l = 0; l < randomAmount; l++) {
+                                        CreateMonster(randomMonsterSetting.monsterType, cave.unoccupiedTiles.ToList(), cave);
+                                    }
+                                }
+                            }
 						}	
 					}
 						
@@ -446,5 +459,22 @@ public class MonsterGeneration : MapGenerationComponent {
 		// 	}
 		// }
 	}
-	#endregion
+    #endregion
+
+    #region Ratmen Generation
+    private bool GenerateRatmen(LocationStructure structure) {
+        if (GameUtilities.RollChance(10)) {
+            if (FactionManager.Instance.ratmenFaction == null) {
+                //Only create ratmen faction if ratmen are spawned
+                FactionManager.Instance.CreateRatmenFaction();
+            }
+            int numOfRatmen = GameUtilities.RandomBetweenTwoNumbers(1, 3);
+            for (int k = 0; k < numOfRatmen; k++) {
+                CreateCharacter(RACE.RATMAN, "Ratman", GENDER.MALE, structure.settlementLocation, structure, FactionManager.Instance.ratmenFaction);
+            }
+            return true;
+        }
+        return false;
+    }
+    #endregion
 }

@@ -16,6 +16,7 @@ public class FactionManager : BaseMonoBehaviour {
     public Faction neutralFaction { get; private set; }
     public Faction vagrantFaction { get; private set; }
     public Faction disguisedFaction { get; private set; }
+    public Faction ratmenFaction { get; private set; }
     private Faction _undeadFaction;
 
     [Space(10)]
@@ -27,7 +28,8 @@ public class FactionManager : BaseMonoBehaviour {
     [SerializeField] private Sprite undeadFactionEmblem;
     [SerializeField] private Sprite playerFactionEmblem;
     [SerializeField] private Sprite cultFactionEmblem;
-    
+    [SerializeField] private Sprite ratmenFactionEmblem;
+
     private List<Sprite> _usedEmblems = new List<Sprite>();
 
     public readonly string[] exclusiveIdeologyTraitRequirements = new string[] { "Worker", "Combatant", "Royalty" };
@@ -95,6 +97,17 @@ public class FactionManager : BaseMonoBehaviour {
         CreateRelationshipsForFaction(newFaction);
         Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
     }
+    public void CreateRatmenFaction() {
+        Faction newFaction = new Faction(FACTION_TYPE.Ratmen);
+        newFaction.SetName("Ratmen");
+        newFaction.SetFactionActiveState(false);
+        newFaction.SetEmblem(ratmenFactionEmblem);
+        newFaction.factionType.SetAsDefault();
+        DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
+        SetRatmenFaction(newFaction);
+        CreateRelationshipsForFaction(newFaction);
+        Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
+    }
     private void SetNeutralFaction(Faction faction) {
         neutralFaction = faction;
     }
@@ -106,6 +119,9 @@ public class FactionManager : BaseMonoBehaviour {
     }
     private void SetUndeadFaction(Faction faction) {
         _undeadFaction = faction;
+    }
+    private void SetRatmenFaction(Faction faction) {
+        ratmenFaction = faction;
     }
     public Faction CreateNewFaction(FACTION_TYPE factionType, string factionName = "") {
         Faction newFaction = new Faction(factionType);
@@ -128,6 +144,8 @@ public class FactionManager : BaseMonoBehaviour {
             faction.SetEmblem(playerFactionEmblem);
         } else if (factionType == FACTION_TYPE.Undead) {
             faction.SetEmblem(undeadFactionEmblem);
+        } else if (factionType == FACTION_TYPE.Ratmen) {
+            faction.SetEmblem(ratmenFactionEmblem);
         } else if (factionType == FACTION_TYPE.Demon_Cult && 
                    DatabaseManager.Instance.factionDatabase.allFactionsList.Count(f => f.factionType.type == FACTION_TYPE.Demon_Cult) == 1) {
             //only set cult faction emblem on first cult faction.
@@ -157,9 +175,10 @@ public class FactionManager : BaseMonoBehaviour {
     private Faction CreateUndeadFaction() {
         Faction undead = CreateNewFaction(FACTION_TYPE.Undead, "Undead");
         undead.SetIsMajorFaction(false);
-        foreach (KeyValuePair<Faction,FactionRelationship> pair in undead.relationships) {
-            undead.SetRelationshipFor(pair.Key, FACTION_RELATIONSHIP_STATUS.Hostile);
-        }
+        CreateRelationshipsForFaction(undead);
+        //foreach (KeyValuePair<Faction,FactionRelationship> pair in undead.relationships) {
+        //    undead.SetRelationshipFor(pair.Key, FACTION_RELATIONSHIP_STATUS.Hostile);
+        //}
         return undead;
     }
     public Faction CreateNewFaction(SaveDataFaction data) {
@@ -228,6 +247,9 @@ public class FactionManager : BaseMonoBehaviour {
         }
         if (p_data.factionType.type == FACTION_TYPE.Demons) {
             return playerFactionEmblem;
+        }
+        if (p_data.factionType.type == FACTION_TYPE.Ratmen) {
+            return ratmenFactionEmblem;
         }
         if (p_data.emblemName == cultFactionEmblem.name) {
             return cultFactionEmblem;
@@ -299,28 +321,59 @@ public class FactionManager : BaseMonoBehaviour {
         FactionRelationship newRel = new FactionRelationship(faction1, faction2);
         faction1.AddNewRelationship(faction2, newRel);
         faction2.AddNewRelationship(faction1, newRel);
-        //faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.Hostile);
-        //faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.Hostile);
-        //Warmonger warmonger1 = CreateIdeology<Warmonger>(FACTION_IDEOLOGY.Warmonger);
-        //Warmonger warmonger2 = CreateIdeology<Warmonger>(FACTION_IDEOLOGY.Warmonger);
-        //faction1.factionType.AddIdeology(warmonger1);
-        //faction2.factionType.AddIdeology(warmonger2);
-        if (faction1.isPlayerFaction || faction2.isPlayerFaction || 
-           faction1 == neutralFaction || faction2 == neutralFaction || 
-           faction1 == _undeadFaction || faction2 == _undeadFaction) {
 
-            if ((faction1.isPlayerFaction || faction2.isPlayerFaction) &&
-                (faction1 == neutralFaction || faction2 == neutralFaction)) {
-                //Player faction should be neutral with Wild Monsters
-                //Reference: https://trello.com/c/hqFZ1MC2/1561-player-faction-should-be-neutral-with-wild-monsters
-                faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.Neutral);
-                faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.Neutral);
+        FACTION_RELATIONSHIP_STATUS status = GetInitialFactionRelationshipStatus(faction1, faction2);
+        faction1.SetRelationshipFor(faction2, status);
+        faction2.SetRelationshipFor(faction1, status);
+
+        //if (faction1.isPlayerFaction || faction2.isPlayerFaction || 
+        //   faction1.factionType.type == FACTION_TYPE.Wild_Monsters || faction2.factionType.type == FACTION_TYPE.Wild_Monsters || 
+        //   faction1.factionType.type == FACTION_TYPE.Undead || faction2.factionType.type == FACTION_TYPE.Undead ||
+        //   faction1.factionType.type == FACTION_TYPE.Ratmen || faction2.factionType.type == FACTION_TYPE.Ratmen) {
+
+        //    if ((faction1.isPlayerFaction || faction2.isPlayerFaction) &&
+        //        (faction1 == neutralFaction || faction2 == neutralFaction)) {
+
+        //        faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.Neutral);
+        //        faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.Neutral);
+        //    } else {
+        //        faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.Hostile);
+        //        faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.Hostile);    
+        //    }
+        //}
+        return newRel;
+    }
+    private FACTION_RELATIONSHIP_STATUS GetInitialFactionRelationshipStatus(Faction faction1, Faction faction2) {
+        if(faction1.isPlayerFaction || faction2.isPlayerFaction) {
+            //Player faction should be neutral with Wild Monsters
+            //Reference: https://trello.com/c/hqFZ1MC2/1561-player-faction-should-be-neutral-with-wild-monsters
+            if (faction1.factionType.type == FACTION_TYPE.Wild_Monsters || faction2.factionType.type == FACTION_TYPE.Wild_Monsters) {
+                return FACTION_RELATIONSHIP_STATUS.Neutral;
             } else {
-                faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.Hostile);
-                faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.Hostile);    
+                return FACTION_RELATIONSHIP_STATUS.Hostile;
+            }
+        } else if (faction1.factionType.type == FACTION_TYPE.Wild_Monsters || faction2.factionType.type == FACTION_TYPE.Wild_Monsters) {
+            //Player faction should be neutral with Wild Monsters
+            //Reference: https://trello.com/c/hqFZ1MC2/1561-player-faction-should-be-neutral-with-wild-monsters
+            if (faction1.isPlayerFaction || faction2.isPlayerFaction) {
+                return FACTION_RELATIONSHIP_STATUS.Neutral;
+            } else {
+                return FACTION_RELATIONSHIP_STATUS.Hostile;
+            }
+        } else if (faction1.factionType.type == FACTION_TYPE.Undead || faction2.factionType.type == FACTION_TYPE.Undead) {
+            if (faction1.factionType.type == FACTION_TYPE.Ratmen || faction2.factionType.type == FACTION_TYPE.Ratmen) {
+                return FACTION_RELATIONSHIP_STATUS.Neutral;
+            } else {
+                return FACTION_RELATIONSHIP_STATUS.Hostile;
+            }
+        } else if (faction1.factionType.type == FACTION_TYPE.Ratmen || faction2.factionType.type == FACTION_TYPE.Ratmen) {
+            if (faction1.factionType.type == FACTION_TYPE.Undead || faction2.factionType.type == FACTION_TYPE.Undead) {
+                return FACTION_RELATIONSHIP_STATUS.Neutral;
+            } else {
+                return FACTION_RELATIONSHIP_STATUS.Hostile;
             }
         }
-        return newRel;
+        return FACTION_RELATIONSHIP_STATUS.Neutral;
     }
     /// <summary>
     /// Utility Function for getting the relationship between 2 factions,

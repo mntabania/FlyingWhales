@@ -141,6 +141,16 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                     character.traitContainer.AddTrait(character, "Transitioning");
                 }
 
+                //Every time ratman changes faction, behaviour set should update to know if he will use the resident behaviour or the ratmana behaviour
+                if(character.race == RACE.RATMAN) {
+                    character.behaviourComponent.UpdateDefaultBehaviourSet();
+                }
+
+                //Remove enslave status every time character changes faction
+                if (character.traitContainer.HasTrait("Enslaved")) {
+                    character.traitContainer.RemoveTrait(character, "Enslaved");
+                }
+
                 if (broadcastSignal) {
                     Messenger.Broadcast(FactionSignals.CHARACTER_ADDED_TO_FACTION, character, this);
                 }

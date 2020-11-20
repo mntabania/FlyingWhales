@@ -54,11 +54,10 @@ public class AbductorBehaviour : CharacterBehaviourComponent {
 		} else {
 			//if has no abducted victim at nest, check current time
 			if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-				List<Character> validTargets = GetValidAbductTargets(character);
-				if (validTargets != null) {
+				Character validTarget = GetRandomValidAbductTarget(character);
+				if (validTarget != null) {
 					//if it is after midnight pick a random villager or docile animal to abduct
-					Character chosenTarget = CollectionUtilities.GetRandomElement(validTargets);
-					return character.jobComponent.TriggerMonsterAbduct(chosenTarget, out producedJob, character.behaviourComponent.nest);
+					return character.jobComponent.TriggerMonsterAbduct(validTarget, out producedJob, character.behaviourComponent.nest);
 				} else {
 					//if no target was found, trigger roam around territory
 					return character.jobComponent.TriggerRoamAroundTerritory(out producedJob);
@@ -85,20 +84,22 @@ public class AbductorBehaviour : CharacterBehaviourComponent {
 	}
 	#endregion
 	
-	private List<Character> GetValidAbductTargets(Character abductor) {
-		List<Character> validTargets = null;
-		for (int i = 0; i < abductor.currentRegion.charactersAtLocation.Count; i++) {
+	private Character GetRandomValidAbductTarget(Character abductor) {
+		List<Character> validTargets = ObjectPoolManager.Instance.CreateNewCharactersList();
+        Character chosenTarget = null;
+        for (int i = 0; i < abductor.currentRegion.charactersAtLocation.Count; i++) {
 			Character character = abductor.currentRegion.charactersAtLocation[i];
 			bool isValidTarget = character is Animal ||
 			                     (character.isNormalCharacter && character.isDead == false && 
 			                      character.traitContainer.HasTrait("Resting")) && character.currentStructure is Kennel == false;
 			if (isValidTarget) {
-				if (validTargets == null) {
-					validTargets = new List<Character>();
-				}
 				validTargets.Add(character);
 			}
 		}
-		return validTargets;
+        if(validTargets.Count > 0) {
+            chosenTarget = CollectionUtilities.GetRandomElement(validTargets);
+        }
+        ObjectPoolManager.Instance.ReturnCharactersListToPool(validTargets);
+        return chosenTarget;
 	}
 }

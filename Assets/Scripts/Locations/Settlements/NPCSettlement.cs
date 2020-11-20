@@ -187,7 +187,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         //Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         //Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
         if (locationType == LOCATION_TYPE.VILLAGE) {
-            settlementJobTriggerComponent.SubscribeToListeners();    
+            settlementJobTriggerComponent.SubscribeToVillageListeners();    
+        } else if (locationType == LOCATION_TYPE.DUNGEON) {
+            settlementJobTriggerComponent.SubscribeToDungeonListeners();
         }
     }
     private void UnsubscribeToSignals() {
@@ -206,7 +208,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
         if (locationType == LOCATION_TYPE.VILLAGE) {
-            settlementJobTriggerComponent.UnsubscribeListeners();
+            settlementJobTriggerComponent.UnsubscribeFromVillageListeners();
+        } else if (locationType == LOCATION_TYPE.DUNGEON) {
+            settlementJobTriggerComponent.UnsubscribeFromDungeonListeners();
         }
     }
     private void OnCharacterAddedToFaction(Character character, Faction faction) {
@@ -304,8 +308,10 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void OnHourStarted() {
         CheckForJudgePrisoners();
-        if(ruler == null && locationType == LOCATION_TYPE.VILLAGE && owner != null && owner.isMajorNonPlayer) {
-            CheckForNewRulerDesignation();
+        if(locationType == LOCATION_TYPE.VILLAGE) {
+            if (ruler == null && owner != null && owner.isMajorNonPlayer) {
+                CheckForNewRulerDesignation();
+            }
         }
         if (isUnderSiege) {
             CheckIfStillUnderSiege();
