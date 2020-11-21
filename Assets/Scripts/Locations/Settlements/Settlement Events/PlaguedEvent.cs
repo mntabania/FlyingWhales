@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Factions.Faction_Components;
 using Locations.Settlements.Components;
@@ -17,8 +18,10 @@ namespace Locations.Settlements.Settlement_Events {
         public PLAGUE_EVENT_RESPONSE rulerDecision => _rulerDecision;
         public GameDate endDate => _endDate;
         #endregion
-        
-        public PlaguedEvent(NPCSettlement location) : base(location) { }
+
+        public PlaguedEvent(NPCSettlement location) : base(location) {
+            _rulerDecision = PLAGUE_EVENT_RESPONSE.Undecided;
+        }
         public PlaguedEvent(SaveDataPlaguedSettlementEvent data) : base(data) {
             LoadEnd(data.endDate);
             _rulerDecision = data.rulerDecision;
@@ -36,6 +39,7 @@ namespace Locations.Settlements.Settlement_Events {
             UnsubscribeListeners(p_settlement);
             p_settlement.settlementClassTracker.RemoveNeededClass("Druid");
             if (!string.IsNullOrEmpty(_endScheduleTicket)) { SchedulingManager.Instance.RemoveSpecificEntry(_endScheduleTicket); }
+            p_settlement.settlementJobTriggerComponent.RemoveJobTrigger(p_settlement, SETTLEMENT_JOB_TRIGGER.Plague_Care);
         }
         public override SaveDataSettlementEvent Save() {
             SaveDataPlaguedSettlementEvent saveData = new SaveDataPlaguedSettlementEvent();
@@ -111,23 +115,36 @@ namespace Locations.Settlements.Settlement_Events {
                     response = p_settlement.HasStructure(STRUCTURE_TYPE.APOTHECARY) ? PLAGUE_EVENT_RESPONSE.Quarantine : PLAGUE_EVENT_RESPONSE.Exile;
                 }
             }
-            Debug.Log($"{p_leader?.name} set plagued event response in {p_settlement.name} to {response}");
-            SetLeaderResponse(response);
-            ExecuteEffectsOfLeaderResponseToPlague(response, p_settlement.owner, p_settlement);
-            string key = response.ToString();
-            if (response == PLAGUE_EVENT_RESPONSE.Do_Nothing && p_leader == null) {
-                key = $"{key}_No_Leader";
+            if (_rulerDecision != response) {
+                Debug.Log($"{p_leader?.name} set plagued event response in {p_settlement.name} to {response}");    
+                RevertEffectsOfLeaderPreviousResponseToPlague(_rulerDecision, p_settlement.owner, p_settlement);
+                SetLeaderResponse(response);
+                ExecuteEffectsOfLeaderResponseToPlague(response, p_settlement.owner, p_settlement);
+                string key = response.ToString();
+                if (response == PLAGUE_EVENT_RESPONSE.Do_Nothing && p_leader == null) {
+                    key = $"{key}_No_Leader";
+                }
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Settlement Event", "Plagued", key);
+                log.AddToFillers(p_settlement, p_settlement.name, LOG_IDENTIFIER.LANDMARK_1);
+                if (p_leader != null) { log.AddToFillers(p_leader, p_leader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER); }
+                if (p_settlement.owner != null) { log.AddInvolvedObjectManual(p_settlement.owner.persistentID); }
+                log.AddLogToDatabase();
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
             }
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Settlement Event", "Plagued", key);
-            log.AddToFillers(p_settlement, p_settlement.name, LOG_IDENTIFIER.LANDMARK_1);
-            if (p_leader != null) { log.AddToFillers(p_leader, p_leader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER); }
-            if (p_settlement.owner != null) { log.AddInvolvedObjectManual(p_settlement.owner.persistentID); }
-            log.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-            
         }
         private void SetLeaderResponse(PLAGUE_EVENT_RESPONSE p_response) {
             _rulerDecision = p_response;
+        }
+        private void RevertEffectsOfLeaderPreviousResponseToPlague(PLAGUE_EVENT_RESPONSE p_response, Faction p_faction, NPCSettlement p_settlement) {
+            switch (p_response) {
+                case PLAGUE_EVENT_RESPONSE.Quarantine:
+                    List<JobQueueItem> jobs = p_settlement.GetJobs(JOB_TYPE.PLAGUE_CARE, JOB_TYPE.QUARANTINE);
+                    for (int i = 0; i < jobs.Count; i++) {
+                        jobs[i].ForceCancelJob(false, "Settlement no longer in Quarantine");
+                    }
+                    p_settlement.settlementJobTriggerComponent.RemoveJobTrigger(p_settlement, SETTLEMENT_JOB_TRIGGER.Plague_Care);
+                    break;
+            }
         }
         private void ExecuteEffectsOfLeaderResponseToPlague(PLAGUE_EVENT_RESPONSE p_response, Faction p_faction, NPCSettlement p_settlement) {
             switch (p_response) {
@@ -136,6 +153,7 @@ namespace Locations.Settlements.Settlement_Events {
                     break;
                 case PLAGUE_EVENT_RESPONSE.Quarantine:
                     p_faction.factionType.AddCrime(CRIME_TYPE.Plagued, CRIME_SEVERITY.Infraction);
+                    p_settlement.settlementJobTriggerComponent.AddJobTrigger(p_settlement, SETTLEMENT_JOB_TRIGGER.Plague_Care);
                     break;
                 case PLAGUE_EVENT_RESPONSE.Slay:
                     p_faction.factionType.AddCrime(CRIME_TYPE.Plagued, CRIME_SEVERITY.Heinous);
@@ -209,6 +227,9 @@ namespace Locations.Settlements.Settlement_Events {
         public override void LoadAdditionalData(NPCSettlement p_settlement) {
             base.LoadAdditionalData(p_settlement);
             SubscribeListeners(p_settlement);
+            if (_rulerDecision == PLAGUE_EVENT_RESPONSE.Quarantine) {
+                p_settlement.settlementJobTriggerComponent.AddJobTrigger(p_settlement, SETTLEMENT_JOB_TRIGGER.Plague_Care);
+            }
         }
         #endregion
 

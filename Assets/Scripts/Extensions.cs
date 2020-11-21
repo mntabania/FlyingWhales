@@ -618,6 +618,7 @@ public static class Extensions {
             case JOB_TYPE.PRODUCE_WOOD:
             case JOB_TYPE.MONSTER_BUTCHER:
             case JOB_TYPE.QUARANTINE:
+            case JOB_TYPE.PLAGUE_CARE:
                 priority = 800;
                 break;
             case JOB_TYPE.CRAFT_OBJECT:

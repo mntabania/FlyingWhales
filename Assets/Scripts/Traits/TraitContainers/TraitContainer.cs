@@ -680,6 +680,36 @@ namespace Traits {
                 }
             } 
         }
+        public void RescheduleLatestTraitRemoval(ITraitable p_traitable, string p_traitName, GameDate p_newRemoveDate) {
+            if (scheduleTickets.ContainsKey(p_traitName)) {
+                TraitRemoveSchedule traitRemoveSchedule = null;
+                if(scheduleTickets[p_traitName].Count > 0) {
+                    traitRemoveSchedule = scheduleTickets[p_traitName].Last();
+                }
+                if (traitRemoveSchedule != null) {
+                    SchedulingManager.Instance.RemoveSpecificEntry(traitRemoveSchedule.ticket);
+                    scheduleTickets[p_traitName].RemoveAt(scheduleTickets[p_traitName].IndexOf(traitRemoveSchedule));
+                    ObjectPoolManager.Instance.ReturnTraitRemoveScheduleToPool(traitRemoveSchedule);
+                }
+                Trait trait = GetTraitOrStatus<Trait>(p_traitName);
+                if (trait != null) {
+                    string ticket = SchedulingManager.Instance.AddEntry(p_newRemoveDate, () => p_traitable.traitContainer.RemoveTraitOnSchedule(p_traitable, trait), this);
+                    p_traitable.traitContainer.AddScheduleTicket(trait.name, ticket, p_newRemoveDate);    
+                }
+            } 
+        }
+        public GameDate GetLatestExpiryDate(string p_traitName) {
+            if (scheduleTickets.ContainsKey(p_traitName)) {
+                TraitRemoveSchedule traitRemoveSchedule = null;
+                if(scheduleTickets[p_traitName].Count > 0) {
+                    traitRemoveSchedule = scheduleTickets[p_traitName].Last();
+                }
+                if (traitRemoveSchedule != null) {
+                    return traitRemoveSchedule.removeDate;
+                }
+            }
+            return default;
+        }
         #endregion
         
         #region Switches

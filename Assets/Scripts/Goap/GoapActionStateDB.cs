@@ -646,6 +646,12 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.QUARANTINE, new[]{
             new StateNameAndDuration(){ name = "Quarantine Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.START_PLAGUE_CARE, new[]{
+            new StateNameAndDuration(){ name = "Care Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.CARE, new[]{
+            new StateNameAndDuration(){ name = "Care Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
+        } },
     };
 }
 

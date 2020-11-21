@@ -6,6 +6,7 @@ using Goap.Job_Checkers;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Interrupts;
+using Jobs;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -21,6 +22,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	public List<Character> poisonCleansers { get; }
 	public List<Character> tileDryers { get; set; }
 	public List<Character> dousers { get; }
+
+	private Dictionary<SETTLEMENT_JOB_TRIGGER, SettlementJobTrigger> _jobTriggers;
 	
 	public SettlementJobTriggerComponent(NPCSettlement owner) {
 		_owner = owner;
@@ -29,7 +32,31 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		poisonCleansers = new List<Character>();
 		tileDryers = new List<Character>();
 		dousers = new List<Character>();
+		_jobTriggers = new Dictionary<SETTLEMENT_JOB_TRIGGER, SettlementJobTrigger>();
 	}
+
+	#region Job Triggers
+	public void AddJobTrigger(NPCSettlement p_settlement, SETTLEMENT_JOB_TRIGGER p_jobTriggerType) {
+		if (!_jobTriggers.ContainsKey(p_jobTriggerType)) {
+			SettlementJobTrigger jobTrigger = CreateSettlementJobTrigger<SettlementJobTrigger>(p_jobTriggerType);
+			_jobTriggers.Add(p_jobTriggerType, jobTrigger);
+			jobTrigger.HookTriggerToSettlement(p_settlement);
+		}
+	}
+	public void RemoveJobTrigger(NPCSettlement p_settlement, SETTLEMENT_JOB_TRIGGER p_jobTriggerType) {
+		if (_jobTriggers.ContainsKey(p_jobTriggerType)) {
+			SettlementJobTrigger jobTrigger = _jobTriggers[p_jobTriggerType];
+			jobTrigger.UnhookTriggerToSettlement(p_settlement);
+			_jobTriggers.Remove(p_jobTriggerType);
+		}
+	}
+	private T CreateSettlementJobTrigger<T>(SETTLEMENT_JOB_TRIGGER p_jobTriggerType) where T : SettlementJobTrigger {
+		string typeName = $"Jobs.{p_jobTriggerType.ToString()}_Job_Trigger, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+		Type type = Type.GetType(typeName);
+		Assert.IsNotNull(type, $"type for {p_jobTriggerType.ToString()} is null!");
+		return Activator.CreateInstance(type) as T;
+	} 
+	#endregion
 
 	#region Listeners
 	public void SubscribeToListeners() {
@@ -1074,6 +1101,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
     private void TriggerChangeClassJob(ProfessionPedestal professionPedestal, string className) {
 	    if (!_owner.HasJobWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, className)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, professionPedestal, _owner);
+		    job.SetCanTakeThisJobChecker(JobManager.Can_Take_Change_Class);
 		    job.AddOtherData(INTERACTION_TYPE.CHANGE_CLASS, new object[] { className });
 		    _owner.AddToAvailableJobs(job);    
 	    }

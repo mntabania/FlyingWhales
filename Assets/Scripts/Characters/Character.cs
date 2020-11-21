@@ -1566,6 +1566,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 Messenger.Broadcast(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, this, newStructure);
             }
             if (previousStructure != null) {
+                eventDispatcher.ExecuteCharacterLeftStructure(this, previousStructure);
                 Messenger.Broadcast(CharacterSignals.CHARACTER_LEFT_STRUCTURE, this, previousStructure);
             }
         }
@@ -3987,6 +3988,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.DISABLE);
         AddAdvertisedAction(INTERACTION_TYPE.CARRY_PATIENT);
         AddAdvertisedAction(INTERACTION_TYPE.QUARANTINE);
+        AddAdvertisedAction(INTERACTION_TYPE.START_PLAGUE_CARE);
+        AddAdvertisedAction(INTERACTION_TYPE.CARE);
 
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);
@@ -4894,8 +4897,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         needsComponent.OnCharacterLeftLocation(currentRegion);
 
         jobQueue.CancelAllJobs();
-
         interruptComponent.OnSeizedOwner();
+        tileObjectLocation?.RemoveUser(this);
 
         UnsubscribeSignals();
         SetIsConversing(false);

@@ -910,6 +910,7 @@ public class ReactionComponent : CharacterComponent {
                         } else if (!disguisedActor.traitContainer.HasTrait("Psychopath")) {
                             debugLog = $"{debugLog}\n-Character is not Psychopath and does not consider Target as Enemy or Rival";
                             bool targetIsParalyzedOrEnsnared = targetCharacter.traitContainer.HasTrait("Paralyzed", "Ensnared");
+                            bool targetIsQuarantined = targetCharacter.traitContainer.HasTrait("Quarantined");
                             bool targetIsRestrainedCriminal = targetCharacter.traitContainer.HasTrait("Restrained") && disguisedTarget.traitContainer.HasTrait("Criminal");
                             bool targetIsCatatonic = targetCharacter.traitContainer.HasTrait("Catatonic");
 
@@ -919,9 +920,9 @@ public class ReactionComponent : CharacterComponent {
                             bool targetIsKnownWerewolf = disguisedTarget.isLycanthrope && disguisedTarget.lycanData.DoesCharacterKnowThisLycan(disguisedActor);
 
 
-                            if (targetIsParalyzedOrEnsnared || targetIsRestrainedCriminal || targetIsCatatonic) {
-                                debugLog =
-                                    $"{debugLog}\n-Target is Restrained Criminal({targetIsRestrainedCriminal.ToString()}) or is Paralyzed or Ensnared({targetIsParalyzedOrEnsnared.ToString()}) or is Catatonic {targetIsCatatonic.ToString()}";
+                            if (targetIsParalyzedOrEnsnared || targetIsRestrainedCriminal || targetIsCatatonic || targetIsQuarantined) {
+                                debugLog = $"{debugLog}\n-Target is Restrained Criminal({targetIsRestrainedCriminal.ToString()}) or " +
+                                           $"is Paralyzed or Ensnared({targetIsParalyzedOrEnsnared.ToString()}) or is Catatonic {targetIsCatatonic.ToString()}";
                                 if ((targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) && !targetIsKnownVampire) {
                                     debugLog = $"{debugLog}\n-Target is hungry or starving and not known vampire, will create feed job";
                                     if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.FEED)) {
@@ -929,7 +930,7 @@ public class ReactionComponent : CharacterComponent {
                                     } else {
                                         debugLog = $"{debugLog}\n-Already has a feed job targeting character";
                                     }
-                                } else if ((targetCharacter.needsComponent.isTired || targetCharacter.needsComponent.isExhausted) && targetIsParalyzedOrEnsnared) {
+                                } else if ((targetCharacter.needsComponent.isTired || targetCharacter.needsComponent.isExhausted) && targetIsParalyzedOrEnsnared && !targetIsQuarantined) {
                                     debugLog = $"{debugLog}\n-Target is tired or exhausted, will create Move Character job to bed if Target has a home and an available bed";
                                     if (disguisedTarget.homeStructure != null) {
                                         Bed bed = disguisedTarget.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED) as Bed;
@@ -948,7 +949,7 @@ public class ReactionComponent : CharacterComponent {
                                     } else {
                                         debugLog = $"{debugLog}\n-Target does not have a home, will not trigger Move Character job";
                                     }
-                                } else if ((targetCharacter.needsComponent.isBored || targetCharacter.needsComponent.isSulking) && targetIsParalyzedOrEnsnared) {
+                                } else if ((targetCharacter.needsComponent.isBored || targetCharacter.needsComponent.isSulking) && targetIsParalyzedOrEnsnared && !targetIsQuarantined) {
                                     debugLog = $"{debugLog}\n-Target is bored or sulking, will trigger Move Character job if character is not in the right place to do Daydream or Pray";
                                     if (UnityEngine.Random.Range(0, 2) == 0 && disguisedTarget.homeStructure != null) {
                                         //Pray
@@ -1065,11 +1066,11 @@ public class ReactionComponent : CharacterComponent {
                         }
                         
                         //Plagued Settlement Event
-                        if (disguisedActor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event)) {
+                        if (disguisedActor.homeSettlement != null && disguisedActor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event)) {
                             Lethargic lethargic = disguisedTarget.traitContainer.GetTraitOrStatus<Lethargic>("Lethargic");
                             if (lethargic != null && !lethargic.IsResponsibleForTrait(disguisedActor) && !disguisedActor.defaultCharacterTrait.IsAwareOfTrait(disguisedActor, lethargic)) {
                                 disguisedActor.defaultCharacterTrait.BecomeAwareOfTrait(disguisedTarget, lethargic);
-                                if (GameUtilities.RollChance(25) && !disguisedActor.relationshipContainer.IsFriendsWith(disguisedTarget)) {
+                                if (GameUtilities.RollChance(25) && !disguisedActor.relationshipContainer.IsFriendsWith(disguisedTarget)) { //25
                                     disguisedActor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_PLAGUED, REACTION_STATUS.WITNESSED);
                                 }
                             }

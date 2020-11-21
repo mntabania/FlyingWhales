@@ -1070,6 +1070,7 @@
               <e p="BabyInfestorBehaviour.cs" t="Include" />
               <e p="BerserkBehaviour.cs" t="Include" />
               <e p="BoneGolemBehaviour.cs" t="Include" />
+              <e p="CarePlagueBearersBehaviour.cs" t="Include" />
               <e p="CharacterBehaviourComponent.cs" t="Include" />
               <e p="CleanseTileBehaviour.cs" t="Include" />
               <e p="CultistBehaviour.cs" t="Include" />
@@ -1450,6 +1451,7 @@
               <e p="BurnAtStake.cs" t="Include" />
               <e p="BuryCharacter.cs" t="Include" />
               <e p="Butcher.cs" t="Include" />
+              <e p="Care.cs" t="Include" />
               <e p="Carry.cs" t="Include" />
               <e p="CarryCorpse.cs" t="Include" />
               <e p="CarryPatient.cs" t="Include" />
@@ -1575,6 +1577,7 @@
               <e p="StartDouse.cs" t="Include" />
               <e p="StartDry.cs" t="Include" />
               <e p="StartPatrol.cs" t="Include" />
+              <e p="StartPlagueCare.cs" t="Include" />
               <e p="StartTend.cs" t="Include" />
               <e p="Steal.cs" t="Include" />
               <e p="StealthTransform.cs" t="Include" />
@@ -1828,6 +1831,10 @@
             <e p="JobQueueItem.cs" t="Include" />
             <e p="JobTriggerComponent.cs" t="Include" />
             <e p="PartyJobTriggerComponent.cs" t="Include" />
+            <e p="Settlement Job Triggers" t="Include">
+              <e p="Plague_Care_Job_Trigger.cs" t="Include" />
+              <e p="SettlementJobTrigger.cs" t="Include" />
+            </e>
             <e p="SettlementJobTriggerComponent.cs" t="Include" />
           </e>
           <e p="Localization" t="Include">
@@ -2938,6 +2945,8 @@
               <e p="Pest.cs" t="Include" />
               <e p="Petrasol.cs" t="Include" />
               <e p="Plague Reservoir.cs" t="Include" />
+              <e p="PlagueCared.cs" t="Include" />
+              <e p="PlagueCaring.cs" t="Include" />
               <e p="Plagued.cs" t="Include" />
               <e p="Poisoned.cs" t="Include" />
               <e p="Prisoner.cs" t="Include" />

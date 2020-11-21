@@ -67,6 +67,7 @@ public class CarryComponent : CharacterComponent {
     }
     private bool CarryCharacter(Character character, bool isOwner, bool isFromSave) {
         if (carriedPOI == null) {
+            character.eventDispatcher.ExecuteCarried(character, owner);
             carriedPOI = character;
             character.carryComponent.SetIsBeingCarriedBy(owner);
 

@@ -35,7 +35,8 @@ public class IsPlagued : GoapAction {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status, node);
         }
 
-        if (witness.homeSettlement.eventManager.HasActiveEvent(out PlaguedEvent plaguedSettlementEvent) && plaguedSettlementEvent.rulerDecision == PLAGUE_EVENT_RESPONSE.Quarantine) {
+        if (witness.homeSettlement.eventManager.HasActiveEvent(out PlaguedEvent plaguedSettlementEvent) && 
+            plaguedSettlementEvent.rulerDecision == PLAGUE_EVENT_RESPONSE.Quarantine && !actor.traitContainer.HasTrait("Quarantined")) {
             witness.homeSettlement.settlementJobTriggerComponent.TriggerQuarantineJob(actor);
         }
         

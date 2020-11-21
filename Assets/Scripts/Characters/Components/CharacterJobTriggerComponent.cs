@@ -586,7 +586,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void HourlyScreamCheck() {
-		if (owner.limiterComponent.canPerform == true) {
+		if (owner.limiterComponent.canPerform) {
 			return;
 		}
         if (owner.needsComponent.isExhausted) {
@@ -636,6 +636,17 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
 			return owner.jobQueue.AddJobInQueue(job);
 		}
+		return false;
+	}
+	public bool TriggerFeed(Character targetCharacter, out JobQueueItem producedJob) {
+		if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.FEED)) {
+			GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.TARGET);
+			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, targetCharacter, owner);
+			job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
+			producedJob = job;
+			return true;
+		}
+		producedJob = null;
 		return false;
 	}
     #endregion
@@ -3168,6 +3179,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void TriggerQuarantineJob(Character target) {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.QUARANTINE, target)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.QUARANTINE, INTERACTION_TYPE.QUARANTINE, target, owner);
+		    job.SetCannotBePushedBack(true);
 		    owner.jobQueue.AddJobInQueue(job);
 	    }
     }
