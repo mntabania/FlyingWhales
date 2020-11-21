@@ -810,8 +810,12 @@ namespace Traits {
                 traits.Add(trait);
             }
             trait.LoadTraitOnLoadTraitContainer(addTo);
-            allTraitsAndStatuses.Add(trait.name, trait);
-            
+            if (allTraitsAndStatuses.ContainsKey(trait.name)) {
+                UnityEngine.Debug.LogError($"Trait {trait.name} already exists in {addTo}'s traits!");
+            } else {
+                allTraitsAndStatuses.Add(trait.name, trait);    
+            }
+
             if(trait.traitOverrideFunctionIdentifiers != null && trait.traitOverrideFunctionIdentifiers.Count > 0) {
                 for (int i = 0; i < trait.traitOverrideFunctionIdentifiers.Count; i++) {
                     string identifier = trait.traitOverrideFunctionIdentifiers[i];

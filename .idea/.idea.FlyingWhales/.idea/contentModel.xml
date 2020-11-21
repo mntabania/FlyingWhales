@@ -1122,9 +1122,11 @@
               <e p="PsychopathBehaviour.cs" t="Include" />
               <e p="RaidBehaviour.cs" t="Include" />
               <e p="RatBehaviour.cs" t="Include" />
+              <e p="RatmanBehaviour.cs" t="Include" />
               <e p="RescueBehaviour.cs" t="Include" />
               <e p="RevenantBehaviour.cs" t="Include" />
               <e p="SettlementRulerBehaviour.cs" t="Include" />
+              <e p="SlaveBehaviour.cs" t="Include" />
               <e p="SmallSpiderBehaviour.cs" t="Include" />
               <e p="SnatcherBehaviour.cs" t="Include" />
               <e p="SocialGatheringBehaviour.cs" t="Include" />
@@ -1378,6 +1380,7 @@
               <e p="FactionType.cs" t="Include" />
               <e p="HumanEmpire.cs" t="Include" />
               <e p="LycanClan.cs" t="Include" />
+              <e p="Ratmen.cs" t="Include" />
               <e p="Undead.cs" t="Include" />
               <e p="Vagrants.cs" t="Include" />
               <e p="VampireClan.cs" t="Include" />
@@ -1443,6 +1446,7 @@
               <e p="Assault.cs" t="Include" />
               <e p="AttackDemonicStructure.cs" t="Include" />
               <e p="BeginMine.cs" t="Include" />
+              <e p="BirthRatman.cs" t="Include" />
               <e p="BoobyTrap.cs" t="Include" />
               <e p="BreakUp.cs" t="Include" />
               <e p="BuildCampfire.cs" t="Include" />
@@ -1621,6 +1625,7 @@
                 <e p="Spit.cs" t="Include" />
                 <e p="WellJump.cs" t="Include" />
               </e>
+              <e p="Torture.cs" t="Include" />
               <e p="TransformToWolfForm.cs" t="Include" />
               <e p="Trespassing.cs" t="Include" />
               <e p="VampiricEmbrace.cs" t="Include" />
@@ -2898,6 +2903,7 @@
               <e p="Drying.cs" t="Include" />
               <e p="Edible.cs" t="Include" />
               <e p="Electric.cs" t="Include" />
+              <e p="Enslaved.cs" t="Include" />
               <e p="Ensnared.cs" t="Include" />
               <e p="Feeble.cs" t="Include" />
               <e p="Fervor.cs" t="Include" />
