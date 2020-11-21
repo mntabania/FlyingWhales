@@ -984,6 +984,51 @@ public class BehaviourComponent : CharacterComponent {
     }
     #endregion
 
+    #region Work
+    public bool PlanWorkActions(out JobQueueItem producedJob) {
+        if (owner.limiterComponent.canTakeJobs) {
+            //NOTE: ONLY ADDED FACTION CHECKING BECAUSE OF BUG THAT VAGRANTS ARE STILL PART OF A VILLAGE
+            if (owner.isAtHomeRegion && owner.homeSettlement != null && owner.homeSettlement.owner == owner.faction) {
+                //check npcSettlement job queue, if it has any jobs that target an object that is in view of the owner
+                JobQueueItem jobToAssign = owner.homeSettlement.GetFirstJobBasedOnVision(owner);
+                if (jobToAssign != null) {
+                    producedJob = jobToAssign;
+                    //took job based from vision
+                    return true;
+                } else {
+                    //if none of the jobs targets can be seen by the owner, try and get a job from the npcSettlement or faction
+                    //regardless of vision instead.
+                    if (owner.homeSettlement.HasPathTowardsTileInSettlement(owner, 2)) {
+                        if (owner.faction != null) {
+                            jobToAssign = owner.faction.GetFirstUnassignedJobToCharacterJob(owner);
+                        }
+
+                        //Characters should only take non-vision settlement jobs if they have a path towards the settlement
+                        //Reference: https://trello.com/c/SSYDok6x/1106-owners-should-only-take-non-vision-settlement-jobs-if-they-have-a-path-towards-the-settlement
+                        if (jobToAssign == null) {
+                            jobToAssign = owner.homeSettlement.GetFirstUnassignedJobToCharacterJob(owner);
+                        }
+                    }
+
+                    if (jobToAssign != null) {
+                        producedJob = jobToAssign;
+                        return true;
+                    }
+                }
+            }
+            if (owner.faction != null) {
+                JobQueueItem jobToAssign = owner.faction.GetFirstUnassignedJobToCharacterJob(owner);
+                if (jobToAssign != null) {
+                    producedJob = jobToAssign;
+                    return true;
+                }
+            }
+        }
+        producedJob = null;
+        return false;
+    }
+    #endregion
+
     #region Loading
     public void LoadReferences(SaveDataBehaviourComponent data) {
         if (!string.IsNullOrEmpty(data.attackVillageTarget)) {

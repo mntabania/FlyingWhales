@@ -201,9 +201,18 @@ public class CombatState : CharacterState {
                 //the reason is we need to let him go to a place where he can transform back to human safely, that is also the reason why we put him in a flee state in the first place
                 summary = $"{summary}\n-Has no flee path";
                 if (HasStillAvoidPOIThatIsInRange()) {
-                    string avoidReason = GetAvoidReason(stateComponent.owner.combatComponent.avoidInRange[0]);
+                    IPointOfInterest avoidedPOI = stateComponent.owner.combatComponent.avoidInRange[0];
+                    string avoidReason = GetAvoidReason(avoidedPOI);
                     bool doNotCower = avoidReason == CombatManager.Avoiding_Witnesses || avoidReason == CombatManager.Encountered_Hostile;
                     summary = $"{summary}\n-Has avoid that is still in range";
+                    if(avoidedPOI is Character avoidedCharacter && avoidedCharacter.isNormalCharacter && stateComponent.owner.traitContainer.HasTrait("Enslaved")) {
+                        //If character is a slave and the target being avoided is a villager, always cower, so that the target will be able to reach this slave
+                        summary = $"{summary}\n-Character is a slave and avoided character is a villageer, will only cower";
+                        summary = $"{summary}\n-Triggered Cowering";
+                        character.logComponent.PrintLogIfActive(summary);
+                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
+                        return;
+                    }
                     if (character.homeStructure != null) {
                         summary = $"{summary}\n-Has home dwelling";
                         if (character.homeStructure == character.currentStructure) {

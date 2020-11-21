@@ -59,9 +59,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	#endregion
 
 	#region Listeners
-	public void SubscribeToListeners() {
+	public void SubscribeToVillageListeners() {
 		Messenger.AddListener(Signals.HOUR_STARTED, HourlyJobActions);
-		Messenger.AddListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChanged);
+		Messenger.AddListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedVillage);
 		Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnTileObjectDamaged);
 		Messenger.AddListener<TileObject>(TileObjectSignals.TILE_OBJECT_FULLY_REPAIRED, OnTileObjectFullyRepaired);
 		Messenger.AddListener<TileObject, LocationGridTile>(GridTileSignals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
@@ -75,11 +75,11 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		Messenger.AddListener<Character, IPointOfInterest>(CharacterSignals.CHARACTER_SAW, OnCharacterSaw);
 		Messenger.AddListener<NPCSettlement>(SettlementSignals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
 		Messenger.AddListener<BurningSource>(InnerMapSignals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
-		Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
+		Messenger.AddListener(Signals.GAME_LOADED, OnGameLoadedVillage);
 	}
-	public void UnsubscribeListeners() {
+	public void UnsubscribeFromVillageListeners() {
 		Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
-		Messenger.RemoveListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChanged);
+		Messenger.RemoveListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedVillage);
 		Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnTileObjectDamaged);
 		Messenger.RemoveListener<TileObject>(TileObjectSignals.TILE_OBJECT_FULLY_REPAIRED, OnTileObjectFullyRepaired);
 		Messenger.RemoveListener<TileObject, LocationGridTile>(GridTileSignals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
@@ -92,9 +92,17 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		Messenger.RemoveListener<NPCSettlement, bool>(SettlementSignals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
 		Messenger.RemoveListener<NPCSettlement>(SettlementSignals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
 		Messenger.RemoveListener<BurningSource>(InnerMapSignals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
-	}
-	private void OnGameLoaded() {
-		Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
+        Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoadedVillage);
+    }
+    public void SubscribeToDungeonListeners() {
+        Messenger.AddListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedDungeon);
+        Messenger.AddListener(Signals.GAME_LOADED, OnGameLoadedDungeon);
+    }
+    public void UnsubscribeFromDungeonListeners() {
+        Messenger.RemoveListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedDungeon);
+    }
+    private void OnGameLoadedVillage() {
+		Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoadedVillage);
 		if (SaveManager.Instance.useSaveData) {
 			LoadTendFarmCheck();
 			LoadCheckResource();
@@ -102,7 +110,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			KickstartJobs();
 		}
 	}
-	public void KickstartJobs() {
+    private void OnGameLoadedDungeon() {
+        Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoadedDungeon);
+        if (SaveManager.Instance.useSaveData) {
+            LoadCheckFoodPile();
+        } else {
+            ScheduledCheckFoodPile();
+        }
+    }
+    public void KickstartJobs() {
 		CheckIfFarmShouldBeTended(true);
 		ScheduledCheckResource();
 		TryCreateMiningJob();
@@ -112,14 +128,21 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		TryCreateMiningJob();
 		HourlyCheckForNeededCharacterClasses();
 	}
-	private void OnResourceInPileChanged(ResourcePile resourcePile) {
+	private void OnResourceInPileChangedVillage(ResourcePile resourcePile) {
 		if (resourcePile.gridTileLocation != null && resourcePile.structureLocation == _owner.mainStorage) {
 			CheckResource(resourcePile.providedResource);
 			Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
 			TryCreateCombineStockpile(resourcePile);
 		}
 	}
-	private void OnTileObjectDamaged(TileObject tileObject, int amount) {
+    private void OnResourceInPileChangedDungeon(ResourcePile resourcePile) {
+        if(resourcePile is FoodPile) {
+            if (resourcePile.gridTileLocation != null && resourcePile.structureLocation == _owner.mainStorage) {
+                CheckFoodPile();
+            }
+        }
+    }
+    private void OnTileObjectDamaged(TileObject tileObject, int amount) {
 		if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.IsPartOfSettlement(_owner) && tileObject.tileObjectType.CanBeRepaired()) {
 			TryCreateRepairTileObjectJob(tileObject);
 		}
@@ -331,7 +354,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(12));
 		SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckResource, this);
 	}
-	private void LoadCheckResource() {
+    private void ScheduledCheckFoodPile() {
+        CheckFoodPile();
+        GameDate dueDate = GameManager.Instance.Today();
+        dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(12));
+        SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckFoodPile, this);
+    }
+    private void LoadCheckResource() {
 		if (GameManager.Instance.Today().tick < GameManager.Instance.GetTicksBasedOnHour(20)) {
 			//schedule check at 8pm
 			GameDate dueDate = GameManager.Instance.Today();
@@ -344,9 +373,27 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			dueDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(12));
 			SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckResource, this);	
 		}
-		
 	}
-	private void CheckAllResources() {
+    private void LoadCheckFoodPile() {
+        if (GameManager.Instance.Today().tick < GameManager.Instance.GetTicksBasedOnHour(20)) {
+            //schedule check at 8pm
+            GameDate dueDate = GameManager.Instance.Today();
+            dueDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(20));
+            SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckFoodPile, this);
+        } else {
+            //schedule check at 8am the next day
+            GameDate dueDate = GameManager.Instance.Today();
+            dueDate.AddDays(1);
+            dueDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(12));
+            SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckFoodPile, this);
+        }
+    }
+    private void CheckFoodPile() {
+        if(_owner.owner?.factionType.type == FACTION_TYPE.Ratmen) {
+            CheckResource(RESOURCE.FOOD);
+        }
+    }
+    private void CheckAllResources() {
 		CheckResource(RESOURCE.FOOD);
 		CheckResource(RESOURCE.WOOD);
 		CheckResource(RESOURCE.STONE);

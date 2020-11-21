@@ -71,6 +71,9 @@ public class FactionInfoHubUI : MonoBehaviour {
         if(FactionManager.Instance.undeadFaction != null) {
             AddFactionItem(FactionManager.Instance.undeadFaction);
         }
+        if (FactionManager.Instance.ratmenFaction != null) {
+            AddFactionItem(FactionManager.Instance.ratmenFaction);
+        }
         InitialFactionItemStates();
     }
     private IEnumerator RepopulateFactions() { //IEnumerator
@@ -93,6 +96,10 @@ public class FactionInfoHubUI : MonoBehaviour {
         }
         if (FactionManager.Instance.undeadFaction != null) {
             FactionItem item = AddFactionItem(FactionManager.Instance.undeadFaction);
+            SetFactionSelection(item, false);
+        }
+        if (FactionManager.Instance.ratmenFaction != null) {
+            FactionItem item = AddFactionItem(FactionManager.Instance.ratmenFaction);
             SetFactionSelection(item, false);
         }
         //if(currentPage >= factionItems.Count || currentPage < 0) {
@@ -159,7 +166,7 @@ public class FactionInfoHubUI : MonoBehaviour {
     #region Listeners
     private void OnFactionCreated(Faction faction) {
         if (GameManager.Instance.gameHasStarted) {
-            if (faction.isMajorNonPlayer || faction.factionType.type == FACTION_TYPE.Vagrants || faction.factionType.type == FACTION_TYPE.Undead) {
+            if (faction.isMajorNonPlayer || faction.factionType.type == FACTION_TYPE.Vagrants || faction.factionType.type == FACTION_TYPE.Undead || faction.factionType.type == FACTION_TYPE.Ratmen) {
                 //FactionItem item = AddFactionItem(faction);
                 //SetFactionSelection(item, false);
                 //RepopulateFactions();

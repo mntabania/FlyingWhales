@@ -640,6 +640,12 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.SUMMON_BONE_GOLEM, new[]{
             new StateNameAndDuration(){ name = "Summon Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
+        {INTERACTION_TYPE.BIRTH_RATMAN, new[]{
+            new StateNameAndDuration(){ name = "Birth Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
+        {INTERACTION_TYPE.TORTURE, new[]{
+            new StateNameAndDuration(){ name = "Torture Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
         {INTERACTION_TYPE.CARRY_PATIENT, new[]{
             new StateNameAndDuration(){ name = "Carry Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },

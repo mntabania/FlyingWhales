@@ -27,7 +27,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
 
         if (character.moodComponent.moodState == MOOD_STATE.Normal) {
             log += $"\n-{character.name} is in normal mood, will do settlement work";
-            return PlanWorkActions(character, out producedJob);
+            return character.behaviourComponent.PlanWorkActions(out producedJob);
         } else {
             log += $"\n-{character.name} is low/critical mood, 4% chance - flaw, 4% chance - undermine";
             bool triggeredFlaw = false;
@@ -133,48 +133,6 @@ public class WorkBehaviour : CharacterBehaviourComponent {
         //        }
         //    }
         //}
-        producedJob = null;
-        return false;
-    }
-    private bool PlanWorkActions(Character character, out JobQueueItem producedJob) {
-        if (character.limiterComponent.canTakeJobs) {
-            //NOTE: ONLY ADDED FACTION CHECKING BECAUSE OF BUG THAT VAGRANTS ARE STILL PART OF A VILLAGE
-            if (character.isAtHomeRegion && character.homeSettlement != null && character.homeSettlement.owner == character.faction) { //&& this.faction.id.factionType.type != FACTION_TYPE.Wild_Monsters.id
-                //check npcSettlement job queue, if it has any jobs that target an object that is in view of the character
-                JobQueueItem jobToAssign = character.homeSettlement.GetFirstJobBasedOnVision(character);
-                if (jobToAssign != null) {
-                    producedJob = jobToAssign;
-                    //took job based from vision
-                    return true;
-                } else {
-                    //if none of the jobs targets can be seen by the character, try and get a job from the npcSettlement or faction
-                    //regardless of vision instead.
-                    if (character.homeSettlement.HasPathTowardsTileInSettlement(character, 2)) {
-                        if (character.faction != null) {
-                            jobToAssign = character.faction.GetFirstUnassignedJobToCharacterJob(character);
-                        }
-
-                        //Characters should only take non-vision settlement jobs if they have a path towards the settlement
-                        //Reference: https://trello.com/c/SSYDok6x/1106-characters-should-only-take-non-vision-settlement-jobs-if-they-have-a-path-towards-the-settlement
-                        if (jobToAssign == null) {
-                            jobToAssign = character.homeSettlement.GetFirstUnassignedJobToCharacterJob(character);
-                        }
-                    }
-
-                    if (jobToAssign != null) {
-                        producedJob = jobToAssign;
-                        return true;
-                    }
-                }
-            }
-            if (character.faction != null) {
-                JobQueueItem jobToAssign = character.faction.GetFirstUnassignedJobToCharacterJob(character);
-                if (jobToAssign != null) {
-                    producedJob = jobToAssign;
-                    return true;
-                }
-            }
-        }
         producedJob = null;
         return false;
     }

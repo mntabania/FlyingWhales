@@ -156,7 +156,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// Is this character a normal character?
     /// Characters that are not monsters or minions.
     /// </summary>
-    public bool isNormalCharacter => (this is Summon) == false && minion == null && faction?.factionType.type != FACTION_TYPE.Undead;
+    public bool isNormalCharacter => (this is Summon) == false && minion == null && faction?.factionType.type != FACTION_TYPE.Undead && faction?.factionType.type != FACTION_TYPE.Ratmen;
     public bool isNormalAndNotAlliedWithPlayer => isNormalCharacter && !faction.isPlayerFaction && !isAlliedWithPlayer;
     public bool isNormalEvenLycanAndNotAlliedWithPlayer => (isNormalCharacter || isLycanthrope) && necromancerTrait == null && !faction.isPlayerFaction && !isAlliedWithPlayer;
     public bool isNotSummonAndDemon => (this is Summon) == false && minion == null;
@@ -768,20 +768,24 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     protected void OnUpdateCharacterClass() {
-        combatComponent.UpdateBasicData(false);
-        needsComponent.UpdateBaseStaminaDecreaseRate();
         for (int i = 0; i < _characterClass.traitNames.Length; i++) {
             traitContainer.AddTrait(this, _characterClass.traitNames[i]);
         }
         if (_characterClass.interestedItemNames != null) {
             AddItemAsInteresting(_characterClass.interestedItemNames);
         }
+        combatComponent.UpdateBasicData(false);
+        needsComponent.UpdateBaseStaminaDecreaseRate();
         visuals.UpdateAllVisuals(this);
-        //minion?.SetAssignedDeadlySinName(_characterClass.className);
         UpdateCanCombatState();
-        //if (previousClassName == "Necromancer") {
-        //    traitContainer.RemoveTrait(this, "Necromancer");
-        //}
+
+        //Misc
+        if (previousClassName == "Ratman") {
+            movementComponent.SetEnableDigging(false);
+        }
+        if(_characterClass.className == "Ratman") {
+            movementComponent.SetEnableDigging(true);
+        }
         if (_characterClass.className == "Hero") {
             //Reference: https://www.notion.so/ruinarch/Hero-9697369ffca6410296f852f295ee0090
             traitContainer.RemoveAllTraitsByType(this, TRAIT_TYPE.FLAW);
@@ -790,10 +794,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
             traitContainer.AddTrait(this, "Blessed");
-        } 
-        //else if (_characterClass.className == "Necromancer") {
-        //    traitContainer.AddTrait(this, "Necromancer");
-        //}
+        }
     }
     public void AssignClass(CharacterClass characterClass, bool isInitial = false) {
         CharacterClass previousClass = _characterClass;
@@ -1771,7 +1772,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private string GetDefaultRaceClassName() {
         if(race == RACE.DEMON) {
             return $"{characterClass.className} {GameUtilities.GetNormalizedRaceAdjective(race)}";
-        } else if (characterClass.className == "Necromancer" || characterClass.className == "Ratman") {
+        } else if (race == RACE.RATMAN) {
+            return $"{characterClass.className}";
+        } else if (characterClass.className == "Necromancer") {
             return $"{characterClass.className}";
         }
         return $"{GameUtilities.GetNormalizedRaceAdjective(race)} {characterClass.className}";
@@ -2750,7 +2753,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         defaultCharacterTrait = traitContainer.GetTraitOrStatus<CharacterTrait>("Character Trait");
     }
     public void CreateRandomInitialTraits(List<string> buffPool = null, List<string> neutralPool = null, List<string> flawPool = null) {
-        if (minion == null && race != RACE.DEMON && !(this is Summon)) { //only generate buffs and flaws for non minion characters. Reference: https://trello.com/c/pC9hBih0/2781-demonic-minions-should-not-have-pregenerated-buff-and-flaw-traits
+        if (minion == null && race != RACE.DEMON && !(this is Summon) && race != RACE.RATMAN) { //only generate buffs and flaws for non minion characters. Reference: https://trello.com/c/pC9hBih0/2781-demonic-minions-should-not-have-pregenerated-buff-and-flaw-traits
  
             List<string> buffTraits = new List<string>(buffPool == null ? TraitManager.Instance.buffTraitPool : buffPool);
             List<string> neutralTraits = new List<string>(neutralPool == null ? TraitManager.Instance.neutralTraitPool : neutralPool);
@@ -3986,6 +3989,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.EAT_ALIVE);
         AddAdvertisedAction(INTERACTION_TYPE.DECREASE_MOOD);
         AddAdvertisedAction(INTERACTION_TYPE.DISABLE);
+        AddAdvertisedAction(INTERACTION_TYPE.TORTURE);
+        AddAdvertisedAction(INTERACTION_TYPE.BIRTH_RATMAN);
         AddAdvertisedAction(INTERACTION_TYPE.CARRY_PATIENT);
         AddAdvertisedAction(INTERACTION_TYPE.QUARANTINE);
         AddAdvertisedAction(INTERACTION_TYPE.START_PLAGUE_CARE);

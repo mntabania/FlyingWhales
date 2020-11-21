@@ -99,15 +99,17 @@ namespace Traits {
                 _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Infected, false);
                 if (addedToPOI is Character character) {
                     Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-                    if (character.isNormalCharacter) {
-                        PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(5, character);    
-                    } else {
-                        if (character is Summon summon) {
-                            if (summon.summonType != SUMMON_TYPE.Rat) {
+                    if(!character.traitContainer.HasTrait("Plague Reservoir")) {
+                        if (character.isNormalCharacter) {
+                            PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(5, character);
+                        } else {
+                            if (character is Summon summon) {
+                                if (summon.summonType != SUMMON_TYPE.Rat) {
+                                    PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(1, character);
+                                }
+                            } else {
                                 PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(1, character);
                             }
-                        } else {
-                            PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(1, character);
                         }
                     }
                 }

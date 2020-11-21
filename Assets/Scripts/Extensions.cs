@@ -608,7 +608,9 @@ public static class Extensions {
                 priority = 830;
                 break;
             case JOB_TYPE.BURY:
+            case JOB_TYPE.TORTURE:
             case JOB_TYPE.CHANGE_CLASS:
+            case JOB_TYPE.MONSTER_ABDUCT:
                 priority = 820;
                 break;
             case JOB_TYPE.PRODUCE_FOOD:
@@ -735,7 +737,6 @@ public static class Extensions {
             case JOB_TYPE.STROLL:
                 priority = 100;
                 break;
-            case JOB_TYPE.MONSTER_ABDUCT:
             case JOB_TYPE.MONSTER_EAT:
                 priority = 90;
                 break;
@@ -868,6 +869,7 @@ public static class Extensions {
             case JOB_TYPE.CAPTURE_CHARACTER:
             case JOB_TYPE.BERSERK_ATTACK:
             case JOB_TYPE.SNATCH:
+            case JOB_TYPE.MONSTER_ABDUCT:
                 return false;
             default:
                 return true;

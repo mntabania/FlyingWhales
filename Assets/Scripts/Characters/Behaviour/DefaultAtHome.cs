@@ -30,7 +30,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
             if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME) {
                 log += $"\n-{character.name} is in home structure and just returned home";
 
-                if((character.characterClass.IsCombatant() || character.characterClass.className == "Noble") && !character.partyComponent.hasParty && character.homeSettlement != null) {
+                if((character.characterClass.IsCombatant() || character.characterClass.className == "Noble") && !character.partyComponent.hasParty && character.homeSettlement != null && !character.traitContainer.HasTrait("Enslaved")) {
                     Party unfullParty = character.homeSettlement.GetFirstUnfullParty();
                     if(unfullParty == null) {
                         if (GameUtilities.RollChance(20) && character.faction != null) { //10

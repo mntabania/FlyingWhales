@@ -33,13 +33,18 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
             
                 //set abduction target if none, and chance met
                 if (character.homeStructure != null && character.behaviourComponent.currentAbductTarget == null  && GameUtilities.RollChance(2)) {
-                    List<Character> characterChoices = character.currentRegion.charactersAtLocation
-                        .Where(c => (c is Animal || (c.isNormalCharacter && c.traitContainer.HasTrait("Resting"))) && 
-                                    c.currentStructure is Kennel == false).ToList();
+                    List<Character> characterChoices = ObjectPoolManager.Instance.CreateNewCharactersList();
+                    for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
+                        Character c = character.currentRegion.charactersAtLocation[i];
+                        if (c != character && !c.isDead && (c is Animal || (c.isNormalCharacter && c.traitContainer.HasTrait("Resting"))) && c.currentStructure is Kennel == false) {
+                            characterChoices.Add(c);
+                        }
+                    }
                     if (characterChoices.Count > 0) {
                         Character chosenCharacter = CollectionUtilities.GetRandomElement(characterChoices);
                         character.behaviourComponent.SetAbductionTarget(chosenCharacter);
                     }
+                    ObjectPoolManager.Instance.ReturnCharactersListToPool(characterChoices);
                 }
 
                 Character targetCharacter = character.behaviourComponent.currentAbductTarget;
