@@ -40,6 +40,13 @@ public class Steal : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
+        if (actor.traitContainer.HasTrait("Enslaved")) {
+            if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+                costLog += $" +2000(Slave, target is not in actor's home)";
+                actor.logComponent.AppendCostLog(costLog);
+                return 2000;
+            }
+        }
         int cost = UtilityScripts.Utilities.Rng.Next(300, 351);
         costLog += $" +{cost}(Initial)";
         if (actor.traitContainer.HasTrait("Kleptomaniac")) {

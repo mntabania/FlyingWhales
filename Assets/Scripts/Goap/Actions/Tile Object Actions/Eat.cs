@@ -39,6 +39,13 @@ public class Eat : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
+        if (actor.traitContainer.HasTrait("Enslaved")) {
+            if(target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+                costLog += $" +2000(Slave, target is not in actor's home)";
+                actor.logComponent.AppendCostLog(costLog);
+                return 2000;
+            }
+        }
         if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
             if (actor.partyComponent.isActiveMember) {
                 if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null

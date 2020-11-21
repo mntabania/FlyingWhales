@@ -144,11 +144,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                     character.behaviourComponent.UpdateDefaultBehaviourSet();
                 }
 
-                //Remove enslave status every time character changes faction
-                if (character.traitContainer.HasTrait("Enslaved")) {
-                    character.traitContainer.RemoveTrait(character, "Enslaved");
-                }
-
                 if (broadcastSignal) {
                     Messenger.Broadcast(FactionSignals.CHARACTER_ADDED_TO_FACTION, character, this);
                 }
@@ -312,8 +307,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         for (int i = 0; i < characters.Count; i++) {
             Character member = characters[i];
             log += $"\n\n-{member.name}";
-            if (member.isDead /*|| member.isMissing*/ || member.isBeingSeized || member.isInLimbo) {
-                log += "\nEither dead, missing, in limbo or seized, will not be part of candidates for faction leader";
+            if (member.isDead /*|| member.isMissing*/ || member.isBeingSeized || member.isInLimbo || member.traitContainer.HasTrait("Enslaved")) {
+                log += "\nEither dead, missing, in limbo, seized or enslaved, will not be part of candidates for faction leader";
                 continue;
             }
 

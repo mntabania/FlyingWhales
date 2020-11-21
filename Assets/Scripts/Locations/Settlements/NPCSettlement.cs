@@ -313,6 +313,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         ClearAllBlacklistToAllExistingJobs();
     }
     private void OnHourStarted() {
+        CheckSlaveResidents();
         CheckForJudgePrisoners();
         if(locationType == LOCATION_TYPE.VILLAGE) {
             if (ruler == null && owner != null && owner.isMajorNonPlayer) {
@@ -450,8 +451,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 continue;
             }
             log += $"\n\n-{resident.name}";
-            if(resident.isDead /*|| resident.isMissing*/ || resident.isBeingSeized) {
-                log += "\nEither dead or missing or seized, will not be part of candidates for ruler";
+            if(resident.isDead /*|| resident.isMissing*/ || resident.isBeingSeized || resident.traitContainer.HasTrait("Enslaved")) {
+                log += "\nEither dead or missing or seized or enslaved, will not be part of candidates for ruler";
                 continue;
             }
 
@@ -713,6 +714,26 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (character.traitContainer.HasTrait("Worker")) {
             UpdateHasWorkers();
         }
+    }
+    private void CheckSlaveResidents() {
+        if (AreAllResidentsSlaves()) {
+            List<Character> settlementResidents = ObjectPoolManager.Instance.CreateNewCharactersList();
+            settlementResidents.AddRange(residents);
+            for (int i = 0; i < settlementResidents.Count; i++) {
+                Character resident = settlementResidents[i];
+                resident.traitContainer.RemoveTrait(resident, "Enslaved");
+            }
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(settlementResidents);
+        }
+
+    }
+    private bool AreAllResidentsSlaves() {
+        for (int i = 0; i < residents.Count; i++) {
+            if (!residents[i].traitContainer.HasTrait("Enslaved")) {
+                return false;
+            }
+        }
+        return true;
     }
     #endregion
 

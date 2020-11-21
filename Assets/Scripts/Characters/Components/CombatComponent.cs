@@ -224,6 +224,12 @@ public class CombatComponent : CharacterComponent {
             owner.logComponent.PrintLogIfActive(debugLog);
             return new CombatReaction(COMBAT_REACTION.Flight);
         }
+        if (owner.traitContainer.HasTrait("Enslaved") && target is Character targetChar && targetChar.isNormalCharacter) {
+            debugLog += "\n-Character is a slave and target is a villager";
+            debugLog += "\n-FLIGHT";
+            owner.logComponent.PrintLogIfActive(debugLog);
+            return new CombatReaction(COMBAT_REACTION.Flight);
+        }
         if (owner.traitContainer.HasTrait("Berserked") || owner is Summon || owner.characterClass.IsZombie() || owner.race == RACE.DEMON) {
             debugLog += "\n-Character is berserked/monster/zombie/demon";
             debugLog += "\n-FIGHT";

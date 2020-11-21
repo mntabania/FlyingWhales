@@ -677,6 +677,23 @@ namespace Inner_Maps {
         public void RemoveCharacterHere(Character character) {
             charactersHere.Remove(character);
         }
+        public bool IsInHomeOf(Character character) {
+            if (character.homeSettlement != null) {
+                return IsPartOfSettlement(character.homeSettlement);
+            } else if (character.homeStructure != null) {
+                return structure == character.homeStructure;
+            } else if (character.territories != null && character.territories.Count > 0) {
+                if (collectionOwner.isPartOfParentRegionMap) {
+                    HexTile hex = collectionOwner.partOfHextile.hexTileOwner;
+                    for (int i = 0; i < character.territories.Count; i++) {
+                        if(hex == character.territories[i]) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
         #endregion
 
         #region Points of Interest

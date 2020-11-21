@@ -26,6 +26,13 @@ public class Drink : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
+        if (actor.traitContainer.HasTrait("Enslaved")) {
+            if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+                costLog += $" +2000(Slave, target is not in actor's home)";
+                actor.logComponent.AppendCostLog(costLog);
+                return 2000;
+            }
+        }
         BaseSettlement settlement = null;
         if(target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(out settlement)) {
             Faction targetFaction = settlement.owner;
