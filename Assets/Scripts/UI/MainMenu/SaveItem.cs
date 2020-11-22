@@ -15,9 +15,11 @@ public class SaveItem : MonoBehaviour {
     public void SetSaveFile(string path) {
         this.path = path;
         DateTime lastWriteTime = File.GetLastWriteTime(path);
-        timeStampLbl.text = lastWriteTime.ToString("yyyy-MM-dd HH:mm");
+        timeStampLbl.text = lastWriteTime.ToString("yyyy-MM-dd HH:mm:ss");
         string fileName = Path.GetFileNameWithoutExtension(path);
-        string formattedFileName = fileName.Substring(0, fileName.IndexOf('(')).Replace(" ", "").Replace('_', ' ').Replace('-', ':');
+        var formattedFileName = fileName.Contains('(') ? 
+            fileName.Substring(0, fileName.IndexOf('(')).Replace(" ", "").Replace('_', ' ').Replace('-', ':') : 
+            fileName;
         saveNameLbl.text = formattedFileName.Replace(' ', '-');
     }
 
