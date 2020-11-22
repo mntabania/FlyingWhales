@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8031301
+    totalSpriteSurfaceArea: 8027413
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -199,7 +199,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 0aed244768942cc41b589c6e154ff2ea, type: 3}
   - {fileID: 21300000, guid: 2fb3e9472179d114f90b5ab9b3246177, type: 3}
   - {fileID: 21300000, guid: 2ab2f057ce6d28f448e14c6b86c2396a, type: 3}
-  - {fileID: 21300000, guid: dcd47457e540a7942a47e22ea2f534a1, type: 3}
   - {fileID: 21300000, guid: 50b2cb67d1cfb3f488173915ee7185e5, type: 3}
   - {fileID: 21300000, guid: 276870770cad95e4583fd7d81613ee9f, type: 3}
   - {fileID: 21300000, guid: 5d84b977b7bf27b4e9adcc425c0d3b4c, type: 3}
@@ -528,7 +527,6 @@ SpriteAtlas:
   - Transition-Arrow-Default
   - button1_invalid
   - intel_button_default
-  - Locked_Icon
   - button_back_clicked
   - event_active_button_enabled
   - assign_button_default

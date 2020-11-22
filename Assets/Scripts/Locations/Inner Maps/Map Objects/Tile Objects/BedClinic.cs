@@ -45,6 +45,9 @@ public class BedClinic : BaseBed, CharacterEventDispatcher.ITraitListener {
     public override bool RemoveUser(Character character) {
         if (base.RemoveUser(character)) {
             character.eventDispatcher.UnsubscribeToCharacterLostTrait(this);
+            //whenever a character is removed from the bed, make sure to remove its quarantined status,
+            //this is so that the character does not get stuck if anything happens to the bed it is in.
+            character.traitContainer.RemoveTrait(character, "Quarantined");
             return true;
         }
         return false;
@@ -54,7 +57,8 @@ public class BedClinic : BaseBed, CharacterEventDispatcher.ITraitListener {
         Character[] currentUsers = users;
         if (currentUsers != null && currentUsers.Length > 0) {
             for (int i = 0; i < currentUsers.Length; i++) {
-                RemoveUser(currentUsers[i]);
+                Character currentUser = currentUsers[i];
+                RemoveUser(currentUser);
             }
         }
     }

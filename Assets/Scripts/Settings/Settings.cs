@@ -20,5 +20,6 @@
 
         //Misc
         public bool skipEarlyAccessAnnouncement;
+        public bool disableCameraShake;
     }
 }

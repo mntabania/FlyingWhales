@@ -347,6 +347,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 }
             }
         }
+        npcSettlementEventDispatcher.ExecuteHourStartedEvent(this);
     }
     #endregion
 

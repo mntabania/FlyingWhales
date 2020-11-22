@@ -195,7 +195,9 @@ public struct GameDate {
     public string ToStringDate(){
 		return $"{((MONTH) this.month).ToString()} {this.day.ToString()}, {this.year.ToString()} T: {this.tick.ToString()}";
 	}
-
+    public override string ToString() {
+        return ConvertToContinuousDaysWithTime();
+    }
     public int ConvertToContinuousDays() {
         int totalDays = 0;
         if (year > GameManager.Instance.startYear) {

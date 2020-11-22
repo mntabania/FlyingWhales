@@ -99,7 +99,7 @@ public class Quarantine : GoapAction {
      }
      private BedClinic GetBedNearActor(Character actor, Character targetCharacter) {
          BedClinic targetBed = actor.gridTileLocation.objHere as BedClinic;
-         if (targetBed == null) {
+         if (targetBed == null || !targetBed.IsAvailable() || !targetBed.CanUseBed(targetCharacter)) {
              //check neighbours
              for (int i = 0; i < actor.gridTileLocation.neighbourList.Count; i++) {
                  LocationGridTile neighbour = actor.gridTileLocation.neighbourList[i];
