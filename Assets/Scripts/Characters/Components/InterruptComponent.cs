@@ -232,6 +232,7 @@ public class InterruptComponent : CharacterComponent {
         if (owner.marker) {
             owner.marker.UpdateActionIcon();
         }
+        thoughtBubbleLog = default;
         Messenger.Broadcast(CharacterSignals.INTERRUPT_FINISHED, finishedInterrupt.type, owner);
     }
     private void CreateThoughtBubbleLog(Interrupt interrupt) {
