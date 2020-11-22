@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using DG.Tweening;
 using Inner_Maps.Location_Structures;
+using Settings;
 
 public class InnerMapCameraMove : BaseCameraMove {
 
@@ -175,30 +176,33 @@ public class InnerMapCameraMove : BaseCameraMove {
     #endregion
 
     #region Camera Control
-    public void SetCameraControlState(bool state) {
+    private void SetCameraControlState(bool state) {
         cameraControlEnabled = state;
-    }
-    public void ShakeCamera() {
-        cameraShake.PlayShake();
     }
     #endregion
 
     #region Meteor
     public void MeteorShake() {
+        if (SettingsManager.Instance.settings.disableCameraShake) {
+            return;
+        }
         if (!DOTween.IsTweening(camera)) {
             innerMapCameraShakeMeteorTween = camera.DOShakeRotation(0.8f, new Vector3(8f, 8f, 0f), 35, fadeOut: false);
-            innerMapCameraShakeMeteorTween.OnComplete(OnTweenComplete);
-        } 
-        //else {
-            //if(innerMapCameraShakeMeteorTween != null) {
-            //    innerMapCameraShakeMeteorTween.ChangeEndValue(new Vector3(8f, 8f, 0f), 0.8f);
-            //}
-        //}
+            innerMapCameraShakeMeteorTween.OnComplete(OnCompleteMeteorShakeTween);
+        }    
     }
-    private void OnTweenComplete() {
-        //InnerMapCameraMove.Instance.innerMapsCamera.transform.rotation = Quaternion.Euler(new Vector3(0f,0f,0f));
+    private void OnCompleteMeteorShakeTween() {
         camera.transform.DORotate(new Vector3(0f, 0f, 0f), 0.2f);
         innerMapCameraShakeMeteorTween = null;
+    }
+    #endregion
+
+    #region Eartquake
+    public void EarthquakeShake() {
+        if (SettingsManager.Instance.settings.disableCameraShake) {
+            return;
+        }
+        camera.DOShakeRotation(1f, new Vector3(2f, 2f, 2f), 15, fadeOut: false);
     }
     #endregion
 }

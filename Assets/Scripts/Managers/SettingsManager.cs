@@ -31,6 +31,7 @@ namespace Settings {
         [SerializeField] private Toggle confineCursorToggle;
         [SerializeField] private Toggle vsyncToggle;
         [SerializeField] private Toggle showVideosToggle;
+        [SerializeField] private Toggle cameraShakeToggle;
         [SerializeField] private GameObject miscParentGO;
         
         [Header("Audio Settings UI")]
@@ -125,10 +126,10 @@ namespace Settings {
             edgePanningToggle.isOn = settings.useEdgePanning;
             confineCursorToggle.SetIsOnWithoutNotify(settings.confineCursor);
             skipTutorialsToggle.SetIsOnWithoutNotify(settings.skipTutorials);
-            miscParentGO.SetActive(SceneManager.GetActiveScene().name == "MainMenu");
+            cameraShakeToggle.SetIsOnWithoutNotify(settings.disableCameraShake);
+            skipTutorialsToggle.gameObject.SetActive(SceneManager.GetActiveScene().name == "MainMenu");
 
-            resolutionsDropdown.value =
-                UtilityScripts.GameUtilities.GetOptionIndex(resolutionsDropdown, settings.resolution);
+            resolutionsDropdown.value = UtilityScripts.GameUtilities.GetOptionIndex(resolutionsDropdown, settings.resolution);
             graphicsDropdown.value = settings.graphicsQuality;
             fullscreenToggle.isOn = settings.fullscreen;
 
@@ -163,6 +164,7 @@ namespace Settings {
                      isVsyncOn = false,
                      doNotShowVideos = true,
                      skipEarlyAccessAnnouncement = false,
+                     disableCameraShake = false,
                  };
                  Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, settings.fullscreen);
                  QualitySettings.SetQualityLevel(settings.graphicsQuality);
@@ -276,6 +278,13 @@ namespace Settings {
         }
         public void SetHasShownEarlyAccessAnnouncement(bool state) {
             hasShownEarlyAccessAnnouncement = state;
+        }
+        #endregion
+
+        #region Camera Shake
+        public void OnToggleCameraShake(bool p_isOn) {
+            cameraShakeToggle.isOn = p_isOn;
+            _settings.disableCameraShake = p_isOn;
         }
         #endregion
     }
