@@ -1,1 +1,0 @@
-{"skillName":"Heal","description":"Se hee and Ji ho special move.","actWeightType":3,"activationWeight":5,"accuracy":100.0,"range":3,"isEnabled":false,"strengthPower":0.0,"intellectPower":1.0,"agilityPower":0.0,"skillRequirements":[{"itemQuantity":0,"equipmentType":2,"attributeRequired":4}],"attributeModifier":1,"levelRequirement":1,"healPower":2,"durabilityCost":1}
