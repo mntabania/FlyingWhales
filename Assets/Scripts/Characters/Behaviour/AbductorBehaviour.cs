@@ -23,7 +23,7 @@ public class AbductorBehaviour : CharacterBehaviourComponent {
 				//check if target is alive, if not, create a job to move corpse to a nearby location.
 				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_ABDUCT, INTERACTION_TYPE.DROP, abductedCharacter, character);
 				job.SetCannotBePushedBack(true);
-				LocationGridTile targetTile = character.behaviourComponent.nest.GetFirstNearestTileFromThisWithNoObject();
+				LocationGridTile targetTile = character.behaviourComponent.nest.GetFirstNearestTileFromThisWithNoObject(exception: character.behaviourComponent.nest);
 				Assert.IsNotNull(targetTile);
 				job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {targetTile.structure, targetTile});
 				producedJob = job;

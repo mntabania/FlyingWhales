@@ -34,12 +34,12 @@ public class OnDeathUIController : MVCUIController, OnDeathUIView.IListener
 	private void UpdateDeathEffectData(PLAGUE_DEATH_EFFECT p_deathEffect) {
 		if (PlagueDisease.Instance.HasMaxDeathEffect() && PlagueDisease.Instance.IsDeathEffectActive(p_deathEffect, out var deathEffect)) {
 			int upgradeCost = deathEffect.GetNextLevelUpgradeCost();
-			m_onDeathUIView.UpdateDeathEffectCost(p_deathEffect, upgradeCost.ToString());
+			bool isMaxLevel = upgradeCost == -1;
+			m_onDeathUIView.UpdateDeathEffectCost(p_deathEffect, isMaxLevel ? "MAX" : $"{upgradeCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
 			m_onDeathUIView.UpdateDeathEffectDescription(p_deathEffect, deathEffect.GetCurrentEffectDescription());
-			m_onDeathUIView.UpdateDeathEffectUpgradeButtonInteractable(p_deathEffect,  upgradeCost != -1 && CanAffordUnlockOrUpgrade(p_deathEffect));
-			m_onDeathUIView.UpdateDeathEffectCostState(p_deathEffect, upgradeCost != -1);
+			m_onDeathUIView.UpdateDeathEffectUpgradeButtonInteractable(p_deathEffect,  !isMaxLevel && CanAffordUnlockOrUpgrade(p_deathEffect));
 		} else {
-			m_onDeathUIView.UpdateDeathEffectCost(p_deathEffect, p_deathEffect.GetUnlockCost().ToString());
+			m_onDeathUIView.UpdateDeathEffectCost(p_deathEffect, $"{p_deathEffect.GetUnlockCost().ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
 			m_onDeathUIView.UpdateDeathEffectDescription(p_deathEffect, string.Empty);
 			m_onDeathUIView.UpdateDeathEffectUpgradeButtonInteractable(p_deathEffect, !PlagueDisease.Instance.HasMaxDeathEffect() && CanAffordUnlockOrUpgrade(p_deathEffect));
 		}
