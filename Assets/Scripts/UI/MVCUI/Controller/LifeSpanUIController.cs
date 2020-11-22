@@ -138,41 +138,36 @@ public class LifeSpanUIController : MVCUIController, LifeSpanUIView.IListener
 		m_lifeSpanUIView.UpdateTileObjectInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.tileObjectInfectionTimeInHours));
 		int nextUpgradeCost = PlagueDisease.Instance.lifespan.GetTileObjectInfectionTimeUpgradeCost();
 		bool isAtMaxLevel = PlagueDisease.Instance.lifespan.IsTileObjectAtMaxLevel();
-		m_lifeSpanUIView.UpdateTileObjectUpgradePrice(nextUpgradeCost.ToString());
+		m_lifeSpanUIView.UpdateTileObjectUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
 		m_lifeSpanUIView.UpdateTileObjectUpgradeButtonInteractable(!isAtMaxLevel && CanAffordUpgrade(nextUpgradeCost));
-		m_lifeSpanUIView.UpdateTileObjectUpgradePriceState(!isAtMaxLevel);
 	}
 	private void UpdateElvesInfectionTimeData() {
 		m_lifeSpanUIView.UpdateElvesInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetSapientLifespanOfPlagueInHours(RACE.ELVES)));
 		int nextUpgradeCost = PlagueDisease.Instance.lifespan.GetSapientInfectionTimeUpgradeCost(RACE.ELVES);
 		bool isAtMaxLevel = PlagueDisease.Instance.lifespan.IsSapientAtMaxLevel(RACE.ELVES);
-		m_lifeSpanUIView.UpdateElvesUpgradePrice(nextUpgradeCost.ToString());
+		m_lifeSpanUIView.UpdateElvesUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
 		m_lifeSpanUIView.UpdateElvesUpgradeButtonInteractable(!isAtMaxLevel && CanAffordUpgrade(nextUpgradeCost));
-		m_lifeSpanUIView.UpdateElvesUpgradePriceState(!isAtMaxLevel);
 	}
 	private void UpdateHumansInfectionTimeData() {
 		m_lifeSpanUIView.UpdateHumansInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetSapientLifespanOfPlagueInHours(RACE.HUMANS)));
 		int nextUpgradeCost = PlagueDisease.Instance.lifespan.GetSapientInfectionTimeUpgradeCost(RACE.HUMANS);
 		bool isAtMaxLevel = PlagueDisease.Instance.lifespan.IsSapientAtMaxLevel(RACE.HUMANS);
-		m_lifeSpanUIView.UpdateHumansUpgradePrice(nextUpgradeCost.ToString());
+		m_lifeSpanUIView.UpdateHumansUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
 		m_lifeSpanUIView.UpdateHumansUpgradeButtonInteractable(!isAtMaxLevel && CanAffordUpgrade(nextUpgradeCost));
-		m_lifeSpanUIView.UpdateHumansUpgradePriceState(!isAtMaxLevel);
 	}
 	private void UpdateMonstersInfectionTimeData() {
 		m_lifeSpanUIView.UpdateMonstersInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.monsterInfectionTimeInHours));
 		int nextUpgradeCost = PlagueDisease.Instance.lifespan.GetMonsterInfectionTimeUpgradeCost();
 		bool isAtMaxLevel = PlagueDisease.Instance.lifespan.IsMonstersAtMaxLevel();
-		m_lifeSpanUIView.UpdateMonstersUpgradePrice(nextUpgradeCost.ToString());
+		m_lifeSpanUIView.UpdateMonstersUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
 		m_lifeSpanUIView.UpdateMonstersUpgradeButtonInteractable(!isAtMaxLevel && CanAffordUpgrade(nextUpgradeCost));
-		m_lifeSpanUIView.UpdateMonstersUpgradePriceState(!isAtMaxLevel);
 	}
 	private void UpdateUndeadInfectionTimeData() {
 		m_lifeSpanUIView.UpdateUndeadInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.undeadInfectionTimeInHours));
 		int nextUpgradeCost = PlagueDisease.Instance.lifespan.GetUndeadInfectionTimeUpgradeCost();
 		bool isAtMaxLevel = PlagueDisease.Instance.lifespan.IsUndeadAtMaxLevel();
-		m_lifeSpanUIView.UpdateUndeadUpgradePrice(nextUpgradeCost.ToString());
+		m_lifeSpanUIView.UpdateUndeadUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
 		m_lifeSpanUIView.UpdateUndeadUpgradeButtonInteractable(!isAtMaxLevel && CanAffordUpgrade(nextUpgradeCost));
-		m_lifeSpanUIView.UpdateUndeadUpgradePriceState(!isAtMaxLevel);
 	}
 
 	private string GetInfectionTimeString(int timeInHours) {

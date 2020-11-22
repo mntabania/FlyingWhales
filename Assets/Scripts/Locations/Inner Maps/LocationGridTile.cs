@@ -1210,14 +1210,14 @@ namespace Inner_Maps {
             }
             return null;
         }
-        public LocationGridTile GetFirstNearestTileFromThisWithNoObject(bool thisStructureOnly = false) {
-            return GetFirstNearestTileFromThisWithNoObjectBase(thisStructureOnly, new List<LocationGridTile>());
+        public LocationGridTile GetFirstNearestTileFromThisWithNoObject(bool thisStructureOnly = false, LocationGridTile exception = null) {
+            return GetFirstNearestTileFromThisWithNoObjectBase(thisStructureOnly, new List<LocationGridTile>(), exception);
         }
-        private LocationGridTile GetFirstNearestTileFromThisWithNoObjectBase(bool thisStructureOnly, List<LocationGridTile> checkedTiles) {
+        private LocationGridTile GetFirstNearestTileFromThisWithNoObjectBase(bool thisStructureOnly, List<LocationGridTile> checkedTiles, LocationGridTile exception) {
             if (!checkedTiles.Contains(this)) {
                 checkedTiles.Add(this);
 
-                if (objHere == null) {
+                if (objHere == null && this != exception) {
                     return this;
                 }
                 LocationGridTile chosenTile = GetFirstNoObjectNeighbor(thisStructureOnly);
@@ -1226,8 +1226,11 @@ namespace Inner_Maps {
                 } else {
                     for (int i = 0; i < neighbourList.Count; i++) {
                         LocationGridTile neighbor = neighbourList[i];
+                        if (neighbor == exception) {
+                            continue; //skip exception tile.
+                        }
                         if (!thisStructureOnly || neighbor.structure == structure) {
-                            chosenTile = neighbor.GetFirstNearestTileFromThisWithNoObjectBase(thisStructureOnly, checkedTiles);
+                            chosenTile = neighbor.GetFirstNearestTileFromThisWithNoObjectBase(thisStructureOnly, checkedTiles, exception);
                             if (chosenTile != null) {
                                 return chosenTile;
                             }

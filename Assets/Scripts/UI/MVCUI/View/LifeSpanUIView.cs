@@ -135,10 +135,7 @@ public class LifeSpanUIView : MVCUIView
 		UIModel.btnObjectsUpgrade.interactable = p_interactable;
 		UIModel.txtObjectsUpgrade.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
 	}
-	public void UpdateTileObjectUpgradePriceState(bool p_state) {
-		UIModel.txtTileObjectCost.gameObject.SetActive(p_state);
-	}
-	
+
 	public void UpdateElvesUpgradePrice(string p_newPrice) {
 		UIModel.txtElvesCost.text = p_newPrice;
 	}
@@ -149,10 +146,7 @@ public class LifeSpanUIView : MVCUIView
 		UIModel.btnElvesUpgrade.interactable = p_interactable;
 		UIModel.txtElvesUpgrade.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
 	}
-	public void UpdateElvesUpgradePriceState(bool p_state) {
-		UIModel.txtElvesCost.gameObject.SetActive(p_state);
-	}
-	
+
 	public void UpdateHumansUpgradePrice(string p_newPrice) {
 		UIModel.txtHumansCost.text = p_newPrice;
 	}
@@ -163,10 +157,7 @@ public class LifeSpanUIView : MVCUIView
 		UIModel.btnHumansUpgrade.interactable = p_interactable;
 		UIModel.txtHumansUpgrade.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
 	}
-	public void UpdateHumansUpgradePriceState(bool p_state) {
-		UIModel.txtHumansCost.gameObject.SetActive(p_state);
-	}
-	
+
 	public void UpdateMonstersUpgradePrice(string p_newPrice) {
 		UIModel.txtMonstersCost.text = p_newPrice;
 	}
@@ -177,10 +168,7 @@ public class LifeSpanUIView : MVCUIView
 		UIModel.btnMonstersUpgrade.interactable = p_interactable;
 		UIModel.txtMonstersUpgrade.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
 	}
-	public void UpdateMonstersUpgradePriceState(bool p_state) {
-		UIModel.txtMonstersCost.gameObject.SetActive(p_state);
-	}
-	
+
 	public void UpdateUndeadUpgradePrice(string p_newPrice) {
 		UIModel.txtUndeadCost.text = p_newPrice;
 	}
@@ -190,8 +178,5 @@ public class LifeSpanUIView : MVCUIView
 	public void UpdateUndeadUpgradeButtonInteractable(bool p_interactable) {
 		UIModel.btnUndeadUpgrade.interactable = p_interactable;
 		UIModel.txtUndeadUpgrade.color = UtilityScripts.GameUtilities.GetUpgradeButtonTextColor(p_interactable);
-	}
-	public void UpdateUndeadUpgradePriceState(bool p_state) {
-		UIModel.txtUndeadCost.gameObject.SetActive(p_state);
 	}
 }

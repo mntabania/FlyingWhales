@@ -95,20 +95,6 @@ public class TransmissionUIView : MVCUIView
 				throw new ArgumentOutOfRangeException(nameof(p_transmissionType), p_transmissionType, null);
 		}
 	}
-	private GameObject GetCostPlagueIcon(PLAGUE_TRANSMISSION p_transmissionType) {
-		switch (p_transmissionType) {
-			case PLAGUE_TRANSMISSION.Airborne:
-				return UIModel.airBorneCostImagePlagueIcon;
-			case PLAGUE_TRANSMISSION.Consumption:
-				return UIModel.consumptionCostPlagueIcon;
-			case PLAGUE_TRANSMISSION.Physical_Contact:
-				return UIModel.directContactCostPlagueIcon;
-			case PLAGUE_TRANSMISSION.Combat:
-				return UIModel.combatCostPlagueIcon;
-			default:
-				throw new ArgumentOutOfRangeException(nameof(p_transmissionType), p_transmissionType, null);
-		}
-	}
 	private TextMeshProUGUI GetTransmissionUpgradeText(PLAGUE_TRANSMISSION p_transmissionType) {
 		switch (p_transmissionType) {
 			case PLAGUE_TRANSMISSION.Airborne:
@@ -127,14 +113,6 @@ public class TransmissionUIView : MVCUIView
 	public void UpdateTransmissionCost(PLAGUE_TRANSMISSION p_transmissionType, string p_newCost) {
 		RuinarchText txtCost = GetTransmissionCostText(p_transmissionType);
 		txtCost.text = p_newCost;
-	}
-	public void UpdateTransmissionCostState(PLAGUE_TRANSMISSION p_transmissionType, bool p_state) {
-		RuinarchText txtCost = GetTransmissionCostText(p_transmissionType);
-		txtCost.gameObject.SetActive(p_state);
-	}
-	public void UpdateTransmissionCostPlagueIcon(PLAGUE_TRANSMISSION p_transmissionType, bool state) {
-		GameObject iconGO = GetCostPlagueIcon(p_transmissionType);
-		iconGO.SetActive(state);
 	}
 	public void UpdateTransmissionRate(PLAGUE_TRANSMISSION p_transmissionType, string p_newRate) {
 		RuinarchText txtRate = GetTransmissionRateText(p_transmissionType);

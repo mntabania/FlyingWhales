@@ -1084,7 +1084,6 @@ public class ReactionComponent : CharacterComponent {
                                 }
                             }
                         }
-                        
                     } else if (disguisedActor.faction != disguisedTarget.faction && disguisedActor.faction != null && disguisedTarget.faction != null) {
                         //https://trello.com/c/Rictd9YD/2569-on-sight-of-restrained-ensnared-frozen-and-unconscious
                         FactionRelationship factionRel = disguisedActor.faction.GetRelationshipWith(disguisedTarget.faction);
@@ -1115,6 +1114,11 @@ public class ReactionComponent : CharacterComponent {
                                     }
                                 }
                             }
+                        }
+
+                        if (disguisedTarget.race == RACE.WOLF && disguisedTarget.traitContainer.HasTrait("Restrained") && disguisedActor.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
+                            //Reference: https://trello.com/c/NPXg3GZs/2828-restrained-wolves-should-be-freed-by-reveres-werewolves-faction-members
+                            actor.jobComponent.TriggerReleaseJob(targetCharacter);
                         }
                     }
                     

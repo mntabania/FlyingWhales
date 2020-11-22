@@ -38,11 +38,6 @@ public class TransmissionUIModel : MVCUIModel
 	public RuinarchText txtDirectContactRate;
 	public RuinarchText txtCombatUpgradeCost;
 	public RuinarchText txtCombatRate;
-
-	public GameObject airBorneCostImagePlagueIcon;
-	public GameObject consumptionCostPlagueIcon;
-	public GameObject directContactCostPlagueIcon;
-	public GameObject combatCostPlagueIcon;
 	
 	public HoverHandler airBorneHoverHandler;
 	public HoverHandler consumptionHoverHandler;

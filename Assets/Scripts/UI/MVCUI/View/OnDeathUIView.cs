@@ -148,10 +148,6 @@ public class OnDeathUIView : MVCUIView
 		RuinarchText txt = GetCostTextToUpdate(p_deathEffect);
 		txt.text = p_cost;
 	}
-	public void UpdateDeathEffectCostState(PLAGUE_DEATH_EFFECT p_deathEffect, bool p_state) {
-		RuinarchText txt = GetCostTextToUpdate(p_deathEffect);
-		txt.gameObject.SetActive(p_state);
-	}
 	public void UpdateDeathEffectUpgradeButtonInteractable(PLAGUE_DEATH_EFFECT p_deathEffect, bool p_interactable) {
 		Button button = GetDeathEffectUpgradeButton(p_deathEffect);
 		button.interactable = p_interactable;

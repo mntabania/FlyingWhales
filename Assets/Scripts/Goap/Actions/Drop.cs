@@ -90,8 +90,7 @@ public class Drop : GoapAction {
     private bool IsDropTargetMissing(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        if (poiTarget.IsAvailable() == false 
-            || (poiTarget.gridTileLocation == null && node.actor.IsPOICarriedOrInInventory(poiTarget) == false)) {
+        if (poiTarget.gridTileLocation == null && node.actor.IsPOICarriedOrInInventory(poiTarget) == false) {
             return true;
         }
         return false;
