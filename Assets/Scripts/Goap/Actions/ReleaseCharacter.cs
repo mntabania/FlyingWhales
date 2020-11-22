@@ -98,6 +98,7 @@ public class ReleaseCharacter : GoapAction {
         target.traitContainer.RemoveStatusAndStacks(target, "Unconscious");
         target.traitContainer.RemoveStatusAndStacks(target, "Frozen");
         target.traitContainer.RemoveStatusAndStacks(target, "Ensnared");
+        target.traitContainer.RemoveStatusAndStacks(target, "Enslaved");
 
         if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive && goapNode.actor.partyComponent.currentParty.currentQuest is RescuePartyQuest quest) {
             if(quest.targetCharacter == goapNode.poiTarget) {

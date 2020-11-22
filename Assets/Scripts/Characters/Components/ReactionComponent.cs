@@ -592,7 +592,10 @@ public class ReactionComponent : CharacterComponent {
                 actor.currentJob.CancelJob(false);
                 actor.combatComponent.Flight(targetCharacter, CombatManager.Encountered_Hostile);
             }
-            if(disguisedActor is Troll && disguisedTarget.isNormalCharacter && disguisedActor.homeStructure != null && !targetCharacter.isDead) {
+            if(disguisedActor.isNormalCharacter && targetCharacter.traitContainer.HasTrait("Enslaved") && disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget)
+                && !disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget) && !targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Enslaved").IsResponsibleForTrait(disguisedActor)) {
+                actor.jobComponent.TriggerReleaseJob(targetCharacter);
+            } else if(disguisedActor is Troll && disguisedTarget.isNormalCharacter && disguisedActor.homeStructure != null && !targetCharacter.isDead) {
                 debugLog = $"{debugLog}\n-Actor is a Troll and target is a Villager and actor has a home structure";
                 if (targetCharacter.currentStructure != disguisedActor.homeStructure) {
                     if(!targetCharacter.limiterComponent.canPerform || !targetCharacter.limiterComponent.canMove) {
@@ -1027,15 +1030,21 @@ public class ReactionComponent : CharacterComponent {
                                 bool isEnsnared = targetCharacter.traitContainer.HasTrait("Ensnared");
                                 bool isFrozen = targetCharacter.traitContainer.HasTrait("Frozen");
                                 bool isUnconscious = targetCharacter.traitContainer.HasTrait("Unconscious");
+                                bool isEnslaved = targetCharacter.traitContainer.HasTrait("Enslaved");
+                                bool isEnslavedAndNotEnemy = isEnslaved && disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget) && !disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget);
 
-                                if (disguisedActor.isNormalCharacter && disguisedTarget.isNormalCharacter && (isRestrained || isEnsnared || isFrozen || isUnconscious) &&
+                                if (disguisedActor.isNormalCharacter && ((disguisedTarget.isNormalCharacter && (isRestrained || isEnsnared || isFrozen || isUnconscious)) || isEnslavedAndNotEnemy) &&
                                     !disguisedTarget.crimeComponent.IsWantedBy(disguisedActor.faction)) {
 
                                     bool isResponsibleForRestrained = isRestrained && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Restrained").IsResponsibleForTrait(disguisedActor);
                                     bool isResponsibleForEnsnared = isEnsnared && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Ensnared").IsResponsibleForTrait(disguisedActor);
                                     bool isResponsibleForFrozen = isFrozen && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Frozen").IsResponsibleForTrait(disguisedActor);
                                     bool isResponsibleForUnconscious = isUnconscious && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Unconscious").IsResponsibleForTrait(disguisedActor);
+                                    bool isResponsibleForEnslaved = isEnslaved && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Enslaved").IsResponsibleForTrait(disguisedActor);
 
+                                    if (isEnslaved && !isResponsibleForEnslaved) {
+                                        actor.jobComponent.TriggerReleaseJob(targetCharacter);
+                                    }
                                     if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.REMOVE_STATUS)) {
                                         if (isRestrained && !isResponsibleForRestrained) {
                                             actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Restrained");

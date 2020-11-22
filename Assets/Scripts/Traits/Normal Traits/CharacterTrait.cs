@@ -195,7 +195,7 @@ namespace Traits {
                                 }
                             }
                         } else {
-                            if (targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared")) {
+                            if (targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared", "Enslaved")) {
                                 if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
                                     if (owner.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueParty && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
                                         if (rescueParty.isWaitTimeOver && rescueParty.targetCharacter == targetCharacter) {
