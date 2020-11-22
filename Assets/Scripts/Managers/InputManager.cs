@@ -52,7 +52,7 @@ namespace Ruinarch {
                     return;
                 }
             } else if (Input.GetKeyDown(KeyCode.F8)) {
-                if (!CanUseHotkeys()) return;
+                if (!CanUseHotkey(KeyCode.F8)) return;
                 ReportABug();
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.F8);
             }
@@ -147,18 +147,23 @@ namespace Ruinarch {
             } else if (Input.GetKeyDown(KeyCode.BackQuote)) {
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.BackQuote);
             } else if (Input.GetKeyDown(KeyCode.Space)) {
+                if (!CanUseHotkey(KeyCode.Space)) return;
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Space);
             } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
+                if (!CanUseHotkey(KeyCode.Alpha1)) return;
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Alpha1);
             } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+                if (!CanUseHotkey(KeyCode.Alpha2)) return;
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Alpha2);
             } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+                if (!CanUseHotkey(KeyCode.Alpha3)) return;
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Alpha3);
             } else if (Input.GetKeyDown(KeyCode.Escape)) {
+                if (!CanUseHotkey(KeyCode.Escape)) return;
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Escape);
                 if (UIManager.Instance != null) {
                     if (!CancelActionsByPriority(true)) {
-                        //if no actions were cancelled then show options menu if itt is not yet showing.
+                        //if no actions were cancelled then show options menu if it is not yet showing.
                         //if game has started then, check if options menu is not showing, if it is not, then
                         //show options menu, then do not cancel any actions.
                         if (!UIManager.Instance.IsOptionsMenuShowing()) {
@@ -169,40 +174,40 @@ namespace Ruinarch {
                 }
                 // CancelActionsByPriority();
             } else if (Input.GetKeyDown(KeyCode.F1)) {
-                BroadcastHotkeyPress("Spells Tab");
+                BroadcastHotkeyPress("Spells Tab", KeyCode.F1);
             } else if (Input.GetKeyDown(KeyCode.F2)) {
-                BroadcastHotkeyPress("Demons Tab");
+                BroadcastHotkeyPress("Demons Tab", KeyCode.F2);
             } else if (Input.GetKeyDown(KeyCode.F3)) {
-                BroadcastHotkeyPress("Monsters Tab");
+                BroadcastHotkeyPress("Monsters Tab", KeyCode.F3);
             } else if (Input.GetKeyDown(KeyCode.F4)) {
-                BroadcastHotkeyPress("Intel Tab");
+                BroadcastHotkeyPress("Intel Tab", KeyCode.F4);
             } else if (Input.GetKeyDown(KeyCode.F5)) {
-                BroadcastHotkeyPress("Villagers Tab");
+                BroadcastHotkeyPress("Villagers Tab", KeyCode.F5);
             } else if (Input.GetKeyDown(KeyCode.F6)) {
-                BroadcastHotkeyPress("Build Tab");
+                BroadcastHotkeyPress("Build Tab", KeyCode.F6);
             } else if (Input.GetKeyDown(KeyCode.F7)) {
-                BroadcastHotkeyPress("Cultist Tab");
+                BroadcastHotkeyPress("Cultist Tab", KeyCode.F7);
             } else if (Input.GetKeyDown(KeyCode.M)) {
-                BroadcastHotkeyPress("ToggleMapBtn");
+                BroadcastHotkeyPress("ToggleMapBtn", KeyCode.M);
             } else if (Input.GetKeyDown(KeyCode.F9)) {
-                if (!CanUseHotkeys()) return;
+                if (!CanUseHotkey(KeyCode.F9)) return;
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.F9);
             } else if (Input.GetKeyDown(KeyCode.Tab)) {
-                if (!CanUseHotkeys()) return;
+                if (!CanUseHotkey(KeyCode.Tab)) return;
                 if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Tab);
             } else if (Input.GetKeyDown(KeyCode.R)) {
-                if (!CanUseHotkeys()) return;
+                if (!CanUseHotkey(KeyCode.R)) return;
                 if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.R);
             }
         }
-        private void BroadcastHotkeyPress(string buttonToActivate) {
-            if (!CanUseHotkeys()) return;
+        private void BroadcastHotkeyPress(string buttonToActivate, KeyCode p_keyCode) {
+            if (!CanUseHotkey(p_keyCode)) return;
             if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
             Messenger.Broadcast(UISignals.HOTKEY_CLICK, buttonToActivate);
         }
-        public bool CanUseHotkeys() {
+        private bool CanUseHotkey(KeyCode p_keyCode) {
             if (SaveManager.Instance.saveCurrentProgressManager.isSaving) {
                 //Do not allow hotkeys while saving
                 return false;
@@ -211,11 +216,14 @@ namespace Ruinarch {
                 //Do not allow hotkeys while loading
                 return false;
             }
-            if (PlayerUI.Instance != null && PlayerUI.Instance.IsMajorUIShowing()) {
-                return false;
-            }
-            if (UIManager.Instance != null && UIManager.Instance.IsObjectPickerOpen()) {
-                return false;
+            if (p_keyCode != KeyCode.Escape) {
+                //Allow escape if any popup is showing 
+                if (PlayerUI.Instance != null && PlayerUI.Instance.IsMajorUIShowing()) {
+                    return false;
+                }
+                if (UIManager.Instance != null && UIManager.Instance.IsObjectPickerOpen()) {
+                    return false;
+                }    
             }
             return _allowHotKeys;
         }

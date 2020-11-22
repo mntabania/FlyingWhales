@@ -77,9 +77,25 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
     #endregion
     
     #region Movement
+    protected bool CanMoveCamera() {
+        if (SaveManager.Instance.saveCurrentProgressManager.isSaving) {
+            //Do not allow hotkeys while saving
+            return false;
+        }
+        if (LevelLoaderManager.Instance.isLoadingNewScene || LevelLoaderManager.Instance.IsLoadingScreenActive()) {
+            //Do not allow hotkeys while loading
+            return false;
+        }
+        if (PlayerUI.Instance != null && PlayerUI.Instance.IsMajorUIShowing()) {
+            return false;
+        }
+        if (UIManager.Instance != null && UIManager.Instance.IsObjectPickerOpen()) {
+            return false;
+        }
+        return !isMovementDisabled;
+    }
     protected void ArrowKeysMovement() {
-        if (isMovementDisabled) { return; }
-        if (!InputManager.Instance.CanUseHotkeys()) { return; }
+        if (!CanMoveCamera()) { return; }
         if (InputManager.Instance.HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
         if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
             if (!UIManager.Instance.IsConsoleShowing()) {
@@ -108,7 +124,7 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
         }
     }
     protected void Dragging(Camera targetCamera) {
-        if (isMovementDisabled) { return; }
+        if (!CanMoveCamera()) { return; }
         if (startedOnUI) {
             if (!Input.GetMouseButton(2)) {
                 ResetDragValues();

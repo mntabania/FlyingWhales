@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using Quests;
+using Ruinarch;
 using Settings;
 using TMPro;
 using Tutorial;
@@ -36,6 +37,7 @@ public class DemoUI : MonoBehaviour {
         UIManager.Instance.SetSpeedTogglesState(false);
         WorldMapCameraMove.Instance.DisableMovement();
         InnerMapCameraMove.Instance.DisableMovement();
+        InputManager.Instance.AllowHotkeys(false);
         startScreen.gameObject.SetActive(true);
         startMessageWindow.gameObject.SetActive(true);
         
@@ -76,6 +78,7 @@ public class DemoUI : MonoBehaviour {
         UIManager.Instance.SetSpeedTogglesState(true);
         WorldMapCameraMove.Instance.EnableMovement();
         InnerMapCameraMove.Instance.EnableMovement();
+        InputManager.Instance.AllowHotkeys(true);
 
         TutorialManager.Instance.InstantiateImportantTutorials();
         TutorialManager.Instance.InstantiatePendingBonusTutorials();
