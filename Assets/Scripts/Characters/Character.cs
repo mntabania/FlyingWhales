@@ -5104,6 +5104,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if((isLycanthrope && targetCharacter.race == RACE.WOLF) || (targetCharacter.isLycanthrope && race == RACE.WOLF)) {
             return false;
         }
+        if (this.race == RACE.WOLF && targetCharacter.faction != null && targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
+            //If this character is a wolf and the other character is part of a faction that reveres werewolves, then do not attack that character
+            //Reference: https://trello.com/c/NPXg3GZs/2828-restrained-wolves-should-be-freed-by-reveres-werewolves-faction-members
+            return false;
+        }
         if (targetCharacter.race == RACE.WOLF || (targetCharacter.isLycanthrope && targetCharacter.lycanData.isInWerewolfForm)) {
             if(faction != null && faction.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
                 //Reveres Werewolf factions will not initiate combat with Wolves and Werewolves
