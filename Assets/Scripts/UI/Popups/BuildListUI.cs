@@ -65,9 +65,10 @@ public class BuildListUI : PopupMenuBase {
                 Vector3.zero, Quaternion.identity, buildingsScrollRect.content);
             SpellItem spellItem = spellNameplate.GetComponent<SpellItem>();
             spellItem.SetObject(demonicStructurePlayerSkill);
-            spellItem.SetInteractableState(CanChooseLandmark(demonicStructurePlayerSkill.type));
+            spellItem.SetInteractableChecker(CanChooseLandmark);
             spellItem.AddHoverEnterAction(OnHoverSpellItem);
             spellItem.AddHoverExitAction(OnHoverExitSpellItem);
+            spellItem.ForceUpdateInteractableState();
             buildItems[i] = spellItem;
         }
     }
@@ -80,7 +81,7 @@ public class BuildListUI : PopupMenuBase {
     private void UpdateBuildList() {
         for (int i = 0; i < buildItems.Length; i++) {
             SpellItem item = buildItems[i];
-            item.SetInteractableState(CanChooseLandmark(item.spellData.type));
+            item.ForceUpdateInteractableState();
             // if (item.toggle.interactable) {
             //     item.transform.SetAsFirstSibling();
             // } else {
@@ -88,18 +89,15 @@ public class BuildListUI : PopupMenuBase {
             // }
         }
     }
-    private bool CanChooseLandmark(SPELL_TYPE structureType) {
-        // if (InnerMapManager.Instance.currentlyShowingLocation == null) {
-        //     return false;
-        // }
-        bool canChooseLandmark = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType).CanPerformAbility();
+    private bool CanChooseLandmark(SpellData p_spellData) {
+        bool canChooseLandmark = p_spellData.CanPerformAbility();
 
         if (canChooseLandmark) {
             if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
-                if (structureType == SPELL_TYPE.EYE) {
+                if (p_spellData.type == SPELL_TYPE.EYE) {
                     return TutorialManager.Instance.HasTutorialBeenCompletedInCurrentPlaythrough(TutorialManager.Tutorial.Share_An_Intel) ||
                            TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Share_An_Intel);
-                } else if (structureType == SPELL_TYPE.KENNEL) {
+                } else if (p_spellData.type == SPELL_TYPE.KENNEL) {
                     return TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Build_A_Kennel) ||
                            TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Build_A_Kennel);
                 }

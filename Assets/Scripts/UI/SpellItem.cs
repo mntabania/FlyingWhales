@@ -8,7 +8,6 @@ using TMPro;
 using UnityEngine.UI;
 
 public class SpellItem : NameplateItem<SpellData> {
-    [SerializeField] private Image lockedImage;
     [SerializeField] private Image cooldownImage;
     [SerializeField] private Image cooldownCoverImage;
     [SerializeField] private TextMeshProUGUI currencyLbl;
@@ -16,6 +15,8 @@ public class SpellItem : NameplateItem<SpellData> {
     public SpellData spellData { get; private set; }
 
     //private Image _coverImg;
+
+    private Func<SpellData, bool> _shouldBeInteractableChecker;
 
     public override void SetObject(SpellData spellData) {
         base.SetObject(spellData);
@@ -119,15 +120,15 @@ public class SpellItem : NameplateItem<SpellData> {
     #endregion
 
     #region Interactability
-    public void SetLockedState(bool state) {
-        lockedImage.gameObject.SetActive(state);
-    }
     private void SetCooldownState(bool state) {
         //cooldownImage.gameObject.SetActive(state);
         cooldownCoverImage.gameObject.SetActive(state);
     }
+    public void ForceUpdateInteractableState() {
+        UpdateInteractableState();
+    }
     private void UpdateInteractableState() {
-        SetInteractableState(spellData.CanPerformAbility());
+        SetInteractableState(_shouldBeInteractableChecker?.Invoke(spellData) ?? spellData.CanPerformAbility());
     }
     public void OnToggleSpell(bool state) {
         PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
@@ -135,12 +136,8 @@ public class SpellItem : NameplateItem<SpellData> {
             PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(spellData);
         }
     }
-    public override void SetInteractableState(bool state) {
-        base.SetInteractableState(state);
-        //coverGO.SetActive(spellData.isInCooldown);
-        //if (coverGO.activeSelf) {
-        //    _coverImg.fillAmount = 0f;    
-        //}
+    public void SetInteractableChecker(System.Func<SpellData, bool> p_checker) {
+        _shouldBeInteractableChecker = p_checker;
     }
     #endregion
 
