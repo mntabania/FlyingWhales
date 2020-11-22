@@ -5557,7 +5557,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool IsInTerritory() {
         HexTile hex = hexTileLocation;
-        return territories.Count > 0 && hex != null && territories.Contains(hex);
+        return hex != null && IsTerritory(hex);
+    }
+    public bool IsInTerritoryOf(Character character) {
+        HexTile hex = hexTileLocation;
+        return hex != null && character.IsTerritory(hex);
     }
     public LocationGridTile GetRandomLocationGridTileWithPath() {
         LocationGridTile chosenTile = null;
