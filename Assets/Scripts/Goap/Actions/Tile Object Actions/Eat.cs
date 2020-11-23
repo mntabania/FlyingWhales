@@ -4,6 +4,7 @@ using UnityEngine;
 using Traits;
 using Inner_Maps.Location_Structures;
 using Inner_Maps;
+using Locations.Settlements;
 
 public class Eat : GoapAction {
 
@@ -81,6 +82,27 @@ public class Eat : GoapAction {
                 cost += UtilityScripts.Utilities.Rng.Next(10, 61);
             } else if (target is Table) {
                 return 2000;
+            }
+        } else if (actor.race == RACE.RATMAN && actor.faction?.factionType.type == FACTION_TYPE.Ratmen) {
+            BaseSettlement settlement = null;
+            if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(out settlement)) {
+                Faction targetFaction = settlement.owner;
+                if (targetFaction != null && actor.faction != targetFaction) {
+                    //Do not drink on hostile faction's taverns
+                    costLog += $" +2000(Ratman, Location of target is in faction different from actor)";
+                    actor.logComponent.AppendCostLog(costLog);
+                    return 2000;
+                } else if (targetFaction == null || targetFaction.factionType.type != FACTION_TYPE.Ratmen) {
+                    //Do not drink on hostile faction's taverns
+                    cost += UtilityScripts.Utilities.Rng.Next(850, 951);
+                    costLog += $" +{cost}(Ratman, Target is in a faction not owned by Ratmen)";
+                } else {
+                    cost += UtilityScripts.Utilities.Rng.Next(800, 851);
+                    costLog += $" +{cost}(Ratman)";
+                }
+            } else {
+                cost += UtilityScripts.Utilities.Rng.Next(800, 851);
+                costLog += $" +{cost}(Ratman)";
             }
         } else {
             if (target is Table table) {

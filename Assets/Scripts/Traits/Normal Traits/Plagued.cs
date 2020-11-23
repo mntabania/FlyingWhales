@@ -73,6 +73,10 @@ namespace Traits {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is IPointOfInterest poi) {
                 owner = poi;
+                if (_infectedEffectGO) {
+                    ObjectPoolManager.Instance.DestroyObject(_infectedEffectGO);
+                    _infectedEffectGO = null;
+                }
                 _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Infected, false);
                 if (poi is Character) {
                     Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
@@ -96,6 +100,10 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is IPointOfInterest addedToPOI) {
                 owner = addedToPOI;
+                if (_infectedEffectGO) {
+                    ObjectPoolManager.Instance.DestroyObject(_infectedEffectGO);
+                    _infectedEffectGO = null;
+                }
                 _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Infected, false);
                 if (addedToPOI is Character character) {
                     Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
