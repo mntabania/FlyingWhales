@@ -154,7 +154,9 @@ public class CharacterAIPath : AILerp {
             return;
         }
         marker.UpdatePosition();
-        if (marker.character.limiterComponent.canMove == false || isStopMovement || GameManager.Instance.isPaused) { return; }
+        //added checking for marker.character again because the call to UpdatePosition can cause the character to die or possibly turn to a food pile,
+        //resulting in his marker being reset, before this function is finished 
+        if (marker.character == null || marker.character.limiterComponent.canMove == false || isStopMovement || GameManager.Instance.isPaused) { return; }
         UpdateRotation();
         base.UpdateMe();
         //Vector3 markerPos = marker.transform.position; 

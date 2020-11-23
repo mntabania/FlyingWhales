@@ -1521,6 +1521,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             Character character = region.charactersAtLocation[i];
             if (character.gridTileLocation == null) { continue; }
+            if (character.isBeingSeized) { continue; }
             if (character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
                 && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax) {
                 if (validityChecker.Invoke(character)) {
