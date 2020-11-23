@@ -99,6 +99,8 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                     log += $"\n-{character.name} is not yet a vampire lord. But is a necromancer, not becoming a Vampire Lord.";
                 } else if (character.characterClass.className == "Werewolf") {
                     log += $"\n-{character.name} is not yet a vampire lord. But is currently a Werewolf, not becoming a Vampire Lord.";
+                } else if (character.traitContainer.HasTrait("Enslaved")) {
+                    log += $"\n-{character.name} is Enslaved, not becoming a Vampire Lord.";
                 } else {
                     log += $"\n-{character.name} is not yet a vampire lord. Rolling for chance to check converted villagers.";
                     if (GameUtilities.RollChance(10, ref log)) { //10

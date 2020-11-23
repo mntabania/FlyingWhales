@@ -30,7 +30,7 @@ namespace UtilityScripts {
                 summary += $"\nActive Events: ";
                 for (int j = 0; j < npcSettlement.eventManager.activeEvents.Count; j++) {
                     SettlementEvent settlementEvent = npcSettlement.eventManager.activeEvents[j];
-                    summary += $"|{settlementEvent.eventType.ToString()}|";
+                    summary += $"|{settlementEvent.GetTestingInfo()}|";
                 }
                 if (npcSettlement.owner == null) { continue; }
                 summary += $"\n{npcSettlement.name} Location Job Queue:";

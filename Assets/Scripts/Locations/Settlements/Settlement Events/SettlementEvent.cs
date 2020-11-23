@@ -28,6 +28,12 @@
         #region Loading
         public virtual void LoadAdditionalData(NPCSettlement p_settlement) { }
         #endregion
+
+        #region For Testing
+        public virtual string GetTestingInfo() {
+            return eventType.ToString();
+        }
+        #endregion
     }
 
     public abstract class SaveDataSettlementEvent : SaveData<SettlementEvent> {

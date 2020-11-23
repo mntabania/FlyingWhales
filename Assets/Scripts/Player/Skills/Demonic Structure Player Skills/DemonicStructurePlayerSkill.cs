@@ -21,7 +21,7 @@ public class DemonicStructurePlayerSkill : SpellData {
         } else {
             question = "Are you sure you want to build " + name + "?";
         }
-        UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", question, () => targetHex.StartBuild(type), showCover: true, pauseAndResume: true);
+        UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", question, () => targetHex.StartBuild(type), showCover: true, pauseAndResume: true, layer: 50);
         
         // base.ActivateAbility(targetHex);
     }

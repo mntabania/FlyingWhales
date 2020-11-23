@@ -46,6 +46,13 @@ public class NonActionEventsComponent : CharacterComponent {
             || disguisedTarget is Summon) {
             return false;
         }
+        //This is to fix this issue: https://trello.com/c/QPXOCuTO/2842-dev-03345-executioner-having-a-chat-with-burning-criminal
+        if (target.traitContainer.HasTrait("Burning", "Burning At Stake")) {
+            return false;
+        }
+        if (owner.traitContainer.HasTrait("Burning", "Burning At Stake")) {
+            return false;
+        }
         return true;
     }
     #endregion
