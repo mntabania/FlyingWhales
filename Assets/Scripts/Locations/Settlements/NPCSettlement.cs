@@ -1398,12 +1398,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         return false;
     }
     private void UpdateAbleJobsOfAllResidents() {
+        if (owner != null && owner.factionType.type == FACTION_TYPE.Ratmen) { return; }
         for (int i = 0; i < residents.Count; i++) {
             Character character = residents[i];
             UpdateAbleJobsOfResident(character);
         }
     }
     public void UpdateAbleJobsOfResident(Character character) {
+        if (owner != null && owner.factionType.type == FACTION_TYPE.Ratmen) { return; }
         //update jobs based on hasPeasants switch
         if (!hasPeasants) {
             if (character.characterClass.className != "Noble") {
