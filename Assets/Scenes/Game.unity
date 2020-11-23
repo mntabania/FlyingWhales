@@ -49435,16 +49435,11 @@ MonoBehaviour:
   - Unconscious
   - Injured
   - Poisoned
-  - Plagued
   - Infected
   - Cursed
   - Freezing
   - Frozen
   - Ensnared
-  specialIllnessTraits:
-  - Poisoned
-  - Plagued
-  - Infected
 --- !u!1 &905962139
 GameObject:
   m_ObjectHideFlags: 0

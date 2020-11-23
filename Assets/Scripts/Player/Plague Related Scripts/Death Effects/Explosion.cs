@@ -45,18 +45,7 @@ namespace Plague.Death_Effect {
                     return string.Empty;
             }
         }
-        public virtual string GetEffectTooltip(int p_level) {
-            switch (p_level) {
-                case 1:
-                    return "Ignite the character's corpse when it dies.";
-                case 2:
-                    return "Trigger a Fire Blast around the corpse when it dies.";
-                case 3:
-                    return "Cast a Meteor on the corpse when it dies.";
-                default:
-                    return string.Empty;
-            }
-        }
+      
         public override void OnDeath(Character p_character) {
             ActivateEffect(p_character);
         }
