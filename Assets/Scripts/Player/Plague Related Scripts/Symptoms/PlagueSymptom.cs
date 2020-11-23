@@ -16,7 +16,7 @@ namespace Plague.Symptom {
         /// <param name="p_character">The actor.</param>
         /// <param name="p_action">The action to be performed.</param>
         /// <returns>Whether or not the action will proceed after this.</returns>
-        public virtual bool CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action) { return true; }
+        public virtual void CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action) { }
         public virtual void CharacterDonePerformingAction(Character p_character, ActualGoapNode p_actionPerformed) { }
         public virtual void HourStarted(Character p_character, int p_numOfHoursPassed) { }
         #endregion

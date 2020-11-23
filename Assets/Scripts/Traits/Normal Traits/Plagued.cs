@@ -15,7 +15,7 @@ namespace Traits {
         public interface IPlaguedListener {
             void PerTickMovement(Character p_character);
             void CharacterGainedTrait(Character p_character, Trait p_gainedTrait);
-            bool CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action);
+            void CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action);
             void CharacterDonePerformingAction(Character p_character, ActualGoapNode p_actionPerformed);
             void HourStarted(Character p_character, int numberOfHours);
         }
@@ -26,7 +26,7 @@ namespace Traits {
 
         private Action<Character> _perTickMovement;
         private Action<Character, Trait> _characterGainedTrait;
-        private Func<Character, ActualGoapNode, bool> _characterStartedPerformingAction;
+        private Action<Character, ActualGoapNode> _characterStartedPerformingAction;
         private Action<Character, int> _hourStarted;
         private Action<Character, ActualGoapNode> _characterDonePerformingAction;
         private Action<Character> _characterDeath;
@@ -220,8 +220,10 @@ namespace Traits {
             }
             if (node.actor == owner && owner is Character character) {
                 if(_characterStartedPerformingAction != null) {
-                    willStillContinueAction = _characterStartedPerformingAction.Invoke(character, node);
-
+                    _characterStartedPerformingAction.Invoke(character, node);
+                    if (character.interruptComponent.isInterrupted && character.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Total_Organ_Failure) {
+                        willStillContinueAction = false;
+                    }
                     //If character can no longer do happiness recovery and the action that is starting is a happiness recovery type job, character should no longer continue doing the job
                     if (node.associatedJobType.IsHappinessRecoveryTypeJob() && !character.limiterComponent.canDoHappinessRecovery) {
                         if (node.actor.jobQueue.jobsInQueue.Count > 0) {
@@ -330,10 +332,10 @@ namespace Traits {
             _characterGainedTrait -= plaguedListener.CharacterGainedTrait;
         }
         private void SubscribeToCharacterStartedPerformingAction(IPlaguedListener plaguedListener) {
-            _characterStartedPerformingAction += plaguedListener.CharacterStartedPerformingAction;
+            _characterStartedPerformingAction += (pCharacter, pAction) => plaguedListener.CharacterStartedPerformingAction(pCharacter, pAction);
         }
         private void UnsubscribeToCharacterStartedPerformingAction(IPlaguedListener plaguedListener) {
-            _characterStartedPerformingAction -= plaguedListener.CharacterStartedPerformingAction;
+            _characterStartedPerformingAction -= (pCharacter, pAction) => plaguedListener.CharacterStartedPerformingAction(pCharacter, pAction);
         }
         private void SubscribeToHourStarted(IPlaguedListener p_plaguedListener) {
             _hourStarted += p_plaguedListener.HourStarted;
