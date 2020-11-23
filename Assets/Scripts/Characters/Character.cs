@@ -4008,7 +4008,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.EAT_CORPSE);
             AddAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
         }
-        if (isNormalCharacter) {
+        if (isNormalOrRatman) {
             AddAdvertisedAction(INTERACTION_TYPE.DAYDREAM);
             AddAdvertisedAction(INTERACTION_TYPE.PRAY);
             AddAdvertisedAction(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER);
