@@ -244,6 +244,14 @@ namespace Locations.Settlements.Settlement_Events {
             return false;
         }
         #endregion
+
+        #region For Testing
+        public override string GetTestingInfo() {
+            string info = base.GetTestingInfo();
+            info = $"{info} will end on {endDate.ToString()}({_rulerDecision.ToString()})";
+            return info;
+        }
+        #endregion
     }
     
     public class SaveDataPlaguedSettlementEvent : SaveDataSettlementEvent {
