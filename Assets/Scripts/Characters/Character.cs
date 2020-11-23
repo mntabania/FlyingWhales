@@ -157,6 +157,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// Characters that are not monsters or minions.
     /// </summary>
     public bool isNormalCharacter => (this is Summon) == false && minion == null && faction?.factionType.type != FACTION_TYPE.Undead && faction?.factionType.type != FACTION_TYPE.Ratmen;
+    public bool isNormalOrRatman => ((this is Summon) == false && minion == null && faction?.factionType.type != FACTION_TYPE.Undead) || faction?.factionType.type == FACTION_TYPE.Ratmen;
     public bool isNormalAndNotAlliedWithPlayer => isNormalCharacter && !faction.isPlayerFaction && !isAlliedWithPlayer;
     public bool isNormalEvenLycanAndNotAlliedWithPlayer => (isNormalCharacter || isLycanthrope) && necromancerTrait == null && !faction.isPlayerFaction && !isAlliedWithPlayer;
     public bool isNotSummonAndDemon => (this is Summon) == false && minion == null;
@@ -4007,7 +4008,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.EAT_CORPSE);
             AddAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
         }
-        if (isNormalCharacter) {
+        if (isNormalOrRatman) {
             AddAdvertisedAction(INTERACTION_TYPE.DAYDREAM);
             AddAdvertisedAction(INTERACTION_TYPE.PRAY);
             AddAdvertisedAction(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER);

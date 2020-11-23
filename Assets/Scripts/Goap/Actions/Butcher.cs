@@ -360,7 +360,7 @@ public class Butcher : GoapAction {
                 goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
             }
         } else {
-            if (foodPile != null && goapNode.actor.homeSettlement != null && goapNode.actor.isNormalCharacter && !(foodPile is HumanMeat) && !(foodPile is ElfMeat)) {
+            if (foodPile != null && goapNode.actor.homeSettlement != null && goapNode.actor.isNormalOrRatman && !(foodPile is HumanMeat) && !(foodPile is ElfMeat)) {
                 goapNode.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(foodPile);
                 goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
             }

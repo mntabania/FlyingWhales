@@ -32,12 +32,13 @@ public class Torture : GoapAction {
                 targetCharacter.Death(deathFromAction: goapNode, responsibleCharacter: goapNode.actor);
             } else {
                 string logKey = string.Empty;
-                if (GameUtilities.RollChance(65)) {
+                int chance = GameUtilities.RandomBetweenTwoNumbers(0, 99);
+                if (chance < 55) {
                     logKey = "nothing";
-                } else if (GameUtilities.RollChance(25)) {
+                } else if (chance >= 55 && chance < 80) {
                     logKey = "enslave";
                     targetCharacter.traitContainer.AddTrait(targetCharacter, "Enslaved", characterResponsible: actor);
-                } else if (GameUtilities.RollChance(20)) {
+                } else {
                     logKey = "injure";
                     targetCharacter.traitContainer.AddTrait(targetCharacter, "Injured", characterResponsible: actor);
                 }

@@ -2438,9 +2438,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         producedJob = null;
         return false;
     }
-    public bool TriggerMonsterAbduct(Character targetCharacter, out JobQueueItem producedJob, LocationGridTile targetTile = null) {
+    public bool TriggerMonsterAbduct(Character targetCharacter, out JobQueueItem producedJob, LocationGridTile targetTile = null, bool cannotBePushedBack = true) {
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_ABDUCT, INTERACTION_TYPE.DROP, targetCharacter, owner);
-	    job.SetCannotBePushedBack(true);
+	    job.SetCannotBePushedBack(cannotBePushedBack);
 	    job.AddOtherData(INTERACTION_TYPE.DROP, targetTile != null ? new object[] {targetTile.structure, targetTile} : new object[] {owner.homeStructure});
 	    producedJob = job;
 	    return true;

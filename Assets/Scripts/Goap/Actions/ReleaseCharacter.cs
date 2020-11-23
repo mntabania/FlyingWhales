@@ -85,7 +85,7 @@ public class ReleaseCharacter : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             Character target = poiTarget as Character;
-            return target.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared");
+            return target.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared", "Enslaved");
         }
         return false;
     }

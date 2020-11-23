@@ -15,7 +15,7 @@ namespace Plague.Symptom {
             Debug.Log("Activated Paralysis Symptom");
         }
         public override void HourStarted (Character p_character, int p_numOfHoursPassed) {
-            if (p_numOfHoursPassed >= 48) {
+            if (p_numOfHoursPassed == 49) {
                 if (GameUtilities.RollChance(25)) {
                     ActivateSymptom(p_character);
                 }
