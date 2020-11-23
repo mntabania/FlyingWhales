@@ -28,6 +28,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(3);
             isTangible = true;
+            hindersSocials = true;
             moodEffect = -25;
             _burningSpreadChoices = new List<ITraitable>();
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EXTRACT_ITEM };
