@@ -115,6 +115,9 @@ namespace Events.World_Events {
                 if (character.traitContainer.HasTrait("Unattractive")) {
                     weight -= 10;
                 }
+                if (character.traitContainer.HasTrait("Enslaved")) {
+                    weight = 0;
+                }
                 if (weight > 0) {
                     weights.AddElement(character, weight);
                 }
