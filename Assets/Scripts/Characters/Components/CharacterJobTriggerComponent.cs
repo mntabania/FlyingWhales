@@ -2011,12 +2011,6 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    npcSettlement.AddToAvailableJobs(buryJob);
 	    }
     }
-    private bool IsBuryJobStillApplicable(Character target, NPCSettlement npcSettlement) {
-	    return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(npcSettlement) && target.marker != null;
-    }
-    private bool IsBuryJobStillApplicable(Character target) {
-        return target.gridTileLocation != null && target.marker != null;
-    }
     public void TriggerPersonalBuryJob(Character targetCharacter) {
         if (owner.gridTileLocation != null && !owner.jobQueue.HasJob(JOB_TYPE.BURY, targetCharacter)) {
             LocationStructure targetStructure = null;

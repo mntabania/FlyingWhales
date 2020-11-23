@@ -240,13 +240,26 @@ public struct GameDate {
     public int GetTickDifference(GameDate otherDate) {
         int yearDifference = Math.Abs(year - otherDate.year);
         int monthDifference = Math.Abs(month - otherDate.month);
+        int dayDifference = Math.Abs(day - otherDate.day);
         int tickDifference = Math.Abs(tick - otherDate.tick);
 
         //difference in years multiplied by (number of ticks per day * number of days in a year)
         int yearDifferenceInTicks = yearDifference * (GameManager.ticksPerDay * 360);
         //difference in months multiplied by (number of ticks per day * number of days per month)
         int monthDifferenceInTicks = monthDifference * (GameManager.ticksPerDay * 30);
-        int totalTickDifference = yearDifferenceInTicks + monthDifferenceInTicks + tickDifference;
+        //difference in days multiplied by number of ticks per day
+        int dayDifferenceInTicks = dayDifference * GameManager.ticksPerDay;
+        
+        int totalTickDifference = yearDifferenceInTicks + monthDifferenceInTicks;
+        if (dayDifference > 0) {
+            if (tick < otherDate.tick) {
+                totalTickDifference += dayDifferenceInTicks + tickDifference;
+            } else {
+                totalTickDifference += dayDifferenceInTicks - tickDifference;
+            }
+        } else {
+            totalTickDifference += tickDifference;
+        }
         return totalTickDifference;
     }
     

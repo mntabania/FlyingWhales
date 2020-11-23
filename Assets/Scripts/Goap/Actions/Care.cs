@@ -28,8 +28,8 @@ public class Care : GoapAction {
         if (plagued != null) {
             GameDate originalRemovalDate = goapNode.target.traitContainer.GetLatestExpiryDate(plagued.name);
             if (originalRemovalDate.hasValue) {
-                int hoursRemaining = GameManager.Instance.Today().GetHourDifference(originalRemovalDate);
-                if (hoursRemaining > 1) {
+                int ticksRemaining = GameManager.Instance.Today().GetTickDifference(originalRemovalDate);
+                if (ticksRemaining > GameManager.ticksPerHour) {
                     GameDate newExpiryDate = originalRemovalDate;
                     newExpiryDate.ReduceTicks(GameManager.ticksPerHour * Random.Range(1, 3));
                     if (newExpiryDate.IsBefore(GameManager.Instance.Today())) {
