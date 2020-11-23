@@ -228,11 +228,21 @@ namespace Traits {
                             node.actor.jobQueue.jobsInQueue[0].CancelJob(false);
                         }
                         willStillContinueAction = false;
+                        if (owner.traitContainer.HasTrait("Depressed")) {
+                            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, "depressed", null, LOG_TAG.Life_Changes);
+                            log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                            log.AddLogToDatabase();
+                        }
                     } else if (node.associatedJobType.IsTirednessRecoveryTypeJob() && !character.limiterComponent.canDoTirednessRecovery) {
                         if (node.actor.jobQueue.jobsInQueue.Count > 0) {
                             node.actor.jobQueue.jobsInQueue[0].CancelJob(false);
                         }
                         willStillContinueAction = false;
+                        if (owner.traitContainer.HasTrait("Insomnia")) {
+                            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, "insomnia", null, LOG_TAG.Life_Changes);
+                            log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                            log.AddLogToDatabase();
+                        }
                     }
                     return true;
                 }

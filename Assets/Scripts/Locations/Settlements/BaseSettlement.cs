@@ -87,7 +87,7 @@ namespace Locations.Settlements {
                 //region.AddResident(character);
                 residents.Add(character);
                 AssignCharacterToDwellingInArea(character, chosenHome);
-                if(owner == null && character.faction != null && character.faction.isMajorNonPlayer) {
+                if(owner == null && character.faction != null && (character.faction.isMajorNonPlayer || character.faction.factionType.type == FACTION_TYPE.Ratmen)) {
                     //If a character becomes a resident and he/she has a faction and this settlement has no faction owner yet, set it as the faction owner
                     LandmarkManager.Instance.OwnSettlement(character.faction, this);
                 }

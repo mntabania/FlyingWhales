@@ -18,6 +18,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
+        character.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
         bool isInHome = character.IsInHomeSettlement() || character.isAtHomeStructure || character.IsInTerritory();
         if (isInHome) {
             if (character.behaviourComponent.PlanWorkActions(out producedJob)) {
@@ -32,20 +33,18 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                 if(isInHome) {
                     Character prisoner = GetFirstPrisonerAtHome(character);
                     if (prisoner == null && !HasJobTypeFromSameHome(character, JOB_TYPE.MONSTER_ABDUCT)) {
-                        if (character.behaviourComponent.currentAbductTarget != null
-                        && (character.behaviourComponent.currentAbductTarget.isDead
-                            || character.behaviourComponent.currentAbductTarget.traitContainer.HasTrait("Restrained", "Prisoner"))) {
-                            character.behaviourComponent.SetAbductionTarget(null);
-                        }
+                    character.behaviourComponent.SetAbductionTarget(null);
 
-                        //set abduction target if none, and chance met
-                        if (character.behaviourComponent.currentAbductTarget == null && character.currentRegion != null) {
+                    //set abduction target if none, and chance met
+                    if (character.behaviourComponent.currentAbductTarget == null && character.currentRegion != null) {
                             List<Character> characterChoices = ObjectPoolManager.Instance.CreateNewCharactersList();
                             for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                                 Character characterAtRegion = character.currentRegion.charactersAtLocation[i];
                                 if (!characterAtRegion.isDead && characterAtRegion != character
                                     && (characterAtRegion.faction?.factionType.type == FACTION_TYPE.Wild_Monsters || (characterAtRegion.isNormalCharacter && characterAtRegion.traitContainer.HasTrait("Resting")))
-                                    && !(characterAtRegion.currentStructure is Kennel)) {
+                                    && !(characterAtRegion.currentStructure is Kennel)
+                                    && !characterAtRegion.traitContainer.HasTrait("Enslaved")
+                                    && characterAtRegion.faction != character.faction) {
                                     characterChoices.Add(characterAtRegion);
                                 }
                             }
@@ -59,14 +58,16 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                         Character targetCharacter = character.behaviourComponent.currentAbductTarget;
                         if (targetCharacter != null) {
                             //create job to abduct target character.
-                            return character.jobComponent.TriggerMonsterAbduct(targetCharacter, out producedJob);
+                            if(character.jobComponent.TriggerMonsterAbduct(targetCharacter, out producedJob)) {
+                                character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+                                return true;
+                            }
                         }
                     }
                 }
             //}
         } else {
             //Day time
-            //Night time
             if (GameUtilities.RollChance(20)) {
                 if (isInHome) {
                     Character prisoner = GetFirstPrisonerAtHome(character);

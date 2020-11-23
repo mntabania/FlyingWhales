@@ -21,6 +21,9 @@ namespace Traits {
         public override void OnAddTrait(ITraitable sourcePOI) {
             base.OnAddTrait(sourcePOI);
             if (sourcePOI is Character targetCharacter) {
+                if (targetCharacter.partyComponent.hasParty) {
+                    targetCharacter.partyComponent.currentParty.RemoveMember(targetCharacter);
+                }
                 targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Restrained");
                 targetCharacter.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Slave_Behaviour);
                 if (targetCharacter.isNotSummonAndDemon) {
@@ -38,9 +41,6 @@ namespace Traits {
                 } else if (responsibleCharacters != null && responsibleCharacters.Count > 0) {
                     Character characterResponsible = responsibleCharacters[0];
                     if(characterResponsible.faction != null) {
-                        targetCharacter.ChangeFactionTo(characterResponsible.faction);
-                    }
-                    if (characterResponsible.faction != null) {
                         targetCharacter.ChangeFactionTo(characterResponsible.faction);
                     }
                     if (characterResponsible.homeStructure != null) {
