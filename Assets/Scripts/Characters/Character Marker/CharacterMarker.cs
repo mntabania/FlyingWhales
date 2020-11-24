@@ -1988,8 +1988,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (constantPath.allNodes != null && constantPath.allNodes.Count > 0) {
             GoTo(PathUtilities.GetPointsOnNodes(constantPath.allNodes, 1).Last(), arrivalAction);    
         } else {
-            //could not find nodes to stroll to. Just exit stroll state.
-            character.stateComponent.ExitCurrentState();
+            if (character.stateComponent.currentState is StrollOutsideState) {
+                //could not find nodes to stroll to. Just exit stroll state.
+                character.stateComponent.ExitCurrentState();    
+            }
         }
         
     }
