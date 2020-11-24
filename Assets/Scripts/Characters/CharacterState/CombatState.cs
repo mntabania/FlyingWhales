@@ -680,7 +680,7 @@ public class CombatState : CharacterState {
             //So, only when there is no connected action should we log the "started attacking"
             Log log;
             string key = stateComponent.owner.combatComponent.GetCombatLogKeyReason(currentClosestHostile);
-            if (key != string.Empty && LocalizationManager.Instance.HasLocalizedValue("Character", "Combat", key)) {
+            if (!string.IsNullOrEmpty(key) && LocalizationManager.Instance.HasLocalizedValue("Character", "Combat", key)) {
                 log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Combat", "new_combat_target_with_reason", providedTags: LOG_TAG.Combat);
                 string reason = LocalizationManager.Instance.GetLocalizedValue("Character", "Combat", key);
                 log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);

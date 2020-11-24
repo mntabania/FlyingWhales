@@ -337,7 +337,7 @@ public class Assault : GoapAction {
 
         string key = goapNode.actor.combatComponent.GetCombatLogKeyReason(goapNode.poiTarget);
         JOB_TYPE jobType = goapNode.associatedJobType;
-        if(LocalizationManager.Instance.HasLocalizedValue("Character", "Combat", key)) {
+        if(!string.IsNullOrEmpty(key) && LocalizationManager.Instance.HasLocalizedValue("Character", "Combat", key)) {
             string reason = LocalizationManager.Instance.GetLocalizedValue("Character", "Combat", key);
             goapNode.descriptionLog.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
         } else {

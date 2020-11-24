@@ -909,52 +909,7 @@ public class CombatComponent : CharacterComponent {
         if (combatData != null) {
             key = combatData.reasonForCombat;
             if (key == CombatManager.Action) {
-                switch (combatData.connectedAction.associatedJobType) {
-                    case JOB_TYPE.RESTRAIN:
-                        key = "Restrain";
-                        break;
-                    case JOB_TYPE.PRODUCE_FOOD:
-                    case JOB_TYPE.PRODUCE_FOOD_FOR_CAMP:
-                    case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:   
-                        key = "Butcher";
-                        break;
-                    case JOB_TYPE.APPREHEND:
-                        key = CombatManager.Apprehend;
-                        break;
-                    case JOB_TYPE.RITUAL_KILLING:
-                        key = "Ritual Killing";
-                        break;
-                    case JOB_TYPE.BERSERK_ATTACK:
-                        key = "Berserked";
-                        break;
-                    case JOB_TYPE.BRAWL:
-                        key = "Snapped";
-                        break;
-                    case JOB_TYPE.DESTROY:
-                        if(target is Guitar guitar && guitar.IsOwnedBy(owner)) {
-                            if (owner.traitContainer.HasTrait("Music Hater")) {
-                                key = "Destroy_Music_Hater";
-                                break;
-                            }
-                        } else if (target is CultistKit) {
-                            key = "Destroy_Cultist_Kit";
-                            break;
-                        }
-                        if (owner.traitContainer.HasTrait("Angry")) {
-                            key = "Destroy_Angry";
-                        } else if (owner.traitContainer.HasTrait("Suspicious")) {
-                            key = "Destroy_Suspicious";
-                        }
-                        break;
-                    case JOB_TYPE.CAPTURE_CHARACTER:
-                        if (owner is Troll) {
-                            key = CombatManager.Abduct;
-                        }
-                        break;
-                    case JOB_TYPE.KIDNAP_RAID:
-                        key = CombatManager.Raid;
-                        break;
-                }
+                key = GetCombatActionReason(combatData, target);
             } else {
                 if(key == CombatManager.Anger) {
                     if (owner.traitContainer.HasTrait("Angry")) {
@@ -972,16 +927,65 @@ public class CombatComponent : CharacterComponent {
         }
         return key;
     }
+    private string GetCombatActionReason(CombatData combatData, IPointOfInterest target) {
+       if(combatData != null && combatData.connectedAction != null) {
+            switch (combatData.connectedAction.associatedJobType) {
+                case JOB_TYPE.RESTRAIN:
+                    return "Restrain";
+                case JOB_TYPE.PRODUCE_FOOD:
+                case JOB_TYPE.PRODUCE_FOOD_FOR_CAMP:
+                case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
+                    return "Butcher";
+                case JOB_TYPE.APPREHEND:
+                    return CombatManager.Apprehend;
+                case JOB_TYPE.RITUAL_KILLING:
+                    return "Ritual Killing";
+                case JOB_TYPE.BERSERK_ATTACK:
+                    return "Berserked";
+                case JOB_TYPE.BRAWL:
+                    return "Snapped";
+                case JOB_TYPE.DESTROY:
+                    if (target is Guitar guitar && guitar.IsOwnedBy(owner)) {
+                        if (owner.traitContainer.HasTrait("Music Hater")) {
+                            return "Destroy_Music_Hater";
+                        }
+                    } else if (target is CultistKit) {
+                        return "Destroy_Cultist_Kit";
+                    }
+                    if (owner.traitContainer.HasTrait("Angry")) {
+                        return "Destroy_Angry";
+                    } else if (owner.traitContainer.HasTrait("Suspicious")) {
+                        return "Destroy_Suspicious";
+                    }
+                    break;
+                case JOB_TYPE.CAPTURE_CHARACTER:
+                    if (owner is Troll) {
+                        return CombatManager.Abduct;
+                    }
+                    break;
+                case JOB_TYPE.KIDNAP_RAID:
+                    return CombatManager.Raid;
+            }
+       }
+       return string.Empty;
+    }
     private string GetRetaliationReason(IPointOfInterest target, CombatData combatData) {
         //Get reason of the target towards this character to know why target attacked this character in the first place
         //Because if the reason is Retaliation we assume that the target attacked this character first
         if(target is Character targetCharacter) {
-            string reason = targetCharacter.combatComponent.GetCombatLogKeyReason(owner);
-            if(!string.IsNullOrEmpty(reason)) {
-                if(reason == CombatManager.Apprehend) {
-                    return CombatManager.Resisting_Arrest;
-                } else if (reason == CombatManager.Abduct) {
-                    return CombatManager.Resisting_Abduction;
+            CombatData targetCombatData = targetCharacter.combatComponent.GetCombatData(owner);
+            if(targetCombatData != null) {
+                string reason = targetCombatData.reasonForCombat;
+                if (!string.IsNullOrEmpty(reason)) {
+                    string key = string.Empty;
+                    if (reason == CombatManager.Action) {
+                        key = targetCharacter.combatComponent.GetCombatActionReason(targetCombatData, owner);
+                    }
+                    if (key == CombatManager.Apprehend) {
+                        return CombatManager.Resisting_Arrest;
+                    } else if (key == CombatManager.Abduct) {
+                        return CombatManager.Resisting_Abduction;
+                    }
                 }
             }
         }
