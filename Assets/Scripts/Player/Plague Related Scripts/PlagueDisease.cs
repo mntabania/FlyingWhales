@@ -6,6 +6,7 @@ using Plague.Death_Effect;
 using UnityEngine;
 using UnityEngine.Assertions;
 using System.Linq;
+using UtilityScripts;
 
 public class PlagueDisease : ISingletonPattern, ISavable {
     private static PlagueDisease _Instance;
@@ -287,6 +288,59 @@ public class PlagueDisease : ISingletonPattern, ISavable {
     }
     #endregion
 
+    #region Randomization
+    public void OnLoadoutPicked() {
+        if (!PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.BIOLAB).isInUse) {
+            RandomizePlague();
+        }
+    }
+    private void RandomizePlague() {
+        string randomizeSummary = $"Randomizing Plague Effects:";
+        List<PLAGUE_TRANSMISSION> transmissionChoices = CollectionUtilities.GetEnumValues<PLAGUE_TRANSMISSION>().ToList();
+        for (int i = 0; i < 2; i++) {
+            if (transmissionChoices.Count == 0) { break; }
+            PLAGUE_TRANSMISSION transmissionTypeToUpgrade = CollectionUtilities.GetRandomElement(transmissionChoices);
+            _transmissionLevels[transmissionTypeToUpgrade] = 2;
+            transmissionChoices.Remove(transmissionTypeToUpgrade);
+            randomizeSummary = $"{randomizeSummary}\nUpgraded {transmissionTypeToUpgrade.ToString()} to Level 2";
+        }
+        List<string> lifespanChoices = new List<string>() { "Tile Object", "Monster", "Undead", "Human", "Elf" };
+        for (int i = 0; i < 2; i++) {
+            if (lifespanChoices.Count == 0) { break; }
+            string chosenLifespanToUpgrade = CollectionUtilities.GetRandomElement(lifespanChoices);
+            switch (chosenLifespanToUpgrade) {
+                case "Tile Object": _lifespan.UpgradeTileObjectInfectionTime(); break;
+                case "Monster": _lifespan.UpgradeMonsterInfectionTime(); break;
+                case "Undead": _lifespan.UpgradeUndeadInfectionTime(); break;
+                case "Human": _lifespan.UpgradeSapientInfectionTime(RACE.HUMANS); break;
+                case "Elf": _lifespan.UpgradeSapientInfectionTime(RACE.ELVES); break;
+            }
+            lifespanChoices.Remove(chosenLifespanToUpgrade);
+            randomizeSummary = $"{randomizeSummary}\nUpgraded {chosenLifespanToUpgrade} lifespan by 1 level.";
+        }
+        PLAGUE_FATALITY[] fatalityChoices = CollectionUtilities.GetEnumValues<PLAGUE_FATALITY>();
+        PLAGUE_FATALITY chosenFatality = CollectionUtilities.GetRandomElement(fatalityChoices);
+        AddAndInitializeFatality(chosenFatality);
+        randomizeSummary = $"{randomizeSummary}\nUnlocked {chosenFatality.ToString()} Fatality";
+        
+        List<PLAGUE_SYMPTOM> symptomChoices = CollectionUtilities.GetEnumValues<PLAGUE_SYMPTOM>().ToList();
+        for (int i = 0; i < 2; i++) {
+            if (symptomChoices.Count == 0) { break; }
+            PLAGUE_SYMPTOM symptomToUpgrade = CollectionUtilities.GetRandomElement(symptomChoices);
+            AddAndInitializeSymptom(symptomToUpgrade);
+            symptomChoices.Remove(symptomToUpgrade);
+            randomizeSummary = $"{randomizeSummary}\nUnlocked {symptomToUpgrade.ToString()} Symptom";
+        }
+
+        PLAGUE_DEATH_EFFECT[] deathEffectChoices = CollectionUtilities.GetEnumValues<PLAGUE_DEATH_EFFECT>();
+        PLAGUE_DEATH_EFFECT deathEffect = CollectionUtilities.GetRandomElement(deathEffectChoices);
+        SetNewPlagueDeathEffectAndUnsetPrev(deathEffect);
+        _activeDeathEffect.AdjustLevel(1);
+        randomizeSummary = $"{randomizeSummary}\nUnlocked and Upgraded {deathEffect.ToString()} to Level 2";
+        Debug.Log(randomizeSummary);
+    }
+    #endregion
+    
 }
 
 [System.Serializable]
