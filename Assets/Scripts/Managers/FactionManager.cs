@@ -191,6 +191,8 @@ public class FactionManager : BaseMonoBehaviour {
             SetNeutralFaction(newFaction);
         } else if (data.factionType.type == FACTION_TYPE.Vagrants) {
             SetVagrantFaction(newFaction);
+        } else if (data.factionType.type == FACTION_TYPE.Ratmen) {
+            SetRatmenFaction(newFaction);
         }
         if (newFaction.isMajorNonPlayer) {
             //claim 2 tags per MAJOR non Player faction, this is so that the last tag is still accurate.

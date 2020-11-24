@@ -91,6 +91,7 @@ public class Summon : Character {
                 stateComponent.ExitCurrentState();
             }
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target is already dead");
+            Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "target is already dead");
             jobQueue.CancelAllJobs();
             DropAllItems(deathTile);
             UnownOrTransferOwnershipOfAllItems();

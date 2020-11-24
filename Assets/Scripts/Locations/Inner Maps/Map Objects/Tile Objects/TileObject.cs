@@ -224,6 +224,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //DisableGameObject();
         previousTile?.parentMap.region.RemovePendingAwareness(this);
         Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
+        Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "");
         OnRemoveTileObject(null, previousTile);
         DestroyMapVisualGameObject();
         SetPOIState(POI_STATE.INACTIVE);
@@ -238,6 +239,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public void OnDiscardCarriedObject() {
         //DisableGameObject();
         Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
+        Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "");
         DestroyMapVisualGameObject();
         SetPOIState(POI_STATE.INACTIVE);
         Messenger.Broadcast(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
@@ -608,6 +610,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             UIManager.Instance.tileObjectInfoUI.CloseMenu();
         }
         Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
+        Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "");
         //Messenger.Broadcast(Signals.ON_SEIZE_TILE_OBJECT, this);
         //OnRemoveTileObject(null, gridTileLocation, false, false);
         gridTileLocation.structure.RemovePOIWithoutDestroying(this);

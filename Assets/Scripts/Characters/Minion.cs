@@ -123,6 +123,7 @@ public class Minion {
             Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, character);
 
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character as IPointOfInterest, "target is already dead");
+            Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, character as IPointOfInterest, "target is already dead");
             character.behaviourComponent.OnDeath();
             character.jobQueue.CancelAllJobs();
             // StopInvasionProtocol(PlayerManager.Instance.player.currentNpcSettlementBeingInvaded);

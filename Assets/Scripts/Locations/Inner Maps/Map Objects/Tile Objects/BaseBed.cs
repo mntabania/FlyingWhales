@@ -32,6 +32,7 @@ public abstract class BaseBed : TileObject {
         base.OnTileObjectGainedTrait(trait);
         if (trait.name == "Burning") {
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "bed is burning");
+            Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "bed is burning");
         }
     }
     #endregion

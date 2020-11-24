@@ -19,6 +19,7 @@ public class Rat : Animal {
     #region Overrides
     public override void Initialize() {
         base.Initialize();
+        traitContainer.AddTrait(this, "Plague Reservoir");
         combatComponent.SetCombatMode(COMBAT_MODE.Defend);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Rat_Behaviour);
     }

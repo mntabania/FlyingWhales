@@ -39,6 +39,7 @@ public class WurmHole : TileObject{
 
         CharacterManager.Instance.Teleport(character, wurmHoleConnection.gridTileLocation);
         Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character as IPointOfInterest, "");
+        Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, character as IPointOfInterest, "");
         character.jobQueue.CancelAllJobs();
         character.combatComponent.ClearHostilesInRange();
         character.combatComponent.ClearAvoidInRange();

@@ -142,7 +142,8 @@ namespace Inner_Maps.Location_Structures {
                 return;
             }
             if (_structureTileObject != null && settlementLocation is NPCSettlement npcSettlement) {
-                Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, _structureTileObject as IPointOfInterest, ""); 
+                Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, _structureTileObject as IPointOfInterest, "");
+                Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, _structureTileObject as IPointOfInterest, "");
                 JobQueueItem existingRepairJob = npcSettlement.GetJob(JOB_TYPE.REPAIR, _structureTileObject);
                  if (existingRepairJob != null) {
                      npcSettlement.RemoveFromAvailableJobs(existingRepairJob);
