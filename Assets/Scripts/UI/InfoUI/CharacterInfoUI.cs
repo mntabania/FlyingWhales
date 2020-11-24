@@ -514,7 +514,7 @@ public class CharacterInfoUI : InfoUIBase {
     public void ShowCharacterTestingInfo() {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         string summary = $"Home structure: {activeCharacter.homeStructure?.ToString() ?? "None"}" ?? "None";
-        summary = $"{summary} {$"Territories: {activeCharacter.territories?.Count.ToString() ?? "None"}"}";
+        summary = $"{summary} {$"Territory: {activeCharacter.territory?.name ?? "None"}"}";
         summary = $"{summary} {$"Current structure: {activeCharacter.currentStructure}" ?? "None"}";
         summary = $"{summary} {"POI State: " + activeCharacter.state.ToString()}";
         summary = $"{summary} {"Do Not Get Hungry: " + activeCharacter.needsComponent.doNotGetHungry.ToString()}";

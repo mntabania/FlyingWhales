@@ -338,15 +338,12 @@ public class Region : ISavable, ILogFiller {
         List<HexTile> areas = null;
         for (int i = 0; i < residents.Count; i++) {
             Character regionResident = residents[i];
-            if (regionResident.territories != null && regionResident.territories.Count > 0) {
-                for (int j = 0; j < regionResident.territories.Count; j++) {
-                    HexTile territory = regionResident.territories[j];
-                    if (areas == null) {
-                        areas = new List<HexTile>();
-                    }
-                    if (areas.Contains(territory) == false) {
-                        areas.Add(territory);
-                    }
+            if (regionResident.HasTerritory()) {
+                if (areas == null) {
+                    areas = new List<HexTile>();
+                }
+                if (areas.Contains(regionResident.territory) == false) {
+                    areas.Add(regionResident.territory);
                 }
             }
         }
@@ -536,23 +533,19 @@ public class Region : ISavable, ILogFiller {
             character.SetHomeRegion(null);
         }
     }
-    public List<Character> GetCharactersWithSameTerritory(Character character) {
-        List<Character> validCharacters = null;
-        for (int i = 0; i < residents.Count; i++) {
-            Character resident = residents[i];
-            if (resident != character && resident.territories.Count > 0) {
-                for (int j = 0; j < character.territories.Count; j++) {
-                    HexTile territory = character.territories[j];
-                    if (resident.territories.Contains(territory)) {
-                        if (validCharacters == null) {
-                            validCharacters = new List<Character>();
-                        }
-                        validCharacters.Add(resident);
+    public int GetCountOfCharacterWithSameTerritory(Character character) {
+        int count = 0;
+        if (character.HasTerritory()) {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (resident != character && resident.HasTerritory()) {
+                    if (resident.IsTerritory(character.territory)) {
+                        count++;
                     }
                 }
             }
         }
-        return validCharacters;
+        return count;
     }
     public Character GetRandomCharacterWithPathAndFaction(Character source) {
         List<Character> validCharacters = ObjectPoolManager.Instance.CreateNewCharactersList();

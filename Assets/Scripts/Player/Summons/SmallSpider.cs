@@ -86,7 +86,7 @@ public class SmallSpider : Summon {
         LocationStructure home = homeStructure;
         NPCSettlement settlement = homeSettlement;
         Region region = homeRegion;
-        List<HexTile> ogTerritories = territories;
+        HexTile ogTerritory = territory;
         
         SetShowNotificationOnDeath(false);
         Death("Transform Giant Spider");
@@ -96,12 +96,10 @@ public class SmallSpider : Summon {
         if (!this.isUsingDefaultName) {
             summon.SetFirstAndLastName(firstName, surName);    
         }
-        if (ogTerritories.Count > 0) {
-            for (int i = 0; i < ogTerritories.Count; i++) {
-                summon.AddTerritory(ogTerritories[i]);    
-            }
+        if (ogTerritory != null) {
+            summon.SetTerritory(ogTerritory);
         }
-        
+
         Log growUpLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "become_giant_spider", null, LOG_TAG.Life_Changes);
         growUpLog.AddToFillers(summon, summon.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         growUpLog.AddLogToDatabase();

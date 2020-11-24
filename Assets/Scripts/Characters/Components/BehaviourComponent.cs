@@ -414,8 +414,8 @@ public class BehaviourComponent : CharacterComponent {
             if (goapPlanJob.jobType == JOB_TYPE.IDLE_RETURN_HOME) {
                 if (character.homeStructure != null) {
                     return character.movementComponent.HasPathToEvenIfDiffRegion(character.homeStructure.GetRandomUnoccupiedTile());
-                } else if (character.territories != null && character.territories.Count > 0) {
-                    HexTile randomTerritory = CollectionUtilities.GetRandomElement(character.territories);
+                } else if (character.HasTerritory()) {
+                    HexTile randomTerritory = character.territory;
                     return character.movementComponent.HasPathToEvenIfDiffRegion(CollectionUtilities.GetRandomElement(randomTerritory.locationGridTiles));
                 }
             } else if (goapPlanJob.jobType == JOB_TYPE.RESCUE || goapPlanJob.jobType == JOB_TYPE.EXTERMINATE ||
@@ -941,7 +941,7 @@ public class BehaviourComponent : CharacterComponent {
         if (character == owner) {
             if (character.homeSettlement != null && character.homeSettlement.tiles.Contains(tile)) {
                 character.traitContainer.RemoveTrait(character, "Dazed");
-            } else if (character.territories != null && character.territories.Contains(tile)) {
+            } else if (character.IsTerritory(tile)) {
                 character.traitContainer.RemoveTrait(character, "Dazed");    
             }
         }

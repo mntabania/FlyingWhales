@@ -682,14 +682,10 @@ namespace Inner_Maps {
                 return IsPartOfSettlement(character.homeSettlement);
             } else if (character.homeStructure != null) {
                 return structure == character.homeStructure;
-            } else if (character.territories != null && character.territories.Count > 0) {
+            } else if (character.HasTerritory()) {
                 if (collectionOwner.isPartOfParentRegionMap) {
                     HexTile hex = collectionOwner.partOfHextile.hexTileOwner;
-                    for (int i = 0; i < character.territories.Count; i++) {
-                        if(hex == character.territories[i]) {
-                            return true;
-                        }
-                    }
+                    return hex == character.territory;
                 }
             }
             return false;

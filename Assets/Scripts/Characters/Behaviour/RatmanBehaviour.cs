@@ -84,8 +84,8 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                 residentCount = character.homeSettlement.residents.Count(x => x.isDead == false);
             } else if (character.homeStructure != null) {
                 residentCount = character.homeStructure.residents.Count(x => x.isDead == false);
-            } else if (character.territories.Count > 0) {
-                residentCount = character.homeRegion.GetCharactersWithSameTerritory(character)?.Count ?? 0;
+            } else if (character.HasTerritory()) {
+                residentCount = character.homeRegion.GetCountOfCharacterWithSameTerritory(character);
             }
             if (residentCount < 8) {
                 return character.jobComponent.TriggerBirthRatman(out producedJob);

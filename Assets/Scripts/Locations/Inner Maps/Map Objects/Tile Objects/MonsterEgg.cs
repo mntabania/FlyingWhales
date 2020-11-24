@@ -76,7 +76,7 @@ public abstract class MonsterEgg : TileObject {
         monster.InitialCharacterPlacement(gridTileLocation);
         if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
             monster.ClearTerritory();
-            monster.AddTerritory(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
+            monster.SetTerritory(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
         }
     }
 

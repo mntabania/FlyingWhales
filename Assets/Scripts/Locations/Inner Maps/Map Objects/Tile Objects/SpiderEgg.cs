@@ -32,7 +32,7 @@ public class SpiderEgg : MonsterEgg {
                 monster.MigrateHomeTo(settlement);
             } else if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                 monster.ClearTerritory();
-                monster.AddTerritory(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
+                monster.SetTerritory(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
             }
         }
 
