@@ -75,7 +75,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public string currentActionNode;
     public string previousCurrentActionNode;
 
-    public List<string> territories;
+    public string territory;
     public List<string> items;
     public List<string> ownedItems;
     public List<string> jobs;
@@ -242,10 +242,11 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
             prevFaction = data.prevFaction.persistentID;
         }
 
-        territories = new List<string>();
-        for (int i = 0; i < data.territories.Count; i++) {
-            territories.Add(data.territories[i].persistentID);
+        territory = string.Empty;
+        if (data.HasTerritory()) {
+            territory = data.territory.persistentID;
         }
+
         items = new List<string>();
         for (int i = 0; i < data.items.Count; i++) {
             items.Add(data.items[i].persistentID);

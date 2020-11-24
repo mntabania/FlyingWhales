@@ -27,7 +27,7 @@ public class SummonPlayerSkill : SpellData {
             summon.MigrateHomeStructureTo(targetTile.structure);	
         } else {
             if (targetTile.collectionOwner.isPartOfParentRegionMap) {
-                summon.AddTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);
+                summon.SetTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);
             }
         }
         summon.jobQueue.CancelAllJobs();

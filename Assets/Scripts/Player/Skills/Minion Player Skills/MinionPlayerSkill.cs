@@ -23,7 +23,7 @@ public class MinionPlayerSkill : SpellData {
             minion.character.MigrateHomeStructureTo(targetTile.structure);
         } else {
             if (targetTile.collectionOwner.isPartOfParentRegionMap) {
-                minion.character.AddTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);
+                minion.character.SetTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);
             }
         }
         minion.character.jobQueue.CancelAllJobs();

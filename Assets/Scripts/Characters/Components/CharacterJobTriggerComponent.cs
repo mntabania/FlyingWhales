@@ -805,8 +805,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             else if (owner.homeSettlement != null) {
                 chosenTile = owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
             } 
-            else if (owner.territories.Count > 0) {
-                HexTile chosenTerritory = owner.territories[UnityEngine.Random.Range(0, owner.territories.Count)];
+            else if (owner.HasTerritory()) {
+                HexTile chosenTerritory = owner.territory;
                 chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
             } else {
                 if (owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
@@ -852,8 +852,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			    chosenTile = checkIfPathPossibleWithoutDigging ? 
 				    owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t)) : 
 				    owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
-		    } else if(owner.territories.Count > 0) {
-			    HexTile chosenTerritory = owner.territories[UnityEngine.Random.Range(0, owner.territories.Count)];
+		    } else if(owner.HasTerritory()) {
+			    HexTile chosenTerritory = owner.territory;
 			    if (checkIfPathPossibleWithoutDigging) {
 				    List<LocationGridTile> choices = chosenTerritory.locationGridTiles
 					    .Where(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
@@ -1142,8 +1142,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             if (owner.homeStructure != null && !owner.homeStructure.hasBeenDestroyed) {
                 chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.unoccupiedTiles);
             } else {
-                if (owner.territories.Count > 0) {
-                    HexTile chosenTerritory = owner.territories[UnityEngine.Random.Range(0, owner.territories.Count)];
+                if (owner.HasTerritory()) {
+                    HexTile chosenTerritory = owner.territory;
                     chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
                 } else {
                     //If has no territory, roam around tile instead
@@ -1167,8 +1167,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             if (owner.homeStructure != null && !owner.homeStructure.hasBeenDestroyed) {
                 chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.unoccupiedTiles);
             } else {
-                if (owner.territories.Count > 0) {
-                    HexTile chosenTerritory = owner.territories[UnityEngine.Random.Range(0, owner.territories.Count)];
+                if (owner.HasTerritory()) {
+                    HexTile chosenTerritory = owner.territory;
                     chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
                 } else {
                     //If has no territory, roam around tile instead
@@ -1192,8 +1192,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    if (owner.homeStructure != null) {
 			    chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.unoccupiedTiles);
 		    } else {
-			    if (owner.territories.Count > 0) {
-				    HexTile chosenTerritory = owner.territories[UnityEngine.Random.Range(0, owner.territories.Count)];
+			    if (owner.HasTerritory()) {
+				    HexTile chosenTerritory = owner.territory;
 				    List<LocationGridTile> validTiles = chosenTerritory.locationGridTiles
 					    .Where(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
 				    chosenTile = CollectionUtilities.GetRandomElement(validTiles.Count > 0 ? validTiles : chosenTerritory.locationGridTiles);
@@ -2410,7 +2410,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return true;
     }
     private bool IsDecreaseMoodJobInTerritoryStillApplicable(Character target) {
-	    return target.hexTileLocation != null && owner.territories.Contains(target.hexTileLocation);
+        HexTile hex = target.hexTileLocation;
+        return hex != null && owner.IsTerritory(hex);
     }
     #endregion
 

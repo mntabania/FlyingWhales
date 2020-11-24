@@ -83,7 +83,7 @@ namespace Interrupts {
                         log += "\n-Getting structureless hex tile in current region: " + currentRegion.name;
                         HexTile hex = currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
                         if (hex != null) {
-                            actor.AddTerritory(hex);
+                            actor.SetTerritory(hex);
                             log += "\n-Hex tile found: " + hex.tileName;
                             actor.logComponent.PrintLogIfActive(log);
                             return;
@@ -141,7 +141,7 @@ namespace Interrupts {
                             log += "\n-Character has no territory";
                             HexTile hex = currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.isCorrupted);
                             if (hex != null) {
-                                actor.AddTerritory(hex);
+                                actor.SetTerritory(hex);
                                 log += "\n-Territory found: " + hex.tileName;
                                 actor.logComponent.PrintLogIfActive(log);
                                 return;
@@ -154,7 +154,7 @@ namespace Interrupts {
                                 HexTile territory = GetTerritoryInAdjacentRegions(currentRegion);
                                 if (territory != null) {
                                     actor.ClearTerritory();
-                                    actor.AddTerritory(territory);
+                                    actor.SetTerritory(territory);
                                     log += "\n-Territory found: " + territory.tileName + " in region: " + territory.region.name;
                                     actor.logComponent.PrintLogIfActive(log);
                                     return;
@@ -236,7 +236,7 @@ namespace Interrupts {
                                     HexTile territory = GetTerritoryInAdjacentRegions(currentRegion);
                                     if (territory != null) {
                                         actor.ClearTerritory();
-                                        actor.AddTerritory(territory);
+                                        actor.SetTerritory(territory);
                                         log += "\n-Territory found: " + territory.tileName + " in region: " + territory.region.name;
                                         actor.logComponent.PrintLogIfActive(log);
                                         return;
@@ -247,7 +247,7 @@ namespace Interrupts {
                                 HexTile hex = currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.isCorrupted);
                                 if (hex != null) {
                                     actor.ClearTerritory();
-                                    actor.AddTerritory(hex);
+                                    actor.SetTerritory(hex);
                                     log += "\n-Territory found: " + hex.tileName;
                                     actor.logComponent.PrintLogIfActive(log);
                                     return;
@@ -374,7 +374,7 @@ namespace Interrupts {
                     HexTile territory = GetTerritoryInAdjacentRegions(currentRegion);
                     if (territory != null) {
                         actor.ClearTerritory();
-                        actor.AddTerritory(territory);
+                        actor.SetTerritory(territory);
                         log += "\n-Territory found: " + territory.tileName + " in region: " + territory.region.name;
                         actor.logComponent.PrintLogIfActive(log);
                         return;
@@ -385,7 +385,7 @@ namespace Interrupts {
                 HexTile hex = currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.isCorrupted);
                 if (hex != null) {
                     actor.ClearTerritory();
-                    actor.AddTerritory(hex);
+                    actor.SetTerritory(hex);
                     log += "\n-Territory found: " + hex.tileName;
                     actor.logComponent.PrintLogIfActive(log);
                     return;

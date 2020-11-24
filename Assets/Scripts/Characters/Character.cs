@@ -85,7 +85,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public List<string> interestedItemNames { get; private set; }
     public string previousClassName { get; private set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
-    public List<HexTile> territories { get; private set; }
+    public HexTile territory { get; private set; }
     public NPCSettlement ruledSettlement { get; private set; }
     public LycanthropeData lycanData { get; protected set; }
     public Necromancer necromancerTrait { get; protected set; }
@@ -291,7 +291,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
-        territories = new List<HexTile>();
         interestedItemNames = new List<string>();
         SetPOIState(POI_STATE.ACTIVE);
         ConstructResources();
@@ -338,7 +337,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
-        territories = new List<HexTile>();
         interestedItemNames = new List<string>();
 
         locationHistory = new List<string>();
@@ -2736,13 +2734,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (homeStructure != null) { //if no home settlement, check home structure
             return otherCharacter.homeStructure == homeStructure;
         }
-        if (territories != null && otherCharacter.territories != null) { //if no home settlement and home structure check territtories
-            for (int i = 0; i < territories.Count; i++) {
-                HexTile territory = territories[i];
-                if (otherCharacter.territories.Contains(territory)) {
-                    return true;
-                }
-            }
+        if (territory != null && otherCharacter.territory != null) { //if no home settlement and home structure check territtories
+            return territory == otherCharacter.territory;
         }
         return false;
     }
@@ -5526,15 +5519,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
     
     #region Territorries
-    public void AddTerritory([NotNull]HexTile tile, bool returnHome = true) {
-        if (territories.Contains(tile) == false) {
-            territories.Add(tile);
-            HexTile firstTerritory = territories[0];
-            if(firstTerritory.region != homeRegion) {
+    public void SetTerritory([NotNull]HexTile tile, bool returnHome = true) {
+        if (territory != tile) {
+            territory = tile;
+            if(territory.region != homeRegion) {
                 if(homeRegion != null) {
                     homeRegion.RemoveResident(this);
                 }
-                firstTerritory.region.AddResident(this);
+                territory.region.AddResident(this);
             }
             if (homeStructure != null && homeStructure.hasBeenDestroyed) {
                 MigrateHomeStructureTo(null, affectSettlement: false);
@@ -5544,27 +5536,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    public void RemoveTerritory(HexTile tile) {
-        if (territories.Remove(tile)) {
-            //QUESTION: Should a character be removed as region resident if it does not have a territory, home structure, home settlement there?
-
-            //if(territorries.Count == 0) {
-            //    if(homeStructure == null && homeSettlement == null) {
-
-            //    }
-            //}
-        }
-    }
     public void ClearTerritory() {
         //QUESTION: Should a character be removed as region resident if it does not have a territory, home structure, home settlement there?
-        territories.Clear();
+        territory = null;
     }
     public bool HasTerritory() {
-        return territories.Count > 0;
+        return territory != null;
     }
     public bool IsTerritory(HexTile hex) {
-        if(territories.Count > 0) {
-            return territories.Contains(hex);
+        if(HasTerritory()) {
+            return territory == hex;
         }
         return false;
     }
@@ -5578,10 +5559,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public LocationGridTile GetRandomLocationGridTileWithPath() {
         LocationGridTile chosenTile = null;
-        if (territories.Count > 0) {
+        if (HasTerritory()) {
             //while (chosenTile == null) {
-            HexTile chosenTerritory = territories[UnityEngine.Random.Range(0, territories.Count)];
-            LocationGridTile chosenGridTile = chosenTerritory.locationGridTiles[UnityEngine.Random.Range(0, chosenTerritory.locationGridTiles.Count)];
+            LocationGridTile chosenGridTile = territory.locationGridTiles[UnityEngine.Random.Range(0, territory.locationGridTiles.Count)];
             if (movementComponent.HasPathToEvenIfDiffRegion(chosenGridTile)) {
                 chosenTile = chosenGridTile;
             }
@@ -6070,9 +6050,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (!string.IsNullOrEmpty(data.previousCurrentActionNode)) {
             previousCurrentActionNode = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.previousCurrentActionNode);
         }
-        for (int i = 0; i < data.territories.Count; i++) {
-            HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.territories[i]);
-            territories.Add(hex);
+        if (!string.IsNullOrEmpty(data.territory)) {
+            territory = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.territory);
         }
         for (int i = 0; i < data.items.Count; i++) {
             TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.items[i]);

@@ -62,12 +62,9 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
             if (character.homeStructure != null) {
                 residentCount = character.homeStructure.residents.Count(x => x.isDead == false);
                 eggCount = character.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.SPIDER_EGG).Count;
-            } else if (character.territories.Count > 0) {
-                residentCount = character.homeRegion.GetCharactersWithSameTerritory(character)?.Count ?? 0;
-                for (int i = 0; i < character.territories.Count; i++) {
-                    HexTile hexTile = character.territories[i];
-                    eggCount += hexTile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.SPIDER_EGG).Count;
-                }
+            } else if (character.HasTerritory()) {
+                residentCount = character.homeRegion.GetCountOfCharacterWithSameTerritory(character);
+                eggCount += character.territory.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.SPIDER_EGG).Count;
             }
             if (residentCount < 4 && eggCount < 2) {
                 return character.jobComponent.TriggerLayEgg(out producedJob);
@@ -89,19 +86,8 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
     private List<Character> GetWebbedCharactersAtHome(Character character) {
         if (character.homeStructure != null) {
             return character.homeStructure.GetCharactersThatMeetCriteria(c => c.traitContainer.HasTrait("Webbed"));
-        } else if (character.territories != null && character.territories.Count > 0) {
-            List<Character> characters = null;
-            for (int i = 0; i < character.territories.Count; i++) {
-                HexTile territory = character.territories[i];
-                List<Character> validCharacters =
-                    territory.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => c.traitContainer.HasTrait("Webbed"));
-                if (validCharacters != null) {
-                    if (characters == null) {
-                        characters = new List<Character>();
-                    }
-                    characters.AddRange(validCharacters);
-                }
-            }
+        } else if (character.HasTerritory()) {
+            List<Character> characters = character.territory.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => c.traitContainer.HasTrait("Webbed"));
             return characters;
         }
         return null;
