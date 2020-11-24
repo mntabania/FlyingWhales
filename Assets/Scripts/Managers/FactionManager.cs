@@ -638,7 +638,9 @@ public class FactionManager : BaseMonoBehaviour {
         }
     }
     public FACTION_TYPE GetFactionTypeForCharacter(Character character) {
-        if (character.traitContainer.HasTrait("Vampire")) {
+        if (character.characterClass.className == "Cult Leader") {
+            return FACTION_TYPE.Demon_Cult;
+        } else if (character.traitContainer.HasTrait("Vampire")) {
             return FACTION_TYPE.Vampire_Clan;
         } else if (character.isLycanthrope && character.lycanData.isMaster) {
             return FACTION_TYPE.Lycan_Clan;
