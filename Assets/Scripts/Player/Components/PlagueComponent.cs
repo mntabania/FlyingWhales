@@ -10,7 +10,7 @@ public class PlagueComponent {
     #endregion
 
     public PlagueComponent() {
-        _plaguePoints = 10;
+        _plaguePoints = 35;
     }
     public PlagueComponent(SaveDataPlagueComponent p_component) {
         _plaguePoints = p_component.plaguePoints;
@@ -24,6 +24,9 @@ public class PlagueComponent {
     public void GainPlaguePointFromCharacter(int amount, Character p_character) {
         AdjustPlaguePoints(amount);
         PlayerUI.Instance.ShowPlaguePointsGainedEffect(amount);    
+    }
+    public bool CanGainPlaguePoints() {
+        return PlayerManager.Instance.player.playerSettlement != null && PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB);
     }
     #endregion
 }

@@ -107,16 +107,16 @@ namespace Traits {
                 _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Infected, false);
                 if (addedToPOI is Character character) {
                     Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-                    if(!character.traitContainer.HasTrait("Plague Reservoir")) {
+                    if(!character.traitContainer.HasTrait("Plague Reservoir") && PlayerManager.Instance.player.plagueComponent.CanGainPlaguePoints()) {
                         if (character.isNormalCharacter) {
-                            PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(5, character);
+                            PlayerManager.Instance.player?.plagueComponent.GainPlaguePointFromCharacter(5, character);
                         } else {
                             if (character is Summon summon) {
                                 if (summon.summonType != SUMMON_TYPE.Rat) {
-                                    PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(1, character);
+                                    PlayerManager.Instance.player?.plagueComponent.GainPlaguePointFromCharacter(1, character);
                                 }
                             } else {
-                                PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(1, character);
+                                PlayerManager.Instance.player?.plagueComponent.GainPlaguePointFromCharacter(1, character);
                             }
                         }
                     }
@@ -275,7 +275,7 @@ namespace Traits {
             _characterDeath?.Invoke(character);
         }
         public override bool OnDeath(Character character) {
-            if (!character.characterClass.IsZombie()) {
+            if (!character.characterClass.IsZombie() && PlayerManager.Instance.player.plagueComponent.CanGainPlaguePoints()) {
                 PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(2, character);    
             }
             return base.OnDeath(character);
