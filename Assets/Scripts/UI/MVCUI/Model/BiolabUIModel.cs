@@ -11,6 +11,8 @@ public class BiolabUIModel : MVCUIModel
 	public Action<bool> onSymptomsTabClicked;
 	public Action<bool> onOnDeathClicked;
 	public Action onCloseClicked;
+	public Action<UIHoverPosition> onPlaguedRatsHoveredOver;
+	public Action onPlaguedRatsHoveredOut;
 	
 	public RuinarchToggle btnTransmissionTab;
 	public RuinarchToggle btnLifeSpanTab;
@@ -25,6 +27,9 @@ public class BiolabUIModel : MVCUIModel
 	public RuinarchText txtPlagueRatsValue;
 	public RuinarchText txtPlaguePoints;
 
+	public HoverHandler hoverHandlerPlaguedRats;
+	public UIHoverPosition hoverPositionPlaguedRats;
+	
 	public Transform tabPrent;
 
 	private void OnEnable()
@@ -35,6 +40,8 @@ public class BiolabUIModel : MVCUIModel
 		btnSymptomsTab.onValueChanged.AddListener(ClickSymptomsTab);
 		btnOnDeathTab.onValueChanged.AddListener(ClickOnDeathTab);
 		btnClose.onClick.AddListener(ClickClose);
+		hoverHandlerPlaguedRats.AddOnHoverOverAction(OnHoverOverPlaguedRats);
+		hoverHandlerPlaguedRats.AddOnHoverOutAction(OnHoverOutPlaguedRats);
 	}
 
 	private void OnDisable()
@@ -45,6 +52,8 @@ public class BiolabUIModel : MVCUIModel
 		btnSymptomsTab.onValueChanged.RemoveListener(ClickSymptomsTab);
 		btnOnDeathTab.onValueChanged.RemoveListener(ClickOnDeathTab);
 		btnClose.onClick.RemoveListener(ClickClose);
+		hoverHandlerPlaguedRats.RemoveOnHoverOverAction(OnHoverOverPlaguedRats);
+		hoverHandlerPlaguedRats.RemoveOnHoverOutAction(OnHoverOutPlaguedRats);
 	}
 
 	#region Buttons OnClick trigger
@@ -75,5 +84,14 @@ public class BiolabUIModel : MVCUIModel
 	{
 		onCloseClicked?.Invoke();
 	}	
+	#endregion
+
+	#region Hover Trigger
+	void OnHoverOverPlaguedRats() {
+		onPlaguedRatsHoveredOver?.Invoke(hoverPositionPlaguedRats);
+	}
+	void OnHoverOutPlaguedRats() {
+		onPlaguedRatsHoveredOut?.Invoke();
+	}
 	#endregion
 }

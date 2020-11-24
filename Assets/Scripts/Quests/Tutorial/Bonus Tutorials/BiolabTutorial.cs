@@ -38,8 +38,9 @@ namespace Tutorial {
                 ),
                 new QuestStepCollection(
                     new ToggleTurnedOnStep("Monsters Tab", "Click on the Monsters tab")
-                        .SetOnTopmostActions(OnTopMostClickMonstersTab, OnNoLongerTopMostClickMonstersTab), //.SetCompleteAction(OnCompleteClickMonstersTab)
-                    new ExecuteSpellStep(SPELL_TYPE.PLAGUED_RAT, "Summon a Plague Rat")
+                        .SetOnTopmostActions(OnTopMostClickMonstersTab, OnNoLongerTopMostClickMonstersTab)
+                        .SetCompleteAction(OnCompleteClickMonstersTab),
+                    new ExecuteSpellStep(SPELL_TYPE.PLAGUED_RAT, "Summon a Plagued Rat")
                 )
             };
         }
@@ -68,10 +69,8 @@ namespace Tutorial {
         }
         private void OnCompleteClickMonstersTab() {
             PlayerUI.Instance.ShowGeneralConfirmation(
-                "Plague Rats", $"These are unique demonic structures that you can build on unoccupied Areas. " +
-                               $"Each structure type has a unique use that may aid you in your invasion. " +
-                               $"For example, the Prison allows you to torture Villagers to afflict them with negative Traits and Statuses." +
-                               $"\n\nIt takes a while to recharge your demonic structures so protect them from attacks!" 
+                "Plagued Rats", $"The Biolab produces {UtilityScripts.Utilities.ColorizeAction("Plagued Rats")} around once every three days - " +
+                                $"up to 3 charges max. These pests can be used to spread the Plague as it visits Villages and transmit the disease to any {UtilityScripts.Utilities.ColorizeAction("food")} it consumes." 
             );
         }
         #endregion

@@ -36,7 +36,7 @@ namespace Inner_Maps.Location_Structures {
 
         #region Plagued Rat
         private void ScheduleReplenishOfPlaguedRatCharge() {
-            replenishDate = GameManager.Instance.Today().AddDays(3);
+            replenishDate = GameManager.Instance.Today().AddDays(2);
             SchedulingManager.Instance.AddEntry(replenishDate, ProcessReplenishingOfPlaguedRatCharge, null);
         }
         private void ProcessReplenishingOfPlaguedRatCharge() {
@@ -46,10 +46,13 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         private void ReplenishPlaguedRatChargeWith3MaxCharges() {
-            SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(SPELL_TYPE.PLAGUED_RAT);
-            if(summonPlayerSkill.charges < 3) {
+            if(!HasMaxPlaguedRat()) {
                 PlayerManager.Instance.player.playerSkillComponent.AddCharges(SPELL_TYPE.PLAGUED_RAT, 1);
             }
+        }
+        public bool HasMaxPlaguedRat() {
+            SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(SPELL_TYPE.PLAGUED_RAT);
+            return summonPlayerSkill.charges >= 3;
         }
         #endregion
     }

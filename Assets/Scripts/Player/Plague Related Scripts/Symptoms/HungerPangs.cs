@@ -12,7 +12,7 @@ namespace Plague.Symptom {
             Debug.Log("Activated Hunger Pangs Symptom");
         }
         public override void PerTickMovement(Character p_character) {
-            if (GameUtilities.RollChance(2)) {
+            if (GameUtilities.RollChance(2.5f)) {
                 ActivateSymptom(p_character);
             }
         }

@@ -262,6 +262,25 @@ public struct GameDate {
         }
         return totalTickDifference;
     }
+    public string GetTimeDifferenceString(GameDate otherDate) {
+        int tickDiff = GetTickDifference(otherDate);
+        if (tickDiff >= GameManager.ticksPerHour) {
+            int hours = GameManager.Instance.GetHoursBasedOnTicks(tickDiff);
+            if (hours > 1) {
+                return $"{hours.ToString()} hours";
+            } else {
+                return $"{hours.ToString()} hour";
+            }
+        } else {
+            int minutes = GameManager.Instance.GetMinutesBasedOnTicks(tickDiff);
+            if (minutes > 1) {
+                return $"{minutes.ToString()} minutes";    
+            } else {
+                return $"{minutes.ToString()} minute";
+            }
+                        
+        }
+    }
     
     public string ConvertToContinuousDaysWithTime(bool nextLineTime = false) {
         if (!hasValue) {
