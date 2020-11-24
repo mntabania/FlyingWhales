@@ -198,12 +198,12 @@ namespace Traits {
             }
         }
         public override void OnInitiateMapObjectVisual(ITraitable traitable) {
-            if (traitable is Character character) {
+            if (traitable is IPointOfInterest poi) {
                 if (_infectedEffectGO) {
                     ObjectPoolManager.Instance.DestroyObject(_infectedEffectGO);
                     _infectedEffectGO = null;
                 }
-                _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Infected, false);
+                _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Infected, false);
             }
         }
         public override void OnDestroyMapObjectVisual(ITraitable traitable) {

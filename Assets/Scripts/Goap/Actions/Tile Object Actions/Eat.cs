@@ -80,7 +80,7 @@ public class Eat : GoapAction {
                 cost += UtilityScripts.Utilities.Rng.Next(20, 51);
             } else if (target is Table) {
                 cost += UtilityScripts.Utilities.Rng.Next(10, 61);
-            } else if (target is Table) {
+            } else {
                 return 2000;
             }
         } else if (actor.race == RACE.RATMAN && actor.faction?.factionType.type == FACTION_TYPE.Ratmen) {
@@ -285,10 +285,14 @@ public class Eat : GoapAction {
                 }
             }
             if (poiTarget is Table) {
-                //if target is table, do not allow if actor is a monster
-                if (UtilityScripts.GameUtilities.IsRaceBeast(actor.race) || actor.isNormalCharacter == false) {
-                    return false;
+                //Allow rats to eat at table
+                if(!(actor is Rat)) {
+                    //if target is table, do not allow if actor is a monster
+                    if (UtilityScripts.GameUtilities.IsRaceBeast(actor.race) || actor.isNormalCharacter == false) {
+                        return false;
+                    }
                 }
+
             }
             // else {
             //     if(poiTarget.storedResources[RESOURCE.FOOD] < 12) {

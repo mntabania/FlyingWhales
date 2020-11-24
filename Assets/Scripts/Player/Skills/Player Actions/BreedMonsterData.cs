@@ -16,7 +16,7 @@ public class BreedMonsterData : PlayerAction {
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if(targetPOI is Summon summon) {
             SPELL_TYPE summonPlayerSkillType = SPELL_TYPE.NONE;
-            if(summon.characterClass.className == "Rat" && summon.traitContainer.HasTrait("Plagued")) {
+            if(summon is Rat) {
                 summonPlayerSkillType = SPELL_TYPE.PLAGUED_RAT;
             } else {
                 SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(summon.race, summon.characterClass.className);

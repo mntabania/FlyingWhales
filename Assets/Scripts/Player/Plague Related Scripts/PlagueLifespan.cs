@@ -36,11 +36,11 @@ public class PlagueLifespan {
         //Default Data
         _sapientInfectionTimeInHours = new Dictionary<RACE, int>();
 
-        SetTileObjectInfectionTimeInHours(12);
+        SetTileObjectInfectionTimeInHours(24);
         SetMonsterInfectionTimeInHours(-1);
         SetUndeadInfectionTimeInHours(-1);
-        SetSapientInfectionTimeInHours(RACE.HUMANS, 24);
-        SetSapientInfectionTimeInHours(RACE.ELVES, 24);
+        SetSapientInfectionTimeInHours(RACE.HUMANS, 48);
+        SetSapientInfectionTimeInHours(RACE.ELVES, 48);
     }
 
     #region Tile Object Lifespan
@@ -82,19 +82,19 @@ public class PlagueLifespan {
     }
     private int GetTileObjectLifespanInHoursByLevel(int p_level) {
         switch (p_level) {
-            case 1: return 12;
-            case 2: return 24;
-            case 3: return 48;
-            case 4: return 72;
-            default: return 12;
+            case 1: return 24;
+            case 2: return 48;
+            case 3: return 72;
+            case 4: return 120;
+            default: return 24;
         }
     }
     private int GetTileObjectLifespanLevelByHours(int p_hours) {
         switch (p_hours) {
-            case 12: return 1;
-            case 24: return 2;
-            case 48: return 3;
-            case 72: return 4;
+            case 24: return 1;
+            case 48: return 2;
+            case 72: return 3;
+            case 120: return 4;
             default: return 1;
         }
     }
@@ -140,18 +140,18 @@ public class PlagueLifespan {
     private int GetMonsterLifespanInHoursByLevel(int p_level) {
         switch (p_level) {
             case 1: return -1;
-            case 2: return 12;
-            case 3: return 24;
-            case 4: return 72;
+            case 2: return 24;
+            case 3: return 72;
+            case 4: return 120;
             default: return -1;
         }
     }
     private int GetMonsterLifespanLevelByHours(int p_hours) {
         switch (p_hours) {
             case -1: return 1;
-            case 12: return 2;
-            case 24: return 3;
-            case 72: return 4;
+            case 24: return 2;
+            case 72: return 3;
+            case 120: return 4;
             default: return 1;
         }
     }
@@ -197,18 +197,18 @@ public class PlagueLifespan {
     private int GetUndeadLifespanInHoursByLevel(int p_level) {
         switch (p_level) {
             case 1: return -1;
-            case 2: return 12;
-            case 3: return 24;
-            case 4: return 72;
+            case 2: return 24;
+            case 3: return 72;
+            case 4: return 120;
             default: return -1;
         }
     }
     private int GetUndeadLifespanLevelByHours(int p_hours) {
         switch (p_hours) {
             case -1: return 1;
-            case 12: return 2;
-            case 24: return 3;
-            case 72: return 4;
+            case 24: return 2;
+            case 72: return 3;
+            case 120: return 4;
             default: return 1;
         }
     }
@@ -266,20 +266,20 @@ public class PlagueLifespan {
     private int GetSapientLifespanInHoursByLevel(RACE p_race, int p_level) {
         //Note: Since Elves and Humans have the same lifespan right now, do not separate them
         switch (p_level) {
-            case 1: return 24;
-            case 2: return 72;
+            case 1: return 48;
+            case 2: return 96;
             case 3: return 144;
-            case 4: return 240;
-            default: return 24;
+            case 4: return 192;
+            default: return 48;
         }
     }
     private int GetSapientLifespanLevelByHours(RACE p_race, int p_hours) {
         //Note: Since Elves and Humans have the same lifespan right now, do not separate them
         switch (p_hours) {
-            case 24: return 1;
-            case 72: return 2;
+            case 48: return 1;
+            case 96: return 2;
             case 144: return 3;
-            case 240: return 4;
+            case 192: return 4;
             default: return 1;
         }
     }

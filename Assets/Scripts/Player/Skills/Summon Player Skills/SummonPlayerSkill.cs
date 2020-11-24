@@ -31,7 +31,6 @@ public class SummonPlayerSkill : SpellData {
             }
         }
         summon.jobQueue.CancelAllJobs();
-        AfterSummoning(summon);
         Messenger.Broadcast(PlayerSignals.PLAYER_PLACED_SUMMON, summon);
         // Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, summon);
         base.ActivateAbility(targetTile);
@@ -41,7 +40,6 @@ public class SummonPlayerSkill : SpellData {
         CharacterManager.Instance.PlaceSummon(summon, targetTile);
         //summon.behaviourComponent.AddBehaviourComponent(typeof(DefaultMinion));
         spawnedCharacter = summon;
-        AfterSummoning(summon);
         Messenger.Broadcast(PlayerSignals.PLAYER_PLACED_SUMMON, summon);
         base.ActivateAbility(targetTile, ref spawnedCharacter);
     }
