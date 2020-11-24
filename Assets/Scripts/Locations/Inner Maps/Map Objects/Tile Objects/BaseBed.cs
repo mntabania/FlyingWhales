@@ -78,9 +78,13 @@ public abstract class BaseBed : TileObject {
                 //enable the character's marker
                 character.marker.SetVisualState(true);
                 if (character.gridTileLocation != null && character.traitContainer.HasTrait("Paralyzed")) {
-                    //When a paralyzed character awakens, place it on a nearby adjacent empty tile in the same Structure
-                    LocationGridTile gridTile = character.gridTileLocation.GetFirstNearestTileFromThisWithNoObject();
-                    character.marker.PlaceMarkerAt(gridTile);
+                    //When a paralyzed character awakens, place it on an adjacent tile in the same Structure
+                    LocationGridTile gridTile = character.gridTileLocation.GetFirstNeighborThatMeetCriteria(x => x.structure == character.gridTileLocation.structure && x.IsPassable());
+                    if(gridTile != null) {
+                        character.marker.PlaceMarkerAt(gridTile);
+                    } else {
+                        character.marker.PlaceMarkerAt(character.gridTileLocation);
+                    }
                 } else {
                     character.marker.UpdateAnimation();
                 }
