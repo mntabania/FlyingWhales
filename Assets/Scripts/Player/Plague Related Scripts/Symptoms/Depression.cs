@@ -13,7 +13,7 @@ namespace Plague.Symptom {
         }
         public override void CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action) {
             if (p_action.associatedJobType.IsHappinessRecoveryTypeJob()) {
-                if (GameUtilities.RollChance(15)) {
+                if (GameUtilities.RollChance(25)) {
                     ActivateSymptom(p_character);
                 }
             }
