@@ -4,9 +4,15 @@ using UnityEngine.Assertions;
 
 public class CornCropObjectVisual : TileObjectGameObject {
     
-    [SerializeField] private Sprite empty;
-    [SerializeField] private Sprite growing;
-    [SerializeField] private Sprite harvestable;
+    [SerializeField] private Sprite horizontalEmpty;
+    [SerializeField] private Sprite horizontalGrowing;
+    [SerializeField] private Sprite horizontalHarvestable;
+    
+    [SerializeField] private Sprite verticalEmpty;
+    [SerializeField] private Sprite verticalGrowing;
+    [SerializeField] private Sprite verticalHarvestable;
+
+    private bool _isHorizontal;
     
     public override void UpdateTileObjectVisual(TileObject tileObject) {
         Crops crops = tileObject as Crops;
@@ -14,11 +20,15 @@ public class CornCropObjectVisual : TileObjectGameObject {
         int totalRipeningTicks = crops.GetRipeningTicks();
         int ticksGrowing = totalRipeningTicks - crops.remainingRipeningTicks; 
         if (ticksGrowing < Mathf.FloorToInt(totalRipeningTicks * 0.4f)) {
-            SetVisual(empty);
+            SetVisual(_isHorizontal ? horizontalEmpty : verticalEmpty);
         } else if (ticksGrowing < totalRipeningTicks) {
-            SetVisual(growing);    
+            SetVisual(_isHorizontal ? horizontalGrowing : verticalGrowing);    
         } else {
-            SetVisual(harvestable);
+            SetVisual(_isHorizontal ? horizontalHarvestable : verticalHarvestable);
         }
+    }
+    public override void SetVisual(Sprite sprite) {
+        base.SetVisual(sprite);
+        _isHorizontal = sprite.name.Contains("#1");
     }
 }

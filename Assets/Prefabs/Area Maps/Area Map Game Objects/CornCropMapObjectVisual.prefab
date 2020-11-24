@@ -20,23 +20,14 @@ MonoBehaviour:
   hpFill: {fileID: 3005738125951949291}
   aspeedFill: {fileID: 8467122077929964678}
   statusIconsParent: {fileID: 7342964965005174171}
-  growingSprites:
-    m_keys:
-    - {fileID: 21300000, guid: f7e0e2d87628b6e419423a3396ddcd16, type: 3}
-    - {fileID: 21300000, guid: f263560a2270c7d40a8c775ad3f0de55, type: 3}
-    m_values:
-    - {fileID: 21300000, guid: f5a809c447efa534b9e9431fb172ef5b, type: 3}
-    - {fileID: 21300000, guid: 064fd10e523a5fa4ba3287b996ff1a20, type: 3}
-  ripeSprites:
-    m_keys:
-    - {fileID: 21300000, guid: f5a809c447efa534b9e9431fb172ef5b, type: 3}
-    - {fileID: 21300000, guid: 064fd10e523a5fa4ba3287b996ff1a20, type: 3}
-    m_values:
-    - {fileID: 21300000, guid: f7e0e2d87628b6e419423a3396ddcd16, type: 3}
-    - {fileID: 21300000, guid: f263560a2270c7d40a8c775ad3f0de55, type: 3}
-  empty: {fileID: 21300000, guid: f7ce80afe9f341844afd79e0f172850d, type: 3}
-  growing: {fileID: 21300000, guid: f5a809c447efa534b9e9431fb172ef5b, type: 3}
-  harvestable: {fileID: 21300000, guid: f7e0e2d87628b6e419423a3396ddcd16, type: 3}
+  horizontalEmpty: {fileID: 21300000, guid: f7ce80afe9f341844afd79e0f172850d, type: 3}
+  horizontalGrowing: {fileID: 21300000, guid: f5a809c447efa534b9e9431fb172ef5b, type: 3}
+  horizontalHarvestable: {fileID: 21300000, guid: f7e0e2d87628b6e419423a3396ddcd16,
+    type: 3}
+  verticalEmpty: {fileID: 21300000, guid: 9a5e71c48adea0546b6041fd52a4ef5b, type: 3}
+  verticalGrowing: {fileID: 21300000, guid: 064fd10e523a5fa4ba3287b996ff1a20, type: 3}
+  verticalHarvestable: {fileID: 21300000, guid: f263560a2270c7d40a8c775ad3f0de55,
+    type: 3}
 --- !u!1001 &2838617087032410969
 PrefabInstance:
   m_ObjectHideFlags: 0
