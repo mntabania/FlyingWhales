@@ -9,7 +9,10 @@ namespace Plague.Symptom {
 
         protected override void ActivateSymptom(Character p_character) {
             p_character.interruptComponent.TriggerInterrupt(INTERRUPT.Seizure, p_character);
-            PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(2, p_character);
+            if (PlayerManager.Instance.player.plagueComponent.CanGainPlaguePoints()) {
+                PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(2, p_character);    
+            }
+            
             Debug.Log("Activated Seizure Symptom");
         }
         public override void PerTickMovement(Character p_character) {

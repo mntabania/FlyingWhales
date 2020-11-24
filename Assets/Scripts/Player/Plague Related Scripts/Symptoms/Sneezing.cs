@@ -9,7 +9,9 @@ namespace Plague.Symptom {
 
         protected override void ActivateSymptom(Character p_character) {
             p_character.interruptComponent.TriggerInterrupt(INTERRUPT.Sneeze, p_character);
-            PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(1, p_character);
+            if (PlayerManager.Instance.player.plagueComponent.CanGainPlaguePoints()) {
+                PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(1, p_character);
+            }
             Debug.Log("Activated Sneezing Symptom");
         }
         public override void PerTickMovement(Character p_character) {
