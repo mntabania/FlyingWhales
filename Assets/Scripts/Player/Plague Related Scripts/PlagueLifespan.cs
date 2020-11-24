@@ -285,6 +285,7 @@ public class PlagueLifespan {
     }
     #endregion
 
+    #region Utilities
     public int GetLifespanInHoursOfPlagueOn(IPointOfInterest p_poi) {
         if(p_poi is Character character) {
             if(character.faction?.factionType.type == FACTION_TYPE.Wild_Monsters) {
@@ -306,6 +307,17 @@ public class PlagueLifespan {
         }
         return -1;
     }
+    public string GetInfectionTimeString(int timeInHours) {
+        if (timeInHours == 0) {
+            return "Indefinite";
+        } else if (timeInHours == -1) {
+            return "Immune";
+        }
+        else {
+            return $"{timeInHours.ToString()} Hours";
+        }
+    }
+    #endregion
 }
 
 [System.Serializable]

@@ -340,7 +340,53 @@ public class PlagueDisease : ISingletonPattern, ISavable {
         Debug.Log(randomizeSummary);
     }
     #endregion
-    
+
+    #region Utilities
+    public string GetPlagueEffectsSummary() {
+        string tooltip = $"<b>Effects:</b>";
+        int airborneLevel = GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne);
+        int combatLevel = GetTransmissionLevel(PLAGUE_TRANSMISSION.Combat);
+        int consumptionLevel = GetTransmissionLevel(PLAGUE_TRANSMISSION.Consumption);
+        int physicalContactLevel = GetTransmissionLevel(PLAGUE_TRANSMISSION.Physical_Contact);
+        if (airborneLevel > 0) { tooltip = $"{tooltip}\nAirborne Rate: {GetTransmissionRateDescription(airborneLevel)}"; }
+        if (combatLevel > 0) { tooltip = $"{tooltip}\nCombat Rate: {GetTransmissionRateDescription(combatLevel)}"; }
+        if (consumptionLevel > 0) { tooltip = $"{tooltip}\nConsumption Rate: {GetTransmissionRateDescription(consumptionLevel)}"; }
+        if (physicalContactLevel > 0) { tooltip = $"{tooltip}\nPhysical Contact Rate: {GetTransmissionRateDescription(physicalContactLevel)}"; }
+        tooltip = $"{tooltip}\nObject Lifespan: {lifespan.GetInfectionTimeString(lifespan.tileObjectInfectionTimeInHours)}";
+        tooltip = $"{tooltip}\nHuman Lifespan: {lifespan.GetInfectionTimeString(lifespan.GetSapientLifespanOfPlagueInHours(RACE.HUMANS))}";
+        tooltip = $"{tooltip}\nElves Lifespan: {lifespan.GetInfectionTimeString(lifespan.GetSapientLifespanOfPlagueInHours(RACE.ELVES))}";
+        tooltip = $"{tooltip}\nMonster Lifespan: {lifespan.GetInfectionTimeString(lifespan.monsterInfectionTimeInHours)}";
+        tooltip = $"{tooltip}\nUndead Lifespan: {lifespan.GetInfectionTimeString(lifespan.undeadInfectionTimeInHours)}";
+        tooltip = $"{tooltip}\nFatalities: ";
+        if (activeFatalities.Count > 0) {
+            for (int i = 0; i < activeFatalities.Count; i++) {
+                Fatality fatality = activeFatalities[i];
+                tooltip = $"{tooltip}{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(fatality.fatalityType.ToString())}";
+                if (i + 1 < activeFatalities.Count) {
+                    tooltip = $"{tooltip}, ";
+                }
+            }    
+        } else {
+            tooltip = $"{tooltip}-";
+        }
+        
+        tooltip = $"{tooltip}\nSymptoms: ";
+        if (activeSymptoms.Count > 0) {
+            for (int i = 0; i < activeSymptoms.Count; i++) {
+                PlagueSymptom symptom = activeSymptoms[i];
+                tooltip = $"{tooltip}{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(symptom.symptomType.ToString())}";
+                if (i + 1 < activeSymptoms.Count) {
+                    tooltip = $"{tooltip}, ";
+                }
+            }    
+        } else {
+            tooltip = $"{tooltip}-";
+        }
+        tooltip = $"{tooltip}\nOn Death: {activeDeathEffect?.GetCurrentEffectDescription() ?? "-"}";
+        return tooltip;
+    }
+    #endregion
+
 }
 
 [System.Serializable]
