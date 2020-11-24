@@ -316,6 +316,7 @@ public class CrimeManager : BaseMonoBehaviour {
         }
         CRIME_SEVERITY witnessCrimeSeverity = crimeTypeObj.GetCrimeSeverity(witness, actor, target);
         CRIME_SEVERITY finalCrimeSeverity = witnessCrimeSeverity;
+        //Only use faction crime severity if the personal witness crime severity is Unapplicable because if it is None, it means that the witness does not consider it a crime
         if (witnessCrimeSeverity == CRIME_SEVERITY.Unapplicable) {
             finalCrimeSeverity = factionCrimeSeverity;
         }

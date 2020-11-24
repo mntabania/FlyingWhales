@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using Interrupts;
 using Inner_Maps.Location_Structures;
+using Inner_Maps;
 
 public class ObjectPoolManager : BaseMonoBehaviour {
 
@@ -30,6 +31,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     private List<List<Character>> _characterListPool;
     private List<List<HexTile>> _hexTileListPool;
     private List<List<LocationStructure>> _structureListPool;
+    private List<List<LocationGridTile>> _tileListPool;
 
     private void Awake() {
         Instance = this;
@@ -64,6 +66,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructCharacterListPool();
         ConstructHexTileListPool();
         ConstructStructureListPool();
+        ConstructGridTileListPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -440,6 +443,27 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     }
     #endregion
 
+    #region Location Grid Tile
+    private void ConstructGridTileListPool() {
+        _tileListPool = new List<List<LocationGridTile>>();
+    }
+    public List<LocationGridTile> CreateNewGridTileList() {
+        List<LocationGridTile> data = GetGridTileListFromPool();
+        return data;
+    }
+    public void ReturnGridTileListToPool(List<LocationGridTile> data) {
+        data.Clear();
+        _tileListPool.Add(data);
+    }
+    private List<LocationGridTile> GetGridTileListFromPool() {
+        if (_tileListPool.Count > 0) {
+            List<LocationGridTile> data = _tileListPool[0];
+            _tileListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<LocationGridTile>();
+    }
+    #endregion
 
     protected override void OnDestroy() {
         if (allObjectPools != null) {
@@ -475,6 +499,8 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _hexTileListPool = null;
         _structureListPool?.Clear();
         _structureListPool = null;
+        _tileListPool?.Clear();
+        _tileListPool = null;
         base.OnDestroy();
         Instance = null;
     }

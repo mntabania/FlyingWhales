@@ -384,7 +384,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             action.OnInvalidAction(this);
             JobQueueItem job = associatedJob;
             if (job != null) {
-                if (job.forceCancelOnInvalid || goapActionInvalidity.IsReasonForCancellation()) {
+                if (job.forceCancelOnInvalid || goapActionInvalidity.IsReasonForCancellationShouldDropJob()) {
                     job.ForceCancelJob(false);
                 } else {
                     if (isInvalidOnVision || isInvalidStealth) { //If action is invalid because of stealth, cancel job immediately, we do not need to recalculate it anymore since there are witnesses around, it will just become invalid again even if we let it recalculate

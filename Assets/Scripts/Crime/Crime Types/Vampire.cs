@@ -16,7 +16,14 @@ namespace Crime_System {
             if (witness.traitContainer.HasTrait("Cultist") && actor.traitContainer.HasTrait("Cultist")) {
                 return CRIME_SEVERITY.None;
             }
-            if (witness.traitContainer.HasTrait("Vampire", "Hemophiliac")) {
+            if (witness.traitContainer.HasTrait("Vampire")) {
+                Traits.Vampire vampire = witness.traitContainer.GetTraitOrStatus<Traits.Vampire>("Vampire");
+                if (vampire.dislikedBeingVampire) {
+                    //Dislikes vampire should not have a personal crime severity, they must refer to the faction crime severity
+                    return CRIME_SEVERITY.Unapplicable;
+                }
+            }
+            if (witness.traitContainer.HasTrait("Hemophiliac")) {
                 return CRIME_SEVERITY.None;
             }
             return base.GetCrimeSeverity(witness, actor, target);

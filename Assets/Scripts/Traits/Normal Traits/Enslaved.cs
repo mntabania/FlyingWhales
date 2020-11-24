@@ -49,6 +49,7 @@ namespace Traits {
                         targetCharacter.MigrateHomeTo(characterResponsible.homeSettlement);
                     }
                 }
+
             }
         }
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {

@@ -16,7 +16,13 @@ namespace Crime_System {
             if (witness.traitContainer.HasTrait("Cultist") && actor.traitContainer.HasTrait("Cultist")) {
                 return CRIME_SEVERITY.None;
             }
-            if (witness.traitContainer.HasTrait("Lycanthrope", "Lycanphiliac")) {
+            if (witness.isLycanthrope) {
+                if (witness.lycanData.activeForm == witness.lycanData.originalForm && witness.lycanData.dislikesBeingLycan) {
+                    //Dislikes lycan should not have a personal crime severity, they must refer to the faction crime severity
+                    return CRIME_SEVERITY.Unapplicable;
+                }
+            }
+            if (witness.traitContainer.HasTrait("Lycanphiliac")) {
                 return CRIME_SEVERITY.None;
             }
             return base.GetCrimeSeverity(witness, actor, target);

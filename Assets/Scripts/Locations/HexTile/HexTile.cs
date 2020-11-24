@@ -1880,23 +1880,19 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
 
     #region IPartyTargetDestination
     public LocationGridTile GetRandomPassableTile() {
-        LocationGridTile centerTile = GetCenterLocationGridTile();
-        if (centerTile.IsPassable()) {
-            return centerTile;
-        } else {
-            List<LocationGridTile> passableTiles = null;
-            for (int i = 0; i < locationGridTiles.Count; i++) {
-                LocationGridTile tile = locationGridTiles[i];
-                if (tile.IsPassable()) {
-                    if(passableTiles == null) { passableTiles = new List<LocationGridTile>(); }
-                    passableTiles.Add(tile);
-                }
-            }
-            if(passableTiles != null && passableTiles.Count > 0) {
-                return CollectionUtilities.GetRandomElement(passableTiles);
+        LocationGridTile chosenTile = null;
+        List<LocationGridTile> passableTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
+        for (int i = 0; i < locationGridTiles.Count; i++) {
+            LocationGridTile tile = locationGridTiles[i];
+            if (tile.IsPassable()) {
+                passableTiles.Add(tile);
             }
         }
-        return null;
+        if (passableTiles != null && passableTiles.Count > 0) {
+            chosenTile = CollectionUtilities.GetRandomElement(passableTiles);
+        }
+        ObjectPoolManager.Instance.ReturnGridTileListToPool(passableTiles);
+        return chosenTile;
     }
     public bool IsAtTargetDestination(Character character) {
         return character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == this;

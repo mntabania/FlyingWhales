@@ -27,10 +27,10 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
             }
         }
         TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
-        if (currentTime == TIME_IN_WORDS.LATE_NIGHT || currentTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+        if (currentTime == TIME_IN_WORDS.EARLY_NIGHT) {
             //Night time
-            //if (GameUtilities.RollChance(20)) {
-                if(isInHome) {
+            if (GameUtilities.RollChance(20)) {
+                if (isInHome) {
                     Character prisoner = GetFirstPrisonerAtHome(character);
                     if (prisoner == null && !HasJobTypeFromSameHome(character, JOB_TYPE.MONSTER_ABDUCT)) {
                     character.behaviourComponent.SetAbductionTarget(null);
@@ -65,7 +65,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                         }
                     }
                 }
-            //}
+            }
         } else {
             //Day time
             if (GameUtilities.RollChance(20)) {
