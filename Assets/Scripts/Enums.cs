@@ -514,7 +514,8 @@ public enum INTERACTION_TYPE {
     QUARANTINE = 214,
     CARRY_PATIENT = 215,
     START_PLAGUE_CARE = 216,
-    CARE = 217
+    CARE = 217,
+    GO_TO_SPECIFIC_TILE = 218,
 }
 public enum INTERRUPT {
     None,

@@ -489,9 +489,9 @@ public struct GoapActionInvalidity {
         this.stateName = stateName;
         reason = null;
     }
-    public bool IsReasonForCancellation() {
+    public bool IsReasonForCancellationShouldDropJob() {
         if (!string.IsNullOrEmpty(reason)) {
-            return reason == "target_carried" || reason == "target_inactive";
+            return reason == "target_carried" || reason == "target_inactive" || reason == "target_dead";
         }
         return false;
     }

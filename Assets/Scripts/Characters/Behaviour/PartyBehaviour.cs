@@ -91,8 +91,12 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                         hasJob = CampBehaviour(character, party, out producedJob);
                                     } else {
                                         LocationGridTile targetTile = party.targetCamp.GetRandomPassableTile();
-                                        hasJob = character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
+                                        hasJob = character.jobComponent.CreatePartyGoToSpecificTileJob(targetTile, out producedJob);
                                     }
+                                } else {
+                                    party.SetPartyState(PARTY_STATE.Moving);
+                                    hasJob = true;
+                                    return hasJob;
                                 }
                             } else if (party.partyState == PARTY_STATE.Working) {
                                 log += $"\n-Party is working";

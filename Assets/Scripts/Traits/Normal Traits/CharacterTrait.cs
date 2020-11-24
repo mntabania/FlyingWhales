@@ -219,10 +219,14 @@ namespace Traits {
                                 }
                             } else {
                                 if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
-                                    if (owner.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueParty && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
-                                        if (rescueParty.isWaitTimeOver && rescueParty.targetCharacter == targetCharacter) {
+                                    if (owner.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueParty) {
+                                        if (rescueParty.targetCharacter == targetCharacter) {
                                             rescueParty.SetIsReleasing(false);
-                                            owner.partyComponent.currentParty.GoBackHomeAndEndQuest();
+                                            if (rescueParty.isWaitTimeOver) {
+                                                owner.partyComponent.currentParty.GoBackHomeAndEndQuest();
+                                            } else {
+                                                rescueParty.EndQuest("Finished quest");
+                                            }
                                         }
                                     }
                                 }

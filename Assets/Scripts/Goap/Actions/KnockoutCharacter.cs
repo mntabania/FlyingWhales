@@ -175,7 +175,11 @@ public class KnockoutCharacter : GoapAction {
             if (job != null && job.jobType == JOB_TYPE.SNATCH && actor.traitContainer.HasTrait("Cultist")) {
                 return true; //only allow cultists to use knock out if it is for snatching 
             }
-            return actor.traitContainer.HasTrait("Psychopath") || actor.traitContainer.HasTrait("Vampire") || actor.isNormalCharacter == false;
+            if (!actor.isNormalCharacter) {
+                //Monsters, minions and ratmen cannot do knockout character
+                return false;
+            }
+            return actor.traitContainer.HasTrait("Psychopath") || actor.traitContainer.HasTrait("Vampire");
         }
         return false;
     }

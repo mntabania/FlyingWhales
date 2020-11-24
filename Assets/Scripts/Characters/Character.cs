@@ -2432,9 +2432,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
         } else {
+            //If target is cannot perform/cannot move, 100% chance to knockout, reason: for abducting resting characters
+            int chance = 15;
+            if(!limiterComponent.canPerform || !limiterComponent.canMove) {
+                chance = 100;
+            }
+
             //Each non lethal attack has a 15% chance of unconscious
             //https://trello.com/c/qxXVulZl/1126-each-non-lethal-attack-has-a-15-chance-of-making-target-unconscious
-            if(GameUtilities.RollChance(15)) {
+            if(GameUtilities.RollChance(chance)) {
                 if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
                     traitContainer.AddTrait(this, "Unconscious", GetCharacterResponsibleForUnconsciousness(characterThatAttacked, combatStateOfAttacker));
                 }

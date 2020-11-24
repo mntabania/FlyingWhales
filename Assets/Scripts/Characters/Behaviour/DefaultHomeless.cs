@@ -22,7 +22,7 @@ public class DefaultHomeless : CharacterBehaviourComponent {
             }
         }
         if(character.characterClass.className != "Vampire Lord") {
-            if (GameUtilities.RollChance(5)) {
+            if (GameUtilities.RollChance(10)) {
                 if (character.homeStructure != null) {
                     if(!(character.homeStructure is Dwelling) && !character.isVagrantOrFactionless) {
                         log += $"\n-{character.name} has a home but his home is not a house and character is not vagrant, 5% chance to find home";
