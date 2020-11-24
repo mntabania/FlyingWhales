@@ -61,7 +61,7 @@ namespace Plague.Death_Effect {
                     else if (p_level == 2)
                         return "Plagued corpses will keep on reanimating as Night Zombies at dusk and then revert to lifelessness each dawn.";
                     else if (p_level == 3)
-                        return "Upcoming feature!";
+                        return "Variety Zombie - Upcoming feature!";
                     else
                         return "-";
                 case PLAGUE_DEATH_EFFECT.Mana_Generator:

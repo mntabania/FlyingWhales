@@ -9,8 +9,6 @@ using UtilityScripts;
 
 public class TileObjectGameObject : MapObjectVisual<TileObject> {
     
-    private System.Func<bool> _isMenuShowing;
-
     public override void Initialize(TileObject tileObject) {
         base.Initialize(tileObject);
         this.name = tileObject.ToString();
@@ -24,7 +22,6 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
 
         visionTrigger = this.transform.GetComponentInChildren<TileObjectVisionTrigger>();
         Assert.IsNotNull(visionTrigger, $"NO COLLISION TRIGGER FOR {tileObject.nameWithID}");
-        _isMenuShowing = () => IsMenuShowing(tileObject);
         UpdateSortingOrders(tileObject);
     }
 
@@ -70,20 +67,6 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
             tileObject.gridTileLocation?.isCorrupted ?? false));
     }
 
-    public virtual void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) {
-        this.SetRotation(furnitureSetting.rotation.z);
-    }
-
-    #region Inquiry
-    private bool IsMenuShowing(TileObject obj) {
-        return UIManager.Instance.tileObjectInfoUI.isShowing &&
-               UIManager.Instance.tileObjectInfoUI.activeTileObject == obj;
-    }
-    public virtual bool IsMapObjectMenuVisible() {
-        return _isMenuShowing.Invoke();
-    }
-    #endregion
-    
     #region Pointer Events
     protected override void OnPointerLeftClick(TileObject poi) {
         base.OnPointerLeftClick(poi);
@@ -133,20 +116,4 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
         }
     }
     #endregion
-
-    // #region Colliders
-    // public override void UpdateCollidersState(TileObject obj) {
-    //     if (obj is GenericTileObject) {
-    //         //Generic tile object is always visible
-    //         SetAsVisibleToCharacters();
-    //     } else {
-    //         if (obj.advertisedActions != null && obj.advertisedActions.Count > 0) {
-    //             SetAsVisibleToCharacters();
-    //         } else {
-    //             SetAsInvisibleToCharacters();
-    //         }    
-    //     }
-    //     
-    // }
-    // #endregion
 }

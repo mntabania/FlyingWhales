@@ -77,11 +77,8 @@ public class TraitManager : BaseMonoBehaviour {
     public List<string> unhiddenTraitsNotStatuses { get; private set; }
 
     public List<string> removeStatusTraits = new List<string> {
-        "Unconscious", "Injured", "Poisoned", "Plagued", "Freezing", "Frozen", "Burning",
+        "Unconscious", "Injured", "Poisoned", "Freezing", "Frozen", "Burning",
         "Ensnared"
-    };
-    public List<string> specialIllnessTraits = new List<string> {
-        "Poisoned", "Plagued"
     };
 
     //This is for instanced traits that do not have unique data
@@ -375,8 +372,6 @@ public class TraitManager : BaseMonoBehaviour {
         neutralTraitPool = null;
         removeStatusTraits?.Clear();
         removeStatusTraits = null;
-        specialIllnessTraits?.Clear();
-        specialIllnessTraits = null;
         base.OnDestroy();
         Instance = null;
     }

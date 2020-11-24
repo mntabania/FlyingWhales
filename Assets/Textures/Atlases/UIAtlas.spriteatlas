@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8027413
+    totalSpriteSurfaceArea: 8036847
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -151,6 +151,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e05fd5c4d5a07ed4486563925c248e61, type: 3}
   - {fileID: 21300000, guid: 6adea2e43ba23fd44a0a909e89394225, type: 3}
   - {fileID: 21300000, guid: 3c1623e45b0eca248a31dc39b63c1c0c, type: 3}
+  - {fileID: 21300000, guid: 604915e4a03bcfd40b6415dbaf519493, type: 3}
   - {fileID: 21300000, guid: d99a58057bb0d694a8d26859e71ae0c9, type: 3}
   - {fileID: 21300000, guid: cbf26805df91346489f4518d29e928dc, type: 3}
   - {fileID: 21300000, guid: b5aac51575b6ba9488cb3215e2602e0a, type: 3}
@@ -479,6 +480,7 @@ SpriteAtlas:
   - AreaMapTravelLine
   - tab_inactive
   - Scroll-Circle-Unselected
+  - plague_container
   - button_unlock_invalid
   - scroll_button_right_invalid
   - button_base_default

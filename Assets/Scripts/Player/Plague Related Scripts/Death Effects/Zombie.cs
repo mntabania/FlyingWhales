@@ -29,7 +29,7 @@ namespace Plague.Death_Effect {
                 case 1:
                     return 30;
                 case 2:
-                    return 50;
+                    return -1; //50 Disabled, since next level is still an upcoming feature
                 default:
                     return -1; //Max Level
             }
@@ -42,18 +42,6 @@ namespace Plague.Death_Effect {
                     return "Night Zombie";
                 case 3:
                     return "Variety Zombie";
-                default:
-                    return string.Empty;
-            }
-        }
-        public virtual string GetEffectTooltip(int p_level) {
-            switch (p_level) {
-                case 1:
-                    return "Plagued corpses will eventually reanimate as a slow-moving zombie.";
-                case 2:
-                    return "Plagued corpses will keep on reanimating as Night Zombies at dusk and then revert to lifelessness each dawn.";
-                case 3:
-                    return "Upcoming feature!";
                 default:
                     return string.Empty;
             }

@@ -35,7 +35,7 @@ public class PsychopathUI : PopupMenuBase {
     private List<string> criteriaClasses = new List<string>() { "Peasant", "Miner", "Craftsman", "Archer", "Stalker", "Hunter", "Druid", "Shaman"
         , "Mage", "Knight", "Barbarian", "Marauder", "Noble" };
     private List<string> criteriaTraits = new List<string>() { "Accident Prone", "Agoraphobic", "Alcoholic", "Ambitious", "Authoritative", "Cannibal"
-        , "Chaste", "Coward", "Diplomatic", "Healing Expert", "Evil"
+        , "Chaste", "Coward", "Diplomatic", "Evil"
         , "Fast", "Fireproof", "Glutton", "Hothead", "Inspiring", "Kleptomaniac"
         , "Lazy", "Lustful", "Lycanthrope", "Music Hater", "Music Lover", "Narcoleptic"
         , "Nocturnal", "Optimist", "Pessimist", "Psychopath", "Purifier", "Pyrophobic"

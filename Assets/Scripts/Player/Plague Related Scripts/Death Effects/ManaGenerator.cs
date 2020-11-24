@@ -45,16 +45,6 @@ namespace Plague.Death_Effect {
                     return string.Empty;
             }
         }
-        public virtual string GetEffectTooltip(int p_level) {
-            switch (p_level) {
-                case 1:
-                case 2:
-                case 3:
-                    return "Plagued victims produce Mana Orbs when they die.";
-                default:
-                    return string.Empty;
-            }
-        }
         public override void OnDeath(Character p_character) {
             ActivateEffect(p_character);
         }

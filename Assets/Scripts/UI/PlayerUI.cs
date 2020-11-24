@@ -95,10 +95,6 @@ public class PlayerUI : BaseMonoBehaviour {
 
     [Header("Summons")]
     [SerializeField] private SummonListUI summonList;
-    //public ScrollRect summonsScrollRect;
-    //public GameObject summonsContainerGO;
-    //[SerializeField] private GameObject characterNameplateItem;
-    //private List<CharacterNameplateItem> _summonItems;
 
     [Header("Items")] 
     public Toggle itemsToggle;
@@ -121,6 +117,10 @@ public class PlayerUI : BaseMonoBehaviour {
 
     [Header("Building")] 
     [SerializeField] private BuildListUI _buildListUI;
+    
+    [Header("Plague Points")]
+    [SerializeField] private TextMeshProUGUI plaguePointLbl;
+    [SerializeField] private RectTransform plaguePointsContainer;
     
     public HexTile harassDefendInvadeTargetHex { get; private set; }
 
@@ -146,6 +146,7 @@ public class PlayerUI : BaseMonoBehaviour {
 
         minionList.Initialize();
         summonList.Initialize();
+        plaguePointsContainer.gameObject.SetActive(false);
 
         Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<InfoUIBase>(UISignals.MENU_CLOSED, OnMenuClosed);
@@ -164,7 +165,6 @@ public class PlayerUI : BaseMonoBehaviour {
     }
 
     public void InitializeAfterGameLoaded() {
-        //Kill Count UI
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
@@ -178,6 +178,7 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_UNSEIZE_POI, OnUnseizePOI);
         Messenger.AddListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnAddNewCharacter);
         Messenger.AddListener<Character>(CharacterSignals.NECROMANCER_SPAWNED, OnNecromancerSpawned);
+        Messenger.AddListener<int>(PlayerSignals.UPDATED_PLAGUE_POINTS, UpdatePlaguePointsAmount);
 
         //key presses
         Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyPressed);
@@ -186,10 +187,7 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         InitialUpdateVillagerListCharacterItems();
         InitializeIntel();
-        // UpdateIntel();
 #if UNITY_EDITOR
-        itemsToggle.gameObject.SetActive(false);
-        artifactsToggle.gameObject.SetActive(false);    
         itemsToggle.gameObject.SetActive(true);
         artifactsToggle.gameObject.SetActive(true);
         CreateItemsForTesting();
@@ -198,7 +196,6 @@ public class PlayerUI : BaseMonoBehaviour {
         itemsToggle.gameObject.SetActive(false);
         artifactsToggle.gameObject.SetActive(false);        
 #endif
-        // OnThreatUpdated();
     }
     public void InitializeAfterLoadOutPicked() {
         UpdateIntel();
@@ -211,6 +208,8 @@ public class PlayerUI : BaseMonoBehaviour {
         summonList.UpdateList();
 
         OnThreatUpdated();
+        UpdatePlaguePointsContainer();
+        UpdatePlaguePointsAmount(PlayerManager.Instance.player.plagueComponent.plaguePoints);
     }
 
     #region Listeners
@@ -377,7 +376,7 @@ public class PlayerUI : BaseMonoBehaviour {
         manaLbl.text = PlayerManager.Instance.player.mana.ToString();
     }
     private Tweener _currentManaPunchTween;
-    public void DoManaPunchEffect() {
+    private void DoManaPunchEffect() {
         if (_currentManaPunchTween == null) {
             _currentManaPunchTween = manaContainer.DOPunchScale(new Vector3(0.8f, 0.8f, 0.8f), 0.5f).OnComplete(() => _currentManaPunchTween = null);    
         }
@@ -531,8 +530,7 @@ public class PlayerUI : BaseMonoBehaviour {
     
     #region Corruption and Threat
     public void OnHoverEnterThreat() {
-        string text =
-            "The amount of threat you've generated in this world. Once this reaches 100, characters will start attacking your structures.";
+        string text = "The amount of threat you've generated in this world. Once this reaches 100, characters will start attacking your structures.";
         UIManager.Instance.ShowSmallInfo(text, threatHoverPos, "Threat");
     }
     public void OnHoverExitThreat() {
@@ -792,28 +790,6 @@ public class PlayerUI : BaseMonoBehaviour {
         _generalConfirmation.ShowGeneralConfirmation(header, body, buttonText, onClickOK, onClickCenter);
     }
     #endregion
-
-    //#region New Minion
-    //[Header("New Minion UI")]
-    //[SerializeField] private GameObject newMinionUIGO;
-    //[SerializeField] private MinionCard newMinionCard;
-    //public void ShowNewMinionUI(Minion minion) {
-    //    if (IsMajorUIShowing()) {
-    //        AddPendingUI(() => ShowNewMinionUI(minion));
-    //        return;
-    //    }
-    //    UIManager.Instance.Pause();
-    //    UIManager.Instance.SetSpeedTogglesState(false);
-    //    newMinionCard.SetMinion(minion);
-    //    newMinionUIGO.SetActive(true);
-    //}
-    //public void HideNewMinionUI() {
-    //    newMinionUIGO.SetActive(false);
-    //    if (!TryShowPendingUI() && !UIManager.Instance.IsObjectPickerOpen()) {
-    //        UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
-    //    }
-    //}
-    //#endregion
 
     #region Seize
     private void OnSeizePOI(IPointOfInterest poi) {
@@ -1106,11 +1082,37 @@ public class PlayerUI : BaseMonoBehaviour {
     #endregion
 
     #region Plague
-    public void ShowPlaguePointsGainedEffect(int adjustmentAmount, Vector3 worldPos) {
-        var text = $"<color=#FE4D60>+{adjustmentAmount.ToString()}{UtilityScripts.Utilities.PlagueIcon()}</color>";
-        Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(InnerMapCameraMove.Instance.camera, worldPos);
-        GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", screenPos, Quaternion.identity, transform, true);
-        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(0f, 50f), true);
+    private Tweener _currentPlaguePointPunchTween;
+    private void DoPlaguePointPunchEffect() {
+        if (_currentPlaguePointPunchTween == null) {
+            _currentPlaguePointPunchTween = plaguePointsContainer.DOPunchScale(new Vector3(0.8f, 0.8f, 0.8f), 0.5f).OnComplete(() => _currentPlaguePointPunchTween = null);    
+        }
+    }
+    public void ShowPlaguePointsGainedEffect(int adjustmentAmount) {
+        if (plaguePointsContainer.gameObject.activeSelf) {
+            DoPlaguePointPunchEffect();
+            var text = $"<color=#FE4D60>+{adjustmentAmount.ToString()}{UtilityScripts.Utilities.PlagueIcon()}</color>";
+            GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", plaguePointLbl.transform.position, Quaternion.identity, transform, true);
+            effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-25, 25), -70f));    
+        }
+    }
+    private void UpdatePlaguePointsAmount(int p_amount) {
+        plaguePointLbl.text = p_amount.ToString();
+    }
+    private void UpdatePlaguePointsContainer() {
+        plaguePointsContainer.gameObject.SetActive(PlayerSkillManager.Instance.GetDemonicStructureSkillData(SPELL_TYPE.BIOLAB).isInUse);
+    }
+    public void OnHoverEnterPlaguePoints() {
+        string text = "The amount of Plague Points you've generated. You can use this to upgrade your Plague if you have a Biolab built";
+        UIManager.Instance.ShowSmallInfo(text, threatHoverPos, $"{UtilityScripts.Utilities.PlagueIcon()}Plague Points");
+    }
+    public void OnHoverExitPlaguePoints() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    public void OnClickPlaguePoints() {
+        if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB)) {
+            UIManager.Instance.ShowBiolabUI();    
+        }
     }
     #endregion
 }

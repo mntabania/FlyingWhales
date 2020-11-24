@@ -19,13 +19,13 @@ namespace Goap.Job_Checkers {
             bool isResponsibleForTrait = trait.IsResponsibleForTrait(character);
 
             //if special illness, check if character is healer
-            if (TraitManager.Instance.specialIllnessTraits.Contains(trait.name)) {
+            if (trait.name == "Poisoned") {
                 return isNotHostileAndNotDead &&
                        character.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter,
                            RelationshipManager.Rival, RelationshipManager.Enemy) == false 
                        && isResponsibleForTrait == false
                        && !character.traitContainer.HasTrait("Psychopath")
-                       && character.traitContainer.HasTrait("Healing Expert");	
+                       && character.traitContainer.HasTrait("Poison Expert");	
             }
 				
             return isNotHostileAndNotDead &&

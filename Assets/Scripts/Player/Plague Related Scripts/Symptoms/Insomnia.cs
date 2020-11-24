@@ -11,13 +11,12 @@ namespace Plague.Symptom {
             p_character.traitContainer.AddTrait(p_character, "Insomnia");
             Debug.Log("Activated Insomnia Symptom");
         }
-        public override bool CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action) {
+        public override void CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action) {
             if (p_action.associatedJobType.IsTirednessRecoveryTypeJob()/* || p_action.goapType.IsRestingAction()*/) {
                 if (GameUtilities.RollChance(15)) {
                     ActivateSymptom(p_character);
                 }
             }
-            return true;
         }
     }
 }

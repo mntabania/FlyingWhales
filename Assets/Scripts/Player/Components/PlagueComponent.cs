@@ -23,9 +23,7 @@ public class PlagueComponent {
     }
     public void GainPlaguePointFromCharacter(int amount, Character p_character) {
         AdjustPlaguePoints(amount);
-        if (p_character.marker) {
-            PlayerUI.Instance.ShowPlaguePointsGainedEffect(amount, p_character.worldPosition);    
-        }
+        PlayerUI.Instance.ShowPlaguePointsGainedEffect(amount);    
     }
     #endregion
 }
