@@ -1022,6 +1022,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         hoveredImg.enabled = state;
         particleEffectParent.gameObject.SetActive(state);
         particleEffectParentAllowRotation.gameObject.SetActive(state);
+        if (!state) {
+            HideHPBar();
+        }
         // clickedImg.enabled = state;
     }
     public bool IsShowingVisuals() {
