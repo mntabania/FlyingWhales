@@ -94,6 +94,7 @@ public class ReleaseCharacter : GoapAction {
     #region State Effects
     public void AfterReleaseSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.poiTarget as Character;
+        bool isEnslaved = target.traitContainer.HasTrait("Enslaved");
         target.traitContainer.RemoveStatusAndStacks(target, "Restrained");
         target.traitContainer.RemoveStatusAndStacks(target, "Unconscious");
         target.traitContainer.RemoveStatusAndStacks(target, "Frozen");
@@ -104,6 +105,12 @@ public class ReleaseCharacter : GoapAction {
             if(quest.targetCharacter == goapNode.poiTarget) {
                 quest.SetIsReleasing(false);
                 goapNode.actor.partyComponent.currentParty.GoBackHomeAndEndQuest();
+            }
+        }
+        if (isEnslaved) {
+            //If target is enslaved and is released, must try to join the faction of the releaser
+            if (goapNode.actor.faction != null && goapNode.actor.faction.isMajorNonPlayer) {
+                target.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, goapNode.actor, "join_faction_normal");
             }
         }
     }
