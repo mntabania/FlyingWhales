@@ -16,6 +16,7 @@ using UnityEngine.Serialization;
 using UtilityScripts;
 using UnityEngine.Assertions;
 using Locations.Settlements;
+using Random = UnityEngine.Random;
 
 public class CharacterMarker : MapObjectVisual<Character> {
     public Character character { get; private set; }
@@ -1987,8 +1988,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (constantPath.allNodes != null && constantPath.allNodes.Count > 0) {
             GoTo(PathUtilities.GetPointsOnNodes(constantPath.allNodes, 1).Last(), arrivalAction);    
         } else {
-            //could not find nodes to stroll to. Just do arrival action, then try again.
-            arrivalAction.Invoke();
+            if (character.stateComponent.currentState is StrollOutsideState) {
+                //could not find nodes to stroll to. Just exit stroll state.
+                character.stateComponent.ExitCurrentState();    
+            }
         }
         
     }

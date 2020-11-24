@@ -1104,7 +1104,7 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     public void OnHoverEnterPlaguePoints() {
         string text = "The amount of Plague Points you've generated. You can use this to upgrade your Plague if you have a Biolab built";
-        UIManager.Instance.ShowSmallInfo(text, threatHoverPos, $"{UtilityScripts.Utilities.PlagueIcon()}Plague Points");
+        UIManager.Instance.ShowSmallInfo(text, threatHoverPos, $"{UtilityScripts.Utilities.PlagueIcon()} Plague Points");
     }
     public void OnHoverExitPlaguePoints() {
         UIManager.Instance.HideSmallInfo();
