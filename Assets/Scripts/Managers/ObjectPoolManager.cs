@@ -32,6 +32,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     private List<List<HexTile>> _hexTileListPool;
     private List<List<LocationStructure>> _structureListPool;
     private List<List<LocationGridTile>> _tileListPool;
+    private List<List<Faction>> _factionListPool;
 
     private void Awake() {
         Instance = this;
@@ -67,6 +68,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructHexTileListPool();
         ConstructStructureListPool();
         ConstructGridTileListPool();
+        ConstructFactionListPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -465,6 +467,28 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     }
     #endregion
 
+    #region Faction
+    private void ConstructFactionListPool() {
+        _factionListPool = new List<List<Faction>>();
+    }
+    public List<Faction> CreateNewFactionList() {
+        List<Faction> data = GetFactionListFromPool();
+        return data;
+    }
+    public void ReturnFactionListToPool(List<Faction> data) {
+        data.Clear();
+        _factionListPool.Add(data);
+    }
+    private List<Faction> GetFactionListFromPool() {
+        if (_factionListPool.Count > 0) {
+            List<Faction> data = _factionListPool[0];
+            _factionListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<Faction>();
+    }
+    #endregion
+
     protected override void OnDestroy() {
         if (allObjectPools != null) {
             foreach (KeyValuePair<string,EZObjectPool> pool in allObjectPools) {
@@ -501,6 +525,8 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _structureListPool = null;
         _tileListPool?.Clear();
         _tileListPool = null;
+        _factionListPool?.Clear();
+        _factionListPool = null;
         base.OnDestroy();
         Instance = null;
     }

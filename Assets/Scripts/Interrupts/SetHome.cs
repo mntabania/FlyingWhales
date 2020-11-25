@@ -147,10 +147,10 @@ namespace Interrupts {
                                 return;
                             }
                         } else {
-                            log += "\n-Character has territory, 15% chance to change territory to adjacent region";
+                            log += "\n-Character has territory, 50% chance to change territory to adjacent region";
                             roll = UnityEngine.Random.Range(0, 100);
                             log += "\n-Roll: " + roll;
-                            if (roll < 15) {
+                            if (roll < 50) {
                                 HexTile territory = GetTerritoryInAdjacentRegions(currentRegion);
                                 if (territory != null) {
                                     actor.ClearTerritory();
@@ -179,7 +179,7 @@ namespace Interrupts {
             if(actor.homeSettlement != null) {
                 log += "\nCharacter is still part of a village";
                 log += "\nFind unoccupied dwelling";
-                LocationStructure chosenDwelling = GetUnoccupiedDwelling(actor.homeSettlement);
+                LocationStructure chosenDwelling = actor.homeSettlement.GetFirstUnoccupiedDwelling();
                 if(chosenDwelling != null) {
                     log += "\nFound dwelling: " + chosenDwelling.name;
                     actor.ClearTerritoryAndMigrateHomeStructureTo(chosenDwelling, affectSettlement: false);
@@ -229,10 +229,10 @@ namespace Interrupts {
                                     return;
                                 }
 
-                                log += "\n-15% chance: set Territory to a random structure-less Area in one of the adjacent regions";
+                                log += "\n-50% chance: set Territory to a random structure-less Area in one of the adjacent regions";
                                 roll = UnityEngine.Random.Range(0, 100);
                                 log += "\n-Roll: " + roll;
-                                if (roll < 15) {
+                                if (roll < 50) {
                                     HexTile territory = GetTerritoryInAdjacentRegions(currentRegion);
                                     if (territory != null) {
                                         actor.ClearTerritory();
@@ -367,10 +367,10 @@ namespace Interrupts {
                     }
                 }
 
-                log += "\n-15% chance: set Territory to a random structure-less Area in one of the adjacent regions";
+                log += "\n-50% chance: set Territory to a random structure-less Area in one of the adjacent regions";
                 roll = UnityEngine.Random.Range(0, 100);
                 log += "\n-Roll: " + roll;
-                if (roll < 15) {
+                if (roll < 50) {
                     HexTile territory = GetTerritoryInAdjacentRegions(currentRegion);
                     if (territory != null) {
                         actor.ClearTerritory();
@@ -403,7 +403,7 @@ namespace Interrupts {
                     if (baseSettlement != actor.homeSettlement) {
                         if(baseSettlement.locationType == LOCATION_TYPE.VILLAGE) {
                             if (baseSettlement is NPCSettlement npcSettlement) {
-                                chosenDwelling = GetUnoccupiedDwelling(npcSettlement);
+                                chosenDwelling = npcSettlement.GetFirstUnoccupiedDwelling();
                                 if (chosenDwelling != null) {
                                     identifier = "unoccupied";
                                     return chosenDwelling;
@@ -468,20 +468,6 @@ namespace Interrupts {
                 }
             }
             return chosenSettlement;
-        }
-        private LocationStructure GetUnoccupiedDwelling(NPCSettlement settlement) {
-            LocationStructure chosenDwelling = null;
-            List<LocationStructure> dwellings = settlement.GetStructuresOfType(STRUCTURE_TYPE.DWELLING);
-            if (dwellings != null) {
-                for (int i = 0; i < dwellings.Count; i++) {
-                    LocationStructure currDwelling = dwellings[i];
-                    if (!currDwelling.IsOccupied()) {
-                        chosenDwelling = currDwelling;
-                        break;
-                    }
-                }
-            }
-            return chosenDwelling;
         }
         private LocationStructure GetDwellingWithCloseFriendOrNonRivalEnemyRelative(NPCSettlement settlement, Character actor) {
             LocationStructure chosenDwelling = null;

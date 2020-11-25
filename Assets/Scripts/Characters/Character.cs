@@ -1356,23 +1356,72 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public Faction JoinFactionProcessing() {
-        List<Faction> viableFactions = new List<Faction>();
-        if (currentRegion != null) {
-            for (int i = 0; i < currentRegion.factionsHere.Count; i++) {
-                Faction potentialFaction = currentRegion.factionsHere[i];
-                if (potentialFaction.isMajorNonPlayer && !potentialFaction.isDestroyed
-                    && !potentialFaction.IsCharacterBannedFromJoining(this)
-                    && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeologies(this)) {
-                    if (potentialFaction.HasOwnedSettlementInRegion(currentRegion)) {
-                        if (!viableFactions.Contains(potentialFaction)) {
-                            viableFactions.Add(potentialFaction);
-                        }
+        Faction chosenFaction = null;
+        List<Faction> viableFactions = ObjectPoolManager.Instance.CreateNewFactionList();
+        if (traitContainer.HasTrait("Cultist")) {
+            viableFactions.Clear();
+            for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+                Faction faction = FactionManager.Instance.allFactions[i];
+                if (faction.factionType.type == FACTION_TYPE.Demon_Cult) {
+                    bool hasCultLeader = faction.HasMemberThatMeetCriteria(m => !m.isDead && m.characterClass.className == "Cult Leader");
+                    if (hasCultLeader) {
+                        chosenFaction = faction;
+                        break;
+                    } else {
+                        viableFactions.Add(faction);
                     }
                 }
             }
+            if(chosenFaction == null && viableFactions.Count > 0) {
+                chosenFaction = CollectionUtilities.GetRandomElement(viableFactions);
+            }
         }
-        if (viableFactions.Count > 0) {
-            Faction chosenFaction = viableFactions[UnityEngine.Random.Range(0, viableFactions.Count)];
+        if(chosenFaction == null) {
+            viableFactions.Clear();
+            if (currentRegion != null) {
+                for (int i = 0; i < currentRegion.factionsHere.Count; i++) {
+                    Faction potentialFaction = currentRegion.factionsHere[i];
+                    if (potentialFaction.isMajorNonPlayer && !potentialFaction.isDestroyed
+                        && !potentialFaction.IsCharacterBannedFromJoining(this)
+                        && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeologies(this)) {
+                        if (potentialFaction.HasOwnedSettlementInRegion(currentRegion)) {
+                            bool hasRelativeOrLoverThatIsNotEnemyRival = faction.HasMemberThatMeetCriteria(m => !m.isDead && (relationshipContainer.IsFamilyMember(m) || relationshipContainer.HasRelationshipWith(m, RELATIONSHIP_TYPE.LOVER)) && !relationshipContainer.IsEnemiesWith(m));
+                            if (hasRelativeOrLoverThatIsNotEnemyRival) {
+                                chosenFaction = potentialFaction;
+                                break;
+                            } else {
+                                bool hasCloseFriend = faction.HasMemberThatMeetCriteria(m => !m.isDead && relationshipContainer.GetOpinionLabel(m) == RelationshipManager.Close_Friend);
+                                if (hasCloseFriend) {
+                                    chosenFaction = potentialFaction;
+                                    break;
+                                } else {
+                                    bool hasNoRival = !faction.HasMemberThatMeetCriteria(m => !m.isDead && relationshipContainer.GetOpinionLabel(m) == RelationshipManager.Rival);
+                                    if (hasNoRival) {
+                                        chosenFaction = potentialFaction;
+                                        break;
+                                    } else {
+                                        bool hasFriend = faction.HasMemberThatMeetCriteria(m => !m.isDead && relationshipContainer.GetOpinionLabel(m) == RelationshipManager.Friend);
+                                        if (hasFriend) {
+                                            chosenFaction = potentialFaction;
+                                            break;
+                                        } else {
+                                            if (!viableFactions.Contains(potentialFaction)) {
+                                                viableFactions.Add(potentialFaction);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (chosenFaction == null && viableFactions.Count > 0) {
+                    chosenFaction = CollectionUtilities.GetRandomElement(viableFactions);
+                }
+            }
+        }
+        
+        if (chosenFaction != null) {
             interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, chosenFaction.characters[0], "join_faction_normal");
             return chosenFaction;
         }

@@ -443,6 +443,15 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return false;
     }
+    public int GetMemberCountThatMeetCriteria(Func<Character, bool> criteria) {
+        int count = 0;
+        for (int i = 0; i < characters.Count; i++) {
+            if (criteria.Invoke(characters[i])) {
+                count++;
+            }
+        }
+        return count;
+    }
     #endregion
 
     #region Utilities
