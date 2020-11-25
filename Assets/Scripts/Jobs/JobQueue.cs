@@ -29,7 +29,7 @@ public class JobQueue {
             //Adding job in queue with assigned plan means that the job has fixes steps and will not go to the multithread anymore to get a plan
             if(job is GoapPlanJob goapPlanJob && goapPlanJob.assignedPlan != null) {
                 int canPerformValue = owner.limiterComponent.canPerformValue;
-                if (canPerformValue == -1 && owner.traitContainer.HasTrait("Paralyzed")) {
+                if (canPerformValue == -1 && (owner.traitContainer.HasTrait("Paralyzed") || owner.traitContainer.HasTrait("Quarantined"))) {
                     //If the owner is paralyzed and the only reason he cannot perform is because of that paralyzed, the plan must not be scrapped
                 } else {
                     owner.logComponent.PrintLogIfActive($"{owner.name} is scrapping plan since {owner.name} cannot perform. {job.name} is the job.");

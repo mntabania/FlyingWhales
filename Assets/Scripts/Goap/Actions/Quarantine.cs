@@ -75,8 +75,9 @@ public class Quarantine : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData, JobQueueItem job) {
         bool requirementsSatisfied = base.AreRequirementsSatisfied(actor, target, otherData, job);
         if (requirementsSatisfied) {
-            Character targetCharacter = target as Character;
-            return GetValidBedForActor(actor, targetCharacter) != null;
+            // Character targetCharacter = target as Character;
+            // return GetValidBedForActor(actor, targetCharacter) != null;
+            return actor.homeSettlement != null;
         }
         return false;
     }
@@ -119,8 +120,13 @@ public class Quarantine : GoapAction {
          Assert.IsNotNull(targetCharacter, $"Target character of Quarantine Action by {goapNode.actor.name} is not a character!");
          BedClinic bed = GetBedNearActor(actor, targetCharacter);
          goapNode.actor.UncarryPOI(targetCharacter, dropLocation: bed.gridTileLocation);
+         //If plagued, quarantined indefinitely, else quarantined for 96 hours.
+         int overrideDuration = -1;
+         if (targetCharacter.traitContainer.HasTrait("Plagued")) {
+             overrideDuration = 0;
+         }
+         targetCharacter.traitContainer.AddTrait(targetCharacter, "Quarantined", overrideDuration: overrideDuration);
          bed.OnDoActionToObject(goapNode);
-         targetCharacter.traitContainer.AddTrait(targetCharacter, "Quarantined");
          targetCharacter.jobQueue.CancelAllJobs("Quarantined");
      }
      #endregion

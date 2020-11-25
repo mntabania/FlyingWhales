@@ -67,8 +67,7 @@ public class Nap : GoapAction {
                 }
             }
         }
-        if (target is Bed) {
-            Bed targetBed = target as Bed;
+        if (target is BaseBed targetBed) {
             if (!targetBed.IsSlotAvailable()) {
                 cost += 2000;
                 costLog += " +2000(Fully Occupied)";
@@ -183,6 +182,6 @@ public class Nap : GoapAction {
     #endregion
 
     private bool CanSleepInBed(Character character, TileObject tileObject) {
-        return (tileObject as Bed).CanUseBed(character);
+        return (tileObject as BaseBed).CanUseBed(character);
     }
 }

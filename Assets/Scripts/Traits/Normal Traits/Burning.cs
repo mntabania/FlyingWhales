@@ -222,7 +222,7 @@ namespace Traits {
 
             //Sleeping characters in bed should also receive damage
             //https://trello.com/c/kFZAHo11/1203-sleeping-characters-in-bed-should-also-receive-damage
-            if (owner is Bed bed) {
+            if (owner is BaseBed bed) {
                 if(bed.users != null && bed.users.Length > 0) {
                     for (int i = 0; i < bed.users.Length; i++) {
                         Character user = bed.users[i];

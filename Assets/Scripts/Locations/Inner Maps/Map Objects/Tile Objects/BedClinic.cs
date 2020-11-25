@@ -7,6 +7,8 @@ public class BedClinic : BaseBed, CharacterEventDispatcher.ITraitListener {
     public override Type serializedData => typeof(SaveDataBedClinic);
     public BedClinic() : base(1) {
         Initialize(TILE_OBJECT_TYPE.BED_CLINIC);
+        AddAdvertisedAction(INTERACTION_TYPE.SLEEP);
+        AddAdvertisedAction(INTERACTION_TYPE.NAP);
     }
     public BedClinic(SaveDataTileObject data) : base(data, 1) { }
     
@@ -23,6 +25,8 @@ public class BedClinic : BaseBed, CharacterEventDispatcher.ITraitListener {
                 character.eventDispatcher.SubscribeToCharacterLostTrait(this);
             }
         }
+        AddAdvertisedAction(INTERACTION_TYPE.SLEEP);
+        AddAdvertisedAction(INTERACTION_TYPE.NAP);
     }
     #endregion
     
@@ -32,6 +36,28 @@ public class BedClinic : BaseBed, CharacterEventDispatcher.ITraitListener {
         switch (action.goapType) {
             case INTERACTION_TYPE.QUARANTINE:
                 AddUser(action.poiTarget as Character);
+                break;
+            case INTERACTION_TYPE.SLEEP:
+            case INTERACTION_TYPE.NAP:
+                mapVisual?.UpdateTileObjectVisual(this);
+                break;
+        }
+    }
+    public override void OnDoneActionToObject(ActualGoapNode action) {
+        base.OnDoneActionToObject(action);
+        switch (action.goapType) {
+            case INTERACTION_TYPE.SLEEP:
+            case INTERACTION_TYPE.NAP:
+                mapVisual?.UpdateTileObjectVisual(this);
+                break;
+        }
+    }
+    public override void OnCancelActionTowardsObject(ActualGoapNode action) {
+        base.OnCancelActionTowardsObject(action);
+        switch (action.goapType) {
+            case INTERACTION_TYPE.SLEEP:
+            case INTERACTION_TYPE.NAP:
+                mapVisual?.UpdateTileObjectVisual(this);
                 break;
         }
     }

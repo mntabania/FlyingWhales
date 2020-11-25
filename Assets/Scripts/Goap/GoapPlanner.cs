@@ -129,8 +129,8 @@ public class GoapPlanner {
             }
             if (!owner.limiterComponent.canPerform) {
                 int canPerformValue = owner.limiterComponent.canPerformValue;
-                if(canPerformValue == -1 && owner.traitContainer.HasTrait("Paralyzed")) {
-                    //If the owner is paralyzed and the only reason he cannot perform is because of that paralyzed, the plan must not be scrapped
+                if(canPerformValue == -1 && (owner.traitContainer.HasTrait("Paralyzed") || owner.traitContainer.HasTrait("Quarantined"))) {
+                    //If the owner is paralyzed or quarantined and the only reason he cannot perform is because of that paralyzed, the plan must not be scrapped
                 } else {
                     owner.logComponent.PrintLogIfActive($"{owner.name} is scrapping plan since {owner.name} cannot perform. {goapThread.job.name} is the job.");
                     goapThread.job.CancelJob(false);

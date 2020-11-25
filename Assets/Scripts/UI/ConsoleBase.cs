@@ -99,6 +99,7 @@ public class ConsoleBase : InfoUIBase {
             {"/adjust_pp", AdjustPlaguePoints},
             {"/remove_needed_class", RemoveNeededClassFromSettlement},
             {"/activate_settlement_event", ActivateSettlementEvent},
+            {"/trigger_quarantine", TriggerQuarantine},
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1634,7 +1635,27 @@ public class ConsoleBase : InfoUIBase {
         } else {
             AddErrorMessage($"No Settlement Event Type {settlementEventTypeStr}");
         }
+    }
+    private void TriggerQuarantine(string[] parameters) {
+        if (parameters.Length != 2) { //Settlement, Character
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /trigger_quarantine");
+            return;
+        }
         
+        string settlementName = parameters[0];
+        string characterName = parameters[1];
+        BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByName(settlementName);
+        if (settlement is NPCSettlement npcSettlement) {
+            Character character = CharacterManager.Instance.GetCharacterByName(characterName);
+            if (character != null) {
+                npcSettlement.settlementJobTriggerComponent.TriggerQuarantineJob(character);    
+            } else {
+                AddErrorMessage($"Could not find character with name {characterName}");
+            }
+        } else {
+            AddErrorMessage($"Could not find NPCSettlement with name {settlementName}");
+        }
         
     }
     #endregion

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps.Location_Structures;
 using UnityEngine;  
 using Traits;
@@ -65,11 +66,16 @@ public class Sleep : GoapAction {
         }
         costLog = $"\n{name} {target.nameWithID}:";
         cost = 0;
-        if (target is Bed) {
-            Bed targetBed = target as Bed;
+        if (target is BaseBed) {
+            BaseBed targetBed = target as BaseBed;
             if (!targetBed.IsSlotAvailable()) {
-                cost += 2000;
-                costLog += " +2000(Fully Occupied)";
+                if (targetBed.users.Contains(actor)) {
+                    cost = 10;
+                    costLog += " 10(Already in bed)"; //Mainly used for quarantine
+                } else {
+                    cost += 2000;
+                    costLog += " +2000(Fully Occupied)";    
+                }
             } else if (actor.traitContainer.HasTrait("Travelling")) {
                 cost += 100;
                 costLog += " +100(Travelling)";

@@ -39,7 +39,6 @@ namespace Locations.Settlements.Settlement_Events {
             UnsubscribeListeners(p_settlement);
             p_settlement.settlementClassTracker.RemoveNeededClass("Druid");
             if (!string.IsNullOrEmpty(_endScheduleTicket)) { SchedulingManager.Instance.RemoveSpecificEntry(_endScheduleTicket); }
-            p_settlement.settlementJobTriggerComponent.RemoveJobTrigger(p_settlement, SETTLEMENT_JOB_TRIGGER.Plague_Care);
         }
         public override SaveDataSettlementEvent Save() {
             SaveDataPlaguedSettlementEvent saveData = new SaveDataPlaguedSettlementEvent();
@@ -142,7 +141,6 @@ namespace Locations.Settlements.Settlement_Events {
                     for (int i = 0; i < jobs.Count; i++) {
                         jobs[i].ForceCancelJob(false, "Settlement no longer in Quarantine");
                     }
-                    p_settlement.settlementJobTriggerComponent.RemoveJobTrigger(p_settlement, SETTLEMENT_JOB_TRIGGER.Plague_Care);
                     break;
             }
         }
@@ -153,6 +151,7 @@ namespace Locations.Settlements.Settlement_Events {
                     break;
                 case PLAGUE_EVENT_RESPONSE.Quarantine:
                     p_faction.factionType.AddCrime(CRIME_TYPE.Plagued, CRIME_SEVERITY.Infraction);
+                    //NOTE: Job trigger is not yet removed when event is finished since it is expected that plague care will still continue after event if there are still quarantined characters.
                     p_settlement.settlementJobTriggerComponent.AddJobTrigger(p_settlement, SETTLEMENT_JOB_TRIGGER.Plague_Care);
                     break;
                 case PLAGUE_EVENT_RESPONSE.Slay:
