@@ -351,7 +351,7 @@ public class GoapPlanJob : JobQueueItem {
             if (o != null) {
                 for (int i = 0; i < o.Length; i++) {
                     OtherData data = o[i];
-                    if (data.obj == p_obj) {
+                    if (data.obj.Equals(p_obj)) {
                         return true;
                     }
                 }

@@ -446,6 +446,8 @@ public class FactionManager : BaseMonoBehaviour {
                         // }
                         factionRelationship.SetRelationshipStatus(newStatus);
                     }    
+                } else {
+                    factionRelationship.SetRelationshipStatus(newStatus);
                 }
             }
         }

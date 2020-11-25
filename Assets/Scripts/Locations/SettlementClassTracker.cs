@@ -3,12 +3,20 @@ using JetBrains.Annotations;
 using System.Linq;
 namespace Locations {
     public class SettlementClassTracker {
+
+        #region IListener
+        public interface ISettlementTrackerListener {
+            void OnNeededClassRemoved(string p_className);
+        }
+        #endregion
         
         private static readonly string[] _characterClassOrder = new[] { "Craftsman", "Peasant", "Combatant", "Civilian", "Combatant", "Combatant", "Noble", "Combatant" };
         private readonly List<string> _neededClasses;
         private readonly List<string> _currentResidentClasses;
         private int _currentClassOrderIndex;
 
+        private System.Action<string> onNeededClassRemoved;
+        
         #region getters
         public int currentClassOrderIndex => _currentClassOrderIndex;
         public List<string> neededClasses => _neededClasses;
@@ -31,6 +39,10 @@ namespace Locations {
         }
         public void RemoveNeededClass(string p_className) {
             neededClasses.Remove(p_className);
+            if (!neededClasses.Contains(p_className)) {
+                //only fire event if there is no more of the given class inside the list.
+                onNeededClassRemoved?.Invoke(p_className);    
+            }
         }
         public void OnResidentAdded(Character p_newResident) {
             currentResidentClasses.Add(p_newResident.characterClass.className);
@@ -59,16 +71,14 @@ namespace Locations {
             }
             return currentClass;
         }
-        public float GetCharacterClassPercentage(string p_className) {
+        public int GetCurrentResidentClassAmount(string p_className) {
             int classCount = 0;
             for (int i = 0; i < _currentResidentClasses.Count; i++) {
                 if (currentResidentClasses[i] == p_className) {
                     classCount++;
                 }
             }
-            int totalClassCount = _currentResidentClasses.Count;
-            float percentage = (float)classCount / totalClassCount;
-            return percentage * 100f;
+            return classCount;
         }
         public bool HasExcessOfClass(string p_className) {
             if (neededClasses.Contains(p_className)) {
@@ -79,6 +89,15 @@ namespace Locations {
             //if class isn't needed, then consider it as excess 
             return false;
         }
+
+        #region Listeners
+        public void SubscribeToNeededClassRemoved(ISettlementTrackerListener p_listener) {
+            onNeededClassRemoved += p_listener.OnNeededClassRemoved;
+        }
+        public void UnsubscribeToNeededClassRemoved(ISettlementTrackerListener p_listener) {
+            onNeededClassRemoved -= p_listener.OnNeededClassRemoved;
+        }
+        #endregion
     }
 
     public class SaveDataSettlementClassTracker : SaveData<SettlementClassTracker> {
