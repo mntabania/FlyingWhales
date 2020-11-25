@@ -397,56 +397,88 @@ public class FactionManager : BaseMonoBehaviour {
     //    int totalFactionLvl = allFactions.Where(x => x.isActive).Sum(x => x.level);
     //    return totalFactionLvl / activeFactionsCount;
     //}
-    public void RerollFactionRelationships(Faction faction, Character leader, bool defaultToNeutral, Action<FACTION_RELATIONSHIP_STATUS, Faction, Faction> onSetRelationshipAction = null) {
+    public void RerollFactionRelationships(Faction faction, Character leader, bool defaultToNeutral, bool logRelationshipChangeFromLeaderRelationship) {
         for (int i = 0; i < allFactions.Count; i++) {
             Faction otherFaction = allFactions[i];
             if(otherFaction.id != faction.id) {
                 FactionRelationship factionRelationship = faction.GetRelationshipWith(otherFaction);
-                if (otherFaction.isPlayerFaction) {
-                    //If Demon Worshipper, friendly with player faction
-                    factionRelationship.SetRelationshipStatus(faction.factionType.HasIdeology(FACTION_IDEOLOGY.Demon_Worship) ? 
-                        FACTION_RELATIONSHIP_STATUS.Friendly : FACTION_RELATIONSHIP_STATUS.Hostile);
-                    onSetRelationshipAction?.Invoke(factionRelationship.relationshipStatus, faction, otherFaction);
-                } else if (otherFaction.factionType.type == FACTION_TYPE.Vampire_Clan) {
+                FACTION_RELATIONSHIP_STATUS newStatus = factionRelationship.relationshipStatus;
+                if (faction.factionType.HasIdeology(FACTION_IDEOLOGY.Demon_Worship)) {
+                    if (otherFaction.isPlayerFaction || otherFaction.factionType.type == FACTION_TYPE.Demon_Cult) {
+                        newStatus = FACTION_RELATIONSHIP_STATUS.Friendly;
+                    }
+                }
+                if (otherFaction.factionType.type == FACTION_TYPE.Vampire_Clan) {
                     //If the other faction is a Vampire Clan
                     //And this faction is a Vampire Clan - Neutral, but if this facton is Lycan Clan - Hostile
                     if (faction.factionType.type == FACTION_TYPE.Lycan_Clan) {
-                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Hostile);
+                        newStatus = FACTION_RELATIONSHIP_STATUS.Hostile;
                     } else if (faction.factionType.type == FACTION_TYPE.Vampire_Clan) {
-                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);
-                    } else {
-                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);
+                        newStatus = FACTION_RELATIONSHIP_STATUS.Neutral;
                     }
-                    onSetRelationshipAction?.Invoke(factionRelationship.relationshipStatus, faction, otherFaction);
-                } else if (otherFaction.factionType.type == FACTION_TYPE.Lycan_Clan) {
+                }
+                if (otherFaction.factionType.type == FACTION_TYPE.Lycan_Clan) {
                     //If the other faction is a Lycan Clan
                     //And this faction is a Lycan Clan - Neutral, but if this facton is Vampire Clan - Hostile
                     if (faction.factionType.type == FACTION_TYPE.Vampire_Clan) {
-                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Hostile);
+                        newStatus = FACTION_RELATIONSHIP_STATUS.Hostile;
                     } else if (faction.factionType.type == FACTION_TYPE.Lycan_Clan) {
-                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);
-                    } else {
-                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);
+                        newStatus = FACTION_RELATIONSHIP_STATUS.Neutral;
                     }
-                    onSetRelationshipAction?.Invoke(factionRelationship.relationshipStatus, faction, otherFaction);
-                } else if (otherFaction.leader != null && otherFaction.leader is Character otherFactionLeader){
-                    //Check each Faction Leader of other existing factions if available:
+                }
+                if (otherFaction.leader != null && otherFaction.leader is Character otherFactionLeader){
                     if (leader.relationshipContainer.IsEnemiesWith(otherFactionLeader)) {
                         //If this one's Faction Leader considers that an Enemy or Rival, war with that faction
                         factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Hostile);
+                        if (logRelationshipChangeFromLeaderRelationship) {
+                            LogRelationshipChangeBasedOnLeadersRelationship(FACTION_RELATIONSHIP_STATUS.Hostile, faction, otherFaction);    
+                        }
                     } else if (leader.relationshipContainer.IsFriendsWith(otherFactionLeader)) {
                         //If this one's Faction Leader considers that a Friend or Close Friend, friendly with that faction
                         factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Friendly);
-                    } else {
-                        if (defaultToNeutral) {
-                            //The rest should be set as neutral
-                            factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);    
+                        if (logRelationshipChangeFromLeaderRelationship) {
+                            LogRelationshipChangeBasedOnLeadersRelationship(FACTION_RELATIONSHIP_STATUS.Friendly, faction, otherFaction);
                         }
-                    }
-                    onSetRelationshipAction?.Invoke(factionRelationship.relationshipStatus, faction, otherFaction);
+                    } else {
+                        // if (defaultToNeutral) {
+                        //     //The rest should be set as neutral
+                        //     factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);    
+                        // }
+                        factionRelationship.SetRelationshipStatus(newStatus);
+                    }    
                 }
-                
             }
+        }
+    }
+    private void LogRelationshipChangeBasedOnLeadersRelationship(FACTION_RELATIONSHIP_STATUS status, Faction faction, Faction otherFaction) {
+        if (!otherFaction.isPlayerFaction) {
+            //If this one's Faction Leader considers that an Enemy or Rival, war with that faction
+            if (status == FACTION_RELATIONSHIP_STATUS.Hostile) {
+                Log dislikeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "dislike_leader", null, LOG_TAG.Major);
+                dislikeLog.AddToFillers(faction.leader as Character, faction.leader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                dislikeLog.AddToFillers(otherFaction.leader as Character, otherFaction.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "declare_war", null, LOG_TAG.Major);
+                log.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
+                log.AddToFillers(otherFaction, otherFaction.name, LOG_IDENTIFIER.FACTION_2);
+                log.AddToFillers(dislikeLog.fillers);
+                log.AddToFillers(null, dislikeLog.unReplacedText, LOG_IDENTIFIER.APPEND);
+                log.AddLogToDatabase();    
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            } else if (status == FACTION_RELATIONSHIP_STATUS.Friendly) {
+                //If this one's Faction Leader considers that a Friend or Close Friend, friendly with that faction
+                Log likeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "like_leader", null, LOG_TAG.Major);
+                likeLog.AddToFillers(faction.leader as Character, faction.leader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                likeLog.AddToFillers(otherFaction.leader as Character, otherFaction.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "declare_peace", null, LOG_TAG.Major);
+                log.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
+                log.AddToFillers(otherFaction, otherFaction.name, LOG_IDENTIFIER.FACTION_2);
+                log.AddToFillers(likeLog.fillers);
+                log.AddToFillers(null, likeLog.unReplacedText, LOG_IDENTIFIER.APPEND);
+                log.AddLogToDatabase();
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            }    
         }
     }
     #endregion

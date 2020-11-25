@@ -613,14 +613,17 @@ public class UIManager : BaseMonoBehaviour {
     /// </summary>
     /// <returns>True or false.</returns>>
     public bool IsMouseOnUI() {
-        _pointer.position = Input.mousePosition;
-        _raycastResults.Clear();
-        EventSystem.current.RaycastAll(_pointer, _raycastResults);
+        if (_pointer != null) {
+            _pointer.position = Input.mousePosition;
+            _raycastResults.Clear();
+            EventSystem.current.RaycastAll(_pointer, _raycastResults);
 
-        return _raycastResults.Count > 0 && _raycastResults.Any(
-            go => go.gameObject.layer == LayerMask.NameToLayer("UI") || 
-                  go.gameObject.layer == LayerMask.NameToLayer("WorldUI") || 
-                  go.gameObject.CompareTag("Map_Click_Blocker"));
+            return _raycastResults.Count > 0 && _raycastResults.Any(
+                go => go.gameObject.layer == LayerMask.NameToLayer("UI") || 
+                      go.gameObject.layer == LayerMask.NameToLayer("WorldUI") || 
+                      go.gameObject.CompareTag("Map_Click_Blocker"));    
+        }
+        return false;
     }
     public void OpenObjectUI(object obj) {
         if (obj is Character character) {

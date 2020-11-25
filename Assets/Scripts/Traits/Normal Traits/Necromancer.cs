@@ -59,7 +59,8 @@ namespace Traits {
             //EDIT NOTE: Faction changing is brought back when necromancer trait is added not when the character built a lair because we now have the Transitioning trait
             //This means that the character will no longer be hostile to villagers if he/she is transitioning
             owner.ChangeFactionTo(FactionManager.Instance.undeadFaction);
-            FactionManager.Instance.undeadFaction.OnlySetLeader(owner);
+            FactionManager.Instance.undeadFaction.OnlySetLeader(owner); //TODO: needed to call this even though Become Faction Leader is called because it calls a version of set leader that prevents setting the leader of The Undead Faction
+            owner.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, owner);
             CharacterManager.Instance.SetNecromancerInTheWorld(owner);
             owner.MigrateHomeStructureTo(null);
             owner.ClearTerritory();

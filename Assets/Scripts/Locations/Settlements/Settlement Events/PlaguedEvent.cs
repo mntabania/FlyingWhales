@@ -79,7 +79,7 @@ namespace Locations.Settlements.Settlement_Events {
         }
         private void DeactivateEventBySchedule(NPCSettlement p_settlement) {
             p_settlement.eventManager.DeactivateEvent(this);
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Settlement Event", "Plagued", "ended");
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Settlement Event", "Plagued", "ended", null, LOG_TAG.Major);
             log.AddToFillers(p_settlement, p_settlement.name, LOG_IDENTIFIER.LANDMARK_1);
             if (p_settlement.owner != null) { log.AddInvolvedObjectManual(p_settlement.owner.persistentID); }
             log.AddLogToDatabase();
@@ -124,7 +124,7 @@ namespace Locations.Settlements.Settlement_Events {
                 if (response == PLAGUE_EVENT_RESPONSE.Do_Nothing && p_leader == null) {
                     key = $"{key}_No_Leader";
                 }
-                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Settlement Event", "Plagued", key);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Settlement Event", "Plagued", key, null, LOG_TAG.Major);
                 log.AddToFillers(p_settlement, p_settlement.name, LOG_IDENTIFIER.LANDMARK_1);
                 if (p_leader != null) { log.AddToFillers(p_leader, p_leader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER); }
                 if (p_settlement.owner != null) { log.AddInvolvedObjectManual(p_settlement.owner.persistentID); }
@@ -222,7 +222,7 @@ namespace Locations.Settlements.Settlement_Events {
         #region Loading
         private void LoadEnd(GameDate date) {
             _endDate = date;
-            _endScheduleTicket = SchedulingManager.Instance.AddEntry(date, () => location.eventManager.DeactivateEvent(this), location);
+            _endScheduleTicket = SchedulingManager.Instance.AddEntry(date, () => DeactivateEventBySchedule(location), location);
         }
         public override void LoadAdditionalData(NPCSettlement p_settlement) {
             base.LoadAdditionalData(p_settlement);

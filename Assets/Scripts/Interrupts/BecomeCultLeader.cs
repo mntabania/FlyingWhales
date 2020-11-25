@@ -49,7 +49,7 @@ namespace Interrupts {
 
                 //create relationships
                 //NOTE: Should not default relationships to neutral when leader changes, because we only want to overwrite relationships if other leader is friend/enemy 
-                FactionManager.Instance.RerollFactionRelationships(faction, actor, false, OnFactionRelationshipSet);
+                FactionManager.Instance.RerollFactionRelationships(faction, actor, false, true);
 
                 Log changeIdeologyLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "ideology_change", null, LOG_TAG.Life_Changes);
                 changeIdeologyLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
