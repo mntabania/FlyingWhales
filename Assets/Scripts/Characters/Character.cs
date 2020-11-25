@@ -4080,6 +4080,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);
             if (this is GiantSpider) {
                 AddAdvertisedAction(INTERACTION_TYPE.LAY_EGG);
+                AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
+            } else if (this is Wolf) {
+                AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);    
+            } else if (this is SmallSpider) {
+                AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);    
             }
         }
         if (this is Animal) {
