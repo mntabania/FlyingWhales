@@ -1509,6 +1509,7 @@
               <e p="FleeCrime.cs" t="Include" />
               <e p="FleeToTile.cs" t="Include" />
               <e p="GoTo.cs" t="Include" />
+              <e p="GoToSpecificTile.cs" t="Include" />
               <e p="GoToTile.cs" t="Include" />
               <e p="Grieving.cs" t="Include" />
               <e p="HaveAffair.cs" t="Include" />
