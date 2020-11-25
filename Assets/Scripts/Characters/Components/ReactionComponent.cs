@@ -634,7 +634,7 @@ public class ReactionComponent : CharacterComponent {
                 } else {
                     if (!targetCharacter.traitContainer.HasTrait("Restrained")) {
                         debugLog = $"{debugLog}\n-Will engage in combat and restrain it";
-                        actor.jobComponent.TriggerRestrainJob(targetCharacter);
+                        actor.jobComponent.TriggerRestrainJob(targetCharacter, JOB_TYPE.CAPTURE_CHARACTER);
                     } else {
                         debugLog = $"{debugLog}\n-Target is already restrained, will do nothing";
                     }
@@ -694,16 +694,15 @@ public class ReactionComponent : CharacterComponent {
                         debugLog = $"{debugLog}\nActor is part of player faction and target character is dazed, do not combat!.";
                         return;
                     }
-                    if(!targetCharacter.isDead && targetCharacter.traitContainer.HasTrait("Restrained") && targetCharacter.traitContainer.HasTrait("Prisoner")) {
-                        Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-                        bool targetIsFactionPrisonerAndIsInPrison = prisoner.IsFactionPrisonerOf(disguisedActor.faction) && disguisedActor.homeSettlement != null && targetCharacter.IsInPrisonOf(disguisedActor.homeSettlement);
-                        bool targetIsPersonalPrisoner = prisoner.IsPersonalPrisonerOf(disguisedActor);
-                        if (targetIsFactionPrisonerAndIsInPrison || targetIsPersonalPrisoner) {
+                    Prisoner targetPrisonerStatus = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+                    if (!targetCharacter.isDead && targetPrisonerStatus != null && targetPrisonerStatus.IsConsideredPrisonerOf(disguisedActor)) {
+                        LocationStructure intendedPrison = targetPrisonerStatus.GetIntendedPrisonAccordingTo(disguisedActor);
+                        if(targetCharacter.currentStructure == intendedPrison) {
                             if (targetCharacter.needsComponent.isStarving) {
                                 Vampire vampireTrait = disguisedTarget.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
                                 bool targetIsKnownVampire = vampireTrait != null && vampireTrait.DoesCharacterKnowThisVampire(disguisedActor);
-                                if(targetIsKnownVampire) {
-                                    if(disguisedActor.traitContainer.HasTrait("Hemophiliac") || (disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget) == RelationshipManager.Close_Friend && !disguisedActor.traitContainer.HasTrait("Hemophobic"))) {
+                                if (targetIsKnownVampire) {
+                                    if (disguisedActor.traitContainer.HasTrait("Hemophiliac") || (disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget) == RelationshipManager.Close_Friend && !disguisedActor.traitContainer.HasTrait("Hemophobic"))) {
                                         debugLog = $"{debugLog}\n-Target is starving and is known vampire and actor is Hemophiliac/Non-Hemophobic Close Friend, feed self";
                                         if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.FEED, JOB_TYPE.OFFER_BLOOD)) {
                                             actor.jobComponent.CreateFeedSelfToVampireJob(targetCharacter);
@@ -711,7 +710,7 @@ public class ReactionComponent : CharacterComponent {
                                             debugLog = $"{debugLog}\n-Already has a feed/offer blood job targeting character";
                                         }
                                     }
-                                    
+
                                 } else {
                                     debugLog = $"{debugLog}\n-Target is starving, will create feed job";
                                     if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.FEED)) {
@@ -722,19 +721,8 @@ public class ReactionComponent : CharacterComponent {
                                 }
                             }
                         } else {
-                            if (!targetCharacter.traitContainer.HasTrait("Unconscious", "Restrained") || (isLethal && isTopPrioJobLethal)) {
-                                //Determine whether to fight or flight.
-                                CombatReaction combatReaction = actor.combatComponent.GetFightOrFlightReaction(targetCharacter, CombatManager.Hostility);
-                                if (combatReaction.reaction == COMBAT_REACTION.Flight) {
-                                    //if flight was decided
-                                    //if target is restrained or resting, do nothing
-                                    if (targetCharacter.traitContainer.HasTrait("Restrained", "Resting") == false) {
-                                        actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);
-                                    }
-                                } else {
-                                    actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);
-                                }
-                            }
+                            bool canDoJob = false;
+                            actor.jobComponent.TryCreateApprehend(targetCharacter, ref canDoJob, intendedPrison: intendedPrison);
                         }
                     } else {
                         //If the target is already unconscious/restrained (it cannot fight back), attack it again only if this character's top priority job is considered lethal

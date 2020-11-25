@@ -109,7 +109,7 @@ public class Carry : GoapAction {
             goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Restrained", goapNode.actor);
             if (goapNode.poiTarget.traitContainer.HasTrait("Prisoner")) {
                 Prisoner prisoner = goapNode.poiTarget.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-                prisoner.SetPrisonerOfCharacter(goapNode.actor);
+                prisoner.SetPrisonerOfFaction(PlayerManager.Instance.player.playerFaction);
             }
         }
         

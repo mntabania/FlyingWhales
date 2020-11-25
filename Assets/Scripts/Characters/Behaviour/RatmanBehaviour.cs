@@ -41,7 +41,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                             for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                                 Character characterAtRegion = character.currentRegion.charactersAtLocation[i];
                                 if (!characterAtRegion.isDead && characterAtRegion != character
-                                    && (characterAtRegion.faction?.factionType.type == FACTION_TYPE.Wild_Monsters || (characterAtRegion.isNormalCharacter && characterAtRegion.traitContainer.HasTrait("Resting")))
+                                    && (characterAtRegion.faction?.factionType.type == FACTION_TYPE.Wild_Monsters || characterAtRegion.isNormalCharacter)
                                     && !(characterAtRegion.currentStructure is Kennel)
                                     && !characterAtRegion.traitContainer.HasTrait("Enslaved")
                                     && characterAtRegion.faction != character.faction) {
