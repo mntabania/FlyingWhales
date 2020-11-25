@@ -37,6 +37,8 @@
     public static string CHARACTER_MISSING = "OnCharacterMissing";
     public static string CHARACTER_PRESUMED_DEAD = "OnCharacterPresumedDead";
     public static string ON_SET_AS_FACTION_LEADER = "OnSetAsFactionLeader";
+    public static string STARTED_TRAVELLING = "OnStartedTravelling"; //Parameters (Character character)
+
     /// <summary>
     /// Parameters (Faction, Character previousLeader)
     /// </summary>

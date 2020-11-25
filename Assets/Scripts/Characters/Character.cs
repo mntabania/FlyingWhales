@@ -491,6 +491,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         combatComponent.SubscribeToSignals();
         visuals.SubscribeListeners();
         religionComponent.SubscribeListeners();
+        movementComponent.SubscribeToSignals();
     }
     public virtual void UnsubscribeSignals() {
         if (!hasSubscribedToSignals) {
@@ -527,6 +528,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         combatComponent.UnsubscribeToSignals();
         visuals.UnsubscribeListeners();
         religionComponent.UnsubscribeListeners();
+        movementComponent.UnsubscribeFromSignals();
     }
     #endregion
 

@@ -61,6 +61,13 @@ public class MovementComponent : CharacterComponent {
         tagPenalties = data.tagPenalties;
     }
 
+    public void SubscribeToSignals() {
+        Messenger.AddListener<Character>(CharacterSignals.STARTED_TRAVELLING, OnStartedTravelling);
+    }
+    public void UnsubscribeFromSignals() {
+        Messenger.RemoveListener<Character>(CharacterSignals.STARTED_TRAVELLING, OnStartedTravelling);
+    }
+
     public void UpdateSpeed() {
         if (owner.marker) {
             SetMovementState();
@@ -167,6 +174,12 @@ public class MovementComponent : CharacterComponent {
     public void SetCameFromWurmHole(bool state) {
         cameFromWurmHole = state;
     }
+
+    #region Listeners
+    private void OnStartedTravelling(Character character) {
+        OnCharacterStartedTravelling(character);
+    }
+    #endregion
 
     #region Go To
     public bool MoveToAnotherRegion(Region targetRegion, Action doneAction = null) {
@@ -531,7 +544,22 @@ public class MovementComponent : CharacterComponent {
         }
     }
     #endregion
-    
+
+    #region Travelling Status
+    private void OnCharacterStartedTravelling(Character character) {
+        if(owner != character) {
+            if(owner.currentActionNode != null && owner.currentActionNode.poiTarget == character) {
+                if(owner.currentActionNode.actionStatus == ACTION_STATUS.STARTED) {
+                    if(owner.currentActionNode.associatedJobType == JOB_TYPE.RITUAL_KILLING
+                        || owner.currentActionNode.goapType == INTERACTION_TYPE.SHARE_INFORMATION) {
+                        owner.currentActionNode.associatedJob?.ForceCancelJob(false);
+                    }
+                }
+            }
+        }
+    }
+    #endregion
+
     #region Loading
     public void LoadReferences(SaveDataMovementComponent data) {
         if (!string.IsNullOrEmpty(data.targetRegionToTravelInWorld)) {

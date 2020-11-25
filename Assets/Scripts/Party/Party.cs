@@ -343,6 +343,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             if (membersThatJoinedQuest.Count >= currentQuest.minimumPartySize) {
                 for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
                     Character member = membersThatJoinedQuest[i];
+                    member.traitContainer.AddTrait(member, "Travelling");
                     member.interruptComponent.TriggerInterrupt(INTERRUPT.Morale_Boost, member);
                 }
                 SetPartyState(PARTY_STATE.Moving);
@@ -651,7 +652,6 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     }
     private void OnAddMemberThatJoinedQuest(Character character) {
         character.movementComponent.SetEnableDigging(true);
-        character.traitContainer.AddTrait(character, "Travelling");
         character.behaviourComponent.AddBehaviourComponent(currentQuest.relatedBehaviour);
         Messenger.Broadcast(PartySignals.CHARACTER_JOINED_PARTY_QUEST, this, character);
     }
