@@ -64,7 +64,7 @@ public class TakeResource : GoapAction {
                 }
             }
         }
-        if (job.jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL || job.jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || job.jobType == JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT || job.jobType == JOB_TYPE.OBTAIN_PERSONAL_FOOD) {
+        if (job.jobType.IsFullnessRecoveryTypeJob() || job.jobType == JOB_TYPE.OBTAIN_PERSONAL_FOOD) {
             if(target is ElfMeat || target is HumanMeat) {
                 if (actor.traitContainer.HasTrait("Cannibal")) {
                     int currCost = 450; //UtilityScripts.Utilities.Rng.Next(450, 501);

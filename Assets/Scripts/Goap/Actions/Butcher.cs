@@ -11,7 +11,7 @@ public class Butcher : GoapAction {
         actionIconString = GoapActionStateDB.Butcher_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.KOBOLD, RACE.TROLL, RACE.RATMAN };
+        //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.KOBOLD, RACE.TROLL, RACE.RATMAN };
         isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Work, LOG_TAG.Needs};
     }
@@ -69,7 +69,7 @@ public class Butcher : GoapAction {
                 cost += 2000;
                 costLog += " +2000(Actor/Target Same)";
             } else {
-                if (actor.isNormalCharacter == false) {
+                if (actor.isNormalOrRatman == false) {
                     cost += 10;
                     costLog += " +10(Actor is not a normal character)";
                 } else {

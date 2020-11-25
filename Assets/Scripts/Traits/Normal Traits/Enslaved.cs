@@ -49,7 +49,7 @@ namespace Traits {
                         targetCharacter.MigrateHomeTo(characterResponsible.homeSettlement);
                     }
                 }
-
+                targetCharacter.jobComponent.AddPriorityJob(JOB_TYPE.PRODUCE_FOOD);
             }
         }
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
@@ -64,6 +64,7 @@ namespace Traits {
                 }
                 targetCharacter.MigrateHomeStructureTo(null);
                 targetCharacter.behaviourComponent.UpdateDefaultBehaviourSet();
+                targetCharacter.jobComponent.RemovePriorityJob(JOB_TYPE.PRODUCE_FOOD);
             }
         }
         #endregion
