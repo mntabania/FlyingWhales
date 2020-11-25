@@ -404,7 +404,7 @@ public class FactionManager : BaseMonoBehaviour {
                 FactionRelationship factionRelationship = faction.GetRelationshipWith(otherFaction);
                 FACTION_RELATIONSHIP_STATUS newStatus = factionRelationship.relationshipStatus;
                 if (faction.factionType.HasIdeology(FACTION_IDEOLOGY.Demon_Worship)) {
-                    if (otherFaction.isPlayerFaction || otherFaction.factionType.type == FACTION_TYPE.Demon_Cult) {
+                    if (otherFaction.isPlayerFaction || otherFaction.factionType.HasIdeology(FACTION_IDEOLOGY.Demon_Worship)) {
                         newStatus = FACTION_RELATIONSHIP_STATUS.Friendly;
                     }
                 }
@@ -426,7 +426,7 @@ public class FactionManager : BaseMonoBehaviour {
                         newStatus = FACTION_RELATIONSHIP_STATUS.Neutral;
                     }
                 }
-                if (otherFaction.leader != null && otherFaction.leader is Character otherFactionLeader){
+                if (otherFaction.leader != null && otherFaction.leader is Character otherFactionLeader) {
                     if (leader.relationshipContainer.IsEnemiesWith(otherFactionLeader)) {
                         //If this one's Faction Leader considers that an Enemy or Rival, war with that faction
                         factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Hostile);
