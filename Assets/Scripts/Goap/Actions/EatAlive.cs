@@ -1,4 +1,6 @@
 ﻿public class EatAlive : GoapAction {
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.CONSUME;
+
     public EatAlive() : base(INTERACTION_TYPE.EAT_ALIVE) {
         actionIconString = GoapActionStateDB.Eat_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };

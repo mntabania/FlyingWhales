@@ -1507,14 +1507,14 @@ public class CharacterNeedsComponent : CharacterComponent {
             //after doing an extreme needs type job, check again if the character needs to recover more of that need.
             if (job.jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT) {
                 if (character.traitContainer.HasTrait("Pest") || character is Rat) {
-                    character.behaviourComponent.SetIsPestEatingOnCooldown(true);
+                    character.traitContainer.AddTrait(character, "Abstain Fullness");
                 }
                 PlanFullnessRecoveryActions();
             } else if (job.jobType == JOB_TYPE.ENERGY_RECOVERY_URGENT) {
                 PlanTirednessRecoveryActions();
             } else if (job.jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL) {
                 if(character.traitContainer.HasTrait("Pest") || character is Rat) {
-                    character.behaviourComponent.SetIsPestEatingOnCooldown(true);
+                    character.traitContainer.AddTrait(character, "Abstain Fullness");
                 }
             }
         }

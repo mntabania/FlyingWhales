@@ -246,9 +246,8 @@ public class CombatState : CharacterState {
                                 //SetIsAttacking(false);
                             }
                         }
-                    } else if (character is Summon && (character as Summon).HasTerritory()) {
+                    } else if (character is Summon summon && summon.HasTerritory()) {
                         summary = $"{summary}\n-Has territory";
-                        Summon summon = character as Summon;
                         if (summon.IsInTerritory()) {
                             summary = $"{summary}\n-Is in territory";
                             if (UnityEngine.Random.Range(0, 2) == 0 && !doNotCower) {

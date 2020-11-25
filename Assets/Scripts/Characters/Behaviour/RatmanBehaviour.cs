@@ -58,7 +58,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                         Character targetCharacter = character.behaviourComponent.currentAbductTarget;
                         if (targetCharacter != null) {
                             //create job to abduct target character.
-                            if(character.jobComponent.TriggerMonsterAbduct(targetCharacter, out producedJob, cannotBePushedBack: false)) {
+                            if(character.jobComponent.TriggerMonsterAbduct(targetCharacter, out producedJob)) {
                                 character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
                                 return true;
                             }

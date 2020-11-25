@@ -2444,10 +2444,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         producedJob = null;
         return false;
     }
-    public bool TriggerMonsterAbduct(Character targetCharacter, out JobQueueItem producedJob, LocationGridTile targetTile = null, bool cannotBePushedBack = true) {
+    public bool TriggerMonsterAbduct(Character targetCharacter, out JobQueueItem producedJob, LocationGridTile targetTile = null) {
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_ABDUCT, INTERACTION_TYPE.DROP, targetCharacter, owner);
-	    job.SetCannotBePushedBack(cannotBePushedBack);
 	    job.AddOtherData(INTERACTION_TYPE.DROP, targetTile != null ? new object[] {targetTile.structure, targetTile} : new object[] {owner.homeStructure});
+        job.SetDoNotRecalculate(true);
 	    producedJob = job;
 	    return true;
     }
@@ -2468,6 +2468,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             return true;
         }
         producedJob = null;
+        return false;
+    }
+    public bool TriggerEatCorpse(Character targetCharacter) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.MONSTER_EAT_CORPSE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_EAT_CORPSE, INTERACTION_TYPE.EAT_CORPSE, targetCharacter, owner);
+            job.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            return owner.jobQueue.AddJobInQueue(job);
+        }
         return false;
     }
     #endregion

@@ -67,8 +67,6 @@ public class BehaviourComponent : CharacterComponent {
 
     //pest
     public List<HexTile> pestVillageTarget { get; private set; }
-    public bool isPestEatingOnCooldown { get; private set; }
-    public GameDate pestEatingCooldownSchedule { get; private set; }
 
     //private COMBAT_MODE combatModeBeforeHarassRaidInvade;
     public COMBAT_MODE combatModeBeforeAttackingDemonicStructure { get; private set; }
@@ -114,8 +112,6 @@ public class BehaviourComponent : CharacterComponent {
         hasEatenInTheNight = data.hasEatenInTheNight;
         isCurrentlySnatching = data.isCurrentlySnatching;
         combatModeBeforeAttackingDemonicStructure = data.combatModeBeforeAttackingDemonicStructure;
-        pestEatingCooldownSchedule = data.pestEatingCooldownSchedule;
-        isPestEatingOnCooldown = data.isPestEatingOnCooldown;
     }
 
     #region General
@@ -973,15 +969,6 @@ public class BehaviourComponent : CharacterComponent {
     public void SetPestVillageTarget(List<HexTile> targets) {
         pestVillageTarget = targets;
     }
-    public void SetIsPestEatingOnCooldown(bool state) {
-        if(isPestEatingOnCooldown != state) {
-            isPestEatingOnCooldown = state;
-            if (isPestEatingOnCooldown) {
-                pestEatingCooldownSchedule = GameManager.Instance.Today().AddDays(1);
-                SchedulingManager.Instance.AddEntry(pestEatingCooldownSchedule, () => SetIsPestEatingOnCooldown(false), owner);
-            }
-        }
-    }
     #endregion
 
     #region Work
@@ -1099,9 +1086,6 @@ public class BehaviourComponent : CharacterComponent {
                 component.OnLoadBehaviourToCharacter(owner);
             }    
         }
-        if (isPestEatingOnCooldown) {
-            SchedulingManager.Instance.AddEntry(pestEatingCooldownSchedule, () => SetIsPestEatingOnCooldown(false), owner);
-        }
     }
     #endregion
 }
@@ -1159,8 +1143,6 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
 
     //pest
     public List<string> pestVillageTarget;
-    public bool isPestEatingOnCooldown { get; private set; }
-    public GameDate pestEatingCooldownSchedule { get; private set; }
 
     public COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
 
@@ -1183,8 +1165,6 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
         hasEatenInTheNight = data.hasEatenInTheNight;
         isCurrentlySnatching = data.isCurrentlySnatching;
         combatModeBeforeAttackingDemonicStructure = data.combatModeBeforeAttackingDemonicStructure;
-        pestEatingCooldownSchedule = data.pestEatingCooldownSchedule;
-        isPestEatingOnCooldown = data.isPestEatingOnCooldown;
 
         if (data.attackVillageTarget != null) {
             attackVillageTarget = data.attackVillageTarget.persistentID;
