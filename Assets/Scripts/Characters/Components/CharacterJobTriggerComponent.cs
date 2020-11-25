@@ -2470,6 +2470,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         producedJob = null;
         return false;
     }
+    public bool TriggerEatCorpse(Character targetCharacter) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.MONSTER_EAT_CORPSE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_EAT_CORPSE, INTERACTION_TYPE.EAT_CORPSE, targetCharacter, owner);
+            job.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            return owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
+    }
     #endregion
 
     #region Arson

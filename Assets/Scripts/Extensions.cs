@@ -708,6 +708,9 @@ public static class Extensions {
             case JOB_TYPE.TAKE_ARTIFACT:
                 priority = 260;
                 break;
+            case JOB_TYPE.MONSTER_EAT_CORPSE:
+                priority = 255;
+                break;
             case JOB_TYPE.IDLE_RETURN_HOME:
             case JOB_TYPE.IDLE_NAP:
             case JOB_TYPE.IDLE_SIT:

@@ -12,7 +12,7 @@ public class RatBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n{character.name} is a Rat";
-        if (character.behaviourComponent.isPestEatingOnCooldown) {
+        if (!character.limiterComponent.canDoFullnessRecovery) {
             if (character.behaviourComponent.pestVillageTarget != null && character.behaviourComponent.pestVillageTarget.Count > 0) {
                 BaseSettlement targetSettlement = character.behaviourComponent.pestVillageTarget[0].settlementOnTile;
                 if (targetSettlement != null) {

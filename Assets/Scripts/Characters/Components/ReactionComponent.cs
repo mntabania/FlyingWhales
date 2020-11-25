@@ -1171,36 +1171,6 @@ public class ReactionComponent : CharacterComponent {
                             actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
                         }
                     }
-
-                    //if (disguisedTarget.traitContainer.HasTrait("Nocturnal")) {
-                    //    if(disguisedActor.homeSettlement != null) {
-                    //        //TODO: Checking if there is an active Vampire Hunt event
-                    //        TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
-                    //        if(currentTime == TIME_IN_WORDS.LATE_NIGHT || currentTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-                    //            Vampire vampireTrait = disguisedTarget.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
-                    //            CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(disguisedActor, disguisedTarget, disguisedTarget, CRIME_TYPE.Vampire);
-                    //            bool isTargetAKnownVampire = vampireTrait != null && vampireTrait.DoesCharacterKnowThisVampire(disguisedActor);
-
-                    //            if(severity != CRIME_SEVERITY.Unapplicable && severity != CRIME_SEVERITY.None && !isTargetAKnownVampire) {
-                    //                if(disguisedActor.traitContainer.HasTrait("Suspicious") || disguisedActor.moodComponent.moodState == MOOD_STATE.Critical) {
-                    //                    actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
-                    //                } else if (disguisedActor.moodComponent.moodState == MOOD_STATE.Bad && !disguisedActor.relationshipContainer.IsFriendsWith(disguisedActor)) {
-                    //                    if(targetCharacter.currentStructure != null) {
-                    //                        if(targetCharacter.currentStructure.IsOccupied() && targetCharacter.currentStructure.IsResident(disguisedTarget)) {
-                    //                            if (GameUtilities.RollChance(50)) {
-                    //                                actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
-                    //                            }
-                    //                        } else if (!targetCharacter.currentStructure.isInterior && targetCharacter.currentSettlement == disguisedActor.homeSettlement) {
-                    //                            if (GameUtilities.RollChance(35)) {
-                    //                                actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
-                    //                            }
-                    //                        }
-                    //                    }
-                    //                }
-                    //            }
-                    //        }
-                    //    }
-                    //}
                     
                 } else {
                     debugLog = $"{debugLog}\n-Target is dead";
@@ -1367,6 +1337,16 @@ public class ReactionComponent : CharacterComponent {
             }
         }
         
+        if(actor is Summon && !(actor is Animal) && targetCharacter is Animal targetAnimal && actor.faction?.factionType.type == FACTION_TYPE.Wild_Monsters) {
+            if(targetAnimal.isDead && targetAnimal.grave == null && actor.limiterComponent.canPerform && actor.limiterComponent.canMove && actor.limiterComponent.canDoFullnessRecovery) {
+                if(actor.currentActionNode == null 
+                    || actor.currentActionNode.action.goapType == INTERACTION_TYPE.ROAM 
+                    || !actor.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.MONSTER_EAT_CORPSE)) {
+                    actor.jobComponent.TriggerEatCorpse(targetAnimal);
+                }
+            }
+        }
+
         //set owner of this component to has reacted to the target character
         targetCharacter.defaultCharacterTrait.AddCharacterThatHasReactedToThis(owner);
     }

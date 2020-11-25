@@ -1,4 +1,7 @@
 ﻿public class EatCorpse : GoapAction {
+
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.CONSUME;
+
     public EatCorpse() : base(INTERACTION_TYPE.EAT_CORPSE) {
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         actionIconString = GoapActionStateDB.Eat_Icon;
@@ -50,6 +53,9 @@
     #region State Effects
     public void PreEatSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
+        if(goapNode.associatedJobType == JOB_TYPE.MONSTER_EAT_CORPSE || goapNode.associatedJobType == JOB_TYPE.HUNT_PREY) {
+            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Abstain Fullness");
+        }
     }
     public void PerTickEatSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustFullness(8.5f);
