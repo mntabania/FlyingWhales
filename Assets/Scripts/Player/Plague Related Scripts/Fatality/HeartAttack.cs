@@ -13,9 +13,9 @@ namespace Plague.Fatality {
         public override void CharacterGainedTrait(Character p_character, Trait p_gainedTrait) {
             int chance = 0;
             if (p_gainedTrait.name == "Spent") {
-                chance = 15; //1;
+                chance = 25; //1;
             } else if (p_gainedTrait.name == "Drained") {
-                chance = 35; //2;
+                chance = 50; //2;
             }
             if (GameUtilities.RollChance(chance)) {
                 ActivateFatality(p_character);
