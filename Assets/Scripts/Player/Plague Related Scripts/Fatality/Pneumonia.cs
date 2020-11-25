@@ -11,7 +11,7 @@ namespace Plague.Fatality {
             PlagueDisease.Instance.UpdateDeathsOnCharacterDied(p_character);
         }
         public override void PerTickMovement(Character p_character) {
-            if (GameUtilities.RollChance(0.5f)) { //0.5f
+            if (GameUtilities.RollChance(0.35f)) { //0.5f
                 ActivateFatality(p_character);
             }
         }
