@@ -5092,36 +5092,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     #endregion
 
-    //#region Supply
-    //public void AdjustSupply(int amount) {
-    //    supply += amount;
-    //    if (supply < 0) {
-    //        supply = 0;
-    //    }
-    //}
-    //public void SetSupply(int amount) {
-    //    supply = amount;
-    //    if (supply < 0) {
-    //        supply = 0;
-    //    }
-    //}
-    //#endregion
-
-    //#region Food
-    //public void AdjustFood(int amount) {
-    //    food += amount;
-    //    if (food < 0) {
-    //        food = 0;
-    //    }
-    //}
-    //public void SetFood(int amount) {
-    //    food = amount;
-    //    if (food < 0) {
-    //        food = 0;
-    //    }
-    //}
-    //#endregion
-
     #region Hostility
     /// <summary>
     /// Function to encapsulate, whether or not this character treats another character as hostile.
@@ -6036,6 +6006,29 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return IsInPrisonOf(npcSettlement);
         }
         return false;
+    }
+    public LocationStructure GetSettlementPrisonFor(Character character) {
+        //Right now the character parameter is irrelevant, but in the future we might need it to know what prison we should put that character in
+        NPCSettlement settlement = null;
+        if (homeSettlement != null) {
+            if (currentSettlement != null) {
+                if (currentSettlement == homeSettlement) {
+                    //if current settlement is home settlement
+                    settlement = homeSettlement;
+                } else if (currentSettlement is NPCSettlement npcSettlement && npcSettlement.owner != null && faction != null && npcSettlement.owner == faction) {
+                    //if current settlement is owned by same faction as this character
+                    settlement = npcSettlement;
+                } else {
+                    settlement = homeSettlement;
+                }
+            } else {
+                settlement = homeSettlement;
+            }
+        }
+        if (settlement != null) {
+            return settlement.prison;
+        }
+        return null;
     }
     #endregion
 

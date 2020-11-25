@@ -2266,41 +2266,30 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Apprehend
-    public bool TryCreateApprehend(Character target, ref bool canDoJob) {
-        // NPCSettlement settlementToGoTo = target.currentSettlement as NPCSettlement;
-        // if(settlementToGoTo == null || (settlementToGoTo.locationType != LOCATION_TYPE.SETTLEMENT)) {
-        //     settlementToGoTo = _owner.homeSettlement;
-        //     if (settlementToGoTo == null || (settlementToGoTo.locationType != LOCATION_TYPE.SETTLEMENT)) {
-        //         settlementToGoTo = null;
-        //     }
-        // }
+    public bool TryCreateApprehend(Character target, ref bool canDoJob, LocationStructure intendedPrison = null) {
         if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive && owner.partyComponent.currentParty.DidMemberJoinQuest(owner)) {
             return false;
         }
-        NPCSettlement settlementToGoTo = null;
-        if (owner.homeSettlement != null) {
-	        if (owner.currentSettlement != null) {
-		        if (owner.currentSettlement == owner.homeSettlement) {
-			        //if current settlement is home settlement
-			        settlementToGoTo = owner.homeSettlement;    
-		        } else if (owner.currentSettlement is NPCSettlement npcSettlement && npcSettlement.owner != null && owner.faction != null && npcSettlement.owner == owner.faction) {
-			        //if current settlement is owned by same faction as this character
-			        settlementToGoTo = npcSettlement;
-		        } else {
-			        settlementToGoTo = owner.homeSettlement;
-		        }
-	        }    
+        LocationStructure prison = intendedPrison;
+        Prisoner prisonerStatus = target.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+        if(prison == null) {
+            if (prisonerStatus != null) {
+                prison = prisonerStatus.GetIntendedPrisonAccordingTo(owner);
+            } else {
+                prison = owner.GetSettlementPrisonFor(target);
+            }
         }
-        canDoJob = InteractionManager.Instance.CanCharacterTakeApprehendJob(owner, target) && settlementToGoTo != null && CanDoJob(JOB_TYPE.APPREHEND);
+
+        canDoJob = InteractionManager.Instance.CanCharacterTakeApprehendJob(owner, target) && prison != null && CanDoJob(JOB_TYPE.APPREHEND);
         if (canDoJob) {
-            if (target.traitContainer.HasTrait("Criminal")) {
-                if (owner.jobQueue.HasJob(JOB_TYPE.APPREHEND, target) == false) {
-                    if (target.crimeComponent.IsWantedBy(owner.faction)) {
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP_RESTRAINED, target, owner);
-                        job.SetStillApplicableChecker(JobManager.Apprehend_Applicability);
-                        job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { settlementToGoTo.prison });
-                        return owner.jobQueue.AddJobInQueue(job);
-                    }
+            if (owner.jobQueue.HasJob(JOB_TYPE.APPREHEND, target) == false) {
+                bool isCriminal = target.traitContainer.HasTrait("Criminal") && target.crimeComponent.IsWantedBy(owner.faction);
+                bool isPrisoner = prisonerStatus != null && prisonerStatus.IsConsideredPrisonerOf(owner);
+                if (isCriminal || isPrisoner) {
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP_RESTRAINED, target, owner);
+                    job.SetStillApplicableChecker(JobManager.Apprehend_Applicability);
+                    job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { prison });
+                    return owner.jobQueue.AddJobInQueue(job);
                 }
             }
         }
@@ -2784,9 +2773,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         producedJob = null;
         return false;
     }
-    public bool TriggerRestrainJob(Character target) {
-        if (!owner.jobQueue.HasJob(JOB_TYPE.RESTRAIN)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.RESTRAIN_CHARACTER, target, owner);
+    public bool TriggerRestrainJob(Character target, JOB_TYPE jobType) {
+        if (!owner.jobQueue.HasJob(jobType)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.RESTRAIN_CHARACTER, target, owner);
             return owner.jobQueue.AddJobInQueue(job);
         }
         return false;

@@ -831,7 +831,7 @@ public class UIManager : BaseMonoBehaviour {
         if(character.isLycanthrope) {
             characterToShow = character.lycanData.activeForm;
         }
-        if(characterToShow.isNormalOrRatman) {
+        if(characterToShow.isNormalCharacter || characterToShow.race == RACE.RATMAN) {
             if (tempDisableShowInfoUI) {
                 SetTempDisableShowInfoUI(false);
                 return;

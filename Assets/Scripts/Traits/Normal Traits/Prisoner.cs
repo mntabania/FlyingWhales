@@ -4,10 +4,11 @@ using System;
 using UnityEngine;
 using Traits;
 using UnityEngine.Assertions;
+using Inner_Maps.Location_Structures;
 
 namespace Traits {
     public class Prisoner : Status {
-        private Character owner;
+        public Character owner { get; private set; }
 
         public Faction prisonerOfFaction { get; private set; }
         public Character prisonerOfCharacter { get; private set; }
@@ -165,11 +166,20 @@ namespace Traits {
         }
         public void SetPrisonerOfFaction(Faction faction) {
             prisonerOfFaction = faction;
+            Messenger.Broadcast(TraitSignals.HAS_BECOME_PRISONER, this);
         }
         public void SetPrisonerOfCharacter(Character character) {
             prisonerOfCharacter = character;
+            Messenger.Broadcast(TraitSignals.HAS_BECOME_PRISONER, this);
         }
-
+        public LocationStructure GetIntendedPrisonAccordingTo(Character character) {
+            if(prisonerOfCharacter != null && prisonerOfCharacter == character) {
+                return character.homeStructure;
+            } else if (prisonerOfFaction != null && prisonerOfFaction == character.faction) {
+                return character.GetSettlementPrisonFor(character);
+            }
+            return null;
+        }
     }
 }
 
