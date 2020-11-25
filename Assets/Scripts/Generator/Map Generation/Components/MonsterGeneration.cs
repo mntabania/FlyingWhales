@@ -70,12 +70,6 @@ public class MonsterGeneration : MapGenerationComponent {
 				}
 			}	
 		}
-
-
-		//summon.ChangeHomeStructure(homeStructure);
-  //      if (homeStructure is IDwelling structure) {
-		//	summon.MigrateHomeStructureTo(structure);
-		//}
 		return summon;
 	}
     private void CreateCharacter(RACE race, string className, GENDER gender, BaseSettlement settlementOnTile, LocationStructure structure, Faction faction = null) {

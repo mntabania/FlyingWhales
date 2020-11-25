@@ -3185,8 +3185,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 200.09998, y: 0}
-  m_SizeDelta: {x: 135.50092, y: 0}
+  m_AnchoredPosition: {x: 135.47, y: 0}
+  m_SizeDelta: {x: 200.13202, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &274248740858596357
 CanvasRenderer:
@@ -3215,7 +3215,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 999 Hours
+  m_text: Fire Elemental
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 44b0e75cf1a2d2246a2de46e846fa57d, type: 2}
   m_sharedMaterial: {fileID: 21554341954933024, guid: 44b0e75cf1a2d2246a2de46e846fa57d,

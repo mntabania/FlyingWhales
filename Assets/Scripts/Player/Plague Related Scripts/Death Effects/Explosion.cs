@@ -12,10 +12,10 @@ namespace Plague.Death_Effect {
         protected override void ActivateEffect(Character p_character) {
             switch (_level) {
                 case 1:
-                    Ignite(p_character);
+                    FireBlast(p_character);
                     break;
                 case 2:
-                    FireBlast(p_character);
+                    FireBlastAndFireElementals(p_character);
                     break;
                 case 3:
                     Meteor(p_character);
@@ -36,9 +36,9 @@ namespace Plague.Death_Effect {
         public override string GetCurrentEffectDescription() {
             switch (_level) {
                 case 1:
-                    return "Ignite";
-                case 2:
                     return "Fire Blast";
+                case 2:
+                    return "Fire Elemental";
                 case 3:
                     return "Meteor";
                 default:
@@ -72,6 +72,15 @@ namespace Plague.Death_Effect {
             if (traitable.gridTileLocation == null) { return; }
             BurningSource burningSource = null;
             traitable.AdjustHP(-150, ELEMENTAL_TYPE.Fire, true, elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref burningSource), showHPBar: true);
+        }
+        private void FireBlastAndFireElementals(Character p_character) {
+            FireBlast(p_character);
+            LocationGridTile chosenTile = p_character.gridTileLocation; 
+            if (chosenTile != null) {
+                Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Fire_Elemental, FactionManager.Instance.neutralFaction, null, chosenTile.parentMap.region);
+                CharacterManager.Instance.PlaceSummon(summon, chosenTile);
+                summon.SetTerritory(chosenTile.collectionOwner.partOfHextile.hexTileOwner, false);
+            }
         }
         private void Meteor(Character p_character) {
             if(p_character.gridTileLocation != null) {

@@ -48,9 +48,9 @@ namespace Plague.Death_Effect {
             switch (p_deathEffect) {
                 case PLAGUE_DEATH_EFFECT.Explosion:
                     if (p_level == 1)
-                        return "Ignite the character's corpse when it dies.";
-                    else if (p_level == 2)
                         return "Trigger a Fire Blast around the corpse when it dies.";
+                    else if (p_level == 2)
+                        return "Trigger a Fire Blast and spawn a Fire Elemental around the corpse when it dies.";
                     else if (p_level == 3)
                         return "Cast a Meteor on the corpse when it dies.";
                     else
