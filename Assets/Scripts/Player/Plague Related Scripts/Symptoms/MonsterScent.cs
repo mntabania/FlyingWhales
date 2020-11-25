@@ -17,7 +17,7 @@ namespace Plague.Symptom {
                 && !(c is Animal));
 
                 if(chosenMonster != null) {
-                    chosenMonster.combatComponent.Fight(p_character, CombatManager.Hostility);
+                    chosenMonster.combatComponent.Fight(p_character, CombatManager.Monster_Scent);
                 }
             }
             Debug.Log("Activated Monster Scent Symptom");
