@@ -27,7 +27,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
             }
         }
         TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
-        if (currentTime == TIME_IN_WORDS.EARLY_NIGHT) {
+        if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT) {
             //Night time
             if (GameUtilities.RollChance(20)) {
                 if (isInHome) {

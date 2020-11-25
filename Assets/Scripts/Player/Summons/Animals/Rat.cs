@@ -4,7 +4,7 @@ using Traits;
 using UtilityScripts;
 
 public class Rat : Animal {
-    public override string raceClassName => "Rat";
+    public override string raceClassName => "Plagued Rat";
     public override COMBAT_MODE defaultCombatMode => COMBAT_MODE.Defend;
     public Rat() : base(SUMMON_TYPE.Rat, "Rat", RACE.RAT) {
         //combatComponent.SetCombatMode(COMBAT_MODE.Defend);

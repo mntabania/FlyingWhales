@@ -1,4 +1,5 @@
 ﻿using UtilityScripts;
+using UnityEngine;
 
 public class Torture : GoapAction {
     public Torture() : base(INTERACTION_TYPE.TORTURE) {
@@ -22,7 +23,9 @@ public class Torture : GoapAction {
     
     #region State Effects
     public void PerTickTortureSuccess(ActualGoapNode goapNode) {
-        goapNode.poiTarget.AdjustHP(-35, ELEMENTAL_TYPE.Normal, source: goapNode.actor, showHPBar: true);
+        int maxHP = goapNode.poiTarget.maxHP;
+        int damage = Mathf.RoundToInt(0.03f * maxHP);
+        goapNode.poiTarget.AdjustHP(-damage, ELEMENTAL_TYPE.Normal, source: goapNode.actor, showHPBar: true);
     }
     public void AfterTortureSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
@@ -33,9 +36,9 @@ public class Torture : GoapAction {
             } else {
                 string logKey = string.Empty;
                 int chance = GameUtilities.RandomBetweenTwoNumbers(0, 99);
-                if (chance < 55) {
+                if (chance < 45) {
                     logKey = "nothing";
-                } else if (chance >= 55 && chance < 80) {
+                } else if (chance >= 45 && chance < 80) {
                     logKey = "enslave";
                     targetCharacter.traitContainer.AddTrait(targetCharacter, "Enslaved", characterResponsible: actor);
                 } else {
