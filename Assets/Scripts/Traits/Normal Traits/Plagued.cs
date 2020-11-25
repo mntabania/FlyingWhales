@@ -280,6 +280,11 @@ namespace Traits {
             }
             return base.OnDeath(character);
         }
+        protected override string GetDescriptionInUI() {
+            string tooltip = base.GetDescriptionInUI();
+            tooltip = $"{tooltip}\n{PlagueDisease.Instance.GetPlagueEffectsSummary()}";
+            return tooltip;
+        }
         #endregion
 
         #region Fatalities

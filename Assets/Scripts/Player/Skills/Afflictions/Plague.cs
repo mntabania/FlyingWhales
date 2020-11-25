@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlagueData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.PLAGUE;
     public override string name => "Plague";
-    public override string description => "This Affliction will afflict a Villager with a virulent disease. The Plague may start spreading to others before eventually killing the Villager.";
+    public override string description => GetDescription();
     public override SPELL_CATEGORY category => SPELL_CATEGORY.AFFLICTION;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
@@ -43,4 +43,12 @@ public class PlagueData : SpellData {
         return reasons;
     }
     #endregion
+
+    private string GetDescription() {
+        string modifiedDescription = $"This Affliction will afflict a Villager with a virulent disease. The Plague may start spreading to others before eventually killing the Villager.";
+        if (GameManager.Instance.gameHasStarted) {
+            modifiedDescription = $"{modifiedDescription}\n\n{PlagueDisease.Instance.GetPlagueEffectsSummary()}";
+        }
+        return modifiedDescription;
+    }
 }

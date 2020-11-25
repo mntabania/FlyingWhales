@@ -88,34 +88,34 @@ public class LifeSpanUIController : MVCUIController, LifeSpanUIView.IListener
 	public void OnMonstersHoveredOut() { HideTooltip(); }
 	public void OnUndeadHoveredOut() { HideTooltip(); }
 	public void OnUpgradeBtnObjectsHoveredOver() {
-		m_lifeSpanUIView.UpdateTileObjectInfectionTime($"<color=\"green\">{GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetUpgradedTileObjectInfectionTime())}</color>");
+		m_lifeSpanUIView.UpdateTileObjectInfectionTime($"<color=\"green\">{PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetUpgradedTileObjectInfectionTime())}</color>");
 	}
 	public void OnUpgradeBtnObjectsHoveredOut() {
-		m_lifeSpanUIView.UpdateTileObjectInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.tileObjectInfectionTimeInHours));
+		m_lifeSpanUIView.UpdateTileObjectInfectionTime(PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.tileObjectInfectionTimeInHours));
 	}
 	public void OnUpgradeBtnElvesHoveredOver() {
-		m_lifeSpanUIView.UpdateElvesInfectionTime($"<color=\"green\">{GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetUpgradedSapientInfectionTime(RACE.ELVES))}</color>");
+		m_lifeSpanUIView.UpdateElvesInfectionTime($"<color=\"green\">{PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetUpgradedSapientInfectionTime(RACE.ELVES))}</color>");
 	}
 	public void OnUpgradeBtnElvesHoveredOut() {
-		m_lifeSpanUIView.UpdateElvesInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetSapientLifespanOfPlagueInHours(RACE.ELVES)));
+		m_lifeSpanUIView.UpdateElvesInfectionTime(PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetSapientLifespanOfPlagueInHours(RACE.ELVES)));
 	}
 	public void OnUpgradeBtnHumansHoveredOver() {
-		m_lifeSpanUIView.UpdateHumansInfectionTime($"<color=\"green\">{GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetUpgradedSapientInfectionTime(RACE.HUMANS))}</color>");
+		m_lifeSpanUIView.UpdateHumansInfectionTime($"<color=\"green\">{PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetUpgradedSapientInfectionTime(RACE.HUMANS))}</color>");
 	}
 	public void OnUpgradeBtnHumansHoveredOut() {
-		m_lifeSpanUIView.UpdateHumansInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetSapientLifespanOfPlagueInHours(RACE.HUMANS)));
+		m_lifeSpanUIView.UpdateHumansInfectionTime(PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetSapientLifespanOfPlagueInHours(RACE.HUMANS)));
 	}
 	public void OnUpgradeBtnMonstersHoveredOver() {
-		m_lifeSpanUIView.UpdateMonstersInfectionTime($"<color=\"green\">{GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetUpgradedMonsterInfectionTime())}</color>");
+		m_lifeSpanUIView.UpdateMonstersInfectionTime($"<color=\"green\">{PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetUpgradedMonsterInfectionTime())}</color>");
 	}
 	public void OnUpgradeBtnMonstersHoveredOut() {
-		m_lifeSpanUIView.UpdateMonstersInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.monsterInfectionTimeInHours));
+		m_lifeSpanUIView.UpdateMonstersInfectionTime(PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.monsterInfectionTimeInHours));
 	}
 	public void OnUpgradeBtnUndeadHoveredOver() {
-		m_lifeSpanUIView.UpdateUndeadInfectionTime($"<color=\"green\">{GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetUpgradedUndeadInfectionTime())}</color>");
+		m_lifeSpanUIView.UpdateUndeadInfectionTime($"<color=\"green\">{PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetUpgradedUndeadInfectionTime())}</color>");
 	}
 	public void OnUpgradeBtnUndeadHoveredOut() { 
-		m_lifeSpanUIView.UpdateUndeadInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.undeadInfectionTimeInHours));
+		m_lifeSpanUIView.UpdateUndeadInfectionTime(PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.undeadInfectionTimeInHours));
 	}
 	#endregion
 	
@@ -135,49 +135,38 @@ public class LifeSpanUIController : MVCUIController, LifeSpanUIView.IListener
 	}
 	
 	private void UpdateTileObjectInfectionTimeData() {
-		m_lifeSpanUIView.UpdateTileObjectInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.tileObjectInfectionTimeInHours));
+		m_lifeSpanUIView.UpdateTileObjectInfectionTime(PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.tileObjectInfectionTimeInHours));
 		int nextUpgradeCost = PlagueDisease.Instance.lifespan.GetTileObjectInfectionTimeUpgradeCost();
 		bool isAtMaxLevel = PlagueDisease.Instance.lifespan.IsTileObjectAtMaxLevel();
 		m_lifeSpanUIView.UpdateTileObjectUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
 		m_lifeSpanUIView.UpdateTileObjectUpgradeButtonInteractable(!isAtMaxLevel && CanAffordUpgrade(nextUpgradeCost));
 	}
 	private void UpdateElvesInfectionTimeData() {
-		m_lifeSpanUIView.UpdateElvesInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetSapientLifespanOfPlagueInHours(RACE.ELVES)));
+		m_lifeSpanUIView.UpdateElvesInfectionTime(PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetSapientLifespanOfPlagueInHours(RACE.ELVES)));
 		int nextUpgradeCost = PlagueDisease.Instance.lifespan.GetSapientInfectionTimeUpgradeCost(RACE.ELVES);
 		bool isAtMaxLevel = PlagueDisease.Instance.lifespan.IsSapientAtMaxLevel(RACE.ELVES);
 		m_lifeSpanUIView.UpdateElvesUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
 		m_lifeSpanUIView.UpdateElvesUpgradeButtonInteractable(!isAtMaxLevel && CanAffordUpgrade(nextUpgradeCost));
 	}
 	private void UpdateHumansInfectionTimeData() {
-		m_lifeSpanUIView.UpdateHumansInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetSapientLifespanOfPlagueInHours(RACE.HUMANS)));
+		m_lifeSpanUIView.UpdateHumansInfectionTime(PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.GetSapientLifespanOfPlagueInHours(RACE.HUMANS)));
 		int nextUpgradeCost = PlagueDisease.Instance.lifespan.GetSapientInfectionTimeUpgradeCost(RACE.HUMANS);
 		bool isAtMaxLevel = PlagueDisease.Instance.lifespan.IsSapientAtMaxLevel(RACE.HUMANS);
 		m_lifeSpanUIView.UpdateHumansUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
 		m_lifeSpanUIView.UpdateHumansUpgradeButtonInteractable(!isAtMaxLevel && CanAffordUpgrade(nextUpgradeCost));
 	}
 	private void UpdateMonstersInfectionTimeData() {
-		m_lifeSpanUIView.UpdateMonstersInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.monsterInfectionTimeInHours));
+		m_lifeSpanUIView.UpdateMonstersInfectionTime(PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.monsterInfectionTimeInHours));
 		int nextUpgradeCost = PlagueDisease.Instance.lifespan.GetMonsterInfectionTimeUpgradeCost();
 		bool isAtMaxLevel = PlagueDisease.Instance.lifespan.IsMonstersAtMaxLevel();
 		m_lifeSpanUIView.UpdateMonstersUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
 		m_lifeSpanUIView.UpdateMonstersUpgradeButtonInteractable(!isAtMaxLevel && CanAffordUpgrade(nextUpgradeCost));
 	}
 	private void UpdateUndeadInfectionTimeData() {
-		m_lifeSpanUIView.UpdateUndeadInfectionTime(GetInfectionTimeString(PlagueDisease.Instance.lifespan.undeadInfectionTimeInHours));
+		m_lifeSpanUIView.UpdateUndeadInfectionTime(PlagueDisease.Instance.lifespan.GetInfectionTimeString(PlagueDisease.Instance.lifespan.undeadInfectionTimeInHours));
 		int nextUpgradeCost = PlagueDisease.Instance.lifespan.GetUndeadInfectionTimeUpgradeCost();
 		bool isAtMaxLevel = PlagueDisease.Instance.lifespan.IsUndeadAtMaxLevel();
 		m_lifeSpanUIView.UpdateUndeadUpgradePrice(isAtMaxLevel ? "MAX" : $"{nextUpgradeCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
 		m_lifeSpanUIView.UpdateUndeadUpgradeButtonInteractable(!isAtMaxLevel && CanAffordUpgrade(nextUpgradeCost));
-	}
-
-	private string GetInfectionTimeString(int timeInHours) {
-		if (timeInHours == 0) {
-			return "Indefinite";
-		} else if (timeInHours == -1) {
-			return "Immune";
-		}
-		else {
-			return $"{timeInHours.ToString()} Hours";
-		}
 	}
 }

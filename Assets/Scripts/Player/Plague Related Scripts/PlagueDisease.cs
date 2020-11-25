@@ -6,6 +6,7 @@ using Plague.Death_Effect;
 using UnityEngine;
 using UnityEngine.Assertions;
 using System.Linq;
+using UtilityScripts;
 
 public class PlagueDisease : ISingletonPattern, ISavable {
     private static PlagueDisease _Instance;
@@ -284,6 +285,105 @@ public class PlagueDisease : ISingletonPattern, ISavable {
             return poi.traitContainer.AddTrait(poi, "Plagued", overrideDuration: lifespanInTicks);
         }
         return false;
+    }
+    #endregion
+
+    #region Randomization
+    public void OnLoadoutPicked() {
+        if (!PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.BIOLAB).isInUse) {
+            RandomizePlague();
+        }
+    }
+    private void RandomizePlague() {
+        string randomizeSummary = $"Randomizing Plague Effects:";
+        List<PLAGUE_TRANSMISSION> transmissionChoices = CollectionUtilities.GetEnumValues<PLAGUE_TRANSMISSION>().ToList();
+        for (int i = 0; i < 2; i++) {
+            if (transmissionChoices.Count == 0) { break; }
+            PLAGUE_TRANSMISSION transmissionTypeToUpgrade = CollectionUtilities.GetRandomElement(transmissionChoices);
+            _transmissionLevels[transmissionTypeToUpgrade] = 2;
+            transmissionChoices.Remove(transmissionTypeToUpgrade);
+            randomizeSummary = $"{randomizeSummary}\nUpgraded {transmissionTypeToUpgrade.ToString()} to Level 2";
+        }
+        List<string> lifespanChoices = new List<string>() { "Tile Object", "Monster", "Undead", "Human", "Elf" };
+        for (int i = 0; i < 2; i++) {
+            if (lifespanChoices.Count == 0) { break; }
+            string chosenLifespanToUpgrade = CollectionUtilities.GetRandomElement(lifespanChoices);
+            switch (chosenLifespanToUpgrade) {
+                case "Tile Object": _lifespan.UpgradeTileObjectInfectionTime(); break;
+                case "Monster": _lifespan.UpgradeMonsterInfectionTime(); break;
+                case "Undead": _lifespan.UpgradeUndeadInfectionTime(); break;
+                case "Human": _lifespan.UpgradeSapientInfectionTime(RACE.HUMANS); break;
+                case "Elf": _lifespan.UpgradeSapientInfectionTime(RACE.ELVES); break;
+            }
+            lifespanChoices.Remove(chosenLifespanToUpgrade);
+            randomizeSummary = $"{randomizeSummary}\nUpgraded {chosenLifespanToUpgrade} lifespan by 1 level.";
+        }
+        PLAGUE_FATALITY[] fatalityChoices = CollectionUtilities.GetEnumValues<PLAGUE_FATALITY>();
+        PLAGUE_FATALITY chosenFatality = CollectionUtilities.GetRandomElement(fatalityChoices);
+        AddAndInitializeFatality(chosenFatality);
+        randomizeSummary = $"{randomizeSummary}\nUnlocked {chosenFatality.ToString()} Fatality";
+        
+        List<PLAGUE_SYMPTOM> symptomChoices = CollectionUtilities.GetEnumValues<PLAGUE_SYMPTOM>().ToList();
+        for (int i = 0; i < 2; i++) {
+            if (symptomChoices.Count == 0) { break; }
+            PLAGUE_SYMPTOM symptomToUpgrade = CollectionUtilities.GetRandomElement(symptomChoices);
+            AddAndInitializeSymptom(symptomToUpgrade);
+            symptomChoices.Remove(symptomToUpgrade);
+            randomizeSummary = $"{randomizeSummary}\nUnlocked {symptomToUpgrade.ToString()} Symptom";
+        }
+
+        PLAGUE_DEATH_EFFECT[] deathEffectChoices = CollectionUtilities.GetEnumValues<PLAGUE_DEATH_EFFECT>();
+        PLAGUE_DEATH_EFFECT deathEffect = CollectionUtilities.GetRandomElement(deathEffectChoices);
+        SetNewPlagueDeathEffectAndUnsetPrev(deathEffect);
+        _activeDeathEffect.AdjustLevel(1);
+        randomizeSummary = $"{randomizeSummary}\nUnlocked and Upgraded {deathEffect.ToString()} to Level 2";
+        Debug.Log(randomizeSummary);
+    }
+    #endregion
+
+    #region Utilities
+    public string GetPlagueEffectsSummary() {
+        string tooltip = $"<b>Effects:</b>";
+        int airborneLevel = GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne);
+        int combatLevel = GetTransmissionLevel(PLAGUE_TRANSMISSION.Combat);
+        int consumptionLevel = GetTransmissionLevel(PLAGUE_TRANSMISSION.Consumption);
+        int physicalContactLevel = GetTransmissionLevel(PLAGUE_TRANSMISSION.Physical_Contact);
+        if (airborneLevel > 0) { tooltip = $"{tooltip}\nAirborne Rate: {GetTransmissionRateDescription(airborneLevel)}"; }
+        if (combatLevel > 0) { tooltip = $"{tooltip}\nCombat Rate: {GetTransmissionRateDescription(combatLevel)}"; }
+        if (consumptionLevel > 0) { tooltip = $"{tooltip}\nConsumption Rate: {GetTransmissionRateDescription(consumptionLevel)}"; }
+        if (physicalContactLevel > 0) { tooltip = $"{tooltip}\nPhysical Contact Rate: {GetTransmissionRateDescription(physicalContactLevel)}"; }
+        tooltip = $"{tooltip}\nObject Lifespan: {lifespan.GetInfectionTimeString(lifespan.tileObjectInfectionTimeInHours)}";
+        tooltip = $"{tooltip}\nHuman Lifespan: {lifespan.GetInfectionTimeString(lifespan.GetSapientLifespanOfPlagueInHours(RACE.HUMANS))}";
+        tooltip = $"{tooltip}\nElves Lifespan: {lifespan.GetInfectionTimeString(lifespan.GetSapientLifespanOfPlagueInHours(RACE.ELVES))}";
+        tooltip = $"{tooltip}\nMonster Lifespan: {lifespan.GetInfectionTimeString(lifespan.monsterInfectionTimeInHours)}";
+        tooltip = $"{tooltip}\nUndead Lifespan: {lifespan.GetInfectionTimeString(lifespan.undeadInfectionTimeInHours)}";
+        tooltip = $"{tooltip}\nFatalities: ";
+        if (activeFatalities.Count > 0) {
+            for (int i = 0; i < activeFatalities.Count; i++) {
+                Fatality fatality = activeFatalities[i];
+                tooltip = $"{tooltip}{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(fatality.fatalityType.ToString())}";
+                if (i + 1 < activeFatalities.Count) {
+                    tooltip = $"{tooltip}, ";
+                }
+            }    
+        } else {
+            tooltip = $"{tooltip}-";
+        }
+        
+        tooltip = $"{tooltip}\nSymptoms: ";
+        if (activeSymptoms.Count > 0) {
+            for (int i = 0; i < activeSymptoms.Count; i++) {
+                PlagueSymptom symptom = activeSymptoms[i];
+                tooltip = $"{tooltip}{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(symptom.symptomType.ToString())}";
+                if (i + 1 < activeSymptoms.Count) {
+                    tooltip = $"{tooltip}, ";
+                }
+            }    
+        } else {
+            tooltip = $"{tooltip}-";
+        }
+        tooltip = $"{tooltip}\nOn Death: {activeDeathEffect?.GetCurrentEffectDescription() ?? "-"}";
+        return tooltip;
     }
     #endregion
 
