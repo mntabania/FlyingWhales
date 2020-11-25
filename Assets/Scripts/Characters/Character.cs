@@ -1684,10 +1684,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         // Debug.Log($"Set region location of {name} to {_currentRegion?.name ?? "Null"}");
     }
     public bool IsInHomeSettlement() {
-        if (isAtHomeRegion) {
-            if(homeSettlement != null) {
-                return currentSettlement == homeSettlement;
-            }
+        if (homeSettlement != null) {
+            return currentSettlement == homeSettlement;
         }
         return false;
     } 
@@ -1704,6 +1702,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
         }
+    }
+    public bool HasHome() {
+        return homeSettlement != null || homeStructure != null || HasTerritory();
+    }
+    public bool IsAtHome() {
+        if (homeSettlement != null) {
+            return IsInHomeSettlement();
+        } else if (homeStructure != null) {
+            return isAtHomeStructure;
+        } else if (territory != null) {
+            return IsInTerritory();
+        }
+        return false;
     }
     #endregion
 
@@ -2044,8 +2055,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetHasRisen(bool state) {
         hasRisen = state;
     }
-    public bool IsInDanger() {
-        return traitContainer.HasTrait("Restrained") && !IsInHomeSettlement();
+    public bool IsConsideredInDangerBy(Character character) {
+        if (traitContainer.HasTrait("Enslaved") && faction != character.faction) {
+            return true;
+        }
+        if(traitContainer.HasTrait("Restrained", "Ensnared", "Frozen")) {
+            return !IsAtHome();
+        }
+        if (HasHome()) {
+            if(!IsAtHome()) {
+                //If cannot return home, consider in danger
+                return !movementComponent.CanReturnHome();
+            }
+        }
+        return false;
     }
     public void SetIsPreplaced(bool state) {
         isPreplaced = state;

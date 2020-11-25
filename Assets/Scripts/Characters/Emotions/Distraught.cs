@@ -12,7 +12,7 @@ public class Distraught : Emotion {
     public override string ProcessEmotion(Character witness, IPointOfInterest target, REACTION_STATUS status,
         ActualGoapNode goapNode = null, string reason = "") {
         if(target is Character targetCharacter) {
-            if (targetCharacter.IsInDanger()) {
+            if (targetCharacter.IsConsideredInDangerBy(witness)) {
                 if (witness.faction != null && !witness.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, targetCharacter)) {
                     witness.faction.partyQuestBoard.CreateRescuePartyQuest(witness, witness.homeSettlement, targetCharacter);
                 }

@@ -47,7 +47,9 @@ namespace Interrupts {
                 if(actor.relationshipContainer.GetAwarenessState(targetCharacter) == AWARENESS_STATE.Missing) {
                     if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
                         if(witness.faction != null && !witness.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, targetCharacter)) {
-                            witness.faction.partyQuestBoard.CreateRescuePartyQuest(witness, witness.homeSettlement, targetCharacter);
+                            if (targetCharacter.IsConsideredInDangerBy(witness)) {
+                                witness.faction.partyQuestBoard.CreateRescuePartyQuest(witness, witness.homeSettlement, targetCharacter);
+                            }
                         }
                         //witness.jobComponent.TriggerRescueJob(targetCharacter);
                     }

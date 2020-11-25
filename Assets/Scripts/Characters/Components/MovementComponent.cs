@@ -366,6 +366,22 @@ public class MovementComponent : CharacterComponent {
             return PathfindingManager.Instance.HasPathEvenDiffRegion(fromTile, toTile, constraint);
         }
     }
+    public bool CanReturnHome() {
+        if (owner.HasHome()) {
+            LocationGridTile chosenTile = null;
+            if(owner.homeSettlement != null) {
+                chosenTile = owner.homeSettlement.GetRandomPassableTile();
+            } else if (owner.homeStructure != null) {
+                chosenTile = owner.homeStructure.GetRandomPassableTile();
+            } else if (owner.HasTerritory()) {
+                chosenTile = owner.territory.GetRandomPassableTile();
+            }
+            if(chosenTile != null) {
+                return HasPathToEvenIfDiffRegion(chosenTile);
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Dig

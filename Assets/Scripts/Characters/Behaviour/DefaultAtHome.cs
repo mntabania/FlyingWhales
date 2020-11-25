@@ -84,8 +84,10 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                             int chance = Random.Range(0, 100);
                             log += $"\nRoll: {chance}";
                             if (chance < 5) {
-                                character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
-                                return true;
+                                if (missingCharacter.IsConsideredInDangerBy(character)) {
+                                    character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
+                                    return true;
+                                }
                             }
                         }
                     } else {
@@ -100,8 +102,10 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                             int chance = Random.Range(0, 100);
                             log += $"\nRoll: {chance}";
                             if (chance < 5) {
-                                character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
-                                return true;
+                                if (missingCharacter.IsConsideredInDangerBy(character)) {
+                                    character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
+                                    return true;
+                                }
                             }
                         }
                         //if (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") {
@@ -137,8 +141,10 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                             int chance = Random.Range(0, 100);
                             log += $"\nRoll: {chance}";
                             if (chance < 15) {
-                                character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
-                                return true;
+                                if (missingCharacter.IsConsideredInDangerBy(character)) {
+                                    character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
+                                    return true;
+                                }
                             }
                         }
                         //if (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") {
