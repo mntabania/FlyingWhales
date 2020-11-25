@@ -69,7 +69,9 @@ public class SleepOutside : GoapAction {
             goapNode.OverrideCurrentStateDuration(goapNode.currentState.duration);
         }
         needsComponent.AdjustTiredness(1f);
-        needsComponent.AdjustHappiness(-0.39f);
+        if (actor.race != RACE.RATMAN && !actor.partyComponent.isActiveMember) {
+            needsComponent.AdjustHappiness(-0.39f);    
+        }
         needsComponent.AdjustSleepTicks(-1);
         //needsComponent.AdjustStamina(0.2f);
     }

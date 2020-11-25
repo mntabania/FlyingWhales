@@ -56,7 +56,7 @@ public class Butcher : GoapAction {
                     costLog += $" +2000(Cannot butcher party member when camping)";
                     actor.logComponent.AppendCostLog(costLog);
                     return 2000;
-                }
+               }
             }
         }
         costLog = $"\n{name} {target.nameWithID}:";
@@ -135,6 +135,10 @@ public class Butcher : GoapAction {
                 int currCost = UtilityScripts.Utilities.Rng.Next(80, 91);
                 cost += currCost;
                 costLog += $" +{currCost}(Elf)";
+            } else if (targetCharacter.race == RACE.RATMAN) {
+                int currCost = UtilityScripts.Utilities.Rng.Next(80, 91);
+                cost += currCost;
+                costLog += $" +{currCost}(Ratman)";
             }
             //else if (deadCharacter.race == RACE.WOLF) {
             //    int currCost = UtilityScripts.Utilities.Rng.Next(50, 61);
