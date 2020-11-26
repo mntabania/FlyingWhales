@@ -46,9 +46,9 @@ public class MakeLove : GoapAction {
             }
         }
         Character targetCharacter = target as Character;
-        if (!(actor is Succubus) && targetCharacter != null && targetCharacter.partyComponent.hasParty && targetCharacter.partyComponent.currentParty.isActive) {
+        if (targetCharacter != null && targetCharacter.partyComponent.hasParty && targetCharacter.partyComponent.currentParty.isActive) {
             if (targetCharacter.partyComponent.isActiveMember) {
-                costLog += $" +2000(Target is in Active Party and actor is NOT a Succubus, Cannot make love)";
+                costLog += $" +2000(Target is in Active Party, Cannot make love)";
                 actor.logComponent.AppendCostLog(costLog);
                 return 2000;
             }
