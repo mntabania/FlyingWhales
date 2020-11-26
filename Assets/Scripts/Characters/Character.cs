@@ -5382,9 +5382,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (faction.isPlayerFaction) {
                 return true;
             }
-            Faction playerFaction = PlayerManager.Instance.player.playerFaction;
-            if (faction == playerFaction || !faction.IsHostileWith(playerFaction)) {
-                return true;
+            if (PlayerManager.Instance.player != null) {
+                Faction playerFaction = PlayerManager.Instance.player.playerFaction;
+                if (faction == playerFaction || !faction.IsHostileWith(playerFaction)) {
+                    return true;
+                }    
             }
         }
         return false;
