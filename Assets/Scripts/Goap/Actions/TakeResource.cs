@@ -66,7 +66,7 @@ public class TakeResource : GoapAction {
         }
         if (job.jobType.IsFullnessRecoveryTypeJob() || job.jobType == JOB_TYPE.OBTAIN_PERSONAL_FOOD) {
             if(target is ElfMeat || target is HumanMeat) {
-                if (actor.traitContainer.HasTrait("Cannibal")) {
+                if (actor.traitContainer.HasTrait("Cannibal") && !actor.traitContainer.HasTrait("Vampire")) {
                     int currCost = 450; //UtilityScripts.Utilities.Rng.Next(450, 501);
                     cost += currCost;
                     costLog += $" +{currCost}(Obtain Personal Food, Elf/Human Meat, Cannibal)";
