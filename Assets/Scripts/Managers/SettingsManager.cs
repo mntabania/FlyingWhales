@@ -37,8 +37,6 @@ namespace Settings {
         [SerializeField] private HoverHandler hoverHandlerEdgePanning;
         [SerializeField] private HoverHandler hoverHandlerSkipTutorials;
         [SerializeField] private HoverHandler hoverHandlerConfineCursor;
-        [SerializeField] private HoverHandler hoverHandlerVsync;
-        [SerializeField] private HoverHandler hoverHandlerShowVideos;
         [SerializeField] private HoverHandler hoverHandlerCameraShake;
         [SerializeField] private HoverHandler hoverHandlerRandomizeMonsterNames;
         

@@ -24581,8 +24581,6 @@ MonoBehaviour:
   hoverHandlerEdgePanning: {fileID: 86800208}
   hoverHandlerSkipTutorials: {fileID: 182572117}
   hoverHandlerConfineCursor: {fileID: 807539087}
-  hoverHandlerVsync: {fileID: 0}
-  hoverHandlerShowVideos: {fileID: 0}
   hoverHandlerCameraShake: {fileID: 1256585124}
   hoverHandlerRandomizeMonsterNames: {fileID: 391870964}
   masterVolumeSlider: {fileID: 430691584}
@@ -31374,7 +31372,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1940818010}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -36799,12 +36797,12 @@ PrefabInstance:
     - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
         type: 3}
       propertyPath: _unlockAllSkills
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
         type: 3}
       propertyPath: _unlimitedCast
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 39888b675721e8e488059363d0de61d1, type: 3}
