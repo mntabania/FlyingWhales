@@ -813,6 +813,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
         _characterClass = characterClass;
+        movementComponent.OnAssignedClass(characterClass);
         //behaviourComponent.OnChangeClass(_characterClass, previousClass);
         if (!isInitial) {
             homeSettlement?.UpdateAbleJobsOfResident(this);
@@ -1340,6 +1341,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (newFaction?.factionType.type == FACTION_TYPE.Undead) {
             behaviourComponent.AddBehaviourComponent(typeof(UndeadBehaviour));
+        }
+        if (newFaction != null && newFaction.isMajorFaction) {
+            //if character is now part of a faction, then set its movement to not avoid that faction
+            movementComponent.DoNotAvoidFaction(newFaction);    
         }
         // Debug.Log($"{name} changed faction from {prevFaction?.name ?? "Null"} to {newFaction?.name ?? "Null"}");
         // if (PlayerManager.Instance.player != null && this.faction == PlayerManager.Instance.player.playerFaction) {

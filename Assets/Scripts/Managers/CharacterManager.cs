@@ -437,8 +437,7 @@ public class CharacterManager : BaseMonoBehaviour {
         AddNewLimboCharacter(newCharacter);
         return newCharacter;
     }
-    public Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null,
-        BaseSettlement homeLocation = null, Region homeRegion = null, LocationStructure homeStructure = null) {
+    public Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null, BaseSettlement homeLocation = null, Region homeRegion = null, LocationStructure homeStructure = null) {
         Character newCharacter = new Character(className, race, gender);
         newCharacter.SetRandomName();
         newCharacter.Initialize();

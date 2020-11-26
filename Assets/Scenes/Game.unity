@@ -84757,7 +84757,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19859e4ff2f9ee74e99426d52b76b328, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentTagIndex: 9
+  currentTagIndex: 12
   characterCollisionTriggerPrefab: {fileID: 1745477595920248, guid: b561293b149dfb44a8798a971c7596c6,
     type: 3}
   pathfinder: {fileID: 1536722385}
@@ -85464,11 +85464,11 @@ MonoBehaviour:
   - Demonic Doors
   - Undead Faction
   - Undead Doors
+  - Ratman Faction
+  - Ratman Doors
   - Roads
   - Caves
   - Special Structures
-  - 9
-  - 10
   - 11
   - 12
   - 13

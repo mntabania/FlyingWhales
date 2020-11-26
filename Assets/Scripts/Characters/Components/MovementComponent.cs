@@ -179,6 +179,11 @@ public class MovementComponent : CharacterComponent {
     private void OnStartedTravelling(Character character) {
         OnCharacterStartedTravelling(character);
     }
+    public void OnAssignedClass(CharacterClass characterClass) {
+        if (characterClass.className == "Ratman") {
+            AvoidAllFactions();
+        }
+    }
     #endregion
 
     #region Go To
@@ -543,6 +548,19 @@ public class MovementComponent : CharacterComponent {
             owner.marker.UpdateTagPenalties();
         }
     }
+    public void AvoidAllFactions() {
+        for (int i = InnerMapManager.Starting_Tag_Index - 1; i < 32; i++) {
+            SetPenaltyForTag(i, 500);
+        }
+    }
+    public void DoNotAvoidFaction(Faction p_faction) {
+        SetPenaltyForTag((int)p_faction.pathfindingTag, 0);
+        SetPenaltyForTag((int)p_faction.pathfindingDoorTag, 0);
+    }
+    public void AvoidFaction(Faction p_faction) {
+        SetPenaltyForTag((int)p_faction.pathfindingTag, 500);
+        SetPenaltyForTag((int)p_faction.pathfindingDoorTag, 500);
+    }
     #endregion
 
     #region Travelling Status
@@ -573,6 +591,8 @@ public class MovementComponent : CharacterComponent {
 
     }
     #endregion
+
+    
 }
 
 [System.Serializable]

@@ -65,9 +65,9 @@ public class Pray : GoapAction {
     public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
         Character targetCharacter = target as Character;
-        
-        CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(witness, actor, target, node.crimeType);
-        
+
+        CRIME_SEVERITY severity = node.crimeType == CRIME_TYPE.None ? CRIME_SEVERITY.None : CrimeManager.Instance.GetCrimeSeverity(witness, actor, target, node.crimeType);
+
         if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
             CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
