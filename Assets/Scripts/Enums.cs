@@ -652,7 +652,7 @@ public enum STRUCTURE_TYPE {
     CITY_CENTER = 11,
     SMITHY = 12,
     BARRACKS = 13,
-    APOTHECARY = 14,
+    HOSPICE = 14,
     GRANARY = 15,
     MINER_CAMP = 16,
     RAIDER_CAMP = 17,

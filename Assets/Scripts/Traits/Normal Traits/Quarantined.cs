@@ -160,7 +160,7 @@ namespace Traits {
             }
         }
         public void OnCharacterLeftStructure(Character p_character, LocationStructure p_leftStructure) {
-            if (p_leftStructure != null && p_leftStructure.structureType == STRUCTURE_TYPE.APOTHECARY) {
+            if (p_leftStructure != null && p_leftStructure.structureType == STRUCTURE_TYPE.HOSPICE) {
                 //if character left an apothecary then it is no longer quarantined
                 p_character.traitContainer.RemoveTrait(p_character, this);
             }

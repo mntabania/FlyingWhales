@@ -268,7 +268,7 @@ namespace Traits {
                         switch (targetCharacter.currentStructure.structureType) {
                             case STRUCTURE_TYPE.TAVERN:
                             case STRUCTURE_TYPE.FARM:
-                            case STRUCTURE_TYPE.APOTHECARY:
+                            case STRUCTURE_TYPE.HOSPICE:
                             case STRUCTURE_TYPE.CEMETERY:
                             case STRUCTURE_TYPE.CITY_CENTER:
                                 willReact = false;

@@ -12,7 +12,7 @@ public class BedClinic : BaseBed, CharacterEventDispatcher.ITraitListener {
     }
     public BedClinic(SaveDataTileObject data) : base(data, 1) { }
     
-    protected override string GenerateName() { return "Apothecary Bed"; }
+    protected override string GenerateName() { return "Hospice Bed"; }
 
     #region Loading
     public override void LoadAdditionalInfo(SaveDataTileObject data) {
