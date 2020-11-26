@@ -97,6 +97,18 @@ public class LocationEventManager {
             settlementEvent.ProcessRemovedVillager(character);
         }
     }
+    public bool CanHaveEvents() {
+        if (_location.owner == null) {
+            return false;
+        }
+        if (_location.owner.isPlayerFaction) {
+            return false;
+        }
+        if (!_location.owner.isMajorFaction) {
+            return false;
+        }
+        return true;
+    }
     #endregion
 
     #region Utilites

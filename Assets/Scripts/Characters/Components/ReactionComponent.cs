@@ -591,7 +591,7 @@ public class ReactionComponent : CharacterComponent {
 
         if (disguisedTarget.characterClass.className == "Werewolf" && disguisedActor.homeSettlement != null && 
             disguisedTarget.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(disguisedActor.homeSettlement) && disguisedTarget.lycanData != null && 
-            !disguisedTarget.lycanData.DoesCharacterKnowThisLycan(disguisedActor)) {
+            !disguisedTarget.lycanData.DoesCharacterKnowThisLycan(disguisedActor) && disguisedActor.homeSettlement.eventManager.CanHaveEvents()) {
             debugLog = $"{debugLog}\n-Target is a werewolf and is near {disguisedActor.homeSettlement.name}";
             CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(disguisedActor, disguisedTarget, disguisedTarget, CRIME_TYPE.Werewolf);
             if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable && !disguisedActor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Werewolf_Hunt)) {
@@ -1299,7 +1299,7 @@ public class ReactionComponent : CharacterComponent {
                             }
                         }
 
-                        if (disguisedTarget.traitContainer.HasTrait("Mangled") && disguisedActor.homeSettlement != null) {
+                        if (disguisedTarget.traitContainer.HasTrait("Mangled") && disguisedActor.homeSettlement != null && disguisedActor.homeSettlement.eventManager.CanHaveEvents()) {
                             CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(disguisedActor, disguisedTarget, disguisedTarget, CRIME_TYPE.Werewolf);
                             if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable && !disguisedActor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Werewolf_Hunt)) {
                                 debugLog = $"{debugLog}\n-Saw a mangled body and no active werewolf hunt is active yet and considers werewolf as a crime.";
