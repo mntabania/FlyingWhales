@@ -97,7 +97,7 @@ public class Sleep : GoapAction {
                     } else if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Rival, RelationshipManager.Enemy)) {
                         cost += 2000;
                         costLog += " +2000(Exhausted, Is in Enemy home structure)";
-                    } else if (targetBed.gridTileLocation != null && targetBed.gridTileLocation.IsPartOfSettlement(settlement) && settlement.owner != null && settlement.owner != actor.faction) {
+                    } else if (targetBed.gridTileLocation != null && targetBed.gridTileLocation.IsPartOfSettlement(out settlement) && settlement.owner != null && settlement.owner != actor.faction) {
                         cost += 200;
                         costLog += " +200(Exhausted, Inside settlement of different faction)";
                     } else {

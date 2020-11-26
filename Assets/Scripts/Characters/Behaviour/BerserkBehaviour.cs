@@ -16,7 +16,8 @@ public class BerserkBehaviour : CharacterBehaviourComponent {
             for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
                 IPointOfInterest inVisionPOI = character.marker.inVisionPOIs[i];
                 if (inVisionPOI is MovingTileObject || inVisionPOI is GenericTileObject || inVisionPOI is StructureTileObject 
-                    || (inVisionPOI.mapObjectVisual != null && inVisionPOI.mapObjectVisual.IsInvisibleToPlayer()) || inVisionPOI.gridTileLocation == null) {
+                    || (inVisionPOI.mapObjectVisual != null && inVisionPOI.mapObjectVisual.IsInvisibleToPlayer()) || inVisionPOI.gridTileLocation == null
+                    || inVisionPOI.traitContainer.HasTrait("Hibernating", "Indestructible")) {
                     //should not target moving tile objects and generic tile objects and structure tile objects
                     continue;
                 }

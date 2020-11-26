@@ -6,7 +6,7 @@ namespace Crime_System {
     public class Plagued : CrimeType {
 
         #region getters
-        public override string accuseText => "is a plague-bearer!";
+        public override string accuseText => "being a plague-bearer";
         #endregion
 
         public Plagued() : base(CRIME_TYPE.Plagued) { }

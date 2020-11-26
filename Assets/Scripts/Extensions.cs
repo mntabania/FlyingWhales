@@ -532,6 +532,7 @@ public static class Extensions {
                 break;
             case JOB_TYPE.FEED:
             case JOB_TYPE.RITUAL_KILLING:
+            case JOB_TYPE.MONSTER_ABDUCT:
                 priority = 1003;
                 break;
             case JOB_TYPE.ENERGY_RECOVERY_URGENT:
@@ -610,7 +611,6 @@ public static class Extensions {
             case JOB_TYPE.BURY:
             case JOB_TYPE.TORTURE:
             case JOB_TYPE.CHANGE_CLASS:
-            case JOB_TYPE.MONSTER_ABDUCT:
                 priority = 820;
                 break;
             case JOB_TYPE.PRODUCE_FOOD:
