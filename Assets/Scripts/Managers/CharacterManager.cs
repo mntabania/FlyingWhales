@@ -691,16 +691,6 @@ public class CharacterManager : BaseMonoBehaviour {
         target.DestroyMarker();
         // RemoveCharacter(target);
     }
-    public List<Character> GetAllNormalCharacters() {
-        List<Character> characters = new List<Character>();
-        for (int i = 0; i < allCharacters.Count; i++) {
-            Character character = allCharacters[i];
-            if (character.isNormalCharacter) {
-                characters.Add(character);
-            }
-        }
-        return characters;
-    }
     public Color GetCharacterNameColor(Character character) {
         if(character != null) {
             if (character.minion != null) {

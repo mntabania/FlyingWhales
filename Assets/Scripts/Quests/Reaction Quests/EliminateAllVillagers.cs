@@ -15,7 +15,7 @@ namespace Quests {
         
         public EliminateAllVillagers() : base($"Eliminate All Villagers") { }
         protected override void ConstructSteps() {
-            List<Character> villagers = CharacterManager.Instance.GetAllNormalCharacters();
+            List<Character> villagers = GetAllCharactersToBeEliminated();
             _eliminateVillagerStep = new EliminateVillagerStep(GetEliminateAllVillagersDescription, villagers);
             _eliminateVillagerStep.SetObjectsToCenter(villagers.Where(x => !ShouldConsiderCharacterAsEliminated(x)).Select(x => x as ISelectable).ToList());
             
@@ -41,9 +41,28 @@ namespace Quests {
 
         #region Utilities
         public static bool ShouldConsiderCharacterAsEliminated(Character character) {
-            return character.isDead ||
-                   (character.faction != null && !character.faction.isMajorNonPlayerOrVagrant) ||
-                   character.traitContainer.HasTrait("Cultist");
+            if (character.isDead) {
+                return true;
+            }
+            if (character.traitContainer.HasTrait("Cultist")) {
+                return true;
+            }
+            if (character.faction != null) {
+                if (!character.faction.isMajorNonPlayerOrVagrant && character.faction.factionType.type != FACTION_TYPE.Ratmen) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        private List<Character> GetAllCharactersToBeEliminated() {
+            List<Character> characters = new List<Character>();
+            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                Character character = CharacterManager.Instance.allCharacters[i];
+                if (character.isNormalCharacter && character.race.IsSapient()) { 
+                    characters.Add(character);
+                }
+            }
+            return characters;
         }
         #endregion
     }
