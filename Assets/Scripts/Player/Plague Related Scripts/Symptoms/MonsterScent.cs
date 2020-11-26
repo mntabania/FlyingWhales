@@ -13,6 +13,7 @@ namespace Plague.Symptom {
                 && c.limiterComponent.canPerform
                 && c.limiterComponent.canMove
                 && c.movementComponent.HasPathTo(p_character.gridTileLocation)
+                && !c.movementComponent.isStationary
                 && (c is Summon)
                 && !(c is Animal));
 

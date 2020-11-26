@@ -2713,6 +2713,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         MigrateHomeStructureTo(dwelling, broadcast, addToRegionResidents, affectSettlement);
         ClearTerritory();
     }
+    public void ClearTerritoryAndMigrateHomeSettlementTo(BaseSettlement newHomeSettlement, LocationStructure homeStructure = null, bool broadcast = true, bool addToRegionResidents = true) {
+        MigrateHomeTo(newHomeSettlement, homeStructure, broadcast, addToRegionResidents);
+        ClearTerritory();
+    }
     public void MigrateHomeStructureTo(LocationStructure dwelling, bool broadcast = true, bool addToRegionResidents = true, bool affectSettlement = true) {
         if(dwelling == null) {
             if (affectSettlement) {
