@@ -118,7 +118,7 @@ public class CharacterInfoUI : InfoUIBase {
         
         factionEventLbl.SetOnClickAction(OnClickFaction);
         currentLocationEventLbl.SetOnClickAction(OnClickCurrentLocation);
-        homeRegionEventLbl.SetOnClickAction(OnClickHomeLocation);
+        homeRegionEventLbl.SetOnClickAction(OnClickHomeVillage);
         houseEventLbl.SetOnClickAction(OnClickHomeStructure);
         partyEventLbl.SetOnClickAction(OnClickParty);
         opinionsEventLabel.SetShouldColorHighlight(false);
@@ -318,7 +318,7 @@ public class CharacterInfoUI : InfoUIBase {
     private void UpdateLocationInfo() {
         factionLbl.text = _activeCharacter.faction != null ? $"<link=\"faction\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.faction.name)}</link>" : "Factionless";
         currentLocationLbl.text = _activeCharacter.currentRegion != null ? $"{_activeCharacter.currentRegion.name}" : "None";
-        homeRegionLbl.text = _activeCharacter.homeRegion != null ? $"{_activeCharacter.homeRegion.name}" : "Homeless";
+        homeRegionLbl.text = _activeCharacter.homeSettlement != null ? $"<link=\"home\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.homeSettlement.name)}</link>" : "Homeless";
         //currentLocationLbl.text = $"<link=\"currLocation\">{UtilityScripts.Utilities.ColorizeName(_activeCharacter.currentRegion.name)}</link>";
         //homeRegionLbl.text = _activeCharacter.homeRegion != null ? $"<link=\"home\">{UtilityScripts.Utilities.ColorizeName(_activeCharacter.homeRegion.name)}</link>" : "Homeless";
         houseLbl.text = _activeCharacter.homeStructure != null ? $"<link=\"house\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.homeStructure.name)}</link>" : "Homeless";
@@ -329,8 +329,12 @@ public class CharacterInfoUI : InfoUIBase {
     private void OnClickCurrentLocation(object obj) {
         UIManager.Instance.ShowRegionInfo(activeCharacter.currentRegion);
     }
-    private void OnClickHomeLocation(object obj) {
-        UIManager.Instance.ShowRegionInfo(activeCharacter.homeRegion);
+    private void OnClickHomeVillage(object obj) {
+        if (_activeCharacter.homeSettlement != null) {
+            if (_activeCharacter.homeSettlement.allStructures.Count > 0) {
+                UIManager.Instance.ShowStructureInfo(_activeCharacter.homeSettlement.allStructures.First());
+            }
+        }
     }
     private void OnClickHomeStructure(object obj) {
         if (activeCharacter.homeStructure != null) {
