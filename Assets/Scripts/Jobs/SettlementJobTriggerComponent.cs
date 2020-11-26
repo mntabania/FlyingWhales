@@ -489,13 +489,14 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 
 	#region Haul
 	public void TryCreateHaulJob(ResourcePile target) {
-		if (_owner.HasJob(JOB_TYPE.HAUL, target) == false && target.gridTileLocation.parentMap.region == _owner.region ) {
+		if (_owner.HasJob(JOB_TYPE.HAUL, target) == false && target.gridTileLocation.parentMap.region == _owner.region) {
 
-            //Should not create haul jobs if the target resource pile is in another village
-            BaseSettlement settlement; 
-            if(target.gridTileLocation.IsPartOfSettlement(out settlement) && _owner != settlement && settlement.locationType == LOCATION_TYPE.VILLAGE) {
+            //Exclude Haul resource if pile is in settlement owned by major faction or ratmen faction
+            if(target.gridTileLocation.IsPartOfSettlement(out var settlement) && _owner != settlement && settlement.owner != null && 
+               (settlement.owner.isMajorNonPlayer || settlement.owner.factionType.type == FACTION_TYPE.Ratmen)) {
                 return;
             }
+            
 			ResourcePile chosenPileToDepositTo = _owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, 
 				new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, _owner);

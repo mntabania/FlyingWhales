@@ -1811,6 +1811,7 @@
             <e p="Seizure.cs" t="Include" />
             <e p="SepticShock.cs" t="Include" />
             <e p="SetHome.cs" t="Include" />
+            <e p="SetHomeRatman.cs" t="Include" />
             <e p="SetLair.cs" t="Include" />
             <e p="ShedPelt.cs" t="Include" />
             <e p="Shocked.cs" t="Include" />
