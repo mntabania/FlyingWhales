@@ -121,7 +121,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         sexuality = data.sexuality;
         className = data.characterClass.className;
         race = data.race;
-        isAlliedWithPlayer = data.isAlliedWithPlayer;
         currentHP = data.currentHP;
         doNotRecoverHP = data.doNotRecoverHP;
         attackPowerMod = data.attackPowerMod;
