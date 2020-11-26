@@ -175,7 +175,7 @@ public class MonsterGeneration : MapGenerationComponent {
 				BaseLandmark landmark = allLandmarks[i];
 				if (landmark.specificLandmarkType != LANDMARK_TYPE.CAVE) {
                     LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-                    if (landmark.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR && GenerateRatmen(structure)) {
+                    if (landmark.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR && GenerateRatmen(structure, GameUtilities.RandomBetweenTwoNumbers(1, 3))) {
                         //Ratmen has been generated
                     } else {
                         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmark.specificLandmarkType);
@@ -242,7 +242,7 @@ public class MonsterGeneration : MapGenerationComponent {
 								//if cave already has occupants, then do not generate monsters for that cave
 								continue;
 							}
-                            if (GenerateRatmen(cave)) {
+                            if (GenerateRatmen(cave, GameUtilities.RandomBetweenTwoNumbers(1, 3))) {
                                 //Ratmen has bee generated
                             } else {
                                 if (GameUtilities.RollChance(caveData.monsterGenerationChance)) {
@@ -412,9 +412,7 @@ public class MonsterGeneration : MapGenerationComponent {
 		if (shuffledCaves.Count > 0) {
 			LocationStructure ratmenCave = shuffledCaves[0];
 			shuffledCaves.Remove(ratmenCave);
-			for (int i = 0; i < 3; i++) {
-				CreateCharacter(RACE.RATMAN, "Ratman", GENDER.MALE, ratmenCave.settlementLocation, ratmenCave, FactionManager.Instance.ratmenFaction);
-			}
+			GenerateRatmen(ratmenCave, 3, 100);
 		}
 		
 		for (int j = 0; j < shuffledCaves.Count; j++) {
@@ -476,13 +474,13 @@ public class MonsterGeneration : MapGenerationComponent {
     #endregion
 
     #region Ratmen Generation
-    private bool GenerateRatmen(LocationStructure structure) {
-        if (GameUtilities.RollChance(10)) {
+    private bool GenerateRatmen(LocationStructure structure, int amount, int chance = 10) {
+        if (GameUtilities.RollChance(chance)) {
             if (FactionManager.Instance.ratmenFaction == null) {
                 //Only create ratmen faction if ratmen are spawned
                 FactionManager.Instance.CreateRatmenFaction();
             }
-            int numOfRatmen = GameUtilities.RandomBetweenTwoNumbers(1, 3);
+            int numOfRatmen = amount;
             for (int k = 0; k < numOfRatmen; k++) {
                 CreateCharacter(RACE.RATMAN, "Ratman", GENDER.MALE, structure.settlementLocation, structure, FactionManager.Instance.ratmenFaction);
             }
