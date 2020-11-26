@@ -3251,6 +3251,9 @@
             <e p="TheNeedlesUI.cs" t="Include" />
             <e p="TheProfaneUI.cs" t="Include" />
             <e p="TimerHubItem.cs" t="Include" />
+            <e p="ToolTips" t="Include">
+              <e p="ToolTip.cs" t="Include" />
+            </e>
             <e p="TraitItem.cs" t="Include" />
             <e p="UIMenuSettings.cs" t="Include" />
             <e p="UnallowOverlaps.cs" t="Include" />

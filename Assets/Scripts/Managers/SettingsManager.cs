@@ -32,7 +32,16 @@ namespace Settings {
         [SerializeField] private Toggle vsyncToggle;
         [SerializeField] private Toggle showVideosToggle;
         [SerializeField] private Toggle cameraShakeToggle;
-        [SerializeField] private GameObject miscParentGO;
+        [SerializeField] private Toggle randomizeMonsterNamesToggle;
+        
+        [SerializeField] private HoverHandler hoverHandlerEdgePanning;
+        [SerializeField] private HoverHandler hoverHandlerSkipTutorials;
+        [SerializeField] private HoverHandler hoverHandlerConfineCursor;
+        [SerializeField] private HoverHandler hoverHandlerVsync;
+        [SerializeField] private HoverHandler hoverHandlerShowVideos;
+        [SerializeField] private HoverHandler hoverHandlerCameraShake;
+        [SerializeField] private HoverHandler hoverHandlerRandomizeMonsterNames;
+        
         
         [Header("Audio Settings UI")]
         [SerializeField] private Slider masterVolumeSlider;
@@ -82,6 +91,21 @@ namespace Settings {
             LoadSettings();
             ConstructGraphicsQuality();
             ConstructResolutions();
+            
+            hoverHandlerRandomizeMonsterNames.AddOnHoverOverAction(OnHoverOverRandomizeMonsterNames);
+            hoverHandlerRandomizeMonsterNames.AddOnHoverOutAction(OnHoverOutRandomizeMonsterNames);
+            
+            hoverHandlerCameraShake.AddOnHoverOverAction(OnHoverOverCameraShake);
+            hoverHandlerCameraShake.AddOnHoverOutAction(OnHoverOutCameraShake);
+            
+            hoverHandlerEdgePanning.AddOnHoverOverAction(OnHoverOverEdgePanning);
+            hoverHandlerEdgePanning.AddOnHoverOutAction(OnHoverOutEdgePanning);
+            
+            hoverHandlerSkipTutorials.AddOnHoverOverAction(OnHoverOverSkipTutorials);
+            hoverHandlerSkipTutorials.AddOnHoverOutAction(OnHoverOutSkipTutorials);
+            
+            hoverHandlerConfineCursor.AddOnHoverOverAction(OnHoverOverConfineCursor);
+            hoverHandlerConfineCursor.AddOnHoverOutAction(OnHoverOutConfineCursor);
         }
         #endregion
 
@@ -127,6 +151,7 @@ namespace Settings {
             confineCursorToggle.SetIsOnWithoutNotify(settings.confineCursor);
             skipTutorialsToggle.SetIsOnWithoutNotify(settings.skipTutorials);
             cameraShakeToggle.SetIsOnWithoutNotify(settings.disableCameraShake);
+            randomizeMonsterNamesToggle.SetIsOnWithoutNotify(settings.randomizeMonsterNames);
             skipTutorialsToggle.gameObject.SetActive(SceneManager.GetActiveScene().name == "MainMenu");
 
             resolutionsDropdown.value = UtilityScripts.GameUtilities.GetOptionIndex(resolutionsDropdown, settings.resolution);
@@ -142,6 +167,12 @@ namespace Settings {
         public void OnToggleEdgePanning(bool isOn) {
             _settings.useEdgePanning = isOn;
             Messenger.Broadcast(SettingsSignals.EDGE_PANNING_TOGGLED, isOn);
+        }
+        private void OnHoverOverEdgePanning() {
+            Tooltip.Instance.ShowSmallInfo("Move the camera when placing the cursor on edges", "Edge Panning", autoReplaceText: false);
+        }
+        private void OnHoverOutEdgePanning() {
+            Tooltip.Instance.HideSmallInfo();
         }
         #endregion
         
@@ -165,6 +196,7 @@ namespace Settings {
                      doNotShowVideos = true,
                      skipEarlyAccessAnnouncement = false,
                      disableCameraShake = false,
+                     randomizeMonsterNames =  false
                  };
                  Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, settings.fullscreen);
                  QualitySettings.SetQualityLevel(settings.graphicsQuality);
@@ -237,6 +269,12 @@ namespace Settings {
             _settings.skipTutorials = state;
             Messenger.Broadcast(SettingsSignals.ON_SKIP_TUTORIALS_CHANGED, state);
         }
+        private void OnHoverOverSkipTutorials() {
+            Tooltip.Instance.ShowSmallInfo("Toggle tutorials on/off", "Skip Tutorials", autoReplaceText: false);
+        }
+        private void OnHoverOutSkipTutorials() {
+            Tooltip.Instance.HideSmallInfo();
+        }
         #endregion
 
         #region Vsync
@@ -270,6 +308,12 @@ namespace Settings {
                 Cursor.lockState = CursorLockMode.None;
             }
         }
+        private void OnHoverOverConfineCursor() {
+            Tooltip.Instance.ShowSmallInfo("Keep the cursor inside the game window", "Confine cursor", autoReplaceText: false);
+        }
+        private void OnHoverOutConfineCursor() {
+            Tooltip.Instance.HideSmallInfo();
+        }
         #endregion
 
         #region Early Access Announcement
@@ -285,6 +329,25 @@ namespace Settings {
         public void OnToggleCameraShake(bool p_isOn) {
             cameraShakeToggle.isOn = p_isOn;
             _settings.disableCameraShake = p_isOn;
+        }
+        private void OnHoverOverCameraShake() {
+            Tooltip.Instance.ShowSmallInfo("Toggle camera shake on/off.", "Camera Shake", autoReplaceText: false);
+        }
+        private void OnHoverOutCameraShake() {
+            Tooltip.Instance.HideSmallInfo();
+        }
+        #endregion
+        
+        #region Monster Names
+        public void OnToggleRandomizeMonsterNames(bool p_isOn) {
+            randomizeMonsterNamesToggle.isOn = p_isOn;
+            _settings.randomizeMonsterNames = p_isOn;
+        }
+        private void OnHoverOverRandomizeMonsterNames() {
+            Tooltip.Instance.ShowSmallInfo("Generate random names for all monsters. NOTE: This will only apply to newly created monsters.", "Randomize Monster Names", autoReplaceText: false);
+        }
+        private void OnHoverOutRandomizeMonsterNames() {
+            Tooltip.Instance.HideSmallInfo();
         }
         #endregion
     }

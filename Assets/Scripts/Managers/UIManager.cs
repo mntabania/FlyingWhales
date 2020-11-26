@@ -532,14 +532,6 @@ public class UIManager : BaseMonoBehaviour {
         smallInfoBGParentLG.childAlignment = position.anchor;
         rt.pivot = position.pivot;
     }
-    public void ShowSmallLocationInfo(Region region, RectTransform initialParent, Vector2 adjustment, string subText = "") {
-        locationSmallInfo.ShowRegionInfo(region, subText);
-        locationSmallInfoRT.SetParent(initialParent);
-        locationSmallInfoRT.anchoredPosition = Vector3.zero;
-        locationSmallInfoRT.anchoredPosition += adjustment;
-        locationSmallInfoRT.SetParent(this.transform);
-        //(locationSmallInfo.transform as RectTransform).anchoredPosition = pos;
-    }
     public void ShowSmallLocationInfo(Region region, Vector3 pos, string subText = "") {
         locationSmallInfo.ShowRegionInfo(region, subText);
         locationSmallInfoRT.position = pos;
