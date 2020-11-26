@@ -533,12 +533,12 @@ public class Region : ISavable, ILogFiller {
             character.SetHomeRegion(null);
         }
     }
-    public int GetCountOfCharacterWithSameTerritory(Character character) {
+    public int GetCountOfAliveCharacterWithSameTerritory(Character character) {
         int count = 0;
         if (character.HasTerritory()) {
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
-                if (resident != character && resident.HasTerritory()) {
+                if (resident != character && !resident.isDead && resident.HasTerritory()) {
                     if (resident.IsTerritory(character.territory)) {
                         count++;
                     }

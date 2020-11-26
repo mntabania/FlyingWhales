@@ -183,12 +183,12 @@ public class ReactionComponent : CharacterComponent {
                     owner.logComponent.PrintLogErrorIfActive(error);
                 } else {
                     //add log of emotions felt
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_witness", providedTags: LOG_TAG.Witnessed);
-                    // log.AddTag(reactable.logTags);
-                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
-                    log.AddLogToDatabase();
+                    //Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_witness", providedTags: LOG_TAG.Witnessed);
+                    //// log.AddTag(reactable.logTags);
+                    //log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    //log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    //log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
+                    //log.AddLogToDatabase();
                 }
             }
             string emotionsToTarget = reactable.ReactionToTarget(actor, target, owner, REACTION_STATUS.WITNESSED);
@@ -201,13 +201,14 @@ public class ReactionComponent : CharacterComponent {
                     error = $"{error}\n-Target: {reactable.target.nameWithID}";
                     owner.logComponent.PrintLogErrorIfActive(error);
                 } else {
+                    //NOTE: Do not log emotions to target
                     //add log of emotions felt
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_witness", providedTags: LOG_TAG.Witnessed);
-                    // log.AddTag(reactable.logTags);
-                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(reactable.target, reactable.target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToTarget), LOG_IDENTIFIER.STRING_1);
-                    log.AddLogToDatabase();
+                    //Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_witness", providedTags: LOG_TAG.Witnessed);
+                    //// log.AddTag(reactable.logTags);
+                    //log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    //log.AddToFillers(reactable.target, reactable.target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    //log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToTarget), LOG_IDENTIFIER.STRING_1);
+                    //log.AddLogToDatabase();
                 }
             }
             string response =
@@ -215,8 +216,9 @@ public class ReactionComponent : CharacterComponent {
             owner.logComponent.PrintLogIfActive(response);
 
             //Should not add witnessed log if there are no reaction/emotion felt
-            //Reason: Assault action still logs that the character witnessed actor is assaulting target even if there are no reactions trigger
-            if (addLog && (emotionsToActor != string.Empty || emotionsToTarget != string.Empty)) {
+            //Reason: Assault action still logs that the character witnessed actor is assaulting target even if there are no reactions trigger4
+            //NOTE: Only check for emotions to actor because we do not log emotions to target anymore to avoid log duplication
+            if (addLog && emotionsToActor != string.Empty) {
                 //Only log witness event if event is not an action. If it is an action, the CharacterManager.Instance.CanAddCharacterLogOrShowNotif must return true
                 if (reactable is ActualGoapNode action && (!action.action.shouldAddLogs || !CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType))) {
                     //Should not add witness log if the action log itself is not added to the actor
@@ -227,6 +229,13 @@ public class ReactionComponent : CharacterComponent {
                     witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
                     witnessLog.AddToFillers(null, reactable.informationLog.unReplacedText, LOG_IDENTIFIER.APPEND);
                     witnessLog.AddToFillers(reactable.informationLog.fillers);
+
+                    Log emotionsLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction", providedTags: LOG_TAG.Witnessed);
+                    emotionsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    emotionsLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
+
+                    witnessLog.AddToFillers(null, emotionsLog.logText, LOG_IDENTIFIER.PARTY_2);
                     witnessLog.AddLogToDatabase();
                     // owner.logComponent.AddHistory(witnessLog);
                 }
@@ -277,17 +286,6 @@ public class ReactionComponent : CharacterComponent {
             target = targetCharacter.reactionComponent.disguisedCharacter;
         }
 
-        if (addLog) {
-            Log informedLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "informed_event", reactable as ActualGoapNode, LOG_TAG.Informed);
-            // informedLog.AddTag(reactable.logTags);
-            // informedLog.SetLogType(LOG_TYPE.Informed);
-            informedLog.AddToFillers(reactable.informationLog.fillers);
-            informedLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
-            informedLog.AddToFillers(null, reactable.informationLog.unReplacedText, LOG_IDENTIFIER.APPEND);
-            informedLog.AddLogToDatabase();
-            // owner.logComponent.AddHistory(informedLog);
-        }
-
         string response = string.Empty;
         if (actor != owner && target != owner) {
             string emotionsToActor = reactable.ReactionToActor(actor, target, owner, REACTION_STATUS.INFORMED);
@@ -301,12 +299,12 @@ public class ReactionComponent : CharacterComponent {
                     owner.logComponent.PrintLogErrorIfActive(error);
                 } else {
                     //add log of emotions felt
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_information", providedTags: LOG_TAG.Informed);
-                    // log.AddTag(reactable.logTags);
-                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
-                    log.AddLogToDatabase();
+                    //Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_information", providedTags: LOG_TAG.Informed);
+                    //// log.AddTag(reactable.logTags);
+                    //log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    //log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    //log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
+                    //log.AddLogToDatabase();
                 }
             }
             string emotionsToTarget = reactable.ReactionToTarget(actor, target, owner, REACTION_STATUS.INFORMED);
@@ -320,15 +318,35 @@ public class ReactionComponent : CharacterComponent {
                     owner.logComponent.PrintLogErrorIfActive(error);
                 } else {
                     //add log of emotions felt
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_information", providedTags: LOG_TAG.Informed);
-                    // log.AddTag(reactable.logTags);
-                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToTarget, 2), LOG_IDENTIFIER.STRING_1);
-                    log.AddLogToDatabase();
+                    //Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_information", providedTags: LOG_TAG.Informed);
+                    //// log.AddTag(reactable.logTags);
+                    //log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    //log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    //log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToTarget, 2), LOG_IDENTIFIER.STRING_1);
+                    //log.AddLogToDatabase();
                 }
             }
             response = $"{response}{emotionsToActor}/{emotionsToTarget}";
+
+
+            if (addLog && emotionsToActor != string.Empty) {
+                Log informedLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "informed_event", reactable as ActualGoapNode, LOG_TAG.Informed);
+                // informedLog.AddTag(reactable.logTags);
+                // informedLog.SetLogType(LOG_TYPE.Informed);
+                informedLog.AddToFillers(reactable.informationLog.fillers);
+                informedLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
+                informedLog.AddToFillers(null, reactable.informationLog.unReplacedText, LOG_IDENTIFIER.APPEND);
+
+                Log emotionsLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction", providedTags: LOG_TAG.Informed);
+                emotionsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                emotionsLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                emotionsLog.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
+
+                informedLog.AddToFillers(null, emotionsLog.logText, LOG_IDENTIFIER.PARTY_2);
+
+                informedLog.AddLogToDatabase();
+                // owner.logComponent.AddHistory(informedLog);
+            }
         } else if(reactable.target == owner && reactable.target is Character) {
             string emotionsOfTarget = reactable.ReactionOfTarget(actor, reactable.target, REACTION_STATUS.INFORMED);
             if (emotionsOfTarget != string.Empty) {

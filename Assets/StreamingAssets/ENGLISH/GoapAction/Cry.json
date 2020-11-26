@@ -1,6 +1,1 @@
-{
-  "items": [
-    { "key": "cry success_description", "value": "%00@ cried. Reason: %111%" },
-    { "key": "thought_bubble", "value": "%00@ is crying." }
-  ]
-}
+{"items":[{"key":"cry success_description","value":"%00@ cried. Reason: %111%."},{"key":"thought_bubble","value":"%00@ is crying."}]}

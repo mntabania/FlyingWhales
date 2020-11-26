@@ -271,7 +271,7 @@ public class CharacterInfoUI : InfoUIBase {
         UpdateThoughtBubble();
     }
     private void UpdateSubTextAndIcon() {
-        if (_activeCharacter is Summon) {
+        if (!_activeCharacter.isNormalCharacter) {
             subLbl.gameObject.SetActive(false);
         } else {
             subLbl.text = _activeCharacter.characterClass.className;

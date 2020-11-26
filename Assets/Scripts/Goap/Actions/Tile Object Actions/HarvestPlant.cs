@@ -120,7 +120,7 @@ public class HarvestPlant : GoapAction {
                         goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
                     }
                 } else {
-                    if (foodPile != null && goapNode.actor.homeSettlement != null && goapNode.actor.isNormalOrRatman) {
+                    if (foodPile != null && goapNode.actor.homeSettlement != null && goapNode.actor.isNormalCharacter) {
                         goapNode.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(foodPile);
                         goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
                     }

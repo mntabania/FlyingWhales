@@ -63,7 +63,7 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
                 residentCount = character.homeStructure.residents.Count(x => x.isDead == false);
                 eggCount = character.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.SPIDER_EGG).Count;
             } else if (character.HasTerritory()) {
-                residentCount = character.homeRegion.GetCountOfCharacterWithSameTerritory(character);
+                residentCount = character.homeRegion.GetCountOfAliveCharacterWithSameTerritory(character);
                 eggCount += character.territory.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.SPIDER_EGG).Count;
             }
             if (residentCount < 4 && eggCount < 2) {

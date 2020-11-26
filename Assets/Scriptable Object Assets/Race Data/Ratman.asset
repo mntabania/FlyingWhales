@@ -20,4 +20,4 @@ MonoBehaviour:
   walkSpeed: 2.5
   runSpeed: 4
   traitNames: []
-  nameplateIcon: {fileID: 0}
+  nameplateIcon: {fileID: 21300000, guid: db9117fb148be414e8eff8519113e1cb, type: 3}

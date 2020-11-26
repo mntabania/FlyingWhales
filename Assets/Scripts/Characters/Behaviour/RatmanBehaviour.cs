@@ -26,6 +26,12 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                 return true;
             }
         }
+        if (GameUtilities.RollChance(0.5f)) {
+            int residentCount = character.GetAliveResidentsCountInHome();
+            if (residentCount >= 8) {
+                //return character.jobComponent.TriggerBirthRatman(out producedJob);
+            }
+        }
         TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
         if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT) {
             //Night time
@@ -79,14 +85,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         }
         //try to give birth to another ratman
         if (GameUtilities.RollChance(2) && isInHome) {//10
-            int residentCount = 0;
-            if (character.homeSettlement != null) {
-                residentCount = character.homeSettlement.residents.Count(x => x.isDead == false);
-            } else if (character.homeStructure != null) {
-                residentCount = character.homeStructure.residents.Count(x => x.isDead == false);
-            } else if (character.HasTerritory()) {
-                residentCount = character.homeRegion.GetCountOfCharacterWithSameTerritory(character);
-            }
+            int residentCount = character.GetAliveResidentsCountInHome();
             if (residentCount < 8) {
                 return character.jobComponent.TriggerBirthRatman(out producedJob);
             }
@@ -147,5 +146,8 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         }
         return null;
     }
-   
+
+    private void ChangeHome() {
+
+    }
 }

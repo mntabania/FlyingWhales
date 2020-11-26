@@ -69,16 +69,16 @@ public class Butcher : GoapAction {
                 cost += 2000;
                 costLog += " +2000(Actor/Target Same)";
             } else {
-                if (actor.isNormalOrRatman == false) {
+                if (actor.traitContainer.HasTrait("Enslaved") && job.jobType == JOB_TYPE.PRODUCE_FOOD && job.originalOwner.ownerType == JOB_OWNER.SETTLEMENT && targetCharacter.faction == actor.faction) {
+                    cost += 2000;
+                    costLog += " +2000(Actor is Slave, job is Produce Food Settlement, Actor/Target same faction)";
+                    actor.logComponent.AppendCostLog(costLog);
+                    return cost;
+                }
+                if (actor.isNormalCharacter) {
                     cost += 10;
                     costLog += " +10(Actor is not a normal character)";
                 } else {
-                    if(actor.traitContainer.HasTrait("Enslaved") && job.jobType == JOB_TYPE.PRODUCE_FOOD && job.originalOwner.ownerType == JOB_OWNER.SETTLEMENT && targetCharacter.faction == actor.faction) {
-                        cost += 2000;
-                        costLog += " +2000(Actor is Slave, job is Produce Food Settlement, Actor/Target same faction)";
-                        actor.logComponent.AppendCostLog(costLog);
-                        return cost;
-                    }
                     bool isCannibal = actor.traitContainer.HasTrait("Cannibal");
                     if (job.jobType == JOB_TYPE.TRIGGER_FLAW && isCannibal && !actor.traitContainer.HasTrait("Vampire")) {
                         cost = UtilityScripts.Utilities.Rng.Next(450, 551);
@@ -370,7 +370,7 @@ public class Butcher : GoapAction {
                 goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
             }
         } else {
-            if (foodPile != null && goapNode.actor.homeSettlement != null && goapNode.actor.isNormalOrRatman && !(foodPile is HumanMeat) && !(foodPile is ElfMeat)) {
+            if (foodPile != null && goapNode.actor.homeSettlement != null && goapNode.actor.isNormalCharacter && !(foodPile is HumanMeat) && !(foodPile is ElfMeat)) {
                 goapNode.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(foodPile);
                 goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
             }

@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8036847
+    totalSpriteSurfaceArea: 8038072
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -295,6 +295,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: cf615ddb149613241b46b177cd202187, type: 3}
   - {fileID: 21300000, guid: 1e5065eb7c6fdd344a3d216071b19954, type: 3}
   - {fileID: 21300000, guid: 68052aebd08ec7545bf281dc7a4a8078, type: 3}
+  - {fileID: 21300000, guid: db9117fb148be414e8eff8519113e1cb, type: 3}
   - {fileID: 21300000, guid: 0cafb50c96a7cec44afb1ecebe056a95, type: 3}
   - {fileID: 21300000, guid: fe1a591c45577164caffea0071e2c890, type: 3}
   - {fileID: 21300000, guid: cd0fdf3cea6343b489b62c13f949612b, type: 3}
@@ -624,6 +625,7 @@ SpriteAtlas:
   - Icon-cont
   - button1_on
   - Icon_LifeChanges
+  - icon_ratman
   - minion_tab_spells_disabled
   - Scroll-Circle-Selected
   - notification_intel_button_hover

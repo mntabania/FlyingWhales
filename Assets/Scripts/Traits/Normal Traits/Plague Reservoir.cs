@@ -19,10 +19,18 @@ namespace Traits {
                 addedTo.traitContainer.RemoveTrait(addedTo, "Plagued");
             }
             addedTo.traitContainer.AddTrait(addedTo, "Plagued");
+            if(addedTo is Character character) {
+                character.needsComponent.AdjustFullnessDecreaseRate(-0.17f);
+                character.needsComponent.AdjustHappinessDecreaseRate(-0.13f);
+            }
         }
-        //public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
-        //    base.OnRemoveTrait(removedFrom, removedBy);
-        //}
+        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+            base.OnRemoveTrait(removedFrom, removedBy);
+            if (removedFrom is Character character) {
+                character.needsComponent.AdjustFullnessDecreaseRate(0.17f);
+                character.needsComponent.AdjustHappinessDecreaseRate(0.13f);
+            }
+        }
         #endregion
     }
 }
