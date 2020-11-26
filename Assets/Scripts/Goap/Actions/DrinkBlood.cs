@@ -408,7 +408,7 @@ public class DrinkBlood : GoapAction {
                     actor.traitContainer.AddTrait(actor, "Unconscious", targetCharacter, goapNode);
                 }
             } else {
-                if (actor.currentSettlement is NPCSettlement currentSettlement) {
+                if (actor.currentSettlement is NPCSettlement currentSettlement && currentSettlement.eventManager.CanHaveEvents()) {
                     if (currentSettlement.owner != null && GameUtilities.RollChance(15)) { //15
                         CRIME_SEVERITY crimeSeverity = currentSettlement.owner.GetCrimeSeverity(actor, goapNode.poiTarget, CRIME_TYPE.Vampire);
                         if (crimeSeverity != CRIME_SEVERITY.None && crimeSeverity != CRIME_SEVERITY.Unapplicable && !currentSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Vampire_Hunt)) {
