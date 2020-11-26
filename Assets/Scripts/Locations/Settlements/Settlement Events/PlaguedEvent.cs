@@ -39,7 +39,6 @@ namespace Locations.Settlements.Settlement_Events {
             UnsubscribeListeners(p_settlement);
             p_settlement.settlementClassTracker.RemoveNeededClass("Druid");
             if (!string.IsNullOrEmpty(_endScheduleTicket)) { SchedulingManager.Instance.RemoveSpecificEntry(_endScheduleTicket); }
-            p_settlement.settlementJobTriggerComponent.RemoveJobTrigger(p_settlement, SETTLEMENT_JOB_TRIGGER.Plague_Care);
         }
         public override SaveDataSettlementEvent Save() {
             SaveDataPlaguedSettlementEvent saveData = new SaveDataPlaguedSettlementEvent();
@@ -79,7 +78,7 @@ namespace Locations.Settlements.Settlement_Events {
         }
         private void DeactivateEventBySchedule(NPCSettlement p_settlement) {
             p_settlement.eventManager.DeactivateEvent(this);
-            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Settlement Event", "Plagued", "ended");
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Settlement Event", "Plagued", "ended", null, LOG_TAG.Major);
             log.AddToFillers(p_settlement, p_settlement.name, LOG_IDENTIFIER.LANDMARK_1);
             if (p_settlement.owner != null) { log.AddInvolvedObjectManual(p_settlement.owner.persistentID); }
             log.AddLogToDatabase();
@@ -124,7 +123,7 @@ namespace Locations.Settlements.Settlement_Events {
                 if (response == PLAGUE_EVENT_RESPONSE.Do_Nothing && p_leader == null) {
                     key = $"{key}_No_Leader";
                 }
-                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Settlement Event", "Plagued", key);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Settlement Event", "Plagued", key, null, LOG_TAG.Major);
                 log.AddToFillers(p_settlement, p_settlement.name, LOG_IDENTIFIER.LANDMARK_1);
                 if (p_leader != null) { log.AddToFillers(p_leader, p_leader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER); }
                 if (p_settlement.owner != null) { log.AddInvolvedObjectManual(p_settlement.owner.persistentID); }
@@ -142,7 +141,6 @@ namespace Locations.Settlements.Settlement_Events {
                     for (int i = 0; i < jobs.Count; i++) {
                         jobs[i].ForceCancelJob(false, "Settlement no longer in Quarantine");
                     }
-                    p_settlement.settlementJobTriggerComponent.RemoveJobTrigger(p_settlement, SETTLEMENT_JOB_TRIGGER.Plague_Care);
                     break;
             }
         }
@@ -153,6 +151,7 @@ namespace Locations.Settlements.Settlement_Events {
                     break;
                 case PLAGUE_EVENT_RESPONSE.Quarantine:
                     p_faction.factionType.AddCrime(CRIME_TYPE.Plagued, CRIME_SEVERITY.Infraction);
+                    //NOTE: Job trigger is not yet removed when event is finished since it is expected that plague care will still continue after event if there are still quarantined characters.
                     p_settlement.settlementJobTriggerComponent.AddJobTrigger(p_settlement, SETTLEMENT_JOB_TRIGGER.Plague_Care);
                     break;
                 case PLAGUE_EVENT_RESPONSE.Slay:
@@ -222,7 +221,7 @@ namespace Locations.Settlements.Settlement_Events {
         #region Loading
         private void LoadEnd(GameDate date) {
             _endDate = date;
-            _endScheduleTicket = SchedulingManager.Instance.AddEntry(date, () => location.eventManager.DeactivateEvent(this), location);
+            _endScheduleTicket = SchedulingManager.Instance.AddEntry(date, () => DeactivateEventBySchedule(location), location);
         }
         public override void LoadAdditionalData(NPCSettlement p_settlement) {
             base.LoadAdditionalData(p_settlement);

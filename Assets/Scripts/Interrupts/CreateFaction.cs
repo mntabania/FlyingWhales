@@ -41,7 +41,7 @@ namespace Interrupts {
             faction.SetLeader(interruptHolder.actor);
             
             //create relationships
-            FactionManager.Instance.RerollFactionRelationships(faction, interruptHolder.actor, true);
+            FactionManager.Instance.RerollFactionRelationships(faction, interruptHolder.actor, true, false);
             
             Messenger.Broadcast(FactionSignals.FACTION_CRIMES_CHANGED, faction);
 

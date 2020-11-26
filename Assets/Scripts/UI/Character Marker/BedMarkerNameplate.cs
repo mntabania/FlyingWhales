@@ -76,11 +76,16 @@ public class BedMarkerNameplate : PooledObject {
             }    
         }
         if (showActionIcon) {
-            ActualGoapNode actionNode = bedTileObject.users[0].currentActionNode;
-            if (actionNode != null) {
+            Character user = bedTileObject.users[0];
+            ActualGoapNode actionNode = user.currentActionNode;
+            if (actionNode != null && (actionNode.actionStatus == ACTION_STATUS.PERFORMING || actionNode.actionStatus == ACTION_STATUS.STARTED)) {
                 UpdateActionIcon(InteractionManager.Instance.actionIconDictionary[actionNode.action.actionIconString]);
             } else {
-                UpdateActionIcon(InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Sleep_Icon]);
+                if (user.traitContainer.HasTrait("Quarantined")) {
+                    UpdateActionIcon(InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Sick_Icon]);
+                } else {
+                    UpdateActionIcon(InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Sleep_Icon]);    
+                }
             }
             ShowMarkerNameplate();
         } else {

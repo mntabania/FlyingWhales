@@ -57,6 +57,27 @@ public class Bed : BaseBed {
                 break;
         }
     }
+    public override bool AddUser(Character character) {
+        if (base.AddUser(character)) {
+            if (!IsSlotAvailable()) {
+                SetPOIState(POI_STATE.INACTIVE); //if all slots in the bed are occupied, set it as inactive
+            }
+            return true;
+        }
+        return false;
+    }
+    public override bool RemoveUser(Character character) {
+        if (base.RemoveUser(character)) {
+            if (IsSlotAvailable()) {
+                //Must not set as active when bed is burning
+                if (!traitContainer.HasTrait("Burning")) {
+                    SetPOIState(POI_STATE.ACTIVE); //if a slots in the bed is unoccupied, set it as active
+                }
+            }
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Inquiry

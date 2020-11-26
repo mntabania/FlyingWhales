@@ -1843,6 +1843,7 @@
             </e>
             <e p="SettlementJobTriggerComponent.cs" t="Include" />
           </e>
+          <e p="JobsListExtension.cs" t="Include" />
           <e p="Localization" t="Include">
             <e p="LocalizationData.cs" t="Include" />
             <e p="LocalizationManager.cs" t="Include" />
@@ -2976,6 +2977,7 @@
               <e p="Tower.cs" t="Include" />
               <e p="Trait.cs" t="Include" />
               <e p="Transforming.cs" t="Include" />
+              <e p="Travelling.cs" t="Include" />
               <e p="Unconscious.cs" t="Include" />
               <e p="Unfaithful.cs" t="Include" />
               <e p="Vampire.cs" t="Include" />

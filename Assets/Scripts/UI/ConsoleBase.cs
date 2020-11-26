@@ -96,7 +96,10 @@ public class ConsoleBase : InfoUIBase {
             {"/find_object", FindTileObject},
             {"/change_name", ChangeName},
             {"/adjust_mana", AdjustMana},
-            {"/adjust_pp", AdjustPlaguePoints}
+            {"/adjust_pp", AdjustPlaguePoints},
+            {"/remove_needed_class", RemoveNeededClassFromSettlement},
+            {"/activate_settlement_event", ActivateSettlementEvent},
+            {"/trigger_quarantine", TriggerQuarantine},
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1592,6 +1595,68 @@ public class ConsoleBase : InfoUIBase {
     }
     private void SaveDatabaseInMemory(string[] parameters) {
         DatabaseManager.Instance.mainSQLDatabase.SaveInMemoryDatabaseToFile($"{UtilityScripts.Utilities.gameSavePath}/Temp/gameDB.db");
+    }
+    #endregion
+
+    #region Settlements
+    private void RemoveNeededClassFromSettlement(string[] parameters) {
+        if (parameters.Length != 2) { //Settlement, class name
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /remove_needed_class");
+            return;
+        }
+        string settlementName = parameters[0];
+        string className = parameters[1];
+        BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByName(settlementName);
+        if (settlement is NPCSettlement npcSettlement) {
+            npcSettlement.settlementClassTracker.RemoveNeededClass(className);
+            AddSuccessMessage($"Removed needed class {className} from {settlement.name}'s needed classes");
+        }
+        else {
+            AddErrorMessage($"Could not find NPCSettlement with name {settlementName}");
+        }
+    }
+    private void ActivateSettlementEvent(string[] parameters) {
+        if (parameters.Length != 2) { //Settlement, SETTLEMENT_EVENT
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /activate_settlement_event");
+            return;
+        }
+        string settlementName = parameters[0];
+        string settlementEventTypeStr = parameters[1];
+        if (Enum.TryParse(settlementEventTypeStr, out SETTLEMENT_EVENT settlementEvent)) {
+            BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByName(settlementName);
+            if (settlement is NPCSettlement npcSettlement) {
+                npcSettlement.eventManager.AddNewActiveEvent(settlementEvent);
+                AddSuccessMessage($"Activated event {settlementEvent.ToString()} at {settlement.name}");
+            } else {
+                AddErrorMessage($"Could not find NPCSettlement with name {settlementName}");
+            }    
+        } else {
+            AddErrorMessage($"No Settlement Event Type {settlementEventTypeStr}");
+        }
+    }
+    private void TriggerQuarantine(string[] parameters) {
+        if (parameters.Length != 2) { //Settlement, Character
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /trigger_quarantine");
+            return;
+        }
+        
+        string settlementName = parameters[0];
+        string characterName = parameters[1];
+        BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByName(settlementName);
+        if (settlement is NPCSettlement npcSettlement) {
+            Character character = CharacterManager.Instance.GetCharacterByName(characterName);
+            if (character != null) {
+                npcSettlement.settlementJobTriggerComponent.TriggerQuarantineJob(character);    
+            } else {
+                AddErrorMessage($"Could not find character with name {characterName}");
+            }
+        } else {
+            AddErrorMessage($"Could not find NPCSettlement with name {settlementName}");
+        }
+        
     }
     #endregion
 }

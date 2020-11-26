@@ -197,6 +197,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         } else if (locationType == LOCATION_TYPE.DUNGEON) {
             settlementJobTriggerComponent.SubscribeToDungeonListeners();
         }
+        settlementJobTriggerComponent.HookToSettlementClassTrackerEvents(settlementClassTracker);
     }
     private void UnsubscribeToSignals() {
         Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
@@ -218,6 +219,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         } else if (locationType == LOCATION_TYPE.DUNGEON) {
             settlementJobTriggerComponent.UnsubscribeFromDungeonListeners();
         }
+        settlementJobTriggerComponent.UnHookToSettlementClassTrackerEvents(settlementClassTracker);
     }
     private void OnCharacterAddedToFaction(Character character, Faction faction) {
         //once a resident character changes its faction, check if all the residents of this settlement share the same faction,
@@ -1069,15 +1071,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 if (availableJobs[i].jobType == jobTypes[j]) {
                     return true;
                 }
-            }
-        }
-        return false;
-    }
-    public bool HasJobWithOtherData(JOB_TYPE p_jobType, INTERACTION_TYPE p_otherDataType, object p_otherDataObj) {
-        for (int i = 0; i < availableJobs.Count; i++) {
-            JobQueueItem jobQueueItem = availableJobs[i];
-            if (jobQueueItem.jobType == p_jobType && jobQueueItem is GoapPlanJob goapPlanJob && goapPlanJob.HasOtherData(p_otherDataType, p_otherDataObj)) {
-                return true;
             }
         }
         return false;

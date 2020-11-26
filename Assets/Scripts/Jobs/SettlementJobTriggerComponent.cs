@@ -7,13 +7,14 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Interrupts;
 using Jobs;
+using Locations;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Locations.Settlements;
 using UtilityScripts;
 
-public class SettlementJobTriggerComponent : JobTriggerComponent {
+public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClassTracker.ISettlementTrackerListener {
 
 	private readonly NPCSettlement _owner;
 
@@ -100,6 +101,12 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
     }
     public void UnsubscribeFromDungeonListeners() {
         Messenger.RemoveListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedDungeon);
+    }
+    public void HookToSettlementClassTrackerEvents(SettlementClassTracker p_classTracker) {
+	    p_classTracker.SubscribeToNeededClassRemoved(this);
+    }
+    public void UnHookToSettlementClassTrackerEvents(SettlementClassTracker p_classTracker) {
+	    p_classTracker.UnsubscribeToNeededClassRemoved(this);
     }
     private void OnGameLoadedVillage() {
 		Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoadedVillage);
@@ -1125,6 +1132,11 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Change Class
+    public void OnNeededClassRemoved(string p_removedClass) {
+	    //cancel all change class jobs targeting removed class
+	    List<JobQueueItem> changeClassJobs = _owner.availableJobs.GetJobsWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, p_removedClass);
+	    changeClassJobs?.CancelJobs(false, $"{p_removedClass} is no longer needed.");
+    }
     private void HourlyCheckForNeededCharacterClasses() {
 	    if (_owner.settlementClassTracker.neededClasses.Count > 0) {
 		    ProfessionPedestal professionPedestal = _owner.GetFirstTileObjectOfTypeThatMeetCriteria<ProfessionPedestal>(t => t.IsAvailable());
@@ -1139,14 +1151,16 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	    }
     }
     private bool ShouldCreateChangeClassJob(string p_className) {
-	    if (_owner.settlementClassTracker.GetCharacterClassPercentage(p_className) <= 15f) {
-		    //if needed class is less than 15% of the village population. Create a change class job
+	    int neededAmount = Mathf.FloorToInt((float)_owner.residents.Count * 0.15f);
+	    neededAmount = Mathf.Max(1, neededAmount);
+	    int currentClassAmount = _owner.settlementClassTracker.GetCurrentResidentClassAmount(p_className);
+	    if (currentClassAmount < neededAmount) {
 		    return true;
 	    }
 	    return false;
     }
     private void TriggerChangeClassJob(ProfessionPedestal professionPedestal, string className) {
-	    if (!_owner.HasJobWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, className)) {
+	    if (!_owner.availableJobs.HasJobWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, className)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, professionPedestal, _owner);
 		    job.SetCanTakeThisJobChecker(JobManager.Can_Take_Change_Class);
 		    job.AddOtherData(INTERACTION_TYPE.CHANGE_CLASS, new object[] { className });
