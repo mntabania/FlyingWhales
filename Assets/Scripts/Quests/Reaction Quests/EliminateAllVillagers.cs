@@ -43,7 +43,7 @@ namespace Quests {
         public static bool ShouldConsiderCharacterAsEliminated(Character character) {
             return character.isDead ||
                    (character.faction != null && !character.faction.isMajorNonPlayerOrVagrant) ||
-                   character.isAlliedWithPlayer;
+                   character.traitContainer.HasTrait("Cultist");
         }
         #endregion
     }

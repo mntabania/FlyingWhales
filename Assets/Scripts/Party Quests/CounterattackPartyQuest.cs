@@ -117,17 +117,18 @@ public class CounterattackPartyQuest : PartyQuest {
             ObjectPoolManager.Instance.ReturnCharactersListToPool(membersAlliedWithPlayer);
         }
     }
-    private void MembersAreBetrayedByThis(Character character) {
+    private void MembersAreBetrayedByThis(Character p_betrayer) {
         if (assignedParty != null) {
             for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
                 Character member = assignedParty.membersThatJoinedQuest[i];
-                if (member != character && !member.isAlliedWithPlayer) {
-                    Betrayed betrayed = member.traitContainer.GetTraitOrStatus<Betrayed>("Betrayed");
-                    if(betrayed != null) {
-                        betrayed.AddCharacterResponsibleForTrait(character);
-                    } else {
-                        member.traitContainer.AddTrait(member, "Betrayed", characterResponsible: character);
-                    }
+                if (member != p_betrayer && !member.isAlliedWithPlayer) {
+                    CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, member, p_betrayer, REACTION_STATUS.WITNESSED);
+                    // Betrayed betrayed = member.traitContainer.GetTraitOrStatus<Betrayed>("Betrayed");
+                    // if(betrayed != null) {
+                    //     betrayed.AddCharacterResponsibleForTrait(character);
+                    // } else {
+                    //     member.traitContainer.AddTrait(member, "Betrayed", characterResponsible: character);
+                    // }
                 }
             }
         }

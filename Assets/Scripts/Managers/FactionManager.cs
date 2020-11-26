@@ -413,7 +413,13 @@ public class FactionManager : BaseMonoBehaviour {
                     if (otherFaction.isPlayerFaction || otherFaction.factionType.HasIdeology(FACTION_IDEOLOGY.Demon_Worship)) {
                         newStatus = FACTION_RELATIONSHIP_STATUS.Friendly;
                     }
+                } else {
+                    //if other faction is player faction and this faction is not a demon worshipper, revert relationship with player faction to hostile.
+                    if (otherFaction.isPlayerFaction) {
+                        newStatus = FACTION_RELATIONSHIP_STATUS.Hostile;
+                    }
                 }
+                
                 if (otherFaction.factionType.type == FACTION_TYPE.Vampire_Clan) {
                     //If the other faction is a Vampire Clan
                     //And this faction is a Vampire Clan - Neutral, but if this facton is Lycan Clan - Hostile
@@ -453,6 +459,7 @@ public class FactionManager : BaseMonoBehaviour {
                         factionRelationship.SetRelationshipStatus(newStatus);
                     }    
                 } else {
+                    
                     factionRelationship.SetRelationshipStatus(newStatus);
                 }
             }

@@ -14,7 +14,7 @@ public class Betrayal : Emotion {
         if (target is Character) {
             Character targetCharacter = target as Character;
             witness.needsComponent.AdjustHope(-10);
-            witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Base", -60);
+            witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Betrayal", -60);
             witness.traitContainer.AddTrait(witness, "Betrayed", characterResponsible: targetCharacter);
             //if (UnityEngine.Random.Range(0, 100) < 50) {
             //    int chance = UnityEngine.Random.Range(0, 3);
