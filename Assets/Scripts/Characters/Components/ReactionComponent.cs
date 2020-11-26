@@ -818,8 +818,9 @@ public class ReactionComponent : CharacterComponent {
                     }
 
                     //Wanted Criminal Reaction Code:
+                    Prisoner targetPrisonerStatus = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
                     if (disguisedTarget.isNormalCharacter && disguisedActor.isNormalCharacter && disguisedActor.faction != null && disguisedTarget.crimeComponent.IsWantedBy(disguisedActor.faction)
-                        && (!disguisedTarget.traitContainer.HasTrait("Restrained") || !(disguisedTarget.currentStructure is Prison))) { //if target is not restrained or not in prison, will create 
+                        && (!targetCharacter.traitContainer.HasTrait("Restrained") || (targetPrisonerStatus != null && targetPrisonerStatus.GetIntendedPrisonAccordingTo(disguisedActor) != null))) { //if target is not restrained or not in prison, will create 
                         debugLog = $"{debugLog}\n-Target Character is a criminal";
                         bool cannotReactToCriminal = false;
                         if (actor.currentJob != null && actor.currentJob is GoapPlanJob planJob) {
