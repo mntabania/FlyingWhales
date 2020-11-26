@@ -16,7 +16,7 @@ namespace Traits {
             ticksDuration = 0;
             canBeTriggered = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Start_Perform_Trait);
-            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_While_Stationary_Unoccupied);
         }
 
         #region Overrides
@@ -32,7 +32,7 @@ namespace Traits {
                 owner = character;
             }
         }
-        public override bool PerTickOwnerMovement() {
+        public override bool PerTickWhileStationaryOrUnoccupied() {
             int stumbleChance = UnityEngine.Random.Range(0, 100);
             //bool hasCreatedJob = false;
             if (stumbleChance < 2) {

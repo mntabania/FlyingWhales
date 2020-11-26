@@ -8,7 +8,7 @@ namespace Plague.Symptom {
         protected abstract void ActivateSymptom(Character p_character);
         
         #region Plagued.IPlaguedListener
-        public virtual void PerTickMovement(Character p_character) { }
+        public virtual void PerTickWhileStationaryOrUnoccupied(Character p_character) { }
         public virtual void CharacterGainedTrait(Character p_character, Trait p_gainedTrait) { }
         /// <summary>
         /// Listener for when a character starts performing an action

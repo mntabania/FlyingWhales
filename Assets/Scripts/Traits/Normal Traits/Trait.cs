@@ -132,7 +132,7 @@ namespace Traits {
         public virtual void OnSeePOIEvenCannotWitness(IPointOfInterest targetPOI, Character character) { }
         protected virtual void OnChangeLevel() { }
         public virtual void OnOwnerInitiallyPlaced(Character owner) { }
-        public virtual bool PerTickOwnerMovement() { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
+        public virtual bool PerTickWhileStationaryOrUnoccupied() { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
         public virtual bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
         public virtual void OnBeforeStartFlee(ITraitable traitable) { }
         public virtual void OnAfterExitingCombat(ITraitable traitable) { }

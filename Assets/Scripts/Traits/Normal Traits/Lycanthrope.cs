@@ -21,7 +21,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             canBeTriggered = true;
-            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_While_Stationary_Unoccupied);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Cannot_Witness_Trait);
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DISPEL };
         }
@@ -81,8 +81,8 @@ namespace Traits {
                 }
             }
         }
-        public override bool PerTickOwnerMovement() {
-            if (owner.lycanData.activeForm == owner.lycanData.lycanthropeForm || owner.lycanData.isInWerewolfForm) {
+        public override bool PerTickWhileStationaryOrUnoccupied() {
+            if (owner.marker != null && owner.marker.isMoving && (owner.lycanData.activeForm == owner.lycanData.lycanthropeForm || owner.lycanData.isInWerewolfForm)) {
                 float roll = Random.Range(0f, 100f);
                 float chance = 0.85f;
                 if (owner.currentRegion.GetTileObjectInRegionCount(TILE_OBJECT_TYPE.WEREWOLF_PELT) >= 3) {

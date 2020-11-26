@@ -38,7 +38,7 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Before_Start_Flee);
             AddTraitOverrideFunctionIdentifier(TraitManager.After_Exiting_Combat);
             AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
-            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_While_Stationary_Unoccupied);
         }
 
         #region Overrides
@@ -206,7 +206,7 @@ namespace Traits {
             }
             return data;
         }
-        public override bool PerTickOwnerMovement() {
+        public override bool PerTickWhileStationaryOrUnoccupied() {
             if (dislikedBeingVampire && GameUtilities.RollChance(1) && _owner.currentJob != null && _owner.currentJob.jobType.IsFullnessRecoveryTypeJob()) { //1
                 _owner.currentJob.ForceCancelJob(false, "Resisted Hunger");
                 _owner.traitContainer.AddTrait(_owner, "Ashamed");

@@ -714,21 +714,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public virtual void PerTickDuringMovement() {
-        List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Per_Tick_Movement);
-        if (traitOverrideFunctions != null) {
-            for (int i = 0; i < traitOverrideFunctions.Count; i++) {
-                Trait trait = traitOverrideFunctions[i];
-                if (trait.PerTickOwnerMovement()) {
-                    break;
-                }
-            }
-        }
-        //for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
-        //    Trait trait = traitContainer.allTraitsAndStatuses[i];
-        //    if (trait.PerTickOwnerMovement()) {
-        //        break;
-        //    }
-        //}
+        //NOTE: Moved All Per Tick Movement effects to TryProcessTraitsOnTickEndedWhileStationaryOrUnoccupied because of task
+        //https://trello.com/c/DqNguu3v/2941-symptoms-triggered-while-moving-should-also-be-triggered-when-character-is-stationary-and-not-doing-anything-and-not-sleeping
     }
     #endregion
 
@@ -2927,6 +2914,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             traitContainer.ProcessOnHourStarted(this);
         }
     }
+    public void TryProcessTraitsOnTickEndedWhileStationaryOrUnoccupied() {
+        if (!interruptComponent.isInterrupted && (currentActionNode == null || currentActionNode.actionStatus != ACTION_STATUS.PERFORMING) && 
+            !traitContainer.HasTrait("Unconscious") && !traitContainer.HasTrait("Resting") && !traitContainer.HasTrait("Frozen")) {
+            List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Per_Tick_While_Stationary_Unoccupied);
+            if (traitOverrideFunctions != null) {
+                for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                    Trait trait = traitOverrideFunctions[i];
+                    if (trait.PerTickWhileStationaryOrUnoccupied()) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
     #endregion
 
     #region Minion
@@ -2978,24 +2979,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         StartTickGoapPlanGeneration();
     }
     protected virtual void OnTickEnded() {
-        Profiler.BeginSample($"{name} ProcessForcedCancelJobsOnTickEnded() call");
         ProcessForcedCancelJobsOnTickEnded();
-        Profiler.EndSample();
-        Profiler.BeginSample($"{name} moodComponent.OnTickEnded() call");
         moodComponent.OnTickEnded();
-        Profiler.EndSample();
-        Profiler.BeginSample($"{name} interruptComponent.OnTickEnded() call");
         interruptComponent.OnTickEnded();
-        Profiler.EndSample();
-        Profiler.BeginSample($"{name} stateComponent.OnTickEnded() call");
         stateComponent.OnTickEnded();
-        Profiler.EndSample();
-        Profiler.BeginSample($"{name} ProcessTraitsOnTickEnded() call");
         ProcessTraitsOnTickEnded();
-        Profiler.EndSample();
-        Profiler.BeginSample($"{name} EndTickPerformJobs() call");
+        TryProcessTraitsOnTickEndedWhileStationaryOrUnoccupied();
         EndTickPerformJobs();
-        Profiler.EndSample();
     }
     protected virtual void OnHourStarted() {
         ProcessTraitsOnHourStarted();

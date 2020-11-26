@@ -15,7 +15,7 @@ namespace Plague.Symptom {
             
             Debug.Log("Activated Seizure Symptom");
         }
-        public override void PerTickMovement(Character p_character) {
+        public override void PerTickWhileStationaryOrUnoccupied(Character p_character) {
             if (GameUtilities.RollChance(1.5f)) {
                 ActivateSymptom(p_character);
             }

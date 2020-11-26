@@ -14,7 +14,7 @@ namespace Plague.Symptom {
             }
             Debug.Log("Activated Vomiting Symptom");
         }
-        public override void PerTickMovement(Character p_character) {
+        public override void PerTickWhileStationaryOrUnoccupied(Character p_character) {
             if (GameUtilities.RollChance(2)) {
                 ActivateSymptom(p_character);
             }

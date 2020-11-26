@@ -185,6 +185,7 @@ public class Minion {
         character.interruptComponent.OnTickEnded();
         character.stateComponent.OnTickEnded();
         character.ProcessTraitsOnTickEnded();
+        character.TryProcessTraitsOnTickEndedWhileStationaryOrUnoccupied();
         character.EndTickPerformJobs();
     }
     private void OnTickStarted() {

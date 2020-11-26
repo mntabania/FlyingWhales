@@ -121,11 +121,7 @@ namespace Inner_Maps.Location_Structures {
                 InnerMapCameraMove.Instance.CenterCameraOn(finalPos);
             }
         }
-        public override void ShowSelectorOnStructure() {
-            if (occupiedHexTile != null) {
-                Selector.Instance.Select(occupiedHexTile.hexTileOwner);
-            }
-        }
+        public override void ShowSelectorOnStructure() { }
         public override bool HasTileOnHexTile(HexTile hexTile) {
             return occupiedHexTile != null && caveHexTiles.Contains(hexTile.innerMapHexTile);
         }

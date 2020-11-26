@@ -8,7 +8,7 @@ namespace Plague.Fatality {
         protected abstract void ActivateFatality(Character p_character);
         
         #region Plagued.IPlaguedListener Implementation
-        public virtual void PerTickMovement(Character p_character) { }
+        public virtual void PerTickWhileStationaryOrUnoccupied(Character p_character) { }
         public virtual void CharacterGainedTrait(Character p_character, Trait p_gainedTrait) { }
         public virtual void CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action) { }
         public virtual void CharacterDonePerformingAction(Character p_character, ActualGoapNode p_actionPerformed) { }

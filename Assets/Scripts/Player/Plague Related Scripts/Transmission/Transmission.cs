@@ -20,18 +20,18 @@ namespace Plague.Transmission {
         public abstract void Transmit(IPointOfInterest p_infector, IPointOfInterest p_target, int p_transmissionLvl);
         protected void TryTransmitToSingleTarget(IPointOfInterest p_infector, IPointOfInterest p_target, int p_transmissionLvl) {
             int chance = GetTransmissionRate(p_transmissionLvl);
-            chance = AdjustTransmissionChancesBasedOnTarget(p_target, chance);
+            chance = AdjustTransmissionChancesBasedOnInfector(p_infector, chance);
             if (GameUtilities.RollChance(chance)) {
                 Infect(p_infector, p_target);
             }
         }
         protected void TryTransmitToInRange(IPointOfInterest p_infector, int p_transmissionLvl) {
             int chance = GetTransmissionRate(p_transmissionLvl);
+            chance = AdjustTransmissionChancesBasedOnInfector(p_infector, chance);
             if (p_infector is Character infector && infector.marker != null) {
                 for (int i = 0; i < infector.marker.inVisionCharacters.Count; i++) {
                     Character inVisionCharacter = infector.marker.inVisionCharacters[i];
-                    int chanceForCharacter = AdjustTransmissionChancesBasedOnTarget(inVisionCharacter, chance);
-                    if (GameUtilities.RollChance(chanceForCharacter)) {
+                    if (GameUtilities.RollChance(chance)) {
                         Infect(p_infector, inVisionCharacter);
                     }
                 }    
@@ -50,9 +50,9 @@ namespace Plague.Transmission {
             _plagueTransmitted?.Invoke(p_target);   
         }
 
-        private int AdjustTransmissionChancesBasedOnTarget(IPointOfInterest p_target, int p_baseChance) {
+        private int AdjustTransmissionChancesBasedOnInfector(IPointOfInterest p_infector, int p_baseChance) {
             int adjustedChance = p_baseChance;
-            if (p_target.traitContainer.HasTrait("Quarantined")) {
+            if (p_infector.traitContainer.HasTrait("Quarantined")) {
                 adjustedChance -= Mathf.FloorToInt(adjustedChance * 0.75f);
             }
             return adjustedChance;

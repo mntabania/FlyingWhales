@@ -48,6 +48,7 @@ namespace Traits {
         T GetTraitOrStatus<T>(params string[] traitNames) where T : Trait;
         List<T> GetTraitsOrStatuses<T>(params string[] traitNames) where T : Trait;
         bool HasTrait(params string[] traitNames);
+        bool HasTrait(string traitName);
         bool HasTraitOf(TRAIT_TYPE traitType);
         //bool HasTraitOf(TRAIT_TYPE type, TRAIT_EFFECT effect);
         bool HasTraitOrStatusOf(TRAIT_EFFECT traitEffect);

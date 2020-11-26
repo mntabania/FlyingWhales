@@ -741,6 +741,9 @@ namespace Traits {
             }
             return false;
         }
+        public bool HasTrait(string traitName) {
+            return allTraitsAndStatuses.ContainsKey(traitName);
+        }
         #endregion
         
         #region Trait Override Functions

@@ -33,7 +33,7 @@ namespace Traits {
             weights = new WeightedDictionary<string>();
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
-            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_While_Stationary_Unoccupied);
         }
 
         #region Loading
@@ -102,7 +102,7 @@ namespace Traits {
                 _overheatingEffectGO = null;
             }
         }
-        public override bool PerTickOwnerMovement() {
+        public override bool PerTickWhileStationaryOrUnoccupied() {
             int roll = UnityEngine.Random.Range(0, 1000);
             int chance = 15 * traitable.traitContainer.GetStacks(name);
             if (roll < chance) {

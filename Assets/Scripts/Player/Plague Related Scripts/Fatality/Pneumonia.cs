@@ -10,7 +10,7 @@ namespace Plague.Fatality {
             p_character.interruptComponent.TriggerInterrupt(INTERRUPT.Pneumonia, p_character);
             PlagueDisease.Instance.UpdateDeathsOnCharacterDied(p_character);
         }
-        public override void PerTickMovement(Character p_character) {
+        public override void PerTickWhileStationaryOrUnoccupied(Character p_character) {
             if (GameUtilities.RollChance(0.35f)) { //0.5f
                 ActivateFatality(p_character);
             }

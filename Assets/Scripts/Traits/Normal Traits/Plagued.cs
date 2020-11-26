@@ -13,7 +13,7 @@ namespace Traits {
     public class Plagued : Status {
 
         public interface IPlaguedListener {
-            void PerTickMovement(Character p_character);
+            void PerTickWhileStationaryOrUnoccupied(Character p_character);
             void CharacterGainedTrait(Character p_character, Trait p_gainedTrait);
             void CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action);
             void CharacterDonePerformingAction(Character p_character, ActualGoapNode p_actionPerformed);
@@ -24,7 +24,7 @@ namespace Traits {
             void OnDeath(Character p_character); 
         }
 
-        private Action<Character> _perTickMovement;
+        private Action<Character> _perTickWhileStationaryOrUnoccupied;
         private Action<Character, Trait> _characterGainedTrait;
         private Action<Character, ActualGoapNode> _characterStartedPerformingAction;
         private Action<Character, int> _hourStarted;
@@ -52,7 +52,7 @@ namespace Traits {
             mutuallyExclusive = new string[] { "Robust" };
             moodEffect = -4;
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Pre_Effect_Trait);
-            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_While_Stationary_Unoccupied);
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Hour_Started_Trait);
@@ -165,12 +165,12 @@ namespace Traits {
                 RemoveDeathEffect(PlagueDisease.Instance.activeDeathEffect);
             }
         }
-        public override bool PerTickOwnerMovement() {
+        public override bool PerTickWhileStationaryOrUnoccupied() {
             if(owner.traitContainer.HasTrait("Plague Reservoir")) {
                 return false;
             }
             if (owner is Character character) {
-                _perTickMovement?.Invoke(character);
+                _perTickWhileStationaryOrUnoccupied?.Invoke(character);
             }
             return false;
         }
@@ -320,23 +320,23 @@ namespace Traits {
 
         #region Events
         private void SubscribeToAllPlagueListenerEvents(IPlaguedListener p_plaguedListener) {
-            SubscribeToPerTickMovement(p_plaguedListener);
+            SubscribeToPerTickWhileStationaryOrUnoccupied(p_plaguedListener);
             SubscribeToCharacterGainedTrait(p_plaguedListener);
             SubscribeToCharacterStartedPerformingAction(p_plaguedListener);
             SubscribeToHourStarted(p_plaguedListener);
             SubscribeToCharacterDonePerformingAction(p_plaguedListener);
         }
         private void UnsubscribeToAllPlagueListenerEvents(IPlaguedListener p_plaguedListener) {
-            UnsubscribeToPerTickMovement(p_plaguedListener);
+            UnsubscribeToPerTickWhileStationaryOrUnoccupied(p_plaguedListener);
             UnsubscribeToCharacterGainedTrait(p_plaguedListener);
             UnsubscribeToCharacterStartedPerformingAction(p_plaguedListener);
             UnsubscribeToCharacterDonePerformingAction(p_plaguedListener);
         }
-        private void SubscribeToPerTickMovement(IPlaguedListener plaguedListener) {
-            _perTickMovement += plaguedListener.PerTickMovement;
+        private void SubscribeToPerTickWhileStationaryOrUnoccupied(IPlaguedListener plaguedListener) {
+            _perTickWhileStationaryOrUnoccupied += plaguedListener.PerTickWhileStationaryOrUnoccupied;
         }
-        private void UnsubscribeToPerTickMovement(IPlaguedListener plaguedListener) {
-            _perTickMovement -= plaguedListener.PerTickMovement;
+        private void UnsubscribeToPerTickWhileStationaryOrUnoccupied(IPlaguedListener plaguedListener) {
+            _perTickWhileStationaryOrUnoccupied -= plaguedListener.PerTickWhileStationaryOrUnoccupied;
         }
         private void SubscribeToCharacterGainedTrait(IPlaguedListener plaguedListener) {
             _characterGainedTrait += plaguedListener.CharacterGainedTrait;

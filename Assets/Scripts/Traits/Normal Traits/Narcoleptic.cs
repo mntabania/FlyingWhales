@@ -13,7 +13,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             canBeTriggered = true;
-            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_While_Stationary_Unoccupied);
         }
 
         #region Overrides
@@ -29,7 +29,7 @@ namespace Traits {
                 owner = character;
             }
         }
-        public override bool PerTickOwnerMovement() {
+        public override bool PerTickWhileStationaryOrUnoccupied() {
             int napChance = UnityEngine.Random.Range(0, 100);
             if (napChance < 4) {
                 return DoNarcolepticNap();
