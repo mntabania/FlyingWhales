@@ -37,6 +37,8 @@ namespace Inner_Maps.Location_Structures {
             base.AfterStructureDestruction();
             hexTile.RemoveCorruption();
             CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
+            currentAttackers.Clear();
+            Messenger.RemoveListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
             Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         public override void ConstructDefaultActions() {
@@ -146,24 +148,28 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Attackers
-        public void AddAttacker(Character attacker) {
-            if (!currentAttackers.Contains(attacker)) {
+        public void AddAttacker(Character p_attacker) {
+            if (!currentAttackers.Contains(p_attacker)) {
                 bool wasEmptyBeforeAdding = currentAttackers.Count == 0;
-                currentAttackers.Add(attacker);
-                Messenger.Broadcast(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, attacker, this);
+                currentAttackers.Add(p_attacker);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, p_attacker, this);
                 if (wasEmptyBeforeAdding) {
-                    Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+                    Messenger.AddListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
                 }
+                UnityEngine.Debug.Log($"Added attacker {p_attacker.name} to {this.name}");
             }
         }
-        public void RemoveAttacker(Character attacker) {
-            currentAttackers.Remove(attacker);
+        private void RemoveAttacker(Character p_attacker) {
+            currentAttackers.Remove(p_attacker);
+            UnityEngine.Debug.Log($"Removed attacker {p_attacker.name} to {this.name}");
             if (currentAttackers.Count == 0) {
-                Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+                Messenger.RemoveListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
             }
         }
-        private void OnCharacterEndedState(Character character, CharacterState characterState) {
-            RemoveAttacker(character);
+        private void OnCharacterRemovedBehaviour(Character p_character, CharacterBehaviourComponent p_removedBehaviour) {
+            if (p_removedBehaviour is AttackDemonicStructureBehaviour) {
+                RemoveAttacker(p_character);    
+            }
         }
         #endregion
     }
