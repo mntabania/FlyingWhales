@@ -250,7 +250,7 @@ public class CharacterVisuals {
                 return UtilityScripts.Utilities.UndeadIcon();
             }
             return UtilityScripts.Utilities.MonsterIcon();
-        } else if (_owner.isAlliedWithPlayer) {
+        } else if (_owner.traitContainer.HasTrait("Cultist")) {
             return UtilityScripts.Utilities.CultistIcon();
         }
         return UtilityScripts.Utilities.VillagerIcon();

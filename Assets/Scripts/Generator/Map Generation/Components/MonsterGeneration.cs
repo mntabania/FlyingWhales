@@ -175,7 +175,7 @@ public class MonsterGeneration : MapGenerationComponent {
 				BaseLandmark landmark = allLandmarks[i];
 				if (landmark.specificLandmarkType != LANDMARK_TYPE.CAVE) {
                     LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-                    if (landmark.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR && GenerateRatmen(structure)) {
+                    if (landmark.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR && GenerateRatmen(structure, GameUtilities.RandomBetweenTwoNumbers(1, 3))) {
                         //Ratmen has been generated
                     } else {
                         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmark.specificLandmarkType);
@@ -204,78 +204,13 @@ public class MonsterGeneration : MapGenerationComponent {
 				caves = caves.OrderByDescending(x => x.tiles.Count).ToList();
 				
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
-					for (int j = 0; j < caves.Count; j++) {
-						LocationStructure cave = caves[j];
-						List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
-						if (j == 0 || j == 1) {
-							//Giant spiders	
-							int randomGiantSpider = Random.Range(2, 5);
-							for (int k = 0; k < randomGiantSpider; k++) {
-								CreateMonster(SUMMON_TYPE.Giant_Spider, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
-							}
-						} else if (j == 2) {
-							//Golem	
-							int randomGolem = Random.Range(3, 6);
-							for (int k = 0; k < randomGolem; k++) {
-								CreateMonster(SUMMON_TYPE.Golem, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
-							}
-						} else {
-							break;
-						}
-					}
+					TutorialCaveMonsterGeneration(caves);
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
-					for (int j = 0; j < caves.Count; j++) {
-						LocationStructure cave = caves[j];
-						if (cave.residents.Count > 0) {
-							//if cave already has occupants, then do not generate monsters for that cave
-							continue;
-						}
-						List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
-						if (j == 0 || j == 1) {
-							//Trolls	
-							int randomTrolls = Random.Range(3, 6);
-							for (int k = 0; k < randomTrolls; k++) {
-								CreateMonster(SUMMON_TYPE.Troll, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
-							}
-						} else if (j == 2) {
-							//Fire Elementals	
-							int fireElementals = 2;
-							for (int k = 0; k < fireElementals; k++) {
-								CreateMonster(SUMMON_TYPE.Fire_Elemental, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
-							}
-						} else {
-							break;
-						}
-					}
+					OonaCaveMonsterGeneration(caves);
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
-					List<LocationStructure> shuffledCaves = CollectionUtilities.Shuffle(caves);
-					for (int j = 0; j < shuffledCaves.Count; j++) {
-						LocationStructure cave = shuffledCaves[j];
-						if (cave.residents.Count > 0) {
-							//if cave already has occupants, then do not generate monsters for that cave
-							continue;
-						}
-						List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
-						if (j < 4) {
-							CreateMonster(SUMMON_TYPE.Wurm, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
-						}
-					}
+					IcalawaCaveMonsterGeneration(caves);
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
-					for (int j = 0; j < caves.Count; j++) {
-						LocationStructure cave = caves[j];
-						if (cave.residents.Count > 0) {
-							//if cave already has occupants, then do not generate monsters for that cave
-							continue;
-						}
-						List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
-						if (j == 0) {
-							for (int k = 0; k < 8; k++) {
-								CreateMonster(SUMMON_TYPE.Wurm, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());	
-							}
-						} else {
-							break;
-						}
-					}
+					PangatLooCaveMonsterGeneration(caves);
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
 					if (region.regionFeatureComponent.HasFeature<HauntedFeature>()) {
 						for (int j = 0; j < caves.Count; j++) {
@@ -307,7 +242,7 @@ public class MonsterGeneration : MapGenerationComponent {
 								//if cave already has occupants, then do not generate monsters for that cave
 								continue;
 							}
-                            if (GenerateRatmen(cave)) {
+                            if (GenerateRatmen(cave, GameUtilities.RandomBetweenTwoNumbers(1, 3))) {
                                 //Ratmen has bee generated
                             } else {
                                 if (GameUtilities.RollChance(caveData.monsterGenerationChance)) {
@@ -326,7 +261,6 @@ public class MonsterGeneration : MapGenerationComponent {
 			yield return null;
 		}
 	}
-
 	private List<HexTile> GetHexTileCountOfCave(LocationStructure caveStructure) {
 		List<HexTile> tiles = new List<HexTile>();
 		for (int i = 0; i < caveStructure.unoccupiedTiles.Count; i++) {
@@ -338,6 +272,32 @@ public class MonsterGeneration : MapGenerationComponent {
 		return tiles;
 	}
 
+	#region Tutorial
+	private void TutorialCaveMonsterGeneration(List<LocationStructure> caves) {
+		for (int j = 0; j < caves.Count; j++) {
+			LocationStructure cave = caves[j];
+			List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
+			if (j == 0 || j == 1) {
+				//Giant spiders	
+				int randomGiantSpider = Random.Range(2, 5);
+				for (int k = 0; k < randomGiantSpider; k++) {
+					CreateMonster(SUMMON_TYPE.Giant_Spider, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
+				}
+			}
+			else if (j == 2) {
+				//Golem	
+				int randomGolem = Random.Range(3, 6);
+				for (int k = 0; k < randomGolem; k++) {
+					CreateMonster(SUMMON_TYPE.Golem, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
+				}
+			}
+			else {
+				break;
+			}
+		}
+	}
+	#endregion
+	
 	#region Zenko
 	private void ZenkoRegionalMonsters(int regionIndex, ref List<LocationGridTile> locationChoices) {
 		if (regionIndex == 0) {
@@ -417,6 +377,56 @@ public class MonsterGeneration : MapGenerationComponent {
 			}
 		}
 	}
+	private void OonaCaveMonsterGeneration(List<LocationStructure> caves) {
+		for (int j = 0; j < caves.Count; j++) {
+			LocationStructure cave = caves[j];
+			if (cave.residents.Count > 0) {
+				//if cave already has occupants, then do not generate monsters for that cave
+				continue;
+			}
+			List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
+			if (j == 0 || j == 1) {
+				//Trolls	
+				int randomTrolls = Random.Range(3, 6);
+				for (int k = 0; k < randomTrolls; k++) {
+					CreateMonster(SUMMON_TYPE.Troll, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
+				}
+			}
+			else if (j == 2) {
+				//Fire Elementals	
+				int fireElementals = 2;
+				for (int k = 0; k < fireElementals; k++) {
+					CreateMonster(SUMMON_TYPE.Fire_Elemental, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
+				}
+			}
+			else {
+				break;
+			}
+		}
+	}
+	#endregion
+
+	#region Icalawa
+	private void IcalawaCaveMonsterGeneration(List<LocationStructure> caves) {
+		List<LocationStructure> shuffledCaves = CollectionUtilities.Shuffle(caves);
+		if (shuffledCaves.Count > 0) {
+			LocationStructure ratmenCave = shuffledCaves[0];
+			shuffledCaves.Remove(ratmenCave);
+			GenerateRatmen(ratmenCave, 3, 100);
+		}
+		
+		for (int j = 0; j < shuffledCaves.Count; j++) {
+			LocationStructure cave = shuffledCaves[j];
+			if (cave.residents.Count > 0) {
+				//if cave already has occupants, then do not generate monsters for that cave
+				continue;
+			}
+			List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
+			if (j < 4) {
+				CreateMonster(SUMMON_TYPE.Wurm, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
+			}
+		}
+	}
 	#endregion
 	
 	#region Pangat Loo
@@ -442,27 +452,35 @@ public class MonsterGeneration : MapGenerationComponent {
 				CreateMonster(SUMMON_TYPE.Skeleton, landmark.tileLocation.settlementOnTile, landmark, structure, FactionManager.Instance.undeadFaction);
 			}
 		}
-		// //Wolves at Monster Lair
-		// List<BaseLandmark> monsterLair = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
-		// for (int i = 0; i < monsterLair.Count; i++) {
-		// 	BaseLandmark landmark = monsterLair[i];
-		// 	LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-		// 	int randomAmount = Random.Range(2, 5);
-		// 	for (int k = 0; k < randomAmount; k++) {
-		// 		CreateMonster(SUMMON_TYPE.Wolf, landmark.tileLocation.settlementOnTile, landmark, structure);
-		// 	}
-		// }
+	}
+	private void PangatLooCaveMonsterGeneration(List<LocationStructure> caves) {
+		for (int j = 0; j < caves.Count; j++) {
+			LocationStructure cave = caves[j];
+			if (cave.residents.Count > 0) {
+				//if cave already has occupants, then do not generate monsters for that cave
+				continue;
+			}
+			List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
+			if (j == 0) {
+				for (int k = 0; k < 8; k++) {
+					CreateMonster(SUMMON_TYPE.Wurm, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
+				}
+			}
+			else {
+				break;
+			}
+		}
 	}
     #endregion
 
     #region Ratmen Generation
-    private bool GenerateRatmen(LocationStructure structure) {
-        if (GameUtilities.RollChance(10)) {
+    private bool GenerateRatmen(LocationStructure structure, int amount, int chance = 10) {
+        if (GameUtilities.RollChance(chance)) {
             if (FactionManager.Instance.ratmenFaction == null) {
                 //Only create ratmen faction if ratmen are spawned
                 FactionManager.Instance.CreateRatmenFaction();
             }
-            int numOfRatmen = GameUtilities.RandomBetweenTwoNumbers(1, 3);
+            int numOfRatmen = amount;
             for (int k = 0; k < numOfRatmen; k++) {
                 CreateCharacter(RACE.RATMAN, "Ratman", GENDER.MALE, structure.settlementLocation, structure, FactionManager.Instance.ratmenFaction);
             }

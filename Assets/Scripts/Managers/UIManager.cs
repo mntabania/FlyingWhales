@@ -532,14 +532,6 @@ public class UIManager : BaseMonoBehaviour {
         smallInfoBGParentLG.childAlignment = position.anchor;
         rt.pivot = position.pivot;
     }
-    public void ShowSmallLocationInfo(Region region, RectTransform initialParent, Vector2 adjustment, string subText = "") {
-        locationSmallInfo.ShowRegionInfo(region, subText);
-        locationSmallInfoRT.SetParent(initialParent);
-        locationSmallInfoRT.anchoredPosition = Vector3.zero;
-        locationSmallInfoRT.anchoredPosition += adjustment;
-        locationSmallInfoRT.SetParent(this.transform);
-        //(locationSmallInfo.transform as RectTransform).anchoredPosition = pos;
-    }
     public void ShowSmallLocationInfo(Region region, Vector3 pos, string subText = "") {
         locationSmallInfo.ShowRegionInfo(region, subText);
         locationSmallInfoRT.position = pos;
@@ -630,7 +622,7 @@ public class UIManager : BaseMonoBehaviour {
             ShowCharacterInfo(character, true);
         } else if (obj is NPCSettlement settlement) {
             if (settlement.allStructures.Count > 0) {
-                settlement.allStructures.First().CenterOnStructure();
+                ShowStructureInfo(settlement.allStructures.First());
             }
             // ShowRegionInfo(settlement.region);
         } else if (obj is Faction faction) {
@@ -644,7 +636,8 @@ public class UIManager : BaseMonoBehaviour {
         } else if (obj is Region region) {
             ShowRegionInfo(region);
         } else if (obj is LocationStructure structure) {
-            structure.CenterOnStructure();
+            ShowStructureInfo(structure);
+            // structure.CenterOnStructure();
         }
     }
     public bool IsMouseOnMapObject() {

@@ -50,19 +50,9 @@ public class StructureInfoUI : InfoUIBase {
     }
     public override void OpenMenu() {
         activeStructure = _data as LocationStructure;
-        
-        GameObject structureObject = null;
-        if (activeStructure is ManMadeStructure manMadeStructure) {
-            structureObject = manMadeStructure.structureObj.gameObject;
-        } else if (activeStructure is DemonicStructure demonicStructure) {
-            structureObject = demonicStructure.structureObj.gameObject;
-        }
-        if(structureObject != null) {
-            bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(activeStructure.region);
-            InnerMapCameraMove.Instance.CenterCameraOn(structureObject, instantCenter);
-        }
+        activeStructure.CenterOnStructure();
         base.OpenMenu();
-        Selector.Instance.Select(activeStructure);
+        activeStructure.ShowSelectorOnStructure();
         UpdateStructureInfoUI();
         UpdateResidents();
     }

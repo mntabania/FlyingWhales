@@ -1368,6 +1368,9 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         if (structureType == STRUCTURE_TYPE.MEDDLER) {
             return CanBuildDemonicStructureHere() && InnerMapManager.Instance.currentlyShowingLocation != null && !InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.MEDDLER); //only 1 finger at a time.
         }
+        if (structureType == STRUCTURE_TYPE.BIOLAB) {
+            return CanBuildDemonicStructureHere() && !PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB); //Only 1 biolab should exist in the world
+        }
         return CanBuildDemonicStructureHere();
     }
     private bool CanBuildDemonicStructureHere() {

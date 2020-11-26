@@ -65,7 +65,7 @@ public class CarryPatient : GoapAction {
             if (actor.homeSettlement == null) {
                 return false;
             }
-            if (!actor.homeSettlement.HasStructure(STRUCTURE_TYPE.APOTHECARY)) {
+            if (!actor.homeSettlement.HasStructure(STRUCTURE_TYPE.HOSPICE)) {
                 return false;
             }
             return target.carryComponent.IsNotBeingCarried();

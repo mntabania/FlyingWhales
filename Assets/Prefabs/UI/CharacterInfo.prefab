@@ -2483,7 +2483,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -885.1997, y: -243.6}
+  m_AnchoredPosition: {x: -885.1997, y: -249.6}
   m_SizeDelta: {x: 104.3, y: 36}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &114304808046673170
@@ -6471,7 +6471,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -781.7, y: -243.6}
+  m_AnchoredPosition: {x: -781.7, y: -249.6}
   m_SizeDelta: {x: 105.6, y: 36}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &114635469443879880
@@ -6780,7 +6780,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -989.3, y: -243.6}
+  m_AnchoredPosition: {x: -989.3, y: -249.6}
   m_SizeDelta: {x: 106.11, y: 36}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &114411206106116374
@@ -8071,7 +8071,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Home Region
+  m_text: Village
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 47fa207187f7a4c4e910018358a0d394, type: 2}
   m_sharedMaterial: {fileID: -8433165783492963644, guid: 47fa207187f7a4c4e910018358a0d394,
@@ -10609,7 +10609,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224763235818138138}
   m_Layer: 5
-  m_Name: Home Region
+  m_Name: Village
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10693,7 +10693,7 @@ GameObject:
   - component: {fileID: 114334194053860140}
   - component: {fileID: 114015586281703230}
   m_Layer: 5
-  m_Name: Home Region Lbl
+  m_Name: Village Lbl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11585,7 +11585,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -679.76, y: -243.6}
+  m_AnchoredPosition: {x: -679.76, y: -249.6}
   m_SizeDelta: {x: 100.82, y: 36}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &114190813249886626

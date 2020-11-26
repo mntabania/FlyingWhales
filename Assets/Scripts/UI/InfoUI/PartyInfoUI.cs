@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
+using System.Linq;
 using Inner_Maps;
 using Traits;
 using Locations.Settlements;
@@ -158,19 +159,22 @@ public class PartyInfoUI : InfoUIBase {
 
     #region Click Actions
     private void OnClickSettlementItem(BaseSettlement settlement) {
-        if (settlement.tiles.Count > 0) {
-            HexTile tile = settlement.tiles[0];
-            if (InnerMapManager.Instance.isAnInnerMapShowing) {
-                //if inner map is showing, open inner map of hextile then center on it
-                if (InnerMapManager.Instance.currentlyShowingLocation != tile.region) {
-                    InnerMapManager.Instance.TryShowLocationMap(tile.region);
-                }
-                InnerMapCameraMove.Instance.CenterCameraOnTile(tile);
-            } else {
-                //if world map is showing, just center on hextile
-                tile.CenterCameraHere();
-            }
-            UIManager.Instance.ShowHexTileInfo(tile);
+        // if (settlement.tiles.Count > 0) {
+        //     HexTile tile = settlement.tiles[0];
+        //     if (InnerMapManager.Instance.isAnInnerMapShowing) {
+        //         //if inner map is showing, open inner map of hextile then center on it
+        //         if (InnerMapManager.Instance.currentlyShowingLocation != tile.region) {
+        //             InnerMapManager.Instance.TryShowLocationMap(tile.region);
+        //         }
+        //         InnerMapCameraMove.Instance.CenterCameraOnTile(tile);
+        //     } else {
+        //         //if world map is showing, just center on hextile
+        //         tile.CenterCameraHere();
+        //     }
+        //     UIManager.Instance.ShowHexTileInfo(tile);
+        // }
+        if (settlement.allStructures.Count > 0) {
+            UIManager.Instance.ShowStructureInfo(settlement.allStructures.First());
         }
     }
     #endregion

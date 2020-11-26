@@ -9,7 +9,11 @@ namespace Plague.Fatality {
             PlagueDisease.Instance.UpdateDeathsOnCharacterDied(p_character);
         }
         public override void CharacterGainedTrait(Character p_character, Trait p_gainedTrait) {
-            if (p_gainedTrait.name == "Starving") {
+            if (p_gainedTrait.name == "Hungry") {
+                if (GameUtilities.RollChance(15)) {
+                    ActivateFatality(p_character);
+                }
+            } else if (p_gainedTrait.name == "Starving") {
                 if (GameUtilities.RollChance(30)) {//5
                     ActivateFatality(p_character);
                 }

@@ -102,8 +102,28 @@ namespace Inner_Maps.Location_Structures {
             tile.genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.MINE);
         }
         public override void CenterOnStructure() {
+            if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingMap != region.innerMap) {
+                InnerMapManager.Instance.HideAreaMap();
+            }
+            if (region.innerMap.isShowing == false) {
+                InnerMapManager.Instance.ShowInnerMap(region);
+            }
             if (occupiedHexTile != null) {
-                occupiedHexTile.hexTileOwner.CenterCameraHere();
+                float centerX = 0f;
+                float centerY = 0f;
+                for (int i = 0; i < occupiedHexTiles.Count; i++) {
+                    HexTile hexTile = occupiedHexTiles[i];
+                    Vector2 worldLocation = hexTile.GetCenterLocationGridTile().centeredWorldLocation;
+                    centerX += worldLocation.x;
+                    centerY += worldLocation.y;
+                }
+                Vector2 finalPos = new Vector2(centerX / occupiedHexTiles.Count, centerY / occupiedHexTiles.Count);
+                InnerMapCameraMove.Instance.CenterCameraOn(finalPos);
+            }
+        }
+        public override void ShowSelectorOnStructure() {
+            if (occupiedHexTile != null) {
+                Selector.Instance.Select(occupiedHexTile.hexTileOwner);
             }
         }
         public override bool HasTileOnHexTile(HexTile hexTile) {

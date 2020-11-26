@@ -65,8 +65,19 @@ namespace Inner_Maps.Location_Structures {
             return this;
         }
         public override void CenterOnStructure() {
+            if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingMap != region.innerMap) {
+                InnerMapManager.Instance.HideAreaMap();
+            }
+            if (region.innerMap.isShowing == false) {
+                InnerMapManager.Instance.ShowInnerMap(region);
+            }
             if (occupiedHexTile != null) {
-                occupiedHexTile.hexTileOwner.CenterCameraHere();
+                InnerMapCameraMove.Instance.CenterCameraOn(occupiedHexTile.hexTileOwner.GetCenterLocationGridTile().centeredWorldLocation);
+            }
+        }
+        public override void ShowSelectorOnStructure() {
+            if (occupiedHexTile != null) {
+                Selector.Instance.Select(occupiedHexTile.hexTileOwner);
             }
         }
     }

@@ -652,7 +652,7 @@ public enum STRUCTURE_TYPE {
     CITY_CENTER = 11,
     SMITHY = 12,
     BARRACKS = 13,
-    APOTHECARY = 14,
+    HOSPICE = 14,
     GRANARY = 15,
     MINER_CAMP = 16,
     RAIDER_CAMP = 17,
@@ -1088,7 +1088,7 @@ public enum LOG_TAG {
     Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Major, Player, Intel, Important
 }
 public enum PARTY_TARGET_DESTINATION_TYPE { Structure, Settlement, Hextile, }
-public enum SETTLEMENT_TYPE { Default_Human, Default_Elf, Capital, Cult_Town }
+public enum SETTLEMENT_TYPE { Human_Village, Elven_Hamlet, Capital, Cult_Town }
 
 public enum RELATIONS_FILTER {
     Enemies, Rivals, Acquaintances, Friends, Close_Friends, Relatives, Lovers,

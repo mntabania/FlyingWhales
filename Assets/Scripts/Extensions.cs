@@ -56,7 +56,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.DWELLING:
             case STRUCTURE_TYPE.SMITHY:
             case STRUCTURE_TYPE.BARRACKS:
-            case STRUCTURE_TYPE.APOTHECARY:
+            case STRUCTURE_TYPE.HOSPICE:
             case STRUCTURE_TYPE.GRANARY:
             case STRUCTURE_TYPE.MINER_CAMP:
             case STRUCTURE_TYPE.RAIDER_CAMP:
@@ -81,7 +81,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.FARM:
             case STRUCTURE_TYPE.MINE_SHACK:
             case STRUCTURE_TYPE.LUMBERYARD:
-            case STRUCTURE_TYPE.APOTHECARY:
+            case STRUCTURE_TYPE.HOSPICE:
             case STRUCTURE_TYPE.CEMETERY:
             case STRUCTURE_TYPE.BARRACKS:
             case STRUCTURE_TYPE.MAGE_QUARTERS:
@@ -120,7 +120,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.BARRACKS:
             case STRUCTURE_TYPE.MINER_CAMP:
             case STRUCTURE_TYPE.WAREHOUSE:
-            case STRUCTURE_TYPE.APOTHECARY:
+            case STRUCTURE_TYPE.HOSPICE:
             case STRUCTURE_TYPE.RAIDER_CAMP:
             case STRUCTURE_TYPE.HUNTER_LODGE:
             case STRUCTURE_TYPE.ASSASSIN_GUILD:

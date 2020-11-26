@@ -418,9 +418,9 @@ public class SettlementGeneration : MapGenerationComponent {
 	private WeightedDictionary<StructureSetting> GetStructureWeights(List<STRUCTURE_TYPE> structureTypes, Faction faction) {
 		WeightedDictionary<StructureSetting> structureWeights = new WeightedDictionary<StructureSetting>();
 		if (faction.factionType.type == FACTION_TYPE.Elven_Kingdom) {
-			if (structureTypes.Contains(STRUCTURE_TYPE.APOTHECARY) == false) {
+			if (structureTypes.Contains(STRUCTURE_TYPE.HOSPICE) == false) {
 				//Apothecary: +6 (disable if already selected from previous hex tile)
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.APOTHECARY, RESOURCE.WOOD), 100); //6
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.HOSPICE, RESOURCE.WOOD), 100); //6
 			}
 			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 1); //Farm: +1
 			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), structureTypes.Contains(STRUCTURE_TYPE.FARM) == false ? 15 : 2);

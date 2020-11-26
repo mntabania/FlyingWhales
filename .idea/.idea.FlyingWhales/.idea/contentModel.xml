@@ -1914,7 +1914,6 @@
                 <e p="AbandonedMine.cs" t="Include" />
                 <e p="AncientGraveyard.cs" t="Include" />
                 <e p="AncientRuin.cs" t="Include" />
-                <e p="Apothecary.cs" t="Include" />
                 <e p="AssassinGuild.cs" t="Include" />
                 <e p="Barracks.cs" t="Include" />
                 <e p="Biolab.cs" t="Include" />
@@ -1930,6 +1929,7 @@
                 <e p="Eye.cs" t="Include" />
                 <e p="Farm.cs" t="Include" />
                 <e p="Granary.cs" t="Include" />
+                <e p="Hospice.cs" t="Include" />
                 <e p="HunterLodge.cs" t="Include" />
                 <e p="Kennel.cs" t="Include" />
                 <e p="LocationStructure.cs" t="Include" />
@@ -2246,8 +2246,8 @@
               <e p="Settlement Types" t="Include">
                 <e p="Capital.cs" t="Include" />
                 <e p="CultTown.cs" t="Include" />
-                <e p="DefaultElf.cs" t="Include" />
-                <e p="DefaultHuman.cs" t="Include" />
+                <e p="ElvenHamlet.cs" t="Include" />
+                <e p="HumanVillage.cs" t="Include" />
                 <e p="SettlementType.cs" t="Include" />
               </e>
             </e>
@@ -3251,6 +3251,9 @@
             <e p="TheNeedlesUI.cs" t="Include" />
             <e p="TheProfaneUI.cs" t="Include" />
             <e p="TimerHubItem.cs" t="Include" />
+            <e p="ToolTips" t="Include">
+              <e p="ToolTip.cs" t="Include" />
+            </e>
             <e p="TraitItem.cs" t="Include" />
             <e p="UIMenuSettings.cs" t="Include" />
             <e p="UnallowOverlaps.cs" t="Include" />

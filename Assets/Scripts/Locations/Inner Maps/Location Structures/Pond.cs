@@ -4,8 +4,19 @@
         public Pond(Region location, SaveDataNaturalStructure data) : base(location, data) { }
         
         public override void CenterOnStructure() {
+            if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingMap != region.innerMap) {
+                InnerMapManager.Instance.HideAreaMap();
+            }
+            if (region.innerMap.isShowing == false) {
+                InnerMapManager.Instance.ShowInnerMap(region);
+            }
             if (occupiedHexTile != null) {
-                occupiedHexTile.hexTileOwner.CenterCameraHere();
+                InnerMapCameraMove.Instance.CenterCameraOn(occupiedHexTile.hexTileOwner.GetCenterLocationGridTile().centeredWorldLocation);
+            }
+        }
+        public override void ShowSelectorOnStructure() {
+            if (occupiedHexTile != null) {
+                Selector.Instance.Select(occupiedHexTile.hexTileOwner);
             }
         }
     }

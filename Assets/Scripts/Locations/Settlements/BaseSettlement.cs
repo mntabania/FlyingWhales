@@ -327,6 +327,7 @@ namespace Locations.Settlements {
                 if (tile.landmarkOnTile != null) {
                     tile.UpdateLandmarkVisuals();
                 }
+                tile.UpdatePathfindingGraph();
             }
         }
         #endregion

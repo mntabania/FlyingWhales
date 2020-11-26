@@ -236,6 +236,7 @@ namespace Inner_Maps.Location_Structures {
             isInterior = _isInterior;
         }
         public abstract void CenterOnStructure();
+        public abstract void ShowSelectorOnStructure();
         public void AddStructureTag(STRUCTURE_TAG tag) {
             structureTags.Add(tag);
         }
@@ -934,7 +935,7 @@ namespace Inner_Maps.Location_Structures {
                    && UIManager.Instance.structureInfoUI.activeStructure == this;
         }
         public void LeftSelectAction() {
-            CenterOnStructure();
+            // CenterOnStructure();
             UIManager.Instance.ShowStructureInfo(this);
         }
         public void RightSelectAction() { }

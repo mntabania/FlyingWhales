@@ -103,6 +103,8 @@ public class FactionManager : BaseMonoBehaviour {
         newFaction.SetFactionActiveState(false);
         newFaction.SetEmblem(ratmenFactionEmblem);
         newFaction.factionType.SetAsDefault();
+        newFaction.SetPathfindingTag(InnerMapManager.Ratmen_Faction);
+        newFaction.SetPathfindingDoorTag(InnerMapManager.Ratmen_Faction_Doors);
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         SetRatmenFaction(newFaction);
         CreateRelationshipsForFaction(newFaction);
@@ -158,12 +160,16 @@ public class FactionManager : BaseMonoBehaviour {
         FACTION_TYPE factionType = faction.factionType.type;
         if (factionType == FACTION_TYPE.Demons) {
             //NOTE: This is always reserved!
-            faction.SetPathfindingTag(2);
-            faction.SetPathfindingDoorTag(3);
+            faction.SetPathfindingTag(InnerMapManager.Demonic_Faction);
+            faction.SetPathfindingDoorTag(InnerMapManager.Demonic_Faction_Doors);
         } else if (factionType == FACTION_TYPE.Undead) {
             //NOTE: This is always reserved!
-            faction.SetPathfindingTag(4);
-            faction.SetPathfindingDoorTag(5);
+            faction.SetPathfindingTag(InnerMapManager.Undead_Faction);
+            faction.SetPathfindingDoorTag(InnerMapManager.Undead_Faction_Doors);
+        } else if (factionType == FACTION_TYPE.Ratmen) {
+            //NOTE: This is always reserved!
+            faction.SetPathfindingTag(InnerMapManager.Ratmen_Faction);
+            faction.SetPathfindingDoorTag(InnerMapManager.Ratmen_Faction_Doors);
         } else {
             if (faction.isMajorNonPlayer) {
                 //claim new tags per new MAJOR faction.

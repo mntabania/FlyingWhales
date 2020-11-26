@@ -29,10 +29,6 @@ public class Summon : Character {
         this.summonType = summonType;
         showNotificationOnDeath = true;
         isVolatileMonster = false;
-        //by default all monsters should try and avoid settlements
-        for (int i = InnerMapManager.Starting_Tag_Index; i < 32; i++) {
-            movementComponent.SetPenaltyForTag(i, 180);
-        }
     }
     protected Summon(SaveDataSummon data) : base(data) {
         summonType = data.summonType;
@@ -60,6 +56,7 @@ public class Summon : Character {
         needsComponent.SetTirednessForcedTick(0);
         needsComponent.SetHappinessForcedTick(0);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Monster_Behaviour);
+        movementComponent.AvoidAllFactions();
     }
     public override void OnActionPerformed(ActualGoapNode node) { } //overridden OnActionStateSet so that summons cannot witness other events.
     public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = default, LogFillerStruct[] deathLogFillers = null,

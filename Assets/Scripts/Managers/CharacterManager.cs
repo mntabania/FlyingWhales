@@ -7,6 +7,7 @@ using Characters.Behaviour;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
+using Settings;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -437,8 +438,7 @@ public class CharacterManager : BaseMonoBehaviour {
         AddNewLimboCharacter(newCharacter);
         return newCharacter;
     }
-    public Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null,
-        BaseSettlement homeLocation = null, Region homeRegion = null, LocationStructure homeStructure = null) {
+    public Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null, BaseSettlement homeLocation = null, Region homeRegion = null, LocationStructure homeStructure = null) {
         Character newCharacter = new Character(className, race, gender);
         newCharacter.SetRandomName();
         newCharacter.Initialize();
@@ -792,7 +792,11 @@ public class CharacterManager : BaseMonoBehaviour {
     #region Summons
     public Summon CreateNewLimboSummon(SUMMON_TYPE summonType, Faction faction = null, NPCSettlement homeLocation = null, LocationStructure homeStructure = null, string className = "") {
         Summon newCharacter = CreateNewSummonClassFromType(summonType, className);
-        newCharacter.SetFirstAndLastName(newCharacter.raceClassName, string.Empty);
+        if (SettingsManager.Instance.settings.randomizeMonsterNames) {
+            newCharacter.SetRandomName();
+        } else {
+            newCharacter.SetFirstAndLastName(newCharacter.raceClassName, string.Empty);    
+        }
         newCharacter.Initialize();
         if (faction == null || !faction.JoinFaction(newCharacter, isInitial: true)) {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, isInitial: true);
@@ -820,7 +824,11 @@ public class CharacterManager : BaseMonoBehaviour {
     public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, BaseSettlement homeLocation = null,
         Region homeRegion = null, LocationStructure homeStructure = null, string className = "", bool bypassIdeologyChecking = false) {
         Summon newCharacter = CreateNewSummonClassFromType(summonType, className);
-        newCharacter.SetFirstAndLastName(newCharacter.raceClassName, string.Empty);
+        if (SettingsManager.Instance.settings.randomizeMonsterNames) {
+            newCharacter.SetRandomName();
+        } else {
+            newCharacter.SetFirstAndLastName(newCharacter.raceClassName, string.Empty);    
+        }
         newCharacter.Initialize();
         if (faction == null || !faction.JoinFaction(newCharacter, bypassIdeologyChecking: bypassIdeologyChecking, isInitial: true)) {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, bypassIdeologyChecking: bypassIdeologyChecking, isInitial: true);

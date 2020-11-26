@@ -98,7 +98,7 @@ namespace Locations.Settlements.Settlement_Events {
                     if (p_settlement.owner != null && p_settlement.owner.factionType.type == FACTION_TYPE.Demon_Cult) {
                         if (GameUtilities.RollChance(30)) {
                             response = PLAGUE_EVENT_RESPONSE.Slay;
-                        } else if (p_settlement.HasStructure(STRUCTURE_TYPE.APOTHECARY)) {
+                        } else if (p_settlement.HasStructure(STRUCTURE_TYPE.HOSPICE)) {
                             response = PLAGUE_EVENT_RESPONSE.Quarantine;
                         } else {
                             response = PLAGUE_EVENT_RESPONSE.Exile;
@@ -107,11 +107,11 @@ namespace Locations.Settlements.Settlement_Events {
                         response = PLAGUE_EVENT_RESPONSE.Slay;
                     }
                 } else if (p_leader.traitContainer.HasTrait("Diplomatic", "Inspiring")) {
-                    response = p_settlement.HasStructure(STRUCTURE_TYPE.APOTHECARY) ? PLAGUE_EVENT_RESPONSE.Quarantine : PLAGUE_EVENT_RESPONSE.Exile;
+                    response = p_settlement.HasStructure(STRUCTURE_TYPE.HOSPICE) ? PLAGUE_EVENT_RESPONSE.Quarantine : PLAGUE_EVENT_RESPONSE.Exile;
                 } else if (p_leader.traitContainer.HasTrait("Coward", "Lazy")) {
                     response = PLAGUE_EVENT_RESPONSE.Do_Nothing;
                 } else {
-                    response = p_settlement.HasStructure(STRUCTURE_TYPE.APOTHECARY) ? PLAGUE_EVENT_RESPONSE.Quarantine : PLAGUE_EVENT_RESPONSE.Exile;
+                    response = p_settlement.HasStructure(STRUCTURE_TYPE.HOSPICE) ? PLAGUE_EVENT_RESPONSE.Quarantine : PLAGUE_EVENT_RESPONSE.Exile;
                 }
             }
             if (_rulerDecision != response) {

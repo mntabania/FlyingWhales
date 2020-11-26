@@ -8,7 +8,7 @@ public class CarePlagueBearersBehaviour : CharacterBehaviourComponent {
         priority = 790;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-        if (character.homeSettlement == null || !character.homeSettlement.HasStructure(STRUCTURE_TYPE.APOTHECARY)) {
+        if (character.homeSettlement == null || !character.homeSettlement.HasStructure(STRUCTURE_TYPE.HOSPICE)) {
             //cancel care job
             producedJob = null;
             character.traitContainer.RemoveTrait(character, "Plague Caring");

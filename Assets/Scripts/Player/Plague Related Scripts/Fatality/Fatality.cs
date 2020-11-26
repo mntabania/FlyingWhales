@@ -37,11 +37,11 @@ namespace Plague.Fatality {
         public static string GetFatalityTooltip(this PLAGUE_FATALITY fatality) {
             switch (fatality) {
                 case PLAGUE_FATALITY.Septic_Shock:
-                    return "Plagued Villagers have a low risk of succumbing to Septic Shock each time they become Starving.";
+                    return "Plagued Villagers have a risk of succumbing to Septic Shock each time they become Hungry or Starving.";
                 case PLAGUE_FATALITY.Heart_Attack:
-                    return "Plagued Villagers have a low risk of having a Heart Attack while their Stamina is Low.";
+                    return "Plagued Villagers have a risk of having a Heart Attack each time they become Spent or Drained.";
                 case PLAGUE_FATALITY.Stroke:
-                    return "Plagued Villagers have a low risk of having a Stroke each time they become Exhausted.";
+                    return "Plagued Villagers have a risk of having a Stroke each time they become Tired or Exhausted.";
                 case PLAGUE_FATALITY.Total_Organ_Failure:
                     return "Plagued Villagers have a very low risk of Total Organ Failure each time they perform an action.";
                 case PLAGUE_FATALITY.Pneumonia:

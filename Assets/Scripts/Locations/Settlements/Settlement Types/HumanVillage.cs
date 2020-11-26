@@ -1,16 +1,16 @@
 ﻿using Inner_Maps.Location_Structures;
 namespace Locations.Settlements.Settlement_Types {
-    public class DefaultHuman : SettlementType {
-        public DefaultHuman() : base(SETTLEMENT_TYPE.Default_Human) {
+    public class HumanVillage : SettlementType {
+        public HumanVillage() : base(SETTLEMENT_TYPE.Human_Village) {
             maxDwellings = 12;
             maxFacilities = 6;
         }
-        public DefaultHuman(SaveDataSettlementType saveData) : base(saveData) {
+        public HumanVillage(SaveDataSettlementType saveData) : base(saveData) {
             maxDwellings = 12;
             maxFacilities = 6;
         }
         public override void ApplyDefaultSettings() {
-            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.APOTHECARY, RESOURCE.STONE), 100, 1); //10
+            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.HOSPICE, RESOURCE.STONE), 100, 1); //10
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE), 50, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE), 30, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE), 10, 1);

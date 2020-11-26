@@ -359,11 +359,11 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public SETTLEMENT_TYPE GetSettlementTypeForRace(RACE race) {
         switch (race) {
             case RACE.HUMANS:
-                return SETTLEMENT_TYPE.Default_Human;
+                return SETTLEMENT_TYPE.Human_Village;
             case RACE.ELVES:
-                return SETTLEMENT_TYPE.Default_Elf;
+                return SETTLEMENT_TYPE.Elven_Hamlet;
             default:
-                return SETTLEMENT_TYPE.Default_Human;
+                return SETTLEMENT_TYPE.Human_Village;
         }
     }
     
@@ -408,10 +408,10 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         }
     }
     private void ConstructRaceStructureRequirements() {
-        humanSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.CEMETERY, STRUCTURE_TYPE.PRISON, STRUCTURE_TYPE.SMITHY, STRUCTURE_TYPE.BARRACKS, STRUCTURE_TYPE.APOTHECARY };
+        humanSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.CEMETERY, STRUCTURE_TYPE.PRISON, STRUCTURE_TYPE.SMITHY, STRUCTURE_TYPE.BARRACKS, STRUCTURE_TYPE.HOSPICE };
         humanUtilityStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.GRANARY, STRUCTURE_TYPE.MINER_CAMP, STRUCTURE_TYPE.TAVERN };
         humanCombatStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.RAIDER_CAMP, STRUCTURE_TYPE.ASSASSIN_GUILD, STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.MAGE_QUARTERS };
-        elfSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.APOTHECARY, STRUCTURE_TYPE.MAGE_QUARTERS };
+        elfSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.HOSPICE, STRUCTURE_TYPE.MAGE_QUARTERS };
         elfUtilityStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.TAVERN, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.CEMETERY, STRUCTURE_TYPE.PRISON, STRUCTURE_TYPE.GRANARY, STRUCTURE_TYPE.MINER_CAMP };
         elfCombatStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.SMITHY, STRUCTURE_TYPE.BARRACKS, STRUCTURE_TYPE.RAIDER_CAMP, STRUCTURE_TYPE.ASSASSIN_GUILD };
     }

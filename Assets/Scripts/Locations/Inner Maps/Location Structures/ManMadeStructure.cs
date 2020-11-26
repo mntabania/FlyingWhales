@@ -119,6 +119,9 @@ namespace Inner_Maps.Location_Structures {
                 InnerMapCameraMove.Instance.CenterCameraOn(structureObj.gameObject);
             } 
         }
+        public override void ShowSelectorOnStructure() {
+            Selector.Instance.Select(this);
+        }
         public void RepairStructure() {
             ResetHP();
             structureObj.OnRepairStructure(region.innerMap, this);
