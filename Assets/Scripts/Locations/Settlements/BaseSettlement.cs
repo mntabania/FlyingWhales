@@ -146,7 +146,14 @@ namespace Locations.Settlements {
                 //if the code reaches here, it means that the npcSettlement could not find a dwelling for the character
                 Debug.LogWarning(
                     $"{GameManager.Instance.TodayLogString()}Could not find a dwelling for {character.name} at {name}, setting home to Town Center");
-                chosenDwelling = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER) as CityCenter;
+                LocationStructure cityCenter = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+                if (cityCenter != null) {
+                    chosenDwelling = cityCenter;
+                } else {
+                    //If there is not city center, assign random structure as home
+                    //This is usually for dungeon type settlements like caves and monster lairs
+                    chosenDwelling = GetRandomStructure();
+                }
             }
             character.ChangeHomeStructure(chosenDwelling);
         }

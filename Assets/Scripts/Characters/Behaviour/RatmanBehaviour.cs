@@ -26,10 +26,10 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                 return true;
             }
         }
-        if (GameUtilities.RollChance(0.5f)) {
+        if (GameUtilities.RollChance(10)) {
             int residentCount = character.GetAliveResidentsCountInHome();
-            if (residentCount >= 8) {
-                //return character.jobComponent.TriggerBirthRatman(out producedJob);
+            if (residentCount >= 3) {
+                character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home_Ratman, null);
             }
         }
         TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();

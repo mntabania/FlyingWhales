@@ -304,14 +304,14 @@ public class BehaviourComponent : CharacterComponent {
         }
     }
     public void UpdateDefaultBehaviourSet() {
-        if (owner.isNormalCharacter || owner.characterClass.IsZombie()) {
+        bool isConsideredRatman = owner.faction?.factionType.type == FACTION_TYPE.Ratmen && owner.race == RACE.RATMAN;
+        if ((owner.isNormalCharacter && !isConsideredRatman) || owner.characterClass.IsZombie()) {
             if(owner.homeSettlement != null) {
                 owner.SetIsWanderer(false);
             } else {
                 owner.SetIsWanderer(true);
             }
         } else {
-            
             if (owner.minion != null) {
                 ChangeDefaultBehaviourSet(CharacterManager.Default_Minion_Behaviour);
             } else if (owner.race == RACE.ANGEL) {

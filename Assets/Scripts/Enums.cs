@@ -594,6 +594,7 @@ public enum INTERRUPT {
     Total_Organ_Failure,
     Sneeze,
     Pneumonia,
+    Set_Home_Ratman,
 }
 
 public enum TRAIT_TYPE {

@@ -7,6 +7,7 @@ using System.Linq;
 using Interrupts;
 using Inner_Maps.Location_Structures;
 using Inner_Maps;
+using Locations.Settlements;
 
 public class ObjectPoolManager : BaseMonoBehaviour {
 
@@ -33,6 +34,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     private List<List<LocationStructure>> _structureListPool;
     private List<List<LocationGridTile>> _tileListPool;
     private List<List<Faction>> _factionListPool;
+    private List<List<BaseSettlement>> _settlementListPool;
 
     private void Awake() {
         Instance = this;
@@ -69,6 +71,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructStructureListPool();
         ConstructGridTileListPool();
         ConstructFactionListPool();
+        ConstructSettlementListPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -489,6 +492,28 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     }
     #endregion
 
+    #region Settlement
+    private void ConstructSettlementListPool() {
+        _settlementListPool = new List<List<BaseSettlement>>();
+    }
+    public List<BaseSettlement> CreateNewSettlementList() {
+        List<BaseSettlement> data = GetSettlementListFromPool();
+        return data;
+    }
+    public void ReturnSettlementListToPool(List<BaseSettlement> data) {
+        data.Clear();
+        _settlementListPool.Add(data);
+    }
+    private List<BaseSettlement> GetSettlementListFromPool() {
+        if (_settlementListPool.Count > 0) {
+            List<BaseSettlement> data = _settlementListPool[0];
+            _settlementListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<BaseSettlement>();
+    }
+    #endregion
+
     protected override void OnDestroy() {
         if (allObjectPools != null) {
             foreach (KeyValuePair<string,EZObjectPool> pool in allObjectPools) {
@@ -527,6 +552,8 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _tileListPool = null;
         _factionListPool?.Clear();
         _factionListPool = null;
+        _settlementListPool?.Clear();
+        _settlementListPool = null;
         base.OnDestroy();
         Instance = null;
     }
