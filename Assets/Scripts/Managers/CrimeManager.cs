@@ -81,13 +81,17 @@ public class CrimeManager : BaseMonoBehaviour {
             existingCrimeData = criminal.crimeComponent.AddCrime(crimeType, crimeSeverity, crime, criminal, criminalTrait, target, targetFaction, reactionStatus);
             CrimeType crimeTypeObj = existingCrimeData.crimeTypeObj;
 
-            Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "become_criminal", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
-            addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            addLog.AddToFillers(null, crimeTypeObj.accuseText, LOG_IDENTIFIER.STRING_1);
-            addLog.AddToFillers(witness, witness.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            //addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_2);
-            addLog.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFrom(criminal, addLog);
+            if(crime is ActualGoapNode action && action.isAssumption) {
+                //Do not log accuse text
+            } else {
+                Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "become_criminal", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+                addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                addLog.AddToFillers(null, crimeTypeObj.accuseText, LOG_IDENTIFIER.STRING_1);
+                addLog.AddToFillers(witness, witness.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                //addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_2);
+                addLog.AddLogToDatabase();
+                PlayerManager.Instance.player.ShowNotificationFrom(criminal, addLog);
+            }
             Messenger.Broadcast(CharacterSignals.CHARACTER_ACCUSED_OF_CRIME, criminal, crimeType, witness);
         }
 

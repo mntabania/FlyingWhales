@@ -833,6 +833,8 @@ public class CombatComponent : CharacterComponent {
                         return "Destroy_Suspicious";
                     }
                     break;
+                case JOB_TYPE.MONSTER_ABDUCT:
+                    return CombatManager.Abduct;
                 case JOB_TYPE.CAPTURE_CHARACTER:
                     if (owner is Troll) {
                         return CombatManager.Abduct;

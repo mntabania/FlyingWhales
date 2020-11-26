@@ -244,7 +244,7 @@ public class ReactionComponent : CharacterComponent {
                         owner.logComponent.PrintLogErrorIfActive(error);
                     } else {
                         //add log of emotions felt
-                        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_witness");
+                        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
                         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsOfTarget), LOG_IDENTIFIER.STRING_1);
@@ -301,7 +301,7 @@ public class ReactionComponent : CharacterComponent {
                     owner.logComponent.PrintLogErrorIfActive(error);
                 } else {
                     //add log of emotions felt
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction", providedTags: LOG_TAG.Informed);
+                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_information", providedTags: LOG_TAG.Informed);
                     // log.AddTag(reactable.logTags);
                     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -320,7 +320,7 @@ public class ReactionComponent : CharacterComponent {
                     owner.logComponent.PrintLogErrorIfActive(error);
                 } else {
                     //add log of emotions felt
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction", providedTags: LOG_TAG.Informed);
+                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_information", providedTags: LOG_TAG.Informed);
                     // log.AddTag(reactable.logTags);
                     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
