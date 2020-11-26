@@ -27,7 +27,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private Minion _minion;
     private LocationStructure _currentStructure; //what structure is this character currently in.
     private Region _currentRegion;
-    private bool _isAlliedWithPlayer;
 
     public string persistentID { get; private set; }
     //visuals
@@ -192,14 +191,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// Is this character allied with the player? Whether secretly (not part of player faction)
     /// or openly (part of player faction).
     /// </summary>
-    public bool isAlliedWithPlayer {
-        get {
-            if (faction != null && faction.isPlayerFaction) {
-                return true;
-            }
-            return _isAlliedWithPlayer;
-        }
-    }
+    public bool isAlliedWithPlayer => IsAlliedWithPlayer();
     public Region currentRegion {
         get {
             if (!carryComponent.IsNotBeingCarried()) {
@@ -279,7 +271,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private Character() {
         SetIsDead(false);
         //_overrideThoughts = new List<string>();
-        _isAlliedWithPlayer = false;
         previousClassName = string.Empty;
 
         //Traits
@@ -356,7 +347,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _isDead = data.isDead;
         _gender = data.gender;
         sexuality = data.sexuality;
-        _isAlliedWithPlayer = data.isAlliedWithPlayer;
         currentHP = data.currentHP;
         doNotRecoverHP = data.doNotRecoverHP;
         attackPowerMod = data.attackPowerMod;
@@ -5374,14 +5364,25 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Player Alliance
     /// <summary>
-    /// Set whether this character is allied with the player outside the faction system.
+    /// Get whether this character is allied with the player outside the faction system.
     /// i.e. when we want that character to be considered as an ally to the player, but don't want to
     /// change his/her faction to prevent other villagers from attacking him or her.
     /// </summary>
     /// <param name="state">Should this character be allied with the player.</param>
-    public void SetIsAlliedWithPlayer(bool state) {
-        _isAlliedWithPlayer = state;
-        Messenger.Broadcast(CharacterSignals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, this);
+    private bool IsAlliedWithPlayer() {
+        if (traitContainer.HasTrait("Cultist")) {
+            return true;
+        }
+        if(faction != null) {
+            if (faction.isPlayerFaction) {
+                return true;
+            }
+            Faction playerFaction = PlayerManager.Instance.player.playerFaction;
+            if (faction == playerFaction || !faction.IsHostileWith(playerFaction)) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
