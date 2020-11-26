@@ -4,6 +4,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;  
 using Traits;
 using Inner_Maps;
+using Locations.Settlements;
 
 public class Sleep : GoapAction {
 
@@ -83,12 +84,16 @@ public class Sleep : GoapAction {
                         costLog += $" +{cost}(Owned/Location is in home structure)";
                     }
                 } else if (actor.needsComponent.isExhausted) {
+                    BaseSettlement settlement = null;
                     if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Close_Friend, RelationshipManager.Friend)) {
                         cost += UtilityScripts.Utilities.Rng.Next(130, 151);
                         costLog += $" +{cost}(Exhausted, Is in Friend home structure)";
                     } else if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Rival, RelationshipManager.Enemy)) {
                         cost += 2000;
                         costLog += " +2000(Exhausted, Is in Enemy home structure)";
+                    } else if (targetBed.gridTileLocation != null && targetBed.gridTileLocation.IsPartOfSettlement(settlement) && settlement.owner != null && settlement.owner != actor.faction) {
+                        cost += 200;
+                        costLog += " +200(Exhausted, Inside settlement of different faction)";
                     } else {
                         cost = UtilityScripts.Utilities.Rng.Next(80, 101);
                         costLog += $" +{cost}(Else)";

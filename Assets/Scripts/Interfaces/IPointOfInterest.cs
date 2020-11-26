@@ -53,6 +53,8 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     void OnUnseizePOI(LocationGridTile tileLocation);
     void CancelRemoveStatusFeedAndRepairJobsTargetingThis();
     void AdjustNumOfActionsBeingPerformedOnThis(int amount);
+    bool IsPOICurrentlyTargetedByAPerformingAction();
+    bool IsPOICurrentlyTargetedByAPerformingAction(params JOB_TYPE[] jobType);
     /// <summary>
     /// Does this POI collect Logs aka. History
     /// </summary>

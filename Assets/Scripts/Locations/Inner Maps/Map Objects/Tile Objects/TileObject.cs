@@ -654,6 +654,32 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         numOfActionsBeingPerformedOnThis += amount;
         numOfActionsBeingPerformedOnThis = Mathf.Max(0, numOfActionsBeingPerformedOnThis);
     }
+    public bool IsPOICurrentlyTargetedByAPerformingAction() {
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            if (allJobsTargetingThis[i] is GoapPlanJob) {
+                GoapPlanJob planJob = allJobsTargetingThis[i] as GoapPlanJob;
+                if (planJob.assignedPlan != null && planJob.assignedPlan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool IsPOICurrentlyTargetedByAPerformingAction(params JOB_TYPE[] jobType) {
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            JobQueueItem job = allJobsTargetingThis[i];
+            for (int j = 0; j < jobType.Length; j++) {
+                if (jobType[j] == job.jobType) {
+                    if (job is GoapPlanJob planJob) {
+                        if (planJob.assignedPlan != null && planJob.assignedPlan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Traits
