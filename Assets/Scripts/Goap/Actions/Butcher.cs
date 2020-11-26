@@ -75,7 +75,7 @@ public class Butcher : GoapAction {
                     actor.logComponent.AppendCostLog(costLog);
                     return cost;
                 }
-                if (actor.isNormalCharacter) {
+                if (!actor.isNormalCharacter) {
                     cost += 10;
                     costLog += " +10(Actor is not a normal character)";
                 } else {

@@ -10,9 +10,16 @@ public class CropObjectVisual : TileObjectGameObject {
     public override void UpdateTileObjectVisual(TileObject obj) {
         Crops crops = obj as Crops;
         if (crops.currentGrowthState == Crops.Growth_State.Growing) {
-            SetVisual(growingSprite);
+            ShowGrowingSprite();
         } else if (crops.currentGrowthState == Crops.Growth_State.Ripe) {
-            SetVisual(ripeSprite);
+            ShowRipeSprite();
         }
     }
+
+    protected virtual void ShowGrowingSprite() {
+        SetVisual(growingSprite);
+    }
+    protected virtual void ShowRipeSprite() {
+        SetVisual(ripeSprite);
+    } 
 }
