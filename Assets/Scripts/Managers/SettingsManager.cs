@@ -270,10 +270,10 @@ namespace Settings {
             Messenger.Broadcast(SettingsSignals.ON_SKIP_TUTORIALS_CHANGED, state);
         }
         private void OnHoverOverSkipTutorials() {
-            Tooltip.Instance.ShowSmallInfo("Toggle tutorials on/off", "Skip Tutorials", autoReplaceText: false);
+            // Tooltip.Instance.ShowSmallInfo("Toggle tutorials on/off", "Skip Tutorials", autoReplaceText: false);
         }
         private void OnHoverOutSkipTutorials() {
-            Tooltip.Instance.HideSmallInfo();
+            // Tooltip.Instance.HideSmallInfo();
         }
         #endregion
 
@@ -331,10 +331,10 @@ namespace Settings {
             _settings.disableCameraShake = p_isOn;
         }
         private void OnHoverOverCameraShake() {
-            Tooltip.Instance.ShowSmallInfo("Toggle camera shake on/off.", "Camera Shake", autoReplaceText: false);
+            // Tooltip.Instance.ShowSmallInfo("Toggle camera shake on/off.", "Camera Shake", autoReplaceText: false);
         }
         private void OnHoverOutCameraShake() {
-            Tooltip.Instance.HideSmallInfo();
+            // Tooltip.Instance.HideSmallInfo();
         }
         #endregion
         
