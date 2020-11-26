@@ -260,7 +260,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
         }
     }
-    private void OnCharacterMissing(Character missingCharacter) {
+    private void OnCharacterPresumedDead(Character missingCharacter) {
         if (leader != null && missingCharacter == leader) {
             SetLeader(null);
         }
@@ -458,7 +458,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     private void AddListeners() {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_REMOVED, OnCharacterRemoved);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_MISSING, OnCharacterMissing);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
@@ -467,7 +467,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     private void RemoveListeners() {
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_REMOVED, OnCharacterRemoved);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
-        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_MISSING, OnCharacterMissing);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
