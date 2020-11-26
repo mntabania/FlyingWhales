@@ -1,11 +1,11 @@
 ﻿using Inner_Maps.Location_Structures;
 namespace Locations.Settlements.Settlement_Types {
-    public class DefaultHuman : SettlementType {
-        public DefaultHuman() : base(SETTLEMENT_TYPE.Default_Human) {
+    public class HumanVillage : SettlementType {
+        public HumanVillage() : base(SETTLEMENT_TYPE.Human_Village) {
             maxDwellings = 12;
             maxFacilities = 6;
         }
-        public DefaultHuman(SaveDataSettlementType saveData) : base(saveData) {
+        public HumanVillage(SaveDataSettlementType saveData) : base(saveData) {
             maxDwellings = 12;
             maxFacilities = 6;
         }

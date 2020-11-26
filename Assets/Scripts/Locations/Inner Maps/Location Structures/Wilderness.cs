@@ -6,5 +6,6 @@
         public override void CenterOnStructure() {
             //cannot center on wilderness since it covers the whole map.
         }
+        public override void ShowSelectorOnStructure() { }
     }
 }

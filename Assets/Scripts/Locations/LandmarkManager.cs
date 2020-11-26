@@ -359,11 +359,11 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public SETTLEMENT_TYPE GetSettlementTypeForRace(RACE race) {
         switch (race) {
             case RACE.HUMANS:
-                return SETTLEMENT_TYPE.Default_Human;
+                return SETTLEMENT_TYPE.Human_Village;
             case RACE.ELVES:
-                return SETTLEMENT_TYPE.Default_Elf;
+                return SETTLEMENT_TYPE.Elven_Hamlet;
             default:
-                return SETTLEMENT_TYPE.Default_Human;
+                return SETTLEMENT_TYPE.Human_Village;
         }
     }
     

@@ -40,6 +40,8 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
     [SerializeField] private float dampTime = 0.2f;
     [SerializeField] private Vector3 velocity = Vector3.zero;
     [SerializeField] private Transform _target;
+    [SerializeField] private Vector3 _targetPos;
+    [SerializeField] private bool isUsingVectorTarget;
 
     [Header("Threat")]
     [SerializeField] protected ThreatParticleEffect threatEffect;
@@ -225,16 +227,23 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
 
     #region Targeting
     public void CenterCameraOn(GameObject GO) {
+        isUsingVectorTarget = false;
         target = GO.transform;
+    }
+    public void CenterCameraOn(Vector3 pos) {
+        _targetPos = pos;
+        isUsingVectorTarget = true;
+        target = null;
     }
     protected void Targeting(Camera camera) {
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) ||
             Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D) || isDragging) { //|| Input.GetMouseButtonDown(0)
             //reset target when player pushes a button to pan the camera
             target = null;
+            isUsingVectorTarget = false;
         }
 
-        if (target) { //smooth camera center
+        if (target) {
             var position = target.position;
             var thisPosition = transform.position;
             Vector3 point = camera.WorldToViewportPoint(position);
@@ -245,7 +254,30 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
                 lastCenteredTarget = target;
                 target = null;
             }
-        }
+        } else if (isUsingVectorTarget) {
+            var position = _targetPos;
+            var thisPosition = transform.position;
+            Vector3 point = camera.WorldToViewportPoint(position);
+            Vector3 delta = position - camera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
+            Vector3 destination = thisPosition + delta;
+            transform.position = Vector3.SmoothDamp(thisPosition, destination, ref velocity, dampTime);
+            if (HasReachedBounds() || (Mathf.Approximately(transform.position.x, destination.x) && Mathf.Approximately(transform.position.y, destination.y))) {
+                isUsingVectorTarget = false;
+            }
+        } 
+        
+        // if (target) { //smooth camera center
+        //     var position = target.position;
+        //     var thisPosition = transform.position;
+        //     Vector3 point = camera.WorldToViewportPoint(position);
+        //     Vector3 delta = position - camera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
+        //     Vector3 destination = thisPosition + delta;
+        //     transform.position = Vector3.SmoothDamp(thisPosition, destination, ref velocity, dampTime);
+        //     if (HasReachedBounds() || (Mathf.Approximately(transform.position.x, destination.x) && Mathf.Approximately(transform.position.y, destination.y))) {
+        //         lastCenteredTarget = target;
+        //         target = null;
+        //     }
+        // }
     }
     private void OnPooledObjectDestroyed(GameObject obj) {
         if (target == obj.transform) {

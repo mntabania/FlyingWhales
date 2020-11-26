@@ -1088,7 +1088,7 @@ public enum LOG_TAG {
     Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Major, Player, Intel, Important
 }
 public enum PARTY_TARGET_DESTINATION_TYPE { Structure, Settlement, Hextile, }
-public enum SETTLEMENT_TYPE { Default_Human, Default_Elf, Capital, Cult_Town }
+public enum SETTLEMENT_TYPE { Human_Village, Elven_Hamlet, Capital, Cult_Town }
 
 public enum RELATIONS_FILTER {
     Enemies, Rivals, Acquaintances, Friends, Close_Friends, Relatives, Lovers,

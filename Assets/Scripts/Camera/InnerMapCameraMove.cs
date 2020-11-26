@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 using Inner_Maps;
 using Ruinarch;
 using UnityEngine.EventSystems;
@@ -100,8 +101,12 @@ public class InnerMapCameraMove : BaseCameraMove {
             target = GO.transform;
         }
     }
-    public void CenterCameraOnTile(HexTile tile) {
-        MoveCamera(tile.worldPosition);
+    public void CenterCameraOnTile(HexTile tile, bool instantCenter = true) {
+        if (instantCenter) {
+            MoveCamera(tile.worldPosition);
+        } else {
+            target = tile.innerMapHexTile.gridTileCollections.FirstOrDefault()?.locationGridTileCollectionItem.transform;    
+        }
     }
     private void Zooming() {
         if (!allowZoom) { return; }

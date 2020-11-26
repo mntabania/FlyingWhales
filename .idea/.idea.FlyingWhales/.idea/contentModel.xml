@@ -2246,8 +2246,8 @@
               <e p="Settlement Types" t="Include">
                 <e p="Capital.cs" t="Include" />
                 <e p="CultTown.cs" t="Include" />
-                <e p="DefaultElf.cs" t="Include" />
-                <e p="DefaultHuman.cs" t="Include" />
+                <e p="ElvenHamlet.cs" t="Include" />
+                <e p="HumanVillage.cs" t="Include" />
                 <e p="SettlementType.cs" t="Include" />
               </e>
             </e>

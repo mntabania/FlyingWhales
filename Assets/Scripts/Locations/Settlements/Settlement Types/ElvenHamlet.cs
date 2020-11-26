@@ -1,11 +1,11 @@
 ﻿using Inner_Maps.Location_Structures;
 namespace Locations.Settlements.Settlement_Types {
-    public class DefaultElf : SettlementType {
-        public DefaultElf() : base(SETTLEMENT_TYPE.Default_Elf) {
+    public class ElvenHamlet : SettlementType {
+        public ElvenHamlet() : base(SETTLEMENT_TYPE.Elven_Hamlet) {
             maxDwellings = 12;
             maxFacilities = 6;
         }
-        public DefaultElf(SaveDataSettlementType saveData) : base(saveData) { 
+        public ElvenHamlet(SaveDataSettlementType saveData) : base(saveData) { 
             maxDwellings = 12;
             maxFacilities = 6;
         }

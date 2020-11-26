@@ -630,7 +630,7 @@ public class UIManager : BaseMonoBehaviour {
             ShowCharacterInfo(character, true);
         } else if (obj is NPCSettlement settlement) {
             if (settlement.allStructures.Count > 0) {
-                settlement.allStructures.First().CenterOnStructure();
+                ShowStructureInfo(settlement.allStructures.First());
             }
             // ShowRegionInfo(settlement.region);
         } else if (obj is Faction faction) {
@@ -644,7 +644,8 @@ public class UIManager : BaseMonoBehaviour {
         } else if (obj is Region region) {
             ShowRegionInfo(region);
         } else if (obj is LocationStructure structure) {
-            structure.CenterOnStructure();
+            ShowStructureInfo(structure);
+            // structure.CenterOnStructure();
         }
     }
     public bool IsMouseOnMapObject() {

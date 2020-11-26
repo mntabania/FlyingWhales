@@ -190,6 +190,8 @@ namespace Inner_Maps {
                                    (tile.structure is DemonicStructure demonicStructure && !ReferenceEquals(demonicStructure.structureObj, null)) && 
                                    tile.structure is CityCenter == false) {
                             return tile.structure;    
+                        } else if (tile.structure is Cave || tile.structure is MonsterLair) {
+                            return tile.structure;    
                         }
                     }
                     // return tile.collectionOwner.partOfHextile.hexTileOwner;
@@ -243,6 +245,8 @@ namespace Inner_Maps {
                             (tile.structure is DemonicStructure demonicStructure && !ReferenceEquals(demonicStructure.structureObj, null)) && //if demonic structure structure check if structure object has not yet been destroyed
                             tile.structure is CityCenter == false) {
                             selectables.Add(tile.structure);
+                        } else if (tile.structure is Cave || tile.structure is MonsterLair) {
+                            selectables.Add(tile.structure);    
                         }
                     }
                     // selectables.Add(tile.collectionOwner.partOfHextile.hexTileOwner);
