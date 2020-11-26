@@ -704,7 +704,7 @@ public class ReactionComponent : CharacterComponent {
                                 if (targetIsKnownVampire) {
                                     if (disguisedActor.traitContainer.HasTrait("Hemophiliac") || (disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget) == RelationshipManager.Close_Friend && !disguisedActor.traitContainer.HasTrait("Hemophobic"))) {
                                         debugLog = $"{debugLog}\n-Target is starving and is known vampire and actor is Hemophiliac/Non-Hemophobic Close Friend, feed self";
-                                        if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.FEED, JOB_TYPE.OFFER_BLOOD)) {
+                                        if (!targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.FEED, JOB_TYPE.OFFER_BLOOD)) {
                                             actor.jobComponent.CreateFeedSelfToVampireJob(targetCharacter);
                                         } else {
                                             debugLog = $"{debugLog}\n-Already has a feed/offer blood job targeting character";
@@ -713,7 +713,7 @@ public class ReactionComponent : CharacterComponent {
 
                                 } else {
                                     debugLog = $"{debugLog}\n-Target is starving, will create feed job";
-                                    if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.FEED)) {
+                                    if (!targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.FEED)) {
                                         actor.jobComponent.TryTriggerFeed(targetCharacter);
                                     } else {
                                         debugLog = $"{debugLog}\n-Already has a feed job targeting character";
@@ -918,7 +918,7 @@ public class ReactionComponent : CharacterComponent {
                                            $"is Paralyzed or Ensnared({targetIsParalyzedOrEnsnared.ToString()}) or is Catatonic {targetIsCatatonic.ToString()}";
                                 if ((targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) && !targetIsKnownVampire) {
                                     debugLog = $"{debugLog}\n-Target is hungry or starving and not known vampire, will create feed job";
-                                    if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.FEED)) {
+                                    if (!targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.FEED)) {
                                         actor.jobComponent.TryTriggerFeed(targetCharacter);
                                     } else {
                                         debugLog = $"{debugLog}\n-Already has a feed job targeting character";
@@ -929,7 +929,7 @@ public class ReactionComponent : CharacterComponent {
                                         Bed bed = disguisedTarget.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED) as Bed;
                                         if (bed != null && bed.gridTileLocation != targetCharacter.gridTileLocation) {
                                             debugLog = $"{debugLog}\n-Target has a home and an available bed, will trigger Move Character job to bed";
-                                            if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.MOVE_CHARACTER)) {
+                                            if (!targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
                                                 if(targetCharacter.currentActionNode == null) {
                                                     actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, disguisedTarget.homeStructure, bed.gridTileLocation);
                                                 }
@@ -948,7 +948,7 @@ public class ReactionComponent : CharacterComponent {
                                         //Pray
                                         if (targetCharacter.currentStructure != disguisedTarget.homeStructure) {
                                             debugLog = $"{debugLog}\n-Target chose Pray and is not inside his/her house, will trigger Move Character job";
-                                            if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.MOVE_CHARACTER)) {
+                                            if (!targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
                                                 if (targetCharacter.currentActionNode == null) {
                                                     actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, disguisedTarget.homeStructure);
                                                 }
@@ -962,7 +962,7 @@ public class ReactionComponent : CharacterComponent {
                                         //Daydream
                                         if (!targetCharacter.currentStructure.structureType.IsOpenSpace()) {
                                             debugLog = $"{debugLog}\n-Target chose Daydream and is not in an open space structure, will trigger Move Character job";
-                                            if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.MOVE_CHARACTER)) {
+                                            if (!targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
                                                 if (targetCharacter.currentActionNode == null) {
                                                     actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
                                                 }
@@ -990,7 +990,7 @@ public class ReactionComponent : CharacterComponent {
                                 } else if (targetCharacter.needsComponent.isStarving) {
                                     if (disguisedActor.traitContainer.HasTrait("Hemophiliac") || disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget) == RelationshipManager.Close_Friend) {
                                         debugLog = $"{debugLog}\n-Target is starving and is known vampire and actor is Hemophiliac/Close Friend, feed self";
-                                        if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.FEED, JOB_TYPE.OFFER_BLOOD)) {
+                                        if (!targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.FEED, JOB_TYPE.OFFER_BLOOD)) {
                                             actor.jobComponent.CreateFeedSelfToVampireJob(targetCharacter);
                                         } else {
                                             debugLog = $"{debugLog}\n-Already has a feed/offer blood job targeting character";
@@ -1917,32 +1917,6 @@ public class ReactionComponent : CharacterComponent {
     #endregion
 
     #region General
-    private bool IsPOICurrentlyTargetedByAPerformingAction(IPointOfInterest poi) {
-        for (int i = 0; i < poi.allJobsTargetingThis.Count; i++) {
-            if(poi.allJobsTargetingThis[i] is GoapPlanJob) {
-                GoapPlanJob planJob = poi.allJobsTargetingThis[i] as GoapPlanJob;
-                if(planJob.assignedPlan != null && planJob.assignedPlan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    private bool IsPOICurrentlyTargetedByAPerformingAction(IPointOfInterest poi, params JOB_TYPE[] jobType) {
-        for (int i = 0; i < poi.allJobsTargetingThis.Count; i++) {
-            JobQueueItem job = poi.allJobsTargetingThis[i];
-            for (int j = 0; j < jobType.Length; j++) {
-                if(jobType[j] == job.jobType) {
-                    if (job is GoapPlanJob planJob) {
-                        if (planJob.assignedPlan != null && planJob.assignedPlan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
     public void AddCharacterThatSawThisDead(Character character) {
         charactersThatSawThisDead.Add(character);
     }

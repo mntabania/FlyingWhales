@@ -39,7 +39,6 @@ namespace Traits {
             base.OnAddTrait(sourceCharacter);
             if (sourceCharacter is Character character) {
                 character.behaviourComponent.AddBehaviourComponent(typeof(CultistBehaviour));
-                character.SetIsAlliedWithPlayer(true);
                 character.AddItemAsInteresting("Cultist Kit");
                 //character.AddPlayerAction(SPELL_TYPE.CULTIST_TRANSFORM);
                 character.AddPlayerAction(SPELL_TYPE.CULTIST_POISON);
@@ -55,15 +54,15 @@ namespace Traits {
                 if (character.traitContainer.HasTrait("Necromancer")) {
                     FactionManager.Instance.undeadFaction.SetRelationshipFor(PlayerManager.Instance.player.playerFaction, FACTION_RELATIONSHIP_STATUS.Friendly);
                 }
-                
+                Messenger.Broadcast(CharacterSignals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, character);
                 Messenger.Broadcast(PlayerSignals.CHECK_IF_PLAYER_WINS);
+
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             base.OnRemoveTrait(sourceCharacter, removedBy);
             if (sourceCharacter is Character character) {
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(CultistBehaviour));
-                character.SetIsAlliedWithPlayer(false);
                 character.RemoveItemAsInteresting("Cultist Kit");
                 //character.RemovePlayerAction(SPELL_TYPE.CULTIST_TRANSFORM);
                 character.RemovePlayerAction(SPELL_TYPE.CULTIST_POISON);
@@ -73,6 +72,7 @@ namespace Traits {
                 character.RemovePlayerAction(SPELL_TYPE.FOUND_CULT);
                 character.jobComponent.RemovePriorityJob(JOB_TYPE.STEAL_CORPSE);
                 character.jobComponent.RemovePriorityJob(JOB_TYPE.SUMMON_BONE_GOLEM);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, character);
             }
         }
         public override bool OnDeath(Character character) {

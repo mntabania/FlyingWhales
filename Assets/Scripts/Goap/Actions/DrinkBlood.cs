@@ -97,9 +97,16 @@ public class DrinkBlood : GoapAction {
             }
         }
         if (target is Character targetCharacter) {
-            if (targetCharacter.traitContainer.HasTrait("Vampire")) {
+            if (targetCharacter.traitContainer.HasTrait("Vampire") && !actor.traitContainer.HasTrait("Cannibal")) {
                 cost += 2000;
-                costLog += " +2000(Vampire)";
+                costLog += " +2000(Vampire target, not Cannibal actor)";
+                actor.logComponent.AppendCostLog(costLog);
+                //Skip further cost processing
+                return cost;
+            }
+            if (!targetCharacter.traitContainer.HasTrait("Vampire") && actor.traitContainer.HasTrait("Cannibal")) {
+                cost += 2000;
+                costLog += " +2000(not Vampire target, Cannibal actor)";
                 actor.logComponent.AppendCostLog(costLog);
                 //Skip further cost processing
                 return cost;

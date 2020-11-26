@@ -73,14 +73,20 @@ public class Butcher : GoapAction {
                     cost += 10;
                     costLog += " +10(Actor is not a normal character)";
                 } else {
+                    if(actor.traitContainer.HasTrait("Enslaved") && job.jobType == JOB_TYPE.PRODUCE_FOOD && job.originalOwner.ownerType == JOB_OWNER.SETTLEMENT && targetCharacter.faction == actor.faction) {
+                        cost += 2000;
+                        costLog += " +2000(Actor is Slave, job is Produce Food Settlement, Actor/Target same faction)";
+                        actor.logComponent.AppendCostLog(costLog);
+                        return cost;
+                    }
                     bool isCannibal = actor.traitContainer.HasTrait("Cannibal");
-                    if (job.jobType == JOB_TYPE.TRIGGER_FLAW && isCannibal) {
+                    if (job.jobType == JOB_TYPE.TRIGGER_FLAW && isCannibal && !actor.traitContainer.HasTrait("Vampire")) {
                         cost = UtilityScripts.Utilities.Rng.Next(450, 551);
                         costLog += $" {cost}(Actor is cannibal and job is trigger flaw)";
                         actor.logComponent.AppendCostLog(costLog);
                         return cost;
                     }
-                    if (isCannibal) {
+                    if (isCannibal && !actor.traitContainer.HasTrait("Vampire")) {
                         if (actor.traitContainer.HasTrait("Malnourished")) {
                             if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
                                 int currCost = UtilityScripts.Utilities.Rng.Next(100, 151);

@@ -79,6 +79,11 @@ public class SmallSpider : Summon {
             shouldGrowUpOnUnSeize = true;
             return;
         }
+        if (IsPOICurrentlyTargetedByAPerformingAction()) {
+            //If target is currently targeted by an action, do not grow up, instead, comeback after 1 hour
+            SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(12), GrowUp, this);
+            return;
+        }
         SetDestroyMarkerOnDeath(true);
         LocationGridTile tile = gridTileLocation;
         Faction targetFaction = faction;

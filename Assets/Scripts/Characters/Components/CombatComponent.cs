@@ -1014,7 +1014,7 @@ public class CombatComponent : CharacterComponent {
     private void OnCharacterBecomePrisoner(Prisoner prisoner) {
         if (prisoner.IsConsideredPrisonerOf(owner)) {
             CombatData combatData = GetCombatData(prisoner.owner);
-            if(combatData != null && combatData.reasonForCombat == CombatManager.Hostility) {
+            if(combatData != null && (combatData.reasonForCombat == CombatManager.Hostility || combatData.reasonForCombat == CombatManager.Retaliation)) {
                 RemoveHostileInRange(prisoner.owner);
             }
         }

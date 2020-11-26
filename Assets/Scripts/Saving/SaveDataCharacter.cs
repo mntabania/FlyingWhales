@@ -17,7 +17,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SEXUALITY sexuality;
     public string className;
     public RACE race;
-    public bool isAlliedWithPlayer;
     public string previousClassName;
 
     public int currentHP;

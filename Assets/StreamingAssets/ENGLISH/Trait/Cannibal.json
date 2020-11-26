@@ -1,1 +1,1 @@
-{"items":[{"key":"flaw_effect","value":"%00@ will attempt to butcher another Villager."},{"key":"fail","value":"Trigger flaw failed because there are no valid targets."}]}
+{"items":[{"key":"flaw_effect","value":"%00@ will attempt to butcher another Villager if %83b is not a vampire. Otherwise, vampire cannibals will attempt to drink the blood of another vampire. "},{"key":"fail","value":"Trigger flaw failed because there are no valid targets."}]}
