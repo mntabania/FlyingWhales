@@ -180,6 +180,10 @@ namespace Traits {
             }
             return null;
         }
+        public bool IsInIntendedPrisonAccordingTo(Character character) {
+            LocationStructure intendedPrison = GetIntendedPrisonAccordingTo(character);
+            return owner.currentStructure != null && owner.currentStructure == intendedPrison;
+        }
     }
 }
 
