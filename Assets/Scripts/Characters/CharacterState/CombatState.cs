@@ -879,7 +879,7 @@ public class CombatState : CharacterState {
         //We did this because of the bug that after a character flees, he will get stuck in combat because the combat state still thinks that he is pursuing the current closest hostile
         //That is why he will no longer reevaluate the hostile list and the will no longer create a path
         //https://trello.com/c/4JzJGQDR/2950-fleeing-while-butchering-makes-character-stuck-in-combat
-        SetClosestHostile(null);
+        ResetClosestHostile();
         List<IPointOfInterest> avoidInRange = stateComponent.owner.combatComponent.avoidInRange;
         IPointOfInterest objToAvoid = avoidInRange[avoidInRange.Count - 1];
         lastFledFrom = objToAvoid;
@@ -946,7 +946,11 @@ public class CombatState : CharacterState {
 
     #region Utilities
     public void ResetClosestHostile() {
+        IPointOfInterest prevHostile = currentClosestHostile;
         currentClosestHostile = null;
+        if (prevHostile != null && stateComponent.owner.marker.targetPOI == prevHostile && stateComponent.owner.marker) {
+            stateComponent.owner.marker.SetTargetPOI(null);
+        }
     }
     public void SetForcedTarget(Character character) {
         forcedTarget = character;
