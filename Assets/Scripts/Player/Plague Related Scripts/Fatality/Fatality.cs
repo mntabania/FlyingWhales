@@ -24,11 +24,11 @@ namespace Plague.Fatality {
                 case PLAGUE_FATALITY.Heart_Attack:
                     return 30;
                 case PLAGUE_FATALITY.Stroke:
-                    return 30;
+                    return 20;
                 case PLAGUE_FATALITY.Total_Organ_Failure:
-                    return 30;
+                    return 40;
                 case PLAGUE_FATALITY.Pneumonia:
-                    return 30;
+                    return 40;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(fatality), fatality, null);
             }
