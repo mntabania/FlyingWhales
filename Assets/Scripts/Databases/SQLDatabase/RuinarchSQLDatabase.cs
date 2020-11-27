@@ -402,7 +402,7 @@ namespace Databases.SQLDatabase {
         private void DeleteOldestLog() {
             SQLiteCommand command = _dbConnection.CreateCommand();
             command.CommandType = CommandType.Text;
-            command.CommandText = "SELECT persistentID FROM Logs WHERE isIntel = 0 ORDER BY rowid LIMIT 1";
+            command.CommandText = "SELECT persistentID FROM Logs ORDER BY rowid LIMIT 1"; //WHERE isIntel = 0
             IDataReader dataReader = command.ExecuteReader();
             string logIDToDelete = string.Empty;
             while (dataReader.Read()) {

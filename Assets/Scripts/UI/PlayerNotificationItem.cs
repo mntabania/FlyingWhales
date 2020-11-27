@@ -116,8 +116,8 @@ public class PlayerNotificationItem : PooledObject {
     #region Listeners
     private void OnLogRemovedFromDatabase(Log log) {
         if (log.persistentID == logPersistentID) {
-            Assert.IsFalse(this is IntelNotificationItem, $"Intel log was removed from database! This should never happen! {logPersistentID}");
-            //if log in this notification is removed from database, then destroy it.
+            // Assert.IsFalse(this is IntelNotificationItem, $"Intel log was removed from database! This should never happen! {logPersistentID}");
+            // //if log in this notification is removed from database, then destroy it.
             DeleteNotification();
         }
     }
