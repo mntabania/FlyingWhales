@@ -28,8 +28,13 @@ public class WallData : SpellData {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile);
         if (canPerform) {
-            if (targetTile.objHere is TileObject tileObject && tileObject.tileObjectType.IsTileObjectImportant()) {
-                return false;
+            if (targetTile.objHere is TileObject tileObject) {
+                if (tileObject.tileObjectType.IsTileObjectImportant()) {
+                    return false;    
+                }
+                if (tileObject.tileObjectType == TILE_OBJECT_TYPE.DOOR_TILE_OBJECT) {
+                    return false;    
+                }
             }
             return targetTile.structure != null && targetTile.structure.structureType != STRUCTURE_TYPE.OCEAN;
         }

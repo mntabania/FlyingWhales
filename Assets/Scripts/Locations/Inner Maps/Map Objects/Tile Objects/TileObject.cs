@@ -989,7 +989,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //if (character.characterClass.className.Equals("Zombie")) {
         //    return false;
         //}
-
+        if (mapObjectState != MAP_OBJECT_STATE.BUILT) {
+            return false;
+        }
+        if (numOfActionsBeingPerformedOnThis > 0) {
+            return false;
+        }
         //characters should not pick up items if that item is the target of it's current action
         if (character.currentActionNode != null && character.currentActionNode.poiTarget == this) {
             return false;

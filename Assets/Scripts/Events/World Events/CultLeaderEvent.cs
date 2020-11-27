@@ -108,15 +108,16 @@ namespace Events.World_Events {
             WeightedDictionary<Character> weights = new WeightedDictionary<Character>();
             for (int i = 0; i < choices.Count; i++) {
                 Character character = choices[i];
+                if (character.traitContainer.HasTrait("Enslaved", "Necromancer")) {
+                    //https://trello.com/c/HfbzyNN1/2987-necromancers-should-no-longer-be-able-to-change-into-cult-leaders
+                    continue;
+                }
                 int weight = 20;
                 if (character.traitContainer.HasTrait("Persuasive", "Evil", "Treacherous")) {
                     weight += 100;
                 }
                 if (character.traitContainer.HasTrait("Unattractive")) {
                     weight -= 10;
-                }
-                if (character.traitContainer.HasTrait("Enslaved")) {
-                    weight = 0;
                 }
                 if (weight > 0) {
                     weights.AddElement(character, weight);
