@@ -36,6 +36,12 @@ namespace Locations.Settlements.Settlement_Events {
         }
         public override void DeactivateEvent(NPCSettlement p_settlement) {
             if (p_settlement.owner != null) { RevertFactionEffects(p_settlement.owner); }
+            
+            List<JobQueueItem> jobs = p_settlement.GetJobs(JOB_TYPE.PLAGUE_CARE, JOB_TYPE.QUARANTINE);
+            for (int i = 0; i < jobs.Count; i++) {
+                jobs[i].ForceCancelJob(false, "Settlement no longer in Quarantine");
+            }
+            
             UnsubscribeListeners(p_settlement);
             p_settlement.settlementClassTracker.RemoveNeededClass("Druid");
             if (!string.IsNullOrEmpty(_endScheduleTicket)) { SchedulingManager.Instance.RemoveSpecificEntry(_endScheduleTicket); }

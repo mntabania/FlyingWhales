@@ -354,6 +354,9 @@ public class NonActionEventsComponent : CharacterComponent {
             if (owner.traitContainer.HasTrait("Plagued")) {
                 AirborneTransmission.Instance.Transmit(owner, target, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne));
             }
+            if (target.traitContainer.HasTrait("Plagued")) {
+                AirborneTransmission.Instance.Transmit(target, owner, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne));
+            }
             
             GameDate dueDate = GameManager.Instance.Today();
             overrideLog = GameManager.CreateNewLog(dueDate, "Interrupt", "Chat", result, providedTags: LOG_TAG.Social);
@@ -428,6 +431,9 @@ public class NonActionEventsComponent : CharacterComponent {
             
             if (owner.traitContainer.HasTrait("Plagued")) {
                 AirborneTransmission.Instance.Transmit(owner, target, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne));
+            }
+            if (target.traitContainer.HasTrait("Plagued")) {
+                AirborneTransmission.Instance.Transmit(target, owner, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne));
             }
             
             GameDate dueDate = GameManager.Instance.Today();

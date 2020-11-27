@@ -8,7 +8,7 @@ using Debug = System.Diagnostics.Debug;
 
 public class Spit : GoapAction {
 
-    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.VERBAL; } }
 
     public Spit() : base(INTERACTION_TYPE.SPIT) {
         actionIconString = GoapActionStateDB.Anger_Icon;

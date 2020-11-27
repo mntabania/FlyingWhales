@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.Assertions;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
@@ -32,7 +33,8 @@ namespace Inner_Maps.Location_Structures {
                 StructureRoom structureRoom = rooms[i];
                 SUMMON_TYPE summonType = orderedMonsters[i];
                 Summon newSummon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, settlementLocation, region, this);
-                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(structureRoom.tilesInRoom);
+                List<LocationGridTile> tileChoices = structureRoom.tilesInRoom.Where(x => x.IsPassable()).ToList();
+                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(tileChoices);
                 CharacterManager.Instance.PlaceSummon(newSummon, targetTile);
             }
         }

@@ -1343,19 +1343,28 @@ public class ReactionComponent : CharacterComponent {
                 debugLog = $"{debugLog}\n-Character is minion or summon or Target is currently being targeted by an action, not going to react";
             }
         }
-        
-        if(actor is Summon && !(actor is Animal) && targetCharacter is Animal targetAnimal && actor.faction?.factionType.type == FACTION_TYPE.Wild_Monsters) {
-            if(targetAnimal.isDead && targetAnimal.grave == null && actor.limiterComponent.canPerform && actor.limiterComponent.canMove && actor.limiterComponent.canDoFullnessRecovery) {
-                if(actor.currentActionNode == null 
-                    || actor.currentActionNode.action.goapType == INTERACTION_TYPE.ROAM 
-                    || !actor.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.MONSTER_EAT_CORPSE)) {
-                    actor.jobComponent.TriggerEatCorpse(targetAnimal);
+
+        if(CanCharacterEatCorpseOf(actor, targetCharacter)) {
+            if(targetCharacter.isDead && targetCharacter.grave == null && actor.limiterComponent.canPerform && actor.limiterComponent.canMove && actor.limiterComponent.canDoFullnessRecovery) {
+                if(actor.currentActionNode == null || actor.currentActionNode.action.goapType == INTERACTION_TYPE.ROAM || !actor.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.MONSTER_EAT_CORPSE)) {
+                    actor.jobComponent.TriggerEatCorpse(targetCharacter);
                 }
             }
         }
 
         //set owner of this component to has reacted to the target character
         targetCharacter.defaultCharacterTrait.AddCharacterThatHasReactedToThis(owner);
+    }
+    private bool CanCharacterEatCorpseOf(Character p_actor, Character p_target) {
+        if (p_actor is Animal) {
+            return false;
+        }
+        if (p_target is Animal) {
+            return (p_actor is Summon && p_actor.faction?.factionType.type == FACTION_TYPE.Wild_Monsters) || p_actor.isConsideredRatman;
+        } else {
+            //If ratmen in ratman faction is starving trigger eat corpse on anyone
+            return p_actor.isConsideredRatman && p_actor.needsComponent.isStarving;
+        }
     }
     private void ReactTo(Character actor, TileObject targetTileObject, ref string debugLog) {
         //TODO: USE DISGUISED ACTOR AND TARGET FOR CHECKING
