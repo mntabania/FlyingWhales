@@ -20,11 +20,11 @@ namespace Plague.Transmission {
         public override int GetTransmissionNextLevelCost(int p_currentLevel) {
             switch (p_currentLevel) {
                 case 0:
-                    return 10;
-                case 1:
                     return 20;
+                case 1:
+                    return 40;
                 case 2:
-                    return 30;
+                    return 60;
                 default:
                     return -1; //Already at max level
             }

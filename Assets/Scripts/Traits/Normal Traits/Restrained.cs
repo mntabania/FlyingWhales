@@ -24,6 +24,7 @@ namespace Traits {
             hindersMovement = true;
             hindersAttackTarget = true;
             hindersPerform = true;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
         }
 
         #region Loading
@@ -46,18 +47,7 @@ namespace Traits {
             base.OnAddTrait(sourceCharacter);
             if (sourceCharacter is Character) {
                 owner = sourceCharacter as Character;
-                //isCriminal = _sourceCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL);
-                //isLeader = _sourceCharacter.role.roleType == CHARACTER_ROLE.LEADER;
-                //Messenger.AddListener(Signals.TICK_STARTED, CheckRestrainTrait);
-                //Messenger.AddListener(Signals.HOUR_STARTED, CheckRestrainTraitPerHour);
-                //_sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_restrained");
-                //_sourceCharacter.RemoveTrait("Unconscious", removedBy: responsibleCharacter);
-                //_sourceCharacter.CancelAllJobsAndPlans();
                 owner.AddTraitNeededToBeRemoved(this);
-                //Once a faction leader is restrained set new faction leader
-                //if (isLeader) {
-                //    _sourceCharacter.faction.SetNewLeader();
-                //}
                 owner.traitContainer.AddTrait(owner, "Prisoner");
             }
         }
@@ -65,25 +55,7 @@ namespace Traits {
             if (sourceCharacter is Character character) {
                 character.ForceCancelAllJobsTargetingThisCharacter(JOB_TYPE.FEED);
                 character.ForceCancelAllJobsTargetingThisCharacter(JOB_TYPE.JUDGE_PRISONER);
-                // if(!(removedBy != null && removedBy.currentActionNode.action.goapType == INTERACTION_TYPE.JUDGE_CHARACTER && removedBy.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
-                //     character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.JUDGE_PRISONER);
-                // }
-                //Messenger.RemoveListener(Signals.TICK_STARTED, CheckRestrainTrait);
-                //Messenger.RemoveListener(Signals.HOUR_STARTED, CheckRestrainTraitPerHour);
-                //_sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
                 owner.RemoveTraitNeededToBeRemoved(this);
-                // Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.APPREHEND, owner as IPointOfInterest);
-                //If restrained trait is removed from this character this means that the character is set free from imprisonment, either he/she was saved from abduction or freed from criminal charges
-                //When this happens, check if he/she was the leader of the faction, if true, he/she can only go back to being the ruler if he/she was not imprisoned because he/she was a criminal
-                //But if he/she was a criminal, he/she cannot go back to being the ruler
-                //if (isLeader && !isCriminal) {
-                //    _sourceCharacter.faction.SetLeader(character);
-                //    Log logNotif = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "return_faction_leader");
-                //    logNotif.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                //    logNotif.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
-                //    _sourceCharacter.AddHistory(logNotif);
-                //    PlayerManager.Instance.player.ShowNotification(logNotif);
-                //}
                 character.traitContainer.RemoveTrait(character, "Webbed"); //always remove webbed trait after restrained has been removed
                 
                 //always set character as un-abducted by anyone after they lose restrain trait. 
@@ -92,6 +64,9 @@ namespace Traits {
                 owner.traitContainer.RemoveTrait(owner, "Prisoner");
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
+        }
+        public override bool OnDeath(Character character) {
+            return character.traitContainer.RemoveTrait(character, this);
         }
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
             if (traitOwner is Character) {
