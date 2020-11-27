@@ -26,14 +26,7 @@ public class SpellData : IPlayerSkill {
     public virtual bool isInCooldown => hasCooldown && currentCooldownTick < cooldown;
 
     protected SpellData() {
-        charges = -1;
-        manaCost = -1;
-        cooldown = -1;
-        maxCharges = -1;
-        threat = 0;
-        threatPerHour = 0;
-        currentCooldownTick = cooldown;
-        isInUse = false;
+        ResetData();
     }
 
     #region Virtuals
@@ -91,6 +84,16 @@ public class SpellData : IPlayerSkill {
     #endregion
 
     #region General
+    public void ResetData() {
+        charges = -1;
+        manaCost = -1;
+        cooldown = -1;
+        maxCharges = -1;
+        threat = 0;
+        threatPerHour = 0;
+        currentCooldownTick = cooldown;
+        isInUse = false;
+    }
     public bool CanPerformAbilityTowards(IPointOfInterest poi) {
         if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             return CanPerformAbilityTowards(poi as Character);

@@ -162,6 +162,10 @@ public class Butcher : GoapAction {
             }
         }
         if (targetCharacter is Animal || targetCharacter.race == RACE.WOLF || targetCharacter.race == RACE.SPIDER) {
+            if(!actor.characterClass.IsCombatant() && !targetCharacter.isDead && (targetCharacter.race == RACE.WOLF || targetCharacter.race == RACE.SPIDER)) {
+                cost += 2000;
+                costLog += $" +{cost}(Non-combatant actor, Alive Wolf/Spider target)";
+            }
             CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(actor, actor, targetCharacter, CRIME_TYPE.Animal_Killing);
             int currCost = 0;
             if(severity == CRIME_SEVERITY.Infraction) {

@@ -306,6 +306,12 @@ public class PlayerSkillManager : MonoBehaviour {
             spellData.SetIsInUse(false);
         }
     }
+    public void ResetSummonPlayerSkills() {
+        for (int i = 0; i < allSummonPlayerSkills.Length; i++) {
+            SpellData spellData = allSummonPlayerSkillsData[allSummonPlayerSkills[i]];
+            spellData.ResetData();
+        }
+    }
     #endregion
 
     #region Assets

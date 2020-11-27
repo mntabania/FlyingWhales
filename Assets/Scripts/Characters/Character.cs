@@ -5124,15 +5124,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //        return true;
         //    }
         //}
-
-        if (otherCharacter.isInVampireBatForm) {
-            Vampire vampireTrait = otherCharacter.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
-            if (!vampireTrait.DoesCharacterKnowThisVampire(this)) {
-                return true;
-            }
-        } else if (otherCharacter.isInWerewolfForm) {
-            if (!otherCharacter.lycanData.DoesCharacterKnowThisLycan(this)) {
-                return true;
+        bool isUndead = faction?.factionType.type == FACTION_TYPE.Undead;
+        if (!isUndead) {
+            if (otherCharacter.isInVampireBatForm) {
+                Vampire vampireTrait = otherCharacter.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                if (!vampireTrait.DoesCharacterKnowThisVampire(this)) {
+                    return true;
+                }
+            } else if (otherCharacter.isInWerewolfForm) {
+                if (!otherCharacter.lycanData.DoesCharacterKnowThisLycan(this)) {
+                    return true;
+                }
             }
         }
 
