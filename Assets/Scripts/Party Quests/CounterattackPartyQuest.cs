@@ -112,7 +112,7 @@ public class CounterattackPartyQuest : PartyQuest {
             for (int i = 0; i < membersAlliedWithPlayer.Count; i++) {
                 Character memberAlliedWithPlayer = membersAlliedWithPlayer[i];
                 MembersAreBetrayedByThis(memberAlliedWithPlayer);
-                memberAlliedWithPlayer.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Party, memberAlliedWithPlayer, "Betrayed party members");
+                memberAlliedWithPlayer.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Party, memberAlliedWithPlayer, "Abandoned party quest");
             }
             ObjectPoolManager.Instance.ReturnCharactersListToPool(membersAlliedWithPlayer);
         }
