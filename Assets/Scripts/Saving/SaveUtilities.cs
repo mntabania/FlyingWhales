@@ -13,7 +13,7 @@ public static class SaveUtilities {
 
 
     public static List<string> compatibleSaveFileVersions = new List<string>() {
-        "0.33.49", "0.33.50", "0.33.51", "0.33.52", "0.33.53"    
+        "0.33.53", "0.33.54"    
     };
     
     #region Character States
