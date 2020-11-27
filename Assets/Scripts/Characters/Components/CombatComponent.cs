@@ -794,27 +794,46 @@ public class CombatComponent : CharacterComponent {
     }
     public string GetCombatLogKeyReason(IPointOfInterest target) {
         string key = string.Empty;
-        CombatData combatData = GetCombatData(target);
-        if (combatData != null) {
-            key = combatData.reasonForCombat;
-            if (key == CombatManager.Action) {
-                key = GetCombatActionReason(combatData, target);
-            } else {
-                if(key == CombatManager.Anger) {
-                    if (owner.traitContainer.HasTrait("Angry")) {
-                        Trait trait = owner.traitContainer.GetTraitOrStatus<Trait>("Angry");
-                        if(trait.IsResponsibleForTrait(target as Character)) {
-                            key = "Anger_Target";
+        if(target != null) {
+            CombatData combatData = GetCombatData(target);
+            if (combatData != null) {
+                key = combatData.reasonForCombat;
+                if (key == CombatManager.Action) {
+                    key = GetCombatActionReason(combatData, target);
+                } else {
+                    if (key == CombatManager.Anger) {
+                        if (owner.traitContainer.HasTrait("Angry")) {
+                            Trait trait = owner.traitContainer.GetTraitOrStatus<Trait>("Angry");
+                            if (trait.IsResponsibleForTrait(target as Character)) {
+                                key = "Anger_Target";
+                            }
                         }
+                    } else if (key == CombatManager.Hostility) {
+                        key = GetHostilityReason(target, combatData);
+                    } else if (key == CombatManager.Retaliation) {
+                        key = GetRetaliationReason(target, combatData);
                     }
-                } else if (key == CombatManager.Hostility) {
-                    key = GetHostilityReason(target, combatData);
-                } else if (key == CombatManager.Retaliation) {
-                    key = GetRetaliationReason(target, combatData);
                 }
             }
         }
         return key;
+    }
+    public string GetCombatStateIconString(IPointOfInterest target) {
+        string iconString = GoapActionStateDB.Hostile_Icon;
+        if(target != null) {
+            CombatData combatData = GetCombatData(target);
+            if (combatData != null && combatData.connectedAction != null) {
+                switch (combatData.connectedAction.associatedJobType) {
+                    case JOB_TYPE.MONSTER_ABDUCT:
+                        iconString = GoapActionStateDB.Stealth_Icon;
+                        break;
+                    case JOB_TYPE.PRODUCE_FOOD:
+                        iconString = GoapActionStateDB.Butcher_Icon;
+                        break;
+                }
+            }
+        }
+        return iconString;
     }
     private string GetCombatActionReason(CombatData combatData, IPointOfInterest target) {
        if(combatData != null && combatData.connectedAction != null) {

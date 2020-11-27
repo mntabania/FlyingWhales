@@ -438,23 +438,38 @@ public class CombatState : CharacterState {
     private void SetIsAttacking(bool state) {
         isAttacking = state;
         if (isAttacking) {
-            actionIconString = GoapActionStateDB.Hostile_Icon;
-            thoughtBubbleLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "CharacterState", "Combat State", "thought_bubble", providedTags: LOG_TAG.Combat);
-            thoughtBubbleLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-
             //When attacking, a Mastered Lycanthrope will transform to werewolf first
-            if(stateComponent.owner.isLycanthrope && stateComponent.owner.lycanData.isMaster) {
+            if (stateComponent.owner.isLycanthrope && stateComponent.owner.lycanData.isMaster) {
                 if (!stateComponent.owner.isInWerewolfForm) {
                     if (!stateComponent.owner.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Werewolf)) {
                         stateComponent.owner.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Werewolf, stateComponent.owner);
                     }
                 }
             }
+        }
+        
+        DoCombatBehavior();
+
+        if (isAttacking) {
+            actionIconString = stateComponent.owner.combatComponent.GetCombatStateIconString(currentClosestHostile);
+            string reasonKey = stateComponent.owner.combatComponent.GetCombatLogKeyReason(currentClosestHostile);
+
+            if (string.IsNullOrEmpty(reasonKey)) {
+                thoughtBubbleLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "CharacterState", "Combat State", "thought_bubble_no_reason", providedTags: LOG_TAG.Combat);
+                thoughtBubbleLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            } else {
+                thoughtBubbleLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "CharacterState", "Combat State", "thought_bubble_with_reason", providedTags: LOG_TAG.Combat);
+                thoughtBubbleLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+
+                if (LocalizationManager.Instance.HasLocalizedValue("Character", "Combat", reasonKey)) {
+                    string reason = LocalizationManager.Instance.GetLocalizedValue("Character", "Combat", reasonKey);
+                    thoughtBubbleLog.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
+                }
+            }
         } else {
             actionIconString = GoapActionStateDB.Flee_Icon;
         }
         stateComponent.owner.marker.UpdateActionIcon();
-        DoCombatBehavior();
     }
     private void SetIsFleeToHome(bool state) {
         isFleeToHome = state;

@@ -1,1 +1,1 @@
-{"items":[{"key":"thought_bubble","value":"%00@ is in combat."}]}
+{"items":[{"key":"thought_bubble_with_reason","value":"%00@ is in combat. Reason: %111%"},{"key":"thought_bubble_no_reason","value":"%00@ is in combat."}]}
