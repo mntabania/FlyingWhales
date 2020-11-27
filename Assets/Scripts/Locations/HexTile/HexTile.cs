@@ -394,7 +394,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     }
     public bool HasAliveVillagerResident() {
         //Does not count if hextile is only a territory
-        return settlementOnTile != null && settlementOnTile.HasAliveVillagerResident();
+        return settlementOnTile != null && settlementOnTile.HasResidentThatMeetsCriteria(resident => !resident.isDead && resident.isNormalCharacter);
     }
     public string GetDisplayName() {
         if (settlementOnTile != null) {

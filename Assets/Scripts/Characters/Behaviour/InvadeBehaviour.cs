@@ -25,7 +25,7 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
             if (character.hexTileLocation != null && character.behaviourComponent.invadeVillageTarget.Contains(character.hexTileLocation)) {
                 log += $"\n-Already att village target, will find character to attack";
                 //character is already at target village
-                List<Character> targets = GetTargetChoices(character.behaviourComponent.invadeVillageTarget);
+                List<Character> targets = GetTargetChoicesFor(character, character.behaviourComponent.invadeVillageTarget);
                 if (targets != null) {
                     //Fight a random target
                     Character chosenTarget = CollectionUtilities.GetRandomElement(targets);
@@ -48,11 +48,11 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
             }
         }
     }
-    private List<Character> GetTargetChoices(List<HexTile> tiles) {
+    private List<Character> GetTargetChoicesFor(Character source, List<HexTile> tiles) {
         List<Character> characters = null;
         for (int i = 0; i < tiles.Count; i++) {
             HexTile tile = tiles[i];
-            List<Character> charactersAtHexTile = tile.GetAllCharactersInsideHexThatMeetCriteria<Character>(IsCharacterValidForInvade);
+            List<Character> charactersAtHexTile = tile.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => c != source && IsCharacterValidForInvade(c));
             if (charactersAtHexTile != null) {
                 if(characters == null) {
                     characters = new List<Character>();
@@ -63,7 +63,7 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
         return characters;
     }
     private bool IsCharacterValidForInvade(Character character) {
-        return character.isNormalCharacter && character.isDead == false && character.isAlliedWithPlayer == false;
+        return character.isNormalCharacter && character.isDead == false && character.isAlliedWithPlayer == false && !character.traitContainer.HasTrait("Hibernating", "Indestructible");
     }
     private List<HexTile> GetVillageTargetsByPriority(Character owner) {
         //get settlements in region that have normal characters living there.

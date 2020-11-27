@@ -416,7 +416,8 @@ public class DrinkBlood : GoapAction {
                         }
                     }
                 }
-                if (!targetCharacter.race.IsSapient()) {
+                //If a vampire drinks the blood of another vampire and he is not a cannibal, add Poor Meal status
+                if (!targetCharacter.race.IsSapient() || (targetCharacter.traitContainer.HasTrait("Vampire") && !actor.traitContainer.HasTrait("Cannibal"))) {
                     actor.traitContainer.AddTrait(actor, "Poor Meal", targetCharacter);
                 }
                 if (GameUtilities.RollChance(98)) {

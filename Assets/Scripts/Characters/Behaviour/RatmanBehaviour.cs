@@ -26,9 +26,9 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                 return true;
             }
         }
-        if (GameUtilities.RollChance(10)) {
+        if (GameUtilities.RollChance(0.5f)) {
             int residentCount = character.GetAliveResidentsCountInHome();
-            if (residentCount >= 3) {
+            if (residentCount >= 8) {
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home_Ratman, null);
             }
         }

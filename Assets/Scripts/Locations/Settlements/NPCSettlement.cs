@@ -282,7 +282,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             } else {
                 if(exterminateTargetStructure != null) {
                     if(owner != null && !owner.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, exterminateTargetStructure)) {
-                        if(exterminateTargetStructure.settlementLocation == null || exterminateTargetStructure.settlementLocation.HasAliveResidentThatIsHostileWith(owner)) {
+                        if(exterminateTargetStructure.settlementLocation == null || exterminateTargetStructure.settlementLocation.HasResidentThatMeetsCriteria(resident => !resident.isDead
+                    && (resident.faction == null || owner == null || owner.IsHostileWith(resident.faction)))) {
                             owner.partyQuestBoard.CreateExterminatePartyQuest(null, this, exterminateTargetStructure, this);
                         }
                     }

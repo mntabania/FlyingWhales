@@ -188,57 +188,14 @@ namespace Locations.Settlements {
             }
             return true;
         }
-        public bool HasResidentInsideSettlement() {
+        public bool HasResidentThatMeetsCriteria(System.Func<Character, bool> criteria) {
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
-                if (resident.gridTileLocation != null
-                    && !resident.isBeingSeized
-                    && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                    && resident.IsInHomeSettlement()) {
+                if (criteria.Invoke(resident)) {
                     return true;
                 }
             }
             return false;
-        }
-        public bool HasAliveResidentInsideSettlement() {
-            for (int i = 0; i < residents.Count; i++) {
-                Character resident = residents[i];
-                if (!resident.isDead
-                    && !resident.isBeingSeized
-                    && resident.gridTileLocation != null
-                    && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                    && resident.gridTileLocation.IsPartOfSettlement(this)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public bool HasAliveVillagerResident() {
-            for (int i = 0; i < residents.Count; i++) {
-                Character resident = residents[i];
-                if (!resident.isDead && resident.isNormalCharacter) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public Character GetRandomAliveResidentInsideSettlement() {
-            List<Character> choices = null;
-            for (int i = 0; i < residents.Count; i++) {
-                Character resident = residents[i];
-                if (!resident.isDead
-                    && !resident.isBeingSeized
-                    && resident.gridTileLocation != null
-                    && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                    && resident.gridTileLocation.IsPartOfSettlement(this)) {
-                    if(choices == null) { choices = new List<Character>(); }
-                    choices.Add(resident);
-                }
-            }
-            if(choices != null && choices.Count > 0) {
-                return choices[UnityEngine.Random.Range(0, choices.Count)];
-            }
-            return null;
         }
         public Character GetRandomCharacterThatMeetCriteria(System.Func<Character, bool> criteria) {
             Character chosenCharacter = null;
@@ -248,7 +205,22 @@ namespace Locations.Settlements {
                     return chosenCharacter;
                 }
             }
-            return null;
+            return chosenCharacter;
+        }
+        public Character GetRandomResidentThatMeetCriteria(System.Func<Character, bool> criteria) {
+            Character chosenCharacter = null;
+            List<Character> choices = ObjectPoolManager.Instance.CreateNewCharactersList();
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (criteria.Invoke(resident)) {
+                    choices.Add(resident);
+                }
+            }
+            if (choices != null && choices.Count > 0) {
+                chosenCharacter = CollectionUtilities.GetRandomElement(choices);
+            }
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(choices);
+            return chosenCharacter;
         }
         public int GetNumOfResidentsThatMeetCriteria(System.Func<Character, bool> criteria) {
             int count = 0;
@@ -259,59 +231,6 @@ namespace Locations.Settlements {
                 }
             }
             return count;
-        }
-        public bool HasResidentThatMeetsCriteria(System.Func<Character, bool> criteria) {
-            for (int i = 0; i < residents.Count; i++) {
-                Character resident = residents[i];
-                if (criteria.Invoke(resident)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public bool HasAliveResidentInsideSettlementThatIsHostileWith(Faction faction) {
-            for (int i = 0; i < residents.Count; i++) {
-                Character resident = residents[i];
-                if (!resident.isDead
-                    && !resident.isBeingSeized
-                    && resident.gridTileLocation != null
-                    && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                    && resident.gridTileLocation.IsPartOfSettlement(this)
-                    && (resident.faction == null || faction == null || faction.IsHostileWith(resident.faction))) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public bool HasAliveResidentThatIsHostileWith(Faction faction) {
-            for (int i = 0; i < residents.Count; i++) {
-                Character resident = residents[i];
-                if (!resident.isDead
-                    && (resident.faction == null || faction == null || faction.IsHostileWith(resident.faction))) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public Character GetRandomAliveResidentInsideSettlementThatIsHostileWith(Character character) {
-            List<Character> choices = null;
-            for (int i = 0; i < residents.Count; i++) {
-                Character resident = residents[i];
-                if (character != resident
-                    && !resident.isBeingSeized
-                    && !resident.isDead
-                    && resident.gridTileLocation != null
-                    && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                    && resident.gridTileLocation.IsPartOfSettlement(this)
-                    && (resident.faction == null || character.faction == null || character.faction.IsHostileWith(resident.faction))) {
-                    if (choices == null) { choices = new List<Character>(); }
-                    choices.Add(resident);
-                }
-            }
-            if (choices != null && choices.Count > 0) {
-                return choices[UnityEngine.Random.Range(0, choices.Count)];
-            }
-            return null;
         }
         public bool AreAllResidentsVagrantOrFactionless() {
             for (int i = 0; i < residents.Count; i++) {

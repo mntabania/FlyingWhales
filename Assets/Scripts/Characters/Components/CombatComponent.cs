@@ -4,6 +4,7 @@ using UnityEngine;
 using Traits;
 using Inner_Maps;
 using UtilityScripts;
+using Locations.Settlements;
 
 public class CombatComponent : CharacterComponent {
     public int attack { get; private set; }
@@ -251,6 +252,19 @@ public class CombatComponent : CharacterComponent {
             debugLog += "\n-FIGHT";
             owner.logComponent.PrintLogIfActive(debugLog);
             return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+        } else if (owner.race == RACE.RATMAN && owner.faction?.factionType.type == FACTION_TYPE.Ratmen) {
+            debugLog += "\n-Character is Ratman and in a Ratmen faction";
+            BaseSettlement settlement = null;
+            if(owner.gridTileLocation != null && owner.gridTileLocation.IsPartOfSettlement(out settlement) && settlement.owner != null && settlement.owner != owner.faction) {
+                debugLog += "\n-Character is inside an occupied Settlement owned by a different faction, Flight";
+                debugLog += "\n-FLIGHT";
+                owner.logComponent.PrintLogIfActive(debugLog);
+                return new CombatReaction(COMBAT_REACTION.Flight);
+            } else {
+                debugLog += "\n-FIGHT";
+                owner.logComponent.PrintLogIfActive(debugLog);
+                return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+            }
         } else if (owner.traitContainer.HasTrait("Drunk")) {
             debugLog += "\n-Character is drunk, 50% chance to Fight";
             if (GameUtilities.RollChance(50)) {

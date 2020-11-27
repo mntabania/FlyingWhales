@@ -24,7 +24,7 @@ public class WolfBehaviour : CharacterBehaviourComponent {
             //find Settlement where wolves are living at
             for (int i = 0; i < character.currentRegion.settlementsInRegion.Count; i++) {
                 BaseSettlement settlement = character.currentRegion.settlementsInRegion[i];
-                if (settlement is NPCSettlement && settlement.HasResidentThatMeetsCriteria(resident => resident.race == RACE.WOLF)) {
+                if (settlement is NPCSettlement && settlement.HasResidentThatMeetsCriteria(resident => character != resident && resident.race == RACE.WOLF)) {
                     if (settlementChoices == null) {
                         settlementChoices = new List<BaseSettlement>();
                     }

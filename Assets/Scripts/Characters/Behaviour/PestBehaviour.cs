@@ -55,7 +55,7 @@ public class PestBehaviour : CharacterBehaviourComponent {
     private List<HexTile> GetVillageTargetsByPriority(Character owner) {
         //get settlements in region that have normal characters living there.
         List<BaseSettlement> settlementsInRegion = owner.currentRegion?.GetSettlementsInRegion(
-            settlement => settlement.HasResidentThatMeetsCriteria(x => !x.isDead)
+            settlement => settlement.HasResidentThatMeetsCriteria(x => owner != x && !x.isDead)
         );
         if (settlementsInRegion != null) {
             List<BaseSettlement> villageChoices = settlementsInRegion.Where(
