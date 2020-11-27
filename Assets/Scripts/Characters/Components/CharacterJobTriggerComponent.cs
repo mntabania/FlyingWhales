@@ -122,7 +122,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 character.marker.StopMovement();
                 character.marker.pathfindingAI.ClearAllCurrentPathData();
             }
-
+            character.reactionComponent.SetIsHidden(false);
             //character.RevertFromVampireBatForm();
             //character.RevertFromWerewolfForm();
 
@@ -139,7 +139,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	}
 	private void OnCharacterCanNoLongerMove(Character character) {
 		if (character == owner) {
-			TryStartScreamCheck();
+            character.reactionComponent.SetIsHidden(false);
+            TryStartScreamCheck();
 		}
 	}
 	private void OnCharacterCanMoveAgain(Character character) {
@@ -1701,9 +1702,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
     }
     private void CreateHealSelfJob() {
-	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RECOVER_HP, INTERACTION_TYPE.HEAL_SELF, owner, owner);
-	    job.SetStillApplicableChecker(JobManager.Heal_Self_Applicability);
-	    owner.jobQueue.AddJobInQueue(job);
+        //Creating heal self job should only for sapient since sapient are the only one that advertises it anyway
+        //This is so that non sapient will no longer try to heal self if they do not advertise it so that they wont drop their current action
+        //Example: Poisoned Ratman while carrying abducted character will drop carried character because he will try to heal himself but since he cannot do it, he will no longer resume the abduction because the Monster Abduct job is not recalculatable
+        if (owner.race.IsSapient()) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RECOVER_HP, INTERACTION_TYPE.HEAL_SELF, owner, owner);
+            job.SetStillApplicableChecker(JobManager.Heal_Self_Applicability);
+            owner.jobQueue.AddJobInQueue(job);
+        }
     }
     #endregion
     
