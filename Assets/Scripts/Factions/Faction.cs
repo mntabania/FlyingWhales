@@ -104,6 +104,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         name = data.name;
         description = data.description;
         emblem = FactionManager.Instance.GetFactionEmblem(data);
+        FactionManager.Instance.SetEmblemAsUsed(emblem);
         factionColor = data.factionColor;
         isActive = data.isActive;
         isMajorFaction = data.isMajorFaction;

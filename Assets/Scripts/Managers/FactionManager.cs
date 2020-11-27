@@ -227,7 +227,7 @@ public class FactionManager : BaseMonoBehaviour {
 
     #region Emblem
     private Sprite GetRandomFactionEmblem(Faction faction) {
-        if(_usedEmblems.Count == _factionEmblems.Count) {
+        if(_usedEmblems.Count >= _factionEmblems.Count) {
             _usedEmblems.Clear();
         }
         for (int i = 0; i < _factionEmblems.Count; i++) {
@@ -235,7 +235,7 @@ public class FactionManager : BaseMonoBehaviour {
             if (_usedEmblems.Contains(currSprite)) {
                 continue;
             }
-            _usedEmblems.Add(currSprite);
+            SetEmblemAsUsed(currSprite);
             return currSprite;
         }
         throw new System.Exception($"There are no more emblems for faction: {faction.name}");
@@ -270,19 +270,10 @@ public class FactionManager : BaseMonoBehaviour {
         }
         return null;
     }
-    public int GetFactionEmblemIndex(Sprite emblem) {
-        for (int i = 0; i < _factionEmblems.Count; i++) {
-            Sprite currSetting = _factionEmblems[i];
-            if (currSetting == emblem) {
-                return i;
-            }
-            //foreach (KeyValuePair<int, Sprite> kvp in currSetting.emblems) {
-            //    if (kvp.Value.name == emblem.name) {
-            //        return i;
-            //    }
-            //}
-        }
-        return -1;
+    public void SetEmblemAsUsed(Sprite sprite) {
+        if (sprite != null && !_usedEmblems.Contains(sprite)) {
+            _usedEmblems.Add(sprite);
+        }   
     }
     #endregion
 
