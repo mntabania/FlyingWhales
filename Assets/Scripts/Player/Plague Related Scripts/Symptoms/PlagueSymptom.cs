@@ -28,19 +28,19 @@ namespace Plague.Symptom {
                 case PLAGUE_SYMPTOM.Paralysis:
                     return 30;
                 case PLAGUE_SYMPTOM.Vomiting:
-                    return 10;
+                    return 25;
                 case PLAGUE_SYMPTOM.Lethargy:
-                    return 15;
+                    return 20;
                 case PLAGUE_SYMPTOM.Seizure:
                     return 25;
                 case PLAGUE_SYMPTOM.Insomnia:
                     return 20;
                 case PLAGUE_SYMPTOM.Poison_Cloud:
-                    return 25;
+                    return 40;
                 case PLAGUE_SYMPTOM.Monster_Scent:
-                    return 30;
+                    return 20;
                 case PLAGUE_SYMPTOM.Sneezing:
-                    return 10;
+                    return 35;
                 case PLAGUE_SYMPTOM.Depression:
                     return 30;
                 case PLAGUE_SYMPTOM.Hunger_Pangs:

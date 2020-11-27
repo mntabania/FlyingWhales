@@ -33,11 +33,11 @@ namespace Plague.Death_Effect {
         public static int GetUnlockCost(this PLAGUE_DEATH_EFFECT p_deathEffect) {
             switch (p_deathEffect) {
                 case PLAGUE_DEATH_EFFECT.Explosion:
-                    return 5;
+                    return 10;
                 case PLAGUE_DEATH_EFFECT.Zombie:
                     return 10;
                 case PLAGUE_DEATH_EFFECT.Mana_Generator:
-                    return 5;
+                    return 10;
                 case PLAGUE_DEATH_EFFECT.Haunted_Spirits:
                     return 10;
                 default:

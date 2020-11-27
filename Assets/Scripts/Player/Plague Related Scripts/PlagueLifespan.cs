@@ -245,11 +245,11 @@ public class PlagueLifespan {
         int level = GetSapientLifespanLevelByHours(p_race, currentDuration);
         switch (level) {
             case 1:
-                return 10;
+                return 20;
             case 2:
-                return 25;
+                return 40;
             case 3:
-                return 50;
+                return 60;
             default:
                 return -1;
         }
