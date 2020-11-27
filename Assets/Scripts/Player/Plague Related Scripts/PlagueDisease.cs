@@ -105,6 +105,9 @@ public class PlagueDisease : ISingletonPattern, ISavable {
         _activeSymptoms = null;
         _activeDeathEffect = null;
         _Instance = null;
+        _deaths = 0;
+        _activeCases = 0;
+        _recoveries = 0;
         Messenger.RemoveListener(Signals.CLEAN_UP_MEMORY, CleanUpAndRemoveCleanUpListener);
     }
     public static bool HasInstance() {
@@ -178,20 +181,24 @@ public class PlagueDisease : ISingletonPattern, ISavable {
 
     #region Misc Data
     public void UpdateActiveCasesAndRecoveriesOnPOILostPlagued(IPointOfInterest p_poi) {
-        if (p_poi is Character character && character.isNotSummonAndDemon) {
+        if (p_poi is Character character && !character.traitContainer.HasTrait("Plague Reservoir")) {
             _activeCases--;
             _recoveries++;
         }
     }
     public void UpdateActiveCasesOnPOIGainedPlagued(IPointOfInterest p_poi) {
-        if (p_poi is Character character && character.isNotSummonAndDemon) {
+        if (p_poi is Character character && !character.traitContainer.HasTrait("Plague Reservoir")) {
             _activeCases++;
         }
     }
     public void UpdateDeathsOnCharacterDied(Character p_character) {
-        if (p_character.isNotSummonAndDemon) {
-            _activeCases--;
+        if (!p_character.traitContainer.HasTrait("Plague Reservoir")) {
             _deaths++;
+        }
+    }
+    public void UpdateActiveCasesOnCharacterDied(Character p_character) {
+        if (!p_character.traitContainer.HasTrait("Plague Reservoir")) {
+            _activeCases--;
         }
     }
     #endregion
