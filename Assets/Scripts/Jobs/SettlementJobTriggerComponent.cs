@@ -1151,10 +1151,20 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		    }
 	    }
     }
+    private int GetAbleResidentsClassAmount(NPCSettlement p_settlement, string p_className) {
+	    int classCount = 0;
+	    for (int i = 0; i < p_settlement.residents.Count; i++) {
+		    Character resident = p_settlement.residents[i];
+		    if (resident.characterClass.className == p_className && !resident.traitContainer.HasTrait("Paralyzed", "Quarantined")) {
+			    classCount++;
+		    }
+	    }
+	    return classCount;
+    }
     private bool ShouldCreateChangeClassJob(string p_className) {
 	    int neededAmount = Mathf.FloorToInt((float)_owner.residents.Count * 0.15f);
 	    neededAmount = Mathf.Max(1, neededAmount);
-	    int currentClassAmount = _owner.settlementClassTracker.GetCurrentResidentClassAmount(p_className);
+	    int currentClassAmount = GetAbleResidentsClassAmount(_owner, p_className);
 	    if (currentClassAmount < neededAmount) {
 		    return true;
 	    }
