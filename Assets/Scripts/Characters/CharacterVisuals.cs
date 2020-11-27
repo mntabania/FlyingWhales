@@ -25,7 +25,9 @@ public class CharacterVisuals {
     public Vector2 selectableSize { get; private set; }
     public string classToUseForVisuals {
         get {
-            if (_owner.characterClass.IsZombie()) {
+            if (_owner.race == RACE.RATMAN) {
+                return "Ratman"; //if race is a ratman then always use the ratman class for its visuals
+            } else if (_owner.characterClass.IsZombie()) {
                 //if character class is a zombie, then use previous class for any visuals to use
                 //this is so we do not need to create special sprites and special cases for every race that can become a zombie
                 if (!string.IsNullOrEmpty(_owner.previousClassName)) {
@@ -252,6 +254,8 @@ public class CharacterVisuals {
             return UtilityScripts.Utilities.MonsterIcon();
         } else if (_owner.traitContainer.HasTrait("Cultist")) {
             return UtilityScripts.Utilities.CultistIcon();
+        } else if (_owner.race == RACE.RATMAN) {
+            return UtilityScripts.Utilities.RatmanIcon();
         }
         return UtilityScripts.Utilities.VillagerIcon();
     }

@@ -127,6 +127,14 @@ public class MoodComponent : CharacterComponent {
         hasMoodChanged = true;
         //OnMoodChanged();
 	}
+	public void RescheduleMoodEffect(IMoodModifier p_modifier, GameDate p_rescheduledDate) {
+		if (allMoodModifications.ContainsKey(p_modifier.moodModificationDescription)) {
+			if (allMoodModifications[p_modifier.moodModificationDescription].expiryDates.Count > 0) {
+				allMoodModifications[p_modifier.moodModificationDescription].expiryDates.RemoveAt(0);	
+			}
+			allMoodModifications[p_modifier.moodModificationDescription].expiryDates.Add(p_rescheduledDate);
+		}
+	}
 	public void RemoveMoodEffect(int amount, IMoodModifier modifier) {
 		// if (amount == 0) {
 		// 	return; //ignore

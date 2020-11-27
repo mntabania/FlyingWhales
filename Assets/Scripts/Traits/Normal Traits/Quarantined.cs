@@ -2,6 +2,7 @@
 using System.Linq;
 using Characters.Components;
 using Inner_Maps.Location_Structures;
+using UnityEngine;
 namespace Traits {
     public class Quarantined : Status, CharacterEventDispatcher.ITraitListener, CharacterEventDispatcher.ICarryListener, CharacterEventDispatcher.ILocationListener {
         public override bool isSingleton => true;
@@ -17,6 +18,7 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED };
             AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Hour_Started_Trait);
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
@@ -53,6 +55,27 @@ namespace Traits {
             base.OnTickStarted(traitable);
             if (traitable is Character owner) {
                 CheckNeeds(owner);
+            }
+        }
+        public override void OnHourStarted(ITraitable traitable) {
+            base.OnHourStarted(traitable);
+            if (traitable.gridTileLocation != null && traitable.gridTileLocation.structure is Hospice && traitable.traitContainer.HasTrait("Plagued")) {
+                Plagued plagued = traitable.traitContainer.GetTraitOrStatus<Plagued>("Plagued");
+                GameDate originalRemovalDate = traitable.traitContainer.GetLatestExpiryDate(plagued.name);
+                if (originalRemovalDate.hasValue) {
+                    int ticksRemaining = GameManager.Instance.Today().GetTickDifference(originalRemovalDate);
+                    if (ticksRemaining > GameManager.ticksPerHour) {
+                        GameDate newExpiryDate = originalRemovalDate;
+                        newExpiryDate.ReduceTicks(GameManager.ticksPerHour);
+                        if (newExpiryDate.IsBefore(GameManager.Instance.Today())) {
+                            //if new expiry date has been set to a tick before this tick, then force it to end on the next tick instead. 
+                            newExpiryDate = GameManager.Instance.Today();
+                            newExpiryDate.AddTicks(1);
+                        }
+                        Debug.Log($"{traitable.name} Will reschedule Plagued removal to {newExpiryDate.ToString()} from {originalRemovalDate.ToString()}");
+                        traitable.traitContainer.RescheduleLatestTraitRemoval(traitable, plagued, newExpiryDate);    
+                    }
+                }
             }
         }
         public override string GetTestingData(ITraitable traitable = null) {
