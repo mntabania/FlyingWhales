@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
+using Locations.Settlements;
 
 public class MinionPlayerSkill : SpellData {
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.MINION; } }
@@ -17,11 +18,13 @@ public class MinionPlayerSkill : SpellData {
         //minion.SetCombatAbility(COMBAT_ABILITY.FLAMESTRIKE);
         minion.Summon(targetTile);
         minion.SetMinionPlayerSkillType(type);
-        if (targetTile.structure?.settlementLocation != null && 
-            targetTile.structure.settlementLocation.locationType != LOCATION_TYPE.VILLAGE) {
-            minion.character.MigrateHomeStructureTo(targetTile.structure);	
+        BaseSettlement settlement = null;
+        if (targetTile.IsPartOfSettlement(out settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE) {
+            minion.character.MigrateHomeStructureTo(targetTile.structure);
         } else {
-            minion.character.AddTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);    
+            if (targetTile.collectionOwner.isPartOfParentRegionMap) {
+                minion.character.SetTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);
+            }
         }
         minion.character.jobQueue.CancelAllJobs();
         base.ActivateAbility(targetTile);

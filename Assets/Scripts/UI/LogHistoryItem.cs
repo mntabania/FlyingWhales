@@ -34,7 +34,7 @@ public class LogHistoryItem : LogItem {
     private void OnClickObjectInLog(object obj) {
         IPointOfInterest pointOfInterest = UIManager.Instance.GetCurrentlySelectedPOI();
         if (pointOfInterest != null) {
-            Messenger.Broadcast(Signals.LOG_HISTORY_OBJECT_CLICKED, obj, logLbl.text, pointOfInterest);    
+            Messenger.Broadcast(UISignals.LOG_HISTORY_OBJECT_CLICKED, obj, logLbl.text, pointOfInterest);    
         }
         UIManager.Instance.OpenObjectUI(obj);
     }

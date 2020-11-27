@@ -42,7 +42,10 @@ public class EvangelizeData : PlayerAction {
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
         if (canPerform) {
-            if (targetCharacter.canPerform == false) {
+            if (targetCharacter.limiterComponent.canPerform == false) {
+                return false;
+            }
+            if (targetCharacter.traitContainer.HasTrait("Enslaved")) {
                 return false;
             }
             return targetCharacter.isDead == false; //&& targetCharacter.traitContainer.HasTrait("Cultist"); //&& targetCharacter.homeSettlement != null
@@ -51,8 +54,11 @@ public class EvangelizeData : PlayerAction {
     }
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter); 
-        if (targetCharacter.canPerform == false) {
+        if (targetCharacter.limiterComponent.canPerform == false) {
             reasons += "Cannot be used while target is incapacitated,";
+        }
+        if (targetCharacter.traitContainer.HasTrait("Enslaved")) {
+            reasons += "Slaves cannot perform this action,";
         }
         return reasons;
     }

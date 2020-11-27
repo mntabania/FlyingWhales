@@ -6,33 +6,33 @@ namespace Inner_Maps.Location_Structures {
         public DemonicPrison(Region location) : base(STRUCTURE_TYPE.DEMONIC_PRISON, location){
             selectableSize = new Vector2(10f, 10f);
         }
-        public DemonicPrison(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public DemonicPrison(Region location, SaveDataDemonicStructure data) : base(location, data) {
             selectableSize = new Vector2(10f, 10f);
         }
         
         #region Listeners
         protected override void SubscribeListeners() {
             base.SubscribeListeners();
-            Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-            Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_LEFT_STRUCTURE, OnCharacterLeftStructure);
+            Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+            Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, OnCharacterLeftStructure);
         }
         protected override void UnsubscribeListeners() {
             base.UnsubscribeListeners();
-            Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-            Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_LEFT_STRUCTURE, OnCharacterLeftStructure);
+            Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+            Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, OnCharacterLeftStructure);
         }
         #endregion
         
         private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
             if (structure == this && character.isNormalCharacter) {
                 character.trapStructure.SetForcedStructure(this);
-                character.DecreaseCanTakeJobs();
+                character.limiterComponent.DecreaseCanTakeJobs();
             }
         }
         private void OnCharacterLeftStructure(Character character, LocationStructure structure) {
             if (structure == this && character.isNormalCharacter) {
                 character.trapStructure.SetForcedStructure(null);
-                character.IncreaseCanTakeJobs();
+                character.limiterComponent.IncreaseCanTakeJobs();
             }
         }
     }

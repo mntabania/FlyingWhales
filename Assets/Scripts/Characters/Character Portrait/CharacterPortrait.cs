@@ -242,23 +242,23 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     private void SubscribeListeners() {
         if (_isSubscribedToListeners) { return; }
         _isSubscribedToListeners = true;
-        Messenger.AddListener<Character>(Signals.FACTION_SET, OnFactionSet);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
-        Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
-        Messenger.AddListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnCharacterSetAsFactionLeader);
-        Messenger.AddListener<Character, Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
-        Messenger.AddListener<Faction, ILeader>(Signals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
-        Messenger.AddListener<NPCSettlement, Character>(Signals.ON_SETTLEMENT_RULER_REMOVED, OnSettlementRulerRemoved);
+        Messenger.AddListener<Character>(FactionSignals.FACTION_SET, OnFactionSet);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
+        Messenger.AddListener<Character>(CharacterSignals.ROLE_CHANGED, OnCharacterChangedRole);
+        Messenger.AddListener<Character, ILeader>(CharacterSignals.ON_SET_AS_FACTION_LEADER, OnCharacterSetAsFactionLeader);
+        Messenger.AddListener<Character, Character>(CharacterSignals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
+        Messenger.AddListener<Faction, ILeader>(CharacterSignals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
+        Messenger.AddListener<NPCSettlement, Character>(CharacterSignals.ON_SETTLEMENT_RULER_REMOVED, OnSettlementRulerRemoved);
     }
     private void RemoveListeners() {
         _isSubscribedToListeners = false;
-        Messenger.RemoveListener<Character>(Signals.FACTION_SET, OnFactionSet);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
-        Messenger.RemoveListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
-        Messenger.RemoveListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnCharacterSetAsFactionLeader);
-        Messenger.RemoveListener<Character, Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
-        Messenger.RemoveListener<Faction, ILeader>(Signals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
-        Messenger.RemoveListener<NPCSettlement, Character>(Signals.ON_SETTLEMENT_RULER_REMOVED, OnSettlementRulerRemoved);
+        Messenger.RemoveListener<Character>(FactionSignals.FACTION_SET, OnFactionSet);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
+        Messenger.RemoveListener<Character>(CharacterSignals.ROLE_CHANGED, OnCharacterChangedRole);
+        Messenger.RemoveListener<Character, ILeader>(CharacterSignals.ON_SET_AS_FACTION_LEADER, OnCharacterSetAsFactionLeader);
+        Messenger.RemoveListener<Character, Character>(CharacterSignals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
+        Messenger.RemoveListener<Faction, ILeader>(CharacterSignals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
+        Messenger.RemoveListener<NPCSettlement, Character>(CharacterSignals.ON_SETTLEMENT_RULER_REMOVED, OnSettlementRulerRemoved);
     }
     #endregion
 

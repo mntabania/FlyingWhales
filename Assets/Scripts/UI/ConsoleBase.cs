@@ -95,12 +95,16 @@ public class ConsoleBase : InfoUIBase {
             {"/save_db", SaveDatabaseInMemory},
             {"/find_object", FindTileObject},
             {"/change_name", ChangeName},
-            {"/adjust_mana", AdjustMana}
+            {"/adjust_mana", AdjustMana},
+            {"/adjust_pp", AdjustPlaguePoints},
+            {"/remove_needed_class", RemoveNeededClassFromSettlement},
+            {"/activate_settlement_event", ActivateSettlementEvent},
+            {"/trigger_quarantine", TriggerQuarantine},
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         //Messenger.AddListener(Signals.TICK_ENDED, CheckForWrongCharacterData);
-        Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
+        Messenger.AddListener<Character, ActualGoapNode>(JobSignals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
 #endif
         InitializeMinion();
     }
@@ -283,7 +287,7 @@ public class ConsoleBase : InfoUIBase {
     #region Listeners
     private void OnCharacterDoingAction(Character character, ActualGoapNode actionNode) {
         if (typesSubscribedTo.Contains(actionNode.goapType)) {
-            Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION,
+            Messenger.Broadcast<string, int, UnityAction>(UISignals.SHOW_DEVELOPER_NOTIFICATION,
                 $"{character.name} is doing {actionNode.goapType}",
                 100, () => UIManager.Instance.ShowCharacterInfo(character, true));
             UIManager.Instance.Pause();
@@ -1371,6 +1375,21 @@ public class ConsoleBase : InfoUIBase {
         }
 
     }
+    private void AdjustPlaguePoints(string[] parameters) {
+        if (parameters.Length != 1) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of AdjustMana");
+            return;
+        }
+        string valueParameterStr = parameters[0];
+        if (Int32.TryParse(valueParameterStr, out var value)) {
+            PlayerManager.Instance.player.plagueComponent.AdjustPlaguePoints(value);
+            AddSuccessMessage($"Adjusted Plague Points by {value.ToString()}. New Plague Points is {PlayerManager.Instance.player.plagueComponent.plaguePoints.ToString()}");
+        } else {
+            AddErrorMessage($"Could not parse value {valueParameterStr} to an integer.");
+        }
+
+    }
     #endregion
 
     #region Tile Objects
@@ -1576,6 +1595,68 @@ public class ConsoleBase : InfoUIBase {
     }
     private void SaveDatabaseInMemory(string[] parameters) {
         DatabaseManager.Instance.mainSQLDatabase.SaveInMemoryDatabaseToFile($"{UtilityScripts.Utilities.gameSavePath}/Temp/gameDB.db");
+    }
+    #endregion
+
+    #region Settlements
+    private void RemoveNeededClassFromSettlement(string[] parameters) {
+        if (parameters.Length != 2) { //Settlement, class name
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /remove_needed_class");
+            return;
+        }
+        string settlementName = parameters[0];
+        string className = parameters[1];
+        BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByName(settlementName);
+        if (settlement is NPCSettlement npcSettlement) {
+            npcSettlement.settlementClassTracker.RemoveNeededClass(className);
+            AddSuccessMessage($"Removed needed class {className} from {settlement.name}'s needed classes");
+        }
+        else {
+            AddErrorMessage($"Could not find NPCSettlement with name {settlementName}");
+        }
+    }
+    private void ActivateSettlementEvent(string[] parameters) {
+        if (parameters.Length != 2) { //Settlement, SETTLEMENT_EVENT
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /activate_settlement_event");
+            return;
+        }
+        string settlementName = parameters[0];
+        string settlementEventTypeStr = parameters[1];
+        if (Enum.TryParse(settlementEventTypeStr, out SETTLEMENT_EVENT settlementEvent)) {
+            BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByName(settlementName);
+            if (settlement is NPCSettlement npcSettlement) {
+                npcSettlement.eventManager.AddNewActiveEvent(settlementEvent);
+                AddSuccessMessage($"Activated event {settlementEvent.ToString()} at {settlement.name}");
+            } else {
+                AddErrorMessage($"Could not find NPCSettlement with name {settlementName}");
+            }    
+        } else {
+            AddErrorMessage($"No Settlement Event Type {settlementEventTypeStr}");
+        }
+    }
+    private void TriggerQuarantine(string[] parameters) {
+        if (parameters.Length != 2) { //Settlement, Character
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /trigger_quarantine");
+            return;
+        }
+        
+        string settlementName = parameters[0];
+        string characterName = parameters[1];
+        BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByName(settlementName);
+        if (settlement is NPCSettlement npcSettlement) {
+            Character character = CharacterManager.Instance.GetCharacterByName(characterName);
+            if (character != null) {
+                npcSettlement.settlementJobTriggerComponent.TriggerQuarantineJob(character);    
+            } else {
+                AddErrorMessage($"Could not find character with name {characterName}");
+            }
+        } else {
+            AddErrorMessage($"Could not find NPCSettlement with name {settlementName}");
+        }
+        
     }
     #endregion
 }

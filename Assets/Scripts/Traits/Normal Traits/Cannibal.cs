@@ -29,17 +29,31 @@ namespace Traits {
         }
         public override string TriggerFlaw(Character character) {
             string successLogKey = base.TriggerFlaw(character);
-            IPointOfInterest poi = GetPOIToTransformToFood(character);
-            if (poi != null) {
-                if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.BUTCHER, poi, character);
-                    character.jobQueue.AddJobInQueue(job);
-                    return successLogKey;
+            if (character.traitContainer.HasTrait("Vampire")) {
+                Character targetCharacter = GetDrinkBloodTarget(character);
+                if (targetCharacter != null) {
+                    if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
+                        character.jobComponent.CreateDrinkBloodJob(JOB_TYPE.TRIGGER_FLAW, targetCharacter);
+                        return successLogKey;
+                    } else {
+                        return "has_trigger_flaw";
+                    }
                 } else {
-                    return "has_trigger_flaw";
+                    return "no_target_vampire";
                 }
             } else {
-                return "no_target";
+                IPointOfInterest poi = GetPOIToTransformToFood(character);
+                if (poi != null) {
+                    if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.BUTCHER, poi, character);
+                        character.jobQueue.AddJobInQueue(job);
+                        return successLogKey;
+                    } else {
+                        return "has_trigger_flaw";
+                    }
+                } else {
+                    return "no_target";
+                }
             }
         }
         #endregion
@@ -83,6 +97,27 @@ namespace Traits {
                 }
             }
             return chosenPOI;
+        }
+
+        private Character GetDrinkBloodTarget(Character vampire) {
+            Character chosenTarget = null;
+            List<Character> targets = ObjectPoolManager.Instance.CreateNewCharactersList();
+            if (vampire.currentRegion != null) {
+                for (int i = 0; i < vampire.currentRegion.charactersAtLocation.Count; i++) {
+                    Character character = vampire.currentRegion.charactersAtLocation[i];
+                    if (vampire != character) {
+                        if (character.traitContainer.HasTrait("Vampire") && character.carryComponent.IsNotBeingCarried() && character.Advertises(INTERACTION_TYPE.DRINK_BLOOD) && !character.isDead
+                            && vampire.movementComponent.HasPathToEvenIfDiffRegion(character.gridTileLocation)) {
+                            targets.Add(character);
+                        }
+                    }
+                }
+            }
+            if (targets != null && targets.Count > 0) {
+                chosenTarget = UtilityScripts.CollectionUtilities.GetRandomElement(targets);
+            }
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(targets);
+            return chosenTarget;
         }
     }
 }

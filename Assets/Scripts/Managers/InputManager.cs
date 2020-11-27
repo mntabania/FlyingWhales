@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using Ruinarch.Custom_UI;
@@ -16,29 +17,19 @@ namespace Ruinarch {
 
         private CursorMode cursorMode = CursorMode.ForceSoftware;
 
-        private readonly List<System.Action> _leftClickActions = new List<System.Action>();
-        private readonly List<System.Action> _pendingLeftClickActions = new List<System.Action>();
-        private readonly List<System.Action> _rightClickActions = new List<System.Action>();
-
         [Space(10)] 
         [Header("Cursors")] 
         [SerializeField] private CursorTextureDictionary cursors;
-        
-        [Space(10)] 
-        [Header("Buttons")] 
-        public Sprite buttonGlowImage;
-        
-        public List<string> buttonsToHighlight { get; private set; }
-        public GameObject lastClickedObject { get; private set; }
-        
+
+        public HashSet<string> buttonsToHighlight { get; private set; }
+
         public enum Cursor_Type {
             None, Default, Target, Drag_Hover, Drag_Clicked, Check, Cross, Link
         }
         public Cursor_Type currentCursorType;
         public Cursor_Type previousCursorType;
-        //public PLAYER_ARCHETYPE selectedArchetype { get; private set; } //Need to move this in the future. Not the best way to store the selected archetype from the main menu scene, but for now this will do since we need an object that is carried to the Game scene
         private bool runUpdate;
-        
+        private bool _allowHotKeys = true;
         
         #region Monobehaviours
         private void Awake() {
@@ -61,9 +52,9 @@ namespace Ruinarch {
                     return;
                 }
             } else if (Input.GetKeyDown(KeyCode.F8)) {
-                if (!CanUseHotkeys()) return;
+                if (!CanUseHotkey(KeyCode.F8)) return;
                 ReportABug();
-                Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.F8);
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.F8);
             }
             
             if (runUpdate == false) { return; }
@@ -127,27 +118,6 @@ namespace Ruinarch {
                             UIManager.Instance.HideSmallInfo(); 
                         } 
                     }
-                } else if (PlayerManager.Instance.player.currentActiveCombatAbility != null) {
-                    // UIManager.Instance.HideSmallInfo();
-                    // CombatAbility ability = PlayerManager.Instance.player.currentActiveCombatAbility;
-                    // if (ability.abilityRadius == 0) {
-                    //     IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
-                    //     if (hoveredPOI != null) {
-                    //         SetCursorTo(ability.CanTarget(hoveredPOI) ? Cursor_Type.Check : Cursor_Type.Cross);
-                    //     }
-                    // } else {
-                    //     LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-                    //     if (hoveredTile != null) {
-                    //         SetCursorTo(Cursor_Type.Check);
-                    //         List<LocationGridTile> highlightTiles = hoveredTile.GetTilesInRadius(ability.abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
-                    //         if (InnerMapManager.Instance.currentlyHighlightedTiles != null) {
-                    //             InnerMapManager.Instance.UnhighlightTiles();
-                    //             InnerMapManager.Instance.HighlightTiles(highlightTiles);
-                    //         } else {
-                    //             InnerMapManager.Instance.HighlightTiles(highlightTiles);
-                    //         }
-                    //     }
-                    // }
                 } else if (PlayerManager.Instance.player.currentActiveIntel != null) {
                     IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
                     if (hoveredPOI != null) {
@@ -170,25 +140,30 @@ namespace Ruinarch {
                 return;
             }
             if (Input.GetMouseButtonDown(0)) {
-                Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Mouse0);
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Mouse0);
             } else if (Input.GetMouseButtonDown(1)) {
-                Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Mouse1);
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Mouse1);
                 CancelActionsByPriority();
             } else if (Input.GetKeyDown(KeyCode.BackQuote)) {
-                Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.BackQuote);
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.BackQuote);
             } else if (Input.GetKeyDown(KeyCode.Space)) {
-                Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Space);
+                if (!CanUseHotkey(KeyCode.Space)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Space);
             } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
-                Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Alpha1);
+                if (!CanUseHotkey(KeyCode.Alpha1)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Alpha1);
             } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-                Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Alpha2);
+                if (!CanUseHotkey(KeyCode.Alpha2)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Alpha2);
             } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
-                Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Alpha3);
+                if (!CanUseHotkey(KeyCode.Alpha3)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Alpha3);
             } else if (Input.GetKeyDown(KeyCode.Escape)) {
-                Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Escape);
+                if (!CanUseHotkey(KeyCode.Escape)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Escape);
                 if (UIManager.Instance != null) {
                     if (!CancelActionsByPriority(true)) {
-                        //if no actions were cancelled then show options menu if itt is not yet showing.
+                        //if no actions were cancelled then show options menu if it is not yet showing.
                         //if game has started then, check if options menu is not showing, if it is not, then
                         //show options menu, then do not cancel any actions.
                         if (!UIManager.Instance.IsOptionsMenuShowing()) {
@@ -199,40 +174,40 @@ namespace Ruinarch {
                 }
                 // CancelActionsByPriority();
             } else if (Input.GetKeyDown(KeyCode.F1)) {
-                BroadcastHotkeyPress("Spells Tab");
+                BroadcastHotkeyPress("Spells Tab", KeyCode.F1);
             } else if (Input.GetKeyDown(KeyCode.F2)) {
-                BroadcastHotkeyPress("Demons Tab");
+                BroadcastHotkeyPress("Demons Tab", KeyCode.F2);
             } else if (Input.GetKeyDown(KeyCode.F3)) {
-                BroadcastHotkeyPress("Monsters Tab");
+                BroadcastHotkeyPress("Monsters Tab", KeyCode.F3);
             } else if (Input.GetKeyDown(KeyCode.F4)) {
-                BroadcastHotkeyPress("Intel Tab");
+                BroadcastHotkeyPress("Intel Tab", KeyCode.F4);
             } else if (Input.GetKeyDown(KeyCode.F5)) {
-                BroadcastHotkeyPress("Villagers Tab");
+                BroadcastHotkeyPress("Villagers Tab", KeyCode.F5);
             } else if (Input.GetKeyDown(KeyCode.F6)) {
-                BroadcastHotkeyPress("Build Tab");
+                BroadcastHotkeyPress("Build Tab", KeyCode.F6);
             } else if (Input.GetKeyDown(KeyCode.F7)) {
-                BroadcastHotkeyPress("Cultist Tab");
+                BroadcastHotkeyPress("Cultist Tab", KeyCode.F7);
             } else if (Input.GetKeyDown(KeyCode.M)) {
-                BroadcastHotkeyPress("ToggleMapBtn");
+                BroadcastHotkeyPress("ToggleMapBtn", KeyCode.M);
             } else if (Input.GetKeyDown(KeyCode.F9)) {
-                if (!CanUseHotkeys()) return;
-                Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.F9);
+                if (!CanUseHotkey(KeyCode.F9)) return;
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.F9);
             } else if (Input.GetKeyDown(KeyCode.Tab)) {
-                if (!CanUseHotkeys()) return;
+                if (!CanUseHotkey(KeyCode.Tab)) return;
                 if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
-                Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Tab);
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Tab);
             } else if (Input.GetKeyDown(KeyCode.R)) {
-                if (!CanUseHotkeys()) return;
+                if (!CanUseHotkey(KeyCode.R)) return;
                 if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
-                Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.R);
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.R);
             }
         }
-        private void BroadcastHotkeyPress(string buttonToActivate) {
-            if (!CanUseHotkeys()) return;
+        private void BroadcastHotkeyPress(string buttonToActivate, KeyCode p_keyCode) {
+            if (!CanUseHotkey(p_keyCode)) return;
             if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
-            Messenger.Broadcast(Signals.HOTKEY_CLICK, buttonToActivate);
+            Messenger.Broadcast(UISignals.HOTKEY_CLICK, buttonToActivate);
         }
-        public bool CanUseHotkeys() {
+        private bool CanUseHotkey(KeyCode p_keyCode) {
             if (SaveManager.Instance.saveCurrentProgressManager.isSaving) {
                 //Do not allow hotkeys while saving
                 return false;
@@ -241,29 +216,48 @@ namespace Ruinarch {
                 //Do not allow hotkeys while loading
                 return false;
             }
-            if (PlayerUI.Instance != null && PlayerUI.Instance.IsMajorUIShowing()) {
-                return false;
+            if (p_keyCode != KeyCode.Escape) {
+                //Allow escape if any popup is showing 
+                if (PlayerUI.Instance != null && PlayerUI.Instance.IsMajorUIShowing()) {
+                    return false;
+                }
+                if (UIManager.Instance != null && UIManager.Instance.IsObjectPickerOpen()) {
+                    return false;
+                }    
             }
-            if (UIManager.Instance != null && UIManager.Instance.IsObjectPickerOpen()) {
-                return false;
-            }
-            return true;
+            return _allowHotKeys;
+        }
+        public void AllowHotkeys(bool p_state) {
+            _allowHotKeys = p_state;
         }
         #endregion
 
         #region Initialization
         private void Initialize() {
-            buttonsToHighlight = new List<string>();
-            Messenger.MarkAsPermanent(Signals.SHOW_SELECTABLE_GLOW);
-            Messenger.MarkAsPermanent(Signals.HIDE_SELECTABLE_GLOW);
-            Messenger.AddListener<string>(Signals.SHOW_SELECTABLE_GLOW, OnReceiveHighlightSignal);
-            Messenger.AddListener<string>(Signals.HIDE_SELECTABLE_GLOW, OnReceiveUnHighlightSignal);
+            buttonsToHighlight = new HashSet<string>();
+            Messenger.MarkAsPermanent(UISignals.SHOW_SELECTABLE_GLOW);
+            Messenger.MarkAsPermanent(UISignals.HIDE_SELECTABLE_GLOW);
+            Messenger.MarkAsPermanent(UISignals.TOGGLE_SHOWN);
+            Messenger.AddListener<string>(UISignals.SHOW_SELECTABLE_GLOW, OnReceiveHighlightSignal);
+            Messenger.AddListener<string>(UISignals.HIDE_SELECTABLE_GLOW, OnReceiveUnHighlightSignal);
+            Messenger.AddListener<RuinarchToggle>(UISignals.TOGGLE_SHOWN, OnToggleShown);
+            Messenger.AddListener<RuinarchButton>(UISignals.BUTTON_SHOWN, OnButtonShown);
         }
         private void OnReceiveHighlightSignal(string name) {
             buttonsToHighlight.Add(name);
         }
         private void OnReceiveUnHighlightSignal(string name) {
             buttonsToHighlight.Remove(name);
+        }
+        private void OnToggleShown(RuinarchToggle toggle) {
+            if (buttonsToHighlight.Contains(toggle.name)) {
+                toggle.StartGlow();
+            }
+        }
+        private void OnButtonShown(RuinarchButton button) {
+            if (buttonsToHighlight.Contains(button.name)) {
+                button.StartGlow();
+            }
         }
         #endregion
 
@@ -398,7 +392,7 @@ namespace Ruinarch {
         #region Selection
         public void Select(ISelectable objToSelect) {
             objToSelect.LeftSelectAction();
-            Messenger.Broadcast(Signals.SELECTABLE_LEFT_CLICKED, objToSelect);
+            Messenger.Broadcast(ControlsSignals.SELECTABLE_LEFT_CLICKED, objToSelect);
         }
         #endregion
 

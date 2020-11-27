@@ -338,15 +338,12 @@ public class Region : ISavable, ILogFiller {
         List<HexTile> areas = null;
         for (int i = 0; i < residents.Count; i++) {
             Character regionResident = residents[i];
-            if (regionResident.territories != null && regionResident.territories.Count > 0) {
-                for (int j = 0; j < regionResident.territories.Count; j++) {
-                    HexTile territory = regionResident.territories[j];
-                    if (areas == null) {
-                        areas = new List<HexTile>();
-                    }
-                    if (areas.Contains(territory) == false) {
-                        areas.Add(territory);
-                    }
+            if (regionResident.HasTerritory()) {
+                if (areas == null) {
+                    areas = new List<HexTile>();
+                }
+                if (areas.Contains(regionResident.territory) == false) {
+                    areas.Add(regionResident.territory);
                 }
             }
         }
@@ -499,13 +496,13 @@ public class Region : ISavable, ILogFiller {
     public void LoadCharacterHere(Character character) {
         charactersAtLocation.Add(character);
         character.SetRegionLocation(this);
-        Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
+        Messenger.Broadcast(RegionSignals.CHARACTER_ENTERED_REGION, character, this);
     }
     public void AddCharacterToLocation(Character character, LocationGridTile tileOverride = null, bool isInitial = false) {
         character.SetRegionLocation(this);
         if (!charactersAtLocation.Contains(character)) {
             charactersAtLocation.Add(character);
-            Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
+            Messenger.Broadcast(RegionSignals.CHARACTER_ENTERED_REGION, character, this);
         }
     }
     public void RemoveCharacterFromLocation(Character character) {
@@ -515,7 +512,7 @@ public class Region : ISavable, ILogFiller {
             //     features[i].OnRemoveCharacterFromRegion(this, character);
             // }
             character.SetRegionLocation(null);
-            Messenger.Broadcast(Signals.CHARACTER_EXITED_REGION, character, this);
+            Messenger.Broadcast(RegionSignals.CHARACTER_EXITED_REGION, character, this);
         }
     }
     //public void RemoveCharacterFromLocation(Party party) {
@@ -536,79 +533,49 @@ public class Region : ISavable, ILogFiller {
             character.SetHomeRegion(null);
         }
     }
-    public List<Character> GetCharactersWithSameTerritory(Character character) {
-        List<Character> validCharacters = null;
-        for (int i = 0; i < residents.Count; i++) {
-            Character resident = residents[i];
-            if (resident != character && resident.territories.Count > 0) {
-                for (int j = 0; j < character.territories.Count; j++) {
-                    HexTile territory = character.territories[j];
-                    if (resident.territories.Contains(territory)) {
-                        if (validCharacters == null) {
-                            validCharacters = new List<Character>();
-                        }
-                        validCharacters.Add(resident);
+    public int GetCountOfAliveCharacterWithSameTerritory(Character character) {
+        int count = 0;
+        if (character.HasTerritory()) {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (resident != character && !resident.isDead && resident.HasTerritory()) {
+                    if (resident.IsTerritory(character.territory)) {
+                        count++;
                     }
                 }
             }
         }
-        return validCharacters;
+        return count;
     }
     public Character GetRandomCharacterWithPathAndFaction(Character source) {
-        List<Character> validCharacters = null;
+        List<Character> validCharacters = ObjectPoolManager.Instance.CreateNewCharactersList();
+        Character chosenCharacter = null;
         for (int i = 0; i < charactersAtLocation.Count; i++) {
             Character character = charactersAtLocation[i];
             if (source != character && source.movementComponent.HasPathTo(character.gridTileLocation) && !character.isDead && character.faction == source.faction) {
-                if (validCharacters == null) { validCharacters = new List<Character>(); }
                 validCharacters.Add(character);
             }
         }
         if(validCharacters != null) {
-            return UtilityScripts.CollectionUtilities.GetRandomElement(validCharacters);
+            chosenCharacter = UtilityScripts.CollectionUtilities.GetRandomElement(validCharacters);
         }
-        return null;
-    }
-    public Character GetRandomAliveVillagerCharacterWithGender(GENDER gender) {
-        List<Character> validCharacters = null;
-        for (int i = 0; i < charactersAtLocation.Count; i++) {
-            Character character = charactersAtLocation[i];
-            if (!character.isDead && character.isNormalCharacter && character.gender == gender) {
-                if (validCharacters == null) { validCharacters = new List<Character>(); }
-                validCharacters.Add(character);
-            }
-        }
-        if (validCharacters != null) {
-            return UtilityScripts.CollectionUtilities.GetRandomElement(validCharacters);
-        }
-        return null;
-    }
-    public Character GetRandomAliveVillagerCharacterWithGenderAndRelationship(GENDER gender, params RELATIONSHIP_TYPE[] rels) {
-        List<Character> validCharacters = null;
-        for (int i = 0; i < charactersAtLocation.Count; i++) {
-            Character character = charactersAtLocation[i];
-            if (!character.isDead && character.isNormalCharacter && character.gender == gender && character.relationshipContainer.HasRelationship(rels)) {
-                if (validCharacters == null) { validCharacters = new List<Character>(); }
-                validCharacters.Add(character);
-            }
-        }
-        if (validCharacters != null) {
-            return UtilityScripts.CollectionUtilities.GetRandomElement(validCharacters);
-        }
-        return null;
+        ObjectPoolManager.Instance.ReturnCharactersListToPool(validCharacters);
+        return chosenCharacter;
     }
     public Character GetRandomCharacterThatMeetCriteria(System.Func<Character, bool> validityChecker) {
-        List<Character> validCharacters = null;
+        List<Character> validCharacters = ObjectPoolManager.Instance.CreateNewCharactersList();
+        Character chosenCharacter = null;
         for (int i = 0; i < charactersAtLocation.Count; i++) {
             Character character = charactersAtLocation[i];
             if (validityChecker.Invoke(character)) {
-                if (validCharacters == null) { validCharacters = new List<Character>(); }
                 validCharacters.Add(character);
             }
         }
         if (validCharacters != null) {
-            return UtilityScripts.CollectionUtilities.GetRandomElement(validCharacters);
+            chosenCharacter = UtilityScripts.CollectionUtilities.GetRandomElement(validCharacters);
         }
-        return null;
+        ObjectPoolManager.Instance.ReturnCharactersListToPool(validCharacters);
+        return chosenCharacter;
     }
     #endregion
 
@@ -745,25 +712,6 @@ public class Region : ISavable, ILogFiller {
         }
         return null;
     }
-    public LocationStructure GetRandomStructureOfTypeThatMeetCriteria(System.Func<LocationStructure, bool> checker, params STRUCTURE_TYPE[] type) {
-        List<LocationStructure> structureChoices = null;
-        for (int i = 0; i < type.Length; i++) {
-            if (structures.ContainsKey(type[i])) {
-                List<LocationStructure> structuresOfType = structures[type[i]];
-                for (int j = 0; j < structuresOfType.Count; j++) {
-                    LocationStructure possibleStructure = structuresOfType[j];
-                    if (checker.Invoke(possibleStructure)) {
-                        if(structureChoices == null) { structureChoices = new List<LocationStructure>(); }
-                        structureChoices.Add(possibleStructure);
-                    }
-                }
-            }
-        }
-        if(structureChoices != null && structureChoices.Count > 0) {
-            return structureChoices[UnityEngine.Random.Range(0, structureChoices.Count)];
-        }
-        return null;
-    }
     public LocationStructure GetFirstUnoccupiedStructureOfType(STRUCTURE_TYPE type) {
         if (structures.ContainsKey(type)) {
             List<LocationStructure> structuresOfType = structures[type];
@@ -797,66 +745,73 @@ public class Region : ISavable, ILogFiller {
         //}
         //return null;
     }
+    public LocationStructure GetRandomStructureThatMeetCriteria(System.Func<LocationStructure, bool> checker) {
+        List<LocationStructure> structureChoices = ObjectPoolManager.Instance.CreateNewStructuresList();
+        LocationStructure chosenStructure = null;
+        for (int i = 0; i < allStructures.Count; i++) {
+            LocationStructure currStructure = allStructures[i];
+            if (checker.Invoke(currStructure)) {
+                structureChoices.Add(currStructure);
+            }
+        }
+        if (structureChoices != null && structureChoices.Count > 0) {
+            chosenStructure = structureChoices[UnityEngine.Random.Range(0, structureChoices.Count)];
+        }
+        ObjectPoolManager.Instance.ReturnStructuresListToPool(structureChoices);
+        return chosenStructure;
+    }
+    public LocationStructure GetRandomStructureOfTypeThatMeetCriteria(System.Func<LocationStructure, bool> checker, params STRUCTURE_TYPE[] type) {
+        List<LocationStructure> structureChoices = ObjectPoolManager.Instance.CreateNewStructuresList();
+        LocationStructure chosenStructure = null;
+        for (int i = 0; i < type.Length; i++) {
+            if (structures.ContainsKey(type[i])) {
+                List<LocationStructure> structuresOfType = structures[type[i]];
+                for (int j = 0; j < structuresOfType.Count; j++) {
+                    LocationStructure possibleStructure = structuresOfType[j];
+                    if (checker.Invoke(possibleStructure)) {
+                        structureChoices.Add(possibleStructure);
+                    }
+                }
+            }
+        }
+        if (structureChoices != null && structureChoices.Count > 0) {
+            chosenStructure = structureChoices[UnityEngine.Random.Range(0, structureChoices.Count)];
+        }
+        ObjectPoolManager.Instance.ReturnStructuresListToPool(structureChoices);
+        return chosenStructure;
+    }
     public LocationStructure GetRandomUnoccupiedStructureWithTag(params STRUCTURE_TAG[] tag) {
-        List<LocationStructure> structuresWithTag = null;
+        List<LocationStructure> structuresWithTag = ObjectPoolManager.Instance.CreateNewStructuresList();
+        LocationStructure chosenStructure = null;
         for (int i = 0; i < allStructures.Count; i++) {
             LocationStructure currStructure = allStructures[i];
             if (!currStructure.IsOccupied()) {
                 if (currStructure.HasStructureTag(tag)) {
-                    if(structuresWithTag == null) { structuresWithTag = new List<LocationStructure>(); }
                     structuresWithTag.Add(currStructure);
                 }
             }
         }
         if(structuresWithTag != null && structuresWithTag.Count > 0) {
-            return structuresWithTag[UnityEngine.Random.Range(0, structuresWithTag.Count)];
+            chosenStructure = structuresWithTag[UnityEngine.Random.Range(0, structuresWithTag.Count)];
         }
-        return null;
-    }
-    public LocationStructure GetRandomUnoccupiedSpecialStructure() {
-        List<LocationStructure> specialStructures = null;
-        for (int i = 0; i < allStructures.Count; i++) {
-            LocationStructure currStructure = allStructures[i];
-            if (!currStructure.IsOccupied()) {
-                if (currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0) {
-                    if (specialStructures == null) { specialStructures = new List<LocationStructure>(); }
-                    specialStructures.Add(currStructure);
-                }
-            }
-        }
-        if (specialStructures != null && specialStructures.Count > 0) {
-            return specialStructures[UnityEngine.Random.Range(0, specialStructures.Count)];
-        }
-        return null;
-    }
-    public LocationStructure GetRandomSpecialStructure() {
-        List<LocationStructure> specialStructures = null;
-        for (int i = 0; i < allStructures.Count; i++) {
-            LocationStructure currStructure = allStructures[i];
-            if (currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0) {
-                if (specialStructures == null) { specialStructures = new List<LocationStructure>(); }
-                specialStructures.Add(currStructure);
-            }
-        }
-        if (specialStructures != null && specialStructures.Count > 0) {
-            return specialStructures[UnityEngine.Random.Range(0, specialStructures.Count)];
-        }
-        return null;
+        ObjectPoolManager.Instance.ReturnStructuresListToPool(structuresWithTag);
+        return chosenStructure;
     }
     public LocationStructure GetRandomSpecialStructureExcept(List<LocationStructure> exceptions) {
-        List<LocationStructure> specialStructures = null;
+        List<LocationStructure> specialStructures = ObjectPoolManager.Instance.CreateNewStructuresList();
+        LocationStructure chosenStructure = null;
         for (int i = 0; i < allStructures.Count; i++) {
             LocationStructure currStructure = allStructures[i];
             if (currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0) {
                 if(exceptions.Contains(currStructure)) { continue; }
-                if(specialStructures == null) { specialStructures = new List<LocationStructure>(); }
                 specialStructures.Add(currStructure);
             }
         }
         if (specialStructures != null && specialStructures.Count > 0) {
-            return specialStructures[UnityEngine.Random.Range(0, specialStructures.Count)];
+            chosenStructure = specialStructures[UnityEngine.Random.Range(0, specialStructures.Count)];
         }
-        return null;
+        ObjectPoolManager.Instance.ReturnStructuresListToPool(specialStructures);
+        return chosenStructure;
     }
     public LocationStructure GetStructureOfTypeWithoutSettlement(STRUCTURE_TYPE type) {
         if (structures.ContainsKey(type)) {
@@ -1145,75 +1100,20 @@ public class Region : ISavable, ILogFiller {
         }
         return count;
     }
-    public HexTile GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex() {
-        List<HexTile> hexes = null;
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currHex = tiles[i];
-            if(currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted) {
-                if(hexes == null) { hexes = new List<HexTile>(); }
-                hexes.Add(currHex);
-            }
-        }
-        if(hexes != null && hexes.Count > 0) {
-            return hexes[UnityEngine.Random.Range(0, hexes.Count)];
-        }
-        return null;
-    }
-    public HexTile GetRandomNoStructureUncorruptedPlainHex() {
-        List<HexTile> hexes = null;
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currHex = tiles[i];
-            if (currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.isCorrupted) {
-                if (hexes == null) { hexes = new List<HexTile>(); }
-                hexes.Add(currHex);
-            }
-        }
-        if (hexes != null && hexes.Count > 0) {
-            return hexes[UnityEngine.Random.Range(0, hexes.Count)];
-        }
-        return null;
-    }
-    public HexTile GetRandomPlainHex() {
-        List<HexTile> hexes = null;
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currHex = tiles[i];
-            if (currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN) {
-                if (hexes == null) { hexes = new List<HexTile>(); }
-                hexes.Add(currHex);
-            }
-        }
-        if (hexes != null && hexes.Count > 0) {
-            return hexes[UnityEngine.Random.Range(0, hexes.Count)];
-        }
-        return null;
-    }
     public HexTile GetRandomHexThatMeetCriteria(System.Func<HexTile, bool> validityChecker) {
-        List<HexTile> hexes = null;
+        List<HexTile> hexes = ObjectPoolManager.Instance.CreateNewHexTilesList();
+        HexTile chosenHex = null;
         for (int i = 0; i < tiles.Count; i++) {
             HexTile currHex = tiles[i];
             if (validityChecker.Invoke(currHex)) {
-                if (hexes == null) { hexes = new List<HexTile>(); }
                 hexes.Add(currHex);
             }
         }
         if (hexes != null && hexes.Count > 0) {
-            return hexes[UnityEngine.Random.Range(0, hexes.Count)];
+            chosenHex = hexes[UnityEngine.Random.Range(0, hexes.Count)];
         }
-        return null;
-    }
-    public HexTile GetRandomUncorruptedPlainHex() {
-        List<HexTile> hexes = null;
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currHex = tiles[i];
-            if (currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && !currHex.isCorrupted) {
-                if (hexes == null) { hexes = new List<HexTile>(); }
-                hexes.Add(currHex);
-            }
-        }
-        if (hexes != null && hexes.Count > 0) {
-            return hexes[UnityEngine.Random.Range(0, hexes.Count)];
-        }
-        return null;
+        ObjectPoolManager.Instance.ReturnHexTilesListToPool(hexes);
+        return chosenHex;
     }
     #endregion
 
@@ -1252,7 +1152,7 @@ public class Region : ISavable, ILogFiller {
         for (int i = 0; i < settlementsInRegion.Count; i++) {
             BaseSettlement settlement = settlementsInRegion[i];
             if (settlement is NPCSettlement npcSettlement && 
-                npcSettlement.owner != null && (npcSettlement.owner.race == RACE.ELVES || npcSettlement.owner.race == RACE.HUMANS)) {
+                npcSettlement.owner != null && npcSettlement.owner.race.IsSapient()) {
                 return true;
             }
         }

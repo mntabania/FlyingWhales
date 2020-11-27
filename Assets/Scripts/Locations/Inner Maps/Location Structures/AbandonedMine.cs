@@ -6,6 +6,6 @@
             AddStructureTag(STRUCTURE_TAG.Monster_Spawner);
             AddStructureTag(STRUCTURE_TAG.Shelter);
         }
-        public AbandonedMine(Region location, SaveDataLocationStructure data) : base(location, data) {}
+        public AbandonedMine(Region location, SaveDataManMadeStructure data) : base(location, data) {}
     }
 }

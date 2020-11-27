@@ -3,10 +3,10 @@
         public UnpauseStep(string stepDescription = "Unpause the game") : base(stepDescription) {
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<bool>(Signals.PAUSED, CheckForCompletion);
+            Messenger.AddListener<bool>(UISignals.PAUSED, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<bool>(Signals.PAUSED, CheckForCompletion);
+            Messenger.RemoveListener<bool>(UISignals.PAUSED, CheckForCompletion);
         }
 
         #region Listeners

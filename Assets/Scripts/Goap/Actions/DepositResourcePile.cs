@@ -12,7 +12,7 @@ public class DepositResourcePile : GoapAction {
         actionIconString = GoapActionStateDB.Haul_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }
 
@@ -44,9 +44,12 @@ public class DepositResourcePile : GoapAction {
     //    }
     //    return ee;
     //}
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData) {
-        List<Precondition> p = new List<Precondition>();
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+        List<Precondition> baseP = base.GetPreconditions(actor, target, otherData, out isOverridden);
+        List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
+        p.AddRange(baseP);
         p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, target.name, false, GOAP_EFFECT_TARGET.TARGET), IsCarriedOrInInventory));
+        isOverridden = true;
         return p;
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -186,7 +189,7 @@ public class DepositResourcePile : GoapAction {
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
-            if (poiTarget.gridTileLocation.structure.settlementLocation != null) {
+            if (poiTarget.gridTileLocation.IsPartOfSettlement()) {
                 // if (poiTarget.gridTileLocation.structure == actor.homeSettlement.mainStorage) {
                 //     return false;
                 // }

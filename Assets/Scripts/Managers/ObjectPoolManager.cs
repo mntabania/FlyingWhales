@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using Interrupts;
+using Inner_Maps.Location_Structures;
+using Inner_Maps;
+using Locations.Settlements;
 
 public class ObjectPoolManager : BaseMonoBehaviour {
 
@@ -24,6 +27,14 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     public List<Party> _partyPool { get; private set; }
     public List<GoapThread> _goapThreadPool { get; private set; }
     private List<LogDatabaseThread> _logDatabaseThreadPool;
+    private List<List<GoapEffect>> _expectedEffectsListPool;
+    private List<List<Precondition>> _preconditionsListPool;
+    private List<List<Character>> _characterListPool;
+    private List<List<HexTile>> _hexTileListPool;
+    private List<List<LocationStructure>> _structureListPool;
+    private List<List<LocationGridTile>> _tileListPool;
+    private List<List<Faction>> _factionListPool;
+    private List<List<BaseSettlement>> _settlementListPool;
 
     private void Awake() {
         Instance = this;
@@ -53,6 +64,14 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructPartyPool();
         ConstructGoapThreadPool();
         ConstructLogDatabaseThreadPool();
+        ConstructExpectedEffectsListPool();
+        ConstructPreconditionListPool();
+        ConstructCharacterListPool();
+        ConstructHexTileListPool();
+        ConstructStructureListPool();
+        ConstructGridTileListPool();
+        ConstructFactionListPool();
+        ConstructSettlementListPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -93,7 +112,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     
     public void DestroyObject(PooledObject pooledObject) {
         PooledObject[] pooledObjects = pooledObject.GetComponents<PooledObject>();
-        Messenger.Broadcast(Signals.POOLED_OBJECT_DESTROYED, pooledObject.gameObject);
+        Messenger.Broadcast(ObjectPoolSignals.POOLED_OBJECT_DESTROYED, pooledObject.gameObject);
         pooledObject.BeforeDestroyActions();
         for (int i = 0; i < pooledObjects.Length; i++) {
             pooledObjects[i].BeforeDestroyActions();
@@ -106,7 +125,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     }
     public void DestroyObject(GameObject gameObject) {
         PooledObject[] pooledObjects = gameObject.GetComponents<PooledObject>();
-        Messenger.Broadcast(Signals.POOLED_OBJECT_DESTROYED, gameObject);
+        Messenger.Broadcast(ObjectPoolSignals.POOLED_OBJECT_DESTROYED, gameObject);
         for (int i = 0; i < pooledObjects.Length; i++) {
             pooledObjects[i].BeforeDestroyActions();
         }
@@ -274,6 +293,28 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         return new Party();
     }
     #endregion
+    
+    #region Database Thread
+    private void ConstructLogDatabaseThreadPool() {
+        _logDatabaseThreadPool = new List<LogDatabaseThread>();
+    }
+    public LogDatabaseThread CreateNewLogDatabaseThread() {
+        LogDatabaseThread data = GetLogDatabaseThreadFromPool();
+        return data;
+    }
+    public void ReturnLogDatabaseThreadToPool(LogDatabaseThread data) {
+        data.Reset();
+        _logDatabaseThreadPool.Add(data);
+    }
+    private LogDatabaseThread GetLogDatabaseThreadFromPool() {
+        if (_logDatabaseThreadPool.Count > 0) {
+            LogDatabaseThread data = _logDatabaseThreadPool[0];
+            _logDatabaseThreadPool.RemoveAt(0);
+            return data;
+        }
+        return new LogDatabaseThread();
+    }
+    #endregion
 
     #region Goap Thread
     private void ConstructGoapThreadPool() {
@@ -296,26 +337,180 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         return new GoapThread();
     }
     #endregion
-    
-    #region Database Thread
-    private void ConstructLogDatabaseThreadPool() {
-        _logDatabaseThreadPool = new List<LogDatabaseThread>();
+
+    #region Goap Action Expected Effects
+    private void ConstructExpectedEffectsListPool() {
+        _expectedEffectsListPool = new List<List<GoapEffect>>();
     }
-    public LogDatabaseThread CreateNewLogDatabaseThread() {
-        LogDatabaseThread data = GetLogDatabaseThreadFromPool();
+    public List<GoapEffect> CreateNewExpectedEffectsList() {
+        List<GoapEffect> data = GetExpectedEffectsListFromPool();
         return data;
     }
-    public void ReturnLogDatabaseThreadToPool(LogDatabaseThread data) {
-        data.Reset();
-        _logDatabaseThreadPool.Add(data);
+    public void ReturnExpectedEffectsListToPool(List<GoapEffect> data) {
+        data.Clear();
+        _expectedEffectsListPool.Add(data);
     }
-    private LogDatabaseThread GetLogDatabaseThreadFromPool() {
-        if (_logDatabaseThreadPool.Count > 0) {
-            LogDatabaseThread data = _logDatabaseThreadPool[0];
-            _logDatabaseThreadPool.RemoveAt(0);
+    private List<GoapEffect> GetExpectedEffectsListFromPool() {
+        if (_expectedEffectsListPool.Count > 0) {
+            List<GoapEffect> data = _expectedEffectsListPool[0];
+            _expectedEffectsListPool.RemoveAt(0);
             return data;
         }
-        return new LogDatabaseThread();
+        return new List<GoapEffect>();
+    }
+    #endregion
+
+    #region Goap Action Preconditions
+    private void ConstructPreconditionListPool() {
+        _preconditionsListPool = new List<List<Precondition>>();
+    }
+    public List<Precondition> CreateNewPreconditionsList() {
+        List<Precondition> data = GetPreconditionsListFromPool();
+        return data;
+    }
+    public void ReturnPreconditionsListToPool(List<Precondition> data) {
+        data.Clear();
+        _preconditionsListPool.Add(data);
+    }
+    private List<Precondition> GetPreconditionsListFromPool() {
+        if (_preconditionsListPool.Count > 0) {
+            List<Precondition> data = _preconditionsListPool[0];
+            _preconditionsListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<Precondition>();
+    }
+    #endregion
+
+    #region Characters
+    private void ConstructCharacterListPool() {
+        _characterListPool = new List<List<Character>>();
+    }
+    public List<Character> CreateNewCharactersList() {
+        List<Character> data = GetCharactersListFromPool();
+        return data;
+    }
+    public void ReturnCharactersListToPool(List<Character> data) {
+        data.Clear();
+        _characterListPool.Add(data);
+    }
+    private List<Character> GetCharactersListFromPool() {
+        if (_characterListPool.Count > 0) {
+            List<Character> data = _characterListPool[0];
+            _characterListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<Character>();
+    }
+    #endregion
+
+    #region HexTiles
+    private void ConstructHexTileListPool() {
+        _hexTileListPool = new List<List<HexTile>>();
+    }
+    public List<HexTile> CreateNewHexTilesList() {
+        List<HexTile> data = GetHexTilesListFromPool();
+        return data;
+    }
+    public void ReturnHexTilesListToPool(List<HexTile> data) {
+        data.Clear();
+        _hexTileListPool.Add(data);
+    }
+    private List<HexTile> GetHexTilesListFromPool() {
+        if (_hexTileListPool.Count > 0) {
+            List<HexTile> data = _hexTileListPool[0];
+            _hexTileListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<HexTile>();
+    }
+    #endregion
+
+    #region Structures
+    private void ConstructStructureListPool() {
+        _structureListPool = new List<List<LocationStructure>>();
+    }
+    public List<LocationStructure> CreateNewStructuresList() {
+        List<LocationStructure> data = GetStructuresListFromPool();
+        return data;
+    }
+    public void ReturnStructuresListToPool(List<LocationStructure> data) {
+        data.Clear();
+        _structureListPool.Add(data);
+    }
+    private List<LocationStructure> GetStructuresListFromPool() {
+        if (_structureListPool.Count > 0) {
+            List<LocationStructure> data = _structureListPool[0];
+            _structureListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<LocationStructure>();
+    }
+    #endregion
+
+    #region Location Grid Tile
+    private void ConstructGridTileListPool() {
+        _tileListPool = new List<List<LocationGridTile>>();
+    }
+    public List<LocationGridTile> CreateNewGridTileList() {
+        List<LocationGridTile> data = GetGridTileListFromPool();
+        return data;
+    }
+    public void ReturnGridTileListToPool(List<LocationGridTile> data) {
+        data.Clear();
+        _tileListPool.Add(data);
+    }
+    private List<LocationGridTile> GetGridTileListFromPool() {
+        if (_tileListPool.Count > 0) {
+            List<LocationGridTile> data = _tileListPool[0];
+            _tileListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<LocationGridTile>();
+    }
+    #endregion
+
+    #region Faction
+    private void ConstructFactionListPool() {
+        _factionListPool = new List<List<Faction>>();
+    }
+    public List<Faction> CreateNewFactionList() {
+        List<Faction> data = GetFactionListFromPool();
+        return data;
+    }
+    public void ReturnFactionListToPool(List<Faction> data) {
+        data.Clear();
+        _factionListPool.Add(data);
+    }
+    private List<Faction> GetFactionListFromPool() {
+        if (_factionListPool.Count > 0) {
+            List<Faction> data = _factionListPool[0];
+            _factionListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<Faction>();
+    }
+    #endregion
+
+    #region Settlement
+    private void ConstructSettlementListPool() {
+        _settlementListPool = new List<List<BaseSettlement>>();
+    }
+    public List<BaseSettlement> CreateNewSettlementList() {
+        List<BaseSettlement> data = GetSettlementListFromPool();
+        return data;
+    }
+    public void ReturnSettlementListToPool(List<BaseSettlement> data) {
+        data.Clear();
+        _settlementListPool.Add(data);
+    }
+    private List<BaseSettlement> GetSettlementListFromPool() {
+        if (_settlementListPool.Count > 0) {
+            List<BaseSettlement> data = _settlementListPool[0];
+            _settlementListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<BaseSettlement>();
     }
     #endregion
 
@@ -343,6 +538,22 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _partyPool = null;
         _logDatabaseThreadPool?.Clear();
         _logDatabaseThreadPool = null;
+        _expectedEffectsListPool?.Clear();
+        _expectedEffectsListPool = null;
+        _preconditionsListPool?.Clear();
+        _preconditionsListPool = null;
+        _characterListPool?.Clear();
+        _characterListPool = null;
+        _hexTileListPool?.Clear();
+        _hexTileListPool = null;
+        _structureListPool?.Clear();
+        _structureListPool = null;
+        _tileListPool?.Clear();
+        _tileListPool = null;
+        _factionListPool?.Clear();
+        _factionListPool = null;
+        _settlementListPool?.Clear();
+        _settlementListPool = null;
         base.OnDestroy();
         Instance = null;
     }

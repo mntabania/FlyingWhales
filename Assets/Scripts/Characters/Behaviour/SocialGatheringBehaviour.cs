@@ -36,7 +36,7 @@ public class SocialGatheringBehaviour : CharacterBehaviourComponent {
                         }
                     } else if (roll >= 50 && roll < 70) {
                         Character chosenCharacter = character.currentStructure.GetRandomCharacterThatMeetCriteria(
-                            x => !x.combatComponent.isInCombat && x.canPerform && x.canWitness && !x.isDead &&
+                            x => !x.combatComponent.isInCombat && x.limiterComponent.canPerform && x.limiterComponent.canWitness && !x.isDead &&
                                  x != character
                         );
                         if (chosenCharacter != null && character.nonActionEventsComponent.CanInteract(chosenCharacter)) {

@@ -25,9 +25,9 @@ namespace Traits {
         }
 
         #region Loading
-        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            SaveDataCriminal saveDataCriminal = saveDataTrait as SaveDataCriminal;
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
+            SaveDataCriminal saveDataCriminal = p_saveDataTrait as SaveDataCriminal;
             Assert.IsNotNull(saveDataCriminal);
             charactersThatAreAlreadyWorried = SaveUtilities.ConvertIDListToCharacters(saveDataCriminal.alreadyWorriedCharacterIDs);
             isImprisoned = saveDataCriminal.isImprisoned;

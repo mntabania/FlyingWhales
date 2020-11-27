@@ -12,7 +12,7 @@ public class RememberFallen : GoapAction {
     public RememberFallen() : base(INTERACTION_TYPE.REMEMBER_FALLEN) {
         actionIconString = GoapActionStateDB.Sad_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.EARLY_NIGHT, TIME_IN_WORDS.LATE_NIGHT, TIME_IN_WORDS.AFTER_MIDNIGHT, };
         isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Social};
@@ -28,6 +28,13 @@ public class RememberFallen : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
+        if (actor.traitContainer.HasTrait("Enslaved")) {
+            if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+                costLog += $" +2000(Slave, target is not in actor's home)";
+                actor.logComponent.AppendCostLog(costLog);
+                return 2000;
+            }
+        }
         if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
             if (actor.partyComponent.isActiveMember) {
                 if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null
@@ -57,7 +64,7 @@ public class RememberFallen : GoapAction {
             cost += 2000;
             costLog += " +2000(Psychopath or active member in a party)";
         }
-        if (actor.moodComponent.moodState == MOOD_STATE.Bad || actor.moodComponent.moodState == MOOD_STATE.Critical || !actor.isSociable) {
+        if (actor.moodComponent.moodState == MOOD_STATE.Bad || actor.moodComponent.moodState == MOOD_STATE.Critical || !actor.limiterComponent.isSociable) {
             cost -= 15;
             costLog += " -15(Low or Critical Mood or Unsociable)";
         }

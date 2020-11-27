@@ -680,6 +680,39 @@ namespace Traits {
                 }
             } 
         }
+        public void RescheduleLatestTraitRemoval(ITraitable p_traitable, Trait p_trait, GameDate p_newRemoveDate) {
+            string traitName = p_trait.name;
+            if (scheduleTickets.ContainsKey(traitName)) {
+                TraitRemoveSchedule traitRemoveSchedule = null;
+                if(scheduleTickets[traitName].Count > 0) {
+                    traitRemoveSchedule = scheduleTickets[traitName].Last();
+                }
+                if (traitRemoveSchedule != null) {
+                    SchedulingManager.Instance.RemoveSpecificEntry(traitRemoveSchedule.ticket);
+                    scheduleTickets[traitName].RemoveAt(scheduleTickets[traitName].IndexOf(traitRemoveSchedule));
+                    ObjectPoolManager.Instance.ReturnTraitRemoveScheduleToPool(traitRemoveSchedule);
+                }
+                string ticket = SchedulingManager.Instance.AddEntry(p_newRemoveDate, () => p_traitable.traitContainer.RemoveTraitOnSchedule(p_traitable, p_trait), this);
+                p_traitable.traitContainer.AddScheduleTicket(p_trait.name, ticket, p_newRemoveDate);    
+                
+                if (p_traitable is Character character) {
+                    //TODO: Make this more abstracted
+                    character.moodComponent.RescheduleMoodEffect(p_trait, p_newRemoveDate);
+                }
+            }
+        }
+        public GameDate GetLatestExpiryDate(string p_traitName) {
+            if (scheduleTickets.ContainsKey(p_traitName)) {
+                TraitRemoveSchedule traitRemoveSchedule = null;
+                if(scheduleTickets[p_traitName].Count > 0) {
+                    traitRemoveSchedule = scheduleTickets[p_traitName].Last();
+                }
+                if (traitRemoveSchedule != null) {
+                    return traitRemoveSchedule.removeDate;
+                }
+            }
+            return default;
+        }
         #endregion
         
         #region Switches
@@ -710,6 +743,9 @@ namespace Traits {
                 }
             }
             return false;
+        }
+        public bool HasTrait(string traitName) {
+            return allTraitsAndStatuses.ContainsKey(traitName);
         }
         #endregion
         
@@ -780,8 +816,12 @@ namespace Traits {
                 traits.Add(trait);
             }
             trait.LoadTraitOnLoadTraitContainer(addTo);
-            allTraitsAndStatuses.Add(trait.name, trait);
-            
+            if (allTraitsAndStatuses.ContainsKey(trait.name)) {
+                UnityEngine.Debug.LogError($"Trait {trait.name} already exists in {addTo}'s traits!");
+            } else {
+                allTraitsAndStatuses.Add(trait.name, trait);    
+            }
+
             if(trait.traitOverrideFunctionIdentifiers != null && trait.traitOverrideFunctionIdentifiers.Count > 0) {
                 for (int i = 0; i < trait.traitOverrideFunctionIdentifiers.Count; i++) {
                     string identifier = trait.traitOverrideFunctionIdentifiers[i];

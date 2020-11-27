@@ -4,6 +4,7 @@ using UnityEngine;
 using Traits;
 using Inner_Maps;
 using UtilityScripts;
+using Locations.Settlements;
 
 public class CombatComponent : CharacterComponent {
     public int attack { get; private set; }
@@ -65,6 +66,22 @@ public class CombatComponent : CharacterComponent {
         willProcessCombat = data.willProcessCombat;
     }
 
+    #region Signals
+    public void SubscribeToSignals() {
+        Messenger.AddListener<Prisoner>(TraitSignals.HAS_BECOME_PRISONER, OnHasBecomePrisoner);
+    }
+    public void UnsubscribeToSignals() {
+        Messenger.RemoveListener<Prisoner>(TraitSignals.HAS_BECOME_PRISONER, OnHasBecomePrisoner);
+    }
+    #endregion
+
+
+    #region Listeners
+    private void OnHasBecomePrisoner(Prisoner prisoner) {
+        OnCharacterBecomePrisoner(prisoner);
+    }
+    #endregion
+
     #region General
     //public void OnThisCharacterEndedCombatState() {
     //    SetOnProcessCombatAction(null);
@@ -77,7 +94,7 @@ public class CombatComponent : CharacterComponent {
         } else {
             if (owner.combatComponent.isInCombat) {
                 log += "\n-Character is already in combat, determining combat action to do";
-                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
+                Messenger.Broadcast(CharacterSignals.DETERMINE_COMBAT_REACTION, owner);
             } else {
                 log += "\n-Character is not in combat, will add Combat job if there is a hostile or avoid in range";
                 if (hostilesInRange.Count > 0 || avoidInRange.Count > 0) {
@@ -208,7 +225,7 @@ public class CombatComponent : CharacterComponent {
         string debugLog = $"FIGHT or FLIGHT response of {owner.name} against {target.nameWithID}";
         //return new CombatReaction(COMBAT_REACTION.Flight);
 
-        if (!owner.canPerform || !owner.canMove) {
+        if (!owner.limiterComponent.canPerform || !owner.limiterComponent.canMove) {
             debugLog += "\n-Character cannot move/perform, will not fight or flight";
             owner.logComponent.PrintLogIfActive(debugLog);
             return new CombatReaction(COMBAT_REACTION.None);
@@ -224,11 +241,30 @@ public class CombatComponent : CharacterComponent {
             owner.logComponent.PrintLogIfActive(debugLog);
             return new CombatReaction(COMBAT_REACTION.Flight);
         }
-        if (owner.traitContainer.HasTrait("Berserked") || owner is Summon || owner.characterClass.className == "Zombie" || owner.race == RACE.DEMON) {
+        if (owner.traitContainer.HasTrait("Enslaved") && target is Character targetChar && targetChar.isNormalCharacter) {
+            debugLog += "\n-Character is a slave and target is a villager";
+            debugLog += "\n-FLIGHT";
+            owner.logComponent.PrintLogIfActive(debugLog);
+            return new CombatReaction(COMBAT_REACTION.Flight);
+        }
+        if (owner.traitContainer.HasTrait("Berserked") || owner is Summon || owner.characterClass.IsZombie() || owner.race == RACE.DEMON) {
             debugLog += "\n-Character is berserked/monster/zombie/demon";
             debugLog += "\n-FIGHT";
             owner.logComponent.PrintLogIfActive(debugLog);
             return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+        } else if (owner.race == RACE.RATMAN && owner.faction?.factionType.type == FACTION_TYPE.Ratmen) {
+            debugLog += "\n-Character is Ratman and in a Ratmen faction";
+            BaseSettlement settlement = null;
+            if(owner.gridTileLocation != null && owner.gridTileLocation.IsPartOfSettlement(out settlement) && settlement.owner != null && settlement.owner != owner.faction) {
+                debugLog += "\n-Character is inside an occupied Settlement owned by a different faction, Flight";
+                debugLog += "\n-FLIGHT";
+                owner.logComponent.PrintLogIfActive(debugLog);
+                return new CombatReaction(COMBAT_REACTION.Flight);
+            } else {
+                debugLog += "\n-FIGHT";
+                owner.logComponent.PrintLogIfActive(debugLog);
+                return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
+            }
         } else if (owner.traitContainer.HasTrait("Drunk")) {
             debugLog += "\n-Character is drunk, 50% chance to Fight";
             if (GameUtilities.RollChance(50)) {
@@ -331,147 +367,6 @@ public class CombatComponent : CharacterComponent {
                 }
             }
         }
-        //if (target is Character) {
-        //    debugLog += "\n-Target is character";
-        //    Character targetCharacter = target as Character;
-        //    if (owner.traitContainer.HasTrait("Coward")) {
-        //        debugLog += "\n-Character is coward";
-        //        if(owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
-        //            debugLog += "\n-Character is a demon";
-        //            debugLog += "\n-FIGHT";
-        //            owner.logComponent.PrintLogIfActive(debugLog);
-        //            return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-        //        } else {
-        //            debugLog += "\n-FLIGHT";
-        //            owner.logComponent.PrintLogIfActive(debugLog);
-        //            return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
-        //        }
-        //    } else {
-        //        debugLog += "\n-Character is not coward";
-        //        if (!owner.traitContainer.HasTrait("Combatant", "Royalty")) {
-        //            debugLog += "\n-Character is not combatant, 20% to Fight";
-        //            int chance = UnityEngine.Random.Range(0, 100);
-        //            debugLog += $"\n-Roll: {chance}";
-        //            if (chance < 20) {
-        //                debugLog += "\n-FIGHT";
-        //                owner.logComponent.PrintLogIfActive(debugLog);
-        //                return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-        //            } else {
-        //                if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
-        //                    debugLog += "\n-Character is a demon";
-        //                    debugLog += "\n-FIGHT";
-        //                    owner.logComponent.PrintLogIfActive(debugLog);
-        //                    return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-        //                } else {
-        //                    debugLog += "\n-FLIGHT";
-        //                    owner.logComponent.PrintLogIfActive(debugLog);
-        //                    return new CombatReaction(COMBAT_REACTION.Flight, "got scared");
-        //                }
-        //            }
-        //        } else {
-        //            debugLog += "\n-Character is combatant or royalty";
-        //            if (owner.currentHP > targetCharacter.currentHP) {
-        //                debugLog += "\n-Character hp is higher than target";
-        //                debugLog += "\n-FIGHT";
-        //                owner.logComponent.PrintLogIfActive(debugLog);
-        //                return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-        //            } else {
-        //                debugLog += "\n-Character hp is lower or equal than target";
-        //                if (CombatManager.Instance.IsImmuneToElement(targetCharacter, elementalDamage.type)) {
-        //                    debugLog += "\n-Target is immune to character elemental damage";
-        //                    if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
-        //                        debugLog += "\n-Character is a demon";
-        //                        debugLog += "\n-FIGHT";
-        //                        owner.logComponent.PrintLogIfActive(debugLog);
-        //                        return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-        //                    } else {
-        //                        debugLog += "\n-FLIGHT";
-        //                        owner.logComponent.PrintLogIfActive(debugLog);
-        //                        return new CombatReaction(COMBAT_REACTION.Flight, "got scared");
-        //                    }
-        //                } else if (CombatManager.Instance.IsImmuneToElement(owner, targetCharacter.combatComponent.elementalDamage.type)) {
-        //                    debugLog += "\n-Character is immune to target elemental damage";
-        //                    debugLog += "\n-FIGHT";
-        //                    owner.logComponent.PrintLogIfActive(debugLog);
-        //                    return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-        //                } else {
-        //                    if (owner.currentHP >= Mathf.CeilToInt(owner.maxHP * 0.15f)) {
-        //                        debugLog += "\n-Character's hp is greater than or equal to 30% of its max hp";
-        //                        debugLog += "\n-FIGHT";
-        //                        owner.logComponent.PrintLogIfActive(debugLog);
-        //                        return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-        //                    } else {
-        //                        int fightChance = 25;
-        //                        for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
-        //                            if (owner.marker.inVisionCharacters[i].combatComponent.hostilesInRange.Contains(target)) {
-        //                                debugLog += "\n-Character has another character in vision who has the same target";
-        //                                fightChance = 75;
-        //                                break;
-        //                            }
-        //                        }
-        //                        debugLog += $"\n-Fight chance: {fightChance}";
-        //                        int roll = UnityEngine.Random.Range(0, 100);
-        //                        debugLog += $"\n-Roll: {roll}";
-        //                        if (roll < fightChance) {
-        //                            debugLog += "\n-FIGHT";
-        //                            owner.logComponent.PrintLogIfActive(debugLog);
-        //                            return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-        //                        } else {
-        //                            if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
-        //                                debugLog += "\n-Character is a demon";
-        //                                debugLog += "\n-FIGHT";
-        //                                owner.logComponent.PrintLogIfActive(debugLog);
-        //                                return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-        //                            } else {
-        //                                debugLog += "\n-FLIGHT";
-        //                                owner.logComponent.PrintLogIfActive(debugLog);
-        //                                return new CombatReaction(COMBAT_REACTION.Flight, "got scared");
-        //                            }
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //} else if (target is TileObject tileObject) {
-        //    debugLog += "\n-Target is object";
-        //    if (owner.traitContainer.HasTrait("Coward")) {
-        //        debugLog += "\n-Character is coward";
-        //        if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
-        //            debugLog += "\n-Character is a demon";
-        //            debugLog += "\n-FIGHT";
-        //            owner.logComponent.PrintLogIfActive(debugLog);
-        //            return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-        //        } else {
-        //            debugLog += "\n-FLIGHT";
-        //            owner.logComponent.PrintLogIfActive(debugLog);
-        //            return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
-        //        }
-        //    } else if (tileObject.traitContainer.HasTrait("Dangerous")) {
-        //        debugLog += "\n-Object is dangerous";
-        //        if (string.IsNullOrEmpty(tileObject.neutralizer) == false && 
-        //            owner.traitContainer.HasTrait(tileObject.neutralizer)) {
-        //            debugLog += $"\n-Character has neutralizer trait {tileObject.neutralizer}";
-        //            owner.logComponent.PrintLogIfActive(debugLog);
-        //            return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-        //        } else {
-        //            if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
-        //                debugLog += "\n-Character is a demon";
-        //                debugLog += "\n-FIGHT";
-        //                owner.logComponent.PrintLogIfActive(debugLog);
-        //                return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-        //            } else {
-        //                debugLog += "\n-FLIGHT";
-        //                owner.logComponent.PrintLogIfActive(debugLog);
-        //                return new CombatReaction(COMBAT_REACTION.Flight, "got scared");
-        //            }
-        //        }
-        //    } else {
-        //        debugLog += "\n-Object is not dangerous";
-        //        owner.logComponent.PrintLogIfActive(debugLog);
-        //        return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
-        //    }
-        //}
         owner.logComponent.PrintLogIfActive(debugLog);
         return new CombatReaction(COMBAT_REACTION.None);
     }
@@ -581,7 +476,7 @@ public class CombatComponent : CharacterComponent {
             return;
         }
         if (hostilesInRange.Count > 0) {
-            if (owner.canMove) {
+            if (owner.limiterComponent.canMove) {
                 for (int i = 0; i < hostilesInRange.Count; i++) {
                     IPointOfInterest hostile = hostilesInRange[i];
                     if (owner.marker.IsPOIInVision(hostile)) {
@@ -818,7 +713,7 @@ public class CombatComponent : CharacterComponent {
 
     #region Avoid
     private bool AddAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true, string reason = "") {
-        if (owner.canMove) {
+        if (owner.limiterComponent.canMove) {
         //if (!poi.isDead && !poi.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && character.traitContainer.GetNormalTrait<Trait>("Berserked") == null) {
             if (!avoidInRange.Contains(poi)) {
                 avoidInRange.Add(poi);
@@ -899,68 +794,186 @@ public class CombatComponent : CharacterComponent {
     }
     public string GetCombatLogKeyReason(IPointOfInterest target) {
         string key = string.Empty;
-        CombatData combatData = GetCombatData(target);
-        if (combatData != null) {
-            key = combatData.reasonForCombat;
-            if (key == CombatManager.Action) {
-                switch (combatData.connectedAction.associatedJobType) {
-                    case JOB_TYPE.RESTRAIN:
-                        key = "Restrain";
-                        break;
-                    case JOB_TYPE.PRODUCE_FOOD:
-                    case JOB_TYPE.PRODUCE_FOOD_FOR_CAMP:
-                    case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:   
-                        key = "Butcher";
-                        break;
-                    case JOB_TYPE.APPREHEND:
-                        key = "Apprehend";
-                        break;
-                    case JOB_TYPE.RITUAL_KILLING:
-                        key = "Ritual Killing";
-                        break;
-                    case JOB_TYPE.BERSERK_ATTACK:
-                        key = "Berserked";
-                        break;
-                    case JOB_TYPE.BRAWL:
-                        key = "Snapped";
-                        break;
-                    case JOB_TYPE.DESTROY:
-                        if(target is Guitar guitar && guitar.IsOwnedBy(owner)) {
-                            if (owner.traitContainer.HasTrait("Music Hater")) {
-                                key = "Destroy_Music_Hater";
-                                break;
-                            }
-                        } else if (target is CultistKit) {
-                            key = "Destroy_Cultist_Kit";
-                            break;
-                        }
+        if(target != null) {
+            CombatData combatData = GetCombatData(target);
+            if (combatData != null) {
+                key = combatData.reasonForCombat;
+                if (key == CombatManager.Action) {
+                    key = GetCombatActionReason(combatData, target);
+                } else {
+                    if (key == CombatManager.Anger) {
                         if (owner.traitContainer.HasTrait("Angry")) {
-                            key = "Destroy_Angry";
-                        } else if (owner.traitContainer.HasTrait("Suspicious")) {
-                            key = "Destroy_Suspicious";
+                            Trait trait = owner.traitContainer.GetTraitOrStatus<Trait>("Angry");
+                            if (trait.IsResponsibleForTrait(target as Character)) {
+                                key = "Anger_Target";
+                            }
                         }
-                        break;
-                    case JOB_TYPE.CAPTURE_CHARACTER:
-                        if (owner is Troll) {
-                            key = "Abduct";
-                        }
-                        break;
-                    case JOB_TYPE.KIDNAP_RAID:
-                        key = "Raid";
-                        break;
-                }
-            } else {
-                if(key == CombatManager.Anger) {
-                    if (owner.traitContainer.HasTrait("Angry")) {
-                        Trait trait = owner.traitContainer.GetTraitOrStatus<Trait>("Angry");
-                        if(trait.responsibleCharacter == target) {
-                            key = "Anger_Target";
-                        }
+                    } else if (key == CombatManager.Hostility) {
+                        key = GetHostilityReason(target, combatData);
+                    } else if (key == CombatManager.Retaliation) {
+                        key = GetRetaliationReason(target, combatData);
                     }
                 }
             }
         }
         return key;
+    }
+    public string GetCombatStateIconString(IPointOfInterest target) {
+        string iconString = GoapActionStateDB.Hostile_Icon;
+        if(target != null) {
+            CombatData combatData = GetCombatData(target);
+            if (combatData != null && combatData.connectedAction != null) {
+                switch (combatData.connectedAction.associatedJobType) {
+                    case JOB_TYPE.MONSTER_ABDUCT:
+                        iconString = GoapActionStateDB.Stealth_Icon;
+                        break;
+                    case JOB_TYPE.PRODUCE_FOOD:
+                        iconString = GoapActionStateDB.Butcher_Icon;
+                        break;
+                }
+            }
+        }
+        return iconString;
+    }
+    private string GetCombatActionReason(CombatData combatData, IPointOfInterest target) {
+       if(combatData != null && combatData.connectedAction != null) {
+            switch (combatData.connectedAction.associatedJobType) {
+                case JOB_TYPE.RESTRAIN:
+                    return "Restrain";
+                case JOB_TYPE.PRODUCE_FOOD:
+                case JOB_TYPE.PRODUCE_FOOD_FOR_CAMP:
+                case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
+                    return "Butcher";
+                case JOB_TYPE.APPREHEND:
+                    return CombatManager.Apprehend;
+                case JOB_TYPE.RITUAL_KILLING:
+                    return "Ritual Killing";
+                case JOB_TYPE.BERSERK_ATTACK:
+                    return "Berserked";
+                case JOB_TYPE.BRAWL:
+                    return "Snapped";
+                case JOB_TYPE.DESTROY:
+                    if (target is Guitar guitar && guitar.IsOwnedBy(owner)) {
+                        if (owner.traitContainer.HasTrait("Music Hater")) {
+                            return "Destroy_Music_Hater";
+                        }
+                    } else if (target is CultistKit) {
+                        return "Destroy_Cultist_Kit";
+                    }
+                    if (owner.traitContainer.HasTrait("Angry")) {
+                        return "Destroy_Angry";
+                    } else if (owner.traitContainer.HasTrait("Suspicious")) {
+                        return "Destroy_Suspicious";
+                    }
+                    break;
+                case JOB_TYPE.MONSTER_ABDUCT:
+                    return CombatManager.Abduct;
+                case JOB_TYPE.CAPTURE_CHARACTER:
+                    if (owner is Troll) {
+                        return CombatManager.Abduct;
+                    }
+                    break;
+                case JOB_TYPE.KIDNAP_RAID:
+                    return CombatManager.Raid;
+            }
+       }
+       return string.Empty;
+    }
+    private string GetRetaliationReason(IPointOfInterest target, CombatData combatData) {
+        //Get reason of the target towards this character to know why target attacked this character in the first place
+        //Because if the reason is Retaliation we assume that the target attacked this character first
+        if(target is Character targetCharacter) {
+            CombatData targetCombatData = targetCharacter.combatComponent.GetCombatData(owner);
+            if(targetCombatData != null) {
+                string reason = targetCombatData.reasonForCombat;
+                if (!string.IsNullOrEmpty(reason)) {
+                    string key = string.Empty;
+                    if (reason == CombatManager.Action) {
+                        key = targetCharacter.combatComponent.GetCombatActionReason(targetCombatData, owner);
+                    }
+                    if (key == CombatManager.Apprehend) {
+                        return CombatManager.Resisting_Arrest;
+                    } else if (key == CombatManager.Abduct) {
+                        return CombatManager.Resisting_Abduction;
+                    }
+                }
+            }
+        }
+        return CombatManager.Defending_Self;
+    }
+    private string GetHostilityReason(IPointOfInterest target, CombatData combatData) {
+        Character targetCharacter = target as Character;
+        if (owner.partyComponent.isMemberThatJoinedQuest) {
+            PartyQuest quest = owner.partyComponent.currentParty.currentQuest;
+            if(quest is RaidPartyQuest raidQuest && raidQuest.targetSettlement != null) {
+                if(targetCharacter != null) {
+                    if(targetCharacter.homeSettlement == raidQuest.targetSettlement) {
+                        return CombatManager.Raid;
+                    }
+                } else if (target is TileObject) {
+                    if(target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(raidQuest.targetSettlement)) {
+                        return CombatManager.Raid;
+                    }
+                }
+            }
+        }
+        if (targetCharacter != null) {
+            if(owner.IsInHomeSettlement()) {
+                if(targetCharacter.homeSettlement != owner.homeSettlement && targetCharacter.currentSettlement == owner.homeSettlement) {
+                    return CombatManager.Defending_Territory;
+                }
+            } else if (owner.IsInTerritory()) {
+                if (!targetCharacter.IsTerritory(owner.hexTileLocation) && targetCharacter.IsInTerritoryOf(owner)) {
+                    return CombatManager.Defending_Territory;
+                }
+            }
+        }
+        if(owner.faction != null) {
+            if(owner.faction.factionType.type == FACTION_TYPE.Wild_Monsters) {
+                return CombatManager.Feral_Monster;
+            } else if (owner.faction.factionType.type == FACTION_TYPE.Undead) {
+                return CombatManager.Hostile_Undead;
+            }
+        }
+
+        if(targetCharacter != null) {
+            if (owner.minion != null && targetCharacter.faction != null && targetCharacter.faction.isMajorNonPlayer) {
+                if (combatData.isLethal) {
+                    return CombatManager.Slaying_Villager;
+                } else {
+                    return CombatManager.Incapacitating_Villager;
+                }
+            }
+            if (targetCharacter.minion != null) {
+                if (combatData.isLethal) {
+                    return CombatManager.Slaying_Demon;
+                } else {
+                    return CombatManager.Incapacitating_Demon;
+                }
+            }
+            if(targetCharacter.faction != null) {
+                if (targetCharacter.faction.factionType.type == FACTION_TYPE.Vagrants) {
+                    return CombatManager.Fighting_Vagrant;
+                } else if (targetCharacter.faction.factionType.type == FACTION_TYPE.Wild_Monsters) {
+                    if (combatData.isLethal) {
+                        return CombatManager.Slaying_Monster;
+                    } else {
+                        return CombatManager.Incapacitating_Monster;
+                    }
+                } else if (targetCharacter.faction.factionType.type == FACTION_TYPE.Undead) {
+                    if (combatData.isLethal) {
+                        return CombatManager.Slaying_Undead;
+                    } else {
+                        return CombatManager.Incapacitating_Undead;
+                    }
+                }
+                if (owner.faction != null && owner.faction.IsHostileWith(targetCharacter.faction)) {
+                    return CombatManager.Warring_Factions;
+                }
+            }
+        }
+        //default is still Hostility
+        return CombatManager.Hostility;
     }
     #endregion
 
@@ -1032,12 +1045,14 @@ public class CombatComponent : CharacterComponent {
     }
     #endregion
 
-    #region Signals
-    public void SubscribeToSignals() {
-        //Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromQueue);
-    }
-    public void UnsubscribeToSignals() {
-        //Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromQueue);
+    #region Prisoner
+    private void OnCharacterBecomePrisoner(Prisoner prisoner) {
+        if (prisoner.IsConsideredPrisonerOf(owner)) {
+            CombatData combatData = GetCombatData(prisoner.owner);
+            if(combatData != null && (combatData.reasonForCombat == CombatManager.Hostility || combatData.reasonForCombat == CombatManager.Retaliation)) {
+                RemoveHostileInRange(prisoner.owner);
+            }
+        }
     }
     #endregion
 

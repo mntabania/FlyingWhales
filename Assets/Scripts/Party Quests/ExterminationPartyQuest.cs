@@ -68,7 +68,14 @@ public class ExterminationPartyQuest : PartyQuest {
     #region General
     private void ProcessExterminationOrDisbandment() {
         if (assignedParty != null && assignedParty.isActive && assignedParty.currentQuest == this) {
-            if (!targetStructure.settlementLocation.HasAliveResidentInsideSettlementThatIsHostileWith(assignedParty.partySettlement.owner)) {
+            Faction faction = assignedParty.partySettlement.owner;
+            if (!targetStructure.settlementLocation.HasResidentThatMeetsCriteria(resident => !resident.isDead
+                    && !resident.partyComponent.IsAMemberOfParty(assignedParty)
+                    && !resident.isBeingSeized
+                    && resident.gridTileLocation != null
+                    && resident.gridTileLocation.IsPartOfSettlement(targetStructure.settlementLocation)
+                    && (resident.faction == null || faction == null || faction.IsHostileWith(resident.faction))
+                    && !resident.traitContainer.HasTrait("Hibernating"))) {
                 assignedParty.GoBackHomeAndEndQuest();
             } else {
                 StartExterminationTimer();

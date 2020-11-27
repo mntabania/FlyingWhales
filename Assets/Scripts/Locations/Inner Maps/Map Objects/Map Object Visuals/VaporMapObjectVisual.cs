@@ -48,8 +48,8 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
         SchedulingManager.Instance.AddEntry(dueDate, () => wasJustPlaced = false, this);
         MoveToRandomDirection();
         _expiryKey = SchedulingManager.Instance.AddEntry(_vapor.expiryDate, Expire, this);
-        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
-        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
+        Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         isSpawned = true;
 
         if (GameManager.Instance.isPaused) {
@@ -135,8 +135,8 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (string.IsNullOrEmpty(_expiryKey) == false) {
             SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);
         }
-        Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
-        Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.RemoveListener<bool>(UISignals.PAUSED, OnGamePaused);
+        Messenger.RemoveListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         _vapor.Expire();
         StartCoroutine(DestroyCoroutine());
     }

@@ -68,7 +68,7 @@ namespace Traits {
             _owner = null;
             if (removedFrom is GenericTileObject genericTileObject) {
                 genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.DRY_TILE);
-                Messenger.Broadcast(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, genericTileObject as IPointOfInterest, removedBy);
+                Messenger.Broadcast(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, genericTileObject as IPointOfInterest, removedBy);
             }
             StopListenForBiomeEffect();
             UpdateVisualsOnRemove(removedFrom);
@@ -107,9 +107,9 @@ namespace Traits {
         public void SetDryer(Character character) {
             dryer = character;
             if (dryer == null) {
-                Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+                Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
             } else {
-                Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+                Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
             }
         }
         #endregion
@@ -124,10 +124,10 @@ namespace Traits {
             if (_owner.gridTileLocation?.structure is Ocean) {
                 return; //do not make ocean frozen if it is part of snow biome
             }
-            Messenger.AddListener<HexTile>(Signals.FREEZE_WET_OBJECTS_IN_TILE, TryFreezeWetObject);
+            Messenger.AddListener<HexTile>(HexTileSignals.FREEZE_WET_OBJECTS_IN_TILE, TryFreezeWetObject);
         }
         private void StopListenForBiomeEffect() {
-            Messenger.RemoveListener<HexTile>(Signals.FREEZE_WET_OBJECTS_IN_TILE, TryFreezeWetObject);
+            Messenger.RemoveListener<HexTile>(HexTileSignals.FREEZE_WET_OBJECTS_IN_TILE, TryFreezeWetObject);
         }
         private void TryFreezeWetObject(HexTile hexTile) {
             if (GameUtilities.RollChance(25)) {

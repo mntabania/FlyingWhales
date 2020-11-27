@@ -20,10 +20,10 @@ namespace Quests.Steps {
         
         
         protected override void SubscribeListeners() {
-            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, CheckForCompletion);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, CheckForCompletion);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, CheckForCompletion);
         }
 
         #region Listeners
@@ -32,7 +32,7 @@ namespace Quests.Steps {
             if (character.isDead) {
                 if (_targets.Remove(character)) {
                     objectsToCenter?.Remove(character);
-                    Messenger.Broadcast(Signals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
+                    Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
                     if (_targets.Count == 0) {
                         Complete();    
                     }

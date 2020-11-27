@@ -7,7 +7,7 @@ namespace Inner_Maps.Location_Structures {
             selectableSize = new Vector2(13f, 10f);
             SetMaxHPAndReset(8000);
         }
-        public Prison(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public Prison(Region location, SaveDataManMadeStructure data) : base(location, data) {
             selectableSize = new Vector2(13f, 10f);
             SetMaxHP(8000);
         }

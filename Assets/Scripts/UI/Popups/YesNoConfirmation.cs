@@ -77,7 +77,7 @@ public class YesNoConfirmation : PopupMenuBase{
 
         yesBtnUnInteractableHoverHandler.gameObject.SetActive(!yesBtn.interactable);
         if (yesBtnInactiveHoverAction != null) {
-            yesBtnUnInteractableHoverHandler.SetOnHoverAction(yesBtnInactiveHoverAction.Invoke);
+            yesBtnUnInteractableHoverHandler.SetOnHoverOverAction(yesBtnInactiveHoverAction.Invoke);
         }
         if (yesBtnInactiveHoverExitAction != null) {
             yesBtnUnInteractableHoverHandler.SetOnHoverOutAction(yesBtnInactiveHoverExitAction.Invoke);

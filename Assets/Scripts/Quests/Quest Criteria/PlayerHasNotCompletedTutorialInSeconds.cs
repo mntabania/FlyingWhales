@@ -11,10 +11,10 @@ namespace Quests {
         }
         
         public override void Enable() {
-            Messenger.AddListener<TutorialQuest>(Signals.TUTORIAL_QUEST_COMPLETED, OnTutorialQuestCompleted);
+            Messenger.AddListener<TutorialQuest>(PlayerQuestSignals.TUTORIAL_QUEST_COMPLETED, OnTutorialQuestCompleted);
         }
         public override void Disable() {
-            Messenger.RemoveListener<TutorialQuest>(Signals.TUTORIAL_QUEST_COMPLETED, OnTutorialQuestCompleted);
+            Messenger.RemoveListener<TutorialQuest>(PlayerQuestSignals.TUTORIAL_QUEST_COMPLETED, OnTutorialQuestCompleted);
         }
         
         private void OnTutorialQuestCompleted(TutorialQuest tutorialQuest) {

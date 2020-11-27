@@ -21,11 +21,11 @@ public class FoundCultData : PlayerAction {
         if (targetPOI is Character character) {
             character.MigrateHomeStructureTo(null);
             character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Faction, character);
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, targetPOI as IPlayerActionTarget);
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, targetPOI as IPlayerActionTarget);
             if (!character.currentRegion.IsRegionVillageCapacityReached()) {
-                HexTile targetTile = character.currentRegion.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
-                if(targetTile != null) {
-                    StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, character.faction.factionType.mainResource, true);
+                HexTile targetTile = character.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
+                if (targetTile != null) {
+                    StructureSetting structureSetting = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, character.faction.factionType.mainResource, character.faction.factionType.usesCorruptedStructures);
                     List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
                     GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
                     character.jobComponent.TriggerFindNewVillage(targetTile.GetCenterLocationGridTile(), chosenStructurePrefab.name);
@@ -46,6 +46,9 @@ public class FoundCultData : PlayerAction {
             if (targetCharacter.faction != null && targetCharacter.faction.factionType.type == FACTION_TYPE.Demon_Cult) {
                 return false;
             }
+            if (targetCharacter.traitContainer.HasTrait("Enslaved")) {
+                return false;
+            }
             return true;
         }
         return false;
@@ -57,6 +60,9 @@ public class FoundCultData : PlayerAction {
         }
         if (targetCharacter.faction != null && targetCharacter.faction.factionType.type == FACTION_TYPE.Demon_Cult) {
             reasons += "Character is already part of a Demon Cult,";
+        }
+        if (targetCharacter.traitContainer.HasTrait("Enslaved")) {
+            reasons += "Slaves cannot perform this action,";
         }
         return reasons;
     }

@@ -16,7 +16,7 @@ public class BuryCharacter : GoapAction {
         actionIconString = GoapActionStateDB.Bury_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }
 
@@ -36,7 +36,7 @@ public class BuryCharacter : GoapAction {
     public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
         if (goapNode.associatedJobType == JOB_TYPE.BURY_IN_ACTIVE_PARTY) {
             Character actor = goapNode.actor;
-            if (actor.canMove && !actor.movementComponent.isStationary) {
+            if (actor.limiterComponent.canMove && !actor.movementComponent.isStationary) {
                 List<LocationGridTile> choices = actor.gridTileLocation.GetTilesInRadius(3, includeImpassable: false);
                 if (choices != null && choices.Count > 0) {
                     return choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];

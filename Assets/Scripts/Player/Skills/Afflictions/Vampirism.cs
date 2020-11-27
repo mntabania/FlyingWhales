@@ -24,7 +24,7 @@ public class VampirismData : SpellData {
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Cannibal", "Vampire", "Beast")) {
+        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Vampire", "Beast")) {
             return false;
         }
         if (targetCharacter.HasItem(TILE_OBJECT_TYPE.PHYLACTERY)) {

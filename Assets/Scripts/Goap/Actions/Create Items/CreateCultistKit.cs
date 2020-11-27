@@ -5,7 +5,7 @@ public class CreateCultistKit : GoapAction {
     public CreateCultistKit() : base(INTERACTION_TYPE.CREATE_CULTIST_KIT) {
         actionIconString = GoapActionStateDB.Build_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work, LOG_TAG.Crimes};
     }
     
@@ -15,13 +15,16 @@ public class CreateCultistKit : GoapAction {
         // AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasStone);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR));
     }
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData) {
-        List<Precondition> p = new List<Precondition>();
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+        List<Precondition> baseP = base.GetPreconditions(actor, target, otherData, out isOverridden);
+        List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
+        p.AddRange(baseP);
         if (actor.race == RACE.HUMANS) {
             p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasStone));
         } else {
             p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasWood));
         }
+        isOverridden = true;
         return p;
     }
     public override void Perform(ActualGoapNode goapNode) {

@@ -8,7 +8,6 @@ using TMPro;
 using UnityEngine.UI;
 
 public class SpellItem : NameplateItem<SpellData> {
-    [SerializeField] private Image lockedImage;
     [SerializeField] private Image cooldownImage;
     [SerializeField] private Image cooldownCoverImage;
     [SerializeField] private TextMeshProUGUI currencyLbl;
@@ -17,6 +16,8 @@ public class SpellItem : NameplateItem<SpellData> {
 
     //private Image _coverImg;
 
+    private Func<SpellData, bool> _shouldBeInteractableChecker;
+
     public override void SetObject(SpellData spellData) {
         base.SetObject(spellData);
         name = spellData.name;
@@ -24,12 +25,12 @@ public class SpellItem : NameplateItem<SpellData> {
         toggle.name = spellData.name;
         this.spellData = spellData;
         UpdateData();
-        Messenger.AddListener<SpellData>(Signals.PLAYER_NO_ACTIVE_SPELL, OnPlayerNoActiveSpell);
-        Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
-        Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
-        Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnExecuteSpell);
-        Messenger.AddListener<SpellData>(Signals.CHARGES_ADJUSTED, OnChargesAdjusted);
-        Messenger.AddListener<int, int>(Signals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
+        Messenger.AddListener<SpellData>(SpellSignals.PLAYER_NO_ACTIVE_SPELL, OnPlayerNoActiveSpell);
+        Messenger.AddListener<SpellData>(SpellSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
+        Messenger.AddListener<SpellData>(SpellSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
+        Messenger.AddListener<SpellData>(SpellSignals.ON_EXECUTE_SPELL, OnExecuteSpell);
+        Messenger.AddListener<SpellData>(PlayerSignals.CHARGES_ADJUSTED, OnChargesAdjusted);
+        Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
         SetAsDefault();
 
         //_coverImg = coverGO.GetComponent<Image>();
@@ -119,15 +120,15 @@ public class SpellItem : NameplateItem<SpellData> {
     #endregion
 
     #region Interactability
-    public void SetLockedState(bool state) {
-        lockedImage.gameObject.SetActive(state);
-    }
     private void SetCooldownState(bool state) {
         //cooldownImage.gameObject.SetActive(state);
         cooldownCoverImage.gameObject.SetActive(state);
     }
+    public void ForceUpdateInteractableState() {
+        UpdateInteractableState();
+    }
     private void UpdateInteractableState() {
-        SetInteractableState(spellData.CanPerformAbility());
+        SetInteractableState(_shouldBeInteractableChecker?.Invoke(spellData) ?? spellData.CanPerformAbility());
     }
     public void OnToggleSpell(bool state) {
         PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
@@ -135,12 +136,8 @@ public class SpellItem : NameplateItem<SpellData> {
             PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(spellData);
         }
     }
-    public override void SetInteractableState(bool state) {
-        base.SetInteractableState(state);
-        //coverGO.SetActive(spellData.isInCooldown);
-        //if (coverGO.activeSelf) {
-        //    _coverImg.fillAmount = 0f;    
-        //}
+    public void SetInteractableChecker(System.Func<SpellData, bool> p_checker) {
+        _shouldBeInteractableChecker = p_checker;
     }
     #endregion
 
@@ -179,11 +176,11 @@ public class SpellItem : NameplateItem<SpellData> {
         spellData = null;
         cooldownCoverImage.fillAmount = 0f;
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
-        Messenger.RemoveListener<SpellData>(Signals.PLAYER_NO_ACTIVE_SPELL, OnPlayerNoActiveSpell);
-        Messenger.RemoveListener<SpellData>(Signals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
-        Messenger.RemoveListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
-        Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnExecuteSpell);
-        Messenger.RemoveListener<SpellData>(Signals.CHARGES_ADJUSTED, OnChargesAdjusted);
-        Messenger.RemoveListener<int, int>(Signals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
+        Messenger.RemoveListener<SpellData>(SpellSignals.PLAYER_NO_ACTIVE_SPELL, OnPlayerNoActiveSpell);
+        Messenger.RemoveListener<SpellData>(SpellSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
+        Messenger.RemoveListener<SpellData>(SpellSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
+        Messenger.RemoveListener<SpellData>(SpellSignals.ON_EXECUTE_SPELL, OnExecuteSpell);
+        Messenger.RemoveListener<SpellData>(PlayerSignals.CHARGES_ADJUSTED, OnChargesAdjusted);
+        Messenger.RemoveListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
     }
 }

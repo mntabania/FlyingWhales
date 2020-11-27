@@ -25,7 +25,7 @@ public class SocialGathering : Gathering {
     #region Overrides
     public override bool IsAllowedToJoin(Character character) {
         if (UnityEngine.Random.Range(0, 2) == 0) {
-            return !character.relationshipContainer.IsEnemiesWith(host) && !character.traitContainer.HasTrait("Agoraphobic") && character.isSociable;
+            return !character.relationshipContainer.IsEnemiesWith(host) && !character.traitContainer.HasTrait("Agoraphobic") && character.limiterComponent.isSociable;
         }
         return false;
     }

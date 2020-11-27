@@ -15,7 +15,7 @@ public class LoadWindow : PopupMenuBase  {
     
     public override void Open() {
         // LoadSavedGameItems();
-        Messenger.AddListener<string>(Signals.LOAD_SAVE_FILE, OnLoadFileChosen);
+        Messenger.AddListener<string>(UISignals.LOAD_SAVE_FILE, OnLoadFileChosen);
         // Messenger.AddListener<string>(Signals.SAVE_FILE_DELETED, OnSaveFileDeleted);
         isFetchingSaves = false;
         fetchSavesCover.gameObject.SetActive(false);
@@ -31,7 +31,7 @@ public class LoadWindow : PopupMenuBase  {
         base.Close();
         isFetchingSaves = false;
         fetchSavesCover.gameObject.SetActive(false);
-        Messenger.RemoveListener<string>(Signals.LOAD_SAVE_FILE, OnLoadFileChosen);
+        Messenger.RemoveListener<string>(UISignals.LOAD_SAVE_FILE, OnLoadFileChosen);
         // Messenger.RemoveListener<string>(Signals.SAVE_FILE_DELETED, OnSaveFileDeleted);
     }
     private void OnSaveFileDeleted(string deleted) {

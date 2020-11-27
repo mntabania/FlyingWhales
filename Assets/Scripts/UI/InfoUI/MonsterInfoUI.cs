@@ -52,19 +52,19 @@ public class MonsterInfoUI : InfoUIBase {
 
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateHistory);
-        Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
-        Messenger.AddListener<Character>(Signals.LOG_MENTIONING_CHARACTER_UPDATED, OnLogMentioningCharacterUpdated);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, UpdateTraitsFromSignal);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, UpdateTraitsFromSignal);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_STACKED, UpdateTraitsFromSignal);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
-        Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
-        Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
-        Messenger.AddListener<Character>(Signals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.AddListener<Log>(UISignals.LOG_ADDED, UpdateHistory);
+        Messenger.AddListener<Log>(UISignals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
+        Messenger.AddListener<Character>(UISignals.LOG_MENTIONING_CHARACTER_UPDATED, OnLogMentioningCharacterUpdated);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_STACKED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
+        Messenger.AddListener(UISignals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
+        Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
+        Messenger.AddListener<Character>(UISignals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
         
         statusTraitsEventLbl.SetShouldColorHighlight(false);
         normalTraitsEventLbl.SetShouldColorHighlight(false);
@@ -344,17 +344,17 @@ public class MonsterInfoUI : InfoUIBase {
     public void ShowCharacterTestingInfo() {
 #if UNITY_EDITOR
         string summary = $"Home structure: {activeMonster.homeStructure?.ToString() ?? "None"}" ?? "None";
-        summary = $"{summary}{$"\nTerritories: {activeMonster.territories?.Count.ToString() ?? "None"}"}";
+        summary = $"{summary}{$"\nTerritory: {activeMonster.territory?.name ?? "None"}"}";
         summary = $"{summary}{($"\nCurrent structure: {activeMonster.currentStructure}" ?? "None")}";
         summary = $"{summary}{("\nPOI State: " + activeMonster.state.ToString())}";
         summary = $"{summary}{("\nDo Not Get Hungry: " + activeMonster.needsComponent.doNotGetHungry.ToString())}";
         summary = $"{summary}{("\nDo Not Get Tired: " + activeMonster.needsComponent.doNotGetTired.ToString())}";
         summary = $"{summary}{("\nDo Not Get Bored: " + activeMonster.needsComponent.doNotGetBored.ToString())}";
         summary = $"{summary}{("\nDo Not Recover HP: " + activeMonster.doNotRecoverHP.ToString())}";
-        summary = $"{summary}{("\nCan Move: " + activeMonster.canMove)}";
-        summary = $"{summary}{("\nCan Witness: " + activeMonster.canWitness)}";
-        summary = $"{summary}{("\nCan Be Attacked: " + activeMonster.canBeAttacked)}";
-        summary = $"{summary}{("\nCan Perform: " + activeMonster.canPerform)}";
+        summary = $"{summary}{("\nCan Move: " + activeMonster.limiterComponent.canMove)}";
+        summary = $"{summary}{("\nCan Witness: " + activeMonster.limiterComponent.canWitness)}";
+        summary = $"{summary}{("\nCan Be Attacked: " + activeMonster.limiterComponent.canBeAttacked)}";
+        summary = $"{summary}{("\nCan Perform: " + activeMonster.limiterComponent.canPerform)}";
         //summary = $"{summary}{("\nIs Missing: " + activeMonster.isMissing)}";
         summary = $"{summary}{("\nIs Running: " + activeMonster.movementComponent.isRunning)}";
         summary = $"{summary}{("\nPOI State: " + activeMonster.state.ToString())}";
@@ -453,14 +453,14 @@ public class MonsterInfoUI : InfoUIBase {
     private void OnClickChooseCombatMode(string mode) {
         COMBAT_MODE combatMode = (COMBAT_MODE) System.Enum.Parse(typeof(COMBAT_MODE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(mode));
         UIManager.Instance.characterInfoUI.activeCharacter.combatComponent.SetCombatMode(combatMode);
-        Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, activeMonster as IPlayerActionTarget);
+        Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, activeMonster as IPlayerActionTarget);
         UIManager.Instance.customDropdownList.Close();
     }
     #endregion
 
     #region Rename
     public void OnClickRenameButton() {
-        Messenger.Broadcast(Signals.EDIT_CHARACTER_NAME, activeMonster.persistentID, activeMonster.firstName);
+        Messenger.Broadcast(UISignals.EDIT_CHARACTER_NAME, activeMonster.persistentID, activeMonster.firstName);
     }
     #endregion
 }

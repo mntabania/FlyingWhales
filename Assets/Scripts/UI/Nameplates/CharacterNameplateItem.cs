@@ -89,7 +89,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         SetSupportingLabelState(true);
     }
     private void UpdateSubTextAndIcon() {
-        if(character is Summon) {
+        if(!character.isNormalCharacter) {
             subLbl.gameObject.SetActive(false);
         } else {
             subLbl.text = character.characterClass.className;

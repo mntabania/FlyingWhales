@@ -61,7 +61,7 @@ namespace Tutorial {
         }
         public override void Activate() {
             base.Activate();
-            Messenger.Broadcast(Signals.UPDATE_BUILD_LIST);
+            Messenger.Broadcast(UISignals.UPDATE_BUILD_LIST);
         }
         
         #region Step Helpers
@@ -102,37 +102,37 @@ namespace Tutorial {
 
         #region Choose Torture Chamber
         private void OnTopMostChooseTorture() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Prison");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Prison");
         }
         private void OnNoLongerTopMostChooseTorture() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Prison");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Prison");
         }
         #endregion
 
         #region Build Tab
         private void OnTopMostBuildTab() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Build Tab");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Build Tab");
         }
         private void OnNoLongerTopMostBuildTab() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Build Tab");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Build Tab");
         }
         #endregion
         
         #region Seize Villager
         private void OnTopMostSeizeVillager() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Seize Villager");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Seize Villager");
         }
         private void OnNoLongerTopMostSeizeVillager() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Seize Villager");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Seize Villager");
         }
         #endregion
 
         #region Torture Button
         private void OnTopMostTorture() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Torture");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Torture");
         }
         private void OnNoLongerTopMostTorture() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Torture");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Torture");
         }
         #endregion
     }

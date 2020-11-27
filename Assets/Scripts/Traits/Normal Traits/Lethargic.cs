@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UtilityScripts;
 namespace Traits {
     public class Lethargic : Status {
         public override bool isSingleton => true;
@@ -21,9 +21,13 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable sourceCharacter) {
             base.OnAddTrait(sourceCharacter);
-            if (sourceCharacter is Character) {
-                Character character = sourceCharacter as Character;
+            if (sourceCharacter is Character character) {
                 character.movementComponent.AdjustSpeedModifier(-0.5f);
+                if (GameUtilities.RollChance(5) && character.homeSettlement != null && 
+                    Locations.Settlements.Settlement_Events.PlaguedEvent.HasMinimumAmountOfPlaguedVillagersForEvent(character.homeSettlement) &&
+                    !character.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event) && character.homeSettlement.eventManager.CanHaveEvents()) {
+                    character.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Plagued_Event);
+                }
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {

@@ -62,6 +62,8 @@ public enum RACE{
     ANGEL = 32,
     WURM = 33,
     REVENANT = 34,
+    RAT = 35,
+    RATMAN = 36,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -227,6 +229,7 @@ public enum LANDMARK_TYPE {
     ANCIENT_GRAVEYARD = 63,
     TEMPLE = 64,
     RUINED_ZOO = 65,
+    BIOLAB = 66,
 }
 public enum CHARACTER_ROLE {
     NONE,
@@ -257,6 +260,7 @@ public enum ACTION_CATEGORY {
     DIRECT,
     INDIRECT,
     CONSUME,
+    VERBAL,
 }
 public enum ACTION_RESULT {
     SUCCESS,
@@ -313,7 +317,8 @@ public enum FACTION_TYPE {
     Disguised,
     Vampire_Clan,
     Lycan_Clan,
-    Demon_Cult
+    Demon_Cult,
+    Ratmen
 }
 
 public enum INTERACTION_TYPE {
@@ -331,7 +336,6 @@ public enum INTERACTION_TYPE {
     EAT = 12,
     DAYDREAM = 13,
     PLAY_GUITAR = 14,
-    CHAT_CHARACTER = 15,
     DRINK = 16,
     SLEEP_OUTSIDE = 17,
     REMOVE_POISON = 18,
@@ -505,6 +509,13 @@ public enum INTERACTION_TYPE {
     DROP_CORPSE = 209,
     CARRY_CORPSE = 210,
     SUMMON_BONE_GOLEM = 211,
+    BIRTH_RATMAN = 212,
+    TORTURE = 213,
+    QUARANTINE = 214,
+    CARRY_PATIENT = 215,
+    START_PLAGUE_CARE = 216,
+    CARE = 217,
+    GO_TO_SPECIFIC_TILE = 218,
 }
 public enum INTERRUPT {
     None,
@@ -578,6 +589,12 @@ public enum INTERRUPT {
     Shed_Pelt,
     Become_Cult_Leader,
     Evaluate_Cultist_Affiliation,
+    Heart_Attack,
+    Stroke,
+    Total_Organ_Failure,
+    Sneeze,
+    Pneumonia,
+    Set_Home_Ratman,
 }
 
 public enum TRAIT_TYPE {
@@ -636,7 +653,7 @@ public enum STRUCTURE_TYPE {
     CITY_CENTER = 11,
     SMITHY = 12,
     BARRACKS = 13,
-    APOTHECARY = 14,
+    HOSPICE = 14,
     GRANARY = 15,
     MINER_CAMP = 16,
     RAIDER_CAMP = 17,
@@ -669,6 +686,7 @@ public enum STRUCTURE_TYPE {
     RUINED_ZOO = 44,
     VAMPIRE_CASTLE = 45,
     CULT_TEMPLE = 46,
+    BIOLAB = 47,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
@@ -849,7 +867,8 @@ public enum TILE_OBJECT_TYPE {
     PHYLACTERY = 159,
     CULT_CIRCLE = 160,
     CULT_ALTAR = 161,
-    CULT_CROSS = 162
+    CULT_CROSS = 162,
+    PROFESSION_PEDESTAL = 163,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -866,7 +885,7 @@ public enum GOAP_EFFECT_CONDITION { NONE, REMOVE_TRAIT, HAS_TRAIT, FULLNESS_RECO
         , PRODUCE_FOOD, PRODUCE_WOOD, PRODUCE_STONE, PRODUCE_METAL, DEPOSIT_RESOURCE, REMOVE_REGION_CORRUPTION, CLEAR_REGION_FACTION_OWNER, REGION_OWNED_BY_ACTOR_FACTION, FACTION_QUEST_DURATION_INCREASE
         , FACTION_QUEST_DURATION_DECREASE, DESTROY_REGION_LANDMARK, CHARACTER_TO_MINION, SEARCH
         , HAS_POI, TAKE_POI //The process of "take" in this manner is different from simply carrying the poi. In technicality, since the actor will only get an amount from the poi target, the actor will not carry the whole poi instead he/she will create a new poi with the amount that he/she needs while simultaneously reducing that amount from the poi target
-        , ABSORB_LIFE, RAISE_CORPSE, SUMMON,
+        , ABSORB_LIFE, RAISE_CORPSE, SUMMON, CARRIED_PATIENT
 }
 public enum GOAP_EFFECT_TARGET { ACTOR, TARGET, }
 public enum GOAP_PLAN_STATE { IN_PROGRESS, SUCCESS, FAILED, CANCELLED, }
@@ -885,7 +904,7 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , DECREASE_MOOD, DISABLE, MONSTER_EAT, ARSON, SEEK_SHELTER, DARK_RITUAL, CULTIST_TRANSFORM, CULTIST_POISON, CULTIST_BOOBY_TRAP, JOIN_GATHERING, EXPLORE, EXTERMINATE, RESCUE, RELEASE_CHARACTER, COUNTERATTACK_PARTY, MONSTER_BUTCHER
         , ROAM_AROUND_STRUCTURE, MONSTER_INVADE, PARTY_GO_TO, KIDNAP, RECRUIT, RAID, FLEE_CRIME, HOST_SOCIAL_PARTY, PARTYING, CRAFT_MISSING_FURNITURE, FULLNESS_RECOVERY_ON_SIGHT, HOARD, ZOMBIE_STROLL, WARM_UP, NO_PATH_IDLE, REPORT_CRIME
         , EVANGELIZE, HUNT_HEIRLOOM, SNATCH, DROP_ITEM_PARTY, GO_TO_WAITING, PRODUCE_FOOD_FOR_CAMP, KIDNAP_RAID, STEAL_RAID, BUILD_CAMP, CAPTURE_CHARACTER, BURY_IN_ACTIVE_PARTY, VAMPIRIC_EMBRACE, BUILD_VAMPIRE_CASTLE, FIND_NEW_VILLAGE
-        , IMPRISON_BLOOD_SOURCE, OFFER_BLOOD, CURE_MAGICAL_AFFLICTION, LYCAN_HUNT_PREY, STEAL_CORPSE, SUMMON_BONE_GOLEM,
+        , IMPRISON_BLOOD_SOURCE, OFFER_BLOOD, CURE_MAGICAL_AFFLICTION, LYCAN_HUNT_PREY, STEAL_CORPSE, SUMMON_BONE_GOLEM, CHANGE_CLASS, QUARANTINE, PLAGUE_CARE, TORTURE, MONSTER_EAT_CORPSE,
 }
 
 public enum JOB_OWNER { CHARACTER, SETTLEMENT, FACTION, PARTY }
@@ -960,7 +979,7 @@ public enum SPELL_TYPE { NONE = 0, LYCANTHROPY = 1, KLEPTOMANIA = 2, VAMPIRISM =
     REVENANT = 147,
     SNATCH = 148,
     SACRIFICE = 149, REPAIR = 150, EVANGELIZE = 151, SPREAD_RUMOR = 152,
-    FOUND_CULT = 153, BONE_GOLEM = 154,
+    FOUND_CULT = 153, BONE_GOLEM = 154, BIOLAB = 155, PLAGUED_RAT = 156, UPGRADE = 157,
 }
 //public enum INTERVENTION_ABILITY_TYPE { NONE, AFFLICTION, SPELL, }
 public enum SPELL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON }
@@ -1005,6 +1024,7 @@ public enum SUMMON_TYPE {
     Dragon,
     Troll,
     Bone_Golem,
+    Rat,
 }
 public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb, Heart_Of_The_Wind, Gorgon_Eye }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
@@ -1060,7 +1080,7 @@ public enum CRIMABLE_TYPE { Action, Interrupt }
 public enum OBJECT_TYPE { 
     Character = 0, Summon = 1, Minion = 2, Faction = 3, Region = 4, Hextile = 5, Structure = 6, Settlement = 7, Gridtile = 8, Trait = 9, Job = 10, 
     Action = 12, Interrupt = 13, Tile_Object = 14, Player = 15, Log = 16, Burning_Source = 17, Rumor = 18, Assumption = 19, Party = 20, Crime = 21, Party_Quest = 22, Gathering = 23,
-    Reaction_Quest = 24
+    Reaction_Quest = 24, Plague_Disease = 25,
 }
 public enum PASSIVE_SKILL {
     Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen
@@ -1069,7 +1089,7 @@ public enum LOG_TAG {
     Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Major, Player, Intel, Important
 }
 public enum PARTY_TARGET_DESTINATION_TYPE { Structure, Settlement, Hextile, }
-public enum SETTLEMENT_TYPE { Default_Human, Default_Elf, Capital, Cult_Town }
+public enum SETTLEMENT_TYPE { Human_Village, Elven_Hamlet, Capital, Cult_Town }
 
 public enum RELATIONS_FILTER {
     Enemies, Rivals, Acquaintances, Friends, Close_Friends, Relatives, Lovers,
@@ -1077,8 +1097,27 @@ public enum RELATIONS_FILTER {
 public enum OVERLAP_UI_TAG { Top, Bottom, }
 
 public enum SETTLEMENT_EVENT {
-    Vampire_Hunt, Werewolf_Hunt
+    Vampire_Hunt, Werewolf_Hunt, Plagued_Event,
 }
 public enum RELIGION {
     None, Demon_Worship, Divine_Worship, Nature_Worship
+}
+public enum PLAGUE_FATALITY {
+    Septic_Shock, Heart_Attack, Stroke, Total_Organ_Failure, Pneumonia
+}
+public enum PLAGUE_SYMPTOM {
+    Paralysis, Vomiting, Lethargy, Seizure, Insomnia, Poison_Cloud, Monster_Scent, Sneezing, Depression, Hunger_Pangs,
+}
+public enum PLAGUE_TRANSMISSION {
+    Airborne, Consumption, Physical_Contact, Combat
+}
+public enum PLAGUE_DEATH_EFFECT {
+    Explosion, Zombie, Mana_Generator, Haunted_Spirits,
+}
+public enum PLAGUE_EVENT_RESPONSE {
+    Undecided, Do_Nothing, Quarantine, Slay, Exile
+}
+
+public enum SETTLEMENT_JOB_TRIGGER {
+    Plague_Care
 }

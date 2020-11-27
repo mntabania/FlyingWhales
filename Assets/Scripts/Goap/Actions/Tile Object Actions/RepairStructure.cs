@@ -13,7 +13,7 @@ public class RepairStructure : GoapAction {
         actionIconString = GoapActionStateDB.Work_Icon;
         
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
 
     }
@@ -23,10 +23,13 @@ public class RepairStructure : GoapAction {
         //AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", false, GOAP_EFFECT_TARGET.TARGET));
         // AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
     }
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData) {
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
         Assert.IsTrue(target is StructureTileObject, $"Repair structure is being advertised by something that is not a StructureTileObject! {target}");
+        List<Precondition> baseP = base.GetPreconditions(actor, target, otherData, out isOverridden);
+        List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
+        p.AddRange(baseP);
+
         StructureTileObject structureTileObject = target as StructureTileObject;
-        List<Precondition> p = new List<Precondition>(base.GetPreconditions(actor, target, otherData));
         if (structureTileObject.structureParent is ManMadeStructure manMadeStructure) {
             switch (manMadeStructure.wallsAreMadeOf) {
                 case RESOURCE.WOOD:
@@ -43,6 +46,7 @@ public class RepairStructure : GoapAction {
                     break;
             }
         }
+        isOverridden = true;
         return p;
     }
     public override void AddFillersToLog(ref Log log, ActualGoapNode node) {

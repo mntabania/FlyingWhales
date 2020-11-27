@@ -25,7 +25,9 @@ public class CharacterVisuals {
     public Vector2 selectableSize { get; private set; }
     public string classToUseForVisuals {
         get {
-            if (_owner.characterClass.className == "Zombie") {
+            if (_owner.race == RACE.RATMAN) {
+                return "Ratman"; //if race is a ratman then always use the ratman class for its visuals
+            } else if (_owner.characterClass.IsZombie()) {
                 //if character class is a zombie, then use previous class for any visuals to use
                 //this is so we do not need to create special sprites and special cases for every race that can become a zombie
                 if (!string.IsNullOrEmpty(_owner.previousClassName)) {
@@ -64,12 +66,12 @@ public class CharacterVisuals {
 
     #region Listeners
     public void SubscribeListeners() {
-        Messenger.AddListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnSetAsFactionLeader);
-        Messenger.AddListener<Character, Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnSetAsSettlementRuler);
+        Messenger.AddListener<Character, ILeader>(CharacterSignals.ON_SET_AS_FACTION_LEADER, OnSetAsFactionLeader);
+        Messenger.AddListener<Character, Character>(CharacterSignals.ON_SET_AS_SETTLEMENT_RULER, OnSetAsSettlementRuler);
     }
     public void UnsubscribeListeners() {
-        Messenger.RemoveListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnSetAsFactionLeader);
-        Messenger.RemoveListener<Character, Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnSetAsSettlementRuler);
+        Messenger.RemoveListener<Character, ILeader>(CharacterSignals.ON_SET_AS_FACTION_LEADER, OnSetAsFactionLeader);
+        Messenger.RemoveListener<Character, Character>(CharacterSignals.ON_SET_AS_SETTLEMENT_RULER, OnSetAsSettlementRuler);
     }
     private void OnSetAsFactionLeader(Character character, ILeader previousLeader) {
         if (character == _owner) {
@@ -230,6 +232,10 @@ public class CharacterVisuals {
             return $"<b>{GetCharacterNameWithIconAndColor()}</b> is in {_owner.currentStructure.GetNameRelativeTo(_owner)}.";
         }
 
+        if (_owner.traitContainer.HasTrait("Quarantined")) {
+            return $"<b>{GetCharacterNameWithIconAndColor()}</b> is Quarantined.";
+        }
+
         if(_owner.minion != null && !_owner.minion.isSummoned) {
             return $"<b>{GetCharacterNameWithIconAndColor()}</b> is unsummoned.";
         }
@@ -242,12 +248,14 @@ public class CharacterVisuals {
                 return UtilityScripts.Utilities.UndeadIcon();        
             } else if (_owner.faction != null && _owner.faction.isPlayerFaction) {
                 return UtilityScripts.Utilities.DemonIcon();
-            } else if (_owner.faction != null && _owner.faction.factionType.type == FACTION_TYPE.Undead) {
+            } else if (_owner.faction?.factionType.type == FACTION_TYPE.Undead) {
                 return UtilityScripts.Utilities.UndeadIcon();
             }
             return UtilityScripts.Utilities.MonsterIcon();
-        } else if (_owner.isAlliedWithPlayer) {
+        } else if (_owner.traitContainer.HasTrait("Cultist")) {
             return UtilityScripts.Utilities.CultistIcon();
+        } else if (_owner.race == RACE.RATMAN) {
+            return UtilityScripts.Utilities.RatmanIcon();
         }
         return UtilityScripts.Utilities.VillagerIcon();
     }

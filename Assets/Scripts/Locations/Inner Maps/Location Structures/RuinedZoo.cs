@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.Assertions;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
@@ -21,7 +22,7 @@ namespace Inner_Maps.Location_Structures {
         public RuinedZoo(Region location) : base(STRUCTURE_TYPE.RUINED_ZOO, location) {
             SetMaxHPAndReset(6000);
         }
-        public RuinedZoo(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public RuinedZoo(Region location, SaveDataManMadeStructure data) : base(location, data) {
             SetMaxHP(6000);
         }
 
@@ -32,7 +33,8 @@ namespace Inner_Maps.Location_Structures {
                 StructureRoom structureRoom = rooms[i];
                 SUMMON_TYPE summonType = orderedMonsters[i];
                 Summon newSummon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, settlementLocation, region, this);
-                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(structureRoom.tilesInRoom);
+                List<LocationGridTile> tileChoices = structureRoom.tilesInRoom.Where(x => x.IsPassable()).ToList();
+                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(tileChoices);
                 CharacterManager.Instance.PlaceSummon(newSummon, targetTile);
             }
         }
@@ -44,13 +46,13 @@ namespace Inner_Maps.Location_Structures {
         #region Listeners
         protected override void SubscribeListeners() {
             base.SubscribeListeners();
-            Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-            Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_LEFT_STRUCTURE, OnCharacterLeftStructure);
+            Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+            Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, OnCharacterLeftStructure);
         }
         protected override void UnsubscribeListeners() {
             base.UnsubscribeListeners();
-            Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-            Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_LEFT_STRUCTURE, OnCharacterLeftStructure);
+            Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+            Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, OnCharacterLeftStructure);
         }
         #endregion
         

@@ -31,16 +31,16 @@ namespace Quests.Special_Popups {
         /// Make this quest start checking for it's criteria
         /// </summary>
         private void StartCheckingCriteria() {
-            Messenger.AddListener<QuestCriteria>(Signals.QUEST_CRITERIA_MET, OnCriteriaMet);
-            Messenger.AddListener<QuestCriteria>(Signals.QUEST_CRITERIA_UNMET, OnCriteriaUnMet);
+            Messenger.AddListener<QuestCriteria>(PlayerQuestSignals.QUEST_CRITERIA_MET, OnCriteriaMet);
+            Messenger.AddListener<QuestCriteria>(PlayerQuestSignals.QUEST_CRITERIA_UNMET, OnCriteriaUnMet);
             for (int i = 0; i < _activationCriteria.Count; i++) {
                 QuestCriteria criteria = _activationCriteria[i];
                 criteria.Enable();
             }
         }
         protected void StopCheckingCriteria() {
-            Messenger.RemoveListener<QuestCriteria>(Signals.QUEST_CRITERIA_MET, OnCriteriaMet);
-            Messenger.RemoveListener<QuestCriteria>(Signals.QUEST_CRITERIA_UNMET, OnCriteriaUnMet);
+            Messenger.RemoveListener<QuestCriteria>(PlayerQuestSignals.QUEST_CRITERIA_MET, OnCriteriaMet);
+            Messenger.RemoveListener<QuestCriteria>(PlayerQuestSignals.QUEST_CRITERIA_UNMET, OnCriteriaUnMet);
             for (int i = 0; i < _activationCriteria.Count; i++) {
                 QuestCriteria criteria = _activationCriteria[i];
                 criteria.Disable();

@@ -40,9 +40,9 @@ namespace Traits {
             victim1Requirement = saveDataPsychopath.victim1Requirement;
             opinionCopy = saveDataPsychopath.opinionCopy;
         }
-        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            SaveDataPsychopath saveDataPsychopath = saveDataTrait as SaveDataPsychopath;
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
+            SaveDataPsychopath saveDataPsychopath = p_saveDataTrait as SaveDataPsychopath;
             Assert.IsNotNull(saveDataPsychopath);
             if (!string.IsNullOrEmpty(saveDataPsychopath.targetVictimID)) {
                 targetVictim = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataPsychopath.targetVictimID);

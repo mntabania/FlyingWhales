@@ -8,12 +8,12 @@ using Debug = System.Diagnostics.Debug;
 
 public class Spit : GoapAction {
 
-    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.VERBAL; } }
 
     public Spit() : base(INTERACTION_TYPE.SPIT) {
         actionIconString = GoapActionStateDB.Anger_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, };
         isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Social};
@@ -33,6 +33,13 @@ public class Spit : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
+        if (actor.traitContainer.HasTrait("Enslaved")) {
+            if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+                costLog += $" +2000(Slave, target is not in actor's home)";
+                actor.logComponent.AppendCostLog(costLog);
+                return 2000;
+            }
+        }
         if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
             if (actor.partyComponent.isActiveMember) {
                 if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null

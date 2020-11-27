@@ -38,7 +38,7 @@ public class FireBall : MovingTileObject {
         traitContainer.RemoveTrait(this, "Flammable");
     }
     public void OnExpire() {
-        Messenger.Broadcast<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);
+        Messenger.Broadcast<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);
     }
     public override string ToString() {
         return "Fire Ball";

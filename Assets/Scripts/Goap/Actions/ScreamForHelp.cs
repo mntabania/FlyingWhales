@@ -5,13 +5,12 @@ using Traits;
 
 public class ScreamForHelp : GoapAction {
 
-    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
-
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.VERBAL;
     public ScreamForHelp() : base(INTERACTION_TYPE.SCREAM_FOR_HELP) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Shock_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Social};
     }
 
@@ -30,7 +29,7 @@ public class ScreamForHelp : GoapAction {
 
     #region State Effects
     public void PerTickScreamSuccess(ActualGoapNode goapNode) {
-        Messenger.Broadcast(Signals.SCREAM_FOR_HELP, goapNode.actor);
+        Messenger.Broadcast(JobSignals.SCREAM_FOR_HELP, goapNode.actor);
     }
     public void AfterScreamSuccess(ActualGoapNode goapNode) {
 

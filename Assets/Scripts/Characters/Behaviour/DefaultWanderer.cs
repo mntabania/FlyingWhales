@@ -13,9 +13,9 @@ public class DefaultWanderer : CharacterBehaviourComponent {
         producedJob = null;
         log += $"\n-{character.name} is wanderer";
         if (!character.HasTerritory() && character.currentRegion != null) {
-            HexTile initialTerritory = character.currentRegion.GetRandomNoStructureUncorruptedPlainHex();
+            HexTile initialTerritory = character.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.isCorrupted);
             if (initialTerritory != null) {
-                character.AddTerritory(initialTerritory);
+                character.SetTerritory(initialTerritory);
             } else {
                 character.logComponent.PrintLogIfActive(character.name + " is a wanderer but could not set temporary territory");
             }

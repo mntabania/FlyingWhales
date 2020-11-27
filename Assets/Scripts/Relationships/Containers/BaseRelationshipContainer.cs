@@ -16,14 +16,14 @@ public class BaseRelationshipContainer : IRelationshipContainer {
     public BaseRelationshipContainer() {
         relationships = new Dictionary<int, IRelationshipData>();
         charactersWithOpinion = new List<Character>();
-        Messenger.AddListener<Character>(Signals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.AddListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     public BaseRelationshipContainer(SaveDataBaseRelationshipContainer data) {
         relationships = new Dictionary<int, IRelationshipData>(data.relationships);
         charactersWithOpinion = SaveUtilities.ConvertIDListToCharacters(data.charactersWithOpinion);
-        Messenger.AddListener<Character>(Signals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.AddListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
 
     #region Adding
@@ -40,7 +40,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             CreateNewRelationship(owner, relatable);
         }
         relationships[relatable.id].AddRelationship(relType);
-        Messenger.Broadcast(Signals.RELATIONSHIP_TYPE_ADDED, owner, relatable);
+        Messenger.Broadcast(CharacterSignals.RELATIONSHIP_TYPE_ADDED, owner, relatable);
     }
     public IRelationshipData CreateNewRelationship(Relatable owner, Relatable relatable) {
         Assert.IsFalse(owner == relatable, $"{owner.relatableName} is trying to add a relationship with itself!");
@@ -51,7 +51,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         if (relatable is Character targetCharacter) {
             charactersWithOpinion.Add(targetCharacter);
         }
-        Messenger.Broadcast(Signals.RELATIONSHIP_CREATED, owner, relatable);
+        Messenger.Broadcast(CharacterSignals.RELATIONSHIP_CREATED, owner, relatable);
         return data;
     }
     public IRelationshipData CreateNewRelationship(Relatable owner, int id, string name, GENDER gender) {
@@ -64,7 +64,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         if (targetCharacter != null) {
             charactersWithOpinion.Add(targetCharacter);
         }
-        Messenger.Broadcast<Relatable, Relatable>(Signals.RELATIONSHIP_CREATED, owner, null);
+        Messenger.Broadcast<Relatable, Relatable>(CharacterSignals.RELATIONSHIP_CREATED, owner, null);
         return data;
     }
     public IRelationshipData GetOrCreateRelationshipDataWith(Relatable owner, Relatable relatable) {
@@ -263,20 +263,20 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         relationshipData.opinions.AdjustOpinion(opinionText, opinionValue);
         if (opinionValue > 0) {
             //OnOpinionReduced(owner, target, lastStrawReason);
-            Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target, lastStrawReason);
+            Messenger.Broadcast(CharacterSignals.OPINION_INCREASED, owner, target, lastStrawReason);
         } else if (opinionValue < 0) {
             if (!owner.reactionComponent.isDisguised && !target.reactionComponent.isDisguised) {
                 //only create jobs if both the owner of this and the target is not disguised.
                 CreateJobsOnOpinionReduced(owner, target, lastStrawReason, opinionValue);    
             }
-            Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target, lastStrawReason);
+            Messenger.Broadcast(CharacterSignals.OPINION_DECREASED, owner, target, lastStrawReason);
         }
         string opinionLabelAfterChange = GetOpinionLabel(target);
         if (opinionLabelBeforeChange != opinionLabelAfterChange && opinionValue < 0) {
             //Only broadcast this signal when an opinion label has changed because of decrease in opinion.
             //This is so that we do not catch cases when Rival Characters become enemies when we expect that
             //this signal will only broadcast when characters change from enemies to rivals
-            Messenger.Broadcast(Signals.OPINION_LABEL_DECREASED, owner, target, opinionLabelAfterChange);
+            Messenger.Broadcast(CharacterSignals.OPINION_LABEL_DECREASED, owner, target, opinionLabelAfterChange);
         }
         
         if (target.relationshipContainer.HasRelationshipWith(owner) == false) {
@@ -299,17 +299,17 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         relationshipData.opinions.SetOpinion(opinionText, opinionValue);
         if (opinionValue > 0) {
             //OnOpinionReduced(owner, target, lastStrawReason);
-            Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target, lastStrawReason);
+            Messenger.Broadcast(CharacterSignals.OPINION_INCREASED, owner, target, lastStrawReason);
         } else if (opinionValue < 0) {
             CreateJobsOnOpinionReduced(owner, target, lastStrawReason, opinionValue);
-            Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target, lastStrawReason);
+            Messenger.Broadcast(CharacterSignals.OPINION_DECREASED, owner, target, lastStrawReason);
         }
         string opinionLabelAfterChange = GetOpinionLabel(target);
         if (opinionLabelBeforeChange != opinionLabelAfterChange && opinionValue < 0) {
             //Only broadcast this signal when an opinion label has changed because of decrease in opinion.
             //This is so that we do not catch cases when Rival Characters become enemies when we expect that
             //this signal will only broadcast when characters change from enemies to rivals
-            Messenger.Broadcast(Signals.OPINION_LABEL_DECREASED, owner, target, opinionLabelAfterChange);
+            Messenger.Broadcast(CharacterSignals.OPINION_LABEL_DECREASED, owner, target, opinionLabelAfterChange);
         }
         if (target.relationshipContainer.HasRelationshipWith(owner) == false) {
             target.relationshipContainer.CreateNewRelationship(target, owner);
@@ -333,10 +333,10 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             if (!isInitial) {
                 if (opinionValue > 0) {
                     //OnOpinionChanged(owner, targetCharacter, lastStrawReason);
-                    Messenger.Broadcast<Character, Character, string>(Signals.OPINION_INCREASED, owner, null, lastStrawReason);
+                    Messenger.Broadcast<Character, Character, string>(CharacterSignals.OPINION_INCREASED, owner, null, lastStrawReason);
                 } else if (opinionValue < 0) {
                     CreateJobsOnOpinionReduced(owner, targetCharacter, lastStrawReason, opinionValue);
-                    Messenger.Broadcast<Character, Character, string>(Signals.OPINION_DECREASED, owner, null, lastStrawReason);
+                    Messenger.Broadcast<Character, Character, string>(CharacterSignals.OPINION_DECREASED, owner, null, lastStrawReason);
                 }
             }
         }

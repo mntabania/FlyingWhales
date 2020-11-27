@@ -11,7 +11,7 @@ public class TakeResource : GoapAction {
     public TakeResource() : base(INTERACTION_TYPE.TAKE_RESOURCE) {
         actionIconString = GoapActionStateDB.Haul_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }
 
@@ -19,17 +19,23 @@ public class TakeResource : GoapAction {
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.TAKE_POI, GOAP_EFFECT_TARGET.ACTOR));
     }
-    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData) {
-        List<GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
-        if(target is ResourcePile) {
+    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+        if (target is ResourcePile) {
+            List<GoapEffect> ee = ObjectPoolManager.Instance.CreateNewExpectedEffectsList();
+            List<GoapEffect> baseEE = base.GetExpectedEffects(actor, target, otherData, out isOverridden);
+            if (baseEE != null && baseEE.Count > 0) {
+                ee.AddRange(baseEE);
+            }
             ResourcePile pile = target as ResourcePile;
             ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_POI, conditionKey = pile.name, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
+            isOverridden = true;
+            return ee;
         } 
         //NOTE: UNCOMMENT THIS IF WE WANT CHARACTERS TO TAKE FOOD FROM OTHER TABLES
         //else if (target is Table) {
         //    ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
         //}
-        return ee;
+        return base.GetExpectedEffects(actor, target, otherData, out isOverridden);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -58,9 +64,9 @@ public class TakeResource : GoapAction {
                 }
             }
         }
-        if (job.jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL || job.jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || job.jobType == JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT || job.jobType == JOB_TYPE.OBTAIN_PERSONAL_FOOD) {
+        if (job.jobType.IsFullnessRecoveryTypeJob() || job.jobType == JOB_TYPE.OBTAIN_PERSONAL_FOOD) {
             if(target is ElfMeat || target is HumanMeat) {
-                if (actor.traitContainer.HasTrait("Cannibal")) {
+                if (actor.traitContainer.HasTrait("Cannibal") && !actor.traitContainer.HasTrait("Vampire")) {
                     int currCost = 450; //UtilityScripts.Utilities.Rng.Next(450, 501);
                     cost += currCost;
                     costLog += $" +{currCost}(Obtain Personal Food, Elf/Human Meat, Cannibal)";
@@ -223,7 +229,7 @@ public class TakeResource : GoapAction {
                     TileObjectData data = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT);
                     TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);
                     takenResource = recipe.GetNeededAmountForIngredient(resourcePile.tileObjectType);
-                } else if (job.targetPOI is TileObject tileObject && !job.jobType.IsFullnessRecovery()) {
+                } else if (job.targetPOI is TileObject tileObject && !job.jobType.IsFullnessRecoveryTypeJob()) {
                     TileObjectData data = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
                     if (data != null && data.craftRecipes != null) {
                         TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);

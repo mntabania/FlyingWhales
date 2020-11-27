@@ -49,7 +49,7 @@ namespace Traits {
             traitable = addTo;
             if (addTo is Character character) {
                 _freezingGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Freezing);
-                Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+                Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
             } else if (addTo is IPointOfInterest poi) {
                 _freezingGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Freezing_Object);
             }
@@ -65,7 +65,7 @@ namespace Traits {
                 //character.needsComponent.AdjustStaminaDecreaseRate(1f);
                 character.needsComponent.AdjustTirednessDecreaseRate(1f);
                 character.movementComponent.AdjustSpeedModifier(-0.15f);
-                Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+                Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
             } else if (addedTo is IPointOfInterest poi) {
                 _freezingGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Freezing_Object);
             }
@@ -108,7 +108,7 @@ namespace Traits {
                 if(character.trapStructure.forcedStructure == currentShelterStructure) {
                     character.trapStructure.SetForcedStructure(null);
                 }
-                Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+                Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
             }
         }
         public override void OnInitiateMapObjectVisual(ITraitable traitable) {

@@ -60,16 +60,16 @@ public class Dragon : Summon {
     }
     public override void SubscribeToSignals() {
         base.SubscribeToSignals();
-        Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
+        Messenger.AddListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.AddListener(Signals.TICK_STARTED, TryLeaveWorld);
     }
     public override void UnsubscribeSignals() {
         base.UnsubscribeSignals();
-        Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
+        Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.RemoveListener(Signals.TICK_STARTED, TryLeaveWorld);
     }
     private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass newClass) {
-        if (character == this && newClass.className == "Zombie") {
+        if (character == this && newClass.IsZombie()) {
             //when dragon becomes a zombie it should no longer try to leave the world, because if it does it will become permanently passive.
             Messenger.RemoveListener(Signals.TICK_STARTED, TryLeaveWorld);
         }
@@ -105,7 +105,7 @@ public class Dragon : Summon {
             traitContainer.RemoveTrait(this, "Hibernating");
             //traitContainer.RemoveTrait(this, "Indestructible");
             //StartLeaveWorldTimer();
-            Messenger.Broadcast(Signals.AWAKEN_DRAGON, this as Character);
+            Messenger.Broadcast(MonsterSignals.AWAKEN_DRAGON, this as Character);
         }
     }
 

@@ -61,11 +61,18 @@ public class MovementComponent : CharacterComponent {
         tagPenalties = data.tagPenalties;
     }
 
+    public void SubscribeToSignals() {
+        Messenger.AddListener<Character>(CharacterSignals.STARTED_TRAVELLING, OnStartedTravelling);
+    }
+    public void UnsubscribeFromSignals() {
+        Messenger.RemoveListener<Character>(CharacterSignals.STARTED_TRAVELLING, OnStartedTravelling);
+    }
+
     public void UpdateSpeed() {
         if (owner.marker) {
             SetMovementState();
             owner.marker.pathfindingAI.speed = GetSpeed();
-            Messenger.Broadcast(Signals.UPDATE_MOVEMENT_STATE, owner);
+            Messenger.Broadcast(CharacterSignals.UPDATE_MOVEMENT_STATE, owner);
         }
         //Debug.Log("Updated speed of " + character.name + ". New speed is: " + pathfindingAI.speed.ToString());
     }
@@ -168,6 +175,17 @@ public class MovementComponent : CharacterComponent {
         cameFromWurmHole = state;
     }
 
+    #region Listeners
+    private void OnStartedTravelling(Character character) {
+        OnCharacterStartedTravelling(character);
+    }
+    public void OnAssignedClass(CharacterClass characterClass) {
+        if (characterClass.className == "Ratman") {
+            AvoidAllFactions();
+        }
+    }
+    #endregion
+
     #region Go To
     public bool MoveToAnotherRegion(Region targetRegion, Action doneAction = null) {
         if (owner.currentRegion == targetRegion) {
@@ -187,7 +205,7 @@ public class MovementComponent : CharacterComponent {
         return false;
     }
     private void TravelToAnotherRegion(Region targetRegion, Action doneAction = null) {
-        if(!owner.canPerform || !owner.canMove || owner.isDead) {
+        if(!owner.limiterComponent.canPerform || !owner.limiterComponent.canMove || owner.isDead) {
             return;
         }
         StartTravellingToRegion(targetRegion, doneAction);
@@ -219,7 +237,7 @@ public class MovementComponent : CharacterComponent {
             owner.marker.pathfindingAI.ClearAllCurrentPathData();
         }
 
-        Messenger.Broadcast(Signals.STARTED_TRAVELLING_IN_WORLD, owner);
+        Messenger.Broadcast(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, owner);
 
         FinishTravellingToRegion(doneAction);
     }
@@ -257,7 +275,7 @@ public class MovementComponent : CharacterComponent {
         owner.EnableMarker();
         SetTargetRegionToTravelInWorld(null);
 
-        Messenger.Broadcast(Signals.FINISHED_TRAVELLING_IN_WORLD, owner);
+        Messenger.Broadcast(CharacterSignals.FINISHED_TRAVELLING_IN_WORLD, owner);
 
         if (doneAction != null) {
             doneAction();
@@ -365,6 +383,22 @@ public class MovementComponent : CharacterComponent {
             }
             return PathfindingManager.Instance.HasPathEvenDiffRegion(fromTile, toTile, constraint);
         }
+    }
+    public bool CanReturnHome() {
+        if (owner.HasHome()) {
+            LocationGridTile chosenTile = null;
+            if(owner.homeSettlement != null) {
+                chosenTile = owner.homeSettlement.GetRandomPassableTile();
+            } else if (owner.homeStructure != null) {
+                chosenTile = owner.homeStructure.GetRandomPassableTile();
+            } else if (owner.HasTerritory()) {
+                chosenTile = owner.territory.GetRandomPassableTile();
+            }
+            if(chosenTile != null) {
+                return HasPathToEvenIfDiffRegion(chosenTile);
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -486,7 +520,8 @@ public class MovementComponent : CharacterComponent {
             expiryDate.AddDays(1);
             SchedulingManager.Instance.AddEntry(expiryDate, () => RemoveStructureToAvoid(locationStructure), this);
             if (owner.homeSettlement != null && GameUtilities.RollChance(25) && owner.faction != null && !owner.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, locationStructure)) {
-                if (locationStructure.settlementLocation == null || locationStructure.settlementLocation.HasAliveResidentThatIsHostileWith(owner.faction)) {
+                if (locationStructure.settlementLocation == null || locationStructure.settlementLocation.HasResidentThatMeetsCriteria(resident => resident != owner && !resident.isDead
+                    && (resident.faction == null || owner.faction == null || owner.faction.IsHostileWith(resident.faction)))) {
                     owner.faction.partyQuestBoard.CreateExterminatePartyQuest(owner, owner.homeSettlement, locationStructure, owner.homeSettlement);
                 }
                 //owner.homeSettlement.settlementJobTriggerComponent.TriggerExterminationJob(locationStructure);
@@ -514,8 +549,36 @@ public class MovementComponent : CharacterComponent {
             owner.marker.UpdateTagPenalties();
         }
     }
+    public void AvoidAllFactions() {
+        for (int i = InnerMapManager.Starting_Tag_Index - 1; i < 32; i++) {
+            SetPenaltyForTag(i, 500);
+        }
+    }
+    public void DoNotAvoidFaction(Faction p_faction) {
+        SetPenaltyForTag((int)p_faction.pathfindingTag, 0);
+        SetPenaltyForTag((int)p_faction.pathfindingDoorTag, 0);
+    }
+    public void AvoidFaction(Faction p_faction) {
+        SetPenaltyForTag((int)p_faction.pathfindingTag, 500);
+        SetPenaltyForTag((int)p_faction.pathfindingDoorTag, 500);
+    }
     #endregion
-    
+
+    #region Travelling Status
+    private void OnCharacterStartedTravelling(Character character) {
+        if(owner != character) {
+            if(owner.currentActionNode != null && owner.currentActionNode.poiTarget == character) {
+                if(owner.currentActionNode.actionStatus == ACTION_STATUS.STARTED) {
+                    if(owner.currentActionNode.associatedJobType == JOB_TYPE.RITUAL_KILLING
+                        || owner.currentActionNode.goapType == INTERACTION_TYPE.SHARE_INFORMATION) {
+                        owner.currentActionNode.associatedJob?.ForceCancelJob(false);
+                    }
+                }
+            }
+        }
+    }
+    #endregion
+
     #region Loading
     public void LoadReferences(SaveDataMovementComponent data) {
         if (!string.IsNullOrEmpty(data.targetRegionToTravelInWorld)) {
@@ -529,6 +592,8 @@ public class MovementComponent : CharacterComponent {
 
     }
     #endregion
+
+    
 }
 
 [System.Serializable]

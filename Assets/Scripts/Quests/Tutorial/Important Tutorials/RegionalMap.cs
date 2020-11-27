@@ -20,18 +20,18 @@ namespace Tutorial {
                 new PlayerHasNotCompletedTutorialInSeconds(15f),
                 new PlayerIsInInnerMap()
             };
-            Messenger.AddListener<HexTile>(Signals.TILE_DOUBLE_CLICKED, OnTileDoubleClicked);
+            Messenger.AddListener<HexTile>(HexTileSignals.HEXTILE_DOUBLE_CLICKED, OnTileDoubleClicked);
         }
         #endregion
         
         #region Overrides
         public override void Activate() {
             base.Activate();
-            Messenger.RemoveListener<HexTile>(Signals.TILE_DOUBLE_CLICKED, OnTileDoubleClicked);
+            Messenger.RemoveListener<HexTile>(HexTileSignals.HEXTILE_DOUBLE_CLICKED, OnTileDoubleClicked);
         }
         public override void Deactivate() {
             base.Deactivate();
-            Messenger.RemoveListener<HexTile>(Signals.TILE_DOUBLE_CLICKED, OnTileDoubleClicked);
+            Messenger.RemoveListener<HexTile>(HexTileSignals.HEXTILE_DOUBLE_CLICKED, OnTileDoubleClicked);
         }
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {

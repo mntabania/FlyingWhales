@@ -24,7 +24,7 @@ public class WolfBehaviour : CharacterBehaviourComponent {
             //find Settlement where wolves are living at
             for (int i = 0; i < character.currentRegion.settlementsInRegion.Count; i++) {
                 BaseSettlement settlement = character.currentRegion.settlementsInRegion[i];
-                if (settlement is NPCSettlement && settlement.HasResidentThatMeetsCriteria(resident => resident.race == RACE.WOLF)) {
+                if (settlement is NPCSettlement && settlement.HasResidentThatMeetsCriteria(resident => character != resident && resident.race == RACE.WOLF)) {
                     if (settlementChoices == null) {
                         settlementChoices = new List<BaseSettlement>();
                     }
@@ -127,6 +127,6 @@ public class WolfBehaviour : CharacterBehaviourComponent {
         return chosenHex;
     }
     private HexTile GetNoStructurePlainHexInRegion(Region region) {
-        return region.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
+        return region.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
     }
 }

@@ -13,7 +13,7 @@ namespace Traits {
                 ApplyStatusEffects(character, status);
             }
             ApplyTraitEffects(character, trait);
-            Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, character as IPointOfInterest);
+            Messenger.Broadcast(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, character as IPointOfInterest);
             //ApplyPOITraitInteractions(character, trait);
             //character.currentAlterEgo.AddTrait(trait);
 
@@ -27,7 +27,7 @@ namespace Traits {
                 }
             }
             DefaultProcessOnAddTrait(traitable, trait, characterResponsible, gainedFromDoing, overrideDuration);
-            Messenger.Broadcast(Signals.CHARACTER_TRAIT_ADDED, character, trait);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_TRAIT_ADDED, character, trait);
         }
         public override void OnTraitRemoved(ITraitable traitable, Trait trait, Character removedBy) {
             Character character = traitable as Character;
@@ -35,40 +35,49 @@ namespace Traits {
                 UnapplyStatusEffects(character, status);
             }
             UnapplyTraitEffects(character, trait);
-            Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, character as IPointOfInterest);
+            Messenger.Broadcast(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, character as IPointOfInterest);
             //UnapplyPOITraitInteractions(character, trait);
             //character.currentAlterEgo.RemoveTrait(trait);
 
             DefaultProcessOnRemoveTrait(traitable, trait, removedBy);
-            Messenger.Broadcast(Signals.CHARACTER_TRAIT_REMOVED, character, trait);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_TRAIT_REMOVED, character, trait);
         }
         public override void OnStatusStacked(ITraitable traitable, Status status, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
             Character character = traitable as Character;
             if(DefaultProcessOnStackStatus(traitable, status, characterResponsible, gainedFromDoing, overrideDuration)) {
-                Messenger.Broadcast(Signals.CHARACTER_TRAIT_STACKED, character, status.GetBase());
+                Messenger.Broadcast(CharacterSignals.CHARACTER_TRAIT_STACKED, character, status.GetBase());
             }
         }
         public override void OnStatusUnstack(ITraitable traitable, Status status, Character removedBy = null) {
             Character character = traitable as Character;
             DefaultProcessOnUnstackStatus(traitable, status, removedBy);
-            Messenger.Broadcast(Signals.CHARACTER_TRAIT_UNSTACKED, character, status.GetBase());
+            Messenger.Broadcast(CharacterSignals.CHARACTER_TRAIT_UNSTACKED, character, status.GetBase());
         }
 
         private void ApplyStatusEffects(Character character, Status status) {
             if (status.hindersWitness) {
-                character.DecreaseCanWitness();
+                character.limiterComponent.DecreaseCanWitness();
             }
             if (status.hindersMovement) {
-                character.DecreaseCanMove();
+                character.limiterComponent.DecreaseCanMove();
             }
             if (status.hindersAttackTarget) {
-                character.DecreaseCanBeAttacked();
+                character.limiterComponent.DecreaseCanBeAttacked();
             }
             if (status.hindersPerform) {
-                character.DecreaseCanPerform();
+                character.limiterComponent.DecreaseCanPerform();
             }
             if (status.hindersSocials) {
-                character.DecreaseSociable();
+                character.limiterComponent.DecreaseSociable();
+            }
+            if (status.hindersFullnessRecovery) {
+                character.limiterComponent.DecreaseCanDoFullnessRecovery();
+            }
+            if (status.hindersHappinessRecovery) {
+                character.limiterComponent.DecreaseCanDoHappinessRecovery();
+            }
+            if (status.hindersTirednessRecovery) {
+                character.limiterComponent.DecreaseCanDoTirednessRecovery();
             }
         }
         private void ApplyTraitEffects(Character character, Trait trait) {
@@ -184,19 +193,28 @@ namespace Traits {
 
         private void UnapplyStatusEffects(Character character, Status status) {
             if (status.hindersWitness) {
-                character.IncreaseCanWitness();
+                character.limiterComponent.IncreaseCanWitness();
             }
             if (status.hindersMovement) {
-                character.IncreaseCanMove();
+                character.limiterComponent.IncreaseCanMove();
             }
             if (status.hindersAttackTarget) {
-                character.IncreaseCanBeAttacked();
+                character.limiterComponent.IncreaseCanBeAttacked();
             }
             if (status.hindersPerform) {
-                character.IncreaseCanPerform();
+                character.limiterComponent.IncreaseCanPerform();
             }
             if (status.hindersSocials) {
-                character.IncreaseSociable();
+                character.limiterComponent.IncreaseSociable();
+            }
+            if (status.hindersFullnessRecovery) {
+                character.limiterComponent.IncreaseCanDoFullnessRecovery();
+            }
+            if (status.hindersHappinessRecovery) {
+                character.limiterComponent.IncreaseCanDoHappinessRecovery();
+            }
+            if (status.hindersTirednessRecovery) {
+                character.limiterComponent.IncreaseCanDoTirednessRecovery();
             }
         }
         public void UnapplyTraitEffects(Character character, Trait trait) {

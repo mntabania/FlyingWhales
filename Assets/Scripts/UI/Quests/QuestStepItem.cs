@@ -37,9 +37,9 @@ public class QuestStepItem : PooledObject {
         //update center button based on the number of selectable objects the step has.
         centerButton.gameObject.SetActive(step.HasObjectsToCenter());
         
-        Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_COMPLETED, OnStepCompleted);
-        Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_FAILED, OnStepFailed);
-        Messenger.AddListener<QuestStep>(Signals.UPDATE_QUEST_STEP_ITEM, UpdateInfo);
+        Messenger.AddListener<QuestStep>(PlayerQuestSignals.QUEST_STEP_COMPLETED, OnStepCompleted);
+        Messenger.AddListener<QuestStep>(PlayerQuestSignals.QUEST_STEP_FAILED, OnStepFailed);
+        Messenger.AddListener<QuestStep>(UISignals.UPDATE_QUEST_STEP_ITEM, UpdateInfo);
     }
     private void UpdateInfo(QuestStep step) {
         if (_step == step) {
@@ -98,9 +98,9 @@ public class QuestStepItem : PooledObject {
         base.Reset();
         _container.anchoredPosition = Vector2.zero;
         _toggleImage.sprite = checkSprite;
-        Messenger.RemoveListener<QuestStep>(Signals.QUEST_STEP_COMPLETED, OnStepCompleted);
-        Messenger.RemoveListener<QuestStep>(Signals.QUEST_STEP_FAILED, OnStepFailed);
-        Messenger.RemoveListener<QuestStep>(Signals.UPDATE_QUEST_STEP_ITEM, UpdateInfo);
+        Messenger.RemoveListener<QuestStep>(PlayerQuestSignals.QUEST_STEP_COMPLETED, OnStepCompleted);
+        Messenger.RemoveListener<QuestStep>(PlayerQuestSignals.QUEST_STEP_FAILED, OnStepFailed);
+        Messenger.RemoveListener<QuestStep>(UISignals.UPDATE_QUEST_STEP_ITEM, UpdateInfo);
     }
     #endregion
 }

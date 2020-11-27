@@ -16,12 +16,12 @@ namespace Traits {
         
         public Lycanthrope() {
             name = "Lycanthrope";
-            description = "Not a werewolf. Just sometimes turns to a plain ole wolf when it sleeps.";
+            description = "Sometimes turns to plain wolf when it sleeps";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             canBeTriggered = true;
-            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_While_Stationary_Unoccupied);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Cannot_Witness_Trait);
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DISPEL };
         }
@@ -53,6 +53,9 @@ namespace Traits {
         }
         protected override string GetDescriptionInUI() {
             string data = base.GetDescriptionInUI();
+            if (owner.lycanData.isMaster) {
+                data = "Can transform into a powerful werewolf at will.";
+            }
             data = owner.lycanData.dislikesBeingLycan ? 
                 $"{data}\n{owner.visuals.GetCharacterNameWithIconAndColor()} loathes being a Lycanthrope" : 
                 $"{data}\n{owner.visuals.GetCharacterNameWithIconAndColor()} enjoys being a Lycanthrope";
@@ -81,8 +84,8 @@ namespace Traits {
                 }
             }
         }
-        public override bool PerTickOwnerMovement() {
-            if (owner.lycanData.activeForm == owner.lycanData.lycanthropeForm || owner.lycanData.isInWerewolfForm) {
+        public override bool PerTickWhileStationaryOrUnoccupied() {
+            if (owner.marker != null && owner.marker.isMoving && (owner.lycanData.activeForm == owner.lycanData.lycanthropeForm || owner.lycanData.isInWerewolfForm)) {
                 float roll = Random.Range(0f, 100f);
                 float chance = 0.85f;
                 if (owner.currentRegion.GetTileObjectInRegionCount(TILE_OBJECT_TYPE.WEREWOLF_PELT) >= 3) {
@@ -337,7 +340,7 @@ namespace Traits {
             lycanthropeForm.needsComponent.ResetStaminaMeter();
             lycanthropeForm.needsComponent.ResetHopeMeter();
             lycanthropeForm.traitContainer.AddTrait(lycanthropeForm, "Transitioning");
-            Messenger.Broadcast(Signals.ON_SWITCH_FROM_LIMBO, originalForm, lycanthropeForm);
+            Messenger.Broadcast(CharacterSignals.ON_SWITCH_FROM_LIMBO, originalForm, lycanthropeForm);
         }
 
         public void RevertToNormal() {
@@ -356,7 +359,7 @@ namespace Traits {
             PutToLimbo(lycanthropeForm);
             ReleaseFromLimbo(originalForm, tile, homeRegion);
             lycanthropeForm.traitContainer.RemoveTrait(lycanthropeForm, "Transitioning");
-            Messenger.Broadcast(Signals.ON_SWITCH_FROM_LIMBO, lycanthropeForm, originalForm);
+            Messenger.Broadcast(CharacterSignals.ON_SWITCH_FROM_LIMBO, lycanthropeForm, originalForm);
         }
 
         private void PutToLimbo(Character form) {
@@ -372,7 +375,8 @@ namespace Traits {
             if (form.trapStructure.IsTrappedInHex()) {
                 form.trapStructure.ResetAllTrapHexes();
             }
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, form as IPointOfInterest, "");
+            Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, form as IPointOfInterest, "");
+            Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, form as IPointOfInterest, "");
             if (form.carryComponent.isBeingCarriedBy != null) {
                 form.carryComponent.masterCharacter.UncarryPOI(form);
             }
@@ -440,6 +444,7 @@ namespace Traits {
                 originalForm.traitContainer.RemoveTrait(originalForm, "Lycanthrope");
                 RevertToNormal();
             }
+            lycanthropeForm.homeSettlement?.RemoveResident(lycanthropeForm);
             lycanthropeForm.faction?.LeaveFaction(lycanthropeForm);
             CharacterManager.Instance.RemoveLimboCharacter(lycanthropeForm);
             originalForm.SetLycanthropeData(null);

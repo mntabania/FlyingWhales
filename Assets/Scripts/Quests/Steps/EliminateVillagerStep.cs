@@ -21,16 +21,16 @@ namespace Quests.Steps {
         
         
         protected override void SubscribeListeners() {
-            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, CheckForCompletion);
-            Messenger.AddListener<Character>(Signals.FACTION_SET, CheckForCompletion);
-            Messenger.AddListener<Character>(Signals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, CheckForCompletion);
-            Messenger.AddListener<Character>(Signals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, CheckForCompletion);
+            Messenger.AddListener<Character>(FactionSignals.FACTION_SET, CheckForCompletion);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, CheckForCompletion);
+            Messenger.AddListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, CheckForCompletion);
-            Messenger.RemoveListener<Character>(Signals.FACTION_SET, CheckForCompletion);
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, CheckForCompletion);
-            Messenger.RemoveListener<Character>(Signals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, CheckForCompletion);
+            Messenger.RemoveListener<Character>(FactionSignals.FACTION_SET, CheckForCompletion);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, CheckForCompletion);
+            Messenger.RemoveListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
         }
 
         #region Listeners
@@ -39,10 +39,10 @@ namespace Quests.Steps {
             if (EliminateAllVillagers.ShouldConsiderCharacterAsEliminated(character)) {
                 if (_targets.Remove(character)) {
                     objectsToCenter?.Remove(character);
-                    Messenger.Broadcast(Signals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
+                    Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
                     if (_targets.Count == 0) {
                         Complete();
-                        Messenger.Broadcast(Signals.WIN_GAME);
+                        Messenger.Broadcast(PlayerSignals.WIN_GAME);
                     }
                 }    
             }
@@ -51,7 +51,7 @@ namespace Quests.Steps {
             _targets.Add(newVillager);
             objectsToCenter?.Add(newVillager);
             _initialCharactersToEliminate++;
-            Messenger.Broadcast(Signals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
+            Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
         }
         #endregion
 

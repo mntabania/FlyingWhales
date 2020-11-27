@@ -321,7 +321,7 @@ public class LocationStructureObject : PooledObject {
         
         RescanPathfindingGridOfStructure(innerMap);
         UpdateSortingOrders();
-        Messenger.Broadcast(Signals.STRUCTURE_OBJECT_PLACED, structure);
+        Messenger.Broadcast(StructureSignals.STRUCTURE_OBJECT_PLACED, structure);
     }
     public void OnLoadStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure, SaveDataLocationStructure saveData) {
         if (structure is ManMadeStructure && structure.structureType != STRUCTURE_TYPE.RUINED_ZOO) {
@@ -338,7 +338,7 @@ public class LocationStructureObject : PooledObject {
         RescanPathfindingGridOfStructure(innerMap);
         UpdateSortingOrders();
         SetPreplacedObjectsState(false);
-        Messenger.Broadcast(Signals.STRUCTURE_OBJECT_PLACED, structure);
+        Messenger.Broadcast(StructureSignals.STRUCTURE_OBJECT_PLACED, structure);
     }
     public void OnOwnerStructureDestroyed(InnerTileMap innerTileMap) {
         RescanPathfindingGridOfStructure(innerTileMap, 0);

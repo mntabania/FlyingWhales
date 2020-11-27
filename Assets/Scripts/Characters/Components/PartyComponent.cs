@@ -22,14 +22,14 @@ public class PartyComponent : CharacterComponent {
         currentParty = party;
     }
     private bool IsPartyActiveAndOwnerActivePartOfQuest() {
-        if (hasParty) {
-            return currentParty.isActive && currentParty.DidMemberJoinQuest(owner) && currentParty.IsMemberActive(owner);
+        if (hasParty && currentParty.isActive) {
+            return currentParty.DidMemberJoinQuest(owner) && currentParty.IsMemberActive(owner);
         }
         return false;
     }
     private bool IsPartyActiveAndOwnerJoinedQuest() {
-        if (hasParty) {
-            return currentParty.isActive && currentParty.DidMemberJoinQuest(owner);
+        if (hasParty && currentParty.isActive) {
+            return currentParty.DidMemberJoinQuest(owner);
         }
         return false;
     }

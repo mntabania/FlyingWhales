@@ -39,16 +39,29 @@ public class Tombstone : TileObject {
         Assert.IsNotNull(saveDataTombstone);
         character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataTombstone.characterID);
     }
+    public override void OnLoadPlacePOI() {
+        DefaultProcessOnPlacePOI();
+        character.marker.PlaceMarkerAt(gridTileLocation);
+        character.DisableMarker();
+        character.marker.TryCancelExpiry();
+        character.SetGrave(this);
+        if (character.race.IsSapient()) {
+            AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
+        }
+    }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
         character.marker.PlaceMarkerAt(gridTileLocation);
         character.DisableMarker();
         character.marker.TryCancelExpiry();
         character.SetGrave(this);
-        if (character.race == RACE.HUMANS || character.race == RACE.ELVES) {
+        if(character.traitContainer.HasTrait("Plagued")) {
+            PlagueDisease.Instance.AddPlaguedStatusOnPOIWithLifespanDuration(this);
+        }
+        if (character.race.IsSapient()) {
             AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
         }
-        Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
+        Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
@@ -76,7 +89,7 @@ public class Tombstone : TileObject {
             }
             character.DestroyMarker();
         }
-        Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
+        Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
     }
     public void SetRespawnCorpseOnDestroy(bool state) {
         _respawnCorpseOnDestroy = state;

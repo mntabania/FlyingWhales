@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
+using System.Linq;
 using Inner_Maps;
 using Traits;
 using Locations.Settlements;
@@ -36,15 +37,15 @@ public class PartyInfoUI : InfoUIBase {
     #region Overrides
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateLogsFromSignal);
-        Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateLogsFromSignal);
-        Messenger.AddListener<Party, Character>(Signals.CHARACTER_JOINED_PARTY, UpdateMembersFromSignal);
-        Messenger.AddListener<Party, Character>(Signals.CHARACTER_LEFT_PARTY, UpdateMembersFromSignal);
-        Messenger.AddListener<Party, Character>(Signals.CHARACTER_JOINED_PARTY_QUEST, UpdateMembersFromSignal);
-        Messenger.AddListener<Party, Character>(Signals.CHARACTER_LEFT_PARTY_QUEST, UpdateMembersFromSignal);
-        Messenger.AddListener<Party>(Signals.CLEAR_MEMBERS_THAT_JOINED_QUEST, UpdateMembersFromSignal);
+        Messenger.AddListener<Log>(UISignals.LOG_ADDED, UpdateLogsFromSignal);
+        Messenger.AddListener<Log>(UISignals.LOG_IN_DATABASE_UPDATED, UpdateLogsFromSignal);
+        Messenger.AddListener<Party, Character>(PartySignals.CHARACTER_JOINED_PARTY, UpdateMembersFromSignal);
+        Messenger.AddListener<Party, Character>(PartySignals.CHARACTER_LEFT_PARTY, UpdateMembersFromSignal);
+        Messenger.AddListener<Party, Character>(PartySignals.CHARACTER_JOINED_PARTY_QUEST, UpdateMembersFromSignal);
+        Messenger.AddListener<Party, Character>(PartySignals.CHARACTER_LEFT_PARTY_QUEST, UpdateMembersFromSignal);
+        Messenger.AddListener<Party>(PartySignals.CLEAR_MEMBERS_THAT_JOINED_QUEST, UpdateMembersFromSignal);
 
-        Messenger.AddListener<Party>(Signals.DISBAND_PARTY, UpdateMembersFromSignal);
+        Messenger.AddListener<Party>(PartySignals.DISBAND_PARTY, UpdateMembersFromSignal);
 
         homeSettlementNameplate.SetAsButton();
         homeSettlementNameplate.ClearAllOnClickActions();
@@ -158,19 +159,22 @@ public class PartyInfoUI : InfoUIBase {
 
     #region Click Actions
     private void OnClickSettlementItem(BaseSettlement settlement) {
-        if (settlement.tiles.Count > 0) {
-            HexTile tile = settlement.tiles[0];
-            if (InnerMapManager.Instance.isAnInnerMapShowing) {
-                //if inner map is showing, open inner map of hextile then center on it
-                if (InnerMapManager.Instance.currentlyShowingLocation != tile.region) {
-                    InnerMapManager.Instance.TryShowLocationMap(tile.region);
-                }
-                InnerMapCameraMove.Instance.CenterCameraOnTile(tile);
-            } else {
-                //if world map is showing, just center on hextile
-                tile.CenterCameraHere();
-            }
-            UIManager.Instance.ShowHexTileInfo(tile);
+        // if (settlement.tiles.Count > 0) {
+        //     HexTile tile = settlement.tiles[0];
+        //     if (InnerMapManager.Instance.isAnInnerMapShowing) {
+        //         //if inner map is showing, open inner map of hextile then center on it
+        //         if (InnerMapManager.Instance.currentlyShowingLocation != tile.region) {
+        //             InnerMapManager.Instance.TryShowLocationMap(tile.region);
+        //         }
+        //         InnerMapCameraMove.Instance.CenterCameraOnTile(tile);
+        //     } else {
+        //         //if world map is showing, just center on hextile
+        //         tile.CenterCameraHere();
+        //     }
+        //     UIManager.Instance.ShowHexTileInfo(tile);
+        // }
+        if (settlement.allStructures.Count > 0) {
+            UIManager.Instance.ShowStructureInfo(settlement.allStructures.First());
         }
     }
     #endregion

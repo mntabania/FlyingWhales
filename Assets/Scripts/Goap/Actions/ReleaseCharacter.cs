@@ -13,7 +13,7 @@ public class ReleaseCharacter : GoapAction {
         racesThatCanDoAction = new RACE[] {
             RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON,
             RACE.GOLEM, RACE.KOBOLD, RACE.LESSER_DEMON, RACE.MIMIC, RACE.PIG, RACE.SHEEP, RACE.ENT, RACE.WISP,
-            RACE.GHOST, RACE.NYMPH, RACE.SLIME, RACE.SLUDGE, RACE.CHICKEN, RACE.ELEMENTAL, RACE.ABOMINATION, RACE.ANGEL, RACE.DEMON
+            RACE.GHOST, RACE.NYMPH, RACE.SLIME, RACE.SLUDGE, RACE.CHICKEN, RACE.ELEMENTAL, RACE.ABOMINATION, RACE.ANGEL, RACE.DEMON, RACE.RATMAN
         };
         logTags = new[] {LOG_TAG.Work};
     }
@@ -85,7 +85,7 @@ public class ReleaseCharacter : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             Character target = poiTarget as Character;
-            return target.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared");
+            return target.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared", "Enslaved");
         }
         return false;
     }
@@ -94,15 +94,23 @@ public class ReleaseCharacter : GoapAction {
     #region State Effects
     public void AfterReleaseSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.poiTarget as Character;
+        bool isEnslaved = target.traitContainer.HasTrait("Enslaved");
         target.traitContainer.RemoveStatusAndStacks(target, "Restrained");
         target.traitContainer.RemoveStatusAndStacks(target, "Unconscious");
         target.traitContainer.RemoveStatusAndStacks(target, "Frozen");
         target.traitContainer.RemoveStatusAndStacks(target, "Ensnared");
+        target.traitContainer.RemoveStatusAndStacks(target, "Enslaved");
 
         if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive && goapNode.actor.partyComponent.currentParty.currentQuest is RescuePartyQuest quest) {
             if(quest.targetCharacter == goapNode.poiTarget) {
                 quest.SetIsReleasing(false);
                 goapNode.actor.partyComponent.currentParty.GoBackHomeAndEndQuest();
+            }
+        }
+        if (isEnslaved) {
+            //If target is enslaved and is released, must try to join the faction of the releaser
+            if (goapNode.actor.faction != null && goapNode.actor.faction.isMajorNonPlayer) {
+                target.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, goapNode.actor, "join_faction_normal");
             }
         }
     }

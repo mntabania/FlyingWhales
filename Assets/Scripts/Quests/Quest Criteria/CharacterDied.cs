@@ -8,10 +8,10 @@ namespace Quests {
         }
         
         public override void Enable() {
-            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         }
         public override void Disable() {
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         }
         
         private void OnCharacterDied(Character character) {

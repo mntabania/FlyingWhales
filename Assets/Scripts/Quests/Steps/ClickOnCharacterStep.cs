@@ -7,16 +7,16 @@ namespace Quests.Steps {
             _validityChecker = validityChecker;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, CheckForCompletion);
-            Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, CheckForCompletion);
+            Messenger.AddListener<ISelectable>(ControlsSignals.SELECTABLE_LEFT_CLICKED, CheckForCompletion);
+            Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, CheckForCompletion);
             Character selectedCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
             if (selectedCharacter != null) {
                 CheckForCompletion(selectedCharacter);
             }
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, CheckForCompletion);
-            Messenger.RemoveListener<InfoUIBase>(Signals.MENU_OPENED, CheckForCompletion);
+            Messenger.RemoveListener<ISelectable>(ControlsSignals.SELECTABLE_LEFT_CLICKED, CheckForCompletion);
+            Messenger.RemoveListener<InfoUIBase>(UISignals.MENU_OPENED, CheckForCompletion);
         }
 
         #region Listeners

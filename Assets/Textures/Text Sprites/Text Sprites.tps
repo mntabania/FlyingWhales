@@ -88,9 +88,9 @@
         <key>maxTextureSize</key>
         <QSize>
             <key>width</key>
-            <int>2048</int>
+            <int>512</int>
             <key>height</key>
-            <int>2048</int>
+            <int>512</int>
         </QSize>
         <key>fixedTextureSize</key>
         <QSize>
@@ -102,7 +102,7 @@
         <key>algorithmSettings</key>
         <struct type="AlgorithmSettings">
             <key>algorithm</key>
-            <enum type="AlgorithmSettings::AlgorithmId">MaxRects</enum>
+            <enum type="AlgorithmSettings::AlgorithmId">Polygon</enum>
             <key>freeSizeMode</key>
             <enum type="AlgorithmSettings::AlgorithmFreeSizeMode">Best</enum>
             <key>sizeConstraints</key>
@@ -124,7 +124,7 @@
             <key>polygon</key>
             <struct type="AlgorithmPolygonSettings">
                 <key>alignToGrid</key>
-                <uint>1</uint>
+                <uint>4</uint>
             </struct>
         </struct>
         <key>dataFileNames</key>
@@ -167,7 +167,7 @@
             <key>trimThreshold</key>
             <uint>1</uint>
             <key>trimMargin</key>
-            <uint>1</uint>
+            <uint>3</uint>
             <key>trimMode</key>
             <enum type="SpriteSettings::TrimMode">Polygon</enum>
             <key>tracerTolerance</key>
@@ -214,6 +214,7 @@
             <key type="filename">C:/Users/12myk/Downloads/icon_cultist.png</key>
             <key type="filename">C:/Users/12myk/Downloads/icon_demon.png</key>
             <key type="filename">C:/Users/12myk/Downloads/icon_monster.png</key>
+            <key type="filename">C:/Users/12myk/Downloads/icon_ratvillager.png</key>
             <key type="filename">C:/Users/12myk/Downloads/icon_undead.png</key>
             <key type="filename">C:/Users/12myk/Downloads/icon_villager.png</key>
             <struct type="IndividualSpriteSettings">
@@ -275,6 +276,21 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">C:/Users/12myk/Downloads/icon_plague.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>10,10,19,19</rect>
+                <key>scale9Paddings</key>
+                <rect>10,10,19,19</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">C:/Users/12myk/Downloads/icon_threat.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -326,6 +342,8 @@
             <filename>../../../../../12myk/Photoshop Files/Key_W.png</filename>
             <filename>C:/Users/12myk/Downloads/icon_demon.png</filename>
             <filename>C:/Users/12myk/Downloads/icon_undead.png</filename>
+            <filename>C:/Users/12myk/Downloads/icon_plague.png</filename>
+            <filename>C:/Users/12myk/Downloads/icon_ratvillager.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

@@ -14,15 +14,12 @@ public class SmallSpider : Summon {
     public bool shouldGrowUpOnUnSeize { get; private set; }
 
     public SmallSpider() : base(SUMMON_TYPE.Small_Spider, ClassName, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
-        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
         combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
     public SmallSpider(string className) : base(SUMMON_TYPE.Small_Spider, className, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
-        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
         combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
     public SmallSpider(SaveDataSmallSpider data) : base(data) {
-        //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
         combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
         growUpDate = data.growUpDate;
         shouldGrowUpOnUnSeize = data.shouldGrowUpOnUnSeize;
@@ -82,6 +79,11 @@ public class SmallSpider : Summon {
             shouldGrowUpOnUnSeize = true;
             return;
         }
+        if (IsPOICurrentlyTargetedByAPerformingAction()) {
+            //If target is currently targeted by an action, do not grow up, instead, comeback after 1 hour
+            SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(12), GrowUp, this);
+            return;
+        }
         SetDestroyMarkerOnDeath(true);
         LocationGridTile tile = gridTileLocation;
         Faction targetFaction = faction;
@@ -89,20 +91,20 @@ public class SmallSpider : Summon {
         LocationStructure home = homeStructure;
         NPCSettlement settlement = homeSettlement;
         Region region = homeRegion;
-        List<HexTile> ogTerritories = territories;
+        HexTile ogTerritory = territory;
         
         SetShowNotificationOnDeath(false);
         Death("Transform Giant Spider");
         
         //create giant spider
         Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Giant_Spider, targetFaction, settlement, region, home);
-        summon.SetFirstAndLastName(firstName, surName);
-        if (ogTerritories.Count > 0) {
-            for (int i = 0; i < ogTerritories.Count; i++) {
-                summon.AddTerritory(ogTerritories[i]);    
-            }
+        if (!this.isUsingDefaultName) {
+            summon.SetFirstAndLastName(firstName, surName);    
         }
-        
+        if (ogTerritory != null) {
+            summon.SetTerritory(ogTerritory);
+        }
+
         Log growUpLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "become_giant_spider", null, LOG_TAG.Life_Changes);
         growUpLog.AddToFillers(summon, summon.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         growUpLog.AddLogToDatabase();

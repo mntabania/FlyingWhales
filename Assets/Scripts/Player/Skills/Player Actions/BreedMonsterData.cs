@@ -15,8 +15,14 @@ public class BreedMonsterData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if(targetPOI is Summon summon) {
-            SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(summon.race, summon.characterClass.className);
-            PlayerManager.Instance.player.playerSkillComponent.AddCharges(summonPlayerSkill.type, 1);
+            SPELL_TYPE summonPlayerSkillType = SPELL_TYPE.NONE;
+            if(summon is Rat) {
+                summonPlayerSkillType = SPELL_TYPE.PLAGUED_RAT;
+            } else {
+                SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(summon.race, summon.characterClass.className);
+                summonPlayerSkillType = summonPlayerSkill.type;
+            }
+            PlayerManager.Instance.player.playerSkillComponent.AddCharges(summonPlayerSkillType, 1);
 
             GameObject effect = ObjectPoolManager.Instance.InstantiateObjectFromPool("Breed Effect",
                 summon.worldPosition, Quaternion.identity, summon.currentRegion.innerMap.objectsParent, true);

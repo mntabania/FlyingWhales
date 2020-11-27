@@ -6,7 +6,7 @@ public class Dispel : GoapAction {
     public Dispel() : base(INTERACTION_TYPE.DISPEL) {
         actionIconString = GoapActionStateDB.Magic_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work, LOG_TAG.Life_Changes};
         showNotification = true;
     }
@@ -43,7 +43,7 @@ public class Dispel : GoapAction {
             string logString = GetTraitLogString(traitToRemove);
             if (traitToRemove == "Lycanthrope") {
                 if (targetCharacter.lycanData != null && targetCharacter.lycanData.isMaster && !targetCharacter.lycanData.dislikesBeingLycan) {
-                    CreateResultLog(targetCharacter.canPerform ? "refuse" : "success", logString, goapNode);
+                    CreateResultLog(targetCharacter.limiterComponent.canPerform ? "refuse" : "success", logString, goapNode);
                 } else {
                     //lycanthropy is removed
                     CreateResultLog("success", logString, goapNode);
@@ -51,7 +51,7 @@ public class Dispel : GoapAction {
             } else if (traitToRemove == "Vampire") {
                 Vampire vampire = targetCharacter.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
                 if (vampire != null && !vampire.dislikedBeingVampire) {
-                    CreateResultLog(targetCharacter.canPerform ? "refuse" : "success", logString, goapNode);
+                    CreateResultLog(targetCharacter.limiterComponent.canPerform ? "refuse" : "success", logString, goapNode);
                 } else {
                     //lycanthropy is removed
                     CreateResultLog("success", logString, goapNode);
@@ -72,7 +72,7 @@ public class Dispel : GoapAction {
                     targetCharacter.interruptComponent.ForceEndNonSimultaneousInterrupt();
                 }
                 if (targetCharacter.lycanData.isMaster && !targetCharacter.lycanData.dislikesBeingLycan) {
-                    if (targetCharacter.canPerform) {
+                    if (targetCharacter.limiterComponent.canPerform) {
                         //lycanthropy is kept
                         actor.relationshipContainer.AdjustOpinion(actor, targetCharacter, "Refused my help.", -8);
                     } else {
@@ -88,7 +88,7 @@ public class Dispel : GoapAction {
             } else if (traitToRemove == "Vampire") {
                 Vampire vampire = targetCharacter.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
                 if (vampire != null && !vampire.dislikedBeingVampire) {
-                    if (targetCharacter.canPerform) {
+                    if (targetCharacter.limiterComponent.canPerform) {
                         //Vampire is kept
                         actor.relationshipContainer.AdjustOpinion(actor, targetCharacter, "Refused my help.", -8);
                     } else {

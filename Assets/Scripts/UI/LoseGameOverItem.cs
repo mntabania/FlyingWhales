@@ -26,6 +26,5 @@ public class LoseGameOverItem : MonoBehaviour {
 
     public void BackToMainMenu() {
         LevelLoaderManager.Instance.LoadLevel("MainMenu");
-        Messenger.Cleanup();
     }
 }

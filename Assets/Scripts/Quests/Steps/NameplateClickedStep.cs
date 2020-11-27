@@ -7,10 +7,10 @@
             _neededText = neededText;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<string>(Signals.NAMEPLATE_CLICKED, CheckForCompletion);
+            Messenger.AddListener<string>(UISignals.NAMEPLATE_CLICKED, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<string>(Signals.NAMEPLATE_CLICKED, CheckForCompletion);
+            Messenger.RemoveListener<string>(UISignals.NAMEPLATE_CLICKED, CheckForCompletion);
         }
 
         #region Listeners

@@ -3,7 +3,7 @@
         public HunterLodge(Region location) : base(STRUCTURE_TYPE.HUNTER_LODGE, location) {
             SetMaxHPAndReset(8000);
         }
-        public HunterLodge(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public HunterLodge(Region location, SaveDataManMadeStructure data) : base(location, data) {
             SetMaxHP(8000);
         }
     }

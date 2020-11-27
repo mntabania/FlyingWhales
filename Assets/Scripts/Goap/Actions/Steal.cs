@@ -9,7 +9,7 @@ public class Steal : GoapAction {
     public Steal() : base(INTERACTION_TYPE.STEAL) {
         actionIconString = GoapActionStateDB.Steal_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.RATMAN };
         isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Crimes};
     }
@@ -20,13 +20,18 @@ public class Steal : GoapAction {
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, GOAP_EFFECT_TARGET.ACTOR));
 
     }
-    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData) {
-        List <GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
+    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+        List<GoapEffect> ee = ObjectPoolManager.Instance.CreateNewExpectedEffectsList();
+        List<GoapEffect> baseEE = base.GetExpectedEffects(actor, target, otherData, out isOverridden);
+        if(baseEE != null && baseEE.Count > 0) {
+            ee.AddRange(baseEE);
+        }
         TileObject item = target as TileObject;
         ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = item.name, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
         if (actor.traitContainer.HasTrait("Kleptomaniac")) {
-            ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
+            ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
         }
+        isOverridden = true;
         return ee;
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -35,6 +40,13 @@ public class Steal : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
+        if (actor.traitContainer.HasTrait("Enslaved")) {
+            if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+                costLog += $" +2000(Slave, target is not in actor's home)";
+                actor.logComponent.AppendCostLog(costLog);
+                return 2000;
+            }
+        }
         int cost = UtilityScripts.Utilities.Rng.Next(300, 351);
         costLog += $" +{cost}(Initial)";
         if (actor.traitContainer.HasTrait("Kleptomaniac")) {

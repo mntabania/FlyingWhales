@@ -40,15 +40,15 @@ public class PlayerManager : BaseMonoBehaviour {
     }
     public void Initialize() {
         availableChaosOrbs = new List<ChaosOrb>();
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_CLOSED, OnMenuClosed);
         // Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         // Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
         // Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
-        Messenger.AddListener<Vector3, int, InnerTileMap>(Signals.CREATE_CHAOS_ORBS, CreateChaosOrbsAt);
-        Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DID_ACTION_SUCCESSFULLY, OnCharacterDidActionSuccess);
+        Messenger.AddListener<Vector3, int, InnerTileMap>(PlayerSignals.CREATE_CHAOS_ORBS, CreateChaosOrbsAt);
+        Messenger.AddListener<Character, ActualGoapNode>(JobSignals.CHARACTER_DID_ACTION_SUCCESSFULLY, OnCharacterDidActionSuccess);
         // Messenger.AddListener(Signals.CHECK_IF_PLAYER_WINS, CheckWinCondition);
-        Messenger.AddListener(Signals.WIN_GAME, WinGame);
+        Messenger.AddListener(PlayerSignals.WIN_GAME, WinGame);
     }
     public void InitializePlayer(HexTile portal) {
         player = new Player();
@@ -299,18 +299,18 @@ public class PlayerManager : BaseMonoBehaviour {
                 }
                 if(orbsToCreate != 0) {
                     character.logComponent.PrintLogIfActive($"{character.name} performed a crime of type {crimeType.ToString()}. Expelling {orbsToCreate.ToString()} Mana Orbs.");
-                    Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, character.marker.transform.position, orbsToCreate, character.currentRegion.innerMap);
+                    Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.marker.transform.position, orbsToCreate, character.currentRegion.innerMap);
                 }
             }    
         }
     }
     private void AddAvailableChaosOrb(ChaosOrb chaosOrb) {
         availableChaosOrbs.Add(chaosOrb);
-        Messenger.Broadcast(Signals.CHAOS_ORB_SPAWNED);
+        Messenger.Broadcast(PlayerSignals.CHAOS_ORB_SPAWNED);
     }
     public void RemoveChaosOrbFromAvailability(ChaosOrb chaosOrb) {
         availableChaosOrbs.Remove(chaosOrb);
-        Messenger.Broadcast(Signals.CHAOS_ORB_DESPAWNED);
+        Messenger.Broadcast(PlayerSignals.CHAOS_ORB_DESPAWNED);
     }
     #endregion
 

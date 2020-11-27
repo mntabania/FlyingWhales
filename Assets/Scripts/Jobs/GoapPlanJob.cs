@@ -90,7 +90,8 @@ public class GoapPlanJob : JobQueueItem {
     #region Overrides 
     public override bool ProcessJob() {
         if (hasBeenReset) { return false; }
-        if(assignedPlan == null && originalOwner != null && assignedCharacter != null) {
+        //Should goap plan in multithread if character is being carried or being seized
+        if(assignedPlan == null && originalOwner != null && assignedCharacter != null && assignedCharacter.carryComponent.IsNotBeingCarried() && !assignedCharacter.isBeingSeized) {
             Character characterOwner = assignedCharacter;
             bool isPersonal = originalOwner.ownerType == JOB_OWNER.CHARACTER;
             IPointOfInterest target = targetPOI ?? assignedCharacter; //if provided target is null, default to the assigned character.
@@ -342,8 +343,22 @@ public class GoapPlanJob : JobQueueItem {
     public void SetCancelOnDeath(bool state) {
         shouldBeCancelledOnDeath = state;
     }
-    public bool HasOtherData(INTERACTION_TYPE actionType) {
-        return otherData.ContainsKey(actionType);
+    public bool HasOtherData(INTERACTION_TYPE p_actionType) {
+        return otherData.ContainsKey(p_actionType);
+    }
+    public bool HasOtherData(INTERACTION_TYPE p_actionType, object p_obj) {
+        if (otherData.ContainsKey(p_actionType)) {
+            OtherData[] o = otherData[p_actionType];
+            if (o != null) {
+                for (int i = 0; i < o.Length; i++) {
+                    OtherData data = o[i];
+                    if (data.obj.Equals(p_obj)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
     public OtherData[] GetOtherData(INTERACTION_TYPE actionType) {
         if (HasOtherData(actionType)) {

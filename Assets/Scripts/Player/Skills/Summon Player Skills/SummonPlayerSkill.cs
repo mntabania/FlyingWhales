@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 
 public class SummonPlayerSkill : SpellData {
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SUMMON; } }
@@ -14,18 +15,23 @@ public class SummonPlayerSkill : SpellData {
     public SummonPlayerSkill() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
     }
+
+    #region Overrides
     public override void ActivateAbility(LocationGridTile targetTile) {
         Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, PlayerManager.Instance.player.playerFaction, homeRegion: targetTile.parentMap.region as Region, className: className);
         summon.OnSummonAsPlayerMonster();
         CharacterManager.Instance.PlaceSummon(summon, targetTile);
-        if (targetTile.structure?.settlementLocation != null && 
-            targetTile.structure.settlementLocation.locationType != LOCATION_TYPE.VILLAGE) {
+
+        BaseSettlement settlement = null;
+        if (targetTile.IsPartOfSettlement(out settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE) {
             summon.MigrateHomeStructureTo(targetTile.structure);	
         } else {
-            summon.AddTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);    
+            if (targetTile.collectionOwner.isPartOfParentRegionMap) {
+                summon.SetTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);
+            }
         }
         summon.jobQueue.CancelAllJobs();
-        Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summon);
+        Messenger.Broadcast(PlayerSignals.PLAYER_PLACED_SUMMON, summon);
         // Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, summon);
         base.ActivateAbility(targetTile);
     }
@@ -34,7 +40,7 @@ public class SummonPlayerSkill : SpellData {
         CharacterManager.Instance.PlaceSummon(summon, targetTile);
         //summon.behaviourComponent.AddBehaviourComponent(typeof(DefaultMinion));
         spawnedCharacter = summon;
-        Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summon);
+        Messenger.Broadcast(PlayerSignals.PLAYER_PLACED_SUMMON, summon);
         base.ActivateAbility(targetTile, ref spawnedCharacter);
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
@@ -65,4 +71,11 @@ public class SummonPlayerSkill : SpellData {
         }
         return false;
     }
+    #endregion
+
+    #region Virtuals
+    protected virtual void AfterSummoning(Summon summon) {
+        //What happens after summoning this monster
+    }
+    #endregion
 }

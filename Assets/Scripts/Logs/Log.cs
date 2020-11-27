@@ -172,7 +172,7 @@ public struct Log {
     #region Addition
     public void AddLogToDatabase() {
         DatabaseManager.Instance.mainSQLDatabase.InsertLog(this);
-        Messenger.Broadcast(Signals.LOG_ADDED, this);
+        Messenger.Broadcast(UISignals.LOG_ADDED, this);
     }
     #endregion
 

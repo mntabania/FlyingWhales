@@ -20,7 +20,7 @@ namespace Traits {
             stackModifier = 0.5f;
             hindersSocials = true;
             pukeChance = 5f;
-            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_While_Stationary_Unoccupied);
         }
 
         #region Loading
@@ -60,11 +60,11 @@ namespace Traits {
             log.AddLogToDatabase();
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
-        public override bool PerTickOwnerMovement() {
+        public override bool PerTickWhileStationaryOrUnoccupied() {
             float pukeRoll = Random.Range(0f, 100f);
             if (pukeRoll < pukeChance) {
                 //do puke action
-                if (owner.characterClass.className == "Zombie") {
+                if (owner.characterClass.IsZombie()) {
                     return false;
                 }
                 return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, owner, "Sick");

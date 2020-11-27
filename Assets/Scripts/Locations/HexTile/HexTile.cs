@@ -394,7 +394,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     }
     public bool HasAliveVillagerResident() {
         //Does not count if hextile is only a territory
-        return settlementOnTile != null && settlementOnTile.HasAliveVillagerResident();
+        return settlementOnTile != null && settlementOnTile.HasResidentThatMeetsCriteria(resident => !resident.isDead && resident.isNormalCharacter);
     }
     public string GetDisplayName() {
         if (settlementOnTile != null) {
@@ -839,14 +839,14 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
             }
         }
         MouseOver();
-        Messenger.Broadcast(Signals.TILE_LEFT_CLICKED, this);
+        Messenger.Broadcast(HexTileSignals.HEXTILE_LEFT_CLICKED, this);
     }
     private void RightClick() {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() ||
             GameManager.Instance.gameHasStarted == false) {
             return;
         }
-        Messenger.Broadcast(Signals.TILE_RIGHT_CLICKED, this);
+        Messenger.Broadcast(HexTileSignals.HEXTILE_RIGHT_CLICKED, this);
     }
     private void MouseOver() {
         if (UIManager.Instance.initialWorldSetupMenu.isPickingPortal) {
@@ -868,7 +868,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         if (GameManager.showAllTilesTooltip) {
             ShowTileInfo();    
         }
-        Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
+        Messenger.Broadcast(HexTileSignals.HEXTILE_HOVERED_OVER, this);
     }
     private void MouseExit() {
         if (UIManager.Instance.initialWorldSetupMenu.isPickingPortal) {
@@ -886,7 +886,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         if (GameManager.showAllTilesTooltip) {
             UIManager.Instance.HideSmallInfo();    
         }
-        Messenger.Broadcast(Signals.TILE_HOVERED_OUT, this);
+        Messenger.Broadcast(HexTileSignals.HEXTILE_HOVERED_OUT, this);
     }
     private void DoubleLeftClick() {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || 
@@ -897,7 +897,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         //     InnerMapManager.Instance.TryShowLocationMap(region);
         //     InnerMapCameraMove.Instance.CenterCameraOnTile(this);
         // }
-        Messenger.Broadcast(Signals.TILE_DOUBLE_CLICKED, this);
+        Messenger.Broadcast(HexTileSignals.HEXTILE_DOUBLE_CLICKED, this);
     }
     public void PointerClick(BaseEventData bed) {
         PointerEventData ped = bed as PointerEventData;
@@ -1253,8 +1253,8 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
 
     #region Listeners
     private void SubscribeListeners() {    
-        Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnStructurePlaced);
-        Messenger.AddListener<LocationStructure, InnerMapHexTile>(Signals.STRUCTURE_OBJECT_REMOVED, OnStructureRemoved);
+        Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_OBJECT_PLACED, OnStructurePlaced);
+        Messenger.AddListener<LocationStructure, InnerMapHexTile>(StructureSignals.STRUCTURE_OBJECT_REMOVED, OnStructureRemoved);
     }
     private void OnStructurePlaced(LocationStructure structure) {
         if (innerMapHexTile != null && innerMapHexTile == structure.occupiedHexTile) {
@@ -1342,12 +1342,12 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     public void AddPlayerAction(SPELL_TYPE action) {
         if (actions.Contains(action) == false) {
             actions.Add(action);
-            Messenger.Broadcast(Signals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
+            Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
         }
     }
     public void RemovePlayerAction(SPELL_TYPE action) {
         if (actions.Remove(action)) {
-            Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+            Messenger.Broadcast(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
         }
     }
     public void ClearPlayerActions() {
@@ -1367,6 +1367,9 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         }
         if (structureType == STRUCTURE_TYPE.MEDDLER) {
             return CanBuildDemonicStructureHere() && InnerMapManager.Instance.currentlyShowingLocation != null && !InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.MEDDLER); //only 1 finger at a time.
+        }
+        if (structureType == STRUCTURE_TYPE.BIOLAB) {
+            return CanBuildDemonicStructureHere() && !PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB); //Only 1 biolab should exist in the world
         }
         return CanBuildDemonicStructureHere();
     }
@@ -1521,6 +1524,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             Character character = region.charactersAtLocation[i];
             if (character.gridTileLocation == null) { continue; }
+            if (character.isBeingSeized) { continue; }
             if (character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
                 && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax) {
                 if (validityChecker.Invoke(character)) {
@@ -1879,23 +1883,19 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
 
     #region IPartyTargetDestination
     public LocationGridTile GetRandomPassableTile() {
-        LocationGridTile centerTile = GetCenterLocationGridTile();
-        if (centerTile.IsPassable()) {
-            return centerTile;
-        } else {
-            List<LocationGridTile> passableTiles = null;
-            for (int i = 0; i < locationGridTiles.Count; i++) {
-                LocationGridTile tile = locationGridTiles[i];
-                if (tile.IsPassable()) {
-                    if(passableTiles == null) { passableTiles = new List<LocationGridTile>(); }
-                    passableTiles.Add(tile);
-                }
-            }
-            if(passableTiles != null && passableTiles.Count > 0) {
-                return CollectionUtilities.GetRandomElement(passableTiles);
+        LocationGridTile chosenTile = null;
+        List<LocationGridTile> passableTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
+        for (int i = 0; i < locationGridTiles.Count; i++) {
+            LocationGridTile tile = locationGridTiles[i];
+            if (tile.IsPassable()) {
+                passableTiles.Add(tile);
             }
         }
-        return null;
+        if (passableTiles != null && passableTiles.Count > 0) {
+            chosenTile = CollectionUtilities.GetRandomElement(passableTiles);
+        }
+        ObjectPoolManager.Instance.ReturnGridTileListToPool(passableTiles);
+        return chosenTile;
     }
     public bool IsAtTargetDestination(Character character) {
         return character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == this;

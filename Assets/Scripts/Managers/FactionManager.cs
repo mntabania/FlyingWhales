@@ -16,6 +16,7 @@ public class FactionManager : BaseMonoBehaviour {
     public Faction neutralFaction { get; private set; }
     public Faction vagrantFaction { get; private set; }
     public Faction disguisedFaction { get; private set; }
+    public Faction ratmenFaction { get; private set; }
     private Faction _undeadFaction;
 
     [Space(10)]
@@ -27,7 +28,8 @@ public class FactionManager : BaseMonoBehaviour {
     [SerializeField] private Sprite undeadFactionEmblem;
     [SerializeField] private Sprite playerFactionEmblem;
     [SerializeField] private Sprite cultFactionEmblem;
-    
+    [SerializeField] private Sprite ratmenFactionEmblem;
+
     private List<Sprite> _usedEmblems = new List<Sprite>();
 
     public readonly string[] exclusiveIdeologyTraitRequirements = new string[] { "Worker", "Combatant", "Royalty" };
@@ -71,7 +73,7 @@ public class FactionManager : BaseMonoBehaviour {
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         SetNeutralFaction(newFaction);
         CreateRelationshipsForFaction(newFaction);
-        Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+        Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
     }
     public void CreateVagrantFaction() {
         Faction newFaction = new Faction(FACTION_TYPE.Vagrants);
@@ -82,7 +84,7 @@ public class FactionManager : BaseMonoBehaviour {
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         SetVagrantFaction(newFaction);
         CreateRelationshipsForFaction(newFaction);
-        Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+        Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
     }
     public void CreateDisguisedFaction() {
         Faction newFaction = new Faction(FACTION_TYPE.Disguised);
@@ -93,7 +95,20 @@ public class FactionManager : BaseMonoBehaviour {
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         SetDisguisedFaction(newFaction);
         CreateRelationshipsForFaction(newFaction);
-        Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+        Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
+    }
+    public void CreateRatmenFaction() {
+        Faction newFaction = new Faction(FACTION_TYPE.Ratmen);
+        newFaction.SetName("Ratmen");
+        newFaction.SetFactionActiveState(false);
+        newFaction.SetEmblem(ratmenFactionEmblem);
+        newFaction.factionType.SetAsDefault();
+        newFaction.SetPathfindingTag(InnerMapManager.Ratmen_Faction);
+        newFaction.SetPathfindingDoorTag(InnerMapManager.Ratmen_Faction_Doors);
+        DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
+        SetRatmenFaction(newFaction);
+        CreateRelationshipsForFaction(newFaction);
+        Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
     }
     private void SetNeutralFaction(Faction faction) {
         neutralFaction = faction;
@@ -107,6 +122,9 @@ public class FactionManager : BaseMonoBehaviour {
     private void SetUndeadFaction(Faction faction) {
         _undeadFaction = faction;
     }
+    private void SetRatmenFaction(Faction faction) {
+        ratmenFaction = faction;
+    }
     public Faction CreateNewFaction(FACTION_TYPE factionType, string factionName = "") {
         Faction newFaction = new Faction(factionType);
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
@@ -118,7 +136,7 @@ public class FactionManager : BaseMonoBehaviour {
             newFaction.SetName(factionName);
         }
         if (!newFaction.isPlayerFaction) {
-            Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+            Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
         }
         return newFaction;
     }
@@ -128,6 +146,8 @@ public class FactionManager : BaseMonoBehaviour {
             faction.SetEmblem(playerFactionEmblem);
         } else if (factionType == FACTION_TYPE.Undead) {
             faction.SetEmblem(undeadFactionEmblem);
+        } else if (factionType == FACTION_TYPE.Ratmen) {
+            faction.SetEmblem(ratmenFactionEmblem);
         } else if (factionType == FACTION_TYPE.Demon_Cult && 
                    DatabaseManager.Instance.factionDatabase.allFactionsList.Count(f => f.factionType.type == FACTION_TYPE.Demon_Cult) == 1) {
             //only set cult faction emblem on first cult faction.
@@ -140,12 +160,16 @@ public class FactionManager : BaseMonoBehaviour {
         FACTION_TYPE factionType = faction.factionType.type;
         if (factionType == FACTION_TYPE.Demons) {
             //NOTE: This is always reserved!
-            faction.SetPathfindingTag(2);
-            faction.SetPathfindingDoorTag(3);
+            faction.SetPathfindingTag(InnerMapManager.Demonic_Faction);
+            faction.SetPathfindingDoorTag(InnerMapManager.Demonic_Faction_Doors);
         } else if (factionType == FACTION_TYPE.Undead) {
             //NOTE: This is always reserved!
-            faction.SetPathfindingTag(4);
-            faction.SetPathfindingDoorTag(5);
+            faction.SetPathfindingTag(InnerMapManager.Undead_Faction);
+            faction.SetPathfindingDoorTag(InnerMapManager.Undead_Faction_Doors);
+        } else if (factionType == FACTION_TYPE.Ratmen) {
+            //NOTE: This is always reserved!
+            faction.SetPathfindingTag(InnerMapManager.Ratmen_Faction);
+            faction.SetPathfindingDoorTag(InnerMapManager.Ratmen_Faction_Doors);
         } else {
             if (faction.isMajorNonPlayer) {
                 //claim new tags per new MAJOR faction.
@@ -157,9 +181,10 @@ public class FactionManager : BaseMonoBehaviour {
     private Faction CreateUndeadFaction() {
         Faction undead = CreateNewFaction(FACTION_TYPE.Undead, "Undead");
         undead.SetIsMajorFaction(false);
-        foreach (KeyValuePair<Faction,FactionRelationship> pair in undead.relationships) {
-            undead.SetRelationshipFor(pair.Key, FACTION_RELATIONSHIP_STATUS.Hostile);
-        }
+        CreateRelationshipsForFaction(undead);
+        //foreach (KeyValuePair<Faction,FactionRelationship> pair in undead.relationships) {
+        //    undead.SetRelationshipFor(pair.Key, FACTION_RELATIONSHIP_STATUS.Hostile);
+        //}
         return undead;
     }
     public Faction CreateNewFaction(SaveDataFaction data) {
@@ -172,6 +197,8 @@ public class FactionManager : BaseMonoBehaviour {
             SetNeutralFaction(newFaction);
         } else if (data.factionType.type == FACTION_TYPE.Vagrants) {
             SetVagrantFaction(newFaction);
+        } else if (data.factionType.type == FACTION_TYPE.Ratmen) {
+            SetRatmenFaction(newFaction);
         }
         if (newFaction.isMajorNonPlayer) {
             //claim 2 tags per MAJOR non Player faction, this is so that the last tag is still accurate.
@@ -180,7 +207,7 @@ public class FactionManager : BaseMonoBehaviour {
         }
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         if (!newFaction.isPlayerFaction) {
-            Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+            Messenger.Broadcast(FactionSignals.FACTION_CREATED, newFaction);
         }
         return newFaction;
     }
@@ -200,7 +227,7 @@ public class FactionManager : BaseMonoBehaviour {
 
     #region Emblem
     private Sprite GetRandomFactionEmblem(Faction faction) {
-        if(_usedEmblems.Count == _factionEmblems.Count) {
+        if(_usedEmblems.Count >= _factionEmblems.Count) {
             _usedEmblems.Clear();
         }
         for (int i = 0; i < _factionEmblems.Count; i++) {
@@ -208,7 +235,7 @@ public class FactionManager : BaseMonoBehaviour {
             if (_usedEmblems.Contains(currSprite)) {
                 continue;
             }
-            _usedEmblems.Add(currSprite);
+            SetEmblemAsUsed(currSprite);
             return currSprite;
         }
         throw new System.Exception($"There are no more emblems for faction: {faction.name}");
@@ -229,6 +256,9 @@ public class FactionManager : BaseMonoBehaviour {
         if (p_data.factionType.type == FACTION_TYPE.Demons) {
             return playerFactionEmblem;
         }
+        if (p_data.factionType.type == FACTION_TYPE.Ratmen) {
+            return ratmenFactionEmblem;
+        }
         if (p_data.emblemName == cultFactionEmblem.name) {
             return cultFactionEmblem;
         }
@@ -240,19 +270,10 @@ public class FactionManager : BaseMonoBehaviour {
         }
         return null;
     }
-    public int GetFactionEmblemIndex(Sprite emblem) {
-        for (int i = 0; i < _factionEmblems.Count; i++) {
-            Sprite currSetting = _factionEmblems[i];
-            if (currSetting == emblem) {
-                return i;
-            }
-            //foreach (KeyValuePair<int, Sprite> kvp in currSetting.emblems) {
-            //    if (kvp.Value.name == emblem.name) {
-            //        return i;
-            //    }
-            //}
-        }
-        return -1;
+    public void SetEmblemAsUsed(Sprite sprite) {
+        if (sprite != null && !_usedEmblems.Contains(sprite)) {
+            _usedEmblems.Add(sprite);
+        }   
     }
     #endregion
 
@@ -299,28 +320,59 @@ public class FactionManager : BaseMonoBehaviour {
         FactionRelationship newRel = new FactionRelationship(faction1, faction2);
         faction1.AddNewRelationship(faction2, newRel);
         faction2.AddNewRelationship(faction1, newRel);
-        //faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.Hostile);
-        //faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.Hostile);
-        //Warmonger warmonger1 = CreateIdeology<Warmonger>(FACTION_IDEOLOGY.Warmonger);
-        //Warmonger warmonger2 = CreateIdeology<Warmonger>(FACTION_IDEOLOGY.Warmonger);
-        //faction1.factionType.AddIdeology(warmonger1);
-        //faction2.factionType.AddIdeology(warmonger2);
-        if (faction1.isPlayerFaction || faction2.isPlayerFaction || 
-           faction1 == neutralFaction || faction2 == neutralFaction || 
-           faction1 == _undeadFaction || faction2 == _undeadFaction) {
 
-            if ((faction1.isPlayerFaction || faction2.isPlayerFaction) &&
-                (faction1 == neutralFaction || faction2 == neutralFaction)) {
-                //Player faction should be neutral with Wild Monsters
-                //Reference: https://trello.com/c/hqFZ1MC2/1561-player-faction-should-be-neutral-with-wild-monsters
-                faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.Neutral);
-                faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.Neutral);
+        FACTION_RELATIONSHIP_STATUS status = GetInitialFactionRelationshipStatus(faction1, faction2);
+        faction1.SetRelationshipFor(faction2, status);
+        faction2.SetRelationshipFor(faction1, status);
+
+        //if (faction1.isPlayerFaction || faction2.isPlayerFaction || 
+        //   faction1.factionType.type == FACTION_TYPE.Wild_Monsters || faction2.factionType.type == FACTION_TYPE.Wild_Monsters || 
+        //   faction1.factionType.type == FACTION_TYPE.Undead || faction2.factionType.type == FACTION_TYPE.Undead ||
+        //   faction1.factionType.type == FACTION_TYPE.Ratmen || faction2.factionType.type == FACTION_TYPE.Ratmen) {
+
+        //    if ((faction1.isPlayerFaction || faction2.isPlayerFaction) &&
+        //        (faction1 == neutralFaction || faction2 == neutralFaction)) {
+
+        //        faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.Neutral);
+        //        faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.Neutral);
+        //    } else {
+        //        faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.Hostile);
+        //        faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.Hostile);    
+        //    }
+        //}
+        return newRel;
+    }
+    private FACTION_RELATIONSHIP_STATUS GetInitialFactionRelationshipStatus(Faction faction1, Faction faction2) {
+        if(faction1.isPlayerFaction || faction2.isPlayerFaction) {
+            //Player faction should be neutral with Wild Monsters
+            //Reference: https://trello.com/c/hqFZ1MC2/1561-player-faction-should-be-neutral-with-wild-monsters
+            if (faction1.factionType.type == FACTION_TYPE.Wild_Monsters || faction2.factionType.type == FACTION_TYPE.Wild_Monsters) {
+                return FACTION_RELATIONSHIP_STATUS.Neutral;
             } else {
-                faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.Hostile);
-                faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.Hostile);    
+                return FACTION_RELATIONSHIP_STATUS.Hostile;
+            }
+        } else if (faction1.factionType.type == FACTION_TYPE.Wild_Monsters || faction2.factionType.type == FACTION_TYPE.Wild_Monsters) {
+            //Player faction should be neutral with Wild Monsters
+            //Reference: https://trello.com/c/hqFZ1MC2/1561-player-faction-should-be-neutral-with-wild-monsters
+            if (faction1.isPlayerFaction || faction2.isPlayerFaction) {
+                return FACTION_RELATIONSHIP_STATUS.Neutral;
+            } else {
+                return FACTION_RELATIONSHIP_STATUS.Hostile;
+            }
+        } else if (faction1.factionType.type == FACTION_TYPE.Undead || faction2.factionType.type == FACTION_TYPE.Undead) {
+            if (faction1.factionType.type == FACTION_TYPE.Ratmen || faction2.factionType.type == FACTION_TYPE.Ratmen) {
+                return FACTION_RELATIONSHIP_STATUS.Neutral;
+            } else {
+                return FACTION_RELATIONSHIP_STATUS.Hostile;
+            }
+        } else if (faction1.factionType.type == FACTION_TYPE.Ratmen || faction2.factionType.type == FACTION_TYPE.Ratmen) {
+            if (faction1.factionType.type == FACTION_TYPE.Undead || faction2.factionType.type == FACTION_TYPE.Undead) {
+                return FACTION_RELATIONSHIP_STATUS.Neutral;
+            } else {
+                return FACTION_RELATIONSHIP_STATUS.Hostile;
             }
         }
-        return newRel;
+        return FACTION_RELATIONSHIP_STATUS.Neutral;
     }
     /// <summary>
     /// Utility Function for getting the relationship between 2 factions,
@@ -342,56 +394,97 @@ public class FactionManager : BaseMonoBehaviour {
     //    int totalFactionLvl = allFactions.Where(x => x.isActive).Sum(x => x.level);
     //    return totalFactionLvl / activeFactionsCount;
     //}
-    public void RerollFactionRelationships(Faction faction, Character leader, bool defaultToNeutral, Action<FACTION_RELATIONSHIP_STATUS, Faction, Faction> onSetRelationshipAction = null) {
+    public void RerollFactionRelationships(Faction faction, Character leader, bool defaultToNeutral, bool logRelationshipChangeFromLeaderRelationship) {
         for (int i = 0; i < allFactions.Count; i++) {
             Faction otherFaction = allFactions[i];
             if(otherFaction.id != faction.id) {
                 FactionRelationship factionRelationship = faction.GetRelationshipWith(otherFaction);
-                if (otherFaction.isPlayerFaction) {
-                    //If Demon Worshipper, friendly with player faction
-                    factionRelationship.SetRelationshipStatus(faction.factionType.HasIdeology(FACTION_IDEOLOGY.Demon_Worship) ? 
-                        FACTION_RELATIONSHIP_STATUS.Friendly : FACTION_RELATIONSHIP_STATUS.Hostile);
-                    onSetRelationshipAction?.Invoke(factionRelationship.relationshipStatus, faction, otherFaction);
-                } else if (otherFaction.factionType.type == FACTION_TYPE.Vampire_Clan) {
+                FACTION_RELATIONSHIP_STATUS newStatus = factionRelationship.relationshipStatus;
+                if (faction.factionType.HasIdeology(FACTION_IDEOLOGY.Demon_Worship)) {
+                    if (otherFaction.isPlayerFaction || otherFaction.factionType.HasIdeology(FACTION_IDEOLOGY.Demon_Worship)) {
+                        newStatus = FACTION_RELATIONSHIP_STATUS.Friendly;
+                    }
+                } else {
+                    //if other faction is player faction and this faction is not a demon worshipper, revert relationship with player faction to hostile.
+                    if (otherFaction.isPlayerFaction) {
+                        newStatus = FACTION_RELATIONSHIP_STATUS.Hostile;
+                    }
+                }
+                
+                if (otherFaction.factionType.type == FACTION_TYPE.Vampire_Clan) {
                     //If the other faction is a Vampire Clan
                     //And this faction is a Vampire Clan - Neutral, but if this facton is Lycan Clan - Hostile
                     if (faction.factionType.type == FACTION_TYPE.Lycan_Clan) {
-                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Hostile);
+                        newStatus = FACTION_RELATIONSHIP_STATUS.Hostile;
                     } else if (faction.factionType.type == FACTION_TYPE.Vampire_Clan) {
-                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);
-                    } else {
-                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);
+                        newStatus = FACTION_RELATIONSHIP_STATUS.Neutral;
                     }
-                    onSetRelationshipAction?.Invoke(factionRelationship.relationshipStatus, faction, otherFaction);
-                } else if (otherFaction.factionType.type == FACTION_TYPE.Lycan_Clan) {
+                }
+                if (otherFaction.factionType.type == FACTION_TYPE.Lycan_Clan) {
                     //If the other faction is a Lycan Clan
                     //And this faction is a Lycan Clan - Neutral, but if this facton is Vampire Clan - Hostile
                     if (faction.factionType.type == FACTION_TYPE.Vampire_Clan) {
-                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Hostile);
+                        newStatus = FACTION_RELATIONSHIP_STATUS.Hostile;
                     } else if (faction.factionType.type == FACTION_TYPE.Lycan_Clan) {
-                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);
-                    } else {
-                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);
+                        newStatus = FACTION_RELATIONSHIP_STATUS.Neutral;
                     }
-                    onSetRelationshipAction?.Invoke(factionRelationship.relationshipStatus, faction, otherFaction);
-                } else if (otherFaction.leader != null && otherFaction.leader is Character otherFactionLeader){
-                    //Check each Faction Leader of other existing factions if available:
+                }
+                if (otherFaction.leader != null && otherFaction.leader is Character otherFactionLeader) {
                     if (leader.relationshipContainer.IsEnemiesWith(otherFactionLeader)) {
                         //If this one's Faction Leader considers that an Enemy or Rival, war with that faction
                         factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Hostile);
+                        if (logRelationshipChangeFromLeaderRelationship) {
+                            LogRelationshipChangeBasedOnLeadersRelationship(FACTION_RELATIONSHIP_STATUS.Hostile, faction, otherFaction);    
+                        }
                     } else if (leader.relationshipContainer.IsFriendsWith(otherFactionLeader)) {
                         //If this one's Faction Leader considers that a Friend or Close Friend, friendly with that faction
                         factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Friendly);
-                    } else {
-                        if (defaultToNeutral) {
-                            //The rest should be set as neutral
-                            factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);    
+                        if (logRelationshipChangeFromLeaderRelationship) {
+                            LogRelationshipChangeBasedOnLeadersRelationship(FACTION_RELATIONSHIP_STATUS.Friendly, faction, otherFaction);
                         }
-                    }
-                    onSetRelationshipAction?.Invoke(factionRelationship.relationshipStatus, faction, otherFaction);
+                    } else {
+                        // if (defaultToNeutral) {
+                        //     //The rest should be set as neutral
+                        //     factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);    
+                        // }
+                        factionRelationship.SetRelationshipStatus(newStatus);
+                    }    
+                } else {
+                    
+                    factionRelationship.SetRelationshipStatus(newStatus);
                 }
-                
             }
+        }
+    }
+    private void LogRelationshipChangeBasedOnLeadersRelationship(FACTION_RELATIONSHIP_STATUS status, Faction faction, Faction otherFaction) {
+        if (!otherFaction.isPlayerFaction) {
+            //If this one's Faction Leader considers that an Enemy or Rival, war with that faction
+            if (status == FACTION_RELATIONSHIP_STATUS.Hostile) {
+                Log dislikeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "dislike_leader", null, LOG_TAG.Major);
+                dislikeLog.AddToFillers(faction.leader as Character, faction.leader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                dislikeLog.AddToFillers(otherFaction.leader as Character, otherFaction.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "declare_war", null, LOG_TAG.Major);
+                log.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
+                log.AddToFillers(otherFaction, otherFaction.name, LOG_IDENTIFIER.FACTION_2);
+                log.AddToFillers(dislikeLog.fillers);
+                log.AddToFillers(null, dislikeLog.unReplacedText, LOG_IDENTIFIER.APPEND);
+                log.AddLogToDatabase();    
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            } else if (status == FACTION_RELATIONSHIP_STATUS.Friendly) {
+                //If this one's Faction Leader considers that a Friend or Close Friend, friendly with that faction
+                Log likeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "like_leader", null, LOG_TAG.Major);
+                likeLog.AddToFillers(faction.leader as Character, faction.leader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                likeLog.AddToFillers(otherFaction.leader as Character, otherFaction.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "declare_peace", null, LOG_TAG.Major);
+                log.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
+                log.AddToFillers(otherFaction, otherFaction.name, LOG_IDENTIFIER.FACTION_2);
+                log.AddToFillers(likeLog.fillers);
+                log.AddToFillers(null, likeLog.unReplacedText, LOG_IDENTIFIER.APPEND);
+                log.AddLogToDatabase();
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            }    
         }
     }
     #endregion
@@ -583,7 +676,9 @@ public class FactionManager : BaseMonoBehaviour {
         }
     }
     public FACTION_TYPE GetFactionTypeForCharacter(Character character) {
-        if (character.traitContainer.HasTrait("Vampire")) {
+        if (character.characterClass.className == "Cult Leader") {
+            return FACTION_TYPE.Demon_Cult;
+        } else if (character.traitContainer.HasTrait("Vampire")) {
             return FACTION_TYPE.Vampire_Clan;
         } else if (character.isLycanthrope && character.lycanData.isMaster) {
             return FACTION_TYPE.Lycan_Clan;

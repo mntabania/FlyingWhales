@@ -49,8 +49,8 @@ public class SuccubusBehaviour : CharacterBehaviourComponent {
                 log += $"\n-Character is in home and not in disguise, 1% chance to disguise";
                 int roll = UnityEngine.Random.Range(0, 100);
                 log += "\nRoll: " + roll;
-                if (roll < 1) {
-                    Character targetCharacter = character.currentRegion.GetRandomAliveVillagerCharacterWithGender(GENDER.FEMALE);
+                if (roll < 1) { //1
+                    Character targetCharacter = character.currentRegion.GetRandomCharacterThatMeetCriteria(c => !c.isDead && c.isNormalCharacter && c.gender == GENDER.FEMALE);
                     if (targetCharacter != null) {
                         log += $"\n-Target for disguise is: " + targetCharacter.name;
                         if (character.currentRegion.GetRandomCharacterThatMeetCriteria((c) => CanTargetCharacterForMakeLove(character, c)) != null) {
@@ -73,8 +73,8 @@ public class SuccubusBehaviour : CharacterBehaviourComponent {
 	}
 
     private bool CanTargetCharacterForMakeLove(Character source, Character c) {
-        if(c.gender == GENDER.MALE && !c.isDead && (source.tileObjectComponent.primaryBed != null || c.tileObjectComponent.primaryBed != null) && c.homeSettlement != null) {
-            if(c.canPerform && !c.combatComponent.isInCombat && !c.raisedFromDeadAsSkeleton && !c.carryComponent.masterCharacter.movementComponent.isTravellingInWorld && c.currentRegion == source.currentRegion) {
+        if(c.gender == GENDER.MALE && !c.isDead && (source.tileObjectComponent.primaryBed != null || c.tileObjectComponent.primaryBed != null) && c.homeSettlement != null && !c.partyComponent.isActiveMember) {
+            if(c.limiterComponent.canPerform && !c.combatComponent.isInCombat && !c.raisedFromDeadAsSkeleton && !c.carryComponent.masterCharacter.movementComponent.isTravellingInWorld && c.currentRegion == source.currentRegion) {
                 return c.homeSettlement.GetFirstTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.IsAvailable() && b.GetActiveUserCount() == 0) != null;
             }
         }

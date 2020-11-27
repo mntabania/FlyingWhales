@@ -10,14 +10,9 @@ using UtilityScripts;
 
 public class BehaviourComponent : CharacterComponent {
     public List<CharacterBehaviourComponent> currentBehaviourComponents { get; private set; }
-    //public NPCSettlement assignedTargetSettlement { get; private set; }
     public NPCSettlement attackVillageTarget { get; private set; }
     public HexTile attackHexTarget { get; private set; }
-    //public HexTile assignedTargetHex { get; private set; }
     public DemonicStructure attackDemonicStructureTarget { get; private set; }
-    //public bool isHarassing { get; private set; }
-    //public bool isDefending { get; private set; }
-    //public bool isInvading { get; private set; }
     public bool isAttackingDemonicStructure { get; private set; }
     public bool hasLayedAnEgg { get; private set; }
     public bool isAgitated { get; private set; }
@@ -69,7 +64,10 @@ public class BehaviourComponent : CharacterComponent {
     
     //snatcher
     public bool isCurrentlySnatching;
-    
+
+    //pest
+    public List<HexTile> pestVillageTarget { get; private set; }
+
     //private COMBAT_MODE combatModeBeforeHarassRaidInvade;
     public COMBAT_MODE combatModeBeforeAttackingDemonicStructure { get; private set; }
 
@@ -153,7 +151,7 @@ public class BehaviourComponent : CharacterComponent {
         if (wasRemoved) {
             // Debug.Log($"{owner.name} removed character behaviour {component}");
             component.OnRemoveBehaviourFromCharacter(owner);
-            Messenger.Broadcast(Signals.CHARACTER_REMOVED_BEHAVIOUR, owner, component);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, owner, component);
         }
         return wasRemoved;
     }
@@ -306,14 +304,13 @@ public class BehaviourComponent : CharacterComponent {
         }
     }
     public void UpdateDefaultBehaviourSet() {
-        if (owner.isNormalCharacter || owner.characterClass.className == "Zombie") {
+        if ((owner.isNormalCharacter && !owner.isConsideredRatman) || owner.characterClass.IsZombie()) {
             if(owner.homeSettlement != null) {
                 owner.SetIsWanderer(false);
             } else {
                 owner.SetIsWanderer(true);
             }
         } else {
-            
             if (owner.minion != null) {
                 ChangeDefaultBehaviourSet(CharacterManager.Default_Minion_Behaviour);
             } else if (owner.race == RACE.ANGEL) {
@@ -337,20 +334,17 @@ public class BehaviourComponent : CharacterComponent {
     #region Utilities
     public List<HexTile> GetVillageTargetsByPriority() {
         //get settlements in region that have normal characters living there.
-        List<BaseSettlement> settlementsInRegion = owner.currentRegion?.GetSettlementsInRegion(
-            settlement => settlement.residents.Count(c => c.isNormalCharacter && c.IsAble()) > 0);
+        List<BaseSettlement> settlementsInRegion = owner.currentRegion?.GetSettlementsInRegion(settlement => settlement.residents.Count > 0 && 
+                                                                                                             settlement.residents.Count(c => c != null && c.isNormalCharacter && c.IsAble()) > 0);
         if (settlementsInRegion != null) {
-            List<BaseSettlement> villageChoices = settlementsInRegion.Where(x =>
-                    x.locationType == LOCATION_TYPE.VILLAGE)
-                .ToList();
+            List<BaseSettlement> villageChoices = settlementsInRegion.Where(x => x.locationType == LOCATION_TYPE.VILLAGE).ToList();
             if (villageChoices.Count > 0) {
                 //a random village occupied by Villagers within current region
                 BaseSettlement chosenVillage = CollectionUtilities.GetRandomElement(villageChoices);
                 return new List<HexTile>(chosenVillage.tiles);
             } else {
                 //a random special structure occupied by Villagers within current region
-                List<BaseSettlement> specialStructureChoices = settlementsInRegion.Where(x =>
-                        x.locationType == LOCATION_TYPE.DUNGEON).ToList();
+                List<BaseSettlement> specialStructureChoices = settlementsInRegion.Where(x => x.locationType == LOCATION_TYPE.DUNGEON).ToList();
                 if (specialStructureChoices.Count > 0) {
                     BaseSettlement chosenSpecialStructure = CollectionUtilities.GetRandomElement(specialStructureChoices);
                     return new List<HexTile>(chosenSpecialStructure.tiles);
@@ -412,8 +406,8 @@ public class BehaviourComponent : CharacterComponent {
             if (goapPlanJob.jobType == JOB_TYPE.IDLE_RETURN_HOME) {
                 if (character.homeStructure != null) {
                     return character.movementComponent.HasPathToEvenIfDiffRegion(character.homeStructure.GetRandomUnoccupiedTile());
-                } else if (character.territories != null && character.territories.Count > 0) {
-                    HexTile randomTerritory = CollectionUtilities.GetRandomElement(character.territories);
+                } else if (character.HasTerritory()) {
+                    HexTile randomTerritory = character.territory;
                     return character.movementComponent.HasPathToEvenIfDiffRegion(CollectionUtilities.GetRandomElement(randomTerritory.locationGridTiles));
                 }
             } else if (goapPlanJob.jobType == JOB_TYPE.RESCUE || goapPlanJob.jobType == JOB_TYPE.EXTERMINATE ||
@@ -611,10 +605,10 @@ public class BehaviourComponent : CharacterComponent {
     
     #region De-Mood
     public void OnBecomeDeMooder() {
-        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDeMoodJobFinished);
+        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDeMoodJobFinished);
     }
     public void OnNoLongerDeMooder() {
-        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDeMoodJobFinished);
+        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDeMoodJobFinished);
     }
     private void CheckIfDeMoodJobFinished(Character character, GoapPlanJob job) {
         if (character == owner && job.jobType == JOB_TYPE.DECREASE_MOOD) {
@@ -652,10 +646,10 @@ public class BehaviourComponent : CharacterComponent {
 
     #region Disabler
     public void OnBecomeDisabler() {
-        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDisablerJobFinished);
+        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDisablerJobFinished);
     }
     public void OnNoLongerDisabler() {
-        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDisablerJobFinished);
+        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfDisablerJobFinished);
     }
     private void CheckIfDisablerJobFinished(Character character, GoapPlanJob job) {
         if (character == owner && job.jobType == JOB_TYPE.DISABLE) {
@@ -679,11 +673,11 @@ public class BehaviourComponent : CharacterComponent {
         previousInvaderToFollow?.behaviourComponent.RemoveFollower();
         if (invaderToFollow != null) {
             invaderToFollow.behaviourComponent.AddFollower();
-            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, CheckIfInvaderToFollowDied);
-            Messenger.AddListener<Character>(Signals.START_FLEE, OnCharacterStartedFleeing);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, CheckIfInvaderToFollowDied);
+            Messenger.AddListener<Character>(CharacterSignals.START_FLEE, OnCharacterStartedFleeing);
         } else {
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, CheckIfInvaderToFollowDied);
-            Messenger.RemoveListener<Character>(Signals.START_FLEE, OnCharacterStartedFleeing);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, CheckIfInvaderToFollowDied);
+            Messenger.RemoveListener<Character>(CharacterSignals.START_FLEE, OnCharacterStartedFleeing);
         }
     }
     private void OnCharacterStartedFleeing(Character character) {
@@ -717,16 +711,16 @@ public class BehaviourComponent : CharacterComponent {
         nest = tile;
     }
     public void OnBecomeAbductor() {
-        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfMonsterAte);
-        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnAbductorAddedJobToQueue);
-        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnAbductorRemovedJobFromQueue);
-        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnAbductorFinishedJobSuccessfully);
+        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfMonsterAte);
+        Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnAbductorAddedJobToQueue);
+        Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnAbductorRemovedJobFromQueue);
+        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnAbductorFinishedJobSuccessfully);
     }
     public void OnNoLongerAbductor() {
-        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfMonsterAte);
-        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnAbductorAddedJobToQueue);
-        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnAbductorRemovedJobFromQueue);
-        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnAbductorFinishedJobSuccessfully);
+        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfMonsterAte);
+        Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnAbductorAddedJobToQueue);
+        Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnAbductorRemovedJobFromQueue);
+        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnAbductorFinishedJobSuccessfully);
     }
     private void OnAbductorFinishedJobSuccessfully(Character character, GoapPlanJob job) {
         if (character == owner && job.jobType == JOB_TYPE.MONSTER_ABDUCT && job.targetPOI is Character targetCharacter) {
@@ -767,7 +761,7 @@ public class BehaviourComponent : CharacterComponent {
     public bool AlreadyHasAbductedVictimAtNest(out Character target) {
         for (int i = 0; i < nest.charactersHere.Count; i++) {
             Character character = nest.charactersHere[i];
-            if (character.canMove == false) {
+            if (character.limiterComponent.canMove == false) {
                 target = character;
                 return true;
             }
@@ -820,12 +814,12 @@ public class BehaviourComponent : CharacterComponent {
         currentArsonCooldown++;
     }
     public void OnBecomeArsonist() {
-        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfArsonistDidBurn);
-        Messenger.AddListener<Character>(Signals.START_FLEE, OnArsonistStartedFleeing);
+        Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfArsonistDidBurn);
+        Messenger.AddListener<Character>(CharacterSignals.START_FLEE, OnArsonistStartedFleeing);
     }
     public void OnNoLongerArsonist() {
-        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfArsonistDidBurn);
-        Messenger.RemoveListener<Character>(Signals.START_FLEE, OnArsonistStartedFleeing);
+        Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfArsonistDidBurn);
+        Messenger.RemoveListener<Character>(CharacterSignals.START_FLEE, OnArsonistStartedFleeing);
     }
     private void CheckIfArsonistDidBurn(Character character, GoapPlanJob job) {
         if (character == owner && job.jobType == JOB_TYPE.ARSON) {
@@ -881,12 +875,12 @@ public class BehaviourComponent : CharacterComponent {
         isCurrentlySnatching = state;
     }
     public void OnBecomeSnatcher() {
-        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnSnatcherAddedJobToQueue);
-        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);   
+        Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnSnatcherAddedJobToQueue);
+        Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);   
     }
     public void OnNoLongerSnatcher() {
-        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnSnatcherAddedJobToQueue);
-        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);   
+        Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnSnatcherAddedJobToQueue);
+        Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);   
     }
     private void OnSnatcherAddedJobToQueue(JobQueueItem job, Character character) {
         if (character == owner && job.jobType == JOB_TYPE.SNATCH && character.combatComponent.combatMode != COMBAT_MODE.Defend) {
@@ -907,12 +901,12 @@ public class BehaviourComponent : CharacterComponent {
 
     #region Cultist
     public void OnBecomeCultist() {
-        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnCultistSnatchAddedJobToQueue);
-        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnCultistSnatchJobRemoved);   
+        Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnCultistSnatchAddedJobToQueue);
+        Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnCultistSnatchJobRemoved);   
     }
     public void OnNoLongerCultist() {
-        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnCultistSnatchAddedJobToQueue);
-        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnCultistSnatchJobRemoved);   
+        Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnCultistSnatchAddedJobToQueue);
+        Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnCultistSnatchJobRemoved);   
     }
     private void OnCultistSnatchAddedJobToQueue(JobQueueItem job, Character character) {
         if (character == owner && job.jobType == JOB_TYPE.SNATCH && character.combatComponent.combatMode != COMBAT_MODE.Defend) {
@@ -930,16 +924,16 @@ public class BehaviourComponent : CharacterComponent {
 
     #region Dazed
     public void OnBecomeDazed() {
-        Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
-        Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnDazedCharacterCanNoLongerPerform);
-        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnDazedCharacterStartedState);
+        Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+        Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnDazedCharacterCanNoLongerPerform);
+        Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnDazedCharacterStartedState);
     }
     private void OnCharacterEnteredHexTile(Character character, HexTile tile) {
         if (character == owner) {
             if (character.homeSettlement != null && character.homeSettlement.tiles.Contains(tile)) {
                 character.traitContainer.RemoveTrait(character, "Dazed");
-            } else if (character.territories != null && character.territories.Contains(tile)) {
+            } else if (character.IsTerritory(tile)) {
                 character.traitContainer.RemoveTrait(character, "Dazed");    
             }
         }
@@ -960,10 +954,61 @@ public class BehaviourComponent : CharacterComponent {
         }
     }
     public void OnNoLongerDazed() {
-        Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
-        Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnDazedCharacterCanNoLongerPerform);
-        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnDazedCharacterStartedState);
+        Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+        Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnDazedCharacterCanNoLongerPerform);
+        Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnDazedCharacterStartedState);
+    }
+    #endregion
+
+    #region Pest
+    public void SetPestVillageTarget(List<HexTile> targets) {
+        pestVillageTarget = targets;
+    }
+    #endregion
+
+    #region Work
+    public bool PlanWorkActions(out JobQueueItem producedJob) {
+        if (owner.limiterComponent.canTakeJobs) {
+            //NOTE: ONLY ADDED FACTION CHECKING BECAUSE OF BUG THAT VAGRANTS ARE STILL PART OF A VILLAGE
+            if (owner.isAtHomeRegion && owner.homeSettlement != null && owner.homeSettlement.owner == owner.faction) {
+                //check npcSettlement job queue, if it has any jobs that target an object that is in view of the owner
+                JobQueueItem jobToAssign = owner.homeSettlement.GetFirstJobBasedOnVision(owner);
+                if (jobToAssign != null) {
+                    producedJob = jobToAssign;
+                    //took job based from vision
+                    return true;
+                } else {
+                    //if none of the jobs targets can be seen by the owner, try and get a job from the npcSettlement or faction
+                    //regardless of vision instead.
+                    if (owner.homeSettlement.HasPathTowardsTileInSettlement(owner, 2)) {
+                        if (owner.faction != null) {
+                            jobToAssign = owner.faction.GetFirstUnassignedJobToCharacterJob(owner);
+                        }
+
+                        //Characters should only take non-vision settlement jobs if they have a path towards the settlement
+                        //Reference: https://trello.com/c/SSYDok6x/1106-owners-should-only-take-non-vision-settlement-jobs-if-they-have-a-path-towards-the-settlement
+                        if (jobToAssign == null) {
+                            jobToAssign = owner.homeSettlement.GetFirstUnassignedJobToCharacterJob(owner);
+                        }
+                    }
+
+                    if (jobToAssign != null) {
+                        producedJob = jobToAssign;
+                        return true;
+                    }
+                }
+            }
+            if (owner.faction != null) {
+                JobQueueItem jobToAssign = owner.faction.GetFirstUnassignedJobToCharacterJob(owner);
+                if (jobToAssign != null) {
+                    producedJob = jobToAssign;
+                    return true;
+                }
+            }
+        }
+        producedJob = null;
+        return false;
     }
     #endregion
 
@@ -1021,6 +1066,13 @@ public class BehaviourComponent : CharacterComponent {
             for (int i = 0; i < data.arsonVillageTarget.Count; i++) {
                 HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.arsonVillageTarget[i]);
                 arsonVillageTarget.Add(hex);
+            }
+        }
+        if (data.pestVillageTarget != null) {
+            pestVillageTarget = new List<HexTile>();
+            for (int i = 0; i < data.pestVillageTarget.Count; i++) {
+                HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.pestVillageTarget[i]);
+                pestVillageTarget.Add(hex);
             }
         }
         if (data.currentBehaviourComponents != null) {
@@ -1085,6 +1137,8 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
     //snatcher
     public bool isCurrentlySnatching;
 
+    //pest
+    public List<string> pestVillageTarget;
 
     public COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
 
@@ -1157,6 +1211,12 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
             arsonVillageTarget = new List<string>();
             for (int i = 0; i < data.arsonVillageTarget.Count; i++) {
                 arsonVillageTarget.Add(data.arsonVillageTarget[i].persistentID);
+            }
+        }
+        if (data.pestVillageTarget != null) {
+            pestVillageTarget = new List<string>();
+            for (int i = 0; i < data.pestVillageTarget.Count; i++) {
+                pestVillageTarget.Add(data.pestVillageTarget[i].persistentID);
             }
         }
     }

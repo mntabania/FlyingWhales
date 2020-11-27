@@ -1,9 +1,12 @@
 ﻿public class EatCorpse : GoapAction {
+
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.CONSUME;
+
     public EatCorpse() : base(INTERACTION_TYPE.EAT_CORPSE) {
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         actionIconString = GoapActionStateDB.Eat_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.WOLF };
+        racesThatCanDoAction = new RACE[] { RACE.WOLF, RACE.RATMAN, RACE.LESSER_DEMON, RACE.ABOMINATION, RACE.ELEMENTAL, RACE.NYMPH, RACE.SPIDER, RACE.SLUDGE, RACE.TROLL };
         logTags = new[] {LOG_TAG.Needs};
     }
     
@@ -50,6 +53,9 @@
     #region State Effects
     public void PreEatSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
+        if(goapNode.associatedJobType == JOB_TYPE.MONSTER_EAT_CORPSE || goapNode.associatedJobType == JOB_TYPE.HUNT_PREY) {
+            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Abstain Fullness");
+        }
     }
     public void PerTickEatSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustFullness(8.5f);
@@ -61,7 +67,8 @@
                 character.currentRegion.RemoveCharacterFromLocation(character);
             }
             character.DestroyMarker();
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, goapNode.poiTarget, "target is already dead");
+            Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, goapNode.poiTarget, "target is already dead");
+            Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, goapNode.poiTarget, "target is already dead");
         }
     }
     #endregion

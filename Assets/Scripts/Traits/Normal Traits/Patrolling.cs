@@ -18,10 +18,10 @@ namespace Traits {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is Character character) {
                 _owner = character;
-                Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
-                Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnJobAddedToQueue);
-                Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_COMBAT, OnCharacterCanNoLongerCombat);
-                Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
+                Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
+                Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnJobAddedToQueue);
+                Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_COMBAT, OnCharacterCanNoLongerCombat);
+                Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
             }
         }
         #endregion
@@ -32,10 +32,10 @@ namespace Traits {
             if (addedTo is Character character) {
                 _owner = character;
                 character.behaviourComponent.AddBehaviourComponent(typeof(PatrolBehaviour));
-                Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
-                Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnJobAddedToQueue);
-                Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_COMBAT, OnCharacterCanNoLongerCombat);
-                Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
+                Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
+                Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnJobAddedToQueue);
+                Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_COMBAT, OnCharacterCanNoLongerCombat);
+                Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
@@ -47,10 +47,10 @@ namespace Traits {
                 endLog.AddLogToDatabase();    
                 
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(PatrolBehaviour));
-                Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
-                Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnJobAddedToQueue);
-                Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_COMBAT, OnCharacterCanNoLongerCombat);
-                Messenger.RemoveListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
+                Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
+                Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnJobAddedToQueue);
+                Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_NO_LONGER_COMBAT, OnCharacterCanNoLongerCombat);
+                Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
             }
         }
         private void OnSeizePOI(IPointOfInterest poi) {

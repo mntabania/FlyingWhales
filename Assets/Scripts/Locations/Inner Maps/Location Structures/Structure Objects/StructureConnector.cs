@@ -42,9 +42,9 @@ namespace Inner_Maps.Location_Structures {
             _tileLocation = GetLocationGridTileGivenCurrentPosition(innerTileMap);
             if (_tileLocation != null) {
                 _tileLocation.AddConnector();
-                Messenger.AddListener<LocationGridTile>(Signals.STRUCTURE_CONNECTOR_PLACED, OnStructureConnectorPlaced);
-                Messenger.AddListener<LocationGridTile>(Signals.STRUCTURE_CONNECTOR_REMOVED, OnStructureConnectorRemoved);
-                Messenger.Broadcast(Signals.STRUCTURE_CONNECTOR_PLACED, _tileLocation);
+                Messenger.AddListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_PLACED, OnStructureConnectorPlaced);
+                Messenger.AddListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_REMOVED, OnStructureConnectorRemoved);
+                Messenger.Broadcast(StructureSignals.STRUCTURE_CONNECTOR_PLACED, _tileLocation);
             }
         }
 
@@ -76,10 +76,10 @@ namespace Inner_Maps.Location_Structures {
         #region Cleanup
         public void Reset() {
             if (_tileLocation != null) {
-                Messenger.RemoveListener<LocationGridTile>(Signals.STRUCTURE_CONNECTOR_PLACED, OnStructureConnectorPlaced);
-                Messenger.RemoveListener<LocationGridTile>(Signals.STRUCTURE_CONNECTOR_REMOVED, OnStructureConnectorRemoved);
+                Messenger.RemoveListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_PLACED, OnStructureConnectorPlaced);
+                Messenger.RemoveListener<LocationGridTile>(StructureSignals.STRUCTURE_CONNECTOR_REMOVED, OnStructureConnectorRemoved);
                 _tileLocation.RemoveConnector();
-                Messenger.Broadcast(Signals.STRUCTURE_CONNECTOR_REMOVED, _tileLocation);    
+                Messenger.Broadcast(StructureSignals.STRUCTURE_CONNECTOR_REMOVED, _tileLocation);    
             }
             _isOpen = true;
             _ownerID = string.Empty;

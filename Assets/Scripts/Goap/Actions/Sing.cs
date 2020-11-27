@@ -5,12 +5,14 @@ using Traits;
 
 public class Sing : GoapAction {
 
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.VERBAL;
+
     public Sing() : base(INTERACTION_TYPE.SING) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
         actionIconString = GoapActionStateDB.Entertain_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Needs};
     }
@@ -33,7 +35,7 @@ public class Sing : GoapAction {
             costLog += " +2000(Times Played > 5)";
         }
 
-        if (actor.traitContainer.HasTrait("Music Hater") || !actor.isSociable || actor.marker.HasEnemyOrRivalInVision()) {
+        if (actor.traitContainer.HasTrait("Music Hater") || !actor.limiterComponent.isSociable || actor.marker.HasEnemyOrRivalInVision()) {
             cost += 2000;
             costLog += " +2000 (Actor is Music Hater or is Unsociable or has Enemy/Rival in vision)";
         }

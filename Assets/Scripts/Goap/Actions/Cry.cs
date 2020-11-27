@@ -15,7 +15,7 @@ public class Cry : GoapAction {
         actionIconString = GoapActionStateDB.Sad_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Needs};
     }
@@ -116,7 +116,7 @@ public class Cry : GoapAction {
             goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
         }
         // goapNode.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, goapNode.actor, "feeling sad");
-        Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, goapNode.actor.marker.transform.position, 2, goapNode.actor.currentRegion.innerMap);
+        Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, goapNode.actor.marker.transform.position, 2, goapNode.actor.currentRegion.innerMap);
     }
     #endregion
 

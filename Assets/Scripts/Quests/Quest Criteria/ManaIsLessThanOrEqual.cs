@@ -9,10 +9,10 @@ namespace Quests {
         }
         
         public override void Enable() {
-            Messenger.AddListener<int, int>(Signals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
+            Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         }
         public override void Disable() {
-            Messenger.RemoveListener<int, int>(Signals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
+            Messenger.RemoveListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         }
 
         private void OnManaAdjusted(int amount, int mana) {

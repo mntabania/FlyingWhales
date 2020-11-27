@@ -12,18 +12,18 @@ public class ThreatParticleEffect : MonoBehaviour {
     private bool _isPlaying;
     
     private void Start() {
-        Messenger.AddListener(Signals.START_THREAT_EFFECT, OnStartThreatEffect);
-        Messenger.AddListener(Signals.STOP_THREAT_EFFECT, OnStopThreatEffect);
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
-        Messenger.AddListener<Quest>(Signals.QUEST_ACTIVATED, OnQuestActivated);
-        Messenger.AddListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
+        Messenger.AddListener(PlayerSignals.START_THREAT_EFFECT, OnStartThreatEffect);
+        Messenger.AddListener(PlayerSignals.STOP_THREAT_EFFECT, OnStopThreatEffect);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.AddListener<Quest>(PlayerQuestSignals.QUEST_ACTIVATED, OnQuestActivated);
+        Messenger.AddListener<Quest>(PlayerQuestSignals.QUEST_DEACTIVATED, OnQuestDeactivated);
         //Messenger.AddListener<Camera>(Signals.ZOOM_INNER_MAP_CAMERA, OnZoomInnerMapCamera);
         //Messenger.AddListener<Camera>(Signals.ZOOM_WORLD_MAP_CAMERA, OnZoomWorldMapCamera);
     }
     private void OnDestroy() {
-        Messenger.RemoveListener(Signals.START_THREAT_EFFECT, OnStartThreatEffect);
-        Messenger.RemoveListener(Signals.STOP_THREAT_EFFECT, OnStopThreatEffect);
+        Messenger.RemoveListener(PlayerSignals.START_THREAT_EFFECT, OnStartThreatEffect);
+        Messenger.RemoveListener(PlayerSignals.STOP_THREAT_EFFECT, OnStopThreatEffect);
     }
     private void OnInnerMapOpened(Region region) {
         gameObject.transform.SetParent(InnerMapCameraMove.Instance.transform);

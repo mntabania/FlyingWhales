@@ -7,6 +7,7 @@ using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Logs;
+using Plague.Transmission;
 using Traits;
 
 public class GoapAction {
@@ -58,7 +59,7 @@ public class GoapAction {
     #region States
     public void SetState(string stateName, ActualGoapNode actionNode) {
         actionNode.OnActionStateSet(stateName);
-        Messenger.Broadcast(Signals.AFTER_ACTION_STATE_SET, stateName, actionNode);
+        Messenger.Broadcast(JobSignals.AFTER_ACTION_STATE_SET, stateName, actionNode);
     }
     #endregion
 
@@ -284,7 +285,7 @@ public class GoapAction {
         }
         
         //https://trello.com/c/Pj6zRg3O/2404-paralyzed-vampire
-        if (!actor.canPerform && actionLocationType != ACTION_LOCATION_TYPE.NEARBY && actionLocationType != ACTION_LOCATION_TYPE.IN_PLACE) {
+        if (!actor.limiterComponent.canPerform && actionLocationType != ACTION_LOCATION_TYPE.NEARBY && actionLocationType != ACTION_LOCATION_TYPE.IN_PLACE) {
             //Cannot perform characters can only perform NEARBY and IN PLACE actions
             requirementActionSatisfied = true;
         }
@@ -371,15 +372,20 @@ public class GoapAction {
         basePreconditions.Add(new Precondition(effect, condition));
     }
     public bool CanSatisfyAllPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType) {
-        List<Precondition> preconditions = GetPreconditions(actor, target, otherData);
+        bool isOverridden = false;
+        List<Precondition> preconditions = GetPreconditions(actor, target, otherData, out isOverridden);
         for (int i = 0; i < preconditions.Count; i++) {
             if (!preconditions[i].CanSatisfyCondition(actor, target, otherData, jobType)) {
                 return false;
             }
         }
+        if (isOverridden) {
+            ObjectPoolManager.Instance.ReturnPreconditionsListToPool(preconditions);
+        }
         return true;
     }
-    public virtual List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData) {
+    public virtual List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+        isOverridden = false; 
         return basePreconditions;
     }
     #endregion
@@ -393,13 +399,19 @@ public class GoapAction {
         possibleExpectedEffectsTypeAndTargetMatching.Add(effect);
     }
     public bool WillEffectsSatisfyPrecondition(GoapEffect precondition, Character actor, IPointOfInterest target, OtherData[] otherData) {
-        List<GoapEffect> effects = GetExpectedEffects(actor, target, otherData);
+        bool isOverridden = false;
+        List<GoapEffect> effects = GetExpectedEffects(actor, target, otherData, out isOverridden);
+        bool satisfied = false;
         for (int i = 0; i < effects.Count; i++) {
             if(EffectPreconditionMatching(effects[i], precondition)) {
-                return true;
+                satisfied = true;
+                break;
             }
         }
-        return false;
+        if (isOverridden) {
+            ObjectPoolManager.Instance.ReturnExpectedEffectsListToPool(effects);
+        }
+        return satisfied;
     }
     public bool WillEffectsMatchPreconditionTypeAndTarget(GoapEffect precondition) {
         List<GoapEffectConditionTypeAndTargetType> effects = possibleExpectedEffectsTypeAndTargetMatching;
@@ -444,17 +456,19 @@ public class GoapAction {
         }
         return false;
     }
-    protected virtual List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData) {
-        List<GoapEffect> effects = new List<GoapEffect>(baseExpectedEffects);
-        //modify expected effects depending on actor's traits
-        List<Trait> traitOverrideFunctions = actor.traitContainer.GetTraitOverrideFunctions(TraitManager.Execute_Expected_Effect_Trait);
-        if (traitOverrideFunctions != null) {
-            for (int i = 0; i < traitOverrideFunctions.Count; i++) {
-                Trait trait = traitOverrideFunctions[i];
-                trait.ExecuteExpectedEffectModification(goapType, actor, target, otherData, ref effects);
-            }
-        }
-        return effects;
+    protected virtual List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverriden) {
+        //NOTE: Removed this to lessen memory gc collection, since it always returns a new List, it is very heavy on memory
+        //List<GoapEffect> effects = new List<GoapEffect>(baseExpectedEffects);
+        ////modify expected effects depending on actor's traits
+        //List<Trait> traitOverrideFunctions = actor.traitContainer.GetTraitOverrideFunctions(TraitManager.Execute_Expected_Effect_Trait);
+        //if (traitOverrideFunctions != null) {
+        //    for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+        //        Trait trait = traitOverrideFunctions[i];
+        //        trait.ExecuteExpectedEffectModification(goapType, actor, target, otherData, ref effects);
+        //    }
+        //}
+        isOverriden = false;
+        return baseExpectedEffects;
     }
     #endregion
 
@@ -475,9 +489,9 @@ public struct GoapActionInvalidity {
         this.stateName = stateName;
         reason = null;
     }
-    public bool IsReasonForCancellation() {
+    public bool IsReasonForCancellationShouldDropJob() {
         if (!string.IsNullOrEmpty(reason)) {
-            return reason == "target_carried" || reason == "target_inactive";
+            return reason == "target_carried" || reason == "target_inactive" || reason == "target_dead";
         }
         return false;
     }
@@ -517,74 +531,6 @@ public struct GoapEffect {
     public override string ToString() {
         return $"{conditionType.ToString()} - {conditionKey} - {target.ToString()}";
     }
-    //public string conditionString() {
-    //    if(conditionKey is string) {
-    //        return conditionKey.ToString();
-    //    } else if (conditionKey is int) {
-    //        return conditionKey.ToString();
-    //    } else if (conditionKey is Character) {
-    //        return (conditionKey as Character).name;
-    //    } else if (conditionKey is NPCSettlement) {
-    //        return (conditionKey as NPCSettlement).name;
-    //    } else if (conditionKey is Region) {
-    //        return (conditionKey as Region).name;
-    //    } else if (conditionKey is SpecialToken) {
-    //        return (conditionKey as SpecialToken).name;
-    //    } else if (conditionKey is IPointOfInterest) {
-    //        return (conditionKey as IPointOfInterest).name;
-    //    }
-    //    return string.Empty;
-    //}
-    //public string conditionKeyToString() {
-    //    if (conditionKey is string) {
-    //        return (string)conditionKey;
-    //    } else if (conditionKey is int) {
-    //        return ((int)conditionKey).ToString();
-    //    } else if (conditionKey is Character) {
-    //        return (conditionKey as Character).id.ToString();
-    //    } else if (conditionKey is NPCSettlement) {
-    //        return (conditionKey as NPCSettlement).id.ToString();
-    //    } else if (conditionKey is Region) {
-    //        return (conditionKey as Region).id.ToString();
-    //    } else if (conditionKey is SpecialToken) {
-    //        return (conditionKey as SpecialToken).id.ToString();
-    //    } else if (conditionKey is IPointOfInterest) {
-    //        return (conditionKey as IPointOfInterest).id.ToString();
-    //    }
-    //    return string.Empty;
-    //}
-    //public string conditionKeyTypeString() {
-    //    if (conditionKey is string) {
-    //        return "string";
-    //    } else if (conditionKey is int) {
-    //        return "int";
-    //    } else if (conditionKey is Character) {
-    //        return "character";
-    //    } else if (conditionKey is NPCSettlement) {
-    //        return "npcSettlement";
-    //    } else if (conditionKey is Region) {
-    //        return "region";
-    //    } else if (conditionKey is SpecialToken) {
-    //        return "item";
-    //    } else if (conditionKey is IPointOfInterest) {
-    //        return "poi";
-    //    }
-    //    return string.Empty;
-    //}
-
-    //public override bool Equals(object obj) {
-    //    if (obj is GoapEffect) {
-    //        GoapEffect otherEffect = (GoapEffect)obj;
-    //        if (otherEffect.conditionType == conditionType) {
-    //            if (string.IsNullOrEmpty(conditionString())) {
-    //                return true;
-    //            } else {
-    //                return otherEffect.conditionString() == conditionString();
-    //            }
-    //        }
-    //    }
-    //    return base.Equals(obj);
-    //}
 }
 
 [System.Serializable]

@@ -50,9 +50,9 @@ namespace Traits {
         #endregion
         
         #region Loading
-        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            SaveDataLycanphiliac saveData = saveDataTrait as SaveDataLycanphiliac;
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
+            SaveDataLycanphiliac saveData = p_saveDataTrait as SaveDataLycanphiliac;
             Assert.IsNotNull(saveData);
             _knownLycans.AddRange(SaveUtilities.ConvertIDListToCharacters(saveData.knownLycans));
         }

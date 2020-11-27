@@ -8,10 +8,10 @@ namespace Quests.Steps {
             _neededStructure = neededStructure;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, CheckForCompletion);
+            Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_OBJECT_PLACED, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, CheckForCompletion);
+            Messenger.RemoveListener<LocationStructure>(StructureSignals.STRUCTURE_OBJECT_PLACED, CheckForCompletion);
         }
 
         #region Listeners

@@ -54,8 +54,8 @@ public abstract class JobQueueItem : ISavable {
         }
         name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(this.jobType.ToString());
         SetInitialPriority();
-        Messenger.AddListener<JOB_TYPE, IPointOfInterest>(Signals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
-        Messenger.AddListener<IPointOfInterest>(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
+        Messenger.AddListener<JOB_TYPE, IPointOfInterest>(JobSignals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
+        Messenger.AddListener<IPointOfInterest>(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
         DatabaseManager.Instance.jobDatabase.Register(this);
     }
     protected void Initialize(SaveDataJobQueueItem data) {
@@ -80,8 +80,8 @@ public abstract class JobQueueItem : ISavable {
             SetStillApplicableChecker(data.applicabilityCheckerKey);
         }
         SetInitialPriority();
-        Messenger.AddListener<JOB_TYPE, IPointOfInterest>(Signals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
-        Messenger.AddListener<IPointOfInterest>(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
+        Messenger.AddListener<JOB_TYPE, IPointOfInterest>(JobSignals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
+        Messenger.AddListener<IPointOfInterest>(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
         DatabaseManager.Instance.jobDatabase.Register(this);
     }
 
@@ -107,7 +107,7 @@ public abstract class JobQueueItem : ISavable {
     
     #region Virtuals
     protected virtual bool CanTakeJob(Character character) {
-        return !character.traitContainer.HasTrait("Criminal") && character.canPerform; //!character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+        return !character.traitContainer.HasTrait("Criminal") && character.limiterComponent.canPerform; //!character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
     }
     public virtual void UnassignJob(bool shouldDoAfterEffect, string reason) { }
     public virtual void OnAddJobToQueue() { }
@@ -356,8 +356,8 @@ public abstract class JobQueueItem : ISavable {
         SetIsThisAGatheringJob(false);
         SetForceCancelOnInvalid(false);
         ResetInvalidCounter();
-        Messenger.RemoveListener<JOB_TYPE, IPointOfInterest>(Signals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
-        Messenger.RemoveListener<IPointOfInterest>(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
+        Messenger.RemoveListener<JOB_TYPE, IPointOfInterest>(JobSignals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
+        Messenger.RemoveListener<IPointOfInterest>(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
     }
     #endregion
 }

@@ -35,11 +35,11 @@ public abstract class MovingTileObject : TileObject {
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        Messenger.AddListener<LocationGridTile, TraitableCallback>(Signals.ACTION_PERFORMED_ON_TILE_TRAITABLES, OnActionPerformedOnTile);
+        Messenger.AddListener<LocationGridTile, TraitableCallback>(GridTileSignals.ACTION_PERFORMED_ON_TILE_TRAITABLES, OnActionPerformedOnTile);
     }
     public virtual void Expire() {
         hasExpired = true;
-        Messenger.RemoveListener<LocationGridTile, TraitableCallback>(Signals.ACTION_PERFORMED_ON_TILE_TRAITABLES, OnActionPerformedOnTile);
+        Messenger.RemoveListener<LocationGridTile, TraitableCallback>(GridTileSignals.ACTION_PERFORMED_ON_TILE_TRAITABLES, OnActionPerformedOnTile);
         // DatabaseManager.Instance.tileObjectDatabase.UnRegisterTileObject(this);
     } 
     #endregion

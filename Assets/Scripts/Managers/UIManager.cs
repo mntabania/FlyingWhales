@@ -148,9 +148,8 @@ public class UIManager : BaseMonoBehaviour {
     }
     private void Start() {
         //openedPopups = new List<PopupMenuBase>();
-        Messenger.AddListener<bool>(Signals.PAUSED, UpdateSpeedToggles);
-        Messenger.AddListener(Signals.UPDATE_UI, UpdateUI);
-        Messenger.AddListener(Signals.INSPECT_ALL, UpdateInteractableInfoUI);
+        Messenger.AddListener<bool>(UISignals.PAUSED, UpdateSpeedToggles);
+        Messenger.AddListener(UISignals.UPDATE_UI, UpdateUI);
     }
     private void Update() {
         if (isHoveringTile) {
@@ -174,34 +173,37 @@ public class UIManager : BaseMonoBehaviour {
         }
         openedPopups = new List<PopupMenuBase>();
         questUI.Initialize();
-        Messenger.AddListener(Signals.HIDE_MENUS, HideMenus);
-        Messenger.AddListener<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, ShowDeveloperNotification);
-        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        _biolabUIController.Init(OnCloseBiolabUI);
+        Messenger.AddListener<string, int, UnityAction>(UISignals.SHOW_DEVELOPER_NOTIFICATION, ShowDeveloperNotification);
+        Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
 
-        Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OVER, OnHoverOverTile);
-        Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OUT, OnHoverOutTile);
+        Messenger.AddListener<HexTile>(HexTileSignals.HEXTILE_HOVERED_OVER, OnHoverOverTile);
+        Messenger.AddListener<HexTile>(HexTileSignals.HEXTILE_HOVERED_OUT, OnHoverOutTile);
         
-        Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
-        Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
+        Messenger.AddListener(UISignals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
+        Messenger.AddListener(UISignals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
  
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
 
-        Messenger.AddListener<IIntel>(Signals.SHOW_INTEL_NOTIFICATION, ShowPlayerNotification);
-        Messenger.AddListener<Log>(Signals.SHOW_PLAYER_NOTIFICATION, ShowPlayerNotification);
+        Messenger.AddListener<IIntel>(UISignals.SHOW_INTEL_NOTIFICATION, ShowPlayerNotification);
+        Messenger.AddListener<Log>(UISignals.SHOW_PLAYER_NOTIFICATION, ShowPlayerNotification);
 
-        Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
-        Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
+        Messenger.AddListener(UISignals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
+        Messenger.AddListener(UISignals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
         
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnUIMenuOpened);
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnUIMenuClosed);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnUIMenuOpened);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_CLOSED, OnUIMenuClosed);
         
-        Messenger.AddListener<PopupMenuBase>(Signals.POPUP_MENU_OPENED, OnPopupMenuOpened);
-        Messenger.AddListener<PopupMenuBase>(Signals.POPUP_MENU_CLOSED, OnPopupMenuClosed);
+        Messenger.AddListener<PopupMenuBase>(UISignals.POPUP_MENU_OPENED, OnPopupMenuOpened);
+        Messenger.AddListener<PopupMenuBase>(UISignals.POPUP_MENU_CLOSED, OnPopupMenuClosed);
         
-        Messenger.AddListener<IPointOfInterest>(Signals.UPDATE_POI_LOGS_UI, TryUpdatePOILog);
-        Messenger.AddListener<Faction>(Signals.UPDATE_FACTION_LOGS_UI, TryUpdateFactionLog);
+        Messenger.AddListener<IPointOfInterest>(UISignals.UPDATE_POI_LOGS_UI, TryUpdatePOILog);
+        Messenger.AddListener<Faction>(UISignals.UPDATE_FACTION_LOGS_UI, TryUpdateFactionLog);
+
+        Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+
 
         //notification area
         notificationSearchField.onValueChanged.AddListener(OnEndNotificationSearchEdit);
@@ -238,38 +240,6 @@ public class UIManager : BaseMonoBehaviour {
     private void OnGameLoaded() {
         UpdateUI();
         returnToWorldBtn.gameObject.SetActive(WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial);
-    }
-    private void HideMenus() {
-        // poiTestingUI.HideUI();
-        // minionCommandsUI.HideUI();
-        // customDropdownList.Close();
-        // if (characterInfoUI.isShowing) {
-        //     characterInfoUI.CloseMenu();
-        // }
-        // if (factionInfoUI.isShowing) {
-        //     factionInfoUI.CloseMenu();
-        // }
-        // if (regionInfoUI.isShowing) {
-        //     regionInfoUI.CloseMenu();
-        // }
-        // if (tileObjectInfoUI.isShowing) {
-        //     tileObjectInfoUI.CloseMenu();
-        // }
-        // if (objectPicker.gameObject.activeSelf) {
-        //     HideObjectPicker();
-        // }
-        // if (PlayerUI.Instance.isShowingKillSummary) {
-        //     PlayerUI.Instance.HideKillSummary();
-        // }
-        // if (PlayerUI.Instance.isShowingMinionList) {
-        //     PlayerUI.Instance.HideMinionList();
-        // }
-        // if (hexTileInfoUI.isShowing) {
-        //     hexTileInfoUI.CloseMenu();
-        // }
-        // if (structureInfoUI.isShowing) {
-        //     structureInfoUI.CloseMenu();
-        // }
     }
     private void UpdateUI() {
         dateLbl.SetText(
@@ -343,7 +313,7 @@ public class UIManager : BaseMonoBehaviour {
     public void PauseByPlayer() {
         Pause();
         // Debug.Log("Game was paused by player.");
-        Messenger.Broadcast(Signals.PAUSED_BY_PLAYER);
+        Messenger.Broadcast(UISignals.PAUSED_BY_PLAYER);
     }
     public void Pause() {
         GameManager.Instance.SetPausedState(true);
@@ -562,14 +532,6 @@ public class UIManager : BaseMonoBehaviour {
         smallInfoBGParentLG.childAlignment = position.anchor;
         rt.pivot = position.pivot;
     }
-    public void ShowSmallLocationInfo(Region region, RectTransform initialParent, Vector2 adjustment, string subText = "") {
-        locationSmallInfo.ShowRegionInfo(region, subText);
-        locationSmallInfoRT.SetParent(initialParent);
-        locationSmallInfoRT.anchoredPosition = Vector3.zero;
-        locationSmallInfoRT.anchoredPosition += adjustment;
-        locationSmallInfoRT.SetParent(this.transform);
-        //(locationSmallInfo.transform as RectTransform).anchoredPosition = pos;
-    }
     public void ShowSmallLocationInfo(Region region, Vector3 pos, string subText = "") {
         locationSmallInfo.ShowRegionInfo(region, subText);
         locationSmallInfoRT.position = pos;
@@ -643,21 +605,24 @@ public class UIManager : BaseMonoBehaviour {
     /// </summary>
     /// <returns>True or false.</returns>>
     public bool IsMouseOnUI() {
-        _pointer.position = Input.mousePosition;
-        _raycastResults.Clear();
-        EventSystem.current.RaycastAll(_pointer, _raycastResults);
+        if (_pointer != null) {
+            _pointer.position = Input.mousePosition;
+            _raycastResults.Clear();
+            EventSystem.current.RaycastAll(_pointer, _raycastResults);
 
-        return _raycastResults.Count > 0 && _raycastResults.Any(
-            go => go.gameObject.layer == LayerMask.NameToLayer("UI") || 
-                  go.gameObject.layer == LayerMask.NameToLayer("WorldUI") || 
-                  go.gameObject.CompareTag("Map_Click_Blocker"));
+            return _raycastResults.Count > 0 && _raycastResults.Any(
+                go => go.gameObject.layer == LayerMask.NameToLayer("UI") || 
+                      go.gameObject.layer == LayerMask.NameToLayer("WorldUI") || 
+                      go.gameObject.CompareTag("Map_Click_Blocker"));    
+        }
+        return false;
     }
     public void OpenObjectUI(object obj) {
         if (obj is Character character) {
             ShowCharacterInfo(character, true);
         } else if (obj is NPCSettlement settlement) {
             if (settlement.allStructures.Count > 0) {
-                settlement.allStructures.First().CenterOnStructure();
+                ShowStructureInfo(settlement.allStructures.First());
             }
             // ShowRegionInfo(settlement.region);
         } else if (obj is Faction faction) {
@@ -671,7 +636,8 @@ public class UIManager : BaseMonoBehaviour {
         } else if (obj is Region region) {
             ShowRegionInfo(region);
         } else if (obj is LocationStructure structure) {
-            structure.CenterOnStructure();
+            ShowStructureInfo(structure);
+            // structure.CenterOnStructure();
         }
     }
     public bool IsMouseOnMapObject() {
@@ -779,7 +745,7 @@ public class UIManager : BaseMonoBehaviour {
 
         objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker, title, onHoverAction,
             onHoverExitAction, identifier, showCover, layer, portraitGetter, asButton, shouldShowConfirmationWindowOnPick);
-        Messenger.Broadcast(Signals.OBJECT_PICKER_SHOWN, identifier);
+        Messenger.Broadcast(UISignals.OBJECT_PICKER_SHOWN, identifier);
         //Pause();
         //SetSpeedTogglesState(false);
     }
@@ -799,7 +765,7 @@ public class UIManager : BaseMonoBehaviour {
     #region For Testing
     public void SetUIState(bool state) {
         this.gameObject.SetActive(state);
-        Messenger.Broadcast(Signals.UI_STATE_SET);
+        Messenger.Broadcast(UISignals.UI_STATE_SET);
     }
     public void DateHover() {
         ShowSmallInfo($"Day: {GameManager.Instance.continuousDays.ToString()} Tick: {GameManager.Instance.Today().tick.ToString()}");
@@ -1017,6 +983,14 @@ public class UIManager : BaseMonoBehaviour {
     public void UpdateStructureInfo() {
         if (structureInfoUI.isShowing) {
             structureInfoUI.UpdateStructureInfoUI();
+        }
+    }
+    private void OnStructureDestroyed(LocationStructure structure) {
+        CheckStructureInfoForClosure(structure);
+    }
+    private void CheckStructureInfoForClosure(LocationStructure structure) {
+        if(structureInfoUI.isShowing && structureInfoUI.activeStructure == structure) {
+            structureInfoUI.CloseMenu();
         }
     }
     #endregion
@@ -1678,6 +1652,22 @@ public class UIManager : BaseMonoBehaviour {
             }
         }
         return null;
+    }
+    #endregion
+
+    #region Biolab UI
+    [Header("Biolab")] 
+    [SerializeField] private BiolabUIController _biolabUIController;
+    public void ShowBiolabUI() {
+        Pause();
+        SetSpeedTogglesState(false);
+        _biolabUIController.Open();
+        InputManager.Instance.AllowHotkeys(false);
+    }
+    private void OnCloseBiolabUI() {
+        SetSpeedTogglesState(true);
+        ResumeLastProgressionSpeed();
+        InputManager.Instance.AllowHotkeys(true);
     }
     #endregion
 }

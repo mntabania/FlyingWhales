@@ -100,7 +100,7 @@ public class SkillSlotItem : MonoBehaviour {
     }
     public void OnClickThis() {
         if (isFixed) { return; }
-        Messenger.Broadcast(Signals.SKILL_SLOT_ITEM_CLICKED, this, archetype);
+        Messenger.Broadcast(UISignals.SKILL_SLOT_ITEM_CLICKED, this, archetype);
     }
     public void OnClickMinus() {
         if (isFixed) { return; }

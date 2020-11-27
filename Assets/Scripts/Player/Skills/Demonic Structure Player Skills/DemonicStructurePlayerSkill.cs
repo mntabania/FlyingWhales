@@ -21,7 +21,7 @@ public class DemonicStructurePlayerSkill : SpellData {
         } else {
             question = "Are you sure you want to build " + name + "?";
         }
-        UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", question, () => targetHex.StartBuild(type), showCover: true, pauseAndResume: true);
+        UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", question, () => targetHex.StartBuild(type), showCover: true, pauseAndResume: true, layer: 50);
         
         // base.ActivateAbility(targetHex);
     }
@@ -35,7 +35,7 @@ public class DemonicStructurePlayerSkill : SpellData {
         targetHex.StartCorruption();
         LandmarkManager.Instance.PlaceBuiltStructureForSettlement(targetHex.settlementOnTile, targetHex.region.innerMap, targetHex, structureType, RESOURCE.NONE);
         targetHex.landmarkOnTile?.OnFinishedBuilding();
-        Messenger.Broadcast(Signals.UPDATE_BUILD_LIST);
+        Messenger.Broadcast(UISignals.UPDATE_BUILD_LIST);
     }
     
     public override void HighlightAffectedTiles(LocationGridTile tile) {

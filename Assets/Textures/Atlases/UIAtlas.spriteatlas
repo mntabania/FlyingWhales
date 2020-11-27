@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8028317
+    totalSpriteSurfaceArea: 8038648
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -151,6 +151,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e05fd5c4d5a07ed4486563925c248e61, type: 3}
   - {fileID: 21300000, guid: 6adea2e43ba23fd44a0a909e89394225, type: 3}
   - {fileID: 21300000, guid: 3c1623e45b0eca248a31dc39b63c1c0c, type: 3}
+  - {fileID: 21300000, guid: 604915e4a03bcfd40b6415dbaf519493, type: 3}
   - {fileID: 21300000, guid: d99a58057bb0d694a8d26859e71ae0c9, type: 3}
   - {fileID: 21300000, guid: cbf26805df91346489f4518d29e928dc, type: 3}
   - {fileID: 21300000, guid: b5aac51575b6ba9488cb3215e2602e0a, type: 3}
@@ -199,7 +200,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 0aed244768942cc41b589c6e154ff2ea, type: 3}
   - {fileID: 21300000, guid: 2fb3e9472179d114f90b5ab9b3246177, type: 3}
   - {fileID: 21300000, guid: 2ab2f057ce6d28f448e14c6b86c2396a, type: 3}
-  - {fileID: 21300000, guid: dcd47457e540a7942a47e22ea2f534a1, type: 3}
   - {fileID: 21300000, guid: 50b2cb67d1cfb3f488173915ee7185e5, type: 3}
   - {fileID: 21300000, guid: 276870770cad95e4583fd7d81613ee9f, type: 3}
   - {fileID: 21300000, guid: 5d84b977b7bf27b4e9adcc425c0d3b4c, type: 3}
@@ -249,6 +249,8 @@ SpriteAtlas:
   - {fileID: 7078123920453852532, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: -8236894391047943605, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: 6206799429775631491, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: -5554612431395520410, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
+  - {fileID: 1531121323253262507, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: -5934634420481666465, guid: 3ac8fd99bd951024e8e2de5be93c738b, type: 3}
   - {fileID: 21300000, guid: 9450c3a9507c1e549800df5991839a0e, type: 3}
   - {fileID: 21300000, guid: b5a91dc998b014448be00704f6143f25, type: 3}
@@ -294,6 +296,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: cf615ddb149613241b46b177cd202187, type: 3}
   - {fileID: 21300000, guid: 1e5065eb7c6fdd344a3d216071b19954, type: 3}
   - {fileID: 21300000, guid: 68052aebd08ec7545bf281dc7a4a8078, type: 3}
+  - {fileID: 21300000, guid: db9117fb148be414e8eff8519113e1cb, type: 3}
   - {fileID: 21300000, guid: 0cafb50c96a7cec44afb1ecebe056a95, type: 3}
   - {fileID: 21300000, guid: fe1a591c45577164caffea0071e2c890, type: 3}
   - {fileID: 21300000, guid: cd0fdf3cea6343b489b62c13f949612b, type: 3}
@@ -342,6 +345,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 7207985ebad35f742a421c612fc154e0, type: 3}
   - {fileID: 21300000, guid: 43b7576e594784744bf34dbe39c5e101, type: 3}
   - {fileID: 21300000, guid: 6966896ef38dc67438774d813e16a8be, type: 3}
+  - {fileID: 21300000, guid: 221aed6e34f8dd14badfba2f2d317c18, type: 3}
   - {fileID: 21300000, guid: b0e98f6e5eb8c424ab82432343bba225, type: 3}
   - {fileID: 21300000, guid: 1c0d578e62658cb41889305f732afc6e, type: 3}
   - {fileID: 21300000, guid: b7df3a8ed9e668f4b893d56e8b8f19da, type: 3}
@@ -478,6 +482,7 @@ SpriteAtlas:
   - AreaMapTravelLine
   - tab_inactive
   - Scroll-Circle-Unselected
+  - plague_container
   - button_unlock_invalid
   - scroll_button_right_invalid
   - button_base_default
@@ -526,7 +531,6 @@ SpriteAtlas:
   - Transition-Arrow-Default
   - button1_invalid
   - intel_button_default
-  - Locked_Icon
   - button_back_clicked
   - event_active_button_enabled
   - assign_button_default
@@ -576,6 +580,8 @@ SpriteAtlas:
   - icon_mana
   - icon_cultist
   - icon_chargesB
+  - icon_plague
+  - icon_ratvillager
   - icon_monster
   - dropdown_container
   - active_ability_icon
@@ -621,6 +627,7 @@ SpriteAtlas:
   - Icon-cont
   - button1_on
   - Icon_LifeChanges
+  - icon_ratman
   - minion_tab_spells_disabled
   - Scroll-Circle-Selected
   - notification_intel_button_hover
@@ -669,6 +676,7 @@ SpriteAtlas:
   - loadout_button_hover
   - tab_active
   - spell_list_button_default
+  - icon_plague
   - 4x_button_hover
   - minion_icon_spy
   - notification_container

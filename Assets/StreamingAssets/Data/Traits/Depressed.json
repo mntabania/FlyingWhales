@@ -1,0 +1,29 @@
+{
+    "advertisedInteractions": [],
+    "canBeTriggered": false,
+    "description": "Cannot be entertained.",
+    "effect": 2,
+    "hasOnCollideWith": false,
+    "hasOnEnterGridTile": false,
+    "hindersAttackTarget": false,
+    "hindersMovement": false,
+    "hindersPerform": false,
+    "hindersWitness": false,
+    "hindersSocials": false,
+    "hindersFullnessRecovery": false,
+    "hindersHappinessRecovery": true,
+    "hindersTirednessRecovery": false,
+    "isHidden": false,
+    "isStacking": false,
+    "level": 0,
+    "moodEffect": 0,
+    "mutuallyExclusive": [
+        ""
+    ],
+    "name": "Depressed",
+    "stackLimit": 0,
+    "stackModifier": 0,
+    "thoughtText": "",
+    "ticksDuration": 144,
+    "type": 0
+}

@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: da1d92a130b3f8f4bb0110cd352dca08, type: 3}
-    totalSpriteSurfaceArea: 6248471
+    totalSpriteSurfaceArea: 6309911
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -100,6 +100,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 65bd26d000e0582489cd248a9776ac08, type: 3}
   - {fileID: 21300000, guid: 4ec117d0ad7266d4c8bbbecede88023d, type: 3}
   - {fileID: 21300000, guid: ded9bdd09d7fec64991864514043f2c2, type: 3}
+  - {fileID: 21300000, guid: 4d1e31e05de27b34c8a712290e10bbc6, type: 3}
   - {fileID: 21300000, guid: fe4ba1e0659ca8747b4d036337fc0cfe, type: 3}
   - {fileID: 21300000, guid: bdb5c2e04e2231f48a7354de5b9eb43a, type: 3}
   - {fileID: 21300000, guid: 2f4c86e0783795b418ff84f23fb05486, type: 3}
@@ -113,6 +114,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: c31692014652e1543aeca664f4b67ee6, type: 3}
   - {fileID: 21300000, guid: fcb18a014a712d442a09956eef6579d9, type: 3}
   - {fileID: 21300000, guid: c1005c014ead66b4e8a5f1c9d1541b1e, type: 3}
+  - {fileID: 21300000, guid: 667f0e017a5ab924d849d81a66ccf704, type: 3}
   - {fileID: 21300000, guid: 171543118ca0c33458fee761110fd802, type: 3}
   - {fileID: 21300000, guid: 600b1d115420b4841bd32190c1265067, type: 3}
   - {fileID: 21300000, guid: 6d5f8521575796f4194adbcf8c1abb70, type: 3}
@@ -156,6 +158,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 8ad191f180a39c64ba8853374f8057ef, type: 3}
   - {fileID: 21300000, guid: 024bbaf1f81026a4383c6da68bb4d9aa, type: 3}
   - {fileID: 21300000, guid: f8954202eaa743340b28c3deee996523, type: 3}
+  - {fileID: 21300000, guid: 3b69b902901f86b4d8591745f3135d9d, type: 3}
   - {fileID: 21300000, guid: ed7d3c02d0def7e43aa5c172b41a82ed, type: 3}
   - {fileID: 21300000, guid: afa8cc025e67c5b4db7c6b27faeb5074, type: 3}
   - {fileID: 21300000, guid: 29f85e027d5d0e04db71fe830b0ccd79, type: 3}
@@ -168,6 +171,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 27535b12ea012454385ffb9da9850c66, type: 3}
   - {fileID: 21300000, guid: b8646e22728d7304c8aa47a2119d3f80, type: 3}
   - {fileID: 21300000, guid: e4ff2f225feeec844a67bddedc2cae3c, type: 3}
+  - {fileID: 21300000, guid: 16f7e8329be16c241b0a2cf7dac17ab9, type: 3}
   - {fileID: 21300000, guid: 3eaeb9328e9f47742b660debe397ff96, type: 3}
   - {fileID: 21300000, guid: aa259b32b55282c439e15f5e7f7a9083, type: 3}
   - {fileID: 21300000, guid: f08266425a0cb8d498561893e0036e65, type: 3}
@@ -514,6 +518,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 171ff398597214f449ca9050e4cbc33c, type: 3}
   - {fileID: 21300000, guid: 17627798b37c1ed4486a31bf1ce902ea, type: 3}
   - {fileID: 21300000, guid: 227ecc987367a76488fbfc0c18795242, type: 3}
+  - {fileID: 21300000, guid: 7d5f6ea806efa3e448dcee563900d63b, type: 3}
   - {fileID: 21300000, guid: cfd8dfa809456ef418256abed8517691, type: 3}
   - {fileID: 21300000, guid: bd5f90b885e49254d8e64713f325c723, type: 3}
   - {fileID: 21300000, guid: 0afff6b8653ca7c40a67d39ac6d49443, type: 3}
@@ -572,6 +577,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: dbde9cb9247132e4bb24bf7708c25707, type: 3}
   - {fileID: 21300000, guid: 664cafb9e3c288f44bb270a8226beefc, type: 3}
   - {fileID: 21300000, guid: d89e10c9ca76dc743981352cd19fc696, type: 3}
+  - {fileID: 21300000, guid: f640a7c988f710a48a1f4e38af36e2d4, type: 3}
   - {fileID: 21300000, guid: 378199c957979bd4a99755f241f96d3d, type: 3}
   - {fileID: 21300000, guid: a2b7aec9441c636438b962c9b182bceb, type: 3}
   - {fileID: 21300000, guid: dcfaeec91e67fd444a184945818db4d3, type: 3}
@@ -971,6 +977,7 @@ SpriteAtlas:
   - Raise up_00012
   - druid_elf_body
   - interact_2
+  - idle_1
   - attack_2
   - idle_1
   - walk_3
@@ -984,6 +991,7 @@ SpriteAtlas:
   - sleep_1
   - walk_1
   - shaman_elf_body
+  - dead_1
   - idle_1
   - attack_3
   - Raise up_00004
@@ -1027,6 +1035,7 @@ SpriteAtlas:
   - walk_3
   - attack_4
   - sleep_1
+  - dead_1
   - interact_2
   - sleep_1
   - walk_1
@@ -1039,6 +1048,7 @@ SpriteAtlas:
   - idle_2
   - Water Droplet
   - walk_3
+  - sleep_1
   - idle_1
   - interact_1
   - dead_1
@@ -1385,6 +1395,7 @@ SpriteAtlas:
   - sleep_1
   - interact_4
   - sleep_1
+  - sleep_1
   - interact_3
   - idle_1
   - sleep_1
@@ -1443,6 +1454,7 @@ SpriteAtlas:
   - idle_1
   - attack_1
   - sleep_1
+  - idle_1
   - dead_1
   - walk_2
   - idle_3

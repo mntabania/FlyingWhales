@@ -7,7 +7,7 @@ namespace Inner_Maps.Location_Structures {
         public Eye(Region location) : base(STRUCTURE_TYPE.EYE, location){
             selectableSize = new Vector2(10f, 10f);
         }
-        public Eye(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public Eye(Region location, SaveDataDemonicStructure data) : base(location, data) {
             selectableSize = new Vector2(10f, 10f);
         }
 

@@ -143,7 +143,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         actor.SetCurrentActionNode(this, job, plan);
         // CreateThoughtBubbleLog(targetStructure);
         //parentPlan?.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
-        Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
+        Messenger.Broadcast(JobSignals.CHARACTER_DOING_ACTION, actor, this);
         actor.marker.UpdateActionIcon();
         action.OnActionStarted(this);
         //poiTarget.AddTargettedByAction(this);
@@ -185,7 +185,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.IN_PLACE) {
             targetTile = actor.gridTileLocation;
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.NEARBY) {
-            if (actor.canMove && !actor.movementComponent.isStationary) {
+            if (actor.limiterComponent.canMove && !actor.movementComponent.isStationary) {
                 List<LocationGridTile> choices = action.NearbyLocationGetter(this) ?? actor.gridTileLocation.GetTilesInRadius(3, includeImpassable: false);
                 if (choices != null && choices.Count > 0) {
                     targetTile = choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];
@@ -327,7 +327,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         Assert.IsNotNull(actor.currentRegion, $"Current region of {actor.name} is null when trying to perform {action.name} with job {job.jobType.ToString()}");
         //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
         if (actor.currentRegion != targetTile.structure.region) { //different core locations
-            if (actor.movementComponent.MoveToAnotherRegion(targetTile.structure.region, () => CheckAndMoveToDoAction(job)) == false || !actor.canMove) {
+            if (actor.movementComponent.MoveToAnotherRegion(targetTile.structure.region, () => CheckAndMoveToDoAction(job)) == false || !actor.limiterComponent.canMove) {
                 //character cannot exit region.
                 return false;
             }
@@ -338,7 +338,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     actor.PerformGoapAction();
                 } else {
                     if ((action.canBePerformedEvenIfPathImpossible == false && 
-                        !actor.movementComponent.HasPathTo(targetTile)) || !actor.canMove) {
+                        !actor.movementComponent.HasPathTo(targetTile)) || !actor.limiterComponent.canMove) {
                         return false;
                     }
                     actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
@@ -349,7 +349,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     actor.PerformGoapAction();
                 } else {
                     if ((action.canBePerformedEvenIfPathImpossible == false && 
-                        !actor.movementComponent.HasPathTo(targetPOIToGoTo.gridTileLocation)) || !actor.canMove) {
+                        !actor.movementComponent.HasPathTo(targetPOIToGoTo.gridTileLocation)) || !actor.limiterComponent.canMove) {
                         return false;
                     }
                     actor.marker.GoToPOI(targetPOIToGoTo, OnArriveAtTargetLocation);
@@ -384,7 +384,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             action.OnInvalidAction(this);
             JobQueueItem job = associatedJob;
             if (job != null) {
-                if (job.forceCancelOnInvalid || goapActionInvalidity.IsReasonForCancellation()) {
+                if (job.forceCancelOnInvalid || goapActionInvalidity.IsReasonForCancellationShouldDropJob()) {
                     job.ForceCancelJob(false);
                 } else {
                     if (isInvalidOnVision || isInvalidStealth) { //If action is invalid because of stealth, cancel job immediately, we do not need to recalculate it anymore since there are witnesses around, it will just become invalid again even if we let it recalculate
@@ -428,7 +428,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     if (targetCharacter.currentActionNode != null) {
                         targetCharacter.StopCurrentActionNode(false);
                     }
-                    targetCharacter.DecreaseCanMove();
+                    targetCharacter.limiterComponent.DecreaseCanMove();
                     InnerMapManager.Instance.FaceTarget(targetCharacter, actor);
                 }
                 targetCharacter.AdjustNumOfActionsBeingPerformedOnThis(1);
@@ -446,11 +446,11 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                 poiTarget.CancelRemoveStatusFeedAndRepairJobsTargetingThis();
             }
         }
-        if (action.actionCategory != ACTION_CATEGORY.INDIRECT && poiTarget is BaseMapObject baseMapObject) {
+        if ((action.actionCategory == ACTION_CATEGORY.DIRECT || action.actionCategory == ACTION_CATEGORY.CONSUME) && poiTarget is BaseMapObject baseMapObject) {
             baseMapObject.OnManipulatedBy(actor);
         }
         action.Perform(this);
-        Messenger.Broadcast(Signals.ACTION_PERFORMED, this);
+        Messenger.Broadcast(JobSignals.STARTED_PERFORMING_ACTION, this);
     }
     public void ActionInterruptedWhilePerforming(bool shouldDoAfterEffect) {
         string log =
@@ -474,7 +474,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     if (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.isPaused) {
                         targetCharacter.stateComponent.currentState.ResumeState();
                     }
-                    targetCharacter.IncreaseCanMove();
+                    targetCharacter.limiterComponent.IncreaseCanMove();
                 }
                 targetCharacter.AdjustNumOfActionsBeingPerformedOnThis(-1);
             }
@@ -488,7 +488,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         }
         //Assert.IsNotNull(job, $"{actor.name} was interrupted when performing {action.goapName} but, in this process his/her current job is null!");
         job?.CancelJob(false);
-        Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, this);
+        Messenger.Broadcast(JobSignals.CHARACTER_FINISHED_ACTION, this);
     }
     public void ActionResult(GoapActionState actionState) {
         string result = GoapActionStateDB.GetStateResult(action.goapType, actionState.name);
@@ -507,7 +507,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     if (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.isPaused) {
                         targetCharacter.stateComponent.currentState.ResumeState();
                     }
-                    targetCharacter.IncreaseCanMove();
+                    targetCharacter.limiterComponent.IncreaseCanMove();
                 }
                 targetCharacter.AdjustNumOfActionsBeingPerformedOnThis(-1);
             }
@@ -538,7 +538,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         //        actor.GoapActionResult(result, this);
         //    }
         //}
-        Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, this);
+        Messenger.Broadcast(JobSignals.CHARACTER_FINISHED_ACTION, this);
         //parentPlan?.OnActionInPlanFinished(actor, this, result);
     }
     public void StopActionNode(bool shouldDoAfterEffect) {

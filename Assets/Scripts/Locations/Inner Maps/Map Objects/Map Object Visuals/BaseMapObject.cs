@@ -53,17 +53,18 @@ public abstract class BaseMapObject {
         baseMapObjectVisual.SetActiveState(true);
     }
     public virtual void DestroyMapVisualGameObject() {
-        Assert.IsNotNull(baseMapObjectVisual, $"Trying to destroy map visual of {this.ToString()} but map visual is null!");
-        if(baseMapObjectVisual.selectable is TileObject tileObject) {
-            List<Trait> traitOverrideFunctions = tileObject.traitContainer.GetTraitOverrideFunctions(TraitManager.Destroy_Map_Visual_Trait);
-            if (traitOverrideFunctions != null) {
-                for (int i = 0; i < traitOverrideFunctions.Count; i++) {
-                    Trait trait = traitOverrideFunctions[i];
-                    trait.OnDestroyMapObjectVisual(tileObject);
+        if (baseMapObjectVisual != null) {
+            if(baseMapObjectVisual.selectable is TileObject tileObject) {
+                List<Trait> traitOverrideFunctions = tileObject.traitContainer.GetTraitOverrideFunctions(TraitManager.Destroy_Map_Visual_Trait);
+                if (traitOverrideFunctions != null) {
+                    for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                        Trait trait = traitOverrideFunctions[i];
+                        trait.OnDestroyMapObjectVisual(tileObject);
+                    }
                 }
             }
+            ObjectPoolManager.Instance.DestroyObject(baseMapObjectVisual);    
         }
-        ObjectPoolManager.Instance.DestroyObject(baseMapObjectVisual);
     }
     #endregion
 

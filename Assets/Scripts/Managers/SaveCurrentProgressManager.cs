@@ -60,6 +60,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         currentSaveDataProgress.SaveDate();
         currentSaveDataProgress.SaveWorldSettings();
         currentSaveDataProgress.SavePlayer();
+        currentSaveDataProgress.SavePlagueDisease();
         yield return null;
         yield return StartCoroutine(currentSaveDataProgress.SaveFactionsCoroutine());
         yield return StartCoroutine(currentSaveDataProgress.SaveCharactersCoroutine());
@@ -79,7 +80,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
 
         if (string.IsNullOrEmpty(fileName)) {
             //if no file name was provided
-            string timeStampStr = $"{currentSaveDataProgress.timeStamp.ToString("yyyy-MM-dd_HHmm")}";
+            string timeStampStr = $"{currentSaveDataProgress.timeStamp.ToString("yyyy-MM-dd_HHmmss")}";
             fileName = $"{worldMapSave.worldType.ToString()}_{currentSaveDataProgress.continuousDays.ToString()}_{GameManager.ConvertTickToTime(currentSaveDataProgress.tick, "-")}({timeStampStr})";
         }
 
@@ -94,12 +95,9 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         Debug.Log($"Saved new game at {savePath}");
         
         //Need to close connection to database so .db file can be zipped.
-        // DatabaseManager.Instance.mainSQLDatabase.CloseConnection();
         DatabaseManager.Instance.mainSQLDatabase.SaveInMemoryDatabaseToFile($"{UtilityScripts.Utilities.tempZipPath}gameDB.db");
         yield return GameUtilities.waitFor2Seconds; //put buffer in between to ensure database has been fully backed-up.
-        
-        // File.Copy($"{UtilityScripts.Utilities.tempPath}gameDB.db", $"{UtilityScripts.Utilities.tempZipPath}gameDB.db");
-        
+
         //zip files
         string zipPath = $"{UtilityScripts.Utilities.gameSavePath}/{fileName}.zip";
         ZipFile.CreateFromDirectory(UtilityScripts.Utilities.tempZipPath, zipPath);
@@ -118,9 +116,6 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         WorldMapCameraMove.Instance.EnableMovement();
         InnerMapCameraMove.Instance.EnableMovement();
         saveCallback?.Invoke();
-        
-        // //Reopen db connection.
-        // DatabaseManager.Instance.mainSQLDatabase.OpenConnection();
     }
     private string filePath;
     private void SaveCurrentDataToFile() {

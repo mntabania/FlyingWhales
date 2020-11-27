@@ -17,6 +17,6 @@ public class RaceWorldOptionItem : MonoBehaviour {
         title.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(race.ToString());
     }
     public void OnToggle(bool state) {
-        Messenger.Broadcast(Signals.RACE_WORLD_OPTION_ITEM_CLICKED, race, state);
+        Messenger.Broadcast(UISignals.RACE_WORLD_OPTION_ITEM_CLICKED, race, state);
     }
 }

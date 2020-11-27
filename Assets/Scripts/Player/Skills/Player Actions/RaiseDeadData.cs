@@ -32,15 +32,15 @@ public class RaiseDeadData : PlayerAction {
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (!targetCharacter.isDead || !targetCharacter.carryComponent.IsNotBeingCarried() || targetCharacter.traitContainer.HasTrait("Infected") || targetCharacter.marker == null) {
+        if (!targetCharacter.isDead || !targetCharacter.carryComponent.IsNotBeingCarried() || targetCharacter.marker == null || targetCharacter.characterClass.IsZombie()) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);
     }
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
-        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter); 
-        if (targetCharacter.traitContainer.HasTrait("Infected")) {
-            reasons += $"Cannot use Raise Dead on Infected Villagers,";
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.characterClass.IsZombie()) {
+            reasons += $"Cannot use Raise Dead on Zombie Villagers,";
         }
         return reasons;
     }
@@ -60,7 +60,7 @@ public class RaiseDeadData : PlayerAction {
         if(character != null) {
             if (!character.isDead) {
                 return false;
-            } else if (character.race != RACE.HUMANS && character.race != RACE.ELVES) {
+            } else if (!character.race.IsSapient()) {
                 return false;
             }
         }

@@ -28,12 +28,12 @@ public class AnkhOfAnubis : Artifact {
             isActivated = true;
             traitContainer.RemoveTrait(this, "Treasure");
             GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Ankh_Of_Anubis_Activate);
-            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDeath);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDeath);
         }
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDeath);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDeath);
     }
     public override void OnTileObjectDroppedBy(Character inventoryOwner, LocationGridTile tile) {
         if (inventoryOwner.isDead && inventoryOwner.isNormalCharacter) {
@@ -44,7 +44,7 @@ public class AnkhOfAnubis : Artifact {
         base.OnPlacePOI();
         if (isActivated) {
             GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Ankh_Of_Anubis_Activate);
-            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDeath);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDeath);
         }
     }
     #endregion

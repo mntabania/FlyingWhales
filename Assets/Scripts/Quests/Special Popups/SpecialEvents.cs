@@ -16,7 +16,7 @@ namespace Quests.Special_Popups {
                     }), 
                 }    
             );
-            Messenger.AddListener<Character>(Signals.NECROMANCER_SPAWNED, OnNecromancerSpawned);
+            Messenger.AddListener<Character>(CharacterSignals.NECROMANCER_SPAWNED, OnNecromancerSpawned);
         }
         protected override bool HasMetAllCriteria() {
             bool hasMetAllCriteria = base.HasMetAllCriteria();
@@ -43,7 +43,7 @@ namespace Quests.Special_Popups {
         public override void Deactivate() {
             base.Deactivate();
             StopCheckingCriteria();
-            Messenger.RemoveListener<Character>(Signals.NECROMANCER_SPAWNED, OnNecromancerSpawned);
+            Messenger.RemoveListener<Character>(CharacterSignals.NECROMANCER_SPAWNED, OnNecromancerSpawned);
         }
     }
 }

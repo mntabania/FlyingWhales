@@ -9,7 +9,7 @@ public class Invite : GoapAction {
     public Invite() : base(INTERACTION_TYPE.INVITE) {
         actionIconString = GoapActionStateDB.Flirt_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON, RACE.LESSER_DEMON };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON, RACE.LESSER_DEMON, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Needs, LOG_TAG.Social};
     }
 
@@ -133,7 +133,7 @@ public class Invite : GoapAction {
 
                     actor.relationshipContainer.AdjustOpinion(actor, targetCharacter, "Base", -3, "rejected sexual advances");
                     actor.traitContainer.AddTrait(actor, "Annoyed");
-                    if (actor.faction == FactionManager.Instance.disguisedFaction) {
+                    if (actor.faction?.factionType.type == FACTION_TYPE.Disguised) {
                         actor.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
                         if (targetCharacter.marker && !targetCharacter.marker.HasUnprocessedPOI(actor)) {
                             targetCharacter.marker.AddUnprocessedPOI(actor);
@@ -183,13 +183,8 @@ public class Invite : GoapAction {
 
     #region Effects
     public void PreInviteSuccess(ActualGoapNode goapNode) {
-        //goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Wooed", goapNode.actor);
-        // goapNode.actor.ownParty.AddPOI(goapNode.poiTarget);
         goapNode.actor.CarryPOI(goapNode.poiTarget);
     }
-    //public void PreInviteFail(ActualGoapNode goapNode) {
-    //    currentState.SetIntelReaction(InviteFailReactions);
-    //}
     public void AfterInviteFail(ActualGoapNode goapNode) {
         if (goapNode.actor is SeducerSummon) {
             //Start Combat between actor and target
@@ -219,7 +214,7 @@ public class Invite : GoapAction {
             //if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) { //do not woo characters that have transformed to other alter egos
             //    return false;
             //}
-            if (!target.canPerform) { //target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+            if (!target.limiterComponent.canPerform) { //target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
                 return false;
             }
             if (target.stateComponent.currentState is CombatState) { //do not invite characters that are currently in combat

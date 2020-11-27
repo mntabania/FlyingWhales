@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Logs;
@@ -14,7 +15,7 @@ public class JudgeCharacter : GoapAction {
         actionIconString = GoapActionStateDB.Work_Icon;
         doesNotStopTargetCharacter = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work, LOG_TAG.Life_Changes, LOG_TAG.Crimes};
     }
 
@@ -109,6 +110,36 @@ public class JudgeCharacter : GoapAction {
                 debugLog += "\n-Rival: absolve = x0, whip = x0.5, kill = x3, exile = x1.5";
             }
 
+            if (actor.traitContainer.HasTrait("Ruthless")) {
+                absolve *= 0;
+                whip = Mathf.RoundToInt(whip * 0.5f);
+                kill *= 2;
+                exile *= 1;
+                debugLog += "\n-Ruthless judge: absolve = x0, whip = x0.5, kill = x2, exile = x1";
+            }
+
+            if (crimeData.crimeType == CRIME_TYPE.Plagued && actor.homeSettlement != null) {
+                Locations.Settlements.Settlement_Events.PlaguedEvent plaguedEventEvent = actor.homeSettlement.eventManager.GetActiveEvent<Locations.Settlements.Settlement_Events.PlaguedEvent>();
+                if (plaguedEventEvent != null) {
+                    switch (plaguedEventEvent.rulerDecision) {
+                        case PLAGUE_EVENT_RESPONSE.Slay:
+                            absolve *= 0;
+                            whip *= 0;
+                            kill *= 1;
+                            exile = Mathf.RoundToInt(exile * 0.2f);
+                            debugLog += "\n-Plagued-Slay: absolve = x0, whip = x0, kill = x1, exile = x0.2";
+                            break;
+                        case PLAGUE_EVENT_RESPONSE.Exile:
+                            absolve *= 0;
+                            whip *= 0;
+                            kill = Mathf.RoundToInt(kill * 0.2f);
+                            exile *= 1;
+                            debugLog += "\n-Plagued-Exile: absolve = x0, whip = x0, kill = x0.2, exile = x1";
+                            break;
+                    }
+                }
+            }
+            
             if(crimeData.crimeType == CRIME_TYPE.Vampire) {
                 if (actor.traitContainer.HasTrait("Hemophobic")) {
                     absolve *= 0;

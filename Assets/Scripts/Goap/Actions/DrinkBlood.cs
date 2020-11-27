@@ -14,7 +14,7 @@ public class DrinkBlood : GoapAction {
         actionIconString = GoapActionStateDB.Drink_Blood_Icon;
         doesNotStopTargetCharacter = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Crimes, LOG_TAG.Needs};
     }
@@ -24,6 +24,19 @@ public class DrinkBlood : GoapAction {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", target = GOAP_EFFECT_TARGET.TARGET }, HasUnconsciousOrRestingTarget);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Lethargic", target = GOAP_EFFECT_TARGET.TARGET });
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, GOAP_EFFECT_TARGET.ACTOR));
+    }
+    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+        if (actor.traitContainer.HasTrait("Vampire")) {
+            List<GoapEffect> ee = ObjectPoolManager.Instance.CreateNewExpectedEffectsList();
+            List<GoapEffect> baseEE = base.GetExpectedEffects(actor, target, otherData, out isOverridden);
+            if (baseEE != null && baseEE.Count > 0) {
+                ee.AddRange(baseEE);
+            }
+            ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
+            isOverridden = true;
+            return ee;
+        }
+        return base.GetExpectedEffects(actor, target, otherData, out isOverridden);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -42,6 +55,13 @@ public class DrinkBlood : GoapAction {
         //    cost = UtilityScripts.Utilities.Rng.Next(0, 11);
         //    costLog += $" +{cost}(Critical Mood)";
         //}
+        if (actor.traitContainer.HasTrait("Enslaved")) {
+            if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+                costLog += $" +2000(Slave, target is not in actor's home)";
+                actor.logComponent.AppendCostLog(costLog);
+                return 2000;
+            }
+        }
         if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
             if (actor.partyComponent.isActiveMember) {
                 if (!(target is Animal)) {
@@ -77,9 +97,16 @@ public class DrinkBlood : GoapAction {
             }
         }
         if (target is Character targetCharacter) {
-            if (targetCharacter.traitContainer.HasTrait("Vampire")) {
+            if (targetCharacter.traitContainer.HasTrait("Vampire") && !actor.traitContainer.HasTrait("Cannibal")) {
                 cost += 2000;
-                costLog += " +2000(Vampire)";
+                costLog += " +2000(Vampire target, not Cannibal actor)";
+                actor.logComponent.AppendCostLog(costLog);
+                //Skip further cost processing
+                return cost;
+            }
+            if (!targetCharacter.traitContainer.HasTrait("Vampire") && actor.traitContainer.HasTrait("Cannibal")) {
+                cost += 2000;
+                costLog += " +2000(not Vampire target, Cannibal actor)";
                 actor.logComponent.AppendCostLog(costLog);
                 //Skip further cost processing
                 return cost;
@@ -95,7 +122,7 @@ public class DrinkBlood : GoapAction {
                     return cost;
                 }
             }
-            if (targetCharacter.canPerform && targetCharacter.canMove) {
+            if (targetCharacter.limiterComponent.canPerform && targetCharacter.limiterComponent.canMove) {
                 cost += 80;
                 costLog += " +80(Can Perform and Move)";
             }
@@ -182,7 +209,7 @@ public class DrinkBlood : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         if (actionInvalidity.isInvalid == false) {
             Character targetCharacter = poiTarget as Character;
-            if (targetCharacter.canMove && targetCharacter.canPerform/*|| targetCharacter.canWitness || targetCharacter.IsAvailable() == false*/) {
+            if (targetCharacter.limiterComponent.canMove && targetCharacter.limiterComponent.canPerform/*|| targetCharacter.limiterComponent.canWitness || targetCharacter.IsAvailable() == false*/) {
                 actionInvalidity.isInvalid = true;
                 actionInvalidity.stateName = "Drink Fail";
             }
@@ -359,14 +386,6 @@ public class DrinkBlood : GoapAction {
 
         actor.needsComponent.AdjustFullness(34f);
         actor.needsComponent.AdjustHappiness(13.3f);
-
-        Infected infectedTarget = goapNode.poiTarget.traitContainer.GetTraitOrStatus<Infected>("Infected");
-        infectedTarget?.InfectTarget(actor);
-
-        if(goapNode.poiTarget is Character targetCharacter) {
-            Infected infectedActor = actor.traitContainer.GetTraitOrStatus<Infected>("Infected");
-            infectedActor?.InfectTarget(targetCharacter);
-        }
     }
     public void AfterDrinkSuccess(ActualGoapNode goapNode) {
         //poiTarget.SetPOIState(POI_STATE.ACTIVE);
@@ -389,7 +408,7 @@ public class DrinkBlood : GoapAction {
                     actor.traitContainer.AddTrait(actor, "Unconscious", targetCharacter, goapNode);
                 }
             } else {
-                if (actor.currentSettlement is NPCSettlement currentSettlement) {
+                if (actor.currentSettlement is NPCSettlement currentSettlement && currentSettlement.eventManager.CanHaveEvents()) {
                     if (currentSettlement.owner != null && GameUtilities.RollChance(15)) { //15
                         CRIME_SEVERITY crimeSeverity = currentSettlement.owner.GetCrimeSeverity(actor, goapNode.poiTarget, CRIME_TYPE.Vampire);
                         if (crimeSeverity != CRIME_SEVERITY.None && crimeSeverity != CRIME_SEVERITY.Unapplicable && !currentSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Vampire_Hunt)) {
@@ -397,7 +416,8 @@ public class DrinkBlood : GoapAction {
                         }
                     }
                 }
-                if (!targetCharacter.race.IsSapient()) {
+                //If a vampire drinks the blood of another vampire and he is not a cannibal, add Poor Meal status
+                if (!targetCharacter.race.IsSapient() || (targetCharacter.traitContainer.HasTrait("Vampire") && !actor.traitContainer.HasTrait("Cannibal"))) {
                     actor.traitContainer.AddTrait(actor, "Poor Meal", targetCharacter);
                 }
                 if (GameUtilities.RollChance(98)) {

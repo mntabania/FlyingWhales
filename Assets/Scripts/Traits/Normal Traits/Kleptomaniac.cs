@@ -16,7 +16,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
             canBeTriggered = true;
-            AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Expected_Effect_Trait);
+            //AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Expected_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
         }
 
@@ -88,11 +88,11 @@ namespace Traits {
                 cost = 10000;//Utilities.rng.Next(5, 10);//5,46
             }
         }
-        public override void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref List<GoapEffect> effects) {
-            if (action == INTERACTION_TYPE.STEAL) {
-                effects.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
-            }
-        }
+        //public override void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref List<GoapEffect> effects) {
+        //    if (action == INTERACTION_TYPE.STEAL) {
+        //        effects.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
+        //    }
+        //}
         #endregion
 
         private bool CanBeStolen(TileObject item) {

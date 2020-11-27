@@ -1,1 +1,1 @@
-{"items":[{"key":"has_trigger_flaw","value":"Another trigger flaw is already in progress."},{"key":"no_target","value":"Cannot find a valid butcher victim. Only targets corpses, enemies, rivals and possibly acquaintances."}]}
+{"items":[{"key":"has_trigger_flaw","value":"Another trigger flaw is already in progress."},{"key":"no_target","value":"Cannot find a valid butcher victim. Only targets corpses, enemies, rivals and possibly acquaintances."},{"key":"no_target_vampire","value":"Cannot find a valid victim. Only targets other vampires."}]}

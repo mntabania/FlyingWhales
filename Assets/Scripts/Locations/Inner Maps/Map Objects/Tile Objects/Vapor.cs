@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UtilityScripts;
 
 public class Vapor : MovingTileObject {
 
@@ -86,11 +87,7 @@ public class Vapor : MovingTileObject {
             LocationGridTile targetTile = gridTileLocation;
             SetDoExpireEffect(false);
             _vaporMapVisualObject.Expire();
-            PoisonCloud poisonCloud = new PoisonCloud();
-            poisonCloud.SetExpiryDate(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(Random.Range(2, 6))));
-            poisonCloud.SetGridTileLocation(targetTile);
-            poisonCloud.OnPlacePOI();
-            poisonCloud.SetStacks(stacks);
+            InnerMapManager.Instance.SpawnPoisonCloud(targetTile, stacks, GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(GameUtilities.RandomBetweenTwoNumbers(2, 5))));
         }
         if (!hasExpired && currentHP == 0) {
             _vaporMapVisualObject.Expire();

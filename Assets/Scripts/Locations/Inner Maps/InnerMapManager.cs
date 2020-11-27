@@ -31,7 +31,7 @@ namespace Inner_Maps {
         /// <summary>
         /// At what tag index should randomly generated stuff start. i.e. tags per faction.
         /// </summary>
-        public const int Starting_Tag_Index = 9;
+        public const int Starting_Tag_Index = 12;
         public uint currentTagIndex = Starting_Tag_Index;
    
         //tags
@@ -42,9 +42,11 @@ namespace Inner_Maps {
         public const int Demonic_Faction_Doors = 4;
         public const int Undead_Faction = 5;
         public const int Undead_Faction_Doors = 6;
-        public const int Roads = 7;
-        public const int Caves = 8;
-        public const int Special_Structures = 9;
+        public const int Ratmen_Faction = 7;
+        public const int Ratmen_Faction_Doors = 8;
+        public const int Roads = 9;
+        public const int Caves = 10;
+        public const int Special_Structures = 11;
         
         private Vector3 _nextMapPos = Vector3.zero;
         public GameObject characterCollisionTriggerPrefab;
@@ -188,6 +190,8 @@ namespace Inner_Maps {
                                    (tile.structure is DemonicStructure demonicStructure && !ReferenceEquals(demonicStructure.structureObj, null)) && 
                                    tile.structure is CityCenter == false) {
                             return tile.structure;    
+                        } else if (tile.structure is Cave || tile.structure is MonsterLair) {
+                            return tile.structure;    
                         }
                     }
                     // return tile.collectionOwner.partOfHextile.hexTileOwner;
@@ -241,6 +245,8 @@ namespace Inner_Maps {
                             (tile.structure is DemonicStructure demonicStructure && !ReferenceEquals(demonicStructure.structureObj, null)) && //if demonic structure structure check if structure object has not yet been destroyed
                             tile.structure is CityCenter == false) {
                             selectables.Add(tile.structure);
+                        } else if (tile.structure is Cave || tile.structure is MonsterLair) {
+                            selectables.Add(tile.structure);    
                         }
                     }
                     // selectables.Add(tile.collectionOwner.partOfHextile.hexTileOwner);
@@ -261,7 +267,7 @@ namespace Inner_Maps {
             worldKnownDemonicStructures = new List<LocationStructure>();
             mapObjectFactory = new MapVisualFactory();
             InnerMapCameraMove.Instance.Initialize();
-            Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyDown);
+            Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyDown);
         }
         /// <summary>
         /// Try and show the npcSettlement map of an npcSettlement. If it does not have one, this will generate one instead.
@@ -278,7 +284,7 @@ namespace Inner_Maps {
             location.innerMap.Open();
             currentlyShowingMap = location.innerMap;
             currentlyShowingLocation = location;
-            Messenger.Broadcast(Signals.LOCATION_MAP_OPENED, location);
+            Messenger.Broadcast(RegionSignals.REGION_MAP_OPENED, location);
 
             if (centerCameraOnMapCenter) {
                 InnerMapCameraMove.Instance.JustCenterCamera(instantCenter);
@@ -294,7 +300,7 @@ namespace Inner_Maps {
             currentlyShowingMap = null;
             currentlyShowingLocation = null;
             // PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
-            Messenger.Broadcast(Signals.LOCATION_MAP_CLOSED, closedLocation);
+            Messenger.Broadcast(RegionSignals.REGION_MAP_CLOSED, closedLocation);
             return closedLocation;
         }
         public void OnCreateInnerMap(InnerTileMap newMap) {
@@ -485,9 +491,9 @@ namespace Inner_Maps {
             string summary = $"Character: {character.name}";
             summary = $"{summary}\n<b>Mood:</b>{character.moodComponent.moodState.ToString()}";
             //summary = $"{summary} <b>Supply:</b>{character.supply.ToString()}";
-            summary = $"{summary} <b>Can Move:</b>{character.canMove.ToString()}";
-            summary = $"{summary} <b>Can Witness:</b>{character.canWitness.ToString()}";
-            summary = $"{summary} <b>Can Be Attacked:</b>{character.canBeAttacked.ToString()}";
+            summary = $"{summary} <b>Can Move:</b>{character.limiterComponent.canMove.ToString()}";
+            summary = $"{summary} <b>Can Witness:</b>{character.limiterComponent.canWitness.ToString()}";
+            summary = $"{summary} <b>Can Be Attacked:</b>{character.limiterComponent.canBeAttacked.ToString()}";
             summary = $"{summary} <b>Move Speed:</b>{character.marker.pathfindingAI.speed.ToString()}";
             summary = $"{summary} <b>Attack Range:</b>{character.characterClass.attackRange.ToString()}";
             summary = $"{summary} <b>Attack Speed:</b>{character.combatComponent.attackSpeed.ToString()}";
@@ -898,23 +904,41 @@ namespace Inner_Maps {
             return claimedTag;
         }
         #endregion
-        
+
+        #region Moving Tile Objects
+        public void SpawnPoisonCloud(LocationGridTile gridTileLocation, int stacks) {
+            PoisonCloud poisonCloud = new PoisonCloud();
+            poisonCloud.SetGridTileLocation(gridTileLocation);
+            poisonCloud.OnPlacePOI();
+            poisonCloud.SetStacks(stacks);
+        }
+        public void SpawnPoisonCloud(LocationGridTile gridTileLocation, int stacks, GameDate expiryDate) {
+            PoisonCloud poisonCloud = new PoisonCloud();
+            poisonCloud.SetExpiryDate(expiryDate);
+            poisonCloud.SetGridTileLocation(gridTileLocation);
+            poisonCloud.OnPlacePOI();
+            poisonCloud.SetStacks(stacks);
+        }
+        #endregion
+
         protected override void OnDestroy() {
-            Debug.Log("Cleaning up inner maps...");
-            if (innerMaps != null) {
-                for (int i = 0; i < innerMaps.Count; i++) {
-                    InnerTileMap innerTileMap = innerMaps[i];
-                    pathfinder.data.RemoveGraph(innerTileMap.pathfindingGraph);    
-                    innerTileMap?.CleanUp();
+            if (Application.isPlaying) {
+                Debug.Log("Cleaning up inner maps...");
+                if (innerMaps != null) {
+                    for (int i = 0; i < innerMaps.Count; i++) {
+                        InnerTileMap innerTileMap = innerMaps[i];
+                        pathfinder.data.RemoveGraph(innerTileMap.pathfindingGraph);    
+                        innerTileMap?.CleanUp();
+                    }
+                    innerMaps?.Clear();    
                 }
-                innerMaps?.Clear();    
+                Destroy(pathfinder);
+                structurePrefabs?.Clear();
+                tileObjectSlotSettings?.Clear();
+                wallResourceAssets?.Clear();
+                base.OnDestroy();
+                Instance = null;    
             }
-            Destroy(pathfinder);
-            structurePrefabs?.Clear();
-            tileObjectSlotSettings?.Clear();
-            wallResourceAssets?.Clear();
-            base.OnDestroy();
-            Instance = null;
         }
     }
 }

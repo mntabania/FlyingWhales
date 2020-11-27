@@ -38,7 +38,7 @@ namespace Traits {
                 if (hasReactedThisTick) {
                     return false;
                 }
-                if (characterThatWillDoJob.canWitness && characterThatWillDoJob.marker.inVisionCharacters.Count(x => x.isNormalCharacter && x.isDead == false) >= 3) {
+                if (characterThatWillDoJob.limiterComponent.canWitness && characterThatWillDoJob.marker.inVisionCharacters.Count(x => x.isNormalCharacter && x.isDead == false) >= 3) {
                     string debugLog = $"{characterThatWillDoJob.name} Is agoraphobic and has 3+ alive villagers in vision. Character became anxious.";
                     characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Anxious");
                     int roll = UnityEngine.Random.Range(0, 100);
@@ -104,7 +104,7 @@ namespace Traits {
         #endregion
 
         private bool ApplyAgoraphobicEffect(Character character, JOB_TYPE jobType = JOB_TYPE.FLEE_TO_HOME/*, bool processCombat*/) {
-            if (!character.canPerform || !character.canWitness) {
+            if (!character.limiterComponent.canPerform || !character.limiterComponent.canWitness) {
                 return false;
             }
             if(!WillTriggerAgoraphobia(character)) {

@@ -21,12 +21,12 @@ public class CleanseTilesState : CharacterState {
     #region Overrides
     protected override void StartState() {
         base.StartState();
-        Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
+        Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
         DetermineAction();
     }
     protected override void EndState() {
         base.EndState();
-        Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
+        Messenger.RemoveListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
     }
     private void DetermineAction() {
         if (StillHasPoisonedTile()) {

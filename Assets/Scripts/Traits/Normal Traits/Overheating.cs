@@ -33,7 +33,7 @@ namespace Traits {
             weights = new WeightedDictionary<string>();
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
-            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_While_Stationary_Unoccupied);
         }
 
         #region Loading
@@ -50,7 +50,7 @@ namespace Traits {
             base.LoadTraitOnLoadTraitContainer(addTo);
             traitable = addTo;
             if (addTo is Character character) {
-                Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+                Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
                 _overheatingEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Overheating);
             }
         }
@@ -61,7 +61,7 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             traitable = addedTo;
             if (addedTo is Character character) {
-                Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+                Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
                 _overheatingEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Overheating);
             }
         }
@@ -84,7 +84,7 @@ namespace Traits {
                 if (character.trapStructure.forcedStructure == currentShelterStructure) {
                     character.trapStructure.SetForcedStructure(null);
                 }
-                Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+                Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
             }
         }
         public override void OnInitiateMapObjectVisual(ITraitable traitable) {
@@ -102,7 +102,7 @@ namespace Traits {
                 _overheatingEffectGO = null;
             }
         }
-        public override bool PerTickOwnerMovement() {
+        public override bool PerTickWhileStationaryOrUnoccupied() {
             int roll = UnityEngine.Random.Range(0, 1000);
             int chance = 15 * traitable.traitContainer.GetStacks(name);
             if (roll < chance) {

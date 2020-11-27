@@ -33,12 +33,12 @@ public class CharacterMarkerNameplate : PooledObject {
         _parentMarker = characterMarker;
         UpdateName();
         UpdateSizeBasedOnZoom();
-        Messenger.AddListener<Camera, float>(Signals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnLocationMapOpened);
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnLocationMapClosed);
-        Messenger.AddListener<Character, Region>(Signals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
-        Messenger.AddListener<Character, Region>(Signals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
-        Messenger.AddListener(Signals.UI_STATE_SET, UpdateElementsStateBasedOnActiveCharacter);
+        Messenger.AddListener<Camera, float>(ControlsSignals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnLocationMapOpened);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnLocationMapClosed);
+        Messenger.AddListener<Character, Region>(RegionSignals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
+        Messenger.AddListener<Character, Region>(RegionSignals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
+        Messenger.AddListener(UISignals.UI_STATE_SET, UpdateElementsStateBasedOnActiveCharacter);
     }
 
     #region Listeners
@@ -101,12 +101,12 @@ public class CharacterMarkerNameplate : PooledObject {
         HideIntelHelper();
         SetHighlighterState(false);
         _parentMarker = null;
-        Messenger.RemoveListener<Camera, float>(Signals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
-        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_OPENED, OnLocationMapOpened);
-        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_CLOSED, OnLocationMapClosed);
-        Messenger.RemoveListener<Character, Region>(Signals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
-        Messenger.RemoveListener<Character, Region>(Signals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
-        Messenger.RemoveListener(Signals.UI_STATE_SET, UpdateElementsStateBasedOnActiveCharacter);
+        Messenger.RemoveListener<Camera, float>(ControlsSignals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
+        Messenger.RemoveListener<Region>(RegionSignals.REGION_MAP_OPENED, OnLocationMapOpened);
+        Messenger.RemoveListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnLocationMapClosed);
+        Messenger.RemoveListener<Character, Region>(RegionSignals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
+        Messenger.RemoveListener<Character, Region>(RegionSignals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
+        Messenger.RemoveListener(UISignals.UI_STATE_SET, UpdateElementsStateBasedOnActiveCharacter);
     }
     #endregion
 

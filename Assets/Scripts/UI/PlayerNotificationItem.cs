@@ -46,8 +46,8 @@ public class PlayerNotificationItem : PooledObject {
         _bg.sprite = log.IsImportant() ? _importantSprite : _normalSprite;
         this.onDestroyAction = onDestroyAction;
         _logsTagButton.SetTags(log.tags);
-        Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemovedFromDatabase);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.AddListener<Log>(UISignals.LOG_REMOVED_FROM_DATABASE, OnLogRemovedFromDatabase);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     public void Initialize(Log log, int tick, Action<PlayerNotificationItem> onDestroyAction = null) {
         logPersistentID = log.persistentID;
@@ -59,8 +59,8 @@ public class PlayerNotificationItem : PooledObject {
         _bg.sprite = log.IsImportant() ? _importantSprite : _normalSprite;
         this.onDestroyAction = onDestroyAction;
         _logsTagButton.SetTags(log.tags);
-        Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemovedFromDatabase);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.AddListener<Log>(UISignals.LOG_REMOVED_FROM_DATABASE, OnLogRemovedFromDatabase);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     public void SetHoverPosition(UIHoverPosition hoverPosition) {
         _hoverPosition = hoverPosition;
@@ -116,8 +116,8 @@ public class PlayerNotificationItem : PooledObject {
     #region Listeners
     private void OnLogRemovedFromDatabase(Log log) {
         if (log.persistentID == logPersistentID) {
-            Assert.IsFalse(this is IntelNotificationItem, $"Intel log was removed from database! This should never happen! {logPersistentID}");
-            //if log in this notification is removed from database, then destroy it.
+            // Assert.IsFalse(this is IntelNotificationItem, $"Intel log was removed from database! This should never happen! {logPersistentID}");
+            // //if log in this notification is removed from database, then destroy it.
             DeleteNotification();
         }
     }
@@ -144,8 +144,8 @@ public class PlayerNotificationItem : PooledObject {
         transform.localScale = Vector3.one;
         fromActionID = string.Empty;
         logPersistentID = string.Empty;
-        Messenger.RemoveListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemovedFromDatabase);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.RemoveListener<Log>(UISignals.LOG_REMOVED_FROM_DATABASE, OnLogRemovedFromDatabase);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     #endregion
 }

@@ -19,13 +19,17 @@ namespace Inner_Maps.Location_Structures {
         /// </summary>
         public List<InnerMapHexTile> caveHexTiles { get; }
         public override InnerMapHexTile occupiedHexTile => caveHexTiles.Count > 0 ? caveHexTiles[0] : null;
-        
+
+        #region getters
+        public override System.Type serializedData => typeof(SaveDataCave);
+        #endregion
+
         public Cave(Region location) : base(STRUCTURE_TYPE.CAVE, location) {
             resourceYield = GetRandomResourceYield();
             caveHexTiles = new List<InnerMapHexTile>();
         }
 
-        public Cave(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public Cave(Region location, SaveDataCave data) : base(location, data) {
             resourceYield = GetRandomResourceYield();
             caveHexTiles = new List<InnerMapHexTile>();
         }
@@ -98,10 +102,26 @@ namespace Inner_Maps.Location_Structures {
             tile.genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.MINE);
         }
         public override void CenterOnStructure() {
+            if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingMap != region.innerMap) {
+                InnerMapManager.Instance.HideAreaMap();
+            }
+            if (region.innerMap.isShowing == false) {
+                InnerMapManager.Instance.ShowInnerMap(region);
+            }
             if (occupiedHexTile != null) {
-                occupiedHexTile.hexTileOwner.CenterCameraHere();
+                float centerX = 0f;
+                float centerY = 0f;
+                for (int i = 0; i < occupiedHexTiles.Count; i++) {
+                    HexTile hexTile = occupiedHexTiles[i];
+                    Vector2 worldLocation = hexTile.GetCenterLocationGridTile().centeredWorldLocation;
+                    centerX += worldLocation.x;
+                    centerY += worldLocation.y;
+                }
+                Vector2 finalPos = new Vector2(centerX / occupiedHexTiles.Count, centerY / occupiedHexTiles.Count);
+                InnerMapCameraMove.Instance.CenterCameraOn(finalPos);
             }
         }
+        public override void ShowSelectorOnStructure() { }
         public override bool HasTileOnHexTile(HexTile hexTile) {
             return occupiedHexTile != null && caveHexTiles.Contains(hexTile.innerMapHexTile);
         }

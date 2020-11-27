@@ -54,11 +54,11 @@ namespace Inner_Maps.Location_Structures {
         public virtual bool isDwelling => false;
         public virtual Vector3 worldPosition { get; protected set; }
         public virtual Vector2 selectableSize => Vector2.zero;
+        public virtual Type serializedData => typeof(SaveDataLocationStructure);
         public LocationStructure currentStructure => this;
         public BaseSettlement currentSettlement => settlementLocation;
         //public Faction owner => settlementLocation != null ? settlementLocation.owner : _owner;
         public OBJECT_TYPE objectType => OBJECT_TYPE.Structure;
-        public Type serializedData => typeof(SaveDataLocationStructure);
         public PARTY_TARGET_DESTINATION_TYPE partyTargetDestinationType => PARTY_TARGET_DESTINATION_TYPE.Structure;
         #endregion
 
@@ -236,6 +236,7 @@ namespace Inner_Maps.Location_Structures {
             isInterior = _isInterior;
         }
         public abstract void CenterOnStructure();
+        public abstract void ShowSelectorOnStructure();
         public void AddStructureTag(STRUCTURE_TAG tag) {
             structureTags.Add(tag);
         }
@@ -899,10 +900,10 @@ namespace Inner_Maps.Location_Structures {
             //disable game object. Destruction of structure game object is handled by it's parent structure template.
             region.RemoveStructure(this);
             settlementLocation.RemoveStructure(this);
-            Messenger.Broadcast(Signals.STRUCTURE_OBJECT_REMOVED, this, occupiedHexTile);
+            Messenger.Broadcast(StructureSignals.STRUCTURE_OBJECT_REMOVED, this, occupiedHexTile);
             SetOccupiedHexTile(null);
             UnsubscribeListeners();
-            Messenger.Broadcast(Signals.STRUCTURE_DESTROYED, this);
+            Messenger.Broadcast(StructureSignals.STRUCTURE_DESTROYED, this);
         }
         #endregion
 
@@ -915,12 +916,12 @@ namespace Inner_Maps.Location_Structures {
         public void AddPlayerAction(SPELL_TYPE action) {
             if (actions.Contains(action) == false) {
                 actions.Add(action);
-                Messenger.Broadcast(Signals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
+                Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
             }
         }
         public void RemovePlayerAction(SPELL_TYPE action) {
             if (actions.Remove(action)) {
-                Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+                Messenger.Broadcast(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
             }
         }
         public void ClearPlayerActions() {
@@ -934,7 +935,7 @@ namespace Inner_Maps.Location_Structures {
                    && UIManager.Instance.structureInfoUI.activeStructure == this;
         }
         public void LeftSelectAction() {
-            CenterOnStructure();
+            // CenterOnStructure();
             UIManager.Instance.ShowStructureInfo(this);
         }
         public void RightSelectAction() { }
@@ -947,13 +948,13 @@ namespace Inner_Maps.Location_Structures {
         public void AddObjectAsDamageContributor(IDamageable damageable) {
             objectsThatContributeToDamage.Add(damageable);
         }
-        protected void OnObjectDamaged(IPointOfInterest poi, int amount) {
-            if (objectsThatContributeToDamage.Contains(poi)) {
+        protected void OnObjectDamaged(TileObject tileObject, int amount) {
+            if (objectsThatContributeToDamage.Contains(tileObject)) {
                 AdjustHP(amount);
             }
         }
-        protected void OnObjectRepaired(IPointOfInterest poi, int amount) {
-            if (objectsThatContributeToDamage.Contains(poi)) {
+        protected void OnObjectRepaired(TileObject tileObject, int amount) {
+            if (objectsThatContributeToDamage.Contains(tileObject)) {
                 AdjustHP(amount);
             }
         }
@@ -990,7 +991,7 @@ namespace Inner_Maps.Location_Structures {
                 //        LandmarkManager.Instance.OwnStructure(character.faction, this);
                 //    }
                 //}
-                Messenger.Broadcast(Signals.ADDED_STRUCTURE_RESIDENT, character, this);
+                Messenger.Broadcast(StructureSignals.ADDED_STRUCTURE_RESIDENT, character, this);
                 return true;
             }
             return false;
@@ -1006,7 +1007,7 @@ namespace Inner_Maps.Location_Structures {
                 //        LandmarkManager.Instance.UnownStructure(this);
                 //    }
                 //}
-                Messenger.Broadcast(Signals.REMOVED_STRUCTURE_RESIDENT, character, this);
+                Messenger.Broadcast(StructureSignals.REMOVED_STRUCTURE_RESIDENT, character, this);
             }
         }
         public bool IsResident(Character character) {

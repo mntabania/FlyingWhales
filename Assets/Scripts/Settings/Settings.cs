@@ -20,5 +20,7 @@
 
         //Misc
         public bool skipEarlyAccessAnnouncement;
+        public bool disableCameraShake;
+        public bool randomizeMonsterNames;
     }
 }

@@ -8,7 +8,7 @@ public class SlayCharacter : GoapAction {
         doesNotStopTargetCharacter = true;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Combat};
     }
 
@@ -58,7 +58,7 @@ public class SlayCharacter : GoapAction {
 
     #region Preconditions
     private bool TargetCannotMove(Character actor, IPointOfInterest target, object[] otherData) {
-        return (target as Character).canMove == false;
+        return (target as Character).limiterComponent.canMove == false;
     }
     #endregion
 
@@ -66,7 +66,7 @@ public class SlayCharacter : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
-            return actor != poiTarget && !(poiTarget as Character).canPerform;
+            return actor != poiTarget && !(poiTarget as Character).limiterComponent.canPerform;
         }
         return false;
     }

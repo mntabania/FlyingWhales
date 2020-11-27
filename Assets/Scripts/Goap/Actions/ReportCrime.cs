@@ -8,13 +8,11 @@ using Crime_System;
 using Logs;
 
 public class ReportCrime : GoapAction {
-    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
-
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.VERBAL;
     public ReportCrime() : base(INTERACTION_TYPE.REPORT_CRIME) {
         actionIconString = GoapActionStateDB.Report_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        // doesNotStopTargetCharacter = true;
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Crimes};
     }
@@ -53,7 +51,7 @@ public class ReportCrime : GoapAction {
             if (targetCharacter.carryComponent.IsNotBeingCarried() == false) {
                 goapActionInvalidity.isInvalid = true;
                 goapActionInvalidity.reason = "target_carried";
-            } else if (!targetCharacter.canWitness) {
+            } else if (!targetCharacter.limiterComponent.canWitness) {
                 goapActionInvalidity.isInvalid = true;
                 goapActionInvalidity.reason = "target_inactive";
             }

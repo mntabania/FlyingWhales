@@ -9,10 +9,10 @@ namespace Quests {
         }
         
         public override void Enable() {
-            Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+            Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         }
         public override void Disable() {
-            Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+            Messenger.RemoveListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         }
         
         private void OnCharacterFinishedAction(ActualGoapNode actualGoapNode) {

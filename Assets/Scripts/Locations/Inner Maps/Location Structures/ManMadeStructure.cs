@@ -13,25 +13,26 @@ namespace Inner_Maps.Location_Structures {
 
         #region Getters
         public override Vector2 selectableSize => structureObj.size;
+        public override System.Type serializedData => typeof(SaveDataManMadeStructure);
         #endregion
-        
+
         protected ManMadeStructure(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) { }
-        protected ManMadeStructure(Region location, SaveDataLocationStructure data) : base(location, data) { }
+        protected ManMadeStructure(Region location, SaveDataManMadeStructure data) : base(location, data) { }
         
         #region Listeners
         protected override void SubscribeListeners() {
             if (hasBeenDestroyed) { return; }
-            Messenger.AddListener<StructureWallObject, int>(Signals.WALL_DAMAGED, OnWallDamaged);
-            Messenger.AddListener<StructureWallObject, int>(Signals.WALL_REPAIRED, OnWallRepaired);
-            Messenger.AddListener<IPointOfInterest, int>(Signals.OBJECT_DAMAGED, OnObjectDamaged);
-            Messenger.AddListener<IPointOfInterest, int>(Signals.OBJECT_REPAIRED, OnObjectRepaired);
+            Messenger.AddListener<StructureWallObject, int>(StructureSignals.WALL_DAMAGED, OnWallDamaged);
+            Messenger.AddListener<StructureWallObject, int>(StructureSignals.WALL_REPAIRED, OnWallRepaired);
+            Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         protected override void UnsubscribeListeners() {
             if (hasBeenDestroyed) { return; }
-            Messenger.RemoveListener<StructureWallObject, int>(Signals.WALL_DAMAGED, OnWallDamaged);
-            Messenger.RemoveListener<StructureWallObject, int>(Signals.WALL_REPAIRED, OnWallRepaired);
-            Messenger.RemoveListener<IPointOfInterest, int>(Signals.OBJECT_DAMAGED, OnObjectDamaged);
-            Messenger.RemoveListener<IPointOfInterest, int>(Signals.OBJECT_REPAIRED, OnObjectRepaired);
+            Messenger.RemoveListener<StructureWallObject, int>(StructureSignals.WALL_DAMAGED, OnWallDamaged);
+            Messenger.RemoveListener<StructureWallObject, int>(StructureSignals.WALL_REPAIRED, OnWallRepaired);
+            Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         #endregion
 
@@ -118,6 +119,9 @@ namespace Inner_Maps.Location_Structures {
                 InnerMapCameraMove.Instance.CenterCameraOn(structureObj.gameObject);
             } 
         }
+        public override void ShowSelectorOnStructure() {
+            Selector.Instance.Select(this);
+        }
         public void RepairStructure() {
             ResetHP();
             structureObj.OnRepairStructure(region.innerMap, this);
@@ -141,7 +145,8 @@ namespace Inner_Maps.Location_Structures {
                 return;
             }
             if (_structureTileObject != null && settlementLocation is NPCSettlement npcSettlement) {
-                Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, _structureTileObject as IPointOfInterest, ""); 
+                Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, _structureTileObject as IPointOfInterest, "");
+                Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, _structureTileObject as IPointOfInterest, "");
                 JobQueueItem existingRepairJob = npcSettlement.GetJob(JOB_TYPE.REPAIR, _structureTileObject);
                  if (existingRepairJob != null) {
                      npcSettlement.RemoveFromAvailableJobs(existingRepairJob);

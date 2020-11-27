@@ -1,14 +1,46 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using Plague.Fatality;
+using Plague.Symptom;
+using Plague.Transmission;
+using Plague.Death_Effect;
+using UnityEngine.Assertions;
 using UnityEngine;
+using Traits;
+using System.Linq;
 
 namespace Traits {
     public class Plagued : Status {
 
+        public interface IPlaguedListener {
+            void PerTickWhileStationaryOrUnoccupied(Character p_character);
+            void CharacterGainedTrait(Character p_character, Trait p_gainedTrait);
+            void CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action);
+            void CharacterDonePerformingAction(Character p_character, ActualGoapNode p_actionPerformed);
+            void HourStarted(Character p_character, int numberOfHours);
+        }
+
+        public interface IPlagueDeathListener {
+            void OnDeath(Character p_character); 
+        }
+
+        private Action<Character> _perTickWhileStationaryOrUnoccupied;
+        private Action<Character, Trait> _characterGainedTrait;
+        private Action<Character, ActualGoapNode> _characterStartedPerformingAction;
+        private Action<Character, int> _hourStarted;
+        private Action<Character, ActualGoapNode> _characterDonePerformingAction;
+        private Action<Character> _characterDeath;
+
         public IPointOfInterest owner { get; private set; } //poi that has the poison
 
-        private readonly int pukeChance = 4;
-        private readonly int septicChance = 1;
+        private int _numberOfHoursPassed;
+        private GameObject _infectedEffectGO;
+
+        #region getters
+        public override bool isPersistent => true;
+        public int numberOfHoursPassed => _numberOfHoursPassed;
+        public override Type serializedData => typeof(SaveDataPlagued);
+        #endregion
 
         public Plagued() {
             name = "Plagued";
@@ -19,15 +51,46 @@ namespace Traits {
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER };
             mutuallyExclusive = new string[] { "Robust" };
             moodEffect = -4;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Pre_Effect_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_While_Stationary_Unoccupied);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Hour_Started_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Start_Perform_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_After_Effect_Trait);
-            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.After_Death);
         }
 
         #region Loading
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
+            SaveDataPlagued saveDataPlagued = saveDataTrait as SaveDataPlagued;
+            Assert.IsNotNull(saveDataPlagued);
+            _numberOfHoursPassed = saveDataPlagued.numberOfHoursPassed;
+        }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is IPointOfInterest poi) {
                 owner = poi;
+                if (_infectedEffectGO) {
+                    ObjectPoolManager.Instance.DestroyObject(_infectedEffectGO);
+                    _infectedEffectGO = null;
+                }
+                _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Infected, false);
+                if (poi is Character) {
+                    Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+                }
+                Messenger.AddListener<Fatality>(PlayerSignals.ADDED_PLAGUE_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
+                Messenger.AddListener<PlagueSymptom>(PlayerSignals.ADDED_PLAGUE_DISEASE_SYMPTOM, OnPlagueDiseaseSymptomAdded);
+                for (int i = 0; i < PlagueDisease.Instance.activeFatalities.Count; i++) {
+                    Fatality fatality = PlagueDisease.Instance.activeFatalities[i];
+                    AddFatality(fatality);
+                }
+                for (int i = 0; i < PlagueDisease.Instance.activeSymptoms.Count; i++) {
+                    PlagueSymptom symptom = PlagueDisease.Instance.activeSymptoms[i];
+                    AddSymptom(symptom);
+                }
             }
         }
         #endregion
@@ -35,136 +98,323 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if (addedTo is IPointOfInterest poi) {
-                owner = poi;
-            }
-        }
-        //public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
-        //    if (removedFrom is Character character) {
-        //        character.needsComponent.AdjustStaminaDecreaseRate(10);
-        //    }
-        //    base.OnRemoveTrait(removedFrom, removedBy);
-        //}
-        // protected override void OnChangeLevel() {
-        //     if (level == 1) {
-        //         pukeChance = 5f;
-        //         septicChance = 0.5f;
-        //     } else if (level == 2) {
-        //         pukeChance = 7f;
-        //         septicChance = 1f;
-        //     } else {
-        //         pukeChance = 9f;
-        //         septicChance = 1.5f;
-        //     }
-        // }
-        public override bool PerTickOwnerMovement() {
-            //NOTE: This is a wrong probability computation for floats - FIND A SOLUTION
-            //float pukeRoll = Random.Range(0f, 100f);
-            //float septicRoll = Random.Range(0f, 100f);
-            int pukeRoll = Random.Range(0, 100);
-            int septicRoll = Random.Range(0, 100);
-            bool hasCreatedJob = false;
-            if (pukeRoll < pukeChance) {
-                //do puke action
-                if (owner is Character character) {
-                    if(character.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)*/) {
-                        return hasCreatedJob;
-                    }
-                    return character.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, owner, "Plague");
+            if (addedTo is IPointOfInterest addedToPOI) {
+                owner = addedToPOI;
+                if (_infectedEffectGO) {
+                    ObjectPoolManager.Instance.DestroyObject(_infectedEffectGO);
+                    _infectedEffectGO = null;
                 }
-            } else if (septicRoll < septicChance) {
-                if (owner is Character character) {
-                    if (character.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)*/) {
-                        return hasCreatedJob;
-                    }
-                    return character.interruptComponent.TriggerInterrupt(INTERRUPT.Septic_Shock, owner);
-                }
-            }
-            return hasCreatedJob;
-        }
-        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
-            base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
-            if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT || goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
-                IPointOfInterest target;
-                IPointOfInterest infector;
-                int chance;
-                if (TryGetTargetAndInfectorAndChance(goapNode, out target, out infector, out chance)) { //this is necessary so that this function can determine which of the characters is infecting the other
-                    int roll = Random.Range(0, 100);
-                    if (roll < chance) {
-                        //target will be infected with plague
-                        if (!target.traitContainer.HasTrait("Plagued")) {
-                            if (target is Character targetCharacter) {
-                                targetCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, target);
-                            } else if (target.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                                target.traitContainer.AddTrait(target, "Plagued", overrideDuration: GameManager.Instance.GetTicksBasedOnHour(12));
+                _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(owner, PARTICLE_EFFECT.Infected, false);
+                if (addedToPOI is Character character) {
+                    Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+                    if(!character.traitContainer.HasTrait("Plague Reservoir") && PlayerManager.Instance.player.plagueComponent.CanGainPlaguePoints()) {
+                        if (character.isNormalCharacter) {
+                            PlayerManager.Instance.player?.plagueComponent.GainPlaguePointFromCharacter(5, character);
+                        } else {
+                            if (character is Summon summon) {
+                                if (summon.summonType != SUMMON_TYPE.Rat) {
+                                    PlayerManager.Instance.player?.plagueComponent.GainPlaguePointFromCharacter(1, character);
+                                }
+                            } else {
+                                PlayerManager.Instance.player?.plagueComponent.GainPlaguePointFromCharacter(1, character);
                             }
                         }
-                        //else {
-                        //    target.traitContainer.AddTrait(target, "Plagued");
-                        //}
                     }
                 }
+                Messenger.AddListener<Fatality>(PlayerSignals.ADDED_PLAGUE_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
+                Messenger.AddListener<PlagueSymptom>(PlayerSignals.ADDED_PLAGUE_DISEASE_SYMPTOM, OnPlagueDiseaseSymptomAdded);
+                Messenger.AddListener<PlagueDeathEffect>(PlayerSignals.SET_PLAGUE_DEATH_EFFECT, OnSetPlagueDeathEffect);
+                Messenger.AddListener<PlagueDeathEffect>(PlayerSignals.UNSET_PLAGUE_DEATH_EFFECT, OnUnsetPlagueDeathEffect);
+
+                for (int i = 0; i < PlagueDisease.Instance.activeFatalities.Count; i++) {
+                    Fatality fatality = PlagueDisease.Instance.activeFatalities[i];
+                    AddFatality(fatality);
+                }
+                for (int i = 0; i < PlagueDisease.Instance.activeSymptoms.Count; i++) {
+                    PlagueSymptom symptom = PlagueDisease.Instance.activeSymptoms[i];
+                    AddSymptom(symptom);
+                }
+                PlagueDisease.Instance.UpdateActiveCasesOnPOIGainedPlagued(addedToPOI);
+                AddDeathEffect(PlagueDisease.Instance.activeDeathEffect);
+            }
+        }
+        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+            base.OnRemoveTrait(removedFrom, removedBy);
+            if (_infectedEffectGO) {
+                ObjectPoolManager.Instance.DestroyObject(_infectedEffectGO);
+                _infectedEffectGO = null;
+            }
+            if (removedFrom is IPointOfInterest removedFromPOI) {
+                if (removedFrom is Character) {
+                    Messenger.RemoveListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+                }
+                Messenger.RemoveListener<Fatality>(PlayerSignals.ADDED_PLAGUE_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
+                Messenger.RemoveListener<PlagueSymptom>(PlayerSignals.ADDED_PLAGUE_DISEASE_SYMPTOM, OnPlagueDiseaseSymptomAdded);
+                Messenger.RemoveListener<PlagueDeathEffect>(PlayerSignals.SET_PLAGUE_DEATH_EFFECT, OnSetPlagueDeathEffect);
+                Messenger.RemoveListener<PlagueDeathEffect>(PlayerSignals.UNSET_PLAGUE_DEATH_EFFECT, OnUnsetPlagueDeathEffect);
+
+                for (int i = 0; i < PlagueDisease.Instance.activeFatalities.Count; i++) {
+                    Fatality fatality = PlagueDisease.Instance.activeFatalities[i];
+                    RemoveFatality(fatality);
+                }
+                for (int i = 0; i < PlagueDisease.Instance.activeSymptoms.Count; i++) {
+                    PlagueSymptom symptom = PlagueDisease.Instance.activeSymptoms[i];
+                    RemoveSymptom(symptom);
+                }
+                PlagueDisease.Instance.UpdateActiveCasesAndRecoveriesOnPOILostPlagued(removedFromPOI);
+                RemoveDeathEffect(PlagueDisease.Instance.activeDeathEffect);
+            }
+        }
+        public override bool PerTickWhileStationaryOrUnoccupied() {
+            if(owner.traitContainer.HasTrait("Plague Reservoir")) {
+                return false;
+            }
+            if (owner is Character character) {
+                _perTickWhileStationaryOrUnoccupied?.Invoke(character);
+            }
+            return false;
+        }
+        public override void ExecuteActionPreEffects(INTERACTION_TYPE action, ActualGoapNode p_actionNode) {
+            base.ExecuteActionPreEffects(action, p_actionNode);
+            IPointOfInterest otherObject = GetOtherObjectInAction(p_actionNode);
+            if (otherObject is StructureTileObject || otherObject is GenericTileObject) {
+                return;
+            }
+            switch (p_actionNode.action.actionCategory) {
+                case ACTION_CATEGORY.CONSUME:
+                    if (!otherObject.traitContainer.HasTrait("Plagued")) {
+                        ConsumptionTransmission.Instance.Transmit(owner, otherObject, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Consumption));    
+                    }
+                    break;
+                case ACTION_CATEGORY.DIRECT:
+                    if (!otherObject.traitContainer.HasTrait("Plagued")) {
+                        PhysicalContactTransmission.Instance.Transmit(owner, otherObject, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Physical_Contact));    
+                    }
+                    break;
+                case ACTION_CATEGORY.VERBAL:
+                    if(p_actionNode.actor == owner) {
+                        //Only transmit verbally if the plagued character is the actor of the action
+                        AirborneTransmission.Instance.Transmit(owner, null, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne));
+                    }
+                    break;
+                    
+            }
+        }
+        public override void OnInitiateMapObjectVisual(ITraitable traitable) {
+            if (traitable is IPointOfInterest poi) {
+                if (_infectedEffectGO) {
+                    ObjectPoolManager.Instance.DestroyObject(_infectedEffectGO);
+                    _infectedEffectGO = null;
+                }
+                _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Infected, false);
+            }
+        }
+        public override void OnDestroyMapObjectVisual(ITraitable traitable) {
+            if (_infectedEffectGO) {
+                ObjectPoolManager.Instance.DestroyObject(_infectedEffectGO);
+                _infectedEffectGO = null;
+            }
+        }
+        public override void OnHourStarted(ITraitable traitable) {
+            base.OnHourStarted(traitable);
+            _numberOfHoursPassed++;
+            if (owner.traitContainer.HasTrait("Plague Reservoir")) {
+                return;
+            }
+            if (traitable is Character character) {
+                _hourStarted?.Invoke(character, _numberOfHoursPassed);
+            }
+        }
+        public override bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
+            if (owner.traitContainer.HasTrait("Plague Reservoir")) {
+                return false;
+            }
+            if (node.actor == owner && owner is Character character) {
+                if(_characterStartedPerformingAction != null) {
+                    _characterStartedPerformingAction.Invoke(character, node);
+                    if (character.interruptComponent.isInterrupted && character.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Total_Organ_Failure) {
+                        willStillContinueAction = false;
+                    }
+                    //If character can no longer do happiness recovery and the action that is starting is a happiness recovery type job, character should no longer continue doing the job
+                    if (node.associatedJobType.IsHappinessRecoveryTypeJob() && !character.limiterComponent.canDoHappinessRecovery) {
+                        if (node.actor.jobQueue.jobsInQueue.Count > 0) {
+                            node.actor.jobQueue.jobsInQueue[0].CancelJob(false);
+                        }
+                        willStillContinueAction = false;
+                        if (owner.traitContainer.HasTrait("Depressed")) {
+                            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, "depressed", null, LOG_TAG.Life_Changes);
+                            log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                            log.AddLogToDatabase();
+                        }
+                    } else if (node.associatedJobType.IsTirednessRecoveryTypeJob() && !character.limiterComponent.canDoTirednessRecovery) {
+                        if (node.actor.jobQueue.jobsInQueue.Count > 0) {
+                            node.actor.jobQueue.jobsInQueue[0].CancelJob(false);
+                        }
+                        willStillContinueAction = false;
+                        if (owner.traitContainer.HasTrait("Insomnia")) {
+                            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, "insomnia", null, LOG_TAG.Life_Changes);
+                            log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                            log.AddLogToDatabase();
+                        }
+                    }
+                    return true;
+                }
+            }
+            return base.OnStartPerformGoapAction(node, ref willStillContinueAction);
+        }
+        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
+            if (owner.traitContainer.HasTrait("Plague Reservoir")) {
+                return;
+            }
+            if (goapNode.actor == owner && owner is Character character) {
+                _characterDonePerformingAction?.Invoke(character, goapNode);
+            }
+            base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
+        }
+        public override void AfterDeath(Character character) {
+            if (owner.traitContainer.HasTrait("Plague Reservoir")) {
+                return;
+            }
+            _characterDeath?.Invoke(character);
+        }
+        public override bool OnDeath(Character character) {
+            if (!character.characterClass.IsZombie() && PlayerManager.Instance.player.plagueComponent.CanGainPlaguePoints()) {
+                PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(2, character);    
+            }
+            PlagueDisease.Instance.UpdateActiveCasesOnCharacterDied(character);
+            return base.OnDeath(character);
+        }
+        protected override string GetDescriptionInUI() {
+            string tooltip = base.GetDescriptionInUI();
+            tooltip = $"{tooltip}\n{PlagueDisease.Instance.GetPlagueEffectsSummary()}";
+            return tooltip;
+        }
+        #endregion
+
+        #region Fatalities
+        public void AddFatality(Fatality p_fatality) {
+            SubscribeToAllPlagueListenerEvents(p_fatality);
+        }
+        public void RemoveFatality(Fatality p_fatality) {
+            UnsubscribeToAllPlagueListenerEvents(p_fatality);
+        }
+        #endregion
+
+        #region Symptoms
+        public void AddSymptom(PlagueSymptom p_symptom) {
+            SubscribeToAllPlagueListenerEvents(p_symptom);
+        }
+        public void RemoveSymptom(PlagueSymptom p_symptom) {
+            UnsubscribeToAllPlagueListenerEvents(p_symptom);
+        }
+        #endregion
+
+        #region Death Effect
+        public void AddDeathEffect(PlagueDeathEffect p_deathEffect) {
+            if(p_deathEffect != null) {
+                SubscribeToDeathEffect(p_deathEffect);
+            }
+        }
+        public void RemoveDeathEffect(PlagueDeathEffect p_deathEffect) {
+            if (p_deathEffect != null) {
+                UnsubscribeToDeathEffect(p_deathEffect);
             }
         }
         #endregion
 
-        private bool TryGetTargetAndInfectorAndChance(ActualGoapNode goapNode, out IPointOfInterest target, out IPointOfInterest infector, out int chance) {
-            chance = 0;
-            if (goapNode.actor == owner) {
-                target = goapNode.poiTarget;
-                infector = goapNode.actor;
-            } else {
-                target = goapNode.actor;
-                infector = goapNode.poiTarget;
-            }
-            if(owner != null) {
-                if (owner.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                    //if (goapNode.poiTarget == owner) {
-                    //    if (goapNode.goapType == INTERACTION_TYPE.CARRY || goapNode.goapType == INTERACTION_TYPE.CARRY_CORPSE || goapNode.goapType == INTERACTION_TYPE.INVITE) {
-                    //        chance = 50;
-                    //        return true;
-                    //    }
-                    //}
-                    if (goapNode.action.goapType == INTERACTION_TYPE.DRINK_BLOOD) {
-                        chance = 100;
-                        return true;
-                    }
-                    if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT || goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
-                        chance = 25;
-                        return true;
-                    }
-                } else if (owner.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                    if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
-                        chance = 20;
-                    } else if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
-                        chance = 100;
-                    }
-                }
-            }
-            return true;
+        #region Events
+        private void SubscribeToAllPlagueListenerEvents(IPlaguedListener p_plaguedListener) {
+            SubscribeToPerTickWhileStationaryOrUnoccupied(p_plaguedListener);
+            SubscribeToCharacterGainedTrait(p_plaguedListener);
+            SubscribeToCharacterStartedPerformingAction(p_plaguedListener);
+            SubscribeToHourStarted(p_plaguedListener);
+            SubscribeToCharacterDonePerformingAction(p_plaguedListener);
         }
+        private void UnsubscribeToAllPlagueListenerEvents(IPlaguedListener p_plaguedListener) {
+            UnsubscribeToPerTickWhileStationaryOrUnoccupied(p_plaguedListener);
+            UnsubscribeToCharacterGainedTrait(p_plaguedListener);
+            UnsubscribeToCharacterStartedPerformingAction(p_plaguedListener);
+            UnsubscribeToCharacterDonePerformingAction(p_plaguedListener);
+        }
+        private void SubscribeToPerTickWhileStationaryOrUnoccupied(IPlaguedListener plaguedListener) {
+            _perTickWhileStationaryOrUnoccupied += plaguedListener.PerTickWhileStationaryOrUnoccupied;
+        }
+        private void UnsubscribeToPerTickWhileStationaryOrUnoccupied(IPlaguedListener plaguedListener) {
+            _perTickWhileStationaryOrUnoccupied -= plaguedListener.PerTickWhileStationaryOrUnoccupied;
+        }
+        private void SubscribeToCharacterGainedTrait(IPlaguedListener plaguedListener) {
+            _characterGainedTrait += plaguedListener.CharacterGainedTrait;
+        }
+        private void UnsubscribeToCharacterGainedTrait(IPlaguedListener plaguedListener) {
+            _characterGainedTrait -= plaguedListener.CharacterGainedTrait;
+        }
+        private void SubscribeToCharacterStartedPerformingAction(IPlaguedListener plaguedListener) {
+            _characterStartedPerformingAction += (pCharacter, pAction) => plaguedListener.CharacterStartedPerformingAction(pCharacter, pAction);
+        }
+        private void UnsubscribeToCharacterStartedPerformingAction(IPlaguedListener plaguedListener) {
+            _characterStartedPerformingAction -= (pCharacter, pAction) => plaguedListener.CharacterStartedPerformingAction(pCharacter, pAction);
+        }
+        private void SubscribeToHourStarted(IPlaguedListener p_plaguedListener) {
+            _hourStarted += p_plaguedListener.HourStarted;
+        }
+        private void UnsubscribeToHourStarted(IPlaguedListener p_plaguedListener) {
+            _hourStarted -= p_plaguedListener.HourStarted;
+        }
+        private void SubscribeToCharacterDonePerformingAction(IPlaguedListener p_plaguedListener) {
+            _characterDonePerformingAction += p_plaguedListener.CharacterDonePerformingAction;
+        }
+        private void UnsubscribeToCharacterDonePerformingAction(IPlaguedListener p_plaguedListener) {
+            _characterDonePerformingAction -= p_plaguedListener.CharacterDonePerformingAction;
+        }
+        private void SubscribeToDeathEffect(IPlagueDeathListener p_plaguedDeathListener) {
+            _characterDeath += p_plaguedDeathListener.OnDeath;
+        }
+        private void UnsubscribeToDeathEffect(IPlagueDeathListener p_plaguedDeathListener) {
+            _characterDeath -= p_plaguedDeathListener.OnDeath;
+        }
+        #endregion
 
-        public void ChatInfection(Character target) {
-            if(UnityEngine.Random.Range(0, 100) < 16) {
-                target.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, target);
+        #region Listeners
+        private void OnPlagueDiseaseFatalityAdded(Fatality p_fatality) {
+            AddFatality(p_fatality);
+        }
+        private void OnPlagueDiseaseSymptomAdded(PlagueSymptom p_symptom) {
+            AddSymptom(p_symptom);
+        }
+        private void OnSetPlagueDeathEffect(PlagueDeathEffect p_deathEffect) {
+            AddDeathEffect(p_deathEffect);
+        }
+        private void OnUnsetPlagueDeathEffect(PlagueDeathEffect p_deathEffect) {
+            RemoveDeathEffect(p_deathEffect);
+        }
+        private void OnTraitableGainedTrait(ITraitable p_traitable, Trait p_trait) {
+            if (owner.traitContainer.HasTrait("Plague Reservoir")) {
+                return;
+            }
+            //TODO: Might be a better way to trigger that the character that owns this has gained a trait, rather than listening to a signal and filtering results
+            if (p_traitable == owner && owner is Character character) {
+                _characterGainedTrait?.Invoke(character, p_trait);
             }
         }
-        public int GetCarryInfectChance() {
-            return 25;
-        }
+        #endregion
 
-        //private int GetInfectChanceForAction(INTERACTION_TYPE type) {
-        //    switch (type) {
-        //        case INTERACTION_TYPE.CHAT_CHARACTER:
-        //            return GetChatInfectChance();
-        //        case INTERACTION_TYPE.MAKE_LOVE:
-        //            return GetMakeLoveInfectChance();
-        //        case INTERACTION_TYPE.CARRY:
-        //            return GetCarryInfectChance();
-        //        default:
-        //            return 0;
-        //    }
-        //}
+        private IPointOfInterest GetOtherObjectInAction(ActualGoapNode p_actionNode) {
+            if (p_actionNode.actor != this.owner) {
+                return p_actionNode.actor;
+            }
+            return p_actionNode.target;
+        }
     }
-
 }
+
+#region Save Data
+public class SaveDataPlagued : SaveDataTrait {
+    public int numberOfHoursPassed;
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Plagued plagued = trait as Plagued;
+        Assert.IsNotNull(plagued);
+        numberOfHoursPassed = plagued.numberOfHoursPassed;
+    }
+}
+#endregion

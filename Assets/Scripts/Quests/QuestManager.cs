@@ -38,19 +38,19 @@ namespace Quests {
         protected override void OnDestroy() {
             base.OnDestroy();
             Instance = null;
-            Messenger.RemoveListener<List<Character>, DemonicStructure>(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
-            Messenger.RemoveListener<LocationStructure, Character, GoapPlanJob>(Signals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
-            Messenger.RemoveListener<List<Character>>(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
-            Messenger.RemoveListener<Character, DemonicStructure>(Signals.CHARACTER_ATTACKED_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
+            Messenger.RemoveListener<List<Character>, DemonicStructure>(PartySignals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
+            Messenger.RemoveListener<LocationStructure, Character, GoapPlanJob>(JobSignals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
+            Messenger.RemoveListener<List<Character>>(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
+            Messenger.RemoveListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
         }
 
         #region Initialization
         public void InitializeAfterGameLoaded() {
-            Messenger.AddListener<List<Character>, DemonicStructure>(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
-            Messenger.AddListener<LocationStructure, Character, GoapPlanJob>(Signals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
-            Messenger.AddListener<List<Character>>(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
-            Messenger.AddListener<Character, DemonicStructure>(Signals.CHARACTER_ATTACKED_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "CenterButton");
+            Messenger.AddListener<List<Character>, DemonicStructure>(PartySignals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
+            Messenger.AddListener<LocationStructure, Character, GoapPlanJob>(JobSignals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
+            Messenger.AddListener<List<Character>>(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
+            Messenger.AddListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "CenterButton");
         }
         public void InitializeAfterLoadoutPicked(){
             if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {
@@ -123,7 +123,7 @@ namespace Quests {
                 QuestItem questItem = UIManager.Instance.questUI.ShowQuest(steppedQuest, true);
                 steppedQuest.SetQuestItem(questItem);
             }
-            Messenger.Broadcast(Signals.QUEST_ACTIVATED, quest);
+            Messenger.Broadcast(PlayerQuestSignals.QUEST_ACTIVATED, quest);
         }
         private void ActivateQuest<T>(params object[] arguments) where T : Quest {
             Quest quest = System.Activator.CreateInstance(typeof(T), arguments) as Quest;
@@ -159,14 +159,14 @@ namespace Quests {
                 SettingsManager.Instance.settings.skipTutorials) {
                 CreateEliminateAllVillagersQuest();
             } else {
-                Messenger.AddListener(Signals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);
+                Messenger.AddListener(PlayerQuestSignals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);
             }
         }
         private void OnImportantTutorialsFinished() {
             CreateEliminateAllVillagersQuest();
         }
         private void CreateEliminateAllVillagersQuest() {
-            Messenger.RemoveListener(Signals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);
+            Messenger.RemoveListener(PlayerQuestSignals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);
             if (!IsQuestActive<EliminateAllVillagers>()) {
                 EliminateAllVillagers eliminateAllVillagers = new EliminateAllVillagers();
                 ActivateQuest(eliminateAllVillagers);    
@@ -194,7 +194,7 @@ namespace Quests {
 
         #region Center Button
         public void OnClickCenterButton() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "CenterButton");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "CenterButton");
         }
         #endregion
 

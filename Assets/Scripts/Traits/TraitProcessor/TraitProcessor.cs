@@ -16,7 +16,7 @@ namespace Traits {
             ApplyPOITraitInteractions(traitable, trait);
             //traitable.traitContainer.SwitchOnTrait(trait.name);
             trait.OnAddTrait(traitable);
-
+            
             int duration = overrideDuration;
             if (duration == -1) { duration = trait.ticksDuration; } //if no override duration was given(-1), then use the default trait duration
             GameDate removeDate = default;
@@ -41,7 +41,10 @@ namespace Traits {
             //if (trait.hasOnEnterGridTile) {
             //    traitable.traitContainer.AddOnEnterGridTileTrait(trait);
             //}
-            Messenger.Broadcast(Signals.TRAITABLE_GAINED_TRAIT, traitable, trait);
+            if (traitable is Character character) {
+                character.eventDispatcher.ExecuteCharacterGainedTrait(character, trait);
+            }
+            Messenger.Broadcast(TraitSignals.TRAITABLE_GAINED_TRAIT, traitable, trait);
         }
         protected void DefaultProcessOnRemoveTrait(ITraitable traitable, Trait trait, Character removedBy) {
             // traitable.traitContainer.RemoveScheduleTicket(trait.name, bySchedule);
@@ -63,7 +66,10 @@ namespace Traits {
             //if (trait.hasOnEnterGridTile) {
             //    traitable.traitContainer.RemoveOnEnterGridTileTrait(trait);
             //}
-            Messenger.Broadcast(Signals.TRAITABLE_LOST_TRAIT, traitable, trait, removedBy);
+            if (traitable is Character character) {
+                character.eventDispatcher.ExecuteCharacterLostTrait(character, trait, removedBy);
+            }
+            Messenger.Broadcast(TraitSignals.TRAITABLE_LOST_TRAIT, traitable, trait, removedBy);
         }
         protected bool DefaultProcessOnStackStatus(ITraitable traitable, Status status, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
             int duration = overrideDuration;

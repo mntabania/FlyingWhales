@@ -24,12 +24,12 @@ public class JobQueue {
     #endregion
     
     public bool AddJobInQueue(JobQueueItem job) { //, bool processLogicForPersonalJob = true
-        if (!owner.canPerform) {
+        if (!owner.limiterComponent.canPerform) {
             //We are only checking the jobs that has an assigned plan because we already have a handle for jobs that goes through multithread in ReceivePlanFromGoapThread
             //Adding job in queue with assigned plan means that the job has fixes steps and will not go to the multithread anymore to get a plan
             if(job is GoapPlanJob goapPlanJob && goapPlanJob.assignedPlan != null) {
-                int canPerformValue = owner.GetCanPerformValue();
-                if (canPerformValue == -1 && owner.traitContainer.HasTrait("Paralyzed")) {
+                int canPerformValue = owner.limiterComponent.canPerformValue;
+                if (canPerformValue == -1 && (owner.traitContainer.HasTrait("Paralyzed") || owner.traitContainer.HasTrait("Quarantined"))) {
                     //If the owner is paralyzed and the only reason he cannot perform is because of that paralyzed, the plan must not be scrapped
                 } else {
                     owner.logComponent.PrintLogIfActive($"{owner.name} is scrapping plan since {owner.name} cannot perform. {job.name} is the job.");
@@ -37,7 +37,7 @@ public class JobQueue {
                 }
             }
         }
-        if (job.jobType.IsFullnessRecovery() && owner.traitContainer.HasTrait("Fasting")) {
+        if (job.jobType.IsFullnessRecoveryTypeJob() && !owner.limiterComponent.canDoFullnessRecovery) {
             //If character is fasting, prevent any fullness recovery job from being added.
             return false;
         }
@@ -97,7 +97,7 @@ public class JobQueue {
 
         job.OnAddJobToQueue();
         job.originalOwner?.OnJobAddedToCharacterJobQueue(job, owner);
-        Messenger.Broadcast(Signals.JOB_ADDED_TO_QUEUE, job, owner);
+        Messenger.Broadcast(JobSignals.JOB_ADDED_TO_QUEUE, job, owner);
         //if(quest != null) {
         //    quest.OnAddJob(job);
         //}
@@ -148,7 +148,7 @@ public class JobQueue {
     }
     public bool RemoveJobInQueue(JobQueueItem job, bool shouldDoAfterEffect = true, string reason = "") {
         if (jobsInQueue.Remove(job)) {
-            Messenger.Broadcast(Signals.JOB_REMOVED_FROM_QUEUE, job, owner);
+            Messenger.Broadcast(JobSignals.JOB_REMOVED_FROM_QUEUE, job, owner);
             owner.combatComponent.OnJobRemovedFromQueue(job);
             job.UnassignJob(shouldDoAfterEffect, reason);
             string ownerName = owner.name;

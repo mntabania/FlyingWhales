@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Plague.Transmission;
 using UnityEngine;
 using Traits;
 using UnityEngine.Assertions;
@@ -39,10 +40,17 @@ public class NonActionEventsComponent : CharacterComponent {
             disguisedTarget = target.reactionComponent.disguisedCharacter;
         }
         if (target.isDead
-            || !disguisedActor.canWitness
-            || !disguisedTarget.canWitness
+            || !disguisedActor.limiterComponent.canWitness
+            || !disguisedTarget.limiterComponent.canWitness
             || disguisedActor is Summon
             || disguisedTarget is Summon) {
+            return false;
+        }
+        //This is to fix this issue: https://trello.com/c/QPXOCuTO/2842-dev-03345-executioner-having-a-chat-with-burning-criminal
+        if (target.traitContainer.HasTrait("Burning", "Burning At Stake")) {
+            return false;
+        }
+        if (owner.traitContainer.HasTrait("Burning", "Burning At Stake")) {
             return false;
         }
         return true;
@@ -204,7 +212,7 @@ public class NonActionEventsComponent : CharacterComponent {
             strLog += "\nInsult: -30, Praise: +30";
         }
 
-        if (!disguisedActor.isSociable) {
+        if (!disguisedActor.limiterComponent.isSociable) {
             chatWeights.AddWeightToElement(Warm_Chat, -20);
             chatWeights.AddWeightToElement(Awkward_Chat, 20);
             chatWeights.AddWeightToElement(Argument, 20);
@@ -212,7 +220,7 @@ public class NonActionEventsComponent : CharacterComponent {
             chatWeights.AddWeightToElement(Praise, -20);
             strLog += "\n\nActor is unsociable";
         }
-        if (!disguisedTarget.isSociable) {
+        if (!disguisedTarget.limiterComponent.isSociable) {
             chatWeights.AddWeightToElement(Warm_Chat, -20);
             chatWeights.AddWeightToElement(Awkward_Chat, 20);
             chatWeights.AddWeightToElement(Argument, 20);
@@ -343,6 +351,13 @@ public class NonActionEventsComponent : CharacterComponent {
                 target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", opinionValue);
             }
 
+            if (owner.traitContainer.HasTrait("Plagued")) {
+                AirborneTransmission.Instance.Transmit(owner, target, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne));
+            }
+            if (target.traitContainer.HasTrait("Plagued")) {
+                AirborneTransmission.Instance.Transmit(target, owner, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne));
+            }
+            
             GameDate dueDate = GameManager.Instance.Today();
             overrideLog = GameManager.CreateNewLog(dueDate, "Interrupt", "Chat", result, providedTags: LOG_TAG.Social);
             overrideLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -350,21 +365,7 @@ public class NonActionEventsComponent : CharacterComponent {
             //owner.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
             owner.SetIsConversing(true);
             target.SetIsConversing(true);
-
-            Traits.Plagued ownerPlague = null;
-            Traits.Plagued targetPlague = null;
-            if (owner.traitContainer.HasTrait("Plagued")) {
-                ownerPlague = owner.traitContainer.GetTraitOrStatus<Traits.Plagued>("Plagued");
-            }
-            if (target.traitContainer.HasTrait("Plagued")) {
-                targetPlague = target.traitContainer.GetTraitOrStatus<Traits.Plagued>("Plagued");
-            }
-            if (ownerPlague != null && targetPlague == null) {
-                ownerPlague.ChatInfection(target);
-            }
-            if (targetPlague != null && ownerPlague == null) {
-                targetPlague.ChatInfection(owner);
-            }
+            
             dueDate.AddTicks(2);
             SchedulingManager.Instance.AddEntry(dueDate, () => owner.SetIsConversing(false), owner);
             SchedulingManager.Instance.AddEntry(dueDate, () => target.SetIsConversing(false), target);
@@ -427,6 +428,14 @@ public class NonActionEventsComponent : CharacterComponent {
         }
         if (!disguisedActor.IsHostileWith(disguisedTarget)) {
             string result = TriggerFlirtCharacter(target);
+            
+            if (owner.traitContainer.HasTrait("Plagued")) {
+                AirborneTransmission.Instance.Transmit(owner, target, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne));
+            }
+            if (target.traitContainer.HasTrait("Plagued")) {
+                AirborneTransmission.Instance.Transmit(target, owner, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Airborne));
+            }
+            
             GameDate dueDate = GameManager.Instance.Today();
             overrideLog = GameManager.CreateNewLog(dueDate, "Interrupt", "Flirt", result, providedTags: LOG_TAG.Social);
             overrideLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -466,7 +475,7 @@ public class NonActionEventsComponent : CharacterComponent {
                 return "ugly";
             }
         }
-        if (!disguisedTarget.isSociable) {
+        if (!disguisedTarget.limiterComponent.isSociable) {
             owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Rebuffed courtship", -8, "engaged in disastrous flirting");
             target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", -12, "engaged in disastrous flirting");
             return "unsociable";

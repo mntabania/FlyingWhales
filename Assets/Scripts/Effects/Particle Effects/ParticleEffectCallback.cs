@@ -7,6 +7,6 @@ public class ParticleEffectCallback : PooledObject {
     public ParticleSystem particle;
 
     public void OnParticleSystemStopped() {
-        Messenger.Broadcast(Signals.PARTICLE_EFFECT_DONE, particle);
+        Messenger.Broadcast(ParticleSignals.PARTICLE_EFFECT_DONE, particle);
     }
 }

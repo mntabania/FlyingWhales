@@ -90,35 +90,35 @@ public class CharacterInfoUI : InfoUIBase {
 
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateHistory);
-        Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
-        Messenger.AddListener<Character>(Signals.LOG_MENTIONING_CHARACTER_UPDATED, OnLogMentioningCharacterUpdated);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, UpdateTraitsFromSignal);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, UpdateTraitsFromSignal);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_STACKED, UpdateTraitsFromSignal);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
-        Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
-        Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_CREATED, OnRelationshipChanged);
-        Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_TYPE_ADDED, OnRelationshipChanged);
-        Messenger.AddListener<Character, Character>(Signals.OPINION_ADDED, OnOpinionChanged);
-        Messenger.AddListener<Character, Character>(Signals.OPINION_REMOVED, OnOpinionChanged);
-        Messenger.AddListener<Character, Character, string>(Signals.OPINION_INCREASED, OnOpinionChanged);
-        Messenger.AddListener<Character, Character, string>(Signals.OPINION_DECREASED, OnOpinionChanged);
-        Messenger.AddListener<Character>(Signals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
-        Messenger.AddListener<MoodComponent>(Signals.MOOD_SUMMARY_MODIFIED, OnMoodModified);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.AddListener<Log>(UISignals.LOG_ADDED, UpdateHistory);
+        Messenger.AddListener<Log>(UISignals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
+        Messenger.AddListener<Character>(UISignals.LOG_MENTIONING_CHARACTER_UPDATED, OnLogMentioningCharacterUpdated);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_STACKED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener(UISignals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
+        Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
+        Messenger.AddListener<Relatable, Relatable>(CharacterSignals.RELATIONSHIP_CREATED, OnRelationshipChanged);
+        Messenger.AddListener<Relatable, Relatable>(CharacterSignals.RELATIONSHIP_TYPE_ADDED, OnRelationshipChanged);
+        Messenger.AddListener<Character, Character>(CharacterSignals.OPINION_ADDED, OnOpinionChanged);
+        Messenger.AddListener<Character, Character>(CharacterSignals.OPINION_REMOVED, OnOpinionChanged);
+        Messenger.AddListener<Character, Character, string>(CharacterSignals.OPINION_INCREASED, OnOpinionChanged);
+        Messenger.AddListener<Character, Character, string>(CharacterSignals.OPINION_DECREASED, OnOpinionChanged);
+        Messenger.AddListener<Character>(UISignals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
+        Messenger.AddListener<MoodComponent>(CharacterSignals.MOOD_SUMMARY_MODIFIED, OnMoodModified);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
 
         //normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
         relationshipNamesEventLbl.SetOnClickAction(OnClickCharacter);
         
         factionEventLbl.SetOnClickAction(OnClickFaction);
         currentLocationEventLbl.SetOnClickAction(OnClickCurrentLocation);
-        homeRegionEventLbl.SetOnClickAction(OnClickHomeLocation);
+        homeRegionEventLbl.SetOnClickAction(OnClickHomeVillage);
         houseEventLbl.SetOnClickAction(OnClickHomeStructure);
         partyEventLbl.SetOnClickAction(OnClickParty);
         opinionsEventLabel.SetShouldColorHighlight(false);
@@ -271,7 +271,7 @@ public class CharacterInfoUI : InfoUIBase {
         UpdateThoughtBubble();
     }
     private void UpdateSubTextAndIcon() {
-        if (_activeCharacter is Summon) {
+        if (!_activeCharacter.isNormalCharacter) {
             subLbl.gameObject.SetActive(false);
         } else {
             subLbl.text = _activeCharacter.characterClass.className;
@@ -318,7 +318,7 @@ public class CharacterInfoUI : InfoUIBase {
     private void UpdateLocationInfo() {
         factionLbl.text = _activeCharacter.faction != null ? $"<link=\"faction\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.faction.name)}</link>" : "Factionless";
         currentLocationLbl.text = _activeCharacter.currentRegion != null ? $"{_activeCharacter.currentRegion.name}" : "None";
-        homeRegionLbl.text = _activeCharacter.homeRegion != null ? $"{_activeCharacter.homeRegion.name}" : "Homeless";
+        homeRegionLbl.text = _activeCharacter.homeSettlement != null ? $"<link=\"home\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.homeSettlement.name)}</link>" : "Homeless";
         //currentLocationLbl.text = $"<link=\"currLocation\">{UtilityScripts.Utilities.ColorizeName(_activeCharacter.currentRegion.name)}</link>";
         //homeRegionLbl.text = _activeCharacter.homeRegion != null ? $"<link=\"home\">{UtilityScripts.Utilities.ColorizeName(_activeCharacter.homeRegion.name)}</link>" : "Homeless";
         houseLbl.text = _activeCharacter.homeStructure != null ? $"<link=\"house\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.homeStructure.name)}</link>" : "Homeless";
@@ -329,8 +329,12 @@ public class CharacterInfoUI : InfoUIBase {
     private void OnClickCurrentLocation(object obj) {
         UIManager.Instance.ShowRegionInfo(activeCharacter.currentRegion);
     }
-    private void OnClickHomeLocation(object obj) {
-        UIManager.Instance.ShowRegionInfo(activeCharacter.homeRegion);
+    private void OnClickHomeVillage(object obj) {
+        if (_activeCharacter.homeSettlement != null) {
+            if (_activeCharacter.homeSettlement.allStructures.Count > 0) {
+                UIManager.Instance.ShowStructureInfo(_activeCharacter.homeSettlement.allStructures.First());
+            }
+        }
     }
     private void OnClickHomeStructure(object obj) {
         if (activeCharacter.homeStructure != null) {
@@ -514,18 +518,18 @@ public class CharacterInfoUI : InfoUIBase {
     public void ShowCharacterTestingInfo() {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         string summary = $"Home structure: {activeCharacter.homeStructure?.ToString() ?? "None"}" ?? "None";
-        summary = $"{summary} {$"Territories: {activeCharacter.territories?.Count.ToString() ?? "None"}"}";
+        summary = $"{summary} {$"Territory: {activeCharacter.territory?.name ?? "None"}"}";
         summary = $"{summary} {$"Current structure: {activeCharacter.currentStructure}" ?? "None"}";
         summary = $"{summary} {"POI State: " + activeCharacter.state.ToString()}";
         summary = $"{summary} {"Do Not Get Hungry: " + activeCharacter.needsComponent.doNotGetHungry.ToString()}";
         summary = $"{summary} {"Do Not Get Tired: " + activeCharacter.needsComponent.doNotGetTired.ToString()}";
         summary = $"{summary} {"Do Not Get Bored: " + activeCharacter.needsComponent.doNotGetBored.ToString()}";
         summary = $"{summary} {"Do Not Recover HP: " + activeCharacter.doNotRecoverHP.ToString()}";
-        summary = $"{summary} {"Can Move: " + activeCharacter.canMove.ToString()}";
-        summary = $"{summary} {"Can Witness: " + activeCharacter.canWitness.ToString()}";
-        summary = $"{summary} {"Can Be Attacked: " + activeCharacter.canBeAttacked.ToString()}";
-        summary = $"{summary} {"Can Perform: " + activeCharacter.canPerform.ToString()}";
-        summary = $"{summary} {"Is Sociable: " + activeCharacter.isSociable.ToString()}";
+        summary = $"{summary} {"Can Move: " + activeCharacter.limiterComponent.canMove.ToString()}";
+        summary = $"{summary} {"Can Witness: " + activeCharacter.limiterComponent.canWitness.ToString()}";
+        summary = $"{summary} {"Can Be Attacked: " + activeCharacter.limiterComponent.canBeAttacked.ToString()}";
+        summary = $"{summary} {"Can Perform: " + activeCharacter.limiterComponent.canPerform.ToString()}";
+        summary = $"{summary} {"Is Sociable: " + activeCharacter.limiterComponent.isSociable.ToString()}";
         summary = $"{summary} {"Is Running: " + activeCharacter.movementComponent.isRunning.ToString()}";
         summary = $"{summary} {"POI State: " + activeCharacter.state.ToString()}";
         summary = $"{summary} {"Personal Religion: " + activeCharacter.religionComponent.religion.ToString()}";
@@ -966,7 +970,7 @@ public class CharacterInfoUI : InfoUIBase {
             }
             PlayerUI.Instance.ShowGeneralConfirmation("Trigger Flaw Failed", log);
         }
-        Messenger.Broadcast(Signals.FLAW_TRIGGERED_BY_PLAYER, trait);
+        Messenger.Broadcast(SpellSignals.FLAW_TRIGGERED_BY_PLAYER, trait);
     }
     private bool CanActivateTriggerFlaw(string traitName) {
         Trait trait = activeCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
@@ -1091,47 +1095,14 @@ public class CharacterInfoUI : InfoUIBase {
                     color = "red";
                 }
                 GameDate expiryDate = modifications.expiryDates.Last();
-                string expiryText = string.Empty;
+                string expiryText;
                 if (expiryDate.hasValue) {
                     GameDate today = GameManager.Instance.Today();
-                    int tickDiff = today.GetTickDifference(expiryDate);
-                    if (tickDiff >= GameManager.ticksPerHour) {
-                        int hours = GameManager.Instance.GetHoursBasedOnTicks(tickDiff);
-                        if (hours > 1) {
-                            expiryText = $"Lasts for: {hours.ToString()} hours";  //expiryDate.ConvertToContinuousDaysWithTime();    
-                        } else {
-                            expiryText = $"Lasts for: {hours.ToString()} hour";  //expiryDate.ConvertToContinuousDaysWithTime();
-                        }
-                    } else {
-                        int minutes = GameManager.Instance.GetMinutesBasedOnTicks(tickDiff);
-                        if (minutes > 1) {
-                            expiryText = $"Lasts for: {minutes.ToString()} minutes";    
-                        } else {
-                            expiryText = $"Lasts for: {minutes.ToString()} minute";
-                        }
-                        
-                    }
+                    expiryText = $"Lasts for: {today.GetTimeDifferenceString(expiryDate)}";
                 } else {
                     expiryText = "Lasts until: Linked to Needs";
                 }
                 string summary = $"<color={color}>{modificationSign}{total.ToString()}</color> {expiryText}";
-                // int dateIndex = modifications.expiryDates.Count - 1;
-                // for (int i = 0; i < modifications.modifications.Count; i++) {
-                //     int modificationValue = modifications.modifications[i];
-                //     if (modificationValue != 0) { //do not show 0 values
-                //         GameDate date = modifications.expiryDates[dateIndex];
-                //         string modificationSign = string.Empty;
-                //         if (modificationValue > 0) {
-                //             modificationSign = "+";
-                //         }
-                //         string color = "green";
-                //         if (modificationValue < 0) {
-                //             color = "red";
-                //         }
-                //         summary = $"{summary} <color={color}>{modificationSign}{modificationValue.ToString()}</color> - {date.ConvertToContinuousDaysWithTime()}\n";
-                //     }
-                //     dateIndex--;
-                // }
                 UIManager.Instance.ShowSmallInfo(summary, autoReplaceText: false);    
             }
         }
@@ -1212,7 +1183,7 @@ public class CharacterInfoUI : InfoUIBase {
     private void OnClickChooseCombatMode(string mode) {
         COMBAT_MODE combatMode = (COMBAT_MODE) System.Enum.Parse(typeof(COMBAT_MODE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(mode));
         UIManager.Instance.characterInfoUI.activeCharacter.combatComponent.SetCombatMode(combatMode);
-        Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, activeCharacter as IPlayerActionTarget);
+        Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, activeCharacter as IPlayerActionTarget);
         UIManager.Instance.customDropdownList.Close();
         PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.CHANGE_COMBAT_MODE).OnExecuteSpellActionAffliction();
     }
@@ -1258,7 +1229,7 @@ public class CharacterInfoUI : InfoUIBase {
 
     #region Rename
     public void OnClickRenameButton() {
-        Messenger.Broadcast(Signals.EDIT_CHARACTER_NAME, activeCharacter.persistentID, activeCharacter.firstName);
+        Messenger.Broadcast(UISignals.EDIT_CHARACTER_NAME, activeCharacter.persistentID, activeCharacter.firstName);
     }
     #endregion
 

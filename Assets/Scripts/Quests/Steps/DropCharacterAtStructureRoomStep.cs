@@ -4,10 +4,10 @@ namespace Quests.Steps {
         
         public DropCharacterAtStructureRoomStep(string stepDescription = "Drop character at Room") : base(stepDescription) { }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<IPointOfInterest>(Signals.ON_UNSEIZE_POI, CheckCompletion);
+            Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_UNSEIZE_POI, CheckCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<IPointOfInterest>(Signals.ON_UNSEIZE_POI, CheckCompletion);
+            Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.ON_UNSEIZE_POI, CheckCompletion);
         }
 
         #region Listeners

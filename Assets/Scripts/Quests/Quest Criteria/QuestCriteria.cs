@@ -21,11 +21,11 @@
         protected virtual void SetCriteriaAsMet() {
             hasCriteriaBeenMet = true;
             _onCriteriaMetAction?.Invoke(this);
-            Messenger.Broadcast(Signals.QUEST_CRITERIA_MET, this);
+            Messenger.Broadcast(PlayerQuestSignals.QUEST_CRITERIA_MET, this);
         }
         protected virtual void SetCriteriaAsUnMet() {
             hasCriteriaBeenMet = false;
-            Messenger.Broadcast(Signals.QUEST_CRITERIA_UNMET, this);
+            Messenger.Broadcast(PlayerQuestSignals.QUEST_CRITERIA_UNMET, this);
         }
 
     }

@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 
 public class DarkRitual : GoapAction {
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.VERBAL;
     public DarkRitual() : base(INTERACTION_TYPE.DARK_RITUAL) {
         actionIconString = GoapActionStateDB.Cult_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work, LOG_TAG.Life_Changes};
     }
     
@@ -87,7 +88,7 @@ public class DarkRitual : GoapAction {
     
     #region State Effects
     public void AfterRitualSuccess(ActualGoapNode goapNode) {
-        Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, goapNode.poiTarget.worldPosition, Random.Range(2, 6), goapNode.poiTarget.gridTileLocation.parentMap);
+        Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, goapNode.poiTarget.worldPosition, Random.Range(2, 6), goapNode.poiTarget.gridTileLocation.parentMap);
         goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.CULTIST_KIT);
     }
     #endregion

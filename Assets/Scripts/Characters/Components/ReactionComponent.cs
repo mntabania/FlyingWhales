@@ -183,12 +183,12 @@ public class ReactionComponent : CharacterComponent {
                     owner.logComponent.PrintLogErrorIfActive(error);
                 } else {
                     //add log of emotions felt
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_witness", providedTags: LOG_TAG.Witnessed);
-                    // log.AddTag(reactable.logTags);
-                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
-                    log.AddLogToDatabase();
+                    //Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_witness", providedTags: LOG_TAG.Witnessed);
+                    //// log.AddTag(reactable.logTags);
+                    //log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    //log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    //log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
+                    //log.AddLogToDatabase();
                 }
             }
             string emotionsToTarget = reactable.ReactionToTarget(actor, target, owner, REACTION_STATUS.WITNESSED);
@@ -201,13 +201,14 @@ public class ReactionComponent : CharacterComponent {
                     error = $"{error}\n-Target: {reactable.target.nameWithID}";
                     owner.logComponent.PrintLogErrorIfActive(error);
                 } else {
+                    //NOTE: Do not log emotions to target
                     //add log of emotions felt
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_witness", providedTags: LOG_TAG.Witnessed);
-                    // log.AddTag(reactable.logTags);
-                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(reactable.target, reactable.target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToTarget), LOG_IDENTIFIER.STRING_1);
-                    log.AddLogToDatabase();
+                    //Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_witness", providedTags: LOG_TAG.Witnessed);
+                    //// log.AddTag(reactable.logTags);
+                    //log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    //log.AddToFillers(reactable.target, reactable.target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    //log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsToTarget), LOG_IDENTIFIER.STRING_1);
+                    //log.AddLogToDatabase();
                 }
             }
             string response =
@@ -215,8 +216,9 @@ public class ReactionComponent : CharacterComponent {
             owner.logComponent.PrintLogIfActive(response);
 
             //Should not add witnessed log if there are no reaction/emotion felt
-            //Reason: Assault action still logs that the character witnessed actor is assaulting target even if there are no reactions trigger
-            if (addLog && (emotionsToActor != string.Empty || emotionsToTarget != string.Empty)) {
+            //Reason: Assault action still logs that the character witnessed actor is assaulting target even if there are no reactions trigger4
+            //NOTE: Only check for emotions to actor because we do not log emotions to target anymore to avoid log duplication
+            if (addLog && emotionsToActor != string.Empty) {
                 //Only log witness event if event is not an action. If it is an action, the CharacterManager.Instance.CanAddCharacterLogOrShowNotif must return true
                 if (reactable is ActualGoapNode action && (!action.action.shouldAddLogs || !CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType))) {
                     //Should not add witness log if the action log itself is not added to the actor
@@ -227,6 +229,13 @@ public class ReactionComponent : CharacterComponent {
                     witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
                     witnessLog.AddToFillers(null, reactable.informationLog.unReplacedText, LOG_IDENTIFIER.APPEND);
                     witnessLog.AddToFillers(reactable.informationLog.fillers);
+
+                    Log emotionsLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction", providedTags: LOG_TAG.Witnessed);
+                    emotionsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    emotionsLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    emotionsLog.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
+
+                    witnessLog.AddToFillers(null, emotionsLog.logText, LOG_IDENTIFIER.PARTY_2);
                     witnessLog.AddLogToDatabase();
                     // owner.logComponent.AddHistory(witnessLog);
                 }
@@ -244,7 +253,7 @@ public class ReactionComponent : CharacterComponent {
                         owner.logComponent.PrintLogErrorIfActive(error);
                     } else {
                         //add log of emotions felt
-                        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_witness");
+                        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction");
                         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsOfTarget), LOG_IDENTIFIER.STRING_1);
@@ -277,17 +286,6 @@ public class ReactionComponent : CharacterComponent {
             target = targetCharacter.reactionComponent.disguisedCharacter;
         }
 
-        if (addLog) {
-            Log informedLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "informed_event", reactable as ActualGoapNode, LOG_TAG.Informed);
-            // informedLog.AddTag(reactable.logTags);
-            // informedLog.SetLogType(LOG_TYPE.Informed);
-            informedLog.AddToFillers(reactable.informationLog.fillers);
-            informedLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
-            informedLog.AddToFillers(null, reactable.informationLog.unReplacedText, LOG_IDENTIFIER.APPEND);
-            informedLog.AddLogToDatabase();
-            // owner.logComponent.AddHistory(informedLog);
-        }
-
         string response = string.Empty;
         if (actor != owner && target != owner) {
             string emotionsToActor = reactable.ReactionToActor(actor, target, owner, REACTION_STATUS.INFORMED);
@@ -301,12 +299,12 @@ public class ReactionComponent : CharacterComponent {
                     owner.logComponent.PrintLogErrorIfActive(error);
                 } else {
                     //add log of emotions felt
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction", providedTags: LOG_TAG.Informed);
-                    // log.AddTag(reactable.logTags);
-                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
-                    log.AddLogToDatabase();
+                    //Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_information", providedTags: LOG_TAG.Informed);
+                    //// log.AddTag(reactable.logTags);
+                    //log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    //log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    //log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
+                    //log.AddLogToDatabase();
                 }
             }
             string emotionsToTarget = reactable.ReactionToTarget(actor, target, owner, REACTION_STATUS.INFORMED);
@@ -320,15 +318,35 @@ public class ReactionComponent : CharacterComponent {
                     owner.logComponent.PrintLogErrorIfActive(error);
                 } else {
                     //add log of emotions felt
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction", providedTags: LOG_TAG.Informed);
-                    // log.AddTag(reactable.logTags);
-                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToTarget, 2), LOG_IDENTIFIER.STRING_1);
-                    log.AddLogToDatabase();
+                    //Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_information", providedTags: LOG_TAG.Informed);
+                    //// log.AddTag(reactable.logTags);
+                    //log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    //log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    //log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToTarget, 2), LOG_IDENTIFIER.STRING_1);
+                    //log.AddLogToDatabase();
                 }
             }
             response = $"{response}{emotionsToActor}/{emotionsToTarget}";
+
+
+            if (addLog && emotionsToActor != string.Empty) {
+                Log informedLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "informed_event", reactable as ActualGoapNode, LOG_TAG.Informed);
+                // informedLog.AddTag(reactable.logTags);
+                // informedLog.SetLogType(LOG_TYPE.Informed);
+                informedLog.AddToFillers(reactable.informationLog.fillers);
+                informedLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
+                informedLog.AddToFillers(null, reactable.informationLog.unReplacedText, LOG_IDENTIFIER.APPEND);
+
+                Log emotionsLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction", providedTags: LOG_TAG.Informed);
+                emotionsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                emotionsLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                emotionsLog.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
+
+                informedLog.AddToFillers(null, emotionsLog.logText, LOG_IDENTIFIER.PARTY_2);
+
+                informedLog.AddLogToDatabase();
+                // owner.logComponent.AddHistory(informedLog);
+            }
         } else if(reactable.target == owner && reactable.target is Character) {
             string emotionsOfTarget = reactable.ReactionOfTarget(actor, reactable.target, REACTION_STATUS.INFORMED);
             if (emotionsOfTarget != string.Empty) {
@@ -562,7 +580,7 @@ public class ReactionComponent : CharacterComponent {
             debugLog = $"{debugLog}\n-Is dazed do not react!";
             return;
         }
-        if(disguisedTarget is Dragon dragon && (!disguisedTarget.canMove || !disguisedTarget.canPerform) && actor.isNormalCharacter) {
+        if(disguisedTarget is Dragon dragon && (!disguisedTarget.limiterComponent.canMove || !disguisedTarget.limiterComponent.canPerform) && actor.isNormalCharacter) {
             debugLog = $"{debugLog}\n-Target is dragon and Actor is normal character, will wary if has not yet wary";
             if (!dragon.charactersThatAreWary.Contains(actor)) {
                 debugLog = $"{debugLog}\n-Will wary to dragon";
@@ -573,7 +591,7 @@ public class ReactionComponent : CharacterComponent {
 
         if (disguisedTarget.characterClass.className == "Werewolf" && disguisedActor.homeSettlement != null && 
             disguisedTarget.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(disguisedActor.homeSettlement) && disguisedTarget.lycanData != null && 
-            !disguisedTarget.lycanData.DoesCharacterKnowThisLycan(disguisedActor)) {
+            !disguisedTarget.lycanData.DoesCharacterKnowThisLycan(disguisedActor) && disguisedActor.homeSettlement.eventManager.CanHaveEvents()) {
             debugLog = $"{debugLog}\n-Target is a werewolf and is near {disguisedActor.homeSettlement.name}";
             CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(disguisedActor, disguisedTarget, disguisedTarget, CRIME_TYPE.Werewolf);
             if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable && !disguisedActor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Werewolf_Hunt)) {
@@ -588,14 +606,19 @@ public class ReactionComponent : CharacterComponent {
         if (isHostile) {
             debugLog = $"{debugLog}\n-Target is hostile";
             if(actor.currentJob != null && actor.currentActionNode != null && actor.currentActionNode.avoidCombat && actor.currentActionNode.actionStatus == ACTION_STATUS.STARTED
-                && !targetCharacter.isDead && targetCharacter.canPerform) {
+                && !targetCharacter.isDead && targetCharacter.limiterComponent.canPerform) {
                 actor.currentJob.CancelJob(false);
                 actor.combatComponent.Flight(targetCharacter, CombatManager.Encountered_Hostile);
             }
-            if(disguisedActor is Troll && disguisedTarget.isNormalCharacter && disguisedActor.homeStructure != null && !targetCharacter.isDead) {
+            bool shouldRelease = disguisedActor.isNormalCharacter && targetCharacter.traitContainer.HasTrait("Enslaved") && disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget)
+                && !disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget) && !targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Enslaved").IsResponsibleForTrait(disguisedActor);
+            bool isPartOfRescueJob = actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive && actor.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueQuest && rescueQuest.targetCharacter == targetCharacter;
+            if (shouldRelease || isPartOfRescueJob) {
+                actor.jobComponent.TriggerReleaseJob(targetCharacter);
+            } else if(disguisedActor is Troll && disguisedTarget.isNormalCharacter && disguisedActor.homeStructure != null && !targetCharacter.isDead) {
                 debugLog = $"{debugLog}\n-Actor is a Troll and target is a Villager and actor has a home structure";
                 if (targetCharacter.currentStructure != disguisedActor.homeStructure) {
-                    if(!targetCharacter.canPerform || !targetCharacter.canMove) {
+                    if(!targetCharacter.limiterComponent.canPerform || !targetCharacter.limiterComponent.canMove) {
                         debugLog += "\n-Target cannot perform/move";
                         if (!actor.combatComponent.isInCombat) {
                             debugLog += "\n-Actor is not in combat, will try to bring target back to home";
@@ -629,7 +652,7 @@ public class ReactionComponent : CharacterComponent {
                 } else {
                     if (!targetCharacter.traitContainer.HasTrait("Restrained")) {
                         debugLog = $"{debugLog}\n-Will engage in combat and restrain it";
-                        actor.jobComponent.TriggerRestrainJob(targetCharacter);
+                        actor.jobComponent.TriggerRestrainJob(targetCharacter, JOB_TYPE.CAPTURE_CHARACTER);
                     } else {
                         debugLog = $"{debugLog}\n-Target is already restrained, will do nothing";
                     }
@@ -671,7 +694,7 @@ public class ReactionComponent : CharacterComponent {
                         debugLog = $"{debugLog}\n-{actor.jobQueue.jobsInQueue[0].jobType}";
                     }
                     
-                    if (targetCharacter.defaultCharacterTrait.hasBeenAbductedByWildMonster && disguisedActor.faction.factionType.type == FACTION_TYPE.Wild_Monsters) {
+                    if (targetCharacter.defaultCharacterTrait.hasBeenAbductedByWildMonster && disguisedActor.faction?.factionType.type == FACTION_TYPE.Wild_Monsters) {
                         debugLog = $"{debugLog}\nActor is a wild monster and target has been abducted by a wild monster, did not trigger Fight or Flight response.";
                         return;
                     }
@@ -689,27 +712,26 @@ public class ReactionComponent : CharacterComponent {
                         debugLog = $"{debugLog}\nActor is part of player faction and target character is dazed, do not combat!.";
                         return;
                     }
-                    if(!targetCharacter.isDead && targetCharacter.traitContainer.HasTrait("Restrained") && targetCharacter.traitContainer.HasTrait("Prisoner")) {
-                        Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-                        bool targetIsFactionPrisonerAndIsInPrison = prisoner.IsFactionPrisonerOf(disguisedActor.faction) && disguisedActor.homeSettlement != null && targetCharacter.IsInPrisonOf(disguisedActor.homeSettlement);
-                        bool targetIsPersonalPrisoner = prisoner.IsPersonalPrisonerOf(disguisedActor);
-                        if (targetIsFactionPrisonerAndIsInPrison || targetIsPersonalPrisoner) {
+                    Prisoner targetPrisonerStatus = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+                    if (!targetCharacter.isDead && targetPrisonerStatus != null && targetPrisonerStatus.IsConsideredPrisonerOf(disguisedActor)) {
+                        LocationStructure intendedPrison = targetPrisonerStatus.GetIntendedPrisonAccordingTo(disguisedActor);
+                        if(targetCharacter.currentStructure == intendedPrison) {
                             if (targetCharacter.needsComponent.isStarving) {
                                 Vampire vampireTrait = disguisedTarget.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
                                 bool targetIsKnownVampire = vampireTrait != null && vampireTrait.DoesCharacterKnowThisVampire(disguisedActor);
-                                if(targetIsKnownVampire) {
-                                    if(disguisedActor.traitContainer.HasTrait("Hemophiliac") || (disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget) == RelationshipManager.Close_Friend && !disguisedActor.traitContainer.HasTrait("Hemophobic"))) {
+                                if (targetIsKnownVampire) {
+                                    if (disguisedActor.traitContainer.HasTrait("Hemophiliac") || (disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget) == RelationshipManager.Close_Friend && !disguisedActor.traitContainer.HasTrait("Hemophobic"))) {
                                         debugLog = $"{debugLog}\n-Target is starving and is known vampire and actor is Hemophiliac/Non-Hemophobic Close Friend, feed self";
-                                        if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.FEED, JOB_TYPE.OFFER_BLOOD)) {
+                                        if (!targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.FEED, JOB_TYPE.OFFER_BLOOD)) {
                                             actor.jobComponent.CreateFeedSelfToVampireJob(targetCharacter);
                                         } else {
                                             debugLog = $"{debugLog}\n-Already has a feed/offer blood job targeting character";
                                         }
                                     }
-                                    
+
                                 } else {
                                     debugLog = $"{debugLog}\n-Target is starving, will create feed job";
-                                    if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.FEED)) {
+                                    if (!targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.FEED)) {
                                         actor.jobComponent.TryTriggerFeed(targetCharacter);
                                     } else {
                                         debugLog = $"{debugLog}\n-Already has a feed job targeting character";
@@ -717,19 +739,8 @@ public class ReactionComponent : CharacterComponent {
                                 }
                             }
                         } else {
-                            if (!targetCharacter.traitContainer.HasTrait("Unconscious", "Restrained") || (isLethal && isTopPrioJobLethal)) {
-                                //Determine whether to fight or flight.
-                                CombatReaction combatReaction = actor.combatComponent.GetFightOrFlightReaction(targetCharacter, CombatManager.Hostility);
-                                if (combatReaction.reaction == COMBAT_REACTION.Flight) {
-                                    //if flight was decided
-                                    //if target is restrained or resting, do nothing
-                                    if (targetCharacter.traitContainer.HasTrait("Restrained", "Resting") == false) {
-                                        actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);
-                                    }
-                                } else {
-                                    actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);
-                                }
-                            }
+                            bool canDoJob = false;
+                            actor.jobComponent.TryCreateApprehend(targetCharacter, ref canDoJob, intendedPrison: intendedPrison);
                         }
                     } else {
                         //If the target is already unconscious/restrained (it cannot fight back), attack it again only if this character's top priority job is considered lethal
@@ -771,7 +782,7 @@ public class ReactionComponent : CharacterComponent {
                             debugLog =
                                 $"{debugLog}\n-Chat did not trigger, will now trigger Flirt if Character is Sexually Compatible with Target and Character is Unfaithful, or Target is Lover or Affair, or Character has no Lover and character is sociable.";
                             if (RelationshipManager.IsSexuallyCompatibleOneSided(disguisedActor, disguisedTarget) && 
-                                disguisedActor.relationshipContainer.IsFamilyMember(disguisedTarget) == false && disguisedActor.isSociable) {
+                                disguisedActor.relationshipContainer.IsFamilyMember(disguisedTarget) == false && disguisedActor.limiterComponent.isSociable) {
                                 
                                 if (disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
                                     || disguisedActor.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER) == -1
@@ -807,8 +818,9 @@ public class ReactionComponent : CharacterComponent {
                     }
 
                     //Wanted Criminal Reaction Code:
+                    Prisoner targetPrisonerStatus = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
                     if (disguisedTarget.isNormalCharacter && disguisedActor.isNormalCharacter && disguisedActor.faction != null && disguisedTarget.crimeComponent.IsWantedBy(disguisedActor.faction)
-                        && (!disguisedTarget.traitContainer.HasTrait("Restrained") || !(disguisedTarget.currentStructure is Prison))) { //if target is not restrained or not in prison, will create 
+                        && (!targetCharacter.traitContainer.HasTrait("Restrained") || (targetPrisonerStatus != null && targetPrisonerStatus.IsConsideredPrisonerOf(disguisedActor) && !targetPrisonerStatus.IsInIntendedPrisonAccordingTo(disguisedActor)))) { //if target is not restrained or not in prison, will create 
                         debugLog = $"{debugLog}\n-Target Character is a criminal";
                         bool cannotReactToCriminal = false;
                         if (actor.currentJob != null && actor.currentJob is GoapPlanJob planJob) {
@@ -890,7 +902,7 @@ public class ReactionComponent : CharacterComponent {
                         debugLog = $"{debugLog}\n-Character and Target are with the same faction or npcSettlement";
                         if (disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget)) {
                             debugLog = $"{debugLog}\n-Character considers Target as Enemy or Rival";
-                            if ((!targetCharacter.canMove || !targetCharacter.canPerform) && 
+                            if ((!targetCharacter.limiterComponent.canMove || !targetCharacter.limiterComponent.canPerform) && 
                                 !targetCharacter.defaultCharacterTrait.HasReactedToThis(owner) && !targetCharacter.traitContainer.HasTrait("Resting")) {
                                 debugLog = $"{debugLog}\n-Target can neither move or perform and actor has not yet reacted to target.";
                                 // if (disguisedActor.moodComponent.moodState == MOOD_STATE.Bad || disguisedActor.moodComponent.moodState == MOOD_STATE.Critical) {
@@ -910,6 +922,7 @@ public class ReactionComponent : CharacterComponent {
                         } else if (!disguisedActor.traitContainer.HasTrait("Psychopath")) {
                             debugLog = $"{debugLog}\n-Character is not Psychopath and does not consider Target as Enemy or Rival";
                             bool targetIsParalyzedOrEnsnared = targetCharacter.traitContainer.HasTrait("Paralyzed", "Ensnared");
+                            bool targetIsQuarantined = targetCharacter.traitContainer.HasTrait("Quarantined");
                             bool targetIsRestrainedCriminal = targetCharacter.traitContainer.HasTrait("Restrained") && disguisedTarget.traitContainer.HasTrait("Criminal");
                             bool targetIsCatatonic = targetCharacter.traitContainer.HasTrait("Catatonic");
 
@@ -919,23 +932,23 @@ public class ReactionComponent : CharacterComponent {
                             bool targetIsKnownWerewolf = disguisedTarget.isLycanthrope && disguisedTarget.lycanData.DoesCharacterKnowThisLycan(disguisedActor);
 
 
-                            if (targetIsParalyzedOrEnsnared || targetIsRestrainedCriminal || targetIsCatatonic) {
-                                debugLog =
-                                    $"{debugLog}\n-Target is Restrained Criminal({targetIsRestrainedCriminal.ToString()}) or is Paralyzed or Ensnared({targetIsParalyzedOrEnsnared.ToString()}) or is Catatonic {targetIsCatatonic.ToString()}";
+                            if (targetIsParalyzedOrEnsnared || targetIsRestrainedCriminal || targetIsCatatonic || targetIsQuarantined) {
+                                debugLog = $"{debugLog}\n-Target is Restrained Criminal({targetIsRestrainedCriminal.ToString()}) or " +
+                                           $"is Paralyzed or Ensnared({targetIsParalyzedOrEnsnared.ToString()}) or is Catatonic {targetIsCatatonic.ToString()}";
                                 if ((targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) && !targetIsKnownVampire) {
                                     debugLog = $"{debugLog}\n-Target is hungry or starving and not known vampire, will create feed job";
-                                    if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.FEED)) {
+                                    if (!targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.FEED)) {
                                         actor.jobComponent.TryTriggerFeed(targetCharacter);
                                     } else {
                                         debugLog = $"{debugLog}\n-Already has a feed job targeting character";
                                     }
-                                } else if ((targetCharacter.needsComponent.isTired || targetCharacter.needsComponent.isExhausted) && targetIsParalyzedOrEnsnared) {
+                                } else if ((targetCharacter.needsComponent.isTired || targetCharacter.needsComponent.isExhausted) && targetIsParalyzedOrEnsnared && !targetIsQuarantined) {
                                     debugLog = $"{debugLog}\n-Target is tired or exhausted, will create Move Character job to bed if Target has a home and an available bed";
                                     if (disguisedTarget.homeStructure != null) {
                                         Bed bed = disguisedTarget.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED) as Bed;
                                         if (bed != null && bed.gridTileLocation != targetCharacter.gridTileLocation) {
                                             debugLog = $"{debugLog}\n-Target has a home and an available bed, will trigger Move Character job to bed";
-                                            if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.MOVE_CHARACTER)) {
+                                            if (!targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
                                                 if(targetCharacter.currentActionNode == null) {
                                                     actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, disguisedTarget.homeStructure, bed.gridTileLocation);
                                                 }
@@ -948,13 +961,13 @@ public class ReactionComponent : CharacterComponent {
                                     } else {
                                         debugLog = $"{debugLog}\n-Target does not have a home, will not trigger Move Character job";
                                     }
-                                } else if ((targetCharacter.needsComponent.isBored || targetCharacter.needsComponent.isSulking) && targetIsParalyzedOrEnsnared) {
+                                } else if ((targetCharacter.needsComponent.isBored || targetCharacter.needsComponent.isSulking) && targetIsParalyzedOrEnsnared && !targetIsQuarantined) {
                                     debugLog = $"{debugLog}\n-Target is bored or sulking, will trigger Move Character job if character is not in the right place to do Daydream or Pray";
                                     if (UnityEngine.Random.Range(0, 2) == 0 && disguisedTarget.homeStructure != null) {
                                         //Pray
                                         if (targetCharacter.currentStructure != disguisedTarget.homeStructure) {
                                             debugLog = $"{debugLog}\n-Target chose Pray and is not inside his/her house, will trigger Move Character job";
-                                            if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.MOVE_CHARACTER)) {
+                                            if (!targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
                                                 if (targetCharacter.currentActionNode == null) {
                                                     actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, disguisedTarget.homeStructure);
                                                 }
@@ -968,7 +981,7 @@ public class ReactionComponent : CharacterComponent {
                                         //Daydream
                                         if (!targetCharacter.currentStructure.structureType.IsOpenSpace()) {
                                             debugLog = $"{debugLog}\n-Target chose Daydream and is not in an open space structure, will trigger Move Character job";
-                                            if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.MOVE_CHARACTER)) {
+                                            if (!targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER)) {
                                                 if (targetCharacter.currentActionNode == null) {
                                                     actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
                                                 }
@@ -996,7 +1009,7 @@ public class ReactionComponent : CharacterComponent {
                                 } else if (targetCharacter.needsComponent.isStarving) {
                                     if (disguisedActor.traitContainer.HasTrait("Hemophiliac") || disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget) == RelationshipManager.Close_Friend) {
                                         debugLog = $"{debugLog}\n-Target is starving and is known vampire and actor is Hemophiliac/Close Friend, feed self";
-                                        if (!IsPOICurrentlyTargetedByAPerformingAction(targetCharacter, JOB_TYPE.FEED, JOB_TYPE.OFFER_BLOOD)) {
+                                        if (!targetCharacter.IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.FEED, JOB_TYPE.OFFER_BLOOD)) {
                                             actor.jobComponent.CreateFeedSelfToVampireJob(targetCharacter);
                                         } else {
                                             debugLog = $"{debugLog}\n-Already has a feed/offer blood job targeting character";
@@ -1027,15 +1040,21 @@ public class ReactionComponent : CharacterComponent {
                                 bool isEnsnared = targetCharacter.traitContainer.HasTrait("Ensnared");
                                 bool isFrozen = targetCharacter.traitContainer.HasTrait("Frozen");
                                 bool isUnconscious = targetCharacter.traitContainer.HasTrait("Unconscious");
+                                bool isEnslaved = targetCharacter.traitContainer.HasTrait("Enslaved");
+                                bool isEnslavedAndNotEnemy = isEnslaved && disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget) && !disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget);
 
-                                if (disguisedActor.isNormalCharacter && disguisedTarget.isNormalCharacter && (isRestrained || isEnsnared || isFrozen || isUnconscious) &&
+                                if (disguisedActor.isNormalCharacter && ((disguisedTarget.isNormalCharacter && (isRestrained || isEnsnared || isFrozen || isUnconscious)) || isEnslavedAndNotEnemy) &&
                                     !disguisedTarget.crimeComponent.IsWantedBy(disguisedActor.faction)) {
 
                                     bool isResponsibleForRestrained = isRestrained && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Restrained").IsResponsibleForTrait(disguisedActor);
                                     bool isResponsibleForEnsnared = isEnsnared && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Ensnared").IsResponsibleForTrait(disguisedActor);
                                     bool isResponsibleForFrozen = isFrozen && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Frozen").IsResponsibleForTrait(disguisedActor);
                                     bool isResponsibleForUnconscious = isUnconscious && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Unconscious").IsResponsibleForTrait(disguisedActor);
+                                    bool isResponsibleForEnslaved = isEnslaved && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Enslaved").IsResponsibleForTrait(disguisedActor);
 
+                                    if (isEnslaved && !isResponsibleForEnslaved) {
+                                        actor.jobComponent.TriggerReleaseJob(targetCharacter);
+                                    }
                                     if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.REMOVE_STATUS)) {
                                         if (isRestrained && !isResponsibleForRestrained) {
                                             actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Restrained");
@@ -1060,6 +1079,17 @@ public class ReactionComponent : CharacterComponent {
                                             }
                                         }
                                     }
+                                }
+                            }
+                        }
+                        
+                        //Plagued Settlement Event
+                        if (disguisedActor.homeSettlement != null && disguisedActor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event)) {
+                            Lethargic lethargic = disguisedTarget.traitContainer.GetTraitOrStatus<Lethargic>("Lethargic");
+                            if (lethargic != null && !lethargic.IsResponsibleForTrait(disguisedActor) && !disguisedActor.defaultCharacterTrait.IsAwareOfTrait(disguisedActor, lethargic)) {
+                                disguisedActor.defaultCharacterTrait.BecomeAwareOfTrait(disguisedTarget, lethargic);
+                                if (GameUtilities.RollChance(25) && !disguisedActor.relationshipContainer.IsFriendsWith(disguisedTarget)) { //25
+                                    disguisedActor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_PLAGUED, REACTION_STATUS.WITNESSED);
                                 }
                             }
                         }
@@ -1094,10 +1124,15 @@ public class ReactionComponent : CharacterComponent {
                                 }
                             }
                         }
+
+                        if (disguisedTarget.race == RACE.WOLF && disguisedTarget.traitContainer.HasTrait("Restrained") && disguisedActor.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
+                            //Reference: https://trello.com/c/NPXg3GZs/2828-restrained-wolves-should-be-freed-by-reveres-werewolves-faction-members
+                            actor.jobComponent.TriggerReleaseJob(targetCharacter);
+                        }
                     }
                     
                     //nocturnal
-                    if (targetCharacter.canPerform && !targetCharacter.partyComponent.isMemberThatJoinedQuest && !disguisedTarget.crimeComponent.IsCrimeAlreadyWitnessedBy(disguisedActor, CRIME_TYPE.Vampire)) {
+                    if (targetCharacter.limiterComponent.canPerform && !targetCharacter.partyComponent.isMemberThatJoinedQuest && !disguisedTarget.crimeComponent.IsCrimeAlreadyWitnessedBy(disguisedActor, CRIME_TYPE.Vampire)) {
                         debugLog = $"{debugLog}\n-Target can perform and not an active member of a party that has a quest and has not yet witnessed a vampire crime of actor";
                         TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
                         if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
@@ -1143,36 +1178,6 @@ public class ReactionComponent : CharacterComponent {
                             actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
                         }
                     }
-
-                    //if (disguisedTarget.traitContainer.HasTrait("Nocturnal")) {
-                    //    if(disguisedActor.homeSettlement != null) {
-                    //        //TODO: Checking if there is an active Vampire Hunt event
-                    //        TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
-                    //        if(currentTime == TIME_IN_WORDS.LATE_NIGHT || currentTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-                    //            Vampire vampireTrait = disguisedTarget.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
-                    //            CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(disguisedActor, disguisedTarget, disguisedTarget, CRIME_TYPE.Vampire);
-                    //            bool isTargetAKnownVampire = vampireTrait != null && vampireTrait.DoesCharacterKnowThisVampire(disguisedActor);
-
-                    //            if(severity != CRIME_SEVERITY.Unapplicable && severity != CRIME_SEVERITY.None && !isTargetAKnownVampire) {
-                    //                if(disguisedActor.traitContainer.HasTrait("Suspicious") || disguisedActor.moodComponent.moodState == MOOD_STATE.Critical) {
-                    //                    actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
-                    //                } else if (disguisedActor.moodComponent.moodState == MOOD_STATE.Bad && !disguisedActor.relationshipContainer.IsFriendsWith(disguisedActor)) {
-                    //                    if(targetCharacter.currentStructure != null) {
-                    //                        if(targetCharacter.currentStructure.IsOccupied() && targetCharacter.currentStructure.IsResident(disguisedTarget)) {
-                    //                            if (GameUtilities.RollChance(50)) {
-                    //                                actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
-                    //                            }
-                    //                        } else if (!targetCharacter.currentStructure.isInterior && targetCharacter.currentSettlement == disguisedActor.homeSettlement) {
-                    //                            if (GameUtilities.RollChance(35)) {
-                    //                                actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, disguisedTarget, INTERACTION_TYPE.IS_VAMPIRE, REACTION_STATUS.WITNESSED);
-                    //                            }
-                    //                        }
-                    //                    }
-                    //                }
-                    //            }
-                    //        }
-                    //    }
-                    //}
                     
                 } else {
                     debugLog = $"{debugLog}\n-Target is dead";
@@ -1295,7 +1300,7 @@ public class ReactionComponent : CharacterComponent {
                             }
                         }
 
-                        if (disguisedTarget.traitContainer.HasTrait("Mangled") && disguisedActor.homeSettlement != null) {
+                        if (disguisedTarget.traitContainer.HasTrait("Mangled") && disguisedActor.homeSettlement != null && disguisedActor.homeSettlement.eventManager.CanHaveEvents()) {
                             CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(disguisedActor, disguisedTarget, disguisedTarget, CRIME_TYPE.Werewolf);
                             if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable && !disguisedActor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Werewolf_Hunt)) {
                                 debugLog = $"{debugLog}\n-Saw a mangled body and no active werewolf hunt is active yet and considers werewolf as a crime.";
@@ -1338,9 +1343,28 @@ public class ReactionComponent : CharacterComponent {
                 debugLog = $"{debugLog}\n-Character is minion or summon or Target is currently being targeted by an action, not going to react";
             }
         }
-        
+
+        if(CanCharacterEatCorpseOf(actor, targetCharacter)) {
+            if(targetCharacter.isDead && targetCharacter.grave == null && actor.limiterComponent.canPerform && actor.limiterComponent.canMove && actor.limiterComponent.canDoFullnessRecovery) {
+                if(actor.currentActionNode == null || actor.currentActionNode.action.goapType == INTERACTION_TYPE.ROAM || !actor.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.MONSTER_EAT_CORPSE)) {
+                    actor.jobComponent.TriggerEatCorpse(targetCharacter);
+                }
+            }
+        }
+
         //set owner of this component to has reacted to the target character
         targetCharacter.defaultCharacterTrait.AddCharacterThatHasReactedToThis(owner);
+    }
+    private bool CanCharacterEatCorpseOf(Character p_actor, Character p_target) {
+        if (p_actor is Animal) {
+            return false;
+        }
+        if (p_target is Animal) {
+            return (p_actor is Summon && p_actor.faction?.factionType.type == FACTION_TYPE.Wild_Monsters) || p_actor.isConsideredRatman;
+        } else {
+            //If ratmen in ratman faction is starving trigger eat corpse on anyone
+            return p_actor.isConsideredRatman && p_actor.needsComponent.isStarving;
+        }
     }
     private void ReactTo(Character actor, TileObject targetTileObject, ref string debugLog) {
         //TODO: USE DISGUISED ACTOR AND TARGET FOR CHECKING
@@ -1628,7 +1652,7 @@ public class ReactionComponent : CharacterComponent {
                     log.AddLogToDatabase();
                 }
             }
-            if(targetTileObject.tileObjectType.IsTileObjectAnItem() && !actor.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, targetTileObject) && targetTileObject.Advertises(INTERACTION_TYPE.PICK_UP) && actor.canMove) {
+            if(targetTileObject.tileObjectType.IsTileObjectAnItem() && !actor.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, targetTileObject) && targetTileObject.Advertises(INTERACTION_TYPE.PICK_UP) && actor.limiterComponent.canMove) {
                 //NOTE: Added checker if character can move, so that Paralyzed characters will not try to pick up items
                 actor.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, targetTileObject);
             }
@@ -1750,7 +1774,7 @@ public class ReactionComponent : CharacterComponent {
             //Minions or Summons cannot react to objects
             return;
         }
-        if(owner.isDead || !owner.canPerform) {
+        if(owner.isDead || !owner.limiterComponent.canPerform) {
             return;
         }
         string log = $"{reactor.name} is reacting to combat of {attacker.name} against {poiHit.nameWithID}";
@@ -1874,7 +1898,10 @@ public class ReactionComponent : CharacterComponent {
                         log = $"{log}\n-Reactor will react to crime";
                         Faction targetFaction = objectHit.factionOwner;
                         if(targetFaction == null) {
-                            targetFaction = objectHit.gridTileLocation?.structure.settlementLocation?.owner;
+                            BaseSettlement settlement = null;
+                            if(objectHit.gridTileLocation != null && objectHit.gridTileLocation.IsPartOfSettlement(out settlement)) {
+                                targetFaction = settlement.owner;
+                            }
                         }
                         if (targetFaction == null) {
                             targetFaction = reactor.faction;
@@ -1918,32 +1945,6 @@ public class ReactionComponent : CharacterComponent {
     #endregion
 
     #region General
-    private bool IsPOICurrentlyTargetedByAPerformingAction(IPointOfInterest poi) {
-        for (int i = 0; i < poi.allJobsTargetingThis.Count; i++) {
-            if(poi.allJobsTargetingThis[i] is GoapPlanJob) {
-                GoapPlanJob planJob = poi.allJobsTargetingThis[i] as GoapPlanJob;
-                if(planJob.assignedPlan != null && planJob.assignedPlan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    private bool IsPOICurrentlyTargetedByAPerformingAction(IPointOfInterest poi, params JOB_TYPE[] jobType) {
-        for (int i = 0; i < poi.allJobsTargetingThis.Count; i++) {
-            JobQueueItem job = poi.allJobsTargetingThis[i];
-            for (int j = 0; j < jobType.Length; j++) {
-                if(jobType[j] == job.jobType) {
-                    if (job is GoapPlanJob planJob) {
-                        if (planJob.assignedPlan != null && planJob.assignedPlan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
     public void AddCharacterThatSawThisDead(Character character) {
         charactersThatSawThisDead.Add(character);
     }
@@ -1977,7 +1978,7 @@ public class ReactionComponent : CharacterComponent {
             disguisedCharacter = character;
             if (disguisedCharacter != null) {
                 owner.visuals.UpdateAllVisuals(owner);
-                Messenger.Broadcast(Signals.CHARACTER_DISGUISED, owner, character);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_DISGUISED, owner, character);
             } else {
                 owner.visuals.UpdateAllVisuals(owner);
                 if (!owner.isDead && owner.marker) {

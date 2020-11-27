@@ -14,7 +14,7 @@ public class SleepOutside : GoapAction {
         racesThatCanDoAction = new RACE[] {
             RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON,
             RACE.GOLEM, RACE.KOBOLD, RACE.LESSER_DEMON, RACE.MIMIC, RACE.PIG, RACE.SHEEP, RACE.ENT, RACE.WISP,
-            RACE.GHOST, RACE.NYMPH, RACE.SLIME, RACE.SLUDGE, RACE.CHICKEN, RACE.ELEMENTAL, RACE.ABOMINATION, RACE.ANGEL, RACE.DEMON
+            RACE.GHOST, RACE.NYMPH, RACE.SLIME, RACE.SLUDGE, RACE.CHICKEN, RACE.ELEMENTAL, RACE.ABOMINATION, RACE.ANGEL, RACE.DEMON, RACE.RATMAN
         };
         logTags = new[] {LOG_TAG.Needs};
     }
@@ -69,7 +69,9 @@ public class SleepOutside : GoapAction {
             goapNode.OverrideCurrentStateDuration(goapNode.currentState.duration);
         }
         needsComponent.AdjustTiredness(1f);
-        needsComponent.AdjustHappiness(-0.39f);
+        if (actor.race != RACE.RATMAN && !actor.partyComponent.isActiveMember) {
+            needsComponent.AdjustHappiness(-0.39f);    
+        }
         needsComponent.AdjustSleepTicks(-1);
         //needsComponent.AdjustStamina(0.2f);
     }

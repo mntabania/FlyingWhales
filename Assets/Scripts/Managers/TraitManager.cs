@@ -22,7 +22,7 @@ public class TraitManager : BaseMonoBehaviour {
     public const string Execute_Pre_Effect_Trait = "Execute_Pre_Effect_Trait";
     public const string Execute_Per_Tick_Effect_Trait = "Execute_Pre_Effect_Trait";
     public const string Execute_After_Effect_Trait = "Execute_Pre_Effect_Trait";
-    public const string Execute_Expected_Effect_Trait = "Execute_Expected_Effect_Trait";
+    //public const string Execute_Expected_Effect_Trait = "Execute_Expected_Effect_Trait";
     public const string Start_Perform_Trait = "Start_Perform_Trait";
     public const string Death_Trait = "Death_Trait";
     public const string Tick_Ended_Trait = "Tick_Ended_Trait";
@@ -32,12 +32,13 @@ public class TraitManager : BaseMonoBehaviour {
     public const string See_Poi_Cannot_Witness_Trait = "See_Poi_Cannot_Witness_Trait";
     public const string Before_Start_Flee = "Before_Start_Flee";
     public const string After_Exiting_Combat = "After_Exiting_Combat";
-    public const string Per_Tick_Movement = "Per_Tick_Movement";
+    public const string Per_Tick_While_Stationary_Unoccupied = "Per_Tick_While_Stationary_Unoccupied";
+    public const string After_Death = "After_Death";
 
     public static string[] instancedTraitsAndStatuses = new string[] {
         "Restrained", "Injured", "Kleptomaniac", "Lycanthrope", "Vampire",
         "Poisoned", "Resting", "Sick", "Unconscious", "Zapped", "Spooked", "Cannibal", "Lethargic",
-        "Dead", "Unfaithful", "Drunk", "Burning", "Burnt", "Agoraphobic", "Infected", "Music Lover", "Music Hater", 
+        "Dead", "Unfaithful", "Drunk", "Burning", "Burnt", "Agoraphobic", "Music Lover", "Music Hater", 
         "Psychopath", "Plagued", "Vigilant", "Diplomatic", "Wet", "Character Trait", "Nocturnal", "Glutton", 
         "Suspicious", "Narcoleptic", "Hothead", "Inspiring", "Pyrophobic", "Angry", "Alcoholic", "Pessimist", "Lazy", 
         "Coward", "Berserked", "Catatonic", "Griefstricken", "Heartbroken", "Chaste", "Lustful", "Edible", "Paralyzed", 
@@ -48,8 +49,8 @@ public class TraitManager : BaseMonoBehaviour {
         "Webbed", "Cultist", "Stealthy", "Invisible", "Noxious Wanderer", "DeMooder", "Defender", "Invader", "Disabler", "Infestor",
         "Abductor", "Arsonist", "Hibernating", "Baby Infestor", "Tower", "Mighty", "Stoned", "Transforming", "Subterranean", "Petrasol",
         "Snatcher", "Agitated", "Hunting", "Chained Electric", "Prisoner", "Hemophiliac", "Hemophobic", "Burning At Stake",
-        "Lycanphiliac", "Lycanphobic", "Interesting"
-
+        "Lycanphiliac", "Lycanphobic", "Interesting", "Pest", "Night Zombie", "Walker Zombie", "Plague Reservoir", "Quarantined", 
+        "Plague Caring", "Plague Cared", "Enslaved", "Travelling"
     };
 
     //public static string[] unhiddenInstancedTraits = new string[] {
@@ -76,12 +77,8 @@ public class TraitManager : BaseMonoBehaviour {
     public List<string> unhiddenTraitsNotStatuses { get; private set; }
 
     public List<string> removeStatusTraits = new List<string> {
-        "Unconscious", "Injured", "Poisoned", "Plagued",
-        "Infected", "Freezing", "Frozen", "Burning",
+        "Unconscious", "Injured", "Poisoned", "Freezing", "Frozen", "Burning",
         "Ensnared"
-    };
-    public List<string> specialIllnessTraits = new List<string> {
-        "Poisoned", "Plagued", "Infected"
     };
 
     //This is for instanced traits that do not have unique data
@@ -331,13 +328,13 @@ public class TraitManager : BaseMonoBehaviour {
             return new[] { "Inspiring", "Diplomatic", "Fast", "Persuasive", "Optimist", "Robust", "Suspicious", "Vigilant", 
                 "Fireproof", "Music Lover", "Authoritative", "Nocturnal", "Lustful", "Chaste", "Music Hater", "Alcoholic",
                 "Accident Prone", "Evil", "Treacherous", "Lazy", "Pessimist", "Unattractive", "Hothead", "Coward", "Hemophobic", "Hemophiliac",
-                "Lycanphobic", "Lycanphiliac"
+                "Lycanphobic", "Lycanphiliac", "Ruthless"
             };
         } else {
             return new[] { "Inspiring", "Blessed", "Diplomatic", "Fast", "Persuasive", "Optimist", "Robust", "Suspicious", "Vigilant", 
                 "Fireproof", "Music Lover", "Authoritative", "Nocturnal", "Lustful", "Chaste", "Music Hater", "Alcoholic",
                 "Accident Prone", "Evil", "Treacherous", "Lazy", "Pessimist", "Unattractive", "Hothead", "Coward", "Hemophobic", "Hemophiliac",
-                "Lycanphobic", "Lycanphiliac"
+                "Lycanphobic", "Lycanphiliac", "Ruthless"
             };;
         }
     }
@@ -375,8 +372,8 @@ public class TraitManager : BaseMonoBehaviour {
         neutralTraitPool = null;
         removeStatusTraits?.Clear();
         removeStatusTraits = null;
-        specialIllnessTraits?.Clear();
-        specialIllnessTraits = null;
+        instancedSingletonTraits?.Clear();
+        instancedSingletonTraits = null;
         base.OnDestroy();
         Instance = null;
     }

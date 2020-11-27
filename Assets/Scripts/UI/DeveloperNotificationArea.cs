@@ -14,8 +14,8 @@ public class DeveloperNotificationArea : InfoUIBase {
 
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_CLOSED, OnMenuClosed);
     }
 
     public void ShowNotification(string text, int expirationTicks, UnityAction onClickAction = null) {

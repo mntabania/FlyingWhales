@@ -26,7 +26,13 @@ public class SpreadRumorData : PlayerAction {
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
         if (canPerform) {
-            if (targetCharacter.canPerform == false) {
+            if (targetCharacter.limiterComponent.canPerform == false) {
+                return false;
+            }
+            if (targetCharacter.traitContainer.HasTrait("Enslaved")) {
+                return false;
+            }
+            if (targetCharacter.jobQueue.HasJob(JOB_TYPE.SPREAD_RUMOR)) {
                 return false;
             }
             return targetCharacter.isDead == false; //&& targetCharacter.traitContainer.HasTrait("Cultist"); //&& targetCharacter.homeSettlement != null
@@ -35,8 +41,14 @@ public class SpreadRumorData : PlayerAction {
     }
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter); 
-        if (targetCharacter.canPerform == false) {
-            reasons += "Cannot be used while target is incapacitated,";
+        if (targetCharacter.limiterComponent.canPerform == false) {
+            reasons = $"{reasons}Cannot be used while target is incapacitated,";
+        }
+        if (targetCharacter.traitContainer.HasTrait("Enslaved")) {
+            reasons += "Slaves cannot perform this action,";
+        }
+        if (targetCharacter.jobQueue.HasJob(JOB_TYPE.SPREAD_RUMOR)) {
+            reasons = $"{reasons}{targetCharacter.name} is already planning to spread rumors,";
         }
         return reasons;
     }
@@ -59,12 +71,10 @@ public class SpreadRumorData : PlayerAction {
     }
     private void OnHoverEnter(Character owner, Character target) {
         if (target.traitContainer.HasTrait("Cultist")) {
-            // UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Cultists.</color>");
             PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(target.name, UtilityScripts.Utilities.InvalidColorize("Cannot target Cultists."));
             return;
         }
         if (owner.relationshipContainer.HasOpinionLabelWithCharacter(target, RelationshipManager.Close_Friend)) {
-            // UIManager.Instance.ShowSmallInfo("<color=red>Cannot target Close Friends.</color>");
             PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(target.name, UtilityScripts.Utilities.InvalidColorize("Cannot target Close Friends."));
             return;
         }
@@ -74,7 +84,6 @@ public class SpreadRumorData : PlayerAction {
         }
     }
     private void OnHoverExit(Character target) {
-        // UIManager.Instance.HideSmallInfo();
         PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
     }
     private void OnChooseCharacter(object obj, Character actor) {
@@ -113,6 +122,7 @@ public class SpreadRumorData : PlayerAction {
                 log.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
             }
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, actor as IPlayerActionTarget);
         }
     }
 }

@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.UI;
 using System;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using Traits;
 
 public class TileObjectInfoUI : InfoUIBase {
@@ -42,18 +43,18 @@ public class TileObjectInfoUI : InfoUIBase {
     #region Overrides
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateLogsFromSignal);
-        Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateLogsFromSignal);
-        Messenger.AddListener<Character>(Signals.LOG_MENTIONING_CHARACTER_UPDATED, OnLogMentioningCharacterUpdated);
-        Messenger.AddListener<TileObject, Character>(Signals.ADD_TILE_OBJECT_USER, UpdateUsersFromSignal);
-        Messenger.AddListener<TileObject, Character>(Signals.REMOVE_TILE_OBJECT_USER, UpdateUsersFromSignal);
-        Messenger.AddListener<TileObject, Trait>(Signals.TILE_OBJECT_TRAIT_ADDED, UpdateTraitsFromSignal);
-        Messenger.AddListener<TileObject, Trait>(Signals.TILE_OBJECT_TRAIT_REMOVED, UpdateTraitsFromSignal);
-        Messenger.AddListener<TileObject, Trait>(Signals.TILE_OBJECT_TRAIT_STACKED, UpdateTraitsFromSignal);
-        Messenger.AddListener<TileObject, Trait>(Signals.TILE_OBJECT_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Log>(UISignals.LOG_ADDED, UpdateLogsFromSignal);
+        Messenger.AddListener<Log>(UISignals.LOG_IN_DATABASE_UPDATED, UpdateLogsFromSignal);
+        Messenger.AddListener<Character>(UISignals.LOG_MENTIONING_CHARACTER_UPDATED, OnLogMentioningCharacterUpdated);
+        Messenger.AddListener<TileObject, Character>(TileObjectSignals.ADD_TILE_OBJECT_USER, UpdateUsersFromSignal);
+        Messenger.AddListener<TileObject, Character>(TileObjectSignals.REMOVE_TILE_OBJECT_USER, UpdateUsersFromSignal);
+        Messenger.AddListener<TileObject, Trait>(TileObjectSignals.TILE_OBJECT_TRAIT_ADDED, UpdateTraitsFromSignal);
+        Messenger.AddListener<TileObject, Trait>(TileObjectSignals.TILE_OBJECT_TRAIT_REMOVED, UpdateTraitsFromSignal);
+        Messenger.AddListener<TileObject, Trait>(TileObjectSignals.TILE_OBJECT_TRAIT_STACKED, UpdateTraitsFromSignal);
+        Messenger.AddListener<TileObject, Trait>(TileObjectSignals.TILE_OBJECT_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
 
         ownerEventLbl.SetOnClickAction(OnClickOwner);
-        carriedByEventLbl.SetOnClickAction(OnClickCarriedBy);
+        carriedByEventLbl.SetOnClickAction(OnClickLocation);
 
         logsWindow.Initialize();
     }
@@ -139,7 +140,21 @@ public class TileObjectInfoUI : InfoUIBase {
         quantityLbl.text = $"{quantity}";
 
         ownerLbl.text = activeTileObject.characterOwner != null ? $"<link=\"1\">{UtilityScripts.Utilities.ColorizeAndBoldName(activeTileObject.characterOwner.name)}</link>" : "None";
-        carriedByLbl.text = activeTileObject.isBeingCarriedBy != null ? $"<link=\"1\">{UtilityScripts.Utilities.ColorizeAndBoldName(activeTileObject.isBeingCarriedBy.name)}</link>" : "None";
+        UpdateLocationInfo();
+    }
+    private void UpdateLocationInfo() {
+        if (activeTileObject.isBeingCarriedBy != null) {
+            carriedByLbl.text = $"<link=\"1\">{UtilityScripts.Utilities.ColorizeAndBoldName(activeTileObject.isBeingCarriedBy.name)}</link>";
+        } else if (activeTileObject.gridTileLocation != null) {
+            if (activeTileObject.gridTileLocation.structure is Wilderness) {
+                carriedByLbl.text = "Wilderness";
+            }
+            else {
+                carriedByLbl.text = $"<link=\"1\">{UtilityScripts.Utilities.ColorizeAndBoldName(activeTileObject.gridTileLocation.structure.name)}</link>";
+            }
+        } else {
+            carriedByLbl.text = "None";
+        }
     }
     private void UpdateTraits() {
         string statusTraits = string.Empty;
@@ -234,9 +249,13 @@ public class TileObjectInfoUI : InfoUIBase {
             UIManager.Instance.ShowCharacterInfo(activeTileObject.characterOwner, true);
         }
     }
-    private void OnClickCarriedBy(object obj) {
+    private void OnClickLocation(object obj) {
         if (activeTileObject.isBeingCarriedBy != null) {
             UIManager.Instance.ShowCharacterInfo(activeTileObject.isBeingCarriedBy, true);
+        } else if (activeTileObject.gridTileLocation != null) {
+            if (!(activeTileObject.gridTileLocation.structure is Wilderness)) {
+                UIManager.Instance.ShowStructureInfo(activeTileObject.gridTileLocation.structure);
+            }
         }
     }
     public void OnHoverTrait(object obj) {

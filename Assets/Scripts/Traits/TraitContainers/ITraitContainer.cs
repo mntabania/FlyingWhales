@@ -12,14 +12,9 @@ namespace Traits {
         Dictionary<string, Trait> allTraitsAndStatuses { get; }
         List<Status> statuses { get; }
         List<Trait> traits { get; }
-        //List<Trait> onCollideWithTraits { get; }
-        //List<Trait> onEnterGridTileTraits { get; }
         Dictionary<string, List<Trait>> traitOverrideFunctions { get; }
         Dictionary<string, List<TraitRemoveSchedule>> scheduleTickets { get; }
         Dictionary<string, int> stacks { get; }
-        //Dictionary<string, bool> traitSwitches { get; }
-        //Dictionary<Trait, int> currentDurations { get; }
-        //List<RelationshipTrait> relationshipTraits { get; }
 
         #region Adding
         bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1);
@@ -53,6 +48,7 @@ namespace Traits {
         T GetTraitOrStatus<T>(params string[] traitNames) where T : Trait;
         List<T> GetTraitsOrStatuses<T>(params string[] traitNames) where T : Trait;
         bool HasTrait(params string[] traitNames);
+        bool HasTrait(string traitName);
         bool HasTraitOf(TRAIT_TYPE traitType);
         //bool HasTraitOf(TRAIT_TYPE type, TRAIT_EFFECT effect);
         bool HasTraitOrStatusOf(TRAIT_EFFECT traitEffect);
@@ -71,12 +67,9 @@ namespace Traits {
         #region Schedule Ticket
         void AddScheduleTicket(string traitName, string ticket, GameDate removeDate);
         void RemoveScheduleTicket(string traitName, bool bySchedule);
+        void RescheduleLatestTraitRemoval(ITraitable p_traitable, Trait p_trait, GameDate p_newRemoveDate);
+        GameDate GetLatestExpiryDate(string p_traitName);
         #endregion
-        
-        //#region Switches
-        //void SwitchOnTrait(string name);
-        //void SwitchOffTrait(string name);
-        //#endregion
 
         #region Inquiry
         bool HasTangibleTrait();

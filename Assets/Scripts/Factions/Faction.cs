@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Factions.Faction_Components;
 using UnityEngine;
 using Factions.Faction_Types;
 using Locations.Settlements;
@@ -11,8 +12,6 @@ using UnityEngine.Assertions;
 using Random = UnityEngine.Random;
 
 public class Faction : IJobOwner, ISavable, ILogFiller {
-    
-    public const int MAX_HISTORY_LOGS = 60;
 
     public string persistentID { get; }
     public int id { get; }
@@ -37,15 +36,16 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public int newLeaderDesignationChance { get; private set; }
     public uint pathfindingTag { get; private set; }
     public uint pathfindingDoorTag { get; private set; }
+    public Heirloom factionHeirloom { get; private set; }
+    public FactionEventDispatcher factionEventDispatcher { get; private set; }
     
     private readonly WeightedDictionary<Character> newLeaderDesignationWeights;
-
-    public Heirloom factionHeirloom { get; private set; }
+    
 
     #region getters/setters
     public bool isDestroyed => characters.Count <= 0;
-    public bool isMajorOrVagrant => isMajorFaction || this == FactionManager.Instance.vagrantFaction;
-    public bool isMajorNonPlayerOrVagrant => isMajorNonPlayer || this == FactionManager.Instance.vagrantFaction;
+    public bool isMajorOrVagrant => isMajorFaction || this.factionType.type == FACTION_TYPE.Vagrants;
+    public bool isMajorNonPlayerOrVagrant => isMajorNonPlayer || this.factionType.type == FACTION_TYPE.Vagrants;
     public bool isMajorNonPlayer => isMajorFaction && !isPlayerFaction;
     public bool isNonMajorOrPlayer => !isMajorFaction || isPlayerFaction;
     public JobTriggerComponent jobTriggerComponent => factionJobTriggerComponent;
@@ -76,22 +76,20 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         id = UtilityScripts.Utilities.SetID(this);
         SetName(RandomNameGenerator.GenerateKingdomName());
-        // SetEmblem(FactionManager.Instance.GenerateFactionEmblem(this));
         SetFactionColor(UtilityScripts.Utilities.GetColorForFaction());
         SetFactionActiveState(true);
         SetFactionType(_factionType);
-        //factionType = FactionManager.Instance.CreateFactionType(_factionType);
         characters = new List<Character>();
         relationships = new Dictionary<Faction, FactionRelationship>();
         ownedSettlements = new List<BaseSettlement>();
         bannedCharacters = new List<Character>();
-        // history = new List<Log>();
         availableJobs = new List<JobQueueItem>();
         newLeaderDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         ideologyComponent = new FactionIdeologyComponent(this);
         factionJobTriggerComponent = new FactionJobTriggerComponent(this);
         partyQuestBoard = new PartyQuestBoard(this);
+        factionEventDispatcher = new FactionEventDispatcher();
         ResetNewLeaderDesignationChance();
         AddListeners();
     }
@@ -106,6 +104,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         name = data.name;
         description = data.description;
         emblem = FactionManager.Instance.GetFactionEmblem(data);
+        FactionManager.Instance.SetEmblemAsUsed(emblem);
         factionColor = data.factionColor;
         isActive = data.isActive;
         isMajorFaction = data.isMajorFaction;
@@ -117,10 +116,10 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         relationships = new Dictionary<Faction, FactionRelationship>();
         ownedSettlements = new List<BaseSettlement>();
         bannedCharacters = new List<Character>();
-        // history = new List<Log>();
         availableJobs = new List<JobQueueItem>();
         newLeaderDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
+        factionEventDispatcher = new FactionEventDispatcher();
 
         AddListeners();
     }
@@ -141,8 +140,13 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                     character.traitContainer.AddTrait(character, "Transitioning");
                 }
 
+                //Every time ratman changes faction, behaviour set should update to know if he will use the resident behaviour or the ratmana behaviour
+                if(character.race == RACE.RATMAN) {
+                    character.behaviourComponent.UpdateDefaultBehaviourSet();
+                }
+
                 if (broadcastSignal) {
-                    Messenger.Broadcast(Signals.CHARACTER_ADDED_TO_FACTION, character, this);
+                    Messenger.Broadcast(FactionSignals.CHARACTER_ADDED_TO_FACTION, character, this);
                 }
             }
             return true;
@@ -155,7 +159,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                 SetLeader(null); //so a new leader can be set if the leader is ever removed from the list of characters of this faction
             }
             character.SetFaction(null);
-            Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_FACTION, character, this);
+            Messenger.Broadcast(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, character, this);
             return true;
         }
         return false;
@@ -165,7 +169,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             characters.Add(character);
             character.SetFaction(this);
             if (isPlayerFaction && character is Summon summon) {
-                Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, summon);
+                Messenger.Broadcast(PlayerSignals.PLAYER_GAINED_SUMMON, summon);
             }
             return true;
         }
@@ -192,10 +196,11 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                 }
             }
             if (newLeader is Character character) {
-                Messenger.Broadcast(Signals.ON_SET_AS_FACTION_LEADER, character, prevLeader);
+                Messenger.Broadcast(CharacterSignals.ON_SET_AS_FACTION_LEADER, character, prevLeader);
             } else if (newLeader == null) {
-                Messenger.Broadcast(Signals.ON_FACTION_LEADER_REMOVED, this, prevLeader);
+                Messenger.Broadcast(CharacterSignals.ON_FACTION_LEADER_REMOVED, this, prevLeader);
             }
+            factionEventDispatcher.ExecuteFactionLeaderChangedEvent(newLeader);
         }
     }
     private void OnCharacterRaceChange(Character character) {
@@ -256,7 +261,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
         }
     }
-    private void OnCharacterMissing(Character missingCharacter) {
+    private void OnCharacterPresumedDead(Character missingCharacter) {
         if (leader != null && missingCharacter == leader) {
             SetLeader(null);
         }
@@ -303,8 +308,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         for (int i = 0; i < characters.Count; i++) {
             Character member = characters[i];
             log += $"\n\n-{member.name}";
-            if (member.isDead /*|| member.isMissing*/ || member.isBeingSeized || member.isInLimbo) {
-                log += "\nEither dead, missing, in limbo or seized, will not be part of candidates for faction leader";
+            if (member.isDead /*|| member.isMissing*/ || member.isBeingSeized || member.isInLimbo || member.traitContainer.HasTrait("Enslaved")) {
+                log += "\nEither dead, missing, in limbo, seized or enslaved, will not be part of candidates for faction leader";
                 continue;
             }
 
@@ -439,26 +444,35 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return false;
     }
+    public int GetMemberCountThatMeetCriteria(Func<Character, bool> criteria) {
+        int count = 0;
+        for (int i = 0; i < characters.Count; i++) {
+            if (criteria.Invoke(characters[i])) {
+                count++;
+            }
+        }
+        return count;
+    }
     #endregion
 
     #region Utilities
     private void AddListeners() {
-        Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
-        Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_REMOVED, OnCharacterRemoved);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
     }
     private void RemoveListeners() {
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_REMOVED, OnCharacterRemoved);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
-        Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.RemoveListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
     }
     private void SetFactionColor(Color color) {
         factionColor = color;
@@ -494,7 +508,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             return; //ignore change
         }
         isActive = state;
-        Messenger.Broadcast(Signals.FACTION_ACTIVE_CHANGED, this);
+        Messenger.Broadcast(FactionSignals.FACTION_ACTIVE_CHANGED, this);
     }
     public string GetRaceText() {
         return $"{UtilityScripts.GameUtilities.GetNormalizedRaceAdjective(race)} Faction";
@@ -610,12 +624,12 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public void AddToOwnedSettlements(BaseSettlement settlement) {
         if (!ownedSettlements.Contains(settlement)) {
             ownedSettlements.Add(settlement);
-            Messenger.Broadcast(Signals.FACTION_OWNED_SETTLEMENT_ADDED, this, settlement);
+            Messenger.Broadcast(FactionSignals.FACTION_OWNED_SETTLEMENT_ADDED, this, settlement);
         }
     }
     public void RemoveFromOwnedSettlements(BaseSettlement settlement) {
         if (ownedSettlements.Remove(settlement)) {
-            Messenger.Broadcast(Signals.FACTION_OWNED_SETTLEMENT_REMOVED, this, settlement);
+            Messenger.Broadcast(FactionSignals.FACTION_OWNED_SETTLEMENT_REMOVED, this, settlement);
         }
     }
     public bool HasOwnedRegionWithLandmarkType(LANDMARK_TYPE type) {
@@ -698,19 +712,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         emblem = sprite;
     }
     #endregion
-    
-    // #region Logs
-    // public void AddHistory(Log log) {
-    //     if (!history.Contains(log)) {
-    //         history.Add(log);
-    //         if (history.Count > MAX_HISTORY_LOGS) {
-    //             history.RemoveAt(0);
-    //         }
-    //         Messenger.Broadcast(Signals.FACTION_LOG_ADDED, this);
-    //     }
-    // }
-    // #endregion
-    
+
     #region Jobs
     public void AddToAvailableJobs(JobQueueItem job, int position = -1) {
         if (position == -1) {
@@ -884,38 +886,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
     }
     #endregion
-
-    //#region Party
-    //public bool HasActiveParty(params PARTY_QUEST_TYPE[] party) {
-    //    for (int i = 0; i < characters.Count; i++) {
-    //        Character factionMember = characters[i];
-    //        if (factionMember.partyComponent.hasParty) {
-    //            for (int j = 0; j < party.Length; j++) {
-    //                PARTY_QUEST_TYPE partyType = party[j];
-    //                if (factionMember.partyComponent.currentParty.partyType == partyType) {
-    //                    return true;
-    //                }
-    //            }
-    //        }
-    //    }
-    //    return false;
-    //}
-    //public bool HasActivePartywithTarget(PARTY_QUEST_TYPE partyType, IPartyQuestTarget target) {
-    //    return GetActivePartywithTarget(partyType, target) != null;
-    //}
-    //public Party GetActivePartywithTarget(PARTY_QUEST_TYPE partyType, IPartyQuestTarget target) {
-    //    for (int i = 0; i < characters.Count; i++) {
-    //        Character factionMember = characters[i];
-    //        if (factionMember.partyComponent.hasParty) {
-    //            Party party = factionMember.partyComponent.currentParty;
-    //            if (party.partyType == partyType && party.target == target) {
-    //                return party;
-    //            }
-    //        }
-    //    }
-    //    return null;
-    //}
-    //#endregion
 
     #region War Declaration
     public void CheckForWar(Faction targetFaction, CRIME_SEVERITY crimeSeverity, Character crimeCommitter, Character crimeTarget, ActualGoapNode crime) {

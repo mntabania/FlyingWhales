@@ -127,10 +127,10 @@ public class GoapPlanner {
                 //This means that the created plan is a recalculated plan
                 goapThread.createdPlan.SetIsBeingRecalculated(false);
             }
-            if (!owner.canPerform) {
-                int canPerformValue = owner.GetCanPerformValue();
-                if(canPerformValue == -1 && owner.traitContainer.HasTrait("Paralyzed")) {
-                    //If the owner is paralyzed and the only reason he cannot perform is because of that paralyzed, the plan must not be scrapped
+            if (!owner.limiterComponent.canPerform) {
+                int canPerformValue = owner.limiterComponent.canPerformValue;
+                if(canPerformValue == -1 && (owner.traitContainer.HasTrait("Paralyzed") || owner.traitContainer.HasTrait("Quarantined"))) {
+                    //If the owner is paralyzed or quarantined and the only reason he cannot perform is because of that paralyzed, the plan must not be scrapped
                 } else {
                     owner.logComponent.PrintLogIfActive($"{owner.name} is scrapping plan since {owner.name} cannot perform. {goapThread.job.name} is the job.");
                     goapThread.job.CancelJob(false);
@@ -157,10 +157,16 @@ public class GoapPlanner {
                 if (owner.trapStructure.IsTrappedInHex()) {
                     owner.trapStructure.ResetAllTrapHexes();
                 }
-            }
-            if(jobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
-                if (owner.partyComponent.hasParty) {
-                    owner.partyComponent.currentParty.SetCannotProduceFoodThisRestPeriod(true);
+                if (owner.partyComponent.isActiveMember) {
+                    if (owner.partyComponent.currentParty.startedTrueRestingState) {
+                        if (jobType.IsFullnessRecoveryTypeJob()) {
+                            owner.traitContainer.AddTrait(owner, "Abstain Fullness");
+                        } else if (jobType.IsTirednessRecoveryTypeJob()) {
+                            owner.traitContainer.AddTrait(owner, "Abstain Tiredness");
+                        } else if (jobType.IsHappinessRecoveryTypeJob()) {
+                            owner.traitContainer.AddTrait(owner, "Abstain Happiness");
+                        }
+                    }
                 }
             }
             if (goapThread.recalculationPlan == null) {
@@ -199,7 +205,7 @@ public class GoapPlanner {
             goapThread.job.CancelJob(false);
 
             if(jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL) {
-                if (!owner.traitContainer.HasTrait("Vampire")) {
+                if (!owner.traitContainer.HasTrait("Vampire") && owner.isNormalCharacter && !owner.isConsideredRatman) {
                     //Special case for when a character cannot do hunger recovery, he/she must produce food instead
                     //NOTE: Excluded vampires because we don't want vampires to produce food when they fail to drink blood.
                     if (!owner.partyComponent.isMemberThatJoinedQuest) {
@@ -548,18 +554,17 @@ public class GoapPlanner {
             return;
         }
         List<Precondition> preconditions = null;
+        OtherData[] otherData = null;
         if (job.otherData != null) {
             if (job.otherData.ContainsKey(action.goapType)) {
-                preconditions = action.GetPreconditions(actor, target, job.otherData[action.goapType]);
+                otherData = job.otherData[action.goapType];
             } else if (job.otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
                 //None Interaction Type means that the other data is applied to all actions in plan
-                preconditions = action.GetPreconditions(actor, target, job.otherData[INTERACTION_TYPE.NONE]);
-            } else {
-                preconditions = action.GetPreconditions(actor, target, null);
+                otherData = job.otherData[INTERACTION_TYPE.NONE];
             }
-        } else {
-            preconditions = action.GetPreconditions(actor, target, null);
         }
+        bool isOverriden = false;
+        preconditions = action.GetPreconditions(actor, target, otherData, out isOverriden);
         if (preconditions.Count > 0) {
             log += $"\n--Node {node.action.goapName} has preconditions: {preconditions.Count}";
             //get other data for current action
@@ -595,6 +600,9 @@ public class GoapPlanner {
                             //Fail - rawPlan must be set to null so the plan will fail
                             rawPlan.Clear();
                             //rawPlan = null;
+                            if (isOverriden) {
+                                ObjectPoolManager.Instance.ReturnPreconditionsListToPool(preconditions);
+                            }
                             log += "\n--Could not find action to satisfy precondition, setting raw plan to null and exiting goap tree...";
                             return;
                         }
@@ -669,6 +677,9 @@ public class GoapPlanner {
                             //Fail - rawPlan must be set to null so the plan will fail
                             rawPlan.Clear();
                             //rawPlan = null;
+                            if (isOverriden) {
+                                ObjectPoolManager.Instance.ReturnPreconditionsListToPool(preconditions);
+                            }
                             log += "\n--Could not find action to satisfy precondition, setting raw plan to null and exiting goap tree...";
                             return;
                         }
@@ -693,79 +704,9 @@ public class GoapPlanner {
         } else {
             log += $"\n--Node {node.action.goapName} has no preconditions, exiting goap tree...";
         }
-        //if (parent == null) {
-        //    return false;
-        //}
-        //log += "\nBuilding goap tree with parent " + parent.actionType.goapName;
-        //if(precondition.actionType.preconditions.Count > 0) {
-        //    List<Precondition> unsatisfiedPreconditions = new List<Precondition>();
-        //    for (int i = 0; i < precondition.actionType.preconditions.Count; i++) {
-        //        Precondition precondition = precondition.actionType.preconditions[i];
-        //        if (!precondition.CanSatisfyCondition(actor, target)) {
-        //            //Pool all unsatisfied preconditions
-        //            unsatisfiedPreconditions.Add(precondition);
-        //        }
-        //    }
-        //    if (unsatisfiedPreconditions.Count > 0) {
-        //        log += "\nChecking unsatisfied preconditions: ";
-        //        for (int j = 0; j < unsatisfiedPreconditions.Count; j++) {
-        //            Precondition precon = unsatisfiedPreconditions[j];
-        //            log += "\n\t" + precon.goapEffect.conditionType.ToString() + " " + precon.goapEffect.conditionKey?.ToString() + " " + precon.goapEffect.targetPOI?.ToString() + " - ";
-        //        }
-        //        //Look for an action that can satisfy all unsatisfied preconditions
-        //        //if one precondition cannot be satisfied, skip that action
-        //        //if all preconditions can be satisfied, create a new goap tree for it
-        //        log += "\nActions: ";
-        //        List<GoapAction> shuffledActions = Utilities.Shuffle(usableActions);
-        //        for (int i = 0; i < shuffledActions.Count; i++) {
-        //            GoapAction usableAction = shuffledActions[i];
-        //            bool canSatisfyAllPreconditions = true;
-        //            log += "\n\t" + usableAction.goapName;
-        //            for (int j = 0; j < unsatisfiedPreconditions.Count; j++) {
-        //                Precondition precon = unsatisfiedPreconditions[j];
-        //                if (!usableAction.WillEffectsSatisfyPrecondition(precon.goapEffect)) {
-        //                    canSatisfyAllPreconditions = false;
-        //                    break;
-        //                } else {
-        //                    //if there is a provided job, check if it has any forced actions
-        //                    //if it does, only allow the action that it allows
-        //                    if (job != null && job.forcedActions.Count > 0) {
-        //                        bool satisfiedForcedActions = true;
-        //                        ForcedActionsComparer comparer = new ForcedActionsComparer();
-        //                        foreach (KeyValuePair<GoapEffect, INTERACTION_TYPE> kvp in job.forcedActions) {
-        //                            if(comparer.Equals(kvp.Key, precon.goapEffect)) {
-        //                                if(kvp.Value != usableAction.goapType) {
-        //                                    satisfiedForcedActions = false;
-        //                                    break;
-        //                                }
-        //                            }
-        //                        }
-        //                        if (!satisfiedForcedActions) {
-        //                            canSatisfyAllPreconditions = false;
-        //                            break;
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //            if (canSatisfyAllPreconditions) {
-        //                GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(precondition, precondition.runningCost + usableAction.cost, usableAction);
-        //                log += " - Satisfied"; 
-        //                bool success = BuildGoapTree(leafNode, startingNodes, usableActions, ref log, job);
-        //                return success;
-        //            }
-        //        }
-        //        return false;
-        //    } else {
-        //        log += "\nNo unsatisfied preconditions";
-        //        startingNodes.Add(precondition);
-        //        return true;
-        //    }
-        //} else {
-        //    log += "\nNo preconditions.";
-        //    startingNodes.Add(precondition);
-        //    return true;
-        //}
-        //return false;
+        if (isOverriden) {
+            ObjectPoolManager.Instance.ReturnPreconditionsListToPool(preconditions);
+        }
     }
 
     private List<JobNode> TransformRawPlanToActualNodes(List<GoapNode> rawPlan, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, GoapPlan currentPlan = null) { //actualPlan is for recalculation only, so that it will no longer create a new list, since in recalculation we already have a list of job nodes

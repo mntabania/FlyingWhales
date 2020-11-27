@@ -6,10 +6,10 @@ namespace Quests.Steps {
             _validityChecker = validityChecker;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<SpellData>(Signals.PLAYER_SET_ACTIVE_SPELL, CheckForCompletion);
+            Messenger.AddListener<SpellData>(SpellSignals.PLAYER_SET_ACTIVE_SPELL, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<SpellData>(Signals.PLAYER_SET_ACTIVE_SPELL, CheckForCompletion);
+            Messenger.RemoveListener<SpellData>(SpellSignals.PLAYER_SET_ACTIVE_SPELL, CheckForCompletion);
         }
 
         #region Listeners

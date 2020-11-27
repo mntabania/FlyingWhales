@@ -1,30 +1,34 @@
 ﻿using Coffee.UIExtensions;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
+
 namespace Ruinarch.Custom_UI {
     public class RuinarchButton : UnityEngine.UI.Button {
         
         private UIShiny shineEffect;
-
+        private System.Action _onHoverOverAction;
+        private System.Action _onHoverOutAction;
+        
         #region Monobehaviours
         protected override void Awake() {
             base.Awake();
-            shineEffect = GetComponent<UIShiny>();
-            if (shineEffect == null) {
-                shineEffect = targetGraphic.gameObject.GetComponent<UIShiny>();
-            }
-            if (shineEffect != null) {
-                shineEffect.Stop();
+            if (Application.isPlaying) {
+                shineEffect = GetComponent<UIShiny>();
+                if (shineEffect == null) {
+                    shineEffect = targetGraphic.gameObject.GetComponent<UIShiny>();
+                }
+                if (shineEffect != null) {
+                    shineEffect.Stop();
+                }
             }
         }
         protected override void OnEnable() {
             base.OnEnable();
             if (Application.isPlaying) {
-                Messenger.AddListener<string>(Signals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
-                Messenger.AddListener<string>(Signals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
-                Messenger.AddListener<string>(Signals.HOTKEY_CLICK, OnReceiveHotKeyClick);
-                //Also added instance checker because there are buttons used in tools
+                Messenger.AddListener<string>(UISignals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
+                Messenger.AddListener<string>(UISignals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
+                Messenger.AddListener<string>(UISignals.HOTKEY_CLICK, OnReceiveHotKeyClick);
+                Messenger.Broadcast(UISignals.BUTTON_SHOWN, this);
                 if (InputManager.Instance != null && InputManager.Instance.ShouldBeHighlighted(this)) {
                     StartGlow();
                 }
@@ -33,9 +37,9 @@ namespace Ruinarch.Custom_UI {
         protected override void OnDisable() {
             base.OnDisable();
             if (Application.isPlaying) {
-                Messenger.RemoveListener<string>(Signals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
-                Messenger.RemoveListener<string>(Signals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
-                Messenger.RemoveListener<string>(Signals.HOTKEY_CLICK, OnReceiveHotKeyClick);
+                Messenger.RemoveListener<string>(UISignals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
+                Messenger.RemoveListener<string>(UISignals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
+                Messenger.RemoveListener<string>(UISignals.HOTKEY_CLICK, OnReceiveHotKeyClick);
                 HideGlow();
             }
         }
@@ -43,15 +47,46 @@ namespace Ruinarch.Custom_UI {
 
         #region Pointer Clicks
         public override void OnPointerClick(PointerEventData eventData) {
-            base.OnPointerClick(eventData);
             if (!IsInteractable())
                 return;
-            Messenger.Broadcast(Signals.BUTTON_CLICKED, this);
+            Messenger.Broadcast(UISignals.BUTTON_CLICKED, this);
+            base.OnPointerClick(eventData);
+            if (!IsActive() || !IsInteractable())
+                return;
+            _onHoverOverAction?.Invoke();
         }
         #endregion
 
+        #region Hover
+        public override void OnPointerEnter(PointerEventData eventData) {
+            base.OnPointerEnter(eventData);
+            if (!IsActive() || !IsInteractable())
+                return;
+            _onHoverOverAction?.Invoke();
+        }
+        public override void OnPointerExit(PointerEventData eventData) {
+            base.OnPointerExit(eventData);
+            if (!IsActive() || !IsInteractable())
+                return;
+            _onHoverOutAction?.Invoke();
+        }
+        public void AddHoverOverAction(System.Action p_hoverOverAction) {
+            _onHoverOverAction += p_hoverOverAction;
+        }
+        public void AddHoverOutAction(System.Action p_hoverOutAction) {
+            _onHoverOutAction += p_hoverOutAction;
+        }
+        public void RemoveHoverOverAction(System.Action p_hoverOverAction) {
+            _onHoverOverAction -= p_hoverOverAction;
+        }
+        public void RemoveHoverOutAction(System.Action p_hoverOutAction) {
+            _onHoverOutAction -= p_hoverOutAction;
+        }
+        #endregion
+        
+
         #region Shine
-        private void StartGlow() {
+        public void StartGlow() {
             if (shineEffect != null) {
                 shineEffect.Play();
             }
@@ -77,7 +112,7 @@ namespace Ruinarch.Custom_UI {
             if (name == buttonName) {
                 if (IsInteractable()) {
                     onClick?.Invoke();
-                    Messenger.Broadcast(Signals.BUTTON_CLICKED, this); 
+                    Messenger.Broadcast(UISignals.BUTTON_CLICKED, this); 
                 }
             }
         }

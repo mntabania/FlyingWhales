@@ -11,7 +11,7 @@ public class Nap : GoapAction {
         actionIconString = GoapActionStateDB.Sleep_Icon;
         
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.LUNCH_TIME };
         logTags = new[] {LOG_TAG.Needs};
     }
@@ -42,6 +42,13 @@ public class Nap : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 0;
+        if (actor.traitContainer.HasTrait("Enslaved")) {
+            if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+                costLog += $" +2000(Slave, target is not in actor's home)";
+                actor.logComponent.AppendCostLog(costLog);
+                return 2000;
+            }
+        }
         if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
             if (actor.partyComponent.isActiveMember) {
                 if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null
@@ -60,8 +67,7 @@ public class Nap : GoapAction {
                 }
             }
         }
-        if (target is Bed) {
-            Bed targetBed = target as Bed;
+        if (target is BaseBed targetBed) {
             if (!targetBed.IsSlotAvailable()) {
                 cost += 2000;
                 costLog += " +2000(Fully Occupied)";
@@ -176,6 +182,6 @@ public class Nap : GoapAction {
     #endregion
 
     private bool CanSleepInBed(Character character, TileObject tileObject) {
-        return (tileObject as Bed).CanSleepInBed(character);
+        return (tileObject as BaseBed).CanUseBed(character);
     }
 }

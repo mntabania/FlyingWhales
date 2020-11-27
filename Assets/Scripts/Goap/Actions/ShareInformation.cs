@@ -7,12 +7,11 @@ using Logs;
 using UnityEngine.Assertions;
 
 public class ShareInformation : GoapAction {
-    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
-
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.VERBAL;
     public ShareInformation() : base(INTERACTION_TYPE.SHARE_INFORMATION) {
         actionIconString = GoapActionStateDB.Gossip_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         doesNotStopTargetCharacter = true;
         isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Informed, LOG_TAG.Social};
@@ -80,7 +79,7 @@ public class ShareInformation : GoapAction {
             if (targetCharacter.carryComponent.IsNotBeingCarried() == false) {
                 goapActionInvalidity.isInvalid = true;
                 goapActionInvalidity.reason = "target_carried";
-            } else if (!targetCharacter.canWitness) {
+            } else if (!targetCharacter.limiterComponent.canWitness) {
                 goapActionInvalidity.isInvalid = true;
                 goapActionInvalidity.reason = "target_inactive";
             }

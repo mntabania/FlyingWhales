@@ -17,7 +17,7 @@ namespace Tutorial {
         protected override bool HasMetAllCriteria() {
             bool hasMetAllCriteria = base.HasMetAllCriteria();
             if (hasMetAllCriteria) {
-                return PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.EYE).charges > 0;
+                return PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.EYE).isInUse;
             }
             return false;
         }
@@ -25,37 +25,49 @@ namespace Tutorial {
 
         #region Overrides
         protected override void MakeAvailable() {
+            if (!PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.EYE)) {
+                 SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.EYE);
+                 if (spellData.charges <= 0) {
+                     //if player does not yet have an eye structure and does not have an eye charge, then give them one so they can build one for this tutorial
+                     spellData.AdjustCharges(1);
+                 }
+            }
             base.MakeAvailable();
             TutorialManager.Instance.ActivateTutorial(this);
         }
         public override void Activate() {
             base.Activate();
-            Messenger.Broadcast(Signals.UPDATE_BUILD_LIST);
+            Messenger.Broadcast(UISignals.UPDATE_BUILD_LIST);
 
         }
         protected override void ConstructSteps() {
-            steps = new List<QuestStepCollection>() {
-                new QuestStepCollection (
+            steps = new List<QuestStepCollection>();
+            if (!PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.EYE)) {
+                //Only add build eye step if player doesn't already have an eye built
+                QuestStepCollection buildCollection = new QuestStepCollection(
                     new ToggleTurnedOnStep("Build Tab", "Open Build Menu")
                         .SetOnTopmostActions(OnTopMostBuildTab, OnNoLongerTopMostBuildTab),
                     new ToggleTurnedOnStep("Eye", "Choose the Eye")
                         .SetOnTopmostActions(OnTopMostTheEye, OnNoLongerTopMostTheEye),
                     new StructureBuiltStep(STRUCTURE_TYPE.EYE, "Place on an unoccupied Area")
-                ),
-                new QuestStepCollection (new StoreIntelStep()
-                    .SetHoverOverAction(OnHoverStoreIntel)
+                );
+                steps.Add(buildCollection);
+            }
+            QuestStepCollection storeIntelStep = new QuestStepCollection(new StoreIntelStep()
+                .SetHoverOverAction(OnHoverStoreIntel)
+                .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                .SetOnTopmostActions(OnTopMostStoreIntel, OnNoLongerTopMostStoreIntel)
+            );
+            steps.Add(storeIntelStep);
+            QuestStepCollection shareIntelStep = new QuestStepCollection(
+                new ShowIntelMenuStep()
+                    .SetOnTopmostActions(OnTopMostIntelTab, OnNoLongerTopMostIntelTab),
+                new SelectIntelStep("Choose the stored intel"),
+                new ShareIntelStep("Share to a Villager")
+                    .SetHoverOverAction(OnHoverShareIntel)
                     .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
-                    .SetOnTopmostActions(OnTopMostStoreIntel, OnNoLongerTopMostStoreIntel)
-                ),
-                new QuestStepCollection(
-                    new ShowIntelMenuStep()
-                        .SetOnTopmostActions(OnTopMostIntelTab, OnNoLongerTopMostIntelTab),
-                    new SelectIntelStep("Choose the stored intel"),
-                    new ShareIntelStep("Share to a Villager")
-                        .SetHoverOverAction(OnHoverShareIntel)
-                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
-                )
-            };
+            );
+            steps.Add(shareIntelStep);
         }
         #endregion
         
@@ -85,46 +97,46 @@ namespace Tutorial {
         
         #region Build Structure Button
         private void OnTopMostBuildStructure() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Build Structure");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Build Structure");
         }
         private void OnNoLongerTopMostBuildStructure() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Build Structure");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Build Structure");
         }
         #endregion
         
         #region The Eye
         private void OnTopMostTheEye() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Eye");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Eye");
         }
         private void OnNoLongerTopMostTheEye() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Eye");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Eye");
         }
         #endregion
         
         #region Store Intel
         private void OnTopMostStoreIntel() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Store Intel Button");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Store Intel Button");
         }
         private void OnNoLongerTopMostStoreIntel() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Store Intel Button");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Store Intel Button");
         }
         #endregion
         
         #region Intel Tab
         private void OnTopMostIntelTab() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Intel Tab");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Intel Tab");
         }
         private void OnNoLongerTopMostIntelTab() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Intel Tab");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Intel Tab");
         }
         #endregion
         
         #region Build Tab
         private void OnTopMostBuildTab() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Build Tab");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Build Tab");
         }
         private void OnNoLongerTopMostBuildTab() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Build Tab");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Build Tab");
         }
         #endregion
     }

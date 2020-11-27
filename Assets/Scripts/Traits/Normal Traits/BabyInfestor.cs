@@ -23,26 +23,28 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
             base.OnRemoveTrait(sourcePOI, removedBy);
-            if (sourcePOI is Summon summon) {
-                if(summon.adultSummonType != SUMMON_TYPE.None) {
-                    Character adult = CharacterManager.Instance.CreateNewSummon(summon.adultSummonType, summon.faction, summon.homeSettlement, summon.homeRegion, summon.homeStructure);
-                    adult.SetFirstAndLastName(summon.firstName, summon.surName);
+            if (sourcePOI is Summon babySummon) {
+                if(babySummon.adultSummonType != SUMMON_TYPE.None) {
+                    Character adult = CharacterManager.Instance.CreateNewSummon(babySummon.adultSummonType, babySummon.faction, babySummon.homeSettlement, babySummon.homeRegion, babySummon.homeStructure);
+                    if (!babySummon.isUsingDefaultName) {
+                        adult.SetFirstAndLastName(babySummon.firstName, babySummon.surName);    
+                    }
                     adult.CreateMarker();
-                    adult.InitialCharacterPlacement(summon.gridTileLocation);
+                    adult.InitialCharacterPlacement(babySummon.gridTileLocation);
                     adult.ClearTerritory();
                     
                     Log growUpLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "become_giant_spider", null, LOG_TAG.Life_Changes);
                     growUpLog.AddToFillers(adult, adult.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     growUpLog.AddLogToDatabase();
-                    
-                    for (int i = 0; i < summon.territories.Count; i++) {
-                        adult.AddTerritory(summon.territories[i]);
+
+                    if (babySummon.HasTerritory()) {
+                        adult.SetTerritory(babySummon.territory);
                     }
                 }
-                summon.SetDestroyMarkerOnDeath(true);
-                summon.SetShowNotificationOnDeath(false);
-                summon.Death();
-                if(UIManager.Instance.monsterInfoUI.isShowing && UIManager.Instance.monsterInfoUI.activeMonster == summon) {
+                babySummon.SetDestroyMarkerOnDeath(true);
+                babySummon.SetShowNotificationOnDeath(false);
+                babySummon.Death();
+                if(UIManager.Instance.monsterInfoUI.isShowing && UIManager.Instance.monsterInfoUI.activeMonster == babySummon) {
                     UIManager.Instance.monsterInfoUI.CloseMenu();
                 }
             }

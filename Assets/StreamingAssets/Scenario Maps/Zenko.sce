@@ -2846,7 +2846,7 @@
         },
         {
           "resource": "WOOD",
-          "structureType": "APOTHECARY"
+          "structureType": "HOSPICE"
         },
         {
           "resource": "WOOD",
@@ -2972,7 +2972,7 @@
         },
         {
           "resource": "WOOD",
-          "structureType": "APOTHECARY"
+          "structureType": "HOSPICE"
         },
         {
           "resource": "WOOD",

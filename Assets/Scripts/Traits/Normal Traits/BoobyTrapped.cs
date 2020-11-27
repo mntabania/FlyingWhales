@@ -35,9 +35,9 @@ namespace Traits {
             Assert.IsNotNull(saveDataBoobyTrapped);
             _element = saveDataBoobyTrapped.elementalType;
         }
-        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            SaveDataBoobyTrapped saveDataBoobyTrapped = saveDataTrait as SaveDataBoobyTrapped;
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
+            SaveDataBoobyTrapped saveDataBoobyTrapped = p_saveDataTrait as SaveDataBoobyTrapped;
             Assert.IsNotNull(saveDataBoobyTrapped);
             awareCharacters.AddRange(SaveUtilities.ConvertIDListToCharacters(saveDataBoobyTrapped.awareCharacterIDs));        
         }

@@ -34,7 +34,8 @@ namespace Tutorial {
             Frame_Up,
             Faction_Info,
             Create_A_Cultist,
-            World_Map
+            World_Map,
+            Biolab_Tutorial
         }
 
         /// <summary>
@@ -64,7 +65,8 @@ namespace Tutorial {
             Tutorial.Frame_Up,
             Tutorial.Faction_Info,
             Tutorial.Create_A_Cultist,
-            Tutorial.World_Map
+            Tutorial.World_Map,
+            Tutorial.Biolab_Tutorial
         };
 
         private List<ImportantTutorial> _activeImportantTutorials;
@@ -228,7 +230,7 @@ namespace Tutorial {
             } else {
                 SaveManager.Instance.currentSaveDataPlayer.AddBonusTutorialAsCompleted(tutorial.tutorialType);    
             }
-            Messenger.Broadcast(Signals.TUTORIAL_QUEST_COMPLETED, tutorial);
+            Messenger.Broadcast(PlayerQuestSignals.TUTORIAL_QUEST_COMPLETED, tutorial);
             DeactivateTutorial(tutorial);
             if (IsBonusTutorial(tutorial) == false) {
                 CheckIfAllTutorialsCompleted();    
@@ -242,7 +244,7 @@ namespace Tutorial {
                     "Villagers fight amongst each other by making them do various crimes, " +
                     "or figure out how to turn someone into a Necromancer. Good luck!");    
                 hasCompletedImportantTutorials = true;
-                Messenger.Broadcast(Signals.FINISHED_IMPORTANT_TUTORIALS);
+                Messenger.Broadcast(PlayerQuestSignals.FINISHED_IMPORTANT_TUTORIALS);
             }
         }
         #endregion

@@ -130,12 +130,6 @@ public class FeedSelf : GoapAction {
             Character actor = goapNode.actor;
 
             targetCharacter.needsComponent.AdjustFullness(34f);
-
-            Infected infectedTarget = targetCharacter.traitContainer.GetTraitOrStatus<Infected>("Infected");
-            infectedTarget?.InfectTarget(actor);
-
-            Infected infectedActor = actor.traitContainer.GetTraitOrStatus<Infected>("Infected");
-            infectedActor?.InfectTarget(targetCharacter);
         }
     }
     public void AfterFeedSuccess(ActualGoapNode goapNode) {
@@ -145,6 +139,10 @@ public class FeedSelf : GoapAction {
             targetCharacter.needsComponent.AdjustDoNotGetHungry(-1);
 
             if (targetCharacter.traitContainer.HasTrait("Vampire")) {
+                //If a vampre drinks the blood of another vampire and he is not a cannibal, add Poor Meal status
+                if (!actor.race.IsSapient() || (actor.traitContainer.HasTrait("Vampire") && !targetCharacter.traitContainer.HasTrait("Cannibal"))) {
+                    targetCharacter.traitContainer.AddTrait(targetCharacter, "Poor Meal", actor);
+                }
                 if (GameUtilities.RollChance(98)) {
                     actor.traitContainer.AddTrait(actor, "Lethargic", targetCharacter, goapNode);
                 } else {

@@ -1,8 +1,8 @@
 {
   "_className": "Incubus",
-  "_baseAttackPower": 44,
-  "_baseHP": 550,
-  "_baseAttackSpeed": 650,
+  "_baseAttackPower": 35,
+  "_baseHP": 660,
+  "_baseAttackSpeed": 500,
   "_attackRange": 3.0,
   "_inventoryCapacity": 5,
   "_staminaReduction": 6.0,

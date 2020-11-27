@@ -39,7 +39,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, unoccupiedCastle.tiles.First().genericTileObject);
                         producedJob = null;
                         return true;
-                    } else if (GameUtilities.RollChance(15, ref log) && character.faction.factionType.type != FACTION_TYPE.Vagrants){ //15
+                    } else if (GameUtilities.RollChance(15, ref log) && character.faction?.factionType.type != FACTION_TYPE.Vagrants){ //15
                         log += $"\n-{character.homeSettlement.name} does not have an unoccupied vampire castle, and successfully rolled to build a new one";
                         //Build vampire castle
                         if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureSetting, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
@@ -56,7 +56,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, unoccupiedCastle.tiles.First().genericTileObject);
                         producedJob = null;
                         return true;
-                    } else if (GameUtilities.RollChance(15, ref log) && character.faction.factionType.type != FACTION_TYPE.Vagrants){ //15
+                    } else if (GameUtilities.RollChance(15, ref log) && character.faction?.factionType.type != FACTION_TYPE.Vagrants){ //15
                         HexTile targetTile = GetNoStructurePlainHexInAllRegions();
                         if (targetTile != null) {
                             log += $"\n-Could not find valid castle in wild, and successfully rolled to build a new castle at {targetTile}";
@@ -99,6 +99,8 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                     log += $"\n-{character.name} is not yet a vampire lord. But is a necromancer, not becoming a Vampire Lord.";
                 } else if (character.characterClass.className == "Werewolf") {
                     log += $"\n-{character.name} is not yet a vampire lord. But is currently a Werewolf, not becoming a Vampire Lord.";
+                } else if (character.traitContainer.HasTrait("Enslaved")) {
+                    log += $"\n-{character.name} is Enslaved, not becoming a Vampire Lord.";
                 } else {
                     log += $"\n-{character.name} is not yet a vampire lord. Rolling for chance to check converted villagers.";
                     if (GameUtilities.RollChance(10, ref log)) { //10
@@ -162,7 +164,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
         return chosenHex;
     }
     private HexTile GetNoStructurePlainHexInRegion(Region region) {
-        return region.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
+        return region.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
     }
 
     public static WeightedDictionary<Character> GetVampiricEmbraceTargetWeights(Character character) {

@@ -7,6 +7,7 @@ using Characters.Behaviour;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
+using Settings;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -54,8 +55,13 @@ public class CharacterManager : BaseMonoBehaviour {
         Dragon_Behaviour = "Dragon Behaviour",
         Troll_Behaviour = "Troll Behaviour",
         Snatcher_Behaviour = "Snatcher Behaviour",
-        Bone_Golem_Behaviour = "Bone Golem Behaviour";
-        
+        Bone_Golem_Behaviour = "Bone Golem Behaviour",
+        Pest_Behaviour = "Pest Behaviour",
+        Rat_Behaviour = "Rat Behaviour",
+        Ratman_Behaviour = "Ratman Behaviour",
+        Slave_Behaviour = "Slave Behaviour";
+
+
 
     public const int MAX_HISTORY_LOGS = 300;
     public const int VISION_RANGE = 8;
@@ -344,6 +350,34 @@ public class CharacterManager : BaseMonoBehaviour {
                 typeof(DefaultExtraCatcher),
             }
         },
+        { Pest_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(PestBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Rat_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(RatBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Ratman_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(RatmanBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Slave_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(SlaveBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
     };
 
     #region getters/setters
@@ -373,8 +407,8 @@ public class CharacterManager : BaseMonoBehaviour {
         rumorWorthyActions = new List<string>() { Make_Love, Steal, Poison_Food, Place_Trap, Flirt, Transform_To_Wolf, Drink_Blood };
         ConstructEmotionData();
         ConstructCharacterBehaviours();
-        Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
-        Messenger.AddListener<string, string>(Signals.RENAME_CHARACTER, OnRenameCharacter);
+        Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        Messenger.AddListener<string, string>(CharacterSignals.RENAME_CHARACTER, OnRenameCharacter);
     }
 
     #region Characters
@@ -404,8 +438,7 @@ public class CharacterManager : BaseMonoBehaviour {
         AddNewLimboCharacter(newCharacter);
         return newCharacter;
     }
-    public Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null,
-        BaseSettlement homeLocation = null, Region homeRegion = null, LocationStructure homeStructure = null) {
+    public Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null, BaseSettlement homeLocation = null, Region homeRegion = null, LocationStructure homeStructure = null) {
         Character newCharacter = new Character(className, race, gender);
         newCharacter.SetRandomName();
         newCharacter.Initialize();
@@ -503,13 +536,13 @@ public class CharacterManager : BaseMonoBehaviour {
     public void AddNewCharacter(Character character, bool broadcastSignal = true) {
         DatabaseManager.Instance.characterDatabase.AddCharacter(character);
         if (broadcastSignal) {
-            Messenger.Broadcast(Signals.CHARACTER_CREATED, character);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_CREATED, character);
         }
     }
     public void RemoveCharacter(Character character, bool broadcastSignal = true) {
         if (DatabaseManager.Instance.characterDatabase.RemoveCharacter(character)) {
             if (broadcastSignal) {
-                Messenger.Broadcast(Signals.CHARACTER_REMOVED, character);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_REMOVED, character);
             }
         }
     }
@@ -609,13 +642,13 @@ public class CharacterManager : BaseMonoBehaviour {
 
             if(poi != null) {
                 FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(tileObjectType);
-                if (poi.traitContainer.HasTrait("Infected")) {
-                    foodPile.traitContainer.AddTrait(foodPile, "Infected");
-                }
                 if (poi.traitContainer.HasTrait("Abomination Germ")) {
                     //transfer abomination germ to created food pile
                     foodPile.traitContainer.AddTrait(foodPile, "Abomination Germ");
                     poi.traitContainer.RemoveStatusAndStacks(poi, "Abomination Germ");
+                }
+                if (poi.traitContainer.HasTrait("Plagued")) {
+                    PlagueDisease.Instance.AddPlaguedStatusOnPOIWithLifespanDuration(foodPile);
                 }
 
                 if (deadCharacter != null && createLog) {
@@ -658,23 +691,13 @@ public class CharacterManager : BaseMonoBehaviour {
         target.DestroyMarker();
         // RemoveCharacter(target);
     }
-    public List<Character> GetAllNormalCharacters() {
-        List<Character> characters = new List<Character>();
-        for (int i = 0; i < allCharacters.Count; i++) {
-            Character character = allCharacters[i];
-            if (character.isNormalCharacter) {
-                characters.Add(character);
-            }
-        }
-        return characters;
-    }
     public Color GetCharacterNameColor(Character character) {
         if(character != null) {
             if (character.minion != null) {
                 return demonNameColor;
-            } else if (character.faction == FactionManager.Instance.undeadFaction) {
+            } else if (character.faction?.factionType.type == FACTION_TYPE.Undead) {
                 return undeadNameColor;
-            } else if (character.faction == FactionManager.Instance.neutralFaction) {
+            } else if (character.faction?.factionType.type == FACTION_TYPE.Wild_Monsters) {
                 return summonNameColor;
             }
         }
@@ -684,9 +707,9 @@ public class CharacterManager : BaseMonoBehaviour {
         if(character != null) {
             if (character.minion != null) {
                 return _demonNameColorHex;
-            } else if (character.faction == FactionManager.Instance.undeadFaction) {
+            } else if (character.faction?.factionType.type == FACTION_TYPE.Undead) {
                 return _undeadNameColorHex;
-            } else if (character.faction == FactionManager.Instance.neutralFaction) {
+            } else if (character.faction?.factionType.type == FACTION_TYPE.Wild_Monsters) {
                 return _summonNameColorHex;
             }
         }
@@ -759,7 +782,11 @@ public class CharacterManager : BaseMonoBehaviour {
     #region Summons
     public Summon CreateNewLimboSummon(SUMMON_TYPE summonType, Faction faction = null, NPCSettlement homeLocation = null, LocationStructure homeStructure = null, string className = "") {
         Summon newCharacter = CreateNewSummonClassFromType(summonType, className);
-        newCharacter.SetFirstAndLastName(newCharacter.raceClassName, string.Empty);
+        if (SettingsManager.Instance.settings.randomizeMonsterNames) {
+            newCharacter.SetRandomName();
+        } else {
+            newCharacter.SetFirstAndLastName(newCharacter.raceClassName, string.Empty);    
+        }
         newCharacter.Initialize();
         if (faction == null || !faction.JoinFaction(newCharacter, isInitial: true)) {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, isInitial: true);
@@ -787,7 +814,11 @@ public class CharacterManager : BaseMonoBehaviour {
     public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, BaseSettlement homeLocation = null,
         Region homeRegion = null, LocationStructure homeStructure = null, string className = "", bool bypassIdeologyChecking = false) {
         Summon newCharacter = CreateNewSummonClassFromType(summonType, className);
-        newCharacter.SetFirstAndLastName(newCharacter.raceClassName, string.Empty);
+        if (SettingsManager.Instance.settings.randomizeMonsterNames) {
+            newCharacter.SetRandomName();
+        } else {
+            newCharacter.SetFirstAndLastName(newCharacter.raceClassName, string.Empty);    
+        }
         newCharacter.Initialize();
         if (faction == null || !faction.JoinFaction(newCharacter, bypassIdeologyChecking: bypassIdeologyChecking, isInitial: true)) {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, bypassIdeologyChecking: bypassIdeologyChecking, isInitial: true);
@@ -1395,7 +1426,7 @@ public class CharacterManager : BaseMonoBehaviour {
             necromancerInTheWorld = character;
             if (necromancerInTheWorld != null) {
                 hasSpawnedNecromancerOnce = true;
-                Messenger.Broadcast(Signals.NECROMANCER_SPAWNED, necromancerInTheWorld);
+                Messenger.Broadcast(CharacterSignals.NECROMANCER_SPAWNED, necromancerInTheWorld);
             }
         }
         

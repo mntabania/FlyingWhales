@@ -29,8 +29,8 @@ public class StructureInfoUI : InfoUIBase {
     #region Overrides
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener<Character, LocationStructure>(Signals.ADDED_STRUCTURE_RESIDENT, UpdateResidentsFromSignal);
-        Messenger.AddListener<Character, LocationStructure>(Signals.REMOVED_STRUCTURE_RESIDENT, UpdateResidentsFromSignal);
+        Messenger.AddListener<Character, LocationStructure>(StructureSignals.ADDED_STRUCTURE_RESIDENT, UpdateResidentsFromSignal);
+        Messenger.AddListener<Character, LocationStructure>(StructureSignals.REMOVED_STRUCTURE_RESIDENT, UpdateResidentsFromSignal);
     }
     public override void CloseMenu() {
         base.CloseMenu();
@@ -50,19 +50,9 @@ public class StructureInfoUI : InfoUIBase {
     }
     public override void OpenMenu() {
         activeStructure = _data as LocationStructure;
-        
-        GameObject structureObject = null;
-        if (activeStructure is ManMadeStructure manMadeStructure) {
-            structureObject = manMadeStructure.structureObj.gameObject;
-        } else if (activeStructure is DemonicStructure demonicStructure) {
-            structureObject = demonicStructure.structureObj.gameObject;
-        }
-        if(structureObject != null) {
-            bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(activeStructure.region);
-            InnerMapCameraMove.Instance.CenterCameraOn(structureObject, instantCenter);
-        }
+        activeStructure.CenterOnStructure();
         base.OpenMenu();
-        Selector.Instance.Select(activeStructure);
+        activeStructure.ShowSelectorOnStructure();
         UpdateStructureInfoUI();
         UpdateResidents();
     }

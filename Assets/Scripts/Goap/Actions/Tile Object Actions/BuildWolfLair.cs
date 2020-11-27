@@ -47,6 +47,20 @@ public class BuildWolfLair : GoapAction {
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
         return null;
     }
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
+        if (goapActionInvalidity.isInvalid == false) {
+            OtherData[] otherData = node.otherData;
+            if (otherData != null) {
+                if (otherData.Length == 1 && otherData[0].obj is LocationGridTile targetTile) {
+                    if (node.actor.gridTileLocation != targetTile && !node.actor.gridTileLocation.IsNeighbour(targetTile)) {
+                        goapActionInvalidity.isInvalid = true;        
+                    }
+                }
+            }
+        }
+        return goapActionInvalidity;
+    }
     #endregion
 
     #region Effects

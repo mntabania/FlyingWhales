@@ -29,7 +29,7 @@ public class QuestUI : MonoBehaviour {
         QuestItem questItem = questGO.GetComponent<QuestItem>();
         questItem.SetQuest(quest);
         questItem.TweenIn();
-        Messenger.Broadcast(Signals.QUEST_SHOWN, quest as Quest);
+        Messenger.Broadcast(UISignals.QUEST_SHOWN, quest as Quest);
         return questItem;
     }
     public void HideQuestDelayed(SteppedQuest quest) {

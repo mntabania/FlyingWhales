@@ -29,6 +29,9 @@ namespace UtilityScripts {
         public static WaitForSeconds waitFor3Seconds = new WaitForSeconds(3f);
         public static WaitForSeconds waitFor5Seconds = new WaitForSeconds(5f);
         
+        private static readonly Color _grayedOutColor = new Color(106f / 255f, 106f / 255f, 128f / 255f);
+        private static readonly Color _normalColor = new Color(248f / 255f, 225f / 255f, 169f / 255f);
+        
         public static string GetNormalizedSingularRace(RACE race) {
             switch (race) {
                 case RACE.HUMANS:
@@ -203,6 +206,7 @@ namespace UtilityScripts {
             RACE.PIG,
             RACE.CHICKEN,
             RACE.BEAST,
+            RACE.RAT,
         };
         public static bool IsRaceBeast(RACE race) {
             return _beastRaces.Contains(race);
@@ -344,6 +348,21 @@ namespace UtilityScripts {
             int roll = UnityEngine.Random.Range(0, 100);
             return roll < chance;
         }
+        /// <summary>
+        /// Roll a chance. This rolls from 0f - 1000f.
+        /// </summary>
+        /// <param name="chance">The chance for this to return true.</param>
+        /// <returns>Whether or not the given chance was met.</returns>
+        public static bool RollChance(float chance) {
+            chance *= 100f;
+            int roll = UnityEngine.Random.Range(0, 10000);
+            return roll < chance;
+        }
+        public static int RandomBetweenTwoNumbers(int p_min, int p_max) {
+            //+1 because max range in Random.Range is exclusive
+            int roll = UnityEngine.Random.Range(p_min, p_max + 1);
+            return roll;
+        }
         public static List<HexTile> GetHexTilesGivenCoordinates(List<Point> coordinates, HexTile[,] map) {
             List<HexTile> tiles = new List<HexTile>();
             for (int i = 0; i < coordinates.Count; i++) {
@@ -352,6 +371,9 @@ namespace UtilityScripts {
                 tiles.Add(tile);
             }
             return tiles;
+        }
+        public static Color GetUpgradeButtonTextColor(bool p_interactable) {
+            return p_interactable ? _normalColor : _grayedOutColor;
         }
     }    
 }

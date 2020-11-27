@@ -130,9 +130,7 @@ public class AchievementManager : MonoBehaviour {
     }
     #endregion
 
-    public void Initialize() {
-        Messenger.AddListener<Character>(Signals.CHARACTER_SNATCHED, OnCharacterSnatched);
-    }
+    public void Initialize() { }
 
     #region Callbacks
     private void OnUserStatsReceived(UserStatsReceived_t val) {

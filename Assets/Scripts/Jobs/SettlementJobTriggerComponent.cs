@@ -6,13 +6,15 @@ using Goap.Job_Checkers;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Interrupts;
+using Jobs;
+using Locations;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Locations.Settlements;
 using UtilityScripts;
 
-public class SettlementJobTriggerComponent : JobTriggerComponent {
+public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClassTracker.ISettlementTrackerListener {
 
 	private readonly NPCSettlement _owner;
 
@@ -21,6 +23,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	public List<Character> poisonCleansers { get; }
 	public List<Character> tileDryers { get; set; }
 	public List<Character> dousers { get; }
+
+	private Dictionary<SETTLEMENT_JOB_TRIGGER, SettlementJobTrigger> _jobTriggers;
 	
 	public SettlementJobTriggerComponent(NPCSettlement owner) {
 		_owner = owner;
@@ -29,47 +33,83 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		poisonCleansers = new List<Character>();
 		tileDryers = new List<Character>();
 		dousers = new List<Character>();
+		_jobTriggers = new Dictionary<SETTLEMENT_JOB_TRIGGER, SettlementJobTrigger>();
 	}
 
+	#region Job Triggers
+	public void AddJobTrigger(NPCSettlement p_settlement, SETTLEMENT_JOB_TRIGGER p_jobTriggerType) {
+		if (!_jobTriggers.ContainsKey(p_jobTriggerType)) {
+			SettlementJobTrigger jobTrigger = CreateSettlementJobTrigger<SettlementJobTrigger>(p_jobTriggerType);
+			_jobTriggers.Add(p_jobTriggerType, jobTrigger);
+			jobTrigger.HookTriggerToSettlement(p_settlement);
+		}
+	}
+	public void RemoveJobTrigger(NPCSettlement p_settlement, SETTLEMENT_JOB_TRIGGER p_jobTriggerType) {
+		if (_jobTriggers.ContainsKey(p_jobTriggerType)) {
+			SettlementJobTrigger jobTrigger = _jobTriggers[p_jobTriggerType];
+			jobTrigger.UnhookTriggerToSettlement(p_settlement);
+			_jobTriggers.Remove(p_jobTriggerType);
+		}
+	}
+	private T CreateSettlementJobTrigger<T>(SETTLEMENT_JOB_TRIGGER p_jobTriggerType) where T : SettlementJobTrigger {
+		string typeName = $"Jobs.{p_jobTriggerType.ToString()}_Job_Trigger, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+		Type type = Type.GetType(typeName);
+		Assert.IsNotNull(type, $"type for {p_jobTriggerType.ToString()} is null!");
+		return Activator.CreateInstance(type) as T;
+	} 
+	#endregion
+
 	#region Listeners
-	public void SubscribeToListeners() {
+	public void SubscribeToVillageListeners() {
 		Messenger.AddListener(Signals.HOUR_STARTED, HourlyJobActions);
-		Messenger.AddListener<ResourcePile>(Signals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChanged);
-		Messenger.AddListener<IPointOfInterest, int>(Signals.OBJECT_DAMAGED, OnObjectDamaged);
-		Messenger.AddListener<IPointOfInterest>(Signals.OBJECT_FULLY_REPAIRED, OnObjectFullyRepaired);
-		Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
-		Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
-		Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-		Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-		Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
-		Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
-		Messenger.AddListener<Table>(Signals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
-		Messenger.AddListener<NPCSettlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
-		Messenger.AddListener<Character, IPointOfInterest>(Signals.CHARACTER_SAW, OnCharacterSaw);
-		// Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
-		Messenger.AddListener<NPCSettlement>(Signals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
-		Messenger.AddListener<BurningSource>(Signals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
-		Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
+		Messenger.AddListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedVillage);
+		Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnTileObjectDamaged);
+		Messenger.AddListener<TileObject>(TileObjectSignals.TILE_OBJECT_FULLY_REPAIRED, OnTileObjectFullyRepaired);
+		Messenger.AddListener<TileObject, LocationGridTile>(GridTileSignals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
+		Messenger.AddListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+		Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+		Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+		Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
+		Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+		Messenger.AddListener<Table>(StructureSignals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
+		Messenger.AddListener<NPCSettlement, bool>(SettlementSignals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
+		Messenger.AddListener<Character, IPointOfInterest>(CharacterSignals.CHARACTER_SAW, OnCharacterSaw);
+		Messenger.AddListener<NPCSettlement>(SettlementSignals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
+		Messenger.AddListener<BurningSource>(InnerMapSignals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
+		Messenger.AddListener(Signals.GAME_LOADED, OnGameLoadedVillage);
 	}
-	public void UnsubscribeListeners() {
+	public void UnsubscribeFromVillageListeners() {
 		Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
-		Messenger.RemoveListener<ResourcePile>(Signals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChanged);
-		Messenger.RemoveListener<IPointOfInterest, int>(Signals.OBJECT_DAMAGED, OnObjectDamaged);
-		Messenger.RemoveListener<IPointOfInterest>(Signals.OBJECT_FULLY_REPAIRED, OnObjectFullyRepaired);
-		Messenger.RemoveListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
-		Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
-		Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-		Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-		Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
-		Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
-		Messenger.RemoveListener<Table>(Signals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
-		Messenger.RemoveListener<NPCSettlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
-		// Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
-		Messenger.RemoveListener<NPCSettlement>(Signals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
-		Messenger.RemoveListener<BurningSource>(Signals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
-	}
-	private void OnGameLoaded() {
-		Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
+		Messenger.RemoveListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedVillage);
+		Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnTileObjectDamaged);
+		Messenger.RemoveListener<TileObject>(TileObjectSignals.TILE_OBJECT_FULLY_REPAIRED, OnTileObjectFullyRepaired);
+		Messenger.RemoveListener<TileObject, LocationGridTile>(GridTileSignals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
+		Messenger.RemoveListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+		Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+		Messenger.RemoveListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+		Messenger.RemoveListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
+		Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+		Messenger.RemoveListener<Table>(StructureSignals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
+		Messenger.RemoveListener<NPCSettlement, bool>(SettlementSignals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
+		Messenger.RemoveListener<NPCSettlement>(SettlementSignals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
+		Messenger.RemoveListener<BurningSource>(InnerMapSignals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
+        Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoadedVillage);
+    }
+    public void SubscribeToDungeonListeners() {
+        Messenger.AddListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedDungeon);
+        Messenger.AddListener(Signals.GAME_LOADED, OnGameLoadedDungeon);
+    }
+    public void UnsubscribeFromDungeonListeners() {
+        Messenger.RemoveListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedDungeon);
+    }
+    public void HookToSettlementClassTrackerEvents(SettlementClassTracker p_classTracker) {
+	    p_classTracker.SubscribeToNeededClassRemoved(this);
+    }
+    public void UnHookToSettlementClassTrackerEvents(SettlementClassTracker p_classTracker) {
+	    p_classTracker.UnsubscribeToNeededClassRemoved(this);
+    }
+    private void OnGameLoadedVillage() {
+		Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoadedVillage);
 		if (SaveManager.Instance.useSaveData) {
 			LoadTendFarmCheck();
 			LoadCheckResource();
@@ -77,7 +117,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			KickstartJobs();
 		}
 	}
-	public void KickstartJobs() {
+    private void OnGameLoadedDungeon() {
+        Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoadedDungeon);
+        if (SaveManager.Instance.useSaveData) {
+            LoadCheckFoodPile();
+        } else {
+            ScheduledCheckFoodPile();
+        }
+    }
+    public void KickstartJobs() {
 		CheckIfFarmShouldBeTended(true);
 		ScheduledCheckResource();
 		TryCreateMiningJob();
@@ -85,33 +133,38 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	private void HourlyJobActions() {
 		CreatePatrolJobs();
 		TryCreateMiningJob();
+		HourlyCheckForNeededCharacterClasses();
 	}
-	private void OnResourceInPileChanged(ResourcePile resourcePile) {
+	private void OnResourceInPileChangedVillage(ResourcePile resourcePile) {
 		if (resourcePile.gridTileLocation != null && resourcePile.structureLocation == _owner.mainStorage) {
 			CheckResource(resourcePile.providedResource);
-			Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
+			Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
 			TryCreateCombineStockpile(resourcePile);
 		}
 	}
-	private void OnObjectDamaged(IPointOfInterest poi, int amount) {
-		Assert.IsTrue(poi is TileObject); // || poi is SpecialToken
-		TileObject tileObject = poi as TileObject;
-		if (poi.gridTileLocation != null && poi.gridTileLocation.IsPartOfSettlement(_owner) && tileObject.tileObjectType.CanBeRepaired()) {
-			TryCreateRepairTileObjectJob(poi);
+    private void OnResourceInPileChangedDungeon(ResourcePile resourcePile) {
+        if(resourcePile is FoodPile) {
+            if (resourcePile.gridTileLocation != null && resourcePile.structureLocation == _owner.mainStorage) {
+                CheckFoodPile();
+            }
+        }
+    }
+    private void OnTileObjectDamaged(TileObject tileObject, int amount) {
+		if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.IsPartOfSettlement(_owner) && tileObject.tileObjectType.CanBeRepaired()) {
+			TryCreateRepairTileObjectJob(tileObject);
 		}
 	}
-	private void OnObjectFullyRepaired(IPointOfInterest poi) {
-		Assert.IsTrue(poi is TileObject); // || poi is SpecialToken
-		if (poi.gridTileLocation != null && poi.gridTileLocation.IsPartOfSettlement(_owner)) {
+	private void OnTileObjectFullyRepaired(TileObject tileObject) {
+		if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.IsPartOfSettlement(_owner)) {
 			//cancel existing repair job
-			Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.REPAIR, poi);
+			Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.REPAIR, tileObject as IPointOfInterest);
 		}
 	}
 	private void OnTileObjectPlaced(TileObject tileObject, LocationGridTile tile) {
 		if (tileObject is ResourcePile resourcePile) {
 			if (resourcePile.resourceInPile > 0) {
-				Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.HAUL, resourcePile as IPointOfInterest);
-				Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
+				Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.HAUL, resourcePile as IPointOfInterest);
+				Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.COMBINE_STOCKPILE, resourcePile as IPointOfInterest);
 				if (tile.IsPartOfSettlement(_owner)) {
 					if (_owner.mainStorage == resourcePile.structureLocation) {
 						CheckResource(resourcePile.providedResource);
@@ -308,7 +361,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(12));
 		SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckResource, this);
 	}
-	private void LoadCheckResource() {
+    private void ScheduledCheckFoodPile() {
+        CheckFoodPile();
+        GameDate dueDate = GameManager.Instance.Today();
+        dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(12));
+        SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckFoodPile, this);
+    }
+    private void LoadCheckResource() {
 		if (GameManager.Instance.Today().tick < GameManager.Instance.GetTicksBasedOnHour(20)) {
 			//schedule check at 8pm
 			GameDate dueDate = GameManager.Instance.Today();
@@ -321,9 +380,27 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			dueDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(12));
 			SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckResource, this);	
 		}
-		
 	}
-	private void CheckAllResources() {
+    private void LoadCheckFoodPile() {
+        if (GameManager.Instance.Today().tick < GameManager.Instance.GetTicksBasedOnHour(20)) {
+            //schedule check at 8pm
+            GameDate dueDate = GameManager.Instance.Today();
+            dueDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(20));
+            SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckFoodPile, this);
+        } else {
+            //schedule check at 8am the next day
+            GameDate dueDate = GameManager.Instance.Today();
+            dueDate.AddDays(1);
+            dueDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(12));
+            SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckFoodPile, this);
+        }
+    }
+    private void CheckFoodPile() {
+        if(_owner.owner?.factionType.type == FACTION_TYPE.Ratmen) {
+            CheckResource(RESOURCE.FOOD);
+        }
+    }
+    private void CheckAllResources() {
 		CheckResource(RESOURCE.FOOD);
 		CheckResource(RESOURCE.WOOD);
 		CheckResource(RESOURCE.STONE);
@@ -354,8 +431,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		} else {
 			ResourcePile pile = _owner.mainStorage.GetResourcePileObjectWithLowestCount<T>(false);
 			Assert.IsNotNull(pile, $"{_owner.name} is trying to cancel produce resource {resource.ToString()}, but could not find any pile that produces {resource.ToString()}");
-			Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, jobType, pile as IPointOfInterest);
-			Messenger.Broadcast(Signals.CHECK_UNBUILT_OBJECT_VALIDITY);
+			Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, jobType, pile as IPointOfInterest);
+			Messenger.Broadcast(TileObjectSignals.CHECK_UNBUILT_OBJECT_VALIDITY);
 		}
 	}
 	private void TriggerProduceResource<T>(RESOURCE resourceType, JOB_TYPE jobType) where T : ResourcePile {
@@ -397,39 +474,29 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	#endregion
 
 	#region Repair
-	private void TryCreateRepairTileObjectJob(IPointOfInterest target) {
+	private void TryCreateRepairTileObjectJob(TileObject target) {
 		if (_owner.HasJob(JOB_TYPE.REPAIR, target) == false) {
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR, target, _owner);
 			job.SetCanTakeThisJobChecker(JobManager.Can_Take_Repair);
 			job.SetStillApplicableChecker(JobManager.Repair_Applicability);
 			if (target is TileObject tileObject) {
 				job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] {TileObjectDB.GetTileObjectData(tileObject.tileObjectType).repairCost});	
-			} 
-			// else if (target is SpecialToken) {
-			// 	SpecialToken specialToken = target as SpecialToken;
-			// 	job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] {
-			// 		TokenManager.Instance.itemData[specialToken.specialTokenType].craftCost
-			// 	});
-			// }
-			
+			}
 			_owner.AddToAvailableJobs(job);
 		}
-	}
-	private bool IsRepairJobStillValid(IPointOfInterest target) {
-		return target.currentHP < target.maxHP && target.gridTileLocation != null 
-		                                       && target.gridTileLocation.IsPartOfSettlement(_owner);
 	}
 	#endregion
 
 	#region Haul
 	public void TryCreateHaulJob(ResourcePile target) {
-		if (_owner.HasJob(JOB_TYPE.HAUL, target) == false && target.gridTileLocation.parentMap.region == _owner.region ) {
+		if (_owner.HasJob(JOB_TYPE.HAUL, target) == false && target.gridTileLocation.parentMap.region == _owner.region) {
 
-            //Should not create haul jobs if the target resource pile is in another village
-            BaseSettlement settlement; 
-            if(target.gridTileLocation.IsPartOfSettlement(out settlement) && _owner != settlement && settlement.locationType == LOCATION_TYPE.VILLAGE) {
+            //Exclude Haul resource if pile is in settlement owned by major faction or ratmen faction
+            if(target.gridTileLocation.IsPartOfSettlement(out var settlement) && _owner != settlement && settlement.owner != null && 
+               (settlement.owner.isMajorNonPlayer || settlement.owner.factionType.type == FACTION_TYPE.Ratmen)) {
                 return;
             }
+            
 			ResourcePile chosenPileToDepositTo = _owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, 
 				new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, _owner);
@@ -446,11 +513,11 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
     #region Judge Prisoner
     public void TryCreateJudgePrisoner(Character target) {
 		if (target.traitContainer.HasTrait("Restrained") && target.traitContainer.HasTrait("Criminal")
-		    && target.currentStructure.settlementLocation is NPCSettlement
-		    && target.currentStructure.settlementLocation == _owner
+            && target.gridTileLocation != null
+		    && target.gridTileLocation.IsPartOfSettlement(_owner)
             && _owner.owner != null) {
-            NPCSettlement npcSettlement = target.currentStructure.settlementLocation as NPCSettlement;
-            if(npcSettlement.prison == target.currentStructure && !npcSettlement.HasJob(JOB_TYPE.JUDGE_PRISONER, target)) {
+            NPCSettlement npcSettlement = _owner as NPCSettlement;
+            if(npcSettlement != null && npcSettlement.prison == target.currentStructure && !npcSettlement.HasJob(JOB_TYPE.JUDGE_PRISONER, target)) {
                 if (!target.HasJobTargetingThis(JOB_TYPE.JUDGE_PRISONER)) {
                     if (target.crimeComponent.IsWantedBy(_owner.owner)) {
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.JUDGE_CHARACTER, target, _owner);
@@ -583,7 +650,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		Debug.Log(summary);
 	}
 	private void TryCreateRestrainJobs(Character target) {
-		if (CanCreateRestrainJob() && target.faction.IsHostileWith(_owner.owner) && target.canPerform && target.canMove && !target.traitContainer.HasTrait("Restrained")) {
+		if (CanCreateRestrainJob() && target.faction.IsHostileWith(_owner.owner) && target.limiterComponent.canPerform && target.limiterComponent.canMove && !target.traitContainer.HasTrait("Restrained")) {
 			int combatantResidents = 
 				_owner.residents.Count(x => x.traitContainer.HasTrait("Combatant"));
 			int existingKnockoutJobs = _owner.GetNumberOfJobsWith(JOB_TYPE.RESTRAIN);
@@ -985,7 +1052,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
             }
             if (target.isDead && targetPOI.gridTileLocation != null && targetPOI.mapObjectVisual) {
 
-                if (targetPOI.gridTileLocation.structure.settlementLocation == _owner) {
+                if (targetPOI.gridTileLocation.IsPartOfSettlement(_owner)) {
                     //If the target is inside this settlement, only take corpse those corpses that are not in the cult temple
                     //We should not take corpses from our own settlement that are already in the Cult Temple
                     if (targetPOI.gridTileLocation.structure.structureType != STRUCTURE_TYPE.CULT_TEMPLE) {
@@ -993,7 +1060,11 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
                         targetWeights.AddElement(targetPOI, 50);
                     }
                 } else {
-                    Faction targetLocationFactionOwner = targetPOI.gridTileLocation.structure.settlementLocation?.owner;
+                    BaseSettlement settlement = null;
+                    Faction targetLocationFactionOwner = null;
+                    if (targetPOI.gridTileLocation.IsPartOfSettlement(out settlement)) {
+                        targetLocationFactionOwner = settlement.owner;
+                    }
                     int weight = 50;
                     if(factionOwner != null && targetLocationFactionOwner != null && factionOwner.IsHostileWith(targetLocationFactionOwner)) {
                         //Corpses that are inside the settlement of a hostile faction should be less likely to be targeted
@@ -1049,6 +1120,63 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
         } else {
             return new object[] { corpse1, corpse2, corpse3 };
         }
+    }
+    #endregion
+    
+    #region Quarantine
+    public void TriggerQuarantineJob(Character target) {
+	    if (!_owner.HasJob(JOB_TYPE.QUARANTINE, target)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.QUARANTINE, INTERACTION_TYPE.QUARANTINE, target, _owner);
+		    _owner.AddToAvailableJobs(job);
+	    }
+    }
+    #endregion
+
+    #region Change Class
+    public void OnNeededClassRemoved(string p_removedClass) {
+	    //cancel all change class jobs targeting removed class
+	    List<JobQueueItem> changeClassJobs = _owner.availableJobs.GetJobsWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, p_removedClass);
+	    changeClassJobs?.CancelJobs(false, $"{p_removedClass} is no longer needed.");
+    }
+    private void HourlyCheckForNeededCharacterClasses() {
+	    if (_owner.settlementClassTracker.neededClasses.Count > 0) {
+		    ProfessionPedestal professionPedestal = _owner.GetFirstTileObjectOfTypeThatMeetCriteria<ProfessionPedestal>(t => t.IsAvailable());
+		    if (professionPedestal != null) {
+			    for (int i = 0; i < _owner.settlementClassTracker.neededClasses.Count; i++) {
+				    string neededClass = _owner.settlementClassTracker.neededClasses[i];
+				    if (ShouldCreateChangeClassJob(neededClass)) {
+					    TriggerChangeClassJob(professionPedestal, neededClass);
+				    }
+			    }    
+		    }
+	    }
+    }
+    private int GetAbleResidentsClassAmount(NPCSettlement p_settlement, string p_className) {
+	    int classCount = 0;
+	    for (int i = 0; i < p_settlement.residents.Count; i++) {
+		    Character resident = p_settlement.residents[i];
+		    if (resident.characterClass.className == p_className && !resident.traitContainer.HasTrait("Paralyzed", "Quarantined")) {
+			    classCount++;
+		    }
+	    }
+	    return classCount;
+    }
+    private bool ShouldCreateChangeClassJob(string p_className) {
+	    int neededAmount = Mathf.FloorToInt((float)_owner.residents.Count * 0.15f);
+	    neededAmount = Mathf.Max(1, neededAmount);
+	    int currentClassAmount = GetAbleResidentsClassAmount(_owner, p_className);
+	    if (currentClassAmount < neededAmount) {
+		    return true;
+	    }
+	    return false;
+    }
+    private void TriggerChangeClassJob(ProfessionPedestal professionPedestal, string className) {
+	    if (!_owner.availableJobs.HasJobWithOtherData(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, className)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHANGE_CLASS, INTERACTION_TYPE.CHANGE_CLASS, professionPedestal, _owner);
+		    job.SetCanTakeThisJobChecker(JobManager.Can_Take_Change_Class);
+		    job.AddOtherData(INTERACTION_TYPE.CHANGE_CLASS, new object[] { className });
+		    _owner.AddToAvailableJobs(job);    
+	    }
     }
     #endregion
 }

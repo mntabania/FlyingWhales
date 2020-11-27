@@ -288,7 +288,7 @@ public class Assault : GoapAction {
                 if (crime.associatedJobType != JOB_TYPE.APPREHEND && crime.associatedJobType != JOB_TYPE.RESTRAIN) {
                     //since there is no drink blood job (it uses fullness recovery), to check if job is from drink blood, just check if the associated job type is knockout
                     //since knockout will only ever be used for fullness recovery if it is for Drinking Blood 
-                    bool isDrinkBloodJob = crime.associatedJobType.IsFullnessRecovery(); 
+                    bool isDrinkBloodJob = crime.associatedJobType.IsFullnessRecoveryTypeJob(); 
                     if (isDrinkBloodJob || crime.associatedJobType == JOB_TYPE.IMPRISON_BLOOD_SOURCE) {
                         return CRIME_TYPE.Vampire;
                     } else {
@@ -337,7 +337,7 @@ public class Assault : GoapAction {
 
         string key = goapNode.actor.combatComponent.GetCombatLogKeyReason(goapNode.poiTarget);
         JOB_TYPE jobType = goapNode.associatedJobType;
-        if(LocalizationManager.Instance.HasLocalizedValue("Character", "Combat", key)) {
+        if(!string.IsNullOrEmpty(key) && LocalizationManager.Instance.HasLocalizedValue("Character", "Combat", key)) {
             string reason = LocalizationManager.Instance.GetLocalizedValue("Character", "Combat", key);
             goapNode.descriptionLog.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
         } else {

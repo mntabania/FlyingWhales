@@ -14,8 +14,8 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT, INTERACTION_TYPE.POISON };
-            AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Pre_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Per_Tick_Effect_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Execute_After_Effect_Trait);
         }
 
         #region Overrides
@@ -31,24 +31,11 @@ namespace Traits {
                 owner = poi;
             }
         }
-        public override void ExecuteActionPreEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
-            base.ExecuteActionPreEffects(action, goapNode);
-            if (action == INTERACTION_TYPE.EAT) {
-                if (owner is Mushroom || owner is BerryShrub) {
-                    owner.SetPOIState(POI_STATE.INACTIVE);
-                }
-            }
-        }
         public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
             base.ExecuteActionPerTickEffects(action, goapNode);
             if (action == INTERACTION_TYPE.EAT) {
                 goapNode.actor.needsComponent.AdjustFullness(8.5f);
                 //goapNode.actor.needsComponent.AdjustStamina(2f);
-                if (!goapNode.actor.traitContainer.HasTrait("Infected")) {
-                    if (owner.traitContainer.HasTrait("Infected")) {
-                        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Infected");
-                    }
-                }
                 if(owner is Table) {
                     goapNode.actor.needsComponent.AdjustHappiness(0.83f);
                     owner.AdjustResource(RESOURCE.FOOD, -1);
@@ -90,7 +77,14 @@ namespace Traits {
                         cost = 28;
                     }
                 }
-               
+            }
+        }
+        public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
+            base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
+            if (action == INTERACTION_TYPE.EAT) {
+                if (owner is Crops crops) {
+                    crops.SetGrowthState(Crops.Growth_State.Growing);
+                }
             }
         }
         #endregion

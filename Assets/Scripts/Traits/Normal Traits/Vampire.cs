@@ -33,12 +33,12 @@ namespace Traits {
             canBeTriggered = true;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED_SELF, INTERACTION_TYPE.DISPEL };
             awareCharacters = new List<Character>();
-            AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Expected_Effect_Trait);
+            //AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Expected_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Before_Start_Flee);
             AddTraitOverrideFunctionIdentifier(TraitManager.After_Exiting_Combat);
             AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
-            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_While_Stationary_Unoccupied);
         }
 
         #region Overrides
@@ -124,11 +124,11 @@ namespace Traits {
             }
             return base.TriggerFlaw(character);
         }
-        public override void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref List<GoapEffect> effects) {
-            if (action == INTERACTION_TYPE.DRINK_BLOOD) {
-                effects.Add(new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
-            }
-        }
+        //public override void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref List<GoapEffect> effects) {
+        //    if (action == INTERACTION_TYPE.DRINK_BLOOD) {
+        //        effects.Add(new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
+        //    }
+        //}
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Character targetCharacter && targetCharacter.advertisedActions.Contains(INTERACTION_TYPE.DRINK_BLOOD) && characterThatWillDoJob.needsComponent.isStarving) {
                 if (!characterThatWillDoJob.relationshipContainer.IsFriendsWith(targetCharacter) &&
@@ -206,11 +206,11 @@ namespace Traits {
             }
             return data;
         }
-        public override bool PerTickOwnerMovement() {
-            if (dislikedBeingVampire && GameUtilities.RollChance(1) && _owner.currentJob != null && _owner.currentJob.jobType.IsFullnessRecovery()) { //1
+        public override bool PerTickWhileStationaryOrUnoccupied() {
+            if (dislikedBeingVampire && GameUtilities.RollChance(1) && _owner.currentJob != null && _owner.currentJob.jobType.IsFullnessRecoveryTypeJob()) { //1
                 _owner.currentJob.ForceCancelJob(false, "Resisted Hunger");
                 _owner.traitContainer.AddTrait(_owner, "Ashamed");
-                _owner.traitContainer.AddTrait(_owner, "Fasting");
+                _owner.traitContainer.AddTrait(_owner, "Abstain Fullness");
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Vampire", "resist_hunger", null, LOG_TAG.Needs);
                 log.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToDatabase();
@@ -230,9 +230,9 @@ namespace Traits {
             isTraversingUnwalkableAsBat = saveDataVampire.isTraversingUnwalkableAsBat;
             hasAlreadyBecomeVampireLord = saveDataVampire.hasAlreadyBecomeVampireLord;
         }
-        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            SaveDataVampire saveDataVampire = saveDataTrait as SaveDataVampire;
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
+            SaveDataVampire saveDataVampire = p_saveDataTrait as SaveDataVampire;
             Assert.IsNotNull(saveDataVampire);
             awareCharacters.AddRange(SaveUtilities.ConvertIDListToCharacters(saveDataVampire.awareCharacters));
         }

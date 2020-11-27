@@ -59,9 +59,9 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         MoveToRandomDirection();
         _expiryKey = SchedulingManager.Instance.AddEntry(_poisonCloud.expiryDate, Expire, this);
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
-        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
-        Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
+        Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+        Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         isSpawned = true;
 
         if (GameManager.Instance.isPaused) {
@@ -244,9 +244,9 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
             SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);
         }
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
-        Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
-        Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-        Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.RemoveListener<bool>(UISignals.PAUSED, OnGamePaused);
+        Messenger.RemoveListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+        Messenger.RemoveListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         _poisonCloud.Expire();
         StartCoroutine(DestroyCoroutine());
     }

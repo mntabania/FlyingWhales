@@ -84,21 +84,20 @@ public class FactionInfoUIV2 : MonoBehaviour {
         ClearFilteredTraits();
         ClearFilteredRegions();
 
-        Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
-        Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
-        Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
-        Messenger.AddListener<Faction, BaseSettlement>(Signals.FACTION_OWNED_SETTLEMENT_ADDED, OnFactionSettlementAdded);
-        Messenger.AddListener<Faction, BaseSettlement>(Signals.FACTION_OWNED_SETTLEMENT_REMOVED, OnFactionSettlementRemoved);
-        Messenger.AddListener<FactionRelationship>(Signals.FACTION_RELATIONSHIP_CHANGED, OnFactionRelationshipChanged);
-        Messenger.AddListener<Faction>(Signals.FACTION_ACTIVE_CHANGED, OnFactionActiveChanged);
-        Messenger.AddListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnFactionLeaderChanged);
-        Messenger.AddListener<Faction, ILeader>(Signals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateHistory);
-        Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
-        Messenger.AddListener<Faction>(Signals.FACTION_IDEOLOGIES_CHANGED, OnFactionIdeologiesChanged);
-        Messenger.AddListener<Faction>(Signals.FACTION_CRIMES_CHANGED, OnFactionCrimesChanged);
-        Messenger.AddListener<Character, Character>(Signals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
+        Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
+        Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
+        Messenger.AddListener<Faction, BaseSettlement>(FactionSignals.FACTION_OWNED_SETTLEMENT_ADDED, OnFactionSettlementAdded);
+        Messenger.AddListener<Faction, BaseSettlement>(FactionSignals.FACTION_OWNED_SETTLEMENT_REMOVED, OnFactionSettlementRemoved);
+        Messenger.AddListener<FactionRelationship>(FactionSignals.FACTION_RELATIONSHIP_CHANGED, OnFactionRelationshipChanged);
+        Messenger.AddListener<Faction>(FactionSignals.FACTION_ACTIVE_CHANGED, OnFactionActiveChanged);
+        Messenger.AddListener<Character, ILeader>(CharacterSignals.ON_SET_AS_FACTION_LEADER, OnFactionLeaderChanged);
+        Messenger.AddListener<Faction, ILeader>(CharacterSignals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Log>(UISignals.LOG_ADDED, UpdateHistory);
+        Messenger.AddListener<Log>(UISignals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
+        Messenger.AddListener<Faction>(FactionSignals.FACTION_IDEOLOGIES_CHANGED, OnFactionIdeologiesChanged);
+        Messenger.AddListener<Faction>(FactionSignals.FACTION_CRIMES_CHANGED, OnFactionCrimesChanged);
+        Messenger.AddListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
         logsWindow.Initialize();
     }
     public void SetFaction(Faction faction) {
@@ -199,20 +198,23 @@ public class FactionInfoUIV2 : MonoBehaviour {
         locationItems.Add(item);
     }
     private void OnClickSettlementItem(BaseSettlement settlement) {
-        if (settlement.tiles.Count > 0) {
-            HexTile tile = settlement.tiles[0];
-            if (InnerMapManager.Instance.isAnInnerMapShowing) {
-                //if inner map is showing, open inner map of hextile then center on it
-                if (InnerMapManager.Instance.currentlyShowingLocation != tile.region) {
-                    InnerMapManager.Instance.TryShowLocationMap(tile.region);
-                }
-                InnerMapCameraMove.Instance.CenterCameraOnTile(tile);
-            } else {
-                //if world map is showing, just center on hextile
-                tile.CenterCameraHere();
-            }
-            UIManager.Instance.ShowHexTileInfo(tile);
+        if (settlement.allStructures.Count > 0) {
+            UIManager.Instance.ShowStructureInfo(settlement.allStructures.First());
         }
+        // if (settlement.tiles.Count > 0) {
+        //     HexTile tile = settlement.tiles[0];
+        //     if (InnerMapManager.Instance.isAnInnerMapShowing) {
+        //         //if inner map is showing, open inner map of hextile then center on it
+        //         if (InnerMapManager.Instance.currentlyShowingLocation != tile.region) {
+        //             InnerMapManager.Instance.TryShowLocationMap(tile.region);
+        //         }
+        //         InnerMapCameraMove.Instance.CenterCameraOnTile(tile);
+        //     } else {
+        //         //if world map is showing, just center on hextile
+        //         tile.CenterCameraHere();
+        //     }
+        //     UIManager.Instance.ShowHexTileInfo(tile);
+        // }
     }
     private SettlementNameplateItem GetLocationItem(BaseSettlement settlement) {
         for (int i = 0; i < locationItems.Count; i++) {
@@ -248,7 +250,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
 
         foreach (KeyValuePair<Faction, FactionRelationship> keyValuePair in activeFaction.relationships) {
             if (keyValuePair.Key.factionType.type != FACTION_TYPE.Wild_Monsters && keyValuePair.Key.factionType.type != FACTION_TYPE.Disguised) {
-                // if (keyValuePair.Key == FactionManager.Instance.undeadFaction && keyValuePair.Key.leader == null) {
+                // if (keyValuePair.Key?.factionType.type == FACTION_TYPE.Undead && keyValuePair.Key.leader == null) {
                 //     //Only add Undead faction in Relations once it gains a Faction Leader
                 //     continue;
                 // }
@@ -572,12 +574,6 @@ public class FactionInfoUIV2 : MonoBehaviour {
         crimesScrollRect.verticalNormalizedPosition = 1;
         //locationsScrollView.verticalNormalizedPosition = 1;
         logsWindow.ResetScrollPosition();
-    }
-    private void OnInspectAll() {
-        if (activeFaction != null) {
-            UpdateAllCharacters();
-            //UpdateHiddenUI();
-        }
     }
     public void ShowFactionTestingInfo() {
         string summary = $"Faction Type: {activeFaction.factionType.type.ToString()}";

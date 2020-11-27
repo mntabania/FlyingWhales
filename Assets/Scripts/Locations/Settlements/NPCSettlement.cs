@@ -5,7 +5,9 @@ using System.Linq;
 using Databases;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations;
 using Locations.Settlements;
+using Locations.Settlements.Components;
 using Locations.Settlements.Settlement_Types;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -14,6 +16,7 @@ using Traits;
 using Random = UnityEngine.Random;
 
 public class NPCSettlement : BaseSettlement, IJobOwner {
+
     public LocationStructure prison { get; private set; }
     public LocationStructure mainStorage { get; private set; }
     public CityCenter cityCenter { get; private set; }
@@ -27,15 +30,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
 
     //structures
     public List<JobQueueItem> availableJobs { get; }
-    public LocationClassManager classManager { get; }
     public LocationEventManager eventManager { get; private set; }
     public SettlementJobPriorityComponent jobPriorityComponent { get; }
     public SettlementType settlementType { get; private set; }
     public GameDate plaguedExpiryDate { get; private set; }
     public SettlementJobTriggerComponent settlementJobTriggerComponent { get; }
+    public SettlementClassTracker settlementClassTracker { get; }
+    public NPCSettlementEventDispatcher npcSettlementEventDispatcher { get; }
     public bool hasPeasants { get; private set; }
     public bool hasWorkers { get; private set; }
-    
+
     private readonly Region _region;
     private readonly WeightedDictionary<Character> newRulerDesignationWeights;
     private int newRulerDesignationChance;
@@ -56,10 +60,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         ResetNewRulerDesignationChance();
         availableJobs = new List<JobQueueItem>();
-        classManager = new LocationClassManager();
         eventManager = new LocationEventManager(this);
         jobPriorityComponent = new SettlementJobPriorityComponent(this);
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
+        settlementClassTracker = new SettlementClassTracker();
+        npcSettlementEventDispatcher = new NPCSettlementEventDispatcher();
         _plaguedExpiryKey = string.Empty;
         _neededObjects = new List<TILE_OBJECT_TYPE>() {
             TILE_OBJECT_TYPE.HEALING_POTION,
@@ -76,10 +81,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         ResetNewRulerDesignationChance();
         availableJobs = new List<JobQueueItem>();
-        classManager = new LocationClassManager();
         // eventManager = new LocationEventManager(this, saveData.eventManager); //loaded event manager at LoadReferences
         jobPriorityComponent = new SettlementJobPriorityComponent(this);
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
+        settlementClassTracker = new SettlementClassTracker(saveData.classTracker);
+        npcSettlementEventDispatcher = new NPCSettlementEventDispatcher();
         _plaguedExpiryKey = string.Empty;
         _neededObjects = new List<TILE_OBJECT_TYPE>(saveData.neededObjects);
     }
@@ -150,8 +156,13 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void LoadResidents(SaveDataBaseSettlement data) {
         if(data.residents != null) {
             for (int i = 0; i < data.residents.Count; i++) {
-                Character resident = CharacterManager.Instance.GetCharacterByPersistentID(data.residents[i]);
-                residents.Add(resident);
+                var residentData = data.residents[i];
+                Character resident = CharacterManager.Instance.GetCharacterByPersistentID(residentData);
+                if (resident != null) {
+                    residents.Add(resident);    
+                } else {
+                    Debug.LogWarning($"{name} is trying to load a null resident with id {residentData}!");
+                }
             }
         }
     }
@@ -167,42 +178,48 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
 
     #region Listeners
     private void SubscribeToSignals() {
-        Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
-        Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingCharacter);
-        Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
-        Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
+        Messenger.AddListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingCharacter);
+        Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(CharacterSignals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         // Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-        Messenger.AddListener<Character, IPointOfInterest>(Signals.CHARACTER_SAW, OnCharacterSaw);
+        Messenger.AddListener<Character, IPointOfInterest>(CharacterSignals.CHARACTER_SAW, OnCharacterSaw);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
-        Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
+        Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         //Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
         //Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         //Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
         if (locationType == LOCATION_TYPE.VILLAGE) {
-            settlementJobTriggerComponent.SubscribeToListeners();    
+            settlementJobTriggerComponent.SubscribeToVillageListeners();    
+        } else if (locationType == LOCATION_TYPE.DUNGEON) {
+            settlementJobTriggerComponent.SubscribeToDungeonListeners();
         }
+        settlementJobTriggerComponent.HookToSettlementClassTrackerEvents(settlementClassTracker);
     }
     private void UnsubscribeToSignals() {
-        Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
-        Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingCharacter);
-        Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
+        Messenger.RemoveListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingCharacter);
+        Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(CharacterSignals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         // Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-        Messenger.RemoveListener<Character, IPointOfInterest>(Signals.CHARACTER_SAW, OnCharacterSaw);
+        Messenger.RemoveListener<Character, IPointOfInterest>(CharacterSignals.CHARACTER_SAW, OnCharacterSaw);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
-        Messenger.RemoveListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
+        Messenger.RemoveListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
         if (locationType == LOCATION_TYPE.VILLAGE) {
-            settlementJobTriggerComponent.UnsubscribeListeners();
+            settlementJobTriggerComponent.UnsubscribeFromVillageListeners();
+        } else if (locationType == LOCATION_TYPE.DUNGEON) {
+            settlementJobTriggerComponent.UnsubscribeFromDungeonListeners();
         }
+        settlementJobTriggerComponent.UnHookToSettlementClassTrackerEvents(settlementClassTracker);
     }
     private void OnCharacterAddedToFaction(Character character, Faction faction) {
         //once a resident character changes its faction, check if all the residents of this settlement share the same faction,
@@ -233,7 +250,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 for (int i = 0; i < residents.Count; i++) {
                     Character resident = residents[i];
                     if (resident != character && resident.faction != faction) {
-                        if(resident.faction != null && (resident.faction.isMajorNonPlayer || resident.faction == FactionManager.Instance.undeadFaction)) {
+                        if(resident.faction != null && (resident.faction.isMajorNonPlayer || resident.faction.factionType.type == FACTION_TYPE.Undead)) {
                             areThereOtherResidentsThatIsInAMajorOrUndeadFaction = true;
                             break;
                         }
@@ -260,12 +277,13 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if(isUnderSiege != state) {
             isUnderSiege = state;
             Debug.Log($"{GameManager.Instance.TodayLogString()}{name} Under Siege state changed to {isUnderSiege.ToString()}");
-            Messenger.Broadcast(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, this, isUnderSiege);
+            Messenger.Broadcast(SettlementSignals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, this, isUnderSiege);
             if (isUnderSiege) {
             } else {
                 if(exterminateTargetStructure != null) {
                     if(owner != null && !owner.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, exterminateTargetStructure)) {
-                        if(exterminateTargetStructure.settlementLocation == null || exterminateTargetStructure.settlementLocation.HasAliveResidentThatIsHostileWith(owner)) {
+                        if(exterminateTargetStructure.settlementLocation == null || exterminateTargetStructure.settlementLocation.HasResidentThatMeetsCriteria(resident => !resident.isDead
+                    && (resident.faction == null || owner == null || owner.IsHostileWith(resident.faction)))) {
                             owner.partyQuestBoard.CreateExterminatePartyQuest(null, this, exterminateTargetStructure, this);
                         }
                     }
@@ -298,9 +316,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         ClearAllBlacklistToAllExistingJobs();
     }
     private void OnHourStarted() {
+        CheckSlaveResidents();
         CheckForJudgePrisoners();
-        if(ruler == null && locationType == LOCATION_TYPE.VILLAGE && owner != null && owner.isMajorNonPlayer) {
-            CheckForNewRulerDesignation();
+        if(locationType == LOCATION_TYPE.VILLAGE) {
+            if (ruler == null && owner != null && owner.isMajorNonPlayer) {
+                CheckForNewRulerDesignation();
+            }
         }
         if (isUnderSiege) {
             CheckIfStillUnderSiege();
@@ -329,6 +350,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 }
             }
         }
+        npcSettlementEventDispatcher.ExecuteHourStartedEvent(this);
     }
     #endregion
 
@@ -350,7 +372,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
         if (character.homeSettlement == this) {
-            classManager.OnResidentChangeClass(character, previousClass, currentClass);
+            settlementClassTracker.OnResidentChangedClass(previousClass.className, character);
             jobPriorityComponent.ChangeClassResidentResetPrimaryJob(character);
         }
     }
@@ -361,7 +383,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             OnAddResident(character);
             if (character.race == RACE.DEMON || character is Summon) { return true; }
             if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
-                classManager.OnAddResident(character);
                 jobPriorityComponent.OnAddResident(character);    
             }
             return true;
@@ -374,7 +395,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             character.SetHomeSettlement(null);
             OnRemoveResident(character);
             if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
-                classManager.OnRemoveResident(character);
                 jobPriorityComponent.OnRemoveResident(character);
             }
             UnassignJobsTakenBy(character);
@@ -382,7 +402,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return false;
     }
-    private void OnCharacterMissing(Character missingCharacter) {
+    private void OnCharacterPresumedDead(Character missingCharacter) {
         if (ruler != null && missingCharacter == ruler) {
             SetRuler(null);
         }
@@ -404,10 +424,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if(ruler != null) {
             ruler.SetRuledSettlement(this);
             //ResetNewRulerDesignationChance();
-            Messenger.Broadcast(Signals.ON_SET_AS_SETTLEMENT_RULER, ruler, previousRuler);
+            Messenger.Broadcast(CharacterSignals.ON_SET_AS_SETTLEMENT_RULER, ruler, previousRuler);
         } else {
-            Messenger.Broadcast(Signals.ON_SETTLEMENT_RULER_REMOVED, this, previousRuler);
+            Messenger.Broadcast(CharacterSignals.ON_SETTLEMENT_RULER_REMOVED, this, previousRuler);
         }
+        npcSettlementEventDispatcher.ExecuteSettlementRulerChangedEvent(newRuler, this);
     }
     private void CheckForNewRulerDesignation() {
         string debugLog =
@@ -434,8 +455,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 continue;
             }
             log += $"\n\n-{resident.name}";
-            if(resident.isDead /*|| resident.isMissing*/ || resident.isBeingSeized) {
-                log += "\nEither dead or missing or seized, will not be part of candidates for ruler";
+            if(resident.isDead /*|| resident.isMissing*/ || resident.isBeingSeized || resident.traitContainer.HasTrait("Enslaved")) {
+                log += "\nEither dead or missing or seized or enslaved, will not be part of candidates for ruler";
                 continue;
             }
 
@@ -609,7 +630,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public bool HasCanPerformOrAliveResidentInsideSettlement() {
         for (int i = 0; i < residents.Count; i++) {
             Character resident = residents[i];
-            if(resident.canPerform && !resident.isDead 
+            if(resident.limiterComponent.canPerform && !resident.isDead 
                 && !resident.isBeingSeized
                 && resident.gridTileLocation != null 
                 && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
@@ -668,6 +689,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void OnAddResident(Character character) {
         eventManager.OnResidentAdded(character);
+        settlementClassTracker.OnResidentAdded(character);
         if(residents.Count == 1 && locationType == LOCATION_TYPE.VILLAGE) {
             //First resident
             ChangeSettlementTypeAccordingTo(character);
@@ -688,6 +710,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void OnRemoveResident(Character character) {
         eventManager.OnResidentRemoved(character);
+        settlementClassTracker.OnResidentRemoved(character);
         UnapplyAbleJobsFromSettlement(character);
         if (character.characterClass.className == "Peasant") {
             UpdateHasPeasants();
@@ -695,6 +718,26 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (character.traitContainer.HasTrait("Worker")) {
             UpdateHasWorkers();
         }
+    }
+    private void CheckSlaveResidents() {
+        if (AreAllResidentsSlaves()) {
+            List<Character> settlementResidents = ObjectPoolManager.Instance.CreateNewCharactersList();
+            settlementResidents.AddRange(residents);
+            for (int i = 0; i < settlementResidents.Count; i++) {
+                Character resident = settlementResidents[i];
+                resident.traitContainer.RemoveTrait(resident, "Enslaved");
+            }
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(settlementResidents);
+        }
+
+    }
+    private bool AreAllResidentsSlaves() {
+        for (int i = 0; i < residents.Count; i++) {
+            if (!residents[i].traitContainer.HasTrait("Enslaved")) {
+                return false;
+            }
+        }
+        return true;
     }
     #endregion
 
@@ -751,63 +794,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         UpdatePrison();
         UpdateMainStorage();
-        switch (structure.structureType) {
-            // case STRUCTURE_TYPE.FARM:
-            //     classManager.AddCombatantClass("Druid");
-            //     break;
-            // case STRUCTURE_TYPE.LUMBERYARD:
-            //     classManager.AddCombatantClass("Archer");
-            //     break;
-            // case STRUCTURE_TYPE.CEMETERY:
-            //     classManager.AddCombatantClass("Stalker");
-            //     break;
-            // case STRUCTURE_TYPE.HUNTER_LODGE:
-            //     classManager.AddCombatantClass("Hunter");
-            //     break;
-            // case STRUCTURE_TYPE.PRISON:
-            //     classManager.AddCombatantClass("Knight");
-            //     break;
-            // case STRUCTURE_TYPE.MAGE_QUARTERS:
-            //     classManager.AddCombatantClass("Mage");
-            //     break;
-            // case STRUCTURE_TYPE.APOTHECARY:
-            //     classManager.AddCombatantClass("Shaman");
-            //     break;
-            case STRUCTURE_TYPE.MINE_SHACK:
-                classManager.AddCivilianClass("Miner");
-                break;
-        }
     }
     protected override void OnStructureRemoved(LocationStructure structure) {
         base.OnStructureRemoved(structure);
         UpdatePrison();
         UpdateMainStorage();
-        switch (structure.structureType) {
-            // case STRUCTURE_TYPE.FARM:
-            //     classManager.RemoveCombatantClass("Druid");
-            //     break;
-            // case STRUCTURE_TYPE.LUMBERYARD:
-            //     classManager.RemoveCombatantClass("Archer");
-            //     break;
-            // case STRUCTURE_TYPE.CEMETERY:
-            //     classManager.RemoveCombatantClass("Stalker");
-            //     break;
-            // case STRUCTURE_TYPE.HUNTER_LODGE:
-            //     classManager.RemoveCombatantClass("Hunter");
-            //     break;
-            // case STRUCTURE_TYPE.PRISON:
-            //     classManager.RemoveCombatantClass("Knight");
-            //     break;
-            // case STRUCTURE_TYPE.MAGE_QUARTERS:
-            //     classManager.RemoveCombatantClass("Mage");
-            //     break;
-            // case STRUCTURE_TYPE.APOTHECARY:
-            //     classManager.RemoveCombatantClass("Shaman");
-            //     break;
-            case STRUCTURE_TYPE.ABANDONED_MINE:
-                classManager.RemoveCivilianClass("Miner");
-                break;
-        }
     }
     private void OnCharacterSaw(Character character, IPointOfInterest seenPOI) {
         if (character.homeSettlement == this && character.currentSettlement == this) {
@@ -818,7 +809,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 if(owner != null 
                    && target.gridTileLocation != null 
                    && target.gridTileLocation.IsPartOfSettlement(this)
-                   && target.canPerform && target.canMove
+                   && target.limiterComponent.canPerform && target.limiterComponent.canMove
                    //&& target.traitContainer.HasTrait("Unconscious") == false
                    && target.isDead == false
                    && target.combatComponent.combatMode != COMBAT_MODE.Passive) {
@@ -891,6 +882,33 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return default;
     }
+    public LocationStructure GetFirstUnoccupiedDwelling() {
+        LocationStructure chosenDwelling = null;
+        List<LocationStructure> dwellings = GetStructuresOfType(STRUCTURE_TYPE.DWELLING);
+        if (dwellings != null) {
+            for (int i = 0; i < dwellings.Count; i++) {
+                LocationStructure currDwelling = dwellings[i];
+                if (!currDwelling.IsOccupied()) {
+                    chosenDwelling = currDwelling;
+                    break;
+                }
+            }
+        }
+        return chosenDwelling;
+    }
+    public int GetUnoccupiedDwellingCount() {
+        int count = 0;
+        List<LocationStructure> dwellings = GetStructuresOfType(STRUCTURE_TYPE.DWELLING);
+        if (dwellings != null && dwellings.Count > 0) {
+            for (int i = 0; i < dwellings.Count; i++) {
+                LocationStructure dwelling = dwellings[i];
+                if (!dwelling.IsOccupied()) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
     #endregion
 
     #region Inner Map
@@ -959,7 +977,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         bool shouldCheckResourcePiles = mainStorage != null && structure != null && mainStorage != structure;
         mainStorage = structure;
         if (shouldCheckResourcePiles) {
-            Messenger.Broadcast(Signals.SETTLEMENT_CHANGE_STORAGE, this);
+            Messenger.Broadcast(SettlementSignals.SETTLEMENT_CHANGE_STORAGE, this);
         }
     }
     public void LoadPrison(LocationStructure prison) {
@@ -1401,12 +1419,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         return false;
     }
     private void UpdateAbleJobsOfAllResidents() {
+        if (owner != null && owner.factionType.type == FACTION_TYPE.Ratmen) { return; }
         for (int i = 0; i < residents.Count; i++) {
             Character character = residents[i];
             UpdateAbleJobsOfResident(character);
         }
     }
     public void UpdateAbleJobsOfResident(Character character) {
+        if (owner != null && owner.factionType.type == FACTION_TYPE.Ratmen) { return; }
         //update jobs based on hasPeasants switch
         if (!hasPeasants) {
             if (character.characterClass.className != "Noble") {
@@ -1491,12 +1511,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #endregion
 
     #region Faction
-    public override void SetOwner(Faction owner) {
-        base.SetOwner(owner);
-        if (owner == null) {
+    public override void SetOwner(Faction p_newOwner) {
+        Faction previousOwner = this.owner;
+        base.SetOwner(p_newOwner);
+        if (p_newOwner == null) {
             //if owner of settlement becomes null, then set the settlement as no longer under siege
             SetIsUnderSiege(false);
         }
+        npcSettlementEventDispatcher.ExecuteFactionOwnerChangedEvent(previousOwner, p_newOwner, this);
     }
     #endregion
 

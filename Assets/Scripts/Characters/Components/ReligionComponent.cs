@@ -14,12 +14,12 @@
         SetDefaultReligion();
     }
     public void SubscribeListeners() {
-        Messenger.AddListener<Character>(Signals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, OnCharacterAllianceChanged);
-        Messenger.AddListener<Character>(Signals.FACTION_SET, OnCharacterFactionSet);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, OnCharacterAllianceChanged);
+        Messenger.AddListener<Character>(FactionSignals.FACTION_SET, OnCharacterFactionSet);
     }
     public void UnsubscribeListeners() {
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, OnCharacterAllianceChanged);
-        Messenger.RemoveListener<Character>(Signals.FACTION_SET, OnCharacterFactionSet);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, OnCharacterAllianceChanged);
+        Messenger.RemoveListener<Character>(FactionSignals.FACTION_SET, OnCharacterFactionSet);
     }
     #endregion
 
@@ -30,7 +30,7 @@
         }
     }
     private void OnCharacterFactionSet(Character character) {
-        if (character == owner && character.faction != null && character.faction.factionType.type == FACTION_TYPE.Undead) {
+        if (character == owner && character.faction?.factionType.type == FACTION_TYPE.Undead) {
             SetReligion(RELIGION.None);
         }
     }

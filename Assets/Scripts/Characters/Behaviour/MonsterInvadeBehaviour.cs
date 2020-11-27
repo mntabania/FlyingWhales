@@ -2,6 +2,7 @@
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 
 public class MonsterInvadeBehaviour : CharacterBehaviourComponent {
     public MonsterInvadeBehaviour() {
@@ -18,22 +19,28 @@ public class MonsterInvadeBehaviour : CharacterBehaviourComponent {
             log += $"\n-Party is not waiting";
             if(monsterInvadeGathering.target != null) {
                 log += $"\n-Party has target structure";
-                if (character.currentStructure.settlementLocation == monsterInvadeGathering.target.currentSettlement) {
-                    log += $"\n-Character is already in target settlement";
-                    Character target = character.currentStructure.settlementLocation.GetRandomAliveResidentInsideSettlement();
-                    if (target != null) {
-                        log += $"\n-Chosen target is {target.name}";
-                        character.combatComponent.Fight(target, CombatManager.Hostility);
+                BaseSettlement targetSettlement = monsterInvadeGathering.target.currentSettlement;
+                if (character.gridTileLocation != null && targetSettlement != null) {
+                    if (character.gridTileLocation.IsPartOfSettlement(targetSettlement)) {
+                        log += $"\n-Character is already in target settlement";
+                        Character target = targetSettlement.GetRandomResidentThatMeetCriteria(resident => character != resident && !resident.isDead && !resident.isBeingSeized && resident.gridTileLocation != null && resident.gridTileLocation.IsPartOfSettlement(targetSettlement) && !resident.traitContainer.HasTrait("Hibernating", "Indestructible"));
+                        if (target != null) {
+                            log += $"\n-Chosen target is {target.name}";
+                            character.combatComponent.Fight(target, CombatManager.Hostility);
+                        } else {
+                            log += $"\n-Roam around";
+                            character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                        }
                     } else {
-                        log += $"\n-Roam around";
-                        character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                        log += $"\n-Character is not in target structure, go to it";
+                        if (monsterInvadeGathering.target is LocationStructure targetStructure) {
+                            LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
+                            character.jobComponent.CreateGoToJob(targetTile, out producedJob);
+                        }
                     }
                 } else {
-                    log += $"\n-Character is not in target structure, go to it";
-                    if (monsterInvadeGathering.target is LocationStructure targetStructure) {
-                        LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
-                        character.jobComponent.CreateGoToJob(targetTile, out producedJob);
-                    }
+                    log += $"\n-Character has no tile/target settlement, roam";
+                    character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                 }
             } else {
                 log += $"\n-Party has no target structure";

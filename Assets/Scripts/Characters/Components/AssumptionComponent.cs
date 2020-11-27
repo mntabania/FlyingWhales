@@ -21,7 +21,7 @@ public class AssumptionComponent : CharacterComponent {
             //Example: If A already assumed that B murdered C, A will never assume that B murdered C again
             return;
         }
-        if (!owner.canWitness) {
+        if (!owner.limiterComponent.canWitness) {
             //Cannot assume cannot witness characters
             return;
         }
@@ -59,7 +59,7 @@ public class AssumptionComponent : CharacterComponent {
             targetTileObject.AddCharacterThatAlreadyAssumed(owner);
         }
 
-        Messenger.Broadcast(Signals.CHARACTER_ASSUMED, owner, assumedCharacter, targetOfAssumedCharacter);
+        Messenger.Broadcast(JobSignals.CHARACTER_ASSUMED, owner, assumedCharacter, targetOfAssumedCharacter);
     }
     private Assumption CreateNewAssumption(Character assumedCharacter, IPointOfInterest targetOfAssumedCharacter, INTERACTION_TYPE assumedActionType) {
         ActualGoapNode assumedAction = new ActualGoapNode(InteractionManager.Instance.goapActionData[assumedActionType], assumedCharacter, targetOfAssumedCharacter, null, 0);

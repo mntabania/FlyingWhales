@@ -97,12 +97,12 @@ namespace Tutorial {
             return false;
         }
         private void OnActivateSecondCollection() {
-            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-            Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.AddListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         }
         private void OnDeactivateSecondCollection() {
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-            Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.RemoveListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         }
         private void OnTileObjectRemoved(TileObject tileObject, Character removedBy, LocationGridTile removedFrom) {
             if (tileObject == _droppedObject) {

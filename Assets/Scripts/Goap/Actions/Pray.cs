@@ -11,7 +11,7 @@ public class Pray : GoapAction {
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.EARLY_NIGHT, TIME_IN_WORDS.LATE_NIGHT, TIME_IN_WORDS.AFTER_MIDNIGHT };
         actionIconString = GoapActionStateDB.Pray_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Needs};
     }
 
@@ -65,9 +65,9 @@ public class Pray : GoapAction {
     public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
         Character targetCharacter = target as Character;
-        
-        CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(witness, actor, target, node.crimeType);
-        
+
+        CRIME_SEVERITY severity = node.crimeType == CRIME_TYPE.None ? CRIME_SEVERITY.None : CrimeManager.Instance.GetCrimeSeverity(witness, actor, target, node.crimeType);
+
         if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
             CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
@@ -104,7 +104,7 @@ public class Pray : GoapAction {
         if (goapNode.actor.religionComponent.religion == RELIGION.Demon_Worship) {
             //Demon Worshippers produce 1 Chaos Orb when they Pray
             //https://trello.com/c/qnZzSwcW/2590-demon-worshippers-produce-1-chaos-orb-when-they-pray
-            Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, goapNode.poiTarget.worldPosition, 1, goapNode.poiTarget.gridTileLocation.parentMap);
+            Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, goapNode.poiTarget.worldPosition, 1, goapNode.poiTarget.gridTileLocation.parentMap);
         }
     }
     #endregion

@@ -36,9 +36,9 @@ namespace Traits {
         }
 
         #region Loading
-        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            SaveDataAngry dataTrait = saveDataTrait as SaveDataAngry;
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
+            SaveDataAngry dataTrait = p_saveDataTrait as SaveDataAngry;
             Assert.IsNotNull(dataTrait);
             _responsibleCharactersStack.AddRange(SaveUtilities.ConvertIDListToCharacters(dataTrait.characterIDs));
         }
@@ -159,7 +159,7 @@ namespace Traits {
         #endregion
         
         private void PerHourEffect() {
-            if (owner.canPerform && owner.canMove && !owner.isDead && owner != null 
+            if (owner.limiterComponent.canPerform && owner.limiterComponent.canMove && !owner.isDead && owner != null 
                 && owner.marker != null && owner.marker.inVisionTileObjects.Count > 0
                 && !owner.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.DESTROY) && Random.Range(0, 100) < 8) {
                 List<TileObject> choices = owner.marker.inVisionTileObjects

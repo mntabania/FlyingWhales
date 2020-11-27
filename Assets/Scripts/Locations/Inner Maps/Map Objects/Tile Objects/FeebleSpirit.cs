@@ -36,8 +36,8 @@ public class FeebleSpirit : TileObject {
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
-        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
+        Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         UpdateSpeed();
         _spiritGO.SetIsRoaming(true);
@@ -46,8 +46,8 @@ public class FeebleSpirit : TileObject {
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
-        Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
-        Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
+        Messenger.RemoveListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.RemoveListener<bool>(UISignals.PAUSED, OnGamePaused);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
     }
     protected override void CreateMapObjectVisual() {

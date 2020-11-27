@@ -22,9 +22,9 @@ public class BedMarkerNameplate : PooledObject {
         name = $"{bedGO.name} Marker Nameplate";
         this.bedGO = bedGO;
         UpdateSizeBasedOnZoom();
-        Messenger.AddListener<Camera, float>(Signals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnLocationMapOpened);
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnLocationMapClosed);
+        Messenger.AddListener<Camera, float>(ControlsSignals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnLocationMapOpened);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnLocationMapClosed);
     }
 
     #region Listeners
@@ -58,9 +58,9 @@ public class BedMarkerNameplate : PooledObject {
     public override void Reset() {
         base.Reset();
         bedGO = null;
-        Messenger.RemoveListener<Camera, float>(Signals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
-        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_OPENED, OnLocationMapOpened);
-        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_CLOSED, OnLocationMapClosed);
+        Messenger.RemoveListener<Camera, float>(ControlsSignals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
+        Messenger.RemoveListener<Region>(RegionSignals.REGION_MAP_OPENED, OnLocationMapOpened);
+        Messenger.RemoveListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnLocationMapClosed);
     }
     #endregion
 
@@ -76,11 +76,16 @@ public class BedMarkerNameplate : PooledObject {
             }    
         }
         if (showActionIcon) {
-            ActualGoapNode actionNode = bedTileObject.users[0].currentActionNode;
-            if (actionNode != null) {
+            Character user = bedTileObject.users[0];
+            ActualGoapNode actionNode = user.currentActionNode;
+            if (actionNode != null && (actionNode.actionStatus == ACTION_STATUS.PERFORMING || actionNode.actionStatus == ACTION_STATUS.STARTED)) {
                 UpdateActionIcon(InteractionManager.Instance.actionIconDictionary[actionNode.action.actionIconString]);
             } else {
-                UpdateActionIcon(InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Sleep_Icon]);
+                if (user.traitContainer.HasTrait("Quarantined")) {
+                    UpdateActionIcon(InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Sick_Icon]);
+                } else {
+                    UpdateActionIcon(InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Sleep_Icon]);    
+                }
             }
             ShowMarkerNameplate();
         } else {

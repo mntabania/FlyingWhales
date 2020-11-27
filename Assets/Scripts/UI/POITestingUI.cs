@@ -19,7 +19,7 @@ public class POITestingUI : MonoBehaviour {
         UIManager.Instance.HideSmallInfo();
         UIManager.Instance.PositionTooltip(gameObject, rt, rt);
         gameObject.SetActive(true);
-        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
+        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyPressed);
     }
     public void ShowUI(LocationGridTile gridTile) {
         if (activeCharacter != null) {
@@ -27,14 +27,14 @@ public class POITestingUI : MonoBehaviour {
             UIManager.Instance.HideSmallInfo();
             UIManager.Instance.PositionTooltip(gameObject, rt, rt);
             gameObject.SetActive(true);
-            Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
+            Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyPressed);
         }
     }
     public void HideUI() {
         gameObject.SetActive(false);
         this.poi = null;
         this.gridTile = null;
-        Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
+        Messenger.RemoveListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyPressed);
     }
     private void OnKeyPressed(KeyCode keyCode) {
         if (keyCode == KeyCode.Mouse0 && UIManager.Instance.IsMouseOnUI() == false) {

@@ -16,7 +16,17 @@ public class ExterminateBehaviour : CharacterBehaviourComponent {
             log += $"\n-Party is working";
             if (party.targetDestination.IsAtTargetDestination(character)) {
                 log += $"\n-Character is at target destination, do work";
-                Character target = character.currentStructure.settlementLocation.GetRandomAliveResidentInsideSettlementThatIsHostileWith(character);
+                BaseSettlement settlement = null;
+                Character target = null;
+                if (character.gridTileLocation != null && character.gridTileLocation.IsPartOfSettlement(out settlement)) {
+                    target = settlement.GetRandomResidentThatMeetCriteria(resident => character != resident
+                    && !resident.isBeingSeized
+                    && !resident.isDead
+                    && resident.gridTileLocation != null
+                    && resident.gridTileLocation.IsPartOfSettlement(settlement)
+                    && (resident.faction == null || character.faction == null || character.faction.IsHostileWith(resident.faction))
+                    && !resident.traitContainer.HasTrait("Hibernating", "Indestructible"));
+                }
                 if (target != null) {
                     log += $"\n-Chosen target is {target.name}";
                     character.combatComponent.Fight(target, CombatManager.Hostility);

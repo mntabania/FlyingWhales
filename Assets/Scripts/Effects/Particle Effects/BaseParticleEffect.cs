@@ -17,7 +17,7 @@ public class BaseParticleEffect : PooledObject {
     }
     private void OnEnable() {
         if (pauseOnGamePaused) {
-            Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
+            Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
         }
         //Messenger.AddListener<ParticleSystem>(Signals.PARTICLE_EFFECT_DONE, OnParticleEffectDonePlaying);
     }
@@ -26,7 +26,7 @@ public class BaseParticleEffect : PooledObject {
         //    Messenger.RemoveListener<ParticleSystem>(Signals.PARTICLE_EFFECT_DONE, OnParticleEffectDonePlaying);
         //}
         if (pauseOnGamePaused) {
-            Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
+            Messenger.RemoveListener<bool>(UISignals.PAUSED, OnGamePaused);
         }
     }
     private void TryConstructParticleSystemRenderers() {

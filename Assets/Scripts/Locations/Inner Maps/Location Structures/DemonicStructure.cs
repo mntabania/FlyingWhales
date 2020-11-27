@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using Inner_Maps;
 using Debug = System.Diagnostics.Debug;
@@ -8,17 +9,17 @@ namespace Inner_Maps.Location_Structures {
         
         public LocationStructureObject structureObj {get; private set;}
         public HashSet<Character> currentAttackers { get; }
-        // public int activeSnatchJobs { get; private set; }
         
         #region Getters
         public override Vector2 selectableSize => structureObj.size;
+        public override Type serializedData => typeof(SaveDataDemonicStructure);
         #endregion
-        
+
         protected DemonicStructure(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) {
             SetMaxHPAndReset(3000);
             currentAttackers = new HashSet<Character>();
         }
-        public DemonicStructure(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public DemonicStructure(Region location, SaveDataDemonicStructure data) : base(location, data) {
             currentAttackers = new HashSet<Character>();
         }
 
@@ -36,7 +37,9 @@ namespace Inner_Maps.Location_Structures {
             base.AfterStructureDestruction();
             hexTile.RemoveCorruption();
             CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+            currentAttackers.Clear();
+            Messenger.RemoveListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
@@ -54,26 +57,12 @@ namespace Inner_Maps.Location_Structures {
 
         #region Listeners
         protected override void SubscribeListeners() {
-            Messenger.AddListener<IPointOfInterest, int>(Signals.OBJECT_DAMAGED, OnObjectDamaged);
-            Messenger.AddListener<IPointOfInterest, int>(Signals.OBJECT_REPAIRED, OnObjectRepaired);
-            // Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnSnatcherAddedJobToQueue);
-            // Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);
+            Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            Messenger.AddListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         protected override void UnsubscribeListeners() {
-            Messenger.RemoveListener<IPointOfInterest, int>(Signals.OBJECT_DAMAGED, OnObjectDamaged);
-            Messenger.RemoveListener<IPointOfInterest, int>(Signals.OBJECT_REPAIRED, OnObjectRepaired);
-            // Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnSnatcherAddedJobToQueue);
-            // Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);
-        }
-        private void OnSnatcherAddedJobToQueue(JobQueueItem job, Character character) {
-            if (job.jobType == JOB_TYPE.SNATCH && DoesSnatchJobTargetThisStructure(job)) {
-                // activeSnatchJobs++;
-            }
-        }
-        private void OnSnatchJobRemoved(JobQueueItem job, Character character) {
-            if (job.jobType == JOB_TYPE.SNATCH && DoesSnatchJobTargetThisStructure(job)) {
-                // activeSnatchJobs--;
-            }
+            Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_DAMAGED, OnObjectDamaged);
+            Messenger.RemoveListener<TileObject, int>(TileObjectSignals.TILE_OBJECT_REPAIRED, OnObjectRepaired);
         }
         private bool DoesSnatchJobTargetThisStructure(JobQueueItem job) {
             if (job is GoapPlanJob goapPlanJob) {
@@ -102,6 +91,9 @@ namespace Inner_Maps.Location_Structures {
             if (structureObj != null) {
                 InnerMapCameraMove.Instance.CenterCameraOn(structureObj.gameObject);
             } 
+        }
+        public override void ShowSelectorOnStructure() {
+            Selector.Instance.Select(this);
         }
         public void RepairStructure() {
             ResetHP();
@@ -156,24 +148,28 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Attackers
-        public void AddAttacker(Character attacker) {
-            if (!currentAttackers.Contains(attacker)) {
+        public void AddAttacker(Character p_attacker) {
+            if (!currentAttackers.Contains(p_attacker)) {
                 bool wasEmptyBeforeAdding = currentAttackers.Count == 0;
-                currentAttackers.Add(attacker);
-                Messenger.Broadcast(Signals.CHARACTER_ATTACKED_DEMONIC_STRUCTURE, attacker, this);
+                currentAttackers.Add(p_attacker);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, p_attacker, this);
                 if (wasEmptyBeforeAdding) {
-                    Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+                    Messenger.AddListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
                 }
+                UnityEngine.Debug.Log($"Added attacker {p_attacker.name} to {this.name}");
             }
         }
-        public void RemoveAttacker(Character attacker) {
-            currentAttackers.Remove(attacker);
+        private void RemoveAttacker(Character p_attacker) {
+            currentAttackers.Remove(p_attacker);
+            UnityEngine.Debug.Log($"Removed attacker {p_attacker.name} to {this.name}");
             if (currentAttackers.Count == 0) {
-                Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+                Messenger.RemoveListener<Character, CharacterBehaviourComponent>(CharacterSignals.CHARACTER_REMOVED_BEHAVIOUR, OnCharacterRemovedBehaviour);
             }
         }
-        private void OnCharacterEndedState(Character character, CharacterState characterState) {
-            RemoveAttacker(character);
+        private void OnCharacterRemovedBehaviour(Character p_character, CharacterBehaviourComponent p_removedBehaviour) {
+            if (p_removedBehaviour is AttackDemonicStructureBehaviour) {
+                RemoveAttacker(p_character);    
+            }
         }
         #endregion
     }

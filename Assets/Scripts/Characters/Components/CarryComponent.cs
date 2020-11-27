@@ -60,13 +60,14 @@ public class CarryComponent : CharacterComponent {
             mapVisualTransform.localPosition = new Vector3(0f, 0.5f, 0f);
             mapVisualTransform.eulerAngles = Vector3.zero;
             tileObject.mapVisual.UpdateSortingOrders(tileObject);
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, tileObject as IPlayerActionTarget);
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, tileObject as IPlayerActionTarget);
             return true;
         }
         return false;
     }
     private bool CarryCharacter(Character character, bool isOwner, bool isFromSave) {
         if (carriedPOI == null) {
+            character.eventDispatcher.ExecuteCarried(character, owner);
             carriedPOI = character;
             character.carryComponent.SetIsBeingCarriedBy(owner);
 
@@ -82,31 +83,6 @@ public class CarryComponent : CharacterComponent {
             character.marker.visualsParent.eulerAngles = Vector3.zero;
             character.marker.transform.eulerAngles = Vector3.zero;
             // character.marker.SetNameState(false);
-
-            //We added isFromSave checker, because if the carrying happens because we loaded the game from save data, infecting should not happen
-            if (!isFromSave) {
-                if (!owner.traitContainer.HasTrait("Plagued") && character.traitContainer.HasTrait("Plagued")) {
-                    Traits.Plagued targetPlagued = character.traitContainer.GetTraitOrStatus<Traits.Plagued>("Plagued");
-                    if (targetPlagued != null) {
-                        string plaguedSummary = $"{owner.name} carried a plagued character. Rolling for infection.";
-                        int roll = UnityEngine.Random.Range(0, 100);
-                        int carryInfectChance = targetPlagued.GetCarryInfectChance();
-                        plaguedSummary += $"\nRoll is: {roll.ToString()}, Chance is: {carryInfectChance.ToString()}";
-                        if (roll < carryInfectChance) {
-                            //carrier will be infected with plague
-                            plaguedSummary += $"\nWill infect {owner.name} with plague!";
-                            owner.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, owner);
-                            // if (owner.traitContainer.AddTrait(owner, "Plagued", character)) {
-                            //     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
-                            //     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                            //     log.AddToFillers(character, character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                            //     log.AddLogToInvolvedObjects();
-                            // }
-                        }
-                        Debug.Log(GameManager.Instance.TodayLogString() + plaguedSummary);
-                    }
-                }
-            }
             return true;
         }
         return false;

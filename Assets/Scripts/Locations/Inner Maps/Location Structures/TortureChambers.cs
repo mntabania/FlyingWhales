@@ -13,7 +13,7 @@ namespace Inner_Maps.Location_Structures {
             selectableSize = new Vector2(10f, 10f);
             nameWithoutID = "Prison";
         }
-        public TortureChambers(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public TortureChambers(Region location, SaveDataDemonicStructure data) : base(location, data) {
             selectableSize = new Vector2(10f, 10f);
         }
 
@@ -37,11 +37,11 @@ namespace Inner_Maps.Location_Structures {
         #region Listeners
         protected override void SubscribeListeners() {
             base.SubscribeListeners();
-            Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+            Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         }
         protected override void UnsubscribeListeners() {
             base.UnsubscribeListeners();
-            Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+            Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         }
         #endregion
         

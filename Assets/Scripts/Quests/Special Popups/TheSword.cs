@@ -17,8 +17,8 @@ namespace Quests.Special_Popups {
                     new IsAtTime(new[] {GameManager.Instance.GetTicksBasedOnHour(13)}), 
                 }    
             );
-            Messenger.AddListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, OnSelectableLeftClicked);
-            Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_OBTAINED_ITEM, OnCharacterObtainedItem);
+            Messenger.AddListener<ISelectable>(ControlsSignals.SELECTABLE_LEFT_CLICKED, OnSelectableLeftClicked);
+            Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_OBTAINED_ITEM, OnCharacterObtainedItem);
         }
         protected override bool HasMetAllCriteria() {
             bool hasMetCriteria = base.HasMetAllCriteria();
@@ -45,8 +45,8 @@ namespace Quests.Special_Popups {
         
         #region Activation
         public override void Activate() {
-            Messenger.RemoveListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, OnSelectableLeftClicked);
-            Messenger.RemoveListener<TileObject, Character>(Signals.CHARACTER_OBTAINED_ITEM, OnCharacterObtainedItem);
+            Messenger.RemoveListener<ISelectable>(ControlsSignals.SELECTABLE_LEFT_CLICKED, OnSelectableLeftClicked);
+            Messenger.RemoveListener<TileObject, Character>(CharacterSignals.CHARACTER_OBTAINED_ITEM, OnCharacterObtainedItem);
             PlayerUI.Instance.ShowGeneralConfirmation("Excalibur", 
                 $"There is a {UtilityScripts.Utilities.ColorizeAction("legendary sword")} at the center of this region. Is it something we can use, or something that can be used against us?", 
                 onClickCenter: () => UIManager.Instance.ShowTileObjectInfo(_excalibur)
@@ -56,8 +56,8 @@ namespace Quests.Special_Popups {
         public override void Deactivate() {
             base.Deactivate();
             StopCheckingCriteria();
-            Messenger.RemoveListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, OnSelectableLeftClicked);
-            Messenger.RemoveListener<TileObject, Character>(Signals.CHARACTER_OBTAINED_ITEM, OnCharacterObtainedItem);
+            Messenger.RemoveListener<ISelectable>(ControlsSignals.SELECTABLE_LEFT_CLICKED, OnSelectableLeftClicked);
+            Messenger.RemoveListener<TileObject, Character>(CharacterSignals.CHARACTER_OBTAINED_ITEM, OnCharacterObtainedItem);
         }
         #endregion
     }

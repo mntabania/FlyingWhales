@@ -13,7 +13,7 @@ public class HarvestPlant : GoapAction {
         actionIconString = GoapActionStateDB.Harvest_Icon;
         
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }
 
@@ -133,6 +133,10 @@ public class HarvestPlant : GoapAction {
             FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.VEGETABLES);
             foodPile.SetResourceInPile(50);
             tile.structure.AddPOI(foodPile, tile);
+            if (foodPile != null && goapNode.actor.homeSettlement != null && goapNode.actor.faction?.factionType.type == FACTION_TYPE.Ratmen) {
+                goapNode.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(foodPile);
+                goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
+            }
         }
     }
     #endregion

@@ -14,15 +14,15 @@ namespace Tutorial {
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new CharacterGainedTrait("Infected", trait => trait.responsibleCharacter != null || trait.gainedFromDoing != null)
-                    .SetOnMeetAction(OnCharacterInfected),
+                // new CharacterGainedTrait("Infected", trait => trait.responsibleCharacter != null || trait.gainedFromDoing != null)
+                //     .SetOnMeetAction(OnCharacterInfected),
                 // new IsAtTime(new [] {
                 //     GameManager.Instance.GetTicksBasedOnHour(7),
                 //     GameManager.Instance.GetTicksBasedOnHour(13),
                 //     GameManager.Instance.GetTicksBasedOnHour(19)
                 // })
             };
-            Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
+            // Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
         }
         private void OnHourStarted() {
             GameDate today = GameManager.Instance.Today();
@@ -54,12 +54,12 @@ namespace Tutorial {
         public override void Activate() {
             base.Activate();
             Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
-            Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
+            Messenger.AddListener<Log>(UISignals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
         }
         public override void Deactivate() {
             base.Deactivate();
             Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
-            Messenger.RemoveListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
+            Messenger.RemoveListener<Log>(UISignals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
         }
         private void OnLogRemoved(Log log) {
             if (log.IsInvolved(_targetCharacter) && log.key.Equals("contracted_zombie")) {

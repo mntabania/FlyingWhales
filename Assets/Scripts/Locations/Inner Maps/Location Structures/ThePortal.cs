@@ -12,7 +12,7 @@ namespace Inner_Maps.Location_Structures {
             name = "Portal";
             SetMaxHPAndReset(5000);
         }
-        public ThePortal(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public ThePortal(Region location, SaveDataDemonicStructure data) : base(location, data) {
             selectableSize = new Vector2(10f, 10f);
         }
         //public override void ConstructDefaultActions() {

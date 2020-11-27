@@ -48,18 +48,18 @@ public class WorldMapCameraMove : BaseCameraMove {
     public override void Initialize() {
         base.Initialize();
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
     }
 
     private void RemoveListeners() {
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
-        Messenger.RemoveListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.RemoveListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.RemoveListener<InfoUIBase>(UISignals.MENU_OPENED, OnMenuOpened);
+        Messenger.RemoveListener<InfoUIBase>(UISignals.MENU_CLOSED, OnMenuClosed);
+        Messenger.RemoveListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.RemoveListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
     }
 
     #region Utilities
@@ -79,9 +79,8 @@ public class WorldMapCameraMove : BaseCameraMove {
         CalculateCameraBounds(mainCamera);
     }
     private void Zooming() {
-        if (isMovementDisabled) { return; }
         if (!allowZoom) { return; }
-        if (!InputManager.Instance.CanUseHotkeys()) { return; }
+        if (!CanMoveCamera()) { return; }
         if (InputManager.Instance.HasSelectedUIObject()) { return; }
         if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.X)) {
             float axis = -0.1f;
@@ -94,7 +93,7 @@ public class WorldMapCameraMove : BaseCameraMove {
                 fov -= adjustment;
                 fov = Mathf.Clamp(fov, _minFov, _maxFov);
                 mainCamera.DOOrthoSize(fov, 0.5f).OnUpdate(() => OnZoom(mainCamera, adjustment));
-                Messenger.Broadcast(Signals.ZOOM_WORLD_MAP_CAMERA, mainCamera);
+                Messenger.Broadcast(ControlsSignals.ZOOM_WORLD_MAP_CAMERA, mainCamera);
             }
         } else {
             Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
@@ -118,7 +117,7 @@ public class WorldMapCameraMove : BaseCameraMove {
                     //    innerMapsCamera.orthographicSize = fov;
                     //}
                     // CalculateCameraBounds();
-                    Messenger.Broadcast(Signals.ZOOM_WORLD_MAP_CAMERA, mainCamera);
+                    Messenger.Broadcast(ControlsSignals.ZOOM_WORLD_MAP_CAMERA, mainCamera);
                 }
             }   
         }

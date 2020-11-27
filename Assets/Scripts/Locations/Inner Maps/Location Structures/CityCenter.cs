@@ -8,7 +8,7 @@ namespace Inner_Maps.Location_Structures {
             wallsAreMadeOf = RESOURCE.WOOD;
         }
 
-        public CityCenter(Region location, SaveDataLocationStructure data) : base(location, data) {
+        public CityCenter(Region location, SaveDataManMadeStructure data) : base(location, data) {
             wallsAreMadeOf = RESOURCE.WOOD;
         }
         public FACILITY_TYPE GetMostNeededValidFacility() {

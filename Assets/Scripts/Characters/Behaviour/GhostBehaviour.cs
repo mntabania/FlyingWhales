@@ -14,7 +14,7 @@ public class GhostBehaviour : CharacterBehaviourComponent {
         if (character.gridTileLocation != null) {
             if (character.HasTerritory()) {
                 //Only get the first territory because right now even though the territory is a list, only one territory is being assigned at a time
-                HexTile territory = character.territories[0];
+                HexTile territory = character.territory;
                 if (territory.HasAliveVillagerResident()) {
                     character.ClearTerritory();
                 }
@@ -23,7 +23,7 @@ public class GhostBehaviour : CharacterBehaviourComponent {
                 log += "\n-No territory, will set nearest hex tile as territory";
                 HexTile hex = character.gridTileLocation.collectionOwner.GetNearestPlainHexTileWithNoResident();
                 if(hex != null) {
-                    character.AddTerritory(hex);
+                    character.SetTerritory(hex);
                 }
             }
             TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);

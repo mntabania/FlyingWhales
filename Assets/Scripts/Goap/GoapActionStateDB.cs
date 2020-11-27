@@ -102,9 +102,6 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.PLAY_GUITAR, new[]{
             new StateNameAndDuration(){ name = "Play Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(60) },
         } },
-        {INTERACTION_TYPE.CHAT_CHARACTER, new[]{
-            new StateNameAndDuration(){ name = "Chat Success", status = InteractionManager.Goap_State_Success, duration = 0 },
-        } },
         {INTERACTION_TYPE.RETURN_HOME, new[]{
             new StateNameAndDuration(){ name = "Return Home Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
@@ -523,6 +520,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.GO_TO_TILE, new[]{
             new StateNameAndDuration(){ name = "Go Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.GO_TO_SPECIFIC_TILE, new[]{
+            new StateNameAndDuration(){ name = "Go Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
         {INTERACTION_TYPE.DISABLE, new[]{
             new StateNameAndDuration(){ name = "Disable Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
@@ -642,6 +642,24 @@ public static class GoapActionStateDB {
         } },
         {INTERACTION_TYPE.SUMMON_BONE_GOLEM, new[]{
             new StateNameAndDuration(){ name = "Summon Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
+        {INTERACTION_TYPE.BIRTH_RATMAN, new[]{
+            new StateNameAndDuration(){ name = "Birth Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
+        {INTERACTION_TYPE.TORTURE, new[]{
+            new StateNameAndDuration(){ name = "Torture Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
+        {INTERACTION_TYPE.CARRY_PATIENT, new[]{
+            new StateNameAndDuration(){ name = "Carry Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.QUARANTINE, new[]{
+            new StateNameAndDuration(){ name = "Quarantine Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.START_PLAGUE_CARE, new[]{
+            new StateNameAndDuration(){ name = "Care Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.CARE, new[]{
+            new StateNameAndDuration(){ name = "Care Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
         } },
     };
 }

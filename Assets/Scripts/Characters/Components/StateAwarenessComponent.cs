@@ -23,14 +23,14 @@ public class StateAwarenessComponent : CharacterComponent {
     }
 
     public void SubscribeSignals() {
-        Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
-        Messenger.AddListener<Character>(Signals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
-        Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_MISSING, OnCharacterMissing);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
+        Messenger.AddListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
     }
     public void UnsubscribeSignals() {
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
-        Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_MISSING, OnCharacterMissing);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
+        Messenger.RemoveListener<Character, HexTile>(CharacterSignals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
     }
 
     #region Listeners
@@ -71,7 +71,7 @@ public class StateAwarenessComponent : CharacterComponent {
     public void PerTick() {
         if (startMissingTimer) {
             if(currentMissingTicks >= CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD) {
-                Messenger.Broadcast(Signals.CHARACTER_MISSING, owner);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_MISSING, owner);
                 SetStartMissingTimer(false);
                 SetStartPresumedDeadTimer(true);
             } else {
@@ -79,7 +79,7 @@ public class StateAwarenessComponent : CharacterComponent {
             }
         } else if (startPresumedDeadTimer) {
             if (currentPresumedDeadTicks >= CharacterManager.Instance.CHARACTER_PRESUMED_DEAD_THRESHOLD) {
-                Messenger.Broadcast(Signals.CHARACTER_PRESUMED_DEAD, owner);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_PRESUMED_DEAD, owner);
                 SetStartMissingTimer(false);
             } else {
                 currentPresumedDeadTicks++;

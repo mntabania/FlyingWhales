@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Traits;
 
 public class CounterattackPartyQuest : PartyQuest {
 
@@ -29,7 +30,7 @@ public class CounterattackPartyQuest : PartyQuest {
     public override void OnWaitTimeOver() {
         base.OnWaitTimeOver();
         if (targetStructure is DemonicStructure demonicStructure) {
-            Messenger.Broadcast(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, assignedParty.membersThatJoinedQuest, demonicStructure);
+            Messenger.Broadcast(PartySignals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, assignedParty.membersThatJoinedQuest, demonicStructure);
         }
         for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
             Character member = assignedParty.membersThatJoinedQuest[i];
@@ -74,6 +75,12 @@ public class CounterattackPartyQuest : PartyQuest {
     //        member.traitContainer.RemoveTrait(member, "Fervor");
     //    }
     //}
+    public override void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {
+        base.OnAssignedPartySwitchedState(fromState, toState);
+        if (toState == PARTY_STATE.Working) {
+            CultistBetrayalProcessing();
+        }
+    }
     #endregion
 
     #region General
@@ -93,6 +100,39 @@ public class CounterattackPartyQuest : PartyQuest {
     //        waitingArea = targetStructure.settlementLocation.GetAPlainAdjacentHextile();
     //    }
     //}
+    private void CultistBetrayalProcessing() {
+        if(assignedParty != null) {
+            List<Character> membersAlliedWithPlayer = ObjectPoolManager.Instance.CreateNewCharactersList();
+            for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
+                Character member = assignedParty.membersThatJoinedQuest[i];
+                if (member.isAlliedWithPlayer) {
+                    membersAlliedWithPlayer.Add(member);
+                }
+            }
+            for (int i = 0; i < membersAlliedWithPlayer.Count; i++) {
+                Character memberAlliedWithPlayer = membersAlliedWithPlayer[i];
+                MembersAreBetrayedByThis(memberAlliedWithPlayer);
+                memberAlliedWithPlayer.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Party, memberAlliedWithPlayer, "Abandoned party quest");
+            }
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(membersAlliedWithPlayer);
+        }
+    }
+    private void MembersAreBetrayedByThis(Character p_betrayer) {
+        if (assignedParty != null) {
+            for (int i = 0; i < assignedParty.membersThatJoinedQuest.Count; i++) {
+                Character member = assignedParty.membersThatJoinedQuest[i];
+                if (member != p_betrayer && !member.isAlliedWithPlayer) {
+                    CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, member, p_betrayer, REACTION_STATUS.WITNESSED);
+                    // Betrayed betrayed = member.traitContainer.GetTraitOrStatus<Betrayed>("Betrayed");
+                    // if(betrayed != null) {
+                    //     betrayed.AddCharacterResponsibleForTrait(character);
+                    // } else {
+                    //     member.traitContainer.AddTrait(member, "Betrayed", characterResponsible: character);
+                    // }
+                }
+            }
+        }
+    }
     #endregion
 
     #region Loading

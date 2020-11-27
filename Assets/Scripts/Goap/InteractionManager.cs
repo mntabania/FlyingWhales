@@ -134,13 +134,6 @@ public partial class InteractionManager : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Goap Action Utilities
-    public bool IsActionTirednessRecovery(GoapAction action) {
-        //Right now this is the checker since all tireness recovery icon is sleep icon, might be changed later
-        return action.actionIconString == GoapActionStateDB.Sleep_Icon;
-    }
-    #endregion
-
     #region Precondition Resolvers
     public bool TargetHasNegativeTraitEffect(Character actor, IPointOfInterest target) {
         return target.traitContainer.HasTraitOrStatusOf(TRAIT_EFFECT.NEGATIVE);

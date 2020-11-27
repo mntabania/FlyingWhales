@@ -128,6 +128,18 @@ MonoBehaviour:
     m_Scale: 1
     m_Name: Undead_Icon
     m_HashCode: 1506109995
+  - m_ElementType: 2
+    m_Unicode: 65534
+    m_GlyphIndex: 15
+    m_Scale: 1
+    m_Name: Plague_Icon
+    m_HashCode: -294947810
+  - m_ElementType: 2
+    m_Unicode: 65534
+    m_GlyphIndex: 16
+    m_Scale: 1
+    m_Name: Ratman_Icon
+    m_HashCode: -1115857775
   m_SpriteGlyphTable:
   - m_Index: 0
     m_Metrics:
@@ -137,8 +149,8 @@ MonoBehaviour:
       m_HorizontalBearingY: 12
       m_HorizontalAdvance: 17
     m_GlyphRect:
-      m_X: 110
-      m_Y: 114
+      m_X: 24
+      m_Y: 2
       m_Width: 17
       m_Height: 14
     m_Scale: 1
@@ -153,9 +165,9 @@ MonoBehaviour:
       m_HorizontalBearingY: 20
       m_HorizontalAdvance: 24
     m_GlyphRect:
-      m_X: 86
-      m_Y: 104
-      m_Width: 23
+      m_X: 60
+      m_Y: 20
+      m_Width: 24
       m_Height: 24
     m_Scale: 1
     m_AtlasIndex: 0
@@ -169,8 +181,8 @@ MonoBehaviour:
       m_HorizontalBearingY: 23
       m_HorizontalAdvance: 28
     m_GlyphRect:
-      m_X: 32
-      m_Y: 102
+      m_X: 40
+      m_Y: 70
       m_Width: 28
       m_Height: 26
     m_Scale: 1
@@ -185,8 +197,8 @@ MonoBehaviour:
       m_HorizontalBearingY: 23
       m_HorizontalAdvance: 26
     m_GlyphRect:
-      m_X: 60
-      m_Y: 102
+      m_X: 32
+      m_Y: 42
       m_Width: 26
       m_Height: 26
     m_Scale: 1
@@ -201,7 +213,7 @@ MonoBehaviour:
       m_HorizontalBearingY: 25
       m_HorizontalAdvance: 32
     m_GlyphRect:
-      m_X: 0
+      m_X: 72
       m_Y: 96
       m_Width: 32
       m_Height: 32
@@ -217,8 +229,8 @@ MonoBehaviour:
       m_HorizontalBearingY: 20
       m_HorizontalAdvance: 24
     m_GlyphRect:
-      m_X: 32
-      m_Y: 80
+      m_X: 84
+      m_Y: 22
       m_Width: 24
       m_Height: 22
     m_Scale: 1
@@ -233,8 +245,8 @@ MonoBehaviour:
       m_HorizontalBearingY: 20
       m_HorizontalAdvance: 24
     m_GlyphRect:
-      m_X: 86
-      m_Y: 79
+      m_X: 84
+      m_Y: 44
       m_Width: 24
       m_Height: 24
     m_Scale: 1
@@ -249,8 +261,8 @@ MonoBehaviour:
       m_HorizontalBearingY: 23
       m_HorizontalAdvance: 23
     m_GlyphRect:
-      m_X: 56
-      m_Y: 76
+      m_X: 68
+      m_Y: 70
       m_Width: 23
       m_Height: 26
     m_Scale: 1
@@ -266,7 +278,7 @@ MonoBehaviour:
       m_HorizontalAdvance: 32
     m_GlyphRect:
       m_X: 0
-      m_Y: 64
+      m_Y: 24
       m_Width: 32
       m_Height: 32
     m_Scale: 1
@@ -281,9 +293,9 @@ MonoBehaviour:
       m_HorizontalBearingY: 20
       m_HorizontalAdvance: 23
     m_GlyphRect:
-      m_X: 32
-      m_Y: 1
-      m_Width: 23
+      m_X: 0
+      m_Y: 0
+      m_Width: 24
       m_Height: 24
     m_Scale: 1
     m_AtlasIndex: 0
@@ -298,7 +310,7 @@ MonoBehaviour:
       m_HorizontalAdvance: 32
     m_GlyphRect:
       m_X: 0
-      m_Y: 32
+      m_Y: 56
       m_Width: 32
       m_Height: 32
     m_Scale: 1
@@ -313,8 +325,8 @@ MonoBehaviour:
       m_HorizontalBearingY: 25
       m_HorizontalAdvance: 21
     m_GlyphRect:
-      m_X: 32
-      m_Y: 25
+      m_X: 104
+      m_Y: 97
       m_Width: 21
       m_Height: 31
     m_Scale: 1
@@ -329,9 +341,9 @@ MonoBehaviour:
       m_HorizontalBearingY: 20
       m_HorizontalAdvance: 22
     m_GlyphRect:
-      m_X: 53
-      m_Y: 32
-      m_Width: 22
+      m_X: 32
+      m_Y: 16
+      m_Width: 24
       m_Height: 24
     m_Scale: 1
     m_AtlasIndex: 0
@@ -345,8 +357,8 @@ MonoBehaviour:
       m_HorizontalBearingY: 25
       m_HorizontalAdvance: 32
     m_GlyphRect:
-      m_X: 0
-      m_Y: 0
+      m_X: 40
+      m_Y: 96
       m_Width: 32
       m_Height: 32
     m_Scale: 1
@@ -361,13 +373,45 @@ MonoBehaviour:
       m_HorizontalBearingY: 20
       m_HorizontalAdvance: 23
     m_GlyphRect:
-      m_X: 32
-      m_Y: 55
-      m_Width: 23
+      m_X: 92
+      m_Y: 72
+      m_Width: 24
       m_Height: 24
     m_Scale: 1
     m_AtlasIndex: 0
     sprite: {fileID: -3053055662445826506, guid: 3ac8fd99bd951024e8e2de5be93c738b,
+      type: 3}
+  - m_Index: 15
+    m_Metrics:
+      m_Width: 38
+      m_Height: 38
+      m_HorizontalBearingX: 0
+      m_HorizontalBearingY: 33
+      m_HorizontalAdvance: 38
+    m_GlyphRect:
+      m_X: 0
+      m_Y: 90
+      m_Width: 38
+      m_Height: 38
+    m_Scale: 1
+    m_AtlasIndex: 0
+    sprite: {fileID: -5554612431395520410, guid: 3ac8fd99bd951024e8e2de5be93c738b,
+      type: 3}
+  - m_Index: 16
+    m_Metrics:
+      m_Width: 24
+      m_Height: 24
+      m_HorizontalBearingX: 0
+      m_HorizontalBearingY: 20
+      m_HorizontalAdvance: 24
+    m_GlyphRect:
+      m_X: 60
+      m_Y: 44
+      m_Width: 24
+      m_Height: 24
+    m_Scale: 1
+    m_AtlasIndex: 0
+    sprite: {fileID: 1531121323253262507, guid: 3ac8fd99bd951024e8e2de5be93c738b,
       type: 3}
   spriteInfoList: []
   fallbackSpriteAssets: []

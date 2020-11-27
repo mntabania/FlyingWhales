@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using UnityEngine;
 
@@ -21,6 +23,18 @@ public class SettlementNameplateItem : NameplateItem<BaseSettlement> {
             portrait.SetPortrait(firstLandmark?.specificLandmarkType ?? LANDMARK_TYPE.HOUSES);    
         }
         mainLbl.text = _settlement.name;
-        subLbl.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(_settlement.locationType.ToString());
+        if (_settlement is NPCSettlement npcSettlement) {
+            if (npcSettlement.settlementType != null) {
+                subLbl.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(npcSettlement.settlementType.settlementType.ToString());    
+            } else if (npcSettlement.structures.Count > 0) {
+                STRUCTURE_TYPE structureType = npcSettlement.structures.First().Key;
+                subLbl.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
+            } else {
+                subLbl.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(_settlement.locationType.ToString());
+            }
+        } else {
+            subLbl.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(_settlement.locationType.ToString());    
+        }
+        
     }
 }

@@ -130,7 +130,7 @@ namespace Interrupts {
                     interruptHolder.actor.relationshipContainer.AdjustOpinion(interruptHolder.actor, targetCharacter, "Base", -3, "rejected sexual advances");
                     interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Annoyed");
                     interruptHolder.actor.currentJob.CancelJob(false);
-                    if(interruptHolder.actor.faction == FactionManager.Instance.disguisedFaction) {
+                    if(interruptHolder.actor.faction?.factionType.type == FACTION_TYPE.Disguised) {
                         interruptHolder.actor.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
                         if (!targetCharacter.marker.HasUnprocessedPOI(interruptHolder.actor)) {
                             targetCharacter.marker.AddUnprocessedPOI(interruptHolder.actor);

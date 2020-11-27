@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps.Location_Structures;
 using UnityEngine;  
 using Traits;
 using Inner_Maps;
+using Locations.Settlements;
 
 public class Sleep : GoapAction {
 
@@ -12,7 +14,7 @@ public class Sleep : GoapAction {
     public Sleep() : base(INTERACTION_TYPE.SLEEP) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Needs};
 
     }
@@ -28,6 +30,13 @@ public class Sleep : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
+        if (actor.traitContainer.HasTrait("Enslaved")) {
+            if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+                costLog += $" +2000(Slave, target is not in actor's home)";
+                actor.logComponent.AppendCostLog(costLog);
+                return 2000;
+            }
+        }
         if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
             if (actor.partyComponent.isActiveMember) {
                 if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null
@@ -58,11 +67,16 @@ public class Sleep : GoapAction {
         }
         costLog = $"\n{name} {target.nameWithID}:";
         cost = 0;
-        if (target is Bed) {
-            Bed targetBed = target as Bed;
+        if (target is BaseBed) {
+            BaseBed targetBed = target as BaseBed;
             if (!targetBed.IsSlotAvailable()) {
-                cost += 2000;
-                costLog += " +2000(Fully Occupied)";
+                if (targetBed.users.Contains(actor)) {
+                    cost = 10;
+                    costLog += " 10(Already in bed)"; //Mainly used for quarantine
+                } else {
+                    cost += 2000;
+                    costLog += " +2000(Fully Occupied)";    
+                }
             } else if (actor.traitContainer.HasTrait("Travelling")) {
                 cost += 100;
                 costLog += " +100(Travelling)";
@@ -75,13 +89,17 @@ public class Sleep : GoapAction {
                         cost += UtilityScripts.Utilities.Rng.Next(5, 16);
                         costLog += $" +{cost}(Owned/Location is in home structure)";
                     }
-                } else  if (actor.needsComponent.isExhausted) {
+                } else if (actor.needsComponent.isExhausted) {
+                    BaseSettlement settlement = null;
                     if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Close_Friend, RelationshipManager.Friend)) {
                         cost += UtilityScripts.Utilities.Rng.Next(130, 151);
                         costLog += $" +{cost}(Exhausted, Is in Friend home structure)";
                     } else if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Rival, RelationshipManager.Enemy)) {
                         cost += 2000;
                         costLog += " +2000(Exhausted, Is in Enemy home structure)";
+                    } else if (targetBed.gridTileLocation != null && targetBed.gridTileLocation.IsPartOfSettlement(out settlement) && settlement.owner != null && settlement.owner != actor.faction) {
+                        cost += 200;
+                        costLog += " +200(Exhausted, Inside settlement of different faction)";
                     } else {
                         cost = UtilityScripts.Utilities.Rng.Next(80, 101);
                         costLog += $" +{cost}(Else)";

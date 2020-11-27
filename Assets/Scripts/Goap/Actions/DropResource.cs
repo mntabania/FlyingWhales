@@ -9,7 +9,7 @@ public class DropResource : GoapAction {
     public DropResource() : base(INTERACTION_TYPE.DROP_RESOURCE) {
         actionIconString = GoapActionStateDB.Haul_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }
 
@@ -22,22 +22,30 @@ public class DropResource : GoapAction {
     //    AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_STONE, GOAP_EFFECT_TARGET.TARGET));
     //    AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_METAL, GOAP_EFFECT_TARGET.TARGET));
     //}
-    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData) {
-        List<GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
+    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+        List<GoapEffect> ee = ObjectPoolManager.Instance.CreateNewExpectedEffectsList();
+        List<GoapEffect> baseEE = base.GetExpectedEffects(actor, target, otherData, out isOverridden);
+        if (baseEE != null && baseEE.Count > 0) {
+            ee.AddRange(baseEE);
+        }
         if (target is Table) {
             ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile", false, GOAP_EFFECT_TARGET.TARGET));
         } else {
             ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, target.name, false, GOAP_EFFECT_TARGET.TARGET));
         }
+        isOverridden = true;
         return ee;
     }
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData) {
-        List<Precondition> p = new List<Precondition>(base.GetPreconditions(actor, target, otherData));
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+        List<Precondition> baseP = base.GetPreconditions(actor, target, otherData, out isOverridden);
+        List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
+        p.AddRange(baseP);
         if (target is Table) {
             p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Food Pile" /*+ (int)otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
         } else {
             p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, target.name /*+ (int) otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
         }
+        isOverridden = true;
         return p;
     }
     public override void Perform(ActualGoapNode goapNode) {

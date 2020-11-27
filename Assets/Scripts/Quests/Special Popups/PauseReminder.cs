@@ -13,7 +13,7 @@ namespace Quests.Special_Popups {
                     new IsAtTime(new[] {GameManager.Instance.GetTicksBasedOnHour(23)}), 
                 }    
             );
-            Messenger.AddListener(Signals.PAUSED_BY_PLAYER, OnPausedByPlayer);
+            Messenger.AddListener(UISignals.PAUSED_BY_PLAYER, OnPausedByPlayer);
         }
         private void OnPausedByPlayer() {
             _timesPaused++;
@@ -34,7 +34,7 @@ namespace Quests.Special_Popups {
             return false;
         }
         public override void Activate() {
-            Messenger.RemoveListener(Signals.PAUSED_BY_PLAYER, OnPausedByPlayer);
+            Messenger.RemoveListener(UISignals.PAUSED_BY_PLAYER, OnPausedByPlayer);
             PlayerUI.Instance.ShowGeneralConfirmation("Pause", 
                 $"Don't forget that you can {UtilityScripts.Utilities.ColorizeAction("Pause")} the game at anytime! " +
                 "A smart Ruinarch will liberally use his time-bending powers to ruminate over what's taking place in the world." +
@@ -45,7 +45,7 @@ namespace Quests.Special_Popups {
         public override void Deactivate() {
             base.Deactivate();
             StopCheckingCriteria();
-            Messenger.RemoveListener(Signals.PAUSED_BY_PLAYER, OnPausedByPlayer);
+            Messenger.RemoveListener(UISignals.PAUSED_BY_PLAYER, OnPausedByPlayer);
         }
     }
 }

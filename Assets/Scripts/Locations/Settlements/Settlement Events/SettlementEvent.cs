@@ -16,13 +16,23 @@
             _location = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.settlementID) as NPCSettlement;
         }
 
-        public abstract void ActivateEvent(NPCSettlement settlement);
-        public abstract void DeactivateEvent(NPCSettlement settlement);
+        public abstract void ActivateEvent(NPCSettlement p_settlement);
+        public abstract void DeactivateEvent(NPCSettlement p_settlement);
         public virtual void ProcessNewVillager(Character newVillager) { }
         public virtual void ProcessRemovedVillager(Character removedVillager) { }
 
         #region Saving
         public abstract SaveDataSettlementEvent Save();
+        #endregion
+
+        #region Loading
+        public virtual void LoadAdditionalData(NPCSettlement p_settlement) { }
+        #endregion
+
+        #region For Testing
+        public virtual string GetTestingInfo() {
+            return eventType.ToString();
+        }
         #endregion
     }
 

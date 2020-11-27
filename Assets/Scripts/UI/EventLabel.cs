@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps.Location_Structures;
 using Ruinarch;
 using UnityEngine.EventSystems;
@@ -124,7 +125,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
             if (onClickAction != null) {
                 if (obj != null) {
                     onClickAction.Invoke(obj);
-                    Messenger.Broadcast(Signals.EVENT_LABEL_LINK_CLICKED, this);
+                    Messenger.Broadcast(UISignals.EVENT_LABEL_LINK_CLICKED, this);
                 }
             } else {
                 if(obj != null) {
@@ -266,22 +267,20 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                 int characterIndex = linkInfo.linkTextfirstCharacterIndex + i;
 
                 // Get the index of the material / sub text object used by this character.
-                int meshIndex = text.textInfo.characterInfo[characterIndex].materialReferenceIndex;
+                TMP_CharacterInfo characterInfo = text.textInfo.characterInfo[characterIndex];
+                int meshIndex = characterInfo.materialReferenceIndex;
+                int vertexIndex = characterInfo.vertexIndex;
 
-                int vertexIndex = text.textInfo.characterInfo[characterIndex].vertexIndex;
-
-                // Get a reference to the vertex color
-                Color32[] vertexColors = text.textInfo.meshInfo[meshIndex].colors32;
-                if (vertexColors.Length > 0) {
-                    originalColor = vertexColors[vertexIndex + 0];
-            
-                    Color32 c = Color.white; //vertexColors[vertexIndex + 0].Tint(0.75f);
-
-                    vertexColors[vertexIndex + 0] = c;
-                    vertexColors[vertexIndex + 1] = c;
-                    vertexColors[vertexIndex + 2] = c;
-                    vertexColors[vertexIndex + 3] = c;
-                    
+                if (!char.IsWhiteSpace(characterInfo.character)) {
+                    // Get a reference to the vertex color
+                    Color32[] vertexColors = text.textInfo.meshInfo[meshIndex].colors32;
+                    if (vertexColors.Length > vertexIndex + 3) {
+                        originalColor = vertexColors[vertexIndex];
+                        vertexColors[vertexIndex] = Color.white;
+                        vertexColors[vertexIndex + 1] = Color.white;
+                        vertexColors[vertexIndex + 2] = Color.white;
+                        vertexColors[vertexIndex + 3] = Color.white;
+                    }
                 }
             }
 
@@ -289,7 +288,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
             text.UpdateVertexData(TMP_VertexDataUpdateFlags.All);    
         }
 
-        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Link);
+        InputManager.Instance?.SetCursorTo(InputManager.Cursor_Type.Link);
     }
     private void UnhighlightLink(TMP_LinkInfo linkInfo) {
         // string oldText = $"{linkInfo.GetLinkText()}";
@@ -302,20 +301,20 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                 int characterIndex = linkInfo.linkTextfirstCharacterIndex + i;
 
                 // Get the index of the material / sub text object used by this character.
-                int meshIndex = text.textInfo.characterInfo[characterIndex].materialReferenceIndex;
+                TMP_CharacterInfo characterInfo = text.textInfo.characterInfo[characterIndex];
+                int meshIndex = characterInfo.materialReferenceIndex;
+                int vertexIndex = characterInfo.vertexIndex;
 
-                int vertexIndex = text.textInfo.characterInfo[characterIndex].vertexIndex;
-
-                // Get a reference to the vertex color
-                Color32[] vertexColors = text.textInfo.meshInfo[meshIndex].colors32;
-
-                if (vertexColors.Length > 0) {
-                    Color32 c = originalColor; //vertexColors[vertexIndex + 0].Tint(1.33333f);
-
-                    vertexColors[vertexIndex + 0] = c;
-                    vertexColors[vertexIndex + 1] = c;
-                    vertexColors[vertexIndex + 2] = c;
-                    vertexColors[vertexIndex + 3] = c;
+                if (!char.IsWhiteSpace(characterInfo.character)) {
+                    // Get a reference to the vertex color
+                    Color32[] vertexColors = text.textInfo.meshInfo[meshIndex].colors32;
+                    if (vertexColors.Length >  vertexIndex + 3) {
+                        Color32 c = originalColor;
+                        vertexColors[vertexIndex] = c;
+                        vertexColors[vertexIndex + 1] = c;
+                        vertexColors[vertexIndex + 2] = c;
+                        vertexColors[vertexIndex + 3] = c;
+                    }
                 }
             }
 
@@ -323,7 +322,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
             text.UpdateVertexData(TMP_VertexDataUpdateFlags.All);
         }
         
-        InputManager.Instance.RevertToPreviousCursor();
+        InputManager.Instance?.RevertToPreviousCursor();
     }
     public void HoverOutAction() {
         //if (hoverOutAction == null) {

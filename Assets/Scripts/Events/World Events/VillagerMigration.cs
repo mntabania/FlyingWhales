@@ -21,7 +21,7 @@ namespace Events.World_Events {
                 string debugLog = $"{GameManager.Instance.TodayLogString()}Checking for villager migration:";
                 NPCSettlement randomSettlement = LandmarkManager.Instance.GetRandomActiveVillageSettlement();
                 if(randomSettlement != null) {
-                    int unoccupiedDwellings = GetUnoccupiedDwellingCount(randomSettlement);
+                    int unoccupiedDwellings = randomSettlement.GetUnoccupiedDwellingCount();
                     debugLog = $"{debugLog}\n{randomSettlement.name} was chosen. It has {unoccupiedDwellings.ToString()} unoccupied dwellings.";
                     int baseChance = 4;
                     if (GameManager.Instance.Today().day >= 12) {
@@ -69,7 +69,7 @@ namespace Events.World_Events {
                             Debug.Log($"Spawned new villager {newCharacter.name} at {edgeTile}");
                             newCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
                             newCharacter.jobComponent.PlanReturnHomeUrgent();
-                            Messenger.Broadcast(Signals.NEW_VILLAGER_ARRIVED, newCharacter);
+                            Messenger.Broadcast(WorldEventSignals.NEW_VILLAGER_ARRIVED, newCharacter);
 
                             debugLog = $"{debugLog}\nNew character {newCharacter.name} was spawned.";
 
@@ -86,19 +86,6 @@ namespace Events.World_Events {
         }
         #endregion
 
-        private int GetUnoccupiedDwellingCount(NPCSettlement npcSettlement) {
-            int count = 0;
-            List<LocationStructure> dwellings = npcSettlement.GetStructuresOfType(STRUCTURE_TYPE.DWELLING);
-            if(dwellings != null && dwellings.Count > 0) {
-                for (int i = 0; i < dwellings.Count; i++) {
-                    LocationStructure dwelling = dwellings[i];
-                    if (dwelling.residents.Count <= 0) {
-                        count++;
-                    }
-                }
-            }
-            return count;
-        }
         public override SaveDataWorldEvent Save() {
             SaveDataVillagerMigration save = new SaveDataVillagerMigration();
             save.Save(this);

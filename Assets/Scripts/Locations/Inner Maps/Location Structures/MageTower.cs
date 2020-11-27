@@ -6,6 +6,6 @@
             AddStructureTag(STRUCTURE_TAG.Counterattack);
             AddStructureTag(STRUCTURE_TAG.Shelter);
         }
-        public MageTower(Region location, SaveDataLocationStructure data) : base(location, data) { }
+        public MageTower(Region location, SaveDataManMadeStructure data) : base(location, data) { }
     }
 }

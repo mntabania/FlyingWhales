@@ -21,17 +21,10 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public const int REGION_VILLAGE_CAPACITY = 3;
     
     [SerializeField] private List<LandmarkData> landmarkData;
-    public List<AreaData> areaData;
-
     public List<BaseLandmark> allLandmarks;
-
     [SerializeField] private GameObject landmarkGO;
-
     private Dictionary<LANDMARK_TYPE, LandmarkData> landmarkDataDict;
-
-    public AreaTypeSpriteDictionary locationPortraits;
-    public List<LocationEvent> locationEventsData { get; private set; }
-
+    
     public STRUCTURE_TYPE[] humanSurvivalStructures { get; private set; }
     public STRUCTURE_TYPE[] humanUtilityStructures { get; private set; }
     public STRUCTURE_TYPE[] humanCombatStructures { get; private set; }
@@ -48,7 +41,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         allLandmarks = new List<BaseLandmark>();
         ConstructLandmarkData();
         LoadLandmarkTypeDictionary();
-        ConstructLocationEventsData();
         ConstructRaceStructureRequirements();
     }
 
@@ -63,11 +55,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     #endregion
 
     #region Landmarks
-    private void ConstructLocationEventsData() {
-        locationEventsData = new List<LocationEvent>() {
-            new NewResidentEvent(),
-        };
-    }
     private void ConstructLandmarkData() {
         for (int i = 0; i < landmarkData.Count; i++) {
             LandmarkData data = landmarkData[i];
@@ -90,7 +77,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
         // location.UpdateBuildSprites();
         allLandmarks.Add(newLandmark);
-        Messenger.Broadcast(Signals.LANDMARK_CREATED, newLandmark);
+        Messenger.Broadcast(LandmarkSignals.LANDMARK_CREATED, newLandmark);
         return newLandmark;
     }
     public void DestroyLandmarkOnTile(HexTile tile) {
@@ -103,7 +90,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         tile.RemoveLandmarkVisuals();
         tile.RemoveLandmarkOnTile();
         allLandmarks.Remove(landmarkOnTile);
-        Messenger.Broadcast(Signals.LANDMARK_DESTROYED, landmarkOnTile, tile);
+        Messenger.Broadcast(LandmarkSignals.LANDMARK_DESTROYED, landmarkOnTile, tile);
     }
     public BaseLandmark LoadLandmarkOnTile(HexTile location, BaseLandmark landmark) {
         BaseLandmark newLandmark = location.LoadLandmark(landmark);
@@ -265,7 +252,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         if (tiles != null) {
             newNpcSettlement.AddTileToSettlement(tiles);    
         }
-        Messenger.Broadcast(Signals.AREA_CREATED, newNpcSettlement);
+        Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newNpcSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newNpcSettlement);
         newNpcSettlement.Initialize();
         return newNpcSettlement;
@@ -277,14 +264,14 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             HexTile tile = tiles[i];
             newNpcSettlement.AddTileToSettlement(tile);
         }
-        Messenger.Broadcast(Signals.AREA_CREATED, newNpcSettlement);
+        Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newNpcSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newNpcSettlement);
         return newNpcSettlement;
     }
     public PlayerSettlement CreateNewPlayerSettlement(params HexTile[] tiles) {
         PlayerSettlement newPlayerSettlement = new PlayerSettlement();
         newPlayerSettlement.AddTileToSettlement(tiles);
-        Messenger.Broadcast(Signals.AREA_CREATED, newPlayerSettlement);
+        Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newPlayerSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newPlayerSettlement);
         return newPlayerSettlement;
     }
@@ -297,7 +284,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             newPlayerSettlement.AddTileToSettlement(tile);
         }
 
-        Messenger.Broadcast(Signals.AREA_CREATED, newPlayerSettlement);
+        Messenger.Broadcast(SettlementSignals.SETTLEMENT_CREATED, newPlayerSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newPlayerSettlement);
         return newPlayerSettlement;
     }
@@ -372,11 +359,11 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public SETTLEMENT_TYPE GetSettlementTypeForRace(RACE race) {
         switch (race) {
             case RACE.HUMANS:
-                return SETTLEMENT_TYPE.Default_Human;
+                return SETTLEMENT_TYPE.Human_Village;
             case RACE.ELVES:
-                return SETTLEMENT_TYPE.Default_Elf;
+                return SETTLEMENT_TYPE.Elven_Hamlet;
             default:
-                return SETTLEMENT_TYPE.Default_Human;
+                return SETTLEMENT_TYPE.Human_Village;
         }
     }
     
@@ -421,10 +408,10 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         }
     }
     private void ConstructRaceStructureRequirements() {
-        humanSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.CEMETERY, STRUCTURE_TYPE.PRISON, STRUCTURE_TYPE.SMITHY, STRUCTURE_TYPE.BARRACKS, STRUCTURE_TYPE.APOTHECARY };
+        humanSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.CEMETERY, STRUCTURE_TYPE.PRISON, STRUCTURE_TYPE.SMITHY, STRUCTURE_TYPE.BARRACKS, STRUCTURE_TYPE.HOSPICE };
         humanUtilityStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.GRANARY, STRUCTURE_TYPE.MINER_CAMP, STRUCTURE_TYPE.TAVERN };
         humanCombatStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.RAIDER_CAMP, STRUCTURE_TYPE.ASSASSIN_GUILD, STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.MAGE_QUARTERS };
-        elfSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.APOTHECARY, STRUCTURE_TYPE.MAGE_QUARTERS };
+        elfSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.HOSPICE, STRUCTURE_TYPE.MAGE_QUARTERS };
         elfUtilityStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.TAVERN, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.CEMETERY, STRUCTURE_TYPE.PRISON, STRUCTURE_TYPE.GRANARY, STRUCTURE_TYPE.MINER_CAMP };
         elfCombatStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.SMITHY, STRUCTURE_TYPE.BARRACKS, STRUCTURE_TYPE.RAIDER_CAMP, STRUCTURE_TYPE.ASSASSIN_GUILD };
     }

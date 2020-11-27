@@ -57,7 +57,7 @@ public class Carry : GoapAction {
             //because when you try to carry a character that can move, it will knock it out first so that it cannot move, the character will end up attacking the other character which we do not want because we use this on paralyzed characters only
             //We do not unnecessary fighting because it will lead to criminality which we do not intended to do in this case
             if (target is Character targetCharacter) {
-                if (targetCharacter.canMove) {
+                if (targetCharacter.limiterComponent.canMove) {
                     costLog += $" +2000(Move Character, target can move again)";
                     actor.logComponent.AppendCostLog(costLog);
                     return 2000;
@@ -103,6 +103,16 @@ public class Carry : GoapAction {
             || goapNode.associatedJobType == JOB_TYPE.OBTAIN_PERSONAL_FOOD) {
             setOwnership = false;
         }
+
+        if (goapNode.associatedJobType == JOB_TYPE.SNATCH) {
+            //Special case for snatch, so that we can be sure that snatched characters are always restrained
+            goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Restrained", goapNode.actor);
+            if (goapNode.poiTarget.traitContainer.HasTrait("Prisoner")) {
+                Prisoner prisoner = goapNode.poiTarget.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+                prisoner.SetPrisonerOfFaction(PlayerManager.Instance.player.playerFaction);
+            }
+        }
+        
         goapNode.actor.CarryPOI(goapNode.poiTarget, setOwnership: setOwnership);
     }
     #endregion
@@ -110,7 +120,7 @@ public class Carry : GoapAction {
     #region Precondition
     private bool TargetCannotMove(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
         if(target is Character) {
-            return (target as Character).canMove == false;
+            return (target as Character).limiterComponent.canMove == false;
         }
         return true;
     }

@@ -30,6 +30,10 @@ public class SaveDataCurrentProgress {
     //Player
     public SaveDataPlayerGame playerSave;
 
+    //Plague
+    public bool hasPlagueDisease;
+    public SaveDataPlagueDisease savedPlagueDisease;
+
     //Pool of all saved objects
     public Dictionary<OBJECT_TYPE, BaseSaveDataHub> objectHub;
 
@@ -177,6 +181,13 @@ public class SaveDataCurrentProgress {
                     yield return null;    
                 }   
             }
+        }
+    }
+    public void SavePlagueDisease() {
+        hasPlagueDisease = PlagueDisease.HasInstance();
+        if (hasPlagueDisease) {
+            savedPlagueDisease = new SaveDataPlagueDisease();
+            savedPlagueDisease.Save();
         }
     }
     #endregion
@@ -360,6 +371,11 @@ public class SaveDataCurrentProgress {
     public Player LoadPlayer() {
         return playerSave.Load();
     }
+    public void LoadPlagueDisease() {
+        if (hasPlagueDisease) {
+            new PlagueDisease(savedPlagueDisease);
+        }
+    }
     #endregion
 
     #region Second Wave Loading
@@ -442,15 +458,6 @@ public class SaveDataCurrentProgress {
                 item.Value.LoadSecondWaveInstancedTrait(saveData);    
             }
         }
-        //if (objectHub.ContainsKey(OBJECT_TYPE.Trait)){
-        //    if(objectHub[OBJECT_TYPE.Trait] is SaveDataTraitHub hub) {
-        //        Dictionary<string, SaveDataTrait> saveDataTraits = hub.hub;
-        //        foreach (SaveDataTrait data in saveDataTraits.Values) {
-        //            Trait trait = DatabaseManager.Instance.traitDatabase.GetTraitByPersistentID(data.persistentID);
-        //            trait.LoadSecondWaveInstancedTrait(data);
-        //        }
-        //    }
-        //}
     }
     public void LoadCharactersCurrentAction() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
@@ -473,7 +480,6 @@ public class SaveDataCurrentProgress {
 
     #region Clean Up
     public void CleanUp() {
-        worldMapSave?.CleanUp();
         familyTreeDatabase = null;
         playerSave?.CleanUp();
         objectHub?.Clear();

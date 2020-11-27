@@ -1,1 +1,0 @@
-{"skillName":"Super Aid Recovery Skill","description":"T3 heal","actWeightType":3,"activationWeight":1,"accuracy":100.0,"range":3,"isEnabled":false,"strengthPower":0.0,"intellectPower":3.0,"agilityPower":0.0,"skillRequirements":[{"itemQuantity":0,"equipmentType":2,"attributeRequired":4}],"attributeModifier":1,"levelRequirement":1,"healPower":4,"durabilityCost":1}

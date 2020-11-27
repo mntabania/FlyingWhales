@@ -21,13 +21,13 @@ public class WaterWell : TileObject {
     public override void OnPlacePOI() {
         base.OnPlacePOI();
         if(structureLocation.structureType == STRUCTURE_TYPE.POND || structureLocation.structureType == STRUCTURE_TYPE.OCEAN) {
+            traitContainer.AddTrait(this, "Indestructible");
             name = "a Lake";
             AddAdvertisedAction(INTERACTION_TYPE.FISH);
         } else {
             AddAdvertisedAction(INTERACTION_TYPE.WELL_JUMP);
             AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
         }
-
         Messenger.AddListener(Signals.HOUR_STARTED, HourStarted);
     }
     public override void OnDestroyPOI() {

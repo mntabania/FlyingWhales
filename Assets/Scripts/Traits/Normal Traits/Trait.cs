@@ -51,9 +51,9 @@ namespace Traits {
             Assert.IsFalse(string.IsNullOrEmpty(persistentID), $"Trait {saveDataTrait.name} does not have a persistent ID!");
             DatabaseManager.Instance.traitDatabase.RegisterTrait(this);
         }
-        public virtual void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
-            if (!string.IsNullOrEmpty(saveDataTrait.gainedFromDoing)) {
-                gainedFromDoing = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(saveDataTrait.gainedFromDoing);    
+        public virtual void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            if (!string.IsNullOrEmpty(p_saveDataTrait.gainedFromDoing)) {
+                gainedFromDoing = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(p_saveDataTrait.gainedFromDoing);    
             }
         }
         #endregion
@@ -132,7 +132,7 @@ namespace Traits {
         public virtual void OnSeePOIEvenCannotWitness(IPointOfInterest targetPOI, Character character) { }
         protected virtual void OnChangeLevel() { }
         public virtual void OnOwnerInitiallyPlaced(Character owner) { }
-        public virtual bool PerTickOwnerMovement() { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
+        public virtual bool PerTickWhileStationaryOrUnoccupied() { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
         public virtual bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
         public virtual void OnBeforeStartFlee(ITraitable traitable) { }
         public virtual void OnAfterExitingCombat(ITraitable traitable) { }
@@ -158,7 +158,7 @@ namespace Traits {
             int manaCost = EditableValuesManager.Instance.triggerFlawManaCost;
 
             return canBeTriggered && PlayerManager.Instance.player.mana >= manaCost
-                && character.canPerform
+                && character.limiterComponent.canPerform
                 //&& !character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER) //disabled characters cannot be triggered
                 && !character.traitContainer.HasTrait("Blessed")
                 && !character.carryComponent.masterCharacter.movementComponent.isTravellingInWorld; //characters travelling outside cannot be triggered
@@ -177,7 +177,7 @@ namespace Traits {
             if (character.traitContainer.HasTrait("Blessed")) {
                 reasons.Add("Blessed characters cannot be targeted by Trigger Flaw.");
             }
-            if (!character.canPerform) {
+            if (!character.limiterComponent.canPerform) {
                 reasons.Add("Characters that cannot perform cannot be targeted by Trigger Flaw.");
             }
             return reasons;
@@ -190,6 +190,7 @@ namespace Traits {
             return name;
         }
         protected virtual string GetDescriptionInUI() { return description; }
+        public virtual void AfterDeath(Character character) { }
         #endregion
 
         #region Utilities
@@ -216,9 +217,13 @@ namespace Traits {
             }
         }
         public bool IsResponsibleForTrait(Character character) {
+            if(character == null) {
+                return false;
+            }
             if (responsibleCharacter == character) {
                 return true;
-            } else if (responsibleCharacters != null) {
+            }
+            if (responsibleCharacters != null) {
                 return responsibleCharacters.Contains(character);
             }
             return false;
@@ -266,7 +271,7 @@ namespace Traits {
         /// <param name="otherData"></param>
         /// <param name="cost">The cost to be modified.</param>
         public virtual void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref int cost) { }
-        public virtual void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref List<GoapEffect> effects) { }
+        //public virtual void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref List<GoapEffect> effects) { }
         public virtual void ExecuteActionPreEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) { }
         public virtual void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) { }
         public virtual void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) { }

@@ -82,13 +82,13 @@ public class MoodComponent : CharacterComponent {
 
         if (!string.IsNullOrEmpty(mentalBreakName)) {
 	        if (mentalBreakName == "Loss of Control") {
-		        Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfLossOfControlFinished);
+		        Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfLossOfControlFinished);
 	        } else if (mentalBreakName == "Berserked") {
-		        Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfBerserkLost);	
+		        Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, CheckIfBerserkLost);	
 	        } else if (mentalBreakName == "Catatonia") {
-		        Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfCatatonicLost);
+		        Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, CheckIfCatatonicLost);
 	        } else if (mentalBreakName == "Suicidal") {
-		        Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfSuicidalLost);
+		        Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, CheckIfSuicidalLost);
 	        }
         }
     }
@@ -126,6 +126,14 @@ public class MoodComponent : CharacterComponent {
 		AddModificationToSummary(modifier.moodModificationDescription, amount, expiryDate);
         hasMoodChanged = true;
         //OnMoodChanged();
+	}
+	public void RescheduleMoodEffect(IMoodModifier p_modifier, GameDate p_rescheduledDate) {
+		if (allMoodModifications.ContainsKey(p_modifier.moodModificationDescription)) {
+			if (allMoodModifications[p_modifier.moodModificationDescription].expiryDates.Count > 0) {
+				allMoodModifications[p_modifier.moodModificationDescription].expiryDates.RemoveAt(0);	
+			}
+			allMoodModifications[p_modifier.moodModificationDescription].expiryDates.Add(p_rescheduledDate);
+		}
 	}
 	public void RemoveMoodEffect(int amount, IMoodModifier modifier) {
 		// if (amount == 0) {
@@ -228,7 +236,7 @@ public class MoodComponent : CharacterComponent {
 	}
 	private void CheckForMajorMentalBreak() {
 		IncreaseMajorMentalBreakChance();
-		if (owner.canPerform && isInMinorMentalBreak == false && isInMajorMentalBreak == false) {
+		if (owner.limiterComponent.canPerform && isInMinorMentalBreak == false && isInMajorMentalBreak == false) {
 			float roll = Random.Range(0f, 100f);
 			Debug.Log(
 				$"<color=green>{GameManager.Instance.TodayLogString()}{owner.name} is checking for <b>MAJOR</b> mental break. Roll is <b>{roll.ToString(CultureInfo.InvariantCulture)}</b>. Chance is <b>{currentCriticalMoodEffectChance.ToString(CultureInfo.InvariantCulture)}</b></color>");
@@ -317,7 +325,7 @@ public class MoodComponent : CharacterComponent {
 	private void TriggerBerserk() {
 		if (owner.traitContainer.AddTrait(owner, "Berserked")) {
 			mentalBreakName = "Berserked";
-			Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfBerserkLost);	
+			Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, CheckIfBerserkLost);	
 		} else {
 			Debug.LogWarning($"{owner.name} triggered berserk mental break but could not add berserk trait to its traits!");
 		}
@@ -326,14 +334,14 @@ public class MoodComponent : CharacterComponent {
 		if (traitable == owner && trait is Berserked) {
 			//gain catharsis
 			owner.traitContainer.AddTrait(owner, "Catharsis");
-			Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfBerserkLost);
+			Messenger.RemoveListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, CheckIfBerserkLost);
 			OnMentalBreakDone();
 		}
 	}
 	private void TriggerCatatonic() {
 		if (owner.traitContainer.AddTrait(owner, "Catatonic")) {
 			mentalBreakName = "Catatonia";
-			Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfCatatonicLost);
+			Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, CheckIfCatatonicLost);
 		} else {
 			Debug.LogWarning($"{owner.name} triggered catatonic mental break but could not add catatonic trait to its traits!");
 		}
@@ -342,14 +350,14 @@ public class MoodComponent : CharacterComponent {
 		if (traitable == owner && trait is Catatonic) {
 			//gain catharsis
 			owner.traitContainer.AddTrait(owner, "Catharsis");
-			Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfCatatonicLost);	
+			Messenger.RemoveListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, CheckIfCatatonicLost);	
 			OnMentalBreakDone();
 		}
 	}
 	private void TriggerSuicidal() {
 		if (owner.traitContainer.AddTrait(owner, "Suicidal")) {
 			mentalBreakName = "Suicidal";
-			Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfSuicidalLost);
+			Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, CheckIfSuicidalLost);
 		} else {
 			Debug.LogWarning($"{owner.name} triggered suicidal mental break but could not add suicidal trait to its traits!");
 		}
@@ -358,17 +366,17 @@ public class MoodComponent : CharacterComponent {
 		if (traitable == owner && trait is Suicidal) {
 			//gain catharsis
 			owner.traitContainer.AddTrait(owner, "Catharsis");
-			Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfSuicidalLost);
+			Messenger.RemoveListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, CheckIfSuicidalLost);
 			OnMentalBreakDone();
 		}
 	}
 	private void TriggerLossOfControl() {
 		owner.interruptComponent.TriggerInterrupt(INTERRUPT.Loss_Of_Control, owner);
-		Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfLossOfControlFinished);
+		Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfLossOfControlFinished);
 	}
 	private void CheckIfLossOfControlFinished(INTERRUPT interrupt, Character character) {
 		if (interrupt == INTERRUPT.Loss_Of_Control && character == owner) {
-			Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfLossOfControlFinished);	
+			Messenger.RemoveListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfLossOfControlFinished);	
 			OnMentalBreakDone();
 		}
 	}
@@ -377,7 +385,7 @@ public class MoodComponent : CharacterComponent {
 	#region Minor Mental Break
 	// private void CheckForMinorMentalBreak() {
 	// 	IncreaseMinorMentalBreakChance();
-	// 	if (owner.canPerform && _isInMinorMentalBreak == false && _isInMajorMentalBreak == false) {
+	// 	if (owner.limiterComponent.canPerform && _isInMinorMentalBreak == false && _isInMajorMentalBreak == false) {
 	// 		float roll = Random.Range(0f, 100f);
 	// 		Debug.Log(
 	// 			$"<color=green>{GameManager.Instance.TodayLogString()}{owner.name} is checking for <b>MINOR</b> mental break. Roll is <b>{roll.ToString(CultureInfo.InvariantCulture)}</b>. Chance is <b>{currentLowMoodEffectChance.ToString(CultureInfo.InvariantCulture)}</b></color>");
@@ -527,7 +535,7 @@ public class MoodComponent : CharacterComponent {
 		}
 		Debug.Log($"<color=blue>{owner.name} Added mood modification {modificationKey} {modificationValue.ToString()}</color>");
 		moodModificationsSummary[modificationKey] += modificationValue;
-		Messenger.Broadcast(Signals.MOOD_SUMMARY_MODIFIED, this);
+		Messenger.Broadcast(CharacterSignals.MOOD_SUMMARY_MODIFIED, this);
 	}
 	private void RemoveModificationFromSummary(string modificationKey, int modificationValue) {
 		if (moodModificationsSummary.ContainsKey(modificationKey)) {
@@ -546,7 +554,7 @@ public class MoodComponent : CharacterComponent {
 				}
 			}
 			
-			Messenger.Broadcast(Signals.MOOD_SUMMARY_MODIFIED, this);
+			Messenger.Broadcast(CharacterSignals.MOOD_SUMMARY_MODIFIED, this);
 		}
 	}
 	#endregion

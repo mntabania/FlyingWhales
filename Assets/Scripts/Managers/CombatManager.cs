@@ -6,6 +6,7 @@ using System;
 using Traits;
 using Inner_Maps;
 using UnityEngine.Assertions;
+using UtilityScripts;
 
 public class CombatManager : BaseMonoBehaviour {
     public static CombatManager Instance;
@@ -17,15 +18,18 @@ public class CombatManager : BaseMonoBehaviour {
     public const int pursueDuration = 4;
     public const string Hostility = "Hostility", Retaliation = "Retaliation", Berserked = "Berserked", Action = "Action",
         Threatened = "Threatened", Anger = "Anger", Join_Combat = "Join Combat", Drunk = "Drunk", Rage = "Rage", Demon_Kill = "Demon Kill", Dig = "Dig",
-        Avoiding_Witnesses = "Avoiding Witnesses", Encountered_Hostile = "Encountered Hostile", Clear_Demonic_Intrusion = "Clear_Demonic_Intrusion";
+        Avoiding_Witnesses = "Avoiding Witnesses", Encountered_Hostile = "Encountered Hostile", Clear_Demonic_Intrusion = "Clear_Demonic_Intrusion", Abduct = "Abduct", Apprehend = "Apprehend",
+        Monster_Scent = "Monster_Scent";
 
     //Hostility reasons
     public const string Raid = "Raid", Warring_Factions = "Warring_Factions",
-        Slaying_Monster = "Slaying_Monster", Slaying_Undead = "Slaying_Undead", Fighting_Vagrant = "Fighting_Vagrant", Feral_Monster = "Feral_Monster",
-        Hostile_Undead = "Hostile_Undead", Brawl = "Brawl";
+        Slaying_Monster = "Slaying_Monster", Slaying_Undead = "Slaying_Undead", Slaying_Demon = "Slaying_Demon", Slaying_Villager = "Slaying_Villager",
+        Incapacitating_Monster = "Incapacitating_Monster", Incapacitating_Undead = "Incapacitating_Undead", Incapacitating_Demon = "Incapacitating_Demon", Incapacitating_Villager = "Incapacitating_Villager",
+        Fighting_Vagrant = "Fighting_Vagrant", Feral_Monster = "Feral_Monster",
+        Hostile_Undead = "Hostile_Undead", Defending_Territory = "Defending_Territory";
 
     //Retaliation reasons
-    public const string Resisting_Arrest = "Resisting_Arrest", Resisting_Abduction = "Resisting_Abduction", Defending_Territory = "Defending_Territory", Defending_Self = "Defending_Self";
+    public const string Resisting_Arrest = "Resisting_Arrest", Resisting_Abduction = "Resisting_Abduction", Defending_Self = "Defending_Self";
 
 
 
@@ -176,7 +180,7 @@ public class CombatManager : BaseMonoBehaviour {
     public void PoisonExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible) {
         StartCoroutine(PoisonExplosionCoroutine(target, targetTile, stacks, characterResponsible));
         if (characterResponsible == null) {
-            Messenger.Broadcast(Signals.POISON_EXPLOSION_TRIGGERED_BY_PLAYER, target);    
+            Messenger.Broadcast(PlayerSignals.POISON_EXPLOSION_TRIGGERED_BY_PLAYER, target);    
         }
     }
     private IEnumerator PoisonExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible) {
@@ -258,7 +262,7 @@ public class CombatManager : BaseMonoBehaviour {
     }
     public void ChainElectricDamage(ITraitable traitable, int damage, Character characterResponsible, ITraitable origin) {
         if (characterResponsible == null) {
-            Messenger.Broadcast(Signals.ELECTRIC_CHAIN_TRIGGERED_BY_PLAYER);
+            Messenger.Broadcast(PlayerSignals.ELECTRIC_CHAIN_TRIGGERED_BY_PLAYER);
         }
 
         if (traitable.gridTileLocation != null && !traitable.gridTileLocation.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
@@ -393,11 +397,7 @@ public class CombatManager : BaseMonoBehaviour {
         if (target.traitContainer.HasTrait("Poisoned")) {
             int stacks = target.traitContainer.stacks["Poisoned"];
             target.traitContainer.RemoveStatusAndStacks(target, "Poisoned");
-            PoisonCloud poisonCloud = new PoisonCloud();
-            poisonCloud.SetExpiryDate(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(UnityEngine.Random.Range(2, 6))));
-            poisonCloud.SetGridTileLocation(target.gridTileLocation);
-            poisonCloud.OnPlacePOI();
-            poisonCloud.SetStacks(stacks);
+            InnerMapManager.Instance.SpawnPoisonCloud(target.gridTileLocation, stacks, GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(GameUtilities.RandomBetweenTwoNumbers(2, 5))));
         }
         if (target.traitContainer.HasTrait("Wet")) {
             int stacks = target.traitContainer.stacks["Wet"];
@@ -407,7 +407,7 @@ public class CombatManager : BaseMonoBehaviour {
             vapor.OnPlacePOI();
             vapor.SetStacks(stacks);
             if (responsibleCharacter == null) {
-                Messenger.Broadcast(Signals.VAPOR_FROM_WIND_TRIGGERED_BY_PLAYER);    
+                Messenger.Broadcast(PlayerSignals.VAPOR_FROM_WIND_TRIGGERED_BY_PLAYER);    
             }
         }
         if (target is DesertRose desertRose) {

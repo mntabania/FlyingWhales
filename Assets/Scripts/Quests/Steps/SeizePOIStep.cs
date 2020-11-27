@@ -10,10 +10,10 @@ namespace Quests.Steps {
         }
         
         protected override void SubscribeListeners() {
-            Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, CheckForCompletion);
+            Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<IPointOfInterest>(Signals.ON_SEIZE_POI, CheckForCompletion);
+            Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, CheckForCompletion);
         }
 
         #region Completion

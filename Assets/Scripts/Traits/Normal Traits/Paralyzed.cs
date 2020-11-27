@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UtilityScripts;
 namespace Traits {
     public class Paralyzed : Status {
 
@@ -24,7 +24,7 @@ namespace Traits {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is Character) {
                 owner = addTo as Character;
-                Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+                Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
         }
         #endregion
@@ -32,19 +32,19 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if (addedTo is Character) {
-                owner = addedTo as Character;
-                // owner.CancelAllJobs();
-                //Messenger.AddListener(Signals.TICK_STARTED, CheckParalyzedTrait);
-                //Messenger.AddListener(Signals.HOUR_STARTED, CheckParalyzedTraitPerHour);
-                Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+            if (addedTo is Character character) {
+                owner = character;
+                Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+                if (GameUtilities.RollChance(15) && character.homeSettlement != null && //15 
+                    Locations.Settlements.Settlement_Events.PlaguedEvent.HasMinimumAmountOfPlaguedVillagersForEvent(character.homeSettlement) && 
+                    !character.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event) && character.homeSettlement.eventManager.CanHaveEvents()) {
+                    character.homeSettlement.eventManager.AddNewActiveEvent(SETTLEMENT_EVENT.Plagued_Event);
+                }
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (owner != null) {
-                //Messenger.RemoveListener(Signals.TICK_STARTED, CheckParalyzedTrait);
-                //Messenger.RemoveListener(Signals.HOUR_STARTED, CheckParalyzedTraitPerHour);
-                Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+                Messenger.RemoveListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
@@ -52,10 +52,6 @@ namespace Traits {
             base.OnTickStarted(traitable);
             CheckParalyzedTrait();
         }
-        // public override void OnHourStarted() {
-        //     base.OnHourStarted();
-        //     CheckParalyzedTraitPerHour();
-        // }
         #endregion
         
         private void CheckParalyzedTrait() {

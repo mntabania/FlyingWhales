@@ -720,6 +720,72 @@ MonoBehaviour:
       mustache: []
       beard: []
       ears: []
+  - raceName: RAT
+    race: 35
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 24b73dbd41dbd1f459072d0dcf1f4314, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: RATMAN
+    race: 36
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: b8afed78d95feec4f8065ced0d0a7884, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
   - raceName: REVENANT
     race: 34
     neutralAssets:
@@ -2331,6 +2397,48 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 3d3ccfdaf11cfe24cae7f7735efecd37, type: 3}
           - {fileID: 21300000, guid: f0d6407ed5faac24fafecb8da3b1fafd, type: 3}
           - {fileID: 21300000, guid: 579d5c8ef63d84a42b425792c43c2a85, type: 3}
+    maleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
+    femaleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
+  - raceName: RAT
+    race: 35
+    neutralAssets:
+      characterClassAssets:
+        m_keys:
+        - Rat
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: f640a7c988f710a48a1f4e38af36e2d4,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 667f0e017a5ab924d849d81a66ccf704, type: 3}
+          - {fileID: 21300000, guid: f640a7c988f710a48a1f4e38af36e2d4, type: 3}
+          - {fileID: 21300000, guid: 16f7e8329be16c241b0a2cf7dac17ab9, type: 3}
+    maleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
+    femaleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
+  - raceName: RATMAN
+    race: 36
+    neutralAssets:
+      characterClassAssets:
+        m_keys:
+        - Ratman
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: 4d1e31e05de27b34c8a712290e10bbc6,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 3b69b902901f86b4d8591745f3135d9d, type: 3}
+          - {fileID: 21300000, guid: 4d1e31e05de27b34c8a712290e10bbc6, type: 3}
+          - {fileID: 21300000, guid: 7d5f6ea806efa3e448dcee563900d63b, type: 3}
     maleAssets:
       characterClassAssets:
         m_keys: []

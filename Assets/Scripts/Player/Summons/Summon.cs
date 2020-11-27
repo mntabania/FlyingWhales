@@ -22,16 +22,13 @@ public class Summon : Character {
     public virtual bool defaultDigMode => false;
     public virtual string bredBehaviour => characterClass.traitNameOnTamedByPlayer;
     public override Type serializedData => typeof(SaveDataSummon);
+    public bool isUsingDefaultName => name == raceClassName;
     #endregion
 
     protected Summon(SUMMON_TYPE summonType, string className, RACE race, GENDER gender) : base(className, race, gender) {
         this.summonType = summonType;
         showNotificationOnDeath = true;
         isVolatileMonster = false;
-        //by default all monsters should try and avoid settlements
-        for (int i = InnerMapManager.Starting_Tag_Index; i < 32; i++) {
-            movementComponent.SetPenaltyForTag(i, 180);
-        }
     }
     protected Summon(SaveDataSummon data) : base(data) {
         summonType = data.summonType;
@@ -47,8 +44,6 @@ public class Summon : Character {
 
         moodComponent.OnCharacterBecomeMinionOrSummon();
         moodComponent.SetMoodValue(50);
-
-        //CreateOwnParty();
         
         needsComponent.Initialize();
         
@@ -61,6 +56,7 @@ public class Summon : Character {
         needsComponent.SetTirednessForcedTick(0);
         needsComponent.SetHappinessForcedTick(0);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Monster_Behaviour);
+        movementComponent.AvoidAllFactions();
     }
     public override void OnActionPerformed(ActualGoapNode node) { } //overridden OnActionStateSet so that summons cannot witness other events.
     public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = default, LogFillerStruct[] deathLogFillers = null,
@@ -88,77 +84,31 @@ public class Summon : Character {
             reactionComponent.SetDisguisedCharacter(null);
 
             UnsubscribeSignals();
-            //behaviourComponent.SetIsHarassing(false, null);
-            //behaviourComponent.SetIsInvading(false, null);
-            //behaviourComponent.SetIsDefending(false, null);
-
-            //if (currentParty.specificLocation == null) {
-            //    throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
-            //}
             if (stateComponent.currentState != null) {
                 stateComponent.ExitCurrentState();
             }
-            //else if (stateComponent.stateToDo != null) {
-            //    stateComponent.SetStateToDo(null);
-            //}
-            //if (deathFromAction != null) { //if this character died from an action, do not cancel the action that he/she died from. so that the action will just end as normal.
-            //    CancelAllJobsTargettingThisCharacterExcept(deathFromAction, "target is already dead", false);
-            //} else {
-            //    CancelAllJobsTargettingThisCharacter("target is already dead", false);
-            //}
-            //ForceCancelAllJobsTargettingCharacter(false, "target is already dead");
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target is already dead");
+            Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target is already dead");
+            Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "target is already dead");
             jobQueue.CancelAllJobs();
-            //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this as Character, "target is already dead");
-            //if (currentActionNode != null) {
-            //    currentActionNode.StopActionNode(false);
-            //}
-            //if (currentSettlement != null && isHoldingItem) {
-            //    DropAllItems(deathTile);
-            //}
             DropAllItems(deathTile);
             UnownOrTransferOwnershipOfAllItems();
 
             reactionComponent.SetIsHidden(false);
-            //if (ownParty.specificLocation != null && isHoldingItem) {
-            //    DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);
-            //}
-
             //clear traits that need to be removed
             traitsNeededToBeRemoved.Clear();
 
             UncarryPOI();
             Character carrier = isBeingCarriedBy;
-            if (carrier != null) {
-                carrier.UncarryPOI(this);
-            }
-            //ownParty.PartyDeath();
-
-            //No longer remove from region list even if character died to prevent inconsistency in data because if a dead character is picked up and dropped, he will be added in the structure location list again but wont be in region list
-            //https://trello.com/c/WTiGxjrK/1786-inconsistent-characters-at-location-list-in-region-with-characters-at-structure
-            //currentRegion?.RemoveCharacterFromLocation(this);
-            //SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
-            //SetCurrentStructureLocation(deathStructure, false);
-
-            // if (_role != null) {
-            //     _role.OnDeath(this);
-            // }
+            carrier?.UncarryPOI(this);
 
             if (homeRegion != null) {
                 Region home = homeRegion;
                 LocationStructure homeStructure = this.homeStructure;
                 homeRegion.RemoveResident(this);
                 MigrateHomeStructureTo(null, addToRegionResidents: false);
-                //SetHomeRegion(home); //keep this data with character to prevent errors
+                SetHomeRegion(home); //keep this data with character to prevent errors
                 //SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             }
-            //if (homeNpcSettlement != null) {
-            //    NPCSettlement home = homeNpcSettlement;
-            //    Dwelling homeStructure = this.homeStructure;
-            //    homeNpcSettlement.RemoveResident(this);
-            //    SetHome(home); //keep this data with character to prevent errors
-            //    SetHomeStructure(homeStructure); //keep this data with character to prevent errors
-            //}
             if (partyComponent.hasParty) {
                 partyComponent.currentParty.RemoveMember(this);
             }
@@ -174,11 +124,6 @@ public class Summon : Character {
                     }
                 }
             }
-            //for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
-            //    if (traitContainer.allTraitsAndStatuses[i].OnDeath(this)) {
-            //        i--;
-            //    }
-            //}
 
             if (interruptComponent.isInterrupted && interruptComponent.currentInterrupt.interrupt != interrupt) {
                 interruptComponent.ForceEndNonSimultaneousInterrupt();
@@ -187,13 +132,12 @@ public class Summon : Character {
             if (cause == "attacked" && responsibleCharacter != null && responsibleCharacter.isInWerewolfForm) {
                 traitContainer.AddTrait(this, "Mangled", responsibleCharacter, gainedFromDoing: deathFromAction);
             }
-            Messenger.Broadcast(Signals.CHARACTER_DEATH, this as Character);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, this as Character);
 
             marker?.OnDeath(deathTile);
             behaviourComponent.OnDeath();
             jobQueue.CancelAllJobs();
 
-            //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
             Log localDeathLog;
             if (!_deathLog.hasValue) {
                 localDeathLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", null, LOG_TAG.Life_Changes);
@@ -207,7 +151,6 @@ public class Summon : Character {
                     }
                 }
                 //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
-                // logComponent.AddHistory(deathLog);
                 localDeathLog.AddLogToDatabase();
                 if (showNotificationOnDeath) {
                     PlayerManager.Instance.player.ShowNotificationFrom(this, localDeathLog);    
@@ -251,7 +194,7 @@ public class Summon : Character {
         behaviourComponent.OnSummon(tile);
     }
     protected virtual void AfterDeath(LocationGridTile deathTileLocation) {
-        if (marker == null && destroyMarkerOnDeath/* && (behaviourComponent.isInvading || behaviourComponent.isDefending || behaviourComponent.isHarassing)*/) {
+        if (marker == null && destroyMarkerOnDeath) {
             GameManager.Instance.CreateParticleEffectAt(deathTileLocation, PARTICLE_EFFECT.Minion_Dissipate);
         }
         behaviourComponent.SetIsHarassing(false, null);
@@ -270,11 +213,6 @@ public class Summon : Character {
         } else {
             actions.Clear();
         }
-        //PlayerAction seizeAction = new PlayerAction(PlayerDB.Seize_Character_Action,
-        //() => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !this.traitContainer.HasTrait("Leader", "Blessed"),
-        //null,
-        //() => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
-
         AddPlayerAction(SPELL_TYPE.SEIZE_MONSTER);
         AddPlayerAction(SPELL_TYPE.BREED_MONSTER);
         AddPlayerAction(SPELL_TYPE.AGITATE);

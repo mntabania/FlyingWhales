@@ -34,8 +34,7 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
                     if (character.traitContainer.HasTrait("Inspiring", "Ambitious")) {
                         createChance = factionsInRegion >= 2 ? 0.5f : 15f;
                     }
-                    float roll = Random.Range(0f, 100f);
-                    if (roll < createChance) {
+                    if (GameUtilities.RollChance(createChance)) {
                         log += $"\nChance met, creating new faction";
                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Faction, character);
                         return true;
@@ -43,26 +42,70 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
                 }
             }
         }
-        if(character.faction != null && character.faction.isMajorNonPlayer && !character.isFactionLeader && !character.isSettlementRuler) {
-            int leaveFactionChance = 0;
-            if(character.moodComponent.moodState == MOOD_STATE.Bad) {
-                leaveFactionChance += 3;
-            } else if (character.moodComponent.moodState == MOOD_STATE.Critical) {
-                leaveFactionChance += 8;
-            }
-            if (character.traitContainer.HasTrait("Betrayed") && character.faction.leader != null) {
-                Betrayed betrayed = character.traitContainer.GetTraitOrStatus<Betrayed>("Betrayed");
-                if(betrayed.responsibleCharacter == character.faction.leader) {
-                    leaveFactionChance += 30;
+        if(!character.isFactionLeader && !character.isSettlementRuler) {
+            if(character.faction != null && character.faction.isMajorNonPlayer) {
+                int leaveFactionChance = 0;
+                if (character.moodComponent.moodState == MOOD_STATE.Bad) {
+                    leaveFactionChance += 3;
+                } else if (character.moodComponent.moodState == MOOD_STATE.Critical) {
+                    leaveFactionChance += 8;
+                }
+                if (character.traitContainer.HasTrait("Betrayed") && character.faction.leader != null) {
+                    Betrayed betrayed = character.traitContainer.GetTraitOrStatus<Betrayed>("Betrayed");
+                    if (betrayed.IsResponsibleForTrait(character.faction.leader as Character)) {
+                        leaveFactionChance += 30;
+                    }
+                }
+                if (GameUtilities.RollChance(leaveFactionChance)) {
+                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_normal");
+                    return true;
                 }
             }
-            if (GameUtilities.RollChance(leaveFactionChance)) {
-                character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_normal");
+            if (character.traitContainer.HasTrait("Cultist")) {
+                log += $"\n-{character.name} is cultist";
+                if (character.faction == null || character.faction.factionType.type != FACTION_TYPE.Demon_Cult) {
+                    log += $"\n-Character is not part of a demon cult faction, will try to join one";
+                    int chance = 0;
+                    if (HasFactionWithMemberWithUnoccupiedDwelling(FACTION_TYPE.Demon_Cult)) {
+                        log += $"\n-Has demon cult faction with a member that has unoccupied dwelling, +3%";
+                        chance += 3;
+                    }
+                    if (HasFactionWith2Members(FACTION_TYPE.Demon_Cult)) {
+                        log += $"\n-Has demon cult faction with 1 or 2 members, +3%";
+                        chance += 3;
+                    }
+                    if (GameUtilities.RollChance(chance)) {
+                        log += $"\n-Will join demon cult";
+                        character.JoinFactionProcessing();
+                    }
+                }
             }
         }
         return false;
     }
-
+    private bool HasFactionWithMemberWithUnoccupiedDwelling(FACTION_TYPE factionType) {
+        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            Faction faction = FactionManager.Instance.allFactions[i];
+            if(faction.factionType.type == factionType) {
+                if (faction.HasMemberThatMeetCriteria(member => !member.isDead && member.homeSettlement != null && member.homeSettlement.GetFirstUnoccupiedDwelling() != null)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    private bool HasFactionWith2Members(FACTION_TYPE factionType) {
+        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            Faction faction = FactionManager.Instance.allFactions[i];
+            if (faction.factionType.type == factionType) {
+                int count = faction.GetMemberCountThatMeetCriteria(member => !member.isDead);
+                if (count == 1 || count == 2) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     private int GetFactionsInRegion(Region region) {
         List<Faction> factionsInRegion = new List<Faction>();
         for (int i = 0; i < region.settlementsInRegion.Count; i++) {

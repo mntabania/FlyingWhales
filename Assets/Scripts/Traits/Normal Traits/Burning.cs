@@ -28,6 +28,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(3);
             isTangible = true;
+            hindersSocials = true;
             moodEffect = -25;
             _burningSpreadChoices = new List<ITraitable>();
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EXTRACT_ITEM };
@@ -57,7 +58,7 @@ namespace Traits {
             sourceOfBurning?.AddObjectOnFire(owner);
             Messenger.AddListener(Signals.TICK_ENDED, PerTickEnded);
             if (addTo is Character) {
-                Messenger.AddListener<Character>(Signals.CHARACTER_MARKER_EXPIRED, OnCharacterMarkerExpired);
+                Messenger.AddListener<Character>(CharacterSignals.CHARACTER_MARKER_EXPIRED, OnCharacterMarkerExpired);
             }
         }
         #endregion
@@ -70,7 +71,7 @@ namespace Traits {
                 burningEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Burning, false);
                 if (poi is Character character) {
                     character.AdjustDoNotRecoverHP(1);
-                    if(character.canMove && character.canWitness && character.canPerform) {
+                    if(character.limiterComponent.canMove && character.limiterComponent.canWitness && character.limiterComponent.canPerform) {
                         CreateJobsOnEnterVisionBasedOnTrait(character, character);
                     }
                     CharacterBurningProcess(character);
@@ -81,7 +82,7 @@ namespace Traits {
                     winterRose.WinterRoseEffect();
                 } else {
                     //Will not reprocess if winter rose since it will be destroyed anyway
-                    Messenger.Broadcast(Signals.REPROCESS_POI, poi);
+                    Messenger.Broadcast(CharacterSignals.REPROCESS_POI, poi);
                 }
             } else if (addedTo is StructureWallObject structureWallObject) {
                 burningEffect = GameManager.Instance.CreateParticleEffectAt(structureWallObject, PARTICLE_EFFECT.Burning);
@@ -92,7 +93,7 @@ namespace Traits {
             }
             Messenger.AddListener(Signals.TICK_ENDED, PerTickEnded);
             if (addedTo is Character) {
-                Messenger.AddListener<Character>(Signals.CHARACTER_MARKER_EXPIRED, OnCharacterMarkerExpired);
+                Messenger.AddListener<Character>(CharacterSignals.CHARACTER_MARKER_EXPIRED, OnCharacterMarkerExpired);
             }
             
             base.OnAddTrait(addedTo);
@@ -104,7 +105,7 @@ namespace Traits {
             SetSourceOfBurning(null, removedFrom);
             Messenger.RemoveListener(Signals.TICK_ENDED, PerTickEnded);
             if (removedFrom is Character) {
-                Messenger.RemoveListener<Character>(Signals.CHARACTER_MARKER_EXPIRED, OnCharacterMarkerExpired);
+                Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_MARKER_EXPIRED, OnCharacterMarkerExpired);
             }
             if (burningEffect) {
                 ObjectPoolManager.Instance.DestroyObject(burningEffect);
@@ -221,7 +222,7 @@ namespace Traits {
 
             //Sleeping characters in bed should also receive damage
             //https://trello.com/c/kFZAHo11/1203-sleeping-characters-in-bed-should-also-receive-damage
-            if (owner is Bed bed) {
+            if (owner is BaseBed bed) {
                 if(bed.users != null && bed.users.Length > 0) {
                     for (int i = 0; i < bed.users.Length; i++) {
                         Character user = bed.users[i];
@@ -256,9 +257,9 @@ namespace Traits {
         public void SetDouser(Character character) {
             douser = character;
             if (douser == null) {
-                Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+                Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
             } else {
-                Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+                Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
             }
         }
         private void OnJobRemovedFromCharacter(JobQueueItem jqi, Character character) {

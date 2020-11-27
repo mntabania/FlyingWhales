@@ -42,7 +42,7 @@ public class HexTileSpellsComponent {
         this.owner = owner;
         earthquakeTileObjects = new List<IPointOfInterest>();
         pendingEarthquakeTileObjects = new List<IPointOfInterest>();
-        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
+        Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
     }
 
     #region Loading
@@ -206,7 +206,7 @@ public class HexTileSpellsComponent {
         }
     }
     private void CameraShake() {
-        InnerMapCameraMove.Instance.camera.DOShakeRotation(1f, new Vector3(2f, 2f, 2f), 15, fadeOut: false);
+        InnerMapCameraMove.Instance.EarthquakeShake();
         //tween.OnComplete(OnCompleteCameraShake);
     }
     private void StopCameraShake() {
@@ -216,14 +216,6 @@ public class HexTileSpellsComponent {
         yield return null;
         InnerMapCameraMove.Instance.camera.DOKill();
         InnerMapCameraMove.Instance.camera.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-    }
-
-    private void OnCompleteCameraShake() {
-        if (hasEarthquake) {
-            CameraShake();
-        } else {
-            StopCameraShake();
-        }
     }
     private void POIShake(IPointOfInterest poi) {
         Tweener tween = poi.mapObjectVisual.transform.DOShakeRotation(1f, new Vector3(0f, 0f, 5f), 40, fadeOut: false);

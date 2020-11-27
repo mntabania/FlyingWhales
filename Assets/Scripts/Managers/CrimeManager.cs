@@ -7,6 +7,7 @@ using Traits;
 using Interrupts;
 using Crime_System;
 using UtilityScripts;
+using Locations.Settlements;
 
 public class CrimeManager : BaseMonoBehaviour {
     public static CrimeManager Instance;
@@ -80,14 +81,18 @@ public class CrimeManager : BaseMonoBehaviour {
             existingCrimeData = criminal.crimeComponent.AddCrime(crimeType, crimeSeverity, crime, criminal, criminalTrait, target, targetFaction, reactionStatus);
             CrimeType crimeTypeObj = existingCrimeData.crimeTypeObj;
 
-            Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "become_criminal", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
-            addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            addLog.AddToFillers(null, crimeTypeObj.accuseText, LOG_IDENTIFIER.STRING_1);
-            addLog.AddToFillers(witness, witness.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            //addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_2);
-            addLog.AddLogToDatabase();
-            PlayerManager.Instance.player.ShowNotificationFrom(criminal, addLog);
-            Messenger.Broadcast(Signals.CHARACTER_ACCUSED_OF_CRIME, criminal, crimeType, witness);
+            if(crime is ActualGoapNode action && action.isAssumption) {
+                //Do not log accuse text
+            } else {
+                Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "become_criminal", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+                addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                addLog.AddToFillers(null, crimeTypeObj.accuseText, LOG_IDENTIFIER.STRING_1);
+                addLog.AddToFillers(witness, witness.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                //addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_2);
+                addLog.AddLogToDatabase();
+                PlayerManager.Instance.player.ShowNotificationFrom(criminal, addLog);
+            }
+            Messenger.Broadcast(CharacterSignals.CHARACTER_ACCUSED_OF_CRIME, criminal, crimeType, witness);
         }
 
         ProcessWitnessCrime(witness, existingCrimeData);
@@ -201,11 +206,12 @@ public class CrimeManager : BaseMonoBehaviour {
                     }
                 } else if (target is TileObject targetTileObject && !targetTileObject.IsOwnedBy(actor)) {
                     //added checking for gridTileLocation because targetTileObject could've been destroyed already. 
-                    LocationStructure structureLocation = targetTileObject.gridTileLocation != null ? targetTileObject.structureLocation : targetTileObject.previousTile.structure;
-                    if(structureLocation != null) {
-                        if (structureLocation.settlementLocation != null
-                        && (structureLocation.settlementLocation.locationType == LOCATION_TYPE.VILLAGE)) {
-                            return CRIME_SEVERITY.Misdemeanor;
+                    if(targetTileObject.gridTileLocation != null) {
+                        BaseSettlement settlement = null;
+                        if (targetTileObject.gridTileLocation.IsPartOfSettlement(out settlement)) {
+                            if(settlement.locationType == LOCATION_TYPE.VILLAGE) {
+                                return CRIME_SEVERITY.Misdemeanor;
+                            }
                         }
                     }
                 }
@@ -289,7 +295,8 @@ public class CrimeManager : BaseMonoBehaviour {
                     //Now, if actor attacked character B again while still having the assault crime against him, and character C witnessed it, instead of creating another crime data that "actor did an assault crime against character B"
                     //Character C will just be added as a witness to the crime data that character A previously created since that crime is still active
                     //The reason for this is so that we can reduce the number of crime data created if it is just the same crime against the same person
-                    CrimeData existingActiveCrimeData = actor.crimeComponent.GetActiveCrimeData(target, crimeType);
+                    //Additional note: also added case if crime is Vampire/Werewolf, crime data should return any crime of the same crime type
+                    CrimeData existingActiveCrimeData = actor.crimeComponent.GetExistingActiveCrimeData(target, crimeType);
                     if(existingActiveCrimeData != null) {
                         ProcessWitnessCrime(witness, existingActiveCrimeData);
                     } else {
@@ -313,6 +320,7 @@ public class CrimeManager : BaseMonoBehaviour {
         }
         CRIME_SEVERITY witnessCrimeSeverity = crimeTypeObj.GetCrimeSeverity(witness, actor, target);
         CRIME_SEVERITY finalCrimeSeverity = witnessCrimeSeverity;
+        //Only use faction crime severity if the personal witness crime severity is Unapplicable because if it is None, it means that the witness does not consider it a crime
         if (witnessCrimeSeverity == CRIME_SEVERITY.Unapplicable) {
             finalCrimeSeverity = factionCrimeSeverity;
         }
@@ -491,10 +499,10 @@ public class CrimeData : ISavable {
 
     #region Listeners
     private void SubscribeToListeners() {
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
     }
     private void UnsubscribeFromListeners() {
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
     }
     private void OnCharacterDied(Character character) {
         if (isRemoved) {

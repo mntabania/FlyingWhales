@@ -15,6 +15,8 @@ using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UtilityScripts;
 using UnityEngine.Assertions;
+using Locations.Settlements;
+using Random = UnityEngine.Random;
 
 public class CharacterMarker : MapObjectVisual<Character> {
     public Character character { get; private set; }
@@ -362,30 +364,30 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Listeners
     private void AddListeners() {
-        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
-        Messenger.AddListener<Character>(Signals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
+        Messenger.AddListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
+        Messenger.AddListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
         Messenger.AddListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
-        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
-        Messenger.AddListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
+        Messenger.AddListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
+        Messenger.AddListener<IPointOfInterest>(CharacterSignals.REPROCESS_POI, ReprocessPOI);
         Messenger.AddListener(Signals.TICK_ENDED, PerTickMovement);
-        Messenger.AddListener<IIntel>(Signals.ACTIVE_INTEL_SET, OnActiveIntelSet);
-        Messenger.AddListener(Signals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.AddListener<IIntel>(PlayerSignals.ACTIVE_INTEL_SET, OnActiveIntelSet);
+        Messenger.AddListener(PlayerSignals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     private void RemoveListeners() {
-        Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
-        Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
-        Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
-        Messenger.RemoveListener<Character>(Signals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
+        Messenger.RemoveListener<PROGRESSION_SPEED>(UISignals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.RemoveListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.RemoveListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
+        Messenger.RemoveListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
         Messenger.RemoveListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
-        Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
-        Messenger.RemoveListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
+        Messenger.RemoveListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
+        Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.REPROCESS_POI, ReprocessPOI);
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
-        Messenger.RemoveListener<IIntel>(Signals.ACTIVE_INTEL_SET, OnActiveIntelSet);
-        Messenger.RemoveListener(Signals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.RemoveListener<IIntel>(PlayerSignals.ACTIVE_INTEL_SET, OnActiveIntelSet);
+        Messenger.RemoveListener(PlayerSignals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     private void OnCharacterChangedName(Character p_character) {
         if (p_character == character) {
@@ -440,7 +442,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         string gainTraitSummary =
             $"{GameManager.Instance.TodayLogString()}{characterThatGainedTrait.name} has <color=green>gained</color> trait <b>{trait.name}</b>";
        
-        if (!characterThatGainedTrait.canPerform) {
+        if (!characterThatGainedTrait.limiterComponent.canPerform) {
             if (character.combatComponent.isInCombat) {
                 characterThatGainedTrait.stateComponent.ExitCurrentState();
                 gainTraitSummary += "\nGained trait hinders performance, and characters current state is combat, exiting combat state.";
@@ -468,7 +470,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
 
             //Only remove hostile in range from non lethal combat if target specifically becomes: Unconscious, Zapped or Restrained.
-            //if (!otherCharacter.canPerform) {
+            //if (!otherCharacter.limiterComponent.canPerform) {
             if (character.combatComponent.IsLethalCombatForTarget(otherCharacter) == false) {
                 if (otherCharacter.traitContainer.HasTrait("Unconscious", "Paralyzed", "Restrained")) {
                     if (character.combatComponent.hostilesInRange.Contains(otherCharacter)) {
@@ -554,7 +556,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             PooledObject pooledObject = pooledObjects[i];
             ObjectPoolManager.Instance.DestroyObject(pooledObject);
         }
-        Messenger.Broadcast(Signals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
+        Messenger.Broadcast(CharacterSignals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
         visionCollider.Reset();
         GameObject.Destroy(visionTrigger.gameObject);
         visionTrigger = null;
@@ -658,16 +660,17 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void ArrivedAtTarget(ref bool shouldRecomputePath) {
         StopMovement();
 
+        LocationGridTile actualDestinationTile = null;
+        LocationGridTile attainedDestinationTile = null;
+        ProcessDestinationAndAttainedDestinationTile(ref actualDestinationTile, ref attainedDestinationTile);
+        
         if (character.traitContainer.HasTrait("Vampire")) {
-            LocationGridTile destinationTile = null;
-            LocationGridTile attainedDestinationTile = null;
-            ProcessDestinationAndAttainedDestinationTile(ref destinationTile, ref attainedDestinationTile);
-            if (attainedDestinationTile != null && character.gridTileLocation != null && destinationTile != null && destinationTile != attainedDestinationTile) {
+            if (attainedDestinationTile != null && character.gridTileLocation != null && actualDestinationTile != null && actualDestinationTile != attainedDestinationTile) {
                 //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
                 //Transform to bat so the character can traverse the tile
                 Vampire vampireTrait = character.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
                 if (!vampireTrait.isInVampireBatForm && !vampireTrait.isTraversingUnwalkableAsBat && !character.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
-                    if(!PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, destinationTile)){
+                    if(!PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, actualDestinationTile)){
                         //Only transform to bat if there is really no path between the current location and destination tile
                         //If it has, even if the destination reached is not really the destination tile, do not transform
                         if (character.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Bat, character)) {
@@ -688,10 +691,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             CombatState combatState = character.stateComponent.currentState as CombatState;
             if (combatState.isAttacking){
                 if (combatState.currentClosestHostile != null && !character.movementComponent.HasPathToEvenIfDiffRegion(combatState.currentClosestHostile.gridTileLocation)) {
-                    LocationGridTile destinationTile = null;
-                    LocationGridTile attainedDestinationTile = null;
-                    ProcessDestinationAndAttainedDestinationTile(ref destinationTile, ref attainedDestinationTile);
-                    if (attainedDestinationTile != null && character.gridTileLocation != null && destinationTile != null && destinationTile != attainedDestinationTile) {
+                    if (attainedDestinationTile != null && character.gridTileLocation != null && actualDestinationTile != null && actualDestinationTile != attainedDestinationTile) {
                         //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
                         if (character.movementComponent.AttackBlockersOnReachEndPath(pathfindingAI.currentPath, attainedDestinationTile)) {
                             targetPOI = null;
@@ -708,10 +708,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
 
         if (character.movementComponent.CanDig()) {
-            LocationGridTile destinationTile = null;
-            LocationGridTile attainedDestinationTile = null;
-            ProcessDestinationAndAttainedDestinationTile(ref destinationTile, ref attainedDestinationTile);
-            if (attainedDestinationTile != null && character.gridTileLocation != null && destinationTile != null && destinationTile != attainedDestinationTile) {
+            if (attainedDestinationTile != null && character.gridTileLocation != null && actualDestinationTile != null && actualDestinationTile != attainedDestinationTile) {
                 //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
                 if (character.movementComponent.DigOnReachEndPath(pathfindingAI.currentPath, attainedDestinationTile)) {
                     targetPOI = null;
@@ -720,11 +717,19 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
         }
 
-        Action action = arrivalAction;
-        //set arrival action to null, because some arrival actions set it
-        ClearArrivalAction();
-        action?.Invoke();
-
+        if (actualDestinationTile == attainedDestinationTile) {
+            Action action = arrivalAction;
+            //set arrival action to null, because some arrival actions set it
+            ClearArrivalAction();
+            action?.Invoke();    
+        } else {
+            ClearArrivalAction();
+            //TODO: Maybe
+            if (character.currentJob != null && character.currentActionNode != null) {
+                character.NoPathToDoJobOrAction(character.currentJob, character.currentActionNode);    
+            }
+        }
+        
         targetPOI = null;
     }
     private void ProcessDestinationAndAttainedDestinationTile(ref LocationGridTile destinationTile, ref LocationGridTile attainedDestinationTile) {
@@ -790,7 +795,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     /// <param name="force">Should this object be forced to rotate?</param>
     public override void LookAt(Vector3 target, bool force = false) {
         if (!force) {
-            if (!character.canPerform || !character.canMove) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+            if (!character.limiterComponent.canPerform || !character.limiterComponent.canMove) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
                 return;
             }
         }
@@ -807,7 +812,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     /// <param name="force">Should this object be forced to rotate?</param>
     public override void Rotate(Quaternion target, bool force = false) {
         if (!force) {
-            if (!character.canPerform || !character.canMove) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+            if (!character.limiterComponent.canPerform || !character.limiterComponent.canMove) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
                 return;
             }
         }
@@ -921,12 +926,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
         } else {
             ResetBlood();
             if (character.numOfActionsBeingPerformedOnThis > 0) {
-                if ((character.canMove == false || (!character.canPerform && !character.canWitness)) && (!character.traitContainer.HasTrait("Hibernating", "Stoned") || (!(character is Golem) && !(character is Troll)))) {
+                if ((character.limiterComponent.canMove == false || (!character.limiterComponent.canPerform && !character.limiterComponent.canWitness)) && (!character.traitContainer.HasTrait("Hibernating", "Stoned") || (!(character is Golem) && !(character is Troll)))) {
                     PlaySleepGround();
                 } else {
                     PlayIdle();
                 }
-            } else if ((character.canMove == false || (!character.canPerform && !character.canWitness)) && (!character.traitContainer.HasTrait("Hibernating", "Stoned") || (!(character is Golem) && !(character is Troll)))) {
+            } else if ((character.limiterComponent.canMove == false || (!character.limiterComponent.canPerform && !character.limiterComponent.canWitness)) && (!character.traitContainer.HasTrait("Hibernating", "Stoned") || (!(character is Golem) && !(character is Troll)))) {
                 PlaySleepGround();
             } else if (isMoving) {
                 //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
@@ -1020,6 +1025,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         hoveredImg.enabled = state;
         particleEffectParent.gameObject.SetActive(state);
         particleEffectParentAllowRotation.gameObject.SetActive(state);
+        if (!state) {
+            HideHPBar();
+        }
         // clickedImg.enabled = state;
     }
     public bool IsShowingVisuals() {
@@ -1065,11 +1073,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 if (_previousHexTileLocation == null || (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap &&
                     _previousHexTileLocation != character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
                     if (_previousHexTileLocation != null) {
-                        Messenger.Broadcast(Signals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
+                        Messenger.Broadcast(CharacterSignals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
                     }
                     if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                         _previousHexTileLocation = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-                        Messenger.Broadcast(Signals.CHARACTER_ENTERED_HEXTILE, character, _previousHexTileLocation); //character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner
+                        Messenger.Broadcast(CharacterSignals.CHARACTER_ENTERED_HEXTILE, character, _previousHexTileLocation); //character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner
                     } else {
                         _previousHexTileLocation = null;
                     }
@@ -1229,7 +1237,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
             //character.AddAwareness(poi);
             OnAddPOIAsInVisionRange(poi);
-            Messenger.Broadcast(Signals.CHARACTER_SAW, character, poi);
+            Messenger.Broadcast(CharacterSignals.CHARACTER_SAW, character, poi);
         }
     }
     public bool RemovePOIFromInVisionRange(IPointOfInterest poi) {
@@ -1243,7 +1251,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 Character target = poi as Character;
                 inVisionCharacters.Remove(target);
                 target.defaultCharacterTrait.RemoveCharacterThatHasReactedToThis(character);
-                Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_VISION, character, target);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_REMOVED_FROM_VISION, character, target);
             } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                 inVisionTileObjects.Remove(poi as TileObject);
             }
@@ -1340,7 +1348,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Profiler.BeginSample($"{character.name} ProcessAllUnprocessedVisionPOIs");
         string log = $"{character.name} tick ended! Processing all unprocessed in visions...";
         if (unprocessedVisionPOIs.Count > 0) {
-            if (!character.isDead && character.reactionComponent.disguisedCharacter == null /* && character.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
+            if (!character.isDead && character.reactionComponent.disguisedCharacter == null /* && character.limiterComponent.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
                     if (poi.mapObjectVisual == null) {
@@ -1438,7 +1446,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //        Character character = poi as Character;
     //        if (isLethal == false && character.canBeAtttacked == false) {
     //            //if combat intent is not lethal and the target cannot be attacked, then do not allow target to be added as a hostile,
-    //            //otherwise ignore canBeAttacked value
+    //            //otherwise ignore limiterComponent.canBeAttacked value
     //            return false;
     //        }
     //        return !character.isDead && !this.character.isFollowingPlayerInstruction &&
@@ -1739,7 +1747,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     LocationGridTile neighbourCenter = neighbour.GetCenterLocationGridTile();
                     if (character.movementComponent.HasPathTo(neighbourCenter)) {
                         if(neighbourCenter.structure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-                            if(character.currentStructure.settlementLocation == null || neighbour.settlementOnTile == null || neighbour.settlementOnTile != character.currentStructure.settlementLocation) {
+                            BaseSettlement settlement = null;
+                            character.gridTileLocation?.IsPartOfSettlement(out settlement);
+                            if(settlement == null || neighbour.settlementOnTile == null || neighbour.settlementOnTile != settlement) {
                                 hexInWildernessForFlee.Add(neighbour);
                             }
                         }
@@ -1769,7 +1779,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     public void OnFleePathComputed(Path path) {
-        if (character == null || !character.canPerform || !character.canMove) {
+        if (character == null || !character.limiterComponent.canPerform || !character.limiterComponent.canMove) {
             return; //this is for cases that the character is no longer in a combat state, but the pathfinding thread returns a flee path
         }
         arrivalAction = OnFinishedTraversingFleePath;
@@ -1947,7 +1957,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private void Expire() {
         Debug.Log($"{character.name}'s marker has expired.");
         character.ForceCancelAllJobsTargetingThisCharacter(false);
-        Messenger.Broadcast(Signals.CHARACTER_MARKER_EXPIRED, character);
+        Messenger.Broadcast(CharacterSignals.CHARACTER_MARKER_EXPIRED, character);
         character.DestroyMarker();
     }
     #endregion
@@ -1984,8 +1994,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (constantPath.allNodes != null && constantPath.allNodes.Count > 0) {
             GoTo(PathUtilities.GetPointsOnNodes(constantPath.allNodes, 1).Last(), arrivalAction);    
         } else {
-            //could not find nodes to stroll to. Just do arrival action, then try again.
-            arrivalAction.Invoke();
+            if (character.stateComponent.currentState is StrollOutsideState) {
+                //could not find nodes to stroll to. Just exit stroll state.
+                character.stateComponent.ExitCurrentState();    
+            }
         }
         
     }

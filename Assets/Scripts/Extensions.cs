@@ -56,7 +56,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.DWELLING:
             case STRUCTURE_TYPE.SMITHY:
             case STRUCTURE_TYPE.BARRACKS:
-            case STRUCTURE_TYPE.APOTHECARY:
+            case STRUCTURE_TYPE.HOSPICE:
             case STRUCTURE_TYPE.GRANARY:
             case STRUCTURE_TYPE.MINER_CAMP:
             case STRUCTURE_TYPE.RAIDER_CAMP:
@@ -81,7 +81,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.FARM:
             case STRUCTURE_TYPE.MINE_SHACK:
             case STRUCTURE_TYPE.LUMBERYARD:
-            case STRUCTURE_TYPE.APOTHECARY:
+            case STRUCTURE_TYPE.HOSPICE:
             case STRUCTURE_TYPE.CEMETERY:
             case STRUCTURE_TYPE.BARRACKS:
             case STRUCTURE_TYPE.MAGE_QUARTERS:
@@ -120,7 +120,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.BARRACKS:
             case STRUCTURE_TYPE.MINER_CAMP:
             case STRUCTURE_TYPE.WAREHOUSE:
-            case STRUCTURE_TYPE.APOTHECARY:
+            case STRUCTURE_TYPE.HOSPICE:
             case STRUCTURE_TYPE.RAIDER_CAMP:
             case STRUCTURE_TYPE.HUNTER_LODGE:
             case STRUCTURE_TYPE.ASSASSIN_GUILD:
@@ -139,6 +139,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.CAVE:
             case STRUCTURE_TYPE.DEFILER:
             case STRUCTURE_TYPE.RUINED_ZOO:
+            case STRUCTURE_TYPE.BIOLAB:
                 return true;
             default:
                 return false;
@@ -236,6 +237,17 @@ public static class Extensions {
     public static bool WillAvoidCharactersWhileMoving(this INTERACTION_TYPE type) {
         switch (type) {
             case INTERACTION_TYPE.RITUAL_KILLING:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool IsRestingAction(this INTERACTION_TYPE p_type) {
+        switch (p_type) {
+            case INTERACTION_TYPE.SLEEP:
+            case INTERACTION_TYPE.SLEEP_OUTSIDE:
+            case INTERACTION_TYPE.NAP:
+            case INTERACTION_TYPE.NARCOLEPTIC_NAP:
                 return true;
             default:
                 return false;
@@ -354,6 +366,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.METAL_PILE:
             case TILE_OBJECT_TYPE.STONE_PILE:
             case TILE_OBJECT_TYPE.WOOD_PILE:
+            case TILE_OBJECT_TYPE.TABLE:
                 return true;
             default:
                 return tileObjectType.IsTileObjectAnItem();
@@ -414,6 +427,33 @@ public static class Extensions {
                 return false;
         }
     }
+    public static bool IsFullnessRecoveryTypeJob(this JOB_TYPE type) {
+        switch (type) {
+            case JOB_TYPE.FULLNESS_RECOVERY_URGENT:
+            case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
+            case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool IsTirednessRecoveryTypeJob(this JOB_TYPE type) {
+        switch (type) {
+            case JOB_TYPE.ENERGY_RECOVERY_URGENT:
+            case JOB_TYPE.ENERGY_RECOVERY_NORMAL:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool IsHappinessRecoveryTypeJob(this JOB_TYPE type) {
+        switch (type) {
+            case JOB_TYPE.HAPPINESS_RECOVERY:
+                return true;
+            default:
+                return false;
+        }
+    }
     public static int GetJobTypePriority(this JOB_TYPE jobType) {
         int priority = 0;
         switch (jobType) {
@@ -439,6 +479,7 @@ public static class Extensions {
                 break;
             case JOB_TYPE.BUILD_CAMP:
             case JOB_TYPE.LYCAN_HUNT_PREY:
+            case JOB_TYPE.MONSTER_EAT_CORPSE:
                 priority = 1087;
                 break;
             case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
@@ -492,6 +533,7 @@ public static class Extensions {
                 break;
             case JOB_TYPE.FEED:
             case JOB_TYPE.RITUAL_KILLING:
+            case JOB_TYPE.MONSTER_ABDUCT:
                 priority = 1003;
                 break;
             case JOB_TYPE.ENERGY_RECOVERY_URGENT:
@@ -564,9 +606,12 @@ public static class Extensions {
             case JOB_TYPE.SNATCH:
             case JOB_TYPE.VAMPIRIC_EMBRACE:
             case JOB_TYPE.IMPRISON_BLOOD_SOURCE:
+            case JOB_TYPE.SPREAD_RUMOR:
                 priority = 830;
                 break;
             case JOB_TYPE.BURY:
+            case JOB_TYPE.TORTURE:
+            case JOB_TYPE.CHANGE_CLASS:
                 priority = 820;
                 break;
             case JOB_TYPE.PRODUCE_FOOD:
@@ -575,6 +620,8 @@ public static class Extensions {
             case JOB_TYPE.PRODUCE_STONE:
             case JOB_TYPE.PRODUCE_WOOD:
             case JOB_TYPE.MONSTER_BUTCHER:
+            case JOB_TYPE.QUARANTINE:
+            case JOB_TYPE.PLAGUE_CARE:
                 priority = 800;
                 break;
             case JOB_TYPE.CRAFT_OBJECT:
@@ -656,17 +703,15 @@ public static class Extensions {
             case JOB_TYPE.VISIT_DIFFERENT_REGION:
                 priority = 280;
                 break;
-            case JOB_TYPE.SPREAD_RUMOR:
-                //case JOB_TYPE.CONFIRM_RUMOR:
-                //case JOB_TYPE.SHARE_NEGATIVE_INFO:
-                priority = 270;
-                break;
             case JOB_TYPE.OBTAIN_PERSONAL_ITEM:
             case JOB_TYPE.ABDUCT:
             case JOB_TYPE.LEARN_MONSTER:
             case JOB_TYPE.TAKE_ARTIFACT:
                 priority = 260;
                 break;
+            // case JOB_TYPE.MONSTER_EAT_CORPSE:
+            //     priority = 255;
+            //     break;
             case JOB_TYPE.IDLE_RETURN_HOME:
             case JOB_TYPE.IDLE_NAP:
             case JOB_TYPE.IDLE_SIT:
@@ -696,7 +741,6 @@ public static class Extensions {
             case JOB_TYPE.STROLL:
                 priority = 100;
                 break;
-            case JOB_TYPE.MONSTER_ABDUCT:
             case JOB_TYPE.MONSTER_EAT:
                 priority = 90;
                 break;
@@ -829,19 +873,10 @@ public static class Extensions {
             case JOB_TYPE.CAPTURE_CHARACTER:
             case JOB_TYPE.BERSERK_ATTACK:
             case JOB_TYPE.SNATCH:
+            case JOB_TYPE.MONSTER_ABDUCT:
                 return false;
             default:
                 return true;
-        }
-    }
-    public static bool IsFullnessRecovery(this JOB_TYPE type) {
-        switch (type) {
-            case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
-            case JOB_TYPE.FULLNESS_RECOVERY_URGENT:
-            case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
-                return true;
-            default:
-                return false;
         }
     }
     #endregion

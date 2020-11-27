@@ -10,10 +10,10 @@ namespace Quests.Steps {
             _neededIdentifier = neededIdentifier;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<RuinarchButton>(Signals.BUTTON_CLICKED, CheckForCompletion);
+            Messenger.AddListener<RuinarchButton>(UISignals.BUTTON_CLICKED, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<RuinarchButton>(Signals.BUTTON_CLICKED, CheckForCompletion);
+            Messenger.RemoveListener<RuinarchButton>(UISignals.BUTTON_CLICKED, CheckForCompletion);
         }
 
         #region Listeners

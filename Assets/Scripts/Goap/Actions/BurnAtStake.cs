@@ -48,7 +48,7 @@ public class BurnAtStake : GoapAction {
 
     #region Preconditions
     private bool CanDoBurnAtStake(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
-        return target is Character targetCharacter && target.traitContainer.HasTrait("Restrained") && targetCharacter.currentSettlement == actor.homeSettlement && targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.WILDERNESS;
+        return target is Character targetCharacter && target.traitContainer.HasTrait("Restrained") && targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.WILDERNESS;
     }
     #endregion
 

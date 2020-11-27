@@ -95,10 +95,6 @@ public class PlayerUI : BaseMonoBehaviour {
 
     [Header("Summons")]
     [SerializeField] private SummonListUI summonList;
-    //public ScrollRect summonsScrollRect;
-    //public GameObject summonsContainerGO;
-    //[SerializeField] private GameObject characterNameplateItem;
-    //private List<CharacterNameplateItem> _summonItems;
 
     [Header("Items")] 
     public Toggle itemsToggle;
@@ -121,6 +117,10 @@ public class PlayerUI : BaseMonoBehaviour {
 
     [Header("Building")] 
     [SerializeField] private BuildListUI _buildListUI;
+    
+    [Header("Plague Points")]
+    [SerializeField] private TextMeshProUGUI plaguePointLbl;
+    [SerializeField] private RectTransform plaguePointsContainer;
     
     public HexTile harassDefendInvadeTargetHex { get; private set; }
 
@@ -146,50 +146,48 @@ public class PlayerUI : BaseMonoBehaviour {
 
         minionList.Initialize();
         summonList.Initialize();
+        plaguePointsContainer.gameObject.SetActive(false);
 
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<InfoUIBase>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.AddListener(Signals.UPDATED_CURRENCIES, UpdateUI);
-        Messenger.AddListener<IIntel>(Signals.PLAYER_OBTAINED_INTEL, OnIntelObtained);
-        Messenger.AddListener<IIntel>(Signals.PLAYER_REMOVED_INTEL, OnIntelRemoved);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<InfoUIBase>(UISignals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener(PlayerSignals.UPDATED_CURRENCIES, UpdateUI);
+        Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_OBTAINED_INTEL, OnIntelObtained);
+        Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_REMOVED_INTEL, OnIntelRemoved);
 
-        Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
-        Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
+        Messenger.AddListener(UISignals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
+        Messenger.AddListener(UISignals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
-        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
         
-        Messenger.AddListener<SPELL_TYPE>(Signals.PLAYER_GAINED_SPELL, OnGainSpell);
-        Messenger.AddListener<SPELL_TYPE>(Signals.PLAYER_LOST_SPELL, OnLostSpell);
+        Messenger.AddListener<SPELL_TYPE>(SpellSignals.PLAYER_GAINED_SPELL, OnGainSpell);
+        Messenger.AddListener<SPELL_TYPE>(SpellSignals.PLAYER_LOST_SPELL, OnLostSpell);
     }
 
     public void InitializeAfterGameLoaded() {
-        //Kill Count UI
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
-        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CREATED, AddedNewCharacter);
-        Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
-        Messenger.AddListener<Character, Character>(Signals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
-        Messenger.AddListener(Signals.THREAT_UPDATED, OnThreatUpdated);
-        Messenger.AddListener<int>(Signals.THREAT_INCREASED, OnThreatIncreased);
-        Messenger.AddListener(Signals.THREAT_RESET, OnThreatReset);
-        Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
-        Messenger.AddListener<IPointOfInterest>(Signals.ON_UNSEIZE_POI, OnUnseizePOI);
-        Messenger.AddListener<Character>(Signals.NEW_VILLAGER_ARRIVED, OnAddNewCharacter);
-        Messenger.AddListener<Character>(Signals.NECROMANCER_SPAWNED, OnNecromancerSpawned);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CREATED, AddedNewCharacter);
+        Messenger.AddListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
+        Messenger.AddListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
+        Messenger.AddListener(PlayerSignals.THREAT_UPDATED, OnThreatUpdated);
+        Messenger.AddListener<int>(PlayerSignals.THREAT_INCREASED, OnThreatIncreased);
+        Messenger.AddListener(PlayerSignals.THREAT_RESET, OnThreatReset);
+        Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
+        Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_UNSEIZE_POI, OnUnseizePOI);
+        Messenger.AddListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnAddNewCharacter);
+        Messenger.AddListener<Character>(CharacterSignals.NECROMANCER_SPAWNED, OnNecromancerSpawned);
+        Messenger.AddListener<int>(PlayerSignals.UPDATED_PLAGUE_POINTS, UpdatePlaguePointsAmount);
 
         //key presses
-        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
+        Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyPressed);
 
         //currencies
-        Messenger.AddListener<int, int>(Signals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
+        Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         InitialUpdateVillagerListCharacterItems();
         InitializeIntel();
-        // UpdateIntel();
 #if UNITY_EDITOR
-        itemsToggle.gameObject.SetActive(false);
-        artifactsToggle.gameObject.SetActive(false);    
         itemsToggle.gameObject.SetActive(true);
         artifactsToggle.gameObject.SetActive(true);
         CreateItemsForTesting();
@@ -198,7 +196,6 @@ public class PlayerUI : BaseMonoBehaviour {
         itemsToggle.gameObject.SetActive(false);
         artifactsToggle.gameObject.SetActive(false);        
 #endif
-        // OnThreatUpdated();
     }
     public void InitializeAfterLoadOutPicked() {
         UpdateIntel();
@@ -211,6 +208,8 @@ public class PlayerUI : BaseMonoBehaviour {
         summonList.UpdateList();
 
         OnThreatUpdated();
+        UpdatePlaguePointsContainer();
+        UpdatePlaguePointsAmount(PlayerManager.Instance.player.plagueComponent.plaguePoints);
     }
 
     #region Listeners
@@ -255,10 +254,10 @@ public class PlayerUI : BaseMonoBehaviour {
         //CheckIfAllCharactersWipedOut();
     }
     private void OnCharacterAddedToFaction(Character character, Faction faction) {
-        //if (faction == FactionManager.Instance.neutralFaction) {
+        //if (faction?.factionType.type == FACTION_TYPE.Wild_Monsters) {
         //    TransferCharacterFromActiveToInactive(character);
         //} else 
-        if (faction.isPlayerFaction || faction == FactionManager.Instance.undeadFaction) {
+        if (faction.isPlayerFaction || faction?.factionType.type == FACTION_TYPE.Undead) {
             OnCharacterBecomesMinionOrSummon(character);
         } else {
             TransferCharacterFromInactiveToActive(character);
@@ -358,7 +357,7 @@ public class PlayerUI : BaseMonoBehaviour {
             regionNameTopMenuText.text = location.name;
             regionNameTopMenuGO.SetActive(true);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            regionNameHoverHandler.SetOnHoverAction(() => TestingUtilities.ShowLocationInfo(location.coreTile.region));
+            regionNameHoverHandler.SetOnHoverOverAction(() => TestingUtilities.ShowLocationInfo(location.coreTile.region));
             regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
 #endif
         } else {
@@ -377,7 +376,7 @@ public class PlayerUI : BaseMonoBehaviour {
         manaLbl.text = PlayerManager.Instance.player.mana.ToString();
     }
     private Tweener _currentManaPunchTween;
-    public void DoManaPunchEffect() {
+    private void DoManaPunchEffect() {
         if (_currentManaPunchTween == null) {
             _currentManaPunchTween = manaContainer.DOPunchScale(new Vector3(0.8f, 0.8f, 0.8f), 0.5f).OnComplete(() => _currentManaPunchTween = null);    
         }
@@ -497,7 +496,7 @@ public class PlayerUI : BaseMonoBehaviour {
     public void ShowPlayerIntels(bool state) {
         intelContainer.SetActive(state);
         if (state) {
-            Messenger.Broadcast(Signals.INTEL_MENU_OPENED);    
+            Messenger.Broadcast(UISignals.INTEL_MENU_OPENED);    
         }
         //RectTransform rt = UIManager.Instance.playerNotifGO.transform as RectTransform;
         //Vector3 previousPos = rt.anchoredPosition;
@@ -531,8 +530,7 @@ public class PlayerUI : BaseMonoBehaviour {
     
     #region Corruption and Threat
     public void OnHoverEnterThreat() {
-        string text =
-            "The amount of threat you've generated in this world. Once this reaches 100, characters will start attacking your structures.";
+        string text = "The amount of threat you've generated in this world. Once this reaches 100, characters will start attacking your structures.";
         UIManager.Instance.ShowSmallInfo(text, threatHoverPos, "Threat");
     }
     public void OnHoverExitThreat() {
@@ -793,28 +791,6 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     #endregion
 
-    //#region New Minion
-    //[Header("New Minion UI")]
-    //[SerializeField] private GameObject newMinionUIGO;
-    //[SerializeField] private MinionCard newMinionCard;
-    //public void ShowNewMinionUI(Minion minion) {
-    //    if (IsMajorUIShowing()) {
-    //        AddPendingUI(() => ShowNewMinionUI(minion));
-    //        return;
-    //    }
-    //    UIManager.Instance.Pause();
-    //    UIManager.Instance.SetSpeedTogglesState(false);
-    //    newMinionCard.SetMinion(minion);
-    //    newMinionUIGO.SetActive(true);
-    //}
-    //public void HideNewMinionUI() {
-    //    newMinionUIGO.SetActive(false);
-    //    if (!TryShowPendingUI() && !UIManager.Instance.IsObjectPickerOpen()) {
-    //        UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
-    //    }
-    //}
-    //#endregion
-
     #region Seize
     private void OnSeizePOI(IPointOfInterest poi) {
         DisableTopMenuButtons();
@@ -847,7 +823,7 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     private void ShowSpells() {
         spellsContainerGO.SetActive(true);
-        Messenger.Broadcast(Signals.SPELLS_MENU_SHOWN);
+        Messenger.Broadcast(UISignals.SPELLS_MENU_SHOWN);
     }
     private void HideSpells() {
         spellsContainerGO.SetActive(false);
@@ -988,7 +964,7 @@ public class PlayerUI : BaseMonoBehaviour {
             TILE_OBJECT_TYPE.ELECTRIC_CRYSTAL, TILE_OBJECT_TYPE.FIRE_CRYSTAL, TILE_OBJECT_TYPE.ICE_CRYSTAL,
             TILE_OBJECT_TYPE.POISON_CRYSTAL, TILE_OBJECT_TYPE.WATER_CRYSTAL, TILE_OBJECT_TYPE.SNOW_MOUND,
             TILE_OBJECT_TYPE.WINTER_ROSE, TILE_OBJECT_TYPE.DESERT_ROSE, TILE_OBJECT_TYPE.CULTIST_KIT,
-            TILE_OBJECT_TYPE.TREASURE_CHEST, TILE_OBJECT_TYPE.ICE, TILE_OBJECT_TYPE.HERB_PLANT, TILE_OBJECT_TYPE.ANIMAL_MEAT
+            TILE_OBJECT_TYPE.TREASURE_CHEST, TILE_OBJECT_TYPE.ICE, TILE_OBJECT_TYPE.HERB_PLANT, TILE_OBJECT_TYPE.ANIMAL_MEAT, TILE_OBJECT_TYPE.PROFESSION_PEDESTAL
         };
         for (int i = 0; i < items.Length; i++) {
             CreateNewItemItem(items[i]);
@@ -1101,6 +1077,41 @@ public class PlayerUI : BaseMonoBehaviour {
             _buildListUI.Open();
         } else {
             _buildListUI.Close();
+        }
+    }
+    #endregion
+
+    #region Plague
+    private Tweener _currentPlaguePointPunchTween;
+    private void DoPlaguePointPunchEffect() {
+        if (_currentPlaguePointPunchTween == null) {
+            _currentPlaguePointPunchTween = plaguePointsContainer.DOPunchScale(new Vector3(0.8f, 0.8f, 0.8f), 0.5f).OnComplete(() => _currentPlaguePointPunchTween = null);    
+        }
+    }
+    public void ShowPlaguePointsGainedEffect(int adjustmentAmount) {
+        if (plaguePointsContainer.gameObject.activeSelf) {
+            DoPlaguePointPunchEffect();
+            var text = $"<color=#FE4D60>+{adjustmentAmount.ToString()}{UtilityScripts.Utilities.PlagueIcon()}</color>";
+            GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", plaguePointLbl.transform.position, Quaternion.identity, transform, true);
+            effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-25, 25), -70f));    
+        }
+    }
+    private void UpdatePlaguePointsAmount(int p_amount) {
+        plaguePointLbl.text = p_amount.ToString();
+    }
+    private void UpdatePlaguePointsContainer() {
+        plaguePointsContainer.gameObject.SetActive(PlayerSkillManager.Instance.GetDemonicStructureSkillData(SPELL_TYPE.BIOLAB).isInUse);
+    }
+    public void OnHoverEnterPlaguePoints() {
+        string text = "The amount of Plague Points you've generated. You can use this to upgrade your Plague if you have a Biolab built";
+        UIManager.Instance.ShowSmallInfo(text, threatHoverPos, $"{UtilityScripts.Utilities.PlagueIcon()} Plague Points");
+    }
+    public void OnHoverExitPlaguePoints() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    public void OnClickPlaguePoints() {
+        if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB)) {
+            UIManager.Instance.ShowBiolabUI();    
         }
     }
     #endregion

@@ -6,10 +6,10 @@ namespace Quests.Steps {
             _requiredTraitName = requiredTraitName;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<Trait>(Signals.FLAW_CLICKED, CheckForCompletion);
+            Messenger.AddListener<Trait>(UISignals.FLAW_CLICKED, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<Trait>(Signals.FLAW_CLICKED, CheckForCompletion);
+            Messenger.RemoveListener<Trait>(UISignals.FLAW_CLICKED, CheckForCompletion);
         }
 
         #region Completion

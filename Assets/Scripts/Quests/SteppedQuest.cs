@@ -32,7 +32,7 @@ namespace Quests {
         public override void Activate() {
             Assert.IsNotNull(steps, $"{questName} was activated but its steps are not yet constructed!");
             Assert.IsTrue(steps.Count > 0, $"{questName} is activated but it has no steps to complete!");
-            Messenger.AddListener<QuestStepCollection>(Signals.STEP_COLLECTION_COMPLETED, OnStepCollectionCompleted);
+            Messenger.AddListener<QuestStepCollection>(PlayerQuestSignals.STEP_COLLECTION_COMPLETED, OnStepCollectionCompleted);
             base.Activate();
             //activate first collection
             QuestStepCollection stepCollection = steps[0];

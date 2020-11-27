@@ -87,7 +87,7 @@ namespace Locations.Settlements {
                 //region.AddResident(character);
                 residents.Add(character);
                 AssignCharacterToDwellingInArea(character, chosenHome);
-                if(owner == null && character.faction != null && character.faction.isMajorNonPlayer) {
+                if(owner == null && character.faction != null && (character.faction.isMajorNonPlayer || character.faction.factionType.type == FACTION_TYPE.Ratmen)) {
                     //If a character becomes a resident and he/she has a faction and this settlement has no faction owner yet, set it as the faction owner
                     LandmarkManager.Instance.OwnSettlement(character.faction, this);
                 }
@@ -146,7 +146,14 @@ namespace Locations.Settlements {
                 //if the code reaches here, it means that the npcSettlement could not find a dwelling for the character
                 Debug.LogWarning(
                     $"{GameManager.Instance.TodayLogString()}Could not find a dwelling for {character.name} at {name}, setting home to Town Center");
-                chosenDwelling = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER) as CityCenter;
+                LocationStructure cityCenter = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+                if (cityCenter != null) {
+                    chosenDwelling = cityCenter;
+                } else {
+                    //If there is not city center, assign random structure as home
+                    //This is usually for dungeon type settlements like caves and monster lairs
+                    chosenDwelling = GetRandomStructure();
+                }
             }
             character.ChangeHomeStructure(chosenDwelling);
         }
@@ -181,57 +188,14 @@ namespace Locations.Settlements {
             }
             return true;
         }
-        public bool HasResidentInsideSettlement() {
+        public bool HasResidentThatMeetsCriteria(System.Func<Character, bool> criteria) {
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
-                if (resident.gridTileLocation != null
-                    && !resident.isBeingSeized
-                    && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                    && resident.IsInHomeSettlement()) {
+                if (criteria.Invoke(resident)) {
                     return true;
                 }
             }
             return false;
-        }
-        public bool HasAliveResidentInsideSettlement() {
-            for (int i = 0; i < residents.Count; i++) {
-                Character resident = residents[i];
-                if (!resident.isDead
-                    && !resident.isBeingSeized
-                    && resident.gridTileLocation != null
-                    && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                    && resident.gridTileLocation.IsPartOfSettlement(this)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public bool HasAliveVillagerResident() {
-            for (int i = 0; i < residents.Count; i++) {
-                Character resident = residents[i];
-                if (!resident.isDead && resident.isNormalCharacter) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public Character GetRandomAliveResidentInsideSettlement() {
-            List<Character> choices = null;
-            for (int i = 0; i < residents.Count; i++) {
-                Character resident = residents[i];
-                if (!resident.isDead
-                    && !resident.isBeingSeized
-                    && resident.gridTileLocation != null
-                    && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                    && resident.gridTileLocation.IsPartOfSettlement(this)) {
-                    if(choices == null) { choices = new List<Character>(); }
-                    choices.Add(resident);
-                }
-            }
-            if(choices != null && choices.Count > 0) {
-                return choices[UnityEngine.Random.Range(0, choices.Count)];
-            }
-            return null;
         }
         public Character GetRandomCharacterThatMeetCriteria(System.Func<Character, bool> criteria) {
             Character chosenCharacter = null;
@@ -241,7 +205,22 @@ namespace Locations.Settlements {
                     return chosenCharacter;
                 }
             }
-            return null;
+            return chosenCharacter;
+        }
+        public Character GetRandomResidentThatMeetCriteria(System.Func<Character, bool> criteria) {
+            Character chosenCharacter = null;
+            List<Character> choices = ObjectPoolManager.Instance.CreateNewCharactersList();
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (criteria.Invoke(resident)) {
+                    choices.Add(resident);
+                }
+            }
+            if (choices != null && choices.Count > 0) {
+                chosenCharacter = CollectionUtilities.GetRandomElement(choices);
+            }
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(choices);
+            return chosenCharacter;
         }
         public int GetNumOfResidentsThatMeetCriteria(System.Func<Character, bool> criteria) {
             int count = 0;
@@ -252,59 +231,6 @@ namespace Locations.Settlements {
                 }
             }
             return count;
-        }
-        public bool HasResidentThatMeetsCriteria(System.Func<Character, bool> criteria) {
-            for (int i = 0; i < residents.Count; i++) {
-                Character resident = residents[i];
-                if (criteria.Invoke(resident)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public bool HasAliveResidentInsideSettlementThatIsHostileWith(Faction faction) {
-            for (int i = 0; i < residents.Count; i++) {
-                Character resident = residents[i];
-                if (!resident.isDead
-                    && !resident.isBeingSeized
-                    && resident.gridTileLocation != null
-                    && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                    && resident.gridTileLocation.IsPartOfSettlement(this)
-                    && (resident.faction == null || faction == null || faction.IsHostileWith(resident.faction))) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public bool HasAliveResidentThatIsHostileWith(Faction faction) {
-            for (int i = 0; i < residents.Count; i++) {
-                Character resident = residents[i];
-                if (!resident.isDead
-                    && (resident.faction == null || faction == null || faction.IsHostileWith(resident.faction))) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public Character GetRandomAliveResidentInsideSettlementThatIsHostileWith(Character character) {
-            List<Character> choices = null;
-            for (int i = 0; i < residents.Count; i++) {
-                Character resident = residents[i];
-                if (character != resident
-                    && !resident.isBeingSeized
-                    && !resident.isDead
-                    && resident.gridTileLocation != null
-                    && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                    && resident.gridTileLocation.IsPartOfSettlement(this)
-                    && (resident.faction == null || character.faction == null || character.faction.IsHostileWith(resident.faction))) {
-                    if (choices == null) { choices = new List<Character>(); }
-                    choices.Add(resident);
-                }
-            }
-            if (choices != null && choices.Count > 0) {
-                return choices[UnityEngine.Random.Range(0, choices.Count)];
-            }
-            return null;
         }
         public bool AreAllResidentsVagrantOrFactionless() {
             for (int i = 0; i < residents.Count; i++) {
@@ -317,8 +243,8 @@ namespace Locations.Settlements {
         #endregion
 
         #region Faction
-        public virtual void SetOwner(Faction owner) {
-            this.owner = owner;
+        public virtual void SetOwner(Faction p_newOwner) {
+            this.owner = p_newOwner;
         
             bool isCorrupted = this.owner != null && this.owner.isPlayerFaction;
             for (int i = 0; i < tiles.Count; i++) {
@@ -327,6 +253,7 @@ namespace Locations.Settlements {
                 if (tile.landmarkOnTile != null) {
                     tile.UpdateLandmarkVisuals();
                 }
+                tile.UpdatePathfindingGraph();
             }
         }
         #endregion
@@ -627,8 +554,8 @@ namespace Locations.Settlements {
 
         #region Fire
         private void StartListeningForFires() {
-            Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-            Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
+            Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+            Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
         }
         private void OnTraitableLostTrait(ITraitable traitable, Trait trait, Character removedBy) {
             //added checker for null so that if an object has been destroyed and lost the burning trait, it will still be removed from the list

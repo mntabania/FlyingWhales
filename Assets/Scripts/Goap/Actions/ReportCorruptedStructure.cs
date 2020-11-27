@@ -13,7 +13,7 @@ public class ReportCorruptedStructure : GoapAction {
         actionIconString = GoapActionStateDB.Work_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Player};
     }
 
@@ -114,7 +114,7 @@ public class ReportCorruptedStructure : GoapAction {
         //int count = 0;
         //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
         //    Character character = CharacterManager.Instance.allCharacters[i];
-        //    if (character.canPerform && character.canMove && character.canWitness && character.faction.isMajorNonPlayerFriendlyNeutral
+        //    if (character.limiterComponent.canPerform && character.canMove && character.limiterComponent.canWitness && character.faction.isMajorNonPlayerFriendlyNeutral
         //        && (character.race == RACE.HUMANS || character.race == RACE.ELVES) 
         //        && !character.combatComponent.isInCombat
         //        && !(character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)

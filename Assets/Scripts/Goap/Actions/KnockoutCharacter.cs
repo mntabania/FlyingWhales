@@ -15,7 +15,7 @@ public class KnockoutCharacter : GoapAction {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF,
             RACE.SPIDER, RACE.DRAGON, RACE.GOLEM, RACE.DEMON, RACE.ELEMENTAL, RACE.KOBOLD, RACE.MIMIC, RACE.ABOMINATION,
             RACE.CHICKEN, RACE.SHEEP, RACE.PIG, RACE.NYMPH, RACE.WISP, RACE.SLUDGE, RACE.GHOST, RACE.LESSER_DEMON, RACE.ANGEL, 
-            RACE.TROLL };
+            RACE.TROLL, RACE.RATMAN };
         isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Combat};
     }
@@ -113,7 +113,7 @@ public class KnockoutCharacter : GoapAction {
             
 
             if (node.associatedJobType != JOB_TYPE.APPREHEND || node.associatedJobType != JOB_TYPE.RESTRAIN) {
-                if (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) {
+                if (targetCharacter.race.IsSapient()) {
                     //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Misdemeanor);
                     CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
                 }
@@ -129,7 +129,7 @@ public class KnockoutCharacter : GoapAction {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, targetCharacter, actor, status, node);
             }
             if (node.associatedJobType != JOB_TYPE.APPREHEND || node.associatedJobType != JOB_TYPE.RESTRAIN) {
-                if (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) {
+                if (targetCharacter.race.IsSapient()) {
                     CrimeManager.Instance.ReactToCrime(targetCharacter, actor, target, target.factionOwner, node.crimeType, node, status);
                 }
             }
@@ -149,7 +149,7 @@ public class KnockoutCharacter : GoapAction {
                 if (crime.associatedJobType != JOB_TYPE.APPREHEND && crime.associatedJobType != JOB_TYPE.RESTRAIN) {
                     //since there is no drink blood job (it uses fullness recovery), to check if job is from drink blood, just check if the associated job type is knockout
                     //since knockout will only ever be used for fullness recovery if it is for Drinking Blood 
-                    bool isDrinkBloodJob = crime.associatedJobType.IsFullnessRecovery(); 
+                    bool isDrinkBloodJob = crime.associatedJobType.IsFullnessRecoveryTypeJob(); 
                     if (isDrinkBloodJob || crime.associatedJobType == JOB_TYPE.IMPRISON_BLOOD_SOURCE) {
                         return CRIME_TYPE.Vampire;
                     } else {
@@ -175,7 +175,11 @@ public class KnockoutCharacter : GoapAction {
             if (job != null && job.jobType == JOB_TYPE.SNATCH && actor.traitContainer.HasTrait("Cultist")) {
                 return true; //only allow cultists to use knock out if it is for snatching 
             }
-            return actor.traitContainer.HasTrait("Psychopath") || actor.traitContainer.HasTrait("Vampire") || actor.isNormalCharacter == false;
+            if (!actor.isNormalCharacter) {
+                //Monsters, minions and ratmen cannot do knockout character
+                return false;
+            }
+            return actor.traitContainer.HasTrait("Psychopath") || actor.traitContainer.HasTrait("Vampire");
         }
         return false;
     }

@@ -40,7 +40,7 @@ public class ExplorationPartyQuest : PartyQuest {
         base.OnWaitTimeOver();
         currentChance = 100;
         //Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-        Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+        Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         ProcessExplorationOrDisbandment();
     }
     public override IPartyTargetDestination GetTargetDestination() {
@@ -68,8 +68,8 @@ public class ExplorationPartyQuest : PartyQuest {
         //if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_ARRIVED_AT_STRUCTURE)) {
         //    Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         //}
-        if (Messenger.eventTable.ContainsKey(Signals.STRUCTURE_DESTROYED)) {
-            Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+        if (Messenger.eventTable.ContainsKey(StructureSignals.STRUCTURE_DESTROYED)) {
+            Messenger.RemoveListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         }
     }
     public override void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {
@@ -184,7 +184,7 @@ public class ExplorationPartyQuest : PartyQuest {
             }
             if (isWaitTimeOver && assignedParty != null) {
                 //Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-                Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+                Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
             }
         }
     }

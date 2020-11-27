@@ -186,8 +186,13 @@ public class RestrainCharacter : GoapAction {
         goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Restrained", goapNode.actor);
         if (goapNode.poiTarget.traitContainer.HasTrait("Prisoner")) {
             Prisoner prisoner = goapNode.poiTarget.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-            if(goapNode.associatedJobType == JOB_TYPE.APPREHEND || goapNode.associatedJobType == JOB_TYPE.KIDNAP_RAID) {
+            if(goapNode.associatedJobType == JOB_TYPE.APPREHEND 
+                || goapNode.associatedJobType == JOB_TYPE.KIDNAP_RAID
+                || (goapNode.actor.faction?.factionType.type == FACTION_TYPE.Ratmen && goapNode.associatedJobType == JOB_TYPE.MONSTER_ABDUCT)
+                || goapNode.associatedJobType == JOB_TYPE.RESTRAIN) {
                 prisoner.SetPrisonerOfFaction(goapNode.actor.faction);
+            } else if (goapNode.associatedJobType == JOB_TYPE.SNATCH) {
+                prisoner.SetPrisonerOfFaction(PlayerManager.Instance.player.playerFaction);
             } else {
                 prisoner.SetPrisonerOfCharacter(goapNode.actor);
             }

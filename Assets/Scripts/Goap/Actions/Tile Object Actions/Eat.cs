@@ -4,6 +4,7 @@ using UnityEngine;
 using Traits;
 using Inner_Maps.Location_Structures;
 using Inner_Maps;
+using Locations.Settlements;
 
 public class Eat : GoapAction {
 
@@ -13,7 +14,7 @@ public class Eat : GoapAction {
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Eat_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON, RACE.KOBOLD };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON, RACE.KOBOLD, RACE.RAT, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Needs};
     }
 
@@ -22,13 +23,16 @@ public class Eat : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.STAMINA_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData) {
-        if (target is Table) { // || target is FoodPile
-            List<Precondition> p = new List<Precondition>(base.GetPreconditions(actor, target, otherData));
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+        if (target is Table && !(actor is Summon)) { // || target is FoodPile
+            List<Precondition> baseP = base.GetPreconditions(actor, target, otherData, out isOverridden);
+            List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
+            p.AddRange(baseP);
             p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile" /*+ (int)otherData[0]*/, false, GOAP_EFFECT_TARGET.TARGET), HasFood));
+            isOverridden = true;
             return p;
         }
-        return base.GetPreconditions(actor, target, otherData);
+        return base.GetPreconditions(actor, target, otherData, out isOverridden);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -36,6 +40,13 @@ public class Eat : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
+        if (actor.traitContainer.HasTrait("Enslaved")) {
+            if(target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
+                costLog += $" +2000(Slave, target is not in actor's home)";
+                actor.logComponent.AppendCostLog(costLog);
+                return 2000;
+            }
+        }
         if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
             if (actor.partyComponent.isActiveMember) {
                 if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null
@@ -64,100 +75,130 @@ public class Eat : GoapAction {
                 return cost;
             }
         }
-        if (target is Table table) {
-            bool isTrapped = actor.trapStructure.IsTrapStructure(table.gridTileLocation.structure)
-                || (table.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrapHex(table.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner));
-            if (isTrapped) {
-                cost = UtilityScripts.Utilities.Rng.Next(50, 71);
-                costLog += $" +{cost}(Actor is currently visiting)";
-            } else if (actor.traitContainer.HasTrait("Travelling")) {
-                if(table.structureLocation.structureType == STRUCTURE_TYPE.TAVERN || table.structureLocation == actor.homeStructure) {
-                    cost = UtilityScripts.Utilities.Rng.Next(400, 451);
-                    costLog += $" +{cost}(Travelling, Inside Tavern or in actor home structure)\n";
-                } else if (actor.needsComponent.isStarving) {
-                    Character tableOwner = table.characterOwner;
-                    if (tableOwner != null) {
-                        if (actor.relationshipContainer.IsFriendsWith(tableOwner)) {
-                            cost = UtilityScripts.Utilities.Rng.Next(400, 451);
-                            costLog += $" +{cost}(Travelling, Table is owned by friend/close friend and actor is starving)";
-                        } else if (actor.relationshipContainer.IsEnemiesWith(tableOwner)) {
-                            cost = 800;
-                            costLog += $" +{cost}(Travelling, Table is owned by friend/close friend and actor is starving)";
-                        } else {
-                            cost = UtilityScripts.Utilities.Rng.Next(450, 501);
-                            costLog += $" +{cost}(Travelling, Table owned by someone that is not friend or enemy and actor is starving)";
-                        }
-                    } else {
-                        cost = UtilityScripts.Utilities.Rng.Next(450, 501);
-                        costLog += $" +{cost}(Travelling, Table not owned)";
-                    }
+        if (actor is Rat) {
+            if (target is FoodPile) {
+                cost += UtilityScripts.Utilities.Rng.Next(20, 51);
+            } else if (target is Table) {
+                cost += UtilityScripts.Utilities.Rng.Next(10, 61);
+            } else {
+                return 2000;
+            }
+        } else if (actor.race == RACE.RATMAN && actor.faction?.factionType.type == FACTION_TYPE.Ratmen) {
+            BaseSettlement settlement = null;
+            if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(out settlement)) {
+                Faction targetFaction = settlement.owner;
+                if (targetFaction != null && actor.faction != targetFaction) {
+                    //Do not drink on hostile faction's taverns
+                    costLog += $" +2000(Ratman, Location of target is in faction different from actor)";
+                    actor.logComponent.AppendCostLog(costLog);
+                    return 2000;
+                } else if (targetFaction == null || targetFaction.factionType.type != FACTION_TYPE.Ratmen) {
+                    //Do not drink on hostile faction's taverns
+                    cost += UtilityScripts.Utilities.Rng.Next(850, 951);
+                    costLog += $" +{cost}(Ratman, Target is in a faction not owned by Ratmen)";
                 } else {
-                    cost += 2000;
-                    costLog += $" +{cost}(Travelling but not starving)";
-                } 
-            } else if (table.gridTileLocation != null && table.structureLocation.settlementLocation != null && table.structureLocation.settlementLocation == actor.homeSettlement) {
-                if (table.structureLocation == actor.homeStructure) {
-                    cost = UtilityScripts.Utilities.Rng.Next(20, 36);
-                    costLog += $" +{cost}(Table is in actor's home)";
-                } else {
-                    if (actor.needsComponent.isStarving) {
+                    cost += UtilityScripts.Utilities.Rng.Next(800, 851);
+                    costLog += $" +{cost}(Ratman)";
+                }
+            } else {
+                cost += UtilityScripts.Utilities.Rng.Next(800, 851);
+                costLog += $" +{cost}(Ratman)";
+            }
+        } else {
+            if (target is Table table) {
+                bool isTrapped = actor.trapStructure.IsTrapStructure(table.gridTileLocation.structure)
+                    || (table.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrapHex(table.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner));
+                if (isTrapped) {
+                    cost = UtilityScripts.Utilities.Rng.Next(50, 71);
+                    costLog += $" +{cost}(Actor is currently visiting)";
+                } else if (actor.traitContainer.HasTrait("Travelling")) {
+                    if (table.structureLocation.structureType == STRUCTURE_TYPE.TAVERN || table.structureLocation == actor.homeStructure) {
+                        cost = UtilityScripts.Utilities.Rng.Next(400, 451);
+                        costLog += $" +{cost}(Travelling, Inside Tavern or in actor home structure)\n";
+                    } else if (actor.needsComponent.isStarving) {
                         Character tableOwner = table.characterOwner;
                         if (tableOwner != null) {
                             if (actor.relationshipContainer.IsFriendsWith(tableOwner)) {
-                                cost = UtilityScripts.Utilities.Rng.Next(70, 81);
-                                costLog += $" +{cost}(Table is owned by friend/close friend and actor is starving)";
+                                cost = UtilityScripts.Utilities.Rng.Next(400, 451);
+                                costLog += $" +{cost}(Travelling, Table is owned by friend/close friend and actor is starving)";
                             } else if (actor.relationshipContainer.IsEnemiesWith(tableOwner)) {
-                                cost = 300;
-                                costLog += $" +{cost}(Table is owned by friend/close friend and actor is starving)";
+                                cost = 800;
+                                costLog += $" +{cost}(Travelling, Table is owned by friend/close friend and actor is starving)";
                             } else {
-                                cost = UtilityScripts.Utilities.Rng.Next(50, 71);
-                                costLog += $" +{cost}(Table owned by someone that is not friend or enemy and actor is starving)";
+                                cost = UtilityScripts.Utilities.Rng.Next(450, 501);
+                                costLog += $" +{cost}(Travelling, Table owned by someone that is not friend or enemy and actor is starving)";
                             }
                         } else {
-                            cost = UtilityScripts.Utilities.Rng.Next(50, 71);
-                            costLog += $" +{cost}(Table not owned)";
+                            cost = UtilityScripts.Utilities.Rng.Next(450, 501);
+                            costLog += $" +{cost}(Travelling, Table not owned)";
                         }
                     } else {
-                        //not starving
-                        if (table.characterOwner != null && !table.IsOwnedBy(actor)
-                            && table.characterOwner.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR) == false
-                            && table.characterOwner.relationshipContainer.IsFamilyMember(actor) == false) {
-                            cost += 2000;
-                            costLog += $" +{cost}(Table personally owned by someone else who is not the Actor's Lover, Affair or Relative)";
+                        cost += 2000;
+                        costLog += $" +{cost}(Travelling but not starving)";
+                    }
+                } else if (table.gridTileLocation != null && table.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)) {
+                    if (table.structureLocation == actor.homeStructure) {
+                        cost = UtilityScripts.Utilities.Rng.Next(20, 36);
+                        costLog += $" +{cost}(Table is in actor's home)";
+                    } else {
+                        if (actor.needsComponent.isStarving) {
+                            Character tableOwner = table.characterOwner;
+                            if (tableOwner != null) {
+                                if (actor.relationshipContainer.IsFriendsWith(tableOwner)) {
+                                    cost = UtilityScripts.Utilities.Rng.Next(70, 81);
+                                    costLog += $" +{cost}(Table is owned by friend/close friend and actor is starving)";
+                                } else if (actor.relationshipContainer.IsEnemiesWith(tableOwner)) {
+                                    cost = 300;
+                                    costLog += $" +{cost}(Table is owned by friend/close friend and actor is starving)";
+                                } else {
+                                    cost = UtilityScripts.Utilities.Rng.Next(50, 71);
+                                    costLog += $" +{cost}(Table owned by someone that is not friend or enemy and actor is starving)";
+                                }
+                            } else {
+                                cost = UtilityScripts.Utilities.Rng.Next(50, 71);
+                                costLog += $" +{cost}(Table not owned)";
+                            }
                         } else {
-                            cost = UtilityScripts.Utilities.Rng.Next(50, 71);
-                            costLog += $" +{cost}(Table not owned)";
+                            //not starving
+                            if (table.characterOwner != null && !table.IsOwnedBy(actor)
+                                && table.characterOwner.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR) == false
+                                && table.characterOwner.relationshipContainer.IsFamilyMember(actor) == false) {
+                                cost += 2000;
+                                costLog += $" +{cost}(Table personally owned by someone else who is not the Actor's Lover, Affair or Relative)";
+                            } else {
+                                cost = UtilityScripts.Utilities.Rng.Next(50, 71);
+                                costLog += $" +{cost}(Table not owned)";
+                            }
                         }
                     }
-                }
-            } else {
-                if (table.characterOwner != null && !table.IsOwnedBy(actor) && actor.relationshipContainer.IsFriendsWith(table.characterOwner)) {
-                    cost = UtilityScripts.Utilities.Rng.Next(500, 551);;
-                    costLog += $" {cost}(Otherwise, if Table personally owned by Friend or Close Friend)";
                 } else {
-                    cost += UtilityScripts.Utilities.Rng.Next(800, 851);;
-                    costLog += $" {cost}(Otherwise, if Table is NOT owned by Friend or Close Friend)";
-                }
-            }
-        } else {
-            if (target is ElfMeat || target is HumanMeat) {
-                if (actor.traitContainer.HasTrait("Cannibal")) {
-                    cost = UtilityScripts.Utilities.Rng.Next(450, 551);
-                    costLog += $" +{cost}(Target is human/elven meat and actor is cannibal)";
-                } else {
-                    if (actor.needsComponent.isStarving) {
-                        cost = UtilityScripts.Utilities.Rng.Next(700, 751);
-                        costLog += $" +{cost}(Target is human/elven meat and actor is not cannibal but is starving)";    
+                    if (table.characterOwner != null && !table.IsOwnedBy(actor) && actor.relationshipContainer.IsFriendsWith(table.characterOwner)) {
+                        cost = UtilityScripts.Utilities.Rng.Next(500, 551); ;
+                        costLog += $" {cost}(Otherwise, if Table personally owned by Friend or Close Friend)";
                     } else {
-                        cost = 2000;
-                        costLog += $" +{cost}(Target is human/elven meat and actor is not cannibal and is not starving)";    
+                        cost += UtilityScripts.Utilities.Rng.Next(800, 851); ;
+                        costLog += $" {cost}(Otherwise, if Table is NOT owned by Friend or Close Friend)";
                     }
                 }
             } else {
-                cost = UtilityScripts.Utilities.Rng.Next(400, 451);
-                costLog += $" +{cost}(Not Table)";    
+                if (target is ElfMeat || target is HumanMeat) {
+                    if (actor.traitContainer.HasTrait("Cannibal")) {
+                        cost = UtilityScripts.Utilities.Rng.Next(450, 551);
+                        costLog += $" +{cost}(Target is human/elven meat and actor is cannibal)";
+                    } else {
+                        if (actor.needsComponent.isStarving) {
+                            cost = UtilityScripts.Utilities.Rng.Next(700, 751);
+                            costLog += $" +{cost}(Target is human/elven meat and actor is not cannibal but is starving)";
+                        } else {
+                            cost = 2000;
+                            costLog += $" +{cost}(Target is human/elven meat and actor is not cannibal and is not starving)";
+                        }
+                    }
+                } else {
+                    cost = UtilityScripts.Utilities.Rng.Next(400, 451);
+                    costLog += $" +{cost}(Not Table)";
+                }
             }
-            
         }
         actor.logComponent.AppendCostLog(costLog);
         return cost;
@@ -204,7 +245,7 @@ public class Eat : GoapAction {
         goapNode.actor.needsComponent.AdjustDoNotGetHungry(-1);
         //goapNode.poiTarget.SetPOIState(POI_STATE.ACTIVE);
         if (goapNode.actor.traitContainer.HasTrait("Cannibal") == false && 
-            (goapNode.poiTarget is ElfMeat || goapNode.poiTarget is HumanMeat)) {
+            (goapNode.poiTarget is ElfMeat || goapNode.poiTarget is HumanMeat) && goapNode.actor.isNotSummonAndDemon) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Cannibal");
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "became_cannibal", goapNode, LOG_TAG.Life_Changes, LOG_TAG.Needs, LOG_TAG.Crimes);
             log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -244,10 +285,14 @@ public class Eat : GoapAction {
                 }
             }
             if (poiTarget is Table) {
-                //if target is table, do not allow if actor is a monster
-                if (UtilityScripts.GameUtilities.IsRaceBeast(actor.race) || actor.isNormalCharacter == false) {
-                    return false;
+                //Allow rats to eat at table
+                if(!(actor is Rat)) {
+                    //if target is table, do not allow if actor is a monster
+                    if (UtilityScripts.GameUtilities.IsRaceBeast(actor.race) || actor.isNormalCharacter == false) {
+                        return false;
+                    }
                 }
+
             }
             // else {
             //     if(poiTarget.storedResources[RESOURCE.FOOD] < 12) {

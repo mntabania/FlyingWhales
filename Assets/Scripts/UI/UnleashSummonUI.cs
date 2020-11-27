@@ -298,7 +298,7 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
     private void TryPlaceSummon(Summon summon, LocationGridTile locationTile) {
         summon.SetHomeRegion(locationTile.structure.region);
         CharacterManager.Instance.PlaceSummon(summon, locationTile);
-        Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summon);
+        Messenger.Broadcast(PlayerSignals.PLAYER_PLACED_SUMMON, summon);
         //PlayerManager.Instance.player.playerSkillComponent.RemoveSummon(summon, true);
     }
 }

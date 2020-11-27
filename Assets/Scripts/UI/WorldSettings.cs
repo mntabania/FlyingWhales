@@ -70,14 +70,17 @@ public class WorldSettings : MonoBehaviour {
     public void Open() {
         settingsGO.SetActive(true);
         mainWindow.SetActive(true);
-        customizeWorldWindow.SetActive(false);
         InitializeData();
+        customizeWorldWindow.SetActive(false);
         UpdateAvailableWorldTypes();
     }
     public void Close() {
         settingsGO.SetActive(false);
     }
     private void InitializeData() {
+        defaultWorldToggle.isOn = true;
+    }
+    private void InitializeCustomUI() {
         //if (raceWorldOptionItems.Count <= 0) {
         //    worldSettingsData.ClearRaces();
         //    PopulateRacesAndToggleOn();
@@ -90,7 +93,6 @@ public class WorldSettings : MonoBehaviour {
         //} else {
         //    ToggleAllBiomes(true);
         //}
-        defaultWorldToggle.isOn = true;
 
         ToggleAllRaces(true);
         ToggleAllBiomes(true);
@@ -243,6 +245,7 @@ public class WorldSettings : MonoBehaviour {
             if(worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
                 mainWindow.SetActive(false);
                 customizeWorldWindow.SetActive(true);
+                InitializeCustomUI();
             } else {
                 Close();
                 MainMenuManager.Instance.StartGame();

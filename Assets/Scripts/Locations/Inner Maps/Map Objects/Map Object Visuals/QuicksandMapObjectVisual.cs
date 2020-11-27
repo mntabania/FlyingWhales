@@ -39,7 +39,7 @@ public class QuicksandMapObjectVisual : MapObjectVisual<TileObject> {
         base.PlaceObjectAt(tile);
         _expiryKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(3)), Expire, this);
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
-        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
+        Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
 
         OnSpawnQuicksand();
 
@@ -129,7 +129,7 @@ public class QuicksandMapObjectVisual : MapObjectVisual<TileObject> {
             SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);
         }
         Messenger.RemoveListener(Signals.TICK_ENDED, PerFifteenMinutes);
-        Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
+        Messenger.RemoveListener<bool>(UISignals.PAUSED, OnGamePaused);
         StartCoroutine(DestroyCoroutine());
     }
     private IEnumerator DestroyCoroutine() {

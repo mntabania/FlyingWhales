@@ -126,7 +126,9 @@ public class BuildStructureComponent : CharacterComponent {
     private void AssignBuildOrder() {
         if(owner.race == RACE.ELVES) {
             buildStructureOrder = ElfBuildOrder();
-        }else if (owner.race == RACE.HUMANS) {
+        } else if (owner.race == RACE.HUMANS) {
+            buildStructureOrder = HumanBuildOrder();
+        } else {
             buildStructureOrder = HumanBuildOrder();
         }
         //structureRequirementNumberGuide = new Dictionary<string, BuildStructureRequirementNumberGuide>() {

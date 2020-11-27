@@ -11,7 +11,7 @@ public class Butcher : GoapAction {
         actionIconString = GoapActionStateDB.Butcher_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.KOBOLD, RACE.TROLL };
+        //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.KOBOLD, RACE.TROLL, RACE.RATMAN };
         isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Work, LOG_TAG.Needs};
     }
@@ -56,7 +56,7 @@ public class Butcher : GoapAction {
                     costLog += $" +2000(Cannot butcher party member when camping)";
                     actor.logComponent.AppendCostLog(costLog);
                     return 2000;
-                }
+               }
             }
         }
         costLog = $"\n{name} {target.nameWithID}:";
@@ -69,24 +69,30 @@ public class Butcher : GoapAction {
                 cost += 2000;
                 costLog += " +2000(Actor/Target Same)";
             } else {
-                if (actor.isNormalCharacter == false) {
+                if (actor.traitContainer.HasTrait("Enslaved") && job.jobType == JOB_TYPE.PRODUCE_FOOD && job.originalOwner.ownerType == JOB_OWNER.SETTLEMENT && targetCharacter.faction == actor.faction) {
+                    cost += 2000;
+                    costLog += " +2000(Actor is Slave, job is Produce Food Settlement, Actor/Target same faction)";
+                    actor.logComponent.AppendCostLog(costLog);
+                    return cost;
+                }
+                if (!actor.isNormalCharacter) {
                     cost += 10;
                     costLog += " +10(Actor is not a normal character)";
                 } else {
                     bool isCannibal = actor.traitContainer.HasTrait("Cannibal");
-                    if (job.jobType == JOB_TYPE.TRIGGER_FLAW && isCannibal) {
+                    if (job.jobType == JOB_TYPE.TRIGGER_FLAW && isCannibal && !actor.traitContainer.HasTrait("Vampire")) {
                         cost = UtilityScripts.Utilities.Rng.Next(450, 551);
                         costLog += $" {cost}(Actor is cannibal and job is trigger flaw)";
                         actor.logComponent.AppendCostLog(costLog);
                         return cost;
                     }
-                    if (isCannibal) {
+                    if (isCannibal && !actor.traitContainer.HasTrait("Vampire")) {
                         if (actor.traitContainer.HasTrait("Malnourished")) {
                             if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
                                 int currCost = UtilityScripts.Utilities.Rng.Next(100, 151);
                                 cost += currCost;
                                 costLog += $" +{currCost}(Cannibal, Malnourished, Friend/Close)";
-                            } else if (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) {
+                            } else if (targetCharacter.race.IsSapient()) {
                                 cost += 300;
                                 costLog += " +300(Cannibal, Malnourished, Human/Elf)";
                             }
@@ -94,7 +100,7 @@ public class Butcher : GoapAction {
                             if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
                                 cost += 2000;
                                 costLog += " +2000(Cannibal, Friend/Close)";
-                            } else if ((targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) && !actor.needsComponent.isStarving) {
+                            } else if (targetCharacter.race.IsSapient() && !actor.needsComponent.isStarving) {
                                 cost += 400;
                                 costLog += " +2000(Cannibal, Human/Elf, not Starving)";
                             }
@@ -106,7 +112,7 @@ public class Butcher : GoapAction {
                                 int currCost = UtilityScripts.Utilities.Rng.Next(100, 151);
                                 cost += currCost;
                                 costLog += $" +{currCost}(not Cannibal, Malnourished, Friend/Close)";
-                            } else if (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) {
+                            } else if (targetCharacter.race.IsSapient()) {
                                 cost += 500;
                                 costLog += " +500(not Cannibal, Malnourished, Human/Elf)";
                             }
@@ -118,7 +124,7 @@ public class Butcher : GoapAction {
                                     costLog += $" +300(not Cannibal, not Malnourished but starving, Friend/Close)";
                                 }
                             } else {
-                                if (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) {
+                                if (targetCharacter.race.IsSapient()) {
                                     cost += 2000;
                                     costLog += " +2000(not Cannibal, not malnourished or starving, Human/Elf)";
                                 }    
@@ -135,6 +141,10 @@ public class Butcher : GoapAction {
                 int currCost = UtilityScripts.Utilities.Rng.Next(80, 91);
                 cost += currCost;
                 costLog += $" +{currCost}(Elf)";
+            } else if (targetCharacter.race == RACE.RATMAN) {
+                int currCost = UtilityScripts.Utilities.Rng.Next(80, 91);
+                cost += currCost;
+                costLog += $" +{currCost}(Ratman)";
             }
             //else if (deadCharacter.race == RACE.WOLF) {
             //    int currCost = UtilityScripts.Utilities.Rng.Next(50, 61);
@@ -152,6 +162,10 @@ public class Butcher : GoapAction {
             }
         }
         if (targetCharacter is Animal || targetCharacter.race == RACE.WOLF || targetCharacter.race == RACE.SPIDER) {
+            if(!actor.characterClass.IsCombatant() && !targetCharacter.isDead && (targetCharacter.race == RACE.WOLF || targetCharacter.race == RACE.SPIDER)) {
+                cost += 2000;
+                costLog += $" +{cost}(Non-combatant actor, Alive Wolf/Spider target)";
+            }
             CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(actor, actor, targetCharacter, CRIME_TYPE.Animal_Killing);
             int currCost = 0;
             if(severity == CRIME_SEVERITY.Infraction) {
@@ -208,8 +222,7 @@ public class Butcher : GoapAction {
         string response = base.ReactionToActor(actor, target, witness, node, status);
         Character targetCharacter = GetDeadCharacter(target);
         if (targetCharacter != null) {
-            if (!witness.traitContainer.HasTrait("Cannibal") &&
-                (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES)) {
+            if (!witness.traitContainer.HasTrait("Cannibal") && targetCharacter.race.IsSapient()) {
                 //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Heinous);
                 CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
 
@@ -273,9 +286,9 @@ public class Butcher : GoapAction {
     }
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         if (target is Character targetCharacter) {
-            if ((actor.race == RACE.HUMANS || actor.race == RACE.ELVES) && (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES)) {
+            if (actor.race.IsSapient() && targetCharacter.race.IsSapient()) {
                 return CRIME_TYPE.Cannibalism;
-            } else if((actor.race == RACE.HUMANS || actor.race == RACE.ELVES) && (targetCharacter is Animal || targetCharacter.race == RACE.WOLF || targetCharacter.race == RACE.SPIDER || targetCharacter.race == RACE.KOBOLD)) {
+            } else if(actor.race.IsSapient() && (targetCharacter is Animal || targetCharacter.race == RACE.WOLF || targetCharacter.race == RACE.SPIDER || targetCharacter.race == RACE.KOBOLD)) {
                 return CRIME_TYPE.Animal_Killing;
             }
         }

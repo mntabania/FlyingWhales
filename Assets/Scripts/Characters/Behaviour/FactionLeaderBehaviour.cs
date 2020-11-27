@@ -102,7 +102,6 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                         if (facilityCount < (character.homeSettlement.settlementType.maxFacilities/2)) {
                             chance = 3;
                         }
-                        // chance = 100;
                         if (GameUtilities.RollChance(chance, ref log)) {
                             log += $"\n-Chance to build facility met.";
                             //place random facility based on weights
@@ -127,6 +126,12 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
             return false;
         }
         if (targetCharacter.faction == recruiter.faction) {
+            return false;
+        }
+        if (recruiter.faction == null) {
+            return false;
+        }
+        if (targetCharacter.faction?.factionType.type == FACTION_TYPE.Undead) {
             return false;
         }
         if (targetCharacter.HasJobTargetingThis(JOB_TYPE.RECRUIT)) {

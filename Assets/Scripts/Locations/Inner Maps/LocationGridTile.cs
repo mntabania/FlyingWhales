@@ -605,7 +605,7 @@ namespace Inner_Maps {
                 TriggerSnareTrap(character);
             }
             if (isCorrupted) {
-                if(!character.isDead && character.canMove && character.canPerform) {
+                if(!character.isDead && character.limiterComponent.canMove && character.limiterComponent.canPerform) {
                     if (!character.movementComponent.hasMovedOnCorruption) {
                         //Corrupted hexes should also be avoided
                         //https://trello.com/c/6WJtivlY/1274-fleeing-should-not-go-to-corrupted-structures
@@ -633,7 +633,7 @@ namespace Inner_Maps {
                         collectionOwner.partOfHextile.hexTileOwner.GetMostImportantStructureOnTile();
                     if(mostImportantStructureOnTile is DemonicStructure demonicStructure) {
                         if (!character.behaviourComponent.isAttackingDemonicStructure 
-                            && character.homeSettlement != null && character.necromancerTrait == null && (character.race == RACE.HUMANS || character.race == RACE.ELVES)
+                            && character.homeSettlement != null && character.necromancerTrait == null && character.race.IsSapient()
                             && character.marker != null && character.carryComponent.IsNotBeingCarried() && character.isAlliedWithPlayer == false
                             && (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue)) 
                             //&& !InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)
@@ -677,6 +677,19 @@ namespace Inner_Maps {
         public void RemoveCharacterHere(Character character) {
             charactersHere.Remove(character);
         }
+        public bool IsInHomeOf(Character character) {
+            if (character.homeSettlement != null) {
+                return IsPartOfSettlement(character.homeSettlement);
+            } else if (character.homeStructure != null) {
+                return structure == character.homeStructure;
+            } else if (character.HasTerritory()) {
+                if (collectionOwner.isPartOfParentRegionMap) {
+                    HexTile hex = collectionOwner.partOfHextile.hexTileOwner;
+                    return hex == character.territory;
+                }
+            }
+            return false;
+        }
         #endregion
 
         #region Points of Interest
@@ -698,7 +711,7 @@ namespace Inner_Maps {
             } else if (IsPassable() && !isPassablePreviously) {
                 structure.AddPassableTile(this);
             }
-            Messenger.Broadcast(Signals.OBJECT_PLACED_ON_TILE, this, poi);
+            Messenger.Broadcast(GridTileSignals.OBJECT_PLACED_ON_TILE, this, poi);
         }
         public void LoadObjectHere(IPointOfInterest poi) {
             bool isPassablePreviously = IsPassable();
@@ -718,7 +731,7 @@ namespace Inner_Maps {
             } else if (IsPassable() && !isPassablePreviously) {
                 structure.AddPassableTile(this);
             }
-            Messenger.Broadcast(Signals.OBJECT_PLACED_ON_TILE, this, poi);
+            Messenger.Broadcast(GridTileSignals.OBJECT_PLACED_ON_TILE, this, poi);
         }
         public IPointOfInterest RemoveObjectHere(Character removedBy) {
             if (objHere != null) {
@@ -732,8 +745,8 @@ namespace Inner_Maps {
                     removedObj.OnDestroyPOI();
                 }
                 SetTileState(Tile_State.Empty);
-                Messenger.Broadcast(Signals.STOP_CURRENT_ACTION_TARGETING_POI, removedObj);
-                Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
+                Messenger.Broadcast(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI, removedObj);
+                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
                 return removedObj;
             }
             return null;
@@ -749,7 +762,7 @@ namespace Inner_Maps {
                     tileObject.OnRemoveTileObject(null, gridTile, false, false);
                 }
                 removedObj.SetPOIState(POI_STATE.INACTIVE);
-                Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
+                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
                 return removedObj;
             }
             return null;
@@ -766,8 +779,8 @@ namespace Inner_Maps {
                     removedTileObj.DestroyMapVisualGameObject();
                 }
                 removedObj.SetPOIState(POI_STATE.INACTIVE);
-                Messenger.Broadcast(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, removedObj, remover);
-                Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
+                Messenger.Broadcast(CharacterSignals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, removedObj, remover);
+                Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
                 return removedObj;
             }
             return null;
@@ -1193,14 +1206,14 @@ namespace Inner_Maps {
             }
             return null;
         }
-        public LocationGridTile GetFirstNearestTileFromThisWithNoObject(bool thisStructureOnly = false) {
-            return GetFirstNearestTileFromThisWithNoObjectBase(thisStructureOnly, new List<LocationGridTile>());
+        public LocationGridTile GetFirstNearestTileFromThisWithNoObject(bool thisStructureOnly = false, LocationGridTile exception = null) {
+            return GetFirstNearestTileFromThisWithNoObjectBase(thisStructureOnly, new List<LocationGridTile>(), exception);
         }
-        private LocationGridTile GetFirstNearestTileFromThisWithNoObjectBase(bool thisStructureOnly, List<LocationGridTile> checkedTiles) {
+        private LocationGridTile GetFirstNearestTileFromThisWithNoObjectBase(bool thisStructureOnly, List<LocationGridTile> checkedTiles, LocationGridTile exception) {
             if (!checkedTiles.Contains(this)) {
                 checkedTiles.Add(this);
 
-                if (objHere == null) {
+                if (objHere == null && this != exception) {
                     return this;
                 }
                 LocationGridTile chosenTile = GetFirstNoObjectNeighbor(thisStructureOnly);
@@ -1209,8 +1222,11 @@ namespace Inner_Maps {
                 } else {
                     for (int i = 0; i < neighbourList.Count; i++) {
                         LocationGridTile neighbor = neighbourList[i];
+                        if (neighbor == exception) {
+                            continue; //skip exception tile.
+                        }
                         if (!thisStructureOnly || neighbor.structure == structure) {
-                            chosenTile = neighbor.GetFirstNearestTileFromThisWithNoObjectBase(thisStructureOnly, checkedTiles);
+                            chosenTile = neighbor.GetFirstNearestTileFromThisWithNoObjectBase(thisStructureOnly, checkedTiles, exception);
                             if (chosenTile != null) {
                                 return chosenTile;
                             }
@@ -1315,7 +1331,7 @@ namespace Inner_Maps {
                 callback.Invoke(objHere);
                 //Sleeping characters in bed should also receive damage
                 //https://trello.com/c/kFZAHo11/1203-sleeping-characters-in-bed-should-also-receive-damage
-                if (tileObject is Bed bed) {
+                if (tileObject is BaseBed bed) {
                     if (bed.users != null && bed.users.Length > 0) {
                         for (int i = 0; i < bed.users.Length; i++) {
                             Character user = bed.users[i];
@@ -1327,7 +1343,7 @@ namespace Inner_Maps {
                     }
                 }
             }
-            Messenger.Broadcast(Signals.ACTION_PERFORMED_ON_TILE_TRAITABLES, this, callback);
+            Messenger.Broadcast(GridTileSignals.ACTION_PERFORMED_ON_TILE_TRAITABLES, this, callback);
         }
         public List<IPointOfInterest> GetPOIsOnTile() {
             List<IPointOfInterest> pois = new List<IPointOfInterest>();
