@@ -195,8 +195,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isAlliedWithPlayer => IsAlliedWithPlayer();
     public Region currentRegion {
         get {
-            if (!carryComponent.IsNotBeingCarried()) {
-                return carryComponent.isBeingCarriedBy.currentRegion;
+            Character carrier = carryComponent.isBeingCarriedBy;
+            if (carrier != null) {
+                return carrier.currentRegion;
             }
             return _currentRegion;
         }
@@ -206,8 +207,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (ReferenceEquals(marker, null)) {
                 return null;
             }
-            if (!carryComponent.IsNotBeingCarried()) {
-                return carryComponent.isBeingCarriedBy.gridTileLocation;
+            Character carrier = carryComponent.isBeingCarriedBy;
+            if (carrier != null) {
+                return carrier.gridTileLocation;
             }
             return GetLocationGridTileByXY(gridTilePosition.x, gridTilePosition.y);
         }
@@ -230,8 +232,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public LocationStructure currentStructure {
         get {
-            if (!carryComponent.IsNotBeingCarried()) {
-                return carryComponent.isBeingCarriedBy.currentStructure;
+            Character carrier = carryComponent.isBeingCarriedBy;
+            if (carrier != null) {
+                return carrier.currentStructure;
             }
             return _currentStructure;
         }

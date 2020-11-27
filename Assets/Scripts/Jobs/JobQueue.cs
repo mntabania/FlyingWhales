@@ -37,7 +37,7 @@ public class JobQueue {
                 }
             }
         }
-        if (job.jobType.IsFullnessRecoveryTypeJob() && owner.traitContainer.HasTrait("Fasting")) {
+        if (job.jobType.IsFullnessRecoveryTypeJob() && !owner.limiterComponent.canDoFullnessRecovery) {
             //If character is fasting, prevent any fullness recovery job from being added.
             return false;
         }

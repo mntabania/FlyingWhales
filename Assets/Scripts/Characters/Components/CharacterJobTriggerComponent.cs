@@ -1384,6 +1384,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             if (owner.partyComponent.isActiveMember) {
                 return;
             }
+            if (!owner.limiterComponent.canDoFullnessRecovery) {
+                return;
+            }
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, INTERACTION_TYPE.EAT, target, owner);
             job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
             if (owner.jobQueue.AddJobInQueue(job)) {
@@ -1399,8 +1402,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             if (owner.partyComponent.isActiveMember) {
                 return false;
             }
-            if (owner.traitContainer.HasTrait("Fasting")) {
-	            return false;
+            if (!owner.limiterComponent.canDoFullnessRecovery) {
+                return false;
             }
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.DRINK_BLOOD, target, owner);
             if (owner.jobQueue.AddJobInQueue(job)) {
