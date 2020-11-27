@@ -16,7 +16,7 @@ namespace Traits {
         
         public Lycanthrope() {
             name = "Lycanthrope";
-            description = "Not a werewolf. Just sometimes turns to a plain ole wolf when it sleeps.";
+            description = "Sometimes turns to plain wolf when it sleeps";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
@@ -53,6 +53,9 @@ namespace Traits {
         }
         protected override string GetDescriptionInUI() {
             string data = base.GetDescriptionInUI();
+            if (owner.lycanData.isMaster) {
+                data = "Can transform into a powerful werewolf at will.";
+            }
             data = owner.lycanData.dislikesBeingLycan ? 
                 $"{data}\n{owner.visuals.GetCharacterNameWithIconAndColor()} loathes being a Lycanthrope" : 
                 $"{data}\n{owner.visuals.GetCharacterNameWithIconAndColor()} enjoys being a Lycanthrope";

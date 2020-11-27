@@ -278,6 +278,7 @@ namespace Traits {
             if (!character.characterClass.IsZombie() && PlayerManager.Instance.player.plagueComponent.CanGainPlaguePoints()) {
                 PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(2, character);    
             }
+            PlagueDisease.Instance.UpdateActiveCasesOnCharacterDied(character);
             return base.OnDeath(character);
         }
         protected override string GetDescriptionInUI() {
