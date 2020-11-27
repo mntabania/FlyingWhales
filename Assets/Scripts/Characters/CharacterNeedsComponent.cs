@@ -1178,9 +1178,6 @@ public class CharacterNeedsComponent : CharacterComponent {
         if (!owner.limiterComponent.canPerform) { //character.doNotDisturb > 0 || !character.limiterComponent.canWitness
             return false;
         }
-        if (owner.traitContainer.HasTrait("Fasting")) {
-            return false;
-        }
         if (owner.traitContainer.HasTrait("Vampire")) {
             //Vampires should only eat in an active party if he is starving or if there is no party members that can see him
             bool shouldEat = false;
@@ -1255,9 +1252,6 @@ public class CharacterNeedsComponent : CharacterComponent {
         //No matter what happens if the character is burning, he/she wil not trigger fullness recovery
         if (owner.traitContainer.HasTrait("Burning")) {
             owner.logComponent.PrintLogIfActive($"\n{owner.name} is burning will not plan fullness recovery...");
-            return null;
-        }
-        if (owner.traitContainer.HasTrait("Fasting")) {
             return null;
         }
         //This base recovery creation function is different from tiredness/happiness because instead of adding the job in the job queue we only return the created job

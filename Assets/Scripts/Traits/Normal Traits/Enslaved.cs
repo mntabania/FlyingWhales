@@ -50,6 +50,7 @@ namespace Traits {
                     }
                 }
                 targetCharacter.jobComponent.AddPriorityJob(JOB_TYPE.PRODUCE_FOOD);
+                targetCharacter.jobComponent.AddPriorityJob(JOB_TYPE.HAUL);
                 Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, targetCharacter as IPlayerActionTarget);
             }
         }
@@ -66,6 +67,7 @@ namespace Traits {
                 targetCharacter.MigrateHomeStructureTo(null);
                 targetCharacter.behaviourComponent.UpdateDefaultBehaviourSet();
                 targetCharacter.jobComponent.RemovePriorityJob(JOB_TYPE.PRODUCE_FOOD);
+                targetCharacter.jobComponent.RemovePriorityJob(JOB_TYPE.HAUL);
                 Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, targetCharacter as IPlayerActionTarget);
             }
         }

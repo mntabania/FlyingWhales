@@ -588,7 +588,7 @@ public class CombatState : CharacterState {
                     log = $"{log}\nAlready within range of: {currentClosestHostile.name}. Skipping pursuit...";
                 }
             }
-            //stateComponent.character.PrintLogIfActive(log);
+            stateComponent.owner.logComponent.PrintLogIfActive(log);
         } else {
             //Character closestHostile = stateComponent.character.marker.GetNearestValidAvoid();
             List<IPointOfInterest> avoidInRange = stateComponent.owner.combatComponent.avoidInRange;
