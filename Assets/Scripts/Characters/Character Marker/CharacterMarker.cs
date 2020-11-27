@@ -724,10 +724,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
             action?.Invoke();    
         } else {
             ClearArrivalAction();
-            //TODO: Maybe
-            if (character.currentJob != null && character.currentActionNode != null) {
-                character.NoPathToDoJobOrAction(character.currentJob, character.currentActionNode);    
-            }
         }
         
         targetPOI = null;
