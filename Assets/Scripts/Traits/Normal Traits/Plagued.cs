@@ -177,6 +177,9 @@ namespace Traits {
         public override void ExecuteActionPreEffects(INTERACTION_TYPE action, ActualGoapNode p_actionNode) {
             base.ExecuteActionPreEffects(action, p_actionNode);
             IPointOfInterest otherObject = GetOtherObjectInAction(p_actionNode);
+            if (otherObject is StructureTileObject || otherObject is GenericTileObject) {
+                return;
+            }
             switch (p_actionNode.action.actionCategory) {
                 case ACTION_CATEGORY.CONSUME:
                     if (!otherObject.traitContainer.HasTrait("Plagued")) {

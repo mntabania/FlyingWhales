@@ -148,8 +148,10 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
                         originMousePos = Input.mousePosition;
                         hasReachedThreshold = true;
                     }
-                    if (originMousePos !=  Input.mousePosition && (PlayerManager.Instance.player == null || !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI)) { //check if the mouse has moved position from the origin, only then will it be considered dragging
-                        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Drag_Clicked);
+                    if (originMousePos !=  Input.mousePosition) { //check if the mouse has moved position from the origin, only then will it be considered dragging
+                        if (PlayerManager.Instance.player == null || !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI) {
+                            InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Drag_Clicked);    
+                        }
                         isDragging = true;
                     }
                 }
@@ -163,7 +165,12 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
             Messenger.Broadcast(ControlsSignals.CAMERA_MOVED_BY_PLAYER, difference);
             if (Input.GetMouseButtonUp(2)) {
                 ResetDragValues();
-                InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
+                if (InputManager.Instance.currentCursorType == InputManager.Cursor_Type.Drag_Clicked) {
+                    InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);    
+                }
+                
+            } else if (InputManager.Instance.currentCursorType == InputManager.Cursor_Type.Default) {
+                InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Drag_Clicked);
             }
         } else {
             if (!Input.GetMouseButton(2)) {
