@@ -28,6 +28,9 @@ public class CultistBoobyTrapData : PlayerAction {
             if (targetCharacter.limiterComponent.canPerform == false) {
                 return false;
             }
+            if (targetCharacter.traitContainer.HasTrait("Enslaved")) {
+                return false;
+            }
             return targetCharacter.isDead == false; //&& targetCharacter.homeSettlement != null;
         }
         return false;
@@ -42,6 +45,9 @@ public class CultistBoobyTrapData : PlayerAction {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter); 
         if (targetCharacter.limiterComponent.canPerform == false) {
             reasons += "Cannot be used while target is incapacitated,";
+        }
+        if (targetCharacter.traitContainer.HasTrait("Enslaved")) {
+            reasons += "Slaves cannot perform this action,";
         }
         return reasons;
     }

@@ -160,6 +160,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isNormalAndNotAlliedWithPlayer => isNormalCharacter && !faction.isPlayerFaction && !isAlliedWithPlayer;
     public bool isNormalEvenLycanAndNotAlliedWithPlayer => (isNormalCharacter || isLycanthrope) && necromancerTrait == null && !faction.isPlayerFaction && !isAlliedWithPlayer;
     public bool isNotSummonAndDemon => (this is Summon) == false && minion == null;
+    public bool isConsideredRatman => faction?.factionType.type == FACTION_TYPE.Ratmen && race == RACE.RATMAN;
 
     public int maxHP => combatComponent.maxHP;
     public Vector3 worldPosition => marker.transform.position;

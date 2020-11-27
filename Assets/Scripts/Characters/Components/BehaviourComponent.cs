@@ -304,8 +304,7 @@ public class BehaviourComponent : CharacterComponent {
         }
     }
     public void UpdateDefaultBehaviourSet() {
-        bool isConsideredRatman = owner.faction?.factionType.type == FACTION_TYPE.Ratmen && owner.race == RACE.RATMAN;
-        if ((owner.isNormalCharacter && !isConsideredRatman) || owner.characterClass.IsZombie()) {
+        if ((owner.isNormalCharacter && !owner.isConsideredRatman) || owner.characterClass.IsZombie()) {
             if(owner.homeSettlement != null) {
                 owner.SetIsWanderer(false);
             } else {

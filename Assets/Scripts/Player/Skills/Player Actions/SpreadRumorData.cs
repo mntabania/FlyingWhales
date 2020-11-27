@@ -29,6 +29,9 @@ public class SpreadRumorData : PlayerAction {
             if (targetCharacter.limiterComponent.canPerform == false) {
                 return false;
             }
+            if (targetCharacter.traitContainer.HasTrait("Enslaved")) {
+                return false;
+            }
             if (targetCharacter.jobQueue.HasJob(JOB_TYPE.SPREAD_RUMOR)) {
                 return false;
             }
@@ -40,6 +43,9 @@ public class SpreadRumorData : PlayerAction {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter); 
         if (targetCharacter.limiterComponent.canPerform == false) {
             reasons = $"{reasons}Cannot be used while target is incapacitated,";
+        }
+        if (targetCharacter.traitContainer.HasTrait("Enslaved")) {
+            reasons += "Slaves cannot perform this action,";
         }
         if (targetCharacter.jobQueue.HasJob(JOB_TYPE.SPREAD_RUMOR)) {
             reasons = $"{reasons}{targetCharacter.name} is already planning to spread rumors,";

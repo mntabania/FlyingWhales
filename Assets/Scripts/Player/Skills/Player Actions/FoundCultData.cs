@@ -46,6 +46,9 @@ public class FoundCultData : PlayerAction {
             if (targetCharacter.faction != null && targetCharacter.faction.factionType.type == FACTION_TYPE.Demon_Cult) {
                 return false;
             }
+            if (targetCharacter.traitContainer.HasTrait("Enslaved")) {
+                return false;
+            }
             return true;
         }
         return false;
@@ -57,6 +60,9 @@ public class FoundCultData : PlayerAction {
         }
         if (targetCharacter.faction != null && targetCharacter.faction.factionType.type == FACTION_TYPE.Demon_Cult) {
             reasons += "Character is already part of a Demon Cult,";
+        }
+        if (targetCharacter.traitContainer.HasTrait("Enslaved")) {
+            reasons += "Slaves cannot perform this action,";
         }
         return reasons;
     }

@@ -24,20 +24,23 @@ public class RaceManager : BaseMonoBehaviour {
 
     #region General
     public bool CanCharacterDoGoapAction(Character character, INTERACTION_TYPE goapType) {
-        bool isTrue = false;
-        Dictionary<INTERACTION_TYPE, GoapAction> goapActionData = InteractionManager.Instance.goapActionData;
-        if (goapActionData.ContainsKey(goapType)) {
-            isTrue = goapActionData[goapType].DoesCharacterMatchRace(character);
-        }
-        //if (!isTrue) {
-        //    if (character.role.allowedInteractions != null) {
-        //        isTrue = character.role.allowedInteractions.Contains(goapType);
-        //    }
+        return true;
+
+        //Temporarily removed this to check if we still need the racesThatCanDoAction checking
+        //bool isTrue = false;
+        //Dictionary<INTERACTION_TYPE, GoapAction> goapActionData = InteractionManager.Instance.goapActionData;
+        //if (goapActionData.ContainsKey(goapType)) {
+        //    isTrue = goapActionData[goapType].DoesCharacterMatchRace(character);
         //}
-        //if (!isTrue) {
-        //    isTrue = character.currentInteractionTypes.Contains(goapType);
-        //}
-        return isTrue;
+        ////if (!isTrue) {
+        ////    if (character.role.allowedInteractions != null) {
+        ////        isTrue = character.role.allowedInteractions.Contains(goapType);
+        ////    }
+        ////}
+        ////if (!isTrue) {
+        ////    isTrue = character.currentInteractionTypes.Contains(goapType);
+        ////}
+        //return isTrue;
     }
     public RaceData GetRaceData(RACE race) {
         if (racesDictionary.ContainsKey(race)) {
