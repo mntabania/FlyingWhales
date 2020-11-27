@@ -2470,7 +2470,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_EAT_CORPSE, INTERACTION_TYPE.EAT_CORPSE, targetCharacter, owner);
             job.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
-            return owner.jobQueue.AddJobInQueue(job);
+            if (owner.jobQueue.AddJobInQueue(job)) {
+	            owner.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
+	            return true;
+            }
+            return false;
         }
         return false;
     }

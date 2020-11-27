@@ -6,7 +6,7 @@
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         actionIconString = GoapActionStateDB.Eat_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.WOLF, RACE.RATMAN };
+        racesThatCanDoAction = new RACE[] { RACE.WOLF, RACE.RATMAN, RACE.LESSER_DEMON, RACE.ABOMINATION, RACE.ELEMENTAL, RACE.NYMPH, RACE.SPIDER, RACE.SLUDGE, RACE.TROLL };
         logTags = new[] {LOG_TAG.Needs};
     }
     

@@ -479,6 +479,7 @@ public static class Extensions {
                 break;
             case JOB_TYPE.BUILD_CAMP:
             case JOB_TYPE.LYCAN_HUNT_PREY:
+            case JOB_TYPE.MONSTER_EAT_CORPSE:
                 priority = 1087;
                 break;
             case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
@@ -708,9 +709,9 @@ public static class Extensions {
             case JOB_TYPE.TAKE_ARTIFACT:
                 priority = 260;
                 break;
-            case JOB_TYPE.MONSTER_EAT_CORPSE:
-                priority = 255;
-                break;
+            // case JOB_TYPE.MONSTER_EAT_CORPSE:
+            //     priority = 255;
+            //     break;
             case JOB_TYPE.IDLE_RETURN_HOME:
             case JOB_TYPE.IDLE_NAP:
             case JOB_TYPE.IDLE_SIT:

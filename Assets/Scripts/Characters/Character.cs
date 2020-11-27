@@ -4129,6 +4129,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.EVANGELIZE);
             AddAdvertisedAction(INTERACTION_TYPE.BUILD_CAMPFIRE);
             AddAdvertisedAction(INTERACTION_TYPE.VAMPIRIC_EMBRACE);
+            AddAdvertisedAction(INTERACTION_TYPE.EAT_CORPSE);
         }
         if (race.IsSapient()) {
             AddAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
