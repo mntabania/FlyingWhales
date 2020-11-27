@@ -15,7 +15,7 @@ namespace Quests.Steps {
                 Character target = targets[i];
                 if (!target.behaviourComponent.HasBehaviour(behaviourType.GetType())) {
                     _targets.Remove(target);
-                    objectsToCenter.Remove(target);
+                    objectsToCenter?.Remove(target);
                 }
             }
         }
@@ -28,7 +28,7 @@ namespace Quests.Steps {
                 Character target = targets[i];
                 if (!target.behaviourComponent.HasBehaviour(behaviourType.GetType())) {
                     _targets.Remove(target);
-                    objectsToCenter.Remove(target);
+                    objectsToCenter?.Remove(target);
                 }
             }
         }

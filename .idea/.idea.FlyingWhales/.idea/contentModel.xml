@@ -1811,6 +1811,7 @@
             <e p="Seizure.cs" t="Include" />
             <e p="SepticShock.cs" t="Include" />
             <e p="SetHome.cs" t="Include" />
+            <e p="SetHomeRatman.cs" t="Include" />
             <e p="SetLair.cs" t="Include" />
             <e p="ShedPelt.cs" t="Include" />
             <e p="Shocked.cs" t="Include" />
@@ -1994,6 +1995,7 @@
                   <e p="MapObjectVisual.cs" t="Include" />
                   <e p="MapVisualFactory.cs" t="Include" />
                   <e p="MovingMapObjectVisual.cs" t="Include" />
+                  <e p="MushroomObjectVisual.cs" t="Include" />
                   <e p="PoisonCloudMapObjectVisual.cs" t="Include" />
                   <e p="PortalGameObject.cs" t="Include" />
                   <e p="QuicksandMapObjectVisual.cs" t="Include" />
