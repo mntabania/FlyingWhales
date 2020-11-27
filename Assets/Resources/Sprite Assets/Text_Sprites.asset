@@ -134,6 +134,12 @@ MonoBehaviour:
     m_Scale: 1
     m_Name: Plague_Icon
     m_HashCode: -294947810
+  - m_ElementType: 2
+    m_Unicode: 65534
+    m_GlyphIndex: 16
+    m_Scale: 1
+    m_Name: Ratman_Icon
+    m_HashCode: -1115857775
   m_SpriteGlyphTable:
   - m_Index: 0
     m_Metrics:
@@ -143,8 +149,8 @@ MonoBehaviour:
       m_HorizontalBearingY: 12
       m_HorizontalAdvance: 17
     m_GlyphRect:
-      m_X: 84
-      m_Y: 30
+      m_X: 24
+      m_Y: 2
       m_Width: 17
       m_Height: 14
     m_Scale: 1
@@ -159,8 +165,8 @@ MonoBehaviour:
       m_HorizontalBearingY: 20
       m_HorizontalAdvance: 24
     m_GlyphRect:
-      m_X: 84
-      m_Y: 44
+      m_X: 60
+      m_Y: 20
       m_Width: 24
       m_Height: 24
     m_Scale: 1
@@ -223,7 +229,7 @@ MonoBehaviour:
       m_HorizontalBearingY: 20
       m_HorizontalAdvance: 24
     m_GlyphRect:
-      m_X: 60
+      m_X: 84
       m_Y: 22
       m_Width: 24
       m_Height: 22
@@ -239,8 +245,8 @@ MonoBehaviour:
       m_HorizontalBearingY: 20
       m_HorizontalAdvance: 24
     m_GlyphRect:
-      m_X: 32
-      m_Y: 16
+      m_X: 84
+      m_Y: 44
       m_Width: 24
       m_Height: 24
     m_Scale: 1
@@ -335,8 +341,8 @@ MonoBehaviour:
       m_HorizontalBearingY: 20
       m_HorizontalAdvance: 22
     m_GlyphRect:
-      m_X: 60
-      m_Y: 44
+      m_X: 32
+      m_Y: 16
       m_Width: 24
       m_Height: 24
     m_Scale: 1
@@ -390,6 +396,22 @@ MonoBehaviour:
     m_Scale: 1
     m_AtlasIndex: 0
     sprite: {fileID: -5554612431395520410, guid: 3ac8fd99bd951024e8e2de5be93c738b,
+      type: 3}
+  - m_Index: 16
+    m_Metrics:
+      m_Width: 24
+      m_Height: 24
+      m_HorizontalBearingX: 0
+      m_HorizontalBearingY: 20
+      m_HorizontalAdvance: 24
+    m_GlyphRect:
+      m_X: 60
+      m_Y: 44
+      m_Width: 24
+      m_Height: 24
+    m_Scale: 1
+    m_AtlasIndex: 0
+    sprite: {fileID: 1531121323253262507, guid: 3ac8fd99bd951024e8e2de5be93c738b,
       type: 3}
   spriteInfoList: []
   fallbackSpriteAssets: []

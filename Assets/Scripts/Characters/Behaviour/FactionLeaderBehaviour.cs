@@ -102,7 +102,6 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                         if (facilityCount < (character.homeSettlement.settlementType.maxFacilities/2)) {
                             chance = 3;
                         }
-                        chance = 50;
                         if (GameUtilities.RollChance(chance, ref log)) {
                             log += $"\n-Chance to build facility met.";
                             //place random facility based on weights

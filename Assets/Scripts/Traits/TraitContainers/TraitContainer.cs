@@ -680,23 +680,26 @@ namespace Traits {
                 }
             } 
         }
-        public void RescheduleLatestTraitRemoval(ITraitable p_traitable, string p_traitName, GameDate p_newRemoveDate) {
-            if (scheduleTickets.ContainsKey(p_traitName)) {
+        public void RescheduleLatestTraitRemoval(ITraitable p_traitable, Trait p_trait, GameDate p_newRemoveDate) {
+            string traitName = p_trait.name;
+            if (scheduleTickets.ContainsKey(traitName)) {
                 TraitRemoveSchedule traitRemoveSchedule = null;
-                if(scheduleTickets[p_traitName].Count > 0) {
-                    traitRemoveSchedule = scheduleTickets[p_traitName].Last();
+                if(scheduleTickets[traitName].Count > 0) {
+                    traitRemoveSchedule = scheduleTickets[traitName].Last();
                 }
                 if (traitRemoveSchedule != null) {
                     SchedulingManager.Instance.RemoveSpecificEntry(traitRemoveSchedule.ticket);
-                    scheduleTickets[p_traitName].RemoveAt(scheduleTickets[p_traitName].IndexOf(traitRemoveSchedule));
+                    scheduleTickets[traitName].RemoveAt(scheduleTickets[traitName].IndexOf(traitRemoveSchedule));
                     ObjectPoolManager.Instance.ReturnTraitRemoveScheduleToPool(traitRemoveSchedule);
                 }
-                Trait trait = GetTraitOrStatus<Trait>(p_traitName);
-                if (trait != null) {
-                    string ticket = SchedulingManager.Instance.AddEntry(p_newRemoveDate, () => p_traitable.traitContainer.RemoveTraitOnSchedule(p_traitable, trait), this);
-                    p_traitable.traitContainer.AddScheduleTicket(trait.name, ticket, p_newRemoveDate);    
+                string ticket = SchedulingManager.Instance.AddEntry(p_newRemoveDate, () => p_traitable.traitContainer.RemoveTraitOnSchedule(p_traitable, p_trait), this);
+                p_traitable.traitContainer.AddScheduleTicket(p_trait.name, ticket, p_newRemoveDate);    
+                
+                if (p_traitable is Character character) {
+                    //TODO: Make this more abstracted
+                    character.moodComponent.RescheduleMoodEffect(p_trait, p_newRemoveDate);
                 }
-            } 
+            }
         }
         public GameDate GetLatestExpiryDate(string p_traitName) {
             if (scheduleTickets.ContainsKey(p_traitName)) {

@@ -214,6 +214,7 @@
             <key type="filename">C:/Users/12myk/Downloads/icon_cultist.png</key>
             <key type="filename">C:/Users/12myk/Downloads/icon_demon.png</key>
             <key type="filename">C:/Users/12myk/Downloads/icon_monster.png</key>
+            <key type="filename">C:/Users/12myk/Downloads/icon_ratvillager.png</key>
             <key type="filename">C:/Users/12myk/Downloads/icon_undead.png</key>
             <key type="filename">C:/Users/12myk/Downloads/icon_villager.png</key>
             <struct type="IndividualSpriteSettings">
@@ -342,6 +343,7 @@
             <filename>C:/Users/12myk/Downloads/icon_demon.png</filename>
             <filename>C:/Users/12myk/Downloads/icon_undead.png</filename>
             <filename>C:/Users/12myk/Downloads/icon_plague.png</filename>
+            <filename>C:/Users/12myk/Downloads/icon_ratvillager.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

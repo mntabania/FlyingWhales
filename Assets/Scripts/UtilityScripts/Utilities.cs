@@ -1019,6 +1019,9 @@ namespace UtilityScripts {
         public static string PlagueIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Plague_Icon\">";
         }
+        public static string RatmanIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Ratman_Icon\"> ";
+        }
         public static string ColorizeAction(string actionString) {
             return $"<color=#f87f43>{actionString}</color>";
         }

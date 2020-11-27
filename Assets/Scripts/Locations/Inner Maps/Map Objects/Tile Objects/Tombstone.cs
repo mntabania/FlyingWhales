@@ -40,6 +40,7 @@ public class Tombstone : TileObject {
         character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataTombstone.characterID);
     }
     public override void OnLoadPlacePOI() {
+        DefaultProcessOnPlacePOI();
         character.marker.PlaceMarkerAt(gridTileLocation);
         character.DisableMarker();
         character.marker.TryCancelExpiry();

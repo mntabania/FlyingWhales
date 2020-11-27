@@ -38,10 +38,9 @@ public class Care : GoapAction {
                         newExpiryDate.AddTicks(1);
                     }
                     Debug.Log($"{goapNode.target.name} Will reschedule Plagued removal to {newExpiryDate.ToString()} from {originalRemovalDate.ToString()}");
-                    goapNode.target.traitContainer.RescheduleLatestTraitRemoval(goapNode.target, plagued.name, newExpiryDate);    
+                    goapNode.target.traitContainer.RescheduleLatestTraitRemoval(goapNode.target, plagued, newExpiryDate);    
                 }
             }
-            
         }
     }
     public void AfterCareSuccess(ActualGoapNode goapNode) {

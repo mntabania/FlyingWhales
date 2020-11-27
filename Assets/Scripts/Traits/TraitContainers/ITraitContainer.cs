@@ -67,7 +67,7 @@ namespace Traits {
         #region Schedule Ticket
         void AddScheduleTicket(string traitName, string ticket, GameDate removeDate);
         void RemoveScheduleTicket(string traitName, bool bySchedule);
-        void RescheduleLatestTraitRemoval(ITraitable p_traitable, string p_traitName, GameDate p_newRemoveDate);
+        void RescheduleLatestTraitRemoval(ITraitable p_traitable, Trait p_trait, GameDate p_newRemoveDate);
         GameDate GetLatestExpiryDate(string p_traitName);
         #endregion
 
