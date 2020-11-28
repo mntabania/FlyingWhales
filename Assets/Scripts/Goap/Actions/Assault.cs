@@ -8,7 +8,7 @@ using UtilityScripts;
 public class Assault : GoapAction {
 
     //private Character winner;
-    private Character loser;
+    //private Character loser;
 
     public Assault() : base(INTERACTION_TYPE.ASSAULT) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
@@ -76,7 +76,7 @@ public class Assault : GoapAction {
                                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status, node);        
                                 }
                             }
-                        } else if (opinionOfTarget == RelationshipManager.Friend ||opinionOfTarget == RelationshipManager.Acquaintance) {
+                        } else if (opinionOfTarget == RelationshipManager.Friend || opinionOfTarget == RelationshipManager.Acquaintance) {
                             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
                             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
                         } else if (targetCharacter == witness) {

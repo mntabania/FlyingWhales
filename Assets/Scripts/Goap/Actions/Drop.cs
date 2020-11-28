@@ -76,15 +76,6 @@ public class Drop : GoapAction {
         string stateName = "Target Missing";
         bool defaultTargetMissing = IsDropTargetMissing(node);
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
-        if (defaultTargetMissing == false) {
-            if (node.associatedJobType == JOB_TYPE.MONSTER_ABDUCT) {
-                if(node.poiTarget is Character targetCharacter && targetCharacter.isDead) {
-                    //Cannot abduct dead characters
-                    goapActionInvalidity.isInvalid = true;
-                    goapActionInvalidity.reason = "target_dead";
-                }
-            }
-        }
         return goapActionInvalidity;
     }
     private bool IsDropTargetMissing(ActualGoapNode node) {

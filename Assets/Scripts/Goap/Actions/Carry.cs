@@ -48,6 +48,15 @@ public class Carry : GoapAction {
                 }
             }
         }
+        if (goapActionInvalidity.isInvalid == false) {
+            if (node.associatedJobType == JOB_TYPE.MONSTER_ABDUCT) {
+                if (node.poiTarget is Character targetCharacter && targetCharacter.isDead) {
+                    //Cannot abduct dead characters
+                    goapActionInvalidity.isInvalid = true;
+                    goapActionInvalidity.reason = "target_dead";
+                }
+            }
+        }
         return goapActionInvalidity;
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
