@@ -23,13 +23,13 @@ namespace Quests.Steps {
         protected override void SubscribeListeners() {
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, CheckForCompletion);
             Messenger.AddListener<Character>(FactionSignals.FACTION_SET, CheckForCompletion);
-            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, CheckForCompletion);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_BECOME_CULTIST, CheckForCompletion);
             Messenger.AddListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
         }
         protected override void UnSubscribeListeners() {
             Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, CheckForCompletion);
             Messenger.RemoveListener<Character>(FactionSignals.FACTION_SET, CheckForCompletion);
-            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, CheckForCompletion);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_BECOME_CULTIST, CheckForCompletion);
             Messenger.RemoveListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
         }
 

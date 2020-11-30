@@ -10,7 +10,6 @@ namespace Traits {
 
         #region getters
         public override bool isPersistent => true;
-        public override bool isSingleton => true;
         #endregion
 
         public NightZombie() {

@@ -54,7 +54,7 @@ namespace Inner_Maps.Location_Structures {
             if (HasAnyAliveCharacterInRoom()) {
                 return false;
             }
-            return character.isNormalCharacter && character.isDead == false && character.isAlliedWithPlayer == false;
+            return character.isNormalCharacter && character.isDead == false && !character.traitContainer.HasTrait("Cultist");
         }
         #endregion
 

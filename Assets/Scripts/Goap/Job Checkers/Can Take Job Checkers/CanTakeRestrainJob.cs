@@ -10,9 +10,9 @@ namespace Goap.Job_Checkers {
             if (targetCharacter.traitContainer.HasTrait("Restrained")) {
                 return false;
             }
-            if (targetCharacter.isAlliedWithPlayer) {
-                //if target character is allied with player, only take restrain job if character is not allied with player
-                return character.isAlliedWithPlayer == false;  
+            if (targetCharacter.traitContainer.HasTrait("Cultist")) {
+                //if target character is a cultist, only take restrain job if character is not cultist
+                return !character.traitContainer.HasTrait("Cultist");  
             }
             return true;
         }

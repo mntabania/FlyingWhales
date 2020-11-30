@@ -5108,7 +5108,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    return false;
         //}
 
-        if (isAlliedWithPlayer && otherCharacter.isAlliedWithPlayer) {
+        if (traitContainer.HasTrait("Cultist") && otherCharacter.traitContainer.HasTrait("Cultist")) {
             //if both characters are allied with the player, do not consider each other as hostile.
             return false;
         }
@@ -5399,7 +5399,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 playerFaction = PlayerManager.Instance.player.playerFaction;
             }
             if(playerFaction != null) {
-                if (faction == playerFaction || !faction.IsHostileWith(playerFaction)) {
+                if (faction == playerFaction || faction.IsFriendlyWith(playerFaction)) {
                     return true;
                 }
             }

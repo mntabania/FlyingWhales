@@ -11,7 +11,6 @@ namespace Traits {
 
         #region getters
         public override bool isPersistent => true;
-        public override bool isSingleton => true;
         #endregion
 
         public WalkerZombie() {
@@ -20,7 +19,7 @@ namespace Traits {
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
-            //isHidden = true;
+            isHidden = true;
         }
 
         #region Loading
