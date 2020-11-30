@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
+  m_Name: Barbarian Data
+  m_EditorClassIdentifier: 
+  defaultSprites:
+    stillSprite: {fileID: 0}
+    animationSprites: []
+  raceSprites:
+    m_keys: 0200000001000000
+    m_values:
+    - stillSprite: {fileID: 21300000, guid: b1def7f0e8f70fe47abde231b1044567, type: 3}
+      animationSprites:
+      - {fileID: 21300000, guid: 2026fe79663fede4eb3471f6bfc0f661, type: 3}
+      - {fileID: 21300000, guid: fe4ba1e0659ca8747b4d036337fc0cfe, type: 3}
+      - {fileID: 21300000, guid: 00e8e42420e4ae745a7ab33717c9aedf, type: 3}
+      - {fileID: 21300000, guid: 1d0370d9b19cfaa4fa453c613d1b1f7b, type: 3}
+      - {fileID: 21300000, guid: 9406af7f51aec764ab283bf1bcd063a3, type: 3}
+      - {fileID: 21300000, guid: b1def7f0e8f70fe47abde231b1044567, type: 3}
+      - {fileID: 21300000, guid: f2da17ca75aec554bb220cbba97ca20b, type: 3}
+      - {fileID: 21300000, guid: 1a7c300666847ff41a96ac1d84ab06f5, type: 3}
+      - {fileID: 21300000, guid: 277f2d4c8432300448879bc7cea1638b, type: 3}
+      - {fileID: 21300000, guid: 3d08cd135c85b5d45a5edd71fc7e83de, type: 3}
+      - {fileID: 21300000, guid: 25c9bceedbbe4c44cbe29219aa9c1481, type: 3}
+      - {fileID: 21300000, guid: 7c5b08d708e3fbb40aeff164ebc77be0, type: 3}
+      - {fileID: 21300000, guid: 90f1115d05d4ae648b8ed4c73af09b30, type: 3}
+      - {fileID: 21300000, guid: 227ecc987367a76488fbfc0c18795242, type: 3}
+      - {fileID: 21300000, guid: 1d7c147ffb8727f419465e516e253a80, type: 3}
+      - {fileID: 21300000, guid: 7c2770912d0336e45b91e68cdad3d6f6, type: 3}
+      - {fileID: 21300000, guid: d06a9fbda80829f489186bbd5a427284, type: 3}
+      - {fileID: 21300000, guid: e10e84acd0b216b4fa30d76648955866, type: 3}
+    - stillSprite: {fileID: 21300000, guid: 1c8ee43979048bc458be8f0b5370e7da, type: 3}
+      animationSprites:
+      - {fileID: 21300000, guid: 08b7ea3345172fd448b84313f8a9f130, type: 3}
+      - {fileID: 21300000, guid: bb6f05970947e75498c9e4e964a8e3c4, type: 3}
+      - {fileID: 21300000, guid: 3d4125e62cb28a641af8a7dc51ee2b5f, type: 3}
+      - {fileID: 21300000, guid: aea87ee766936ec4288bee79c445851d, type: 3}
+      - {fileID: 21300000, guid: 27820d844895ee343a3508e2d658dbc4, type: 3}
+      - {fileID: 21300000, guid: 1c8ee43979048bc458be8f0b5370e7da, type: 3}
+      - {fileID: 21300000, guid: 3ca2c627b29089e48b505e89031939b4, type: 3}
+      - {fileID: 21300000, guid: 820a7f6402182734b9604ff833afee94, type: 3}
+      - {fileID: 21300000, guid: 0a4a5be1d0d57ae43900ee0096783741, type: 3}
+      - {fileID: 21300000, guid: 8848e2b9c3cd0d145be757ef2f404eb4, type: 3}
+      - {fileID: 21300000, guid: 188d656955c34e047acd84aa476717ac, type: 3}
+      - {fileID: 21300000, guid: 9a7fa6e11917d544f9d9f8d3a3287156, type: 3}
+      - {fileID: 21300000, guid: f14cc99f106b99f4cb2b1e34835bb20c, type: 3}
+      - {fileID: 21300000, guid: 80db808c3cd3e654facd7fe1a095cef4, type: 3}
+      - {fileID: 21300000, guid: fcb18a014a712d442a09956eef6579d9, type: 3}
+      - {fileID: 21300000, guid: bc5a728bf6a4b1c408b33addd35fee9c, type: 3}
+      - {fileID: 21300000, guid: e77ba47f514d0aa44a22e34bc9d4b1b8, type: 3}
+      - {fileID: 21300000, guid: 03c796813408efd45a3e2e0b94df62e0, type: 3}

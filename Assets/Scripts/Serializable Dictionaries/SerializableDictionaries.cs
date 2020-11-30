@@ -86,6 +86,11 @@ public class PlayerSkillDataDictionary : SerializableDictionary<SPELL_TYPE, Play
 public class PlayerArchetypeLoadoutDictionary : SerializableDictionary<PLAYER_ARCHETYPE, PlayerSkillLoadout> { }
 [System.Serializable]
 public class LogTagSpriteDictionary : SerializableDictionary<LOG_TAG, Sprite> { }
+[System.Serializable]
+public class RaceSpriteListDictionary : SerializableDictionary<RACE, CharacterClassAsset> { }
+[System.Serializable]
+public class RaceDataDictionary : SerializableDictionary<RACE, RaceData> { }
+
 //List storage
 [System.Serializable]
 public class LandmarkSpriteListStorage : SerializableDictionary.Storage<List<LandmarkStructureSprite>> { }
@@ -103,5 +108,3 @@ public class GameObjectListStorage : SerializableDictionary.Storage<List<GameObj
 public class MonsterSettingListStorage : SerializableDictionary.Storage<List<MonsterSetting>> { }
 [System.Serializable]
 public class TileObjectSettingListStorage : SerializableDictionary.Storage<List<ItemSetting>> { }
-[System.Serializable]
-public class RaceDataDictionary : SerializableDictionary<RACE, RaceData> { }

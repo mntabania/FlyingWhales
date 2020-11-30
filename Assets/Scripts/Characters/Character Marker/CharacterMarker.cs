@@ -1176,17 +1176,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if(character.reactionComponent.disguisedCharacter != null) {
             character = character.reactionComponent.disguisedCharacter;
         }
-        if (character.characterClass.className == "Mage" || character.characterClass.className == "Necromancer" || character.visuals.portraitSettings.hair == -1 || 
-            character.race == RACE.WOLF || character.race == RACE.SKELETON || 
-            character.race == RACE.GOLEM || character.race == RACE.ELEMENTAL || character.race == RACE.KOBOLD ||
-            character.race == RACE.SPIDER || character.race == RACE.MIMIC || character.race == RACE.ENT || 
-            character.race == RACE.PIG || character.race == RACE.CHICKEN || character.race == RACE.SHEEP 
-            || character.race == RACE.ABOMINATION
-            || character.isInVampireBatForm
-            || character.isInWerewolfForm) {
-            hairImg.gameObject.SetActive(false);
-            knockedOutHairImg.gameObject.SetActive(false);
-        } else {
+        if (character.visuals.HasHeadHair()) {
             if (currentAnimation == "Sleep Ground") {
                 knockedOutHairImg.gameObject.SetActive(true);
                 hairImg.gameObject.SetActive(false);
@@ -1194,6 +1184,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 knockedOutHairImg.gameObject.SetActive(false);
                 hairImg.gameObject.SetActive(true);
             }
+        } else {
+            hairImg.gameObject.SetActive(false);
+            knockedOutHairImg.gameObject.SetActive(false);
         }
     }
     public List<Character> GetInVisionCharactersThatMeetCriteria(System.Func<Character, bool> criteria) {

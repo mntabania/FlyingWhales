@@ -118,6 +118,10 @@
     /// </summary>
     public static string CHARACTER_BECOME_CULTIST = "OnCharacterBecomeCultist";
     /// <summary>
+    /// Parameters (Character)
+    /// </summary>
+    public static string CHARACTER_NO_LONGER_CULTIST = "OnCharacterNoLongerCultist";
+    /// <summary>
     /// Parameters Character disguiser, Character target
     /// </summary>
     public static string CHARACTER_DISGUISED = "OnCharacterDisguised";

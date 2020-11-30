@@ -79,6 +79,11 @@ public class PlayerSkillDataDictionaryPropertyDrawer : SerializableDictionaryPro
 public class PlayerArchetypeLoadoutDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(LogTagSpriteDictionary))]
 public class LogTagSpriteDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(RaceSpriteListDictionary))]
+public class RaceSpriteListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(RaceDataDictionary))]
+public class RaceDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+
 //list storage
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]
 public class LandmarkSpriteListStorageStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
@@ -100,5 +105,3 @@ public class ElementalDamageDataDictionaryPropertyDrawer : SerializableDictionar
 public class MonsterTypeListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileObjectSettingListStorage))]
 public class TileObjectTypeListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
-[CustomPropertyDrawer(typeof(RaceDataDictionary))]
-public class RaceDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
