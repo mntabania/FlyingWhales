@@ -338,7 +338,7 @@ public class Region : ISavable, ILogFiller {
         List<HexTile> areas = null;
         for (int i = 0; i < residents.Count; i++) {
             Character regionResident = residents[i];
-            if (regionResident.HasTerritory()) {
+            if (regionResident.isNormalCharacter && regionResident.HasTerritory()) {
                 if (areas == null) {
                     areas = new List<HexTile>();
                 }

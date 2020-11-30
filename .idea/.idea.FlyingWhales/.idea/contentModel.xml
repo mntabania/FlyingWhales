@@ -2832,6 +2832,7 @@
           <e p="Settings" t="Include">
             <e p="Settings.cs" t="Include" />
           </e>
+          <e p="SettlementListExtension.cs" t="Include" />
           <e p="Steamworks.NET" t="Include">
             <e p="SteamManager.cs" t="Include" />
           </e>
