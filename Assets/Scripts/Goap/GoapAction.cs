@@ -321,9 +321,15 @@ public class GoapAction {
         if (actor.gridTileLocation != null && tile != null) {
             int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
             distance = (int) (distance * 2f);
-            if (actor.currentRegion != tile.structure.region) {
-                return distance + 100;
+            if(distance > 80) {
+                //+4000 if distance exceeds 80 so that the action will no longer be part of the choices
+                //Only did 4000 instead of 2000 so we can identify in the logs that the distance exceeded 80 because it will be 4000+
+                //https://trello.com/c/UKehLZQg/2993-if-distance-cost-exceeds-80-ignore-action
+                distance += 4000;
             }
+            //if (actor.currentRegion != tile.structure.region) {
+            //    return distance + 100;
+            //}
             return distance;
         }
         return 1;

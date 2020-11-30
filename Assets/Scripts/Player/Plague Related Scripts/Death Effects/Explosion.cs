@@ -47,7 +47,7 @@ namespace Plague.Death_Effect {
         }
       
         public override void OnDeath(Character p_character) {
-            ActivateEffect(p_character);
+            ActivateEffectOn(p_character);
         }
 
         private void Ignite(Character p_character) {

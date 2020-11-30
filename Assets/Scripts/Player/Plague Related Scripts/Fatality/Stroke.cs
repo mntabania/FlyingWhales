@@ -13,11 +13,11 @@ namespace Plague.Fatality {
         public override void CharacterGainedTrait(Character p_character, Trait p_gainedTrait) {
             if (p_gainedTrait.name == "Tired") {
                 if (GameUtilities.RollChance(15)) {
-                    ActivateFatality(p_character);
+                    ActivateFatalityOn(p_character);
                 }        
             } else if (p_gainedTrait.name == "Exhausted") {
                 if (GameUtilities.RollChance(30)) { //5
-                    ActivateFatality(p_character);
+                    ActivateFatalityOn(p_character);
                 }        
             }
         }

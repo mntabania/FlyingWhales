@@ -18,7 +18,7 @@ namespace Plague.Fatality {
                 chance = 50; //2;
             }
             if (GameUtilities.RollChance(chance)) {
-                ActivateFatality(p_character);
+                ActivateFatalityOn(p_character);
             }
         }
     }

@@ -14,7 +14,7 @@ namespace Plague.Symptom {
         public override void CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action) {
             if (p_action.associatedJobType.IsTirednessRecoveryTypeJob()/* || p_action.goapType.IsRestingAction()*/) {
                 if (GameUtilities.RollChance(25)) {
-                    ActivateSymptom(p_character);
+                    ActivateSymptomOn(p_character);
                 }
             }
         }

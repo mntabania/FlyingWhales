@@ -6,7 +6,13 @@ namespace Plague.Symptom {
         public abstract PLAGUE_SYMPTOM symptomType { get; }
         
         protected abstract void ActivateSymptom(Character p_character);
-        
+
+        protected void ActivateSymptomOn(Character p_character) {
+            if (CanActivateSymptomOn(p_character)) {
+                ActivateSymptom(p_character);
+            }
+        }
+
         #region Plagued.IPlaguedListener
         public virtual void PerTickWhileStationaryOrUnoccupied(Character p_character) { }
         public virtual void CharacterGainedTrait(Character p_character, Trait p_gainedTrait) { }
@@ -19,6 +25,15 @@ namespace Plague.Symptom {
         public virtual void CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action) { }
         public virtual void CharacterDonePerformingAction(Character p_character, ActualGoapNode p_actionPerformed) { }
         public virtual void HourStarted(Character p_character, int p_numOfHoursPassed) { }
+        #endregion
+
+        #region Virtuals
+        protected virtual bool CanActivateSymptomOn(Character p_character) {
+            if (p_character.traitContainer.HasTrait("Plague Reservoir") || p_character.characterClass.IsZombie()) {
+                return false;
+            }
+            return true;
+        }
         #endregion
     }
 

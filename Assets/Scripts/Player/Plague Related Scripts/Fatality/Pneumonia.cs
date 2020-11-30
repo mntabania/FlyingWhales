@@ -12,7 +12,7 @@ namespace Plague.Fatality {
         }
         public override void PerTickWhileStationaryOrUnoccupied(Character p_character) {
             if (GameUtilities.RollChance(0.35f)) { //0.5f
-                ActivateFatality(p_character);
+                ActivateFatalityOn(p_character);
             }
         }
     }

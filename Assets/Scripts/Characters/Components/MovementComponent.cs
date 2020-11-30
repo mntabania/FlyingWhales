@@ -193,9 +193,7 @@ public class MovementComponent : CharacterComponent {
             doneAction?.Invoke();
             return true;
         } else {
-            LocationGridTile gate = owner.GetTargetTileToGoToRegion(targetRegion);
-            DIRECTION direction = gate.GetDirection();
-            LocationGridTile exitTile = owner.gridTileLocation.GetNearestEdgeTileFromThis(direction);
+            LocationGridTile exitTile = owner.gridTileLocation.GetExitTileToGoToRegion(targetRegion);
             if (exitTile != null && owner.movementComponent.HasPathTo(exitTile)) {
                 //check first if character has path toward the exit tile.
                 owner.marker.GoTo(exitTile, () => TravelToAnotherRegion(targetRegion, doneAction));

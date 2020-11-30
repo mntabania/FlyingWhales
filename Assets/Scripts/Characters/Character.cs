@@ -1640,20 +1640,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return null;
     }
-    public LocationGridTile GetTargetTileToGoToRegion(Region region) {
-        if (currentRegion != null) {
-            RegionInnerTileMap regionInnerTileMap = currentRegion.innerMap as RegionInnerTileMap;
-            if (regionInnerTileMap != null) {
-                return regionInnerTileMap.GetTileToGoToRegion(region);    
-            }
-        } else if (gridTileLocation != null) {
-            RegionInnerTileMap regionInnerTileMap = gridTileLocation.parentMap.region.innerMap as RegionInnerTileMap;
-            if (regionInnerTileMap != null) {
-                return regionInnerTileMap.GetTileToGoToRegion(region);    
-            }
-        }
-        return null;
-    }
     public LocationGridTile GetNearestUnoccupiedEdgeTileFromThis() {
         LocationGridTile currentGridTile = gridTileLocation;
         if (currentGridTile.IsAtEdgeOfWalkableMap() && currentGridTile.structure != null) {
