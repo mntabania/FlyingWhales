@@ -182,24 +182,36 @@ public class PlagueDisease : ISingletonPattern, ISavable {
     #region Misc Data
     public void UpdateActiveCasesAndRecoveriesOnPOILostPlagued(IPointOfInterest p_poi) {
         if (p_poi is Character character && !character.traitContainer.HasTrait("Plague Reservoir")) {
-            _activeCases--;
-            _recoveries++;
+            AdjustActiveCases(-1);
+            AdjustRecoveries(1);
         }
     }
     public void UpdateActiveCasesOnPOIGainedPlagued(IPointOfInterest p_poi) {
         if (p_poi is Character character && !character.traitContainer.HasTrait("Plague Reservoir")) {
-            _activeCases++;
+            AdjustActiveCases(1);
         }
     }
     public void UpdateDeathsOnCharacterDied(Character p_character) {
         if (!p_character.traitContainer.HasTrait("Plague Reservoir")) {
-            _deaths++;
+            AdjustDeaths(1);
         }
     }
     public void UpdateActiveCasesOnCharacterDied(Character p_character) {
         if (!p_character.traitContainer.HasTrait("Plague Reservoir")) {
-            _activeCases--;
+            AdjustActiveCases(-1);
         }
+    }
+    private void AdjustDeaths(int p_adjustment) {
+        _deaths += p_adjustment;
+        _deaths = Mathf.Max(0, _deaths);
+    }
+    private void AdjustRecoveries(int p_adjustment) {
+        _recoveries += p_adjustment;
+        _recoveries = Mathf.Max(0, _recoveries);
+    }
+    private void AdjustActiveCases(int p_adjustment) {
+        _activeCases += p_adjustment;
+        _activeCases = Mathf.Max(0, _activeCases);
     }
     #endregion
 

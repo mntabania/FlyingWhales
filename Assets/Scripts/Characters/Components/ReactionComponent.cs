@@ -913,7 +913,7 @@ public class ReactionComponent : CharacterComponent {
                                 }
                             }
                         }
-                        
+
                         //Plagued Settlement Event
                         if (disguisedActor.homeSettlement != null && disguisedActor.homeSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event)) {
                             Lethargic lethargic = disguisedTarget.traitContainer.GetTraitOrStatus<Lethargic>("Lethargic");
@@ -955,11 +955,11 @@ public class ReactionComponent : CharacterComponent {
                                 }
                             }
                         }
-
-                        if (disguisedTarget.race == RACE.WOLF && disguisedTarget.traitContainer.HasTrait("Restrained") && disguisedActor.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
-                            //Reference: https://trello.com/c/NPXg3GZs/2828-restrained-wolves-should-be-freed-by-reveres-werewolves-faction-members
-                            actor.jobComponent.TriggerReleaseJob(targetCharacter);
-                        }
+                    }
+                    
+                    if (disguisedTarget.race == RACE.WOLF && disguisedTarget.traitContainer.HasTrait("Restrained") && disguisedActor.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
+                        //Reference: https://trello.com/c/NPXg3GZs/2828-restrained-wolves-should-be-freed-by-reveres-werewolves-faction-members
+                        actor.jobComponent.TriggerReleaseJob(targetCharacter);
                     }
                     
                     //nocturnal

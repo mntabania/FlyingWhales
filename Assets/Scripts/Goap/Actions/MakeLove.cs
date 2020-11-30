@@ -353,7 +353,7 @@ public class MakeLove : GoapAction {
         //targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
 
         //targetCharacter.RemoveTargettedByAction(this);
-        if (targetCharacter.currentActionNode.action == this) {
+        if (targetCharacter.currentActionNode == goapNode) {
             targetCharacter.SetCurrentActionNode(null, null, null);
         }
     }
