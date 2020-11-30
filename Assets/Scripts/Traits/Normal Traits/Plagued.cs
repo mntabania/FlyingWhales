@@ -83,6 +83,9 @@ namespace Traits {
                 }
                 Messenger.AddListener<Fatality>(PlayerSignals.ADDED_PLAGUE_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
                 Messenger.AddListener<PlagueSymptom>(PlayerSignals.ADDED_PLAGUE_DISEASE_SYMPTOM, OnPlagueDiseaseSymptomAdded);
+                Messenger.AddListener<PlagueDeathEffect>(PlayerSignals.SET_PLAGUE_DEATH_EFFECT, OnSetPlagueDeathEffect);
+                Messenger.AddListener<PlagueDeathEffect>(PlayerSignals.UNSET_PLAGUE_DEATH_EFFECT, OnUnsetPlagueDeathEffect);
+
                 for (int i = 0; i < PlagueDisease.Instance.activeFatalities.Count; i++) {
                     Fatality fatality = PlagueDisease.Instance.activeFatalities[i];
                     AddFatality(fatality);
@@ -91,6 +94,7 @@ namespace Traits {
                     PlagueSymptom symptom = PlagueDisease.Instance.activeSymptoms[i];
                     AddSymptom(symptom);
                 }
+                AddDeathEffect(PlagueDisease.Instance.activeDeathEffect);
             }
         }
         #endregion
