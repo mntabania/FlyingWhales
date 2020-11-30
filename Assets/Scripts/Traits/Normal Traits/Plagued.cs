@@ -282,10 +282,12 @@ namespace Traits {
             _characterDeath?.Invoke(character);
         }
         public override bool OnDeath(Character character) {
-            if (!character.characterClass.IsZombie() && PlayerManager.Instance.player.plagueComponent.CanGainPlaguePoints()) {
-                PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(2, character);    
+            if (!character.characterClass.IsZombie()) {
+                if (PlayerManager.Instance.player.plagueComponent.CanGainPlaguePoints()) {
+                    PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(2, character);    
+                }
+                PlagueDisease.Instance.UpdateActiveCasesOnCharacterDied(character);
             }
-            PlagueDisease.Instance.UpdateActiveCasesOnCharacterDied(character);
             return base.OnDeath(character);
         }
         protected override string GetDescriptionInUI() {
