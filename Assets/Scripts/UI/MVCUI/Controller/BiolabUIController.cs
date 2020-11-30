@@ -136,7 +136,7 @@ public class BiolabUIController : MVCUIController, BiolabUIView.IListener
 		if (UIManager.Instance != null && PlayerManager.Instance != null) {
 			if (PlayerManager.Instance.player.playerSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.BIOLAB) is Biolab biolab && !biolab.HasMaxPlaguedRat()) {
 				string timeDifference = GameManager.Instance.Today().GetTimeDifferenceString(biolab.replenishDate);
-				string summary = $"The Biolab produce sa Plagued Rat once every 2 days up to a maximum of \n3 charges. [A new Plagued Rat charge will be produced in {timeDifference}].";
+				string summary = $"The Biolab produce sa Plagued Rat once every 2 days up to a maximum of \n3 charges. A new Plagued Rat charge will be produced in {UtilityScripts.Utilities.ColorizeAction(timeDifference)}.";
 				UIManager.Instance.ShowSmallInfo(summary, p_hoverPosition, "Plagued Rats");	
 			}
 		}

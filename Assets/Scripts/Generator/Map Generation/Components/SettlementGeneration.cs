@@ -420,7 +420,7 @@ public class SettlementGeneration : MapGenerationComponent {
 		if (faction.factionType.type == FACTION_TYPE.Elven_Kingdom) {
 			if (structureTypes.Contains(STRUCTURE_TYPE.HOSPICE) == false) {
 				//Apothecary: +6 (disable if already selected from previous hex tile)
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.HOSPICE, RESOURCE.WOOD), 100); //6
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.HOSPICE, RESOURCE.WOOD), 6); //6
 			}
 			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 1); //Farm: +1
 			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), structureTypes.Contains(STRUCTURE_TYPE.FARM) == false ? 15 : 2);
