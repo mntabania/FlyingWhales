@@ -97,7 +97,13 @@ namespace Inner_Maps.Location_Structures {
         }
         public void RepairStructure() {
             ResetHP();
-            structureObj.OnRepairStructure(region.innerMap, this);
+            structureObj.OnRepairStructure(region.innerMap, this, out int createdWalls, out int totalWallsInTemplate);
+            if (createdWalls < totalWallsInTemplate) {
+                int missingWalls = totalWallsInTemplate - createdWalls;
+                TileObjectData tileObjectData = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.BLOCK_WALL);
+                AdjustHP(-(missingWalls * tileObjectData.maxHP));
+            }
+            Messenger.Broadcast(StructureSignals.DEMONIC_STRUCTURE_REPAIRED, this);
         }
         /// <summary>
         /// Does this structure has an unoccupied room?

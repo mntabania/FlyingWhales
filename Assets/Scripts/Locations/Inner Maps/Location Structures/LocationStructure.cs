@@ -358,6 +358,14 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
+        public void OnlyAddPOIToList(IPointOfInterest p_poi) {
+            if (!pointsOfInterest.Contains(p_poi)) {
+                pointsOfInterest.Add(p_poi);
+            }
+        }
+        public void OnlyRemovePOIFromList(IPointOfInterest p_poi) {
+            pointsOfInterest.Remove(p_poi);
+        }
         public virtual bool LoadPOI(IPointOfInterest poi, LocationGridTile tileLocation) {
             if (!pointsOfInterest.Contains(poi)) {
                 pointsOfInterest.Add(poi);
@@ -958,7 +966,7 @@ namespace Inner_Maps.Location_Structures {
                 AdjustHP(amount);
             }
         }
-        protected virtual void AdjustHP(int amount) {
+        public void AdjustHP(int amount) {
             if (hasBeenDestroyed) { return; }
             currentHP += amount;
             currentHP = Mathf.Clamp(currentHP, 0, maxHP);
