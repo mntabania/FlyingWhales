@@ -326,7 +326,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     message = $"{message}{character.visuals.GetCharacterNameWithIconAndColor()} is the target of this intel.\n";
                 }  
             }
-            if (!string.IsNullOrEmpty(message)) {
+            if (!string.IsNullOrEmpty(message) && _nameplate != null) {
                 _nameplate.ShowIntelHelper(message);
             }
         }
@@ -358,7 +358,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
             //only process hover tooltips if character is not the currently selected character
             HideThoughtsAndNameplate();
         }
-        _nameplate.HideIntelHelper();
+        if (_nameplate != null) {
+            _nameplate.HideIntelHelper();    
+        }
     }
     #endregion
 
