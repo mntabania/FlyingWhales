@@ -814,39 +814,26 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                    && target.isDead == false
                    && target.combatComponent.combatMode != COMBAT_MODE.Passive) {
                     if (owner.IsHostileWith(target.faction)) {
-                        SetIsUnderSiege(true);
-                        if(target.homeStructure != null 
-                           && target.homeStructure.settlementLocation != null 
-                           && target.homeStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON
-                           && exterminateTargetStructure == null) {
-                            exterminateTargetStructure = target.homeStructure;
+                        bool shouldBeUnderSiege = true;
+                        // if (target.race == RACE.WOLF) {
+                        //     if (owner.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
+                        //         shouldBeUnderSiege = false;
+                        //     }
+                        // }
+                        if (shouldBeUnderSiege) {
+                            SetIsUnderSiege(true);
+                            if(target.homeStructure != null 
+                               && target.homeStructure.settlementLocation != null 
+                               && target.homeStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON
+                               && exterminateTargetStructure == null) {
+                                exterminateTargetStructure = target.homeStructure;
+                            }    
                         }
                     }
                 }
             }	
         }
     }
-    // private void OnCharacterArrivedAtStructure(Character target, LocationStructure structure) {
-    //     if(target.reactionComponent.disguisedCharacter != null) {
-    //         target = target.reactionComponent.disguisedCharacter;
-    //     }
-    //     if(owner != null 
-    //         && target.gridTileLocation != null 
-    //         && target.gridTileLocation.IsPartOfSettlement(this)
-    //         && target.traitContainer.HasTrait("Unconscious") == false
-    //         && target.isDead == false
-    //         && target.combatComponent.combatMode != COMBAT_MODE.Passive) {
-    //         if (owner.IsHostileWith(target.faction)) {
-    //             SetIsUnderSiege(true);
-    //             if(target.homeStructure != null 
-    //                 && target.homeStructure.settlementLocation != null 
-    //                 && target.homeStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON
-    //                 && exterminateTargetStructure == null) {
-    //                 exterminateTargetStructure = target.homeStructure;
-    //             }
-    //         }
-    //     }
-    // }
     private void CheckIfStillUnderSiege() {
         bool stillUnderSiege = false;
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {

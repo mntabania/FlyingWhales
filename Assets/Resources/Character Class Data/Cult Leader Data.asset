@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
+  m_Name: Cult Leader Data
+  m_EditorClassIdentifier: 
+  defaultSprites:
+    stillSprite: {fileID: 21300000, guid: 457ca2d0a8fd9414ab7a77709ade59d0, type: 3}
+    animationSprites:
+    - {fileID: 21300000, guid: 1c3b5c10e9ca2de4d812fa7723225f71, type: 3}
+    - {fileID: 21300000, guid: 47c69db5b1a574e41b69fb94f42b8c21, type: 3}
+    - {fileID: 21300000, guid: 8d7758f69c10b6045bb3325673811748, type: 3}
+    - {fileID: 21300000, guid: e3103df51ad352f41b3320604f62edc1, type: 3}
+    - {fileID: 21300000, guid: 457ca2d0a8fd9414ab7a77709ade59d0, type: 3}
+    - {fileID: 21300000, guid: 077af1e53bb7257409555996e8c25e76, type: 3}
+    - {fileID: 21300000, guid: 1d41b9670b4defd4e820acc8f30c1f4f, type: 3}
+    - {fileID: 21300000, guid: f1437ea1987e5774988834f7a3900e7d, type: 3}
+    - {fileID: 21300000, guid: 24a84cde4bf5d9945a11197977b723c9, type: 3}
+    - {fileID: 21300000, guid: bd5bdbe4b37723147a39abe02f255001, type: 3}
+    - {fileID: 21300000, guid: 57e75b8b01b43a34e84c6b0e55c19b45, type: 3}
+    - {fileID: 21300000, guid: 2d586c4d31a3448458e5e272c2c46fa5, type: 3}
+    - {fileID: 21300000, guid: c379c36a23e1cd246888c3b9bc8425a5, type: 3}
+    - {fileID: 21300000, guid: 4301355a8ee61384e9a2a40f9865f79e, type: 3}
+    - {fileID: 21300000, guid: ba1ecd8255803d34d8716d80f4ef7699, type: 3}
+    - {fileID: 21300000, guid: d7fcb55e60a670343af9992b2ece3acd, type: 3}
+    - {fileID: 21300000, guid: a4c0f3377c863544abf034753ce86d52, type: 3}
+  raceSprites:
+    m_keys: 
+    m_values: []

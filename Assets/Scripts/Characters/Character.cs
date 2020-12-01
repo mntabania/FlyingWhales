@@ -760,7 +760,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         combatComponent.UpdateBasicData(false);
         needsComponent.UpdateBaseStaminaDecreaseRate();
-        visuals.UpdateAllVisuals(this);
+        visuals.UpdateAllVisuals(this);    
+        
         UpdateCanCombatState();
 
         //Misc

@@ -2799,6 +2799,9 @@
           </e>
           <e p="Scriptable Object Scripts" t="Include">
             <e p="ArtifactData.cs" t="Include" />
+            <e p="Character Classes" t="Include">
+              <e p="CharacterClassData.cs" t="Include" />
+            </e>
             <e p="ElementalDamageData.cs" t="Include" />
             <e p="ItemGenerationSetting.cs" t="Include" />
             <e p="MonsterGenerationSetting.cs" t="Include" />

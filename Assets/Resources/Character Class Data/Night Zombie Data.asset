@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
+  m_Name: Night Zombie Data
+  m_EditorClassIdentifier: 
+  defaultSprites:
+    stillSprite: {fileID: 21300000, guid: 01999ef64e20ea04c984e15302021085, type: 3}
+    animationSprites:
+    - {fileID: 21300000, guid: 92cbb783ab664da46be5a8f9fa23db6f, type: 3}
+    - {fileID: 21300000, guid: 01999ef64e20ea04c984e15302021085, type: 3}
+    - {fileID: 21300000, guid: e975e04bd3f308f44903f970258ed57c, type: 3}
+  raceSprites:
+    m_keys: 
+    m_values: []

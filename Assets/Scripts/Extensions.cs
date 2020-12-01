@@ -1024,16 +1024,6 @@ public static class Extensions {
     #endregion
 
     #region Races
-    public static bool UsesGenderNeutralMarkerAssets(this RACE race) {
-        switch (race) {
-            // case RACE.HUMANS:
-            // case RACE.ELVES:
-            case RACE.LESSER_DEMON:
-                return false;
-            default:
-                return true;
-        }
-    }
     public static bool UsesGenderNeutralPortrait(this RACE race) {
         switch (race) {
             case RACE.HUMANS:
@@ -1045,6 +1035,15 @@ public static class Extensions {
         }
     }
     public static bool IsSapient(this RACE race) {
+        switch (race) {
+            case RACE.HUMANS:
+            case RACE.ELVES:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool HasHeadHair(this RACE race) {
         switch (race) {
             case RACE.HUMANS:
             case RACE.ELVES:

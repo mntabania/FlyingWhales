@@ -6,7 +6,7 @@ using UnityEngine;
 public class CharacterClassAsset {
 
     [Header("Sprites")]
-    public Sprite defaultSprite;
+    public Sprite stillSprite;
 
     [Header("Animation Sprites")]
     public List<Sprite> animationSprites;

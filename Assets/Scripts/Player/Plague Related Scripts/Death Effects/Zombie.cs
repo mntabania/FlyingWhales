@@ -52,11 +52,13 @@ namespace Plague.Death_Effect {
 
         private void WalkerZombie(Character p_character) {
             if (!p_character.characterClass.IsZombie()) {
+                p_character.visuals.UsePreviousClassAsset(true);
                 p_character.AssignClass("Walker Zombie");
             }
         }
         private void NightZombie(Character p_character) {
             if (!p_character.characterClass.IsZombie()) {
+                p_character.visuals.UsePreviousClassAsset(true);
                 p_character.AssignClass("Night Zombie");
             }
         }

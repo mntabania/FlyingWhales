@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
+  m_Name: Miner Data
+  m_EditorClassIdentifier: 
+  defaultSprites:
+    stillSprite: {fileID: 0}
+    animationSprites: []
+  raceSprites:
+    m_keys: 0200000001000000
+    m_values:
+    - stillSprite: {fileID: 21300000, guid: 44c76ac663c721541866b862919be525, type: 3}
+      animationSprites:
+      - {fileID: 21300000, guid: 0f55e7500f589a34489df2b792715d18, type: 3}
+      - {fileID: 21300000, guid: 69f1cbdbf00e2a64789db5451c9522c9, type: 3}
+      - {fileID: 21300000, guid: 06dfac532b5bbd44b8c36dea77ffce99, type: 3}
+      - {fileID: 21300000, guid: ec370daacd336c54ab051387c159ab35, type: 3}
+      - {fileID: 21300000, guid: 44c76ac663c721541866b862919be525, type: 3}
+      - {fileID: 21300000, guid: 74955a6504cd6454aa95961955726797, type: 3}
+      - {fileID: 21300000, guid: f0896073c42d378489afb92d2045b8dd, type: 3}
+      - {fileID: 21300000, guid: 0e917412e34869c4387af2f9de22785e, type: 3}
+      - {fileID: 21300000, guid: b6e0fe9a8e261c64c9caf1bcf67f2148, type: 3}
+      - {fileID: 21300000, guid: e716d6c6f2654c646bc62280ede19ce5, type: 3}
+      - {fileID: 21300000, guid: 54372540bc123384691c288655232fc8, type: 3}
+      - {fileID: 21300000, guid: 65737cfdd0b23f74883890a7163e8aca, type: 3}
+      - {fileID: 21300000, guid: c276566d49dcb8f458f3c4f60ca3a8d7, type: 3}
+      - {fileID: 21300000, guid: a6408525e194d9541b781e53a7729f01, type: 3}
+      - {fileID: 21300000, guid: fabfb7fe8f812f44db4aedd99fbe8719, type: 3}
+      - {fileID: 21300000, guid: 2b14577335688dd4488ba6f9873c15a8, type: 3}
+      - {fileID: 21300000, guid: 810dcc14fa6c7bd46b6461152761ee42, type: 3}
+      - {fileID: 21300000, guid: 09ca956493cff8d4f92097e119a87de3, type: 3}
+    - stillSprite: {fileID: 21300000, guid: f6343cd6bc012664d8dc227c262e948c, type: 3}
+      animationSprites:
+      - {fileID: 21300000, guid: dc84e0d02d7a18242a375180b0ef3f2b, type: 3}
+      - {fileID: 21300000, guid: 6f19bb0cf840a5b4bbed22c35e78bf72, type: 3}
+      - {fileID: 21300000, guid: 2c38656cb4f8e56468458f3e7d87ff3a, type: 3}
+      - {fileID: 21300000, guid: 9bcc44f049534bc4b9d77848c21a670e, type: 3}
+      - {fileID: 21300000, guid: f6343cd6bc012664d8dc227c262e948c, type: 3}
+      - {fileID: 21300000, guid: 6f7198869cbb44240ad5f4f328811dc2, type: 3}
+      - {fileID: 21300000, guid: 11226a745a679e343bb16e2e4a82b4ba, type: 3}
+      - {fileID: 21300000, guid: ee293efe27740dc48b015e510e0888be, type: 3}
+      - {fileID: 21300000, guid: 92d28369d9d9ebd4ab0d194dd6a9bac2, type: 3}
+      - {fileID: 21300000, guid: 2fe4f22340c820e44bb0aab3bdbd43ea, type: 3}
+      - {fileID: 21300000, guid: 444d7b55ee77adb44b532eced305d4f7, type: 3}
+      - {fileID: 21300000, guid: 4d5e4fdd53b841d4da8ccae9ac8ebd1f, type: 3}
+      - {fileID: 21300000, guid: c2ce4fcc381765a4f83a67a4cdf37253, type: 3}
+      - {fileID: 21300000, guid: ebce68e61e0d4d744bb326b33101ea1a, type: 3}
+      - {fileID: 21300000, guid: 6602b821f0e53ab4fa3f833f5aa7ab14, type: 3}
+      - {fileID: 21300000, guid: 2b378e10fbf186c40b3692863b0e5dd0, type: 3}
+      - {fileID: 21300000, guid: fd21286882ae66d41b200d14642c15a3, type: 3}
+      - {fileID: 21300000, guid: df32bff98d127ee44b9d7e84521a10ff, type: 3}
