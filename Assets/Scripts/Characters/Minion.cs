@@ -202,6 +202,26 @@ public class Minion {
     public void SetMinionPlayerSkillType(SPELL_TYPE skillType) {
         minionPlayerSkillType = skillType;
     }
+    public string GetMinionClassName(SPELL_TYPE skillType) {
+        switch (skillType) {
+            case SPELL_TYPE.DEMON_WRATH:
+                return "Wrath";
+            case SPELL_TYPE.DEMON_ENVY:
+                return "Envy";
+            case SPELL_TYPE.DEMON_GLUTTONY:
+                return "Gluttony";
+            case SPELL_TYPE.DEMON_GREED:
+                return "Greed";
+            case SPELL_TYPE.DEMON_LUST:
+                return "Lust";
+            case SPELL_TYPE.DEMON_PRIDE:
+                return "Pride";
+            case SPELL_TYPE.DEMON_SLOTH:
+                return "Sloth";
+            default:
+                return "Wrath";
+        }
+    }
     #endregion
 
     #region Summoning

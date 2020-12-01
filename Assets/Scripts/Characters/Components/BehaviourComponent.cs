@@ -312,7 +312,11 @@ public class BehaviourComponent : CharacterComponent {
             }
         } else {
             if (owner.minion != null) {
-                ChangeDefaultBehaviourSet(CharacterManager.Default_Minion_Behaviour);
+                if (owner.faction != null && owner.faction.isMajorNonPlayer) {
+                    ChangeDefaultBehaviourSet(CharacterManager.Default_Resident_Behaviour);
+                } else {
+                    ChangeDefaultBehaviourSet(CharacterManager.Default_Minion_Behaviour);    
+                }
             } else if (owner.race == RACE.ANGEL) {
                 ChangeDefaultBehaviourSet(CharacterManager.Default_Angel_Behaviour);
             } else {

@@ -29,6 +29,8 @@ public class CharacterVisuals {
         get {
             if (_owner.race == RACE.RATMAN) {
                 return "Ratman"; //if race is a ratman then always use the ratman class for its visuals
+            } else if (_owner.minion != null) {
+                return _owner.minion.GetMinionClassName(_owner.minion.minionPlayerSkillType);
             } else if (_usePreviousClassAsset) {
                 if (!string.IsNullOrEmpty(_owner.previousClassName)) {
                     return _owner.previousClassName;    
@@ -272,7 +274,7 @@ public class CharacterVisuals {
         if (!_owner.isNormalCharacter) {
             if (_owner.characterClass.className == "Necromancer") {
                 return UtilityScripts.Utilities.UndeadIcon();        
-            } else if (_owner.faction != null && _owner.faction.isPlayerFaction) {
+            } else if (_owner.minion != null || (_owner.faction != null && _owner.faction.isPlayerFaction)) {
                 return UtilityScripts.Utilities.DemonIcon();
             } else if (_owner.faction?.factionType.type == FACTION_TYPE.Undead) {
                 return UtilityScripts.Utilities.UndeadIcon();
