@@ -13,10 +13,16 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
-            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Faction prevFaction = interruptHolder.actor.faction;
-            if (interruptHolder.actor.ChangeFactionTo(FactionManager.Instance.vagrantFaction)) {
+            Faction targetFaction;
+            if (interruptHolder.actor is Summon summon) {
+                targetFaction = summon.defaultFaction;
+            } else {
+                targetFaction = FactionManager.Instance.vagrantFaction;
+            }
+            
+            if (interruptHolder.actor.ChangeFactionTo(targetFaction)) {
                 overrideEffectLog  = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Leave Faction", interruptHolder.identifier, null, logTags);
                 overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 overrideEffectLog.AddToFillers(prevFaction, prevFaction.name, LOG_IDENTIFIER.FACTION_1);

@@ -5,12 +5,12 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 
-public class DragonBehaviour : CharacterBehaviourComponent {
+public class DragonBehaviour : BaseMonsterBehaviour {
 	public DragonBehaviour() {
 		priority = 8;
 		// attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
 	}
-	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+	protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         log += $"\n-{character.name} is a dragon";
         if(character is Dragon dragon) {

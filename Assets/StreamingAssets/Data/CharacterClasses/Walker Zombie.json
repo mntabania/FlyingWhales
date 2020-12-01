@@ -1,1 +1,20 @@
-{"_className":"Walker Zombie","_baseAttackPower":50,"_baseHP":670,"_baseAttackSpeed":1250,"_inventoryCapacity":5,"_attackRange":1.0,"_staminaReduction":15.0,"_identifier":"","_traitNameOnTamedByPlayer":"","_traitNames":["Walker Zombie"],"_interestedItemNames":[],"_relatedStructures":[],"_elementalType":0,"_attackType":0,"_rangeType":0,"_priorityJobs":[],"_secondaryJobs":[],"_ableJobs":[]}
+{
+  "_className": "Walker Zombie",
+  "_baseAttackPower": 50,
+  "_baseHP": 670,
+  "_baseAttackSpeed": 1250,
+  "_inventoryCapacity": 5,
+  "_attackRange": 1.0,
+  "_staminaReduction": 15.0,
+  "_identifier": "",
+  "_traitNameOnTamedByPlayer": "",
+  "_traitNames": ["Walker Zombie"],
+  "_interestedItemNames": [],
+  "_relatedStructures": [],
+  "_elementalType": 0,
+  "_attackType": 0,
+  "_rangeType": 0,
+  "_priorityJobs": [],
+  "_secondaryJobs": [],
+  "_ableJobs": [19, 8]
+}

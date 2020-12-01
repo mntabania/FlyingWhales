@@ -15,6 +15,7 @@ public class Summon : Character {
     /// Is this monster unimportant? (i.e. skeleton carriers from Defiler/Prison)
     /// </summary>
     public bool isVolatileMonster { get; private set; }
+    public virtual Faction defaultFaction => FactionManager.Instance.neutralFaction;
 
     #region getters
     public virtual SUMMON_TYPE adultSummonType => SUMMON_TYPE.None;

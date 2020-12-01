@@ -3219,6 +3219,19 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     #endregion
 
+    #region Burrowing
+    public bool TriggerIdleBurrow(LocationGridTile p_targetTile, out JobQueueItem p_producedJob) {
+	    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BURROW], owner, owner, new OtherData[] { new LocationGridTileOtherData(p_targetTile) }, 0);
+	    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.BURROW, owner, owner);
+	    goapPlan.SetDoNotRecalculate(true);
+	    job.SetCannotBePushedBack(true);
+	    job.SetAssignedPlan(goapPlan);
+	    p_producedJob = job;
+	    return true;
+    }
+    #endregion
+    
     #region Loading
     public void LoadReferences(SaveDataCharacterJobTriggerComponent data) {
         //Currently N/A

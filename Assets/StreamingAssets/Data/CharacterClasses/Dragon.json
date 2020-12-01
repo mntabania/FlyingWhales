@@ -1,1 +1,20 @@
-{"_className":"Dragon","_baseAttackPower":250,"_baseHP":7560,"_baseAttackSpeed":2000,"_inventoryCapacity":5,"_attackRange":10.0,"_staminaReduction":13.0,"_identifier":"Beast","_traitNameOnTamedByPlayer":"Defender","_traitNames":["Beast","Combatant"],"_interestedItemNames":[],"_relatedStructures":[],"_elementalType":1,"_attackType":0,"_rangeType":1,"_priorityJobs":[],"_secondaryJobs":[],"_ableJobs":[]}
+{
+  "_className": "Dragon",
+  "_baseAttackPower": 250,
+  "_baseHP": 7560,
+  "_baseAttackSpeed": 2000,
+  "_inventoryCapacity": 5,
+  "_attackRange": 10.0,
+  "_staminaReduction": 13.0,
+  "_identifier": "Beast",
+  "_traitNameOnTamedByPlayer": "Defender",
+  "_traitNames": ["Beast", "Combatant"],
+  "_interestedItemNames": [],
+  "_relatedStructures": [],
+  "_elementalType": 1,
+  "_attackType": 0,
+  "_rangeType": 1,
+  "_priorityJobs": [],
+  "_secondaryJobs": [],
+  "_ableJobs": [19, 8]
+}

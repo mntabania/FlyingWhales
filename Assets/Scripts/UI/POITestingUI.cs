@@ -156,6 +156,13 @@ public class POITestingUI : MonoBehaviour {
         activeCharacter.jobQueue.AddJobInQueue(job);
         HideUI();
     }
+    public void Recruit() {
+        if (poi is Character targetCharacter) {
+            activeCharacter.jobComponent.TriggerRecruitJob(targetCharacter, out var producedJob);
+            activeCharacter.jobQueue.AddJobInQueue(producedJob);
+        }
+        HideUI();
+    }
     #endregion
 
     #region Tile Object Testing

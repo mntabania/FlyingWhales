@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 
 public class VengefulGhost : Summon {
     public override string raceClassName => characterClass.className;
+    public override Faction defaultFaction => FactionManager.Instance.undeadFaction;
     public VengefulGhost() : base(SUMMON_TYPE.Vengeful_Ghost, "Vengeful Ghost", RACE.GHOST, UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
     }

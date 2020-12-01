@@ -1068,6 +1068,7 @@
               <e p="AttackDemonicStructureBehaviour.cs" t="Include" />
               <e p="AttackVillageBehaviour.cs" t="Include" />
               <e p="BabyInfestorBehaviour.cs" t="Include" />
+              <e p="BaseMonsterBehaviour.cs" t="Include" />
               <e p="BerserkBehaviour.cs" t="Include" />
               <e p="BoneGolemBehaviour.cs" t="Include" />
               <e p="CarePlagueBearersBehaviour.cs" t="Include" />
@@ -1097,6 +1098,7 @@
               <e p="ExploreBehaviour.cs" t="Include" />
               <e p="ExterminateBehaviour.cs" t="Include" />
               <e p="FactionLeaderBehaviour.cs" t="Include" />
+              <e p="FireElementalBehaviour.cs" t="Include" />
               <e p="GhostBehaviour.cs" t="Include" />
               <e p="GiantSpiderBehaviour.cs" t="Include" />
               <e p="GluttonBehaviour.cs" t="Include" />
@@ -1127,6 +1129,7 @@
               <e p="RevenantBehaviour.cs" t="Include" />
               <e p="SettlementRulerBehaviour.cs" t="Include" />
               <e p="SlaveBehaviour.cs" t="Include" />
+              <e p="SludgeBehaviour.cs" t="Include" />
               <e p="SmallSpiderBehaviour.cs" t="Include" />
               <e p="SnatcherBehaviour.cs" t="Include" />
               <e p="SocialGatheringBehaviour.cs" t="Include" />
@@ -1453,6 +1456,7 @@
               <e p="BuildTrollCauldron.cs" t="Include" />
               <e p="Burn.cs" t="Include" />
               <e p="BurnAtStake.cs" t="Include" />
+              <e p="Burrow.cs" t="Include" />
               <e p="BuryCharacter.cs" t="Include" />
               <e p="Butcher.cs" t="Include" />
               <e p="Care.cs" t="Include" />
@@ -1526,6 +1530,7 @@
               <e p="KnockoutCharacter.cs" t="Include" />
               <e p="LaughAt.cs" t="Include" />
               <e p="LayEgg.cs" t="Include" />
+              <e p="LongStandStill.cs" t="Include" />
               <e p="MakeLove.cs" t="Include" />
               <e p="Meditate.cs" t="Include" />
               <e p="Mine.cs" t="Include" />
