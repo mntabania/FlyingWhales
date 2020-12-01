@@ -455,13 +455,20 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 continue;
             }
             log += $"\n\n-{resident.name}";
-            if(resident.isDead /*|| resident.isMissing*/ || resident.isBeingSeized || resident.traitContainer.HasTrait("Enslaved")) {
+            if(resident.isDead /*|| resident.isMissing*/ || resident.isBeingSeized) {
                 log += "\nEither dead or missing or seized or enslaved, will not be part of candidates for ruler";
                 continue;
             }
 
             if (owner != null && resident.crimeComponent.IsWantedBy(owner)) {
                 log += "\nMember is wanted by the faction owner of this settlement " + owner.name + ", skipping...";
+                continue;
+            }
+            bool isInsideSettlement = resident.gridTileLocation != null && resident.gridTileLocation.IsPartOfSettlement(this);
+            bool isInAnActiveParty = resident.partyComponent.isMemberThatJoinedQuest;
+
+            if(!isInsideSettlement && !isInAnActiveParty) {
+                log += "\nMember is not inside settlement and not in active party, skipping...";
                 continue;
             }
 
@@ -543,13 +550,23 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 weight += -40;
                 log += "\n  -Civilian: -40";
             }
+            if (weight < 1) {
+                weight = 1;
+                log += "\n  -Weight cannot be less than 1, setting weight to 1";
+            }
             if (resident.traitContainer.HasTrait("Ambitious")) {
                 weight = Mathf.RoundToInt(weight * 1.5f);
                 log += "\n  -Ambitious: x1.5";
             }
-            if (weight < 1) {
-                weight = 1;
-                log += "\n  -Weight cannot be less than 1, setting weight to 1";
+            if (resident is Summon) {
+                if(HasResidentThatMeetsCriteria(c => c.race.IsSapient() && ((c.gridTileLocation != null && c.gridTileLocation.IsPartOfSettlement(this)) || c.partyComponent.isMemberThatJoinedQuest))) {
+                    weight *= 0;
+                    log += "\n  -Resident is a Summon and there is atleast 1 Sapient resident inside settlement or in active party: x0";
+                }
+            }
+            if (resident.traitContainer.HasTrait("Enslaved")) {
+                weight *= 0;
+                log += "\n  -Enslaved: x0";
             }
             log += $"\n  -TOTAL WEIGHT: {weight}";
             if (weight > 0) {

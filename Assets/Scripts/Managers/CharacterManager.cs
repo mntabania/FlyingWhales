@@ -680,30 +680,70 @@ public class CharacterManager : BaseMonoBehaviour {
         }
         return null;
     }
-    public void RaiseFromDeath(Character characterToCopy, Faction faction, RACE race = RACE.SKELETON, string className = "") {
-        if (!characterToCopy.hasRisen) {
-            characterToCopy.SetHasRisen(true);
-            StartCoroutine(Raise(characterToCopy, faction, race, className));
-        }
-    }
-    private IEnumerator Raise(Character target, Faction faction, RACE race, string className) {
-        target.marker.PlayAnimation("Raise Dead");
-        yield return new WaitForSeconds(0.7f);
-        Summon summon = CreateNewSummon(SUMMON_TYPE.Skeleton, faction, homeRegion: target.homeRegion, className: target.characterClass.className);
-        summon.SetFirstAndLastName(target.firstName, target.surName);
-        summon.CreateMarker();
+    //This raise dead will replace the dead character with a new character 
+    public void RaiseFromDeadReplaceCharacterWithSkeleton(Character target, Faction faction, string className = "", Action<Character> onRaisedFromDeadAction = null) {
+        //Since we no longer see the raise dead animation putting raise dead in a coroutine might have some problems like:
+        //https://trello.com/c/Qu1VHS2A/3044-dev-03355-null-reference-charactermanagerraised
+        target.SetHasRisen(true);
+        target.SetRaisedFromDeadAsSkeleton(true);
+        //target.marker.PlayAnimation("Raise Dead");
+        //yield return new WaitForSeconds(0.7f);
         LocationGridTile tile = target.gridTileLocation;
         if (target.grave != null) {
             tile = target.grave.gridTileLocation;
-            target.grave.gridTileLocation.structure.RemovePOI(target.grave);
-            target.SetGrave(null);
         }
-        summon.InitialCharacterPlacement(tile);
-        if (target.currentRegion != null) {
-            target.currentRegion.RemoveCharacterFromLocation(target);
+        if(tile != null) {
+            if (target.grave != null) {
+                tile.structure.RemovePOI(target.grave);
+                target.SetGrave(null);
+            }
+            Summon summon = CreateNewSummon(SUMMON_TYPE.Skeleton, faction, homeRegion: target.homeRegion, className: target.characterClass.className);
+            summon.SetFirstAndLastName(target.firstName, target.surName);
+            summon.SetHasRisen(true);
+            summon.SetRaisedFromDeadAsSkeleton(true);
+            summon.CreateMarker();
+
+            summon.InitialCharacterPlacement(tile);
+            if (target.currentRegion != null) {
+                target.currentRegion.RemoveCharacterFromLocation(target);
+            }
+            target.DestroyMarker();
+            onRaisedFromDeadAction?.Invoke(target);
+            AddNewLimboCharacter(target);
+            RemoveCharacter(target);
         }
-        target.DestroyMarker();
         // RemoveCharacter(target);
+    }
+
+    //This raise dead will retain the same dead character, meaning we will use the same instance of the character
+    public void RaiseFromDeadRetainCharacterInstance(Character target, Faction faction, RACE race, string className, Action<Character> onRaisedFromDeadAction = null) {
+        //Since we no longer see the raise dead animation putting raise dead in a coroutine might have some problems like:
+        //https://trello.com/c/Qu1VHS2A/3044-dev-03355-null-reference-charactermanagerraised
+        if (className.Contains("Zombie")) {
+            //Raise from dead as zombie
+            target.SetHasRisen(true);
+            target.SetRaisedFromDeadAsSkeleton(true);
+            LocationGridTile tile = target.grave != null ? target.grave.gridTileLocation : target.gridTileLocation;
+            GameManager.Instance.CreateParticleEffectAt(tile, PARTICLE_EFFECT.Zombie_Transformation);
+            target.ReturnToLife(faction, race, className);
+            target.MigrateHomeStructureTo(null);
+            target.needsComponent.SetTirednessForcedTick(0);
+            target.needsComponent.SetFullnessForcedTick(0);
+            target.needsComponent.SetHappinessForcedTick(0);
+            if (!target.behaviourComponent.HasBehaviour(typeof(ZombieBehaviour))) {
+                target.behaviourComponent.AddBehaviourComponent(typeof(ZombieBehaviour));
+            }
+            target.combatComponent.UpdateMaxHPAndReset();
+            //yield return new WaitForSeconds(5f);
+            //target.marker.PlayAnimation("Raise Dead");
+        } else {
+            target.ReturnToLife();
+        }
+        //else {
+        //    target.marker.PlayAnimation("Raise Dead");
+        //    yield return new WaitForSeconds(0.7f);
+        //}
+        onRaisedFromDeadAction?.Invoke(target);
     }
     public Color GetCharacterNameColor(Character character) {
         if(character != null) {
