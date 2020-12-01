@@ -237,15 +237,16 @@ public class LocationStructureObject : PooledObject {
             if (tile.objHere != null && tile.objHere is TileObject tileObject && (tileObject is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
                 if (tileObject.traitContainer.HasTrait("Indestructible")) {
                     tile.structure.OnlyRemovePOIFromList(tileObject);
-                    continue;
+                } else {
+                    if (isDemonicStructure && tile.objHere is Tombstone tombstone) {
+                        tombstone.SetRespawnCorpseOnDestroy(false);
+                    }
+                    bool hasBlockWall = _blockWallsTilemap == null ? false : _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
+                    if (!tileObject.tileObjectType.IsTileObjectImportant() || preplacedObj != null || hasBlockWall || structureType == STRUCTURE_TYPE.THE_PORTAL) {
+                        tile.structure.RemovePOI(tile.objHere);    
+                    }    
                 }
-                if (isDemonicStructure && tile.objHere is Tombstone tombstone) {
-                    tombstone.SetRespawnCorpseOnDestroy(false);
-                }
-                bool hasBlockWall = _blockWallsTilemap == null ? false : _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
-                if (!tileObject.tileObjectType.IsTileObjectImportant() || preplacedObj != null || hasBlockWall || structureType == STRUCTURE_TYPE.THE_PORTAL) {
-                    tile.structure.RemovePOI(tile.objHere);    
-                }
+                
             }
             
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
@@ -261,12 +262,13 @@ public class LocationStructureObject : PooledObject {
                 if (diffTile.objHere != null && (diffTile.objHere is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
                     if (diffTile.objHere.traitContainer.HasTrait("Indestructible")) {
                         diffTile.structure.OnlyRemovePOIFromList(diffTile.objHere);
-                        continue;
+                    } else {
+                        if (isDemonicStructure && diffTile.objHere is Tombstone tombstone) {
+                            tombstone.SetRespawnCorpseOnDestroy(false);
+                        }
+                        diffTile.structure.RemovePOI(diffTile.objHere);    
                     }
-                    if (isDemonicStructure && diffTile.objHere is Tombstone tombstone) {
-                        tombstone.SetRespawnCorpseOnDestroy(false);
-                    }
-                    diffTile.structure.RemovePOI(diffTile.objHere);
+                    
                 }
                 diffTile.parentMap.detailsTilemap.SetTile(diffTile.localPlace, null);
 

@@ -360,11 +360,28 @@ namespace Inner_Maps.Location_Structures {
         }
         public void OnlyAddPOIToList(IPointOfInterest p_poi) {
             if (!pointsOfInterest.Contains(p_poi)) {
+                Debug.Log($"Added {p_poi.name} to {name}");
                 pointsOfInterest.Add(p_poi);
+                if (p_poi is TileObject tileObject) {
+                    if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
+                        groupedTileObjects[tileObject.tileObjectType].AddTileObject(tileObject);
+                    } else {
+                        TileObjectsAndCount toac = new TileObjectsAndCount();
+                        toac.AddTileObject(tileObject);
+                        groupedTileObjects.Add(tileObject.tileObjectType, toac);
+                    }    
+                }
             }
         }
         public void OnlyRemovePOIFromList(IPointOfInterest p_poi) {
-            pointsOfInterest.Remove(p_poi);
+            if (pointsOfInterest.Remove(p_poi)) {
+                Debug.Log($"Removed {p_poi.name} from {name}");
+                if (p_poi is TileObject tileObject) {
+                    if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
+                        groupedTileObjects[tileObject.tileObjectType].RemoveTileObject(tileObject);
+                    }    
+                }
+            }
         }
         public virtual bool LoadPOI(IPointOfInterest poi, LocationGridTile tileLocation) {
             if (!pointsOfInterest.Contains(poi)) {
