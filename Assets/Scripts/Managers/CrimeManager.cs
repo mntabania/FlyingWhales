@@ -252,10 +252,6 @@ public class CrimeManager : BaseMonoBehaviour {
                     //Will only react to crime once
                     return;
                 }
-                if (actor.isDead) {
-                    //Cannot react to crime if criminal is already dead
-                    return;
-                }
                 Criminal existingCriminalTrait = null;
                 if (actor.traitContainer.HasTrait("Criminal")) {
                     existingCriminalTrait = actor.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
@@ -293,6 +289,11 @@ public class CrimeManager : BaseMonoBehaviour {
                         }
                     }
 
+                    if (actor.isDead) {
+                        //Should not process crime further if criminal is already dead
+                        //This means that the witness will still emotion react to the dead criminal but will no longer add criminal trait/report crime/make the criminal wanted
+                        return;
+                    }
                     //Witness should check if the actor already has an active crime data against the target with same crime type
                     //If actor already has one, the witness should not create another crime data against the actor, he must only be added to the witness list
                     //Example: If actor attacked character B (Assault crime), then character A witnessed it, character A will create a crime data that "actor did an assault crime against character B"

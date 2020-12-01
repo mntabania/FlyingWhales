@@ -55,15 +55,8 @@ namespace Traits {
             //owner.AssignClass("Necromancer");
             owner.behaviourComponent.AddBehaviourComponent(typeof(NecromancerBehaviour));
             owner.SetNecromancerTrait(this);
-            //Temporary fix: Change faction to undead when the necromancer sucessfully built his lair so that the other characters in the village will not attack him
-            //EDIT NOTE: Faction changing is brought back when necromancer trait is added not when the character built a lair because we now have the Transitioning trait
-            //This means that the character will no longer be hostile to villagers if he/she is transitioning
-            owner.ChangeFactionTo(FactionManager.Instance.undeadFaction);
-            FactionManager.Instance.undeadFaction.OnlySetLeader(owner); //TODO: needed to call this even though Become Faction Leader is called because it calls a version of set leader that prevents setting the leader of The Undead Faction
-            owner.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, owner);
-            CharacterManager.Instance.SetNecromancerInTheWorld(owner);
-            owner.MigrateHomeStructureTo(null);
-            owner.ClearTerritory();
+            //NOTE: The changing of faction and clearing out home is moved in Necromantic Transformation interrupt, the reason is the necromancer must not change faction every time he changes classes because he can be a master lycan
+            //The creation of lair must also be done only once
             AdjustEnergy(5);
             owner.jobQueue.CancelAllJobs();
             owner.movementComponent.SetEnableDigging(true);
@@ -82,12 +75,17 @@ namespace Traits {
             //owner.AssignClass(prevClassName);
             owner.behaviourComponent.RemoveBehaviourComponent(typeof(NecromancerBehaviour));
             owner.SetNecromancerTrait(null);
-            owner.ChangeFactionTo(FactionManager.Instance.vagrantFaction);
-            FactionManager.Instance.undeadFaction.OnlySetLeader(null);
-            CharacterManager.Instance.SetNecromancerInTheWorld(null);
+            //owner.ChangeFactionTo(FactionManager.Instance.vagrantFaction);
+            //FactionManager.Instance.undeadFaction.OnlySetLeader(null);
+            //CharacterManager.Instance.SetNecromancerInTheWorld(null);
             owner.movementComponent.SetEnableDigging(false);
             owner.movementComponent.SetAvoidSettlements(false);
             Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
+        }
+        public override bool OnDeath(Character character) {
+            //Clearing out of necromancer in the world must only done once the current necromancer in the world dies
+            CharacterManager.Instance.SetNecromancerInTheWorld(null);
+            return base.OnDeath(character);
         }
         #endregion
 
