@@ -114,7 +114,7 @@ namespace Traits {
         private void Reanimate() {
             _hasTurnedAtLeastOnce = true;
             owner.visuals.UsePreviousClassAsset(false);
-            owner.RaiseFromDeath(faction: FactionManager.Instance.undeadFaction, race: owner.race, className: "Walker Zombie");
+            CharacterManager.Instance.RaiseFromDeadRetainCharacterInstance(owner, FactionManager.Instance.undeadFaction, owner.race, "Walker Zombie");
             owner.visuals.UpdateAllVisuals(owner);    
             // SetColor(Color.grey);
         }

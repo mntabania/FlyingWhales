@@ -84,9 +84,9 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
             }
         }
         //try to give birth to another ratman
-        if (GameUtilities.RollChance(2) && isInHome) {//10
+        if (GameUtilities.RollChance(1) && isInHome) {//10
             int residentCount = character.GetAliveResidentsCountInHome();
-            if (residentCount < 8) {
+            if (residentCount < 6) {
                 return character.jobComponent.TriggerBirthRatman(out producedJob);
             }
         }

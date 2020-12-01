@@ -2090,6 +2090,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetHasRisen(bool state) {
         hasRisen = state;
     }
+    public void SetRaisedFromDeadAsSkeleton(bool state) {
+        raisedFromDeadAsSkeleton = state;
+    }
     public bool IsConsideredInDangerBy(Character character) {
         if (traitContainer.HasTrait("Enslaved") && faction != character.faction) {
             return true;
@@ -5658,42 +5661,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //}
         }
     }
-    public void RaiseFromDeath(Action<Character> onRaisedFromDeadAction = null, Faction faction = null, RACE race = RACE.SKELETON, string className = "") {
-        GameManager.Instance.StartCoroutine(faction == null
-            ? Raise(this, onRaisedFromDeadAction, FactionManager.Instance.neutralFaction, race, className)
-            : Raise(this, onRaisedFromDeadAction, faction, race, className));
-    }
-    private IEnumerator Raise(Character target, Action<Character> onReturnToLifeAction, Faction faction, RACE race, string className) {
-        if (className.Contains("Zombie")) {
-            LocationGridTile tile = grave != null ? grave.gridTileLocation : target.gridTileLocation;
-            GameManager.Instance.CreateParticleEffectAt(tile, PARTICLE_EFFECT.Zombie_Transformation);
-            yield return new WaitForSeconds(5f);
-            target.marker.PlayAnimation("Raise Dead");
-        } else {
-            target.marker.PlayAnimation("Raise Dead");
-            yield return new WaitForSeconds(0.7f);
-        }
-        target.RaiseFromDeadAsSkeleton(faction, race, className);
-        target.combatComponent.UpdateMaxHPAndReset();
-        yield return null;
-        onReturnToLifeAction?.Invoke(this);
-    }
-    private void RaiseFromDeadAsSkeleton(Faction faction, RACE race, string className) {
+    public void ReturnToLife(Faction faction, RACE race, string className) {
         if (_isDead) {
-            raisedFromDeadAsSkeleton = true;
+            //SetRaisedFromDeadAsSkeleton(true);
             ChangeFactionTo(faction);
             AssignRace(race);
             AssignClass(className);
 
             ReturnToLife();
-
-            MigrateHomeStructureTo(null);
-            needsComponent.SetTirednessForcedTick(0);
-            needsComponent.SetFullnessForcedTick(0);
-            needsComponent.SetHappinessForcedTick(0);
-            if (!behaviourComponent.HasBehaviour(typeof(ZombieBehaviour))) {
-                behaviourComponent.AddBehaviourComponent(typeof(ZombieBehaviour));
-            }
         }
     }
     public bool ReturnToLife() {
@@ -5965,7 +5940,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             SetDeathLog(localDeathLog);
             deathStr = localDeathLog.logText;
             Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, this);
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
 
             List<Trait> afterDeathTraitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.After_Death);
             if (afterDeathTraitOverrideFunctions != null) {
@@ -5974,6 +5948,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     trait.AfterDeath(this);
                 }
             }
+
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
     }
     public void SetDeathLog(Log log) {

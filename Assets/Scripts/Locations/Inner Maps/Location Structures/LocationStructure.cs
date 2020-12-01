@@ -1085,6 +1085,16 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
+        public int GetNumberOfReidentsThatMeetCriteria(System.Func<Character, bool> criteria) {
+            int count = 0;
+            for (int i = 0; i < residents.Count; i++) {
+                Character character = residents[i];
+                if (criteria.Invoke(character)) {
+                    count++;
+                }
+            }
+            return count;
+        }
         #endregion
 
         #region Rooms
