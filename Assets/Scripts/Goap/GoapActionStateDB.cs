@@ -661,6 +661,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.CARE, new[]{
             new StateNameAndDuration(){ name = "Care Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
         } },
+        {INTERACTION_TYPE.LONG_STAND_STILL, new[]{
+            new StateNameAndDuration(){ name = "Stand Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(8) },
+        } },
     };
 }
 

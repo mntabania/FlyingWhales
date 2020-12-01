@@ -141,7 +141,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                 }
 
                 //Every time ratman changes faction, behaviour set should update to know if he will use the resident behaviour or the ratmana behaviour
-                if(character.race == RACE.RATMAN) {
+                //Every time a minion changes faction, behaviour set should update to know if he will use the resident behaviour or the minion behaviour
+                //Reference: https://trello.com/c/8LQpoNGp/3036-when-a-demon-is-recruited-by-a-major-faction-its-behavior-will-be-replaced-by-the-villager-set
+                if(character.race == RACE.RATMAN || character.minion != null) {
                     character.behaviourComponent.UpdateDefaultBehaviourSet();
                 }
 

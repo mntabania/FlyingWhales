@@ -12,6 +12,7 @@ namespace Inner_Maps.Location_Structures {
         public TortureChambers(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBERS, location){
             selectableSize = new Vector2(10f, 10f);
             nameWithoutID = "Prison";
+            name = $"{nameWithoutID} {id.ToString()}";
         }
         public TortureChambers(Region location, SaveDataDemonicStructure data) : base(location, data) {
             selectableSize = new Vector2(10f, 10f);

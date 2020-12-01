@@ -516,6 +516,7 @@ public enum INTERACTION_TYPE {
     START_PLAGUE_CARE = 216,
     CARE = 217,
     GO_TO_SPECIFIC_TILE = 218,
+    LONG_STAND_STILL = 219,
 }
 public enum INTERRUPT {
     None,

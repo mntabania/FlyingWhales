@@ -507,9 +507,10 @@ namespace Inner_Maps {
 
         #region Structures
         public List<LocationStructure> PlaceBuiltStructureTemplateAt(GameObject structurePrefab, HexTile hexTile, BaseSettlement settlement) {
-            GameObject structureTemplateGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structurePrefab.name, hexTile.GetCenterLocationGridTile().centeredLocalLocation, 
-                Quaternion.identity, structureParent);
-        
+            GameObject structureTemplateGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structurePrefab.name, hexTile.GetCenterLocationGridTile().centeredLocalLocation, Quaternion.identity, structureParent);
+            
+            hexTile.innerMapHexTile.Occupy();
+            
             List<LocationStructure> createdStructures = new List<LocationStructure>();
             
             StructureTemplate structureTemplate = structureTemplateGO.GetComponent<StructureTemplate>();
@@ -538,12 +539,16 @@ namespace Inner_Maps {
                 }
                 
                 structure.SetOccupiedHexTile(hexTile.innerMapHexTile);
-                structureObject.OnBuiltStructureObjectPlaced(this, structure);
+                structureObject.OnBuiltStructureObjectPlaced(this, structure, out int createdWalls, out int totalWalls);
                 structure.CreateRoomsBasedOnStructureObject(structureObject);
                 structure.OnBuiltNewStructure();
+                
+                if (createdWalls < totalWalls) {
+                    int missingWalls = totalWalls - createdWalls;
+                    TileObjectData tileObjectData = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.BLOCK_WALL);
+                    structure.AdjustHP(-(missingWalls * tileObjectData.maxHP));
+                }
             }
-
-            hexTile.innerMapHexTile.Occupy();
             return createdStructures;
         }
         /// <summary>
@@ -582,9 +587,15 @@ namespace Inner_Maps {
             }
             
             structure.SetOccupiedHexTile(centerTile.collectionOwner.partOfHextile);
-            structureObject.OnBuiltStructureObjectPlaced(this, structure);
+            structureObject.OnBuiltStructureObjectPlaced(this, structure, out int createdWalls, out int totalWalls);
             structure.CreateRoomsBasedOnStructureObject(structureObject);
             structure.OnBuiltNewStructure();
+            
+            if (createdWalls < totalWalls) {
+                int missingWalls = totalWalls - createdWalls;
+                TileObjectData tileObjectData = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.BLOCK_WALL);
+                structure.AdjustHP(-(missingWalls * tileObjectData.maxHP));
+            }
 
             Debug.Log($"Placed {structure} at {centerTile}");
             return structure;
