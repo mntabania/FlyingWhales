@@ -31,6 +31,7 @@ public class StructureInfoUI : InfoUIBase {
         base.Initialize();
         Messenger.AddListener<Character, LocationStructure>(StructureSignals.ADDED_STRUCTURE_RESIDENT, UpdateResidentsFromSignal);
         Messenger.AddListener<Character, LocationStructure>(StructureSignals.REMOVED_STRUCTURE_RESIDENT, UpdateResidentsFromSignal);
+        Messenger.AddListener<DemonicStructure>(StructureSignals.DEMONIC_STRUCTURE_REPAIRED, OnDemonicStructureRepaired);
     }
     public override void CloseMenu() {
         base.CloseMenu();
@@ -98,7 +99,13 @@ public class StructureInfoUI : InfoUIBase {
             UpdateResidents();
         }
     }
+    private void OnDemonicStructureRepaired(DemonicStructure p_demonicStructure) {
+        if (isShowing && activeStructure == p_demonicStructure) {
+            UpdateInfo();
+        }
+    }
     #endregion
+    
     #region For Testing
     public void ShowStructureTestingInfo() {
 #if UNITY_EDITOR

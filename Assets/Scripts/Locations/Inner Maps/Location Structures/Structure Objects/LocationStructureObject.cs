@@ -53,6 +53,7 @@ public class LocationStructureObject : PooledObject {
     public bool wallsContributeToDamage = true;
     private StructureTemplate _parentTemplate;
     private StructureTemplateObjectData[] _preplacedObjs;
+    private int _totalBlockWallsCount;
 
     #region Properties
     private Tilemap[] allTilemaps;
@@ -234,13 +235,18 @@ public class LocationStructureObject : PooledObject {
             LocationGridTile tile = tiles[i];
             StructureTemplateObjectData preplacedObj = GetStructureTemplateObjectData(tile, tile.parentMap);
             if (tile.objHere != null && tile.objHere is TileObject tileObject && (tileObject is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
-                if (isDemonicStructure && tile.objHere is Tombstone tombstone) {
-                    tombstone.SetRespawnCorpseOnDestroy(false);
+                if (tileObject.traitContainer.HasTrait("Indestructible")) {
+                    tile.structure.OnlyRemovePOIFromList(tileObject);
+                } else {
+                    if (isDemonicStructure && tile.objHere is Tombstone tombstone) {
+                        tombstone.SetRespawnCorpseOnDestroy(false);
+                    }
+                    bool hasBlockWall = _blockWallsTilemap == null ? false : _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
+                    if (!tileObject.tileObjectType.IsTileObjectImportant() || preplacedObj != null || hasBlockWall || structureType == STRUCTURE_TYPE.THE_PORTAL) {
+                        tile.structure.RemovePOI(tile.objHere);    
+                    }    
                 }
-                bool hasBlockWall = _blockWallsTilemap == null ? false : _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
-                if (!tileObject.tileObjectType.IsTileObjectImportant() || preplacedObj != null || hasBlockWall || structureType == STRUCTURE_TYPE.THE_PORTAL) {
-                    tile.structure.RemovePOI(tile.objHere);    
-                }
+                
             }
             
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
@@ -254,10 +260,15 @@ public class LocationStructureObject : PooledObject {
             for (int j = 0; j < differentStructureTiles.Count; j++) {
                 LocationGridTile diffTile = differentStructureTiles[j];
                 if (diffTile.objHere != null && (diffTile.objHere is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
-                    if (isDemonicStructure && diffTile.objHere is Tombstone tombstone) {
-                        tombstone.SetRespawnCorpseOnDestroy(false);
+                    if (diffTile.objHere.traitContainer.HasTrait("Indestructible")) {
+                        diffTile.structure.OnlyRemovePOIFromList(diffTile.objHere);
+                    } else {
+                        if (isDemonicStructure && diffTile.objHere is Tombstone tombstone) {
+                            tombstone.SetRespawnCorpseOnDestroy(false);
+                        }
+                        diffTile.structure.RemovePOI(diffTile.objHere);    
                     }
-                    diffTile.structure.RemovePOI(diffTile.objHere);
+                    
                 }
                 diffTile.parentMap.detailsTilemap.SetTile(diffTile.localPlace, null);
 
@@ -293,23 +304,17 @@ public class LocationStructureObject : PooledObject {
     /// <param name="innerMap">The map where the structure was placed.</param>
     /// <param name="structure">The structure that was placed.</param>
     /// <param name="buildAllTileObjects">Should all preplaced objects be built</param>
-    public void OnBuiltStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure, bool buildAllTileObjects = true) {
+    public void OnBuiltStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure, out int createdWalls, out int totalWalls, bool buildAllTileObjects = true) {
         // bool isDemonicStructure = structure is DemonicStructure;
         for (int i = 0; i < tiles.Length; i++) {
             LocationGridTile tile = tiles[i];
             //set the ground asset of the parent npcSettlement map to what this objects ground map uses, then clear this objects ground map
             ApplyGroundTileAssetForTile(tile);
             tile.CreateSeamlessEdgesForTile(innerMap);
-            // if (tile.objHere != null) {
-            //     if (isDemonicStructure && tile.objHere is Tombstone tombstone) {
-            //         tombstone.SetRespawnCorpseOnDestroy(false);
-            //     }
-            //     tile.structure.RemovePOI(tile.objHere);
-            // }
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
         }
         ProcessConnectors(structure);
-        RegisterWalls(innerMap, structure);
+        RegisterWalls(innerMap, structure, out createdWalls, out totalWalls);
         _groundTileMap.gameObject.SetActive(false);
         if (buildAllTileObjects) {
             RegisterPreplacedObjects(structure, innerMap);    
@@ -326,7 +331,7 @@ public class LocationStructureObject : PooledObject {
     public void OnLoadStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure, SaveDataLocationStructure saveData) {
         if (structure is ManMadeStructure && structure.structureType != STRUCTURE_TYPE.RUINED_ZOO) {
             //Only register walls if structure is a man made structure, this is because demonic structures and the ruined zoo uses the loaded block wall objects. 
-            RegisterWalls(innerMap, structure);
+            RegisterWalls(innerMap, structure, out int createdWalls, out int totalWalls);
         }
         if (saveData is SaveDataManMadeStructure saveDataManMadeStructure && saveDataManMadeStructure.structureConnectors != null) {
             LoadConnectors(saveDataManMadeStructure.structureConnectors, innerMap);    
@@ -345,8 +350,8 @@ public class LocationStructureObject : PooledObject {
         gameObject.SetActive(false); //disable this object.
         _parentTemplate.CheckForDestroy(); //check if whole structure template has been destroyed.
     }
-    public void OnRepairStructure(InnerTileMap innerMap, LocationStructure structure) {
-        RepairWallsAndFloors(innerMap, structure);
+    public void OnRepairStructure(InnerTileMap innerMap, LocationStructure structure, out int createdWalls, out int totalWalls) {
+        RepairWallsAndFloors(innerMap, structure, out createdWalls, out totalWalls);
         RegisterPreplacedObjects(structure, innerMap);
 
         RescanPathfindingGridOfStructure(innerMap);
@@ -484,7 +489,9 @@ public class LocationStructureObject : PooledObject {
     /// </summary>
     /// <param name="map">The inner tile map this structure is part of.</param>
     /// <param name="structure">The structure instance this object is connected to.</param>
-    private void RegisterWalls(InnerTileMap map, LocationStructure structure) {
+    private void RegisterWalls(InnerTileMap map, LocationStructure structure, out int createdWalls, out int totalWalls) {
+        createdWalls = 0;
+        totalWalls = 0;
         if (_blockWallsTilemap != null) {
             _blockWallsTilemap.gameObject.SetActive(true);
             for (int i = 0; i < tiles.Length; i++) {
@@ -493,18 +500,26 @@ public class LocationStructureObject : PooledObject {
                 TileBase blockWallAsset = _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
                 if (blockWallAsset != null) {
                     if (blockWallAsset.name.Contains("Wall")) {
+                        bool shouldBuildBlockWall = true;
                         if (tile.objHere != null) {
-                            tile.structure.RemovePOI(tile.objHere);
+                            if (tile.objHere.traitContainer.HasTrait("Indestructible")) {
+                                shouldBuildBlockWall = false;
+                                tile.structure.OnlyAddPOIToList(tile.objHere);
+                            } else {
+                                tile.structure.RemovePOI(tile.objHere);    
+                            }
                         }
-
-                        BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
-                        blockWall.SetWallType(_blockWallType);
-                        structure.AddPOI(blockWall, tile);
-                        if (wallsContributeToDamage) {
-                            structure.AddObjectAsDamageContributor(blockWall);    
+                        if (shouldBuildBlockWall) {
+                            createdWalls++;
+                            BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
+                            blockWall.SetWallType(_blockWallType);
+                            structure.AddPOI(blockWall, tile);
+                            if (wallsContributeToDamage) {
+                                structure.AddObjectAsDamageContributor(blockWall);    
+                            }
                         }
-                    }
-                    else {
+                        totalWalls++;
+                    } else {
                         map.structureTilemap.SetTile(tile.localPlace, blockWallAsset);
                     }
                 }
@@ -522,6 +537,8 @@ public class LocationStructureObject : PooledObject {
                 tile.SetTileType(LocationGridTile.Tile_Type.Wall);
                 structureWallObject.SetGridTileLocation(tile);
                 tile.AddWallObject(structureWallObject);
+                createdWalls++;
+                totalWalls++;
                 if (wallsContributeToDamage) {
                     structure.AddObjectAsDamageContributor(structureWallObject);    
                 }
@@ -530,7 +547,9 @@ public class LocationStructureObject : PooledObject {
             manMadeStructure.SetWallObjects(wallObjects, _thinWallResource);
         }
     }
-    private void RepairWallsAndFloors(InnerTileMap map, LocationStructure structure) {
+    private void RepairWallsAndFloors(InnerTileMap map, LocationStructure structure, out int createdWalls, out int totalWalls) {
+        createdWalls = 0;
+        totalWalls = 0;
         if (_blockWallsTilemap != null) {
             _blockWallsTilemap.gameObject.SetActive(true);
             for (int i = 0; i < tiles.Length; i++) {
@@ -544,16 +563,26 @@ public class LocationStructureObject : PooledObject {
                 TileBase blockWallAsset = _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
                 if (blockWallAsset != null) {
                     if (blockWallAsset.name.Contains("Wall")) {
+                        bool shouldBuildBlockWall = true;
                         if (tile.objHere != null) {
-                            tile.structure.RemovePOI(tile.objHere);
+                            if (tile.objHere.traitContainer.HasTrait("Indestructible")) {
+                                shouldBuildBlockWall = false;
+                                tile.structure.OnlyAddPOIToList(tile.objHere);
+                            } else {
+                                tile.structure.RemovePOI(tile.objHere);    
+                            }
                         }
 
-                        BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
-                        blockWall.SetWallType(_blockWallType);
-                        structure.AddPOI(blockWall, tile);
-                        if (wallsContributeToDamage) {
-                            structure.AddObjectAsDamageContributor(blockWall);
+                        if (shouldBuildBlockWall) {
+                            createdWalls++;
+                            BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
+                            blockWall.SetWallType(_blockWallType);
+                            structure.AddPOI(blockWall, tile);
+                            if (wallsContributeToDamage) {
+                                structure.AddObjectAsDamageContributor(blockWall);
+                            }
                         }
+                        totalWalls++;
                     } else {
                         map.structureTilemap.SetTile(tile.localPlace, blockWallAsset);
                     }
@@ -580,6 +609,8 @@ public class LocationStructureObject : PooledObject {
                     tile.SetTileType(LocationGridTile.Tile_Type.Wall);
                     structureWallObject.SetGridTileLocation(tile);
                     tile.AddWallObject(structureWallObject);
+                    createdWalls++;
+                    totalWalls++;
                     if (wallsContributeToDamage) {
                         structure.AddObjectAsDamageContributor(structureWallObject);
                     }
