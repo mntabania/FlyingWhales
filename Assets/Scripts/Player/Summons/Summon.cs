@@ -168,12 +168,31 @@ public class Summon : Character {
     }
     public override void OnUnseizePOI(LocationGridTile tileLocation) {
         base.OnUnseizePOI(tileLocation);
-        //If you drop a monster at a structure that is not yet full and not occupied by villagers, they will set their home to that place.
-        if(tileLocation.structure != null && tileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS && !(tileLocation.structure is DemonicStructure)) {
-            if(!tileLocation.structure.HasReachedMaxResidentCapacity() && !tileLocation.structure.HasResidentThatMeetCriteria(r => r.isNormalCharacter)) {
-                MigrateHomeStructureTo(tileLocation.structure);
-            }
+        //Reference: https://trello.com/c/Flr78mJy/3037-summon-types-should-no-longer-relocate-home-when-unseized-if-they-belong-to-a-major-faction
+        if (faction != null && !faction.isMajorFaction) {
+            //If you drop a monster at a structure that is not yet full and not occupied by villagers, they will set their home to that place.
+            if(tileLocation.structure != null) {
+                if(ShouldRelocateHomeToStructureOnUnseize(tileLocation.structure)) {
+                    ClearTerritoryAndMigrateHomeStructureTo(tileLocation.structure);
+                }
+            }    
         }
+    }
+    private bool ShouldRelocateHomeToStructureOnUnseize(LocationStructure p_structure) {
+        if (p_structure is Wilderness || p_structure is DemonicStructure) {
+            return false;
+        }
+        //Reference: https://trello.com/c/NoWry5Tk/3041-monster-sets-home-to-settlement-structure-with-no-residents-if-unseized-there-even-though-settlement-is-still-owned-by-a-village
+        if (p_structure.settlementLocation?.owner != null) {
+            return false;
+        }
+        if (p_structure.HasReachedMaxResidentCapacity()) {
+            return false;
+        }
+        if (p_structure.HasResidentThatMeetCriteria(r => r.isNormalCharacter)) {
+            return false;
+        }
+        return true;
     }
     public override void LoadReferences(SaveDataCharacter data) {
         base.LoadReferences(data);
