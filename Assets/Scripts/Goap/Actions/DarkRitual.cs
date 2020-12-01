@@ -40,7 +40,7 @@ public class DarkRitual : GoapAction {
         string response = base.ReactionToActor(actor, target, witness, node, status);
         if (witness.traitContainer.HasTrait("Cultist") == false) {
             //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Serious);
-            CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
+            //CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
 
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
 

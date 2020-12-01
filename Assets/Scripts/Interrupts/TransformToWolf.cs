@@ -77,7 +77,7 @@ namespace Interrupts {
                     }
                 }
 
-                CrimeManager.Instance.ReactToCrime(witness, originalForm, target, target.factionOwner, interrupt.crimeType, interrupt, status);
+                //CrimeManager.Instance.ReactToCrime(witness, originalForm, target, target.factionOwner, interrupt.crimeType, interrupt, status);
             }
             return response;
         }

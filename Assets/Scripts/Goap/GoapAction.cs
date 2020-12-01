@@ -200,11 +200,19 @@ public class GoapAction {
     /// <returns>List of tile choices</returns>
     public virtual List<LocationGridTile> NearbyLocationGetter(ActualGoapNode goapNode) { return null; }
     public virtual string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) { return string.Empty; }
+        ActualGoapNode node, REACTION_STATUS status) {
+        CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
+        return string.Empty;
+    }
     public virtual string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) { return string.Empty; }
     public virtual string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node,
-        REACTION_STATUS status) { return string.Empty; }
+        REACTION_STATUS status) {
+        if(target is Character targetCharacter) {
+            CrimeManager.Instance.ReactToCrime(targetCharacter, actor, target, target.factionOwner, node.crimeType, node, status);
+        }
+        return string.Empty;
+    }
     public virtual void OnActionStarted(ActualGoapNode node) { }
     public virtual void OnStoppedInterrupt(ActualGoapNode node) { }
     public virtual REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {

@@ -115,7 +115,7 @@ public class ShareInformation : GoapAction {
                 }
             }
             //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Infraction);
-            CrimeManager.Instance.ReactToCrime(witness, actor, poiTarget, poiTarget.factionOwner, node.crimeType, node, status);
+            //CrimeManager.Instance.ReactToCrime(witness, actor, poiTarget, poiTarget.factionOwner, node.crimeType, node, status);
         } else {
             if (witness == reactable.actor) {
                 if (reactable is ActualGoapNode) {

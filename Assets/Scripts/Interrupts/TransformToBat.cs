@@ -39,7 +39,7 @@ namespace Interrupts {
                 vampire.AddAwareCharacter(witness);
             }
 
-            CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, interrupt.crimeType, interrupt, status);
+            //CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, interrupt.crimeType, interrupt, status);
 
             CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(witness, actor, target, CRIME_TYPE.Vampire);
             if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {

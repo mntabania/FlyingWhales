@@ -112,12 +112,12 @@ public class KnockoutCharacter : GoapAction {
             
             
 
-            if (node.associatedJobType != JOB_TYPE.APPREHEND || node.associatedJobType != JOB_TYPE.RESTRAIN) {
-                if (targetCharacter.race.IsSapient()) {
-                    //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Misdemeanor);
-                    CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
-                }
-            }
+            //if (node.associatedJobType != JOB_TYPE.APPREHEND || node.associatedJobType != JOB_TYPE.RESTRAIN) {
+            //    if (targetCharacter.race.IsSapient()) {
+            //        //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Misdemeanor);
+            //        CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
+            //    }
+            //}
         }
         return response;
     }
@@ -128,11 +128,11 @@ public class KnockoutCharacter : GoapAction {
             if (targetCharacter.traitContainer.HasTrait("Hothead")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, targetCharacter, actor, status, node);
             }
-            if (node.associatedJobType != JOB_TYPE.APPREHEND || node.associatedJobType != JOB_TYPE.RESTRAIN) {
-                if (targetCharacter.race.IsSapient()) {
-                    CrimeManager.Instance.ReactToCrime(targetCharacter, actor, target, target.factionOwner, node.crimeType, node, status);
-                }
-            }
+            //if (node.associatedJobType != JOB_TYPE.APPREHEND || node.associatedJobType != JOB_TYPE.RESTRAIN) {
+            //    if (targetCharacter.race.IsSapient()) {
+            //        CrimeManager.Instance.ReactToCrime(targetCharacter, actor, target, target.factionOwner, node.crimeType, node, status);
+            //    }
+            //}
         }
         return response;
     }

@@ -252,6 +252,10 @@ public class CrimeManager : BaseMonoBehaviour {
                     //Will only react to crime once
                     return;
                 }
+                if (actor.isDead) {
+                    //Cannot react to crime if criminal is already dead
+                    return;
+                }
                 Criminal existingCriminalTrait = null;
                 if (actor.traitContainer.HasTrait("Criminal")) {
                     existingCriminalTrait = actor.traitContainer.GetTraitOrStatus<Criminal>("Criminal");

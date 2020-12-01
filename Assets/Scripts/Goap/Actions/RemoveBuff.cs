@@ -72,7 +72,7 @@ public class RemoveBuff : GoapAction {
         if (witness.traitContainer.HasTrait("Cultist") == false) {
             //not a cultist
             //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Serious);
-            CrimeManager.Instance.ReactToCrime(witness, actor, poiTarget, poiTarget.factionOwner, node.crimeType, node, status);
+            //CrimeManager.Instance.ReactToCrime(witness, actor, poiTarget, poiTarget.factionOwner, node.crimeType, node, status);
 
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
             if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasOpinionLabelWithCharacter(actor, RelationshipManager.Acquaintance)) {
@@ -105,7 +105,7 @@ public class RemoveBuff : GoapAction {
         string response = base.ReactionOfTarget(actor, target, node, status);
         if (target is Character targetCharacter) {
             //CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_SEVERITY.Serious);
-            CrimeManager.Instance.ReactToCrime(targetCharacter, actor, target, target.factionOwner, node.crimeType, node, status);
+            //CrimeManager.Instance.ReactToCrime(targetCharacter, actor, target, target.factionOwner, node.crimeType, node, status);
 
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor, status, node);
             if (targetCharacter.traitContainer.HasTrait("Coward")) {
