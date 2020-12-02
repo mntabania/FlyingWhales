@@ -201,6 +201,11 @@ public class PlagueDisease : ISingletonPattern, ISavable {
             AdjustActiveCases(-1);
         }
     }
+    public void UpdateActiveCasesOnCharacterBecameZombie(Character p_character) {
+        if (!p_character.traitContainer.HasTrait("Plague Reservoir")) {
+            AdjustActiveCases(-1);
+        }
+    }
     private void AdjustDeaths(int p_adjustment) {
         _deaths += p_adjustment;
         _deaths = Mathf.Max(0, _deaths);

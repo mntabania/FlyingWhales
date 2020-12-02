@@ -395,6 +395,9 @@ namespace Traits {
             //TODO: Might be a better way to trigger that the character that owns this has gained a trait, rather than listening to a signal and filtering results
             if (p_traitable == owner && owner is Character character) {
                 _characterGainedTrait?.Invoke(character, p_trait);
+                if (p_trait is WalkerZombie || p_trait is NightZombie) {
+                    PlagueDisease.Instance.UpdateActiveCasesOnCharacterBecameZombie(character);
+                }
             }
         }
         #endregion
