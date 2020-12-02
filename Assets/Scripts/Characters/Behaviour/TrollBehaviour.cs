@@ -129,7 +129,7 @@ public class TrollBehaviour : BaseMonsterBehaviour {
                 }
                 if (chosenCharacter != null) {
                     log += $"\n-Chosen character: " + chosenCharacter.name;
-                    if (character.jobComponent.CreateButcherJob(chosenCharacter, out producedJob)) {
+                    if (character.jobComponent.CreateButcherJob(chosenCharacter, JOB_TYPE.MONSTER_BUTCHER, out producedJob)) {
                         return true;
                     }
                 }

@@ -316,15 +316,23 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         for (int i = 0; i < characters.Count; i++) {
             Character member = characters[i];
             log += $"\n\n-{member.name}";
-            if (member.isDead /*|| member.isMissing*/ || member.isBeingSeized || member.isInLimbo || member.traitContainer.HasTrait("Enslaved")) {
+            if (member.isDead /*|| member.isMissing*/ || member.isBeingSeized || member.isInLimbo) {
                 log += "\nEither dead, missing, in limbo, seized or enslaved, will not be part of candidates for faction leader";
                 continue;
             }
-
             if (member.crimeComponent.IsWantedBy(this)) {
                 log += "\nMember is wanted by this faction, skipping...";
                 continue;
             }
+
+            bool isInHome = member.IsAtHome();
+            bool isInAnActiveParty = member.partyComponent.isMemberThatJoinedQuest;
+
+            if (!isInHome && !isInAnActiveParty) {
+                log += "\nMember is not inside home and not in active party, skipping...";
+                continue;
+            }
+
             int weight = 50;
             log += "\n  -Base Weight: +50";
             if (factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Vampires)) {
@@ -403,6 +411,20 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             if(weight < 1) {
                 weight = 1;
                 log += "\n  -Weight cannot be less than 1, setting weight to 1";
+            }
+            if (member.traitContainer.HasTrait("Ambitious")) {
+                weight = Mathf.RoundToInt(weight * 1.5f);
+                log += "\n  -Ambitious: x1.5";
+            }
+            if (member is Summon) {
+                if (HasMemberThatMeetCriteria(c => c.race.IsSapient() && (c.IsAtHome() || c.partyComponent.isMemberThatJoinedQuest))) {
+                    weight *= 0;
+                    log += "\n  -Member is a Summon and there is atleast 1 Sapient resident inside home settlement or in active party: x0";
+                }
+            }
+            if (member.traitContainer.HasTrait("Enslaved")) {
+                weight *= 0;
+                log += "\n  -Enslaved: x0";
             }
             log += $"\n  -TOTAL WEIGHT: {weight}";
             if (weight > 0) {

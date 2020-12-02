@@ -5111,6 +5111,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //This should almost never happen since we expect that all characters should have a faction.
             return false;
         }
+        if((race == RACE.RATMAN && otherCharacter.race == RACE.RAT)
+            || (race == RACE.RAT && otherCharacter.race == RACE.RATMAN)) {
+            //Ratmen does not consider rats as hostile and vice versa
+            return false;
+        }
         //if (isInVampireBatForm) {
         //    Vampire vampireTrait = traitContainer.GetTraitOrStatus<Vampire>("Vampire");
         //    if (!vampireTrait.DoesCharacterKnowThisVampire(otherCharacter)) {
