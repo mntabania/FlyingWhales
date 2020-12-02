@@ -974,7 +974,8 @@ public class BehaviourComponent : CharacterComponent {
 
     #region Work
     public bool PlanWorkActions(out JobQueueItem producedJob) {
-        if (owner.limiterComponent.canTakeJobs) {
+        //Stationary characters like Wurm cannot take work jobs
+        if (owner.limiterComponent.canTakeJobs && !owner.movementComponent.isStationary) {
             //NOTE: ONLY ADDED FACTION CHECKING BECAUSE OF BUG THAT VAGRANTS ARE STILL PART OF A VILLAGE
             if (owner.isAtHomeRegion && owner.homeSettlement != null && owner.homeSettlement.owner == owner.faction) {
                 //check npcSettlement job queue, if it has any jobs that target an object that is in view of the owner
