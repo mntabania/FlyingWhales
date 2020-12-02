@@ -119,6 +119,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         }
         bool decision = true;
         if (residents != null) {
+            decision = false;
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
                 if(resident != character) {
@@ -128,7 +129,6 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                     }
                 }
             }
-            decision = true;
         }
         if (hasBorrowedList) {
             ObjectPoolManager.Instance.ReturnCharactersListToPool(residents);
