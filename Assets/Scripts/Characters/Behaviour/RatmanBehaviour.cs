@@ -28,7 +28,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         }
         if (GameUtilities.RollChance(0.5f)) {
             int residentCount = character.GetAliveResidentsCountInHome();
-            if (residentCount >= 8) {
+            if (residentCount >= 6) {
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home_Ratman, null);
             }
         }
@@ -47,10 +47,11 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                             for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                                 Character characterAtRegion = character.currentRegion.charactersAtLocation[i];
                                 if (!characterAtRegion.isDead && characterAtRegion != character
-                                    && (characterAtRegion.faction?.factionType.type == FACTION_TYPE.Wild_Monsters || characterAtRegion.isNormalCharacter)
+                                    //&& (characterAtRegion.faction?.factionType.type == FACTION_TYPE.Wild_Monsters || characterAtRegion.isNormalCharacter)
                                     && !(characterAtRegion.currentStructure is Kennel)
-                                    && !characterAtRegion.traitContainer.HasTrait("Enslaved")
-                                    && characterAtRegion.faction != character.faction) {
+                                    && !characterAtRegion.traitContainer.HasTrait("Enslaved", "Hibernating")
+                                    && characterAtRegion.faction != character.faction
+                                    && (CanProduceFood(characterAtRegion) || CanBeButchered(characterAtRegion))) {
                                     characterChoices.Add(characterAtRegion);
                                 }
                             }
@@ -74,11 +75,15 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
             }
         } else {
             //Day time
-            if (GameUtilities.RollChance(20)) {
-                if (isInHome) {
-                    Character prisoner = GetFirstPrisonerAtHome(character);
-                    if (prisoner != null && !HasJobTypeFromSameHome(character, JOB_TYPE.TORTURE)) {
+            if (isInHome) {
+                Character prisoner = GetFirstPrisonerAtHome(character);
+                if (prisoner != null) {
+                    if (GameUtilities.RollChance(30) && prisoner.race == RACE.RATMAN) {
+                        return character.jobComponent.TriggerRecruitJob(prisoner, out producedJob);
+                    } else if (GameUtilities.RollChance(20) && CanProduceFood(prisoner) && !HasJobTypeFromSameHome(character, JOB_TYPE.TORTURE)) {
                         return character.jobComponent.TriggerTorture(prisoner, out producedJob);
+                    } else if (GameUtilities.RollChance(30) && CanBeButchered(prisoner) && !HasJobTypeFromSameHome(character, JOB_TYPE.MONSTER_BUTCHER)) {
+                        return character.jobComponent.CreateButcherJob(prisoner, JOB_TYPE.MONSTER_BUTCHER, out producedJob);
                     }
                 }
             }
@@ -97,24 +102,39 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
     }
     private bool HasJobTypeFromSameHome(Character character, JOB_TYPE jobType) {
         List<Character> residents = null;
+        bool hasBorrowedList = false;
         if(character.homeSettlement != null) {
             residents = character.homeSettlement.residents;
         } else if (character.homeStructure != null) {
             residents = character.homeStructure.residents;
+        } else if (character.HasTerritory()) {
+            hasBorrowedList = true;
+            residents = ObjectPoolManager.Instance.CreateNewCharactersList();
+            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                Character resident = CharacterManager.Instance.allCharacters[i];
+                if(!resident.isDead && resident.IsTerritory(character.territory)) {
+                    residents.Add(resident);
+                }
+            }
         }
-        if(residents != null) {
+        bool decision = true;
+        if (residents != null) {
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
                 if(resident != character) {
                     if (resident.jobQueue.HasJob(jobType)) {
-                        return true;
+                        decision = true;
+                        break;
                     }
                 }
             }
-            return false;
+            decision = true;
+        }
+        if (hasBorrowedList) {
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(residents);
         }
         //If character has no home, this should return true so that the character will not do the action
-        return true;
+        return decision;
     }
     private Character GetFirstPrisonerAtHome(Character character) {
         if (character.homeStructure != null) {
@@ -147,7 +167,20 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         return null;
     }
 
-    private void ChangeHome() {
+    private bool CanProduceFood(Character character) {
+        if(character.race == RACE.HUMANS || character.race == RACE.ELVES || character is Incubus || character is Succubus || character.race == RACE.NYMPH || character.race == RACE.KOBOLD
+            || character.race == RACE.TROLL || character.race == RACE.RATMAN || character.race == RACE.ABOMINATION || character.race == RACE.GOLEM
+            || (character.race == RACE.ENT && character is Ent ent && !ent.isTree) || character is GiantSpider) {
+            return true;
+        }
+        return false;
+    }
 
+    private bool CanBeButchered(Character character) {
+        if ((character is Animal && !(character is Rat)) || character.race == RACE.ELVES || character.race == RACE.HUMANS 
+            || character is GiantSpider || character is SmallSpider || character is Wolf) {
+            return true;
+        }
+        return false;
     }
 }
