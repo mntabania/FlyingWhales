@@ -122,9 +122,9 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
         if(recruiter.faction == null) {
             return false;
         }
-        if(targetCharacter.faction?.factionType.type == FACTION_TYPE.Undead) {
-            return false;
-        }
+        // if(targetCharacter.faction?.factionType.type == FACTION_TYPE.Undead) {
+        //     return false;
+        // }
         if (targetCharacter.HasJobTargetingThis(JOB_TYPE.RECRUIT)) {
             return false;
         }
