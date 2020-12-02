@@ -426,8 +426,8 @@ public class Player : ILeader, IObjectManipulator {
                 return false;
             }
             hoverText = string.Empty;
-            if(character.traitContainer.HasTrait("Catatonic")) { //"Blessed"
-                hoverText = "Catatonic characters cannot be targeted."; //Blessed/
+            if(character.traitContainer.HasTrait("Catatonic")) {
+                hoverText = "Catatonic characters cannot be targeted.";
                 return false;
             }
             if(character.traitContainer.HasTrait("Resting")) { 
@@ -435,7 +435,26 @@ public class Player : ILeader, IObjectManipulator {
                 return false;
             }
             if (!character.limiterComponent.canWitness) {
-                //hoverText = "Unconscious characters cannot be targeted.";
+                return false;
+            }
+            if (!character.faction.isPlayerFaction && !GameUtilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool CanShareIntel(IPointOfInterest poi) {
+        if(poi is Character character) {
+            if (!character.isNormalCharacter) {
+                return false;
+            }
+            if(character.traitContainer.HasTrait("Catatonic")) {
+                return false;
+            }
+            if(character.traitContainer.HasTrait("Resting")) { 
+                return false;
+            }
+            if (!character.limiterComponent.canWitness) {
                 return false;
             }
             if (!character.faction.isPlayerFaction && !GameUtilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER

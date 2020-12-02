@@ -1,5 +1,6 @@
-﻿namespace Traits {
-    public class Tending : Status {
+﻿using Characters.Components;
+namespace Traits {
+    public class Tending : Status, CharacterEventDispatcher.ICarryListener {
 
         private Character _owner;
         private bool _hasTendedAtLeastOnce;
@@ -20,6 +21,7 @@
                 _owner = character;
                 Messenger.AddListener<Character, ActualGoapNode>(JobSignals.CHARACTER_DOING_ACTION, OnActionStarted);
                 Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+                character.eventDispatcher.SubscribeToCharacterCarried(this);
             }
         }
         #endregion
@@ -32,6 +34,7 @@
                 character.behaviourComponent.AddBehaviourComponent(typeof(TendFarmBehaviour));
                 Messenger.AddListener<Character, ActualGoapNode>(JobSignals.CHARACTER_DOING_ACTION, OnActionStarted);
                 Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+                character.eventDispatcher.SubscribeToCharacterCarried(this);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
@@ -47,6 +50,7 @@
                 Messenger.RemoveListener<Character, ActualGoapNode>(JobSignals.CHARACTER_DOING_ACTION, OnActionStarted);
                 Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
                 character.homeSettlement?.settlementJobTriggerComponent.CheckIfFarmShouldBeTended(false);
+                character.eventDispatcher.UnsubscribeToCharacterCarried(this);
             }
         }
         #endregion
@@ -65,6 +69,9 @@
             if (character == _owner) {
                 _owner.traitContainer.RemoveTrait(_owner, this);
             }
+        }
+        public void OnCharacterCarried(Character p_character, Character p_carriedBy) {
+            p_character.traitContainer.RemoveTrait(p_character, this);
         }
     }
 }
