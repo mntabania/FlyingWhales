@@ -165,8 +165,13 @@ namespace Traits {
                     PlagueSymptom symptom = PlagueDisease.Instance.activeSymptoms[i];
                     RemoveSymptom(symptom);
                 }
-                if (removedFrom is Character character && !character.characterClass.IsZombie() && !character.isDead) {
-                    PlagueDisease.Instance.UpdateActiveCasesAndRecoveriesOnPOILostPlagued(removedFromPOI);    
+                if (removedFrom is Character character) {
+                    if (!character.isDead) {
+                        PlagueDisease.Instance.UpdateActiveCasesOnPOILostPlagued(removedFromPOI);
+                        if (!character.characterClass.IsZombie()) {
+                            PlagueDisease.Instance.UpdateRecoveriesOnPOILostPlagued(removedFromPOI);
+                        }    
+                    }
                 }
                 RemoveDeathEffect(PlagueDisease.Instance.activeDeathEffect);
             }
@@ -395,9 +400,6 @@ namespace Traits {
             //TODO: Might be a better way to trigger that the character that owns this has gained a trait, rather than listening to a signal and filtering results
             if (p_traitable == owner && owner is Character character) {
                 _characterGainedTrait?.Invoke(character, p_trait);
-                if (p_trait is WalkerZombie || p_trait is NightZombie) {
-                    PlagueDisease.Instance.UpdateActiveCasesOnCharacterBecameZombie(character);
-                }
             }
         }
         #endregion
