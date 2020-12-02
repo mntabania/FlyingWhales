@@ -53,7 +53,8 @@ public class RevenantBehaviour : BaseMonsterBehaviour {
                 p_log += $"\n-Will spawn ghost";
                 Character betrayer = revenant.GetRandomBetrayer();
                 LocationGridTile tile = GetTileToSpawnGhostRelativeTo(revenant);
-                Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.undeadFaction, homeLocation: revenant.homeSettlement, homeRegion: revenant.homeRegion);
+                var targetFaction = p_character.faction ?? FactionManager.Instance.undeadFaction;
+                Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, targetFaction, homeLocation: revenant.homeSettlement, homeRegion: revenant.homeRegion);
                 (ghost as Ghost).SetBetrayedBy(betrayer);
                 CharacterManager.Instance.PlaceSummon(ghost, tile);
                 revenant.AdjustNumOfSummonedGhosts(1);

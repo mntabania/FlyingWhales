@@ -342,14 +342,14 @@ public class BehaviourComponent : CharacterComponent {
             .GetSettlementsInRegion(settlement => settlement.residents.Count > 0 && settlement.residents.Count(c => c != null && c.isNormalCharacter && !c.isAlliedWithPlayer && c.IsAble()) > 0);
         if (settlementsInRegion != null) {
             // List<BaseSettlement> villageChoices = settlementsInRegion.Where(x => x.locationType == LOCATION_TYPE.VILLAGE && (x.owner == null || !x.owner.IsFriendlyWith(PlayerManager.Instance.player.playerFaction))).ToList();
-            List<BaseSettlement> villageChoices = settlementsInRegion.GetSettlementsThatAreUnownedOrNotFriendlyWithFaction(LOCATION_TYPE.VILLAGE, PlayerManager.Instance.player.playerFaction);
+            List<BaseSettlement> villageChoices = settlementsInRegion.GetSettlementsThatAreUnownedOrHostileWithFaction(LOCATION_TYPE.VILLAGE, PlayerManager.Instance.player.playerFaction);
             if (villageChoices != null) {
                 //a random village occupied by Villagers within current region
                 BaseSettlement chosenVillage = CollectionUtilities.GetRandomElement(villageChoices);
                 return new List<HexTile>(chosenVillage.tiles);
             } else {
                 //a random special structure occupied by Villagers within current region
-                List<BaseSettlement> specialStructureChoices = settlementsInRegion.GetSettlementsThatAreUnownedOrNotFriendlyWithFaction(LOCATION_TYPE.DUNGEON, PlayerManager.Instance.player.playerFaction);
+                List<BaseSettlement> specialStructureChoices = settlementsInRegion.GetSettlementsThatAreUnownedOrHostileWithFaction(LOCATION_TYPE.DUNGEON, PlayerManager.Instance.player.playerFaction);
                 if (specialStructureChoices != null) {
                     BaseSettlement chosenSpecialStructure = CollectionUtilities.GetRandomElement(specialStructureChoices);
                     return new List<HexTile>(chosenSpecialStructure.tiles);
