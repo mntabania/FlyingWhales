@@ -343,7 +343,11 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             if (membersThatJoinedQuest.Count >= currentQuest.minimumPartySize) {
                 for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
                     Character member = membersThatJoinedQuest[i];
-                    member.traitContainer.AddTrait(member, "Travelling");
+                    //Member can only dig once the party is travelling
+                    if (!member.traitContainer.HasTrait("Travelling")) {
+                        member.movementComponent.SetEnableDigging(true);
+                        member.traitContainer.AddTrait(member, "Travelling");
+                    }
                     member.interruptComponent.TriggerInterrupt(INTERRUPT.Morale_Boost, member);
                 }
                 SetPartyState(PARTY_STATE.Moving);
@@ -662,13 +666,14 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         return false;
     }
     private void OnAddMemberThatJoinedQuest(Character character) {
-        character.movementComponent.SetEnableDigging(true);
         character.behaviourComponent.AddBehaviourComponent(currentQuest.relatedBehaviour);
         Messenger.Broadcast(PartySignals.CHARACTER_JOINED_PARTY_QUEST, this, character);
     }
     private void OnRemoveMemberThatJoinedQuest(Character character, bool broadcastSignal) {
-        character.movementComponent.SetEnableDigging(false);
-        character.traitContainer.RemoveTrait(character, "Travelling");
+        if (character.traitContainer.HasTrait("Travelling")) {
+            character.movementComponent.SetEnableDigging(false);
+            character.traitContainer.RemoveTrait(character, "Travelling");
+        }
         character.behaviourComponent.RemoveBehaviourComponent(currentQuest.relatedBehaviour);
 
         //Remove trap structure every time a character is remove from the quest so that he will return to normal behaviour
