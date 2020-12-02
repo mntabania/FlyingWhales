@@ -181,13 +181,13 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     //private void SetEndRestSchedule() {
     //    endRestSchedule = GameManager.GetRandomTicokFromTimeInWords(TIME_IN_WORDS.MORNING);
     //}
-    private void SetMeetingPlace() {
+    public void SetMeetingPlace() {
         if (partySettlement != null) {
             if (partySettlement.locationType == LOCATION_TYPE.DUNGEON) {
                 meetingPlace = partySettlement.GetRandomStructure();
             } else {
-                meetingPlace = partySettlement.GetFirstStructureOfType(STRUCTURE_TYPE.TAVERN);
-                if (meetingPlace == null) {
+                meetingPlace = partySettlement.GetRandomStructureThatMeetCriteria(s => s.structureType == STRUCTURE_TYPE.TAVERN && CanAMemberGoTo(s));
+                if(meetingPlace == null){
                     meetingPlace = partySettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
                 }
             }
@@ -352,6 +352,17 @@ public class Party : ILogFiller, ISavable, IJobOwner {
                 currentQuest.EndQuest("Not enough members joined");
             }
         }
+    }
+    public bool CanAMemberGoTo(LocationStructure structure) {
+        LocationGridTile tile = structure.GetRandomPassableTile();
+        if (tile != null) {
+            for (int i = 0; i < members.Count; i++) {
+                if (members[i].movementComponent.HasPathToEvenIfDiffRegion(tile)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     //private void PopulateMembersThatJoinedQuest() {
     //    membersThatJoinedQuest.Clear();
