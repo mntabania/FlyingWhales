@@ -2109,6 +2109,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (!owner.jobQueue.HasJob(JOB_TYPE.GO_TO_WAITING)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO_WAITING, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, owner);
             job.SetCannotBePushedBack(true);
+            job.SetDoNotRecalculate(true);
             producedJob = job;
             return true;
         }
