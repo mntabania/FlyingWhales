@@ -35,7 +35,7 @@ public class WolfBehaviour : BaseMonsterBehaviour {
                 //if there is a settlement found, set the wolf's home to that
                 BaseSettlement randomSettlement = CollectionUtilities.GetRandomElement(settlementChoices);
                 log += $"\n-Found valid settlement {randomSettlement.name}";
-                LocationStructure randomStructure = randomSettlement.GetRandomStructure(structure =>
+                LocationStructure randomStructure = randomSettlement.GetRandomStructureThatMeetCriteria(structure =>
                     structure.structureType != STRUCTURE_TYPE.WILDERNESS && structure.CanBeResidentHere(character));
                 if (randomStructure != null) {
                     log += $"\n-Found valid structure at {randomSettlement.name}. Structure is {randomStructure.name}. Setting home to that.";
