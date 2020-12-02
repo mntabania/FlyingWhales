@@ -180,10 +180,14 @@ public class PlagueDisease : ISingletonPattern, ISavable {
     #endregion
 
     #region Misc Data
-    public void UpdateActiveCasesAndRecoveriesOnPOILostPlagued(IPointOfInterest p_poi) {
+    public void UpdateRecoveriesOnPOILostPlagued(IPointOfInterest p_poi) {
+        if (p_poi is Character character && !character.traitContainer.HasTrait("Plague Reservoir")) {
+            AdjustRecoveries(1);
+        }
+    }
+    public void UpdateActiveCasesOnPOILostPlagued(IPointOfInterest p_poi) {
         if (p_poi is Character character && !character.traitContainer.HasTrait("Plague Reservoir")) {
             AdjustActiveCases(-1);
-            AdjustRecoveries(1);
         }
     }
     public void UpdateActiveCasesOnPOIGainedPlagued(IPointOfInterest p_poi) {

@@ -441,7 +441,7 @@ public class ReactionComponent : CharacterComponent {
                 actor.currentJob.CancelJob(false);
                 actor.combatComponent.Flight(targetCharacter, CombatManager.Encountered_Hostile);
             }
-            bool shouldRelease = disguisedActor.isNormalCharacter && targetCharacter.traitContainer.HasTrait("Enslaved") && disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget)
+            bool shouldRelease = disguisedActor.isNormalCharacter && !disguisedActor.traitContainer.HasTrait("Enslaved") && targetCharacter.traitContainer.HasTrait("Enslaved") && disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget)
                 && !disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget) && !targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Enslaved").IsResponsibleForTrait(disguisedActor);
             bool isPartOfRescueJob = actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive && actor.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueQuest && rescueQuest.targetCharacter == targetCharacter;
             if (shouldRelease || isPartOfRescueJob) {
@@ -883,7 +883,7 @@ public class ReactionComponent : CharacterComponent {
                                     bool isResponsibleForUnconscious = isUnconscious && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Unconscious").IsResponsibleForTrait(disguisedActor);
                                     bool isResponsibleForEnslaved = isEnslaved && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Enslaved").IsResponsibleForTrait(disguisedActor);
 
-                                    if (isEnslaved && !isResponsibleForEnslaved) {
+                                    if (!disguisedActor.traitContainer.HasTrait("Enslaved") && isEnslaved && !isResponsibleForEnslaved) {
                                         actor.jobComponent.TriggerReleaseJob(targetCharacter);
                                     }
                                     if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.REMOVE_STATUS)) {

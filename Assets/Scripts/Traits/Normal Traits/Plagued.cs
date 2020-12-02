@@ -165,8 +165,13 @@ namespace Traits {
                     PlagueSymptom symptom = PlagueDisease.Instance.activeSymptoms[i];
                     RemoveSymptom(symptom);
                 }
-                if (removedFrom is Character character && !character.characterClass.IsZombie() && !character.isDead) {
-                    PlagueDisease.Instance.UpdateActiveCasesAndRecoveriesOnPOILostPlagued(removedFromPOI);    
+                if (removedFrom is Character character) {
+                    if (!character.isDead) {
+                        PlagueDisease.Instance.UpdateActiveCasesOnPOILostPlagued(removedFromPOI);
+                        if (!character.characterClass.IsZombie()) {
+                            PlagueDisease.Instance.UpdateRecoveriesOnPOILostPlagued(removedFromPOI);
+                        }    
+                    }
                 }
                 RemoveDeathEffect(PlagueDisease.Instance.activeDeathEffect);
             }

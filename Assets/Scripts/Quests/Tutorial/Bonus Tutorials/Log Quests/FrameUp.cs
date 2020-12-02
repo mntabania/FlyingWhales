@@ -11,6 +11,7 @@ namespace Tutorial {
 
         private TileObject _droppedObject;
         private LocationStructure _droppedAtStructure;
+        private Character _droppedObjectOwner; 
         
         public FrameUp() : base("Frame Up", TutorialManager.Tutorial.Frame_Up) { }
 
@@ -60,20 +61,20 @@ namespace Tutorial {
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                 ),
                 new QuestStepCollection(OnActivateSecondCollection, OnDeactivateSecondCollection,
-                    new SeizePOIStep("Seize item owner", poi => _droppedObject.characterOwner == poi)
+                    new SeizePOIStep("Seize item owner", poi => _droppedObjectOwner == poi)
                         .SetObjectsToCenter(GetItemOwnerToCenter),
-                    new DropPOIAtStructureStep(IsDroppedAtSameStructure, poi => _droppedObject.characterOwner == poi,
+                    new DropPOIAtStructureStep(IsDroppedAtSameStructure, poi => _droppedObjectOwner == poi,
                             "Drop at the same house")
                         .SetObjectsToCenter(GetHouseToCenter),
                     new CharacterAssumedStep(poi => poi == _droppedObject && _droppedObject.gridTileLocation.structure == _droppedAtStructure, 
-                            character => character == _droppedObject.characterOwner, 
+                            character => character == _droppedObjectOwner, 
                             "Wait for the character's reaction")
                         .SetCompleteAction(OnCompleteDropAtSameHouse)
                 ),
-                new QuestStepCollection(
-                    new ClickOnCharacterStep("Click item owner", character => character == _droppedObject.characterOwner)
+                new QuestStepCollection(OnActivateThirdCollection, OnDeactivateThirdCollection,
+                    new ClickOnCharacterStep("Click item owner", character => character == _droppedObjectOwner)
                         .SetObjectsToCenter(GetItemOwnerToCenter),
-                    new ToggleTurnedOnStep("CharacterInfo_Logs", "Click on Log tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _droppedObject.characterOwner),
+                    new ToggleTurnedOnStep("CharacterInfo_Logs", "Click on Log tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _droppedObjectOwner),
                     new LogHistoryItemClicked("Click assumed thief's name", IsClickedLogObjectValid)
                         .SetHoverOverAction(OnHoverAssumedThief)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
@@ -86,12 +87,13 @@ namespace Tutorial {
                 && dwelling.residents.Contains(tileObject.characterOwner) == false) {
                 _droppedObject = tileObject;
                 _droppedAtStructure = structure;
+                _droppedObjectOwner = tileObject.characterOwner;
                 return true;
             }
             return false;
         }
         private bool IsDroppedAtSameStructure(LocationStructure structure, IPointOfInterest poi) {
-            if (structure == _droppedAtStructure && poi == _droppedObject.characterOwner) {
+            if (structure == _droppedAtStructure && poi == _droppedObjectOwner) {
                 return true;
             }
             return false;
@@ -104,13 +106,21 @@ namespace Tutorial {
             Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
             Messenger.RemoveListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         }
+        private void OnActivateThirdCollection() {
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.AddListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+        }
+        private void OnDeactivateThirdCollection() {
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+            Messenger.RemoveListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+        }
         private void OnTileObjectRemoved(TileObject tileObject, Character removedBy, LocationGridTile removedFrom) {
             if (tileObject == _droppedObject) {
                 FailQuest(); //the tile object was removed from where it was, fail this quest
             }
         }
         private void OnCharacterDied(Character character) {
-            if (_droppedObject.IsOwnedBy(character)) {
+            if (_droppedObjectOwner == character) {
                 FailQuest(); //the owner of the dropped object died, fail this quest.
             }
         }
@@ -135,7 +145,7 @@ namespace Tutorial {
             );
         }
         private List<ISelectable> GetItemOwnerToCenter() {
-            return new List<ISelectable>() { _droppedObject.characterOwner };
+            return new List<ISelectable>() { _droppedObjectOwner };
         }
         private List<ISelectable> GetHouseToCenter() {
             return new List<ISelectable>() { _droppedAtStructure };
@@ -148,22 +158,22 @@ namespace Tutorial {
             PlayerUI.Instance.ShowGeneralConfirmation("Frame Up", 
                 $"Villagers are prone to making suspicious assumptions " +
                 $"especially when they are in Bad or Critical Mood!\n\n" +
-                $"{UtilityScripts.Utilities.ColorizeAction(_droppedObject.characterOwner.name)} just saw " +
-                $"{UtilityScripts.Utilities.GetPronounString(_droppedObject.characterOwner.gender, PRONOUN_TYPE.POSSESSIVE, false)} " +
-                $"{_droppedObject.name} in {UtilityScripts.Utilities.ColorizeAction(_droppedAtStructure.GetNameRelativeTo(_droppedObject.characterOwner))} " +
+                $"{UtilityScripts.Utilities.ColorizeAction(_droppedObjectOwner.name)} just saw " +
+                $"{UtilityScripts.Utilities.GetPronounString(_droppedObjectOwner.gender, PRONOUN_TYPE.POSSESSIVE, false)} " +
+                $"{_droppedObject.name} in {UtilityScripts.Utilities.ColorizeAction(_droppedAtStructure.GetNameRelativeTo(_droppedObjectOwner))} " +
                 $"and has now assumed that it has been {UtilityScripts.Utilities.ColorizeAction("stolen")}!"
             );
         }
         private bool IsClickedLogObjectValid(object obj, string log, IPointOfInterest owner) {
-            if (owner == _droppedObject.characterOwner && obj is Character clickedCharacter 
-                && clickedCharacter != _droppedObject.characterOwner
+            if (owner == _droppedObjectOwner && obj is Character clickedCharacter 
+                && clickedCharacter != _droppedObjectOwner
                 && log.Contains("assumed")) {
                 return true;
             }
             return false;
         }
         private void OnHoverAssumedThief(QuestStepItem stepItem) {
-            Character owner = _droppedObject.characterOwner;
+            Character owner = _droppedObjectOwner;
             UIManager.Instance.ShowSmallInfo(
                 $"An {UtilityScripts.Utilities.ColorizeAction("assumption log")} should have been registered in " +
                 $"{owner.name}'s Log tab. {UtilityScripts.Utilities.ColorizeAction("Click on the name")} of the " +

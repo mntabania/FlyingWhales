@@ -156,7 +156,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     private void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
 		if (traitable == owner) {
 			if (TraitManager.Instance.removeStatusTraits.Contains(trait.name)) {
-				TryCreateRemoveStatusJob(trait);
+				TryCreateSettlementRemoveStatusJob(trait);
 			}
 			if (trait is Burning || trait is Poisoned) {
 				TriggerRemoveStatusSelf(trait);
@@ -480,6 +480,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void TriggerRemoveStatusSelf(Trait trait) {
+		if (owner is Summon) {
+			return; //Reference: https://trello.com/c/LkTisHji/3023-live-03356-spider-in-villager-faction-able-to-remove-poison
+		}
 		if (trait.gainedFromDoing == null || trait.gainedFromDoing.isStealth == false) { //only create remove status job if trait was not gained from a stealth action
 			GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, target = GOAP_EFFECT_TARGET.TARGET };
 			if (owner.jobQueue.HasJob(goapEffect, owner) == false) {
@@ -490,6 +493,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 	}
     public void TriggerRemoveStatusTarget(IPointOfInterest target, string traitName) {
+	    if (owner is Summon) {
+		    return; //Reference: https://trello.com/c/LkTisHji/3023-live-03356-spider-in-villager-faction-able-to-remove-poison
+	    }
         GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, target = GOAP_EFFECT_TARGET.TARGET };
         if (owner.jobQueue.HasJob(goapEffect, owner) == false) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, target, owner);
@@ -606,7 +612,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	#endregion
 	
 	#region Remove Status
-	private void TryCreateRemoveStatusJob(Trait trait) {
+	private void TryCreateSettlementRemoveStatusJob(Trait trait) {
 		if (owner.homeSettlement != null && owner.gridTileLocation != null && owner.gridTileLocation.IsNextToOrPartOfSettlement(owner.homeSettlement)
 		    && owner.traitContainer.HasTrait("Criminal") == false) {
 			TriggerSettlementRemoveStatusJob(trait);
@@ -618,7 +624,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			List<Trait> statusTraits = owner.traitContainer.GetTraitsOrStatuses<Trait>(TraitManager.Instance.removeStatusTraits.ToArray());
 			for (int i = 0; i < statusTraits.Count; i++) {
 				Trait trait = statusTraits[i];
-				TryCreateRemoveStatusJob(trait);
+				TryCreateSettlementRemoveStatusJob(trait);
 			}
 		}
 	}
