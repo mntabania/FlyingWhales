@@ -663,7 +663,7 @@ namespace Locations.Settlements {
             }
             return null;
         }
-        public List<T> GetTileObjectsOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker) where T : TileObject {
+        public List<T> GetTileObjectsOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker = null) where T : TileObject {
             List<T> objs = null;
             for (int i = 0; i < allStructures.Count; i++) {
                 List<T> structureTileObjects = allStructures[i].GetTileObjectsOfType(validityChecker);

@@ -1431,6 +1431,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     public void UpdateAbleJobsOfResident(Character character) {
         if (owner != null && owner.factionType.type == FACTION_TYPE.Ratmen) { return; }
+        if (!character.race.IsSapient() && character.minion == null) { return; }
         //update jobs based on hasPeasants switch
         if (!hasPeasants) {
             if (character.characterClass.className != "Noble") {
@@ -1466,6 +1467,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
     }
     public void UnapplyAbleJobsFromSettlement(Character character) {
+        if (!character.race.IsSapient() && character.minion == null) { return; }
         if (!hasPeasants) {
             if (character.characterClass.className != "Noble") {
                 CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");

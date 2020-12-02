@@ -8,13 +8,12 @@ using Traits;
 using UnityEngine;
 using UtilityScripts;
 
-public class WolfBehaviour : CharacterBehaviourComponent {
+public class WolfBehaviour : BaseMonsterBehaviour {
     
     public WolfBehaviour() {
         priority = 9;
     }
-    
-    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+    protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         log += $"\n-{character.name} is a Wolf";
         if ((character.homeStructure == null || character.homeStructure.hasBeenDestroyed) && !character.HasTerritory()) {

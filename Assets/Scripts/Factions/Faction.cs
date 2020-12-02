@@ -223,7 +223,13 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             if (willLog) {
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_not_fit");
             } else {
-                character.ChangeFactionTo(FactionManager.Instance.vagrantFaction);
+                Faction targetFaction;
+                if (character is Summon summon) {
+                    targetFaction = summon.defaultFaction;
+                } else {
+                    targetFaction = FactionManager.Instance.vagrantFaction;
+                }
+                character.ChangeFactionTo(targetFaction);
             }
             //character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
             //Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_not_fit");

@@ -517,6 +517,7 @@ public enum INTERACTION_TYPE {
     CARE = 217,
     GO_TO_SPECIFIC_TILE = 218,
     LONG_STAND_STILL = 219,
+    BURROW = 220,
 }
 public enum INTERRUPT {
     None,

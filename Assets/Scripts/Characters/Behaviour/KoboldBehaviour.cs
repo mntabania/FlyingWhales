@@ -4,22 +4,20 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UtilityScripts;
 
-public class KoboldBehaviour : CharacterBehaviourComponent {
+public class KoboldBehaviour : BaseMonsterBehaviour {
     
     public KoboldBehaviour() {
         priority = 9;
     }
     
-    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+    protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n{character.name} is Kobold";
         if (UnityEngine.Random.Range(0, 100) < 10) {
             log += $"\nChance to place freezing trap met.";
-            // List<HexTile> hexTileChoices = GetTilesNextToActiveSetztlement(character.currentRegion);
             List<HexTile> hexTileChoices = GetValidHexTilesNextToHome(character);
             if (hexTileChoices != null && hexTileChoices.Count > 0) {
                 HexTile chosenTile = CollectionUtilities.GetRandomElement(hexTileChoices);
-                List<LocationGridTile> locationGridTileChoices =
-                    chosenTile.locationGridTiles.Where(x => 
+                List<LocationGridTile> locationGridTileChoices = chosenTile.locationGridTiles.Where(x => 
                         x.hasFreezingTrap == false && x.isOccupied == false && x.IsNextToSettlement() == false).ToList();
                 if (locationGridTileChoices.Count > 0) {
                     LocationGridTile targetTile = CollectionUtilities.GetRandomElement(locationGridTileChoices);
@@ -44,9 +42,10 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
                 //check if a character is frozen in any of the neighbouring areas,
                 //if there are, then create a job to carry then drop them at this character's home/territory
                 Character chosenCharacter = CollectionUtilities.GetRandomElement(frozenCharacters);
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CAPTURE_CHARACTER, INTERACTION_TYPE.DROP,
-                    chosenCharacter, character);
-                if (character.homeStructure != null) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CAPTURE_CHARACTER, INTERACTION_TYPE.DROP, chosenCharacter, character);
+                if (character.homeSettlement?.mainStorage != null) {
+                    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {character.homeSettlement.mainStorage});
+                } else if (character.homeStructure != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {character.homeStructure});    
                 } else if (character.HasTerritory()) {
                     HexTile chosenTerritory = character.territory;
@@ -66,8 +65,7 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
                     Character chosenCharacter = CollectionUtilities.GetRandomElement(frozenCharactersAtHome);
                     if (GameUtilities.RollChance(8)) {
                         log += $"\nChance to butcher met, will butcher {chosenCharacter.name}.";
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_BUTCHER, INTERACTION_TYPE.BUTCHER,
-                                            chosenCharacter, character);
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_BUTCHER, INTERACTION_TYPE.BUTCHER, chosenCharacter, character);
                         job.SetCancelOnDeath(false);
                         producedJob = job;
                         return true;
@@ -75,8 +73,7 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
                         log += $"\nChance to butcher NOT met, will roll Mock/Laugh At {chosenCharacter.name} instead.";
                         if (GameUtilities.RollChance(30) && character.marker.IsPOIInVision(chosenCharacter)) {
                             log += $"\nMock/Laugh triggered.";
-                            character.interruptComponent.TriggerInterrupt(
-                                GameUtilities.RollChance(50) ? INTERRUPT.Mock : INTERRUPT.Laugh_At, chosenCharacter);
+                            character.interruptComponent.TriggerInterrupt(GameUtilities.RollChance(50) ? INTERRUPT.Mock : INTERRUPT.Laugh_At, chosenCharacter);
                             producedJob = null;
                             return true;    
                         }
@@ -91,8 +88,7 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
                 if (foodPiles != null && foodPiles.Count > 0) {
                     //if there are any, create job to eat a random food pile
                     FoodPile chosenPile = CollectionUtilities.GetRandomElement(foodPiles);
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_EAT, INTERACTION_TYPE.EAT,
-                        chosenPile, character);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_EAT, INTERACTION_TYPE.EAT, chosenPile, character);
                     producedJob = job;
                     log += $"\nFood Piles found, will eat {chosenPile}";
                     return true;
@@ -104,7 +100,9 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
         }
     }
     private List<HexTile> GetValidHexTilesNextToHome(Character character) {
-        if (character.homeStructure != null) {
+        if (character.homeSettlement != null) {
+            return character.homeSettlement.GetSurroundingAreas().Where(x => x.region == character.homeRegion && x.freezingTraps < 4).ToList();
+        } else if (character.homeStructure != null) {
             if (character.homeStructure is Cave cave) {
                 HexTile homeTile = CollectionUtilities.GetRandomElement(cave.caveHexTiles).hexTileOwner;
                 return homeTile.AllNeighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();
@@ -137,7 +135,9 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
         return characters;
     }
     private List<Character> GetFrozenCharactersInHome(Character character) {
-        if (character.homeStructure != null) {
+        if (character.homeSettlement?.mainStorage != null) {
+            return character.homeSettlement.mainStorage.charactersHere.Where(x => x.traitContainer.HasTrait("Frozen") && x.race != RACE.KOBOLD).ToList();
+        } else if (character.homeStructure != null) {
             return character.homeStructure.charactersHere.Where(x => x.traitContainer.HasTrait("Frozen") && x.race != RACE.KOBOLD).ToList();
         } else if (character.HasTerritory()) {
             List<Character> characters = character.territory.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD);
@@ -147,13 +147,15 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
     }
 
     private List<HexTile> GetAreasSurroundingHome(Character character) {
-        if (character.homeStructure != null) {
+        if (character.homeSettlement != null) {
+            return character.homeSettlement.GetSurroundingAreas();
+        } else if (character.homeStructure != null) {
             if (character.homeStructure is Cave cave) {
                 HexTile homeTile = CollectionUtilities.GetRandomElement(cave.caveHexTiles).hexTileOwner;
-                return homeTile.AllNeighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();
+                return homeTile.AllNeighbours.Where(x => x.region == homeTile.region).ToList();
             } else {
                 HexTile homeTile = character.homeStructure.occupiedHexTile.hexTileOwner;
-                return homeTile.AllNeighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();    
+                return homeTile.AllNeighbours.Where(x => x.region == homeTile.region).ToList();    
             }
         } else if (character.HasTerritory()) {
             List<HexTile> surroundingAreas = character.territory.AllNeighbours.Where(x => x.region == character.territory.region).ToList();
@@ -163,7 +165,9 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
     }
 
     private List<FoodPile> GetFoodPilesAtHome(Character character) {
-        if (character.homeStructure != null) {
+        if (character.homeSettlement != null) {
+            return character.homeSettlement.GetTileObjectsOfTypeThatMeetCriteria<FoodPile>(null);
+        } else if (character.homeStructure != null) {
             return character.homeStructure.GetTileObjectsOfType<FoodPile>();
         } else if (character.HasTerritory()) {
             List<FoodPile> foodPiles = character.territory.GetTileObjectsInHexTile<FoodPile>();

@@ -8,6 +8,7 @@ public class Ghost : Summon {
     public override System.Type serializedData => typeof(SaveDataGhost);
 
     public Character betrayedBy { get; private set; }
+    public override Faction defaultFaction => FactionManager.Instance.undeadFaction;
 
     public override string raceClassName => characterClass.className;
     public Ghost() : base(SUMMON_TYPE.Ghost, "Ghost", RACE.GHOST, UtilityScripts.Utilities.GetRandomGender()) {

@@ -5,7 +5,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UtilityScripts;
 
-public class MimicBehaviour : CharacterBehaviourComponent {
+public class MimicBehaviour : BaseMonsterBehaviour {
     private readonly WeightedDictionary<string> _actionWeights;
     
     public MimicBehaviour() {
@@ -15,7 +15,7 @@ public class MimicBehaviour : CharacterBehaviourComponent {
         _actionWeights.AddElement("Stand", 20); //20
         _actionWeights.AddElement("Revert", 5); //5
     }
-    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+    protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} is Mimic";
 
         string chosenAction = _actionWeights.PickRandomElementGivenWeights();
@@ -38,7 +38,5 @@ public class MimicBehaviour : CharacterBehaviourComponent {
             chest.SetObjectInside(mimic);
             return true;
         }
-        producedJob = null;
-        return false;
     }
 }

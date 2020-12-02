@@ -59,11 +59,10 @@ public class CharacterManager : BaseMonoBehaviour {
         Pest_Behaviour = "Pest Behaviour",
         Rat_Behaviour = "Rat Behaviour",
         Ratman_Behaviour = "Ratman Behaviour",
-        Slave_Behaviour = "Slave Behaviour";
-
-
-
-    public const int MAX_HISTORY_LOGS = 300;
+        Slave_Behaviour = "Slave Behaviour",
+        Fire_Elemental_Behaviour = "Fire Elemental Behaviour",
+        Sludge_Behaviour = "Sludge Behaviour";
+    
     public const int VISION_RANGE = 8;
     public const int AVOID_COMBAT_VISION_RANGE = 12;
 
@@ -375,6 +374,20 @@ public class CharacterManager : BaseMonoBehaviour {
             new []{
                 typeof(MovementProcessing),
                 typeof(SlaveBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Fire_Elemental_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(FireElementalBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Sludge_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(SludgeBehaviour),
                 typeof(DefaultExtraCatcher),
             }
         },

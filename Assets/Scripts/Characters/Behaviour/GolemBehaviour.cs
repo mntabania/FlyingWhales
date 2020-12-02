@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GolemBehaviour : CharacterBehaviourComponent {
+public class GolemBehaviour : BaseMonsterBehaviour {
 	public GolemBehaviour() {
 		priority = 8;
-		// attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
 	}
-	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+	protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
 		if (character is Summon summon) {
 			log += $"\n-{summon.name} is a golem";

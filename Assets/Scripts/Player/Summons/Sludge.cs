@@ -11,6 +11,10 @@ public class Sludge : Summon {
     public Sludge(SaveDataSummon data) : base(data) { }
 
     #region Overrides
+    public override void Initialize() {
+        base.Initialize();
+        behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Sludge_Behaviour);
+    }
     public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null,
         Log _deathLog = default, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null) {
         if (isDead) {

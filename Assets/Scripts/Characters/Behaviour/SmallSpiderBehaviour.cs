@@ -4,13 +4,13 @@ using Inner_Maps.Location_Structures;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 
-public class SmallSpiderBehaviour : CharacterBehaviourComponent {
+public class SmallSpiderBehaviour : BaseMonsterBehaviour {
 
     public SmallSpiderBehaviour() {
         priority = 9;
     }
     
-    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+    protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (GameUtilities.RollChance(30)) {
             //Try and eat a webbed character at this spiders home cave
             List<Character> webbedCharacters = GetWebbedCharactersAtHome(character);
@@ -19,10 +19,11 @@ public class SmallSpiderBehaviour : CharacterBehaviourComponent {
                 return character.jobComponent.TriggerEatAlive(webbedCharacter, out producedJob);
             }    
         }
-        
         return character.jobComponent.TriggerRoamAroundTerritory(out producedJob, true);
     }
-
+    protected override bool TamedBehaviour(Character p_character, ref string p_log, out JobQueueItem p_producedJob) {
+        return TriggerRoamAroundTerritory(p_character, ref p_log, out p_producedJob);
+    }
     private List<Character> GetWebbedCharactersAtHome(Character character) {
         if (character.homeStructure != null) {
             return character.homeStructure.GetCharactersThatMeetCriteria(c => c.traitContainer.HasTrait("Webbed"));

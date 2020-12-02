@@ -1,15 +1,13 @@
-﻿using System.Collections;
+﻿
 using System.Collections.Generic;
-using UnityEngine;
 using Inner_Maps;
-using Inner_Maps.Location_Structures;
+using UtilityScripts;
 
-public class WurmBehaviour : CharacterBehaviourComponent {
+public class WurmBehaviour : BaseMonsterBehaviour {
 	public WurmBehaviour() {
 		priority = 8;
-		// attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
 	}
-	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+	protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         log += $"\n-{character.name} is a wurm";
         log += $"\n-Do nothing";
@@ -43,5 +41,59 @@ public class WurmBehaviour : CharacterBehaviourComponent {
         //    }
         //}
         //return false;
+	}
+	protected override bool TamedBehaviour(Character p_character, ref string p_log, out JobQueueItem p_producedJob) {
+		p_log = $"{p_log}\n-Will try to transfer to a random unoccupied wilderness or cave spot in current settlement";
+		if (GameUtilities.RollChance(15, ref p_log)) {
+			LocationGridTile targetBurrowTile = GetBurrowTargetTile(p_character);
+			if (targetBurrowTile != null && p_character.jobComponent.TriggerIdleBurrow(targetBurrowTile, out p_producedJob)) {
+				p_log = $"{p_log}\n-Will burrow to {targetBurrowTile}";
+				return true;
+			}
+		}
+		p_log = $"{p_log}\n-Will stay idle for 8 hours";
+		return p_character.jobComponent.PlanIdleLongStandStill(out p_producedJob);
+	}
+
+	private LocationGridTile GetBurrowTargetTile(Character p_character) {
+		if (p_character.homeSettlement != null) {
+			List<LocationGridTile> settlementTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
+			for (int i = 0; i < p_character.homeSettlement.tiles.Count; i++) {
+				HexTile hexTile = p_character.homeSettlement.tiles[i];
+				for (int j = 0; j < hexTile.locationGridTiles.Count; j++) {
+					LocationGridTile tile = hexTile.locationGridTiles[j];
+					if (tile.structure.structureType == STRUCTURE_TYPE.WILDERNESS || tile.structure.structureType == STRUCTURE_TYPE.CAVE) {
+						settlementTiles.Add(tile);
+					}
+				}
+			}
+			if (settlementTiles.Count > 0) {
+				LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(settlementTiles);
+				ObjectPoolManager.Instance.ReturnGridTileListToPool(settlementTiles);
+				return chosenTile;
+			} else {
+				ObjectPoolManager.Instance.ReturnGridTileListToPool(settlementTiles);
+			}
+		} else if (p_character.homeStructure != null) {
+			if (p_character.homeStructure.tiles.Count > 0) {
+				return CollectionUtilities.GetRandomElement(p_character.homeStructure.tiles);
+			}
+		} else if (p_character.HasTerritory()) {
+			List<LocationGridTile> territoryTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
+			for (int j = 0; j < p_character.territory.locationGridTiles.Count; j++) {
+				LocationGridTile tile = p_character.territory.locationGridTiles[j];
+				if (tile.structure.structureType == STRUCTURE_TYPE.WILDERNESS || tile.structure.structureType == STRUCTURE_TYPE.CAVE) {
+					territoryTiles.Add(tile);
+				}
+			}
+			if (territoryTiles.Count > 0) {
+				LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(territoryTiles);
+				ObjectPoolManager.Instance.ReturnGridTileListToPool(territoryTiles);
+				return chosenTile;
+			} else {
+				ObjectPoolManager.Instance.ReturnGridTileListToPool(territoryTiles);
+			}
+		}
+		return null;
 	}
 }

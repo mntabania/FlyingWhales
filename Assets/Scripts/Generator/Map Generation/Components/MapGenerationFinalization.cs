@@ -350,7 +350,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 				if (artifactChoices.Count == 0) { break; }
 				BaseLandmark landmark = landmarks[i];
 				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-				ARTIFACT_TYPE randomArtifact = artifactChoices.First();
+				ARTIFACT_TYPE randomArtifact = CollectionUtilities.GetRandomElement(artifactChoices);
 				Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(randomArtifact);
 				structure.AddPOI(artifact);
 				artifactChoices.Remove(randomArtifact);
