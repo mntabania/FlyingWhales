@@ -71,7 +71,7 @@ namespace Interrupts {
                 log += "\n-Character is a monster";
                 log += "\n-Find an unoccupied Special Structure within the region and randomly select one. Clear out Territory data if it has one.";
                 LocationStructure chosenHomeStructure = currentRegion.GetRandomStructureThatMeetCriteria(currStructure => !currStructure.IsOccupied() && currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0);
-                if (chosenHomeStructure != null) {
+                if (chosenHomeStructure != null && !IsSameAsCurrentHomeStructure(chosenHomeStructure, actor)) {
                     actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                     log += "\n-Special Structure found: " + chosenHomeStructure.ToString();
                     actor.logComponent.PrintLogIfActive(log);
@@ -180,13 +180,13 @@ namespace Interrupts {
                 log += "\nCharacter is still part of a village";
                 log += "\nFind unoccupied dwelling";
                 LocationStructure chosenDwelling = actor.homeSettlement.GetFirstUnoccupiedDwelling();
-                if(chosenDwelling != null) {
+                if(chosenDwelling != null && !IsSameAsCurrentHomeStructure(chosenDwelling, actor)) {
                     log += "\nFound dwelling: " + chosenDwelling.name;
                     actor.ClearTerritoryAndMigrateHomeStructureTo(chosenDwelling, affectSettlement: false);
                 } else {
                     log += "\nFind dwelling that is still not at full capacity and is home of a non-enemy and non-rival relative or a non-relative but close friend";
                     chosenDwelling = GetDwellingWithCloseFriendOrNonRivalEnemyRelative(actor.homeSettlement, actor);
-                    if (chosenDwelling != null) {
+                    if (chosenDwelling != null && !IsSameAsCurrentHomeStructure(chosenDwelling, actor)) {
                         log += "\nFound dwelling: " + chosenDwelling.name;
                         actor.ClearTerritoryAndMigrateHomeStructureTo(chosenDwelling, affectSettlement: false);
                     } else {
@@ -198,7 +198,7 @@ namespace Interrupts {
                                 log += "\nFind an unoccupied House in one of those other Villages and set that as its Home Structure";
                                 string identifier = string.Empty;
                                 LocationStructure chosenHomeStructure = FindHabitableStructureOrUnoccupiedHouseInOneOfOwnedSettlementsProcessing(actor, ref identifier);
-                                if (chosenHomeStructure != null && identifier == "unoccupied") {
+                                if (chosenHomeStructure != null && identifier == "unoccupied" && !IsSameAsCurrentHomeStructure(chosenHomeStructure, actor)) {
                                     log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
                                     actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                                     actor.logComponent.PrintLogIfActive(log);
@@ -206,14 +206,14 @@ namespace Interrupts {
                                 }
 
                                 log += "\nFind a Habitable Special Structure or House that is still not at full capacity and is home of a non-enemy and non-rival relative or a non-relative but close friende";
-                                if (chosenHomeStructure != null && identifier == "occupied") {
+                                if (chosenHomeStructure != null && identifier == "occupied" && !IsSameAsCurrentHomeStructure(chosenHomeStructure, actor)) {
                                     log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
                                     actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                                     actor.logComponent.PrintLogIfActive(log);
                                     return;
                                 }
 
-                                if (chosenHomeStructure != null && identifier == "habitable") {
+                                if (chosenHomeStructure != null && identifier == "habitable" && !IsSameAsCurrentHomeStructure(chosenHomeStructure, actor)) {
                                     log += "\nFound Habitable Structure: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
                                     actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                                     actor.logComponent.PrintLogIfActive(log);
@@ -222,7 +222,7 @@ namespace Interrupts {
 
                                 log += "\nFind an unoccupied but Habitable Special Structure within the region";
                                 chosenHomeStructure = currentRegion.GetRandomUnoccupiedStructureWithTag(STRUCTURE_TAG.Shelter);
-                                if (chosenHomeStructure != null) {
+                                if (chosenHomeStructure != null && !IsSameAsCurrentHomeStructure(chosenHomeStructure, actor)) {
                                     log += "\n-Chosen Habitable Structure: " + chosenHomeStructure.name;
                                     actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                                     actor.logComponent.PrintLogIfActive(log);
@@ -302,7 +302,7 @@ namespace Interrupts {
                         log += "\nFind an unoccupied House in one of those other Villages and set that as its Home Structure";
                         string identifier = string.Empty;
                         chosenHomeStructure = FindHabitableStructureOrUnoccupiedHouseInOneOfOwnedSettlementsProcessing(actor, ref identifier);
-                        if (chosenHomeStructure != null && identifier == "unoccupied") {
+                        if (chosenHomeStructure != null && identifier == "unoccupied" && !IsSameAsCurrentHomeStructure(chosenHomeStructure, actor)) {
                             log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
                             actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                             actor.logComponent.PrintLogIfActive(log);
@@ -310,14 +310,14 @@ namespace Interrupts {
                         }
 
                         log += "\nFind a Habitable Special Structure or House that is still not at full capacity and is home of a non-enemy and non-rival relative or a non-relative but close friend";
-                        if (chosenHomeStructure != null && identifier == "occupied") {
+                        if (chosenHomeStructure != null && identifier == "occupied" && !IsSameAsCurrentHomeStructure(chosenHomeStructure, actor)) {
                             log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
                             actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                             actor.logComponent.PrintLogIfActive(log);
                             return;
                         }
 
-                        if (chosenHomeStructure != null && identifier == "habitable") {
+                        if (chosenHomeStructure != null && identifier == "habitable" && !IsSameAsCurrentHomeStructure(chosenHomeStructure, actor)) {
                             log += "\nFound Habitable Structure: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
                             actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                             actor.logComponent.PrintLogIfActive(log);
@@ -326,7 +326,7 @@ namespace Interrupts {
 
                         log += "\nIf none available: Find the Village with least number of Villagers owned by the character's Faction and set its Town Center as its Home Structure. Make character go there.";
                         chosenHomeStructure = actor.faction.GetFirstStructureOfTypeFromOwnedSettlementsWithLeastVillagers(STRUCTURE_TYPE.CITY_CENTER);
-                        if (chosenHomeStructure != null) {
+                        if (chosenHomeStructure != null && !IsSameAsCurrentHomeStructure(chosenHomeStructure, actor)) {
                             log += "\nFound City Center: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
                             actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                             actor.logComponent.PrintLogIfActive(log);
@@ -343,7 +343,7 @@ namespace Interrupts {
                     if (chosenSettlement != null) {
                         log += "\n-Chosen Settlement: " + chosenSettlement.name;
                         chosenHomeStructure = GetStructureInSettlementPrioritizeDwellings(chosenSettlement, actor);
-                        if (chosenHomeStructure != null) {
+                        if (chosenHomeStructure != null && !IsSameAsCurrentHomeStructure(chosenHomeStructure, actor)) {
                             log += "\n-Chosen Home Structure: " + chosenHomeStructure.name;
                             actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                             actor.logComponent.PrintLogIfActive(log);
@@ -357,7 +357,7 @@ namespace Interrupts {
                 log += "\n-Roll: " + roll;
                 if (roll < 15) {
                     chosenHomeStructure = currentRegion.GetRandomUnoccupiedStructureWithTag(STRUCTURE_TAG.Shelter);
-                    if (chosenHomeStructure != null) {
+                    if (chosenHomeStructure != null && !IsSameAsCurrentHomeStructure(chosenHomeStructure, actor)) {
                         log += "\n-Chosen Habitable Structure: " + chosenHomeStructure.name;
                         actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                         actor.logComponent.PrintLogIfActive(log);
@@ -491,7 +491,6 @@ namespace Interrupts {
             }
             return chosenDwelling;
         }
-
         private LocationStructure GetStructureInSettlementPrioritizeDwellings(BaseSettlement settlement, Character actor) {
             LocationStructure secondaryStructure = null;
             for (int i = 0; i < settlement.allStructures.Count; i++) {
@@ -505,6 +504,10 @@ namespace Interrupts {
                 }
             }
             return secondaryStructure;
+        }
+
+        private bool IsSameAsCurrentHomeStructure(LocationStructure p_structure, Character p_character) {
+            return p_structure == p_character.homeStructure;
         }
     }
 }
