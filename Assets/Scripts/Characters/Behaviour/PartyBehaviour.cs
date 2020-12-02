@@ -31,7 +31,11 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                         }
                         LocationGridTile targetTile = party.meetingPlace.GetRandomPassableTile();
                         if(targetTile != null) {
-                            character.jobComponent.CreateGoToWaitingJob(targetTile, out producedJob);
+                            if (character.movementComponent.HasPathToEvenIfDiffRegion(targetTile)) {
+                                character.jobComponent.CreateGoToWaitingJob(targetTile, out producedJob);
+                            } else {
+                                hasJob = false;
+                            }
                         } else {
                             //Character must go to other behaviours if there is no passable tile in meeting place, that's why this is set to false
                             party.SetMeetingPlace();
