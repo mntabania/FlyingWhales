@@ -387,16 +387,22 @@ public class GoapAction {
     }
     public bool CanSatisfyAllPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType) {
         bool isOverridden = false;
+        bool canSatisfy = true;
         List<Precondition> preconditions = GetPreconditions(actor, target, otherData, out isOverridden);
-        for (int i = 0; i < preconditions.Count; i++) {
-            if (!preconditions[i].CanSatisfyCondition(actor, target, otherData, jobType)) {
-                return false;
+        if(preconditions != null) {
+            for (int i = 0; i < preconditions.Count; i++) {
+                Precondition precondition = preconditions[i];
+                if (precondition != null && !precondition.CanSatisfyCondition(actor, target, otherData, jobType)) {
+                    canSatisfy = false;
+                    break;
+                }
             }
         }
+
         if (isOverridden) {
             ObjectPoolManager.Instance.ReturnPreconditionsListToPool(preconditions);
         }
-        return true;
+        return canSatisfy;
     }
     public virtual List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
         isOverridden = false; 
