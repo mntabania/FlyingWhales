@@ -19,6 +19,11 @@ namespace Crime_System {
             if (witness.traitContainer.HasTrait("Cultist")) {
                 return CRIME_SEVERITY.None;
             }
+            if(witness == target && actor.currentActionNode != null && actor.currentActionNode.action.goapType == INTERACTION_TYPE.EVANGELIZE && actor.currentActionNode.target == target) {
+                //Target should not consider Demon Worship, Divine Worship or Nature Worship as a crime while being the target of a Preach Action
+                //https://trello.com/c/mFCzllwZ/2934-live-03346-successful-preach-gets-reported
+                return CRIME_SEVERITY.None;
+            }
             return base.GetCrimeSeverity(witness, actor, target);
         }
         public override string GetLastStrawReason(Character witness, Character actor, IPointOfInterest target, ICrimeable crime) {
