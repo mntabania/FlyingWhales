@@ -491,7 +491,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         RemovePOIAsInRangeButDifferentStructure(obj);
     }
     private void OnActiveIntelSet(IIntel intel) {
-        if (HasRelationshipWithIntel(intel)) {
+        if (PlayerManager.Instance.player.CanShareIntel(character) && HasRelationshipWithIntel(intel)) {
             _nameplate.SetHighlighterState(true);    
         }
     }
