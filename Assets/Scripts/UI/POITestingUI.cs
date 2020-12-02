@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
+using Traits;
 
 public class POITestingUI : MonoBehaviour {
     //This script is used to test characters and actions
@@ -222,6 +223,22 @@ public class POITestingUI : MonoBehaviour {
             activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError($"{poi.name} is not a table or a character!");
+        }
+        HideUI();
+    }
+    public void RestrainPersonal() {
+        poi.traitContainer.AddTrait(poi, "Restrained", activeCharacter);
+        if (poi.traitContainer.HasTrait("Prisoner")) {
+            Prisoner prisoner = poi.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+            prisoner.SetPrisonerOfCharacter(activeCharacter);
+        }
+        HideUI();
+    }
+    public void RestrainFaction() {
+        poi.traitContainer.AddTrait(poi, "Restrained", activeCharacter);
+        if (poi.traitContainer.HasTrait("Prisoner")) {
+            Prisoner prisoner = poi.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+            prisoner.SetPrisonerOfFaction(activeCharacter.faction);
         }
         HideUI();
     }

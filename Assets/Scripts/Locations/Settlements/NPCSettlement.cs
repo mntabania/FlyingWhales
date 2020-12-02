@@ -558,7 +558,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 weight = Mathf.RoundToInt(weight * 1.5f);
                 log += "\n  -Ambitious: x1.5";
             }
-            if (resident is Summon) {
+            if (resident is Summon || resident.characterClass.IsZombie()) {
                 if(HasResidentThatMeetsCriteria(c => c.race.IsSapient() && ((c.gridTileLocation != null && c.gridTileLocation.IsPartOfSettlement(this)) || c.partyComponent.isMemberThatJoinedQuest))) {
                     weight *= 0;
                     log += "\n  -Resident is a Summon and there is atleast 1 Sapient resident inside settlement or in active party: x0";

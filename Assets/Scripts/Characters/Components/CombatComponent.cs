@@ -842,7 +842,7 @@ public class CombatComponent : CharacterComponent {
                     return "Restrain";
                 case JOB_TYPE.PRODUCE_FOOD:
                 case JOB_TYPE.PRODUCE_FOOD_FOR_CAMP:
-                case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
+                case JOB_TYPE.MONSTER_BUTCHER:
                     return "Butcher";
                 case JOB_TYPE.APPREHEND:
                     return CombatManager.Apprehend;

@@ -416,7 +416,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                 weight = Mathf.RoundToInt(weight * 1.5f);
                 log += "\n  -Ambitious: x1.5";
             }
-            if (member is Summon) {
+            if (member is Summon || member.characterClass.IsZombie()) {
                 if (HasMemberThatMeetCriteria(c => c.race.IsSapient() && (c.IsAtHome() || c.partyComponent.isMemberThatJoinedQuest))) {
                     weight *= 0;
                     log += "\n  -Member is a Summon and there is atleast 1 Sapient resident inside home settlement or in active party: x0";

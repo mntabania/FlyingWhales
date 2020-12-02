@@ -2473,7 +2473,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (currentHP <= 0) {
             return; //if hp is already 0, do not deal damage
         }
-        
+        //If target is cannot perform/cannot move, 100% chance to knockout, reason: for abducting resting characters
+        //Put this here so that we will have the chance to knockout before applying damage, since once the character receives damage they will automatically wake up from sleeping
+        //So we need to check the knockout chance before applying damage
+        int chanceToKnockout = 15;
+        if (!limiterComponent.canPerform || !limiterComponent.canMove) {
+            chanceToKnockout = 100;
+        }
+
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
         AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true);
         attackSummary += $"\nDealt damage {stateComponent.owner.combatComponent.attack}";
@@ -2493,15 +2500,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
         } else {
-            //If target is cannot perform/cannot move, 100% chance to knockout, reason: for abducting resting characters
-            int chance = 15;
-            if(!limiterComponent.canPerform || !limiterComponent.canMove) {
-                chance = 100;
-            }
-
             //Each non lethal attack has a 15% chance of unconscious
             //https://trello.com/c/qxXVulZl/1126-each-non-lethal-attack-has-a-15-chance-of-making-target-unconscious
-            if(GameUtilities.RollChance(chance)) {
+            if(GameUtilities.RollChance(chanceToKnockout)) {
                 if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
                     traitContainer.AddTrait(this, "Unconscious", GetCharacterResponsibleForUnconsciousness(characterThatAttacked, combatStateOfAttacker));
                 }

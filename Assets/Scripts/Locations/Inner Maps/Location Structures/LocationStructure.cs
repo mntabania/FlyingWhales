@@ -487,11 +487,21 @@ namespace Inner_Maps.Location_Structures {
             return objs;
         }
         public bool HasTileObjectOfType(TILE_OBJECT_TYPE type) {
-            List<TileObject> objs = new List<TileObject>();
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
                 if (poi is TileObject obj) {
                     if (obj.tileObjectType == type) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        public bool HasTileObjectThatMeetCriteria(Func<TileObject, bool> criteria) {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is TileObject obj) {
+                    if (criteria.Invoke(obj)) {
                         return true;
                     }
                 }

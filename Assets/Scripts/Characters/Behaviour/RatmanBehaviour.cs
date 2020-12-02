@@ -50,9 +50,11 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                                     //&& (characterAtRegion.faction?.factionType.type == FACTION_TYPE.Wild_Monsters || characterAtRegion.isNormalCharacter)
                                     && !(characterAtRegion.currentStructure is Kennel)
                                     && !characterAtRegion.traitContainer.HasTrait("Enslaved", "Hibernating")
-                                    && characterAtRegion.faction != character.faction
                                     && (CanProduceFood(characterAtRegion) || CanBeButchered(characterAtRegion))) {
-                                    characterChoices.Add(characterAtRegion);
+                                    bool isFriendlyWithCharacter = characterAtRegion.faction == character.faction || (characterAtRegion.faction != null && character.faction != null && character.faction.IsFriendlyWith(characterAtRegion.faction));
+                                    if (!isFriendlyWithCharacter) {
+                                        characterChoices.Add(characterAtRegion);
+                                    }
                                 }
                             }
                             if (characterChoices.Count > 0) {
@@ -82,7 +84,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                         return character.jobComponent.TriggerRecruitJob(prisoner, out producedJob);
                     } else if (GameUtilities.RollChance(20) && CanProduceFood(prisoner) && !HasJobTypeFromSameHome(character, JOB_TYPE.TORTURE)) {
                         return character.jobComponent.TriggerTorture(prisoner, out producedJob);
-                    } else if (GameUtilities.RollChance(30) && CanBeButchered(prisoner) && !HasJobTypeFromSameHome(character, JOB_TYPE.MONSTER_BUTCHER)) {
+                    } else if (GameUtilities.RollChance(30) && CanBeButchered(prisoner) && !HasJobTypeFromSameHome(character, JOB_TYPE.MONSTER_BUTCHER) /*&& HasStorage(character)*/ && !HasFoodPileInHomeStorage(character)) {
                         return character.jobComponent.CreateButcherJob(prisoner, JOB_TYPE.MONSTER_BUTCHER, out producedJob);
                     }
                 }
@@ -175,12 +177,36 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         }
         return false;
     }
-
     private bool CanBeButchered(Character character) {
         if ((character is Animal && !(character is Rat)) || character.race == RACE.ELVES || character.race == RACE.HUMANS 
             || character is GiantSpider || character is SmallSpider || character is Wolf) {
             return true;
         }
         return false;
+    }
+    private bool HasFoodPileInHomeStorage(Character character) {
+        LocationStructure storage = null;
+        if(character.homeSettlement != null) {
+            storage = character.homeSettlement.mainStorage;
+        } else if (character.homeStructure != null) {
+            storage = character.homeStructure;
+        } else if (character.HasTerritory()) {
+            return character.territory.HasTileObjectInsideHexThatMeetCriteria(t => t is FoodPile);
+        }
+        if(storage != null) {
+            return storage.HasTileObjectThatMeetCriteria(t => t is FoodPile);
+        }
+        return false;
+    }
+    private bool HasStorage(Character character) {
+        LocationStructure storage = null;
+        if (character.homeSettlement != null) {
+            storage = character.homeSettlement.mainStorage;
+        } else if (character.homeStructure != null) {
+            storage = character.homeStructure;
+        } else if (character.HasTerritory()) {
+            return true;
+        }
+        return storage != null;
     }
 }
