@@ -1359,17 +1359,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
-    public bool CreateButcherJob(Character target) {
-        if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, INTERACTION_TYPE.BUTCHER, target, owner);
-            return owner.jobQueue.AddJobInQueue(job);
-        }
-        return false;
-    }
     public bool CreateButcherJob(Character target, JOB_TYPE jobType, out JobQueueItem producedJob) {
         producedJob = null;
         if (!owner.jobQueue.HasJob(jobType)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.BUTCHER, target, owner);
+            job.SetCancelOnDeath(false);
             producedJob = job;
             return true;
         }
@@ -1938,12 +1932,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         bool canReportToFactionLeader = false;
         bool canReportToSettlementRuler = false;
         if (owner.faction != null && owner.faction.isMajorNonPlayer && owner.faction.leader != null && owner.faction.leader is Character characterLeader
-            && !characterLeader.isDead && characterLeader != owner && characterLeader != crimeData.criminal && characterLeader != crimeData.target) {
+            && !characterLeader.isDead && !characterLeader.traitContainer.HasTrait("Travelling") && characterLeader != owner && characterLeader != crimeData.criminal && characterLeader != crimeData.target) {
             if(!crimeData.IsWitness(characterLeader)) {
                 canReportToFactionLeader = true;
             }
         }
-        if (owner.homeSettlement != null && owner.homeSettlement.ruler != null && !owner.homeSettlement.ruler.isDead && owner.homeSettlement.ruler != owner && owner.homeSettlement.ruler != crimeData.criminal && owner.homeSettlement.ruler != crimeData.target) {
+        if (owner.homeSettlement != null && owner.homeSettlement.ruler != null && !owner.homeSettlement.ruler.isDead && !owner.homeSettlement.ruler.traitContainer.HasTrait("Travelling") && owner.homeSettlement.ruler != owner && owner.homeSettlement.ruler != crimeData.criminal && owner.homeSettlement.ruler != crimeData.target) {
             if (!crimeData.IsWitness(owner.homeSettlement.ruler)) {
                 canReportToSettlementRuler = true;
             }

@@ -1208,6 +1208,20 @@ public class ReactionComponent : CharacterComponent {
                 }
             }
         }
+        if (targetTileObject is ResourcePile resourcePile && actor.homeSettlement != null) {
+            //if character sees a resource pile that is outside his/her home settlement or
+            //is not at his/her settlement's main storage
+            if (resourcePile.gridTileLocation.IsPartOfSettlement(actor.homeSettlement) == false ||
+                resourcePile.gridTileLocation.structure != actor.homeSettlement.mainStorage) {
+                //do not create haul job for human and elven meat if actor is part of major faction
+                bool cannotCreateHaulJob = (resourcePile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || resourcePile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && actor.faction != null && actor.faction.isMajorNonPlayer;
+                bool isRatmanAndFoodPile = actor.faction?.factionType.type == FACTION_TYPE.Ratmen && resourcePile is FoodPile;
+                if (!cannotCreateHaulJob || isRatmanAndFoodPile) {
+                    actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
+                }
+            }
+        }
+
         if (!actor.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to objects
             return;
@@ -1526,19 +1540,6 @@ public class ReactionComponent : CharacterComponent {
                     }
                 }
             } 
-        }
-
-        if (targetTileObject is ResourcePile resourcePile && actor.homeSettlement != null) {
-            //if character sees a resource pile that is outside his/her home settlement or
-            //is not at his/her settlement's main storage
-            if (resourcePile.gridTileLocation.IsPartOfSettlement(actor.homeSettlement) == false || 
-                resourcePile.gridTileLocation.structure != actor.homeSettlement.mainStorage) {
-                //do not create haul job for human and elven meat
-                if (resourcePile.tileObjectType != TILE_OBJECT_TYPE.ELF_MEAT && 
-                    resourcePile.tileObjectType != TILE_OBJECT_TYPE.HUMAN_MEAT) {
-                    actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
-                }
-            }
         }
 
         if (targetTileObject.traitContainer.HasTrait("Interesting")) {

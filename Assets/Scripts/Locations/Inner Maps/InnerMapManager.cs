@@ -625,7 +625,7 @@ namespace Inner_Maps {
             resourcePile.SetResourceInPile(resourcesInPile);
             locationGridTile.structure.AddPOI(resourcePile, locationGridTile);
 
-            if (creator.homeSettlement != null && creator.isNormalCharacter) {
+            if (creator.homeSettlement != null) {
                 creator.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
                 creator.marker.AddPOIAsInVisionRange(resourcePile); //automatically add pile to character's vision so he/she can take haul job immediately after
             }

@@ -205,7 +205,7 @@ public class CombatState : CharacterState {
                     string avoidReason = GetAvoidReason(avoidedPOI);
                     bool doNotCower = avoidReason == CombatManager.Avoiding_Witnesses || avoidReason == CombatManager.Encountered_Hostile;
                     summary = $"{summary}\n-Has avoid that is still in range";
-                    if(avoidedPOI is Character avoidedCharacter && avoidedCharacter.isNormalCharacter && stateComponent.owner.traitContainer.HasTrait("Enslaved")) {
+                    if(avoidedPOI is Character avoidedCharacter && avoidedCharacter.isNormalCharacter && stateComponent.owner.traitContainer.HasTrait("Enslaved") && stateComponent.owner.isNormalCharacter) {
                         //If character is a slave and the target being avoided is a villager, always cower, so that the target will be able to reach this slave
                         summary = $"{summary}\n-Character is a slave and avoided character is a villageer, will only cower";
                         summary = $"{summary}\n-Triggered Cowering";
