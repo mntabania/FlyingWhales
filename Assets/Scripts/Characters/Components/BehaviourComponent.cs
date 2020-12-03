@@ -387,7 +387,13 @@ public class BehaviourComponent : CharacterComponent {
                         owner.jobQueue.AddJobInQueue(producedJob);
                     }
                     component.PostProcessAfterSuccessfulDoBehaviour(owner);
-                    if (!component.WillContinueProcess()) { break; }    
+                    if (producedJob != null) {
+                        //if a job was produced, always stop behaviour loop, regardless if behaviour says it should not skip processing
+                        break;
+                    } else {
+                        if (!component.WillContinueProcess()) { break; }    
+                    }
+                        
                 }
                 if (isProducedJobValid == false && producedJob != null) { //if produced valid is not valid and produced job is not null
                     //add character to blacklist if job is owned by a settlement
