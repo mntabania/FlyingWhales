@@ -711,10 +711,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
         if (character.movementComponent.CanDig()) {
             if (attainedDestinationTile != null && character.gridTileLocation != null && actualDestinationTile != null && actualDestinationTile != attainedDestinationTile) {
-                //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
-                if (character.movementComponent.DigOnReachEndPath(pathfindingAI.currentPath, attainedDestinationTile, actualDestinationTile)) {
-                    targetPOI = null;
-                    return;
+                //Only really dig if the character has really no path towards target
+                if(!PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, actualDestinationTile)) {
+                    //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
+                    if (character.movementComponent.DigOnReachEndPath(pathfindingAI.currentPath, attainedDestinationTile, actualDestinationTile)) {
+                        targetPOI = null;
+                        return;
+                    }
                 }
             }
         }

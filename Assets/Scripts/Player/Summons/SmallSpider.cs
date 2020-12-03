@@ -94,7 +94,6 @@ public class SmallSpider : Summon {
         HexTile ogTerritory = territory;
         
         SetShowNotificationOnDeath(false);
-        Death("Transform Giant Spider");
         
         //create giant spider
         Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Giant_Spider, targetFaction, settlement, region, home);
@@ -110,6 +109,9 @@ public class SmallSpider : Summon {
         growUpLog.AddLogToDatabase();
         
         CharacterManager.Instance.PlaceSummon(summon, tile);
+        TraitManager.Instance.CopyStatuses(this, summon);
+
+        Death("Transform Giant Spider");
         if (UIManager.Instance.characterInfoUI.isShowing && 
             UIManager.Instance.characterInfoUI.activeCharacter == this) {
             UIManager.Instance.characterInfoUI.CloseMenu();    

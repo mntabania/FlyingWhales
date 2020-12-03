@@ -4,7 +4,11 @@ namespace Traits {
 
         private Character _owner;
         private bool _hasTendedAtLeastOnce;
-        
+
+        #region getters
+        public bool hasTendedAtLeastOnce => _hasTendedAtLeastOnce;
+        #endregion
+
         public Tending() {
             name = "Tending";
             description = "This is Tending.";
@@ -51,6 +55,12 @@ namespace Traits {
                 Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
                 character.homeSettlement?.settlementJobTriggerComponent.CheckIfFarmShouldBeTended(false);
                 character.eventDispatcher.UnsubscribeToCharacterCarried(this);
+            }
+        }
+        public override void OnCopyStatus(Status statusToCopy, ITraitable from, ITraitable to) {
+            base.OnCopyStatus(statusToCopy, from, to);
+            if (statusToCopy is Tending status) {
+                _hasTendedAtLeastOnce = status.hasTendedAtLeastOnce;
             }
         }
         #endregion

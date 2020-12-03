@@ -34,7 +34,7 @@ public class Exile : GoapAction {
         target.crimeComponent.SetDecisionAndJudgeToAllUnpunishedCrimesWantedBy(target.faction, CRIME_STATUS.Exiled, goapNode.actor);
         target.crimeComponent.RemoveAllCrimesWantedBy(goapNode.actor.faction);
         //target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);
-        target.traitContainer.RemoveTrait(target, "Restrained", goapNode.actor);
+        target.traitContainer.RemoveRestrainAndImprison(target, goapNode.actor);
         Faction oldFaction = target.faction;
         oldFaction.KickOutCharacter(target);
         target.MigrateHomeStructureTo(null);

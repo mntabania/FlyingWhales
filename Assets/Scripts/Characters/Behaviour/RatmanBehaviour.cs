@@ -139,19 +139,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         return decision;
     }
     private Character GetFirstPrisonerAtHome(Character character) {
-        if (character.homeStructure != null) {
-            for (int i = 0; i < character.homeStructure.charactersHere.Count; i++) {
-                Character potentialPrisoner = character.homeStructure.charactersHere[i];
-                if (!potentialPrisoner.isDead) {
-                    if (potentialPrisoner.traitContainer.HasTrait("Prisoner")) {
-                        Prisoner prisoner = potentialPrisoner.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-                        if (prisoner.IsConsideredPrisonerOf(character)) {
-                            return potentialPrisoner;
-                        }
-                    }
-                }
-            }
-        } else if (character.homeSettlement != null) {
+        if (character.homeSettlement != null) {
             for (int i = 0; i < character.homeSettlement.region.charactersAtLocation.Count; i++) {
                 Character potentialPrisoner = character.homeSettlement.region.charactersAtLocation[i];
                 if (!potentialPrisoner.isDead) {
@@ -161,6 +149,18 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                             if (prisoner.IsConsideredPrisonerOf(character)) {
                                 return potentialPrisoner;
                             }
+                        }
+                    }
+                }
+            }
+        } else if (character.homeStructure != null) {
+            for (int i = 0; i < character.homeStructure.charactersHere.Count; i++) {
+                Character potentialPrisoner = character.homeStructure.charactersHere[i];
+                if (!potentialPrisoner.isDead) {
+                    if (potentialPrisoner.traitContainer.HasTrait("Prisoner")) {
+                        Prisoner prisoner = potentialPrisoner.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+                        if (prisoner.IsConsideredPrisonerOf(character)) {
+                            return potentialPrisoner;
                         }
                     }
                 }

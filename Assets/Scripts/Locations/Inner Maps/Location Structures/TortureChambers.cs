@@ -20,11 +20,12 @@ namespace Inner_Maps.Location_Structures {
 
         public override void OnCharacterUnSeizedHere(Character character) {
             if (character.isNormalCharacter) {
-                character.traitContainer.AddTrait(character, "Restrained");
-                Prisoner prisonerTrait = character.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-                if (prisonerTrait != null) {
-                    prisonerTrait.SetPrisonerOfFaction(PlayerManager.Instance.player.playerFaction);
-                }
+                character.traitContainer.RestrainAndImprison(character, null, PlayerManager.Instance.player.playerFaction);
+                //character.traitContainer.AddTrait(character, "Restrained");
+                //Prisoner prisonerTrait = character.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+                //if (prisonerTrait != null) {
+                //    prisonerTrait.SetPrisonerOfFaction(PlayerManager.Instance.player.playerFaction);
+                //}
                 if (character.partyComponent.hasParty) {
                     //We remove the character from the party quest if he is put in the defiler so he will not dig out of it and do the quest
                     character.partyComponent.currentParty.RemoveMemberThatJoinedQuest(character);

@@ -771,6 +771,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if(_characterClass.className == "Ratman") {
             movementComponent.SetEnableDigging(true);
         }
+        //Should not remove necromancer trait when necromancer becomes werewolf because it is only temporary
+        if(previousClassName == "Necromancer" && _characterClass.className != "Werewolf") {
+            traitContainer.RemoveTrait(this, "Necromancer");
+        }
+        if (_characterClass.className == "Necromancer" && previousClassName != "Werewolf") {
+            traitContainer.AddTrait(this, "Necromancer");
+        }
         if (_characterClass.className == "Hero") {
             //Reference: https://www.notion.so/ruinarch/Hero-9697369ffca6410296f852f295ee0090
             traitContainer.RemoveAllTraitsByType(this, TRAIT_TYPE.FLAW);

@@ -197,12 +197,13 @@ public class POITestingUI : MonoBehaviour {
         HideUI();
     }
     public void BoobyTrap() {
-        if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), poi, activeCharacter);
-            activeCharacter.jobQueue.AddJobInQueue(job);
-        } else {
-            Debug.LogError($"{poi.name} is not a tile object!");
-        }
+        poi.traitContainer.AddTrait(poi, "Plagued");
+        //if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+        //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), poi, activeCharacter);
+        //    activeCharacter.jobQueue.AddJobInQueue(job);
+        //} else {
+        //    Debug.LogError($"{poi.name} is not a tile object!");
+        //}
         HideUI();
     }
     public void HarvestPlant() {
@@ -227,19 +228,11 @@ public class POITestingUI : MonoBehaviour {
         HideUI();
     }
     public void RestrainPersonal() {
-        poi.traitContainer.AddTrait(poi, "Restrained", activeCharacter);
-        if (poi.traitContainer.HasTrait("Prisoner")) {
-            Prisoner prisoner = poi.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-            prisoner.SetPrisonerOfCharacter(activeCharacter);
-        }
+        poi.traitContainer.RestrainAndImprison(poi, activeCharacter, null, activeCharacter);
         HideUI();
     }
     public void RestrainFaction() {
-        poi.traitContainer.AddTrait(poi, "Restrained", activeCharacter);
-        if (poi.traitContainer.HasTrait("Prisoner")) {
-            Prisoner prisoner = poi.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-            prisoner.SetPrisonerOfFaction(activeCharacter.faction);
-        }
+        poi.traitContainer.RestrainAndImprison(poi, activeCharacter, activeCharacter.faction, null);
         HideUI();
     }
     #endregion

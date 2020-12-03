@@ -11,8 +11,11 @@ namespace Traits {
         private readonly int deathDuration;
         private int _currentDeathDuration;
 
+        #region getters
         public int currentDeathDuration => _currentDeathDuration;
         public override Type serializedData => typeof(SaveDataMalnourished);
+        #endregion
+
         public Malnourished() {
             name = "Malnourished";
             description = "Has not eaten for a very long time.";
@@ -47,6 +50,12 @@ namespace Traits {
         public override void OnTickStarted(ITraitable traitable) {
             base.OnTickStarted(traitable);
             CheckDeath(owner);
+        }
+        public override void OnCopyStatus(Status statusToCopy, ITraitable from, ITraitable to) {
+            base.OnCopyStatus(statusToCopy, from, to);
+            if (statusToCopy is Malnourished status) {
+                _currentDeathDuration = status.currentDeathDuration;
+            }
         }
         #endregion
 

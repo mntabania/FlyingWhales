@@ -115,11 +115,12 @@ public class Carry : GoapAction {
 
         if (goapNode.associatedJobType == JOB_TYPE.SNATCH) {
             //Special case for snatch, so that we can be sure that snatched characters are always restrained
-            goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Restrained", goapNode.actor);
-            if (goapNode.poiTarget.traitContainer.HasTrait("Prisoner")) {
-                Prisoner prisoner = goapNode.poiTarget.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-                prisoner.SetPrisonerOfFaction(PlayerManager.Instance.player.playerFaction);
-            }
+            goapNode.poiTarget.traitContainer.RestrainAndImprison(goapNode.poiTarget, goapNode.actor, PlayerManager.Instance.player.playerFaction);
+            //goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Restrained", goapNode.actor);
+            //if (goapNode.poiTarget.traitContainer.HasTrait("Prisoner")) {
+            //    Prisoner prisoner = goapNode.poiTarget.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+            //    prisoner.SetPrisonerOfFaction(PlayerManager.Instance.player.playerFaction);
+            //}
         }
         
         goapNode.actor.CarryPOI(goapNode.poiTarget, setOwnership: setOwnership);

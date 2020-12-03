@@ -88,6 +88,12 @@ namespace Traits {
                 }
             }
         }
+        public override void OnCopyStatus(Status statusToCopy, ITraitable from, ITraitable to) {
+            base.OnCopyStatus(statusToCopy, from, to);
+            if (statusToCopy is Invisible status) {
+                originalCombatMode = status.originalCombatMode;
+            }
+        }
         #endregion
 
         #region Listeners

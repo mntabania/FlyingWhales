@@ -298,6 +298,12 @@ namespace Traits {
             tooltip = $"{tooltip}\n{PlagueDisease.Instance.GetPlagueEffectsSummary()}";
             return tooltip;
         }
+        public override void OnCopyStatus(Status statusToCopy, ITraitable from, ITraitable to) {
+            base.OnCopyStatus(statusToCopy, from, to);
+            if (statusToCopy is Plagued status) {
+                _numberOfHoursPassed = status.numberOfHoursPassed;
+            }
+        }
         #endregion
 
         #region Fatalities

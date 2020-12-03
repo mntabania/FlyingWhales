@@ -72,6 +72,13 @@ namespace Traits {
             }
             return desc;
         }
+        public override void OnCopyStatus(Status statusToCopy, ITraitable from, ITraitable to) {
+            base.OnCopyStatus(statusToCopy, from, to);
+            if (statusToCopy is Criminal status) {
+                isImprisoned = status.isImprisoned;
+                charactersThatAreAlreadyWorried.AddRange(status.charactersThatAreAlreadyWorried);
+            }
+        }
         #endregion
 
         #region General

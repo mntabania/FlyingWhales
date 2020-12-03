@@ -166,15 +166,17 @@ namespace Inner_Maps.Location_Structures {
                     GameDate dueDate = GameManager.Instance.Today();
                     dueDate.AddTicks(1);
                     SchedulingManager.Instance.AddEntry(dueDate, () => chosenTarget.jobComponent.PlanIdleReturnHome(), chosenTarget);
-                    chosenTarget.traitContainer.RemoveTrait(chosenTarget, "Restrained");
+                    chosenTarget.traitContainer.RemoveRestrainAndImprison(chosenTarget);
                     chosenTarget.traitContainer.RemoveTrait(chosenTarget, "Unconscious");
                     BrainwashDone();
                 } else {
-                    chosenTarget.traitContainer.AddTrait(chosenTarget, "Restrained");
-                    Prisoner prisonerTrait = chosenTarget.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner"); 
-                    if(prisonerTrait != null) {
-                        prisonerTrait.SetPrisonerOfFaction(PlayerManager.Instance.player.playerFaction);
-                    }
+                    chosenTarget.traitContainer.RestrainAndImprison(chosenTarget, null, PlayerManager.Instance.player.playerFaction);
+
+                    //chosenTarget.traitContainer.AddTrait(chosenTarget, "Restrained");
+                    //Prisoner prisonerTrait = chosenTarget.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner"); 
+                    //if(prisonerTrait != null) {
+                    //    prisonerTrait.SetPrisonerOfFaction(PlayerManager.Instance.player.playerFaction);
+                    //}
                     //spawn skeleton to carry target
                     skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.vagrantFaction, null, chosenTarget.currentRegion, className: "Archer");
                     skeleton.SetIsVolatile(true);
@@ -208,7 +210,7 @@ namespace Inner_Maps.Location_Structures {
                 
                 //kill skeleton
                 skeleton.Death();
-                currentBrainwashTarget.traitContainer.RemoveTrait(currentBrainwashTarget, "Restrained");
+                currentBrainwashTarget.traitContainer.RemoveRestrainAndImprison(currentBrainwashTarget);
                 currentBrainwashTarget.jobComponent.DisableReportStructure();
                 if (!currentBrainwashTarget.traitContainer.HasTrait("Paralyzed")) {
                     //No need to daze paralyzed characters, because we expect that characters than cannot perform should not be dazed.

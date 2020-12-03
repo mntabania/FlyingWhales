@@ -76,16 +76,11 @@ namespace Traits {
             owner.behaviourComponent.RemoveBehaviourComponent(typeof(NecromancerBehaviour));
             owner.SetNecromancerTrait(null);
             //owner.ChangeFactionTo(FactionManager.Instance.vagrantFaction);
-            //FactionManager.Instance.undeadFaction.OnlySetLeader(null);
-            //CharacterManager.Instance.SetNecromancerInTheWorld(null);
+            FactionManager.Instance.undeadFaction.OnlySetLeader(null);
+            CharacterManager.Instance.SetNecromancerInTheWorld(null);
             owner.movementComponent.SetEnableDigging(false);
             owner.movementComponent.SetAvoidSettlements(false);
             Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
-        }
-        public override bool OnDeath(Character character) {
-            //Clearing out of necromancer in the world must only done once the current necromancer in the world dies
-            CharacterManager.Instance.SetNecromancerInTheWorld(null);
-            return base.OnDeath(character);
         }
         #endregion
 

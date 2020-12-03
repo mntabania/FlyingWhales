@@ -110,6 +110,13 @@ namespace Traits {
             }
             return false;
         }
+        public override void OnCopyStatus(Status statusToCopy, ITraitable from, ITraitable to) {
+            base.OnCopyStatus(statusToCopy, from, to);
+            if (statusToCopy is Overheating status) {
+                excludedStructuresInSeekingShelter.AddRange(status.excludedStructuresInSeekingShelter);
+                currentShelterStructure = status.currentShelterStructure;
+            }
+        }
         #endregion
 
         #region General

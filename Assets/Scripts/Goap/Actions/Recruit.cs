@@ -87,7 +87,7 @@ public class Recruit : GoapAction {
             //This can happen if vengeful ghost already has a target demonic structure but is restrained and recruited on its way there
             targetCharacter.behaviourComponent.SetIsAttackingDemonicStructure(false, null);
         }
-        targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Restrained");
+        targetCharacter.traitContainer.RemoveRestrainAndImprison(targetCharacter, goapNode.actor);
         targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Criminal");
     }
     #endregion

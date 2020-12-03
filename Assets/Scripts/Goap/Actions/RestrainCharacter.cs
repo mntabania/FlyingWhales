@@ -183,20 +183,20 @@ public class RestrainCharacter : GoapAction {
     #region State Effects
     public void AfterRestrainSuccess(ActualGoapNode goapNode) {
         //**Effect 1**: Target gains Restrained trait.
-        goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Restrained", goapNode.actor);
-        if (goapNode.poiTarget.traitContainer.HasTrait("Prisoner")) {
-            Prisoner prisoner = goapNode.poiTarget.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-            if(goapNode.associatedJobType == JOB_TYPE.APPREHEND 
-                || goapNode.associatedJobType == JOB_TYPE.KIDNAP_RAID
-                || (goapNode.actor.faction?.factionType.type == FACTION_TYPE.Ratmen && goapNode.associatedJobType == JOB_TYPE.MONSTER_ABDUCT)
-                || goapNode.associatedJobType == JOB_TYPE.RESTRAIN) {
-                prisoner.SetPrisonerOfFaction(goapNode.actor.faction);
-            } else if (goapNode.associatedJobType == JOB_TYPE.SNATCH) {
-                prisoner.SetPrisonerOfFaction(PlayerManager.Instance.player.playerFaction);
-            } else {
-                prisoner.SetPrisonerOfCharacter(goapNode.actor);
-            }
+        Faction factionThatImprisoned = null;
+        Character characterThatImprisoned = null;
+        if (goapNode.associatedJobType == JOB_TYPE.APPREHEND
+               || goapNode.associatedJobType == JOB_TYPE.KIDNAP_RAID
+               || (goapNode.actor.faction?.factionType.type == FACTION_TYPE.Ratmen && goapNode.associatedJobType == JOB_TYPE.MONSTER_ABDUCT)
+               || goapNode.associatedJobType == JOB_TYPE.RESTRAIN) {
+            factionThatImprisoned = goapNode.actor.faction;
+        } else if (goapNode.associatedJobType == JOB_TYPE.SNATCH) {
+            factionThatImprisoned = PlayerManager.Instance.player.playerFaction;
+        } else {
+            characterThatImprisoned = goapNode.actor;
         }
+
+        goapNode.poiTarget.traitContainer.RestrainAndImprison(goapNode.poiTarget, goapNode.actor, factionThatImprisoned, characterThatImprisoned);
     }
     #endregion
 

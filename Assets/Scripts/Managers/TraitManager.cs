@@ -267,16 +267,19 @@ public class TraitManager : BaseMonoBehaviour {
             //In the loop, override duration to zero so that it will not reset the trait's timer
             Trait duplicateTrait = null;
             for (int i = 0; i < numOfStacks; i++) {
-                to.traitContainer.AddTrait(to, trait.name, out duplicateTrait, overrideDuration: 0, bypassElementalChance: true);
+                to.traitContainer.AddTrait(to, trait.name, out duplicateTrait, characterResponsible: trait.responsibleCharacter, gainedFromDoing: trait.gainedFromDoing, overrideDuration: 0, bypassElementalChance: true);
             }
             if(duplicateTrait != null) {
+                if(duplicateTrait is Status statusCopy && trait is Status statusToCopy) {
+                    statusCopy.OnCopyStatus(statusToCopy, from, to);
+                }
                 //Copy the trait's responsible characters and gainedFromDoing
                 if(trait.responsibleCharacters != null && trait.responsibleCharacters.Count > 0) {
                     for (int i = 0; i < trait.responsibleCharacters.Count; i++) {
                         duplicateTrait.AddCharacterResponsibleForTrait(trait.responsibleCharacters[i]);
                     }
                 }
-                duplicateTrait.SetGainedFromDoing(trait.gainedFromDoing);
+                //duplicateTrait.SetGainedFromDoing(trait.gainedFromDoing);
 
                 //Copy the trait's timer
                 if (from.traitContainer.scheduleTickets.ContainsKey(trait.name)) {
@@ -294,15 +297,17 @@ public class TraitManager : BaseMonoBehaviour {
         }
     }
     public void CopyStatuses(ITraitable from, ITraitable to) {
-        List<Status> statuses = new List<Status>(from.traitContainer.statuses);
-        for (int i = 0; i < statuses.Count; i++) {
-            Status status = statuses[i];
+        //List<Status> statuses = new List<Status>(from.traitContainer.statuses);
+        for (int i = 0; i < from.traitContainer.statuses.Count; i++) {
+            Status status = from.traitContainer.statuses[i];
             if (!to.traitContainer.HasTrait(status.name)) {
                 CopyTraitOrStatus(status, from, to);
                 if (status is AbominationGerm) {
                     //if copied status is abomination germ, then remove that trait from the object it came from,
                     //since it was transferred to the other object
-                    from.traitContainer.RemoveTrait(from, status);
+                    if(from.traitContainer.RemoveTrait(from, status)) {
+                        i--;
+                    }
                 }
             }
         }

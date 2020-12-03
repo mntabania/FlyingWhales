@@ -73,6 +73,12 @@ namespace Traits {
             StopListenForBiomeEffect();
             UpdateVisualsOnRemove(removedFrom);
         }
+        public override void OnCopyStatus(Status statusToCopy, ITraitable from, ITraitable to) {
+            base.OnCopyStatus(statusToCopy, from, to);
+            if (statusToCopy is Wet status) {
+                dryer = status.dryer;
+            }
+        }
         #endregion
 
         #region Visuals
