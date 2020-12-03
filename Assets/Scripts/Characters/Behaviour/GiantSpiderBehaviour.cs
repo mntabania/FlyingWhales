@@ -51,7 +51,7 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
         }
 
         //try to lay an egg
-        if (GameUtilities.RollChance(2) && (character.IsInHomeSettlement() || character.isAtHomeStructure || character.IsInTerritory())) {
+        if (GameUtilities.RollChance(2) && (character.IsInHomeSettlement() || character.isAtHomeStructure || character.IsInTerritory()) && !(character.currentStructure is RuinedZoo)) {
             if (TryTriggerLayEgg(character, 4, out producedJob)) {
                 return true;
             }
