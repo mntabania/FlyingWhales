@@ -176,25 +176,28 @@ public class RumorComponent : CharacterComponent {
         if(charactersWithOpinionCount > 2) {
             while (chosenCharacter == null) {
                 Character potentialCharacter = owner.relationshipContainer.charactersWithOpinion[Random.Range(0, owner.relationshipContainer.charactersWithOpinion.Count)];
-                if (potentialCharacter != rumoredCharacter) {
+                if (potentialCharacter != rumoredCharacter && CanShareInfoTo(potentialCharacter)) {
                     chosenCharacter = potentialCharacter;
                 }
             }
         } else if (charactersWithOpinionCount == 1) {
             Character potentialCharacter = owner.relationshipContainer.charactersWithOpinion[0];
-            if (potentialCharacter != rumoredCharacter) {
+            if (potentialCharacter != rumoredCharacter && CanShareInfoTo(potentialCharacter)) {
                 chosenCharacter = potentialCharacter;
             }
         } else if (charactersWithOpinionCount == 2) {
             for (int i = 0; i < owner.relationshipContainer.charactersWithOpinion.Count; i++) {
                 Character potentialCharacter = owner.relationshipContainer.charactersWithOpinion[i];
-                if (potentialCharacter != rumoredCharacter) {
+                if (potentialCharacter != rumoredCharacter && CanShareInfoTo(potentialCharacter)) {
                     chosenCharacter = potentialCharacter;
                     break;
                 }
             }
         }
         return chosenCharacter;
+    }
+    private bool CanShareInfoTo(Character character) {
+        return !character.isDead && !character.traitContainer.HasTrait("Enslaved", "Travelling");
     }
     public Rumor CreateNewRumor(Character rumoredCharacter, IPointOfInterest targetOfRumoredCharacter, string identifier) {
         IRumorable rumorable = null;
