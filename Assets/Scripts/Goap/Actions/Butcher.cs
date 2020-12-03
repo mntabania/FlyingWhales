@@ -215,7 +215,7 @@ public class Butcher : GoapAction {
     private bool IsTargetMissing(Character actor, IPointOfInterest poiTarget) {
         return poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion
               || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true)) 
-              || (poiTarget is Character character && !character.isDead) || poiTarget.numOfActionsBeingPerformedOnThis > 0;
+              || (poiTarget is Character character && !character.isDead) || poiTarget.numOfActionsBeingPerformedOnThis > 0 || poiTarget.isBeingCarriedBy != null || (poiTarget is Character c && c.grave?.isBeingCarriedBy != null);
     }
     public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
@@ -301,6 +301,12 @@ public class Butcher : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             if (poiTarget.gridTileLocation == null) {
+                return false;
+            }
+            if (poiTarget.isBeingCarriedBy != null) {
+                return false;
+            }
+            if (poiTarget is Character character && character.grave != null && character.grave.isBeingCarriedBy != null) {
                 return false;
             }
             return true;

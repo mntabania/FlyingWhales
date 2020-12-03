@@ -43,6 +43,7 @@ public class Tombstone : TileObject {
         DefaultProcessOnPlacePOI();
         character.marker.PlaceMarkerAt(gridTileLocation);
         character.DisableMarker();
+        character.marker.SetNameState(true);
         character.marker.TryCancelExpiry();
         character.SetGrave(this);
         if (character.race.IsSapient()) {
@@ -53,6 +54,7 @@ public class Tombstone : TileObject {
         base.OnPlacePOI();
         character.marker.PlaceMarkerAt(gridTileLocation);
         character.DisableMarker();
+        character.marker.SetNameState(true);
         character.marker.TryCancelExpiry();
         character.SetGrave(this);
         if(character.traitContainer.HasTrait("Plagued")) {
@@ -97,7 +99,15 @@ public class Tombstone : TileObject {
     public override string ToString() {
         return $"Tombstone of {character?.name}";
     }
-
+    public override void SetInventoryOwner(Character character) {
+        base.SetInventoryOwner(character);
+        if (character != null) {
+            if (this.character.marker != null) {
+                this.character.marker.SetNameState(false);
+            }
+        }
+        
+    }
     public void SetCharacter(Character character) {
         this.character = character;
         Initialize(TILE_OBJECT_TYPE.TOMBSTONE, false);

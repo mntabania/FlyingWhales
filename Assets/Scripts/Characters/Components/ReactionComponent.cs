@@ -437,7 +437,7 @@ public class ReactionComponent : CharacterComponent {
         if (isHostile) {
             debugLog = $"{debugLog}\n-Target is hostile";
             if(actor.currentJob != null && actor.currentActionNode != null && actor.currentActionNode.avoidCombat && actor.currentActionNode.actionStatus == ACTION_STATUS.STARTED
-                && !targetCharacter.isDead && targetCharacter.limiterComponent.canPerform) {
+                && !targetCharacter.isDead && targetCharacter.limiterComponent.canPerform && targetCharacter.combatComponent.combatMode != COMBAT_MODE.Passive) {
                 actor.currentJob.CancelJob(false);
                 actor.combatComponent.Flight(targetCharacter, CombatManager.Encountered_Hostile);
             }

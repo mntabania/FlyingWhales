@@ -12,7 +12,7 @@ public class SubterraneanBehaviour : CharacterBehaviourComponent {
 	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         log += $"\n-{character.name} is a subterranean";
-        if (!character.isDead && character.gridTileLocation != null && !character.isNormalCharacter) {
+        if (!character.isDead && character.gridTileLocation != null && !character.isNormalCharacter && !IsTamedMonster(character)) {
             if (character.behaviourComponent.subterraneanJustExitedCombat) {
                 character.behaviourComponent.SetSubterraneanJustExitedCombat(false);
                 log += $"\n-Just exited combat will teleport to new location";
@@ -65,5 +65,11 @@ public class SubterraneanBehaviour : CharacterBehaviourComponent {
         if(point1 != null && point2 != null) {
             InnerMapManager.Instance.CreateWurmHoles(point1, point2);
         }
+    }
+    private bool IsTamedMonster(Character p_character) {
+        if (p_character is Summon summon) {
+            return summon.isTamed;
+        }
+        return false;
     }
 }
