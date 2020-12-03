@@ -219,7 +219,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     }
     //Returns true if character left the faction, otherwise return false
     public void CheckIfCharacterStillFitsIdeology(Character character, bool willLog = true) {
-        if (character.faction == this && !ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
+        if (character.faction == this && !character.isDead && !ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
             if (willLog) {
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_not_fit");
             } else {

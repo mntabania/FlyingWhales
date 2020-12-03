@@ -79,14 +79,16 @@ namespace Interrupts {
             changeIdeologyLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
             changeIdeologyLog.AddLogToDatabase();
 
-                
+
             //check if faction characters still meets ideology requirements
-            List<Character> charactersToCheck = new List<Character>(faction.characters);
+            List<Character> charactersToCheck = ObjectPoolManager.Instance.CreateNewCharactersList();
+            charactersToCheck.AddRange(faction.characters);
             charactersToCheck.Remove(actor);
             for (int i = 0; i < charactersToCheck.Count; i++) {
                 Character factionMember = charactersToCheck[i];
                 faction.CheckIfCharacterStillFitsIdeology(factionMember);
             }
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(charactersToCheck);
 
             overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Become Faction Leader", "became_leader", null, LOG_TAG.Major);
             overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
