@@ -718,11 +718,16 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         LocationStructure structure = null;
         for (int i = 0; i < ownedSettlements.Count; i++) {
             BaseSettlement settlement = ownedSettlements[i];
-            if (structure == null || leastVillagersSettlement == null || settlement.residents.Count < leastVillagersSettlement.residents.Count) {
-                structure = settlement.GetFirstStructureOfType(structureType);
+            LocationStructure structureOfType = settlement.GetFirstStructureOfType(structureType);
+            //if settlement has structure of type
+            if (structureOfType != null) {
+                if (leastVillagersSettlement == null || settlement.residents.Count < leastVillagersSettlement.residents.Count) {
+                    leastVillagersSettlement = settlement;
+                    structure = structureOfType;
+                }
             }
         }
-        return null;
+        return structure;
     }
     //public bool HasOwnedStructures() {
     //    return ownedStructures.Count > 0;
