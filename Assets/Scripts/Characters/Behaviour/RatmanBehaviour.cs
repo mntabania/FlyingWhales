@@ -36,7 +36,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT) {
             //Night time
             int chance = 30;
-            if(HasResidentFromSameHomeThatMeetCriteria(character, r => r.traitContainer.HasTrait("Enslaved"))) {
+            if(HasResidentFromSameHomeThatMeetCriteria(character, r => !r.isDead && r.traitContainer.HasTrait("Enslaved"))) {
                 chance -= 25;
             }
             if (HasFoodPileInHomeStorage(character)) {
@@ -89,9 +89,9 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                 if (prisoner != null) {
                     if (GameUtilities.RollChance(30) && prisoner.race == RACE.RATMAN) {
                         return character.jobComponent.TriggerRecruitJob(prisoner, out producedJob);
-                    } else if (GameUtilities.RollChance(20) && CanProduceFood(prisoner) && !HasResidentFromSameHomeThatMeetCriteria(character, r => r.jobQueue.HasJob(JOB_TYPE.TORTURE))) {
+                    } else if (GameUtilities.RollChance(20) && CanProduceFood(prisoner) && !HasResidentFromSameHomeThatMeetCriteria(character, r => r.jobQueue.HasJob(JOB_TYPE.TORTURE, JOB_TYPE.MONSTER_BUTCHER))) {
                         return character.jobComponent.TriggerTorture(prisoner, out producedJob);
-                    } else if (GameUtilities.RollChance(30) && CanBeButchered(prisoner) && !HasResidentFromSameHomeThatMeetCriteria(character, r => r.jobQueue.HasJob(JOB_TYPE.MONSTER_BUTCHER)) /*&& HasStorage(character)*/ && !HasFoodPileInHomeStorage(character)) {
+                    } else if (GameUtilities.RollChance(30) && CanBeButchered(prisoner) && !HasResidentFromSameHomeThatMeetCriteria(character, r => r.jobQueue.HasJob(JOB_TYPE.MONSTER_BUTCHER, JOB_TYPE.TORTURE)) /*&& HasStorage(character)*/ && !HasFoodPileInHomeStorage(character)) {
                         return character.jobComponent.CreateButcherJob(prisoner, JOB_TYPE.MONSTER_BUTCHER, out producedJob);
                     }
                 }
@@ -198,10 +198,10 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         } else if (character.homeStructure != null) {
             storage = character.homeStructure;
         } else if (character.HasTerritory()) {
-            return character.territory.HasTileObjectInsideHexThatMeetCriteria(t => t is FoodPile);
+            return character.territory.HasTileObjectInsideHexThatMeetCriteria(t => t is FoodPile && t.mapObjectState == MAP_OBJECT_STATE.BUILT);
         }
         if(storage != null) {
-            return storage.HasTileObjectThatMeetCriteria(t => t is FoodPile);
+            return storage.HasTileObjectThatMeetCriteria(t => t is FoodPile && t.mapObjectState == MAP_OBJECT_STATE.BUILT);
         }
         return false;
     }

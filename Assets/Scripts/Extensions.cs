@@ -500,6 +500,7 @@ public static class Extensions {
             case JOB_TYPE.FIND_NEW_VILLAGE:
             case JOB_TYPE.STEAL_CORPSE:
             case JOB_TYPE.SUMMON_BONE_GOLEM:
+            case JOB_TYPE.REPORT_CRIME:
                 priority = 1050;
                 break;
             case JOB_TYPE.RETURN_HOME_URGENT:
@@ -584,10 +585,10 @@ public static class Extensions {
             case JOB_TYPE.RESTRAIN:
                 priority = 970;
                 break;
-            case JOB_TYPE.REPORT_CRIME:
-                //case JOB_TYPE.BURY:
-                priority = 870;
-                break;
+            //case JOB_TYPE.REPORT_CRIME:
+            //    //case JOB_TYPE.BURY:
+            //    priority = 870;
+            //    break;
             case JOB_TYPE.BUILD_BLUEPRINT:
             case JOB_TYPE.PLACE_BLUEPRINT:
             case JOB_TYPE.SPAWN_LAIR:

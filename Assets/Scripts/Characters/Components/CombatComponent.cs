@@ -241,8 +241,8 @@ public class CombatComponent : CharacterComponent {
             owner.logComponent.PrintLogIfActive(debugLog);
             return new CombatReaction(COMBAT_REACTION.Flight);
         }
-        if (owner.traitContainer.HasTrait("Enslaved") && target is Character targetChar && targetChar.isNormalCharacter) {
-            debugLog += "\n-Character is a slave and target is a villager";
+        if (owner.traitContainer.HasTrait("Enslaved") && owner.isNormalCharacter && target is Character targetChar && targetChar.isNormalCharacter) {
+            debugLog += "\n-Character is a villager slave and target is a villager";
             debugLog += "\n-FLIGHT";
             owner.logComponent.PrintLogIfActive(debugLog);
             return new CombatReaction(COMBAT_REACTION.Flight);
