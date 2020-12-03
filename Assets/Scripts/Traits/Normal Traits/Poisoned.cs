@@ -155,6 +155,14 @@ namespace Traits {
             }
             return data;
         }
+        public override void OnCopyStatus(Status statusToCopy, ITraitable from, ITraitable to) {
+            base.OnCopyStatus(statusToCopy, from, to);
+            if (statusToCopy is Poisoned status) {
+                awareCharacters.AddRange(status.awareCharacters);
+                cleanser = status.cleanser;
+                isVenomous = status.isVenomous;
+            }
+        }
         #endregion
 
         #region Aware Characters

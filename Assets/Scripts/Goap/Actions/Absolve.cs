@@ -34,7 +34,7 @@ public class Absolve : GoapAction {
         target.crimeComponent.SetDecisionAndJudgeToAllUnpunishedCrimesWantedBy(target.faction, CRIME_STATUS.Absolved, goapNode.actor);
         target.crimeComponent.RemoveAllCrimesWantedBy(goapNode.actor.faction);
         //target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);
-        target.traitContainer.RemoveTrait(target, "Restrained", goapNode.actor);
+        target.traitContainer.RemoveRestrainAndImprison(target, goapNode.actor);
     }
     #endregion
 }

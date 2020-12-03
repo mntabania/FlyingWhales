@@ -54,8 +54,7 @@ namespace Traits {
                 if (character.traitContainer.HasTrait("Necromancer")) {
                     FactionManager.Instance.undeadFaction.SetRelationshipFor(PlayerManager.Instance.player.playerFaction, FACTION_RELATIONSHIP_STATUS.Friendly);
                 }
-                Messenger.Broadcast(CharacterSignals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, character);
-                Messenger.Broadcast(PlayerSignals.CHECK_IF_PLAYER_WINS);
+                Messenger.Broadcast(CharacterSignals.CHARACTER_BECOME_CULTIST, character);
 
             }
         }
@@ -72,7 +71,8 @@ namespace Traits {
                 character.RemovePlayerAction(SPELL_TYPE.FOUND_CULT);
                 character.jobComponent.RemovePriorityJob(JOB_TYPE.STEAL_CORPSE);
                 character.jobComponent.RemovePriorityJob(JOB_TYPE.SUMMON_BONE_GOLEM);
-                Messenger.Broadcast(CharacterSignals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, character);
+                
+                Messenger.Broadcast(CharacterSignals.CHARACTER_NO_LONGER_CULTIST, character);
             }
         }
         public override bool OnDeath(Character character) {

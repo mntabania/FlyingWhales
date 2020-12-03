@@ -98,7 +98,7 @@ public class Execute : GoapAction {
         target.crimeComponent.RemoveAllCrimesWantedBy(goapNode.actor.faction);
 
         target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);
-        target.traitContainer.RemoveTrait(target, "Restrained", goapNode.actor);
+        target.traitContainer.RemoveRestrainAndImprison(target, goapNode.actor);
         target.Death("executed", goapNode, goapNode.actor);
     }
     #endregion

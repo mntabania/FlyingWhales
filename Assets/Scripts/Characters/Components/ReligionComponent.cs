@@ -14,18 +14,18 @@
         SetDefaultReligion();
     }
     public void SubscribeListeners() {
-        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, OnCharacterAllianceChanged);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_BECOME_CULTIST, OnCharacterBecomeCultist);
         Messenger.AddListener<Character>(FactionSignals.FACTION_SET, OnCharacterFactionSet);
     }
     public void UnsubscribeListeners() {
-        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, OnCharacterAllianceChanged);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_BECOME_CULTIST, OnCharacterBecomeCultist);
         Messenger.RemoveListener<Character>(FactionSignals.FACTION_SET, OnCharacterFactionSet);
     }
     #endregion
 
     #region Listeners
-    private void OnCharacterAllianceChanged(Character character) {
-        if (character == owner && character.isAlliedWithPlayer) {
+    private void OnCharacterBecomeCultist(Character character) {
+        if (character == owner) {
             SetReligion(RELIGION.Demon_Worship);
         }
     }

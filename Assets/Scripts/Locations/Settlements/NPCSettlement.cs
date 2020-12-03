@@ -455,13 +455,20 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 continue;
             }
             log += $"\n\n-{resident.name}";
-            if(resident.isDead /*|| resident.isMissing*/ || resident.isBeingSeized || resident.traitContainer.HasTrait("Enslaved")) {
+            if(resident.isDead /*|| resident.isMissing*/ || resident.isBeingSeized) {
                 log += "\nEither dead or missing or seized or enslaved, will not be part of candidates for ruler";
                 continue;
             }
 
             if (owner != null && resident.crimeComponent.IsWantedBy(owner)) {
                 log += "\nMember is wanted by the faction owner of this settlement " + owner.name + ", skipping...";
+                continue;
+            }
+            bool isInsideSettlement = resident.gridTileLocation != null && resident.gridTileLocation.IsPartOfSettlement(this);
+            bool isInAnActiveParty = resident.partyComponent.isMemberThatJoinedQuest;
+
+            if(!isInsideSettlement && !isInAnActiveParty) {
+                log += "\nMember is not inside settlement and not in active party, skipping...";
                 continue;
             }
 
@@ -543,13 +550,23 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 weight += -40;
                 log += "\n  -Civilian: -40";
             }
+            if (weight < 1) {
+                weight = 1;
+                log += "\n  -Weight cannot be less than 1, setting weight to 1";
+            }
             if (resident.traitContainer.HasTrait("Ambitious")) {
                 weight = Mathf.RoundToInt(weight * 1.5f);
                 log += "\n  -Ambitious: x1.5";
             }
-            if (weight < 1) {
-                weight = 1;
-                log += "\n  -Weight cannot be less than 1, setting weight to 1";
+            if (resident is Summon || resident.characterClass.IsZombie()) {
+                if(HasResidentThatMeetsCriteria(c => c.race.IsSapient() && ((c.gridTileLocation != null && c.gridTileLocation.IsPartOfSettlement(this)) || c.partyComponent.isMemberThatJoinedQuest))) {
+                    weight *= 0;
+                    log += "\n  -Resident is a Summon and there is atleast 1 Sapient resident inside settlement or in active party: x0";
+                }
+            }
+            if (resident.traitContainer.HasTrait("Enslaved")) {
+                weight *= 0;
+                log += "\n  -Enslaved: x0";
             }
             log += $"\n  -TOTAL WEIGHT: {weight}";
             if (weight > 0) {
@@ -806,14 +823,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 if(target.reactionComponent.disguisedCharacter != null) {
                     target = target.reactionComponent.disguisedCharacter;
                 }
-                if(owner != null 
-                   && target.gridTileLocation != null 
-                   && target.gridTileLocation.IsPartOfSettlement(this)
-                   && target.limiterComponent.canPerform && target.limiterComponent.canMove
-                   //&& target.traitContainer.HasTrait("Unconscious") == false
-                   && target.isDead == false
-                   && target.combatComponent.combatMode != COMBAT_MODE.Passive) {
-                    if (owner.IsHostileWith(target.faction)) {
+                if(owner != null && target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(this)) {
+                    if (ShouldBeUnderSiegeIfCharacterEntersSettlement(target)) {
                         SetIsUnderSiege(true);
                         if(target.homeStructure != null 
                            && target.homeStructure.settlementLocation != null 
@@ -826,27 +837,17 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }	
         }
     }
-    // private void OnCharacterArrivedAtStructure(Character target, LocationStructure structure) {
-    //     if(target.reactionComponent.disguisedCharacter != null) {
-    //         target = target.reactionComponent.disguisedCharacter;
-    //     }
-    //     if(owner != null 
-    //         && target.gridTileLocation != null 
-    //         && target.gridTileLocation.IsPartOfSettlement(this)
-    //         && target.traitContainer.HasTrait("Unconscious") == false
-    //         && target.isDead == false
-    //         && target.combatComponent.combatMode != COMBAT_MODE.Passive) {
-    //         if (owner.IsHostileWith(target.faction)) {
-    //             SetIsUnderSiege(true);
-    //             if(target.homeStructure != null 
-    //                 && target.homeStructure.settlementLocation != null 
-    //                 && target.homeStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON
-    //                 && exterminateTargetStructure == null) {
-    //                 exterminateTargetStructure = target.homeStructure;
-    //             }
-    //         }
-    //     }
-    // }
+    private bool ShouldBeUnderSiegeIfCharacterEntersSettlement(Character p_character) {
+        if (p_character.limiterComponent.canPerform && p_character.limiterComponent.canMove && !p_character.isDead && p_character.combatComponent.combatMode != COMBAT_MODE.Passive) {
+            if (owner != null && p_character.faction != null && owner.IsHostileWith(p_character.faction)) {
+                if (p_character.race == RACE.WOLF && owner.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
+                    return false;
+                }
+                return true;
+            }    
+        }
+        return false;
+    }
     private void CheckIfStillUnderSiege() {
         bool stillUnderSiege = false;
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
@@ -1427,6 +1428,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     public void UpdateAbleJobsOfResident(Character character) {
         if (owner != null && owner.factionType.type == FACTION_TYPE.Ratmen) { return; }
+        if (!character.race.IsSapient() && character.minion == null) { return; }
         //update jobs based on hasPeasants switch
         if (!hasPeasants) {
             if (character.characterClass.className != "Noble") {
@@ -1462,6 +1464,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
     }
     public void UnapplyAbleJobsFromSettlement(Character character) {
+        if (!character.race.IsSapient() && character.minion == null) { return; }
         if (!hasPeasants) {
             if (character.characterClass.className != "Noble") {
                 CharacterClass peasantClass = CharacterManager.Instance.GetCharacterClass("Peasant");

@@ -24,7 +24,7 @@ namespace Traits {
                 if (targetCharacter.partyComponent.hasParty) {
                     targetCharacter.partyComponent.currentParty.RemoveMember(targetCharacter);
                 }
-                targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Restrained");
+                targetCharacter.traitContainer.RemoveRestrainAndImprison(targetCharacter);
                 targetCharacter.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Slave_Behaviour);
                 if (targetCharacter.isNotSummonAndDemon) {
                     targetCharacter.AssignClass("Peasant");

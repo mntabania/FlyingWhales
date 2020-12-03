@@ -15,6 +15,8 @@ public class CharacterVisuals {
     private static readonly int HsvaAdjust = Shader.PropertyToID("_HSVAAdjust");
     
     private Character _owner;
+    private bool _hasBlood;
+    private bool _usePreviousClassAsset;
     
     public PortraitSettings portraitSettings { get; private set; }
     public Material hairMaterial { get; private set; }
@@ -27,20 +29,16 @@ public class CharacterVisuals {
         get {
             if (_owner.race == RACE.RATMAN) {
                 return "Ratman"; //if race is a ratman then always use the ratman class for its visuals
-            } else if (_owner.characterClass.IsZombie()) {
-                //if character class is a zombie, then use previous class for any visuals to use
-                //this is so we do not need to create special sprites and special cases for every race that can become a zombie
+            } else if (_owner.minion != null) {
+                return _owner.minion.GetMinionClassName(_owner.minion.minionPlayerSkillType);
+            } else if (_usePreviousClassAsset) {
                 if (!string.IsNullOrEmpty(_owner.previousClassName)) {
                     return _owner.previousClassName;    
-                } else {
-                    return "Peasant"; //just a failsafe
                 }
             }
             return _owner.characterClass.className;
         }
     }
-    
-    private bool _hasBlood;
 
     public CharacterVisuals(Character character) {
         _owner = character;
@@ -104,6 +102,33 @@ public class CharacterVisuals {
         hairUIMaterial = Object.Instantiate(CharacterManager.Instance.hairUIMaterial);
         hairUIMaterial.SetVector(HsvaAdjust, new Vector4(ps.hairColorHue, ps.hairColorSaturation, ps.hairColorValue, 0f));
     }
+    public bool HasHeadHair() {
+        if (!_owner.race.HasHeadHair()) {
+            return false;
+        }
+        if (_owner.characterClass.className == "Mage" || _owner.characterClass.className == "Necromancer" || _owner.characterClass.className == "Cult Leader") {
+            return false;
+        }
+
+        if (portraitSettings.hair == -1) {
+            return false;
+        }
+        if (_owner.isInVampireBatForm || _owner.isInWerewolfForm) {
+            return false;
+        }
+
+        if (_owner.characterClass.IsZombie()) {
+            if (_usePreviousClassAsset) {
+                if (_owner.previousClassName == "Mage" || _owner.previousClassName == "Necromancer" || _owner.characterClass.className == "Cult Leader") {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
+    }
     #endregion
 
     #region Utilities
@@ -124,6 +149,9 @@ public class CharacterVisuals {
     private void RegeneratePortrait(Character character) {
         portraitSettings = CharacterManager.Instance.GeneratePortrait(character);
     }
+    public void UsePreviousClassAsset(bool p_state) {
+        _usePreviousClassAsset = p_state;
+    }
     #endregion
 
     #region Animations
@@ -139,14 +167,14 @@ public class CharacterVisuals {
         CharacterClassAsset assets = null;
         if (!isInBatForm) {
             if (!isInWerewolfForm) {
-                assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender, character.visuals.classToUseForVisuals);
+                assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.visuals.classToUseForVisuals);
             } else {
                 assets = CharacterManager.Instance.GetAdditionalMarkerAsset("Werewolf");
             }
         } else {
             assets = CharacterManager.Instance.GetAdditionalMarkerAsset("Vampire Bat");
         }
-        defaultSprite = assets.defaultSprite;
+        defaultSprite = assets.stillSprite;
 
         float size = defaultSprite.rect.width / 100f;
         if (character is Troll) {
@@ -246,7 +274,7 @@ public class CharacterVisuals {
         if (!_owner.isNormalCharacter) {
             if (_owner.characterClass.className == "Necromancer") {
                 return UtilityScripts.Utilities.UndeadIcon();        
-            } else if (_owner.faction != null && _owner.faction.isPlayerFaction) {
+            } else if (_owner.minion != null || (_owner.faction != null && _owner.faction.isPlayerFaction)) {
                 return UtilityScripts.Utilities.DemonIcon();
             } else if (_owner.faction?.factionType.type == FACTION_TYPE.Undead) {
                 return UtilityScripts.Utilities.UndeadIcon();

@@ -760,7 +760,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         combatComponent.UpdateBasicData(false);
         needsComponent.UpdateBaseStaminaDecreaseRate();
-        visuals.UpdateAllVisuals(this);
+        visuals.UpdateAllVisuals(this);    
+        
         UpdateCanCombatState();
 
         //Misc
@@ -769,6 +770,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if(_characterClass.className == "Ratman") {
             movementComponent.SetEnableDigging(true);
+        }
+        //Should not remove necromancer trait when necromancer becomes werewolf because it is only temporary
+        if(previousClassName == "Necromancer" && _characterClass.className != "Werewolf") {
+            traitContainer.RemoveTrait(this, "Necromancer");
+        }
+        if (_characterClass.className == "Necromancer" && previousClassName != "Werewolf") {
+            traitContainer.AddTrait(this, "Necromancer");
         }
         if (_characterClass.className == "Hero") {
             //Reference: https://www.notion.so/ruinarch/Hero-9697369ffca6410296f852f295ee0090
@@ -1640,20 +1648,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return null;
     }
-    public LocationGridTile GetTargetTileToGoToRegion(Region region) {
-        if (currentRegion != null) {
-            RegionInnerTileMap regionInnerTileMap = currentRegion.innerMap as RegionInnerTileMap;
-            if (regionInnerTileMap != null) {
-                return regionInnerTileMap.GetTileToGoToRegion(region);    
-            }
-        } else if (gridTileLocation != null) {
-            RegionInnerTileMap regionInnerTileMap = gridTileLocation.parentMap.region.innerMap as RegionInnerTileMap;
-            if (regionInnerTileMap != null) {
-                return regionInnerTileMap.GetTileToGoToRegion(region);    
-            }
-        }
-        return null;
-    }
     public LocationGridTile GetNearestUnoccupiedEdgeTileFromThis() {
         LocationGridTile currentGridTile = gridTileLocation;
         if (currentGridTile.IsAtEdgeOfWalkableMap() && currentGridTile.structure != null) {
@@ -2103,6 +2097,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetHasRisen(bool state) {
         hasRisen = state;
     }
+    public void SetRaisedFromDeadAsSkeleton(bool state) {
+        raisedFromDeadAsSkeleton = state;
+    }
     public bool IsConsideredInDangerBy(Character character) {
         if (traitContainer.HasTrait("Enslaved") && faction != character.faction) {
             return true;
@@ -2483,7 +2480,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (currentHP <= 0) {
             return; //if hp is already 0, do not deal damage
         }
-        
+        //If target is cannot perform/cannot move, 100% chance to knockout, reason: for abducting resting characters
+        //Put this here so that we will have the chance to knockout before applying damage, since once the character receives damage they will automatically wake up from sleeping
+        //So we need to check the knockout chance before applying damage
+        int chanceToKnockout = 15;
+        if (!limiterComponent.canPerform || !limiterComponent.canMove) {
+            chanceToKnockout = 100;
+        }
+
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
         AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true);
         attackSummary += $"\nDealt damage {stateComponent.owner.combatComponent.attack}";
@@ -2503,15 +2507,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
         } else {
-            //If target is cannot perform/cannot move, 100% chance to knockout, reason: for abducting resting characters
-            int chance = 15;
-            if(!limiterComponent.canPerform || !limiterComponent.canMove) {
-                chance = 100;
-            }
-
             //Each non lethal attack has a 15% chance of unconscious
             //https://trello.com/c/qxXVulZl/1126-each-non-lethal-attack-has-a-15-chance-of-making-target-unconscious
-            if(GameUtilities.RollChance(chance)) {
+            if(GameUtilities.RollChance(chanceToKnockout)) {
                 if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
                     traitContainer.AddTrait(this, "Unconscious", GetCharacterResponsibleForUnconsciousness(characterThatAttacked, combatStateOfAttacker));
                 }
@@ -4079,6 +4077,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.QUARANTINE);
         AddAdvertisedAction(INTERACTION_TYPE.START_PLAGUE_CARE);
         AddAdvertisedAction(INTERACTION_TYPE.CARE);
+        AddAdvertisedAction(INTERACTION_TYPE.LONG_STAND_STILL);
 
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);
@@ -4089,6 +4088,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);    
             } else if (this is SmallSpider) {
                 AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);    
+            } else if (this is Wurm) {
+                AddAdvertisedAction(INTERACTION_TYPE.BURROW);    
             }
         }
         if (this is Animal) {
@@ -5108,7 +5109,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    return false;
         //}
 
-        if (isAlliedWithPlayer && otherCharacter.isAlliedWithPlayer) {
+        if (traitContainer.HasTrait("Cultist") && otherCharacter.traitContainer.HasTrait("Cultist")) {
             //if both characters are allied with the player, do not consider each other as hostile.
             return false;
         }
@@ -5116,6 +5117,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (faction == null || otherCharacter.faction == null) {
             //if either character does not have a faction, do not consider them as hostile
             //This should almost never happen since we expect that all characters should have a faction.
+            return false;
+        }
+        if(((race == RACE.RATMAN || faction.factionType.type == FACTION_TYPE.Ratmen) && otherCharacter.race == RACE.RAT)
+            || (race == RACE.RAT && (otherCharacter.race == RACE.RATMAN || otherCharacter.faction.factionType.type == FACTION_TYPE.Ratmen))) {
+            //Ratmen does not consider rats as hostile and vice versa
             return false;
         }
         //if (isInVampireBatForm) {
@@ -5399,7 +5405,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 playerFaction = PlayerManager.Instance.player.playerFaction;
             }
             if(playerFaction != null) {
-                if (faction == playerFaction || !faction.IsHostileWith(playerFaction)) {
+                if (faction == playerFaction || faction.IsFriendlyWith(playerFaction)) {
                     return true;
                 }
             }
@@ -5671,42 +5677,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //}
         }
     }
-    public void RaiseFromDeath(Action<Character> onRaisedFromDeadAction = null, Faction faction = null, RACE race = RACE.SKELETON, string className = "") {
-        GameManager.Instance.StartCoroutine(faction == null
-            ? Raise(this, onRaisedFromDeadAction, FactionManager.Instance.neutralFaction, race, className)
-            : Raise(this, onRaisedFromDeadAction, faction, race, className));
-    }
-    private IEnumerator Raise(Character target, Action<Character> onReturnToLifeAction, Faction faction, RACE race, string className) {
-        if (className.Contains("Zombie")) {
-            LocationGridTile tile = grave != null ? grave.gridTileLocation : target.gridTileLocation;
-            GameManager.Instance.CreateParticleEffectAt(tile, PARTICLE_EFFECT.Zombie_Transformation);
-            yield return new WaitForSeconds(5f);
-            target.marker.PlayAnimation("Raise Dead");
-        } else {
-            target.marker.PlayAnimation("Raise Dead");
-            yield return new WaitForSeconds(0.7f);
-        }
-        target.RaiseFromDeadAsSkeleton(faction, race, className);
-        target.combatComponent.UpdateMaxHPAndReset();
-        yield return null;
-        onReturnToLifeAction?.Invoke(this);
-    }
-    private void RaiseFromDeadAsSkeleton(Faction faction, RACE race, string className) {
+    public void ReturnToLife(Faction faction, RACE race, string className) {
         if (_isDead) {
-            raisedFromDeadAsSkeleton = true;
+            //SetRaisedFromDeadAsSkeleton(true);
             ChangeFactionTo(faction);
             AssignRace(race);
             AssignClass(className);
 
             ReturnToLife();
-
-            MigrateHomeStructureTo(null);
-            needsComponent.SetTirednessForcedTick(0);
-            needsComponent.SetFullnessForcedTick(0);
-            needsComponent.SetHappinessForcedTick(0);
-            if (!behaviourComponent.HasBehaviour(typeof(ZombieBehaviour))) {
-                behaviourComponent.AddBehaviourComponent(typeof(ZombieBehaviour));
-            }
         }
     }
     public bool ReturnToLife() {
@@ -5978,7 +5956,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             SetDeathLog(localDeathLog);
             deathStr = localDeathLog.logText;
             Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, this);
-            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
 
             List<Trait> afterDeathTraitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.After_Death);
             if (afterDeathTraitOverrideFunctions != null) {
@@ -5987,6 +5964,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     trait.AfterDeath(this);
                 }
             }
+
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
         }
     }
     public void SetDeathLog(Log log) {

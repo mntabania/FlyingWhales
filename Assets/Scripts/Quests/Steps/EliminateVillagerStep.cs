@@ -23,14 +23,16 @@ namespace Quests.Steps {
         protected override void SubscribeListeners() {
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, CheckForCompletion);
             Messenger.AddListener<Character>(FactionSignals.FACTION_SET, CheckForCompletion);
-            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, CheckForCompletion);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_BECOME_CULTIST, CheckForCompletion);
             Messenger.AddListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
+            Messenger.AddListener<Character>(CharacterSignals.CHARACTER_NO_LONGER_CULTIST, OnCharacterNoLongerCultist);
         }
         protected override void UnSubscribeListeners() {
             Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, CheckForCompletion);
             Messenger.RemoveListener<Character>(FactionSignals.FACTION_SET, CheckForCompletion);
-            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, CheckForCompletion);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_BECOME_CULTIST, CheckForCompletion);
             Messenger.RemoveListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
+            Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_NO_LONGER_CULTIST, OnCharacterNoLongerCultist);
         }
 
         #region Listeners
@@ -52,6 +54,14 @@ namespace Quests.Steps {
             objectsToCenter?.Add(newVillager);
             _initialCharactersToEliminate++;
             Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
+        }
+        private void OnCharacterNoLongerCultist(Character p_character) {
+            if (!_targets.Contains(p_character)) {
+                _targets.Add(p_character);
+                objectsToCenter?.Add(p_character);
+                _initialCharactersToEliminate++;
+                Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);    
+            }
         }
         #endregion
 

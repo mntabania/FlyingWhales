@@ -116,7 +116,11 @@
     /// <summary>
     /// Parameters (Character)
     /// </summary>
-    public static string CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED = "OnCharacterChangedAllianceWithPlayer";
+    public static string CHARACTER_BECOME_CULTIST = "OnCharacterBecomeCultist";
+    /// <summary>
+    /// Parameters (Character)
+    /// </summary>
+    public static string CHARACTER_NO_LONGER_CULTIST = "OnCharacterNoLongerCultist";
     /// <summary>
     /// Parameters Character disguiser, Character target
     /// </summary>

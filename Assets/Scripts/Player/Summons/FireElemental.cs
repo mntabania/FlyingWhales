@@ -14,6 +14,7 @@ public class FireElemental : Summon {
     public override void Initialize() {
         base.Initialize();
         traitContainer.AddTrait(this, "Fireproof");
+        behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Fire_Elemental_Behaviour);
     }
     public override void SubscribeToSignals() {
         base.SubscribeToSignals();

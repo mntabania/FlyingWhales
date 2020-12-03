@@ -61,7 +61,7 @@ public class BurnAtStake : GoapAction {
         }
         target.crimeComponent.SetDecisionAndJudgeToAllUnpunishedCrimesWantedBy(target.faction, CRIME_STATUS.Burned_At_Stake, goapNode.actor);
         target.crimeComponent.RemoveAllCrimesWantedBy(goapNode.actor.faction);
-        target.traitContainer.RemoveTrait(target, "Restrained", goapNode.actor);
+        target.traitContainer.RemoveRestrainAndImprison(target, goapNode.actor);
 
         Faction oldFaction = target.faction;
         oldFaction.KickOutCharacter(target);

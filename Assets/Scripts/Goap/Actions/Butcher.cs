@@ -215,7 +215,7 @@ public class Butcher : GoapAction {
     private bool IsTargetMissing(Character actor, IPointOfInterest poiTarget) {
         return poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion
               || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true)) 
-              || (poiTarget is Character character && !character.isDead) || poiTarget.numOfActionsBeingPerformedOnThis > 0;
+              || (poiTarget is Character character && !character.isDead) || poiTarget.numOfActionsBeingPerformedOnThis > 0 || poiTarget.isBeingCarriedBy != null || (poiTarget is Character c && c.grave?.isBeingCarriedBy != null);
     }
     public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
@@ -224,7 +224,7 @@ public class Butcher : GoapAction {
         if (targetCharacter != null) {
             if (!witness.traitContainer.HasTrait("Cannibal") && targetCharacter.race.IsSapient()) {
                 //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Heinous);
-                CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
+                //CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
 
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status, node);
@@ -303,6 +303,12 @@ public class Butcher : GoapAction {
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
+            if (poiTarget.isBeingCarriedBy != null) {
+                return false;
+            }
+            if (poiTarget is Character character && character.grave != null && character.grave.isBeingCarriedBy != null) {
+                return false;
+            }
             return true;
             //if(poiTarget is Animal) {
             //    return true;
@@ -374,9 +380,12 @@ public class Butcher : GoapAction {
                 goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
             }
         } else {
-            if (foodPile != null && goapNode.actor.homeSettlement != null && goapNode.actor.isNormalCharacter && !(foodPile is HumanMeat) && !(foodPile is ElfMeat)) {
-                goapNode.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(foodPile);
-                goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
+            if (foodPile != null && goapNode.actor.homeSettlement != null) { //&& !(foodPile is HumanMeat) && !(foodPile is ElfMeat)
+                bool cannotCreateHaulJob = (foodPile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || foodPile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && goapNode.actor.faction != null && goapNode.actor.faction.isMajorNonPlayer;
+                if (!cannotCreateHaulJob) {
+                    goapNode.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(foodPile);
+                    goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
+                }
             }
         }
         if (foodPile != null) {

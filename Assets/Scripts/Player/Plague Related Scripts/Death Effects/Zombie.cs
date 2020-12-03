@@ -47,16 +47,18 @@ namespace Plague.Death_Effect {
             }
         }
         public override void OnDeath(Character p_character) {
-            ActivateEffect(p_character);
+            ActivateEffectOn(p_character);
         }
 
         private void WalkerZombie(Character p_character) {
             if (!p_character.characterClass.IsZombie()) {
+                p_character.visuals.UsePreviousClassAsset(true);
                 p_character.AssignClass("Walker Zombie");
             }
         }
         private void NightZombie(Character p_character) {
             if (!p_character.characterClass.IsZombie()) {
+                p_character.visuals.UsePreviousClassAsset(true);
                 p_character.AssignClass("Night Zombie");
             }
         }

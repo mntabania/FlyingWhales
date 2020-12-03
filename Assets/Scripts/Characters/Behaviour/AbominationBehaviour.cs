@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using Inner_Maps;
 using UtilityScripts;
 
-public class AbominationBehaviour : CharacterBehaviourComponent {
+public class AbominationBehaviour : BaseMonsterBehaviour {
     public AbominationBehaviour() {
         priority = 10;
     }
-    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+    protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.behaviourComponent.abominationTarget == null) {
             //determine new abomination target
             List<HexTile> targetChoices = GetTargetChoices(character);

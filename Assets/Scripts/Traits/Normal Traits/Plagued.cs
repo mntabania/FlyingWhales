@@ -83,6 +83,9 @@ namespace Traits {
                 }
                 Messenger.AddListener<Fatality>(PlayerSignals.ADDED_PLAGUE_DISEASE_FATALITY, OnPlagueDiseaseFatalityAdded);
                 Messenger.AddListener<PlagueSymptom>(PlayerSignals.ADDED_PLAGUE_DISEASE_SYMPTOM, OnPlagueDiseaseSymptomAdded);
+                Messenger.AddListener<PlagueDeathEffect>(PlayerSignals.SET_PLAGUE_DEATH_EFFECT, OnSetPlagueDeathEffect);
+                Messenger.AddListener<PlagueDeathEffect>(PlayerSignals.UNSET_PLAGUE_DEATH_EFFECT, OnUnsetPlagueDeathEffect);
+
                 for (int i = 0; i < PlagueDisease.Instance.activeFatalities.Count; i++) {
                     Fatality fatality = PlagueDisease.Instance.activeFatalities[i];
                     AddFatality(fatality);
@@ -91,6 +94,7 @@ namespace Traits {
                     PlagueSymptom symptom = PlagueDisease.Instance.activeSymptoms[i];
                     AddSymptom(symptom);
                 }
+                AddDeathEffect(PlagueDisease.Instance.activeDeathEffect);
             }
         }
         #endregion
@@ -161,14 +165,18 @@ namespace Traits {
                     PlagueSymptom symptom = PlagueDisease.Instance.activeSymptoms[i];
                     RemoveSymptom(symptom);
                 }
-                PlagueDisease.Instance.UpdateActiveCasesAndRecoveriesOnPOILostPlagued(removedFromPOI);
+                if (removedFrom is Character character) {
+                    if (!character.isDead) {
+                        PlagueDisease.Instance.UpdateActiveCasesOnPOILostPlagued(removedFromPOI);
+                        if (!character.characterClass.IsZombie()) {
+                            PlagueDisease.Instance.UpdateRecoveriesOnPOILostPlagued(removedFromPOI);
+                        }    
+                    }
+                }
                 RemoveDeathEffect(PlagueDisease.Instance.activeDeathEffect);
             }
         }
         public override bool PerTickWhileStationaryOrUnoccupied() {
-            if(owner.traitContainer.HasTrait("Plague Reservoir")) {
-                return false;
-            }
             if (owner is Character character) {
                 _perTickWhileStationaryOrUnoccupied?.Invoke(character);
             }
@@ -218,18 +226,23 @@ namespace Traits {
         public override void OnHourStarted(ITraitable traitable) {
             base.OnHourStarted(traitable);
             _numberOfHoursPassed++;
-            if (owner.traitContainer.HasTrait("Plague Reservoir")) {
-                return;
-            }
             if (traitable is Character character) {
                 _hourStarted?.Invoke(character, _numberOfHoursPassed);
             }
         }
         public override bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
+            //We still have a checker here for plague reservoir and zombie even though we already have a checker for it in fatality/symptom/death effect
+            //The reason is the code after Invoking the _characterStartedPerformingAction
+            //Since we do are not entirely sure that the reason for canDoHappinessRecovery being false is because of the _characterStartedPerformingAction since we do not return anything from it
+            //There might be other reasons why the canDoHappinessRecovery is false, so the safest option is not to invoke it at all
             if (owner.traitContainer.HasTrait("Plague Reservoir")) {
                 return false;
             }
             if (node.actor == owner && owner is Character character) {
+                if (character.characterClass.IsZombie()) {
+                    //Do not do start perform effect if character is a zombie
+                    return false;
+                }
                 if(_characterStartedPerformingAction != null) {
                     _characterStartedPerformingAction.Invoke(character, node);
                     if (character.interruptComponent.isInterrupted && character.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Total_Organ_Failure) {
@@ -263,31 +276,33 @@ namespace Traits {
             return base.OnStartPerformGoapAction(node, ref willStillContinueAction);
         }
         public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
-            if (owner.traitContainer.HasTrait("Plague Reservoir")) {
-                return;
-            }
             if (goapNode.actor == owner && owner is Character character) {
                 _characterDonePerformingAction?.Invoke(character, goapNode);
             }
             base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
         }
         public override void AfterDeath(Character character) {
-            if (owner.traitContainer.HasTrait("Plague Reservoir")) {
-                return;
-            }
             _characterDeath?.Invoke(character);
         }
         public override bool OnDeath(Character character) {
-            if (!character.characterClass.IsZombie() && PlayerManager.Instance.player.plagueComponent.CanGainPlaguePoints()) {
-                PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(2, character);    
+            if (!character.characterClass.IsZombie()) {
+                if (PlayerManager.Instance.player.plagueComponent.CanGainPlaguePoints()) {
+                    PlayerManager.Instance.player.plagueComponent.GainPlaguePointFromCharacter(2, character);    
+                }
+                PlagueDisease.Instance.UpdateActiveCasesOnCharacterDied(character);
             }
-            PlagueDisease.Instance.UpdateActiveCasesOnCharacterDied(character);
             return base.OnDeath(character);
         }
         protected override string GetDescriptionInUI() {
             string tooltip = base.GetDescriptionInUI();
             tooltip = $"{tooltip}\n{PlagueDisease.Instance.GetPlagueEffectsSummary()}";
             return tooltip;
+        }
+        public override void OnCopyStatus(Status statusToCopy, ITraitable from, ITraitable to) {
+            base.OnCopyStatus(statusToCopy, from, to);
+            if (statusToCopy is Plagued status) {
+                _numberOfHoursPassed = status.numberOfHoursPassed;
+            }
         }
         #endregion
 
@@ -388,9 +403,6 @@ namespace Traits {
             RemoveDeathEffect(p_deathEffect);
         }
         private void OnTraitableGainedTrait(ITraitable p_traitable, Trait p_trait) {
-            if (owner.traitContainer.HasTrait("Plague Reservoir")) {
-                return;
-            }
             //TODO: Might be a better way to trigger that the character that owns this has gained a trait, rather than listening to a signal and filtering results
             if (p_traitable == owner && owner is Character character) {
                 _characterGainedTrait?.Invoke(character, p_trait);

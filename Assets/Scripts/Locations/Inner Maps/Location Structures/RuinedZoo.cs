@@ -36,6 +36,8 @@ namespace Inner_Maps.Location_Structures {
                 List<LocationGridTile> tileChoices = structureRoom.tilesInRoom.Where(x => x.IsPassable()).ToList();
                 LocationGridTile targetTile = CollectionUtilities.GetRandomElement(tileChoices);
                 CharacterManager.Instance.PlaceSummon(newSummon, targetTile);
+                newSummon.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+                newSummon.movementComponent.SetEnableDigging(false);
             }
         }
         protected override StructureRoom CreteNewRoomForStructure(List<LocationGridTile> tilesInRoom) {
@@ -46,22 +48,25 @@ namespace Inner_Maps.Location_Structures {
         #region Listeners
         protected override void SubscribeListeners() {
             base.SubscribeListeners();
-            Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-            Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, OnCharacterLeftStructure);
+            // Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+            Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
         }
         protected override void UnsubscribeListeners() {
             base.UnsubscribeListeners();
-            Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+            // Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
             Messenger.RemoveListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, OnCharacterLeftStructure);
+        }
+        private void OnGameLoaded() {
+            Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
+            Messenger.AddListener<Character, LocationStructure>(CharacterSignals.CHARACTER_LEFT_STRUCTURE, OnCharacterLeftStructure);
         }
         #endregion
         
-        private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
-            if (structure == this && character is Summon && IsTilePartOfARoom(character.gridTileLocation, out var room) && room is ZooCell) {
-                character.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
-                character.movementComponent.SetEnableDigging(false);
-            }
-        }
+        // private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
+        //     if (structure == this && character is Summon && IsTilePartOfARoom(character.gridTileLocation, out var room) && room is ZooCell) {
+        //         
+        //     }
+        // }
         private void OnCharacterLeftStructure(Character character, LocationStructure structure) {
             if (structure == this && character is Summon summon) {
                 summon.combatComponent.SetCombatMode(summon.defaultCombatMode);

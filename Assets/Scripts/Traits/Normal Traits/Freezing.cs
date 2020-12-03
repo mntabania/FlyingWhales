@@ -130,6 +130,13 @@ namespace Traits {
                 _freezingGO = null;
             }
         }
+        public override void OnCopyStatus(Status statusToCopy, ITraitable from, ITraitable to) {
+            base.OnCopyStatus(statusToCopy, from, to);
+            if (statusToCopy is Freezing status) {
+                excludedStructuresInSeekingShelter.AddRange(status.excludedStructuresInSeekingShelter);
+                currentShelterStructure = status.currentShelterStructure;
+            }
+        }
         #endregion
 
         #region General

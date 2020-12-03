@@ -273,9 +273,10 @@ public class GenericTileObject : TileObject {
             manMadeStructure.SetStructureObject(blueprintOnTile);    
         }
         structure.SetOccupiedHexTile(hexTile.innerMapHexTile);
-        blueprintOnTile.OnBuiltStructureObjectPlaced(gridTileLocation.parentMap, structure);
+        blueprintOnTile.OnBuiltStructureObjectPlaced(gridTileLocation.parentMap, structure, out int createdWalls, out int totalWalls);
         structure.CreateRoomsBasedOnStructureObject(blueprintOnTile);
         structure.OnBuiltNewStructure();
+
         CancelBlueprintExpiry();
         blueprintOnTile = null;
         isCurrentlyBuilding = false;

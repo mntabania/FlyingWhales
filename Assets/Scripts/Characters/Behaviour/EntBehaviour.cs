@@ -1,11 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Inner_Maps;
+﻿using Inner_Maps;
 using Inner_Maps.Location_Structures;
-using UnityEngine;
-using UtilityScripts;
 
-public class EntBehaviour : CharacterBehaviourComponent {
+public class EntBehaviour : BaseMonsterBehaviour {
     private readonly WeightedDictionary<string> _actionWeights;
     
 	public EntBehaviour() {
@@ -15,7 +11,7 @@ public class EntBehaviour : CharacterBehaviourComponent {
         _actionWeights.AddElement("Stand", 20); //20
         _actionWeights.AddElement("Revert", 5); //5
 	}
-	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+	protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} is Ent";
 
         string chosenAction = _actionWeights.PickRandomElementGivenWeights();
@@ -39,7 +35,5 @@ public class EntBehaviour : CharacterBehaviourComponent {
             treeObject.SetOccupyingEnt(ent);
             return true;
         }
-        producedJob = null;
-        return false;
     }
 }

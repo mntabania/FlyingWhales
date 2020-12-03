@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
+  m_Name: Necromancer Data
+  m_EditorClassIdentifier: 
+  defaultSprites:
+    stillSprite: {fileID: 21300000, guid: 4e6e48b9940ff9a40a66a35d0f810874, type: 3}
+    animationSprites:
+    - {fileID: 21300000, guid: a57d69a1b23654e41b0f05acaef73396, type: 3}
+    - {fileID: 21300000, guid: ace0232642536ba43a0701e3da121fd4, type: 3}
+    - {fileID: 21300000, guid: ae89228d20a7bf44d8e9d8e41377ae6e, type: 3}
+    - {fileID: 21300000, guid: f9a27ffd3b6c0d640bfefc00c5c583a4, type: 3}
+    - {fileID: 21300000, guid: 4e6e48b9940ff9a40a66a35d0f810874, type: 3}
+    - {fileID: 21300000, guid: 61550948c5c1dcf4d8638fd3dea57ad0, type: 3}
+    - {fileID: 21300000, guid: 77c6cbc03455475438d3f6107dcfd461, type: 3}
+    - {fileID: 21300000, guid: 7b583143f7259604f990404c063e5036, type: 3}
+    - {fileID: 21300000, guid: aa259b32b55282c439e15f5e7f7a9083, type: 3}
+    - {fileID: 21300000, guid: ed7d3c02d0def7e43aa5c172b41a82ed, type: 3}
+    - {fileID: 21300000, guid: 6312771a1a77a134b813681e09eb2e20, type: 3}
+    - {fileID: 21300000, guid: 3a0ec23466d41b64e8f053ab57eb85f8, type: 3}
+    - {fileID: 21300000, guid: b28f7c74048914e4fb88f907fbd8a2d0, type: 3}
+    - {fileID: 21300000, guid: 3869438d5a5b4bc45a4b8f72c5b486a1, type: 3}
+    - {fileID: 21300000, guid: db50c6d736fa2354287653c042ce3a3e, type: 3}
+    - {fileID: 21300000, guid: 08e02355cad41b84d9d56e52a52ee35d, type: 3}
+    - {fileID: 21300000, guid: 8b06beed07978f14ebeee9e9d3b4bfac, type: 3}
+    - {fileID: 21300000, guid: 4610ef57915419a47b37d4465151cc0c, type: 3}
+  raceSprites:
+    m_keys: 
+    m_values: []

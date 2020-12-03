@@ -48,7 +48,7 @@ namespace Traits {
             if (sourceCharacter is Character) {
                 owner = sourceCharacter as Character;
                 owner.AddTraitNeededToBeRemoved(this);
-                owner.traitContainer.AddTrait(owner, "Prisoner");
+                //owner.traitContainer.AddTrait(owner, "Prisoner");
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
@@ -61,7 +61,7 @@ namespace Traits {
                 //always set character as un-abducted by anyone after they lose restrain trait. 
                 character.defaultCharacterTrait.SetHasBeenAbductedByWildMonster(false);
                 character.defaultCharacterTrait.SetHasBeenAbductedByPlayerMonster(false);
-                owner.traitContainer.RemoveTrait(owner, "Prisoner");
+                //owner.traitContainer.RemoveTrait(owner, "Prisoner");
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }

@@ -844,7 +844,20 @@ namespace Inner_Maps {
             return localPlace.ToString();
         }
         public float GetDistanceTo(LocationGridTile tile) {
-            return Vector2.Distance(localLocation, tile.localLocation);
+            if(structure.region != tile.structure.region) {
+                //Computing distance of tiles from different region should be different
+                //It should origin tile distance to origin tile region's edge tile + target tile region's edge tile to target tile
+                Region targetRegion = tile.structure.region;
+                LocationGridTile targetGate = GetTargetTileToGoToRegion(targetRegion);
+                LocationGridTile exitTile = GetExitTileToGoToRegion(targetGate);
+
+                float originDistanceToExitTile = Vector2.Distance(localLocation, exitTile.localLocation);
+                float targetGateDistanceToTargetTile = Vector2.Distance(targetGate.localLocation, tile.localLocation);
+
+                return originDistanceToExitTile + targetGateDistanceToTargetTile;
+            } else {
+                return Vector2.Distance(localLocation, tile.localLocation);
+            }
         }
         public bool HasOccupiedNeighbour() {
             for (int i = 0; i < neighbourList.Count; i++) {
@@ -1499,6 +1512,35 @@ namespace Inner_Maps {
         }
         public bool IsPassable() {
             return (objHere == null || !(objHere is BlockWall)) && groundType != Ground_Type.Water;
+        }
+        private LocationGridTile GetTargetTileToGoToRegion(Region region) {
+            //if (currentRegion != null) {
+            //    RegionInnerTileMap regionInnerTileMap = currentRegion.innerMap as RegionInnerTileMap;
+            //    if (regionInnerTileMap != null) {
+            //        return regionInnerTileMap.GetTileToGoToRegion(region);
+            //    }
+            //} else if (gridTileLocation != null) {
+            //    RegionInnerTileMap regionInnerTileMap = gridTileLocation.parentMap.region.innerMap as RegionInnerTileMap;
+            //    if (regionInnerTileMap != null) {
+            //        return regionInnerTileMap.GetTileToGoToRegion(region);
+            //    }
+            //}
+            RegionInnerTileMap regionInnerTileMap = structure.region.innerMap as RegionInnerTileMap;
+            if (regionInnerTileMap != null) {
+                return regionInnerTileMap.GetTileToGoToRegion(region);
+            }
+            return null;
+        }
+        public LocationGridTile GetExitTileToGoToRegion(Region region) {
+            //gate -the tile where the character will appear in the target region
+            LocationGridTile gate = GetTargetTileToGoToRegion(region);
+            return GetExitTileToGoToRegion(gate);
+        }
+        public LocationGridTile GetExitTileToGoToRegion(LocationGridTile gateInTargetRegion) {
+            //direction - the direction where the character must go in order to go to the other region, it is also the basis in which we get the tile where the character will exit in this region
+            DIRECTION direction = gateInTargetRegion.GetDirection();
+            LocationGridTile exitTile = GetNearestEdgeTileFromThis(direction);
+            return exitTile;
         }
         #endregion
 

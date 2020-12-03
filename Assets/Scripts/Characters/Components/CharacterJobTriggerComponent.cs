@@ -156,7 +156,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     private void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
 		if (traitable == owner) {
 			if (TraitManager.Instance.removeStatusTraits.Contains(trait.name)) {
-				TryCreateRemoveStatusJob(trait);
+				TryCreateSettlementRemoveStatusJob(trait);
 			}
 			if (trait is Burning || trait is Poisoned) {
 				TriggerRemoveStatusSelf(trait);
@@ -325,24 +325,19 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region General Jobs
-    public bool PlanIdleStroll(LocationStructure targetStructure, LocationGridTile targetTile = null) {
-        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.STROLL, CHARACTER_STATE.STROLL, owner);
-        owner.jobQueue.AddJobInQueue(job);
-        //if (currentStructure == targetStructure) {
-        //    stateComponent.SwitchToState(CHARACTER_STATE.STROLL);
-        //} else {
-        //    MoveToAnotherStructure(targetStructure, targetTile, null, () => stateComponent.SwitchToState(CHARACTER_STATE.STROLL));
-        //}
-        return true;
+    public bool PlanIdleLongStandStill(out JobQueueItem p_producedJob) {
+	    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.LONG_STAND_STILL], owner, owner, null, 0);
+	    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.LONG_STAND_STILL, owner, owner);
+	    goapPlan.SetDoNotRecalculate(true);
+	    job.SetCannotBePushedBack(true);
+	    job.SetAssignedPlan(goapPlan);
+	    p_producedJob = job;
+	    return true;
     }
     public bool PlanIdleStrollOutside() {
         CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.STROLL, CHARACTER_STATE.STROLL_OUTSIDE, owner);
         owner.jobQueue.AddJobInQueue(job);
-        //if (currentStructure == targetStructure) {
-        //    stateComponent.SwitchToState(CHARACTER_STATE.STROLL_OUTSIDE);
-        //} else {
-        //    MoveToAnotherStructure(targetStructure, targetTile, null, () => stateComponent.SwitchToState(CHARACTER_STATE.STROLL_OUTSIDE));
-        //}
         return true;
     }
     public bool PlanIdleStrollOutside(out JobQueueItem producedJob) {
@@ -485,6 +480,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void TriggerRemoveStatusSelf(Trait trait) {
+		if (owner is Summon) {
+			return; //Reference: https://trello.com/c/LkTisHji/3023-live-03356-spider-in-villager-faction-able-to-remove-poison
+		}
 		if (trait.gainedFromDoing == null || trait.gainedFromDoing.isStealth == false) { //only create remove status job if trait was not gained from a stealth action
 			GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, target = GOAP_EFFECT_TARGET.TARGET };
 			if (owner.jobQueue.HasJob(goapEffect, owner) == false) {
@@ -495,6 +493,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 	}
     public void TriggerRemoveStatusTarget(IPointOfInterest target, string traitName) {
+	    if (owner is Summon) {
+		    return; //Reference: https://trello.com/c/LkTisHji/3023-live-03356-spider-in-villager-faction-able-to-remove-poison
+	    }
         GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, target = GOAP_EFFECT_TARGET.TARGET };
         if (owner.jobQueue.HasJob(goapEffect, owner) == false) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, target, owner);
@@ -611,7 +612,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	#endregion
 	
 	#region Remove Status
-	private void TryCreateRemoveStatusJob(Trait trait) {
+	private void TryCreateSettlementRemoveStatusJob(Trait trait) {
 		if (owner.homeSettlement != null && owner.gridTileLocation != null && owner.gridTileLocation.IsNextToOrPartOfSettlement(owner.homeSettlement)
 		    && owner.traitContainer.HasTrait("Criminal") == false) {
 			TriggerSettlementRemoveStatusJob(trait);
@@ -623,7 +624,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			List<Trait> statusTraits = owner.traitContainer.GetTraitsOrStatuses<Trait>(TraitManager.Instance.removeStatusTraits.ToArray());
 			for (int i = 0; i < statusTraits.Count; i++) {
 				Trait trait = statusTraits[i];
-				TryCreateRemoveStatusJob(trait);
+				TryCreateSettlementRemoveStatusJob(trait);
 			}
 		}
 	}
@@ -836,23 +837,18 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool TriggerRoamAroundTerritory(out JobQueueItem producedJob, bool checkIfPathPossibleWithoutDigging = false) {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TERRITORY)) {
 		    LocationGridTile chosenTile;
-		    if (owner.homeStructure != null) {
+		    if (owner.homeSettlement != null) {
+			    chosenTile = checkIfPathPossibleWithoutDigging ? 
+				    owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t)) : 
+				    owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+		    } else if (owner.homeStructure != null) {
                 if (checkIfPathPossibleWithoutDigging) {
 				    List<LocationGridTile> choices = owner.homeStructure.passableTiles
                         .Where(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
 				    chosenTile = choices.Count > 0 ? CollectionUtilities.GetRandomElement(choices) : CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
 			    } else {
 				    chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
-                    //string log = _owner.name + "-> " + _owner.homeStructure.name + " PASSABLE TILES: " + _owner.homeStructure.passableTiles.Count;
-                    //for (int i = 0; i < _owner.homeStructure.passableTiles.Count; i++) {
-                    //    log += "\n" + _owner.homeStructure.passableTiles[i];
-                    //}
-                    //Debug.LogWarning(log);
-			    }
-		    } else if (owner.homeSettlement != null) {
-			    chosenTile = checkIfPathPossibleWithoutDigging ? 
-				    owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t)) : 
-				    owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+                }
 		    } else if(owner.HasTerritory()) {
 			    HexTile chosenTerritory = owner.territory;
 			    if (checkIfPathPossibleWithoutDigging) {
@@ -1363,17 +1359,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
-    public bool CreateButcherJob(Character target) {
-        if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, INTERACTION_TYPE.BUTCHER, target, owner);
-            return owner.jobQueue.AddJobInQueue(job);
-        }
-        return false;
-    }
-    public bool CreateButcherJob(Character target, out JobQueueItem producedJob) {
+    public bool CreateButcherJob(Character target, JOB_TYPE jobType, out JobQueueItem producedJob) {
         producedJob = null;
-        if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, INTERACTION_TYPE.BUTCHER, target, owner);
+        if (!owner.jobQueue.HasJob(jobType)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.BUTCHER, target, owner);
+            job.SetCancelOnDeath(false);
             producedJob = job;
             return true;
         }
@@ -1942,12 +1932,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         bool canReportToFactionLeader = false;
         bool canReportToSettlementRuler = false;
         if (owner.faction != null && owner.faction.isMajorNonPlayer && owner.faction.leader != null && owner.faction.leader is Character characterLeader
-            && !characterLeader.isDead && characterLeader != owner && characterLeader != crimeData.criminal && characterLeader != crimeData.target) {
+            && !characterLeader.isDead && !characterLeader.traitContainer.HasTrait("Travelling") && characterLeader != owner && characterLeader != crimeData.criminal && characterLeader != crimeData.target) {
             if(!crimeData.IsWitness(characterLeader)) {
                 canReportToFactionLeader = true;
             }
         }
-        if (owner.homeSettlement != null && owner.homeSettlement.ruler != null && !owner.homeSettlement.ruler.isDead && owner.homeSettlement.ruler != owner && owner.homeSettlement.ruler != crimeData.criminal && owner.homeSettlement.ruler != crimeData.target) {
+        if (owner.homeSettlement != null && owner.homeSettlement.ruler != null && !owner.homeSettlement.ruler.isDead && !owner.homeSettlement.ruler.traitContainer.HasTrait("Travelling") && owner.homeSettlement.ruler != owner && owner.homeSettlement.ruler != crimeData.criminal && owner.homeSettlement.ruler != crimeData.target) {
             if (!crimeData.IsWitness(owner.homeSettlement.ruler)) {
                 canReportToSettlementRuler = true;
             }
@@ -2119,6 +2109,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (!owner.jobQueue.HasJob(JOB_TYPE.GO_TO_WAITING)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO_WAITING, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, owner);
             job.SetCannotBePushedBack(true);
+            job.SetDoNotRecalculate(true);
             producedJob = job;
             return true;
         }
@@ -2443,8 +2434,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerMonsterAbduct(Character targetCharacter, out JobQueueItem producedJob, LocationGridTile targetTile = null) {
-	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_ABDUCT, INTERACTION_TYPE.DROP, targetCharacter, owner);
-	    job.AddOtherData(INTERACTION_TYPE.DROP, targetTile != null ? new object[] {targetTile.structure, targetTile} : new object[] {owner.homeStructure});
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_ABDUCT, INTERACTION_TYPE.DROP_RESTRAINED, targetCharacter, owner);
+	    job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, targetTile != null ? new object[] {targetTile.structure, targetTile} : new object[] {owner.homeStructure});
         job.SetDoNotRecalculate(true);
 	    producedJob = job;
 	    return true;
@@ -3216,6 +3207,32 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     #endregion
 
+    #region Patrol
+    public bool TriggerPersonalPatrol(out JobQueueItem p_producedJob) {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.PATROL)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PATROL, INTERACTION_TYPE.START_PATROL, owner, owner);
+		    job.SetCannotBePushedBack(true);
+		    p_producedJob = job;
+		    return true;
+	    }
+	    p_producedJob = null;
+	    return false;
+    }
+    #endregion
+
+    #region Burrowing
+    public bool TriggerIdleBurrow(LocationGridTile p_targetTile, out JobQueueItem p_producedJob) {
+	    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BURROW], owner, owner, new OtherData[] { new LocationGridTileOtherData(p_targetTile) }, 0);
+	    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.BURROW, owner, owner);
+	    goapPlan.SetDoNotRecalculate(true);
+	    job.SetCannotBePushedBack(true);
+	    job.SetAssignedPlan(goapPlan);
+	    p_producedJob = job;
+	    return true;
+    }
+    #endregion
+    
     #region Loading
     public void LoadReferences(SaveDataCharacterJobTriggerComponent data) {
         //Currently N/A

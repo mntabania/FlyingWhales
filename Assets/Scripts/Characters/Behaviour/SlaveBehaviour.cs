@@ -19,13 +19,17 @@ public class SlaveBehaviour : CharacterBehaviourComponent {
         bool isInHome = character.IsInHomeSettlement() || character.isAtHomeStructure || character.IsInTerritory();
         if (isInHome) {
             if (character.behaviourComponent.PlanWorkActions(out producedJob)) {
-                //Ratmen can do work actions
+                //Slaves can do work actions
                 return true;
             }
         }
-        if (!isInHome) {
-            return character.jobComponent.TriggerReturnTerritory(out producedJob);
+        if (character.movementComponent.isStationary) {
+            return character.jobComponent.PlanIdleLongStandStill(out producedJob);
+        } else {
+            if (!isInHome) {
+                return character.jobComponent.TriggerReturnTerritory(out producedJob);
+            }
+            return character.jobComponent.TriggerRoamAroundTile(out producedJob);
         }
-        return character.jobComponent.TriggerRoamAroundTile(out producedJob);
     }
 }

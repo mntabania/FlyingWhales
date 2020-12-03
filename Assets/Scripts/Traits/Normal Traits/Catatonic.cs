@@ -77,6 +77,12 @@ namespace Traits {
 
             //CheckForChaosOrb();
         }
+        public override void OnCopyStatus(Status statusToCopy, ITraitable from, ITraitable to) {
+            base.OnCopyStatus(statusToCopy, from, to);
+            if (statusToCopy is Catatonic status) {
+                _chanceToRemove = status.chanceToRemove;
+            }
+        }
         #endregion
 
         private void CheckTrait(Character owner) {

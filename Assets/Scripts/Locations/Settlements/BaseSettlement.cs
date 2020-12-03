@@ -351,8 +351,9 @@ namespace Locations.Settlements {
         public bool HasStructure(STRUCTURE_TYPE type) {
             return structures.ContainsKey(type);
         }
-        public LocationStructure GetRandomStructure(System.Func<LocationStructure, bool> criteria) {
-            List<LocationStructure> choices = new List<LocationStructure>();
+        public LocationStructure GetRandomStructureThatMeetCriteria(System.Func<LocationStructure, bool> criteria) {
+            List<LocationStructure> choices = ObjectPoolManager.Instance.CreateNewStructuresList();
+            LocationStructure chosenStructure = null;
             for (int i = 0; i < allStructures.Count; i++) {
                 LocationStructure structure = allStructures[i];
                 if (criteria.Invoke(structure)) {
@@ -360,9 +361,10 @@ namespace Locations.Settlements {
                 }
             }
             if (choices.Count > 0) {
-                return CollectionUtilities.GetRandomElement(choices);
+                chosenStructure = CollectionUtilities.GetRandomElement(choices);
             }
-            return null;
+            ObjectPoolManager.Instance.ReturnStructuresListToPool(choices);
+            return chosenStructure;
         }
         public List<StructureConnector> GetAvailableStructureConnectors() {
             List<StructureConnector> connectors = new List<StructureConnector>();
@@ -663,7 +665,7 @@ namespace Locations.Settlements {
             }
             return null;
         }
-        public List<T> GetTileObjectsOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker) where T : TileObject {
+        public List<T> GetTileObjectsOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker = null) where T : TileObject {
             List<T> objs = null;
             for (int i = 0; i < allStructures.Count; i++) {
                 List<T> structureTileObjects = allStructures[i].GetTileObjectsOfType(validityChecker);

@@ -1,17 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Inner_Maps;
-using Inner_Maps.Location_Structures;
-using Locations.Settlements;
-using Traits;
+﻿using Traits;
 
-public class TrollBehaviour : CharacterBehaviourComponent {
+public class TrollBehaviour : BaseMonsterBehaviour {
 	public TrollBehaviour() {
 		priority = 8;
-		// attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
 	}
-	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+	protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         log += $"\n-{character.name} is a troll";
         if (character.isAtHomeStructure || character.IsInHomeSettlement()) {
@@ -136,7 +129,7 @@ public class TrollBehaviour : CharacterBehaviourComponent {
                 }
                 if (chosenCharacter != null) {
                     log += $"\n-Chosen character: " + chosenCharacter.name;
-                    if (character.jobComponent.CreateButcherJob(chosenCharacter, out producedJob)) {
+                    if (character.jobComponent.CreateButcherJob(chosenCharacter, JOB_TYPE.MONSTER_BUTCHER, out producedJob)) {
                         return true;
                     }
                 }

@@ -100,6 +100,7 @@ public class ConsoleBase : InfoUIBase {
             {"/remove_needed_class", RemoveNeededClassFromSettlement},
             {"/activate_settlement_event", ActivateSettlementEvent},
             {"/trigger_quarantine", TriggerQuarantine},
+            {"/add_ideology", AddFactionIdeology},
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1148,6 +1149,40 @@ public class ConsoleBase : InfoUIBase {
 
     //AddSuccessMessage(text);
     //}
+    private void AddFactionIdeology(string[] parameters) {
+        if (parameters.Length < 2) { //Faction, Ideology
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /add_ideology");
+            return;
+        }
+        
+        string factionParameterString = parameters[0];
+        string ideologyStr = parameters[1];
+        Faction faction = FactionManager.Instance.GetFactionBasedOnName(factionParameterString);
+        if (faction == null) {
+            AddErrorMessage($"Could not find faction with name {factionParameterString}");
+            return;
+        }
+        if (Enum.TryParse(ideologyStr, out FACTION_IDEOLOGY ideology)) {
+            FactionIdeology factionIdeology = FactionManager.Instance.CreateIdeology<FactionIdeology>(ideology);
+            if (factionIdeology is Exclusive exclusive) {
+                exclusive.SetRequirement(GENDER.MALE);
+                faction.factionType.RemoveIdeology(FACTION_IDEOLOGY.Exclusive);
+            }
+            faction.factionType.AddIdeology(factionIdeology);
+            //check if faction characters still meets ideology requirements
+            List<Character> charactersToCheck = ObjectPoolManager.Instance.CreateNewCharactersList();
+            charactersToCheck.AddRange(faction.characters);
+            for (int i = 0; i < charactersToCheck.Count; i++) {
+                Character factionMember = charactersToCheck[i];
+                faction.CheckIfCharacterStillFitsIdeology(factionMember);
+            }
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(charactersToCheck);
+        } else {
+            AddErrorMessage($"Could not find ideology named {ideologyStr}");
+        }
+        
+    }
     #endregion
 
     #region NPCSettlement

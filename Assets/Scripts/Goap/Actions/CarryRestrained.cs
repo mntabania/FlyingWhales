@@ -15,7 +15,7 @@ public class CarryRestrained : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Restrained", false, GOAP_EFFECT_TARGET.TARGET), TargetIsRestrained);
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Restrained", false, GOAP_EFFECT_TARGET.TARGET), TargetIsRestrainedOrDead);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = "Carry Restrained", isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -33,6 +33,15 @@ public class CarryRestrained : GoapAction {
             if(poiTarget is Character) {
                 if ((poiTarget as Character).carryComponent.IsNotBeingCarried() == false) {
                     goapActionInvalidity.isInvalid = true;
+                }
+            }
+        }
+        if (goapActionInvalidity.isInvalid == false) {
+            if (node.associatedJobType == JOB_TYPE.MONSTER_ABDUCT) {
+                if (node.poiTarget is Character targetCharacter && targetCharacter.isDead) {
+                    //Cannot abduct dead characters
+                    goapActionInvalidity.isInvalid = true;
+                    goapActionInvalidity.reason = "target_dead";
                 }
             }
         }
@@ -83,9 +92,9 @@ public class CarryRestrained : GoapAction {
     #endregion
 
     #region Precondition
-    private bool TargetIsRestrained(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
+    private bool TargetIsRestrainedOrDead(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
         if(target is Character) {
-            return target.traitContainer.HasTrait("Restrained");
+            return target.traitContainer.HasTrait("Restrained") || target.isDead;
         }
         return true;
     }

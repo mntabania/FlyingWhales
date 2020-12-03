@@ -19,7 +19,7 @@ public class MinionPlayerSkill : SpellData {
         minion.Summon(targetTile);
         minion.SetMinionPlayerSkillType(type);
         BaseSettlement settlement = null;
-        if (targetTile.IsPartOfSettlement(out settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE) {
+        if (targetTile.IsPartOfSettlement(out settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE && targetTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS && targetTile.structure.structureType != STRUCTURE_TYPE.OCEAN) {
             minion.character.MigrateHomeStructureTo(targetTile.structure);
         } else {
             if (targetTile.collectionOwner.isPartOfParentRegionMap) {

@@ -124,8 +124,12 @@ public class CharacterStateJob : JobQueueItem {
     public override bool CancelJob(bool shouldDoAfterEffect = true, string reason = "") {
         if(assignedState != null && assignedState.characterState == CHARACTER_STATE.COMBAT) {
             if(assignedCharacter != null) {
-                assignedCharacter.combatComponent.ClearHostilesInRange();
-                assignedCharacter.combatComponent.ClearAvoidInRange();
+                if(assignedState.isPaused && !assignedState.isDone) {
+                    //Once we cancel combat and it is currently paused, we need to resume it so that it will be properly cancelled, since while paused, we remove the assigned state as the current state of the character
+                    assignedState.ResumeState();
+                }
+                assignedCharacter?.combatComponent.ClearHostilesInRange();
+                assignedCharacter?.combatComponent.ClearAvoidInRange();
             }
         }
         return base.CancelJob(shouldDoAfterEffect, reason);

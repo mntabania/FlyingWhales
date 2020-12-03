@@ -1913,4 +1913,19 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         return _blueprintsOnTile > 0;
     }
     #endregion
+
+    #region Tile Object
+    public bool HasTileObjectInsideHexThatMeetCriteria(Func<TileObject, bool> criteria) {
+        for (int i = 0; i < locationGridTiles.Count; i++) {
+            LocationGridTile tile = locationGridTiles[i];
+            if (tile.objHere != null) {
+                TileObject obj = tile.objHere as TileObject;
+                if (obj != null && criteria.Invoke(obj)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    #endregion
 }

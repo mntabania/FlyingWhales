@@ -19,7 +19,7 @@ public class DrinkBlood : GoapAction {
         logTags = new[] {LOG_TAG.Crimes, LOG_TAG.Needs};
     }
 
-    #region Overrides
+        #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", target = GOAP_EFFECT_TARGET.TARGET }, HasUnconsciousOrRestingTarget);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Lethargic", target = GOAP_EFFECT_TARGET.TARGET });
@@ -45,16 +45,22 @@ public class DrinkBlood : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 0;
-        //if (actor.moodComponent.moodState == MOOD_STATE.Normal) {
-        //    cost = UtilityScripts.Utilities.Rng.Next(50, 61);
-        //    costLog += $" +{cost}(Normal Mood)";
-        //} else if (actor.moodComponent.moodState == MOOD_STATE.Bad) {
-        //    cost = UtilityScripts.Utilities.Rng.Next(20, 31);
-        //    costLog += $" +{cost}(Low Mood)";
-        //} else if (actor.moodComponent.moodState == MOOD_STATE.Critical) {
-        //    cost = UtilityScripts.Utilities.Rng.Next(0, 11);
-        //    costLog += $" +{cost}(Critical Mood)";
-        //}
+        if (job.jobType == JOB_TYPE.TRIGGER_FLAW) {
+            if (actor.traitContainer.HasTrait("Cannibal")) {
+                cost = UtilityScripts.Utilities.Rng.Next(450, 551);
+                costLog += $" {cost}(Actor is cannibal and job is trigger flaw)";
+            } else {
+                if (!target.traitContainer.HasTrait("Vampire")) {
+                    cost = UtilityScripts.Utilities.Rng.Next(450, 551);
+                    costLog += $" {cost}(Actor not cannibal, target not vampire, and job is trigger flaw)";
+                } else {
+                    cost = 2000;
+                    costLog += $" {cost}(Actor not cannibal, target vampire, and job is trigger flaw)";
+                }
+            }
+            actor.logComponent.AppendCostLog(costLog);
+            return cost;
+        }
         if (actor.traitContainer.HasTrait("Enslaved")) {
             if (target.gridTileLocation == null || !target.gridTileLocation.IsInHomeOf(actor)) {
                 costLog += $" +2000(Slave, target is not in actor's home)";
@@ -224,7 +230,7 @@ public class DrinkBlood : GoapAction {
             vampire.AddAwareCharacter(witness);
         }
 
-        CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
+        //CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
 
         CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(witness, actor, target, CRIME_TYPE.Vampire);
         if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
@@ -304,7 +310,7 @@ public class DrinkBlood : GoapAction {
                 vampire.AddAwareCharacter(targetCharacter);
             }
 
-            CrimeManager.Instance.ReactToCrime(targetCharacter, actor, targetCharacter, target.factionOwner, node.crimeType, node, status);
+            //CrimeManager.Instance.ReactToCrime(targetCharacter, actor, targetCharacter, target.factionOwner, node.crimeType, node, status);
 
             CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(targetCharacter, actor, target, CRIME_TYPE.Vampire);
             if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {

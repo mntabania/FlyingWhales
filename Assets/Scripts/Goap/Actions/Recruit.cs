@@ -45,6 +45,8 @@ public class Recruit : GoapAction {
                 successWeight += 500;
             }
 
+            // failWeight = 0;
+            
             weightDictionary.AddElement(true, successWeight);
             weightDictionary.AddElement(false, failWeight);
 
@@ -75,7 +77,17 @@ public class Recruit : GoapAction {
         Character targetCharacter = goapNode.poiTarget as Character;
         targetCharacter.ChangeFactionTo(actor.faction, bypassIdeologyChecking: true);
         targetCharacter.MigrateHomeTo(targetCharacter.currentSettlement);
-        targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Restrained");
+        if (targetCharacter is FireElemental) {
+            //NOTE: If target is fire elemental, do not set home structure, only home settlement
+            //Reference: https://www.notion.so/ruinarch/27d2d290c43d40dbb0e8cf7c38b09ae2?v=e607fbe0a1ac49b8ac63649e2bdef458&p=cf8c2d7da65f458eb18378c834a42488
+            //TODO: Find a way to make this more abstracted
+            targetCharacter.MigrateHomeStructureTo(null, affectSettlement: false);
+        } else if (targetCharacter is VengefulGhost) {
+            //Just to make sure that vengeful ghosts will stop attacking a demonic structure once they  are recruited.
+            //This can happen if vengeful ghost already has a target demonic structure but is restrained and recruited on its way there
+            targetCharacter.behaviourComponent.SetIsAttackingDemonicStructure(false, null);
+        }
+        targetCharacter.traitContainer.RemoveRestrainAndImprison(targetCharacter, goapNode.actor);
         targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Criminal");
     }
     #endregion

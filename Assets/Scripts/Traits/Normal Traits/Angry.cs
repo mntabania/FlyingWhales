@@ -156,8 +156,14 @@ namespace Traits {
             }
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
+        public override void OnCopyStatus(Status statusToCopy, ITraitable from, ITraitable to) {
+            base.OnCopyStatus(statusToCopy, from, to);
+            if(statusToCopy is Angry status) {
+                _responsibleCharactersStack.AddRange(status.responsibleCharactersStack);
+            }
+        }
         #endregion
-        
+
         private void PerHourEffect() {
             if (owner.limiterComponent.canPerform && owner.limiterComponent.canMove && !owner.isDead && owner != null 
                 && owner.marker != null && owner.marker.inVisionTileObjects.Count > 0

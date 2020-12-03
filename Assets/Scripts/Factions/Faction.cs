@@ -141,7 +141,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                 }
 
                 //Every time ratman changes faction, behaviour set should update to know if he will use the resident behaviour or the ratmana behaviour
-                if(character.race == RACE.RATMAN) {
+                //Every time a minion changes faction, behaviour set should update to know if he will use the resident behaviour or the minion behaviour
+                //Reference: https://trello.com/c/8LQpoNGp/3036-when-a-demon-is-recruited-by-a-major-faction-its-behavior-will-be-replaced-by-the-villager-set
+                if(character.race == RACE.RATMAN || character.minion != null) {
                     character.behaviourComponent.UpdateDefaultBehaviourSet();
                 }
 
@@ -217,11 +219,17 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     }
     //Returns true if character left the faction, otherwise return false
     public void CheckIfCharacterStillFitsIdeology(Character character, bool willLog = true) {
-        if (character.faction == this && !ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
+        if (character.faction == this && !character.isDead && !ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
             if (willLog) {
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_not_fit");
             } else {
-                character.ChangeFactionTo(FactionManager.Instance.vagrantFaction);
+                Faction targetFaction;
+                if (character is Summon summon) {
+                    targetFaction = summon.defaultFaction;
+                } else {
+                    targetFaction = FactionManager.Instance.vagrantFaction;
+                }
+                character.ChangeFactionTo(targetFaction);
             }
             //character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
             //Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_not_fit");
@@ -308,15 +316,23 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         for (int i = 0; i < characters.Count; i++) {
             Character member = characters[i];
             log += $"\n\n-{member.name}";
-            if (member.isDead /*|| member.isMissing*/ || member.isBeingSeized || member.isInLimbo || member.traitContainer.HasTrait("Enslaved")) {
+            if (member.isDead /*|| member.isMissing*/ || member.isBeingSeized || member.isInLimbo) {
                 log += "\nEither dead, missing, in limbo, seized or enslaved, will not be part of candidates for faction leader";
                 continue;
             }
-
             if (member.crimeComponent.IsWantedBy(this)) {
                 log += "\nMember is wanted by this faction, skipping...";
                 continue;
             }
+
+            bool isInHome = member.IsAtHome();
+            bool isInAnActiveParty = member.partyComponent.isMemberThatJoinedQuest;
+
+            if (!isInHome && !isInAnActiveParty) {
+                log += "\nMember is not inside home and not in active party, skipping...";
+                continue;
+            }
+
             int weight = 50;
             log += "\n  -Base Weight: +50";
             if (factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Vampires)) {
@@ -395,6 +411,20 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             if(weight < 1) {
                 weight = 1;
                 log += "\n  -Weight cannot be less than 1, setting weight to 1";
+            }
+            if (member.traitContainer.HasTrait("Ambitious")) {
+                weight = Mathf.RoundToInt(weight * 1.5f);
+                log += "\n  -Ambitious: x1.5";
+            }
+            if (member is Summon || member.characterClass.IsZombie()) {
+                if (HasMemberThatMeetCriteria(c => c.race.IsSapient() && (c.IsAtHome() || c.partyComponent.isMemberThatJoinedQuest))) {
+                    weight *= 0;
+                    log += "\n  -Member is a Summon and there is atleast 1 Sapient resident inside home settlement or in active party: x0";
+                }
+            }
+            if (member.traitContainer.HasTrait("Enslaved")) {
+                weight *= 0;
+                log += "\n  -Enslaved: x0";
             }
             log += $"\n  -TOTAL WEIGHT: {weight}";
             if (weight > 0) {
@@ -688,11 +718,16 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         LocationStructure structure = null;
         for (int i = 0; i < ownedSettlements.Count; i++) {
             BaseSettlement settlement = ownedSettlements[i];
-            if (structure == null || leastVillagersSettlement == null || settlement.residents.Count < leastVillagersSettlement.residents.Count) {
-                structure = settlement.GetFirstStructureOfType(structureType);
+            LocationStructure structureOfType = settlement.GetFirstStructureOfType(structureType);
+            //if settlement has structure of type
+            if (structureOfType != null) {
+                if (leastVillagersSettlement == null || settlement.residents.Count < leastVillagersSettlement.residents.Count) {
+                    leastVillagersSettlement = settlement;
+                    structure = structureOfType;
+                }
             }
         }
-        return null;
+        return structure;
     }
     //public bool HasOwnedStructures() {
     //    return ownedStructures.Count > 0;

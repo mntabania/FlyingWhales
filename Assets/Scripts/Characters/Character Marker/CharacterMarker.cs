@@ -326,7 +326,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     message = $"{message}{character.visuals.GetCharacterNameWithIconAndColor()} is the target of this intel.\n";
                 }  
             }
-            if (!string.IsNullOrEmpty(message)) {
+            if (!string.IsNullOrEmpty(message) && _nameplate != null) {
                 _nameplate.ShowIntelHelper(message);
             }
         }
@@ -358,7 +358,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
             //only process hover tooltips if character is not the currently selected character
             HideThoughtsAndNameplate();
         }
-        _nameplate.HideIntelHelper();
+        if (_nameplate != null) {
+            _nameplate.HideIntelHelper();    
+        }
     }
     #endregion
 
@@ -489,7 +491,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         RemovePOIAsInRangeButDifferentStructure(obj);
     }
     private void OnActiveIntelSet(IIntel intel) {
-        if (HasRelationshipWithIntel(intel)) {
+        if (PlayerManager.Instance.player.CanShareIntel(character) && HasRelationshipWithIntel(intel)) {
             _nameplate.SetHighlighterState(true);    
         }
     }
@@ -693,7 +695,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 if (combatState.currentClosestHostile != null && !character.movementComponent.HasPathToEvenIfDiffRegion(combatState.currentClosestHostile.gridTileLocation)) {
                     if (attainedDestinationTile != null && character.gridTileLocation != null && actualDestinationTile != null && actualDestinationTile != attainedDestinationTile) {
                         //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
-                        if (character.movementComponent.AttackBlockersOnReachEndPath(pathfindingAI.currentPath, attainedDestinationTile)) {
+                        if (character.movementComponent.AttackBlockersOnReachEndPath(pathfindingAI.currentPath, attainedDestinationTile, actualDestinationTile)) {
                             targetPOI = null;
                             return;
                         }
@@ -709,26 +711,34 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
         if (character.movementComponent.CanDig()) {
             if (attainedDestinationTile != null && character.gridTileLocation != null && actualDestinationTile != null && actualDestinationTile != attainedDestinationTile) {
-                //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
-                if (character.movementComponent.DigOnReachEndPath(pathfindingAI.currentPath, attainedDestinationTile)) {
-                    targetPOI = null;
-                    return;
+                //Only really dig if the character has really no path towards target
+                if(!PathfindingManager.Instance.HasPathEvenDiffRegion(character.gridTileLocation, actualDestinationTile)) {
+                    //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
+                    if (character.movementComponent.DigOnReachEndPath(pathfindingAI.currentPath, attainedDestinationTile, actualDestinationTile)) {
+                        targetPOI = null;
+                        return;
+                    }
                 }
             }
         }
 
-        if (actualDestinationTile == attainedDestinationTile) {
-            Action action = arrivalAction;
-            //set arrival action to null, because some arrival actions set it
-            ClearArrivalAction();
-            action?.Invoke();    
-        } else {
-            ClearArrivalAction();
-            //TODO: Maybe
-            if (character.currentJob != null && character.currentActionNode != null) {
-                character.NoPathToDoJobOrAction(character.currentJob, character.currentActionNode);    
-            }
-        }
+        
+        Action action = arrivalAction;
+        //set arrival action to null, because some arrival actions set it
+        ClearArrivalAction();
+        action?.Invoke();   
+        
+        // if (actualDestinationTile == attainedDestinationTile || (attainedDestinationTile != null && actualDestinationTile != null && attainedDestinationTile.IsNeighbour(actualDestinationTile))) {
+        //     Action action = arrivalAction;
+        //     //set arrival action to null, because some arrival actions set it
+        //     ClearArrivalAction();
+        //     action?.Invoke();    
+        // } else {
+        //     ClearArrivalAction();
+        //     if (character.currentJob != null && character.currentActionNode != null) {
+        //         character.NoPathToDoJobOrAction(character.currentJob, character.currentActionNode);    
+        //     }
+        // }
         
         targetPOI = null;
     }
@@ -1171,17 +1181,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if(character.reactionComponent.disguisedCharacter != null) {
             character = character.reactionComponent.disguisedCharacter;
         }
-        if (character.characterClass.className == "Mage" || character.characterClass.className == "Necromancer" || character.visuals.portraitSettings.hair == -1 || 
-            character.race == RACE.WOLF || character.race == RACE.SKELETON || 
-            character.race == RACE.GOLEM || character.race == RACE.ELEMENTAL || character.race == RACE.KOBOLD ||
-            character.race == RACE.SPIDER || character.race == RACE.MIMIC || character.race == RACE.ENT || 
-            character.race == RACE.PIG || character.race == RACE.CHICKEN || character.race == RACE.SHEEP 
-            || character.race == RACE.ABOMINATION
-            || character.isInVampireBatForm
-            || character.isInWerewolfForm) {
-            hairImg.gameObject.SetActive(false);
-            knockedOutHairImg.gameObject.SetActive(false);
-        } else {
+        if (character.visuals.HasHeadHair()) {
             if (currentAnimation == "Sleep Ground") {
                 knockedOutHairImg.gameObject.SetActive(true);
                 hairImg.gameObject.SetActive(false);
@@ -1189,6 +1189,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 knockedOutHairImg.gameObject.SetActive(false);
                 hairImg.gameObject.SetActive(true);
             }
+        } else {
+            hairImg.gameObject.SetActive(false);
+            knockedOutHairImg.gameObject.SetActive(false);
         }
     }
     public List<Character> GetInVisionCharactersThatMeetCriteria(System.Func<Character, bool> criteria) {

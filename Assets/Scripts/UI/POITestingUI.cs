@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
+using Traits;
 
 public class POITestingUI : MonoBehaviour {
     //This script is used to test characters and actions
@@ -156,6 +157,13 @@ public class POITestingUI : MonoBehaviour {
         activeCharacter.jobQueue.AddJobInQueue(job);
         HideUI();
     }
+    public void Recruit() {
+        if (poi is Character targetCharacter) {
+            activeCharacter.jobComponent.TriggerRecruitJob(targetCharacter, out var producedJob);
+            activeCharacter.jobQueue.AddJobInQueue(producedJob);
+        }
+        HideUI();
+    }
     #endregion
 
     #region Tile Object Testing
@@ -189,12 +197,13 @@ public class POITestingUI : MonoBehaviour {
         HideUI();
     }
     public void BoobyTrap() {
-        if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), poi, activeCharacter);
-            activeCharacter.jobQueue.AddJobInQueue(job);
-        } else {
-            Debug.LogError($"{poi.name} is not a tile object!");
-        }
+        poi.traitContainer.AddTrait(poi, "Plagued");
+        //if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+        //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), poi, activeCharacter);
+        //    activeCharacter.jobQueue.AddJobInQueue(job);
+        //} else {
+        //    Debug.LogError($"{poi.name} is not a tile object!");
+        //}
         HideUI();
     }
     public void HarvestPlant() {
@@ -216,6 +225,14 @@ public class POITestingUI : MonoBehaviour {
         } else {
             Debug.LogError($"{poi.name} is not a table or a character!");
         }
+        HideUI();
+    }
+    public void RestrainPersonal() {
+        poi.traitContainer.RestrainAndImprison(poi, activeCharacter, null, activeCharacter);
+        HideUI();
+    }
+    public void RestrainFaction() {
+        poi.traitContainer.RestrainAndImprison(poi, activeCharacter, activeCharacter.faction, null);
         HideUI();
     }
     #endregion

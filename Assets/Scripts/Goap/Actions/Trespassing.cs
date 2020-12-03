@@ -35,54 +35,19 @@ public class Trespassing : GoapAction {
     public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
     ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
-        if (!actor.isDead) {
-            Character targetCharacter = target as Character;
-            LocationStructure trespassedStructure = actor.currentStructure;
-            if (trespassedStructure != null && trespassedStructure.settlementLocation != null && trespassedStructure.settlementLocation.owner != null && trespassedStructure.settlementLocation.owner == witness.faction) {
-                bool willReact = true;
-                switch (trespassedStructure.structureType) {
-                    case STRUCTURE_TYPE.TAVERN:
-                    case STRUCTURE_TYPE.FARM:
-                    case STRUCTURE_TYPE.HOSPICE:
-                    case STRUCTURE_TYPE.CEMETERY:
-                    case STRUCTURE_TYPE.CITY_CENTER:
-                        willReact = false;
-                        break;
-                }
-                if (willReact) {
-                    if (!witness.traitContainer.HasTrait("Cultist")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
-                    }
-                    CrimeManager.Instance.ReactToCrime(witness, actor, targetCharacter, trespassedStructure.settlementLocation.owner, node.crimeType, node, status);
-                }
-            }
+        if (!witness.traitContainer.HasTrait("Cultist")) {
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
         }
+        //CrimeManager.Instance.ReactToCrime(witness, actor, targetCharacter, trespassedStructure.settlementLocation.owner, node.crimeType, node, status);
         return response;
     }
     public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionOfTarget(actor, target, node, status);
-        if (!actor.isDead) {
-            Character targetCharacter = target as Character;
-            LocationStructure trespassedStructure = actor.currentStructure;
-            if (trespassedStructure != null && trespassedStructure.settlementLocation != null && trespassedStructure.settlementLocation.owner != null && trespassedStructure.settlementLocation.owner == targetCharacter.faction) {
-                bool willReact = true;
-                switch (trespassedStructure.structureType) {
-                    case STRUCTURE_TYPE.TAVERN:
-                    case STRUCTURE_TYPE.FARM:
-                    case STRUCTURE_TYPE.HOSPICE:
-                    case STRUCTURE_TYPE.CEMETERY:
-                    case STRUCTURE_TYPE.CITY_CENTER:
-                        willReact = false;
-                        break;
-                }
-
-                if (willReact) {
-                    if (!targetCharacter.traitContainer.HasTrait("Cultist")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor, status, node);
-                    }
-                    CrimeManager.Instance.ReactToCrime(targetCharacter, actor, targetCharacter, trespassedStructure.settlementLocation.owner, node.crimeType, node, status);
-                }
+        if(target is Character targetCharacter) {
+            if (!targetCharacter.traitContainer.HasTrait("Cultist")) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor, status, node);
             }
+            //CrimeManager.Instance.ReactToCrime(targetCharacter, actor, targetCharacter, trespassedStructure.settlementLocation.owner, node.crimeType, node, status);
         }
         return response;
     }

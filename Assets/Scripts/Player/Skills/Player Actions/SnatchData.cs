@@ -131,7 +131,7 @@ public class SnatchData : PlayerAction {
                 if (targetCharacter.currentStructure is DemonicStructure) {
                     return false;
                 }
-                if (targetCharacter.isAlliedWithPlayer) {
+                if (targetCharacter.traitContainer.HasTrait("Cultist")) {
                     return false;
                 }
                 if (targetCharacter.isDead) {

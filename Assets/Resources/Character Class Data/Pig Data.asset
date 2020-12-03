@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
+  m_Name: Pig Data
+  m_EditorClassIdentifier: 
+  defaultSprites:
+    stillSprite: {fileID: 21300000, guid: f0d6407ed5faac24fafecb8da3b1fafd, type: 3}
+    animationSprites:
+    - {fileID: 21300000, guid: 3d3ccfdaf11cfe24cae7f7735efecd37, type: 3}
+    - {fileID: 21300000, guid: f0d6407ed5faac24fafecb8da3b1fafd, type: 3}
+    - {fileID: 21300000, guid: 579d5c8ef63d84a42b425792c43c2a85, type: 3}
+  raceSprites:
+    m_keys: 
+    m_values: []

@@ -52,6 +52,12 @@ namespace Traits {
                 Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
             }
         }
+        public override void OnCopyStatus(Status statusToCopy, ITraitable from, ITraitable to) {
+            base.OnCopyStatus(statusToCopy, from, to);
+            if (statusToCopy is Hunting status) {
+                targetTile = status.targetTile;
+            }
+        }
         #endregion
 
         public void SetTargetTile(HexTile hexTile) {

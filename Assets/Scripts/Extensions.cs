@@ -500,6 +500,7 @@ public static class Extensions {
             case JOB_TYPE.FIND_NEW_VILLAGE:
             case JOB_TYPE.STEAL_CORPSE:
             case JOB_TYPE.SUMMON_BONE_GOLEM:
+            case JOB_TYPE.REPORT_CRIME:
                 priority = 1050;
                 break;
             case JOB_TYPE.RETURN_HOME_URGENT:
@@ -584,10 +585,10 @@ public static class Extensions {
             case JOB_TYPE.RESTRAIN:
                 priority = 970;
                 break;
-            case JOB_TYPE.REPORT_CRIME:
-                //case JOB_TYPE.BURY:
-                priority = 870;
-                break;
+            //case JOB_TYPE.REPORT_CRIME:
+            //    //case JOB_TYPE.BURY:
+            //    priority = 870;
+            //    break;
             case JOB_TYPE.BUILD_BLUEPRINT:
             case JOB_TYPE.PLACE_BLUEPRINT:
             case JOB_TYPE.SPAWN_LAIR:
@@ -1024,16 +1025,6 @@ public static class Extensions {
     #endregion
 
     #region Races
-    public static bool UsesGenderNeutralMarkerAssets(this RACE race) {
-        switch (race) {
-            // case RACE.HUMANS:
-            // case RACE.ELVES:
-            case RACE.LESSER_DEMON:
-                return false;
-            default:
-                return true;
-        }
-    }
     public static bool UsesGenderNeutralPortrait(this RACE race) {
         switch (race) {
             case RACE.HUMANS:
@@ -1045,6 +1036,15 @@ public static class Extensions {
         }
     }
     public static bool IsSapient(this RACE race) {
+        switch (race) {
+            case RACE.HUMANS:
+            case RACE.ELVES:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool HasHeadHair(this RACE race) {
         switch (race) {
             case RACE.HUMANS:
             case RACE.ELVES:

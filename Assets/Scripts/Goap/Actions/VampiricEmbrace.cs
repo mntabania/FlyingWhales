@@ -34,7 +34,7 @@ public class VampiricEmbrace : GoapAction {
         if (vampire != null) {
             vampire.AddAwareCharacter(witness);
         }
-        CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
+        //CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
 
         CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(witness, actor, target, CRIME_TYPE.Vampire);
         if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
@@ -82,7 +82,7 @@ public class VampiricEmbrace : GoapAction {
             if (vampire != null) {
                 vampire.AddAwareCharacter(targetCharacter);
             }
-            CrimeManager.Instance.ReactToCrime(targetCharacter, actor, targetCharacter, target.factionOwner, node.crimeType, node, status);
+            //CrimeManager.Instance.ReactToCrime(targetCharacter, actor, targetCharacter, target.factionOwner, node.crimeType, node, status);
 
             CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(targetCharacter, actor, target, CRIME_TYPE.Vampire);
             if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {

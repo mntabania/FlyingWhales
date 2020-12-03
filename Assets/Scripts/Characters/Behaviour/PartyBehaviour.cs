@@ -17,17 +17,31 @@ public class PartyBehaviour : CharacterBehaviourComponent {
             if (party.partyState == PARTY_STATE.Waiting) {
                 log += $"\n-Party is waiting";
                 if(party.meetingPlace != null && !party.meetingPlace.hasBeenDestroyed && party.meetingPlace.passableTiles.Count > 0) {
-                    if(character.currentStructure == party.meetingPlace) {
+                    hasJob = true;
+                    if (character.currentStructure == party.meetingPlace) {
                         party.AddMemberThatJoinedQuest(character);
                         character.trapStructure.SetForcedStructure(party.meetingPlace);
                         character.needsComponent.CheckExtremeNeedsWhileInActiveParty();
 
-                        hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                        character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                     } else {
-                        LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(party.meetingPlace.passableTiles);
-                        hasJob = character.jobComponent.CreateGoToWaitingJob(targetTile, out producedJob);
+                        if (!party.CanAMemberGoTo(party.meetingPlace)) {
+                            //If no party member can go to meeting place, set new meeting place
+                            party.SetMeetingPlace();
+                        }
+                        LocationGridTile targetTile = party.meetingPlace.GetRandomPassableTile();
+                        if(targetTile != null) {
+                            if (character.movementComponent.HasPathToEvenIfDiffRegion(targetTile)) {
+                                character.jobComponent.CreateGoToWaitingJob(targetTile, out producedJob);
+                            } else {
+                                hasJob = false;
+                            }
+                        } else {
+                            //Character must go to other behaviours if there is no passable tile in meeting place, that's why this is set to false
+                            party.SetMeetingPlace();
+                            hasJob = false;
+                        }
                     }
-                    hasJob = true;
                 }
             } else {
                 if (party.membersThatJoinedQuest.Contains(character)) {

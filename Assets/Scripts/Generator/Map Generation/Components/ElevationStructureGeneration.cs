@@ -159,9 +159,11 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		yield return null;
 	}
 	private void CreateInvisibleWellAt(LocationGridTile tile) {
-		TileObject well = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
-		tile.structure.AddPOI(well, tile);
-		well.mapObjectVisual.SetVisual(null);
+		if (tile != null) {
+			TileObject well = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
+			tile.structure.AddPOI(well, tile);
+			well.mapObjectVisual.SetVisual(null);	
+		}
 	}
 	private void SetAsWater(LocationGridTile tile, LocationStructure structure) {
 		tile.SetTileState(LocationGridTile.Tile_State.Occupied);

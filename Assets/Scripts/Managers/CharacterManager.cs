@@ -59,11 +59,10 @@ public class CharacterManager : BaseMonoBehaviour {
         Pest_Behaviour = "Pest Behaviour",
         Rat_Behaviour = "Rat Behaviour",
         Ratman_Behaviour = "Ratman Behaviour",
-        Slave_Behaviour = "Slave Behaviour";
-
-
-
-    public const int MAX_HISTORY_LOGS = 300;
+        Slave_Behaviour = "Slave Behaviour",
+        Fire_Elemental_Behaviour = "Fire Elemental Behaviour",
+        Sludge_Behaviour = "Sludge Behaviour";
+    
     public const int VISION_RANGE = 8;
     public const int AVOID_COMBAT_VISION_RANGE = 12;
 
@@ -87,7 +86,6 @@ public class CharacterManager : BaseMonoBehaviour {
     [SerializeField] private Sprite[] femaleHairSprite;
     [SerializeField] private Sprite[] maleKnockoutHairSprite;
     [SerializeField] private Sprite[] femaleKnockoutHairSprite;
-    [SerializeField] private List<RaceMarkerAsset> markerAssets;
     [SerializeField] private List<AdditionalMarkerAsset> additionalMarkerAssets;
 
     [Header("Summon Settings")]
@@ -108,6 +106,8 @@ public class CharacterManager : BaseMonoBehaviour {
     private string _demonNameColorHex;
     private string _undeadNameColorHex;
     private string _normalNameColorHex;
+    
+    private Dictionary<string, CharacterClassData> _loadedClassData;
 
     private Dictionary<string, DeadlySin> deadlySins { get; set; }
     private Dictionary<EMOTION, Emotion> emotionData { get; set; }
@@ -121,7 +121,6 @@ public class CharacterManager : BaseMonoBehaviour {
     public bool hasSpawnedNecromancerOnce { get; private set; }
     public int CHARACTER_MISSING_THRESHOLD { get; private set; }
     public int CHARACTER_PRESUMED_DEAD_THRESHOLD { get; private set; }
-
     private Dictionary<Type, CharacterBehaviourComponent> behaviourComponents;
     private readonly Dictionary<string, Type[]> defaultBehaviourSets = new Dictionary<string, Type[]>() {
         { Default_Resident_Behaviour,
@@ -378,6 +377,20 @@ public class CharacterManager : BaseMonoBehaviour {
                 typeof(DefaultExtraCatcher),
             }
         },
+        { Fire_Elemental_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(FireElementalBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Sludge_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(SludgeBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
     };
 
     #region getters/setters
@@ -396,6 +409,7 @@ public class CharacterManager : BaseMonoBehaviour {
         _demonNameColorHex = ColorUtility.ToHtmlStringRGB(demonNameColor);
         _undeadNameColorHex = ColorUtility.ToHtmlStringRGB(undeadNameColor);
         _normalNameColorHex = ColorUtility.ToHtmlStringRGB(normalNameColor);
+        _loadedClassData = new Dictionary<string, CharacterClassData>();
 
         classManager.Initialize();
         CreateDeadlySinsData();
@@ -666,30 +680,70 @@ public class CharacterManager : BaseMonoBehaviour {
         }
         return null;
     }
-    public void RaiseFromDeath(Character characterToCopy, Faction faction, RACE race = RACE.SKELETON, string className = "") {
-        if (!characterToCopy.hasRisen) {
-            characterToCopy.SetHasRisen(true);
-            StartCoroutine(Raise(characterToCopy, faction, race, className));
-        }
-    }
-    private IEnumerator Raise(Character target, Faction faction, RACE race, string className) {
-        target.marker.PlayAnimation("Raise Dead");
-        yield return new WaitForSeconds(0.7f);
-        Summon summon = CreateNewSummon(SUMMON_TYPE.Skeleton, faction, homeRegion: target.homeRegion, className: target.characterClass.className);
-        summon.SetFirstAndLastName(target.firstName, target.surName);
-        summon.CreateMarker();
+    //This raise dead will replace the dead character with a new character 
+    public void RaiseFromDeadReplaceCharacterWithSkeleton(Character target, Faction faction, string className = "", Action<Character> onRaisedFromDeadAction = null) {
+        //Since we no longer see the raise dead animation putting raise dead in a coroutine might have some problems like:
+        //https://trello.com/c/Qu1VHS2A/3044-dev-03355-null-reference-charactermanagerraised
+        target.SetHasRisen(true);
+        target.SetRaisedFromDeadAsSkeleton(true);
+        //target.marker.PlayAnimation("Raise Dead");
+        //yield return new WaitForSeconds(0.7f);
         LocationGridTile tile = target.gridTileLocation;
         if (target.grave != null) {
             tile = target.grave.gridTileLocation;
-            target.grave.gridTileLocation.structure.RemovePOI(target.grave);
-            target.SetGrave(null);
         }
-        summon.InitialCharacterPlacement(tile);
-        if (target.currentRegion != null) {
-            target.currentRegion.RemoveCharacterFromLocation(target);
+        if(tile != null) {
+            if (target.grave != null) {
+                tile.structure.RemovePOI(target.grave);
+                target.SetGrave(null);
+            }
+            Summon summon = CreateNewSummon(SUMMON_TYPE.Skeleton, faction, homeRegion: target.homeRegion, className: target.characterClass.className);
+            summon.SetFirstAndLastName(target.firstName, target.surName);
+            summon.SetHasRisen(true);
+            summon.SetRaisedFromDeadAsSkeleton(true);
+            summon.CreateMarker();
+
+            summon.InitialCharacterPlacement(tile);
+            if (target.currentRegion != null) {
+                target.currentRegion.RemoveCharacterFromLocation(target);
+            }
+            target.DestroyMarker();
+            onRaisedFromDeadAction?.Invoke(target);
+            AddNewLimboCharacter(target);
+            RemoveCharacter(target);
         }
-        target.DestroyMarker();
         // RemoveCharacter(target);
+    }
+
+    //This raise dead will retain the same dead character, meaning we will use the same instance of the character
+    public void RaiseFromDeadRetainCharacterInstance(Character target, Faction faction, RACE race, string className, Action<Character> onRaisedFromDeadAction = null) {
+        //Since we no longer see the raise dead animation putting raise dead in a coroutine might have some problems like:
+        //https://trello.com/c/Qu1VHS2A/3044-dev-03355-null-reference-charactermanagerraised
+        if (className.Contains("Zombie")) {
+            //Raise from dead as zombie
+            target.SetHasRisen(true);
+            target.SetRaisedFromDeadAsSkeleton(true);
+            LocationGridTile tile = target.grave != null ? target.grave.gridTileLocation : target.gridTileLocation;
+            GameManager.Instance.CreateParticleEffectAt(tile, PARTICLE_EFFECT.Zombie_Transformation);
+            target.ReturnToLife(faction, race, className);
+            target.MigrateHomeStructureTo(null);
+            target.needsComponent.SetTirednessForcedTick(0);
+            target.needsComponent.SetFullnessForcedTick(0);
+            target.needsComponent.SetHappinessForcedTick(0);
+            if (!target.behaviourComponent.HasBehaviour(typeof(ZombieBehaviour))) {
+                target.behaviourComponent.AddBehaviourComponent(typeof(ZombieBehaviour));
+            }
+            target.combatComponent.UpdateMaxHPAndReset();
+            //yield return new WaitForSeconds(5f);
+            //target.marker.PlayAnimation("Raise Dead");
+        } else {
+            target.ReturnToLife();
+        }
+        //else {
+        //    target.marker.PlayAnimation("Raise Dead");
+        //    yield return new WaitForSeconds(0.7f);
+        //}
+        onRaisedFromDeadAction?.Invoke(target);
     }
     public Color GetCharacterNameColor(Character character) {
         if(character != null) {
@@ -1202,22 +1256,20 @@ public class CharacterManager : BaseMonoBehaviour {
     #endregion
 
     #region Marker Assets
-    public CharacterClassAsset GetMarkerAsset(RACE race, GENDER gender, string characterClassName) {
-        for (int i = 0; i < markerAssets.Count; i++) {
-            RaceMarkerAsset currRaceAsset = markerAssets[i];
-            if (currRaceAsset.race == race) {
-                var asset = race.UsesGenderNeutralMarkerAssets() ? currRaceAsset.neutralAssets : currRaceAsset.GetMarkerAsset(gender);
-                if (asset.characterClassAssets.ContainsKey(characterClassName)) {
-                    return asset.characterClassAssets[characterClassName];
-                } else if (asset.characterClassAssets.ContainsKey("Default")) {
-                    return asset.characterClassAssets["Default"];
-                } else {
-                    throw new Exception($"There are no class assets for {characterClassName} {gender.ToString()} {race.ToString()}");
-                }
-                
-            }
+    public CharacterClassAsset GetMarkerAsset(RACE race, string characterClassName) {
+        CharacterClassData loadedData = GetOrCreateCharacterClassData(race == RACE.SKELETON ? "Skeleton" : characterClassName);
+        return loadedData.GetAssets(race);
+    }
+    private CharacterClassData GetOrCreateCharacterClassData(string p_className) {
+        if (_loadedClassData.ContainsKey(p_className)) {
+            return _loadedClassData[p_className];
         }
-        throw new Exception($"There are no race assets for {characterClassName} {gender.ToString()} {race.ToString()}");
+        CharacterClassData loadedData = Resources.Load<CharacterClassData>($"Character Class Data/{p_className} Data");
+        if (loadedData == null) {
+            throw new Exception($"There are no class assets for {p_className}");
+        }
+        _loadedClassData.Add(p_className, loadedData);
+        return loadedData;
     }
     public CharacterClassAsset GetAdditionalMarkerAsset(string identifier) {
         for (int i = 0; i < additionalMarkerAssets.Count; i++) {
@@ -1248,58 +1300,6 @@ public class CharacterManager : BaseMonoBehaviour {
                 return null;
         }
     }
-#if UNITY_EDITOR
-    public void LoadCharacterMarkerAssets() {
-        markerAssets = new List<RaceMarkerAsset>();
-        string characterMarkerAssetPath = "Assets/Textures/Character Markers/";
-        string[] races = Directory.GetDirectories(characterMarkerAssetPath);
-
-        //loop through races found in directory
-        for (int i = 0; i < races.Length; i++) {
-            string currRacePath = races[i];
-            string raceName = new DirectoryInfo(currRacePath).Name.ToUpper();
-            if (Enum.TryParse(raceName, out RACE race)) {
-                RaceMarkerAsset raceAsset = new RaceMarkerAsset(race);
-                //loop through genders found in races directory
-                string[] genders = Directory.GetDirectories(currRacePath);
-                for (int j = 0; j < genders.Length; j++) {
-                    string currGenderPath = genders[j];
-                    string genderName = new DirectoryInfo(currGenderPath).Name.ToUpper();
-                    MarkerAsset markerAsset = null;
-                    if (Enum.TryParse(genderName, out GENDER gender)) {
-                        markerAsset = raceAsset.GetMarkerAsset(gender);    
-                    } else if (genderName.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase)) {
-                        markerAsset = raceAsset.neutralAssets;
-                    } else {
-                        throw new Exception($"No MarkerAsset class for {genderName}");
-                    }
-                    //loop through all folders found in gender directory. consider all these as character classes
-                    string[] characterClasses = Directory.GetDirectories(currGenderPath);
-                    for (int k = 0; k < characterClasses.Length; k++) {
-                        string currCharacterClassPath = characterClasses[k];
-                        string className = new DirectoryInfo(currCharacterClassPath).Name;
-                        string[] classFiles = Directory.GetFiles(currCharacterClassPath);
-                        CharacterClassAsset characterClassAsset = new CharacterClassAsset();
-                        markerAsset.characterClassAssets.Add(className, characterClassAsset);
-                        for (int l = 0; l < classFiles.Length; l++) {
-                            string classAssetPath = classFiles[l];
-                            Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(classAssetPath, typeof(Sprite));
-                            if (loadedSprite != null) {
-                                if (loadedSprite.name.Contains("idle_1")) {
-                                    characterClassAsset.defaultSprite = loadedSprite;
-                                }
-                                //assume that sprite is for animation
-                                characterClassAsset.animationSprites.Add(loadedSprite);
-                            }
-
-                        }
-                    }
-                }
-                markerAssets.Add(raceAsset);
-            }
-        }
-    }
-#endif
     #endregion
 
     #region Listeners

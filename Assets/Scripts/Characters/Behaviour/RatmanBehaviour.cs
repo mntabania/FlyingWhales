@@ -28,17 +28,24 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         }
         if (GameUtilities.RollChance(0.5f)) {
             int residentCount = character.GetAliveResidentsCountInHome();
-            if (residentCount >= 8) {
+            if (residentCount >= 6) {
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home_Ratman, null);
             }
         }
         TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
         if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT) {
             //Night time
-            if (GameUtilities.RollChance(20)) {
+            int chance = 30;
+            if(HasResidentFromSameHomeThatMeetCriteria(character, r => !r.isDead && r.traitContainer.HasTrait("Enslaved"))) {
+                chance -= 25;
+            }
+            if (HasFoodPileInHomeStorage(character)) {
+                chance -= 15;
+            }
+            if (GameUtilities.RollChance(chance)) {
                 if (isInHome) {
                     Character prisoner = GetFirstPrisonerAtHome(character);
-                    if (prisoner == null && !HasJobTypeFromSameHome(character, JOB_TYPE.MONSTER_ABDUCT)) {
+                    if (prisoner == null && !HasResidentFromSameHomeThatMeetCriteria(character, r => r.jobQueue.HasJob(JOB_TYPE.MONSTER_ABDUCT))) {
                     character.behaviourComponent.SetAbductionTarget(null);
 
                     //set abduction target if none, and chance met
@@ -47,11 +54,14 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                             for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                                 Character characterAtRegion = character.currentRegion.charactersAtLocation[i];
                                 if (!characterAtRegion.isDead && characterAtRegion != character
-                                    && (characterAtRegion.faction?.factionType.type == FACTION_TYPE.Wild_Monsters || characterAtRegion.isNormalCharacter)
+                                    //&& (characterAtRegion.faction?.factionType.type == FACTION_TYPE.Wild_Monsters || characterAtRegion.isNormalCharacter)
                                     && !(characterAtRegion.currentStructure is Kennel)
-                                    && !characterAtRegion.traitContainer.HasTrait("Enslaved")
-                                    && characterAtRegion.faction != character.faction) {
-                                    characterChoices.Add(characterAtRegion);
+                                    && !characterAtRegion.traitContainer.HasTrait("Enslaved", "Hibernating")
+                                    && (CanProduceFood(characterAtRegion) || CanBeButchered(characterAtRegion))) {
+                                    bool isFriendlyWithCharacter = characterAtRegion.faction == character.faction || (characterAtRegion.faction != null && character.faction != null && character.faction.IsFriendlyWith(characterAtRegion.faction));
+                                    if (!isFriendlyWithCharacter) {
+                                        characterChoices.Add(characterAtRegion);
+                                    }
                                 }
                             }
                             if (characterChoices.Count > 0) {
@@ -74,19 +84,23 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
             }
         } else {
             //Day time
-            if (GameUtilities.RollChance(20)) {
-                if (isInHome) {
-                    Character prisoner = GetFirstPrisonerAtHome(character);
-                    if (prisoner != null && !HasJobTypeFromSameHome(character, JOB_TYPE.TORTURE)) {
+            if (isInHome) {
+                Character prisoner = GetFirstPrisonerAtHome(character);
+                if (prisoner != null) {
+                    if (GameUtilities.RollChance(30) && prisoner.race == RACE.RATMAN) {
+                        return character.jobComponent.TriggerRecruitJob(prisoner, out producedJob);
+                    } else if (GameUtilities.RollChance(20) && CanProduceFood(prisoner) && !HasResidentFromSameHomeThatMeetCriteria(character, r => r.jobQueue.HasJob(JOB_TYPE.TORTURE, JOB_TYPE.MONSTER_BUTCHER))) {
                         return character.jobComponent.TriggerTorture(prisoner, out producedJob);
+                    } else if (GameUtilities.RollChance(30) && CanBeButchered(prisoner) && !HasResidentFromSameHomeThatMeetCriteria(character, r => r.jobQueue.HasJob(JOB_TYPE.MONSTER_BUTCHER, JOB_TYPE.TORTURE)) /*&& HasStorage(character)*/ && !HasFoodPileInHomeStorage(character)) {
+                        return character.jobComponent.CreateButcherJob(prisoner, JOB_TYPE.MONSTER_BUTCHER, out producedJob);
                     }
                 }
             }
         }
         //try to give birth to another ratman
-        if (GameUtilities.RollChance(2) && isInHome) {//10
+        if (GameUtilities.RollChance(1) && isInHome) {//10
             int residentCount = character.GetAliveResidentsCountInHome();
-            if (residentCount < 8) {
+            if (residentCount < 6) {
                 return character.jobComponent.TriggerBirthRatman(out producedJob);
             }
         }
@@ -95,41 +109,44 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         }
         return character.jobComponent.TriggerRoamAroundTile(out producedJob);
     }
-    private bool HasJobTypeFromSameHome(Character character, JOB_TYPE jobType) {
+    private bool HasResidentFromSameHomeThatMeetCriteria(Character character, Func<Character, bool> criteria) {
         List<Character> residents = null;
+        bool hasBorrowedList = false;
         if(character.homeSettlement != null) {
             residents = character.homeSettlement.residents;
         } else if (character.homeStructure != null) {
             residents = character.homeStructure.residents;
+        } else if (character.HasTerritory()) {
+            hasBorrowedList = true;
+            residents = ObjectPoolManager.Instance.CreateNewCharactersList();
+            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                Character resident = CharacterManager.Instance.allCharacters[i];
+                if(!resident.isDead && resident.IsTerritory(character.territory)) {
+                    residents.Add(resident);
+                }
+            }
         }
-        if(residents != null) {
+        bool decision = true;
+        if (residents != null) {
+            decision = false;
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
                 if(resident != character) {
-                    if (resident.jobQueue.HasJob(jobType)) {
-                        return true;
+                    if (criteria.Invoke(resident)) {
+                        decision = true;
+                        break;
                     }
                 }
             }
-            return false;
+        }
+        if (hasBorrowedList) {
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(residents);
         }
         //If character has no home, this should return true so that the character will not do the action
-        return true;
+        return decision;
     }
     private Character GetFirstPrisonerAtHome(Character character) {
-        if (character.homeStructure != null) {
-            for (int i = 0; i < character.homeStructure.charactersHere.Count; i++) {
-                Character potentialPrisoner = character.homeStructure.charactersHere[i];
-                if (!potentialPrisoner.isDead) {
-                    if (potentialPrisoner.traitContainer.HasTrait("Prisoner")) {
-                        Prisoner prisoner = potentialPrisoner.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-                        if (prisoner.IsConsideredPrisonerOf(character)) {
-                            return potentialPrisoner;
-                        }
-                    }
-                }
-            }
-        } else if (character.homeSettlement != null) {
+        if (character.homeSettlement != null) {
             for (int i = 0; i < character.homeSettlement.region.charactersAtLocation.Count; i++) {
                 Character potentialPrisoner = character.homeSettlement.region.charactersAtLocation[i];
                 if (!potentialPrisoner.isDead) {
@@ -143,11 +160,60 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                     }
                 }
             }
+        } else if (character.homeStructure != null) {
+            for (int i = 0; i < character.homeStructure.charactersHere.Count; i++) {
+                Character potentialPrisoner = character.homeStructure.charactersHere[i];
+                if (!potentialPrisoner.isDead) {
+                    if (potentialPrisoner.traitContainer.HasTrait("Prisoner")) {
+                        Prisoner prisoner = potentialPrisoner.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+                        if (prisoner.IsConsideredPrisonerOf(character)) {
+                            return potentialPrisoner;
+                        }
+                    }
+                }
+            }
         }
         return null;
     }
 
-    private void ChangeHome() {
-
+    private bool CanProduceFood(Character character) {
+        if(character.race == RACE.HUMANS || character.race == RACE.ELVES || character is Incubus || character is Succubus || character.race == RACE.NYMPH || character.race == RACE.KOBOLD
+            || character.race == RACE.TROLL || character.race == RACE.RATMAN || character.race == RACE.ABOMINATION || character.race == RACE.GOLEM
+            || (character.race == RACE.ENT && character is Ent ent && !ent.isTree) || character is GiantSpider) {
+            return true;
+        }
+        return false;
+    }
+    private bool CanBeButchered(Character character) {
+        if ((character is Animal && !(character is Rat)) || character.race == RACE.ELVES || character.race == RACE.HUMANS 
+            || character is GiantSpider || character is SmallSpider || character is Wolf) {
+            return true;
+        }
+        return false;
+    }
+    private bool HasFoodPileInHomeStorage(Character character) {
+        LocationStructure storage = null;
+        if(character.homeSettlement != null) {
+            storage = character.homeSettlement.mainStorage;
+        } else if (character.homeStructure != null) {
+            storage = character.homeStructure;
+        } else if (character.HasTerritory()) {
+            return character.territory.HasTileObjectInsideHexThatMeetCriteria(t => t is FoodPile && t.mapObjectState == MAP_OBJECT_STATE.BUILT);
+        }
+        if(storage != null) {
+            return storage.HasTileObjectThatMeetCriteria(t => t is FoodPile && t.mapObjectState == MAP_OBJECT_STATE.BUILT);
+        }
+        return false;
+    }
+    private bool HasStorage(Character character) {
+        LocationStructure storage = null;
+        if (character.homeSettlement != null) {
+            storage = character.homeSettlement.mainStorage;
+        } else if (character.homeStructure != null) {
+            storage = character.homeStructure;
+        } else if (character.HasTerritory()) {
+            return true;
+        }
+        return storage != null;
     }
 }

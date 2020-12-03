@@ -18,10 +18,7 @@ public class CharacterManagerEditor : Editor {
         DrawDefaultInspector();
 
         GUILayout.Space(10f);
-
-        if (GUILayout.Button("Load Character Marker Assets")) {
-            characterManager.LoadCharacterMarkerAssets();
-        }
+        
         if (GUILayout.Button("Load Character Portrait Assets")) {
             characterManager.LoadCharacterPortraitAssets();
         }

@@ -45,8 +45,15 @@ namespace Traits {
             base.LoadTraitOnLoadTraitContainer(addTo);
             traitable = addTo;
         }
+        public override void OnCopyStatus(Status statusToCopy, ITraitable from, ITraitable to) {
+            base.OnCopyStatus(statusToCopy, from, to);
+            if (statusToCopy is BoobyTrapped status) {
+                _element = status.element;
+                awareCharacters.AddRange(status.awareCharacters);
+            }
+        }
         #endregion
-        
+
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);

@@ -34,7 +34,12 @@ public class ExterminationPartyQuest : PartyQuest {
     //}
     public override void OnWaitTimeOver() {
         base.OnWaitTimeOver();
-        StartExterminationTimer();
+        if (targetStructure == null || targetStructure.hasBeenDestroyed || targetStructure.tiles.Count <= 0) {
+            EndQuest("Target is destroyed");
+        } else {
+            Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+            StartExterminationTimer();
+        }
     }
     public override IPartyTargetDestination GetTargetDestination() {
         return targetStructure;
@@ -59,8 +64,12 @@ public class ExterminationPartyQuest : PartyQuest {
     //}
     protected override void OnEndQuest() {
         base.OnEndQuest();
+        isExterminating = false;
         if (originSettlement.exterminateTargetStructure == targetStructure) {
             originSettlement.SetExterminateTarget(null);
+        }
+        if (Messenger.eventTable.ContainsKey(StructureSignals.STRUCTURE_DESTROYED)) {
+            Messenger.RemoveListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         }
     }
     #endregion
@@ -96,6 +105,11 @@ public class ExterminationPartyQuest : PartyQuest {
     //private void SetWaitingArea() {
     //    waitingArea = targetStructure.settlementLocation.GetAPlainAdjacentHextile();
     //}
+    private void OnStructureDestroyed(LocationStructure structure) {
+        if (targetStructure == structure) {
+            EndQuest("Target is destroyed");
+        }
+    }
     #endregion
 
     #region Extermination Timer

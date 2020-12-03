@@ -39,6 +39,11 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
         structuresSkillSlotItems = new GroupedSkillSlotItems();
         miscsSkillSlotItems = new GroupedSkillSlotItems();
         loadoutChoices = new List<SPELL_TYPE>();
+        LoadSkillDataToUI(loadout.spells.fixedSkills, loadout.spells.extraSlots, spellsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraSpells(loadout.archetype), spellsScrollRect.content);
+        LoadSkillDataToUI(loadout.afflictions.fixedSkills, loadout.afflictions.extraSlots, afflictionsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraAfflictions(loadout.archetype), afflictionsScrollRect.content);
+        LoadSkillDataToUI(loadout.minions.fixedSkills, loadout.minions.extraSlots, minionsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraMinions(loadout.archetype), minionsScrollRect.content);
+        LoadSkillDataToUI(loadout.structures.fixedSkills, loadout.structures.extraSlots, structuresSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraStructures(loadout.archetype), structuresScrollRect.content);
+        LoadSkillDataToUI(loadout.miscs.fixedSkills, loadout.miscs.extraSlots, miscsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraMiscs(loadout.archetype), miscsScrollRect.content);
 
         Messenger.AddListener<SkillSlotItem, PLAYER_ARCHETYPE>(UISignals.SKILL_SLOT_ITEM_CLICKED, OnClickSkillSlotItem);
         Messenger.AddListener(UISignals.START_GAME_AFTER_LOADOUT_SELECT, OnStartGameAfterLoadoutSelect);

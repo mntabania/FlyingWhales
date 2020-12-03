@@ -193,9 +193,7 @@ public class MovementComponent : CharacterComponent {
             doneAction?.Invoke();
             return true;
         } else {
-            LocationGridTile gate = owner.GetTargetTileToGoToRegion(targetRegion);
-            DIRECTION direction = gate.GetDirection();
-            LocationGridTile exitTile = owner.gridTileLocation.GetNearestEdgeTileFromThis(direction);
+            LocationGridTile exitTile = owner.gridTileLocation.GetExitTileToGoToRegion(targetRegion);
             if (exitTile != null && owner.movementComponent.HasPathTo(exitTile)) {
                 //check first if character has path toward the exit tile.
                 owner.marker.GoTo(exitTile, () => TravelToAnotherRegion(targetRegion, doneAction));
@@ -423,7 +421,7 @@ public class MovementComponent : CharacterComponent {
             enableDiggingCounter--;
         }
     }
-    public LocationGridTile GetBlockerTargetTileOnReachEndPath(Path path, LocationGridTile lastGridTileInPath) {
+    public LocationGridTile GetBlockerTargetTileOnReachEndPath(Path path, LocationGridTile lastGridTileInPath, LocationGridTile actualDestinationTile) {
         LocationGridTile targetTile = null;
 
         if (!owner.marker) {
@@ -431,10 +429,10 @@ public class MovementComponent : CharacterComponent {
         }
 
         LocationGridTile tile = lastGridTileInPath;// owner.currentRegion.innerMap.GetTile(lastPositionInPath);
-        if (tile.objHere is BlockWall || tile.centeredWorldLocation == owner.marker.transform.position) {
+        if (tile.objHere is BlockWall || actualDestinationTile.centeredWorldLocation == tile.centeredWorldLocation) {
             targetTile = tile;
         } else {
-            Vector2 direction = tile.centeredWorldLocation - owner.marker.transform.position; //character.behaviourComponent.currentAbductTarget.worldPosition - tile.centeredWorldLocation;
+            Vector2 direction = actualDestinationTile.centeredWorldLocation - tile.centeredWorldLocation; //character.behaviourComponent.currentAbductTarget.worldPosition - tile.centeredWorldLocation;
             if (direction.y > 0) {
                 //north
                 targetTile = tile.GetNeighbourAtDirection(GridNeighbourDirection.North);
@@ -463,12 +461,12 @@ public class MovementComponent : CharacterComponent {
         }
         return targetTile;
     }
-    public bool DigOnReachEndPath(Path path, LocationGridTile lastGridTileInPath) {
+    public bool DigOnReachEndPath(Path path, LocationGridTile lastGridTileInPath, LocationGridTile actualDestinationTile) {
         //Vector3 lastPositionInPath = path.vectorPath.Last();
 
         //no path to target tile
         //create job to dig wall
-        LocationGridTile targetTile = GetBlockerTargetTileOnReachEndPath(path, lastGridTileInPath);
+        LocationGridTile targetTile = GetBlockerTargetTileOnReachEndPath(path, lastGridTileInPath, actualDestinationTile);
 
 
         //Debug.Log($"No Path found for {owner.name} towards {owner.behaviourComponent.currentAbductTarget?.name ?? "null"}! Last position in path is {lastPositionInPath.ToString()}. Wall to dig is at {targetTile}");
@@ -485,8 +483,8 @@ public class MovementComponent : CharacterComponent {
         return false;
         // character.behaviourComponent.SetDigForAbductionPath(null); //so behaviour can be run again after job has been added
     }
-    public bool AttackBlockersOnReachEndPath(Path path, LocationGridTile lastGridTileInPath) {
-        LocationGridTile targetTile = GetBlockerTargetTileOnReachEndPath(path, lastGridTileInPath);
+    public bool AttackBlockersOnReachEndPath(Path path, LocationGridTile lastGridTileInPath, LocationGridTile actualDestinationTile) {
+        LocationGridTile targetTile = GetBlockerTargetTileOnReachEndPath(path, lastGridTileInPath, actualDestinationTile);
 
         if (targetTile != null && targetTile.objHere != null && targetTile.objHere is BlockWall) {
             if (owner.combatComponent.hostilesInRange.Contains(targetTile.objHere)) {
@@ -570,7 +568,8 @@ public class MovementComponent : CharacterComponent {
             if(owner.currentActionNode != null && owner.currentActionNode.poiTarget == character) {
                 if(owner.currentActionNode.actionStatus == ACTION_STATUS.STARTED) {
                     if(owner.currentActionNode.associatedJobType == JOB_TYPE.RITUAL_KILLING
-                        || owner.currentActionNode.goapType == INTERACTION_TYPE.SHARE_INFORMATION) {
+                        || owner.currentActionNode.goapType == INTERACTION_TYPE.SHARE_INFORMATION
+                        || owner.currentActionNode.goapType == INTERACTION_TYPE.REPORT_CRIME) {
                         owner.currentActionNode.associatedJob?.ForceCancelJob(false);
                     }
                 }

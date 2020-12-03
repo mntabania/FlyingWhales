@@ -14,8 +14,8 @@ public class UndeadBehaviour : CharacterBehaviourComponent {
             Faction undeadFaction = FactionManager.Instance.undeadFaction;
             if(undeadFaction.leader != null && undeadFaction.leader is Character undeadFactionLeader) {
                 log += $"\n-Undead faction has a character leader";
-                if(undeadFactionLeader.necromancerTrait.lairStructure != null) {
-                    LocationStructure lair = undeadFactionLeader.necromancerTrait.lairStructure;
+                if(undeadFactionLeader.homeStructure != null) {
+                    LocationStructure lair = undeadFactionLeader.homeStructure;
                     log += $"\n-Undead faction leader has a lair";
                     log += $"\n-Character must migrate there if the lair is not yet his home";
                     if (character.homeStructure != lair) {

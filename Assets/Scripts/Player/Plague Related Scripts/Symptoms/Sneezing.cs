@@ -16,7 +16,7 @@ namespace Plague.Symptom {
         }
         public override void PerTickWhileStationaryOrUnoccupied(Character p_character) {
             if (GameUtilities.RollChance(1.5f)) { //1
-                ActivateSymptom(p_character);
+                ActivateSymptomOn(p_character);
             }
         }
     }

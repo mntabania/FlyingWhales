@@ -9,6 +9,13 @@ namespace Plague.Death_Effect {
         public abstract int GetNextLevelUpgradeCost();
         public abstract string GetCurrentEffectDescription();
 
+        protected void ActivateEffectOn(Character p_character) {
+            if (CanActivateEffectOn(p_character)) {
+                ActivateEffect(p_character);
+            }
+        }
+
+
         #region getters
         public int level => _level;
         #endregion
@@ -19,6 +26,15 @@ namespace Plague.Death_Effect {
 
         #region Plagued.IPlagueDeathListener
         public virtual void OnDeath(Character p_character) { }
+        #endregion
+
+        #region Virtuals
+        protected virtual bool CanActivateEffectOn(Character p_character) {
+            if (p_character.traitContainer.HasTrait("Plague Reservoir") || p_character.characterClass.IsZombie()) {
+                return false;
+            }
+            return true;
+        }
         #endregion
 
         public void AdjustLevel(int amount) {

@@ -7,10 +7,12 @@ using Random = UnityEngine.Random;
 namespace Traits {
     public class NightZombie : Trait {
         private Character owner;
+        private bool _hasTurnedAtLeastOnce;
 
         #region getters
         public override bool isPersistent => true;
-        public override bool isSingleton => true;
+        public override Type serializedData => typeof(SaveDataNightZombie);
+        public bool hasTurnedAtLeastOnce => _hasTurnedAtLeastOnce;
         #endregion
 
         public NightZombie() {
@@ -23,11 +25,23 @@ namespace Traits {
         }
 
         #region Loading
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
+            if (p_saveDataTrait is SaveDataNightZombie nightZombie) {
+                _hasTurnedAtLeastOnce = nightZombie.hasTurnedAtLeastOnce;
+            } else {
+                //Had to do this because had to handle incompatible saves
+                _hasTurnedAtLeastOnce = true;
+            }
+            if (!_hasTurnedAtLeastOnce) {
+                owner.visuals.UsePreviousClassAsset(true);
+                owner.visuals.UpdateAllVisuals(owner);
+            }
+        }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is Character character) {
                 owner = character;
-                UpdateColor();
                 Messenger.AddListener(Signals.HOUR_STARTED, HourlyCheck);
             }
         }
@@ -46,7 +60,7 @@ namespace Traits {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (owner != null) {
                 UnsetMovementSpeed();
-                SetColor(Color.white);
+                // SetColor(Color.white);
                 if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
                     Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyCheck);
                 }
@@ -91,19 +105,22 @@ namespace Traits {
             }
         }
 
-        private void UpdateColor() {
-            if (!owner.isDead) {
-                SetColor(Color.grey);
-            } else {
-                SetColor(Color.white);
-            }
-        }
-        private void SetColor(Color color) {
-            owner.marker.SetMarkerColor(color);
-        }
+        // private void UpdateColor() {
+            // if (!owner.isDead) {
+            //     SetColor(Color.grey);
+            // } else {
+            //     SetColor(Color.white);
+            // }
+        // }
+        // private void SetColor(Color color) {
+        //     owner.marker.SetMarkerColor(color);
+        // }
         private void Reanimate() {
-            owner.RaiseFromDeath(faction: FactionManager.Instance.undeadFaction, race: owner.race, className: "Night Zombie");
-            SetColor(Color.grey);
+            _hasTurnedAtLeastOnce = true;
+            owner.visuals.UsePreviousClassAsset(false);
+            CharacterManager.Instance.RaiseFromDeadRetainCharacterInstance(owner, FactionManager.Instance.undeadFaction, owner.race, "Night Zombie");
+            owner.visuals.UpdateAllVisuals(owner);
+            // SetColor(Color.grey);
         }
         private void SetMovementSpeed() {
             owner.movementComponent.AdjustRunSpeedModifier(1f);
@@ -115,3 +132,15 @@ namespace Traits {
         }
     }
 }
+
+#region Save Data
+public class SaveDataNightZombie : SaveDataTrait {
+    public bool hasTurnedAtLeastOnce;
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        NightZombie nightZombie = trait as NightZombie;
+        Assert.IsNotNull(nightZombie);
+        hasTurnedAtLeastOnce = nightZombie.hasTurnedAtLeastOnce;
+    }
+}
+#endregion

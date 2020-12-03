@@ -358,6 +358,31 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
+        public void OnlyAddPOIToList(IPointOfInterest p_poi) {
+            if (!pointsOfInterest.Contains(p_poi)) {
+                Debug.Log($"Added {p_poi.name} to {name}");
+                pointsOfInterest.Add(p_poi);
+                if (p_poi is TileObject tileObject) {
+                    if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
+                        groupedTileObjects[tileObject.tileObjectType].AddTileObject(tileObject);
+                    } else {
+                        TileObjectsAndCount toac = new TileObjectsAndCount();
+                        toac.AddTileObject(tileObject);
+                        groupedTileObjects.Add(tileObject.tileObjectType, toac);
+                    }    
+                }
+            }
+        }
+        public void OnlyRemovePOIFromList(IPointOfInterest p_poi) {
+            if (pointsOfInterest.Remove(p_poi)) {
+                Debug.Log($"Removed {p_poi.name} from {name}");
+                if (p_poi is TileObject tileObject) {
+                    if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
+                        groupedTileObjects[tileObject.tileObjectType].RemoveTileObject(tileObject);
+                    }    
+                }
+            }
+        }
         public virtual bool LoadPOI(IPointOfInterest poi, LocationGridTile tileLocation) {
             if (!pointsOfInterest.Contains(poi)) {
                 pointsOfInterest.Add(poi);
@@ -462,11 +487,21 @@ namespace Inner_Maps.Location_Structures {
             return objs;
         }
         public bool HasTileObjectOfType(TILE_OBJECT_TYPE type) {
-            List<TileObject> objs = new List<TileObject>();
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
                 if (poi is TileObject obj) {
                     if (obj.tileObjectType == type) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        public bool HasTileObjectThatMeetCriteria(Func<TileObject, bool> criteria) {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is TileObject obj) {
+                    if (criteria.Invoke(obj)) {
                         return true;
                     }
                 }
@@ -958,7 +993,7 @@ namespace Inner_Maps.Location_Structures {
                 AdjustHP(amount);
             }
         }
-        protected virtual void AdjustHP(int amount) {
+        public void AdjustHP(int amount) {
             if (hasBeenDestroyed) { return; }
             currentHP += amount;
             currentHP = Mathf.Clamp(currentHP, 0, maxHP);
@@ -1084,6 +1119,16 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
             return false;
+        }
+        public int GetNumberOfReidentsThatMeetCriteria(System.Func<Character, bool> criteria) {
+            int count = 0;
+            for (int i = 0; i < residents.Count; i++) {
+                Character character = residents[i];
+                if (criteria.Invoke(character)) {
+                    count++;
+                }
+            }
+            return count;
         }
         #endregion
 

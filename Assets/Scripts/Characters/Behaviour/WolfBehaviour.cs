@@ -8,13 +8,12 @@ using Traits;
 using UnityEngine;
 using UtilityScripts;
 
-public class WolfBehaviour : CharacterBehaviourComponent {
+public class WolfBehaviour : BaseMonsterBehaviour {
     
     public WolfBehaviour() {
         priority = 9;
     }
-    
-    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+    protected override bool WildBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         log += $"\n-{character.name} is a Wolf";
         if ((character.homeStructure == null || character.homeStructure.hasBeenDestroyed) && !character.HasTerritory()) {
@@ -36,7 +35,7 @@ public class WolfBehaviour : CharacterBehaviourComponent {
                 //if there is a settlement found, set the wolf's home to that
                 BaseSettlement randomSettlement = CollectionUtilities.GetRandomElement(settlementChoices);
                 log += $"\n-Found valid settlement {randomSettlement.name}";
-                LocationStructure randomStructure = randomSettlement.GetRandomStructure(structure =>
+                LocationStructure randomStructure = randomSettlement.GetRandomStructureThatMeetCriteria(structure =>
                     structure.structureType != STRUCTURE_TYPE.WILDERNESS && structure.CanBeResidentHere(character));
                 if (randomStructure != null) {
                     log += $"\n-Found valid structure at {randomSettlement.name}. Structure is {randomStructure.name}. Setting home to that.";

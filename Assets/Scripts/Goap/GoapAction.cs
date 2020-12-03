@@ -200,11 +200,19 @@ public class GoapAction {
     /// <returns>List of tile choices</returns>
     public virtual List<LocationGridTile> NearbyLocationGetter(ActualGoapNode goapNode) { return null; }
     public virtual string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) { return string.Empty; }
+        ActualGoapNode node, REACTION_STATUS status) {
+        CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
+        return string.Empty;
+    }
     public virtual string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) { return string.Empty; }
     public virtual string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node,
-        REACTION_STATUS status) { return string.Empty; }
+        REACTION_STATUS status) {
+        if(target is Character targetCharacter) {
+            CrimeManager.Instance.ReactToCrime(targetCharacter, actor, target, target.factionOwner, node.crimeType, node, status);
+        }
+        return string.Empty;
+    }
     public virtual void OnActionStarted(ActualGoapNode node) { }
     public virtual void OnStoppedInterrupt(ActualGoapNode node) { }
     public virtual REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
@@ -321,9 +329,15 @@ public class GoapAction {
         if (actor.gridTileLocation != null && tile != null) {
             int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
             distance = (int) (distance * 2f);
-            if (actor.currentRegion != tile.structure.region) {
-                return distance + 100;
-            }
+            //if(distance > 80) {
+            //    //+4000 if distance exceeds 80 so that the action will no longer be part of the choices
+            //    //Only did 4000 instead of 2000 so we can identify in the logs that the distance exceeded 80 because it will be 4000+
+            //    //https://trello.com/c/UKehLZQg/2993-if-distance-cost-exceeds-80-ignore-action
+            //    distance += 4000;
+            //}
+            //if (actor.currentRegion != tile.structure.region) {
+            //    return distance + 100;
+            //}
             return distance;
         }
         return 1;
@@ -373,16 +387,22 @@ public class GoapAction {
     }
     public bool CanSatisfyAllPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType) {
         bool isOverridden = false;
+        bool canSatisfy = true;
         List<Precondition> preconditions = GetPreconditions(actor, target, otherData, out isOverridden);
-        for (int i = 0; i < preconditions.Count; i++) {
-            if (!preconditions[i].CanSatisfyCondition(actor, target, otherData, jobType)) {
-                return false;
+        if(preconditions != null) {
+            for (int i = 0; i < preconditions.Count; i++) {
+                Precondition precondition = preconditions[i];
+                if (precondition != null && !precondition.CanSatisfyCondition(actor, target, otherData, jobType)) {
+                    canSatisfy = false;
+                    break;
+                }
             }
         }
+
         if (isOverridden) {
             ObjectPoolManager.Instance.ReturnPreconditionsListToPool(preconditions);
         }
-        return true;
+        return canSatisfy;
     }
     public virtual List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
         isOverridden = false; 

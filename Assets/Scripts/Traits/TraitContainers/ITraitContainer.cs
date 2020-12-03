@@ -21,7 +21,7 @@ namespace Traits {
         bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1);
         bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1);
         void AddTraitOverrideFunction(string identifier, Trait trait);
-        void RemoveTraitOverrideFunction(string identifier, Trait trait);
+        bool RestrainAndImprison(ITraitable addTo, Character characterResponsible = null, Faction factionThatImprisoned = null, Character characterThatImprisoned = null);
         //void AddOnCollideWithTrait(Trait trait);
         //bool RemoveOnCollideWithTrait(Trait trait);
         //void AddOnEnterGridTileTrait(Trait trait);
@@ -42,6 +42,8 @@ namespace Traits {
         void RemoveAllTraitsAndStatuses(ITraitable traitable);
         void RemoveAllTraits(ITraitable traitable);
         void RemoveAllTraitsByType(ITraitable traitable, TRAIT_TYPE traitType);
+        void RemoveTraitOverrideFunction(string identifier, Trait trait);
+        bool RemoveRestrainAndImprison(ITraitable removedFrom, Character removedBy = null);
         #endregion
 
         #region Getting

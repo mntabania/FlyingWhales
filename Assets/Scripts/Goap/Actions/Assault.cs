@@ -8,10 +8,10 @@ using UtilityScripts;
 public class Assault : GoapAction {
 
     //private Character winner;
-    private Character loser;
+    //private Character loser;
 
     public Assault() : base(INTERACTION_TYPE.ASSAULT) {
-        actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
+        actionLocationType = ACTION_LOCATION_TYPE.TARGET_IN_VISION;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         //racesThatCanDoAction = new RACE[] {
@@ -55,7 +55,7 @@ public class Assault : GoapAction {
     public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
         
-        if (status == REACTION_STATUS.INFORMED || node.isAssumption) {
+        //if (status == REACTION_STATUS.INFORMED || node.isAssumption) {
             if (node.crimeType == CRIME_TYPE.Vampire) {
                 if (target is Character targetCharacter) {
                     string opinionOfTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
@@ -76,7 +76,7 @@ public class Assault : GoapAction {
                                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status, node);        
                                 }
                             }
-                        } else if (opinionOfTarget == RelationshipManager.Friend ||opinionOfTarget == RelationshipManager.Acquaintance) {
+                        } else if (opinionOfTarget == RelationshipManager.Friend || opinionOfTarget == RelationshipManager.Acquaintance) {
                             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
                             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
                         } else if (targetCharacter == witness) {
@@ -163,9 +163,6 @@ public class Assault : GoapAction {
                             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disinterest, witness, actor, status, node);
                         }
                     }
-                    if (node.associatedJobType != JOB_TYPE.APPREHEND && !actor.IsHostileWith(targetCharacter)) {
-                        CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
-                    }
                 } else if (target is TileObject targetTileObject) {
                     if (targetTileObject.IsOwnedBy(witness)) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status, node);
@@ -201,12 +198,12 @@ public class Assault : GoapAction {
                     }
                 }
             }
-        }
+        //}
         return response;
     }
     public override string ReactionToTarget(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToTarget(actor, target, witness, node, status);
-        if(status == REACTION_STATUS.INFORMED || node.isAssumption) {
+        //if(status == REACTION_STATUS.INFORMED || node.isAssumption) {
             if (target is Character targetCharacter && targetCharacter.faction != null && targetCharacter.faction.isMajorNonPlayer && !witness.IsHostileWith(targetCharacter)) {
                 if (node.associatedJobType == JOB_TYPE.APPREHEND) {
                     string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
@@ -242,12 +239,12 @@ public class Assault : GoapAction {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status, node);
                 }
             }
-        }
+        //}
         return response;
     }
     public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionOfTarget(actor, target, node, status);
-        if (status == REACTION_STATUS.WITNESSED) {
+        //if (status == REACTION_STATUS.WITNESSED) {
             if (target is Character targetCharacter) {
                 if (node.crimeType != CRIME_TYPE.None && node.crimeType != CRIME_TYPE.Unset) {
                     CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(targetCharacter, actor, target, node.crimeType);
@@ -261,7 +258,7 @@ public class Assault : GoapAction {
                     }
                 }
             }
-        }
+        //}
         return response;
     }
     public override void OnStoppedInterrupt(ActualGoapNode node) {
@@ -297,7 +294,9 @@ public class Assault : GoapAction {
                             //if combat came from retaliation, do no consider assault as a crime.
                             return CRIME_TYPE.None;
                         }
-                        return CRIME_TYPE.Assault;
+                        //if (!actor.IsHostileWith(targetCharacter)) {
+                            return CRIME_TYPE.Assault;
+                        //}
                     }
                 }
             }

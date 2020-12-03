@@ -241,8 +241,8 @@ public class CombatComponent : CharacterComponent {
             owner.logComponent.PrintLogIfActive(debugLog);
             return new CombatReaction(COMBAT_REACTION.Flight);
         }
-        if (owner.traitContainer.HasTrait("Enslaved") && target is Character targetChar && targetChar.isNormalCharacter) {
-            debugLog += "\n-Character is a slave and target is a villager";
+        if (owner.traitContainer.HasTrait("Enslaved") && owner.isNormalCharacter && target is Character targetChar && targetChar.isNormalCharacter) {
+            debugLog += "\n-Character is a villager slave and target is a villager";
             debugLog += "\n-FLIGHT";
             owner.logComponent.PrintLogIfActive(debugLog);
             return new CombatReaction(COMBAT_REACTION.Flight);
@@ -388,35 +388,41 @@ public class CombatComponent : CharacterComponent {
         FightOrFlight(target, combatReaction, connectedAction, isLethal);
     }
     public bool Fight(IPointOfInterest target, string reason, ActualGoapNode connectedAction = null, bool isLethal = true) {
+        string debugLog = $"Triggered FIGHT response for {owner.name} against {target.nameWithID}";
         bool hasFought = false;
-        bool cannotFight = reason == CombatManager.Hostility && (target is Character targetCharacter && bannedFromHostileList.Contains(targetCharacter));
-        if (!hostilesInRange.Contains(target) && !cannotFight) {
-            string debugLog = $"Triggered FIGHT response for {owner.name} against {target.nameWithID}";
-            hostilesInRange.Add(target);
-            avoidInRange.Remove(target);
-            SetWillProcessCombat(true);
+        bool cannotFight = (reason == CombatManager.Hostility && target is Character targetCharacter && bannedFromHostileList.Contains(targetCharacter)) || !owner.limiterComponent.canPerform;
+        if (!cannotFight) {
+            if (!hostilesInRange.Contains(target)) {
+                hostilesInRange.Add(target);
+                avoidInRange.Remove(target);
+                SetWillProcessCombat(true);
 
-            //CombatData newCombatData = ObjectPoolManager.Instance.CreateNewCombatData();
-            //newCombatData.SetFightData(reason, connectedAction, isLethal);
-            if (combatDataDictionary.ContainsKey(target)) {
-                //CombatData prevCombatData = fightCombatData[target];
-                //ObjectPoolManager.Instance.ReturnCombatDataToPool(prevCombatData);
-                //fightCombatData[target] = newCombatData;
-                combatDataDictionary[target].SetFightData(reason, connectedAction, isLethal);
+                //CombatData newCombatData = ObjectPoolManager.Instance.CreateNewCombatData();
+                //newCombatData.SetFightData(reason, connectedAction, isLethal);
+                if (combatDataDictionary.ContainsKey(target)) {
+                    //CombatData prevCombatData = fightCombatData[target];
+                    //ObjectPoolManager.Instance.ReturnCombatDataToPool(prevCombatData);
+                    //fightCombatData[target] = newCombatData;
+                    combatDataDictionary[target].SetFightData(reason, connectedAction, isLethal);
+                } else {
+                    CombatData newCombatData = ObjectPoolManager.Instance.CreateNewCombatData();
+                    newCombatData.SetFightData(reason, connectedAction, isLethal);
+                    combatDataDictionary.Add(target, newCombatData);
+                }
+
+                if (target is TileObject targetTileObject) {
+                    targetTileObject.AdjustRepairCounter(1);
+                }
+                target.CancelRemoveStatusFeedAndRepairJobsTargetingThis();
+                debugLog += $"\n{target.name} was added to {owner.name}'s hostile range!";
+                hasFought = true;
             } else {
-                CombatData newCombatData = ObjectPoolManager.Instance.CreateNewCombatData();
-                newCombatData.SetFightData(reason, connectedAction, isLethal);
-                combatDataDictionary.Add(target, newCombatData);
+                debugLog += $"\n{target.name} is already in {owner.name}'s hostile range!";
             }
-
-            if (target is TileObject targetTileObject) {
-                targetTileObject.AdjustRepairCounter(1);
-            }
-            target.CancelRemoveStatusFeedAndRepairJobsTargetingThis();
-            debugLog += $"\n{target.name} was added to {owner.name}'s hostile range!";
-            hasFought = true;
-            owner.logComponent.PrintLogIfActive(debugLog);
+        } else {
+            debugLog += $"\n{owner.name} cannot fight!";
         }
+        owner.logComponent.PrintLogIfActive(debugLog);
         return hasFought;
     }
     public bool Flight(IPointOfInterest target, string reason = "") {
@@ -438,31 +444,43 @@ public class CombatComponent : CharacterComponent {
                 //}
             }
         }
-        if (!avoidInRange.Contains(target)) {
-            string debugLog = $"Triggered FLIGHT response for {owner.name} against {target.nameWithID}";
-            if (owner.marker.IsPOIInVision(target)) {
-                avoidInRange.Add(target);
-                SetWillProcessCombat(true);
+        string debugLog = $"Triggered FLIGHT response for {owner.name} against {target.nameWithID}";
+        if (owner.limiterComponent.canMove) {
+            if (!avoidInRange.Contains(target)) {
+                if (owner.marker.IsPOIInVision(target)) {
+                    avoidInRange.Add(target);
+                    SetWillProcessCombat(true);
 
-                if (combatDataDictionary.ContainsKey(target)) {
-                    combatDataDictionary[target].SetFlightData(reason);
-                } else {
-                    CombatData newCombatData = ObjectPoolManager.Instance.CreateNewCombatData();
-                    newCombatData.SetFlightData(reason);
-                    combatDataDictionary.Add(target, newCombatData);
-                }
+                    if (combatDataDictionary.ContainsKey(target)) {
+                        combatDataDictionary[target].SetFlightData(reason);
+                    } else {
+                        CombatData newCombatData = ObjectPoolManager.Instance.CreateNewCombatData();
+                        newCombatData.SetFlightData(reason);
+                        combatDataDictionary.Add(target, newCombatData);
+                    }
 
-                debugLog += $"\n{target.name} was added to {owner.name}'s avoid range!";
-                hasFled = true;
-                if (target is Character) {
-                    Character targetCharacter = target as Character;
-                    if (targetCharacter.combatComponent.combatMode == COMBAT_MODE.Defend) {
-                        targetCharacter.combatComponent.RemoveHostileInRange(owner);
+                    debugLog += $"\n{target.name} was added to {owner.name}'s avoid range!";
+                    hasFled = true;
+                    if (target is Character) {
+                        Character targetCharacter = target as Character;
+                        if (targetCharacter.combatComponent.combatMode == COMBAT_MODE.Defend) {
+                            targetCharacter.combatComponent.RemoveHostileInRange(owner);
+                        }
                     }
                 }
+            } else {
+                debugLog += $"\n{target.name} is already {owner.name}'s avoid range!";
             }
-            owner.logComponent.PrintLogIfActive(debugLog);
+        } else {
+            debugLog += $"\n{owner.name} cannot move!";
+            if (target is Character) {
+                Character targetCharacter = target as Character;
+                if (targetCharacter.combatComponent.combatMode == COMBAT_MODE.Defend) {
+                    targetCharacter.combatComponent.RemoveHostileInRange(owner);
+                }
+            }
         }
+        owner.logComponent.PrintLogIfActive(debugLog);
         return hasFled;
     }
     public void FlightAll(string reason = "") {
@@ -475,6 +493,7 @@ public class CombatComponent : CharacterComponent {
         if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
             return;
         }
+        string debugLog = $"Triggered FLIGHT ALL response for {owner.name}";
         if (hostilesInRange.Count > 0) {
             if (owner.limiterComponent.canMove) {
                 for (int i = 0; i < hostilesInRange.Count; i++) {
@@ -495,6 +514,16 @@ public class CombatComponent : CharacterComponent {
                             if (targetCharacter.combatComponent.combatMode == COMBAT_MODE.Defend) {
                                 targetCharacter.combatComponent.RemoveHostileInRange(owner);
                             }
+                        }
+                    }
+                }
+            } else {
+                for (int i = 0; i < hostilesInRange.Count; i++) {
+                    IPointOfInterest hostile = hostilesInRange[i];
+                    if (hostile is Character) {
+                        Character targetCharacter = hostile as Character;
+                        if (targetCharacter.combatComponent.combatMode == COMBAT_MODE.Defend) {
+                            targetCharacter.combatComponent.RemoveHostileInRange(owner);
                         }
                     }
                 }
@@ -842,7 +871,7 @@ public class CombatComponent : CharacterComponent {
                     return "Restrain";
                 case JOB_TYPE.PRODUCE_FOOD:
                 case JOB_TYPE.PRODUCE_FOOD_FOR_CAMP:
-                case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
+                case JOB_TYPE.MONSTER_BUTCHER:
                     return "Butcher";
                 case JOB_TYPE.APPREHEND:
                     return CombatManager.Apprehend;

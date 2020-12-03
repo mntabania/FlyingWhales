@@ -96,11 +96,13 @@ namespace Inner_Maps.Location_Structures {
                 Assert.IsNotNull(tortureChamber, $"Parent structure of torture room is not torture chamber! {parentStructure?.ToString() ?? "Null"}");
                 
                 Messenger.RemoveListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
-                character.traitContainer.AddTrait(character, "Restrained");
-                Prisoner prisonerTrait = character.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-                if (prisonerTrait != null) {
-                    prisonerTrait.SetPrisonerOfFaction(PlayerManager.Instance.player.playerFaction);
-                }
+
+                character.traitContainer.RestrainAndImprison(character, null, PlayerManager.Instance.player.playerFaction);
+                //character.traitContainer.AddTrait(character, "Restrained");
+                //Prisoner prisonerTrait = character.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+                //if (prisonerTrait != null) {
+                //    prisonerTrait.SetPrisonerOfFaction(PlayerManager.Instance.player.playerFaction);
+                //}
                 //open door
                 DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
                 door?.Open();
@@ -141,7 +143,7 @@ namespace Inner_Maps.Location_Structures {
                 //kill skeleton
                 // GameManager.Instance.CreateParticleEffectAt(_skeleton.gridTileLocation, PARTICLE_EFFECT.Zombie_Transformation);
                 skeleton.Death();
-                currentTortureTarget.traitContainer.RemoveTrait(currentTortureTarget, "Restrained");
+                currentTortureTarget.traitContainer.RemoveRestrainAndImprison(currentTortureTarget);
                 currentTortureTarget.jobComponent.DisableReportStructure();
                 if (!currentTortureTarget.traitContainer.HasTrait("Paralyzed")) {
                     //No need to daze paralyzed characters, because we expect that characters than cannot perform should not be dazed.
@@ -162,7 +164,7 @@ namespace Inner_Maps.Location_Structures {
             if (currentTortureTarget != null && currentTortureTarget.interruptComponent.isInterrupted && 
                 currentTortureTarget.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Being_Tortured) {
                 currentTortureTarget.interruptComponent.ForceEndNonSimultaneousInterrupt();
-                currentTortureTarget.traitContainer.RemoveTrait(currentTortureTarget, "Restrained");
+                currentTortureTarget.traitContainer.RemoveRestrainAndImprison(currentTortureTarget);
             }
             if (_particleEffect != null) {
                 _particleEffect.StopEmission();

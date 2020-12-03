@@ -312,7 +312,11 @@ public class BehaviourComponent : CharacterComponent {
             }
         } else {
             if (owner.minion != null) {
-                ChangeDefaultBehaviourSet(CharacterManager.Default_Minion_Behaviour);
+                if (owner.faction != null && owner.faction.isMajorNonPlayer) {
+                    ChangeDefaultBehaviourSet(CharacterManager.Default_Resident_Behaviour);
+                } else {
+                    ChangeDefaultBehaviourSet(CharacterManager.Default_Minion_Behaviour);    
+                }
             } else if (owner.race == RACE.ANGEL) {
                 ChangeDefaultBehaviourSet(CharacterManager.Default_Angel_Behaviour);
             } else {
@@ -334,18 +338,19 @@ public class BehaviourComponent : CharacterComponent {
     #region Utilities
     public List<HexTile> GetVillageTargetsByPriority() {
         //get settlements in region that have normal characters living there.
-        List<BaseSettlement> settlementsInRegion = owner.currentRegion?.GetSettlementsInRegion(settlement => settlement.residents.Count > 0 && 
-                                                                                                             settlement.residents.Count(c => c != null && c.isNormalCharacter && c.IsAble()) > 0);
+        List<BaseSettlement> settlementsInRegion = owner.currentRegion?
+            .GetSettlementsInRegion(settlement => settlement.residents.Count > 0 && settlement.residents.Count(c => c != null && c.isNormalCharacter && !c.isAlliedWithPlayer && c.IsAble()) > 0);
         if (settlementsInRegion != null) {
-            List<BaseSettlement> villageChoices = settlementsInRegion.Where(x => x.locationType == LOCATION_TYPE.VILLAGE).ToList();
-            if (villageChoices.Count > 0) {
+            // List<BaseSettlement> villageChoices = settlementsInRegion.Where(x => x.locationType == LOCATION_TYPE.VILLAGE && (x.owner == null || !x.owner.IsFriendlyWith(PlayerManager.Instance.player.playerFaction))).ToList();
+            List<BaseSettlement> villageChoices = settlementsInRegion.GetSettlementsThatAreUnownedOrHostileWithFaction(LOCATION_TYPE.VILLAGE, PlayerManager.Instance.player.playerFaction);
+            if (villageChoices != null) {
                 //a random village occupied by Villagers within current region
                 BaseSettlement chosenVillage = CollectionUtilities.GetRandomElement(villageChoices);
                 return new List<HexTile>(chosenVillage.tiles);
             } else {
                 //a random special structure occupied by Villagers within current region
-                List<BaseSettlement> specialStructureChoices = settlementsInRegion.Where(x => x.locationType == LOCATION_TYPE.DUNGEON).ToList();
-                if (specialStructureChoices.Count > 0) {
+                List<BaseSettlement> specialStructureChoices = settlementsInRegion.GetSettlementsThatAreUnownedOrHostileWithFaction(LOCATION_TYPE.DUNGEON, PlayerManager.Instance.player.playerFaction);
+                if (specialStructureChoices != null) {
                     BaseSettlement chosenSpecialStructure = CollectionUtilities.GetRandomElement(specialStructureChoices);
                     return new List<HexTile>(chosenSpecialStructure.tiles);
                 }
@@ -382,7 +387,13 @@ public class BehaviourComponent : CharacterComponent {
                         owner.jobQueue.AddJobInQueue(producedJob);
                     }
                     component.PostProcessAfterSuccessfulDoBehaviour(owner);
-                    if (!component.WillContinueProcess()) { break; }    
+                    if (producedJob != null) {
+                        //if a job was produced, always stop behaviour loop, regardless if behaviour says it should not skip processing
+                        break;
+                    } else {
+                        if (!component.WillContinueProcess()) { break; }    
+                    }
+                        
                 }
                 if (isProducedJobValid == false && producedJob != null) { //if produced valid is not valid and produced job is not null
                     //add character to blacklist if job is owned by a settlement
@@ -969,7 +980,8 @@ public class BehaviourComponent : CharacterComponent {
 
     #region Work
     public bool PlanWorkActions(out JobQueueItem producedJob) {
-        if (owner.limiterComponent.canTakeJobs) {
+        //Stationary characters like Wurm cannot take work jobs
+        if (owner.limiterComponent.canTakeJobs && !owner.movementComponent.isStationary) {
             //NOTE: ONLY ADDED FACTION CHECKING BECAUSE OF BUG THAT VAGRANTS ARE STILL PART OF A VILLAGE
             if (owner.isAtHomeRegion && owner.homeSettlement != null && owner.homeSettlement.owner == owner.faction) {
                 //check npcSettlement job queue, if it has any jobs that target an object that is in view of the owner

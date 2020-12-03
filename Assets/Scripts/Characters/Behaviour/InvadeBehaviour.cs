@@ -71,8 +71,9 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
             settlement => settlement.residents.Count(IsCharacterValidForInvade) > 0
         );
         if (settlementsInRegion != null) {
+            //Do not attack villages who are neutral/friendly with player faction
             List<BaseSettlement> villageChoices = settlementsInRegion.Where(
-                x => x.locationType == LOCATION_TYPE.VILLAGE
+                x => x.locationType == LOCATION_TYPE.VILLAGE && (x.owner == null || x.owner.IsHostileWith(owner.faction))
             ).ToList();
             if (villageChoices.Count > 0) {
                 //a random village occupied by Villagers within current region

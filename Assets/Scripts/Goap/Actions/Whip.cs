@@ -92,7 +92,7 @@ public class Whip : GoapAction {
         target.crimeComponent.SetDecisionAndJudgeToAllUnpunishedCrimesWantedBy(target.faction, CRIME_STATUS.Punished, goapNode.actor);
         target.crimeComponent.RemoveAllCrimesWantedBy(goapNode.actor.faction);
         //target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);
-        target.traitContainer.RemoveTrait(target, "Restrained", goapNode.actor);
+        target.traitContainer.RemoveRestrainAndImprison(target, goapNode.actor);
         target.traitContainer.AddTrait(target, "Injured", goapNode.actor, goapNode);
     }
     #endregion

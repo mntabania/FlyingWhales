@@ -14,7 +14,7 @@ namespace Plague.Symptom {
         public override void CharacterDonePerformingAction(Character p_character, ActualGoapNode p_actionPerformed) {
             base.CharacterDonePerformingAction(p_character, p_actionPerformed);
             if (p_actionPerformed.goapType.IsRestingAction() || p_actionPerformed.goapType == INTERACTION_TYPE.SIT) {
-                ActivateSymptom(p_character);
+                ActivateSymptomOn(p_character);
             }
         }
     }

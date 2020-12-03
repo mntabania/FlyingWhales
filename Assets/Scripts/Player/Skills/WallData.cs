@@ -35,6 +35,9 @@ public class WallData : SpellData {
                 if (tileObject.tileObjectType == TILE_OBJECT_TYPE.DOOR_TILE_OBJECT) {
                     return false;    
                 }
+                if (tileObject.traitContainer.HasTrait("Indestructible")) {
+                    return false;
+                }
             }
             return targetTile.structure != null && targetTile.structure.structureType != STRUCTURE_TYPE.OCEAN;
         }

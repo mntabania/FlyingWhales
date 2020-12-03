@@ -62,6 +62,13 @@ namespace Traits {
             data = $"{data}\nPrisoner of character: {prisonerOfCharacter?.name}";
             return data;
         }
+        public override void OnCopyStatus(Status statusToCopy, ITraitable from, ITraitable to) {
+            base.OnCopyStatus(statusToCopy, from, to);
+            if (statusToCopy is Prisoner status) {
+                prisonerOfFaction = status.prisonerOfFaction;
+                prisonerOfCharacter = status.prisonerOfCharacter;
+            }
+        }
         //public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         //    if (sourceCharacter is Character character) {
         //        character.ForceCancelAllJobsTargetingThisCharacter(JOB_TYPE.FEED);
@@ -166,11 +173,15 @@ namespace Traits {
         }
         public void SetPrisonerOfFaction(Faction faction) {
             prisonerOfFaction = faction;
-            Messenger.Broadcast(TraitSignals.HAS_BECOME_PRISONER, this);
+            if(prisonerOfFaction != null) {
+                Messenger.Broadcast(TraitSignals.HAS_BECOME_PRISONER, this);
+            }
         }
         public void SetPrisonerOfCharacter(Character character) {
             prisonerOfCharacter = character;
-            Messenger.Broadcast(TraitSignals.HAS_BECOME_PRISONER, this);
+            if (prisonerOfCharacter != null) {
+                Messenger.Broadcast(TraitSignals.HAS_BECOME_PRISONER, this);
+            }
         }
         public LocationStructure GetIntendedPrisonAccordingTo(Character character) {
             if(prisonerOfCharacter != null && prisonerOfCharacter == character) {

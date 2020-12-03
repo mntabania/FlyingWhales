@@ -532,25 +532,31 @@ public class FactionManager : BaseMonoBehaviour {
             Exclusive exclusive = CreateIdeology<Exclusive>(FACTION_IDEOLOGY.Exclusive);
             exclusive.SetRequirement(RELIGION.Demon_Worship);
             faction.factionType.AddIdeology(exclusive);
-        } else if (GameUtilities.RollChance(60)) {
+        } else if (faction.factionType.type == FACTION_TYPE.Undead) {
             Inclusive inclusive = CreateIdeology<Inclusive>(FACTION_IDEOLOGY.Inclusive);
             faction.factionType.AddIdeology(inclusive);
         } else {
-            //Remove first the existing Exclusive ideology so it can be replaced with a new one that has a diff requirement
-            faction.factionType.RemoveIdeology(FACTION_IDEOLOGY.Exclusive);
-
-            Exclusive exclusive = CreateIdeology<Exclusive>(FACTION_IDEOLOGY.Exclusive);
-            if(faction.factionType.type == FACTION_TYPE.Vampire_Clan && GameUtilities.RollChance(35)) {
-                exclusive.SetRequirement("Vampire");
-            } else if (faction.factionType.type == FACTION_TYPE.Lycan_Clan && GameUtilities.RollChance(35)) {
-                exclusive.SetRequirement("Lycanthrope");
-            } else if (GameUtilities.RollChance(60)) {
-                exclusive.SetRequirement(leader.race);
+            if (GameUtilities.RollChance(60)) {
+                Inclusive inclusive = CreateIdeology<Inclusive>(FACTION_IDEOLOGY.Inclusive);
+                faction.factionType.AddIdeology(inclusive);
             } else {
-                exclusive.SetRequirement(leader.gender);
-            }
-            faction.factionType.AddIdeology(exclusive);
-        }
+                //Remove first the existing Exclusive ideology so it can be replaced with a new one that has a diff requirement
+                faction.factionType.RemoveIdeology(FACTION_IDEOLOGY.Exclusive);
+
+                Exclusive exclusive = CreateIdeology<Exclusive>(FACTION_IDEOLOGY.Exclusive);
+                if(faction.factionType.type == FACTION_TYPE.Vampire_Clan && GameUtilities.RollChance(35)) {
+                    exclusive.SetRequirement("Vampire");
+                } else if (faction.factionType.type == FACTION_TYPE.Lycan_Clan && GameUtilities.RollChance(35)) {
+                    exclusive.SetRequirement("Lycanthrope");
+                } else if (GameUtilities.RollChance(60)) {
+                    exclusive.SetRequirement(leader.race);
+                } else {
+                    exclusive.SetRequirement(leader.gender);
+                }
+                faction.factionType.AddIdeology(exclusive);
+            }    
+        } 
+        
     }
     public void RerollReligionTypeIdeology(Faction faction, Character leader) {
         if (leader.traitContainer.HasTrait("Cultist")) {

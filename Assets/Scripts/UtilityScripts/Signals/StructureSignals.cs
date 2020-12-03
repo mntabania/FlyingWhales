@@ -25,4 +25,8 @@
     /// Parameters (Table table)
     /// </summary>
     public static string FOOD_IN_DWELLING_CHANGED = "OnFoodInDwellingChanged";
+    /// <summary>
+    /// Parameters (DemonicStructure)
+    /// </summary>
+    public static string DEMONIC_STRUCTURE_REPAIRED = "OnDemonicStructureRepaired";
 }

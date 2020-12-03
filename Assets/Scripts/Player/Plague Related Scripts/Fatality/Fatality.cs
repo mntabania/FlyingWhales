@@ -6,13 +6,28 @@ namespace Plague.Fatality {
         public abstract PLAGUE_FATALITY fatalityType { get; }
         
         protected abstract void ActivateFatality(Character p_character);
-        
+
+        protected void ActivateFatalityOn(Character p_character) {
+            if (CanActivateFatalityOn(p_character)) {
+                ActivateFatality(p_character);
+            }
+        }
+
         #region Plagued.IPlaguedListener Implementation
         public virtual void PerTickWhileStationaryOrUnoccupied(Character p_character) { }
         public virtual void CharacterGainedTrait(Character p_character, Trait p_gainedTrait) { }
         public virtual void CharacterStartedPerformingAction(Character p_character, ActualGoapNode p_action) { }
         public virtual void CharacterDonePerformingAction(Character p_character, ActualGoapNode p_actionPerformed) { }
         public virtual void HourStarted(Character p_character, int p_numOfHoursPassed) { }
+        #endregion
+
+        #region Virtuals
+        protected virtual bool CanActivateFatalityOn(Character p_character) {
+            if (p_character.traitContainer.HasTrait("Plague Reservoir") || p_character.characterClass.IsZombie()) {
+                return false;
+            }
+            return true;
+        }
         #endregion
     }
 
