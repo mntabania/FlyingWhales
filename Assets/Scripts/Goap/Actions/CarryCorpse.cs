@@ -45,6 +45,10 @@ public class CarryCorpse : GoapAction {
             if (poiTarget.isBeingCarriedBy != null && poiTarget.isBeingCarriedBy != actor) {
                 //If the target is already being carried by another character, fail this carry
                 goapActionInvalidity.isInvalid = true;
+            } else if (poiTarget.numOfActionsBeingPerformedOnThis > 0) {
+                goapActionInvalidity.isInvalid = true;
+            } else if (poiTarget is Tombstone tombstone && tombstone.character != null && tombstone.character.numOfActionsBeingPerformedOnThis > 0) {
+                goapActionInvalidity.isInvalid = true;
             }
         }
         return goapActionInvalidity;

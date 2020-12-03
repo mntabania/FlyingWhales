@@ -3,7 +3,7 @@ using UtilityScripts;
 
 public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
     public sealed override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-        if (character.faction != null && (character.faction.isMajorNonPlayer || character.faction.factionType.type == FACTION_TYPE.Ratmen)) {
+        if (character is Summon summon && summon.isTamed) {
             return TamedBehaviour(character, ref log, out producedJob);
         } else {
             return WildBehaviour(character, ref log, out producedJob);

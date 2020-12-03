@@ -15,7 +15,7 @@ public class SpiderEgg : MonsterEgg {
     protected override void Hatch() {
         int numOfSpiders = UnityEngine.Random.Range(2, 4);
         for (int i = 0; i < numOfSpiders; i++) {
-            Summon monster = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Small_Spider, characterThatLay.faction, homeRegion: gridTileLocation.parentMap.region);
+            Summon monster = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Small_Spider, characterThatLay.faction, homeRegion: gridTileLocation.parentMap.region, bypassIdeologyChecking: true);
             if (monster.faction.isPlayerFaction) {
                 monster.traitContainer.RemoveTrait(monster, monster.bredBehaviour);
                 monster.traitContainer.AddTrait(monster, "Baby Infestor");

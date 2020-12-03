@@ -24,6 +24,7 @@ public class Summon : Character {
     public virtual string bredBehaviour => characterClass.traitNameOnTamedByPlayer;
     public override Type serializedData => typeof(SaveDataSummon);
     public bool isUsingDefaultName => name == raceClassName;
+    public bool isTamed => faction != null && (faction.isMajorNonPlayer || faction.factionType.type == FACTION_TYPE.Ratmen);
     #endregion
 
     protected Summon(SUMMON_TYPE summonType, string className, RACE race, GENDER gender) : base(className, race, gender) {
