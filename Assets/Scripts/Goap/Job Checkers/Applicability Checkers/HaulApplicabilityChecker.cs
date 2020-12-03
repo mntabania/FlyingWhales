@@ -12,8 +12,8 @@ namespace Goap.Job_Checkers {
             IPointOfInterest target = goapPlanJob.targetPOI;
             BaseSettlement settlementWhereTargetIsPlaced = null;
 
-            bool cannotBeHauled = target.gridTileLocation.IsPartOfSettlement(out settlementWhereTargetIsPlaced) && settlementWhereTargetIsPlaced != settlement && settlementWhereTargetIsPlaced.owner != null &&
-               (settlementWhereTargetIsPlaced.owner.isMajorNonPlayer || settlementWhereTargetIsPlaced.owner.factionType.type == FACTION_TYPE.Ratmen);
+            bool cannotBeHauled = target == null || target.gridTileLocation == null || (target.gridTileLocation.IsPartOfSettlement(out settlementWhereTargetIsPlaced) && settlementWhereTargetIsPlaced != settlement && settlementWhereTargetIsPlaced.owner != null &&
+               (settlementWhereTargetIsPlaced.owner.isMajorNonPlayer || settlementWhereTargetIsPlaced.owner.factionType.type == FACTION_TYPE.Ratmen));
 
 
             return !cannotBeHauled && (goapPlanJob.targetPOI.isBeingCarriedBy != null || (goapPlanJob.targetPOI.gridTileLocation != null && goapPlanJob.targetPOI.gridTileLocation.structure != settlement.mainStorage));
