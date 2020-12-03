@@ -442,7 +442,7 @@ public class ReactionComponent : CharacterComponent {
                 actor.combatComponent.Flight(targetCharacter, CombatManager.Encountered_Hostile);
             }
             bool shouldRelease = disguisedActor.isNormalCharacter && !disguisedActor.traitContainer.HasTrait("Enslaved") && targetCharacter.traitContainer.HasTrait("Enslaved") && disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget)
-                && !disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget) && !targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Enslaved").IsResponsibleForTrait(disguisedActor);
+                && !disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget) && !targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Enslaved").IsResponsibleForTrait(disguisedActor) && disguisedActor.faction != targetCharacter.faction;
             bool isPartOfRescueJob = actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive && actor.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueQuest && rescueQuest.targetCharacter == targetCharacter;
             if (shouldRelease || isPartOfRescueJob) {
                 actor.jobComponent.TriggerReleaseJob(targetCharacter);
@@ -883,7 +883,8 @@ public class ReactionComponent : CharacterComponent {
                                     bool isResponsibleForUnconscious = isUnconscious && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Unconscious").IsResponsibleForTrait(disguisedActor);
                                     bool isResponsibleForEnslaved = isEnslaved && targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Enslaved").IsResponsibleForTrait(disguisedActor);
 
-                                    if (!disguisedActor.traitContainer.HasTrait("Enslaved") && isEnslaved && !isResponsibleForEnslaved) {
+                                    //NOTE: Manyayari na lang ito kapag same home settlement na lang yung actor and target
+                                    if (!disguisedActor.traitContainer.HasTrait("Enslaved") && isEnslaved && !isResponsibleForEnslaved && disguisedActor.faction != targetCharacter.faction) {
                                         actor.jobComponent.TriggerReleaseJob(targetCharacter);
                                     }
                                     if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.REMOVE_STATUS)) {
