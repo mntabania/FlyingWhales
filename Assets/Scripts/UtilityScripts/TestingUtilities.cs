@@ -10,7 +10,7 @@ namespace UtilityScripts {
             summary += "\nLocations Info:";
             for (int i = 0; i < settlements.Count; i++) {
                 NPCSettlement npcSettlement = settlements[i];
-                if (npcSettlement.locationType != LOCATION_TYPE.VILLAGE) {
+                if (npcSettlement.locationType != LOCATION_TYPE.VILLAGE && (npcSettlement.owner == null || npcSettlement.owner.factionType.type != FACTION_TYPE.Ratmen)) {
                     continue;
                 }
                 summary += $"\n<b>{npcSettlement.name}</b> Settlement Type: {npcSettlement.settlementType?.settlementType.ToString() ?? "None"}";

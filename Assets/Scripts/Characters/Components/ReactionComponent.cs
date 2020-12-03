@@ -1215,10 +1215,15 @@ public class ReactionComponent : CharacterComponent {
             if (resourcePile.gridTileLocation.IsPartOfSettlement(actor.homeSettlement) == false ||
                 resourcePile.gridTileLocation.structure != actor.homeSettlement.mainStorage) {
                 //do not create haul job for human and elven meat if actor is part of major faction
-                bool cannotCreateHaulJob = (resourcePile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || resourcePile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && actor.faction != null && actor.faction.isMajorNonPlayer;
-                bool isRatmanAndFoodPile = actor.faction?.factionType.type == FACTION_TYPE.Ratmen && resourcePile is FoodPile;
-                if (!cannotCreateHaulJob || isRatmanAndFoodPile) {
-                    actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
+                if(actor.faction?.factionType.type == FACTION_TYPE.Ratmen) {
+                    if(resourcePile is FoodPile) {
+                        actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
+                    }
+                } else {
+                    bool cannotCreateHaulJob = (resourcePile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || resourcePile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && actor.faction != null && actor.faction.isMajorNonPlayer;
+                    if (!cannotCreateHaulJob) {
+                        actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
+                    }
                 }
             }
         }

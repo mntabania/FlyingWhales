@@ -35,12 +35,12 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
         if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT) {
             //Night time
-            int chance = 30;
+            int chance = 15;
             if(HasResidentFromSameHomeThatMeetCriteria(character, r => !r.isDead && r.traitContainer.HasTrait("Enslaved"))) {
-                chance -= 25;
+                chance -= 11;
             }
             if (HasFoodPileInHomeStorage(character)) {
-                chance -= 15;
+                chance -= 6;
             }
             if (GameUtilities.RollChance(chance)) {
                 if (isInHome) {
