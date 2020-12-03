@@ -35,10 +35,17 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
         if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT) {
             //Night time
-            if (GameUtilities.RollChance(20)) {
+            int chance = 30;
+            if(HasResidentFromSameHomeThatMeetCriteria(character, r => r.traitContainer.HasTrait("Enslaved"))) {
+                chance -= 25;
+            }
+            if (HasFoodPileInHomeStorage(character)) {
+                chance -= 15;
+            }
+            if (GameUtilities.RollChance(chance)) {
                 if (isInHome) {
                     Character prisoner = GetFirstPrisonerAtHome(character);
-                    if (prisoner == null && !HasJobTypeFromSameHome(character, JOB_TYPE.MONSTER_ABDUCT)) {
+                    if (prisoner == null && !HasResidentFromSameHomeThatMeetCriteria(character, r => r.jobQueue.HasJob(JOB_TYPE.MONSTER_ABDUCT))) {
                     character.behaviourComponent.SetAbductionTarget(null);
 
                     //set abduction target if none, and chance met
@@ -82,9 +89,9 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                 if (prisoner != null) {
                     if (GameUtilities.RollChance(30) && prisoner.race == RACE.RATMAN) {
                         return character.jobComponent.TriggerRecruitJob(prisoner, out producedJob);
-                    } else if (GameUtilities.RollChance(20) && CanProduceFood(prisoner) && !HasJobTypeFromSameHome(character, JOB_TYPE.TORTURE)) {
+                    } else if (GameUtilities.RollChance(20) && CanProduceFood(prisoner) && !HasResidentFromSameHomeThatMeetCriteria(character, r => r.jobQueue.HasJob(JOB_TYPE.TORTURE))) {
                         return character.jobComponent.TriggerTorture(prisoner, out producedJob);
-                    } else if (GameUtilities.RollChance(30) && CanBeButchered(prisoner) && !HasJobTypeFromSameHome(character, JOB_TYPE.MONSTER_BUTCHER) /*&& HasStorage(character)*/ && !HasFoodPileInHomeStorage(character)) {
+                    } else if (GameUtilities.RollChance(30) && CanBeButchered(prisoner) && !HasResidentFromSameHomeThatMeetCriteria(character, r => r.jobQueue.HasJob(JOB_TYPE.MONSTER_BUTCHER)) /*&& HasStorage(character)*/ && !HasFoodPileInHomeStorage(character)) {
                         return character.jobComponent.CreateButcherJob(prisoner, JOB_TYPE.MONSTER_BUTCHER, out producedJob);
                     }
                 }
@@ -102,7 +109,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         }
         return character.jobComponent.TriggerRoamAroundTile(out producedJob);
     }
-    private bool HasJobTypeFromSameHome(Character character, JOB_TYPE jobType) {
+    private bool HasResidentFromSameHomeThatMeetCriteria(Character character, Func<Character, bool> criteria) {
         List<Character> residents = null;
         bool hasBorrowedList = false;
         if(character.homeSettlement != null) {
@@ -125,7 +132,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
             for (int i = 0; i < residents.Count; i++) {
                 Character resident = residents[i];
                 if(resident != character) {
-                    if (resident.jobQueue.HasJob(jobType)) {
+                    if (criteria.Invoke(resident)) {
                         decision = true;
                         break;
                     }
