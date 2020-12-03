@@ -823,14 +823,21 @@ public class CharacterInfoUI : InfoUIBase {
         Character target = CharacterManager.Instance.GetCharacterByID(targetID);
 
         string summary = $"{activeCharacter.name}'s opinion of {targetData.targetName}";
-        summary += "\n---------------------";
-        Dictionary<string, int> opinions = activeCharacter.relationshipContainer.GetOpinionData(targetID).allOpinions;
-        foreach (KeyValuePair<string, int> kvp in opinions) {
-            summary += $"\n{kvp.Key}: <color={BaseRelationshipContainer.OpinionColorNoGray(kvp.Value)}>{GetOpinionText(kvp.Value)}</color>";
+        bool isPsychopath = activeCharacter.traitContainer.HasTrait("Psychopath");
+        if (!isPsychopath) {
+            summary += "\n---------------------";
+            Dictionary<string, int> opinions = activeCharacter.relationshipContainer.GetOpinionData(targetID).allOpinions;
+            foreach (KeyValuePair<string, int> kvp in opinions) {
+                summary += $"\n{kvp.Key}: <color={BaseRelationshipContainer.OpinionColorNoGray(kvp.Value)}>{GetOpinionText(kvp.Value)}</color>";
+            }
+            summary += "\n---------------------";
         }
-        summary += "\n---------------------";
         summary +=
             $"\nTotal: <color={BaseRelationshipContainer.OpinionColorNoGray(targetData.opinions.totalOpinion)}>{GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}</color>";
+        if (isPsychopath) {
+            summary += $" (Psychopath)";
+        }
+
         if (target != null) {
             int opinionOfOther = target.relationshipContainer.GetTotalOpinion(activeCharacter);
             summary +=
