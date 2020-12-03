@@ -327,7 +327,7 @@ namespace Traits {
 
             Trait trait = null;
             hasAddedPrisoner = AddTrait(addTo, "Prisoner", out trait, characterResponsible);
-            if(trait != null && trait is Prisoner prisoner) {
+            if(hasAddedPrisoner && trait != null && trait is Prisoner prisoner) {
                 prisoner.SetPrisonerOfFaction(factionThatImprisoned);
                 prisoner.SetPrisonerOfCharacter(characterThatImprisoned);
             }

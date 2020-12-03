@@ -723,23 +723,24 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
 
         
-        // Action action = arrivalAction;
-        // //set arrival action to null, because some arrival actions set it
-        // ClearArrivalAction();
-        // action?.Invoke();   
-        targetPOI = null;
+        Action action = arrivalAction;
+        //set arrival action to null, because some arrival actions set it
+        ClearArrivalAction();
+        action?.Invoke();   
         
-        if (actualDestinationTile == attainedDestinationTile) {
-            Action action = arrivalAction;
-            //set arrival action to null, because some arrival actions set it
-            ClearArrivalAction();
-            action?.Invoke();    
-        } else {
-            ClearArrivalAction();
-            if (character.currentJob != null && character.currentActionNode != null) {
-                character.NoPathToDoJobOrAction(character.currentJob, character.currentActionNode);    
-            }
-        }
+        // if (actualDestinationTile == attainedDestinationTile || (attainedDestinationTile != null && actualDestinationTile != null && attainedDestinationTile.IsNeighbour(actualDestinationTile))) {
+        //     Action action = arrivalAction;
+        //     //set arrival action to null, because some arrival actions set it
+        //     ClearArrivalAction();
+        //     action?.Invoke();    
+        // } else {
+        //     ClearArrivalAction();
+        //     if (character.currentJob != null && character.currentActionNode != null) {
+        //         character.NoPathToDoJobOrAction(character.currentJob, character.currentActionNode);    
+        //     }
+        // }
+        
+        targetPOI = null;
     }
     private void ProcessDestinationAndAttainedDestinationTile(ref LocationGridTile destinationTile, ref LocationGridTile attainedDestinationTile) {
         destinationTile = GetDestinationTile();

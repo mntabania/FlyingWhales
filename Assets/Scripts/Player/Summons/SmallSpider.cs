@@ -96,7 +96,7 @@ public class SmallSpider : Summon {
         SetShowNotificationOnDeath(false);
         
         //create giant spider
-        Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Giant_Spider, targetFaction, settlement, region, home);
+        Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Giant_Spider, targetFaction, settlement, region, home, bypassIdeologyChecking: true);
         if (!this.isUsingDefaultName) {
             summon.SetFirstAndLastName(firstName, surName);    
         }
