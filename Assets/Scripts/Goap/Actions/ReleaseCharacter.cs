@@ -113,6 +113,8 @@ public class ReleaseCharacter : GoapAction {
                 target.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, goapNode.actor, "join_faction_normal");
             }
         }
+        target.combatComponent.RemoveHostileInRange(goapNode.actor);
+        target.combatComponent.RemoveAvoidInRange(goapNode.actor);
     }
     #endregion
 }
