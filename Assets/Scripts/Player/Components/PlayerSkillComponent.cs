@@ -155,7 +155,7 @@ public class PlayerSkillComponent {
             //                      && PlayerSkillManager.Instance.GetPlayerSpellData(data.skill) != null;
             // } else {
                 shouldAddSpell = PlayerSkillManager.Instance.GetPlayerSpellData(data.skill) != null 
-                && data.skill != SPELL_TYPE.OSTRACIZER && data.skill != SPELL_TYPE.MEDDLER && data.skill != SPELL_TYPE.CRYPT && data.skill != SPELL_TYPE.SKELETON_MARAUDER;
+                && data.skill != SPELL_TYPE.OSTRACIZER && data.skill != SPELL_TYPE.CRYPT && data.skill != SPELL_TYPE.SKELETON_MARAUDER;
             // }
             if (shouldAddSpell) {
                 SetPlayerSkillData(data);
