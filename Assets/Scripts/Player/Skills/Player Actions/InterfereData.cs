@@ -4,7 +4,7 @@ using UnityEngine;
 using Inner_Maps.Location_Structures;
 
 public class InterfereData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.INTERFERE;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.INTERFERE;
     public override string name { get { return "Interfere"; } }
     public override string description { get { return "Interfere"; } }
 

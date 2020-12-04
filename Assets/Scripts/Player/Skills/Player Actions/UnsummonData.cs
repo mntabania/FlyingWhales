@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 using Inner_Maps.Location_Structures;
 
 public class UnsummonData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.UNSUMMON;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.UNSUMMON;
     public override string name => "Unsummon";
     public override string description => $"Unsummon a minion.";
     public UnsummonData() : base() {

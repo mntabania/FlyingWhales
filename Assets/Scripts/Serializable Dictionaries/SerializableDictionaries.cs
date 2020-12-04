@@ -51,7 +51,7 @@ public class SeamlessEdgeAssetsDictionary : SerializableDictionary<LocationGridT
 [System.Serializable]
 public class YieldTypeLandmarksDictionary : SerializableDictionary<LANDMARK_YIELD_TYPE, List<LANDMARK_TYPE>, LandmarkTypeListStorage> { }
 [System.Serializable]
-public class InterventionAbilityTierDictionary : SerializableDictionary<SPELL_TYPE, int> { }
+public class InterventionAbilityTierDictionary : SerializableDictionary<PLAYER_SKILL_TYPE, int> { }
 [System.Serializable]
 public class CharacterClassAssetDictionary : SerializableDictionary<string, CharacterClassAsset> { }
 [System.Serializable]
@@ -75,13 +75,13 @@ public class BiomeMonsterDictionary : SerializableDictionary<BIOMES, List<Monste
 [System.Serializable]
 public class BiomeItemDictionary : SerializableDictionary<BIOMES, List<ItemSetting>, TileObjectSettingListStorage> { }
 [System.Serializable]
-public class SpellSpriteDictionary : SerializableDictionary<SPELL_TYPE, Sprite> { }
+public class SpellSpriteDictionary : SerializableDictionary<PLAYER_SKILL_TYPE, Sprite> { }
 [System.Serializable]
-public class PlayerSkillTreeNodeDictionary : SerializableDictionary<SPELL_TYPE, PlayerSkillTreeNode> { }
+public class PlayerSkillTreeNodeDictionary : SerializableDictionary<PLAYER_SKILL_TYPE, PlayerSkillTreeNode> { }
 [System.Serializable]
-public class PlayerSkillTreeNodeItemDictionary : SerializableDictionary<SPELL_TYPE, PlayerSkillTreeItem> { }
+public class PlayerSkillTreeNodeItemDictionary : SerializableDictionary<PLAYER_SKILL_TYPE, PlayerSkillTreeItem> { }
 [System.Serializable]
-public class PlayerSkillDataDictionary : SerializableDictionary<SPELL_TYPE, PlayerSkillData> { }
+public class PlayerSkillDataDictionary : SerializableDictionary<PLAYER_SKILL_TYPE, PlayerSkillData> { }
 [System.Serializable]
 public class PlayerArchetypeLoadoutDictionary : SerializableDictionary<PLAYER_ARCHETYPE, PlayerSkillLoadout> { }
 [System.Serializable]

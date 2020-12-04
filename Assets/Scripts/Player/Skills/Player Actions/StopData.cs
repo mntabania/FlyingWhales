@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 using Inner_Maps.Location_Structures;
 
 public class StopData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.STOP;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.STOP;
     public override string name { get { return "Stop"; } }
     public override string description { get { return "Stop"; } }
 

@@ -5421,7 +5421,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    jobComponent.SetFinalJobAssignment(null);
         //    Messenger.AddListener(Signals.TICK_STARTED, DissipateAfterFinalJobAssignment);
         //}
-        JobManager.Instance.OnFinishJob(job);
+        
+        //Only return to job pool if the job is personal, because if not, the control should be in the owner
+        if(job.originalOwner == this) {
+            JobManager.Instance.OnFinishJob(job);
+        }
     }
     //private void DissipateAfterFinalJobAssignment() {
     //    Messenger.RemoveListener(Signals.TICK_STARTED, DissipateAfterFinalJobAssignment);
@@ -5497,13 +5501,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Player Action Target
-    public List<SPELL_TYPE> actions { get; protected set; }
+    public List<PLAYER_SKILL_TYPE> actions { get; protected set; }
     //public List<string> overrideThoughts {
     //    get { return _overrideThoughts; }
     //}
     public virtual void ConstructDefaultActions() {
         if (actions == null) {
-            actions = new List<SPELL_TYPE>();
+            actions = new List<PLAYER_SKILL_TYPE>();
         } else {
             actions.Clear();
         }
@@ -5524,7 +5528,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //combatModeAction.SetLabelText(combatModeAction.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(combatComponent.combatMode.ToString()));
 
             //AddPlayerAction(SPELL_TYPE.STOP);
-            AddPlayerAction(SPELL_TYPE.UNSUMMON);
+            AddPlayerAction(PLAYER_SKILL_TYPE.UNSUMMON);
             //AddPlayerAction(SPELL_TYPE.RETURN_TO_PORTAL);
             //AddPlayerAction(SPELL_TYPE.CHANGE_COMBAT_MODE);
         } else {
@@ -5542,23 +5546,23 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //    () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
             // PlayerAction shareIntelAction = new PlayerAction("Share Intel", () => false, null);
             if (isNormalCharacter) {
-                AddPlayerAction(SPELL_TYPE.AFFLICT);
-                AddPlayerAction(SPELL_TYPE.ZAP);
-                AddPlayerAction(SPELL_TYPE.TRIGGER_FLAW);
-                AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
+                AddPlayerAction(PLAYER_SKILL_TYPE.AFFLICT);
+                AddPlayerAction(PLAYER_SKILL_TYPE.ZAP);
+                AddPlayerAction(PLAYER_SKILL_TYPE.TRIGGER_FLAW);
+                AddPlayerAction(PLAYER_SKILL_TYPE.RAISE_DEAD);
             }
-            AddPlayerAction(SPELL_TYPE.SEIZE_CHARACTER);
-            AddPlayerAction(SPELL_TYPE.SNATCH);
+            AddPlayerAction(PLAYER_SKILL_TYPE.SEIZE_CHARACTER);
+            AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH);
         }
         // AddPlayerAction(shareIntelAction);
     }
-    public void AddPlayerAction(SPELL_TYPE action) {
+    public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Contains(action) == false) {
             actions.Add(action);
             Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
         }
     }
-    public void RemovePlayerAction(SPELL_TYPE action) {
+    public void RemovePlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Remove(action)) {
             Messenger.Broadcast(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
         }

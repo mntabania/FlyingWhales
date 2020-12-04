@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 using Inner_Maps.Location_Structures;
 
 public class SummonMinionData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.SUMMON_MINION;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SUMMON_MINION;
     public override string name { get { return "Summon Minion"; } }
     public override string description { get { return "Summon Minion"; } }
 

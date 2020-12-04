@@ -12,16 +12,16 @@ public class PlayerSkillLoadout : ScriptableObject {
     public PlayerSkillLoadoutData miscs;
     public PASSIVE_SKILL[] passiveSkills;
 
-    public SPELL_TYPE[] availableSpells;
-    public SPELL_TYPE[] availableAfflictions;
-    public SPELL_TYPE[] availableMinions;
-    public SPELL_TYPE[] availableStructures;
-    public SPELL_TYPE[] availableMiscs;
+    public PLAYER_SKILL_TYPE[] availableSpells;
+    public PLAYER_SKILL_TYPE[] availableAfflictions;
+    public PLAYER_SKILL_TYPE[] availableMinions;
+    public PLAYER_SKILL_TYPE[] availableStructures;
+    public PLAYER_SKILL_TYPE[] availableMiscs;
 
 }
 
 [System.Serializable]
 public class PlayerSkillLoadoutData {
     public int extraSlots;
-    public List<SPELL_TYPE> fixedSkills;
+    public List<PLAYER_SKILL_TYPE> fixedSkills;
 }

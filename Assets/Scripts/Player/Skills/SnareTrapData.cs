@@ -4,10 +4,10 @@ using UnityEngine;
 using Inner_Maps;
 
 public class SnareTrapData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.SNARE_TRAP;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SNARE_TRAP;
     public override string name => "Snare Trap";
     public override string description => "This Spell places an invisible trap on a target unoccupied tile. Any character that walks into the tile will activate it and become Ensnared.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     public virtual int abilityRadius => 1;
 
     public SnareTrapData() : base() {

@@ -4,7 +4,7 @@ using Traits;
 using UnityEngine;
 
 public class ActivateData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.ACTIVATE;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.ACTIVATE;
     public override string name => "Activate";
     public override string description => "This Action can be used on a few special objects. The effect varies depending on the object but it usually only affects nearby tiles and characters. You've got to try it out first to find out.";
     public ActivateData() : base() {

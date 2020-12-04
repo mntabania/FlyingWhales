@@ -59,7 +59,7 @@ public class BuildListUI : PopupMenuBase {
     public void PopulateBuildingList() {
         buildItems = new SpellItem[PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills.Count];
         for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills.Count; i++) {
-            SPELL_TYPE structureSpell = PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills[i];
+            PLAYER_SKILL_TYPE structureSpell = PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills[i];
             DemonicStructurePlayerSkill demonicStructurePlayerSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureSpell);
             GameObject spellNameplate = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellItemPrefab.name,
                 Vector3.zero, Quaternion.identity, buildingsScrollRect.content);
@@ -94,10 +94,10 @@ public class BuildListUI : PopupMenuBase {
 
         if (canChooseLandmark) {
             if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
-                if (p_spellData.type == SPELL_TYPE.EYE) {
+                if (p_spellData.type == PLAYER_SKILL_TYPE.EYE) {
                     return TutorialManager.Instance.HasTutorialBeenCompletedInCurrentPlaythrough(TutorialManager.Tutorial.Share_An_Intel) ||
                            TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Share_An_Intel);
-                } else if (p_spellData.type == SPELL_TYPE.KENNEL) {
+                } else if (p_spellData.type == PLAYER_SKILL_TYPE.KENNEL) {
                     return TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Build_A_Kennel) ||
                            TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Build_A_Kennel);
                 }

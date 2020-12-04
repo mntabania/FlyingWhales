@@ -4,7 +4,7 @@ using UnityEngine;
 using Inner_Maps.Location_Structures;
 
 public class DefendData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.DEFEND;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.DEFEND;
     public override string name { get { return "Defend"; } }
     public override string description { get { return "Defend"; } }
 

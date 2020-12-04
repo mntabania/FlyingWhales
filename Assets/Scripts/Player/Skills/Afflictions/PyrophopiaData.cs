@@ -5,10 +5,10 @@ using Traits;
 using UnityEngine;
 
 public class PyrophobiaData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.PYROPHOBIA;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.PYROPHOBIA;
     public override string name => "Pyrophobia";
     public override string description => "This Affliction will make a Villager fear fire. Pyrophobic Villagers will always flee or cower whenever it gets close to a fire.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.AFFLICTION;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.AFFLICTION;
     public PyrophobiaData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }

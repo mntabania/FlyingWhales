@@ -34,10 +34,10 @@ namespace Inner_Maps.Location_Structures {
         #region Learn Spell
         private void AddLearnSpell() {
             //PlayerAction learnSpellAction = new PlayerAction(PlayerDB.Learn_Spell_Action, CanLearnSpell, null, TryLearnASpellOrAffliction);
-            AddPlayerAction(SPELL_TYPE.LEARN_SPELL);
+            AddPlayerAction(PLAYER_SKILL_TYPE.LEARN_SPELL);
         }
         private void RemoveLearnSpell() {
-            RemovePlayerAction(SPELL_TYPE.LEARN_SPELL);
+            RemovePlayerAction(PLAYER_SKILL_TYPE.LEARN_SPELL);
         }
         public bool CanLearnSpell() {
             return _isLearnSpellInCooldown == false && PlayerManager.Instance.player.mana >= 100 &&
@@ -74,12 +74,12 @@ namespace Inner_Maps.Location_Structures {
             //PlayerManager.Instance.player.LearnSpell(spellType);
             UIManager.Instance.HideObjectPicker();
             OnSpellLearned();
-            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.LEARN_SPELL).OnExecuteSpellActionAffliction();
+            PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.LEARN_SPELL).OnExecuteSpellActionAffliction();
         }
-        private void OnHoverSpell(SPELL_TYPE spell) {
+        private void OnHoverSpell(PLAYER_SKILL_TYPE spell) {
             
         }
-        private void OnHoverExitSpell(SPELL_TYPE spell) {
+        private void OnHoverExitSpell(PLAYER_SKILL_TYPE spell) {
             
         }
         private void TryLearnAffliction() {
@@ -93,13 +93,13 @@ namespace Inner_Maps.Location_Structures {
             //PlayerManager.Instance.player.LearnAffliction(spellType);
             UIManager.Instance.HideObjectPicker();
             OnSpellLearned();
-            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.LEARN_SPELL).OnExecuteSpellActionAffliction();
+            PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.LEARN_SPELL).OnExecuteSpellActionAffliction();
         }
-        private void OnHoverAffliction(SPELL_TYPE spellType) {
+        private void OnHoverAffliction(PLAYER_SKILL_TYPE spellType) {
             SpellData data = PlayerSkillManager.Instance.GetAfflictionData(spellType);
             UIManager.Instance.ShowSmallInfo(data.description, data.name);
         }
-        private void OnHoverExitAffliction(SPELL_TYPE spellType) {
+        private void OnHoverExitAffliction(PLAYER_SKILL_TYPE spellType) {
             UIManager.Instance.HideSmallInfo();
         }
         private Sprite AfflictionPortraitGetter(string afflictionStr) {

@@ -4,7 +4,7 @@ using UnityEngine;
 using Inner_Maps.Location_Structures;
 
 public class LearnSpellData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.LEARN_SPELL;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.LEARN_SPELL;
     public override string name { get { return "Learn Spell"; } }
     public override string description { get { return "Learn Spell"; } }
 

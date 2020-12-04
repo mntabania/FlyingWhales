@@ -26,8 +26,8 @@ public abstract class InfoUIBase : MonoBehaviour {
         Messenger.AddListener<PlayerAction>(SpellSignals.ON_EXECUTE_PLAYER_ACTION, OnExecutePlayerAction);
         Messenger.AddListener<IPlayerActionTarget>(SpellSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
         Messenger.AddListener(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
-        Messenger.AddListener<SPELL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
-        Messenger.AddListener<SPELL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
+        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
+        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
         _toggles = GetComponentsInChildren<RuinarchToggle>(true);
     }
     private void OnReceiveHideMenuSignal() {
@@ -136,12 +136,12 @@ public abstract class InfoUIBase : MonoBehaviour {
         }
         return null;
     }
-    private void OnPlayerActionAddedToTarget(SPELL_TYPE playerAction, IPlayerActionTarget actionTarget) {
+    private void OnPlayerActionAddedToTarget(PLAYER_SKILL_TYPE playerAction, IPlayerActionTarget actionTarget) {
         if (_playerActionTarget == actionTarget && isShowing) {
             LoadActions(actionTarget);
         }
     }
-    private void OnPlayerActionRemovedFromTarget(SPELL_TYPE playerAction, IPlayerActionTarget actionTarget) {
+    private void OnPlayerActionRemovedFromTarget(PLAYER_SKILL_TYPE playerAction, IPlayerActionTarget actionTarget) {
         if (_playerActionTarget == actionTarget && isShowing) {
             LoadActions(actionTarget);
         }

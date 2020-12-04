@@ -52,7 +52,7 @@ public class StringPickerItem : ObjectPickerItem<string>, IPointerClickHandler {
                 iconImg.sprite = CharacterManager.Instance.GetWholeImagePortraitSprite(str);
                 iconImg.gameObject.SetActive(true);
             } else if (identifier == "player skill") {
-                iconImg.sprite = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>((SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(str).ToUpper())).buttonSprite;
+                iconImg.sprite = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>((PLAYER_SKILL_TYPE) System.Enum.Parse(typeof(PLAYER_SKILL_TYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(str).ToUpper())).buttonSprite;
                 iconImg.gameObject.SetActive(true);
             }
             iconImg.SetNativeSize();

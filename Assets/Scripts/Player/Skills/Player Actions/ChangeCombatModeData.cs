@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 using Inner_Maps.Location_Structures;
 
 public class ChangeCombatModeData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.CHANGE_COMBAT_MODE;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.CHANGE_COMBAT_MODE;
     public override string name { get { return "Change Combat Mode"; } }
     public override string description { get { return "Change Combat Mode"; } }
 

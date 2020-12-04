@@ -1,10 +1,10 @@
 ﻿using Inner_Maps;
 
 public class VaporData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.VAPOR;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.VAPOR;
     public override string name => "Vapor";
     public override string description => "Vapor";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public VaporData() : base() {

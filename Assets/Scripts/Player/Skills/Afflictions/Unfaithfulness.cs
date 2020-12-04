@@ -3,10 +3,10 @@ using Logs;
 using UnityEngine;
 
 public class UnfaithfulnessData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.UNFAITHFULNESS;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.UNFAITHFULNESS;
     public override string name => "Unfaithfulness";
     public override string description => $"This Affliction will make a Villager Unfaithful. Unfaithful Villagers may flirt and develop Affairs even if they already have a Husband or a Wife.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.AFFLICTION;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.AFFLICTION;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     public UnfaithfulnessData() : base() {

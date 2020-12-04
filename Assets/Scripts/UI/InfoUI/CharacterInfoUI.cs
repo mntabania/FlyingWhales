@@ -205,7 +205,7 @@ public class CharacterInfoUI : InfoUIBase {
     }
     protected override void OnExecutePlayerAction(PlayerAction action) {
         base.OnExecutePlayerAction(action);
-        if(action.type == SPELL_TYPE.CHANGE_COMBAT_MODE) {
+        if(action.type == PLAYER_SKILL_TYPE.CHANGE_COMBAT_MODE) {
             SetCombatModeUIPosition(action);
         }
     }
@@ -893,9 +893,9 @@ public class CharacterInfoUI : InfoUIBase {
     #region Afflict
     public void ShowAfflictUI() {
         afflictions.Clear();
-        List<SPELL_TYPE> afflictionTypes = PlayerManager.Instance.player.playerSkillComponent.afflictions;
+        List<PLAYER_SKILL_TYPE> afflictionTypes = PlayerManager.Instance.player.playerSkillComponent.afflictions;
         for (int i = 0; i < afflictionTypes.Count; i++) {
-            SPELL_TYPE spellType = afflictionTypes[i];
+            PLAYER_SKILL_TYPE spellType = afflictionTypes[i];
             SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(spellType);
             afflictions.Add(spellData);
         }
@@ -908,16 +908,16 @@ public class CharacterInfoUI : InfoUIBase {
     }
     private void ActivateAfflictionConfirmation(object o) {
         SpellData affliction = (SpellData)o;
-        SPELL_TYPE afflictionType = affliction.type;
+        PLAYER_SKILL_TYPE afflictionType = affliction.type;
         string afflictionName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(afflictionType.ToString());
         UIManager.Instance.ShowYesNoConfirmation("Affliction Confirmation",
             "Are you sure you want to afflict " + afflictionName + "?", () => ActivateAffliction(afflictionType),
             layer: 26, showCover: true, pauseAndResume: true);
     }
-    private void ActivateAffliction(SPELL_TYPE afflictionType) {
+    private void ActivateAffliction(PLAYER_SKILL_TYPE afflictionType) {
         UIManager.Instance.HideObjectPicker();
         PlayerSkillManager.Instance.GetAfflictionData(afflictionType).ActivateAbility(activeCharacter);
-        PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.AFFLICT).OnExecuteSpellActionAffliction();
+        PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.AFFLICT).OnExecuteSpellActionAffliction();
     }
     private bool CanActivateAffliction(SpellData spellData) {
         // if (WorldConfigManager.Instance.isTutorialWorld) {
@@ -945,7 +945,7 @@ public class CharacterInfoUI : InfoUIBase {
             }
         }
         UIManager.Instance.ShowClickableObjectPicker(triggerFlawPool, ActivateTriggerFlawConfirmation, null, CanActivateTriggerFlaw,
-            $"Select Flaw ({PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()})", 
+            $"Select Flaw ({PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()})", 
             OnHoverEnterFlaw, OnHoverExitFlaw, showCover: true, layer: 25, shouldShowConfirmationWindowOnPick: true, asButton: true, identifier: "Trigger Flaw");
     }
     private void ActivateTriggerFlawConfirmation(object o) {
@@ -953,7 +953,7 @@ public class CharacterInfoUI : InfoUIBase {
         Trait trait = activeCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
         string question = "Are you sure you want to trigger " + traitName + "?";
         string effect = $"<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
-        string manaCost = $"{PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
+        string manaCost = $"{PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
 
         UIManager.Instance.ShowTriggerFlawConfirmation(question, effect, manaCost, () => ActivateTriggerFlaw(trait), layer: 26, showCover: true, pauseAndResume: true);
     }
@@ -965,7 +965,7 @@ public class CharacterInfoUI : InfoUIBase {
             if (activeCharacter.partyComponent.hasParty) {
                 activeCharacter.partyComponent.currentParty.RemoveMemberThatJoinedQuest(activeCharacter);
             }
-            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).OnExecuteSpellActionAffliction();
+            PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).OnExecuteSpellActionAffliction();
         } else {
             string log = "Failed to trigger flaw. Some requirements might be unmet.";
             if (LocalizationManager.Instance.HasLocalizedValue("Trigger Flaw", trait.name, result)) {
@@ -990,7 +990,7 @@ public class CharacterInfoUI : InfoUIBase {
         Trait trait = activeCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
         PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(
             traitName, trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect"), 
-            manaCost: PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost
+            manaCost: PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost
         );
     }
     private void OnHoverExitFlaw(string traitName) {
@@ -1192,7 +1192,7 @@ public class CharacterInfoUI : InfoUIBase {
         UIManager.Instance.characterInfoUI.activeCharacter.combatComponent.SetCombatMode(combatMode);
         Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, activeCharacter as IPlayerActionTarget);
         UIManager.Instance.customDropdownList.Close();
-        PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.CHANGE_COMBAT_MODE).OnExecuteSpellActionAffliction();
+        PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.CHANGE_COMBAT_MODE).OnExecuteSpellActionAffliction();
     }
     #endregion
 

@@ -243,7 +243,7 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
                     entrances.RemoveAt(0);
                 }
             }
-            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.HARASS).OnExecuteSpellActionAffliction();
+            PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.HARASS).OnExecuteSpellActionAffliction();
         } else if (identifier == "defend") {
             for (int i = 0; i < chosenSummons.Count; i++) {
                 if(entrances.Count <= 0) {
@@ -267,7 +267,7 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
                     entrances.RemoveAt(0);
                 }
             }
-            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.DEFEND).OnExecuteSpellActionAffliction();
+            PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.DEFEND).OnExecuteSpellActionAffliction();
         } else if (identifier == "invade") {
             for (int i = 0; i < chosenSummons.Count; i++) {
                 Summon summon = chosenSummons[i] as Summon;
@@ -285,7 +285,7 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
                     entrances.RemoveAt(0);
                 }
             }
-            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.INVADE).OnExecuteSpellActionAffliction();
+            PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.INVADE).OnExecuteSpellActionAffliction();
         }
         //PlayerManager.Instance.player.threatComponent.AdjustThreat(5 + (5 * chosenSummons.Count));
 

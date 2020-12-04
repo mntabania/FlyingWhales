@@ -160,8 +160,8 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
         
-        Messenger.AddListener<SPELL_TYPE>(SpellSignals.PLAYER_GAINED_SPELL, OnGainSpell);
-        Messenger.AddListener<SPELL_TYPE>(SpellSignals.PLAYER_LOST_SPELL, OnLostSpell);
+        Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.PLAYER_GAINED_SPELL, OnGainSpell);
+        Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.PLAYER_LOST_SPELL, OnLostSpell);
     }
 
     public void InitializeAfterGameLoaded() {
@@ -831,17 +831,17 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     private void CreateInitialSpells() {
         for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.spells.Count; i++) {
-            SPELL_TYPE spell = PlayerManager.Instance.player.playerSkillComponent.spells[i];
+            PLAYER_SKILL_TYPE spell = PlayerManager.Instance.player.playerSkillComponent.spells[i];
             CreateNewSpellItem(spell);
         }
     }
-    private void OnGainSpell(SPELL_TYPE spell) {
+    private void OnGainSpell(PLAYER_SKILL_TYPE spell) {
         CreateNewSpellItem(spell);
     }
-    private void OnLostSpell(SPELL_TYPE spell) {
+    private void OnLostSpell(PLAYER_SKILL_TYPE spell) {
         DeleteSpellItem(spell);
     }
-    private void CreateNewSpellItem(SPELL_TYPE spell) {
+    private void CreateNewSpellItem(PLAYER_SKILL_TYPE spell) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellItemPrefab.name, Vector3.zero, Quaternion.identity, spellsScrollRect.content);
         SpellItem item = go.GetComponent<SpellItem>();
         go.SetActive(false);
@@ -873,13 +873,13 @@ public class PlayerUI : BaseMonoBehaviour {
         // }
         _spellItems.Add(item);
     }
-    private void DeleteSpellItem(SPELL_TYPE spell) {
+    private void DeleteSpellItem(PLAYER_SKILL_TYPE spell) {
         SpellItem item = GetSpellItem(spell);
         if (item != null) {
             ObjectPoolManager.Instance.DestroyObject(item.gameObject);
         }
     }
-    private SpellItem GetSpellItem(SPELL_TYPE spell) {
+    private SpellItem GetSpellItem(PLAYER_SKILL_TYPE spell) {
         for (int i = 0; i < _spellItems.Count; i++) {
             SpellItem item = _spellItems[i];
             if (item.spellData.type == spell) {
@@ -1100,7 +1100,7 @@ public class PlayerUI : BaseMonoBehaviour {
         plaguePointLbl.text = p_amount.ToString();
     }
     private void UpdatePlaguePointsContainer() {
-        plaguePointsContainer.gameObject.SetActive(PlayerSkillManager.Instance.GetDemonicStructureSkillData(SPELL_TYPE.BIOLAB).isInUse);
+        plaguePointsContainer.gameObject.SetActive(PlayerSkillManager.Instance.GetDemonicStructureSkillData(PLAYER_SKILL_TYPE.BIOLAB).isInUse);
     }
     public void OnHoverEnterPlaguePoints() {
         string text = "The amount of Plague Points you've generated. You can use this to upgrade your Plague if you have a Biolab built";

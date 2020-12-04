@@ -3,10 +3,10 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;
 
 public class SpellData : IPlayerSkill {
-    public virtual SPELL_TYPE type => SPELL_TYPE.NONE;
+    public virtual PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.NONE;
     public virtual string name { get { return string.Empty; } }
     public virtual string description { get { return string.Empty; } }
-    public virtual SPELL_CATEGORY category { get { return SPELL_CATEGORY.NONE; } }
+    public virtual PLAYER_SKILL_CATEGORY category { get { return PLAYER_SKILL_CATEGORY.NONE; } }
     //public virtual INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.NONE;
     public SPELL_TARGET[] targetTypes { get; protected set; }
     //public int radius { get; protected set; }
@@ -162,11 +162,11 @@ public class SpellData : IPlayerSkill {
         PlayerManager.Instance.player.threatComponent.AdjustThreat(threat);
         //PlayerManager.Instance.player.threatComponent.AdjustThreat(20);
 
-        if (category == SPELL_CATEGORY.PLAYER_ACTION) {
+        if (category == PLAYER_SKILL_CATEGORY.PLAYER_ACTION) {
             Messenger.Broadcast(SpellSignals.ON_EXECUTE_PLAYER_ACTION, this as PlayerAction);
-        } else if (category == SPELL_CATEGORY.AFFLICTION) {
+        } else if (category == PLAYER_SKILL_CATEGORY.AFFLICTION) {
             Messenger.Broadcast(SpellSignals.ON_EXECUTE_AFFLICTION, this);
-        } else if (category == SPELL_CATEGORY.SPELL || category == SPELL_CATEGORY.MINION || category == SPELL_CATEGORY.SUMMON) {
+        } else if (category == PLAYER_SKILL_CATEGORY.SPELL || category == PLAYER_SKILL_CATEGORY.MINION || category == PLAYER_SKILL_CATEGORY.SUMMON) {
             Messenger.Broadcast(SpellSignals.ON_EXECUTE_SPELL, this);
         }
     }

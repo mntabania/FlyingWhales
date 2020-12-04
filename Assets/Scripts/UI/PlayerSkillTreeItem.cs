@@ -13,10 +13,10 @@ public class PlayerSkillTreeItem : MonoBehaviour {
     public Button button;
 
     private PlayerSkillData skillData;
-    private SPELL_TYPE skillType;
-    private System.Action<SPELL_TYPE, PlayerSkillTreeItem> onClick;
+    private PLAYER_SKILL_TYPE skillType;
+    private System.Action<PLAYER_SKILL_TYPE, PlayerSkillTreeItem> onClick;
 
-    public void SetData(SPELL_TYPE skillType, PlayerSkillTreeNode data, System.Action<SPELL_TYPE, PlayerSkillTreeItem> onClick) {
+    public void SetData(PLAYER_SKILL_TYPE skillType, PlayerSkillTreeNode data, System.Action<PLAYER_SKILL_TYPE, PlayerSkillTreeItem> onClick) {
         this.skillType = skillType;
         skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(this.skillType);
         this.onClick = onClick;

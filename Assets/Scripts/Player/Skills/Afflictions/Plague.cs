@@ -3,10 +3,10 @@ using Logs;
 using UnityEngine;
 
 public class PlagueData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.PLAGUE;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.PLAGUE;
     public override string name => "Plague";
     public override string description => GetDescription();
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.AFFLICTION;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.AFFLICTION;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     public PlagueData() : base() {

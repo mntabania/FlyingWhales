@@ -30,7 +30,7 @@ namespace Inner_Maps.Location_Structures {
         }
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
-            AddPlayerAction(SPELL_TYPE.UPGRADE);
+            AddPlayerAction(PLAYER_SKILL_TYPE.UPGRADE);
         }
         #endregion
 
@@ -47,11 +47,11 @@ namespace Inner_Maps.Location_Structures {
         }
         private void ReplenishPlaguedRatChargeWith3MaxCharges() {
             if(!HasMaxPlaguedRat()) {
-                PlayerManager.Instance.player.playerSkillComponent.AddCharges(SPELL_TYPE.PLAGUED_RAT, 1);
+                PlayerManager.Instance.player.playerSkillComponent.AddCharges(PLAYER_SKILL_TYPE.PLAGUED_RAT, 1);
             }
         }
         public bool HasMaxPlaguedRat() {
-            SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(SPELL_TYPE.PLAGUED_RAT);
+            SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(PLAYER_SKILL_TYPE.PLAGUED_RAT);
             return summonPlayerSkill.charges >= 3;
         }
         #endregion

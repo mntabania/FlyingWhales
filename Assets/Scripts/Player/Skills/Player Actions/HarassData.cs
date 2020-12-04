@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class HarassData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.HARASS;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.HARASS;
     public override string name { get { return "Harass"; } }
     public override string description { get { return "Harass"; } }
 

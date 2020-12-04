@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 using Inner_Maps.Location_Structures;
 
 public class EndHarassData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.END_HARASS;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.END_HARASS;
     public override string name { get { return "End Harass"; } }
     public override string description { get { return "End Harass"; } }
 

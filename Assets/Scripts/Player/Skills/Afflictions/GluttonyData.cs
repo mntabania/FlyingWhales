@@ -5,10 +5,10 @@ using Traits;
 using UnityEngine;
 
 public class GluttonyData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.GLUTTONY;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.GLUTTONY;
     public override string name => "Gluttony";
     public override string description => "This Affliction will turn a Villager into a Gluttons. Gluttons get hungry faster.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.AFFLICTION;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.AFFLICTION;
     public GluttonyData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }

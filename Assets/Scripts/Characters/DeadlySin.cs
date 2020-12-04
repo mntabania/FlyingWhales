@@ -13,7 +13,7 @@ public class DeadlySin {
     }
 
     #region Virtuals
-    public virtual SPELL_CATEGORY GetInterventionAbilityCategory() { return SPELL_CATEGORY.NONE; }
+    public virtual PLAYER_SKILL_CATEGORY GetInterventionAbilityCategory() { return PLAYER_SKILL_CATEGORY.NONE; }
     #endregion
 }
 

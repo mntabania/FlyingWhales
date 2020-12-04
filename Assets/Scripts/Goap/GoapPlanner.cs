@@ -39,6 +39,7 @@ public class GoapPlanner {
         GoapThread thread = ObjectPoolManager.Instance.CreateNewGoapThread();
         thread.Initialize(actor, target, goal, isPersonalPlan, job);
         MultiThreadPool.Instance.AddToThreadPool(thread);
+        job.SetIsInMultithread(true);
     }
     public void StartGOAP(GoapAction goal, IPointOfInterest target, GoapPlanJob job, bool isPersonalPlan = true) {
         if (status == GOAP_PLANNING_STATUS.RUNNING) {
@@ -65,6 +66,7 @@ public class GoapPlanner {
         GoapThread thread = ObjectPoolManager.Instance.CreateNewGoapThread();
         thread.Initialize(owner, target, goal, isPersonalPlan, job);
         MultiThreadPool.Instance.AddToThreadPool(thread);
+        job.SetIsInMultithread(true);
     }
     public void StartGOAP(INTERACTION_TYPE goalType, IPointOfInterest target, GoapPlanJob job, bool isPersonalPlan = true) {
         if (status == GOAP_PLANNING_STATUS.RUNNING) {
@@ -85,6 +87,7 @@ public class GoapPlanner {
         GoapThread thread = ObjectPoolManager.Instance.CreateNewGoapThread();
         thread.Initialize(owner, goalType, target, isPersonalPlan, job);
         MultiThreadPool.Instance.AddToThreadPool(thread);
+        job.SetIsInMultithread(true);
     }
     public void RecalculateJob(GoapPlanJob job) {
         if (status == GOAP_PLANNING_STATUS.RUNNING) {
@@ -97,15 +100,28 @@ public class GoapPlanner {
             GoapThread thread = ObjectPoolManager.Instance.CreateNewGoapThread();
             thread.Initialize(owner, job.assignedPlan, job);
             MultiThreadPool.Instance.AddToThreadPool(thread);
+            job.SetIsInMultithread(true);
         }
     }
     public void ReceivePlanFromGoapThread(GoapThread goapThread) {
+        if (goapThread.job != null) {
+            goapThread.job.SetIsInMultithread(false);
+            if (goapThread.job.shouldForceCancelUponReceiving) {
+                ForceCancelJobAndReturnToObjectPool(goapThread.job);
+                ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
+                return;
+            }
+        }
         if (owner.isDead || !owner.marker) {
             status = GOAP_PLANNING_STATUS.NONE;
+            ForceCancelJobAndReturnToObjectPool(goapThread.job);
+            ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
             return;
         }
         if (goapThread.recalculationPlan != null && goapThread.recalculationPlan.isEnd) {
             status = GOAP_PLANNING_STATUS.NONE;
+            ForceCancelJobAndReturnToObjectPool(goapThread.job);
+            ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
             return;
         }
 
@@ -118,6 +134,8 @@ public class GoapPlanner {
             //This means that the job is already in the object pool, meaning that the received plan for the job is no longer applicable since the job is already deleted/cancelled
             additionalLog += "\nJOB NO LONGER APPLICABLE, DISCARD PLAN IF THERE'S ANY";
             owner.logComponent.PrintLogIfActive(goapThread.log + additionalLog);
+            ForceCancelJobAndReturnToObjectPool(goapThread.job);
+            ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
             return;
         }
         owner.logComponent.PrintLogIfActive(goapThread.log + additionalLog);
@@ -134,6 +152,7 @@ public class GoapPlanner {
                 } else {
                     owner.logComponent.PrintLogIfActive($"{owner.name} is scrapping plan since {owner.name} cannot perform. {goapThread.job.name} is the job.");
                     goapThread.job.CancelJob(false);
+                    ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
                     return;
                 }
             }
@@ -220,6 +239,15 @@ public class GoapPlanner {
         }
 
         ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
+    }
+    private void ForceCancelJobAndReturnToObjectPool(JobQueueItem job) {
+        if(job == null) {
+            return;
+        }
+        job.ForceCancelJob(false);
+        if (!string.IsNullOrEmpty(job.persistentID)) {
+            JobManager.Instance.OnFinishJob(job);
+        }
     }
     //public GoapPlan PlanActions(IPointOfInterest target, GoapAction goalAction, List<GoapAction> usableActions, GOAP_CATEGORY category, bool isPersonalPlan, ref string log, GoapPlanJob job = null) {
     //    //List of all starting nodes that can do the goal

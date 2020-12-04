@@ -1370,7 +1370,7 @@ public class ConsoleBase : InfoUIBase {
             return;
         }
         string typeParameterString = parameters[0];
-        SPELL_TYPE type;
+        PLAYER_SKILL_TYPE type;
         if (Enum.TryParse(typeParameterString, out type)) {
             //PlayerManager.Instance.player.GainNewInterventionAbility(type, true);
             //AddSuccessMessage($"Gained new Spell: {type}");

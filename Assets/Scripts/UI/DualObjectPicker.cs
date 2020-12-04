@@ -615,9 +615,9 @@ public class DualObjectPicker : PopupMenuBase {
         if (myActionT == null) return null;
         else return new Action<Faction>(o => myActionT((T) (object) o));
     }
-    public Action<SPELL_TYPE> ConvertToSummonMinionPlayerSkill<T>(Action<T> myActionT) {
+    public Action<PLAYER_SKILL_TYPE> ConvertToSummonMinionPlayerSkill<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
-        else return new Action<SPELL_TYPE>(o => myActionT((T) (object) o));
+        else return new Action<PLAYER_SKILL_TYPE>(o => myActionT((T) (object) o));
     }
     #endregion
 }

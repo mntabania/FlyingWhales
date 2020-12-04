@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 using Inner_Maps.Location_Structures;
 
 public class ReturnToPortalData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.RETURN_TO_PORTAL;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.RETURN_TO_PORTAL;
     public override string name { get { return "Return To Portal"; } }
     public override string description { get { return "Return To Portal"; } }
 

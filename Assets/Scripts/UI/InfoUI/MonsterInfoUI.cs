@@ -113,7 +113,7 @@ public class MonsterInfoUI : InfoUIBase {
     }
     protected override void OnExecutePlayerAction(PlayerAction action) {
         base.OnExecutePlayerAction(action);
-        if(action.type == SPELL_TYPE.CHANGE_COMBAT_MODE) {
+        if(action.type == PLAYER_SKILL_TYPE.CHANGE_COMBAT_MODE) {
             SetCombatModeUIPosition(action);
         }
     }

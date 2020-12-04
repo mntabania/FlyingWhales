@@ -14,11 +14,11 @@ namespace Archetype {
             //        , PlayerDB.Activate_Artifact_Action
             //};
             monsters = new List<RaceClass> { }; //No initial monsters
-            demonicStructuresSkills = new List<SPELL_TYPE>();
+            demonicStructuresSkills = new List<PLAYER_SKILL_TYPE>();
             //demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_EYE, LANDMARK_TYPE.THE_GOADER, LANDMARK_TYPE.DEMONIC_PRISON, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_CRYPT};
             minionClasses = new List<string>() { "Lust", "Envy", "Greed", "Gluttony" };
-            afflictions = new List<SPELL_TYPE>() { SPELL_TYPE.PARALYSIS, SPELL_TYPE.UNFAITHFULNESS, SPELL_TYPE.KLEPTOMANIA, SPELL_TYPE.AGORAPHOBIA, SPELL_TYPE.PSYCHOPATHY, /*Pyromania, Cowardice, Bewitch*/ };
-            spells = new List<SPELL_TYPE>() { SPELL_TYPE.RAVENOUS_SPIRIT, SPELL_TYPE.MANIFEST_FOOD/*, SPELL_TYPE.SPIDER_RAIN, SPELL_TYPE.WILD_GROWTH, SPELL_TYPE.FERTILITY, SPELL_TYPE.SPAWN_BANDIT_CAMP*/ };
+            afflictions = new List<PLAYER_SKILL_TYPE>() { PLAYER_SKILL_TYPE.PARALYSIS, PLAYER_SKILL_TYPE.UNFAITHFULNESS, PLAYER_SKILL_TYPE.KLEPTOMANIA, PLAYER_SKILL_TYPE.AGORAPHOBIA, PLAYER_SKILL_TYPE.PSYCHOPATHY, /*Pyromania, Cowardice, Bewitch*/ };
+            spells = new List<PLAYER_SKILL_TYPE>() { PLAYER_SKILL_TYPE.RAVENOUS_SPIRIT, PLAYER_SKILL_TYPE.MANIFEST_FOOD/*, SPELL_TYPE.SPIDER_RAIN, SPELL_TYPE.WILD_GROWTH, SPELL_TYPE.FERTILITY, SPELL_TYPE.SPAWN_BANDIT_CAMP*/ };
             SetCanTriggerFlaw(true);
             SetCanRemoveTraits(true);
         }

@@ -35,6 +35,8 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     private List<List<LocationGridTile>> _tileListPool;
     private List<List<Faction>> _factionListPool;
     private List<List<BaseSettlement>> _settlementListPool;
+    private List<GoapPlanJob> _goapJobPool;
+    private List<CharacterStateJob> _stateJobPool;
 
     private void Awake() {
         Instance = this;
@@ -72,6 +74,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructGridTileListPool();
         ConstructFactionListPool();
         ConstructSettlementListPool();
+        ConstructJobPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -514,6 +517,37 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     }
     #endregion
 
+    #region Jobs
+    private void ConstructJobPool() {
+        _goapJobPool = new List<GoapPlanJob>();
+        _stateJobPool = new List<CharacterStateJob>();
+    }
+    public GoapPlanJob GetGoapPlanJobFromPool() {
+        if (_goapJobPool.Count > 0) {
+            GoapPlanJob job = _goapJobPool[0];
+            _goapJobPool.RemoveAt(0);
+            return job;
+        }
+        return new GoapPlanJob();
+    }
+    public void ReturnGoapPlanJobToPool(GoapPlanJob job) {
+        job.Reset();
+        _goapJobPool.Add(job);
+    }
+    public CharacterStateJob GetCharacterStateJobFromPool() {
+        if (_stateJobPool.Count > 0) {
+            CharacterStateJob job = _stateJobPool[0];
+            _stateJobPool.RemoveAt(0);
+            return job;
+        }
+        return new CharacterStateJob();
+    }
+    public void ReturnCharacterStateJobToPool(CharacterStateJob job) {
+        job.Reset();
+        _stateJobPool.Add(job);
+    }
+    #endregion
+
     protected override void OnDestroy() {
         if (allObjectPools != null) {
             foreach (KeyValuePair<string,EZObjectPool> pool in allObjectPools) {
@@ -554,6 +588,10 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _factionListPool = null;
         _settlementListPool?.Clear();
         _settlementListPool = null;
+        _goapJobPool?.Clear();
+        _goapJobPool = null;
+        _stateJobPool?.Clear();
+        _stateJobPool = null;
         base.OnDestroy();
         Instance = null;
     }

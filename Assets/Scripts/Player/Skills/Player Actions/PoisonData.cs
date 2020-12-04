@@ -5,7 +5,7 @@ using Traits;
 using UnityEngine;
 
 public class PoisonData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.POISON;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.POISON;
     public override string name => "Poison";
     public override string description => "This Action can be used to apply Poisoned on an object.";
     public PoisonData() : base() {

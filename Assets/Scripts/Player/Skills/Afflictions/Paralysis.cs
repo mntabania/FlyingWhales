@@ -3,10 +3,10 @@ using Logs;
 using UnityEngine;
 
 public class ParalysisData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.PARALYSIS;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.PARALYSIS;
     public override string name => "Paralysis";
     public override string description => "This Affliction will permanently paralyze a Villager. Paralysis prevents the Villager from moving.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.AFFLICTION;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.AFFLICTION;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     public ParalysisData() : base() {

@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 namespace Quests {
     public class SpellExecuted : QuestCriteria {
-        private readonly SPELL_TYPE[] _spellTypes;
+        private readonly PLAYER_SKILL_TYPE[] _spellTypes;
         
-        public SpellExecuted(SPELL_TYPE[] spellTypes) {
+        public SpellExecuted(PLAYER_SKILL_TYPE[] spellTypes) {
             _spellTypes = spellTypes;
         }
         

@@ -3,10 +3,10 @@ using Inner_Maps;
 using Traits;
 
 public class WaterBombData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.WATER_BOMB;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.WATER_BOMB;
     public override string name => "Water Bomb";
     public override string description => "Applies Wet to a 2 tile radius around the designated spot.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public WaterBombData() : base() {

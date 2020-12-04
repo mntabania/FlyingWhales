@@ -4,10 +4,10 @@ using Locations.Tile_Features;
 using UnityEngine;
 
 public class HeatWaveData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.HEAT_WAVE;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.HEAT_WAVE;
     public override string name => "Heat Wave";
     public override string description => "This Spell summons a blistering heatwave over a large area. Characters caught outside within the Heatwave may get stacks of Overheating. It does not affect characters inside structures. Heatwave cannot be cast on a snow area.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
 
     public HeatWaveData() : base() {
         targetTypes = new[] { SPELL_TARGET.HEX };

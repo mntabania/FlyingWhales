@@ -4,10 +4,10 @@ using Traits;
 using UnityEngine;
 
 public class LycanthropyData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.LYCANTHROPY;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.LYCANTHROPY;
     public override string name => "Lycanthropy";
     public override string description => "This Affliction will turn a Villager into a Werewolf. A Werewolf sometimes switches from normal form to wolf form and vice-versa whenever it sleeps.";
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
+    public override PLAYER_SKILL_CATEGORY category { get { return PLAYER_SKILL_CATEGORY.AFFLICTION; } }
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     public LycanthropyData() : base() {

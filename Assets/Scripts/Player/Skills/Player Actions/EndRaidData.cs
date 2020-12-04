@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 using Inner_Maps.Location_Structures;
 
 public class EndRaidData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.END_RAID;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.END_RAID;
     public override string name { get { return "End Raid"; } }
     public override string description { get { return "End Raid"; } }
 

@@ -2,10 +2,10 @@
 using Inner_Maps;
 using UnityEngine;
 public class LocustSwarmData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.LOCUST_SWARM;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.LOCUST_SWARM;
     public override string name => "Locust Swarm";
     public override string description => "This Spell spawns a swarm of hungry locusts that would roam around randomly for a few hours, eating everything edible in its path.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 2;
 

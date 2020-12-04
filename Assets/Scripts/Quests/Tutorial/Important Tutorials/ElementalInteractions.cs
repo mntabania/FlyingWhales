@@ -26,7 +26,7 @@ namespace Tutorial {
                         .SetHoverOverAction(OnHoverShowSpell)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostSpellTab, OnNoLongerTopMostSpellTab),
-                    new ExecuteSpellStep(SPELL_TYPE.RAIN, "Cast Rain")
+                    new ExecuteSpellStep(PLAYER_SKILL_TYPE.RAIN, "Cast Rain")
                         .SetCompleteAction(OnCompleteExecuteSpell)
                         .SetOnTopmostActions(OnTopMostRainSpell, OnNoLongerTopMostRainSpell),
                     new TriggerVaporFromWindStep()
@@ -39,7 +39,7 @@ namespace Tutorial {
                         .SetOnTopmostActions(OnTopMostLightning, OnNoLongerTopMosLightning)
                 ),
                 new QuestStepCollection(
-                    new ExecuteSpellStep(SPELL_TYPE.SPLASH_POISON, "Cast Splash Poison")
+                    new ExecuteSpellStep(PLAYER_SKILL_TYPE.SPLASH_POISON, "Cast Splash Poison")
                         .SetOnTopmostActions(OnTopMostSplashPoison, OnNoLongerTopMostSplashPoison),
                      new TriggerPoisonExplosionStep("Burn Poisoned Floor")
                         .SetHoverOverAction(OnHoverFire)

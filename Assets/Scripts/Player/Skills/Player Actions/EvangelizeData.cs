@@ -2,10 +2,10 @@
 using Logs;
 
 public class EvangelizeData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.EVANGELIZE;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.EVANGELIZE;
     public override string name => "Preach";
     public override string description => GetDescription();
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.PLAYER_ACTION;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.PLAYER_ACTION;
     public override bool canBeCastOnBlessed => true;
     
     public EvangelizeData() : base() {

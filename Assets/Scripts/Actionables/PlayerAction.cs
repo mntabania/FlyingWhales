@@ -8,7 +8,7 @@ public class PlayerAction : SpellData {
 
     public virtual bool canBeCastOnBlessed => false;
     
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.PLAYER_ACTION; } }
+    public override PLAYER_SKILL_CATEGORY category { get { return PLAYER_SKILL_CATEGORY.PLAYER_ACTION; } }
 
     #region Virtuals
     public virtual bool IsValid(IPlayerActionTarget target) {

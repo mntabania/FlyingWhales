@@ -17,7 +17,7 @@ namespace Inner_Maps.Location_Structures {
         
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
-            AddPlayerAction(SPELL_TYPE.TORTURE);
+            AddPlayerAction(PLAYER_SKILL_TYPE.TORTURE);
         }
 
         #region Loading

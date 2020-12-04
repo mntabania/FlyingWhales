@@ -47,7 +47,7 @@ public class Tombstone : TileObject {
         character.marker.TryCancelExpiry();
         character.SetGrave(this);
         if (character.race.IsSapient()) {
-            AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
+            AddPlayerAction(PLAYER_SKILL_TYPE.RAISE_DEAD);
         }
     }
     public override void OnPlacePOI() {
@@ -61,13 +61,13 @@ public class Tombstone : TileObject {
             PlagueDisease.Instance.AddPlaguedStatusOnPOIWithLifespanDuration(this);
         }
         if (character.race.IsSapient()) {
-            AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
+            AddPlayerAction(PLAYER_SKILL_TYPE.RAISE_DEAD);
         }
         Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
-        RemovePlayerAction(SPELL_TYPE.RAISE_DEAD);
+        RemovePlayerAction(PLAYER_SKILL_TYPE.RAISE_DEAD);
         if (_respawnCorpseOnDestroy) {
             if(previousTile != null) {
                 character.EnableMarker();

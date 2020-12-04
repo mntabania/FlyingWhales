@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class InvadeData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.INVADE;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.INVADE;
     public override string name { get { return "Invade"; } }
     public override string description { get { return "Invade"; } }
 

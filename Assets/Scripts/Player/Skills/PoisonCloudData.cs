@@ -7,10 +7,10 @@ using UnityEngine;
 using UtilityScripts;
 
 public class PoisonCloudData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.POISON_CLOUD;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.POISON_CLOUD;
     public override string name => "Poison Cloud";
     public override string description => "This Spell spawns a 2x2 Poison Cloud.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public PoisonCloudData() : base() {

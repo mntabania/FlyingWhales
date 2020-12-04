@@ -5,5 +5,5 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Player Skill Tree", menuName = "Scriptable Objects/Player Skill Tree")]
 public class PlayerSkillTree : ScriptableObject {
     public PlayerSkillTreeNodeDictionary nodes;
-    public SPELL_TYPE[] initialLearnedSkills;
+    public PLAYER_SKILL_TYPE[] initialLearnedSkills;
 }

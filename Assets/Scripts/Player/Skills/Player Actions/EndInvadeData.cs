@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 using Inner_Maps.Location_Structures;
 
 public class EndInvadeData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.END_INVADE;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.END_INVADE;
     public override string name { get { return "End Invade"; } }
     public override string description { get { return "End Invade"; } }
 

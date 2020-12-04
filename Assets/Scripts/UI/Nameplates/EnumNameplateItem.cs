@@ -21,7 +21,7 @@ public class EnumNameplateItem : NameplateItem<Enum> {
         subLbl.text = string.Empty;
 
         //TODO: Make this better
-        if (o is SPELL_TYPE spellType) {
+        if (o is PLAYER_SKILL_TYPE spellType) {
             // if (WorldConfigManager.Instance.isTutorialWorld) {
             //     SetLockedState(WorldConfigManager.Instance.availableSpellsInTutorial.Contains(spellType) == false);
             // }

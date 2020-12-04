@@ -3,10 +3,10 @@ using Logs;
 using UnityEngine;
 
 public class KleptomaniaData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.KLEPTOMANIA;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.KLEPTOMANIA;
     public override string name => "Kleptomania";
     public override string description => $"This Affliction will turn a Villager into a Kleptomaniac. Kleptomaniacs will sometimes steal objects owned by other Villagers.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.AFFLICTION;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.AFFLICTION;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     public KleptomaniaData() : base() {

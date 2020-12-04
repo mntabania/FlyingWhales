@@ -313,7 +313,7 @@ public class PlagueDisease : ISingletonPattern, ISavable {
 
     #region Randomization
     public void OnLoadoutPicked() {
-        if (!PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.BIOLAB).isInUse) {
+        if (!PlayerSkillManager.Instance.GetPlayerSpellData(PLAYER_SKILL_TYPE.BIOLAB).isInUse) {
             RandomizePlague();
         }
     }

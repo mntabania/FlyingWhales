@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AbductData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.ABDUCT;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.ABDUCT;
     public override string name => "Abduct";
     public override string description => "This Action can be used to summon a Demon or Minion to Abduct a Resident.";
     public AbductData() : base() {

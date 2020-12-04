@@ -40,7 +40,7 @@ namespace Tutorial {
                     new ToggleTurnedOnStep("Monsters Tab", "Click on the Monsters tab")
                         .SetOnTopmostActions(OnTopMostClickMonstersTab, OnNoLongerTopMostClickMonstersTab)
                         .SetCompleteAction(OnCompleteClickMonstersTab),
-                    new ExecuteSpellStep(SPELL_TYPE.PLAGUED_RAT, "Summon a Plagued Rat")
+                    new ExecuteSpellStep(PLAYER_SKILL_TYPE.PLAGUED_RAT, "Summon a Plagued Rat")
                 )
             };
         }

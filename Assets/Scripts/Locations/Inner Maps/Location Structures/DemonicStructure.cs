@@ -43,7 +43,7 @@ namespace Inner_Maps.Location_Structures {
         }
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
-            AddPlayerAction(SPELL_TYPE.REPAIR);
+            AddPlayerAction(PLAYER_SKILL_TYPE.REPAIR);
         }
         #endregion
 

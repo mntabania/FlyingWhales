@@ -4,10 +4,10 @@ using Traits;
 using UnityEngine;
 
 public class AlcoholicData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.ALCOHOLIC;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.ALCOHOLIC;
     public override string name { get { return "Alcoholic"; } }
     public override string description { get { return "Makes a character often want to drink."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
+    public override PLAYER_SKILL_CATEGORY category { get { return PLAYER_SKILL_CATEGORY.AFFLICTION; } }
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     public AlcoholicData() : base() {

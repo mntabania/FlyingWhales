@@ -3,10 +3,10 @@ using Logs;
 using UnityEngine;
 
 public class CannibalismData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.CANNIBALISM;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.CANNIBALISM;
     public override string name { get { return "Cannibalism"; } }
     public override string description { get { return "Makes a character eat other characters with the same race for sustenance."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
+    public override PLAYER_SKILL_CATEGORY category { get { return PLAYER_SKILL_CATEGORY.AFFLICTION; } }
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     public CannibalismData() : base() {

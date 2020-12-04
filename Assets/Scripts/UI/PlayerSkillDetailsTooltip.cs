@@ -33,13 +33,13 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     public void ShowPlayerSkillDetails(string title, string description, int charges = -1, int manaCost = -1, 
         int cooldown = -1, int threat = -1, string additionalText = "", UIHoverPosition position = null) {
         UpdateData(title, description, charges, manaCost, cooldown, threat, additionalText);
-        UpdatePositionAndVideo(position, SPELL_TYPE.NONE);
+        UpdatePositionAndVideo(position, PLAYER_SKILL_TYPE.NONE);
     }
     public void HidePlayerSkillDetails() {
         gameObject.SetActive(false);
         tooltipVideoPlayer.Stop();
     }
-    private void UpdatePositionAndVideo(UIHoverPosition position, SPELL_TYPE spellType) {
+    private void UpdatePositionAndVideo(UIHoverPosition position, PLAYER_SKILL_TYPE spellType) {
         bool wasActiveBefore = gameObject.activeSelf;
         gameObject.SetActive(true);
         UIHoverPosition positionToUse = position;
@@ -57,7 +57,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         thisRect.anchoredPosition = Vector2.zero;
 
         if (wasActiveBefore == false) {
-            SPELL_TYPE skillType = spellType;
+            PLAYER_SKILL_TYPE skillType = spellType;
             PlayerSkillData data = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType);
             if (data != null) {
                 if (data.tooltipImage != null) {
@@ -132,7 +132,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         currenciesText.text = currencyStr;
 
         additionalText.text = string.Empty;
-        if (spellData is PlayerAction  || spellData.category == SPELL_CATEGORY.AFFLICTION) {
+        if (spellData is PlayerAction  || spellData.category == PLAYER_SKILL_CATEGORY.AFFLICTION) {
             IPointOfInterest activePOI = UIManager.Instance.GetCurrentlySelectedPOI();
             if (activePOI != null) {
                 if (activePOI is Character activeCharacter) {
@@ -151,7 +151,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                         }
                     }
                 } else if (activePOI is TileObject activeTileObject) {
-                    if (activeTileObject is AnkhOfAnubis ankh && ankh.isActivated && spellData.type == SPELL_TYPE.SEIZE_OBJECT) {
+                    if (activeTileObject is AnkhOfAnubis ankh && ankh.isActivated && spellData.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT) {
                         additionalText.text += "<color=#FE3E83>Activated Ankh can no longer be seized.</color>\n";
                     }
                 }

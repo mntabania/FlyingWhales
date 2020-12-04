@@ -4,7 +4,7 @@ using UnityEngine;
 using Inner_Maps;
 
 public class PlantGermData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.PLANT_GERM;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.PLANT_GERM;
     public override string name => "Plant Germ";
     public override string description => "This Action puts an Abomination Germ on a Mushroom or a Berry Shrub.";
 
