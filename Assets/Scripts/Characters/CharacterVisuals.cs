@@ -29,7 +29,7 @@ public class CharacterVisuals {
         get {
             if (_owner.race == RACE.RATMAN) {
                 return "Ratman"; //if race is a ratman then always use the ratman class for its visuals
-            } else if (_owner.minion != null) {
+            } else if (_owner.minion != null && _owner.minion.minionPlayerSkillType != SPELL_TYPE.NONE) {
                 return _owner.minion.GetMinionClassName(_owner.minion.minionPlayerSkillType);
             } else if (_usePreviousClassAsset) {
                 if (!string.IsNullOrEmpty(_owner.previousClassName)) {
