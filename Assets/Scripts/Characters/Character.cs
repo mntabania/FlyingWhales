@@ -5109,8 +5109,23 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    return false;
         //}
 
+        if (faction != null && faction.isPlayerFaction) {
+            //if this character is part of the player faction and the other character is allied with the player, then do not consider as hostile
+            if (otherCharacter.isAlliedWithPlayer) {
+                return false;
+            }
+        }
+
+        if (isAlliedWithPlayer) {
+            //if this character is allied with the player and the other character is part of the player faction, then do not consider as hostile
+            if (otherCharacter.faction != null && otherCharacter.faction.isPlayerFaction) {
+                return false;
+            }
+        }
+
         if (traitContainer.HasTrait("Cultist") && otherCharacter.traitContainer.HasTrait("Cultist")) {
-            //if both characters are allied with the player, do not consider each other as hostile.
+            //if both characters are cultists, do not be hostile with each other, NOTE: Did not use allied with player because if both characters are friendly with the player faction
+            //but are hostile with each other, they should still be hostile with each other
             return false;
         }
 
