@@ -37,8 +37,6 @@ public class Player : ILeader, IObjectManipulator {
     //public PlayerJobActionSlot[] interventionAbilitySlots { get; }
     public HexTile portalTile { get; private set; }
     //public float constructionRatePercentageModifier { get; private set; }
-    public List<PLAYER_SKILL_TYPE> unlearnedSpells { get; }
-    public List<PLAYER_SKILL_TYPE> unlearnedAfflictions { get; }
     public TILE_OBJECT_TYPE currentActiveItem { get; private set; }
     public bool isCurrentlyBuildingDemonicStructure { get; private set; }
 
@@ -68,8 +66,6 @@ public class Player : ILeader, IObjectManipulator {
         //interventionAbilitySlots = new PlayerJobActionSlot[PlayerDB.MAX_INTERVENTION_ABILITIES];
         //maxSummonSlots = 0;
         //maxArtifactSlots = 0;
-        unlearnedSpells = new List<PLAYER_SKILL_TYPE>(PlayerDB.spells);
-        unlearnedAfflictions = new List<PLAYER_SKILL_TYPE>(PlayerDB.afflictions);
         mana = EditableValuesManager.Instance.startingMana;
         seizeComponent = new SeizeComponent();
         threatComponent = new ThreatComponent(this);
@@ -83,8 +79,6 @@ public class Player : ILeader, IObjectManipulator {
         allIntel = new List<IIntel>();
         minions = new List<Minion>();
         summons = new List<Summon>();
-        unlearnedSpells = new List<PLAYER_SKILL_TYPE>(PlayerDB.spells);
-        unlearnedAfflictions = new List<PLAYER_SKILL_TYPE>(PlayerDB.afflictions);
         seizeComponent = data.seizeComponent.Load();
         threatComponent = data.threatComponent.Load();
         playerSkillComponent = data.playerSkillComponent.Load();

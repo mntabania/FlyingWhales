@@ -81,7 +81,6 @@ public class CharacterInfoUI : InfoUIBase {
     public Character activeCharacter => _activeCharacter;
     public Character previousCharacter => _previousCharacter;
     private List<SpellData> afflictions;
-    private List<string> combatModes;
     private List<string> triggerFlawPool;
     private List<LogFiller> triggerFlawLogFillers;
     private bool aliveRelationsOnly;
@@ -161,7 +160,6 @@ public class CharacterInfoUI : InfoUIBase {
         afflictions = new List<SpellData>();
         triggerFlawPool = new List<string>();
         triggerFlawLogFillers = new List<LogFiller>();
-        ConstructCombatModes();
     }
 
     #region Overrides
@@ -202,12 +200,6 @@ public class CharacterInfoUI : InfoUIBase {
         UpdateAllHistoryInfo();
         ResetAllScrollPositions();
         UpdateMoodSummary();
-    }
-    protected override void OnExecutePlayerAction(PlayerAction action) {
-        base.OnExecutePlayerAction(action);
-        if(action.type == PLAYER_SKILL_TYPE.CHANGE_COMBAT_MODE) {
-            SetCombatModeUIPosition(action);
-        }
     }
     protected override void LoadActions(IPlayerActionTarget target) {
         UtilityScripts.Utilities.DestroyChildren(actionsTransform);
@@ -1161,38 +1153,6 @@ public class CharacterInfoUI : InfoUIBase {
         string summary = $"Villagers will be unable to run when this Meter is empty. This is used up when the Villager is running and quickly replenished when he isn't.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.stamina.ToString("N0")}/100";
         UIManager.Instance.ShowSmallInfo(summary, "STAMINA");
-    }
-    #endregion
-
-    #region Combat Modes
-    private void ConstructCombatModes() {
-        combatModes = new List<string>();
-        for (int i = 0; i < CharacterManager.Instance.combatModes.Length; i++) {
-            combatModes.Add(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(CharacterManager.Instance.combatModes[i].ToString()));
-        }
-    }
-    public void ShowSwitchCombatModeUI() {
-        UIManager.Instance.customDropdownList.ShowDropdown(combatModes, OnClickChooseCombatMode, CanChoostCombatMode);
-    }
-    private void SetCombatModeUIPosition(PlayerAction action) {
-        ActionItem actionItem = GetActiveActionItem(action);
-        if(actionItem != null) {
-            Vector3 actionWorldPos = actionItem.transform.localPosition;
-            UIManager.Instance.customDropdownList.SetPosition(new Vector3(actionWorldPos.x, actionWorldPos.y + 10f, actionWorldPos.z));
-        }
-    }
-    private bool CanChoostCombatMode(string mode) {
-        if(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeCharacter.combatComponent.combatMode.ToString()) == mode) {
-            return false;
-        }
-        return true;
-    }
-    private void OnClickChooseCombatMode(string mode) {
-        COMBAT_MODE combatMode = (COMBAT_MODE) System.Enum.Parse(typeof(COMBAT_MODE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(mode));
-        UIManager.Instance.characterInfoUI.activeCharacter.combatComponent.SetCombatMode(combatMode);
-        Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, activeCharacter as IPlayerActionTarget);
-        UIManager.Instance.customDropdownList.Close();
-        PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.CHANGE_COMBAT_MODE).OnExecuteSpellActionAffliction();
     }
     #endregion
 

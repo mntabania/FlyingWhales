@@ -48,7 +48,6 @@ public class MonsterInfoUI : InfoUIBase {
     private Character _activeMonster;
 
     public Character activeMonster => _activeMonster;
-    private List<string> combatModes;
 
     internal override void Initialize() {
         base.Initialize();
@@ -70,7 +69,6 @@ public class MonsterInfoUI : InfoUIBase {
         normalTraitsEventLbl.SetShouldColorHighlight(false);
         
         logsWindow.Initialize();
-        ConstructCombatModes();
     }
 
     #region Overrides
@@ -110,12 +108,6 @@ public class MonsterInfoUI : InfoUIBase {
         logsWindow.OnParentMenuOpened(activeMonster.persistentID);
         UpdateAllHistoryInfo();
         ResetAllScrollPositions();
-    }
-    protected override void OnExecutePlayerAction(PlayerAction action) {
-        base.OnExecutePlayerAction(action);
-        if(action.type == PLAYER_SKILL_TYPE.CHANGE_COMBAT_MODE) {
-            SetCombatModeUIPosition(action);
-        }
     }
     protected override void LoadActions(IPlayerActionTarget target) {
         UtilityScripts.Utilities.DestroyChildren(actionsTransform);
@@ -423,38 +415,6 @@ public class MonsterInfoUI : InfoUIBase {
         UIManager.Instance.HideSmallInfo();
 #endif
         
-    }
-    #endregion
-
-    #region Combat Modes
-    private void ConstructCombatModes() {
-        combatModes = new List<string>();
-        for (int i = 0; i < CharacterManager.Instance.combatModes.Length; i++) {
-            combatModes.Add(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(CharacterManager.Instance.combatModes[i].ToString()));
-        }
-    }
-    public void ShowSwitchCombatModeUI() {
-        UIManager.Instance.customDropdownList.ShowDropdown(combatModes, OnClickChooseCombatMode, CanChoostCombatMode);
-    }
-    private void SetCombatModeUIPosition(PlayerAction action) {
-        ActionItem actionItem = GetActiveActionItem(action);
-        if (actionItem != null) {
-            Vector3 actionWorldPos = actionItem.transform.localPosition;
-            UIManager.Instance.customDropdownList.SetPosition(new Vector3(actionWorldPos.x, actionWorldPos.y + 10f, actionWorldPos.z));
-        }
-    }
-    private bool CanChoostCombatMode(string mode) {
-        if(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeMonster.combatComponent.combatMode.ToString())
-            == mode) {
-            return false;
-        }
-        return true;
-    }
-    private void OnClickChooseCombatMode(string mode) {
-        COMBAT_MODE combatMode = (COMBAT_MODE) System.Enum.Parse(typeof(COMBAT_MODE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(mode));
-        UIManager.Instance.characterInfoUI.activeCharacter.combatComponent.SetCombatMode(combatMode);
-        Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, activeMonster as IPlayerActionTarget);
-        UIManager.Instance.customDropdownList.Close();
     }
     #endregion
 
