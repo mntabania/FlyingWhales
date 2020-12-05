@@ -2,11 +2,11 @@
 using Logs;
 using UnityEngine;
 
-public class CannibalismData : SpellData {
+public class CannibalismData : AfflictData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.CANNIBALISM;
     public override string name { get { return "Cannibalism"; } }
     public override string description { get { return "Makes a character eat other characters with the same race for sustenance."; } }
-    public override PLAYER_SKILL_CATEGORY category { get { return PLAYER_SKILL_CATEGORY.AFFLICTION; } }
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.AFFLICTION;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     public CannibalismData() : base() {
@@ -15,13 +15,8 @@ public class CannibalismData : SpellData {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        targetPOI.traitContainer.AddTrait(targetPOI, "Cannibal");
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted", null, LOG_TAG.Player, LOG_TAG.Life_Changes);
-        log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, "Cannibal", LOG_IDENTIFIER.STRING_1);
-        log.AddLogToDatabase();
-        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-        base.ActivateAbility(targetPOI);
+        AfflictPOIWith("Cannibal", targetPOI, name);
+        OnExecuteSpellActionAffliction();
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Cannibal")) {

@@ -4,7 +4,7 @@ using Logs;
 using Traits;
 using UnityEngine;
 
-public class LazinessData : SpellData {
+public class LazinessData : AfflictData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.LAZINESS;
     public override string name => "Laziness";
     public override string description => "This Affliction will make a Villager Lazy. Lazy villagers may sometimes refuse to do work.";
@@ -14,13 +14,8 @@ public class LazinessData : SpellData {
     }
     
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        targetPOI.traitContainer.AddTrait(targetPOI, "Lazy");
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted", null, LOG_TAG.Player, LOG_TAG.Life_Changes);
-        log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, "Lazy", LOG_IDENTIFIER.STRING_1);
-        log.AddLogToDatabase();
-        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-        base.ActivateAbility(targetPOI);
+        AfflictPOIWith("Lazy", targetPOI, name);
+        OnExecuteSpellActionAffliction();
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Lazy")) {

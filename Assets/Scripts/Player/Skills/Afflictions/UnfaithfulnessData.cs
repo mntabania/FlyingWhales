@@ -2,7 +2,7 @@
 using Logs;
 using UnityEngine;
 
-public class UnfaithfulnessData : SpellData {
+public class UnfaithfulnessData : AfflictData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.UNFAITHFULNESS;
     public override string name => "Unfaithfulness";
     public override string description => $"This Affliction will make a Villager Unfaithful. Unfaithful Villagers may flirt and develop Affairs even if they already have a Husband or a Wife.";
@@ -15,13 +15,8 @@ public class UnfaithfulnessData : SpellData {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        targetPOI.traitContainer.AddTrait(targetPOI, "Unfaithful");
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted", null, LOG_TAG.Player, LOG_TAG.Life_Changes);
-        log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, "Unfaithful", LOG_IDENTIFIER.STRING_1);
-        log.AddLogToDatabase();
-        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-        base.ActivateAbility(targetPOI);
+        AfflictPOIWith("Unfaithful", targetPOI, name);
+        OnExecuteSpellActionAffliction();
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Unfaithful", "Beast")) {

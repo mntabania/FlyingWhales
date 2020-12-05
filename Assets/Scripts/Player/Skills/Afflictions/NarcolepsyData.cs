@@ -4,7 +4,7 @@ using Logs;
 using Traits;
 using UnityEngine;
 
-public class NarcolepsyData : SpellData {
+public class NarcolepsyData : AfflictData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.NARCOLEPSY;
     public override string name => "Narcolepsy";
     public override string description => "This Affliction will make a Villager Narcoleptic. Narcoleptic villagers may involuntarily fall asleep at any time.";
@@ -15,13 +15,8 @@ public class NarcolepsyData : SpellData {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        targetPOI.traitContainer.AddTrait(targetPOI, "Narcoleptic");
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted", null, LOG_TAG.Player, LOG_TAG.Life_Changes);
-        log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, name, LOG_IDENTIFIER.STRING_1);
-        log.AddLogToDatabase();
-        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-        base.ActivateAbility(targetPOI);
+        AfflictPOIWith("Narcoleptic", targetPOI, name);
+        OnExecuteSpellActionAffliction();
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Narcoleptic")) {

@@ -2,7 +2,7 @@
 using Logs;
 using UnityEngine;
 
-public class PlagueData : SpellData {
+public class PlagueData : AfflictData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.PLAGUE;
     public override string name => "Plague";
     public override string description => GetDescription();
@@ -24,7 +24,7 @@ public class PlagueData : SpellData {
             (targetPOI as Character).interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, targetPOI);
         }
         // targetPOI.traitContainer.AddTrait(targetPOI, "Plagued");
-        base.ActivateAbility(targetPOI);
+        OnExecuteSpellActionAffliction();
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Plagued", "Robust", "Beast")) {

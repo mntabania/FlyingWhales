@@ -132,7 +132,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         currenciesText.text = currencyStr;
 
         additionalText.text = string.Empty;
-        if (spellData is PlayerAction  || spellData.category == PLAYER_SKILL_CATEGORY.AFFLICTION) {
+        if (spellData is PlayerAction) {
             IPointOfInterest activePOI = UIManager.Instance.GetCurrentlySelectedPOI();
             if (activePOI != null) {
                 if (activePOI is Character activeCharacter) {
