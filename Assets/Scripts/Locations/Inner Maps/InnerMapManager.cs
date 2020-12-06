@@ -20,8 +20,6 @@ namespace Inner_Maps {
         public static InnerMapManager Instance;
         
         public static readonly Vector2Int BuildingSpotSize = new Vector2Int(7, 7);
-        public static readonly int BuildingSpotBorderSize = 1; //how many tiles, per side of the build spot, should not be occupied by the structure.
-        
         public const int DefaultCharacterSortingOrder = 82;
         public const int GroundTilemapSortingOrder = 10;
         public const int DetailsTilemapSortingOrder = 40;
@@ -313,18 +311,6 @@ namespace Inner_Maps {
             mainGraphMask = mainGraphMask | GraphMask.FromGraph(newMap.pathfindingGraph);
             _nextMapPos = new Vector3(_nextMapPos.x, _nextMapPos.y + newMap.height + 50, _nextMapPos.z);
             newMap.OnMapGenerationFinished();
-        }
-        public void DestroyInnerMap(Region location) {
-            foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in location.structures) {
-                for (var i = 0; i < keyValuePair.Value.Count; i++) {
-                    keyValuePair.Value[i].DoCleanup();
-                }
-            }
-            pathfinder.data.RemoveGraph(location.innerMap.pathfindingGraph);
-            location.innerMap.CleanUp();
-            innerMaps.Remove(location.innerMap);
-            GameObject.Destroy(location.innerMap.gameObject);
-            Debug.LogError($"NPCSettlement map of {location.name} is destroyed!");
         }
         #endregion
 
@@ -646,9 +632,6 @@ namespace Inner_Maps {
         #region Structures
         public List<GameObject> GetStructurePrefabsForStructure(STRUCTURE_TYPE type, RESOURCE resource) {
             StructureSetting structureSetting = new StructureSetting(type, resource);
-            return structurePrefabs[structureSetting];
-        }
-        public List<GameObject> GetStructurePrefabsForStructure(StructureSetting structureSetting) {
             return structurePrefabs[structureSetting];
         }
         public List<GameObject> GetIndividualStructurePrefabsForStructure(StructureSetting structureSetting) {
