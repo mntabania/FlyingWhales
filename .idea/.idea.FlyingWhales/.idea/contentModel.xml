@@ -2818,6 +2818,13 @@
             <e p="PlayerSkillLoadout.cs" t="Include" />
             <e p="PlayerSkillTree.cs" t="Include" />
             <e p="RaceData.cs" t="Include" />
+            <e p="UIRoadMap" t="Include">
+              <e p="Scripts" t="Include">
+                <e p="ClickableMenuData.cs" t="Include" />
+                <e p="ClickableMenuUIObject.cs" t="Include" />
+                <e p="ParentUIData.cs" t="Include" />
+              </e>
+            </e>
           </e>
           <e p="Serializable Dictionaries" t="Include">
             <e p="SerializableDictionaries.cs" t="Include" />
@@ -3141,6 +3148,7 @@
                 <e p="FatalityUIController.cs" t="Include" />
                 <e p="LifeSpanUIController.cs" t="Include" />
                 <e p="OnDeathUIController.cs" t="Include" />
+                <e p="RightClickUIController.cs" t="Include" />
                 <e p="SymptomsUIController.cs" t="Include" />
                 <e p="TransmissionUIController.cs" t="Include" />
               </e>
@@ -3149,6 +3157,7 @@
                 <e p="FatalityUIModel.cs" t="Include" />
                 <e p="LifeSpanUIModel.cs" t="Include" />
                 <e p="OnDeathUIModel.cs" t="Include" />
+                <e p="RightClickUIModel.cs" t="Include" />
                 <e p="SymptomsUIModel.cs" t="Include" />
                 <e p="TransmissionUIModel.cs" t="Include" />
               </e>
@@ -3157,6 +3166,7 @@
                 <e p="FatalityUIView.cs" t="Include" />
                 <e p="LifeSpanUIView.cs" t="Include" />
                 <e p="OnDeathUIView.cs" t="Include" />
+                <e p="RgihtClickUIView.cs" t="Include" />
                 <e p="SymptomsUIView.cs" t="Include" />
                 <e p="TransmissionUIView.cs" t="Include" />
               </e>
