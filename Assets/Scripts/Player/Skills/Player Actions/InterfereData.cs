@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
 
+[System.Obsolete]
 public class InterfereData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.INTERFERE;
     public override string name { get { return "Interfere"; } }
@@ -13,11 +14,7 @@ public class InterfereData : PlayerAction {
     }
 
     #region Overrides
-    public override void ActivateAbility(LocationStructure structure) {
-        if (structure is Inner_Maps.Location_Structures.Meddler goader) {
-            goader.ShowInterfereUI();
-        }
-    }
+    public override void ActivateAbility(LocationStructure structure) { }
     public override bool CanPerformAbilityTowards(LocationStructure structure) {
         bool canPerform = base.CanPerformAbilityTowards(structure);
         if (canPerform) {

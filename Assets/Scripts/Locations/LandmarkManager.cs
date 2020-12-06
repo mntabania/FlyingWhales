@@ -460,37 +460,15 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
         innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
     }
-    /// <summary>
-    /// Place a built structure for a settlement at a given tile.
-    /// NOTE: This function also creates the LocationStructure instances.
-    /// </summary>
-    /// <param name="settlement">The settlement to create structures for.</param>
-    /// <param name="innerTileMap">The Inner map that the settlement is part of.</param>
-    /// <param name="tileLocation">The hextile to place the structure object at</param>
-    /// <param name="structureSetting">The settings that the structure should use.</param>
-    private void PlaceBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, StructureSetting structureSetting) {
-        List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
-        GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-        innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
-    }
     public IEnumerator PlaceIndividualBuiltStructureForSettlementCoroutine(BaseSettlement settlement, InnerTileMap innerTileMap, StructureSetting structureSetting) {
         HexTile chosenTile = settlement.GetFirstUnoccupiedHexTile();
         Assert.IsNotNull(chosenTile, $"There are no more unoccupied tiles to place structure {structureSetting.ToString()} for settlement {settlement.name}");
         PlaceIndividualBuiltStructureForSettlement(settlement, innerTileMap, chosenTile, structureSetting);
         yield return null;
     }
-    public List<LocationStructure> PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, StructureSetting structureSetting) {
+    private List<LocationStructure> PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, StructureSetting structureSetting) {
         List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-        return innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
-    }
-    public LocationStructure PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, LocationGridTile tileLocation, StructureSetting structureSetting) {
-        List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
-        GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-        return innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
-    }
-    public List<LocationStructure> PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, string prefabName) {
-        GameObject chosenStructurePrefab = ObjectPoolManager.Instance.GetOriginalObjectFromPool(prefabName);
         return innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
     }
     public LocationStructure PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, LocationGridTile tileLocation, string prefabName) {
