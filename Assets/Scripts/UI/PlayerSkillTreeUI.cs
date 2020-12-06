@@ -7,14 +7,14 @@ public class PlayerSkillTreeUI : MonoBehaviour {
     public PlayerSkillTreeNodeItemDictionary skillTreeItems;
 
     public void LoadSkillTree() {
-        foreach (KeyValuePair<SPELL_TYPE, PlayerSkillTreeItem> item in skillTreeItems) {
+        foreach (KeyValuePair<PLAYER_SKILL_TYPE, PlayerSkillTreeItem> item in skillTreeItems) {
             if (parentSkillTreeUI.skillTree.nodes.ContainsKey(item.Key)) {
                 item.Value.SetData(item.Key, parentSkillTreeUI.skillTree.nodes[item.Key], OnClickSkillTreeButton);    
             }
         }
     }
 
-    public void OnClickSkillTreeButton(SPELL_TYPE skillType, PlayerSkillTreeItem skillTreeItem) {
+    public void OnClickSkillTreeButton(PLAYER_SKILL_TYPE skillType, PlayerSkillTreeItem skillTreeItem) {
         parentSkillTreeUI.OnClickSkillTreeButton(skillType, skillTreeItem);
     }
 }

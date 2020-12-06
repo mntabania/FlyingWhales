@@ -1326,9 +1326,9 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     #endregion
     
     #region Player Action Target
-    public List<SPELL_TYPE> actions { get; private set; }
+    public List<PLAYER_SKILL_TYPE> actions { get; private set; }
     public void ConstructDefaultActions() {
-        actions = new List<SPELL_TYPE>();
+        actions = new List<PLAYER_SKILL_TYPE>();
         //PlayerAction harassAction = new PlayerAction(PlayerDB.Harass_Action, CanDoHarass, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "harass"));
         //PlayerAction raidAction = new PlayerAction(PlayerDB.Raid_Action, CanDoRaid, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "raid"));
         //PlayerAction invadeAction = new PlayerAction(PlayerDB.Invade_Action, CanDoInvade, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "invade"));
@@ -1339,13 +1339,13 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         // AddPlayerAction(SPELL_TYPE.INVADE);
         // AddPlayerAction(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE);
     }
-    public void AddPlayerAction(SPELL_TYPE action) {
+    public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Contains(action) == false) {
             actions.Add(action);
             Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
         }
     }
-    public void RemovePlayerAction(SPELL_TYPE action) {
+    public void RemovePlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Remove(action)) {
             Messenger.Broadcast(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
         }
@@ -1396,14 +1396,14 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         // }
         // return false;
     }
-    public void StartBuild(SPELL_TYPE structureType) {
+    public void StartBuild(PLAYER_SKILL_TYPE structureType) {
         _buildParticles = GameManager.Instance.CreateParticleEffectAt(GetCenterLocationGridTile(), PARTICLE_EFFECT.Build_Demonic_Structure).GetComponent<AutoDestroyParticle>();
         DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
         demonicStructureSkill.OnExecuteSpellActionAffliction();
         StartCoroutine(BuildCoroutine(structureType));
         PlayerManager.Instance.player.SetIsCurrentlyBuildingDemonicStructure(true);
     }
-    private IEnumerator BuildCoroutine(SPELL_TYPE structureType) {
+    private IEnumerator BuildCoroutine(PLAYER_SKILL_TYPE structureType) {
         yield return new WaitForSeconds(3f);
         _buildParticles.StopEmission();
         DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);

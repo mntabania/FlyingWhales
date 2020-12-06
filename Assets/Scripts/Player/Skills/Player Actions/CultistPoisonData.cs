@@ -2,10 +2,10 @@
 using Logs;
 
 public class CultistPoisonData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.CULTIST_POISON;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.CULTIST_POISON;
     public override string name => "Poison Neighbor";
     public override string description => "This Action instructs the character to Poison an object owned by someone they know.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.PLAYER_ACTION;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.PLAYER_ACTION;
     public override bool canBeCastOnBlessed => true;
     
     public CultistPoisonData() : base() {

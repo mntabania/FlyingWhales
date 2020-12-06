@@ -4,7 +4,7 @@ using UnityEngine;
 
 [System.Serializable]
 public class SaveDataPlayerSkill : SaveData<SpellData> {
-    public SPELL_TYPE type;
+    public PLAYER_SKILL_TYPE type;
     public int maxCharges;
     public int charges;
     public int manaCost;

@@ -78,7 +78,7 @@ public class ExterminationPartyQuest : PartyQuest {
     private void ProcessExterminationOrDisbandment() {
         if (assignedParty != null && assignedParty.isActive && assignedParty.currentQuest == this) {
             Faction faction = assignedParty.partySettlement.owner;
-            if (!targetStructure.settlementLocation.HasResidentThatMeetsCriteria(resident => !resident.isDead
+            if (targetStructure == null || targetStructure.hasBeenDestroyed || targetStructure.tiles.Count <= 0 || !targetStructure.settlementLocation.HasResidentThatMeetsCriteria(resident => !resident.isDead
                     && !resident.partyComponent.IsAMemberOfParty(assignedParty)
                     && !resident.isBeingSeized
                     && resident.gridTileLocation != null
@@ -141,6 +141,10 @@ public class ExterminationPartyQuest : PartyQuest {
             //}
             if (!string.IsNullOrEmpty(subData.originSettlement)) {
                 originSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(subData.originSettlement) as NPCSettlement;
+            }
+            if (isWaitTimeOver && assignedParty != null) {
+                //Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+                Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
             }
         }
     }

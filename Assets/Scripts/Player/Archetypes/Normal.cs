@@ -7,10 +7,8 @@ namespace Archetype {
     public class Normal : PlayerArchetype {
         public Normal() : base(PLAYER_ARCHETYPE.Normal) {
             minionClasses = CharacterManager.sevenDeadlySinsClassNames.ToList();
-            afflictions = PlayerDB.afflictions;
-            spells = PlayerDB.spells;
             // SPELL_TYPE.THE_SPIRE,
-            demonicStructuresSkills = new List<SPELL_TYPE>() { SPELL_TYPE.EYE, SPELL_TYPE.KENNEL, SPELL_TYPE.CRYPT, SPELL_TYPE.MEDDLER, SPELL_TYPE.TORTURE_CHAMBERS, SPELL_TYPE.DEMONIC_PRISON };
+            demonicStructuresSkills = new List<PLAYER_SKILL_TYPE>() { PLAYER_SKILL_TYPE.EYE, PLAYER_SKILL_TYPE.KENNEL, PLAYER_SKILL_TYPE.CRYPT, PLAYER_SKILL_TYPE.MEDDLER, PLAYER_SKILL_TYPE.TORTURE_CHAMBERS, PLAYER_SKILL_TYPE.DEMONIC_PRISON };
             monsters = new List<RaceClass>() {
                 new RaceClass(RACE.WOLF, "Ravager"), new RaceClass(RACE.GOLEM, "Golem"),
                 new RaceClass(RACE.SKELETON, "Archer"), new RaceClass(RACE.SKELETON, "Marauder"),
@@ -18,8 +16,8 @@ namespace Archetype {
                 new RaceClass(RACE.DEMON, "Succubus"), new RaceClass(RACE.KOBOLD, "Kobold"),
                 new RaceClass(RACE.SPIDER, "Giant Spider")
             };
-            minionPlayerSkills = new List<SPELL_TYPE>() { SPELL_TYPE.DEMON_WRATH, SPELL_TYPE.DEMON_PRIDE, SPELL_TYPE.DEMON_LUST, SPELL_TYPE.DEMON_GLUTTONY, SPELL_TYPE.DEMON_SLOTH, SPELL_TYPE.DEMON_ENVY, SPELL_TYPE.DEMON_GREED, };
-            summonPlayerSkills = new List<SPELL_TYPE>() { SPELL_TYPE.SKELETON_MARAUDER, };
+            minionPlayerSkills = new List<PLAYER_SKILL_TYPE>() { PLAYER_SKILL_TYPE.DEMON_WRATH, PLAYER_SKILL_TYPE.DEMON_PRIDE, PLAYER_SKILL_TYPE.DEMON_LUST, PLAYER_SKILL_TYPE.DEMON_GLUTTONY, PLAYER_SKILL_TYPE.DEMON_SLOTH, PLAYER_SKILL_TYPE.DEMON_ENVY, PLAYER_SKILL_TYPE.DEMON_GREED, };
+            summonPlayerSkills = new List<PLAYER_SKILL_TYPE>() { PLAYER_SKILL_TYPE.SKELETON_MARAUDER, };
 
             //playerActions = new List<string>();
             SetCanTriggerFlaw(true);
@@ -27,16 +25,16 @@ namespace Archetype {
         }
 
         #region Overrides
-        public override bool CanAfflict(SPELL_TYPE type) {
+        public override bool CanAfflict(PLAYER_SKILL_TYPE type) {
             return true;
         }
-        public override bool CanDoPlayerAction(SPELL_TYPE type) {
+        public override bool CanDoPlayerAction(PLAYER_SKILL_TYPE type) {
             return true;
         }
         public override bool CanSummonMinion(Minion minion) {
             return true;
         }
-        public override bool CanBuildDemonicStructure(SPELL_TYPE type) {
+        public override bool CanBuildDemonicStructure(PLAYER_SKILL_TYPE type) {
             return true;
         }
         //public override bool CanCastSpell(string spellName) {

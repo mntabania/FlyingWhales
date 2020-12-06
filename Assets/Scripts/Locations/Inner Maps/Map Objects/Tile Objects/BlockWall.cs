@@ -59,9 +59,9 @@ public class BlockWall : TileObject {
     }
     public override void ConstructDefaultActions() {
         base.ConstructDefaultActions();
-        RemovePlayerAction(SPELL_TYPE.SEIZE_OBJECT);
-        RemovePlayerAction(SPELL_TYPE.POISON);
-        RemovePlayerAction(SPELL_TYPE.IGNITE);
+        RemovePlayerAction(PLAYER_SKILL_TYPE.SEIZE_OBJECT);
+        RemovePlayerAction(PLAYER_SKILL_TYPE.POISON);
+        RemovePlayerAction(PLAYER_SKILL_TYPE.IGNITE);
     }
     #endregion
 

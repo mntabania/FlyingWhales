@@ -2405,24 +2405,23 @@
             <e p="PlayerSkillTreeNode.cs" t="Include" />
             <e p="Skills" t="Include">
               <e p="Afflictions" t="Include">
-                <e p="Agoraphobia.cs" t="Include" />
-                <e p="Alcoholic.cs" t="Include" />
-                <e p="Cannibalism.cs" t="Include" />
+                <e p="AgoraphobiaData.cs" t="Include" />
+                <e p="AlcoholicData.cs" t="Include" />
+                <e p="CannibalismData.cs" t="Include" />
                 <e p="CowardiceData.cs" t="Include" />
                 <e p="GluttonyData.cs" t="Include" />
                 <e p="HotheadedData.cs" t="Include" />
-                <e p="Kleptomania.cs" t="Include" />
+                <e p="KleptomaniaData.cs" t="Include" />
                 <e p="LazinessData.cs" t="Include" />
-                <e p="Lycanthropy.cs" t="Include" />
+                <e p="LycanthropyData.cs" t="Include" />
                 <e p="MusicHaterData.cs" t="Include" />
                 <e p="NarcolepsyData.cs" t="Include" />
-                <e p="Paralysis.cs" t="Include" />
-                <e p="Plague.cs" t="Include" />
-                <e p="Psychopathy.cs" t="Include" />
+                <e p="ParalysisData.cs" t="Include" />
+                <e p="PlagueData.cs" t="Include" />
+                <e p="PsychopathyData.cs" t="Include" />
                 <e p="PyrophopiaData.cs" t="Include" />
-                <e p="Unfaithfulness.cs" t="Include" />
-                <e p="Vampirism.cs" t="Include" />
-                <e p="ZombieVirus.cs" t="Include" />
+                <e p="UnfaithfulnessData.cs" t="Include" />
+                <e p="VampirismData.cs" t="Include" />
               </e>
               <e p="BallLightningData.cs" t="Include" />
               <e p="Blizzard.cs" t="Include" />
@@ -2473,44 +2472,31 @@
               </e>
               <e p="PlantGermData.cs" t="Include" />
               <e p="Player Actions" t="Include">
-                <e p="AbductData.cs" t="Include" />
-                <e p="ActivateTIleObjectData.cs" t="Include" />
                 <e p="AfflictData.cs" t="Include" />
                 <e p="AgitateData.cs" t="Include" />
-                <e p="AnimateData.cs" t="Include" />
                 <e p="BrainwashData.cs" t="Include" />
                 <e p="BreedMonsterData.cs" t="Include" />
                 <e p="BuildDemonicStructureData.cs" t="Include" />
-                <e p="ChangeCombatModeData.cs" t="Include" />
                 <e p="CultistBoobyTrapData.cs" t="Include" />
                 <e p="CultistPoisonData.cs" t="Include" />
                 <e p="CultistTransformData.cs" t="Include" />
-                <e p="DefendData.cs" t="Include" />
                 <e p="DestroyData.cs" t="Include" />
                 <e p="EmpowerData.cs" t="Include" />
-                <e p="EndHarassData.cs" t="Include" />
-                <e p="EndInvadeData.cs" t="Include" />
-                <e p="EndRaidData.cs" t="Include" />
                 <e p="EvangelizeData.cs" t="Include" />
                 <e p="FoundCultData.cs" t="Include" />
-                <e p="HarassData.cs" t="Include" />
                 <e p="HealData.cs" t="Include" />
                 <e p="IgniteData.cs" t="Include" />
                 <e p="InterfereData.cs" t="Include" />
-                <e p="InvadeData.cs" t="Include" />
-                <e p="LearnSpellData.cs" t="Include" />
                 <e p="PoisonData.cs" t="Include" />
                 <e p="RaiseDeadData.cs" t="Include" />
                 <e p="RepairData.cs" t="Include" />
-                <e p="ReturnToPortalData.cs" t="Include" />
                 <e p="SacrificeData.cs" t="Include" />
+                <e p="SchemeData.cs" t="Include" />
                 <e p="SeizeCharacterData.cs" t="Include" />
                 <e p="SeizeMonsterData.cs" t="Include" />
                 <e p="SeizeObjectData.cs" t="Include" />
                 <e p="SnatchData.cs" t="Include" />
                 <e p="SpreadRumorData.cs" t="Include" />
-                <e p="StopData.cs" t="Include" />
-                <e p="SummonMinionData.cs" t="Include" />
                 <e p="TortureData.cs" t="Include" />
                 <e p="TriggerFlawData.cs" t="Include" />
                 <e p="UnsummonData.cs" t="Include" />
@@ -3268,7 +3254,6 @@
             <e p="TraitItem.cs" t="Include" />
             <e p="UIMenuSettings.cs" t="Include" />
             <e p="UnallowOverlaps.cs" t="Include" />
-            <e p="UnleashSummonUI.cs" t="Include" />
             <e p="WinGameOverItem.cs" t="Include" />
             <e p="WorldEventIcon.cs" t="Include" />
             <e p="WorldPickerItem.cs" t="Include" />

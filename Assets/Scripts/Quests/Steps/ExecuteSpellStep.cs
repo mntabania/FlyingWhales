@@ -2,9 +2,9 @@
 namespace Quests.Steps {
     public class ExecuteSpellStep : QuestStep {
         private readonly Func<SpellData, bool> _validityChecker;
-        private readonly SPELL_TYPE _neededSpellType;
+        private readonly PLAYER_SKILL_TYPE _neededSpellType;
         
-        public ExecuteSpellStep(SPELL_TYPE neededSpellType, string stepDescription) 
+        public ExecuteSpellStep(PLAYER_SKILL_TYPE neededSpellType, string stepDescription) 
             : base(stepDescription) {
             _neededSpellType = neededSpellType;
             _validityChecker = null;
@@ -12,10 +12,10 @@ namespace Quests.Steps {
         public ExecuteSpellStep(System.Func<SpellData, bool> validityChecker, string stepDescription) 
             : base(stepDescription) {
             _validityChecker = validityChecker;
-            _neededSpellType = SPELL_TYPE.NONE;
+            _neededSpellType = PLAYER_SKILL_TYPE.NONE;
         }
         protected override void SubscribeListeners() {
-            if (_neededSpellType == SPELL_TYPE.METEOR) {
+            if (_neededSpellType == PLAYER_SKILL_TYPE.METEOR) {
                 Messenger.AddListener(SpellSignals.METEOR_FELL, Complete);
             } else {
                 Messenger.AddListener<SpellData>(SpellSignals.ON_EXECUTE_SPELL, CheckForCompletion);    
@@ -23,7 +23,7 @@ namespace Quests.Steps {
             
         }
         protected override void UnSubscribeListeners() {
-            if (_neededSpellType == SPELL_TYPE.METEOR) {
+            if (_neededSpellType == PLAYER_SKILL_TYPE.METEOR) {
                 Messenger.RemoveListener(SpellSignals.METEOR_FELL, Complete);
             } else {
                 Messenger.RemoveListener<SpellData>(SpellSignals.ON_EXECUTE_SPELL, CheckForCompletion);

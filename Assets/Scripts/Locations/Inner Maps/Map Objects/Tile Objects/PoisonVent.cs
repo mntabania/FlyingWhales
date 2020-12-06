@@ -28,7 +28,7 @@ public class PoisonVent : TileObject {
     public override void ConstructDefaultActions() {
         base.ConstructDefaultActions();
         // AddPlayerAction(SPELL_TYPE.ACTIVATE);
-        RemovePlayerAction(SPELL_TYPE.SEIZE_OBJECT);
+        RemovePlayerAction(PLAYER_SKILL_TYPE.SEIZE_OBJECT);
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();

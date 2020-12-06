@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PsychopathyData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.PSYCHOPATHY;
+public class PsychopathyData : AfflictData {
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.PSYCHOPATHY;
     public override string name => "Psychopathy";
     public override string description => "This Affliction will turn a Villager into a Serial Killer. Serial Killers have a specific type of victim that they would target for abduction and killing. You may set your desired Victim Profile.";
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.AFFLICTION;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     public PsychopathyData() : base() {

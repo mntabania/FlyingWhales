@@ -17,7 +17,7 @@ namespace Tutorial {
         protected override bool HasMetAllCriteria() {
             bool hasMetCriteria = base.HasMetAllCriteria();
             if (hasMetCriteria) {
-                return PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.SEIZE_CHARACTER).isInUse;
+                return PlayerSkillManager.Instance.GetPlayerSpellData(PLAYER_SKILL_TYPE.SEIZE_CHARACTER).isInUse;
             }
             return false;
         }
@@ -39,13 +39,13 @@ namespace Tutorial {
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                 ),
                 new QuestStepCollection(
-                    new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_CHARACTER, $"Seize a {UtilityScripts.Utilities.VillagerIcon()}Villager")
+                    new ExecutedPlayerActionStep(PLAYER_SKILL_TYPE.SEIZE_CHARACTER, $"Seize a {UtilityScripts.Utilities.VillagerIcon()}Villager")
                         .SetHoverOverAction(OnHoverSeizeCharacter)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostSeizeVillager, OnNoLongerTopMostSeizeVillager),
                     new DropCharacterAtStructureRoomStep<PrisonCell>("Drop at a Cell"),
                 new ClickOnRoomStep("Click on that Cell", IsClickedRoomValid),
-                    new ExecutedPlayerActionStep(SPELL_TYPE.TORTURE, "Click on Begin Torture button")
+                    new ExecutedPlayerActionStep(PLAYER_SKILL_TYPE.TORTURE, "Click on Begin Torture button")
                         .SetHoverOverAction(OnHoverBeginTorture)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostTorture, OnNoLongerTopMostTorture)

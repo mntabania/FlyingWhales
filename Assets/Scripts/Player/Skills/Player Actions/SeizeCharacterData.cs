@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 using Inner_Maps.Location_Structures;
 
 public class SeizeCharacterData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.SEIZE_CHARACTER;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SEIZE_CHARACTER;
     public override string name => "Seize Villager";
     public override string description => "This Action can be used to take a Villager and then transfer it to an unoccupied tile.";
     public SeizeCharacterData() : base() {

@@ -7,10 +7,10 @@ using Traits;
 using UtilityScripts;
 
 public class LightningData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.LIGHTNING;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.LIGHTNING;
     public override string name => "Lightning";
     public override string description => "This Spell triggers a lightning strike at the target spot. Deals major Electric damage.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;
 
@@ -20,7 +20,7 @@ public class LightningData : SpellData {
 
     public override void ActivateAbility(LocationGridTile targetTile) {
         AudioManager.Instance.TryCreateAudioObject(
-            CollectionUtilities.GetRandomElement(PlayerSkillManager.Instance.GetPlayerSkillData<LightningSkillData>(SPELL_TYPE.LIGHTNING).thunderAudioClips), 
+            CollectionUtilities.GetRandomElement(PlayerSkillManager.Instance.GetPlayerSkillData<LightningSkillData>(PLAYER_SKILL_TYPE.LIGHTNING).thunderAudioClips), 
             targetTile, 1, false
         );
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Lightning_Strike);

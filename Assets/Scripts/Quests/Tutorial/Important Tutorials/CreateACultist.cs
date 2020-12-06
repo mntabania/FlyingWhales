@@ -17,7 +17,7 @@ namespace Tutorial {
         protected override bool HasMetAllCriteria() {
             bool hasMetCriteria = base.HasMetAllCriteria();
             if (hasMetCriteria) {
-                return PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.SEIZE_CHARACTER).isInUse;
+                return PlayerSkillManager.Instance.GetPlayerSpellData(PLAYER_SKILL_TYPE.SEIZE_CHARACTER).isInUse;
             }
             return false;
         }
@@ -41,13 +41,13 @@ namespace Tutorial {
                     new ClickOnRoomStep("Click on the Chamber", room => room is DefilerRoom)
                         .SetHoverOverAction(OnHoverChamber)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
-                    new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_CHARACTER, $"Seize a Brainwash Target")
+                    new ExecutedPlayerActionStep(PLAYER_SKILL_TYPE.SEIZE_CHARACTER, $"Seize a Brainwash Target")
                         .SetHoverOverAction(OnHoverSeizeCharacter)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostSeizeVillager, OnNoLongerTopMostSeizeVillager),
                     new DropCharacterAtStructureRoomStep<DefilerRoom>("Drop at the Chamber"),
                     new ClickOnRoomStep("Click on the Chamber", IsClickedRoomValid),
-                    new ExecutedPlayerActionStep(SPELL_TYPE.BRAINWASH, "Click on Brainwash button")
+                    new ExecutedPlayerActionStep(PLAYER_SKILL_TYPE.BRAINWASH, "Click on Brainwash button")
                         .SetHoverOverAction(OnHoverBrainwash)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostBrainwash, OnNoLongerTopMostBrainwash)

@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 using Inner_Maps.Location_Structures;
 
 public class BrainwashData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.BRAINWASH;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.BRAINWASH;
     public override string name => "Brainwash";
     public override string description => $"Brainwash a Villager.";
     

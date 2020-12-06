@@ -943,18 +943,18 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Player Action Target
-        public List<SPELL_TYPE> actions { get; private set; }
+        public List<PLAYER_SKILL_TYPE> actions { get; private set; }
 
         public virtual void ConstructDefaultActions() {
-            actions = new List<SPELL_TYPE>();
+            actions = new List<PLAYER_SKILL_TYPE>();
         }
-        public void AddPlayerAction(SPELL_TYPE action) {
+        public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
             if (actions.Contains(action) == false) {
                 actions.Add(action);
                 Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
             }
         }
-        public void RemovePlayerAction(SPELL_TYPE action) {
+        public void RemovePlayerAction(PLAYER_SKILL_TYPE action) {
             if (actions.Remove(action)) {
                 Messenger.Broadcast(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
             }

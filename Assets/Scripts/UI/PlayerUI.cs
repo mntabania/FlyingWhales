@@ -46,9 +46,6 @@ public class PlayerUI : BaseMonoBehaviour {
     [Header("Intervention Abilities")]
     [SerializeField] private GameObject actionBtnPrefab;
 
-    [Header("Unleash Summon UI")]
-    public UnleashSummonUI unleashSummonUI;
-
     [Header("Saving/Loading")]
     public Button saveGameButton;
 
@@ -160,8 +157,8 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
         
-        Messenger.AddListener<SPELL_TYPE>(SpellSignals.PLAYER_GAINED_SPELL, OnGainSpell);
-        Messenger.AddListener<SPELL_TYPE>(SpellSignals.PLAYER_LOST_SPELL, OnLostSpell);
+        Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.PLAYER_GAINED_SPELL, OnGainSpell);
+        Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.PLAYER_LOST_SPELL, OnLostSpell);
     }
 
     public void InitializeAfterGameLoaded() {
@@ -410,7 +407,7 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     public bool IsMajorUIShowing() {
         return _generalConfirmation.isShowing /*|| newMinionUIGO.activeInHierarchy*/ || 
-               UIManager.Instance.generalConfirmationWithVisual.isShowing || unleashSummonUI.isShowing || 
+               UIManager.Instance.generalConfirmationWithVisual.isShowing || 
                UIManager.Instance.yesNoConfirmation.yesNoGO.activeInHierarchy;
     }
     #endregion
@@ -831,17 +828,17 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     private void CreateInitialSpells() {
         for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.spells.Count; i++) {
-            SPELL_TYPE spell = PlayerManager.Instance.player.playerSkillComponent.spells[i];
+            PLAYER_SKILL_TYPE spell = PlayerManager.Instance.player.playerSkillComponent.spells[i];
             CreateNewSpellItem(spell);
         }
     }
-    private void OnGainSpell(SPELL_TYPE spell) {
+    private void OnGainSpell(PLAYER_SKILL_TYPE spell) {
         CreateNewSpellItem(spell);
     }
-    private void OnLostSpell(SPELL_TYPE spell) {
+    private void OnLostSpell(PLAYER_SKILL_TYPE spell) {
         DeleteSpellItem(spell);
     }
-    private void CreateNewSpellItem(SPELL_TYPE spell) {
+    private void CreateNewSpellItem(PLAYER_SKILL_TYPE spell) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellItemPrefab.name, Vector3.zero, Quaternion.identity, spellsScrollRect.content);
         SpellItem item = go.GetComponent<SpellItem>();
         go.SetActive(false);
@@ -873,13 +870,13 @@ public class PlayerUI : BaseMonoBehaviour {
         // }
         _spellItems.Add(item);
     }
-    private void DeleteSpellItem(SPELL_TYPE spell) {
+    private void DeleteSpellItem(PLAYER_SKILL_TYPE spell) {
         SpellItem item = GetSpellItem(spell);
         if (item != null) {
             ObjectPoolManager.Instance.DestroyObject(item.gameObject);
         }
     }
-    private SpellItem GetSpellItem(SPELL_TYPE spell) {
+    private SpellItem GetSpellItem(PLAYER_SKILL_TYPE spell) {
         for (int i = 0; i < _spellItems.Count; i++) {
             SpellItem item = _spellItems[i];
             if (item.spellData.type == spell) {
@@ -1037,40 +1034,6 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Settlement Actions
-    public void OnClickHarassDefendInvade(HexTile targetHex, string identifier) {
-        harassDefendInvadeTargetHex = targetHex;
-        unleashSummonUI.ShowUnleashSummonUI(identifier);
-        //UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.minions.Where(x => x.character.gridTileLocation != null).Select(x => x.character).ToList(), HarassRaidInvade
-        //    , null, CanChooseMinion, "Choose Leader Minion", showCover: true);
-    }
-    //private bool CanChooseMinion(Character character) {
-    //    return !character.isDead && !character.behaviourComponent.isHarassing && !character.behaviourComponent.isRaiding && !character.behaviourComponent.isInvading;
-    //}
-    //private void HarassRaidInvade(object obj) {
-    //    Character character = obj as Character;
-    //    harassRaidInvadeLeaderMinion = character.minion;
-    //    UIManager.Instance.HideObjectPicker();
-    //    if(PlayerManager.Instance.player.summons.Count > 0) {
-    //        unleashSummonUI.ShowUnleashSummonUI();
-    //    } else {
-    //        //harassRaidInvadeLeaderMinion.character.behaviourComponent.SetHarassInvadeRaidTarget(harassRaidInvadeTargetNpcSettlement);
-    //        if (harassRaidInvadeIdentifier == "harass") {
-    //            harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsHarassing(true, harassRaidInvadeTargetHex);
-    //            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.HARASS).OnExecuteSpellActionAffliction();
-    //        } else if (harassRaidInvadeIdentifier == "raid") {
-    //            harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsRaiding(true, harassRaidInvadeTargetHex);
-    //            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.RAID).OnExecuteSpellActionAffliction();
-    //        } else if (harassRaidInvadeIdentifier == "invade") {
-    //            harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsInvading(true, harassRaidInvadeTargetHex);
-    //            PlayerManager.Instance.GetPlayerActionData(SPELL_TYPE.INVADE).OnExecuteSpellActionAffliction();
-    //        }
-    //        PlayerManager.Instance.player.threatComponent.AdjustThreat(5);
-            
-    //    }
-    //}
-    #endregion
-
     #region Build List
     public void OnToggleBuildList(bool isOn) {
         if (isOn) {
@@ -1100,7 +1063,7 @@ public class PlayerUI : BaseMonoBehaviour {
         plaguePointLbl.text = p_amount.ToString();
     }
     private void UpdatePlaguePointsContainer() {
-        plaguePointsContainer.gameObject.SetActive(PlayerSkillManager.Instance.GetDemonicStructureSkillData(SPELL_TYPE.BIOLAB).isInUse);
+        plaguePointsContainer.gameObject.SetActive(PlayerSkillManager.Instance.GetDemonicStructureSkillData(PLAYER_SKILL_TYPE.BIOLAB).isInUse);
     }
     public void OnHoverEnterPlaguePoints() {
         string text = "The amount of Plague Points you've generated. You can use this to upgrade your Plague if you have a Biolab built";

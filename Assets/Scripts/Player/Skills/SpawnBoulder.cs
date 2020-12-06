@@ -3,10 +3,10 @@ using Inner_Maps;
 using UnityEngine;
 
 public class SpawnBoulderData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.SPAWN_BOULDER;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.NONE;
     public override string name => "Spawn Boulder";
     public override string description => "This will produce a durable and impassable block of stone.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 2;
 

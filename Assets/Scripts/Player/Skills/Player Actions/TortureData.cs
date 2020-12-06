@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 using Inner_Maps.Location_Structures;
 
 public class TortureData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.TORTURE;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.TORTURE;
     public override string name => "Torture";
     public override string description => $"Torture a Villager to afflict it with a random negative Trait and a random negative Status.";
     public TortureData() : base() {

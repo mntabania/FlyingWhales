@@ -14,11 +14,11 @@ namespace Archetype {
             //        , PlayerDB.Learn_Spell_Action, PlayerDB.Activate_Artifact_Action
             //};
             monsters = new List<RaceClass> { new RaceClass(RACE.SKELETON, "Archer"), new RaceClass(RACE.SKELETON, "Marauder") };
-            demonicStructuresSkills = new List<SPELL_TYPE>();
+            demonicStructuresSkills = new List<PLAYER_SKILL_TYPE>();
             //demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.TORTURE_CHAMBER, LANDMARK_TYPE.DEMONIC_PRISON, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_CRYPT };
             minionClasses = new List<string>() { "Pride", "Sloth", "Lust", "Gluttony" };
-            afflictions = new List<SPELL_TYPE>() { SPELL_TYPE.PLAGUE, SPELL_TYPE.LYCANTHROPY, SPELL_TYPE.VAMPIRISM/*, SPELL_TYPE.ZOMBIE_VIRUS*/, /*Befoul, Imp Seed*/ };
-            spells = new List<SPELL_TYPE>() { SPELL_TYPE.FORLORN_SPIRIT, SPELL_TYPE.BRIMSTONES, SPELL_TYPE.RAIN, SPELL_TYPE.BLIZZARD/*, SPELL_TYPE.SPAWN_HAUNTED_GROUNDS*/ };
+            afflictions = new List<PLAYER_SKILL_TYPE>() { PLAYER_SKILL_TYPE.PLAGUE, PLAYER_SKILL_TYPE.LYCANTHROPY, PLAYER_SKILL_TYPE.VAMPIRISM/*, SPELL_TYPE.ZOMBIE_VIRUS*/, /*Befoul, Imp Seed*/ };
+            spells = new List<PLAYER_SKILL_TYPE>() { PLAYER_SKILL_TYPE.FORLORN_SPIRIT, PLAYER_SKILL_TYPE.BRIMSTONES, PLAYER_SKILL_TYPE.RAIN, PLAYER_SKILL_TYPE.BLIZZARD/*, SPELL_TYPE.SPAWN_HAUNTED_GROUNDS*/ };
             SetCanTriggerFlaw(false);
             SetCanRemoveTraits(false);
         }

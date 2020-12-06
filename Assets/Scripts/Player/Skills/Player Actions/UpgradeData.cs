@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 using Inner_Maps.Location_Structures;
 
 public class UpgradeData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.UPGRADE;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.UPGRADE;
     public override string name => "Upgrade";
     public override string description => $"Use the Biolab to upgrade your Plague affliction.";
     public UpgradeData() : base() {

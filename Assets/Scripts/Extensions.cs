@@ -902,49 +902,6 @@ public static class Extensions {
     }
     #endregion
 
-    #region Intervention Abilities
-    public static List<ABILITY_TAG> GetAbilityTags(this SPELL_TYPE type) {
-        List<ABILITY_TAG> tags = new List<ABILITY_TAG>();
-        switch (type) {
-            case SPELL_TYPE.LYCANTHROPY:
-                tags.Add(ABILITY_TAG.MAGIC);
-                break;
-            case SPELL_TYPE.KLEPTOMANIA:
-                tags.Add(ABILITY_TAG.CRIME);
-                break;
-            case SPELL_TYPE.VAMPIRISM:
-                tags.Add(ABILITY_TAG.MAGIC);
-                break;
-            case SPELL_TYPE.UNFAITHFULNESS:
-                tags.Add(ABILITY_TAG.CRIME);
-                break;
-            case SPELL_TYPE.CANNIBALISM:
-                tags.Add(ABILITY_TAG.MAGIC);
-                tags.Add(ABILITY_TAG.CRIME);
-                break;
-            case SPELL_TYPE.ZAP:
-                tags.Add(ABILITY_TAG.MAGIC);
-                break;
-            //case SPELL_TYPE.JOLT:
-            //    tags.Add(ABILITY_TAG.MAGIC);
-            //    break;
-            //case SPELL_TYPE.ENRAGE:
-            //    tags.Add(ABILITY_TAG.MAGIC);
-            //    break;
-            //case SPELL_TYPE.PROVOKE:
-            //    tags.Add(ABILITY_TAG.MAGIC);
-            //    break;
-            case SPELL_TYPE.RAISE_DEAD:
-                tags.Add(ABILITY_TAG.MAGIC);
-                break;
-                //case SPELL_TYPE.CLOAK_OF_INVISIBILITY:
-                //    tags.Add(ABILITY_TAG.MAGIC);
-                //    break;
-        }
-        return tags;
-    }
-    #endregion
-
     #region Landmarks
     public static bool IsPlayerLandmark(this LANDMARK_TYPE type) {
         switch (type) {
@@ -1140,6 +1097,23 @@ public static class Extensions {
         r.center = rectTransform.TransformPoint(r.center);
         r.size = rectTransform.TransformVector(r.size);
         return r;
+    }
+    #endregion
+
+    #region Player Skills
+    public static bool IsPlayerSkillSubCategoryOf(this PLAYER_SKILL_TYPE sub, PLAYER_SKILL_CATEGORY cat) {
+        System.Type t = typeof(PLAYER_SKILL_TYPE);
+        MemberInfo mi = t.GetMember(sub.ToString()).FirstOrDefault(m => m.GetCustomAttribute(typeof(PlayerSkillSubCategoryOf)) != null);
+        if (mi == null) throw new System.ArgumentException("PlayerSkillSubCategory " + sub + " has no category.");
+        PlayerSkillSubCategoryOf subAttr = (PlayerSkillSubCategoryOf) mi.GetCustomAttribute(typeof(PlayerSkillSubCategoryOf));
+        return subAttr.Category == cat;
+    }
+    public static PLAYER_SKILL_CATEGORY GetCategory(this PLAYER_SKILL_TYPE sub) {
+        System.Type t = typeof(PLAYER_SKILL_TYPE);
+        MemberInfo mi = t.GetMember(sub.ToString()).FirstOrDefault(m => m.GetCustomAttribute(typeof(PlayerSkillSubCategoryOf)) != null);
+        if (mi == null) throw new System.ArgumentException("PlayerSkillSubCategory " + sub + " has no category.");
+        PlayerSkillSubCategoryOf subAttr = (PlayerSkillSubCategoryOf) mi.GetCustomAttribute(typeof(PlayerSkillSubCategoryOf));
+        return subAttr.Category;
     }
     #endregion
 }

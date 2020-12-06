@@ -21,11 +21,11 @@ public class PlayerSkillLoadoutObjectPicker : MonoBehaviour {
     private System.Action<PlayerSkillData> onConfirmAction;
     private PlayerSkillData pickedSkill;
 
-    public void ShowLoadoutPicker(SPELL_TYPE[] items, Action<PlayerSkillData> onConfirmAction, Action<PlayerSkillData> onHoverEnterAction, Action<PlayerSkillData> onHoverExitAction) {
+    public void ShowLoadoutPicker(PLAYER_SKILL_TYPE[] items, Action<PlayerSkillData> onConfirmAction, Action<PlayerSkillData> onHoverEnterAction, Action<PlayerSkillData> onHoverExitAction) {
         UtilityScripts.Utilities.DestroyChildren(objectPickerScrollView.content);
         this.onConfirmAction = onConfirmAction;
         for (int i = 0; i < items.Length; i++) {
-            SPELL_TYPE skillType = items[i];
+            PLAYER_SKILL_TYPE skillType = items[i];
             if (!PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
                 //If there is no data yet, the skill must not be part of the choices
                 continue;
@@ -45,11 +45,11 @@ public class PlayerSkillLoadoutObjectPicker : MonoBehaviour {
         UpdateConfirmBtnState();
         Open();
     }
-    public void ShowLoadoutPicker(List<SPELL_TYPE> items, Action<PlayerSkillData> onConfirmAction, Action<PlayerSkillData> onHoverEnterAction, Action<PlayerSkillData> onHoverExitAction) {
+    public void ShowLoadoutPicker(List<PLAYER_SKILL_TYPE> items, Action<PlayerSkillData> onConfirmAction, Action<PlayerSkillData> onHoverEnterAction, Action<PlayerSkillData> onHoverExitAction) {
         UtilityScripts.Utilities.DestroyChildren(objectPickerScrollView.content);
         this.onConfirmAction = onConfirmAction;
         for (int i = 0; i < items.Count; i++) {
-            SPELL_TYPE skillType = items[i];
+            PLAYER_SKILL_TYPE skillType = items[i];
             if (!PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
                 //If there is no data yet, the skill must not be part of the choices
                 continue;
@@ -65,7 +65,7 @@ public class PlayerSkillLoadoutObjectPicker : MonoBehaviour {
             item.SetToggleAction(OnPickSkill);
             item.SetOnHoverEnterAction(onHoverEnterAction);
             item.SetOnHoverExitAction(onHoverExitAction);
-            if (skillType == SPELL_TYPE.OSTRACIZER) {
+            if (skillType == PLAYER_SKILL_TYPE.MEDDLER || skillType == PLAYER_SKILL_TYPE.OSTRACIZER) {
                 //disable meddler and ostracizer
                 item.SetInteractableState(false);
                 item.transform.SetAsLastSibling();

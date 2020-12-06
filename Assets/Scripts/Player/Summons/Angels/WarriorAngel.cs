@@ -12,11 +12,11 @@ public class WarriorAngel : Summon {
     #region Overrides
     public override void ConstructDefaultActions() {
         if (actions == null) {
-            actions = new List<SPELL_TYPE>();
+            actions = new List<PLAYER_SKILL_TYPE>();
         } else {
             actions.Clear();
         }
-        AddPlayerAction(SPELL_TYPE.ZAP);
+        AddPlayerAction(PLAYER_SKILL_TYPE.ZAP);
         //AddPlayerAction(SPELL_TYPE.SEIZE_CHARACTER);
     }
     public override void Initialize() {

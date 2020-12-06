@@ -30,7 +30,7 @@ public class SummonListUI : PopupMenuBase {
         _summonPlayerSkillItems = new List<SummonMinionPlayerSkillNameplateItem>();
         Messenger.AddListener<Summon>(PlayerSignals.PLAYER_GAINED_SUMMON, OnGainSummon);
         Messenger.AddListener<Summon>(PlayerSignals.PLAYER_LOST_SUMMON, OnLostSummon);
-        Messenger.AddListener<SPELL_TYPE>(SpellSignals.ADDED_PLAYER_SUMMON_SKILL, OnGainPlayerSummonSkill);
+        Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.ADDED_PLAYER_SUMMON_SKILL, OnGainPlayerSummonSkill);
         Messenger.AddListener<SpellData>(PlayerSignals.CHARGES_ADJUSTED, OnChargesAdjusted);
     }
     public void UpdateList() {
@@ -75,7 +75,7 @@ public class SummonListUI : PopupMenuBase {
             item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());    
         }
     }
-    private SummonMinionPlayerSkillNameplateItem CreateNewReserveSummonItem(SPELL_TYPE summonPlayerSkillType) {
+    private SummonMinionPlayerSkillNameplateItem CreateNewReserveSummonItem(PLAYER_SKILL_TYPE summonPlayerSkillType) {
         SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(summonPlayerSkillType);
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(reserveSummonItemPrefab.name, Vector3.zero, Quaternion.identity, summonListScrollView.content);
         SummonMinionPlayerSkillNameplateItem item = go.GetComponent<SummonMinionPlayerSkillNameplateItem>();
@@ -119,7 +119,7 @@ public class SummonListUI : PopupMenuBase {
         }
         return null;
     }
-    private void OnGainPlayerSummonSkill(SPELL_TYPE minionPlayerSkillType) {
+    private void OnGainPlayerSummonSkill(PLAYER_SKILL_TYPE minionPlayerSkillType) {
         CreateNewReserveSummonItem(minionPlayerSkillType);
     }
     private void OnGainSummon(Summon summon) {

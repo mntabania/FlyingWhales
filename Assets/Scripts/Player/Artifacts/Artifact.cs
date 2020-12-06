@@ -35,9 +35,9 @@ public class Artifact : TileObject {
     }
     protected override string GenerateName() { return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString()); }
     public override void ConstructDefaultActions() {
-        actions = new List<SPELL_TYPE>();
+        actions = new List<PLAYER_SKILL_TYPE>();
         // AddPlayerAction(SPELL_TYPE.ACTIVATE);
-        AddPlayerAction(SPELL_TYPE.SEIZE_OBJECT);
+        AddPlayerAction(PLAYER_SKILL_TYPE.SEIZE_OBJECT);
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();

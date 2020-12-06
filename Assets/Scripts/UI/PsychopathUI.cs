@@ -196,6 +196,6 @@ public class PsychopathUI : PopupMenuBase {
         psychopathTrait.SetVictimRequirements(victimType1, victimDescription1, victimType2, victimDescription2);
 
         HidePsychopathUI();
-        PlayerSkillManager.Instance.GetAfflictionData(SPELL_TYPE.PSYCHOPATHY).OnExecuteSpellActionAffliction();
+        PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.PSYCHOPATHY).OnExecuteSpellActionAffliction();
     }
 }

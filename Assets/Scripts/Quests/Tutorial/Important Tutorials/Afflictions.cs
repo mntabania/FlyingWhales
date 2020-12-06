@@ -33,7 +33,7 @@ namespace Tutorial {
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostAfflict, OnNoLongerTopMostAfflict)
                         .SetCompleteAction(OnCompleteExecuteAffliction),
-                    new ExecuteAfflictionStep("Apply Vampirism", SPELL_TYPE.VAMPIRISM, OnApplyVampirism)
+                    new ExecuteAfflictionStep("Apply Vampirism", PLAYER_SKILL_TYPE.VAMPIRISM, OnApplyVampirism)
                         .SetOnTopmostActions(OnTopMostVampirism, OnNoLongerTopMostVampirism)
                 ),
                 new QuestStepCollection(

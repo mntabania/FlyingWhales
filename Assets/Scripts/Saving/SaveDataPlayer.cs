@@ -11,8 +11,8 @@ public class SaveDataPlayer {
     public string gameVersion;
     public int exp;
     //public List<PlayerSkillDataCopy> learnedSkills;
-    public List<SPELL_TYPE> learnedSkills;
-    public List<SPELL_TYPE> unlockedSkills;
+    public List<PLAYER_SKILL_TYPE> learnedSkills;
+    public List<PLAYER_SKILL_TYPE> unlockedSkills;
     //public List<SaveDataSummon> kennelSummons;
     public List<SaveDataTileObject> cryptTileObjects;
     public List<TutorialManager.Tutorial> completedBonusTutorials;
@@ -31,12 +31,12 @@ public class SaveDataPlayer {
         gameVersion = Application.version;
         exp = 10000;
         //learnedSkills = new List<PlayerSkillDataCopy>();
-        learnedSkills = new List<SPELL_TYPE>();
-        unlockedSkills = new List<SPELL_TYPE>();
+        learnedSkills = new List<PLAYER_SKILL_TYPE>();
+        unlockedSkills = new List<PLAYER_SKILL_TYPE>();
         for (int i = 0; i < PlayerSkillManager.Instance.allSkillTrees.Length; i++) {
             PlayerSkillTree currSkillTree = PlayerSkillManager.Instance.allSkillTrees[i];
             for (int j = 0; j < currSkillTree.initialLearnedSkills.Length; j++) {
-                SPELL_TYPE node = currSkillTree.initialLearnedSkills[j];
+                PLAYER_SKILL_TYPE node = currSkillTree.initialLearnedSkills[j];
                 if (PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(node) != null) {
                     LearnSkill(node, currSkillTree.nodes[node]);    
                 }
@@ -89,7 +89,7 @@ public class SaveDataPlayer {
     #endregion
 
     #region Skills
-    public void LearnSkill(SPELL_TYPE skillType, PlayerSkillTreeNode node) {
+    public void LearnSkill(PLAYER_SKILL_TYPE skillType, PlayerSkillTreeNode node) {
         PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType);
         AdjustExp(-skillData.expCost);
         learnedSkills.Add(skillType);
@@ -99,14 +99,14 @@ public class SaveDataPlayer {
         //PlayerSkillTreeNode learnedNode = PlayerSkillManager.Instance.GetPlayerSkillTreeNode(skillType);
         if (node.unlockedSkills != null && node.unlockedSkills.Length > 0) {
             for (int k = 0; k < node.unlockedSkills.Length; k++) {
-                SPELL_TYPE unlockedSkillType = node.unlockedSkills[k];
+                PLAYER_SKILL_TYPE unlockedSkillType = node.unlockedSkills[k];
                 //PlayerSkillTreeNode unlockedNode = PlayerSkillManager.Instance.GetPlayerSkillTreeNode(unlockedSkillType); //skillTree.nodes[unlockedSkillType];
                 //PlayerSkillTreeNodeData unlockedSkill = new PlayerSkillTreeNodeData() { skill = unlockedSkillType, charges = unlockedNode.charges, cooldown = unlockedNode.cooldown, manaCost = unlockedNode.manaCost, threat = unlockedNode.threat, threatPerHour = unlockedNode.threatPerHour };
                 unlockedSkills.Add(unlockedSkillType);
             }
         }
     }
-    public bool IsSkillLearned(SPELL_TYPE skillType) {
+    public bool IsSkillLearned(PLAYER_SKILL_TYPE skillType) {
         if (learnedSkills != null) {
             for (int i = 0; i < learnedSkills.Count; i++) {
                 //PlayerSkillDataCopy nodeData = learnedSkills[i];
@@ -117,7 +117,7 @@ public class SaveDataPlayer {
         }
         return false;
     }
-    public bool IsSkillUnlocked(SPELL_TYPE skillType) {
+    public bool IsSkillUnlocked(PLAYER_SKILL_TYPE skillType) {
         if (unlockedSkills != null) {
             for (int i = 0; i < unlockedSkills.Count; i++) {
                 //PlayerSkillTreeNodeData nodeData = unlockedSkills[i];
@@ -353,7 +353,7 @@ public class SaveDataPlayer {
             }
         }
     }
-    public List<SPELL_TYPE> GetLoadoutExtraSpells(PLAYER_ARCHETYPE archetype) {
+    public List<PLAYER_SKILL_TYPE> GetLoadoutExtraSpells(PLAYER_ARCHETYPE archetype) {
         if (archetype == PLAYER_ARCHETYPE.Ravager) {
             return ravagerLoadoutSaveData.extraSpells;
         } else if (archetype == PLAYER_ARCHETYPE.Puppet_Master) {
@@ -365,7 +365,7 @@ public class SaveDataPlayer {
         }
         return null;
     }
-    public List<SPELL_TYPE> GetLoadoutExtraAfflictions(PLAYER_ARCHETYPE archetype) {
+    public List<PLAYER_SKILL_TYPE> GetLoadoutExtraAfflictions(PLAYER_ARCHETYPE archetype) {
         if (archetype == PLAYER_ARCHETYPE.Ravager) {
             return ravagerLoadoutSaveData.extraAfflictions;
         } else if (archetype == PLAYER_ARCHETYPE.Puppet_Master) {
@@ -377,7 +377,7 @@ public class SaveDataPlayer {
         }
         return null;
     }
-    public List<SPELL_TYPE> GetLoadoutExtraMinions(PLAYER_ARCHETYPE archetype) {
+    public List<PLAYER_SKILL_TYPE> GetLoadoutExtraMinions(PLAYER_ARCHETYPE archetype) {
         if (archetype == PLAYER_ARCHETYPE.Ravager) {
             return ravagerLoadoutSaveData.extraMinions;
         } else if (archetype == PLAYER_ARCHETYPE.Puppet_Master) {
@@ -389,7 +389,7 @@ public class SaveDataPlayer {
         }
         return null;
     }
-    public List<SPELL_TYPE> GetLoadoutExtraStructures(PLAYER_ARCHETYPE archetype) {
+    public List<PLAYER_SKILL_TYPE> GetLoadoutExtraStructures(PLAYER_ARCHETYPE archetype) {
         if (archetype == PLAYER_ARCHETYPE.Ravager) {
             return ravagerLoadoutSaveData.extraStructures;
         } else if (archetype == PLAYER_ARCHETYPE.Puppet_Master) {
@@ -401,7 +401,7 @@ public class SaveDataPlayer {
         }
         return null;
     }
-    public List<SPELL_TYPE> GetLoadoutExtraMiscs(PLAYER_ARCHETYPE archetype) {
+    public List<PLAYER_SKILL_TYPE> GetLoadoutExtraMiscs(PLAYER_ARCHETYPE archetype) {
         if (archetype == PLAYER_ARCHETYPE.Ravager) {
             return ravagerLoadoutSaveData.extraMiscs;
         } else if (archetype == PLAYER_ARCHETYPE.Puppet_Master) {
@@ -501,33 +501,33 @@ public class SaveDataPlayer {
 
 [System.Serializable]
 public class LoadoutSaveData {
-    public List<SPELL_TYPE> extraSpells;
-    public List<SPELL_TYPE> extraAfflictions;
-    public List<SPELL_TYPE> extraMinions;
-    public List<SPELL_TYPE> extraStructures;
-    public List<SPELL_TYPE> extraMiscs;
+    public List<PLAYER_SKILL_TYPE> extraSpells;
+    public List<PLAYER_SKILL_TYPE> extraAfflictions;
+    public List<PLAYER_SKILL_TYPE> extraMinions;
+    public List<PLAYER_SKILL_TYPE> extraStructures;
+    public List<PLAYER_SKILL_TYPE> extraMiscs;
 
     public LoadoutSaveData() {
-        extraSpells = new List<SPELL_TYPE>();
-        extraAfflictions = new List<SPELL_TYPE>();
-        extraMinions = new List<SPELL_TYPE>();
-        extraStructures = new List<SPELL_TYPE>();
-        extraMiscs = new List<SPELL_TYPE>();
+        extraSpells = new List<PLAYER_SKILL_TYPE>();
+        extraAfflictions = new List<PLAYER_SKILL_TYPE>();
+        extraMinions = new List<PLAYER_SKILL_TYPE>();
+        extraStructures = new List<PLAYER_SKILL_TYPE>();
+        extraMiscs = new List<PLAYER_SKILL_TYPE>();
     }
 
-    public void AddExtraSpell(SPELL_TYPE skillType) {
+    public void AddExtraSpell(PLAYER_SKILL_TYPE skillType) {
         extraSpells.Add(skillType);
     }
-    public void AddExtraAffliction(SPELL_TYPE skillType) {
+    public void AddExtraAffliction(PLAYER_SKILL_TYPE skillType) {
         extraAfflictions.Add(skillType);
     }
-    public void AddExtraMinion(SPELL_TYPE skillType) {
+    public void AddExtraMinion(PLAYER_SKILL_TYPE skillType) {
         extraMinions.Add(skillType);
     }
-    public void AddExtraStructure(SPELL_TYPE skillType) {
+    public void AddExtraStructure(PLAYER_SKILL_TYPE skillType) {
         extraStructures.Add(skillType);
     }
-    public void AddExtraMisc(SPELL_TYPE skillType) {
+    public void AddExtraMisc(PLAYER_SKILL_TYPE skillType) {
         extraMiscs.Add(skillType);
     }
 

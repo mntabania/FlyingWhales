@@ -81,7 +81,6 @@ public class CharacterInfoUI : InfoUIBase {
     public Character activeCharacter => _activeCharacter;
     public Character previousCharacter => _previousCharacter;
     private List<SpellData> afflictions;
-    private List<string> combatModes;
     private List<string> triggerFlawPool;
     private List<LogFiller> triggerFlawLogFillers;
     private bool aliveRelationsOnly;
@@ -161,7 +160,6 @@ public class CharacterInfoUI : InfoUIBase {
         afflictions = new List<SpellData>();
         triggerFlawPool = new List<string>();
         triggerFlawLogFillers = new List<LogFiller>();
-        ConstructCombatModes();
     }
 
     #region Overrides
@@ -202,12 +200,6 @@ public class CharacterInfoUI : InfoUIBase {
         UpdateAllHistoryInfo();
         ResetAllScrollPositions();
         UpdateMoodSummary();
-    }
-    protected override void OnExecutePlayerAction(PlayerAction action) {
-        base.OnExecutePlayerAction(action);
-        if(action.type == SPELL_TYPE.CHANGE_COMBAT_MODE) {
-            SetCombatModeUIPosition(action);
-        }
     }
     protected override void LoadActions(IPlayerActionTarget target) {
         UtilityScripts.Utilities.DestroyChildren(actionsTransform);
@@ -893,9 +885,9 @@ public class CharacterInfoUI : InfoUIBase {
     #region Afflict
     public void ShowAfflictUI() {
         afflictions.Clear();
-        List<SPELL_TYPE> afflictionTypes = PlayerManager.Instance.player.playerSkillComponent.afflictions;
+        List<PLAYER_SKILL_TYPE> afflictionTypes = PlayerManager.Instance.player.playerSkillComponent.afflictions;
         for (int i = 0; i < afflictionTypes.Count; i++) {
-            SPELL_TYPE spellType = afflictionTypes[i];
+            PLAYER_SKILL_TYPE spellType = afflictionTypes[i];
             SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(spellType);
             afflictions.Add(spellData);
         }
@@ -908,16 +900,16 @@ public class CharacterInfoUI : InfoUIBase {
     }
     private void ActivateAfflictionConfirmation(object o) {
         SpellData affliction = (SpellData)o;
-        SPELL_TYPE afflictionType = affliction.type;
+        PLAYER_SKILL_TYPE afflictionType = affliction.type;
         string afflictionName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(afflictionType.ToString());
         UIManager.Instance.ShowYesNoConfirmation("Affliction Confirmation",
             "Are you sure you want to afflict " + afflictionName + "?", () => ActivateAffliction(afflictionType),
             layer: 26, showCover: true, pauseAndResume: true);
     }
-    private void ActivateAffliction(SPELL_TYPE afflictionType) {
+    private void ActivateAffliction(PLAYER_SKILL_TYPE afflictionType) {
         UIManager.Instance.HideObjectPicker();
         PlayerSkillManager.Instance.GetAfflictionData(afflictionType).ActivateAbility(activeCharacter);
-        PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.AFFLICT).OnExecuteSpellActionAffliction();
+        PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.AFFLICT).OnExecuteSpellActionAffliction();
     }
     private bool CanActivateAffliction(SpellData spellData) {
         // if (WorldConfigManager.Instance.isTutorialWorld) {
@@ -945,7 +937,7 @@ public class CharacterInfoUI : InfoUIBase {
             }
         }
         UIManager.Instance.ShowClickableObjectPicker(triggerFlawPool, ActivateTriggerFlawConfirmation, null, CanActivateTriggerFlaw,
-            $"Select Flaw ({PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()})", 
+            $"Select Flaw ({PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()})", 
             OnHoverEnterFlaw, OnHoverExitFlaw, showCover: true, layer: 25, shouldShowConfirmationWindowOnPick: true, asButton: true, identifier: "Trigger Flaw");
     }
     private void ActivateTriggerFlawConfirmation(object o) {
@@ -953,7 +945,7 @@ public class CharacterInfoUI : InfoUIBase {
         Trait trait = activeCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
         string question = "Are you sure you want to trigger " + traitName + "?";
         string effect = $"<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
-        string manaCost = $"{PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
+        string manaCost = $"{PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
 
         UIManager.Instance.ShowTriggerFlawConfirmation(question, effect, manaCost, () => ActivateTriggerFlaw(trait), layer: 26, showCover: true, pauseAndResume: true);
     }
@@ -965,7 +957,7 @@ public class CharacterInfoUI : InfoUIBase {
             if (activeCharacter.partyComponent.hasParty) {
                 activeCharacter.partyComponent.currentParty.RemoveMemberThatJoinedQuest(activeCharacter);
             }
-            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).OnExecuteSpellActionAffliction();
+            PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).OnExecuteSpellActionAffliction();
         } else {
             string log = "Failed to trigger flaw. Some requirements might be unmet.";
             if (LocalizationManager.Instance.HasLocalizedValue("Trigger Flaw", trait.name, result)) {
@@ -990,7 +982,7 @@ public class CharacterInfoUI : InfoUIBase {
         Trait trait = activeCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
         PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(
             traitName, trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect"), 
-            manaCost: PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost
+            manaCost: PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost
         );
     }
     private void OnHoverExitFlaw(string traitName) {
@@ -1161,38 +1153,6 @@ public class CharacterInfoUI : InfoUIBase {
         string summary = $"Villagers will be unable to run when this Meter is empty. This is used up when the Villager is running and quickly replenished when he isn't.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.stamina.ToString("N0")}/100";
         UIManager.Instance.ShowSmallInfo(summary, "STAMINA");
-    }
-    #endregion
-
-    #region Combat Modes
-    private void ConstructCombatModes() {
-        combatModes = new List<string>();
-        for (int i = 0; i < CharacterManager.Instance.combatModes.Length; i++) {
-            combatModes.Add(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(CharacterManager.Instance.combatModes[i].ToString()));
-        }
-    }
-    public void ShowSwitchCombatModeUI() {
-        UIManager.Instance.customDropdownList.ShowDropdown(combatModes, OnClickChooseCombatMode, CanChoostCombatMode);
-    }
-    private void SetCombatModeUIPosition(PlayerAction action) {
-        ActionItem actionItem = GetActiveActionItem(action);
-        if(actionItem != null) {
-            Vector3 actionWorldPos = actionItem.transform.localPosition;
-            UIManager.Instance.customDropdownList.SetPosition(new Vector3(actionWorldPos.x, actionWorldPos.y + 10f, actionWorldPos.z));
-        }
-    }
-    private bool CanChoostCombatMode(string mode) {
-        if(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeCharacter.combatComponent.combatMode.ToString()) == mode) {
-            return false;
-        }
-        return true;
-    }
-    private void OnClickChooseCombatMode(string mode) {
-        COMBAT_MODE combatMode = (COMBAT_MODE) System.Enum.Parse(typeof(COMBAT_MODE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(mode));
-        UIManager.Instance.characterInfoUI.activeCharacter.combatComponent.SetCombatMode(combatMode);
-        Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, activeCharacter as IPlayerActionTarget);
-        UIManager.Instance.customDropdownList.Close();
-        PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.CHANGE_COMBAT_MODE).OnExecuteSpellActionAffliction();
     }
     #endregion
 

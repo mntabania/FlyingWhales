@@ -5,7 +5,7 @@ using UnityEngine.Video;
 
 [CreateAssetMenu(fileName = "New Player Skill Data", menuName = "Scriptable Objects/Player Skills/Player Skill Data")]
 public class PlayerSkillData : ScriptableObject {
-    public SPELL_TYPE skill;
+    public PLAYER_SKILL_TYPE skill;
     public int manaCost;
     public int charges;
     public int cooldown;

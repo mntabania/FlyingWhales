@@ -3,10 +3,10 @@ using Inner_Maps;
 using Traits;
 
 public class TerrifyingHowlData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.TERRIFYING_HOWL;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.TERRIFYING_HOWL;
     public override string name => "Terrifying Howl";
     public override string description => "This Spell releases a bunch of screaming skulls. Their spine-tingling wails will cause all nearby characters to flee.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public TerrifyingHowlData() : base() {

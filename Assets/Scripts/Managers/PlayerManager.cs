@@ -127,7 +127,7 @@ public class PlayerManager : BaseMonoBehaviour {
     #endregion
 
     #region Intervention Ability
-    public int GetSpellTier(SPELL_TYPE abilityType) {
+    public int GetSpellTier(PLAYER_SKILL_TYPE abilityType) {
         if (spellTiers.ContainsKey(abilityType)) {
             return spellTiers[abilityType];
         }

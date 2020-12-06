@@ -28,7 +28,7 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
     public GroupedSkillSlotItems miscsSkillSlotItems { get; private set; }
 
     private SkillSlotItem pickedSlotItem;
-    private List<SPELL_TYPE> loadoutChoices;
+    private List<PLAYER_SKILL_TYPE> loadoutChoices;
 
     public bool moreLoadoutOptions { get; set; }
 
@@ -38,7 +38,7 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
         minionsSkillSlotItems = new GroupedSkillSlotItems();
         structuresSkillSlotItems = new GroupedSkillSlotItems();
         miscsSkillSlotItems = new GroupedSkillSlotItems();
-        loadoutChoices = new List<SPELL_TYPE>();
+        loadoutChoices = new List<PLAYER_SKILL_TYPE>();
         LoadSkillDataToUI(loadout.spells.fixedSkills, loadout.spells.extraSlots, spellsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraSpells(loadout.archetype), spellsScrollRect.content);
         LoadSkillDataToUI(loadout.afflictions.fixedSkills, loadout.afflictions.extraSlots, afflictionsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraAfflictions(loadout.archetype), afflictionsScrollRect.content);
         LoadSkillDataToUI(loadout.minions.fixedSkills, loadout.minions.extraSlots, minionsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraMinions(loadout.archetype), minionsScrollRect.content);
@@ -108,10 +108,10 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
     #endregion
 
     #region Load Data
-    private void LoadSkillDataToUI(List<SPELL_TYPE> fixedSkills, int extraSlots, GroupedSkillSlotItems groupedSkillSlotItems, List<SPELL_TYPE> extraSkills, Transform parent) {
+    private void LoadSkillDataToUI(List<PLAYER_SKILL_TYPE> fixedSkills, int extraSlots, GroupedSkillSlotItems groupedSkillSlotItems, List<PLAYER_SKILL_TYPE> extraSkills, Transform parent) {
         if(fixedSkills != null) {
             for (int i = 0; i < fixedSkills.Count; i++) {
-                SPELL_TYPE fixedSkill = fixedSkills[i];
+                PLAYER_SKILL_TYPE fixedSkill = fixedSkills[i];
                 SkillSlotItem skillSlotItem = CreateNewSkillSlotItem(parent);
                 skillSlotItem.SetSkillSlotItem(loadout.archetype, fixedSkill, true);
                 skillSlotItem.SetOnHoverEnterAction(OnHoverEnterSkillSlotItem);
@@ -145,8 +145,8 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
         if (archetype != loadout.archetype) { return; }
         pickedSlotItem = slotItem;
         loadoutChoices.Clear();
-        SPELL_TYPE[] availableSkills = null;
-        List<SPELL_TYPE> fixedSkills = null;
+        PLAYER_SKILL_TYPE[] availableSkills = null;
+        List<PLAYER_SKILL_TYPE> fixedSkills = null;
         GroupedSkillSlotItems groupedSkillSlotItems = null;
         if (spellsTab.isOn) {
             availableSkills = loadout.availableSpells;
@@ -186,7 +186,7 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
         }
         if(availableSkills != null) {
             for (int i = 0; i < availableSkills.Length; i++) {
-                SPELL_TYPE skillType = availableSkills[i];
+                PLAYER_SKILL_TYPE skillType = availableSkills[i];
                 if (PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
                     if (!PlayerSkillManager.Instance.constantSkills.Contains(skillType) && !fixedSkills.Contains(skillType) && !groupedSkillSlotItems.HasExtraSkill(skillType)) {
                         loadoutChoices.Add(skillType);
@@ -276,7 +276,7 @@ public class GroupedSkillSlotItems {
     public void ClearExtraSkillSlotItem() {
         extraSkillSlotItems.Clear();
     }
-    public bool HasExtraSkill(SPELL_TYPE skillType) {
+    public bool HasExtraSkill(PLAYER_SKILL_TYPE skillType) {
         for (int i = 0; i < extraSkillSlotItems.Count; i++) {
             if(extraSkillSlotItems[i].skillData != null && extraSkillSlotItems[i].skillData.skill == skillType) {
                 return true;

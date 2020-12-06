@@ -8,7 +8,7 @@ namespace Inner_Maps.Location_Structures {
         
         public string name { get; }
         public List<LocationGridTile> tilesInRoom { get; }
-        public List<SPELL_TYPE> actions { get; }
+        public List<PLAYER_SKILL_TYPE> actions { get; }
         public Vector3 worldPosition { get; }
         public Vector2 selectableSize { get; protected set; }
         public List<Character> charactersInRoom => GetCharactersInRoom();
@@ -17,7 +17,7 @@ namespace Inner_Maps.Location_Structures {
         protected StructureRoom(string name, List<LocationGridTile> tilesInRoom) {
             this.name = name;
             this.tilesInRoom = tilesInRoom;
-            actions = new List<SPELL_TYPE>();
+            actions = new List<PLAYER_SKILL_TYPE>();
             worldPosition = GetCenterTile().centeredWorldLocation;
             int maxX = tilesInRoom.Max(t => t.localPlace.x);
             int minX = tilesInRoom.Min(t => t.localPlace.x);
@@ -29,7 +29,7 @@ namespace Inner_Maps.Location_Structures {
         public StructureRoom(SaveDataStructureRoom data) {
             this.name = data.name;
             this.tilesInRoom = SaveUtilities.ConvertIDListToLocationGridTiles(data.tilesInRoom);
-            actions = new List<SPELL_TYPE>();
+            actions = new List<PLAYER_SKILL_TYPE>();
             worldPosition = GetCenterTile().centeredWorldLocation;
             int maxX = tilesInRoom.Max(t => t.localPlace.x);
             int minX = tilesInRoom.Min(t => t.localPlace.x);
@@ -52,12 +52,12 @@ namespace Inner_Maps.Location_Structures {
 
         #region Player Action Target
         public virtual void ConstructDefaultActions() { }
-        public void AddPlayerAction(SPELL_TYPE action) {
+        public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
             if (actions.Contains(action) == false) {
                 actions.Add(action);
             }
         }
-        public void RemovePlayerAction(SPELL_TYPE action) {
+        public void RemovePlayerAction(PLAYER_SKILL_TYPE action) {
             actions.Remove(action);
         }
         public void ClearPlayerActions() {

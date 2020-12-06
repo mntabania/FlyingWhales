@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EmpowerData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.EMPOWER;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.EMPOWER;
     public override string name => "Empower";
     public override string description => "This Action will significantly increase a character's combat prowess.";
     public EmpowerData() : base() {

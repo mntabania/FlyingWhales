@@ -5,10 +5,10 @@ using Inner_Maps;
 using Locations.Tile_Features;
 
 public class RainData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.RAIN;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.RAIN;
     public override string name => "Rain";
     public override string description => "This Spell will generate rainfall on the target area, applying Wet to anything outside structures.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public RainData() : base() {

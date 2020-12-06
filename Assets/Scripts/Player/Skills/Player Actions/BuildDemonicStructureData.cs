@@ -4,7 +4,7 @@ using UnityEngine;
 
 [System.Obsolete("This is no longer used because structures can now be cast independently.")]
 public class BuildDemonicStructureData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.BUILD_DEMONIC_STRUCTURE;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.BUILD_DEMONIC_STRUCTURE;
     public override string name => "Build Structure";
     public override string description => "Build a Demonic Structure";
     public BuildDemonicStructureData() : base() {

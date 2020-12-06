@@ -3,11 +3,11 @@ using Logs;
 using Traits;
 using UnityEngine;
 
-public class AlcoholicData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.ALCOHOLIC;
+public class AlcoholicData : AfflictData {
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.ALCOHOLIC;
     public override string name { get { return "Alcoholic"; } }
     public override string description { get { return "Makes a character often want to drink."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.AFFLICTION;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     public AlcoholicData() : base() {
@@ -16,13 +16,8 @@ public class AlcoholicData : SpellData {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        targetPOI.traitContainer.AddTrait(targetPOI, "Alcoholic");
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted", null, LOG_TAG.Player, LOG_TAG.Life_Changes);
-        log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, "Alcoholic", LOG_IDENTIFIER.STRING_1);
-        log.AddLogToDatabase();
-        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-        base.ActivateAbility(targetPOI);
+        AfflictPOIWith("Alcoholic", targetPOI, "Alcoholism");
+        OnExecuteSpellActionAffliction();
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Alcoholic")) {

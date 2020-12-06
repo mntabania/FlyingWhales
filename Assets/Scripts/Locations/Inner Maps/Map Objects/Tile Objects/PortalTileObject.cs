@@ -20,7 +20,7 @@ public class PortalTileObject : TileObject {
     }
     
     public override void ConstructDefaultActions() {
-        actions = new List<SPELL_TYPE>();
+        actions = new List<PLAYER_SKILL_TYPE>();
         //portal has no actions by default
     }
     protected override string GenerateName() { return "Demonic Portal"; }

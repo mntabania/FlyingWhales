@@ -4,7 +4,7 @@ using Logs;
 using UnityEngine;
 
 public class RaiseDeadData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.RAISE_DEAD;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.RAISE_DEAD;
     public override string name => "Raise Dead";
     public override string description => "This Action can be used on a corpse of a Resident to spawn a Skeleton.";
     public RaiseDeadData() : base() {

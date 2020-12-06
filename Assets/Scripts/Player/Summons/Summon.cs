@@ -230,15 +230,15 @@ public class Summon : Character {
     #region Player Action Target
     public override void ConstructDefaultActions() {
         if (actions == null) {
-            actions = new List<SPELL_TYPE>();
+            actions = new List<PLAYER_SKILL_TYPE>();
         } else {
             actions.Clear();
         }
-        AddPlayerAction(SPELL_TYPE.SEIZE_MONSTER);
-        AddPlayerAction(SPELL_TYPE.BREED_MONSTER);
-        AddPlayerAction(SPELL_TYPE.AGITATE);
-        AddPlayerAction(SPELL_TYPE.SNATCH);
-        AddPlayerAction(SPELL_TYPE.SACRIFICE);
+        AddPlayerAction(PLAYER_SKILL_TYPE.SEIZE_MONSTER);
+        AddPlayerAction(PLAYER_SKILL_TYPE.BREED_MONSTER);
+        AddPlayerAction(PLAYER_SKILL_TYPE.AGITATE);
+        AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH);
+        AddPlayerAction(PLAYER_SKILL_TYPE.SACRIFICE);
     }
     #endregion
 

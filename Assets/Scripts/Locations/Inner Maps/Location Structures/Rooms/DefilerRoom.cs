@@ -45,7 +45,7 @@ namespace Inner_Maps.Location_Structures {
         #region Overrides
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
-            AddPlayerAction(SPELL_TYPE.BRAINWASH);
+            AddPlayerAction(PLAYER_SKILL_TYPE.BRAINWASH);
         }
         #endregion
         

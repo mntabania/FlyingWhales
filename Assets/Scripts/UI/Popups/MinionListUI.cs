@@ -29,7 +29,7 @@ public class MinionListUI : PopupMenuBase {
         _minionItems = new List<SummonMinionPlayerSkillNameplateItem>();
         Messenger.AddListener<Minion>(PlayerSignals.PLAYER_GAINED_MINION, OnGainMinion);
         Messenger.AddListener<Minion>(PlayerSignals.PLAYER_LOST_MINION, OnLostMinion);
-        Messenger.AddListener<SPELL_TYPE>(SpellSignals.ADDED_PLAYER_MINION_SKILL, OnGainPlayerMinionSkill);
+        Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.ADDED_PLAYER_MINION_SKILL, OnGainPlayerMinionSkill);
     }
     public void UpdateList() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
@@ -58,7 +58,7 @@ public class MinionListUI : PopupMenuBase {
             item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());    
         }
     }
-    private void CreateNewReserveMinionItem(SPELL_TYPE minionPlayerSkillType) {
+    private void CreateNewReserveMinionItem(PLAYER_SKILL_TYPE minionPlayerSkillType) {
         MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellItemPrefab.name, Vector3.zero, Quaternion.identity, minionListScrollView.content);
         SummonMinionPlayerSkillNameplateItem spellItem = go.GetComponent<SummonMinionPlayerSkillNameplateItem>();
@@ -88,7 +88,7 @@ public class MinionListUI : PopupMenuBase {
         }
         return null;
     }
-    private void OnGainPlayerMinionSkill(SPELL_TYPE minionPlayerSkillType) {
+    private void OnGainPlayerMinionSkill(PLAYER_SKILL_TYPE minionPlayerSkillType) {
         CreateNewReserveMinionItem(minionPlayerSkillType);
     }
     private void OnGainMinion(Minion minion) {
