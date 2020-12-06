@@ -607,7 +607,7 @@ MonoBehaviour:
   questNotificationSound: {fileID: 1471678630840876878}
   positiveNotificationSound: {fileID: 1471678631164629409}
   negativeNotificationSound: {fileID: 1471678630721085883}
-  shareIntel: {fileID: 1471678630611329844}
+  conversationMenuOpened: {fileID: 1471678630611329844}
   particleMagnet: {fileID: 1471678629975775075}
   worldSelectableClick: {fileID: 1471678629649303886}
   mainMenuSnapShot: {fileID: -3617194834739653821, guid: 7a818491cfe93db4289122bc35fefeeb,
@@ -930,7 +930,7 @@ GameObject:
   - component: {fileID: 1471678630611329847}
   - component: {fileID: 1471678630611329844}
   m_Layer: 0
-  m_Name: Share Intel
+  m_Name: Conversation Menu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

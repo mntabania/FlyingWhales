@@ -409,9 +409,28 @@ public class Player : ILeader, IObjectManipulator {
         string hoverText = string.Empty;
         if (CanShareIntel(InnerMapManager.Instance.currentlyHoveredPoi, ref hoverText)) {
             Character targetCharacter = InnerMapManager.Instance.currentlyHoveredPoi as Character;
-            UIManager.Instance.OpenShareIntelMenu(targetCharacter, null, currentActiveIntel);
+            List<ConversationData> conversationList = ObjectPoolManager.Instance.CreateNewConversationDataList();
+            ConversationData targetOpeningLine = ObjectPoolManager.Instance.CreateNewConversationData("What do you want from me?", targetCharacter, DialogItem.Position.Left);
+            ConversationData demonOpeningLine = ObjectPoolManager.Instance.CreateNewConversationData(currentActiveIntel.log.logText, null, DialogItem.Position.Right);
+
+            string targetCharacterEmotions = targetCharacter.reactionComponent.ReactToIntel(currentActiveIntel);
+            string emotionText = UtilityScripts.Utilities.FormulateTextFromEmotions(targetCharacterEmotions, currentActiveIntel.actor, currentActiveIntel.target, targetCharacter);
+
+            ConversationData targetEmotionResponse = ObjectPoolManager.Instance.CreateNewConversationData(emotionText, targetCharacter, DialogItem.Position.Left);
+
+            conversationList.Add(targetOpeningLine);
+            conversationList.Add(demonOpeningLine);
+            conversationList.Add(targetEmotionResponse);
+
+            UIManager.Instance.OpenConversationMenu(conversationList, $"Share Intel with {targetCharacter.name}");
+            Messenger.Broadcast(UISignals.ON_SHARE_INTEL);
             RemoveIntel(currentActiveIntel);
             SetCurrentActiveIntel(null);
+
+            ObjectPoolManager.Instance.ReturnConversationDataToPool(targetOpeningLine);
+            ObjectPoolManager.Instance.ReturnConversationDataToPool(demonOpeningLine);
+            ObjectPoolManager.Instance.ReturnConversationDataToPool(targetEmotionResponse);
+            ObjectPoolManager.Instance.ReturnConversationDataListToPool(conversationList);
         }
     }
     public bool CanShareIntel(IPointOfInterest poi, ref string hoverText) {

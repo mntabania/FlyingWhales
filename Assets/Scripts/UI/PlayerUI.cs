@@ -151,8 +151,8 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_OBTAINED_INTEL, OnIntelObtained);
         Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_REMOVED_INTEL, OnIntelRemoved);
 
-        Messenger.AddListener(UISignals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
-        Messenger.AddListener(UISignals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
+        Messenger.AddListener(UISignals.ON_OPEN_CONVERSATION_MENU, OnOpenConversationMenu);
+        Messenger.AddListener(UISignals.ON_CLOSE_CONVERSATION_MENU, OnCloseConversationMenu);
         
         Messenger.AddListener<Region>(RegionSignals.REGION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<Region>(RegionSignals.REGION_MAP_CLOSED, OnInnerMapClosed);
@@ -462,21 +462,11 @@ public class PlayerUI : BaseMonoBehaviour {
             currItem.AddOtherClickAction(clickAction);
         }
     }
-    private void OnOpenShareIntelMenu() {
+    private void OnOpenConversationMenu() {
         intelToggle.isOn = false;
         intelToggle.interactable = false;
-        //for (int i = 0; i < roleSlots.Length; i++) {
-        //    RoleSlotItem rsi = roleSlots[i];
-        //    rsi.HideActionButtons();
-        //    rsi.OverrideDraggableState(false);
-        //}
-        //assignBtn.interactable = false;
-
-        //if (UIManager.Instance.characterInfoUI.isShowing || UIManager.Instance.tileObjectInfoUI.isShowing) {
-        //    HideActionButtons();
-        //}
     }
-    private void OnCloseShareIntelMenu() {
+    private void OnCloseConversationMenu() {
         intelToggle.interactable = true;
         //for (int i = 0; i < roleSlots.Length; i++) {
         //    RoleSlotItem rsi = roleSlots[i];

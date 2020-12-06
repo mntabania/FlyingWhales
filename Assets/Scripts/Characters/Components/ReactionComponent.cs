@@ -1752,34 +1752,20 @@ public class ReactionComponent : CharacterComponent {
 
         reactor.logComponent.PrintLogIfActive(log);
     }
-    // private void ReactTo(SpecialToken targetItem, ref string debugLog) {
-    //     if (owner.minion != null || owner is Summon) {
-    //         //Minions or Summons cannot react to items
-    //         return;
-    //     }
-    //     debuglog = log +owner.name + " is reacting to " + targetItem.nameWithID;
-    //     if (!owner.hasSeenFire) {
-    //         if (targetItem.traitContainer.HasTrait("Burning")
-    //             && targetItem.gridTileLocation != null
-    //             && targetItem.gridTileLocation.IsPartOfSettlement(owner.homeNpcSettlement)
-    //             && !owner.traitContainer.HasTrait("Pyrophobic")) {
-    //             debuglog = log +"\n-Target is Burning and Character is not Pyrophobic";
-    //             owner.SetHasSeenFire(true);
-    //             owner.homeNpcSettlement.settlementJobTriggerComponent.TriggerDouseFire();
-    //             for (int i = 0; i < owner.homeNpcSettlement.availableJobs.Count; i++) {
-    //                 JobQueueItem job = owner.homeNpcSettlement.availableJobs[i];
-    //                 if (job.jobType == JOB_TYPE.DOUSE_FIRE) {
-    //                     if (job.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(job)) {
-    //                         owner.jobQueue.AddJobInQueue(job);
-    //                     } else {
-    //                         owner.combatComponent.Flight(targetItem);
-    //                     }
-    //                     return;
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
+    #endregion
+
+    #region Reaction To Intel
+    public string ReactToIntel(IIntel intel) {
+        string response = owner.reactionComponent.ReactTo(intel.reactable, REACTION_STATUS.INFORMED);
+        if ((string.IsNullOrEmpty(response) || string.IsNullOrWhiteSpace(response)) && intel.actor != owner) {
+            ActualGoapNode action = null;
+            if (intel is ActionIntel actionIntel) {
+                action = actionIntel.node;
+            }
+            response = CharacterManager.Instance.TriggerEmotion(EMOTION.Disinterest, owner, intel.actor, REACTION_STATUS.INFORMED, action);
+        }
+        return response;
+    }
     #endregion
 
     #region General

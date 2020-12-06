@@ -58,7 +58,7 @@ public class MonsterInfoUI : InfoUIBase {
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_STACKED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
-        Messenger.AddListener(UISignals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
+        Messenger.AddListener(UISignals.ON_OPEN_CONVERSATION_MENU, OnOpenConversationMenu);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
@@ -321,7 +321,7 @@ public class MonsterInfoUI : InfoUIBase {
     #endregion   
 
     #region Listeners
-    private void OnOpenShareIntelMenu() {
+    private void OnOpenConversationMenu() {
         backButton.interactable = false;
     }
     //private void OnCloseShareIntelMenu() { }

@@ -33713,7 +33713,6 @@ MonoBehaviour:
   _generalConfirmation: {fileID: 426009156}
   actionBtnPrefab: {fileID: 1407515856224950, guid: 0c64f5050d08386459366dc1cbd0f055,
     type: 3}
-  unleashSummonUI: {fileID: 0}
   saveGameButton: {fileID: 1978547267}
   winGameOver: {fileID: 1822835}
   loseGameOver: {fileID: 6828106095688763986}
@@ -56742,7 +56741,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1367263513123078, guid: 8373d084f987be54ca83074f42d06b4b, type: 3}
       propertyPath: m_Name
-      value: ShareIntelMenu
+      value: ConversationMenu
       objectReference: {fileID: 0}
     - target: {fileID: 1367263513123078, guid: 8373d084f987be54ca83074f42d06b4b, type: 3}
       propertyPath: m_IsActive
@@ -88174,7 +88173,7 @@ MonoBehaviour:
   consoleUI: {fileID: 1810423191}
   returnToWorldBtn: {fileID: 1040506111}
   returnToWorldBtnTooltipPos: {fileID: 1401949885}
-  shareIntelMenu: {fileID: 431201654}
+  conversationMenu: {fileID: 431201654}
   intelPrefab: {fileID: 1520246901535660, guid: 31553687798ac7f4f8153f94dc861add,
     type: 3}
   defaultNotificationPrefab: {fileID: 1620646669321964, guid: 216ad1daee947014a93e5b7a7120f58d,

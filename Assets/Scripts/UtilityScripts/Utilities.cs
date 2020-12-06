@@ -1327,6 +1327,41 @@ namespace UtilityScripts {
                 }
             }
         }
+        public static string FormulateTextFromEmotions(string emotions, Character actor, IPointOfInterest target, Character reactor) {
+            if (string.IsNullOrEmpty(emotions)) {
+                //character had no reaction
+                return actor == target ? "I know what I did." : "A proper response to this information has not been implemented yet.";
+            } else {
+                if (emotions == "aware") {
+                    return $"{ColorizeAndBoldName(reactor.name)} already knows this.";
+                } else {
+                    string[] emotionsToActorAndTarget = emotions.Split('/');
+
+                    string emotionsTowardsActor = emotionsToActorAndTarget.ElementAtOrDefault(0);
+                    string emotionsTowardsTarget = emotionsToActorAndTarget.ElementAtOrDefault(1);
+
+                    bool hasReactionToActor = string.IsNullOrEmpty(emotionsTowardsActor) == false;
+                    bool hasReactionToTarget = string.IsNullOrEmpty(emotionsTowardsTarget) == false;
+
+                    if (hasReactionToActor == false && hasReactionToTarget == false) {
+                        //has no reactions to actor and target
+                        return $"{reactor.visuals.GetCharacterStringIcon()}{ColorizeAndBoldName(reactor.name)} seemed Disinterested about this.";
+                    } else {
+                        if (hasReactionToActor) {
+                            return $"{reactor.visuals.GetCharacterStringIcon()}{ColorizeAndBoldName(reactor.name)} seemed {GetFirstFewEmotionsAndComafy(emotionsTowardsActor, 2)} at {actor.visuals.GetCharacterStringIcon()}{ColorizeAndBoldName(actor.name)} after receiving the new information.";
+                        }
+                        if (hasReactionToTarget) {
+                            if (target is Character targetCharacter) {
+                                return $"{reactor.visuals.GetCharacterStringIcon()}{ColorizeAndBoldName(reactor.name)} seemed {GetFirstFewEmotionsAndComafy(emotionsTowardsTarget, 2)} at {targetCharacter.visuals.GetCharacterStringIcon()}{ColorizeAndBoldName(targetCharacter.name)} after receiving the new information.";
+                            } else {
+                                return $"{reactor.visuals.GetCharacterStringIcon()}{ColorizeAndBoldName(reactor.name)} seemed {ColorizeAndBoldName(target.name)} after receiving the new information.";
+                            }
+                        }
+                    }
+                }
+            }
+            return string.Empty;
+        }
         #endregion
 
         #region Weighted Dictionary

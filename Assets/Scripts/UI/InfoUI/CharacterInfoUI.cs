@@ -98,7 +98,7 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
         Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<InfoUIBase>(UISignals.MENU_CLOSED, OnMenuClosed);
-        Messenger.AddListener(UISignals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
+        Messenger.AddListener(UISignals.ON_OPEN_CONVERSATION_MENU, OnOpenConversationMenu);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
@@ -484,7 +484,7 @@ public class CharacterInfoUI : InfoUIBase {
         //    }
         //}
     }
-    private void OnOpenShareIntelMenu() {
+    private void OnOpenConversationMenu() {
         backButton.interactable = false;
     }
     //private void OnCloseShareIntelMenu() { }

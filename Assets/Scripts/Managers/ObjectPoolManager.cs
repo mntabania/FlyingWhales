@@ -37,6 +37,8 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     private List<List<BaseSettlement>> _settlementListPool;
     private List<GoapPlanJob> _goapJobPool;
     private List<CharacterStateJob> _stateJobPool;
+    private List<ConversationData> _conversationDataPool;
+    private List<List<ConversationData>> _conversationDataListPool;
 
     private void Awake() {
         Instance = this;
@@ -75,6 +77,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructFactionListPool();
         ConstructSettlementListPool();
         ConstructJobPool();
+        ConstructConversationPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -255,8 +258,12 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _interruptPool = new List<InterruptHolder>();
     }
     public InterruptHolder CreateNewInterrupt() {
-        InterruptHolder data = GetInterruptFromPool();
-        return data;
+        if (_interruptPool.Count > 0) {
+            InterruptHolder data = _interruptPool[0];
+            _interruptPool.RemoveAt(0);
+            return data;
+        }
+        return new InterruptHolder();
     }
     public void ReturnInterruptToPool(InterruptHolder data) {
         if (data.shouldNotBeObjectPooled) {
@@ -265,14 +272,6 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         data.Reset();
         _interruptPool.Add(data);
     }
-    private InterruptHolder GetInterruptFromPool() {
-        if (_interruptPool.Count > 0) {
-            InterruptHolder data = _interruptPool[0];
-            _interruptPool.RemoveAt(0);
-            return data;
-        }
-        return new InterruptHolder();
-    }
     #endregion
 
     #region Party
@@ -280,20 +279,16 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _partyPool = new List<Party>();
     }
     public Party CreateNewParty() {
-        Party data = GetPartyFromPool();
-        return data;
-    }
-    public void ReturnPartyToPool(Party data) {
-        data.Reset();
-        _partyPool.Add(data);
-    }
-    private Party GetPartyFromPool() {
         if (_partyPool.Count > 0) {
             Party data = _partyPool[0];
             _partyPool.RemoveAt(0);
             return data;
         }
         return new Party();
+    }
+    public void ReturnPartyToPool(Party data) {
+        data.Reset();
+        _partyPool.Add(data);
     }
     #endregion
     
@@ -302,20 +297,16 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _logDatabaseThreadPool = new List<LogDatabaseThread>();
     }
     public LogDatabaseThread CreateNewLogDatabaseThread() {
-        LogDatabaseThread data = GetLogDatabaseThreadFromPool();
-        return data;
-    }
-    public void ReturnLogDatabaseThreadToPool(LogDatabaseThread data) {
-        data.Reset();
-        _logDatabaseThreadPool.Add(data);
-    }
-    private LogDatabaseThread GetLogDatabaseThreadFromPool() {
         if (_logDatabaseThreadPool.Count > 0) {
             LogDatabaseThread data = _logDatabaseThreadPool[0];
             _logDatabaseThreadPool.RemoveAt(0);
             return data;
         }
         return new LogDatabaseThread();
+    }
+    public void ReturnLogDatabaseThreadToPool(LogDatabaseThread data) {
+        data.Reset();
+        _logDatabaseThreadPool.Add(data);
     }
     #endregion
 
@@ -324,20 +315,16 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _goapThreadPool = new List<GoapThread>();
     }
     public GoapThread CreateNewGoapThread() {
-        GoapThread data = GetGoapThreadFromPool();
-        return data;
-    }
-    public void ReturnGoapThreadToPool(GoapThread data) {
-        data.Reset();
-        _goapThreadPool.Add(data);
-    }
-    private GoapThread GetGoapThreadFromPool() {
         if (_goapThreadPool.Count > 0) {
             GoapThread data = _goapThreadPool[0];
             _goapThreadPool.RemoveAt(0);
             return data;
         }
         return new GoapThread();
+    }
+    public void ReturnGoapThreadToPool(GoapThread data) {
+        data.Reset();
+        _goapThreadPool.Add(data);
     }
     #endregion
 
@@ -346,20 +333,16 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _expectedEffectsListPool = new List<List<GoapEffect>>();
     }
     public List<GoapEffect> CreateNewExpectedEffectsList() {
-        List<GoapEffect> data = GetExpectedEffectsListFromPool();
-        return data;
-    }
-    public void ReturnExpectedEffectsListToPool(List<GoapEffect> data) {
-        data.Clear();
-        _expectedEffectsListPool.Add(data);
-    }
-    private List<GoapEffect> GetExpectedEffectsListFromPool() {
         if (_expectedEffectsListPool.Count > 0) {
             List<GoapEffect> data = _expectedEffectsListPool[0];
             _expectedEffectsListPool.RemoveAt(0);
             return data;
         }
         return new List<GoapEffect>();
+    }
+    public void ReturnExpectedEffectsListToPool(List<GoapEffect> data) {
+        data.Clear();
+        _expectedEffectsListPool.Add(data);
     }
     #endregion
 
@@ -368,20 +351,16 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _preconditionsListPool = new List<List<Precondition>>();
     }
     public List<Precondition> CreateNewPreconditionsList() {
-        List<Precondition> data = GetPreconditionsListFromPool();
-        return data;
-    }
-    public void ReturnPreconditionsListToPool(List<Precondition> data) {
-        data.Clear();
-        _preconditionsListPool.Add(data);
-    }
-    private List<Precondition> GetPreconditionsListFromPool() {
         if (_preconditionsListPool.Count > 0) {
             List<Precondition> data = _preconditionsListPool[0];
             _preconditionsListPool.RemoveAt(0);
             return data;
         }
         return new List<Precondition>();
+    }
+    public void ReturnPreconditionsListToPool(List<Precondition> data) {
+        data.Clear();
+        _preconditionsListPool.Add(data);
     }
     #endregion
 
@@ -390,20 +369,16 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _characterListPool = new List<List<Character>>();
     }
     public List<Character> CreateNewCharactersList() {
-        List<Character> data = GetCharactersListFromPool();
-        return data;
-    }
-    public void ReturnCharactersListToPool(List<Character> data) {
-        data.Clear();
-        _characterListPool.Add(data);
-    }
-    private List<Character> GetCharactersListFromPool() {
         if (_characterListPool.Count > 0) {
             List<Character> data = _characterListPool[0];
             _characterListPool.RemoveAt(0);
             return data;
         }
         return new List<Character>();
+    }
+    public void ReturnCharactersListToPool(List<Character> data) {
+        data.Clear();
+        _characterListPool.Add(data);
     }
     #endregion
 
@@ -412,20 +387,16 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _hexTileListPool = new List<List<HexTile>>();
     }
     public List<HexTile> CreateNewHexTilesList() {
-        List<HexTile> data = GetHexTilesListFromPool();
-        return data;
-    }
-    public void ReturnHexTilesListToPool(List<HexTile> data) {
-        data.Clear();
-        _hexTileListPool.Add(data);
-    }
-    private List<HexTile> GetHexTilesListFromPool() {
         if (_hexTileListPool.Count > 0) {
             List<HexTile> data = _hexTileListPool[0];
             _hexTileListPool.RemoveAt(0);
             return data;
         }
         return new List<HexTile>();
+    }
+    public void ReturnHexTilesListToPool(List<HexTile> data) {
+        data.Clear();
+        _hexTileListPool.Add(data);
     }
     #endregion
 
@@ -434,20 +405,16 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _structureListPool = new List<List<LocationStructure>>();
     }
     public List<LocationStructure> CreateNewStructuresList() {
-        List<LocationStructure> data = GetStructuresListFromPool();
-        return data;
-    }
-    public void ReturnStructuresListToPool(List<LocationStructure> data) {
-        data.Clear();
-        _structureListPool.Add(data);
-    }
-    private List<LocationStructure> GetStructuresListFromPool() {
         if (_structureListPool.Count > 0) {
             List<LocationStructure> data = _structureListPool[0];
             _structureListPool.RemoveAt(0);
             return data;
         }
         return new List<LocationStructure>();
+    }
+    public void ReturnStructuresListToPool(List<LocationStructure> data) {
+        data.Clear();
+        _structureListPool.Add(data);
     }
     #endregion
 
@@ -456,20 +423,16 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _tileListPool = new List<List<LocationGridTile>>();
     }
     public List<LocationGridTile> CreateNewGridTileList() {
-        List<LocationGridTile> data = GetGridTileListFromPool();
-        return data;
-    }
-    public void ReturnGridTileListToPool(List<LocationGridTile> data) {
-        data.Clear();
-        _tileListPool.Add(data);
-    }
-    private List<LocationGridTile> GetGridTileListFromPool() {
         if (_tileListPool.Count > 0) {
             List<LocationGridTile> data = _tileListPool[0];
             _tileListPool.RemoveAt(0);
             return data;
         }
         return new List<LocationGridTile>();
+    }
+    public void ReturnGridTileListToPool(List<LocationGridTile> data) {
+        data.Clear();
+        _tileListPool.Add(data);
     }
     #endregion
 
@@ -478,20 +441,16 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _factionListPool = new List<List<Faction>>();
     }
     public List<Faction> CreateNewFactionList() {
-        List<Faction> data = GetFactionListFromPool();
-        return data;
-    }
-    public void ReturnFactionListToPool(List<Faction> data) {
-        data.Clear();
-        _factionListPool.Add(data);
-    }
-    private List<Faction> GetFactionListFromPool() {
         if (_factionListPool.Count > 0) {
             List<Faction> data = _factionListPool[0];
             _factionListPool.RemoveAt(0);
             return data;
         }
         return new List<Faction>();
+    }
+    public void ReturnFactionListToPool(List<Faction> data) {
+        data.Clear();
+        _factionListPool.Add(data);
     }
     #endregion
 
@@ -500,20 +459,16 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _settlementListPool = new List<List<BaseSettlement>>();
     }
     public List<BaseSettlement> CreateNewSettlementList() {
-        List<BaseSettlement> data = GetSettlementListFromPool();
-        return data;
-    }
-    public void ReturnSettlementListToPool(List<BaseSettlement> data) {
-        data.Clear();
-        _settlementListPool.Add(data);
-    }
-    private List<BaseSettlement> GetSettlementListFromPool() {
         if (_settlementListPool.Count > 0) {
             List<BaseSettlement> data = _settlementListPool[0];
             _settlementListPool.RemoveAt(0);
             return data;
         }
         return new List<BaseSettlement>();
+    }
+    public void ReturnSettlementListToPool(List<BaseSettlement> data) {
+        data.Clear();
+        _settlementListPool.Add(data);
     }
     #endregion
 
@@ -522,7 +477,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _goapJobPool = new List<GoapPlanJob>();
         _stateJobPool = new List<CharacterStateJob>();
     }
-    public GoapPlanJob GetGoapPlanJobFromPool() {
+    public GoapPlanJob CreateNewGoapPlanJob() {
         if (_goapJobPool.Count > 0) {
             GoapPlanJob job = _goapJobPool[0];
             _goapJobPool.RemoveAt(0);
@@ -534,7 +489,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         job.Reset();
         _goapJobPool.Add(job);
     }
-    public CharacterStateJob GetCharacterStateJobFromPool() {
+    public CharacterStateJob CreateNewCharacterStateJob() {
         if (_stateJobPool.Count > 0) {
             CharacterStateJob job = _stateJobPool[0];
             _stateJobPool.RemoveAt(0);
@@ -545,6 +500,44 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     public void ReturnCharacterStateJobToPool(CharacterStateJob job) {
         job.Reset();
         _stateJobPool.Add(job);
+    }
+    #endregion
+
+    #region Conversation
+    private void ConstructConversationPool() {
+        _conversationDataPool = new List<ConversationData>();
+        _conversationDataListPool = new List<List<ConversationData>>();
+    }
+    public ConversationData CreateNewConversationData(string text, Character character, DialogItem.Position position) {
+        ConversationData data = CreateNewConversationData();
+        data.text = text;
+        data.character = character;
+        data.position = position;
+        return data;
+    }
+    public ConversationData CreateNewConversationData() {
+        if (_conversationDataPool.Count > 0) {
+            ConversationData data = _conversationDataPool[0];
+            _conversationDataPool.RemoveAt(0);
+            return data;
+        }
+        return new ConversationData();
+    }
+    public void ReturnConversationDataToPool(ConversationData data) {
+        data.Reset();
+        _conversationDataPool.Add(data);
+    }
+    public List<ConversationData> CreateNewConversationDataList() {
+        if (_conversationDataListPool.Count > 0) {
+            List<ConversationData> data = _conversationDataListPool[0];
+            _conversationDataListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<ConversationData>();
+    }
+    public void ReturnConversationDataListToPool(List<ConversationData> data) {
+        data.Clear();
+        _conversationDataListPool.Add(data);
     }
     #endregion
 
@@ -592,6 +585,10 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _goapJobPool = null;
         _stateJobPool?.Clear();
         _stateJobPool = null;
+        _conversationDataPool?.Clear();
+        _conversationDataPool = null;
+        _conversationDataListPool?.Clear();
+        _conversationDataListPool = null;
         base.OnDestroy();
         Instance = null;
     }

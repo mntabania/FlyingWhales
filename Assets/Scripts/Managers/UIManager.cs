@@ -189,8 +189,8 @@ public class UIManager : BaseMonoBehaviour {
         Messenger.AddListener<IIntel>(UISignals.SHOW_INTEL_NOTIFICATION, ShowPlayerNotification);
         Messenger.AddListener<Log>(UISignals.SHOW_PLAYER_NOTIFICATION, ShowPlayerNotification);
 
-        Messenger.AddListener(UISignals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
-        Messenger.AddListener(UISignals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
+        Messenger.AddListener(UISignals.ON_OPEN_CONVERSATION_MENU, OnOpenConversationMenu);
+        Messenger.AddListener(UISignals.ON_CLOSE_CONVERSATION_MENU, OnCloseShareIntelMenu);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
         
         Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnUIMenuOpened);
@@ -1114,19 +1114,19 @@ public class UIManager : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Share Intel
-    [Header("Share Intel")]
-    [SerializeField] private ShareIntelMenu shareIntelMenu;
-    public void OpenShareIntelMenu(Character targetCharacter, Character actor, IIntel intel) {
-        shareIntelMenu.Open(targetCharacter, actor, intel);
+    #region Conversation Menu
+    [Header("Conversation Menu")]
+    [SerializeField] private ConversationMenu conversationMenu;
+    public void OpenConversationMenu(List<ConversationData> conversationList, string titleText) {
+        conversationMenu.Open(conversationList, titleText);
     }
     public bool IsShareIntelMenuOpen() {
-        return shareIntelMenu.gameObject.activeSelf;
+        return conversationMenu.gameObject.activeSelf;
     }
     public void CloseShareIntelMenu() {
-        shareIntelMenu.Close();
+        conversationMenu.Close();
     }
-    private void OnOpenShareIntelMenu() {
+    private void OnOpenConversationMenu() {
         returnToWorldBtn.interactable = false;
         SetCoverState(true);
         //playerNotificationParent.SetSiblingIndex(1);
