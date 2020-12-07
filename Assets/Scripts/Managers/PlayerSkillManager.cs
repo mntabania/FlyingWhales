@@ -28,7 +28,7 @@ public class PlayerSkillManager : MonoBehaviour {
 
     public Dictionary<PLAYER_SKILL_TYPE, SpellData> allSpellsData { get; private set; }
     public Dictionary<PLAYER_SKILL_TYPE, PlayerAction> allPlayerActionsData { get; private set; }
-    public Dictionary<PLAYER_SKILL_TYPE, SpellData> allAfflictionsData { get; private set; }
+    public Dictionary<PLAYER_SKILL_TYPE, AfflictData> allAfflictionsData { get; private set; }
     public Dictionary<PLAYER_SKILL_TYPE, DemonicStructurePlayerSkill> allDemonicStructureSkillsData { get; private set; }
     public Dictionary<PLAYER_SKILL_TYPE, MinionPlayerSkill> allMinionPlayerSkillsData { get; private set; }
     public Dictionary<PLAYER_SKILL_TYPE, SummonPlayerSkill> allSummonPlayerSkillsData { get; private set; }
@@ -176,14 +176,13 @@ public class PlayerSkillManager : MonoBehaviour {
         }
     }
     private void ConstructAllAfflictionsData() {
-        allAfflictionsData = new Dictionary<PLAYER_SKILL_TYPE, SpellData>();
+        allAfflictionsData = new Dictionary<PLAYER_SKILL_TYPE, AfflictData>();
         for (int i = 0; i < allAfflictions.Length; i++) {
             PLAYER_SKILL_TYPE spellType = allAfflictions[i];
             if (spellType != PLAYER_SKILL_TYPE.NONE) {
                 var typeName =
                     $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-                SpellData affliction = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
-                   throw new Exception($"Problem with creating spell data for {typeName}")) as SpellData;
+                AfflictData affliction = System.Activator.CreateInstance(System.Type.GetType(typeName) ?? throw new Exception($"Problem with creating spell data for {typeName}")) as AfflictData;
                 allAfflictionsData.Add(spellType, affliction);
                 allPlayerSkillsData.Add(spellType, affliction);
             }

@@ -21,7 +21,8 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
     private bool _shouldColorHighlight = true;
 
     public System.Func<object, bool> shouldBeHighlightedChecker;
-    public System.Action<object> onClickAction;
+    public System.Action<object> onLeftClickAction;
+    public System.Action<object> onRightClickAction;
 
     [SerializeField] protected bool isHovering;
     [SerializeField] private bool wasHoveringPreviousFrame = false;
@@ -91,47 +92,23 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                     obj = linkText;
                 }
             }
-            
-            // if (logItem == null) {
-            //     string linkText = linkInfo.GetLinkID();
-            //     if (!int.TryParse(linkText, out var idToUse)) {
-            //         if (linkText.Contains("_") && linkText.Length > 1) {
-            //             string id = linkText.Substring(0, linkText.IndexOf('_'));
-            //             idToUse = int.Parse(id);
-            //         }
-            //     }
-            //     if (linkText.Contains("_faction")) {
-            //         Faction faction = FactionManager.Instance.GetFactionBasedOnID(idToUse);
-            //         obj = faction;
-            //     } else if (linkText.Contains("_character")) {
-            //         Character character = CharacterManager.Instance.GetCharacterByID(idToUse);
-            //         obj = character;
-            //     } else if (linkText.Contains("_hextile")) {
-            //         HexTile tile = GridMap.Instance.normalHexTiles[idToUse];
-            //         obj = tile;
-            //     }
-            //     else {
-            //         obj = linkInfo.GetLinkID();
-            //     }
-            // } else if (logItem.log != null) {
-            //     string linkText = linkInfo.GetLinkID();
-            //     if (!int.TryParse(linkText, out var idToUse)) {
-            //         string id = linkText.Substring(0, linkText.IndexOf('_'));
-            //         idToUse = int.Parse(id);
-            //     }
-            //     LogFiller lf = logItem.log.fillers[idToUse];
-            //     obj = lf.obj;
-            // }
-            if (onClickAction != null) {
+            if (eventData.button == PointerEventData.InputButton.Left) {
+                if (onLeftClickAction != null) {
+                    if (obj != null) {
+                        onLeftClickAction.Invoke(obj);
+                        Messenger.Broadcast(UISignals.EVENT_LABEL_LINK_CLICKED, this);
+                    }
+                } else {
+                    if(obj != null) {
+                        UIManager.Instance.OpenObjectUI(obj);
+                    }
+                }    
+            } else if (eventData.button == PointerEventData.InputButton.Right) {
                 if (obj != null) {
-                    onClickAction.Invoke(obj);
-                    Messenger.Broadcast(UISignals.EVENT_LABEL_LINK_CLICKED, this);
-                }
-            } else {
-                if(obj != null) {
-                    UIManager.Instance.OpenObjectUI(obj);
+                    onRightClickAction?.Invoke(obj);
                 }
             }
+            
             ResetHighlightValues();
         }
     }
@@ -150,9 +127,6 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
         isHovering = false;
         HoverOutAction();
     }
-    public void SetLog(Log log) {
-        this.log = log;
-    }
     public void SetHighlightChecker(System.Func<object, bool> shouldBeHighlightedChecker) {
         this.shouldBeHighlightedChecker = shouldBeHighlightedChecker;
     }
@@ -165,10 +139,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
         }
         return true; //default is highlighted
     }
-    public void HoveringAction() {
-        //if (hoverAction == null) {
-        //    return;
-        //}
+    private void HoveringAction() {
         bool executeHoverOutAction = true;
         int linkIndex = TMP_TextUtilities.FindIntersectingLink(text, Input.mousePosition, null);
         if (lastHoveredLinkIndex != -1 && lastHoveredLinkIndex != linkIndex && isHighlighting) {
@@ -200,40 +171,6 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                     obj = linkText;
                 }
             }
-            // if (log == null) {
-            //     int idToUse;
-            //     if (!int.TryParse(linkText, out idToUse)) {
-            //         if (linkText.Contains("_") && linkText.Length > 1) {
-            //             string id = linkText.Substring(0, linkText.IndexOf('_'));
-            //             idToUse = int.Parse(id);
-            //         }
-            //     }
-            //     if (objectDictionary.ContainsKey(linkText)) {
-            //         obj = objectDictionary[linkText];
-            //     } else {
-            //         if (linkText.Contains("_faction")) {
-            //             obj = FactionManager.Instance.GetFactionBasedOnID(idToUse);
-            //         } else if (linkText.Contains("_character")) {
-            //             obj = CharacterManager.Instance.GetCharacterByID(idToUse);
-            //         } else if (linkText.Contains("_hextile")) {
-            //             obj = GridMap.Instance.normalHexTiles[idToUse];
-            //         } else {
-            //             obj = linkText;
-            //         }
-            //         objectDictionary.Add(linkText, obj);
-            //     }
-            // } else {
-            //     if (!int.TryParse(linkText, out var idToUse)) {
-            //         string id = linkText.Substring(0, linkText.IndexOf('_'));
-            //         idToUse = int.Parse(id);
-            //     }
-            //     if (objectDictionary.ContainsKey(linkText)) {
-            //         obj = objectDictionary[linkText];
-            //     } else {
-            //         obj = log.fillers[idToUse].obj;
-            //         objectDictionary.Add(linkText, obj);
-            //     }
-            // }
             if (obj != null) {
                 if (ShouldBeHighlighted(obj)) {
                     if (lastHoveredLinkIndex != linkIndex) {
@@ -255,7 +192,6 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
     }
 
     private Color32 originalColor;
-    
     private void HighlightLink(TMP_LinkInfo linkInfo) {
         // string oldText = $"{linkInfo.GetLinkText()}";
         // string newText = $"<u>{oldText}</u>";
@@ -334,8 +270,11 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
         // }
         ResetHighlightValues();
     }
-    public void SetOnClickAction(System.Action<object> onClickAction) {
-        this.onClickAction = onClickAction;
+    public void SetOnLeftClickAction(System.Action<object> onClickAction) {
+        this.onLeftClickAction = onClickAction;
+    }
+    public void SetOnRightClickAction(System.Action<object> onRightClickAction) {
+        this.onRightClickAction = onRightClickAction;
     }
 }
 

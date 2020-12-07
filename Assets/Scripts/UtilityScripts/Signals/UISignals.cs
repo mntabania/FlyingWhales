@@ -124,4 +124,8 @@
     /// </summary>
     public static string UPDATE_QUEST_STEP_ITEM = "UpdateQuestStepItem";
     public static string BUTTON_SHOWN = "OnButtonShown";
+    /// <summary>
+    /// Parameters (IPlayerActionTarget)
+    /// </summary>
+    public static string PLAYER_ACTION_CONTEXT_MENU_SHOWN = "OnPlayerActionContextMenuShown";
 }

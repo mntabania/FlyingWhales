@@ -21,7 +21,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public Character characterOwner { get; protected set; }
     public List<INTERACTION_TYPE> advertisedActions { get; protected set; }
     public Region currentRegion => gridTileLocation.structure.region.coreTile.region;
-    public LocationStructure structureLocation => gridTileLocation.structure;
+    public LocationStructure structureLocation => gridTileLocation?.structure;
     public bool isPreplaced { get; private set; }
     /// <summary>
     /// All currently in progress jobs targeting this.

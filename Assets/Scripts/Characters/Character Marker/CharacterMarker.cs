@@ -102,6 +102,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public bool isMainVisualActive => mainImg.gameObject.activeSelf;
     public CharacterMarkerAnimationListener animationListener => _animationListener;
     public int sortingOrder => mainImg.sortingOrder;
+    public CharacterMarkerNameplate nameplate => _nameplate;
     #endregion
     
     public void SetCharacter(Character character) {
@@ -283,19 +284,17 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     protected override void OnPointerRightClick(Character poi) {
         base.OnPointerRightClick(poi);
-        Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter;
-        if (activeCharacter == null) {
-            activeCharacter = UIManager.Instance.monsterInfoUI.activeMonster;
-        }
-        if (activeCharacter != null) {
-            if (activeCharacter.minion == null) {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-                UIManager.Instance.poiTestingUI.ShowUI(character, activeCharacter);
-#endif
-            } else {
-                UIManager.Instance.minionCommandsUI.ShowUI(character);
-            }
-        }
+//         Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter ?? UIManager.Instance.monsterInfoUI.activeMonster;
+//         if (activeCharacter != null) {
+//             if (activeCharacter.minion == null) {
+// #if UNITY_EDITOR || DEVELOPMENT_BUILD
+//                 UIManager.Instance.poiTestingUI.ShowUI(character, activeCharacter);
+// #endif
+//             } else {
+//                 UIManager.Instance.minionCommandsUI.ShowUI(character);
+//             }
+//         }
+        UIManager.Instance.ShowPlayerActionContextMenu(poi, this.transform);
     }
     protected override void OnPointerEnter(Character character) {
         base.OnPointerEnter(character);

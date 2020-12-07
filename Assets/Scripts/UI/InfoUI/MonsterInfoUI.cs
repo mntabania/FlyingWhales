@@ -109,21 +109,21 @@ public class MonsterInfoUI : InfoUIBase {
         UpdateAllHistoryInfo();
         ResetAllScrollPositions();
     }
-    protected override void LoadActions(IPlayerActionTarget target) {
-        UtilityScripts.Utilities.DestroyChildren(actionsTransform);
-        activeActionItems.Clear();
-        for (int i = 0; i < target.actions.Count; i++) {
-            PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(target.actions[i]);
-            if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
-                //if (action.actionName == PlayerDB.Combat_Mode_Action) {
-                //    action.SetLabelText(action.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeMonster.combatComponent.combatMode.ToString()));
-                //}
-                ActionItem actionItem = AddNewAction(action, target);
-                actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
-                actionItem.ForceUpdateCooldown();
-            }
-        }
-    }
+    // protected override void LoadActions(IPlayerActionTarget target) {
+    //     UtilityScripts.Utilities.DestroyChildren(actionsTransform);
+    //     activeActionItems.Clear();
+    //     for (int i = 0; i < target.actions.Count; i++) {
+    //         PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(target.actions[i]);
+    //         if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
+    //             //if (action.actionName == PlayerDB.Combat_Mode_Action) {
+    //             //    action.SetLabelText(action.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeMonster.combatComponent.combatMode.ToString()));
+    //             //}
+    //             ActionItem actionItem = AddNewAction(action, target);
+    //             actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
+    //             actionItem.ForceUpdateCooldown();
+    //         }
+    //     }
+    // }
     #endregion
 
     #region Utilities

@@ -23,11 +23,7 @@ public abstract class InfoUIBase : MonoBehaviour {
     #region virtuals
     internal virtual void Initialize() {
         Messenger.AddListener<InfoUIBase>(UISignals.BEFORE_MENU_OPENED, BeforeMenuOpens);
-        Messenger.AddListener<PlayerAction>(SpellSignals.ON_EXECUTE_PLAYER_ACTION, OnExecutePlayerAction);
-        Messenger.AddListener<IPlayerActionTarget>(SpellSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
-        Messenger.AddListener(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
-        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
-        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
+        // Messenger.AddListener<PlayerAction>(SpellSignals.ON_EXECUTE_PLAYER_ACTION, OnExecutePlayerAction);
         _toggles = GetComponentsInChildren<RuinarchToggle>(true);
     }
     private void OnReceiveHideMenuSignal() {
@@ -65,9 +61,9 @@ public abstract class InfoUIBase : MonoBehaviour {
         } else {
             _playerActionTarget = _data as IPlayerActionTarget;
         }
-        if (_playerActionTarget != null) {
-            LoadActions(_playerActionTarget);    
-        }
+        // if (_playerActionTarget != null) {
+        //     LoadActions(_playerActionTarget);    
+        // }
         //FactionInfoHubUI.Instance.OnClickClose();
     }
     public virtual void CloseMenu() {
@@ -81,11 +77,11 @@ public abstract class InfoUIBase : MonoBehaviour {
     public virtual void ShowTooltip(GameObject objectHovered) {
 
     }
-    protected virtual void OnExecutePlayerAction(PlayerAction action) {
-        if (_playerActionTarget != null && _playerActionTarget.actions.Contains(action.type)) {
-            LoadActions(_playerActionTarget);
-        }
-    }
+    // protected virtual void OnExecutePlayerAction(PlayerAction action) {
+    //     if (_playerActionTarget != null && _playerActionTarget.actions.Contains(action.type)) {
+    //         LoadActions(_playerActionTarget);
+    //     }
+    // }
     #endregion
 
     public void OnClickCloseMenu() {
@@ -98,72 +94,72 @@ public abstract class InfoUIBase : MonoBehaviour {
     }
 
     #region Actions
-    protected List<ActionItem> activeActionItems = new List<ActionItem>();
-    protected virtual void LoadActions(IPlayerActionTarget target) {
-        UtilityScripts.Utilities.DestroyChildren(actionsTransform);
-        activeActionItems.Clear();
-        for (int i = 0; i < target.actions.Count; i++) {
-            PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(target.actions[i]);
-            if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
-                ActionItem actionItem = AddNewAction(action, target);
-
-                // if (WorldConfigManager.Instance.isDemoWorld && WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(action.type) == false) {
-                //     //if demo world, and action is not set as available, then disable button.
-                //     actionItem.SetInteractable(false);
-                // } else {
-                    actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);    
-                    actionItem.ForceUpdateCooldown();
-                // }
-            }
-        }
-    }
-    protected ActionItem AddNewAction(PlayerAction playerAction, IPlayerActionTarget target) {
-        GameObject obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(actionItemPrefab.name, Vector3.zero,
-            Quaternion.identity, actionsTransform);
-        obj.SetActive(false);
-        ActionItem item = obj.GetComponent<ActionItem>();
-        item.SetAction(playerAction, target);
-        //playerAction.SetActionItem(item);
-        activeActionItems.Add(item);
-        return item;
-    }
-    private ActionItem GetActionItem(PlayerAction action) {
-        for (int i = 0; i < activeActionItems.Count; i++) {
-            ActionItem item = activeActionItems[i];
-            if (item.playerAction == action) {
-                return item;
-            }
-        }
-        return null;
-    }
-    private void OnPlayerActionAddedToTarget(PLAYER_SKILL_TYPE playerAction, IPlayerActionTarget actionTarget) {
-        if (_playerActionTarget == actionTarget && isShowing) {
-            LoadActions(actionTarget);
-        }
-    }
-    private void OnPlayerActionRemovedFromTarget(PLAYER_SKILL_TYPE playerAction, IPlayerActionTarget actionTarget) {
-        if (_playerActionTarget == actionTarget && isShowing) {
-            LoadActions(actionTarget);
-        }
-    }
-    private void ReloadPlayerActions(IPlayerActionTarget actionTarget) {
-        if (_playerActionTarget == actionTarget && isShowing) {
-            LoadActions(actionTarget);
-        }
-    }
-    private void ForceReloadPlayerActions() {
-        if (isShowing && _playerActionTarget != null) {
-            LoadActions(_playerActionTarget);
-        }
-    }
-    protected ActionItem GetActiveActionItem(PlayerAction action) {
-        for (int i = 0; i < activeActionItems.Count; i++) {
-            ActionItem item = activeActionItems[i];
-            if (item.playerAction == action) {
-                return item;
-            }
-        }
-        return null;
-    }
+    // protected List<ActionItem> activeActionItems = new List<ActionItem>();
+    // protected virtual void LoadActions(IPlayerActionTarget target) {
+    //     UtilityScripts.Utilities.DestroyChildren(actionsTransform);
+    //     activeActionItems.Clear();
+    //     for (int i = 0; i < target.actions.Count; i++) {
+    //         PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(target.actions[i]);
+    //         if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
+    //             ActionItem actionItem = AddNewAction(action, target);
+    //
+    //             // if (WorldConfigManager.Instance.isDemoWorld && WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(action.type) == false) {
+    //             //     //if demo world, and action is not set as available, then disable button.
+    //             //     actionItem.SetInteractable(false);
+    //             // } else {
+    //                 actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);    
+    //                 actionItem.ForceUpdateCooldown();
+    //             // }
+    //         }
+    //     }
+    // }
+    // protected ActionItem AddNewAction(PlayerAction playerAction, IPlayerActionTarget target) {
+    //     GameObject obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(actionItemPrefab.name, Vector3.zero,
+    //         Quaternion.identity, actionsTransform);
+    //     obj.SetActive(false);
+    //     ActionItem item = obj.GetComponent<ActionItem>();
+    //     item.SetAction(playerAction, target);
+    //     //playerAction.SetActionItem(item);
+    //     activeActionItems.Add(item);
+    //     return item;
+    // }
+    // private ActionItem GetActionItem(PlayerAction action) {
+    //     for (int i = 0; i < activeActionItems.Count; i++) {
+    //         ActionItem item = activeActionItems[i];
+    //         if (item.playerAction == action) {
+    //             return item;
+    //         }
+    //     }
+    //     return null;
+    // }
+    // private void OnPlayerActionAddedToTarget(PLAYER_SKILL_TYPE playerAction, IPlayerActionTarget actionTarget) {
+    //     if (_playerActionTarget == actionTarget && isShowing) {
+    //         LoadActions(actionTarget);
+    //     }
+    // }
+    // private void OnPlayerActionRemovedFromTarget(PLAYER_SKILL_TYPE playerAction, IPlayerActionTarget actionTarget) {
+    //     if (_playerActionTarget == actionTarget && isShowing) {
+    //         LoadActions(actionTarget);
+    //     }
+    // }
+    // private void ReloadPlayerActions(IPlayerActionTarget actionTarget) {
+    //     if (_playerActionTarget == actionTarget && isShowing) {
+    //         LoadActions(actionTarget);
+    //     }
+    // }
+    // private void ForceReloadPlayerActions() {
+    //     if (isShowing && _playerActionTarget != null) {
+    //         LoadActions(_playerActionTarget);
+    //     }
+    // }
+    // protected ActionItem GetActiveActionItem(PlayerAction action) {
+    //     for (int i = 0; i < activeActionItems.Count; i++) {
+    //         ActionItem item = activeActionItems[i];
+    //         if (item.playerAction == action) {
+    //             return item;
+    //         }
+    //     }
+    //     return null;
+    // }
     #endregion
 }

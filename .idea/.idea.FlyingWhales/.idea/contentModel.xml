@@ -2669,6 +2669,7 @@
               <e p="MinionSummonedStep.cs" t="Include" />
               <e p="NameplateClickedStep.cs" t="Include" />
               <e p="ObjectPickerShownStep.cs" t="Include" />
+              <e p="PlayerActionContextMenuShown.cs" t="Include" />
               <e p="QuestStep.cs" t="Include" />
               <e p="QuestStepCollection.cs" t="Include" />
               <e p="QuestStepHoveredStep.cs" t="Include" />
@@ -2792,6 +2793,10 @@
             <e p="Character Classes" t="Include">
               <e p="CharacterClassData.cs" t="Include" />
             </e>
+            <e p="Context Menu" t="Include">
+              <e p="ClickableMenuData.cs" t="Include" />
+              <e p="ContextMenuUIObject.cs" t="Include" />
+            </e>
             <e p="ElementalDamageData.cs" t="Include" />
             <e p="ItemGenerationSetting.cs" t="Include" />
             <e p="MonsterGenerationSetting.cs" t="Include" />
@@ -2818,13 +2823,6 @@
             <e p="PlayerSkillLoadout.cs" t="Include" />
             <e p="PlayerSkillTree.cs" t="Include" />
             <e p="RaceData.cs" t="Include" />
-            <e p="UIRoadMap" t="Include">
-              <e p="Scripts" t="Include">
-                <e p="ClickableMenuData.cs" t="Include" />
-                <e p="ClickableMenuUIObject.cs" t="Include" />
-                <e p="ParentUIData.cs" t="Include" />
-              </e>
-            </e>
           </e>
           <e p="Serializable Dictionaries" t="Include">
             <e p="SerializableDictionaries.cs" t="Include" />
@@ -2853,6 +2851,7 @@
           </e>
           <e p="Testing Scripts" t="Include">
             <e p="BiolabUITester.cs" t="Include" />
+            <e p="ContextMenuTester.cs" t="Include" />
             <e p="ProjectileTester.cs" t="Include" />
           </e>
           <e p="Threads" t="Include">
@@ -3135,6 +3134,7 @@
             <e p="MinionLeaderPicker.cs" t="Include" />
             <e p="MinionPicker.cs" t="Include" />
             <e p="Models" t="Include">
+              <e p="IContextMenuItem.cs" t="Include" />
               <e p="LogItem.cs" t="Include" />
             </e>
             <e p="MVCFramework" t="Include">
@@ -3145,28 +3145,28 @@
             <e p="MVCUI" t="Include">
               <e p="Controller" t="Include">
                 <e p="BiolabUIController.cs" t="Include" />
+                <e p="ContextMenuUIController.cs" t="Include" />
                 <e p="FatalityUIController.cs" t="Include" />
                 <e p="LifeSpanUIController.cs" t="Include" />
                 <e p="OnDeathUIController.cs" t="Include" />
-                <e p="RightClickUIController.cs" t="Include" />
                 <e p="SymptomsUIController.cs" t="Include" />
                 <e p="TransmissionUIController.cs" t="Include" />
               </e>
               <e p="Model" t="Include">
                 <e p="BiolabUIModel.cs" t="Include" />
+                <e p="ContextMenuUIModel.cs" t="Include" />
                 <e p="FatalityUIModel.cs" t="Include" />
                 <e p="LifeSpanUIModel.cs" t="Include" />
                 <e p="OnDeathUIModel.cs" t="Include" />
-                <e p="RightClickUIModel.cs" t="Include" />
                 <e p="SymptomsUIModel.cs" t="Include" />
                 <e p="TransmissionUIModel.cs" t="Include" />
               </e>
               <e p="View" t="Include">
                 <e p="BiolabUIView.cs" t="Include" />
+                <e p="ContextMenuUIView.cs" t="Include" />
                 <e p="FatalityUIView.cs" t="Include" />
                 <e p="LifeSpanUIView.cs" t="Include" />
                 <e p="OnDeathUIView.cs" t="Include" />
-                <e p="RgihtClickUIView.cs" t="Include" />
                 <e p="SymptomsUIView.cs" t="Include" />
                 <e p="TransmissionUIView.cs" t="Include" />
               </e>

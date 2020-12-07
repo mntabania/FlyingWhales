@@ -81,8 +81,6 @@ public class CharacterInfoUI : InfoUIBase {
     public Character activeCharacter => _activeCharacter;
     public Character previousCharacter => _previousCharacter;
     private List<SpellData> afflictions;
-    private List<string> triggerFlawPool;
-    private List<LogFiller> triggerFlawLogFillers;
     private bool aliveRelationsOnly;
     private List<RELATIONS_FILTER> filters;
     private RELATIONS_FILTER[] allFilters;
@@ -113,13 +111,15 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
 
         //normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
-        relationshipNamesEventLbl.SetOnClickAction(OnClickCharacter);
+        relationshipNamesEventLbl.SetOnLeftClickAction(OnLeftClickRelationship);
+        relationshipNamesEventLbl.SetOnRightClickAction(OnRightClickRelationship);
         
-        factionEventLbl.SetOnClickAction(OnClickFaction);
-        currentLocationEventLbl.SetOnClickAction(OnClickCurrentLocation);
-        homeRegionEventLbl.SetOnClickAction(OnClickHomeVillage);
-        houseEventLbl.SetOnClickAction(OnClickHomeStructure);
-        partyEventLbl.SetOnClickAction(OnClickParty);
+        factionEventLbl.SetOnLeftClickAction(OnClickFaction);
+        currentLocationEventLbl.SetOnLeftClickAction(OnClickCurrentLocation);
+        homeRegionEventLbl.SetOnLeftClickAction(OnClickHomeVillage);
+        houseEventLbl.SetOnLeftClickAction(OnLeftClickHomeStructure);
+        houseEventLbl.SetOnRightClickAction(OnRightClickHomeStructure);
+        partyEventLbl.SetOnLeftClickAction(OnClickParty);
         opinionsEventLabel.SetShouldColorHighlight(false);
         statusTraitsEventLbl.SetShouldColorHighlight(false);
         normalTraitsEventLbl.SetShouldColorHighlight(false);
@@ -158,8 +158,6 @@ public class CharacterInfoUI : InfoUIBase {
         InitializeRelationships();
         
         afflictions = new List<SpellData>();
-        triggerFlawPool = new List<string>();
-        triggerFlawLogFillers = new List<LogFiller>();
     }
 
     #region Overrides
@@ -201,21 +199,21 @@ public class CharacterInfoUI : InfoUIBase {
         ResetAllScrollPositions();
         UpdateMoodSummary();
     }
-    protected override void LoadActions(IPlayerActionTarget target) {
-        UtilityScripts.Utilities.DestroyChildren(actionsTransform);
-        activeActionItems.Clear();
-        for (int i = 0; i < target.actions.Count; i++) {
-            PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(target.actions[i]);
-            if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
-                //if (action.actionName == PlayerDB.Combat_Mode_Action) {
-                //    action.SetLabelText(action.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeCharacter.combatComponent.combatMode.ToString()));
-                //}
-                ActionItem actionItem = AddNewAction(action, target);
-                actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
-                actionItem.ForceUpdateCooldown();
-            }
-        }
-    }
+    // protected override void LoadActions(IPlayerActionTarget target) {
+    //     UtilityScripts.Utilities.DestroyChildren(actionsTransform);
+    //     activeActionItems.Clear();
+    //     for (int i = 0; i < target.actions.Count; i++) {
+    //         PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(target.actions[i]);
+    //         if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
+    //             //if (action.actionName == PlayerDB.Combat_Mode_Action) {
+    //             //    action.SetLabelText(action.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeCharacter.combatComponent.combatMode.ToString()));
+    //             //}
+    //             ActionItem actionItem = AddNewAction(action, target);
+    //             actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
+    //             actionItem.ForceUpdateCooldown();
+    //         }
+    //     }
+    // }
     #endregion
 
     #region Utilities
@@ -328,11 +326,13 @@ public class CharacterInfoUI : InfoUIBase {
             }
         }
     }
-    private void OnClickHomeStructure(object obj) {
-        if (activeCharacter.homeStructure != null) {
-            activeCharacter.homeStructure.CenterOnStructure();
+    private void OnLeftClickHomeStructure(object obj) {
+        activeCharacter.homeStructure?.CenterOnStructure();
+    }
+    private void OnRightClickHomeStructure(object obj) {
+        if (obj is IPlayerActionTarget playerActionTarget) {
+            UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
         }
-        
     }
     #endregion
 
@@ -853,7 +853,7 @@ public class CharacterInfoUI : InfoUIBase {
         }
         return $"+{number.ToString()}";
     }
-    private void OnClickCharacter(object obj) {
+    private void OnLeftClickRelationship(object obj) {
         if (obj is string) {
             string text = (string)obj;
             int index = int.Parse(text);
@@ -862,6 +862,11 @@ public class CharacterInfoUI : InfoUIBase {
             if (target != null) {
                 UIManager.Instance.ShowCharacterInfo(target,true);    
             }
+        }
+    }
+    private void OnRightClickRelationship(object obj) {
+        if (obj is IPlayerActionTarget playerActionTarget) {
+            UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
         }
     }
     private void OnHoverCharacterNameInRelationships(int id) {
@@ -926,132 +931,7 @@ public class CharacterInfoUI : InfoUIBase {
         PlayerUI.Instance.OnHoverOutSpell(null);
     }
     #endregion
-
-    #region Trigger Flaw
-    public void ShowTriggerFlawUI() {
-        triggerFlawPool.Clear();
-        for (int i = 0; i < activeCharacter.traitContainer.traits.Count; i++) {
-            Trait trait = activeCharacter.traitContainer.traits[i];
-            if(trait.type == TRAIT_TYPE.FLAW) {
-                triggerFlawPool.Add(trait.name);
-            }
-        }
-        UIManager.Instance.ShowClickableObjectPicker(triggerFlawPool, ActivateTriggerFlawConfirmation, null, CanActivateTriggerFlaw,
-            $"Select Flaw ({PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()})", 
-            OnHoverEnterFlaw, OnHoverExitFlaw, showCover: true, layer: 25, shouldShowConfirmationWindowOnPick: true, asButton: true, identifier: "Trigger Flaw");
-    }
-    private void ActivateTriggerFlawConfirmation(object o) {
-        string traitName = (string) o;
-        Trait trait = activeCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
-        string question = "Are you sure you want to trigger " + traitName + "?";
-        string effect = $"<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
-        string manaCost = $"{PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
-
-        UIManager.Instance.ShowTriggerFlawConfirmation(question, effect, manaCost, () => ActivateTriggerFlaw(trait), layer: 26, showCover: true, pauseAndResume: true);
-    }
-    private void ActivateTriggerFlaw(Trait trait) {
-        UIManager.Instance.HideObjectPicker();
-        string result = trait.TriggerFlaw(activeCharacter);
-        //When flaw is triggered, leave from party
-        if (result == "flaw_effect") {
-            if (activeCharacter.partyComponent.hasParty) {
-                activeCharacter.partyComponent.currentParty.RemoveMemberThatJoinedQuest(activeCharacter);
-            }
-            PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).OnExecuteSpellActionAffliction();
-        } else {
-            string log = "Failed to trigger flaw. Some requirements might be unmet.";
-            if (LocalizationManager.Instance.HasLocalizedValue("Trigger Flaw", trait.name, result)) {
-                triggerFlawLogFillers.Clear();
-                triggerFlawLogFillers.Add(new LogFiller(activeCharacter, activeCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
-
-                string reason = LocalizationManager.Instance.GetLocalizedValue("Trigger Flaw", trait.name, result);
-                log = UtilityScripts.Utilities.StringReplacer(reason, triggerFlawLogFillers);
-            }
-            PlayerUI.Instance.ShowGeneralConfirmation("Trigger Flaw Failed", log);
-        }
-        Messenger.Broadcast(SpellSignals.FLAW_TRIGGERED_BY_PLAYER, trait);
-    }
-    private bool CanActivateTriggerFlaw(string traitName) {
-        Trait trait = activeCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
-        if (trait != null) {
-            return trait.CanFlawBeTriggered(activeCharacter);
-        }
-        return false;
-    }
-    private void OnHoverEnterFlaw(string traitName) {
-        Trait trait = activeCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
-        PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(
-            traitName, trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect"), 
-            manaCost: PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost
-        );
-    }
-    private void OnHoverExitFlaw(string traitName) {
-        PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
-    }
-    //    private void OnClickTrait(object obj) {
-//#if UNITY_EDITOR
-//        if (obj is string text) {
-//            int index = int.Parse(text);
-//            Trait trait = activeCharacter.traitContainer.traits[index];
-//            string traitDescription = trait.description;
-//            if (trait.canBeTriggered) {
-//                traitDescription +=
-//                    $"\n{trait.GetRequirementDescription(activeCharacter)}\n\n<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
-//            }
-
-//            StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
-//            UIManager.Instance.ShowYesNoConfirmation(trait.name, traitDescription,
-//                onClickYesAction: () => OnClickTriggerFlaw(trait),
-//                onClickNoAction: () => OnClickRemoveTrait(trait),
-//                showCover: true, layer: 25,
-//                yesBtnText: $"Trigger ({EditableValuesManager.Instance.triggerFlawManaCost.ToString()} Mana)",
-//                noBtnText: "Remove Trait",
-//                yesBtnInteractable: PlayerManager.Instance.player.playerSkillComponent.canTriggerFlaw && trait.canBeTriggered && trait.CanFlawBeTriggered(activeCharacter) && TraitManager.Instance.CanStillTriggerFlaws(activeCharacter),
-//                noBtnInteractable: PlayerManager.Instance.player.playerSkillComponent.canRemoveTraits,
-//                pauseAndResume: true,
-//                //noBtnActive: false,
-//                //yesBtnActive: trait.canBeTriggered,
-//                yesBtnInactiveHoverAction: () => ShowCannotTriggerFlawReason(trait),
-//                yesBtnInactiveHoverExitAction: UIManager.Instance.HideSmallInfo
-//            );
-//            normalTraitsEventLbl.ResetHighlightValues();
-//            if (trait.type == TRAIT_TYPE.FLAW) {
-//                Messenger.Broadcast(Signals.FLAW_CLICKED, trait);
-//            }
-//        }
-//#endif
-//    }
-//    private IEnumerator HoverOutTraitAfterClick() {
-//        yield return new WaitForEndOfFrame();
-//        OnHoverOutTrait();
-//    }
-//    private void ShowCannotTriggerFlawReason(Trait trait) {
-//        string reason = $"You cannot trigger {activeCharacter.name}'s flaw because: ";
-//        List<string> reasons = trait.GetCannotTriggerFlawReasons(activeCharacter);
-//        for (int i = 0; i < reasons.Count; i++) {
-//            reason = $"{reason}\n\t- {reasons[i]}";
-//        }
-//        UIManager.Instance.ShowSmallInfo(reason);
-//    }
-//    private void OnClickTriggerFlaw(Trait trait) {
-//        string logKey = trait.TriggerFlaw(activeCharacter);
-//        int manaCost = EditableValuesManager.Instance.triggerFlawManaCost;
-//        PlayerManager.Instance.player.AdjustMana(-manaCost);
-//        if (logKey != "flaw_effect") {
-//            UIManager.Instance.ShowYesNoConfirmation(
-//                trait.name,
-//                trait.GetTriggerFlawEffectDescription(activeCharacter, logKey),
-//                showCover: true,
-//                layer: 25,
-//                yesBtnText: "OK",
-//                pauseAndResume: true,
-//                noBtnActive: false
-//            );
-//        }
-//        Messenger.Broadcast(Signals.FLAW_TRIGGERED_BY_PLAYER);
-//    }
-    #endregion
-
+    
     #region Mood
     private void OnMoodModified(MoodComponent moodComponent) {
         if (_activeCharacter != null && _activeCharacter.moodComponent == moodComponent) {

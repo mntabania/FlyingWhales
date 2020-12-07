@@ -187,15 +187,14 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     #region Pointer Actions
     public void OnPointerClick(PointerEventData eventData) {
-#if !WORLD_CREATION_TOOL
         if (ignoreInteractions) {
             return;
         }
-        if (eventData.button == interactionBtn) {
-            OnClick();
+        if (eventData.button == PointerEventData.InputButton.Left) {
+            OnLeftClick();
+        } else if (eventData.button == PointerEventData.InputButton.Right) {
+            OnRightClick();
         }
-        
-#endif
     }
     public void OnClick(BaseEventData eventData) {
         if (ignoreInteractions || !gameObject.activeSelf) {
@@ -203,8 +202,13 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         }
         OnPointerClick(eventData as PointerEventData);
     }
-    public void OnClick() {
+    public void OnLeftClick() {
         ShowCharacterMenu();
+    }
+    private void OnRightClick() {
+        if (_character != null) {
+            UIManager.Instance.ShowPlayerActionContextMenu(_character, Input.mousePosition, true);    
+        }
     }
     public void SetHoverHighlightState(bool state) {
         hoverObj.SetActive(state);

@@ -106,6 +106,11 @@ namespace Ruinarch.Custom_UI {
                 HideGlow();
             }
         }
+        public void ForceUpdateGlow() {
+            if (InputManager.Instance != null && InputManager.Instance.ShouldBeHighlighted(this)) {
+                StartGlow();
+            }
+        }
         #endregion
         
         private void OnReceiveHotKeyClick(string buttonName) {
