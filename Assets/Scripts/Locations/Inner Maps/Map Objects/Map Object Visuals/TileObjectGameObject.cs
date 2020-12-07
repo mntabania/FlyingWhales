@@ -74,17 +74,20 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     }
     protected override void OnPointerRightClick(TileObject poi) {
         base.OnPointerRightClick(poi);
-//         Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter ?? UIManager.Instance.monsterInfoUI.activeMonster;
-//         if (activeCharacter != null) {
-//             if(activeCharacter.minion == null) {
-// #if UNITY_EDITOR || DEVELOPMENT_BUILD
-//                 UIManager.Instance.poiTestingUI.ShowUI(poi,activeCharacter);
-// #endif
-//             } else {
-//                 UIManager.Instance.minionCommandsUI.ShowUI(poi);
-//             }
-//         }
         UIManager.Instance.ShowPlayerActionContextMenu(poi, this.transform);
+    }
+    protected override void OnPointerMiddleClick(TileObject poi) {
+        base.OnPointerMiddleClick(poi);
+        Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter ?? UIManager.Instance.monsterInfoUI.activeMonster;
+        if (activeCharacter != null) {
+            if(activeCharacter.minion == null) {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                UIManager.Instance.poiTestingUI.ShowUI(poi,activeCharacter);
+#endif
+            } else {
+                UIManager.Instance.minionCommandsUI.ShowUI(poi);
+            }
+        }
     }
     protected override void OnPointerEnter(TileObject character) {
         if (character.mapObjectState == MAP_OBJECT_STATE.UNBUILT) { return; }

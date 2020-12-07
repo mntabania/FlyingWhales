@@ -11,6 +11,7 @@ public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamage
         onHoverExitAction = () => OnPointerExit(obj);
         onLeftClickAction = () => OnPointerLeftClick(obj);
         onRightClickAction = () => OnPointerRightClick(obj);
+        onMiddleClickAction = () => OnPointerMiddleClick(obj);
     }
 
     #region Visuals
@@ -36,6 +37,7 @@ public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamage
     }
     protected virtual void OnPointerLeftClick(T poi) { }
     protected virtual void OnPointerRightClick(T poi) { }
+    protected virtual void OnPointerMiddleClick(T poi) { }
     #endregion
 
     #region General

@@ -144,6 +144,8 @@ namespace Ruinarch {
             } else if (Input.GetMouseButtonDown(1)) {
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Mouse1);
                 CancelSpellsByPriority();
+            } else if (Input.GetMouseButtonDown(2)) {
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Mouse2);
             } else if (Input.GetKeyDown(KeyCode.BackQuote)) {
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.BackQuote);
             } else if (Input.GetKeyDown(KeyCode.Space)) {

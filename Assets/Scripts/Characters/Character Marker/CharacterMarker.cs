@@ -284,17 +284,20 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     protected override void OnPointerRightClick(Character poi) {
         base.OnPointerRightClick(poi);
-//         Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter ?? UIManager.Instance.monsterInfoUI.activeMonster;
-//         if (activeCharacter != null) {
-//             if (activeCharacter.minion == null) {
-// #if UNITY_EDITOR || DEVELOPMENT_BUILD
-//                 UIManager.Instance.poiTestingUI.ShowUI(character, activeCharacter);
-// #endif
-//             } else {
-//                 UIManager.Instance.minionCommandsUI.ShowUI(character);
-//             }
-//         }
         UIManager.Instance.ShowPlayerActionContextMenu(poi, this.transform);
+    }
+    protected override void OnPointerMiddleClick(Character poi) {
+        base.OnPointerMiddleClick(poi);
+        Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter ?? UIManager.Instance.monsterInfoUI.activeMonster;
+        if (activeCharacter != null) {
+            if (activeCharacter.minion == null) {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                UIManager.Instance.poiTestingUI.ShowUI(character, activeCharacter);
+#endif
+            } else {
+                UIManager.Instance.minionCommandsUI.ShowUI(character);
+            }
+        }
     }
     protected override void OnPointerEnter(Character character) {
         base.OnPointerEnter(character);

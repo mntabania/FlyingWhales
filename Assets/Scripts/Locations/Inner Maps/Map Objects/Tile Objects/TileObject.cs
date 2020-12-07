@@ -1217,6 +1217,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public void RightSelectAction() {
         mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Right);
     }
+    public void MiddleSelectAction() {
+        mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Middle);
+    }
     public virtual bool CanBeSelected() {
         return true;
     }
