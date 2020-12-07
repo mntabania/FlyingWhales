@@ -25,11 +25,14 @@ public class PlayerNotificationItem : PooledObject {
     [SerializeField] private Image _bg;
     [SerializeField] private Sprite _normalSprite;
     [SerializeField] private Sprite _importantSprite;
+    [SerializeField] private EventLabel _logEventLbl;
     private UIHoverPosition _hoverPosition;
 
     private Action<PlayerNotificationItem> onDestroyAction;
     private bool _adjustHeightOnEnable;
-    
+    private void Awake() {
+        _logEventLbl.SetOnRightClickAction(OnRightClickLog);
+    }
     private void OnEnable() {
         if (_adjustHeightOnEnable) {
             StartCoroutine(InstantHeight());
@@ -70,8 +73,6 @@ public class PlayerNotificationItem : PooledObject {
     }
     public void QueueAdjustHeightOnEnable() {
         _adjustHeightOnEnable = true;
-       
-        
         // RectTransform thisRect = transform as RectTransform;
         // thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, sizeDelta.y);
     }
@@ -111,6 +112,11 @@ public class PlayerNotificationItem : PooledObject {
     }
     public void OnHoverOutLog() {
         UIManager.Instance.HideCharacterNameplateTooltip();
+    }
+    private void OnRightClickLog(object obj) {
+        if (obj is IPlayerActionTarget playerActionTarget) {
+            UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
+        }
     }
 
     #region Listeners

@@ -7,6 +7,7 @@ using UnityEngine;
 /// </summary>
 public interface IPlayerActionTarget {
 
+    string name { get; }
     List<PLAYER_SKILL_TYPE> actions { get; }
 
     void ConstructDefaultActions();

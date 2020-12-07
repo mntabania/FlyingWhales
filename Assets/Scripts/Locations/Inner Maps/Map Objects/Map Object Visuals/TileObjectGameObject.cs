@@ -74,10 +74,11 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     }
     protected override void OnPointerRightClick(TileObject poi) {
         base.OnPointerRightClick(poi);
-        Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter;
-        if (activeCharacter == null) {
-            activeCharacter = UIManager.Instance.monsterInfoUI.activeMonster;
-        }
+        UIManager.Instance.ShowPlayerActionContextMenu(poi, this.transform);
+    }
+    protected override void OnPointerMiddleClick(TileObject poi) {
+        base.OnPointerMiddleClick(poi);
+        Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter ?? UIManager.Instance.monsterInfoUI.activeMonster;
         if (activeCharacter != null) {
             if(activeCharacter.minion == null) {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

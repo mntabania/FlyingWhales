@@ -5,7 +5,6 @@ using System;
 public class BiolabUIView : MVCUIView
 {
 	#region interface for listener
-
 	public interface IListener
 	{
 		void OnTransmissionTabClicked(bool isOn);

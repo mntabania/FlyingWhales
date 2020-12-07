@@ -15,5 +15,6 @@ public interface ISelectable {
      bool IsCurrentlySelected();
      void LeftSelectAction();
      void RightSelectAction();
+     void MiddleSelectAction();
      bool CanBeSelected();
 }

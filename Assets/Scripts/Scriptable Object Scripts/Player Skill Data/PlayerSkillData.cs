@@ -15,6 +15,10 @@ public class PlayerSkillData : ScriptableObject {
     public Sprite buttonSprite;
     public VideoClip tooltipVideoClip;
     public Texture tooltipImage;
+    
+    [Header("Context Menu")]
+    public Sprite contextMenuIcon;
+    public int contextMenuColumn;
 }
 
 //[System.Serializable]

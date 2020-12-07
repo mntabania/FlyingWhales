@@ -1457,9 +1457,8 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     public void LeftSelectAction() {
         UIManager.Instance.ShowHexTileInfo(this);
     }
-    public void RightSelectAction() {
-        //Nothing happens
-    }
+    public void RightSelectAction() { }
+    public void MiddleSelectAction() { }
     public bool CanBeSelected() {
         return true;
     }

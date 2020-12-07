@@ -102,6 +102,8 @@ namespace Inner_Maps {
                 OnClickMapObject();
             } else if (keyCode == KeyCode.Mouse1) {
                 OnRightClick();
+            } else if (keyCode == KeyCode.Mouse2) {
+                OnMiddleClick();
             } else if (keyCode == KeyCode.R) {
                 CycleRegions();
             }
@@ -111,6 +113,13 @@ namespace Inner_Maps {
                 LocationGridTile clickedTile = GetTileFromMousePosition();
                 ISelectable selectable = GetFirstSelectableOnTile(clickedTile);
                 selectable?.RightSelectAction();
+            }
+        }
+        private void OnMiddleClick() {
+            if (UIManager.Instance.IsMouseOnUI() == false && ReferenceEquals(currentlyShowingMap, null) == false) {
+                LocationGridTile clickedTile = GetTileFromMousePosition();
+                ISelectable selectable = GetFirstSelectableOnTile(clickedTile);
+                selectable?.MiddleSelectAction();
             }
         }
         private void OnClickMapObject() {

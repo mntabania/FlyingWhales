@@ -25,21 +25,13 @@ public class Player : ILeader, IObjectManipulator {
     public List<IIntel> allIntel { get; private set; }
     public List<Minion> minions { get; private set; }
     public List<Summon> summons { get; private set; }
-    //public List<Artifact> artifacts { get; private set; }
-    //private int currentCorruptionDuration { get; set; }
-    //private int currentCorruptionTick { get; set; }
-    //private bool isTileCurrentlyBeingCorrupted { get; set; }
-    //public HexTile currentTileBeingCorrupted { get; private set; }
     public CombatAbility currentActiveCombatAbility { get; private set; }
     public IIntel currentActiveIntel { get; private set; }
-    //public int maxSummonSlots { get; private set; } //how many summons can the player have
-    //public int maxArtifactSlots { get; private set; } //how many artifacts can the player have
-    //public PlayerJobActionSlot[] interventionAbilitySlots { get; }
     public HexTile portalTile { get; private set; }
-    //public float constructionRatePercentageModifier { get; private set; }
     public TILE_OBJECT_TYPE currentActiveItem { get; private set; }
     public bool isCurrentlyBuildingDemonicStructure { get; private set; }
-
+    public IPlayerActionTarget currentlySelectedPlayerActionTarget { get; private set; }
+    
     //Components
     public SeizeComponent seizeComponent { get; }
     public ThreatComponent threatComponent { get; }
@@ -62,16 +54,11 @@ public class Player : ILeader, IObjectManipulator {
         allIntel = new List<IIntel>();
         minions = new List<Minion>();
         summons = new List<Summon>();
-        //artifacts = new List<Artifact>();
-        //interventionAbilitySlots = new PlayerJobActionSlot[PlayerDB.MAX_INTERVENTION_ABILITIES];
-        //maxSummonSlots = 0;
-        //maxArtifactSlots = 0;
         mana = EditableValuesManager.Instance.startingMana;
         seizeComponent = new SeizeComponent();
         threatComponent = new ThreatComponent(this);
         playerSkillComponent = new PlayerSkillComponent(this);
         plagueComponent = new PlagueComponent();
-        //ConstructAllInterventionAbilitySlots();
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
         AddListeners();
     }
@@ -736,6 +723,9 @@ public class Player : ILeader, IObjectManipulator {
                || PlayerManager.Instance.player.currentActiveIntel != null
                || PlayerManager.Instance.player.currentActiveItem != TILE_OBJECT_TYPE.NONE
                || PlayerManager.Instance.player.currentActiveArtifact != ARTIFACT_TYPE.None;
+    }
+    public void SetCurrentPlayerActionTarget(IPlayerActionTarget p_target) {
+        currentlySelectedPlayerActionTarget = p_target;
     }
     #endregion
 

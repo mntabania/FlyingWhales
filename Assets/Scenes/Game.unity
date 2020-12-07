@@ -378,6 +378,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &4452502
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1419,6 +1420,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &21581965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2651,6 +2653,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &42023241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6666,6 +6669,58 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &142246404
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 142246405}
+  - component: {fileID: 142246406}
+  m_Layer: 5
+  m_Name: ContextMenuController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &142246405
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 142246404}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1538653384}
+  m_RootOrder: 51
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &142246406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 142246404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04f237be9b2ba6446800e82d45acdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _canvas: {fileID: 1538653388}
+  m_contextMenuUIModel: {fileID: 1831149024571254713, guid: bc38887c486cb4645b83efe66047b3c0,
+    type: 3}
+  m_camera: {fileID: 1713567858}
 --- !u!1 &145595164
 GameObject:
   m_ObjectHideFlags: 0
@@ -8025,6 +8080,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &173379006
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8712,6 +8768,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &195780687
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16632,6 +16689,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &344982730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21035,6 +21093,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &439475195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21219,6 +21278,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &440005256
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -32319,6 +32379,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &578576742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32600,6 +32661,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &581916557
 GameObject:
   m_ObjectHideFlags: 0
@@ -35881,6 +35943,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &646289238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37849,6 +37912,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &679838835
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -41080,6 +41144,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &739042433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51782,6 +51847,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &939821325
 GameObject:
   m_ObjectHideFlags: 0
@@ -54547,6 +54613,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &993157786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58092,6 +58159,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &1040506116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60080,6 +60148,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &1112642082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60362,6 +60431,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &1122843148
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -60903,6 +60973,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &1130896348
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -62094,6 +62165,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &1153526154
 GameObject:
   m_ObjectHideFlags: 0
@@ -68161,6 +68233,95 @@ PrefabInstance:
       propertyPath: m_Name
       value: SmallInfoParent
       objectReference: {fileID: 0}
+    - target: {fileID: 1867265464452530, guid: b2759c51bf271794183341425156d63a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224023144324239886, guid: b2759c51bf271794183341425156d63a,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224023144324239886, guid: b2759c51bf271794183341425156d63a,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224579750271752798, guid: b2759c51bf271794183341425156d63a,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224579750271752798, guid: b2759c51bf271794183341425156d63a,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224579750271752798, guid: b2759c51bf271794183341425156d63a,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224579750271752798, guid: b2759c51bf271794183341425156d63a,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224579750271752798, guid: b2759c51bf271794183341425156d63a,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224579750271752798, guid: b2759c51bf271794183341425156d63a,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224799474973095362, guid: b2759c51bf271794183341425156d63a,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224799474973095362, guid: b2759c51bf271794183341425156d63a,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224799474973095362, guid: b2759c51bf271794183341425156d63a,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224799474973095362, guid: b2759c51bf271794183341425156d63a,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224799474973095362, guid: b2759c51bf271794183341425156d63a,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224799474973095362, guid: b2759c51bf271794183341425156d63a,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224925453976045288, guid: b2759c51bf271794183341425156d63a,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224925453976045288, guid: b2759c51bf271794183341425156d63a,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224925453976045288, guid: b2759c51bf271794183341425156d63a,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 224945227632504150, guid: b2759c51bf271794183341425156d63a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -68666,6 +68827,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &1265447760
 GameObject:
   m_ObjectHideFlags: 0
@@ -70267,6 +70429,56 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1303512307}
   m_CullTransparentMesh: 0
+--- !u!1 &1307220863
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1307220865}
+  - component: {fileID: 1307220864}
+  m_Layer: 5
+  m_Name: ContextMenuTooltipPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1307220864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1307220863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a81b96823c9c6704498c188c2c4b997d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pivot: {x: 0, y: 1}
+  anchor: 0
+--- !u!224 &1307220865
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1307220863}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1538653384}
+  m_RootOrder: 52
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 20, y: -76}
+  m_SizeDelta: {x: 100, y: 50.18994}
+  m_Pivot: {x: 0, y: 1}
 --- !u!1 &1307245793
 GameObject:
   m_ObjectHideFlags: 0
@@ -71981,6 +72193,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &1334195747
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84937,6 +85150,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &1533776043
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88063,6 +88277,8 @@ RectTransform:
   - {fileID: 768646805}
   - {fileID: 2091719608}
   - {fileID: 1658988108}
+  - {fileID: 142246405}
+  - {fileID: 1307220865}
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -88220,6 +88436,8 @@ MonoBehaviour:
   initialWorldSetupMenu: {fileID: 85761050}
   bottomNotification: {fileID: 1455444294}
   _biolabUIController: {fileID: 1658988109}
+  _contextMenuUIController: {fileID: 142246406}
+  _contextMenuTooltipHoverPosition: {fileID: 1307220864}
 --- !u!114 &1538653386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88633,6 +88851,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &1553911522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89690,6 +89909,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &1585143277
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91807,6 +92027,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &1613206692
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92296,6 +92517,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &1625326714
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97564,6 +97786,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!1001 &1704848198
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -100915,6 +101138,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &1738818157
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104456,6 +104680,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &1788548039
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106054,6 +106279,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &1810622854
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -111304,6 +111530,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &1941553623
 GameObject:
   m_ObjectHideFlags: 0
@@ -111523,6 +111750,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &1941830667
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112204,6 +112432,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &1953087921
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112902,6 +113131,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &1963648031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121920,6 +122150,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!114 &2084430039
 MonoBehaviour:
   m_ObjectHideFlags: 0
