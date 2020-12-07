@@ -39,6 +39,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     private List<CharacterStateJob> _stateJobPool;
     private List<ConversationData> _conversationDataPool;
     private List<List<ConversationData>> _conversationDataListPool;
+    private List<List<EMOTION>> _emotionListPool;
 
     private void Awake() {
         Instance = this;
@@ -78,6 +79,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructSettlementListPool();
         ConstructJobPool();
         ConstructConversationPool();
+        ConstructEmotionListPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -541,6 +543,24 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     }
     #endregion
 
+    #region Emotions
+    private void ConstructEmotionListPool() {
+        _emotionListPool = new List<List<EMOTION>>();
+    }
+    public List<EMOTION> CreateNewEmotionList() {
+        if (_emotionListPool.Count > 0) {
+            List<EMOTION> data = _emotionListPool[0];
+            _emotionListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<EMOTION>();
+    }
+    public void ReturnEmotionListToPool(List<EMOTION> data) {
+        data.Clear();
+        _emotionListPool.Add(data);
+    }
+    #endregion
+
     protected override void OnDestroy() {
         if (allObjectPools != null) {
             foreach (KeyValuePair<string,EZObjectPool> pool in allObjectPools) {
@@ -589,6 +609,8 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _conversationDataPool = null;
         _conversationDataListPool?.Clear();
         _conversationDataListPool = null;
+        _emotionListPool?.Clear();
+        _emotionListPool = null;
         base.OnDestroy();
         Instance = null;
     }

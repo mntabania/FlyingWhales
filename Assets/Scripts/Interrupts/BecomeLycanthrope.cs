@@ -1,6 +1,7 @@
 ﻿using Crime_System;
 using Traits;
 using UtilityScripts;
+using System.Collections.Generic;
 
 namespace Interrupts {
     public class BecomeLycanthrope : Interrupt {
@@ -24,6 +25,12 @@ namespace Interrupts {
 
             if (status == REACTION_STATUS.INFORMED) {
                 actor.lycanData?.AddAwareCharacter(witness);
+            }
+            return response;
+        }
+        public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
+            base.PopulateReactionsToActor(reactions, actor, target, witness, interrupt, status);
+            if (status == REACTION_STATUS.INFORMED) {
                 CrimeType crimeTypeObj = CrimeManager.Instance.GetCrimeType(interrupt.crimeType);
                 CRIME_SEVERITY severity = CRIME_SEVERITY.None;
                 if (crimeTypeObj != null) {
@@ -32,28 +39,27 @@ namespace Interrupts {
                 if (severity == CRIME_SEVERITY.Heinous) {
                     string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
                     if (opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, actor, status);
+                        reactions.Add(EMOTION.Despair);
                     } else if (witness.relationshipContainer.IsRelativeLoverOrAffairAndNotRival(actor)) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, actor, status);
+                        reactions.Add(EMOTION.Despair);
                     }
                     if (witness.traitContainer.HasTrait("Coward")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
+                        reactions.Add(EMOTION.Fear);
                     } else {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status);
+                        reactions.Add(EMOTION.Threatened);
                     }
                 } else {
                     if (witness.traitContainer.HasTrait("Lycanphiliac")) {
                         if (RelationshipManager.IsSexuallyCompatible(witness, actor)) {
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status);
+                            reactions.Add(EMOTION.Arousal);
                         } else {
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);
+                            reactions.Add(EMOTION.Approval);
                         }
                     } else if (witness.traitContainer.HasTrait("Lycanphobic")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status);
+                        reactions.Add(EMOTION.Threatened);
                     }
                 }
             }
-            return response;
         }
         public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, InterruptHolder crime) {
             return CRIME_TYPE.Werewolf;

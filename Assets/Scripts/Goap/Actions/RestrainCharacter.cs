@@ -44,116 +44,106 @@ public class RestrainCharacter : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, target, witness, node, status);
-        if(target is Character) {
-            Character targetCharacter = target as Character;
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+        if (target is Character targetCharacter) {
             if (targetCharacter.traitContainer.HasTrait("Criminal")) {
                 if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status, node);
+                    reactions.Add(EMOTION.Resentment);
                 } else if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) &&
                            witness.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, RelationshipManager.Rival) == false) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status, node);
+                    reactions.Add(EMOTION.Resentment);
                 } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
+                    reactions.Add(EMOTION.Approval);
                 }
             } else {
                 if (!witness.relationshipContainer.IsEnemiesWith(targetCharacter) && !witness.IsHostileWith(targetCharacter)) {
-                    //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Misdemeanor);
-                    //CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
                     if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
                         if (!witness.traitContainer.HasTrait("Psychopath")) {
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status);    
+                            reactions.Add(EMOTION.Resentment);
                         }
-                        if(UnityEngine.Random.Range(0, 100) < 35) {
+                        if (UnityEngine.Random.Range(0, 100) < 35) {
                             if (!witness.traitContainer.HasTrait("Diplomatic")) {
-                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                                reactions.Add(EMOTION.Anger);
                             }
                         }
                     } else if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) &&
                                witness.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, RelationshipManager.Rival) == false) {
                         if (!witness.traitContainer.HasTrait("Psychopath")) {
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status);    
+                            reactions.Add(EMOTION.Resentment);
                         }
-                        if(UnityEngine.Random.Range(0, 100) < 35) {
+                        if (UnityEngine.Random.Range(0, 100) < 35) {
                             if (!witness.traitContainer.HasTrait("Diplomatic")) {
-                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                                reactions.Add(EMOTION.Anger);
                             }
                         }
                     } else if (witness.relationshipContainer.IsEnemiesWith(targetCharacter)) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);    
+                        reactions.Add(EMOTION.Approval);
                     }
                 }
             }
         }
-        return response;
     }
-    public override string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToTarget(actor, target, witness, node, status);
+    public override void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToTarget(reactions, actor, target, witness, node, status);
         if (target is Character targetCharacter) {
             if (node.associatedJobType == JOB_TYPE.APPREHEND) {
                 if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
                     if (!witness.traitContainer.HasTrait("Psychopath")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status, node);
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, targetCharacter, status, node);
+                        reactions.Add(EMOTION.Concern);
+                        reactions.Add(EMOTION.Sadness);
                     }
                 } else if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) &&
                            witness.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, RelationshipManager.Rival) == false) {
                     if (!witness.traitContainer.HasTrait("Psychopath")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status, node);
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, targetCharacter, status, node);
+                        reactions.Add(EMOTION.Concern);
+                        reactions.Add(EMOTION.Sadness);
                     }
                 } else {
                     if (UnityEngine.Random.Range(0, 100) < 30 && !witness.traitContainer.HasTrait("Diplomatic")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter, status, node);
-                    }    
+                        reactions.Add(EMOTION.Scorn);
+                    }
                 }
             } else {
                 string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                     if (!witness.traitContainer.HasTrait("Psychopath")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Distraught, witness, targetCharacter, status, node);
+                        reactions.Add(EMOTION.Distraught);
                     }
                 } else if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) &&
                           opinionLabel != RelationshipManager.Rival) {
                     if (!witness.traitContainer.HasTrait("Psychopath")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Distraught, witness, targetCharacter, status, node);
+                        reactions.Add(EMOTION.Distraught);
                     }
-                } else if(opinionLabel == RelationshipManager.Acquaintance) {
+                } else if (opinionLabel == RelationshipManager.Acquaintance) {
                     if (!witness.traitContainer.HasTrait("Psychopath")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status, node);
+                        reactions.Add(EMOTION.Concern);
                     }
                 } else if (((witness.faction != null && witness.faction.leader == targetCharacter) || (witness.homeSettlement != null && witness.homeSettlement.ruler == targetCharacter))
                     && opinionLabel != RelationshipManager.Rival) {
                     if (!witness.traitContainer.HasTrait("Psychopath")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Distraught, witness, targetCharacter, status, node);
+                        reactions.Add(EMOTION.Distraught);
                     }
                 } else if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
                     if (!witness.traitContainer.HasTrait("Diplomatic")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter, status, node);
+                        reactions.Add(EMOTION.Scorn);
                     } else {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status, node);
+                        reactions.Add(EMOTION.Concern);
                     }
                 }
             }
         }
-        return response;
     }
-    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node,
-        REACTION_STATUS status) {
-        string response = base.ReactionOfTarget(actor, target, node, status);
-        if (target is Character) {
-            Character targetCharacter = target as Character;
+    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
+        if (target is Character targetCharacter) {
             if (!targetCharacter.IsHostileWith(actor)) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, targetCharacter, actor, status, node);
+                reactions.Add(EMOTION.Resentment);
                 if (targetCharacter.traitContainer.HasTrait("Hothead") || UnityEngine.Random.Range(0, 100) < 35) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor, status, node);
+                    reactions.Add(EMOTION.Anger);
                 }
             }
         }
-        return response;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         if (node.poiTarget is Character character) {

@@ -21,26 +21,23 @@ namespace Interrupts {
             }
             return base.ExecuteInterruptEndEffect(interruptHolder);
         }
-        public override string ReactionToActor(Character actor, IPointOfInterest target,
-            Character witness,
-            InterruptHolder interrupt, REACTION_STATUS status) {
-            string response = base.ReactionToActor(actor, target, witness, interrupt, status);
+        public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
+            base.PopulateReactionsToActor(reactions, actor, target, witness, interrupt, status);
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
-            
+
             if ((witness.relationshipContainer.IsFamilyMember(actor) ||
                  witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR)) &&
                 !witness.relationshipContainer.IsEnemiesWith(actor)) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
+                reactions.Add(EMOTION.Concern);
             } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
+                reactions.Add(EMOTION.Concern);
             } else if (opinionLabel == RelationshipManager.Acquaintance) {
-                if(GameUtilities.RollChance(50)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
+                if (GameUtilities.RollChance(50)) {
+                    reactions.Add(EMOTION.Concern);
                 }
             } else if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
+                reactions.Add(EMOTION.Scorn);
             }
-            return response;
         }
         #endregion
     }

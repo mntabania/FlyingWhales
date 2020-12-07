@@ -25,16 +25,13 @@ namespace Interrupts {
             }
             return true;
         }
-        public override string ReactionToActor(Character actor, IPointOfInterest target,
-            Character witness,
-            InterruptHolder interrupt, REACTION_STATUS status) {
-            string response = base.ReactionToActor(actor, target, witness, interrupt, status);
+        public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
+            base.PopulateReactionsToActor(reactions, actor, target, witness, interrupt, status);
             if (witness.relationshipContainer.IsFriendsWith(actor)) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
+                reactions.Add(EMOTION.Concern);
             } else if (witness.relationshipContainer.IsEnemiesWith(actor)) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
+                reactions.Add(EMOTION.Scorn);
             }
-            return response;
         }
         #endregion
     }

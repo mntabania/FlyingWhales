@@ -1,4 +1,5 @@
 ﻿using Locations.Settlements.Settlement_Events;
+using System.Collections.Generic;
 
 public class IsPlagued : GoapAction {
     public IsPlagued() : base(INTERACTION_TYPE.IS_PLAGUED) {
@@ -21,25 +22,24 @@ public class IsPlagued : GoapAction {
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
     }
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+        if (witness.relationshipContainer.IsFriendsWith(actor)) {
+            reactions.Add(EMOTION.Concern);
+        } else if (witness.relationshipContainer.IsEnemiesWith(actor)) {
+            reactions.Add(EMOTION.Disgust);
+            reactions.Add(EMOTION.Scorn);
+        } else {
+            reactions.Add(EMOTION.Disgust);
+            reactions.Add(EMOTION.Fear);
+        }
+    }
     public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
-        
-        //CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
-        if (witness.relationshipContainer.IsFriendsWith(actor)) {
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status, node);
-        } else if (witness.relationshipContainer.IsEnemiesWith(actor)) {
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status, node);
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status, node);
-        } else {
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status, node);
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status, node);
-        }
-
-        if (witness.homeSettlement.eventManager.HasActiveEvent(out PlaguedEvent plaguedSettlementEvent) && 
+        if (witness.homeSettlement.eventManager.HasActiveEvent(out PlaguedEvent plaguedSettlementEvent) &&
             plaguedSettlementEvent.rulerDecision == PLAGUE_EVENT_RESPONSE.Quarantine && !actor.traitContainer.HasTrait("Quarantined")) {
             witness.homeSettlement.settlementJobTriggerComponent.TriggerQuarantineJob(actor);
         }
-        
         return response;
     }
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
