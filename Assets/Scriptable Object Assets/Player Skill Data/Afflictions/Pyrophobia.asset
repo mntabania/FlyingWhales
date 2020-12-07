@@ -22,3 +22,5 @@ MonoBehaviour:
   buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
   tooltipVideoClip: {fileID: 0}
   tooltipImage: {fileID: 0}
+  contextMenuIcon: {fileID: 21300000, guid: 322efa28f960f9248adcb0def018a2fc, type: 3}
+  contextMenuColumn: 1

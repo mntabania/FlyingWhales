@@ -54,6 +54,8 @@ public class UIManager : BaseMonoBehaviour {
     public GameObject characterPortraitHoverInfoGO;
     public CharacterPortrait characterPortraitHoverInfo;
     public RectTransform characterPortraitHoverInfoRT;
+    private List<int> cornersOutside = new List<int>();
+    private Vector3[] corners = new Vector3[4]; //bottom-left, top-left, top-right, bottom-right
 
     [Header("Small Info with Visual")] 
     [SerializeField] private SmallInfoWithVisual _smallInfoWithVisual;
@@ -156,6 +158,9 @@ public class UIManager : BaseMonoBehaviour {
             currentTileHovered.region?.OnHoverOverAction();
         }
         UpdateTransitionRegionUI();
+        if (Input.GetMouseButtonDown(0) && GameManager.Instance.gameHasStarted && IsContextMenuShowing() && !IsMouseOnContextMenu()) { //!IsMouseOnUI()
+            HidePlayerActionContextMenu();
+        }
     }
     #endregion
 
@@ -203,7 +208,7 @@ public class UIManager : BaseMonoBehaviour {
         Messenger.AddListener<Faction>(UISignals.UPDATE_FACTION_LOGS_UI, TryUpdateFactionLog);
 
         Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
-
+        Messenger.AddListener<PlayerAction>(SpellSignals.PLAYER_ACTION_ACTIVATED, OnPlayerActionActivated);
 
         //notification area
         notificationSearchField.onValueChanged.AddListener(OnEndNotificationSearchEdit);
@@ -217,9 +222,13 @@ public class UIManager : BaseMonoBehaviour {
         showAllToggle.onValueChanged.AddListener(OnToggleAllFilters);
         UpdateSearchFieldsState();
         
+        _contextMenuUIController.SetOnHoverOverAction(OnHoverOverPlayerActionContextMenuItem);
+        _contextMenuUIController.SetOnHoverOutAction(OnHoverOutPlayerActionContextMenuItem);
+        
         UpdateUI();
-        //InitializeOverlapUI();
-        // && WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Oona
+    }
+    private void OnPlayerActionActivated(PlayerAction p_playerAction) {
+        HidePlayerActionContextMenu();
     }
     private void TryUpdateFactionLog(Faction faction) {
         if (factionInfoUI.isShowing && factionInfoUI.currentlyShowingFaction == faction) {
@@ -242,11 +251,8 @@ public class UIManager : BaseMonoBehaviour {
         returnToWorldBtn.gameObject.SetActive(WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial);
     }
     private void UpdateUI() {
-        dateLbl.SetText(
-            $"Day {GameManager.Instance.continuousDays.ToString()}\n{GameManager.ConvertTickToTime(GameManager.Instance.Today().tick)}");
-
+        dateLbl.SetText($"Day {GameManager.Instance.continuousDays.ToString()}\n{GameManager.ConvertTickToTime(GameManager.Instance.Today().tick)}");
         UpdateInteractableInfoUI();
-        //UpdateFactionInfo();
         PlayerUI.Instance.UpdateUI();
     }
     private void UpdateInteractableInfoUI() {
@@ -370,12 +376,6 @@ public class UIManager : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Minimap
-    internal void UpdateMinimapInfo() {
-        //CameraMove.Instance.UpdateMinimapTexture();
-    }
-    #endregion
-
     #region Tooltips
     public void ShowSmallInfo(string info, string header = "", bool autoReplaceText = true) {
         Profiler.BeginSample("Show Small Info Sample");
@@ -467,7 +467,7 @@ public class UIManager : BaseMonoBehaviour {
     public void PositionTooltip(GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT) {
         PositionTooltip(Input.mousePosition, tooltipParent, rtToReposition, boundsRT);
     }
-    public void PositionTooltip(Vector3 position, GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT) {
+    private void PositionTooltip(Vector3 position, GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT) {
         var v3 = position;
 
         rtToReposition.pivot = new Vector2(0f, 1f);
@@ -489,8 +489,7 @@ public class UIManager : BaseMonoBehaviour {
             return;
         }
 
-        Vector3[] corners = new Vector3[4]; //bottom-left, top-left, top-right, bottom-right
-        List<int> cornersOutside = new List<int>();
+        cornersOutside.Clear();
         boundsRT.GetWorldCorners(corners);
         for (int i = 0; i < 4; i++) {
             Vector3 localSpacePoint = mainRT.InverseTransformPoint(corners[i]);
@@ -563,21 +562,7 @@ public class UIManager : BaseMonoBehaviour {
         developerNotificationArea.ShowNotification(text, expirationTicks, onClickAction);
     }
     #endregion
-
-    #region World History
-    internal void AddLogToLogHistory(Log log) {
-        Messenger.Broadcast<Log>("AddLogToHistory", log);
-    }
-    public void ToggleNotificationHistory() {
-        //worldHistoryUI.ToggleWorldHistoryUI();
-        //if (notificationHistoryGO.activeSelf) {
-        //    HideNotificationHistory();
-        //} else {
-        //    ShowLogHistory();
-        //}
-    }
-    #endregion
-
+    
     #region UI Utilities
     public List<PopupMenuBase> openedPopups { get; private set; }
     private void OnUIMenuOpened(InfoUIBase menu) {
@@ -1668,6 +1653,117 @@ public class UIManager : BaseMonoBehaviour {
         SetSpeedTogglesState(true);
         ResumeLastProgressionSpeed();
         InputManager.Instance.AllowHotkeys(true);
+    }
+    #endregion
+
+    #region Context Menu
+    [Header("Context Menu")]
+    [SerializeField] private ContextMenuUIController _contextMenuUIController;
+    [SerializeField] private UIHoverPosition _contextMenuTooltipHoverPosition;
+    public void ShowPlayerActionContextMenu(IPlayerActionTarget p_target, Transform p_followTarget) {
+        PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
+        List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
+        if (contextMenuItems == null) {
+            HidePlayerActionContextMenu();
+            return;
+        }
+        _contextMenuUIController.SetFollowPosition(p_followTarget);
+        _contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name);
+        Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
+        AddPlayerActionContextMenuSignals();
+    }
+    public void ShowPlayerActionContextMenu(IPlayerActionTarget p_target, Vector3 p_followTarget, bool p_isScreenPosition) {
+        PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
+        List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
+        if (contextMenuItems == null) {
+            HidePlayerActionContextMenu();
+            return;
+        }
+        _contextMenuUIController.SetFollowPosition(p_followTarget, p_isScreenPosition);
+        _contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name);
+        Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
+        AddPlayerActionContextMenuSignals();
+    }
+    
+    public void HidePlayerActionContextMenu() {
+        PlayerManager.Instance.player.SetCurrentPlayerActionTarget(null);
+        _contextMenuUIController.HideUI();
+        RemovePlayerActionContextMenuSignals();
+    }
+    public bool IsContextMenuShowing() {
+        return _contextMenuUIController.IsShowing();
+    }
+    private void OnHoverOverPlayerActionContextMenuItem(IContextMenuItem p_item) {
+        if (p_item is PlayerAction playerAction) {
+            PlayerUI.Instance.OnHoverSpell(playerAction, _contextMenuTooltipHoverPosition);
+        }
+    }
+    private void OnHoverOutPlayerActionContextMenuItem(IContextMenuItem p_item) {
+        if (p_item is PlayerAction playerAction) {
+            PlayerUI.Instance.OnHoverOutSpell(playerAction);
+        }
+    }
+    private List<IContextMenuItem> GetPlayerActionContextMenuItems(IPlayerActionTarget p_target) {
+        List<IContextMenuItem> contextMenuItems = null;
+        for (int i = 0; i < p_target.actions.Count; i++) {
+            PLAYER_SKILL_TYPE skillType = p_target.actions[i];
+            PlayerAction playerAction = PlayerSkillManager.Instance.GetPlayerActionData(skillType);
+            if (playerAction.IsValid(p_target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(skillType)) {
+                if (contextMenuItems == null) { contextMenuItems = new List<IContextMenuItem>(); }
+                contextMenuItems.Add(playerAction);
+            }
+        }
+        return contextMenuItems;
+    }
+    private void AddPlayerActionContextMenuSignals() {
+        Messenger.AddListener<IPlayerActionTarget>(SpellSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
+        Messenger.AddListener(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
+        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
+        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
+    }
+    private void RemovePlayerActionContextMenuSignals() {
+        Messenger.RemoveListener<IPlayerActionTarget>(SpellSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
+        Messenger.RemoveListener(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
+        Messenger.RemoveListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
+        Messenger.RemoveListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
+    }
+    private void OnPlayerActionRemovedFromTarget(PLAYER_SKILL_TYPE p_skillType, IPlayerActionTarget p_target) {
+        if (IsContextMenuShowing() && p_target != null && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget == p_target) {
+            UpdatePlayerActionContextMenuItems(p_target);
+        }
+    }
+    private void OnPlayerActionAddedToTarget(PLAYER_SKILL_TYPE p_skillType, IPlayerActionTarget p_target) {
+        if (IsContextMenuShowing() && p_target != null && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget == p_target) {
+            UpdatePlayerActionContextMenuItems(p_target);
+        }
+    }
+    private void ReloadPlayerActions(IPlayerActionTarget p_target) {
+        if (IsContextMenuShowing() && p_target != null && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget == p_target) {
+            UpdatePlayerActionContextMenuItems(p_target);
+        }
+    }
+    private void ForceReloadPlayerActions() {
+        if (IsContextMenuShowing() && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget != null) {
+            UpdatePlayerActionContextMenuItems(PlayerManager.Instance.player.currentlySelectedPlayerActionTarget);
+        }
+    }
+    private void UpdatePlayerActionContextMenuItems(IPlayerActionTarget p_target) {
+        List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
+        if (contextMenuItems == null) {
+            HidePlayerActionContextMenu();
+            return;
+        }
+        _contextMenuUIController.UpdateContextMenuItems(contextMenuItems);
+    }
+    private bool IsMouseOnContextMenu() {
+        if (_pointer != null) {
+            _pointer.position = Input.mousePosition;
+            _raycastResults.Clear();
+            EventSystem.current.RaycastAll(_pointer, _raycastResults);
+
+            return _raycastResults.Count > 0 && _raycastResults.Any(go => go.gameObject.CompareTag("Context Menu"));    
+        }
+        return false;
     }
     #endregion
 }

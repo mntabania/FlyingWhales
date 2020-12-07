@@ -197,7 +197,7 @@ namespace Databases.SQLDatabase {
            
             
             string commandStr = $"{insertStr} {valuesStr}";
-            Debug.Log($"Insert command was {commandStr}");
+            // Debug.Log($"Insert command was {commandStr}");
             
             // DatabaseThreadPool.Instance.AddToThreadPool(commandStr);
             
@@ -221,7 +221,7 @@ namespace Databases.SQLDatabase {
             command.Dispose();
 
             timer.Stop();
-            Debug.Log($"Total log insert time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
+            // Debug.Log($"Total log insert time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
         }
         public void ExecuteInsertCommand(string commandStr) {
             if (_dbConnection != null) {
@@ -283,7 +283,7 @@ namespace Databases.SQLDatabase {
             if (limit != -1) {
                 commandStr = $"{commandStr} LIMIT {limit.ToString()}";
             }
-            Debug.Log($"Trying to get logs that match criteria, full query command is {commandStr}");
+            // Debug.Log($"Trying to get logs that match criteria, full query command is {commandStr}");
             command.CommandText = commandStr;
             IDataReader dataReader = command.ExecuteReader();
             List<Log> logs = new List<Log>();
@@ -294,7 +294,7 @@ namespace Databases.SQLDatabase {
             dataReader.Close();
 #if UNITY_EDITOR
             timer.Stop();
-            Debug.Log($"Total log query time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
+            // Debug.Log($"Total log query time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
 #endif
             return logs;    
         }
@@ -345,7 +345,7 @@ namespace Databases.SQLDatabase {
             if (limit != -1) {
                 commandStr = $"{commandStr} LIMIT {limit.ToString()}";
             }
-            Debug.Log($"Trying to get notifications that match criteria, full query command is {commandStr}");
+            // Debug.Log($"Trying to get notifications that match criteria, full query command is {commandStr}");
             command.CommandText = commandStr;
             IDataReader dataReader = command.ExecuteReader();
             List<string> logs = new List<string>();
@@ -356,7 +356,7 @@ namespace Databases.SQLDatabase {
             dataReader.Close();
 #if UNITY_EDITOR
             timer.Stop();
-            Debug.Log($"Total notification query time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
+            // Debug.Log($"Total notification query time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
 #endif
             return logs;    
         }
@@ -388,7 +388,7 @@ namespace Databases.SQLDatabase {
             command.CommandText = $"UPDATE 'Logs' SET isIntel = {isIntel.ToString()} WHERE persistentID = '{persistentID}'";
             command.ExecuteNonQuery();
             command.Dispose();
-            Debug.Log($"Set intel state of log {persistentID} to {isIntel.ToString()}");
+            // Debug.Log($"Set intel state of log {persistentID} to {isIntel.ToString()}");
         }
         public void UpdateInvolvedObjects(in Log log) {
             SQLiteCommand command = _dbConnection.CreateCommand();
@@ -397,7 +397,7 @@ namespace Databases.SQLDatabase {
             command.ExecuteNonQuery();
             command.Dispose();
             Messenger.Broadcast(UISignals.LOG_IN_DATABASE_UPDATED, log);
-            Debug.Log($"Set involved objects of log {log.persistentID} to {log.allInvolvedObjectIDs}");
+            // Debug.Log($"Set involved objects of log {log.persistentID} to {log.allInvolvedObjectIDs}");
         }
         private void DeleteOldestLog() {
             SQLiteCommand command = _dbConnection.CreateCommand();
@@ -416,7 +416,7 @@ namespace Databases.SQLDatabase {
         }
         private void DeleteLog(string persistentID) {
             Log deletedLog = GetLogWithPersistentID(persistentID);
-            Debug.Log($"Will delete log with ID: {persistentID}");
+            // Debug.Log($"Will delete log with ID: {persistentID}");
             SQLiteCommand command = _dbConnection.CreateCommand();
             command.CommandType = CommandType.Text;
             command.CommandText = $"DELETE FROM Logs WHERE persistentID = '{persistentID}'";

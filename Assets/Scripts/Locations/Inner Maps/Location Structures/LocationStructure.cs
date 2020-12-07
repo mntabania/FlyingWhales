@@ -973,7 +973,10 @@ namespace Inner_Maps.Location_Structures {
             // CenterOnStructure();
             UIManager.Instance.ShowStructureInfo(this);
         }
-        public void RightSelectAction() { }
+        public void RightSelectAction() {
+            UIManager.Instance.ShowPlayerActionContextMenu(this, Input.mousePosition, true);
+        }
+        public void MiddleSelectAction() { }
         public bool CanBeSelected() {
             return true;
         }

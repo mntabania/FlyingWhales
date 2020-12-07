@@ -53,8 +53,11 @@ public class TileObjectInfoUI : InfoUIBase {
         Messenger.AddListener<TileObject, Trait>(TileObjectSignals.TILE_OBJECT_TRAIT_STACKED, UpdateTraitsFromSignal);
         Messenger.AddListener<TileObject, Trait>(TileObjectSignals.TILE_OBJECT_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
 
-        ownerEventLbl.SetOnClickAction(OnClickOwner);
-        carriedByEventLbl.SetOnClickAction(OnClickLocation);
+        ownerEventLbl.SetOnLeftClickAction(OnLeftClickOwner);
+        ownerEventLbl.SetOnRightClickAction(OnRightClickOwner);
+        
+        carriedByEventLbl.SetOnLeftClickAction(OnLeftClickLocation);
+        carriedByEventLbl.SetOnRightClickAction(OnRightClickLocation);
 
         logsWindow.Initialize();
     }
@@ -244,18 +247,28 @@ public class TileObjectInfoUI : InfoUIBase {
     #endregion
 
     #region Event Labels
-    private void OnClickOwner(object obj) {
+    private void OnLeftClickOwner(object obj) {
         if(activeTileObject.characterOwner != null) {
             UIManager.Instance.ShowCharacterInfo(activeTileObject.characterOwner, true);
         }
     }
-    private void OnClickLocation(object obj) {
+    private void OnRightClickOwner(object obj) {
+        if (obj is IPlayerActionTarget playerActionTarget) {
+            UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
+        }
+    }
+    private void OnLeftClickLocation(object obj) {
         if (activeTileObject.isBeingCarriedBy != null) {
             UIManager.Instance.ShowCharacterInfo(activeTileObject.isBeingCarriedBy, true);
         } else if (activeTileObject.gridTileLocation != null) {
             if (!(activeTileObject.gridTileLocation.structure is Wilderness)) {
                 UIManager.Instance.ShowStructureInfo(activeTileObject.gridTileLocation.structure);
             }
+        }
+    }
+    private void OnRightClickLocation(object obj) {
+        if (obj is IPlayerActionTarget playerActionTarget) {
+            UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
         }
     }
     public void OnHoverTrait(object obj) {

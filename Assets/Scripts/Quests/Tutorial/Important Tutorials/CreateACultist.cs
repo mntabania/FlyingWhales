@@ -25,29 +25,18 @@ namespace Tutorial {
       
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
-                // new QuestStepCollection(
-                //     new ToggleTurnedOnStep("Build Tab", "Open Build Menu")
-                //         .SetOnTopmostActions(OnTopMostBuildTab, OnNoLongerTopMostBuildTab),
-                //     new ToggleTurnedOnStep("Defiler", "Choose the Defiler")
-                //         .SetOnTopmostActions(OnTopMostChooseDefiler, OnNoLongerTopMostChooseDefiler),
-                //     new StructureBuiltStep(STRUCTURE_TYPE.DEFILER, "Place on an unoccupied Area.")
-                // ),
-                // new QuestStepCollection(
-                //     new ClickOnRoomStep("Click on the Chamber", room => room is DefilerRoom)
-                //         .SetHoverOverAction(OnHoverChamber)
-                //         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
-                // ),
                 new QuestStepCollection(
                     new ClickOnRoomStep("Click on the Chamber", room => room is DefilerRoom)
                         .SetHoverOverAction(OnHoverChamber)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
-                    new ExecutedPlayerActionStep(PLAYER_SKILL_TYPE.SEIZE_CHARACTER, $"Seize a Brainwash Target")
+                    new PlayerActionContextMenuShown(target => target is Character character && character.isNormalCharacter, $"Right click on a Villager"),
+                    new ExecutedPlayerActionStep(PLAYER_SKILL_TYPE.SEIZE_CHARACTER, $"Seize Brainwash Target")
                         .SetHoverOverAction(OnHoverSeizeCharacter)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostSeizeVillager, OnNoLongerTopMostSeizeVillager),
                     new DropCharacterAtStructureRoomStep<DefilerRoom>("Drop at the Chamber"),
-                    new ClickOnRoomStep("Click on the Chamber", IsClickedRoomValid),
-                    new ExecutedPlayerActionStep(PLAYER_SKILL_TYPE.BRAINWASH, "Click on Brainwash button")
+                    new PlayerActionContextMenuShown(IsClickedRoomValid, $"Right click on the Chamber"),
+                    new ExecutedPlayerActionStep(PLAYER_SKILL_TYPE.BRAINWASH, "Click on Brainwash option")
                         .SetHoverOverAction(OnHoverBrainwash)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostBrainwash, OnNoLongerTopMostBrainwash)
@@ -68,8 +57,11 @@ namespace Tutorial {
         }
 
         #region Step Helpers
-        private bool IsClickedRoomValid(StructureRoom room) {
-            return room is DefilerRoom defilerRoom && defilerRoom.HasValidBrainwashTarget();
+        private bool IsClickedRoomValid(IPlayerActionTarget p_target) {
+            if (p_target is DefilerRoom defilerRoom) {
+                return defilerRoom.HasValidBrainwashTarget();    
+            }
+            return false;
         }
         private void OnHoverSeizeCharacter(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo(

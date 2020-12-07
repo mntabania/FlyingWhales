@@ -15,7 +15,9 @@ public class HoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     [SerializeField] protected UnityEvent onHoverOverAction;
     [SerializeField] protected UnityEvent onHoverExitAction;
-
+    [SerializeField] protected bool executeHoverEnterActionPerFrame = true;
+    
+    
     protected Selectable selectable;
 
 
@@ -37,7 +39,13 @@ public class HoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
                 return;
             }
         }
-        isHovering = true;
+        if (executeHoverEnterActionPerFrame) {
+            isHovering = true;    
+        } else {
+            isHovering = true;
+            onHoverOverAction?.Invoke();
+        }
+        
     }
     public virtual void OnPointerExit(PointerEventData eventData) {
         if (!ignoreInteractable && selectable != null) {
@@ -72,8 +80,10 @@ public class HoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     }
 
     void Update() {
-        if (isHovering) {
-            onHoverOverAction?.Invoke();
+        if (executeHoverEnterActionPerFrame) {
+            if (isHovering) {
+                onHoverOverAction?.Invoke();
+            }    
         }
     }
 

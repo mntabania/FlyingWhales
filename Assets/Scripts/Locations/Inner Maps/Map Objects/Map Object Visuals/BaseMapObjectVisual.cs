@@ -30,6 +30,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     protected System.Action onHoverExitAction;
     protected System.Action onLeftClickAction;
     protected System.Action onRightClickAction;
+    protected System.Action onMiddleClickAction;
     public GameObject gameObjectVisual => this.gameObject;
     public Sprite usedSprite => objectVisual.sprite;
     public Quaternion rotation => objectVisual.transform.localRotation;
@@ -136,8 +137,10 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     public void ExecuteClickAction(PointerEventData.InputButton button) {
         if (button == PointerEventData.InputButton.Left) {
             onLeftClickAction?.Invoke();
-        }else if (button == PointerEventData.InputButton.Right) {
+        } else if (button == PointerEventData.InputButton.Right) {
             onRightClickAction?.Invoke();
+        } else if (button == PointerEventData.InputButton.Middle) {
+            onMiddleClickAction?.Invoke();
         }
     }
     public void OnPointerEnter(PointerEventData eventData) {

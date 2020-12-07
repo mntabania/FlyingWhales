@@ -102,6 +102,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public bool isMainVisualActive => mainImg.gameObject.activeSelf;
     public CharacterMarkerAnimationListener animationListener => _animationListener;
     public int sortingOrder => mainImg.sortingOrder;
+    public CharacterMarkerNameplate nameplate => _nameplate;
     #endregion
     
     public void SetCharacter(Character character) {
@@ -283,10 +284,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     protected override void OnPointerRightClick(Character poi) {
         base.OnPointerRightClick(poi);
-        Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter;
-        if (activeCharacter == null) {
-            activeCharacter = UIManager.Instance.monsterInfoUI.activeMonster;
-        }
+        UIManager.Instance.ShowPlayerActionContextMenu(poi, this.transform);
+    }
+    protected override void OnPointerMiddleClick(Character poi) {
+        base.OnPointerMiddleClick(poi);
+        Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter ?? UIManager.Instance.monsterInfoUI.activeMonster;
         if (activeCharacter != null) {
             if (activeCharacter.minion == null) {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

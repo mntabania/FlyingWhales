@@ -1,15 +1,23 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
+using UnityEngine;
 
-public class PlayerAction : SpellData {
+public class PlayerAction : SpellData, IContextMenuItem {
 
     public virtual bool canBeCastOnBlessed => false;
-    
-    public override PLAYER_SKILL_CATEGORY category { get { return PLAYER_SKILL_CATEGORY.PLAYER_ACTION; } }
 
+    public virtual Sprite contextMenuIcon => PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type)?.contextMenuIcon;
+    public string contextMenuName => name;
+    public virtual int contextMenuColumn  => PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(type)?.contextMenuColumn ?? 0;
+    public List<IContextMenuItem> subMenus => GetSubMenus(_contextMenuItems);
+    private List<IContextMenuItem> _contextMenuItems;
+    
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.PLAYER_ACTION;
+
+    public PlayerAction() {
+        _contextMenuItems = new List<IContextMenuItem>();
+    }
+    
     #region Virtuals
     public virtual bool IsValid(IPlayerActionTarget target) {
         if (target is Character character) {
@@ -19,8 +27,11 @@ public class PlayerAction : SpellData {
         }
         return true;
     }
-    public virtual string GetLabelName(IPlayerActionTarget target) {
+    public string GetLabelName(IPlayerActionTarget target) {
         return name;
+    }
+    protected virtual List<IContextMenuItem> GetSubMenus(List<IContextMenuItem> p_contextMenuItems) {
+        return null;
     }
     #endregion
 
@@ -64,4 +75,27 @@ public class PlayerAction : SpellData {
         }
         return CanPerformAbility();
     }
+
+    #region IContextMenuItem Implementation
+    public void OnPickAction() {
+        if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget != null) {
+            Activate(PlayerManager.Instance.player.currentlySelectedPlayerActionTarget);
+        }
+    }
+    public bool CanBePicked() {
+        if (isInCooldown) {
+            return false;
+        }
+        if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget != null && !CanPerformAbilityTo(PlayerManager.Instance.player.currentlySelectedPlayerActionTarget)) {
+            return false;
+        }
+        return true;
+    }
+    public float GetCoverFillAmount() {
+        if (isInCooldown) {
+            return 1f - ((float)currentCooldownTick / cooldown);
+        }
+        return 1f;
+    }
+    #endregion
 }

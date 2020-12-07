@@ -72,7 +72,10 @@ namespace Inner_Maps.Location_Structures {
         public void LeftSelectAction() {
             UIManager.Instance.ShowStructureRoomInfo(this);
         }
-        public void RightSelectAction() { }
+        public void RightSelectAction() {
+            UIManager.Instance.ShowPlayerActionContextMenu(this, Input.mousePosition, true);
+        }
+        public void MiddleSelectAction() { }
         public bool CanBeSelected() {
             return true;
         }
