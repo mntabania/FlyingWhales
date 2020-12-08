@@ -24,7 +24,7 @@ public class PlagueData : AfflictData {
             (targetPOI as Character).interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, targetPOI);
         }
         // targetPOI.traitContainer.AddTrait(targetPOI, "Plagued");
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Plagued", "Robust", "Beast")) {

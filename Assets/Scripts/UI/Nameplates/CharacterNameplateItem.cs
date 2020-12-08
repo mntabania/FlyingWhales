@@ -104,7 +104,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     public void OnHoverLeaderIcon() {
         string message = string.Empty;
         if (character.isSettlementRuler) {
-            message = $"<b>{character.name}</b> is the Settlement Ruler of <b>{character.ruledSettlement.name}</b>\n";
+            message = $"<b>{character.name}</b> is the Settlement Ruler of <b>{character.homeSettlement.name}</b>\n";
         } 
         if (character.isFactionLeader) {
             message += $"<b>{character.name}</b> is the Faction Leader of <b>{character.faction.name}</b>";

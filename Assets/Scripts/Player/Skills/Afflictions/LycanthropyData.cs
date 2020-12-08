@@ -23,7 +23,7 @@ public class LycanthropyData : AfflictData {
         log.AddToFillers(null, "Lycanthrope", LOG_IDENTIFIER.STRING_1);
         log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Lycanthrope", "Beast")) {

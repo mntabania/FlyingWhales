@@ -16,7 +16,7 @@ public class NarcolepsyData : AfflictData {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         AfflictPOIWith("Narcoleptic", targetPOI, name);
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Narcoleptic")) {

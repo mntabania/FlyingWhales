@@ -621,8 +621,8 @@ public class CrimeData : ISavable {
             }
 
             if (criminal.isSettlementRuler) {
-                if(criminal.ruledSettlement.owner == faction) {
-                    criminal.ruledSettlement.SetRuler(null);
+                if(criminal.homeSettlement.owner == faction) {
+                    criminal.homeSettlement.SetRuler(null);
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_settlement_ruler", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
                     log.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     criminal.logComponent.RegisterLog(log, onlyClickedCharacter: false);

@@ -1105,10 +1105,10 @@ public class UIManager : BaseMonoBehaviour {
     public void OpenConversationMenu(List<ConversationData> conversationList, string titleText) {
         conversationMenu.Open(conversationList, titleText);
     }
-    public bool IsShareIntelMenuOpen() {
+    public bool IsConversationMenuOpen() {
         return conversationMenu.gameObject.activeSelf;
     }
-    public void CloseShareIntelMenu() {
+    public void CloseConversationMenu() {
         conversationMenu.Close();
     }
     private void OnOpenConversationMenu() {

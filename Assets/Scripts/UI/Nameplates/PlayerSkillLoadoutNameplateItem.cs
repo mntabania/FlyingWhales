@@ -21,7 +21,7 @@ public class PlayerSkillLoadoutNameplateItem : MonoBehaviour {
 
     public void SetObject(PLAYER_SKILL_TYPE o) {
         skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(o);
-        string gameObjectName = PlayerSkillManager.Instance.GetPlayerSpellData(o).name;
+        string gameObjectName = PlayerSkillManager.Instance.GetPlayerSkillData(o).name;
         name = gameObjectName;
         mainLbl.text = gameObjectName;
         SetPortrait(skillData.buttonSprite);

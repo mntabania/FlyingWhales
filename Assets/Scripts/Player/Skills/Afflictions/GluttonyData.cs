@@ -16,7 +16,7 @@ public class GluttonyData : AfflictData {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         AfflictPOIWith("Glutton", targetPOI, name);
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Glutton")) {

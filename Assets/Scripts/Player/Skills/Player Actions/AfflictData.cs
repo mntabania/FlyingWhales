@@ -36,7 +36,7 @@ public class AfflictData : PlayerAction {
             List<PLAYER_SKILL_TYPE> afflictionTypes = PlayerManager.Instance.player.playerSkillComponent.afflictions;
             for (int i = 0; i < afflictionTypes.Count; i++) {
                 PLAYER_SKILL_TYPE spellType = afflictionTypes[i];
-                PlayerAction spellData = PlayerSkillManager.Instance.GetPlayerSpellData(spellType) as PlayerAction;
+                PlayerAction spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType) as PlayerAction;
                 if (spellData != null && spellData.IsValid(PlayerManager.Instance.player.currentlySelectedPlayerActionTarget)) {
                     p_contextMenuItems.Add(spellData);
                 }

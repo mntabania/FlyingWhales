@@ -419,10 +419,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     public void SetRuler(Character newRuler) {
         Character previousRuler = ruler; 
-        ruler?.SetRuledSettlement(null);
         ruler = newRuler;
+        if(previousRuler != null) {
+            previousRuler.behaviourComponent.RemoveBehaviourComponent(typeof(SettlementRulerBehaviour));
+            if (!previousRuler.isFactionLeader) {
+                previousRuler.jobComponent.RemovePriorityJob(JOB_TYPE.JUDGE_PRISONER);
+            }
+        }
         if(ruler != null) {
-            ruler.SetRuledSettlement(this);
+            ruler.behaviourComponent.AddBehaviourComponent(typeof(SettlementRulerBehaviour));
+            ruler.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
             //ResetNewRulerDesignationChance();
             Messenger.Broadcast(CharacterSignals.ON_SET_AS_SETTLEMENT_RULER, ruler, previousRuler);
         } else {

@@ -8,6 +8,7 @@ public class PlayerSkillComponent {
     //public List<PlayerSkillTreeNodeData> nodesData { get; protected set; }
     public List<PLAYER_SKILL_TYPE> spells { get; protected set; }
     public List<PLAYER_SKILL_TYPE> afflictions { get; protected set; }
+    public List<PLAYER_SKILL_TYPE> schemes { get; protected set; }
     public List<PLAYER_SKILL_TYPE> playerActions { get; protected set; }
     public List<PLAYER_SKILL_TYPE> demonicStructuresSkills { get; protected set; }
     public List<PLAYER_SKILL_TYPE> minionsSkills { get; protected set; }
@@ -22,6 +23,7 @@ public class PlayerSkillComponent {
         //nodesData = new List<PlayerSkillTreeNodeData>();
         spells = new List<PLAYER_SKILL_TYPE>();
         afflictions = new List<PLAYER_SKILL_TYPE>();
+        schemes = new List<PLAYER_SKILL_TYPE>();
         playerActions = new List<PLAYER_SKILL_TYPE>();
         demonicStructuresSkills = new List<PLAYER_SKILL_TYPE>();
         minionsSkills = new List<PLAYER_SKILL_TYPE>();
@@ -34,6 +36,7 @@ public class PlayerSkillComponent {
     public PlayerSkillComponent() {
         spells = new List<PLAYER_SKILL_TYPE>();
         afflictions = new List<PLAYER_SKILL_TYPE>();
+        schemes = new List<PLAYER_SKILL_TYPE>();
         playerActions = new List<PLAYER_SKILL_TYPE>();
         demonicStructuresSkills = new List<PLAYER_SKILL_TYPE>();
         minionsSkills = new List<PLAYER_SKILL_TYPE>();
@@ -66,7 +69,7 @@ public class PlayerSkillComponent {
         CategorizePlayerSkill(spellData);
     }
     public void AddCharges(PLAYER_SKILL_TYPE spellType, int amount) {
-        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(spellType);
+        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType);
         if (spellData.isInUse) {
             spellData.AdjustCharges(amount);
         } else {
@@ -113,21 +116,15 @@ public class PlayerSkillComponent {
     #endregion
 
     #region Utilities
-    public bool CanAfflict(PLAYER_SKILL_TYPE type) {
-        return PlayerSkillManager.Instance.GetAfflictionData(type).isInUse;
-    }
     public bool CanDoPlayerAction(PLAYER_SKILL_TYPE type) {
         return PlayerSkillManager.Instance.GetPlayerActionData(type).isInUse;
     }
     public bool CanBuildDemonicStructure(PLAYER_SKILL_TYPE type) {
         return PlayerSkillManager.Instance.GetDemonicStructureSkillData(type).isInUse;
     }
-    public bool CanCastSpell(PLAYER_SKILL_TYPE type) {
-        return PlayerSkillManager.Instance.GetSpellData(type).isInUse;
-    }
     public bool HasAnyAvailableAffliction() {
         for (int i = 0; i < afflictions.Count; i++) {
-            SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(afflictions[i]);
+            SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(afflictions[i]);
             if (spellData.hasCharges == false) {
                 return true;
             } else {
@@ -154,7 +151,7 @@ public class PlayerSkillComponent {
             //                      && data.skill != SPELL_TYPE.HARASS && data.skill != SPELL_TYPE.SKELETON_MARAUDER
             //                      && PlayerSkillManager.Instance.GetPlayerSpellData(data.skill) != null;
             // } else {
-                shouldAddSpell = PlayerSkillManager.Instance.GetPlayerSpellData(data.skill) != null 
+                shouldAddSpell = PlayerSkillManager.Instance.GetPlayerSkillData(data.skill) != null 
                 && data.skill != PLAYER_SKILL_TYPE.OSTRACIZER && data.skill != PLAYER_SKILL_TYPE.CRYPT && data.skill != PLAYER_SKILL_TYPE.SKELETON_MARAUDER;
             // }
             if (shouldAddSpell) {
@@ -209,7 +206,7 @@ public class PlayerSkillComponent {
     }
     private void SetPlayerSkillData(PLAYER_SKILL_TYPE skillType) {
         PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType);
-        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(skillType);
+        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillType);
         if (spellData == null) {
             Debug.LogError(skillType.ToString() + " data is null!");
         }
@@ -229,7 +226,7 @@ public class PlayerSkillComponent {
         CategorizePlayerSkill(spellData);
     }
     private void SetPlayerSkillData(PlayerSkillData skillData) {
-        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(skillData.skill);
+        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
         if(spellData == null) {
             Debug.LogError(skillData.skill.ToString() + " data is null!");
         }
@@ -246,6 +243,8 @@ public class PlayerSkillComponent {
         spellData.SetIsInUse(true);
         if (spellData.category == PLAYER_SKILL_CATEGORY.AFFLICTION) {
             afflictions.Add(spellData.type);
+        } else if (spellData.category == PLAYER_SKILL_CATEGORY.SCHEME) {
+            schemes.Add(spellData.type);
         } else if (spellData.category == PLAYER_SKILL_CATEGORY.DEMONIC_STRUCTURE) {
             demonicStructuresSkills.Add(spellData.type);
         } else if (spellData.category == PLAYER_SKILL_CATEGORY.MINION) {
@@ -336,6 +335,11 @@ public class PlayerSkillComponent {
             SpellData skill = PlayerSkillManager.Instance.GetAfflictionData(skillType);
             skill.OnLoadSpell();
         }
+        for (int i = 0; i < schemes.Count; i++) {
+            PLAYER_SKILL_TYPE skillType = schemes[i];
+            SpellData skill = PlayerSkillManager.Instance.GetSchemeData(skillType);
+            skill.OnLoadSpell();
+        }
         //did not save passive skills since I expect that passive skills will always be constant per loadout.
         PlayerSkillLoadout loadout = PlayerSkillManager.Instance.GetSelectedLoadout();
         PopulatePassiveSkills(loadout.passiveSkills);
@@ -361,6 +365,12 @@ public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {
         }
         for (int i = 0; i < component.afflictions.Count; i++) {
             SpellData spell = PlayerSkillManager.Instance.GetAfflictionData(component.afflictions[i]);
+            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
+            dataPlayerSkill.Save(spell);
+            skills.Add(dataPlayerSkill);
+        }
+        for (int i = 0; i < component.schemes.Count; i++) {
+            SpellData spell = PlayerSkillManager.Instance.GetSchemeData(component.schemes[i]);
             SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
             dataPlayerSkill.Save(spell);
             skills.Add(dataPlayerSkill);

@@ -17,7 +17,7 @@ public class EvangelizeData : PlayerAction {
         if (targetPOI is Character character) {
             if(character.characterClass.className == "Cult Leader") {
                 //Cultist leader should have all characters as the target for evangelization
-                List<Character> choices = new List<Character>();
+                List<Character> choices = ObjectPoolManager.Instance.CreateNewCharactersList();
                 for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
                     Character target = CharacterManager.Instance.allCharacters[i];
                     //if (resident.isNormalCharacter && resident.traitContainer.HasTrait("Cultist") == false && 
@@ -29,11 +29,14 @@ public class EvangelizeData : PlayerAction {
                 }
                 UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), validityChecker: t => CanBeEvangelized(character, t), onHoverAction: t => OnHoverEnter(character, t), onHoverExitAction: OnHoverExit, showCover: true,
                     shouldShowConfirmationWindowOnPick: false, layer: 25, asButton: false);
+
+                ObjectPoolManager.Instance.ReturnCharactersListToPool(choices);
             } else {
-                List<Character> choices = character.GetListOfCultistTargets(x => !x.isDead && x.isNormalCharacter && x.race.IsSapient());
-                if (choices == null) { choices = new List<Character>(); }
+                List<Character> choices = ObjectPoolManager.Instance.CreateNewCharactersList();
+                character.PopulateListOfCultistTargets(choices, x => !x.isDead && x.isNormalCharacter && x.race.IsSapient());
                 UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), validityChecker: t => CanBeEvangelized(character, t), onHoverAction: t => OnHoverEnter(character, t), onHoverExitAction: OnHoverExit, showCover: true,
                     shouldShowConfirmationWindowOnPick: false, layer: 25, asButton: false);
+                ObjectPoolManager.Instance.ReturnCharactersListToPool(choices);
             }
 
         }

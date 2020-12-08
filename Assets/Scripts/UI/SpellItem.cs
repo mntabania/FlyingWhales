@@ -28,7 +28,7 @@ public class SpellItem : NameplateItem<SpellData> {
         Messenger.AddListener<SpellData>(SpellSignals.PLAYER_NO_ACTIVE_SPELL, OnPlayerNoActiveSpell);
         Messenger.AddListener<SpellData>(SpellSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
         Messenger.AddListener<SpellData>(SpellSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
-        Messenger.AddListener<SpellData>(SpellSignals.ON_EXECUTE_SPELL, OnExecuteSpell);
+        Messenger.AddListener<SpellData>(SpellSignals.ON_EXECUTE_PLAYER_SKILL, OnExecuteSpell);
         Messenger.AddListener<SpellData>(PlayerSignals.CHARGES_ADJUSTED, OnChargesAdjusted);
         Messenger.AddListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
         SetAsDefault();
@@ -179,7 +179,7 @@ public class SpellItem : NameplateItem<SpellData> {
         Messenger.RemoveListener<SpellData>(SpellSignals.PLAYER_NO_ACTIVE_SPELL, OnPlayerNoActiveSpell);
         Messenger.RemoveListener<SpellData>(SpellSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
         Messenger.RemoveListener<SpellData>(SpellSignals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
-        Messenger.RemoveListener<SpellData>(SpellSignals.ON_EXECUTE_SPELL, OnExecuteSpell);
+        Messenger.RemoveListener<SpellData>(SpellSignals.ON_EXECUTE_PLAYER_SKILL, OnExecuteSpell);
         Messenger.RemoveListener<SpellData>(PlayerSignals.CHARGES_ADJUSTED, OnChargesAdjusted);
         Messenger.RemoveListener<int, int>(PlayerSignals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
     }

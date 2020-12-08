@@ -82,7 +82,7 @@ public class TriggerFlawData : PlayerAction {
             if (p_character.partyComponent.hasParty) {
                 p_character.partyComponent.currentParty.RemoveMemberThatJoinedQuest(p_character);
             }
-            PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).OnExecuteSpellActionAffliction();
+            PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).OnExecutePlayerSkill();
         } else {
             string log = "Failed to trigger flaw. Some requirements might be unmet.";
             if (LocalizationManager.Instance.HasLocalizedValue("Trigger Flaw", trait.name, result)) {

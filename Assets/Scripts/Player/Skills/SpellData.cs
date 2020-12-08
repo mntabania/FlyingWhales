@@ -31,13 +31,13 @@ public class SpellData : IPlayerSkill {
 
     #region Virtuals
     public virtual void ActivateAbility(IPointOfInterest targetPOI) {
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
     }
     public virtual void ActivateAbility(LocationGridTile targetTile) {
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
     }
     public virtual void ActivateAbility(LocationGridTile targetTile, ref Character spawnedCharacter) {
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
     }
     public virtual void ActivateAbility(HexTile targetHex) {
         //if(targetHex.settlementOnTile != null) {
@@ -45,13 +45,13 @@ public class SpellData : IPlayerSkill {
         //        PlayerManager.Instance.player.threatComponent.AdjustThreat(20);
         //    }
         //}
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
     }
     public virtual void ActivateAbility(LocationStructure targetStructure) {
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
     }
     public virtual void ActivateAbility(StructureRoom room) {
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
     }
     public virtual string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) { return null; }
     public virtual bool CanPerformAbilityTowards(Character targetCharacter) {
@@ -147,7 +147,7 @@ public class SpellData : IPlayerSkill {
             }
         }
     }
-    public void OnExecuteSpellActionAffliction() {
+    public void OnExecutePlayerSkill() {
         if (PlayerSkillManager.Instance.unlimitedCast == false) {
             if(hasCharges && charges > 0) {
                 AdjustCharges(-1);
@@ -166,8 +166,8 @@ public class SpellData : IPlayerSkill {
             Messenger.Broadcast(SpellSignals.ON_EXECUTE_PLAYER_ACTION, this as PlayerAction);
         } else if (category == PLAYER_SKILL_CATEGORY.AFFLICTION) {
             Messenger.Broadcast(SpellSignals.ON_EXECUTE_AFFLICTION, this);
-        } else if (category == PLAYER_SKILL_CATEGORY.SPELL || category == PLAYER_SKILL_CATEGORY.MINION || category == PLAYER_SKILL_CATEGORY.SUMMON) {
-            Messenger.Broadcast(SpellSignals.ON_EXECUTE_SPELL, this);
+        } else {
+            Messenger.Broadcast(SpellSignals.ON_EXECUTE_PLAYER_SKILL, this);
         }
     }
     private void StartCooldown() {

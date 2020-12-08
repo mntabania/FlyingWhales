@@ -698,6 +698,14 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return false;
     }
+    public bool HasOwnedSettlementThatMeetCriteria(Func<BaseSettlement, bool> criteria) {
+        for (int i = 0; i < ownedSettlements.Count; i++) {
+            if (criteria.Invoke(ownedSettlements[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
     public BaseSettlement GetRandomOwnedSettlement() {
         if(ownedSettlements.Count > 0) {
             return ownedSettlements[UnityEngine.Random.Range(0, ownedSettlements.Count)];

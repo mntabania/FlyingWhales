@@ -86,7 +86,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public string previousClassName { get; private set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
     public HexTile territory { get; private set; }
-    public NPCSettlement ruledSettlement { get; private set; }
     public LycanthropeData lycanData { get; protected set; }
     public Necromancer necromancerTrait { get; protected set; }
     public POI_STATE state { get; private set; }
@@ -146,7 +145,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isAtHomeStructure => currentStructure == homeStructure && homeStructure != null;
     public bool isPartOfHomeFaction => homeRegion != null && faction != null && homeRegion.IsFactionHere(faction); //is this character part of the faction that owns his home npcSettlement
     public bool isFactionless => faction == null || FactionManager.Instance.neutralFaction == faction;
-    public bool isSettlementRuler => ruledSettlement != null;
+    public bool isSettlementRuler => homeSettlement != null && homeSettlement.ruler == this;
     public bool isHidden => reactionComponent.isHidden;
     public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
     public bool isLycanthrope => lycanData != null;
@@ -1720,20 +1719,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     } 
-    public void SetRuledSettlement(NPCSettlement settlement) {
-        if(ruledSettlement != settlement) {
-            ruledSettlement = settlement;
-            if (isSettlementRuler) {
-                behaviourComponent.AddBehaviourComponent(typeof(SettlementRulerBehaviour));
-                jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
-            } else {
-                behaviourComponent.RemoveBehaviourComponent(typeof(SettlementRulerBehaviour));
-                if (!isFactionLeader) {
-                    jobComponent.RemovePriorityJob(JOB_TYPE.JUDGE_PRISONER);
-                }
-            }
-        }
-    }
     public bool HasHome() {
         return homeSettlement != null || homeStructure != null || HasTerritory();
     }
@@ -5898,16 +5883,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Cultist
-    public List<Character> GetListOfCultistTargets(Func<Character, bool> criteria) {
-        List<Character> choices = null;
+    public void PopulateListOfCultistTargets(List<Character> choices, Func<Character, bool> criteria) {
         for (int i = 0; i < relationshipContainer.charactersWithOpinion.Count; i++) {
             Character target = relationshipContainer.charactersWithOpinion[i];
             if (criteria.Invoke(target)) {
-                if(choices == null) { choices = new List<Character>(); }
                 choices.Add(target);
             }
         }
-        return choices;
     }
     #endregion
 
@@ -5952,9 +5934,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (!string.IsNullOrEmpty(data.grave)) {
             grave = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.grave) as Tombstone;
-        }
-        if (!string.IsNullOrEmpty(data.ruledSettlement)) {
-            ruledSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.ruledSettlement) as NPCSettlement;
         }
         if (data.deathLog.hasValue) {
             deathLog = data.deathLog;

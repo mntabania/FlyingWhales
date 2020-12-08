@@ -15,7 +15,7 @@ public class LazinessData : AfflictData {
     
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         AfflictPOIWith("Lazy", targetPOI, name);
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Lazy")) {

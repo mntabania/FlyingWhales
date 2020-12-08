@@ -1399,7 +1399,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     public void StartBuild(PLAYER_SKILL_TYPE structureType) {
         _buildParticles = GameManager.Instance.CreateParticleEffectAt(GetCenterLocationGridTile(), PARTICLE_EFFECT.Build_Demonic_Structure).GetComponent<AutoDestroyParticle>();
         DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
-        demonicStructureSkill.OnExecuteSpellActionAffliction();
+        demonicStructureSkill.OnExecutePlayerSkill();
         StartCoroutine(BuildCoroutine(structureType));
         PlayerManager.Instance.player.SetIsCurrentlyBuildingDemonicStructure(true);
     }
