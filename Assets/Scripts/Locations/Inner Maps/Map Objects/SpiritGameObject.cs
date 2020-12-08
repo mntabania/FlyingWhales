@@ -103,7 +103,7 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
     }
     protected override void OnPointerRightClick(TileObject poi) {
         base.OnPointerRightClick(poi);
-        UIManager.Instance.ShowPlayerActionContextMenu(poi, this.transform);
+        UIManager.Instance.ShowPlayerActionContextMenu(poi, poi.worldPosition, false);
     }
     protected override void OnPointerMiddleClick(TileObject poi) {
         base.OnPointerMiddleClick(poi);
