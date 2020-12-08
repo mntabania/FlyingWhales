@@ -63,27 +63,34 @@ public class ReportCrime : GoapAction {
         OtherData[] otherData = node.otherData;
 
         if (otherData[0].obj is ICrimeable reactable) {
-            if (witness == reactable.actor) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
-                if (witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER) || witness.relationshipContainer.IsFriendsWith(actor)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status, node);
-                }
-            } else if (witness.relationshipContainer.GetOpinionLabel(reactable.actor) == RelationshipManager.Close_Friend || 
-                       witness.relationshipContainer.HasRelationshipWith(reactable.actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER)){
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
-            } else {
-                if (witness.relationshipContainer.IsEnemiesWith(reactable.actor)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
-                } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status, node);
-                }
-            }
             //SPECIAL CASE: After reacting to the Report Crime, witness should also react to the rumor itself
             if(status == REACTION_STATUS.INFORMED && reactable.name != "Report Crime") {
                 ProcessInformation(node.actor, witness, reactable, node);
             }
         }
         return response;
+    }
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+        OtherData[] otherData = node.otherData;
+
+        if (otherData[0].obj is ICrimeable reactable) {
+            if (witness == reactable.actor) {
+                reactions.Add(EMOTION.Anger);
+                if (witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER) || witness.relationshipContainer.IsFriendsWith(actor)) {
+                    reactions.Add(EMOTION.Betrayal);
+                }
+            } else if (witness.relationshipContainer.GetOpinionLabel(reactable.actor) == RelationshipManager.Close_Friend ||
+                       witness.relationshipContainer.HasRelationshipWith(reactable.actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER)) {
+                reactions.Add(EMOTION.Anger);
+            } else {
+                if (witness.relationshipContainer.IsEnemiesWith(reactable.actor)) {
+                    reactions.Add(EMOTION.Approval);
+                } else {
+                    reactions.Add(EMOTION.Concern);
+                }
+            }
+        }
     }
     //public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
     //    IReactable reactable = node.otherData[0] as IReactable;

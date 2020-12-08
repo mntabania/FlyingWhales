@@ -46,6 +46,15 @@ public class Rumor : IReactable {
     public string ReactionOfTarget(Character actor, IPointOfInterest target, REACTION_STATUS status) {
         return rumorable.ReactionOfTarget(actor, target, status);
     }
+    public void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
+        rumorable.PopulateReactionsToActor(reactions, actor, target, witness, status);
+    }
+    public void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
+        rumorable.PopulateReactionsToTarget(reactions, actor, target, witness, status);
+    }
+    public void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, REACTION_STATUS status) {
+        rumorable.PopulateReactionsOfTarget(reactions, actor, target, status);
+    }
     public REACTABLE_EFFECT GetReactableEffect(Character witness) {
         return REACTABLE_EFFECT.Negative;
     }

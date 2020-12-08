@@ -969,14 +969,21 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public string ReactionToActor(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
         return action.ReactionToActor(actor, target, witness, this, status);
     }
-
     public string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
         REACTION_STATUS status) {
         return action.ReactionToTarget(actor, target, witness, this, status);
     }
-
     public string ReactionOfTarget(Character actor, IPointOfInterest target, REACTION_STATUS status) {
         return action.ReactionOfTarget(actor, target, this, status);
+    }
+    public void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
+        action.PopulateReactionsToActor(reactions, actor, target, witness, this, status);
+    }
+    public void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
+        action.PopulateReactionsToTarget(reactions, actor, target, witness, this, status);
+    }
+    public void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, REACTION_STATUS status) {
+        action.PopulateReactionsOfTarget(reactions, actor, target, this, status);
     }
     public REACTABLE_EFFECT GetReactableEffect(Character witness) {
         return action.GetReactableEffect(this, witness);

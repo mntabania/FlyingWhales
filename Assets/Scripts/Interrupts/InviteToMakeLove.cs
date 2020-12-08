@@ -141,33 +141,32 @@ namespace Interrupts {
             }
             return true;
         }
-        public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
-            string response = base.ReactionToActor(actor, target, witness, interrupt, status);
+        public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
+            base.PopulateReactionsToActor(reactions, actor, target, witness, interrupt, status);
+
             if (target != witness && target is Character targetCharacter) {
                 bool isActorLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
                 bool isTargetLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
 
                 if (isActorLoverOrAffairOfWitness) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                    reactions.Add(EMOTION.Rage);
+                    reactions.Add(EMOTION.Betrayal);
                 } else if (isTargetLoverOrAffairOfWitness) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status);
-                    //response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                    reactions.Add(EMOTION.Rage);
                     if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.IsFamilyMember(actor)) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                        reactions.Add(EMOTION.Betrayal);
                     }
                 } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, witness, actor, status);
+                    reactions.Add(EMOTION.Embarassment);
                     Character loverOfActor = actor.relationshipContainer.GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER);
                     if (loverOfActor != null && loverOfActor != targetCharacter) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
+                        reactions.Add(EMOTION.Disapproval);
+                        reactions.Add(EMOTION.Disgust);
                     } else if (witness.relationshipContainer.IsFriendsWith(actor)) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
+                        reactions.Add(EMOTION.Scorn);
                     }
                 }
             }
-            return response;
         }
         #endregion
     }

@@ -38,9 +38,57 @@ namespace Interrupts {
         //PerTickInterrupt does not trigger on the last tick of the interrupt because ExecuteInterruptEndEffect is triggered
         public virtual bool PerTickInterrupt(InterruptHolder interruptHolder) { return false; }
 
-        public virtual string ReactionToActor(Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) { return string.Empty; }
-        public virtual string ReactionToTarget(Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) { return string.Empty; }
-        public virtual string ReactionOfTarget(Character actor, IPointOfInterest target, InterruptHolder interrupt, REACTION_STATUS status) { return string.Empty; }
+        public virtual string ReactionToActor(Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
+            List<EMOTION> emotions = ObjectPoolManager.Instance.CreateNewEmotionList();
+            PopulateReactionsToActor(emotions, actor, target, witness, interrupt, status);
+
+            if(interrupt.interrupt.type == INTERRUPT.Transform_To_Wolf || interrupt.interrupt.type == INTERRUPT.Revert_To_Normal) {
+                if (actor.isLycanthrope) {
+                    //If actor is lycanthrope, reaction to actor must be to the human form
+                    actor = actor.lycanData.originalForm;
+                }
+            }
+
+            string response = string.Empty;
+            if (emotions != null) {
+                for (int i = 0; i < emotions.Count; i++) {
+                    response += CharacterManager.Instance.TriggerEmotion(emotions[i], witness, actor, status);
+                }
+            }
+            ObjectPoolManager.Instance.ReturnEmotionListToPool(emotions);
+            return response;
+        }
+        public virtual string ReactionToTarget(Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
+            List<EMOTION> emotions = ObjectPoolManager.Instance.CreateNewEmotionList();
+            PopulateReactionsToTarget(emotions, actor, target, witness, interrupt, status);
+            string response = string.Empty;
+            if (emotions != null) {
+                for (int i = 0; i < emotions.Count; i++) {
+                    response += CharacterManager.Instance.TriggerEmotion(emotions[i], witness, target, status);
+                }
+            }
+            ObjectPoolManager.Instance.ReturnEmotionListToPool(emotions);
+            return response;
+        }
+        public virtual string ReactionOfTarget(Character actor, IPointOfInterest target, InterruptHolder interrupt, REACTION_STATUS status) {
+            if (target is Character targetCharacter) {
+                List<EMOTION> emotions = ObjectPoolManager.Instance.CreateNewEmotionList();
+                PopulateReactionsOfTarget(emotions, actor, target, interrupt, status);
+                string response = string.Empty;
+                if (emotions != null) {
+                    for (int i = 0; i < emotions.Count; i++) {
+                        response += CharacterManager.Instance.TriggerEmotion(emotions[i], targetCharacter, actor, status);
+                    }
+                }
+                ObjectPoolManager.Instance.ReturnEmotionListToPool(emotions);
+                return response;
+            }
+            return string.Empty;
+        }
+        public virtual void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) { }
+        public virtual void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) { }
+        public virtual void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, InterruptHolder interrupt, REACTION_STATUS status) { }
+
         public virtual Log CreateEffectLog(Character actor, IPointOfInterest target) {
             if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", name, "effect")) {
                 Log effectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", name, "effect", null, logTags);
@@ -140,14 +188,21 @@ namespace Interrupts {
         public string ReactionToActor(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
             return interrupt.ReactionToActor(actor, target, witness, this, status);
         }
-
         public string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
             REACTION_STATUS status) {
             return interrupt.ReactionToTarget(actor, target, witness, this, status);
         }
-
         public string ReactionOfTarget(Character actor, IPointOfInterest target, REACTION_STATUS status) {
             return interrupt.ReactionOfTarget(actor, target, this, status);
+        }
+        public void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
+            interrupt.PopulateReactionsToActor(reactions, actor, target, witness, this, status);
+        }
+        public void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
+            interrupt.PopulateReactionsToTarget(reactions, actor, target, witness, this, status);
+        }
+        public void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, REACTION_STATUS status) {
+            interrupt.PopulateReactionsOfTarget(reactions, actor, target, this, status);
         }
         public REACTABLE_EFFECT GetReactableEffect(Character witness) {
             return REACTABLE_EFFECT.Neutral;

@@ -27,84 +27,87 @@ public class VampiricEmbrace : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, target, witness, node, status);
-        Vampire vampire = actor.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
-        if (vampire != null) {
-            vampire.AddAwareCharacter(witness);
-        }
-        //CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
 
         CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(witness, actor, target, CRIME_TYPE.Vampire);
         if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
+            reactions.Add(EMOTION.Shock);
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
             if (opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, actor, status, node);
+                reactions.Add(EMOTION.Despair);
             }
             if (witness.traitContainer.HasTrait("Coward")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status, node);
+                reactions.Add(EMOTION.Fear);
             } else if (!witness.traitContainer.HasTrait("Psychopath")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
+                reactions.Add(EMOTION.Threatened);
             }
             if (target is Character targetCharacter) {
                 string opinionToTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if (opinionToTarget == RelationshipManager.Friend || opinionToTarget == RelationshipManager.Close_Friend) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                    reactions.Add(EMOTION.Disapproval);
+                    reactions.Add(EMOTION.Anger);
                 } else if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
                      && opinionToTarget != RelationshipManager.Rival) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                    reactions.Add(EMOTION.Disapproval);
+                    reactions.Add(EMOTION.Anger);
                 } else if (opinionToTarget == RelationshipManager.Acquaintance || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
                     if (!witness.traitContainer.HasTrait("Psychopath")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                        reactions.Add(EMOTION.Anger);
                     }
                 }
             }
         } else {
             if (witness.traitContainer.HasTrait("Hemophiliac")) {
-                if(RelationshipManager.IsSexuallyCompatible(witness, actor)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status, node);
+                if (RelationshipManager.IsSexuallyCompatible(witness, actor)) {
+                    reactions.Add(EMOTION.Arousal);
                 } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
+                    reactions.Add(EMOTION.Approval);
                 }
             }
         }
+    }
+    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
+        if (target is Character targetCharacter) {
+            CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(targetCharacter, actor, target, CRIME_TYPE.Vampire);
+            if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
+                reactions.Add(EMOTION.Shock);
+
+                string opinionLabel = targetCharacter.relationshipContainer.GetOpinionLabel(actor);
+                if (targetCharacter.traitContainer.HasTrait("Coward")) {
+                    reactions.Add(EMOTION.Fear);
+                } else {
+                    reactions.Add(EMOTION.Threatened);
+                }
+                if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
+                    reactions.Add(EMOTION.Betrayal);
+                }
+            } else {
+                if (targetCharacter.traitContainer.HasTrait("Hemophiliac")) {
+                    if (RelationshipManager.IsSexuallyCompatible(actor, targetCharacter)) {
+                        reactions.Add(EMOTION.Arousal);
+                    } else {
+                        reactions.Add(EMOTION.Approval);
+                    }
+                }
+            }
+        }
+    }
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(actor, target, witness, node, status);
+        Vampire vampire = actor.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+        if (vampire != null) {
+            vampire.AddAwareCharacter(witness);
+        }
         return response;
     }
-    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node,
-        REACTION_STATUS status) {
+    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionOfTarget(actor, target, node, status);
         if (target is Character targetCharacter) {
             Vampire vampire = actor.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
             if (vampire != null) {
                 vampire.AddAwareCharacter(targetCharacter);
-            }
-            //CrimeManager.Instance.ReactToCrime(targetCharacter, actor, targetCharacter, target.factionOwner, node.crimeType, node, status);
-
-            CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(targetCharacter, actor, target, CRIME_TYPE.Vampire);
-            if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor, status, node);
-
-                string opinionLabel = targetCharacter.relationshipContainer.GetOpinionLabel(actor);
-                if (targetCharacter.traitContainer.HasTrait("Coward")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, targetCharacter, actor, status, node);
-                } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, targetCharacter, actor, status, node);
-                }
-                if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status, node);
-                }
-            } else {
-                if (targetCharacter.traitContainer.HasTrait("Hemophiliac")) {
-                    if (RelationshipManager.IsSexuallyCompatible(actor, targetCharacter)) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, targetCharacter, actor, status, node);
-                    } else {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, targetCharacter, actor, status, node);
-                    }
-                }
             }
         }
         return response;

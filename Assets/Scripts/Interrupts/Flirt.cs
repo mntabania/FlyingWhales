@@ -19,10 +19,9 @@ namespace Interrupts {
             interruptHolder.actor.nonActionEventsComponent.NormalFlirtCharacter(interruptHolder.target as Character, ref overrideEffectLog);
             return true;
         }
-        public override string ReactionToActor(Character actor, IPointOfInterest target,
-            Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
-            string response = base.ReactionToActor(actor, target, witness, interrupt, status);
-            if(target is Character targetCharacter) {
+        public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
+            base.PopulateReactionsToActor(reactions, actor, target, witness, interrupt, status);
+            if (target is Character targetCharacter) {
                 if (target != witness) {
                     bool isActorLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
                     bool isTargetLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
@@ -32,43 +31,41 @@ namespace Interrupts {
                         Vampire vampire = actor.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
                         isKnownVampire = vampire != null && vampire.DoesCharacterKnowThisVampire(witness);
                         if (isKnownVampire) {
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
+                            reactions.Add(EMOTION.Disgust);
                         }
                     }
                     if (witness.traitContainer.HasTrait("Lycanphobic")) {
                         bool isKnownWerewolf = false;
                         isKnownWerewolf = actor.isLycanthrope && actor.lycanData.DoesCharacterKnowThisLycan(witness);
                         if (isKnownWerewolf) {
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
+                            reactions.Add(EMOTION.Disgust);
                         }
                     }
 
                     if (isActorLoverOrAffairOfWitness) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status);
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                        reactions.Add(EMOTION.Rage);
+                        reactions.Add(EMOTION.Betrayal);
                     } else if (isTargetLoverOrAffairOfWitness) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status);
-                        //response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
-                        if(witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.IsFamilyMember(actor)) {
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                        reactions.Add(EMOTION.Rage);
+                        if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.IsFamilyMember(actor)) {
+                            reactions.Add(EMOTION.Betrayal);
                         }
                     } else {
                         Character loverOfActor = actor.relationshipContainer.GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER);
                         if (loverOfActor != null && loverOfActor != targetCharacter) {
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
+                            reactions.Add(EMOTION.Disapproval);
+                            reactions.Add(EMOTION.Disgust);
                         } else if (witness.relationshipContainer.IsFriendsWith(actor)) {
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
+                            reactions.Add(EMOTION.Scorn);
                         }
                     }
                 } else {
                     //target is witness
                     if (status == REACTION_STATUS.INFORMED) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, witness, actor, status);
+                        reactions.Add(EMOTION.Embarassment);
                     }
                 }
             }
-            return response;
         }
         public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, InterruptHolder crime) {
             if (target is Character targetCharacter) {

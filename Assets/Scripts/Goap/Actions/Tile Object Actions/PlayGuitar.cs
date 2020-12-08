@@ -104,34 +104,32 @@ public class PlayGuitar : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, target, witness, node, status);
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
         Trait trait = witness.traitContainer.GetTraitOrStatus<Trait>("Music Hater", "Music Lover");
         if (trait != null) {
             if (trait.name == "Music Hater") {
                 if (witness.moodComponent.moodState == MOOD_STATE.Bad) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);    
+                    reactions.Add(EMOTION.Anger);
                 } else if (witness.moodComponent.moodState == MOOD_STATE.Critical) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status, node);    
+                    reactions.Add(EMOTION.Rage);
                 } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);    
+                    reactions.Add(EMOTION.Disapproval);
                 }
             } else {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
-                if(RelationshipManager.Instance.GetCompatibilityBetween(witness, actor) >= 4 && RelationshipManager.IsSexuallyCompatible(witness, actor) && 
+                reactions.Add(EMOTION.Approval);
+                if (RelationshipManager.Instance.GetCompatibilityBetween(witness, actor) >= 4 && RelationshipManager.IsSexuallyCompatible(witness, actor) &&
                    witness.moodComponent.moodState != MOOD_STATE.Critical) {
                     int value = 50;
                     if (actor.traitContainer.HasTrait("Unattractive")) {
                         value = 20;
                     }
-                    if(UnityEngine.Random.Range(0, 100) < value) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status, node);
+                    if (UnityEngine.Random.Range(0, 100) < value) {
+                        reactions.Add(EMOTION.Arousal);
                     }
                 }
             }
         }
-        return response;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         if (witness.traitContainer.HasTrait("Music Hater")) {

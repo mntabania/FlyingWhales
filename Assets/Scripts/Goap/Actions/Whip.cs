@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Traits;
 using Random = UnityEngine.Random;
 
@@ -29,56 +30,50 @@ public class Whip : GoapAction {
         }
         return REACTABLE_EFFECT.Positive;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, target, witness, node, status);
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
         Character targetCharacter = target as Character;
         if (targetCharacter.crimeComponent.HasWantedCrime() && targetCharacter.crimeComponent.IsTargetOfACrime(witness)) {
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, node.actor, status, node);
+            reactions.Add(EMOTION.Approval);
         } else {
             if (witness.relationshipContainer.IsFriendsWith(targetCharacter)
                 && witness.traitContainer.HasTrait("Psychopath") == false) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, node.actor, status, node);
+                reactions.Add(EMOTION.Resentment);
             }
             if (witness.traitContainer.HasTrait("Psychopath") == false) {
                 if ((witness.traitContainer.HasTrait("Coward") && Random.Range(0, 100) < 75) ||
                     (witness.traitContainer.HasTrait("Coward") == false && Random.Range(0, 100) < 15)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, node.actor, status, node);
+                    reactions.Add(EMOTION.Fear);
                 }
             }
         }
-        return response;
     }
-    public override string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToTarget(actor, target, witness, node, status);
+    public override void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToTarget(reactions, actor, target, witness, node, status);
         Character targetCharacter = target as Character;
         if (witness.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, RelationshipManager.Acquaintance)) {
             if (witness.traitContainer.HasTrait("Psychopath") == false && Random.Range(0, 100) < 50) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status, node);
+                reactions.Add(EMOTION.Concern);
             }
         } else if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
             if (witness.traitContainer.HasTrait("Psychopath") == false) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status, node);
+                reactions.Add(EMOTION.Concern);
             }
         } else if (witness.relationshipContainer.IsEnemiesWith(targetCharacter)) {
             if (witness.traitContainer.HasTrait("Diplomatic") == false) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter, status, node);
+                reactions.Add(EMOTION.Scorn);
             }
         }
-        return response;
     }
-    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node,
-        REACTION_STATUS status) {
-        string response = base.ReactionOfTarget(actor, target, node, status);
+    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
         Character targetCharacter = target as Character;
         if (Random.Range(0, 100) < 20) {
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, targetCharacter, node.actor, status, node);
+            reactions.Add(EMOTION.Resentment);
         }
         if (targetCharacter.traitContainer.HasTrait("Hothead") || Random.Range(0, 100) < 20) {
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, node.actor, status, node);
+            reactions.Add(EMOTION.Anger);
         }
-        return response;
     }
     #endregion
 

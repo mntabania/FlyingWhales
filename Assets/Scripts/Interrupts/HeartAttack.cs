@@ -1,4 +1,6 @@
 ﻿using UtilityScripts;
+using System.Collections.Generic;
+
 namespace Interrupts {
     public class HeartAttack : Interrupt {
         public HeartAttack() : base(INTERRUPT.Heart_Attack) {
@@ -23,23 +25,6 @@ namespace Interrupts {
         public override string ReactionToActor(Character actor, IPointOfInterest target,
             Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
             string response = base.ReactionToActor(actor, target, witness, interrupt, status);
-            
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
-            
-            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
-            if (opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Friend ||
-                opinionLabel == RelationshipManager.Close_Friend) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
-            } else if ((witness.relationshipContainer.IsFamilyMember(actor) || 
-                        witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR)) && 
-                       !witness.relationshipContainer.HasOpinionLabelWithCharacter(actor, RelationshipManager.Rival)) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
-            } else if (opinionLabel == RelationshipManager.Rival) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
-            }
-            if (witness.traitContainer.HasTrait("Coward")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
-            }
 
             if (status == REACTION_STATUS.WITNESSED && actor.homeSettlement != null && actor.homeSettlement is NPCSettlement settlement) {
                 //When a resident has been witnessed to die due to Heart Attack, the Settlement will be flagged as Plagued
@@ -47,6 +32,26 @@ namespace Interrupts {
             }
             
             return response;
+        }
+        public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
+            base.PopulateReactionsToActor(reactions, actor, target, witness, interrupt, status);
+
+            reactions.Add(EMOTION.Shock);
+
+            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
+            if (opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Friend ||
+                opinionLabel == RelationshipManager.Close_Friend) {
+                reactions.Add(EMOTION.Concern);
+            } else if ((witness.relationshipContainer.IsFamilyMember(actor) ||
+                        witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR)) &&
+                       !witness.relationshipContainer.HasOpinionLabelWithCharacter(actor, RelationshipManager.Rival)) {
+                reactions.Add(EMOTION.Concern);
+            } else if (opinionLabel == RelationshipManager.Rival) {
+                reactions.Add(EMOTION.Scorn);
+            }
+            if (witness.traitContainer.HasTrait("Coward")) {
+                reactions.Add(EMOTION.Fear);
+            }
         }
         #endregion
     }

@@ -50,53 +50,50 @@ public class FirstAidCharacter : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, target, witness, node, status);
-        
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
         if (target is Character targetCharacter) {
             string opinionOfTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             FirstAidCharacterUAD data = node.GetConvertedUniqueActionData<FirstAidCharacterUAD>();
             if (data.usedPoisonedHealingPotion) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
+                reactions.Add(EMOTION.Shock);
                 if (opinionOfTarget == RelationshipManager.Friend || opinionOfTarget == RelationshipManager.Close_Friend) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);    
+                    reactions.Add(EMOTION.Anger);
                 }
             } else {
                 if (opinionOfTarget == RelationshipManager.Friend || opinionOfTarget == RelationshipManager.Close_Friend) {
                     if (!witness.traitContainer.HasTrait("Psychopath")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, witness, actor, status, node);
+                        reactions.Add(EMOTION.Gratefulness);
                     }
                 } else if (opinionOfTarget == RelationshipManager.Rival) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                    reactions.Add(EMOTION.Disapproval);
                 }
             }
         }
-        return response;
     }
-    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node,
-        REACTION_STATUS status) {
-        string response = base.ReactionOfTarget(actor, target, node, status);
+    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
         if (target is Character targetCharacter) {
             FirstAidCharacterUAD data = node.GetConvertedUniqueActionData<FirstAidCharacterUAD>();
             if (data.usedPoisonedHealingPotion) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor, status, node);
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status, node);
+                reactions.Add(EMOTION.Shock);
+                reactions.Add(EMOTION.Betrayal);
             } else {
                 if (!targetCharacter.traitContainer.HasTrait("Psychopath")) {
                     if (targetCharacter.relationshipContainer.IsEnemiesWith(actor)) {
                         if (UnityEngine.Random.Range(0, 100) < 30) {
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status, node);
+                            reactions.Add(EMOTION.Gratefulness);
                         }
                         if (UnityEngine.Random.Range(0, 100) < 20) {
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, targetCharacter, actor, status, node);
+                            reactions.Add(EMOTION.Embarassment);
+
                         }
                     } else {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status, node);
+                        reactions.Add(EMOTION.Gratefulness);
                     }
                 }
             }
         }
-        return response;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         if (node.poiTarget is Character character) {

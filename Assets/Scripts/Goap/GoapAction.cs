@@ -202,17 +202,54 @@ public class GoapAction {
     public virtual string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
         CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
-        return string.Empty;
+
+        List<EMOTION> emotions = ObjectPoolManager.Instance.CreateNewEmotionList();
+        PopulateReactionsToActor(emotions, actor, target, witness, node, status);
+        string response = string.Empty;
+        if(emotions != null) {
+            for (int i = 0; i < emotions.Count; i++) {
+                response += CharacterManager.Instance.TriggerEmotion(emotions[i], witness, actor, status, node);
+            }
+        }
+        ObjectPoolManager.Instance.ReturnEmotionListToPool(emotions);
+        return response;
     }
     public virtual string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) { return string.Empty; }
+        ActualGoapNode node, REACTION_STATUS status) {
+        List<EMOTION> emotions = ObjectPoolManager.Instance.CreateNewEmotionList();
+        PopulateReactionsToTarget(emotions, actor, target, witness, node, status);
+        string response = string.Empty;
+        if (emotions != null) {
+            for (int i = 0; i < emotions.Count; i++) {
+                response += CharacterManager.Instance.TriggerEmotion(emotions[i], witness, target, status, node);
+            }
+        }
+        ObjectPoolManager.Instance.ReturnEmotionListToPool(emotions);
+        return response;
+    }
     public virtual string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node,
         REACTION_STATUS status) {
         if(target is Character targetCharacter) {
             CrimeManager.Instance.ReactToCrime(targetCharacter, actor, target, target.factionOwner, node.crimeType, node, status);
+            List<EMOTION> emotions = ObjectPoolManager.Instance.CreateNewEmotionList();
+            PopulateReactionsOfTarget(emotions, actor, target, node, status);
+            string response = string.Empty;
+            if (emotions != null) {
+                for (int i = 0; i < emotions.Count; i++) {
+                    response += CharacterManager.Instance.TriggerEmotion(emotions[i], targetCharacter, actor, status, node);
+                }
+            }
+            ObjectPoolManager.Instance.ReturnEmotionListToPool(emotions);
+            return response;
         }
         return string.Empty;
     }
+    public virtual void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness,
+        ActualGoapNode node, REACTION_STATUS status) { }
+    public virtual void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness,
+    ActualGoapNode node, REACTION_STATUS status) { }
+    public virtual void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target,
+    ActualGoapNode node, REACTION_STATUS status) { }
     public virtual void OnActionStarted(ActualGoapNode node) { }
     public virtual void OnStoppedInterrupt(ActualGoapNode node) { }
     public virtual REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {

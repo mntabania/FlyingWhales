@@ -32,24 +32,19 @@ public class Trespassing : GoapAction {
     //    }
     //    return goapActionInvalidity;
     //}
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-    ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, target, witness, node, status);
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
         if (!witness.traitContainer.HasTrait("Cultist")) {
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+            reactions.Add(EMOTION.Anger);
         }
-        //CrimeManager.Instance.ReactToCrime(witness, actor, targetCharacter, trespassedStructure.settlementLocation.owner, node.crimeType, node, status);
-        return response;
     }
-    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionOfTarget(actor, target, node, status);
-        if(target is Character targetCharacter) {
+    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
+        if (target is Character targetCharacter) {
             if (!targetCharacter.traitContainer.HasTrait("Cultist")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor, status, node);
+                reactions.Add(EMOTION.Anger);
             }
-            //CrimeManager.Instance.ReactToCrime(targetCharacter, actor, targetCharacter, trespassedStructure.settlementLocation.owner, node.crimeType, node, status);
         }
-        return response;
     }
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Trespassing;
