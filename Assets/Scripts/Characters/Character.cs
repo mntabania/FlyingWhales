@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Characters.Components;
@@ -11,7 +10,6 @@ using UnityEngine.Assertions;
 using Interrupts;
 using Locations.Settlements;
 using UnityEngine.EventSystems;
-using UnityEngine.Profiling;
 using UtilityScripts;
 using JetBrains.Annotations;
 using Plague.Transmission;
@@ -32,7 +30,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public string persistentID { get; private set; }
     //visuals
     public CharacterVisuals visuals { get; }
-    //public CharacterAvatar avatar { get; private set; }
     public int currentHP { get; protected set; }
     public int doNotRecoverHP { get; protected set; }
     public SEXUALITY sexuality { get; private set; }
@@ -48,8 +45,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Region homeRegion { get; protected set; }
     public NPCSettlement homeSettlement { get; protected set; }
     public LocationStructure homeStructure { get; protected set; }
-    //public int supply { get; set; }
-    //public int food { get; set; }
     public CharacterMarker marker { get; private set; }
     public JobQueueItem currentJob { get; private set; }
     public GoapPlan currentPlan { get; private set; }
@@ -58,15 +53,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public JobQueue jobQueue { get; private set; }
     public TileObject tileObjectLocation { get; private set; }
     public CharacterTrait defaultCharacterTrait { get; private set; }
-    public Faction prevFaction { get; private set; }
-    //public Character lastAssaultedCharacter { get; private set; }
     public List<INTERACTION_TYPE> advertisedActions { get; private set; }
     public List<TileObject> items { get; private set; }
     public List<TileObject> ownedItems { get; private set; }
     public List<JobQueueItem> allJobsTargetingThis { get; private set; }
     public List<Trait> traitsNeededToBeRemoved { get; private set; }
-    //public Party ownParty { get; protected set; }
-    //public Party currentParty { get; protected set; }
     public Dictionary<RESOURCE, int> storedResources { get; protected set; }
     public bool hasUnresolvedCrime { get; protected set; }
     public bool isConversing { get; protected set; }
@@ -125,6 +116,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public ReligionComponent religionComponent { get; private set; }
     public LimiterComponent limiterComponent { get; private set; }
     public CharacterEventDispatcher eventDispatcher { get; }
+    public PreviousCharacterDataComponent previousCharacterDataComponent { get; }
 
     #region getters / setters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
@@ -244,6 +236,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// Is the character part of the neutral faction? or no faction?
     /// </summary>
     public bool isVagrantOrFactionless => faction == null || FactionManager.Instance.vagrantFaction == faction; //is the character part of the friendly neutral faction? or no faction?
+    public Faction prevFaction => previousCharacterDataComponent.previousFaction;
     #endregion
 
     public Character(string className, RACE race, GENDER gender, SEXUALITY sexuality, int id = -1) : this() {
@@ -321,6 +314,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         religionComponent = new ReligionComponent(); religionComponent.SetOwner(this);
         limiterComponent = new LimiterComponent(); limiterComponent.SetOwner(this);
         eventDispatcher = new CharacterEventDispatcher();
+        previousCharacterDataComponent = new PreviousCharacterDataComponent(); previousCharacterDataComponent.SetOwner(this);
 
         needsComponent.ResetSleepTicks();
     }
@@ -398,6 +392,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         crimeComponent = data.crimeComponent.Load(); crimeComponent.SetOwner(this);
         religionComponent = data.religionComponent.Load(); religionComponent.SetOwner(this);
         limiterComponent = data.limiterComponent.Load(); limiterComponent.SetOwner(this);
+        previousCharacterDataComponent = data.previousCharacterDataComponent.Load(); previousCharacterDataComponent.SetOwner(this);
         eventDispatcher = new CharacterEventDispatcher();
 
         if (data.hasMinion) {
@@ -441,7 +436,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// <summary>
     /// Make this character subscribe to signals that we never want to remove.
     /// </summary>
-    public void SubscribeToPermanentSignals() {
+    private void SubscribeToPermanentSignals() {
         //had to make name change signal permanent because it is possible for the player to change the name of
         //this characters killer, and we still want to update this character's death log if that happens. 
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
@@ -1307,11 +1302,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //ignore change, because character is already part of that faction
             return false;
         }
-        prevFaction = _faction;
+        if (_faction != null) {
+            previousCharacterDataComponent.SetPreviousFaction(_faction);    
+        }
         _faction = newFaction;
-        //currentAlterEgo.SetFaction(faction);
         OnChangeFaction(prevFaction, newFaction);
-        // UpdateItemFactionOwner();
         if (_faction != null) {
             Messenger.Broadcast(FactionSignals.FACTION_SET, this);
         }
@@ -2655,18 +2650,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    public void SetHomeStructure(LocationStructure homeStructure) {
-        this.homeStructure = homeStructure;
-        if(homeStructure != null) {
+    public void SetHomeStructure(LocationStructure p_homeStructure) {
+        if (homeStructure != null) {
+            previousCharacterDataComponent.SetPreviousHomeStructure(homeStructure);
+        }
+        homeStructure = p_homeStructure;
+        if(p_homeStructure != null) {
             if(tileObjectComponent.primaryBed != null) {
-                if(tileObjectComponent.primaryBed.gridTileLocation == null || tileObjectComponent.primaryBed.gridTileLocation.structure != homeStructure) {
-                    tileObjectComponent.SetPrimaryBed(homeStructure.GetRandomTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.gridTileLocation != null));
+                if(tileObjectComponent.primaryBed.gridTileLocation == null || tileObjectComponent.primaryBed.gridTileLocation.structure != p_homeStructure) {
+                    tileObjectComponent.SetPrimaryBed(p_homeStructure.GetRandomTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.gridTileLocation != null));
                 }
             } else {
-                tileObjectComponent.SetPrimaryBed(homeStructure.GetRandomTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.gridTileLocation != null));
+                tileObjectComponent.SetPrimaryBed(p_homeStructure.GetRandomTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.gridTileLocation != null));
             }
         }
-        //currentAlterEgo.SetHomeStructure(homeStructure);
     }
     public bool MigrateHomeTo(BaseSettlement newHomeSettlement, LocationStructure homeStructure = null, bool broadcast = true, bool addToRegionResidents = true) {
         BaseSettlement previousHome = null;
@@ -2777,6 +2774,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Party, this, "Left home settlement");
                 }
             }
+            if (homeSettlement != null) {
+                //make sure that previous data only stores non null values, this is so that when a character leaves a settlement,
+                //then becomes homeless, the stored value is still the first actual settlement that it left.
+                previousCharacterDataComponent.SetPreviousHomeSettlement(homeSettlement);    
+            }
+            
             homeSettlement = settlement;
             logComponent.PrintLogIfActive($"Set home settlement of {name} to {homeSettlement?.name}");
             if (isNormalCharacter) {
@@ -5978,9 +5981,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (!string.IsNullOrEmpty(data.faction)) {
             _faction = FactionManager.Instance.GetFactionByPersistentID(data.faction);
         }
-        if (!string.IsNullOrEmpty(data.prevFaction)) {
-            prevFaction = FactionManager.Instance.GetFactionByPersistentID(data.prevFaction);
-        }
         if (!string.IsNullOrEmpty(data.currentJob)) {
             currentJob = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(data.currentJob);
             if (currentJob is GoapPlanJob job && job.assignedPlan != null) {
@@ -6036,6 +6036,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         gatheringComponent.LoadReferences(data.gatheringComponent);
         tileObjectComponent.LoadReferences(data.tileObjectComponent);
         crimeComponent.LoadReferences(data.crimeComponent);
+        previousCharacterDataComponent.LoadReferences(data.previousCharacterDataComponent);
 
         //Place marker after loading references
         if (data.hasMarker) {

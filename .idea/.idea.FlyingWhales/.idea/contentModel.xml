@@ -1210,6 +1210,7 @@
               <e p="MovementComponent.cs" t="Include" />
               <e p="NonActionEventsComponent.cs" t="Include" />
               <e p="PartyComponent.cs" t="Include" />
+              <e p="PreviousCharacterDataComponent.cs" t="Include" />
               <e p="ReactionComponent.cs" t="Include" />
               <e p="ReligionComponent.cs" t="Include" />
               <e p="RumorComponent.cs" t="Include" />
@@ -3044,6 +3045,7 @@
             <e p="CombatAbilityButton.cs" t="Include" />
             <e p="Comparers.cs" t="Include" />
             <e p="ConsoleBase.cs" t="Include" />
+            <e p="ConversationMenu.cs" t="Include" />
             <e p="Custom UI" t="Include">
               <e p="ButtonConverter.cs" t="Include" />
               <e p="RuinarchButton.cs" t="Include" />
@@ -3246,7 +3248,6 @@
             <e p="RoleSlotItemDraggable.cs" t="Include" />
             <e p="SecretItem.cs" t="Include" />
             <e p="Selector.cs" t="Include" />
-            <e p="ShareIntelMenu.cs" t="Include" />
             <e p="SkillSlotItem.cs" t="Include" />
             <e p="SlotItem.cs" t="Include" />
             <e p="SlotItemDraggable.cs" t="Include" />
