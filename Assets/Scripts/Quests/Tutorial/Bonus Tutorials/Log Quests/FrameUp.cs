@@ -51,11 +51,11 @@ namespace Tutorial {
                 new QuestStepCollection(
                     new SeizePOIStep("Take someone's item", 
                             poi => poi is TileObject tileObject && tileObject.characterOwner != null 
-                            && tileObject.characterOwner.isDead == false && tileObject.characterOwner.traitContainer.HasTrait("Blessed") == false)
+                            && tileObject.characterOwner.isDead == false && tileObject.characterOwner.traitContainer.IsBlessed() == false)
                         .SetHoverOverAction(OnHoverOwnership)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
                     new DropPOIAtStructureStep(IsDroppedAtStructureValid, poi => poi is TileObject tileObject && tileObject.characterOwner != null
-                            && tileObject.characterOwner.isDead == false && tileObject.characterOwner.traitContainer.HasTrait("Blessed") == false,
+                            && tileObject.characterOwner.isDead == false && tileObject.characterOwner.traitContainer.IsBlessed() == false,
                         "Drop at another one's house")
                         .SetHoverOverAction(OnHoverStructureOwnership)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)

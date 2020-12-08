@@ -52,12 +52,14 @@ public class DefaultHomeless : CharacterBehaviourComponent {
             }
         }
 
-        if (character.currentSettlement != null) {
-            log += $"\n-{character.name} is currently inside settlement {character.currentSettlement.name}";
-            if (character.currentSettlement != character.homeSettlement) {
-                log += $"\n-{character.currentSettlement.name} is not {character.name}'s home. Will Create job to move to wilderness.";
-                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).tiles);
-                return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
+        if (character.homeStructure == null || character.homeStructure.hasBeenDestroyed) {
+            if (character.currentSettlement != null) {
+                log += $"\n-{character.name} is currently inside settlement {character.currentSettlement.name}";
+                if (character.currentSettlement != character.homeSettlement) {
+                    log += $"\n-{character.currentSettlement.name} is not {character.name}'s home. Will Create job to move to wilderness.";
+                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).tiles);
+                    return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
+                }
             }
         }
         return false;

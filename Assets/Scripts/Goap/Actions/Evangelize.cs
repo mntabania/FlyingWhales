@@ -118,7 +118,7 @@ public class Evangelize : GoapAction {
         if (targetCharacter.traitContainer.HasTrait("Vigilant")) {
             fail += 50;
         }
-        if (targetCharacter.traitContainer.HasTrait("Blessed")) {
+        if (targetCharacter.traitContainer.IsBlessed()) {
             fail += 100;
         }
         if (targetCharacter.isSettlementRuler) {

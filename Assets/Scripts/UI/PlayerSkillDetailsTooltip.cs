@@ -137,7 +137,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             if (activePOI != null) {
                 if (activePOI is Character activeCharacter) {
                     if (spellData.CanPerformAbilityTowards(activeCharacter) == false) {
-                        if (spellData is PlayerAction playerAction && !playerAction.canBeCastOnBlessed && activeCharacter.traitContainer.HasTrait("Blessed")) {
+                        if (spellData is PlayerAction playerAction && !playerAction.canBeCastOnBlessed && activeCharacter.traitContainer.IsBlessed()) {
                             additionalText.text += $"<color=#FE3E83>Blessed Villagers are protected from your powers.</color>\n";
                         }
                         string wholeReason = spellData

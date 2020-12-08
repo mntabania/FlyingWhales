@@ -22,15 +22,10 @@ namespace Traits {
         bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1);
         void AddTraitOverrideFunction(string identifier, Trait trait);
         bool RestrainAndImprison(ITraitable addTo, Character characterResponsible = null, Faction factionThatImprisoned = null, Character characterThatImprisoned = null);
-        //void AddOnCollideWithTrait(Trait trait);
-        //bool RemoveOnCollideWithTrait(Trait trait);
-        //void AddOnEnterGridTileTrait(Trait trait);
-        //bool RemoveOnEnterGridTileTrait(Trait trait);
         #endregion
 
         #region Removing
         bool RemoveTrait(ITraitable removeFrom, Trait trait, Character removedBy = null, bool bySchedule = false);
-        //void RemoveTraitAndStacks(ITraitable removeFrom, Trait trait, Character removedBy = null, bool bySchedule = false);
         void RemoveStatusAndStacks(ITraitable removeFrom, string name, Character removedBy = null, bool bySchedule = false);
         bool RemoveTrait(ITraitable removeFrom, string traitName, Character removedBy = null, bool bySchedule = false);
         bool RemoveTrait(ITraitable removeFrom, int index, Character removedBy = null);
@@ -52,12 +47,11 @@ namespace Traits {
         bool HasTrait(params string[] traitNames);
         bool HasTrait(string traitName);
         bool HasTraitOf(TRAIT_TYPE traitType);
-        //bool HasTraitOf(TRAIT_TYPE type, TRAIT_EFFECT effect);
         bool HasTraitOrStatusOf(TRAIT_EFFECT traitEffect);
         List<Trait> GetAllTraitsOf(TRAIT_TYPE type);
-        //List<Trait> GetAllTraitsOf(TRAIT_TYPE type, TRAIT_EFFECT effect);
         List<Trait> GetTraitOverrideFunctions(string identifier);
         int GetStacks(string traitName);
+        bool IsBlessed();
         #endregion
 
         #region Processes

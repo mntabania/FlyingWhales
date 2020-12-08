@@ -70,7 +70,7 @@ public class PlayerAction : SpellData, IContextMenuItem {
         return CanPerformAbility();
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if(!canBeCastOnBlessed && targetCharacter.traitContainer.HasTrait("Blessed")) {
+        if(!canBeCastOnBlessed && targetCharacter.traitContainer.IsBlessed()) {
             return false;
         }
         return CanPerformAbility();
