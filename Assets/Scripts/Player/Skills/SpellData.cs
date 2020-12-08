@@ -56,7 +56,7 @@ public class SpellData : IPlayerSkill {
     public virtual string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) { return null; }
     public virtual bool CanPerformAbilityTowards(Character targetCharacter) {
         //(targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES)
-        if(targetCharacter.traitContainer.HasTrait("Blessed")) {
+        if(targetCharacter.traitContainer.IsBlessed()) {
             return false;
         }
         return CanPerformAbility();
@@ -112,7 +112,7 @@ public class SpellData : IPlayerSkill {
     /// <param name="poi">The target poi</param>
     /// <returns>true or false</returns>
     public bool CanTarget(IPointOfInterest poi, ref string hoverText) {
-        if (poi.traitContainer.HasTrait("Blessed")) {
+        if (poi.traitContainer.IsBlessed()) {
             hoverText = "Blessed characters cannot be targeted.";
             return false;
         }

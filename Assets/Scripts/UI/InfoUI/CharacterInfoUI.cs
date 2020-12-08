@@ -19,6 +19,7 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private TextMeshProUGUI subLbl;
     [SerializeField] private TextMeshProUGUI actionLbl;
+    [SerializeField] private EventLabel actionEventLabel;
     [SerializeField] private TextMeshProUGUI partyLbl;
     [SerializeField] private EventLabel partyEventLbl;
     [SerializeField] private LogItem plansLblLogItem;
@@ -111,6 +112,7 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
 
         //normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
+        actionEventLabel.SetOnRightClickAction(OnRightClickThoughtBubble);
         relationshipNamesEventLbl.SetOnLeftClickAction(OnLeftClickRelationship);
         relationshipNamesEventLbl.SetOnRightClickAction(OnRightClickRelationship);
         
@@ -276,18 +278,19 @@ public class CharacterInfoUI : InfoUIBase {
         //     plansLblLogItem.SetLog(log);
         // }
     }
-    public void OnHoverLeaderIcon() {
-        string message = string.Empty;
-        if (activeCharacter.isSettlementRuler) {
-            message = $"<b>{activeCharacter.name}</b> is the Settlement Ruler of <b>{activeCharacter.homeSettlement.name}</b>\n";
-        } 
-        if (activeCharacter.isFactionLeader) {
-            message += $"<b>{activeCharacter.name}</b> is the Faction Leader of <b>{activeCharacter.faction.name}</b>";
+    //public void OnHoverLeaderIcon() {
+    //    string message = string.Empty;
+    //    if (activeCharacter.isSettlementRuler) {
+    //        message = $"<b>{activeCharacter.name}</b> is the Settlement Ruler of <b>{activeCharacter.homeSettlement.name}</b>\n";
+    //    }
+    //    if (activeCharacter.isFactionLeader) {
+    //        message += $"<b>{activeCharacter.name}</b> is the Faction Leader of <b>{activeCharacter.faction.name}</b>";
+    //    }
+    //}
+    private void OnRightClickThoughtBubble(object obj) {
+        if (obj is IPlayerActionTarget playerActionTarget) {
+            UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
         }
-        UIManager.Instance.ShowSmallInfo(message);
-    }
-    public void OnHoverExitLeaderIcon() {
-        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 
@@ -509,86 +512,12 @@ public class CharacterInfoUI : InfoUIBase {
     #region For Testing
     public void ShowCharacterTestingInfo() {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-        string summary = $"Home structure: {activeCharacter.homeStructure?.ToString() ?? "None"}" ?? "None";
-        summary = $"{summary} {$"Territory: {activeCharacter.territory?.name ?? "None"}"}";
-        summary = $"{summary} {$"Current structure: {activeCharacter.currentStructure}" ?? "None"}";
-        summary = $"{summary} {"POI State: " + activeCharacter.state.ToString()}";
-        summary = $"{summary} {"Do Not Get Hungry: " + activeCharacter.needsComponent.doNotGetHungry.ToString()}";
-        summary = $"{summary} {"Do Not Get Tired: " + activeCharacter.needsComponent.doNotGetTired.ToString()}";
-        summary = $"{summary} {"Do Not Get Bored: " + activeCharacter.needsComponent.doNotGetBored.ToString()}";
-        summary = $"{summary} {"Do Not Recover HP: " + activeCharacter.doNotRecoverHP.ToString()}";
-        summary = $"{summary} {"Can Move: " + activeCharacter.limiterComponent.canMove.ToString()}";
-        summary = $"{summary} {"Can Witness: " + activeCharacter.limiterComponent.canWitness.ToString()}";
-        summary = $"{summary} {"Can Be Attacked: " + activeCharacter.limiterComponent.canBeAttacked.ToString()}";
-        summary = $"{summary} {"Can Perform: " + activeCharacter.limiterComponent.canPerform.ToString()}";
-        summary = $"{summary} {"Is Sociable: " + activeCharacter.limiterComponent.isSociable.ToString()}";
-        summary = $"{summary} {"Is Running: " + activeCharacter.movementComponent.isRunning.ToString()}";
-        summary = $"{summary} {"POI State: " + activeCharacter.state.ToString()}";
-        summary = $"{summary} {"Personal Religion: " + activeCharacter.religionComponent.religion.ToString()}";
-        summary = $"{summary}{"\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick))}";
-        summary = $"{summary}{"\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick))}";
-        summary = $"{summary}{"\nHappiness Time: " + (activeCharacter.needsComponent.happinessSecondForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.happinessSecondForcedTick))} - Satisfied Schedule Today ({activeCharacter.needsComponent.hasForcedSecondHappiness.ToString()})";
-        summary = $"{summary}{"\nRemaining Sleep Ticks: " + activeCharacter.needsComponent.currentSleepTicks.ToString()}";
-        //summary = $"{summary}{("\nFood: " + activeCharacter.food.ToString())}";
-        summary = $"{summary}{"\nSexuality: " + activeCharacter.sexuality.ToString()}";
-        // summary = $"{summary}{("\nMood: " + activeCharacter.moodComponent.moodValue + "/100" + "(" + activeCharacter.moodComponent.moodState.ToString() + ")")}";
-        // summary = $"{summary}{("\nHP: " + activeCharacter.currentHP.ToString() + "/" + activeCharacter.maxHP.ToString())}";
-        summary = $"{summary}{"\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString(CultureInfo.InvariantCulture)}";
-        summary = $"{summary}{"\nAttack Speed: " + activeCharacter.combatComponent.attackSpeed.ToString()}";
-        summary = $"{summary}{"\nCombat Mode: " + activeCharacter.combatComponent.combatMode.ToString()}";
-        summary = $"{summary}{"\nElemental Type: " + activeCharacter.combatComponent.elementalDamage.name}";
-        summary = $"{summary}{"\nPrimary Job: " + activeCharacter.jobComponent.primaryJob.ToString()}";
-        summary = $"{summary}{"\nPriority Jobs: " + activeCharacter.jobComponent.GetPriorityJobs()}";
-        summary = $"{summary}{"\nSecondary Jobs: " + activeCharacter.jobComponent.GetSecondaryJobs()}";
-        summary = $"{summary}{"\nAble Jobs: " + activeCharacter.jobComponent.GetAbleJobs()}";
-        summary = $"{summary}{"\nAdditional Priority Jobs: " + activeCharacter.jobComponent.GetAdditionalPriorityJobs()}";
-        summary = $"{summary}{("\nParty: " + (activeCharacter.partyComponent.hasParty ? activeCharacter.partyComponent.currentParty.partyName : "None") + ", State: " + activeCharacter.partyComponent.currentParty?.partyState.ToString() + ", Members: " + activeCharacter.partyComponent.currentParty?.members.Count)}";
-        summary = $"{summary}{"\nPrimary Bed: " + (activeCharacter.tileObjectComponent.primaryBed != null ? activeCharacter.tileObjectComponent.primaryBed.name : "None")}";
-        summary = $"{summary}{"\nEnable Digging: " + activeCharacter.movementComponent.enableDigging.ToString()}";
-        summary = $"{summary}{"\nAvoid Settlements: " + activeCharacter.movementComponent.avoidSettlements.ToString()}";
-
-        if (activeCharacter.stateComponent.currentState != null) {
-            summary = $"{summary}\nCurrent State: {activeCharacter.stateComponent.currentState}";
-            summary = $"{summary}\n\tDuration in state: {activeCharacter.stateComponent.currentState.currentDuration.ToString()}/{activeCharacter.stateComponent.currentState.duration.ToString()}";
-        }
-        
-        summary += "\nBehaviour Components: ";
-        for (int i = 0; i < activeCharacter.behaviourComponent.currentBehaviourComponents.Count; i++) {
-            CharacterBehaviourComponent component = activeCharacter.behaviourComponent.currentBehaviourComponents[i];
-            summary += $"{component}, ";
-        }
-        
-        summary += "\nInterested Items: ";
-        for (int i = 0; i < activeCharacter.interestedItemNames.Count; i++) {
-            summary += $"{activeCharacter.interestedItemNames[i]}, ";
-        }
-        
-        summary += "\nPersonal Job Queue: ";
-        if (activeCharacter.jobQueue.jobsInQueue.Count > 0) {
-            for (int i = 0; i < activeCharacter.jobQueue.jobsInQueue.Count; i++) {
-                JobQueueItem poi = activeCharacter.jobQueue.jobsInQueue[i];
-                summary += $"{poi}, ";
-            }
-        } else {
-            summary += "None";
-        }
-        
-        // summary += "\nCharacters with opinion: ";
-        // if (activeCharacter.relationshipContainer.charactersWithOpinion.Count > 0) {
-        //     for (int i = 0; i < activeCharacter.relationshipContainer.charactersWithOpinion.Count; i++) {
-        //         Character characterWithOpinion = activeCharacter.relationshipContainer.charactersWithOpinion[i];
-        //         summary += $"{characterWithOpinion}, ";
-        //     }
-        // } else {
-        //     summary += "None";
-        // }
-        // summary += "\n" + activeCharacter.needsComponent.GetNeedsSummary();
-        UIManager.Instance.ShowSmallInfo(summary);
+        TestingUtilities.ShowCharacterTestingInfo(activeCharacter);
 #endif
     }
     public void HideCharacterTestingInfo() {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-        UIManager.Instance.HideSmallInfo();
+        TestingUtilities.HideCharacterTestingInfo();
 #endif
     }
     #endregion

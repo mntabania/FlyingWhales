@@ -284,7 +284,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     protected override void OnPointerRightClick(Character poi) {
         base.OnPointerRightClick(poi);
-        UIManager.Instance.ShowPlayerActionContextMenu(poi, this.transform);
+        UIManager.Instance.ShowPlayerActionContextMenu(poi, poi.worldPosition, false);
     }
     protected override void OnPointerMiddleClick(Character poi) {
         base.OnPointerMiddleClick(poi);

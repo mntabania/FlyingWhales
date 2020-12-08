@@ -626,6 +626,9 @@ namespace Traits {
             }
             return 0;
         }
+        public bool IsBlessed() {
+            return HasTrait("Blessed") || HasTrait("Dark Blessing");
+        }
         #endregion
 
         #region Processes

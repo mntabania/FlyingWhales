@@ -67,7 +67,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public string currentRegion;
     public string currentStructure;
     public string faction;
-    public string prevFaction;
 
     public string currentJob;
     public string currentActionNode;
@@ -105,6 +104,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataCrimeComponent crimeComponent;
     public SaveDataReligionComponent religionComponent;
     public SaveDataLimiterComponent limiterComponent;
+    public SaveDataPreviousCharacterDataComponent previousCharacterDataComponent;
 
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
@@ -180,6 +180,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         crimeComponent = new SaveDataCrimeComponent(); crimeComponent.Save(data.crimeComponent);
         religionComponent = new SaveDataReligionComponent(); religionComponent.Save(data.religionComponent);
         limiterComponent = new SaveDataLimiterComponent(); limiterComponent.Save(data.limiterComponent);
+        previousCharacterDataComponent = new SaveDataPreviousCharacterDataComponent(); previousCharacterDataComponent.Save(data.previousCharacterDataComponent);
 
         if (data.currentJob != null && data.currentJob.jobType != JOB_TYPE.NONE) {
             currentJob = data.currentJob.persistentID;
@@ -232,9 +233,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         }
         if (data.faction != null) {
             faction = data.faction.persistentID;
-        }
-        if (data.prevFaction != null) {
-            prevFaction = data.prevFaction.persistentID;
         }
 
         territory = string.Empty;

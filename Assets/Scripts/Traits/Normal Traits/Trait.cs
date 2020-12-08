@@ -159,8 +159,7 @@ namespace Traits {
 
             return canBeTriggered && PlayerManager.Instance.player.mana >= manaCost
                 && character.limiterComponent.canPerform
-                //&& !character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER) //disabled characters cannot be triggered
-                && !character.traitContainer.HasTrait("Blessed")
+                && !character.traitContainer.IsBlessed()
                 && !character.carryComponent.masterCharacter.movementComponent.isTravellingInWorld; //characters travelling outside cannot be triggered
         }
         public virtual string GetRequirementDescription(Character character) {
@@ -174,7 +173,7 @@ namespace Traits {
             if (PlayerManager.Instance.player.mana < EditableValuesManager.Instance.triggerFlawManaCost) {
                 reasons.Add("You do not have enough mana.");
             }
-            if (character.traitContainer.HasTrait("Blessed")) {
+            if (character.traitContainer.IsBlessed()) {
                 reasons.Add("Blessed characters cannot be targeted by Trigger Flaw.");
             }
             if (!character.limiterComponent.canPerform) {

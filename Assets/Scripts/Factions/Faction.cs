@@ -127,7 +127,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     #region Characters
     public bool JoinFaction(Character character, bool broadcastSignal = true, bool bypassIdeologyChecking = false, bool isInitial = false) {
         if (bypassIdeologyChecking || ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
-            Faction prevFaction = character.prevFaction;
             if (AddCharacter(character)) {
                 //Once a character joins any faction and the faction is not the owner of the character's current home settlement, leave the settlement also
                 //Reason: One village = One faction, no other faction can co exist in a village, for simplification
