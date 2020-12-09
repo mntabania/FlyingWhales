@@ -64,7 +64,8 @@ public class SchemeData : PlayerAction {
                 return false;
             }
         }
-        return base.IsValid(target);
+        return base.IsValid(target) && PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerSettlement != null && 
+               PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.MEDDLER);
     }
     protected override List<IContextMenuItem> GetSubMenus(List<IContextMenuItem> p_contextMenuItems) {
         if (type == PLAYER_SKILL_TYPE.SCHEME && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget != null) {
