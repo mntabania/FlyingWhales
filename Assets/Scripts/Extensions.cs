@@ -1116,4 +1116,19 @@ public static class Extensions {
         return subAttr.Category;
     }
     #endregion
+
+    #region Temptations
+    public static bool CanTemptCharacter(this TEMPTATION p_temptation, Character p_target) {
+        switch (p_temptation) {
+            case TEMPTATION.Dark_Blessing:
+                return !p_target.traitContainer.IsBlessed();
+            case TEMPTATION.Empower:
+                return !p_target.traitContainer.HasTrait("Mighty");
+            case TEMPTATION.Cleanse_Flaws:
+                return p_target.traitContainer.HasTraitOf(TRAIT_TYPE.FLAW);
+            default:
+                throw new ArgumentOutOfRangeException(nameof(p_temptation), p_temptation, null);
+        }
+    }
+    #endregion
 }
