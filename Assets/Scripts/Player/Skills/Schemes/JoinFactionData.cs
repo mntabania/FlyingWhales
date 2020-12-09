@@ -72,6 +72,7 @@ public class JoinFactionData : SchemeData {
             UIManager.Instance.HideObjectPicker();
 
             //Show Scheme UI
+            UIManager.Instance.ShowSchemeUI(source, targetFaction, this);
         }
     }
 }

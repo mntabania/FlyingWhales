@@ -16,6 +16,9 @@ public class LeaveVillageData : SchemeData {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
+        if (targetPOI is Character targetCharacter) {
+            UIManager.Instance.ShowSchemeUI(targetCharacter, null, this);
+        }
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character character) {

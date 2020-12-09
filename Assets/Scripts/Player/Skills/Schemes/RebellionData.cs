@@ -16,6 +16,9 @@ public class RebellionData : SchemeData {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
+        if (targetPOI is Character targetCharacter) {
+            UIManager.Instance.ShowSchemeUI(targetCharacter, null, this);
+        }
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character character) {
@@ -42,6 +45,43 @@ public class RebellionData : SchemeData {
         ConversationData data = ObjectPoolManager.Instance.CreateNewConversationData($"You must rebel against {character.faction.name} and start your own Faction.", null, DialogItem.Position.Right);
         conversationList.Add(data);
         base.PopulateSchemeConversation(conversationList, character, target, isSuccessful);
+    }
+    public override float GetSuccessRateMultiplier(Character p_targetCharacter) {
+        float rate = 0f;
+        if (p_targetCharacter.faction != null && p_targetCharacter.faction.leader != null && p_targetCharacter.faction.leader is Character factionLeader && p_targetCharacter != factionLeader) {
+            if (p_targetCharacter.relationshipContainer.IsFriendsWith(factionLeader)) {
+                rate += 0.2f;
+            } else if (p_targetCharacter.relationshipContainer.IsEnemiesWith(factionLeader)) {
+                rate += 3f;
+            }
+        }
+        if (p_targetCharacter.traitContainer.HasTrait("Treacherous")) {
+            rate += 2f;
+        }
+        if(rate != 0f) {
+            return rate; 
+        }
+        return base.GetSuccessRateMultiplier(p_targetCharacter);
+    }
+    public override string GetSuccessRateMultiplierText(Character p_targetCharacter) {
+        string text = string.Empty;
+        if (p_targetCharacter.faction != null && p_targetCharacter.faction.leader != null && p_targetCharacter.faction.leader is Character factionLeader && p_targetCharacter != factionLeader) {
+            if (p_targetCharacter.relationshipContainer.IsFriendsWith(factionLeader)) {
+                if(text != string.Empty) { text += "\n"; }
+                text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is friends with the Faction Leader";
+            } else if (p_targetCharacter.relationshipContainer.IsEnemiesWith(factionLeader)) {
+                if (text != string.Empty) { text += "\n"; }
+                text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is enemies with the Faction Leader";
+            }
+        }
+        if (p_targetCharacter.traitContainer.HasTrait("Treacherous")) {
+            if (text != string.Empty) { text += "\n"; }
+            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Treacherous";
+        }
+        if (text != string.Empty) {
+            return text;
+        }
+        return base.GetSuccessRateMultiplierText(p_targetCharacter);
     }
     #endregion
 }

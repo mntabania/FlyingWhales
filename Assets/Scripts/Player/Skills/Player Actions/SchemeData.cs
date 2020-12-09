@@ -28,6 +28,8 @@ public class SchemeData : PlayerAction {
             conversationList.Add(data);
         }
     }
+    public virtual float GetSuccessRateMultiplier(Character p_targetCharacter) { return 1f; }
+    public virtual string GetSuccessRateMultiplierText(Character p_targetCharacter) { return string.Empty; }
     #endregion
 
     #region Overrides

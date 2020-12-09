@@ -6698,7 +6698,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1538653384}
-  m_RootOrder: 51
+  m_RootOrder: 52
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -70472,7 +70472,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1538653384}
-  m_RootOrder: 52
+  m_RootOrder: 53
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -82494,6 +82494,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1496497876}
   m_CullTransparentMesh: 0
+--- !u!1 &1496807648
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1496807650}
+  - component: {fileID: 1496807649}
+  m_Layer: 0
+  m_Name: SchemeUIController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1496807649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1496807648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fb14d45c2c9b764c81bc59f5bbb4fbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _canvas: {fileID: 1538653388}
+  m_schemeUIModel: {fileID: 2500776707621525991, guid: 45f2175a4ec5c9a4fbee9c6691a7d9e6,
+    type: 3}
+--- !u!4 &1496807650
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1496807648}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1538653384}
+  m_RootOrder: 51
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1497309327
 GameObject:
   m_ObjectHideFlags: 0
@@ -88277,6 +88323,7 @@ RectTransform:
   - {fileID: 768646805}
   - {fileID: 2091719608}
   - {fileID: 1658988108}
+  - {fileID: 1496807650}
   - {fileID: 142246405}
   - {fileID: 1307220865}
   m_Father: {fileID: 0}
@@ -88436,6 +88483,7 @@ MonoBehaviour:
   initialWorldSetupMenu: {fileID: 85761050}
   bottomNotification: {fileID: 1455444294}
   _biolabUIController: {fileID: 1658988109}
+  _schemeUIController: {fileID: 1496807649}
   _contextMenuUIController: {fileID: 142246406}
   _contextMenuTooltipHoverPosition: {fileID: 1307220864}
 --- !u!114 &1538653386

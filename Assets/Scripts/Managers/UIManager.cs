@@ -1656,6 +1656,22 @@ public class UIManager : BaseMonoBehaviour {
     }
     #endregion
 
+    #region Scheme UI
+    [Header("Scheme")]
+    [SerializeField] private SchemeUIController _schemeUIController;
+    public void ShowSchemeUI(Character p_targetCharacter, object p_otherTarget, SchemeData p_schemeUsed) {
+        Pause();
+        SetSpeedTogglesState(false);
+        _schemeUIController.Show(p_targetCharacter, p_otherTarget, p_schemeUsed);
+        InputManager.Instance.AllowHotkeys(false);
+    }
+    private void OnCloseSchemeUI() {
+        SetSpeedTogglesState(true);
+        ResumeLastProgressionSpeed();
+        InputManager.Instance.AllowHotkeys(true);
+    }
+    #endregion
+
     #region Context Menu
     [Header("Context Menu")]
     [SerializeField] private ContextMenuUIController _contextMenuUIController;

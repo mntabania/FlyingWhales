@@ -51,6 +51,26 @@ public class InstigateWarData : SchemeData {
         }
         base.PopulateSchemeConversation(conversationList, character, target, isSuccessful);
     }
+    public override float GetSuccessRateMultiplier(Character p_targetCharacter) {
+        if (p_targetCharacter.faction != null && p_targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {
+            return 0.25f;
+        } else if (p_targetCharacter.traitContainer.HasTrait("Diplomatic")) {
+            return 0.5f;
+        } else if (p_targetCharacter.faction != null && p_targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
+            return 3f;
+        }
+        return base.GetSuccessRateMultiplier(p_targetCharacter);
+    }
+    public override string GetSuccessRateMultiplierText(Character p_targetCharacter) {
+        if (p_targetCharacter.faction != null && p_targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {
+            return $"Faction is Peaceful";
+        } else if (p_targetCharacter.traitContainer.HasTrait("Diplomatic")) {
+            return $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Diplomatic";
+        } else if (p_targetCharacter.faction != null && p_targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
+            return $"Faction is Warmonger";
+        }
+        return base.GetSuccessRateMultiplierText(p_targetCharacter);
+    }
     #endregion
 
     private bool CanInstigateWar(Faction source, Faction target) {
@@ -72,6 +92,7 @@ public class InstigateWarData : SchemeData {
             UIManager.Instance.HideObjectPicker();
 
             //Show Scheme UI
+            UIManager.Instance.ShowSchemeUI(source, targetFaction, this);
         }
     }
 }

@@ -16,6 +16,9 @@ public class LeaveHomeData : SchemeData {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
+        if (targetPOI is Character targetCharacter) {
+            UIManager.Instance.ShowSchemeUI(targetCharacter, null, this);
+        }
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character character) {
@@ -31,6 +34,9 @@ public class LeaveHomeData : SchemeData {
         ConversationData data = ObjectPoolManager.Instance.CreateNewConversationData("I want you to abandon your current home.", null, DialogItem.Position.Right);
         conversationList.Add(data);
         base.PopulateSchemeConversation(conversationList, targetCharacter, target, isSuccessful);
+    }
+    public override float GetSuccessRateMultiplier(Character p_targetCharacter) {
+        return 2f;
     }
     #endregion
 }

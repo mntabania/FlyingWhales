@@ -22,6 +22,7 @@ public class Rumor : IReactable {
     public Character disguisedTarget => rumorable.disguisedTarget;
     public Log informationLog => rumorable.informationLog;
     public bool isStealth => rumorable.isStealth;
+    public CRIME_TYPE crimeType => rumorable.crimeType;
     public List<Character> awareCharacters => rumorable.awareCharacters;
     public LOG_TAG[] logTags => rumorable.logTags;
     #endregion

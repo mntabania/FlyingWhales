@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8179247
+    totalSpriteSurfaceArea: 8350767
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -216,6 +216,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5d84b977b7bf27b4e9adcc425c0d3b4c, type: 3}
   - {fileID: 21300000, guid: 4dbbfc779d936194c8c446b77c24a99e, type: 3}
   - {fileID: 21300000, guid: e01f268796ea2a541aa719a287d06ec1, type: 3}
+  - {fileID: 21300000, guid: df0ef0a758a443748978f2fd68df6dfc, type: 3}
   - {fileID: 21300000, guid: 7a103ac722a0a654ab82413b52f4e2b4, type: 3}
   - {fileID: 21300000, guid: 46b8cfc737d17154193cf793e2409bb5, type: 3}
   - {fileID: 21300000, guid: 0e0660d7121fbec41ab7b927d1bea4c9, type: 3}
@@ -572,6 +573,7 @@ SpriteAtlas:
   - assign_button_default
   - supply_icon
   - 2x_button_clicked
+  - scheme_container
   - tab_default
   - button_psychopathdetail_hover
   - trait_physical_attack

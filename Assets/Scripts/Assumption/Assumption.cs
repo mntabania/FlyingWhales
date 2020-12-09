@@ -19,6 +19,7 @@ public class Assumption : IReactable {
     public Character disguisedTarget => assumedAction.disguisedTarget;
     public Log informationLog => assumedAction.informationLog;
     public bool isStealth => assumedAction.isStealth;
+    public CRIME_TYPE crimeType => assumedAction.crimeType;
     public List<Character> awareCharacters => assumedAction.awareCharacters;
     public LOG_TAG[] logTags => assumedAction.logTags;
     #endregion

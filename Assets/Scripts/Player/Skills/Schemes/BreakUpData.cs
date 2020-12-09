@@ -34,6 +34,8 @@ public class BreakUpData : SchemeData {
             } else {
                 //If only 1 lover or affair do not pick anymore
                 //Show Scheme UI
+                Character loverOrAffair = targetCharacter.relationshipContainer.GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
+                UIManager.Instance.ShowSchemeUI(targetCharacter, loverOrAffair, this);
             }
         }
     }
@@ -56,6 +58,18 @@ public class BreakUpData : SchemeData {
         }
         base.PopulateSchemeConversation(conversationList, character, target, isSuccessful);
     }
+    public override float GetSuccessRateMultiplier(Character p_targetCharacter) {
+        if (p_targetCharacter.traitContainer.HasTrait("Unfaithful")) {
+            return 2f;
+        }
+        return base.GetSuccessRateMultiplier(p_targetCharacter);
+    }
+    public override string GetSuccessRateMultiplierText(Character p_targetCharacter) {
+        if (p_targetCharacter.traitContainer.HasTrait("Unfaithful")) {
+            return $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Unfaithful";
+        }
+        return base.GetSuccessRateMultiplierText(p_targetCharacter);
+    }
     #endregion
 
     private bool CanBeBrokenUp(Character source, Character target) {
@@ -66,6 +80,7 @@ public class BreakUpData : SchemeData {
             UIManager.Instance.HideObjectPicker();
 
             //Show Scheme UI
+            UIManager.Instance.ShowSchemeUI(source, targetCharacter, this);
         }
     }
 }
