@@ -64,7 +64,23 @@ public class SchemeData : PlayerAction {
                 return false;
             }
         }
-        return base.IsValid(target);
+        return base.IsValid(target) && PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerSettlement != null && 
+               PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.MEDDLER);
+    }
+    protected override List<IContextMenuItem> GetSubMenus(List<IContextMenuItem> p_contextMenuItems) {
+        if (type == PLAYER_SKILL_TYPE.SCHEME && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget != null) {
+            p_contextMenuItems.Clear();
+            List<PLAYER_SKILL_TYPE> schemeTypes = PlayerManager.Instance.player.playerSkillComponent.schemes;
+            for (int i = 0; i < schemeTypes.Count; i++) {
+                PLAYER_SKILL_TYPE spellType = schemeTypes[i];
+                PlayerAction spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType) as PlayerAction;
+                if (spellData != null && spellData.IsValid(PlayerManager.Instance.player.currentlySelectedPlayerActionTarget)) {
+                    p_contextMenuItems.Add(spellData);
+                }
+            }
+            return p_contextMenuItems;    
+        }
+        return null;
     }
     #endregion
 

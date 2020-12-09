@@ -177,6 +177,9 @@ public class ActionIntel : IIntel, IDisposable {
         DatabaseManager.Instance.mainSQLDatabase.SetLogIntelState(log.persistentID, false);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
+    public bool CanBeUsedToBlackmailCharacter(Character p_target) {
+        return p_target == actor && node.crimeType != CRIME_TYPE.None && node.crimeType != CRIME_TYPE.Unset;
+    }
     #endregion
 
     #region Listeners
@@ -381,6 +384,9 @@ public class InterruptIntel : IIntel, IDisposable {
         DatabaseManager.Instance.mainSQLDatabase.SetLogIntelState(log.persistentID, false);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
+    public bool CanBeUsedToBlackmailCharacter(Character p_target) {
+        return p_target == actor && interruptHolder.crimeType != CRIME_TYPE.None && interruptHolder.crimeType != CRIME_TYPE.Unset;
+    }
     #endregion
 
     #region Listeners
@@ -418,6 +424,7 @@ public interface IIntel {
     /// Called whenever this intel is used up by the player or the notification it belongs to expires.
     /// </summary>
     void OnIntelRemoved();
+    bool CanBeUsedToBlackmailCharacter(Character p_target);
 }
 
 [System.Serializable]
