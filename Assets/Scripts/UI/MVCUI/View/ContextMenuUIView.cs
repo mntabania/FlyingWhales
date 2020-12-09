@@ -57,7 +57,7 @@ public class ContextMenuUIView : MVCUIView
 		ScrollRect columnScrollRect = UIModel.menuParent[p_targetColumn];
 		columnScrollRect.gameObject.SetActive(true);
 
-		clickableMenuUIObjects = columnScrollRect.content.GetComponentsInChildren<ContextMenuUIObject>().ToList();
+		clickableMenuUIObjects.AddRange(columnScrollRect.content.GetComponentsInChildren<ContextMenuUIObject>());
 		int count = clickableMenuUIObjects.Count;
 		for (int x = 0; x < count; ++x) {
 			ObjectPoolManager.Instance.DestroyObject(clickableMenuUIObjects[x]);
@@ -68,8 +68,6 @@ public class ContextMenuUIView : MVCUIView
 				ContextMenuUIObject contextMenuUI = go.GetComponent<ContextMenuUIObject>();
 				contextMenuUI.SetMenuDetails(p_UIMenu[x]);
 				contextMenuUI.btnActivate.ForceUpdateGlow();
-				// contextMenuUI.transform.SetParent(columnRect.content.transform);
-				clickableMenuUIObjects.Add(contextMenuUI);
 			}	
 		}
 	}
