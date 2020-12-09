@@ -44,7 +44,7 @@ public class ConsoleBase : InfoUIBase {
         commandHistory = new List<string>();
         _consoleActions = new Dictionary<string, Action<string[]>>() {
             {"/help", ShowHelp},
-            {"/change_faction_rel_stat", ChangeFactionRelationshipStatus},
+            {"/set_faction_rel", ChangeFactionRelationshipStatus},
             {"/kill",  KillCharacter},
             //{"/lfli", LogFactionLandmarkInfo},
             {"/center_character", CenterOnCharacter},
@@ -396,10 +396,14 @@ public class ConsoleBase : InfoUIBase {
 
         if (isFaction1Numeric) {
             faction1 = FactionManager.Instance.GetFactionBasedOnID(faction1ID);
+        } else {
+            faction1 = FactionManager.Instance.GetFactionBasedOnName(faction1Name);
         }
 
         if (isFaction2Numeric) {
             faction2 = FactionManager.Instance.GetFactionBasedOnID(faction2ID);
+        } else {
+            faction2 = FactionManager.Instance.GetFactionBasedOnName(faction2Name);
         }
 
         try {
@@ -419,8 +423,7 @@ public class ConsoleBase : InfoUIBase {
         FactionRelationship rel = FactionManager.Instance.GetRelationshipBetween(faction1, faction2);
         rel.SetRelationshipStatus(newRelStatus);
 
-        AddSuccessMessage(
-            $"Changed relationship status of {faction1.name} and {faction2.name} to {rel.relationshipStatus}");
+        AddSuccessMessage($"Changed relationship status of {faction1.name} and {faction2.name} to {rel.relationshipStatus}");
     }
     #endregion
 
