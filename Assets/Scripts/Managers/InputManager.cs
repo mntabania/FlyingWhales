@@ -312,21 +312,22 @@ namespace Ruinarch {
             //     return true;
             // }
             UIManager.Instance.SetTempDisableShowInfoUI(false);
-            if (UIManager.Instance.IsOptionsMenuShowing()) {
-                //if options menu is showing, check if load window is showing, if it is close load window.
-                if (UIManager.Instance.optionsMenu.IsLoadWindowShowing()) {
-                    UIManager.Instance.optionsMenu.CloseLoadWindow();
+            if (!CancelSpellsByPriority()) {
+                if (UIManager.Instance.IsOptionsMenuShowing()) {
+                    //if options menu is showing, check if load window is showing, if it is close load window.
+                    if (UIManager.Instance.optionsMenu.IsLoadWindowShowing()) {
+                        UIManager.Instance.optionsMenu.CloseLoadWindow();
+                        return true;
+                    }
+                    //if load window is not showing then close options menu
+                    UIManager.Instance.CloseOptionsMenu();
                     return true;
                 }
-                //if load window is not showing then close options menu
-                UIManager.Instance.CloseOptionsMenu();
-                return true;
-            }
-            if (UIManager.Instance.IsContextMenuShowing()) {
-                UIManager.Instance.HidePlayerActionContextMenu();
-                return true;
-            }
-            if (!CancelSpellsByPriority()) {
+                if (UIManager.Instance.IsContextMenuShowing()) {
+                    UIManager.Instance.HidePlayerActionContextMenu();
+                    return true;
+                }
+            
                 CustomStandaloneInputModule customModule = EventSystem.current.currentInputModule as CustomStandaloneInputModule;
                 if (ignoreCursor || !EventSystem.current.IsPointerOverGameObject() || customModule.GetPointerData().pointerEnter.GetComponent<Button>() == null) {
                     if (UIManager.Instance.openedPopups.Count > 0) {
@@ -346,8 +347,11 @@ namespace Ruinarch {
                         }
                     }
                 }
+                return false;
+            } else {
+                //cancelled a spell
+                return true;
             }
-            return false;
         }
         private bool CancelSpellsByPriority() {
             if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.currentActivePlayerSpell != null) {

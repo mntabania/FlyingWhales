@@ -14,6 +14,19 @@ public class ArsonistBehaviour : CharacterBehaviourComponent {
             if (character.behaviourComponent.arsonVillageTarget == null) {
                 List<HexTile> target = character.behaviourComponent.GetVillageTargetsByPriority();
                 character.behaviourComponent.SetArsonistVillageTarget(target);
+            } else {
+                //if already has arson village target, check if it is still valid.
+                for (int i = 0; i < character.behaviourComponent.arsonVillageTarget.Count; i++) {
+                    HexTile target = character.behaviourComponent.arsonVillageTarget[i];
+                    if (target.IsPartOfVillage(out var village)) {
+                        if (village.owner != null && !village.owner.IsHostileWith(PlayerManager.Instance.player.playerFaction)) {
+                            //target is no longer hostile with player faction, redetermine target.
+                            List<HexTile> newTarget = character.behaviourComponent.GetVillageTargetsByPriority();
+                            character.behaviourComponent.SetArsonistVillageTarget(newTarget);
+                            break;
+                        }
+                    }
+                }
             }
             if (character.behaviourComponent.arsonVillageTarget != null) {
                 if (character.hexTileLocation != null && character.behaviourComponent.arsonVillageTarget.Contains(character.hexTileLocation)) {

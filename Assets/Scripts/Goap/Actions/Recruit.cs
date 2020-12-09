@@ -73,7 +73,7 @@ public class Recruit : GoapAction {
         Character actor = goapNode.actor;
         Character targetCharacter = goapNode.poiTarget as Character;
         targetCharacter.ChangeFactionTo(actor.faction, bypassIdeologyChecking: true);
-        targetCharacter.MigrateHomeTo(targetCharacter.currentSettlement);
+        targetCharacter.MigrateHomeTo(actor.homeSettlement);
         if (targetCharacter is FireElemental) {
             //NOTE: If target is fire elemental, do not set home structure, only home settlement
             //Reference: https://www.notion.so/ruinarch/27d2d290c43d40dbb0e8cf7c38b09ae2?v=e607fbe0a1ac49b8ac63649e2bdef458&p=cf8c2d7da65f458eb18378c834a42488
@@ -93,7 +93,7 @@ public class Recruit : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
-            return actor.faction != poiTarget.factionOwner;
+            return actor.faction != poiTarget.factionOwner && actor.homeSettlement != null;
         }
         return false;
     }
