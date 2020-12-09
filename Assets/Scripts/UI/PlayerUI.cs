@@ -426,8 +426,19 @@ public class PlayerUI : BaseMonoBehaviour {
             currItem.SetIntel(intel);
             if (intel != null) {
                 currItem.SetClickAction(PlayerManager.Instance.player.SetCurrentActiveIntel);
+                currItem.SetOnHoverEnterAction(() => OnHoverEnterStoredIntel(intel));
+                currItem.SetOnHoverExitAction(OnHoverExitStoredIntel);
             }
         }
+    }
+    private void OnHoverEnterStoredIntel(IIntel intel) {
+        string text = intel.GetIntelInfoRelationshipText();
+        if (!string.IsNullOrEmpty(text)) {
+            UIManager.Instance.ShowSmallInfo(text);
+        }
+    }
+    private void OnHoverExitStoredIntel() {
+        UIManager.Instance.HideSmallInfo();
     }
     private void InitializeIntel() {
         for (int i = 0; i < intelItems.Length; i++) {

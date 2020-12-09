@@ -182,7 +182,7 @@ public class CharacterInfoUI : InfoUIBase {
         if (_previousCharacter != null && _previousCharacter.marker != null) {
             _previousCharacter.marker.UpdateNameplateElementsState();
         }
-        if (UIManager.Instance.IsShareIntelMenuOpen()) {
+        if (UIManager.Instance.IsConversationMenuOpen()) {
             backButton.interactable = false;
         }
         if (UIManager.Instance.IsObjectPickerOpen()) {
@@ -278,6 +278,15 @@ public class CharacterInfoUI : InfoUIBase {
         //     plansLblLogItem.SetLog(log);
         // }
     }
+    //public void OnHoverLeaderIcon() {
+    //    string message = string.Empty;
+    //    if (activeCharacter.isSettlementRuler) {
+    //        message = $"<b>{activeCharacter.name}</b> is the Settlement Ruler of <b>{activeCharacter.homeSettlement.name}</b>\n";
+    //    }
+    //    if (activeCharacter.isFactionLeader) {
+    //        message += $"<b>{activeCharacter.name}</b> is the Faction Leader of <b>{activeCharacter.faction.name}</b>";
+    //    }
+    //}
     private void OnRightClickThoughtBubble(object obj) {
         if (obj is IPlayerActionTarget playerActionTarget) {
             UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
@@ -813,7 +822,7 @@ public class CharacterInfoUI : InfoUIBase {
         List<PLAYER_SKILL_TYPE> afflictionTypes = PlayerManager.Instance.player.playerSkillComponent.afflictions;
         for (int i = 0; i < afflictionTypes.Count; i++) {
             PLAYER_SKILL_TYPE spellType = afflictionTypes[i];
-            SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(spellType);
+            SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType);
             afflictions.Add(spellData);
         }
         UIManager.Instance.ShowClickableObjectPicker(afflictions, ActivateAfflictionConfirmation, null, CanActivateAffliction,
@@ -834,7 +843,7 @@ public class CharacterInfoUI : InfoUIBase {
     private void ActivateAffliction(PLAYER_SKILL_TYPE afflictionType) {
         UIManager.Instance.HideObjectPicker();
         PlayerSkillManager.Instance.GetAfflictionData(afflictionType).ActivateAbility(activeCharacter);
-        PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.AFFLICT).OnExecuteSpellActionAffliction();
+        PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.AFFLICT).OnExecutePlayerSkill();
     }
     private bool CanActivateAffliction(SpellData spellData) {
         // if (WorldConfigManager.Instance.isTutorialWorld) {

@@ -29,6 +29,7 @@ public class PlayerSkillManager : MonoBehaviour {
     public Dictionary<PLAYER_SKILL_TYPE, SpellData> allSpellsData { get; private set; }
     public Dictionary<PLAYER_SKILL_TYPE, PlayerAction> allPlayerActionsData { get; private set; }
     public Dictionary<PLAYER_SKILL_TYPE, AfflictData> allAfflictionsData { get; private set; }
+    public Dictionary<PLAYER_SKILL_TYPE, SchemeData> allSchemesData { get; private set; }
     public Dictionary<PLAYER_SKILL_TYPE, DemonicStructurePlayerSkill> allDemonicStructureSkillsData { get; private set; }
     public Dictionary<PLAYER_SKILL_TYPE, MinionPlayerSkill> allMinionPlayerSkillsData { get; private set; }
     public Dictionary<PLAYER_SKILL_TYPE, SummonPlayerSkill> allSummonPlayerSkillsData { get; private set; }
@@ -43,6 +44,8 @@ public class PlayerSkillManager : MonoBehaviour {
     public List<PLAYER_SKILL_TYPE> constantSkills = new List<PLAYER_SKILL_TYPE> { PLAYER_SKILL_TYPE.AFFLICT, PLAYER_SKILL_TYPE.BUILD_DEMONIC_STRUCTURE, PLAYER_SKILL_TYPE.UNSUMMON, 
         PLAYER_SKILL_TYPE.BREED_MONSTER, PLAYER_SKILL_TYPE.TORTURE, PLAYER_SKILL_TYPE.BRAINWASH, PLAYER_SKILL_TYPE.EVANGELIZE,/*, SPELL_TYPE.CULTIST_TRANSFORM,*/ PLAYER_SKILL_TYPE.CULTIST_POISON,
         PLAYER_SKILL_TYPE.SACRIFICE, PLAYER_SKILL_TYPE.REPAIR, PLAYER_SKILL_TYPE.FOUND_CULT, PLAYER_SKILL_TYPE.SPREAD_RUMOR, PLAYER_SKILL_TYPE.CULTIST_BOOBY_TRAP, PLAYER_SKILL_TYPE.UPGRADE,
+        PLAYER_SKILL_TYPE.INSTIGATE_WAR, PLAYER_SKILL_TYPE.RESIGN, PLAYER_SKILL_TYPE.LEAVE_FACTION, PLAYER_SKILL_TYPE.LEAVE_HOME, PLAYER_SKILL_TYPE.LEAVE_VILLAGE, PLAYER_SKILL_TYPE.BREAK_UP,
+        PLAYER_SKILL_TYPE.JOIN_FACTION, PLAYER_SKILL_TYPE.REBELLION
     };
 
     [NonSerialized]
@@ -73,6 +76,13 @@ public class PlayerSkillManager : MonoBehaviour {
             , PLAYER_SKILL_TYPE.AGORAPHOBIA, PLAYER_SKILL_TYPE.PARALYSIS/*, SPELL_TYPE.ZOMBIE_VIRUS*/
             , PLAYER_SKILL_TYPE.PLAGUE, PLAYER_SKILL_TYPE.PSYCHOPATHY, PLAYER_SKILL_TYPE.COWARDICE, PLAYER_SKILL_TYPE.PYROPHOBIA
             , PLAYER_SKILL_TYPE.NARCOLEPSY, PLAYER_SKILL_TYPE.HOTHEADED, PLAYER_SKILL_TYPE.LAZINESS, PLAYER_SKILL_TYPE.MUSIC_HATER, PLAYER_SKILL_TYPE.GLUTTONY
+    };
+
+    [NonSerialized]
+    public PLAYER_SKILL_TYPE[] allSchemes = { PLAYER_SKILL_TYPE.INSTIGATE_WAR
+            , PLAYER_SKILL_TYPE.RESIGN, PLAYER_SKILL_TYPE.LEAVE_FACTION, PLAYER_SKILL_TYPE.LEAVE_HOME
+            , PLAYER_SKILL_TYPE.LEAVE_VILLAGE, PLAYER_SKILL_TYPE.BREAK_UP
+            , PLAYER_SKILL_TYPE.JOIN_FACTION, PLAYER_SKILL_TYPE.REBELLION
     };
 
     [NonSerialized]
@@ -117,6 +127,7 @@ public class PlayerSkillManager : MonoBehaviour {
         ConstructAllSpellsData();
         ConstructAllPlayerActionsData();
         ConstructAllAfflictionsData();
+        ConstructAllSchemesData();
         ConstructAllDemonicStructureSkillsData();
         ConstructAllMinionPlayerSkillsData();
         ConstructAllSummonPlayerSkillsData();
@@ -188,6 +199,19 @@ public class PlayerSkillManager : MonoBehaviour {
             }
         }
     }
+    private void ConstructAllSchemesData() {
+        allSchemesData = new Dictionary<PLAYER_SKILL_TYPE, SchemeData>();
+        for (int i = 0; i < allSchemes.Length; i++) {
+            PLAYER_SKILL_TYPE spellType = allSchemes[i];
+            if (spellType != PLAYER_SKILL_TYPE.NONE) {
+                var typeName =
+                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+                SchemeData scheme = System.Activator.CreateInstance(System.Type.GetType(typeName) ?? throw new Exception($"Problem with creating spell data for {typeName}")) as SchemeData;
+                allSchemesData.Add(spellType, scheme);
+                allPlayerSkillsData.Add(spellType, scheme);
+            }
+        }
+    }
     private void ConstructAllMinionPlayerSkillsData() {
         allMinionPlayerSkillsData = new Dictionary<PLAYER_SKILL_TYPE, MinionPlayerSkill>();
         for (int i = 0; i < allMinionPlayerSkills.Length; i++) {
@@ -220,6 +244,9 @@ public class PlayerSkillManager : MonoBehaviour {
     public bool IsAffliction(PLAYER_SKILL_TYPE type) {
         return allAfflictions.Contains(type);
     }
+    public bool IsScheme(PLAYER_SKILL_TYPE type) {
+        return allSchemes.Contains(type);
+    }
     public bool IsMinion(PLAYER_SKILL_TYPE type) {
         return allMinionPlayerSkills.Contains(type);
     }
@@ -229,7 +256,7 @@ public class PlayerSkillManager : MonoBehaviour {
     public bool IsDemonicStructure(PLAYER_SKILL_TYPE type) {
         return allDemonicStructureSkills.Contains(type);
     }
-    public SpellData GetPlayerSpellData(PLAYER_SKILL_TYPE type) {
+    public SpellData GetPlayerSkillData(PLAYER_SKILL_TYPE type) {
         if (allPlayerSkillsData.ContainsKey(type)) {
             return allPlayerSkillsData[type];
         }
@@ -241,9 +268,15 @@ public class PlayerSkillManager : MonoBehaviour {
         }
         return null;
     }
-    public SpellData GetAfflictionData(PLAYER_SKILL_TYPE type) {
+    public AfflictData GetAfflictionData(PLAYER_SKILL_TYPE type) {
         if (allAfflictionsData.ContainsKey(type)) {
             return allAfflictionsData[type];
+        }
+        return null;
+    }
+    public SchemeData GetSchemeData(PLAYER_SKILL_TYPE type) {
+        if (allSchemesData.ContainsKey(type)) {
+            return allSchemesData[type];
         }
         return null;
     }

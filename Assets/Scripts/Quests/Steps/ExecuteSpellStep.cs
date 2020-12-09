@@ -18,7 +18,7 @@ namespace Quests.Steps {
             if (_neededSpellType == PLAYER_SKILL_TYPE.METEOR) {
                 Messenger.AddListener(SpellSignals.METEOR_FELL, Complete);
             } else {
-                Messenger.AddListener<SpellData>(SpellSignals.ON_EXECUTE_SPELL, CheckForCompletion);    
+                Messenger.AddListener<SpellData>(SpellSignals.ON_EXECUTE_PLAYER_SKILL, CheckForCompletion);    
             }
             
         }
@@ -26,7 +26,7 @@ namespace Quests.Steps {
             if (_neededSpellType == PLAYER_SKILL_TYPE.METEOR) {
                 Messenger.RemoveListener(SpellSignals.METEOR_FELL, Complete);
             } else {
-                Messenger.RemoveListener<SpellData>(SpellSignals.ON_EXECUTE_SPELL, CheckForCompletion);
+                Messenger.RemoveListener<SpellData>(SpellSignals.ON_EXECUTE_PLAYER_SKILL, CheckForCompletion);
             }
         }
 

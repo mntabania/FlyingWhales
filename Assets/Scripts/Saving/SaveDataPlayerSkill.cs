@@ -26,7 +26,7 @@ public class SaveDataPlayerSkill : SaveData<SpellData> {
         currentCooldownTick = data.currentCooldownTick;
     }
     public override SpellData Load() {
-        SpellData data = PlayerSkillManager.Instance.GetPlayerSpellData(type);
+        SpellData data = PlayerSkillManager.Instance.GetPlayerSkillData(type);
         data.SetCharges(charges);
         data.SetCooldown(cooldown);
         data.SetManaCost(manaCost);

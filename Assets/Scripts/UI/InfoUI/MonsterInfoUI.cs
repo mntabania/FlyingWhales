@@ -92,7 +92,7 @@ public class MonsterInfoUI : InfoUIBase {
         if (previousMonster != null && previousMonster.marker != null) {
             previousMonster.marker.UpdateNameplateElementsState();
         }
-        if (UIManager.Instance.IsShareIntelMenuOpen()) {
+        if (UIManager.Instance.IsConversationMenuOpen()) {
             backButton.interactable = false;
         }
         if (UIManager.Instance.IsObjectPickerOpen()) {

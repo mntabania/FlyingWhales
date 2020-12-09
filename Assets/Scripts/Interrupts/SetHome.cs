@@ -458,7 +458,7 @@ namespace Interrupts {
                     Character factionMember = actor.faction.characters[i];
                     if (factionMember.isSettlementRuler) {
                         if (npcSettlements == null) { npcSettlements = new List<NPCSettlement>(); }
-                        npcSettlements.Add(factionMember.ruledSettlement);
+                        npcSettlements.Add(factionMember.homeSettlement);
                     }
                 }
                 if (npcSettlements != null && npcSettlements.Count > 0) {

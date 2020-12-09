@@ -13,7 +13,7 @@
     /// <summary>
     /// parameters (Spell)
     /// </summary>
-    public static string ON_EXECUTE_SPELL = "OnExecuteSpell";
+    public static string ON_EXECUTE_PLAYER_SKILL = "OnExecutePlayerSkill";
     /// <summary>
     /// parameters (SpellData)
     /// </summary>

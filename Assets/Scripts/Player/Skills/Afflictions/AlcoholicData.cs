@@ -17,7 +17,7 @@ public class AlcoholicData : AfflictData {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         AfflictPOIWith("Alcoholic", targetPOI, "Alcoholism");
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Alcoholic")) {

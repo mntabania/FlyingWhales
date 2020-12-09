@@ -1392,6 +1392,9 @@ public class CharacterManager : BaseMonoBehaviour {
             return string.Empty;
         }
     }
+    public string GetEmotionText(EMOTION emotionType) {
+        return $"{GetEmotion(emotionType).GetRandomResponseText()}";
+    }
     public Emotion GetEmotion(string name) {
         for (int i = 0; i < allEmotions.Count; i++) {
             if(allEmotions[i].name == name) {

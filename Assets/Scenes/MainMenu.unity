@@ -789,6 +789,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!1001 &89920247
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1998,6 +1999,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &201978296
 GameObject:
   m_ObjectHideFlags: 0
@@ -4248,6 +4250,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &397563550
 GameObject:
   m_ObjectHideFlags: 0
@@ -5679,6 +5682,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &538731802
 GameObject:
   m_ObjectHideFlags: 0
@@ -17679,6 +17683,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &816932135
 GameObject:
   m_ObjectHideFlags: 0
@@ -23095,6 +23100,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &1258941063
 GameObject:
   m_ObjectHideFlags: 0

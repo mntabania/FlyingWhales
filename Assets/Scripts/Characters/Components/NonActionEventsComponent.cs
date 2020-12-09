@@ -393,7 +393,7 @@ public class NonActionEventsComponent : CharacterComponent {
         RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.EX_LOVER);
 
         Log log;
-        if (reason != string.Empty) {
+        if (!string.IsNullOrEmpty(reason)) {
             log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Break Up", "break_up_reason", null, LOG_TAG.Social, LOG_TAG.Life_Changes);
             log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
         } else {

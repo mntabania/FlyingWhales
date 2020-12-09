@@ -83,7 +83,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         }
     }
     private void UpdateData(PlayerSkillData skillData) {
-        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(skillData.skill);
+        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
         titleText.SetText(spellData.name);
         descriptionText.SetTextAndReplaceWithIcons(spellData.description);
         int charges = skillData.charges;

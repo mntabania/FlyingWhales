@@ -46,6 +46,21 @@ public class IntelNotificationItem : PlayerNotificationItem {
         ObjectPoolManager.Instance.DestroyObject(effectGO);
         PlayerManager.Instance.player.AddIntel(intel);
     }
+
+    #region Hover
+    public void OnHoverEnter() {
+        if(intel != null) {
+            string text = intel.GetIntelInfoBlackmailText();
+            if (!string.IsNullOrEmpty(text)) {
+                UIManager.Instance.ShowSmallInfo(text);
+            }
+        }
+    }
+    public void OnHoverExit() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
+
     public override void DeleteOldestNotification() {
         intel.OnIntelRemoved(); //cleanup intel
         base.DeleteOldestNotification();

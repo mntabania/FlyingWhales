@@ -69,7 +69,7 @@ public class FactionInfoUI : InfoUIBase {
         Faction previousArea = activeFaction;
         activeFaction = _data as Faction;
         base.OpenMenu();
-        if (UIManager.Instance.IsShareIntelMenuOpen()) {
+        if (UIManager.Instance.IsConversationMenuOpen()) {
             backButton.interactable = false;
         }
         UpdateOverview();

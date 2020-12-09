@@ -16,7 +16,7 @@ public class UnfaithfulnessData : AfflictData {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         AfflictPOIWith("Unfaithful", targetPOI, name);
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Unfaithful", "Beast")) {
