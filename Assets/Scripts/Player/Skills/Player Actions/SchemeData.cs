@@ -66,6 +66,21 @@ public class SchemeData : PlayerAction {
         }
         return base.IsValid(target);
     }
+    protected override List<IContextMenuItem> GetSubMenus(List<IContextMenuItem> p_contextMenuItems) {
+        if (type == PLAYER_SKILL_TYPE.SCHEME && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget != null) {
+            p_contextMenuItems.Clear();
+            List<PLAYER_SKILL_TYPE> schemeTypes = PlayerManager.Instance.player.playerSkillComponent.schemes;
+            for (int i = 0; i < schemeTypes.Count; i++) {
+                PLAYER_SKILL_TYPE spellType = schemeTypes[i];
+                PlayerAction spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType) as PlayerAction;
+                if (spellData != null && spellData.IsValid(PlayerManager.Instance.player.currentlySelectedPlayerActionTarget)) {
+                    p_contextMenuItems.Add(spellData);
+                }
+            }
+            return p_contextMenuItems;    
+        }
+        return null;
+    }
     #endregion
 
     public void ProcessScheme(Character character, object target, float successRate) {

@@ -5329,38 +5329,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
         if (race == RACE.DEMON) {
-            //PlayerAction stopAction = new PlayerAction(PlayerDB.Stop_Action, 
-            //    () => true,
-            //    null,
-            //    jobComponent.TriggerStopJobs);
-            //PlayerAction returnAction = new PlayerAction(PlayerDB.Return_To_Portal_Action, 
-            //    () => true,
-            //    null,
-            //    () => jobComponent.TriggerReturnPortal());
-            //PlayerAction combatModeAction = new PlayerAction(PlayerDB.Combat_Mode_Action,
-            //    () => true,
-            //    null,
-            //    UIManager.Instance.characterInfoUI.ShowSwitchCombatModeUI);
-            //combatModeAction.SetLabelText(combatModeAction.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(combatComponent.combatMode.ToString()));
-
-            //AddPlayerAction(SPELL_TYPE.STOP);
             AddPlayerAction(PLAYER_SKILL_TYPE.UNSUMMON);
-            //AddPlayerAction(SPELL_TYPE.RETURN_TO_PORTAL);
-            //AddPlayerAction(SPELL_TYPE.CHANGE_COMBAT_MODE);
         } else {
-            //PlayerAction afflictAction = new PlayerAction(PlayerDB.Afflict_Action, 
-            //    () => true,
-            //    null,
-            //    UIManager.Instance.characterInfoUI.ShowAfflictUI);
-            //PlayerAction zapAction = new PlayerAction(PlayerDB.Zap_Action, 
-            //    () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].CanPerformAbilityTowards(this),
-            //    null,
-            //    () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].ActivateAbility(this));
-            //PlayerAction seizeAction = new PlayerAction(PlayerDB.Seize_Character_Action, 
-            //    () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !traitContainer.HasTrait("Leader", "Blessed"),
-            //    null,
-            //    () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
-            // PlayerAction shareIntelAction = new PlayerAction("Share Intel", () => false, null);
             if (isNormalCharacter) {
                 AddPlayerAction(PLAYER_SKILL_TYPE.AFFLICT);
                 AddPlayerAction(PLAYER_SKILL_TYPE.ZAP);
@@ -5369,8 +5339,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
             AddPlayerAction(PLAYER_SKILL_TYPE.SEIZE_CHARACTER);
             AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH);
+            AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
         }
-        // AddPlayerAction(shareIntelAction);
     }
     public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Contains(action) == false) {

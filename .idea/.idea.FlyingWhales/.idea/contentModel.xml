@@ -1776,6 +1776,7 @@
             <e p="Cry.cs" t="Include" />
             <e p="CryRequest.cs" t="Include" />
             <e p="DeclareRaid.cs" t="Include" />
+            <e p="DeclareWar.cs" t="Include" />
             <e p="EvaluateCultistAffiliation.cs" t="Include" />
             <e p="Feared.cs" t="Include" />
             <e p="FeelingAngry.cs" t="Include" />
@@ -1796,7 +1797,9 @@
             <e p="JoinParty.cs" t="Include" />
             <e p="LaughAt.cs" t="Include" />
             <e p="LeaveFaction.cs" t="Include" />
+            <e p="LeaveHome.cs" t="Include" />
             <e p="LeaveParty.cs" t="Include" />
+            <e p="LeaveVillage.cs" t="Include" />
             <e p="LossOfControl.cs" t="Include" />
             <e p="MentalBreak.cs" t="Include" />
             <e p="Mock.cs" t="Include" />
@@ -1811,6 +1814,7 @@
             <e p="Puke.cs" t="Include" />
             <e p="RecallAttack.cs" t="Include" />
             <e p="ReduceConflict.cs" t="Include" />
+            <e p="Resign.cs" t="Include" />
             <e p="RevertFromBat.cs" t="Include" />
             <e p="RevertFromWerewolf.cs" t="Include" />
             <e p="RevertToNormal.cs" t="Include" />
@@ -2507,6 +2511,16 @@
               <e p="PoisonCloudData.cs" t="Include" />
               <e p="RainData.cs" t="Include" />
               <e p="RavenousSpiritData.cs" t="Include" />
+              <e p="Schemes" t="Include">
+                <e p="BreakUpData.cs" t="Include" />
+                <e p="InstigateWarData.cs" t="Include" />
+                <e p="JoinFactionData.cs" t="Include" />
+                <e p="LeaveFactionData.cs" t="Include" />
+                <e p="LeaveHomeData.cs" t="Include" />
+                <e p="LeaveVillageData.cs" t="Include" />
+                <e p="RebellionData.cs" t="Include" />
+                <e p="ResignData.cs" t="Include" />
+              </e>
               <e p="SnareTrapData.cs" t="Include" />
               <e p="SpawnBoulder.cs" t="Include" />
               <e p="SpellData.cs" t="Include" />
