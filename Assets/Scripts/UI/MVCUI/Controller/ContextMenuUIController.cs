@@ -110,7 +110,7 @@ public class ContextMenuUIController : MVCUIController, ContextMenuUIView.IListe
 		m_hasVectorPositionToFollow = false;
 	}
 	public bool IsShowing() {
-		return m_contextMenuUIModel.parentDisplay.gameObject.activeSelf;
+		return m_contextMenuUIView.UIModel.parentDisplay.gameObject.activeSelf;
 	}
 	public void OnHoverOverParentDisplay() { }
 	public void OnHoverOutParentDisplay() {
