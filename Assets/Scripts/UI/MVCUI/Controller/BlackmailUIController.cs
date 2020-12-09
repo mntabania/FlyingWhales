@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using Ruinarch.MVCFramework;
 using UnityEngine;
 
 public class BlackmailUIController : MVCUIController, BlackmailUIView.IListener {
     [SerializeField] private BlackmailUIModel m_blackmailUIModel;
     private BlackmailUIView m_blackmailUIView;
+
+    private IIntel _chosenBlackmail;
+    private System.Action<IIntel> _onConfirmAction;
+    
     private void Start() {
         InstantiateUI();
     }
@@ -25,13 +30,26 @@ public class BlackmailUIController : MVCUIController, BlackmailUIView.IListener 
         });
     }
 
-    private void OnChooseIntel(IIntel p_intel) {
-        
+    public void Show(List<IIntel> p_blackmail, System.Action<IIntel> p_onConfirmAction) {
+        ShowUI();
+        m_blackmailUIView.DisplayBlackmailItems(p_blackmail);
+        _onConfirmAction = p_onConfirmAction;
+    }
+
+    private void OnChooseIntel(IIntel p_intel, bool p_isOn) {
+        if (p_isOn) {
+            _chosenBlackmail = p_intel;
+            Debug.Log($"Chosen intel {p_intel?.log.logText}");    
+        }
     }
 
     #region BlackmailUIView.IListener Implementation
     public void OnClickClose() {
         HideUI();
+    }
+    public void OnClickConfirm() {
+        HideUI();
+        _onConfirmAction?.Invoke(_chosenBlackmail);
     }
     #endregion
 }

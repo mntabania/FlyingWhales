@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Ruinarch.MVCFramework;
 using UnityEngine;
 
@@ -6,6 +8,7 @@ public class BlackmailUIView : MVCUIView {
     #region interface for listener
     public interface IListener {
         void OnClickClose();
+        void OnClickConfirm();
     }
     #endregion
     
@@ -31,9 +34,24 @@ public class BlackmailUIView : MVCUIView {
     #region Subscribe/Unsubscribe for IListener
     public void Subscribe(IListener p_listener) {
         UIModel.onCloseClicked += p_listener.OnClickClose;
+        UIModel.onClickConfirm += p_listener.OnClickConfirm;
     }
     public void Unsubscribe(IListener p_listener) {
         UIModel.onCloseClicked -= p_listener.OnClickClose;
+        UIModel.onClickConfirm -= p_listener.OnClickConfirm;
     }
     #endregion
+
+    public void DisplayBlackmailItems(List<IIntel> p_intel) {
+        for (int i = 0; i < UIModel.blackmailUIItems.Length; i++) {
+            BlackmailUIItem blackMailItem = UIModel.blackmailUIItems[i];
+            IIntel intel = p_intel.ElementAtOrDefault(i);
+            if (intel != null) {
+                blackMailItem.SetItemDetails(intel);
+                blackMailItem.gameObject.SetActive(true);
+            } else {
+                blackMailItem.gameObject.SetActive(false);    
+            }
+        }
+    }
 }

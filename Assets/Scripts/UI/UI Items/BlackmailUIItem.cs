@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class BlackmailUIItem : MonoBehaviour {
 
-    public static System.Action<IIntel> onChooseBlackmail;
+    public static System.Action<IIntel, bool> onChooseBlackmail;
     
     public TextMeshProUGUI txtLog;
-    public RuinarchButton btnChoose;
+    public RuinarchToggle tglChoose;
 
     private IIntel _intel;
     
     private void OnEnable() {
-        btnChoose.onClick.AddListener(OnClickIntel);
+        tglChoose.onValueChanged.AddListener(OnToggleIntel);
     }
     private void OnDisable() {
-        btnChoose.onClick.RemoveListener(OnClickIntel);
+        tglChoose.onValueChanged.RemoveListener(OnToggleIntel);
     }
 
     public void SetItemDetails(IIntel p_intel) {
@@ -24,8 +24,8 @@ public class BlackmailUIItem : MonoBehaviour {
     }
     
     #region Button Clicks
-    private void OnClickIntel() {
-        onChooseBlackmail?.Invoke(_intel);
+    private void OnToggleIntel(bool p_isOn) {
+        onChooseBlackmail?.Invoke(_intel, p_isOn);
     }
     #endregion
 }
