@@ -102,7 +102,6 @@ public class BiolabUIController : MVCUIController, BiolabUIView.IListener
 		}
 	}
 	
-
 	#region BiolabUIView.IListener implementation
 	public void OnTransmissionTabClicked(bool isOn) {
 		if (isOn) {
