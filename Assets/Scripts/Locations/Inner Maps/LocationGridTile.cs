@@ -1568,7 +1568,7 @@ namespace Inner_Maps {
                         if (objHere is Tombstone tombstone) {
                             tombstone.SetRespawnCorpseOnDestroy(false);
                         }
-                        if (!tileObject.tileObjectType.IsTileObjectImportant()) {
+                        if (!tileObject.tileObjectType.IsTileObjectImportant() && !tileObject.traitContainer.HasTrait("Indestructible")) {
                             structure.RemovePOI(objHere);    
                         }    
                     }
@@ -1581,7 +1581,13 @@ namespace Inner_Maps {
             RevertTileToOriginalPerlin();
             CreateSeamlessEdgesForSelfAndNeighbours();
             if (objHere != null) {
-                structure.RemovePOI(objHere);
+                if (objHere is TileObject tileObject) {
+                    if (!tileObject.traitContainer.HasTrait("Indestructible")) {
+                        structure.RemovePOI(objHere);    
+                    }
+                } else {
+                    structure.RemovePOI(objHere);
+                }
             }
         }
         #endregion

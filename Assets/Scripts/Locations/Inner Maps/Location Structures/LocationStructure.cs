@@ -908,16 +908,40 @@ namespace Inner_Maps.Location_Structures {
             LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
             for (int i = 0; i < tilesInStructure.Count; i++) {
                 LocationGridTile tile = tilesInStructure[i];
-                LocationStructure transferTo = wilderness;
-            
                 tile.ClearWallObjects();
                 IPointOfInterest obj = tile.objHere;
                 if (obj != null) {
-                    // obj.AdjustHP(-tile.objHere.maxHP, ELEMENTAL_TYPE.Normal, showHPBar: true);
-                    obj.gridTileLocation?.structure.RemovePOI(obj); //because sometimes adjusting the hp of the object to 0 does not remove it?
+                    if (obj is TileObject tileObject && tileObject.traitContainer.HasTrait("Indestructible")) {
+                        if (tileObject.isPreplaced) {
+                            LocationStructureObject structureObject = null;
+                            if (this is DemonicStructure demonicStructure) {
+                                structureObject = demonicStructure.structureObj;
+                            } else if (this is ManMadeStructure manMadeStructure) {
+                                structureObject = manMadeStructure.structureObj;
+                            }
+                            if (structureObject != null) {
+                                if (structureObject.HasPreplacedObjectOfType(tileObject.tileObjectType)) {
+                                    //if indestructible object is part of this structures template, then remove it
+                                    obj.gridTileLocation?.structure.RemovePOI(obj);
+                                } else {
+                                    //otherwise, transfer it to the wilderness structure
+                                    OnlyRemovePOIFromList(tileObject);
+                                    wilderness.OnlyAddPOIToList(tileObject);        
+                                }
+                            }
+                        } else {
+                            //tile object is not pre placed and is indestructible, do not destroy
+                            OnlyRemovePOIFromList(tileObject);
+                            wilderness.OnlyAddPOIToList(tileObject);    
+                        }
+                        
+                    } else {
+                        // obj.AdjustHP(-tile.objHere.maxHP, ELEMENTAL_TYPE.Normal, showHPBar: true);
+                        obj.gridTileLocation?.structure.RemovePOI(obj); //because sometimes adjusting the hp of the object to 0 does not remove it?    
+                    }
                 }
                 
-                tile.SetStructure(transferTo);
+                tile.SetStructure(wilderness);
                 tile.SetTileType(LocationGridTile.Tile_Type.Empty);
                 if (tile.groundType.IsStructureType()) {
                     tile.genericTileObject.AdjustHP(-tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);

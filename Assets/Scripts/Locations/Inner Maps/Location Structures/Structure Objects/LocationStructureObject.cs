@@ -159,7 +159,12 @@ public class LocationStructureObject : PooledObject {
             Vector3Int tileCoords = innerMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
             LocationGridTile tile = innerMap.map[tileCoords.x, tileCoords.y];
             if (tile.objHere != null) {
-                tile.structure.RemovePOI(tile.objHere);
+                if (tile.objHere.traitContainer.HasTrait("Indestructible")) {
+                    //skip placement if current object there is indestructible
+                    continue;
+                } else {
+                    tile.structure.RemovePOI(tile.objHere);    
+                }
             }
             TileObject newTileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
             newTileObject.SetIsPreplaced(true);
@@ -217,6 +222,18 @@ public class LocationStructureObject : PooledObject {
             return _preplacedObjs;
         }
         return null;
+    }
+    public bool HasPreplacedObjectOfType(TILE_OBJECT_TYPE p_tileObjectType) {
+        StructureTemplateObjectData[] prePlacedObjects = GetPreplacedObjects();
+        if (prePlacedObjects != null) {
+            for (int i = 0; i < prePlacedObjects.Length; i++) {
+                StructureTemplateObjectData prePlaced = prePlacedObjects[i];
+                if (prePlaced.tileObjectType == p_tileObjectType) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     internal void ReceiveMapObject<T>(MapObjectVisual<T> mapGameObject) where T : IDamageable {
         mapGameObject.transform.SetParent(objectsParent);
