@@ -931,7 +931,7 @@ public class ReactionComponent : CharacterComponent {
                         if(factionRel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Neutral || factionRel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Friendly) {
                             //If actor's faction is friendly/neutral with prisoner's faction and prisoner is restrained
                             Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-                            if(prisoner != null) {
+                            if(prisoner != null && !prisoner.IsConsideredPrisonerOf(disguisedActor)) {
                                 bool isRestrained = targetCharacter.traitContainer.HasTrait("Restrained");
                                 if (isRestrained) {
                                     Faction factionThatImprisoned = prisoner.GetFactionThatImprisoned();
