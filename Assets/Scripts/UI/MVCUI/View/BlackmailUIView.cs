@@ -42,12 +42,12 @@ public class BlackmailUIView : MVCUIView {
     }
     #endregion
 
-    public void DisplayBlackmailItems(List<IIntel> p_intel) {
+    public void DisplayBlackmailItems(List<IIntel> p_intel, List<IIntel> p_alreadyChosenBlackmail) {
         for (int i = 0; i < UIModel.blackmailUIItems.Length; i++) {
             BlackmailUIItem blackMailItem = UIModel.blackmailUIItems[i];
             IIntel intel = p_intel.ElementAtOrDefault(i);
             if (intel != null) {
-                blackMailItem.SetItemDetails(intel);
+                blackMailItem.SetInitialItemDetails(intel, !p_alreadyChosenBlackmail.Contains(intel));
                 blackMailItem.gameObject.SetActive(true);
             } else {
                 blackMailItem.gameObject.SetActive(false);    

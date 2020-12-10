@@ -1,5 +1,6 @@
 ﻿using Ruinarch.Custom_UI;
 using Ruinarch.MVCFramework;
+using UnityEngine;
 
 public class TemptUIModel : MVCUIModel {
 
@@ -12,6 +13,10 @@ public class TemptUIModel : MVCUIModel {
     public RuinarchToggle tglDarkBlessing;
     public RuinarchToggle tglEmpower;
     public RuinarchToggle tglCleanseFlaws;
+    
+    public GameObject coverDarkBlessing;
+    public GameObject coverEmpower;
+    public GameObject coverCleanseFlaws;
 
     public RuinarchButton btnConfirm;
     public RuinarchButton btnClose;

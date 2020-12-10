@@ -73,12 +73,12 @@ public class ContextMenuUIController : MVCUIController, ContextMenuUIView.IListe
 		}
 	}
 	private void OnMenuHoveredOver(IContextMenuItem p_UIMenu, bool p_isAction, int p_currentColumn) {
-		if (p_UIMenu.CanBePicked()) {
-			if (!p_isAction) {
+		if (!p_isAction) {
+			if (p_UIMenu.CanBePicked()) {
 				m_contextMenuUIView.DisplaySubMenu(p_UIMenu.subMenus, p_currentColumn + 1, _canvas);
-			} else {
-				m_contextMenuUIView.HideColumn(p_currentColumn + 1);
-			}	
+			}
+		} else {
+			m_contextMenuUIView.HideColumn(p_currentColumn + 1);
 		}
 		_onHoverOverAction?.Invoke(p_UIMenu);
 	}

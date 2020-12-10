@@ -2,24 +2,32 @@
 using System.Collections.Generic;
 using Ruinarch.MVCFramework;
 using UnityEngine;
+using UtilityScripts;
 
 public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
-    private enum BLACKMAIL_TYPE {
-        None, Strong, Normal, Weak,
-    }
 
     [SerializeField] private SchemeUIModel m_schemeUIModel;
     private SchemeUIView m_schemeUIView;
+
+    public BlackmailUIController blackmailUIController;
+    public TemptUIController temptUIController;
 
     private Character _targetCharacter;
     private object _otherTarget;
     private SchemeData _schemeUsed;
     private float _successRate;
     private List<SchemeUIItem> _schemeUIItems;
-
+    private List<IIntel> _chosenBlackmail;
+    private List<TEMPTATION> _chosenTemptations;
+    
+    private System.Action _onCloseAction;
     private void Start() {
         InstantiateUI();
         HideUI();
+    }
+    private void Awake() {
+        _chosenBlackmail = new List<IIntel>();
+        _chosenTemptations = new List<TEMPTATION>();
     }
 
     //Call this function to Instantiate the UI, on the callback you can call initialization code for the said UI
@@ -29,10 +37,15 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
             m_schemeUIView = p_ui;
             m_schemeUIView.Subscribe(this);
             InitUI(p_ui.UIModel, p_ui);
+            
+            blackmailUIController.InstantiateUI();
+            blackmailUIController.HideUI();
+            temptUIController.InstantiateUI();
+            temptUIController.HideUI();
         });
     }
 
-    public void Show(Character p_targetCharacter, object p_otherTarget, SchemeData p_schemeUsed) {
+    public void Show(Character p_targetCharacter, object p_otherTarget, SchemeData p_schemeUsed, System.Action p_onCloseAction) {
         ShowUI();
         _targetCharacter = p_targetCharacter;
         _otherTarget = p_otherTarget;
@@ -40,39 +53,85 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
         if(_schemeUIItems == null) {
             _schemeUIItems = new List<SchemeUIItem>();
         }
+        _onCloseAction = p_onCloseAction;
+        _chosenBlackmail.Clear();
+        _chosenTemptations.Clear();
         ClearSchemeUIItems();
         m_schemeUIView.SetTitle(_schemeUsed.name);
+        m_schemeUIView.SetBlackmailBtnInteractableState(HasValidBlackmailForTarget(p_targetCharacter));
+        m_schemeUIView.SetTemptBtnInteractableState(temptUIController.HasValidTemptationsForTarget(p_targetCharacter));
+    }
+    public override void HideUI() {
+        base.HideUI();
+        _onCloseAction?.Invoke();
     }
 
     #region Blackmail
-    public void AddBlackmail(IIntel intel) {
-        BLACKMAIL_TYPE blackmailType = GetBlackMailTypeConsidering(intel);
+    private void AddBlackmail(IIntel intel) {
+        BLACKMAIL_TYPE blackmailType = intel.GetBlackMailTypeConsideringTarget(_targetCharacter);
         if(blackmailType == BLACKMAIL_TYPE.None) {
-            CreateAndAddNewSchemeUIItem("Non-Blackmail Material", 0f, OnClickMinusSchemeUIItem, OnHoverEnterSchemeUIItem, OnHoverExitSchemeUIItem);
+            CreateAndAddNewSchemeUIItem("Non-Blackmail Material", 0f, item => {
+                OnClickMinusSchemeUIItem(item);
+                _chosenBlackmail.Remove(intel);
+            }, OnHoverEnterSchemeUIItem, OnHoverExitSchemeUIItem);
         } else {
             float successRate = GetSchemeSuccessRate(blackmailType);
-            CreateAndAddNewSchemeUIItem($"{blackmailType.ToString()} Blackmail", successRate, OnClickMinusSchemeUIItem, OnHoverEnterSchemeUIItem, OnHoverExitSchemeUIItem);
+            CreateAndAddNewSchemeUIItem($"{blackmailType.ToString()} Blackmail", successRate, item => {
+                OnClickMinusSchemeUIItem(item);
+                _chosenBlackmail.Remove(intel);
+            }, OnHoverEnterSchemeUIItem, OnHoverExitSchemeUIItem);
         }
+        _chosenBlackmail.Add(intel);
         UpdateSuccessRate();
     }
-    private BLACKMAIL_TYPE GetBlackMailTypeConsidering(IIntel intel) {
-        CRIME_TYPE crimeType = intel.reactable.crimeType;
-        if(crimeType != CRIME_TYPE.None && crimeType != CRIME_TYPE.Unset && _targetCharacter.faction != null) {
-            CRIME_SEVERITY severity = _targetCharacter.faction.GetCrimeSeverity(intel.actor, intel.target, crimeType);
-            if(severity == CRIME_SEVERITY.Heinous) {
-                return BLACKMAIL_TYPE.Strong;
-            } else if (severity == CRIME_SEVERITY.Serious) {
-                return BLACKMAIL_TYPE.Normal;
-            } else if (severity == CRIME_SEVERITY.Misdemeanor || severity == CRIME_SEVERITY.Infraction) {
-                return BLACKMAIL_TYPE.Weak;
+    private List<IIntel> GetValidBlackmailForTarget(Character p_target) {
+        List<IIntel> validIntel = null;
+        for (int i = 0; i < PlayerManager.Instance.player.allIntel.Count; i++) {
+            IIntel intel = PlayerManager.Instance.player.allIntel[i];
+            if (intel.CanBeUsedToBlackmailCharacter(p_target)) {
+                if (validIntel == null) { validIntel = new List<IIntel>(); }
+                validIntel.Add(intel);
             }
         }
-        return BLACKMAIL_TYPE.None;
+        return validIntel;
+    }
+    private bool HasValidBlackmailForTarget(Character p_target) {
+        for (int i = 0; i < PlayerManager.Instance.player.allIntel.Count; i++) {
+            IIntel intel = PlayerManager.Instance.player.allIntel[i];
+            if (intel.CanBeUsedToBlackmailCharacter(p_target)) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
     #region Temptation
-    //TODO: Add Temptation
+    private void AddTemptation(TEMPTATION p_temptation) {
+        float successRate = GetSchemeSuccessRate(p_temptation);
+        CreateAndAddNewSchemeUIItem(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(p_temptation.ToString()), successRate, item => {
+            OnClickMinusSchemeUIItem(item);
+            _chosenTemptations.Remove(p_temptation);
+        }, OnHoverEnterSchemeUIItem, OnHoverExitSchemeUIItem);
+        
+        _chosenTemptations.Add(p_temptation);
+        UpdateSuccessRate();
+    }
+    private void ActivateTemptationEffect(TEMPTATION p_temptation) {
+        switch (p_temptation) {
+            case TEMPTATION.Dark_Blessing:
+                _targetCharacter.traitContainer.AddTrait(_targetCharacter, "Dark Blessing");
+                break;
+            case TEMPTATION.Empower:
+                _targetCharacter.traitContainer.AddTrait(_targetCharacter, "Mighty");
+                break;
+            case TEMPTATION.Cleanse_Flaws:
+                _targetCharacter.traitContainer.RemoveAllTraitsByType(_targetCharacter, TRAIT_TYPE.FLAW);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(p_temptation), p_temptation, null);
+        }
+    }
     #endregion
 
     #region Scheme
@@ -112,14 +171,57 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
     public void OnClickConfirm() {
         HideUI();
         //Process all activate temptations also
+        for (int i = 0; i < _chosenTemptations.Count; i++) {
+            TEMPTATION temptation = _chosenTemptations[i];
+            ActivateTemptationEffect(temptation);
+        }
         //Consume blackmail intels
+        for (int i = 0; i < _chosenBlackmail.Count; i++) {
+            IIntel blackmail = _chosenBlackmail[i];
+            PlayerManager.Instance.player.RemoveIntel(blackmail);
+        }
         _schemeUsed.ProcessScheme(_targetCharacter, _otherTarget, _successRate);
     }
     public void OnClickBlackmail() {
         //Show Blackmail UI
+        List<IIntel> validIntel = GetValidBlackmailForTarget(_targetCharacter);
+        if (validIntel != null) {
+            blackmailUIController.ShowBlackmailUI(validIntel, _chosenBlackmail, OnConfirmBlackmail);    
+        }
+    }
+    private void OnConfirmBlackmail(List<IIntel> p_chosenBlackmail) {
+        for (int i = 0; i < p_chosenBlackmail.Count; i++) {
+            IIntel intel = p_chosenBlackmail[i];
+            if (!_chosenBlackmail.Contains(intel)) {
+                AddBlackmail(intel);
+            }
+        }
     }
     public void OnClickTemptation() {
         //Show Temptation UI
+        if (temptUIController.HasValidTemptationsForTarget(_targetCharacter)) {
+            temptUIController.ShowTemptationPopup(_targetCharacter, OnConfirmTemptation, _chosenTemptations);
+        }
+    }
+    private void OnConfirmTemptation(List<TEMPTATION> p_temptations) {
+        for (int i = 0; i < p_temptations.Count; i++) {
+            TEMPTATION temptation = p_temptations[i];
+            if (!_chosenTemptations.Contains(temptation)) {
+                AddTemptation(temptation);    
+            }
+        }
+    }
+    public void OnHoverOverBlackmailBtn(UIHoverPosition p_hoverPos) {
+        if (!HasValidBlackmailForTarget(_targetCharacter)) {
+            UIManager.Instance.ShowSmallInfo(UtilityScripts.Utilities.ColorizeInvalidText($"You have no usable blackmail against {_targetCharacter.name}!"), p_hoverPos, "No Blackmail");    
+        }
+    }
+    public void OnHoverOverTemptBtn(UIHoverPosition p_hoverPos) { }
+    public void OnHoverOutBlackmailBtn() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    public void OnHoverOutTemptBtn() {
+        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 
@@ -139,7 +241,7 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
         }
     }
     private void CreateAndAddNewSchemeUIItem(string text, float successRate, System.Action<SchemeUIItem> onClickMinusAction, System.Action<SchemeUIItem> onHoverEnterAction, System.Action<SchemeUIItem> onHoverExitAction) {
-        GameObject go = UIManager.Instance.InstantiateUIObject(m_schemeUIModel.schemeUIItemPrefab.name, m_schemeUIModel.scrollViewSchemes.content);
+        GameObject go = UIManager.Instance.InstantiateUIObject(m_schemeUIView.UIModel.schemeUIItemPrefab.name, m_schemeUIView.UIModel.scrollViewSchemes.content);
         SchemeUIItem item = go.GetComponent<SchemeUIItem>();
         item.SetItemDetails(text, successRate);
         item.SetClickMinusAction(onClickMinusAction);

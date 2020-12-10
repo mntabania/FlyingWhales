@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using Ruinarch.Custom_UI;
 using Ruinarch.MVCFramework;
 using UnityEngine;
 
 public class TemptUIView : MVCUIView {
-    private TEMPTATION[] _allTemptationTypes;
+    [NonSerialized] public TEMPTATION[] allTemptationTypes;
     
     #region interface for listener
     public interface IListener {
@@ -36,7 +37,7 @@ public class TemptUIView : MVCUIView {
     #endregion
 
     private void Awake() {
-        _allTemptationTypes = UtilityScripts.CollectionUtilities.GetEnumValues<TEMPTATION>();
+        allTemptationTypes = UtilityScripts.CollectionUtilities.GetEnumValues<TEMPTATION>();
     }
 
     #region Subscribe/Unsubscribe for IListener
@@ -56,12 +57,20 @@ public class TemptUIView : MVCUIView {
     }
     #endregion
 
-    public void UpdateShownItems(Character p_target) {
-        for (int i = 0; i < _allTemptationTypes.Length; i++) {
-            TEMPTATION temptation = _allTemptationTypes[i];
+    public void UpdateShownItems(Character p_target, List<TEMPTATION> p_alreadyChosenTemptations) {
+        for (int i = 0; i < allTemptationTypes.Length; i++) {
+            TEMPTATION temptation = allTemptationTypes[i];
             RuinarchToggle toggle = GetTemptationToggle(temptation);
+            GameObject cover = GetTemptationCover(temptation);
             bool canTemptCharacter = temptation.CanTemptCharacter(p_target);
-            toggle.gameObject.SetActive(canTemptCharacter);
+            toggle.SetIsOnWithoutNotify(false);
+            if (canTemptCharacter) {
+                toggle.gameObject.SetActive(true);
+                toggle.interactable = !p_alreadyChosenTemptations.Contains(temptation);
+                cover.SetActive(!toggle.interactable);
+            } else {
+                toggle.gameObject.SetActive(false);    
+            }
         }
     }
 
@@ -73,6 +82,18 @@ public class TemptUIView : MVCUIView {
                 return UIModel.tglEmpower;
             case TEMPTATION.Cleanse_Flaws:
                 return UIModel.tglCleanseFlaws;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(p_temptationType), p_temptationType, null);
+        }
+    }
+    private GameObject GetTemptationCover(TEMPTATION p_temptationType) {
+        switch (p_temptationType) {
+            case TEMPTATION.Dark_Blessing:
+                return UIModel.coverDarkBlessing;
+            case TEMPTATION.Empower:
+                return UIModel.coverEmpower;
+            case TEMPTATION.Cleanse_Flaws:
+                return UIModel.coverCleanseFlaws;
             default:
                 throw new ArgumentOutOfRangeException(nameof(p_temptationType), p_temptationType, null);
         }

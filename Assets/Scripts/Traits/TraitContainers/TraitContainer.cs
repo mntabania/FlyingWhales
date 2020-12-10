@@ -464,7 +464,9 @@ namespace Traits {
             for (int i = 0; i < traits.Count; i++) {
                 Trait trait = traits[i];
                 if (trait.type == traitType) {
-                    RemoveTrait(removeFrom, i);
+                    if (RemoveTrait(removeFrom, i)) {
+                        i--;
+                    }
                 }
             }
         }

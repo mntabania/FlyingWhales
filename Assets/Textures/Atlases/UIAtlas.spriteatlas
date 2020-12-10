@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8350767
+    totalSpriteSurfaceArea: 8379071
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -292,6 +292,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f67b178a31856b140aeca240e4ea35af, type: 3}
   - {fileID: 21300000, guid: 0896459a72f34e744871ced404221e73, type: 3}
   - {fileID: 21300000, guid: 25cb10aad517e434e99509d6aba74989, type: 3}
+  - {fileID: 21300000, guid: 2ae9a0aae3ce1f6459679ea847c46218, type: 3}
   - {fileID: 21300000, guid: c9cbccaaa1257d34aa77e18c8ea8ffc2, type: 3}
   - {fileID: 21300000, guid: 22b245da1531a0546975ce2eb97f7068, type: 3}
   - {fileID: 21300000, guid: 2f89f0eabd5de7548944eca6d41afab8, type: 3}
@@ -649,6 +650,7 @@ SpriteAtlas:
   - minion_tab_items_active
   - tab_items_active
   - assign_button_inactive
+  - intel_row_disabled
   - button_back_default
   - intel_button_hover
   - travel_line

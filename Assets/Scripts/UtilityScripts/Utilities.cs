@@ -1028,6 +1028,9 @@ namespace UtilityScripts {
         public static string ColorizeActionInLog(string actionString) {
             return $"<color=#FFC700>{actionString}</color>";
         }
+        public static string ColorizeInvalidText(string p_text) {
+            return $"<color=#FE3E83>{p_text}</color>";
+        }
         public static string ColorizeName(string name) {
             return $"<color=#f8ed43>{name}</color>";
         }

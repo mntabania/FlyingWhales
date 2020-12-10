@@ -11,7 +11,10 @@ public class SchemeUIView : MVCUIView {
         void OnClickConfirm();
         void OnClickBlackmail();
         void OnClickTemptation();
-
+        void OnHoverOverBlackmailBtn(UIHoverPosition p_hoverPos);
+        void OnHoverOverTemptBtn(UIHoverPosition p_hoverPos);
+        void OnHoverOutBlackmailBtn();
+        void OnHoverOutTemptBtn();
     }
     #endregion
 
@@ -40,12 +43,20 @@ public class SchemeUIView : MVCUIView {
         UIModel.onClickConfirm += p_listener.OnClickConfirm;
         UIModel.onClickBlackmail += p_listener.OnClickBlackmail;
         UIModel.onClickTemptation += p_listener.OnClickTemptation;
+        UIModel.onHoverOverBlackmailBtn += p_listener.OnHoverOverBlackmailBtn;
+        UIModel.onHoverOutBlackmailBtn += p_listener.OnHoverOutBlackmailBtn;
+        UIModel.onHoverOverTemptBtn += p_listener.OnHoverOverTemptBtn;
+        UIModel.onHoverOutTemptBtn += p_listener.OnHoverOutTemptBtn;
     }
     public void Unsubscribe(IListener p_listener) {
         UIModel.onCloseClicked -= p_listener.OnClickClose;
         UIModel.onClickConfirm -= p_listener.OnClickConfirm;
         UIModel.onClickBlackmail -= p_listener.OnClickBlackmail;
         UIModel.onClickTemptation -= p_listener.OnClickTemptation;
+        UIModel.onHoverOverBlackmailBtn -= p_listener.OnHoverOverBlackmailBtn;
+        UIModel.onHoverOutBlackmailBtn -= p_listener.OnHoverOutBlackmailBtn;
+        UIModel.onHoverOverTemptBtn -= p_listener.OnHoverOverTemptBtn;
+        UIModel.onHoverOutTemptBtn -= p_listener.OnHoverOutTemptBtn;
     }
     #endregion
 
@@ -55,6 +66,12 @@ public class SchemeUIView : MVCUIView {
     }
     public void SetTitle(string p_title) {
         UIModel.txtTitle.text = p_title;
+    }
+    public void SetBlackmailBtnInteractableState(bool p_state) {
+        UIModel.btnBlackmail.interactable = p_state;
+    }
+    public void SetTemptBtnInteractableState(bool p_state) {
+        UIModel.btnTemptation.interactable = p_state;
     }
     #endregion
 }
