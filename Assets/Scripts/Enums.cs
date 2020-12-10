@@ -1136,7 +1136,9 @@ public enum PLAGUE_DEATH_EFFECT {
 public enum PLAGUE_EVENT_RESPONSE {
     Undecided, Do_Nothing, Quarantine, Slay, Exile
 }
-
 public enum SETTLEMENT_JOB_TRIGGER {
     Plague_Care
+}
+public enum TEMPTATION {
+    Dark_Blessing, Empower, Cleanse_Flaws
 }

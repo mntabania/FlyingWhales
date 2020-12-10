@@ -3167,6 +3167,7 @@
                 <e p="LifeSpanUIController.cs" t="Include" />
                 <e p="OnDeathUIController.cs" t="Include" />
                 <e p="SymptomsUIController.cs" t="Include" />
+                <e p="TemptUIController.cs" t="Include" />
                 <e p="TransmissionUIController.cs" t="Include" />
               </e>
               <e p="Model" t="Include">
@@ -3177,6 +3178,7 @@
                 <e p="LifeSpanUIModel.cs" t="Include" />
                 <e p="OnDeathUIModel.cs" t="Include" />
                 <e p="SymptomsUIModel.cs" t="Include" />
+                <e p="TemptUIModel.cs" t="Include" />
                 <e p="TransmissionUIModel.cs" t="Include" />
               </e>
               <e p="View" t="Include">
@@ -3187,6 +3189,7 @@
                 <e p="LifeSpanUIView.cs" t="Include" />
                 <e p="OnDeathUIView.cs" t="Include" />
                 <e p="SymptomsUIView.cs" t="Include" />
+                <e p="TemptUIView.cs" t="Include" />
                 <e p="TransmissionUIView.cs" t="Include" />
               </e>
             </e>
