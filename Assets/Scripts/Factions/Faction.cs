@@ -188,20 +188,48 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                     }
                 }
             }
+            Character newCharacterLeader = leader as Character;
             if(leader != null) {
-                if(leader is Character characterLeader) {
+                if(newCharacterLeader != null) {
                     if (isMajorNonPlayer) {
-                        characterLeader.behaviourComponent.AddBehaviourComponent(typeof(FactionLeaderBehaviour));
-                        characterLeader.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
+                        newCharacterLeader.behaviourComponent.AddBehaviourComponent(typeof(FactionLeaderBehaviour));
+                        newCharacterLeader.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
                     }
                 }
             }
-            if (newLeader is Character character) {
-                Messenger.Broadcast(CharacterSignals.ON_SET_AS_FACTION_LEADER, character, prevLeader);
+            if (newCharacterLeader != null) {
+                Messenger.Broadcast(CharacterSignals.ON_SET_AS_FACTION_LEADER, newCharacterLeader, prevLeader);
             } else if (newLeader == null) {
                 Messenger.Broadcast(CharacterSignals.ON_FACTION_LEADER_REMOVED, this, prevLeader);
             }
             factionEventDispatcher.ExecuteFactionLeaderChangedEvent(newLeader);
+
+            //https://trello.com/c/KDgydAWd/3005-faction-leader-also-doubles-as-the-settlement-ruler-of-its-current-settlement
+            if (newCharacterLeader != null) {
+                NPCSettlement homeSettlement = newCharacterLeader.homeSettlement as NPCSettlement;
+                if (homeSettlement != null) {
+                    Character previousRuler = homeSettlement.ruler;
+                    if(previousRuler != newCharacterLeader) {
+                        if (GameManager.Instance.gameHasStarted) {
+                            if (previousRuler == null) {
+                                newCharacterLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Settlement_Ruler, newCharacterLeader);
+                            } else {
+                                //Do not trigger Become_Settlement_Ruler because we have a special log for this
+                                homeSettlement.SetRuler(newCharacterLeader);
+
+                                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "replace_ruler", null, LOG_TAG.Life_Changes);
+                                log.AddToFillers(newCharacterLeader, newCharacterLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                log.AddToFillers(previousRuler, previousRuler.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                log.AddToFillers(homeSettlement, homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
+                                log.AddLogToDatabase();
+                            }
+                        } else {
+                            //If the game has not yet started yet, just set the ruler and do not log it because this is the first state of the world/game
+                            homeSettlement.SetRuler(newCharacterLeader);
+                        }
+                    }
+                }
+            }
         }
     }
     private void OnCharacterRaceChange(Character character) {
