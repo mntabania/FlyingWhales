@@ -51,15 +51,16 @@ public class InstigateWarData : SchemeData {
         }
         base.PopulateSchemeConversation(conversationList, character, target, isSuccessful);
     }
-    public override float GetSuccessRateMultiplier(Character p_targetCharacter) {
+    public override void ProcessSuccessRateWithMultipliers(Character p_targetCharacter, ref float p_newSuccessRate) {
         if (p_targetCharacter.faction != null && p_targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {
-            return 0.25f;
+            p_newSuccessRate *= 0.25f;
         } else if (p_targetCharacter.traitContainer.HasTrait("Diplomatic")) {
-            return 0.5f;
-        } else if (p_targetCharacter.faction != null && p_targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
-            return 3f;
+            p_newSuccessRate *= 0.5f;
         }
-        return base.GetSuccessRateMultiplier(p_targetCharacter);
+        if (p_targetCharacter.faction != null && p_targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
+            p_newSuccessRate *= 3f;
+        }
+        base.ProcessSuccessRateWithMultipliers(p_targetCharacter, ref p_newSuccessRate);
     }
     public override string GetSuccessRateMultiplierText(Character p_targetCharacter) {
         if (p_targetCharacter.faction != null && p_targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {

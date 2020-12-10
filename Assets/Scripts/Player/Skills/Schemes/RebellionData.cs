@@ -46,22 +46,18 @@ public class RebellionData : SchemeData {
         conversationList.Add(data);
         base.PopulateSchemeConversation(conversationList, character, target, isSuccessful);
     }
-    public override float GetSuccessRateMultiplier(Character p_targetCharacter) {
-        float rate = 0f;
+    public override void ProcessSuccessRateWithMultipliers(Character p_targetCharacter, ref float p_newSuccessRate) {
         if (p_targetCharacter.faction != null && p_targetCharacter.faction.leader != null && p_targetCharacter.faction.leader is Character factionLeader && p_targetCharacter != factionLeader) {
             if (p_targetCharacter.relationshipContainer.IsFriendsWith(factionLeader)) {
-                rate += 0.2f;
+                p_newSuccessRate *= 0.2f;
             } else if (p_targetCharacter.relationshipContainer.IsEnemiesWith(factionLeader)) {
-                rate += 3f;
+                p_newSuccessRate *= 3f;
             }
         }
         if (p_targetCharacter.traitContainer.HasTrait("Treacherous")) {
-            rate += 2f;
+            p_newSuccessRate *= 2f;
         }
-        if(rate != 0f) {
-            return rate; 
-        }
-        return base.GetSuccessRateMultiplier(p_targetCharacter);
+        base.ProcessSuccessRateWithMultipliers(p_targetCharacter, ref p_newSuccessRate);
     }
     public override string GetSuccessRateMultiplierText(Character p_targetCharacter) {
         string text = string.Empty;

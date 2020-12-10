@@ -35,8 +35,8 @@ public class LeaveHomeData : SchemeData {
         conversationList.Add(data);
         base.PopulateSchemeConversation(conversationList, targetCharacter, target, isSuccessful);
     }
-    public override float GetSuccessRateMultiplier(Character p_targetCharacter) {
-        return 2f;
+    public override void ProcessSuccessRateWithMultipliers(Character p_targetCharacter, ref float p_newSuccessRate) {
+        p_newSuccessRate *= 2f;
     }
     #endregion
 }

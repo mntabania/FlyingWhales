@@ -432,7 +432,16 @@ public class PlayerUI : BaseMonoBehaviour {
         }
     }
     private void OnHoverEnterStoredIntel(IIntel intel) {
-        string text = intel.GetIntelInfoRelationshipText();
+        string blackmailText = intel.GetIntelInfoBlackmailText();
+        string reactionText = intel.GetIntelInfoRelationshipText();
+        string text = string.Empty;
+
+        text += blackmailText;
+        if (!string.IsNullOrEmpty(text)) {
+            text += "\n";
+        }
+        text += reactionText;
+
         if (!string.IsNullOrEmpty(text)) {
             UIManager.Instance.ShowSmallInfo(text);
         }

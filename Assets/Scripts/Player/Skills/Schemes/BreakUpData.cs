@@ -58,11 +58,11 @@ public class BreakUpData : SchemeData {
         }
         base.PopulateSchemeConversation(conversationList, character, target, isSuccessful);
     }
-    public override float GetSuccessRateMultiplier(Character p_targetCharacter) {
+    public override void ProcessSuccessRateWithMultipliers(Character p_targetCharacter, ref float p_newSuccessRate) {
         if (p_targetCharacter.traitContainer.HasTrait("Unfaithful")) {
-            return 2f;
+            p_newSuccessRate *= 2f;
         }
-        return base.GetSuccessRateMultiplier(p_targetCharacter);
+        base.ProcessSuccessRateWithMultipliers(p_targetCharacter, ref p_newSuccessRate);
     }
     public override string GetSuccessRateMultiplierText(Character p_targetCharacter) {
         if (p_targetCharacter.traitContainer.HasTrait("Unfaithful")) {

@@ -17,8 +17,6 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
     private float _successRate;
     private List<SchemeUIItem> _schemeUIItems;
 
-    private System.Action<IIntel> _onConfirmAction;
-    
     private void Start() {
         InstantiateUI();
         HideUI();
@@ -51,12 +49,11 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
         BLACKMAIL_TYPE blackmailType = GetBlackMailTypeConsidering(intel);
         if(blackmailType == BLACKMAIL_TYPE.None) {
             CreateAndAddNewSchemeUIItem("Non-Blackmail Material", 0f, OnClickMinusSchemeUIItem, OnHoverEnterSchemeUIItem, OnHoverExitSchemeUIItem);
-            UpdateSuccessRate();
         } else {
             float successRate = GetSchemeSuccessRate(blackmailType);
             CreateAndAddNewSchemeUIItem($"{blackmailType.ToString()} Blackmail", successRate, OnClickMinusSchemeUIItem, OnHoverEnterSchemeUIItem, OnHoverExitSchemeUIItem);
-            UpdateSuccessRate();
         }
+        UpdateSuccessRate();
     }
     private BLACKMAIL_TYPE GetBlackMailTypeConsidering(IIntel intel) {
         CRIME_TYPE crimeType = intel.reactable.crimeType;
@@ -79,7 +76,18 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
     #endregion
 
     #region Scheme
-    //TODO: GetSchemeSuccessRate Temptation
+    private float GetSchemeSuccessRate(TEMPTATION temptationType) {
+        float rate = 0f;
+        if (temptationType == TEMPTATION.Dark_Blessing) {
+            rate = 50f;
+        } else if (temptationType == TEMPTATION.Empower) {
+            rate = 25f;
+        } else if (temptationType == TEMPTATION.Cleanse_Flaws) {
+            rate = 20f;
+        }
+        ProcessSchemeSuccessRateWithMultipliers(ref rate);
+        return rate;
+    }
     private float GetSchemeSuccessRate(BLACKMAIL_TYPE blackmailType) {
         float rate = 0f;
         if(blackmailType == BLACKMAIL_TYPE.Strong) {
@@ -89,11 +97,11 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
         } else if (blackmailType == BLACKMAIL_TYPE.Weak) {
             rate = 20f;
         }
-        rate *= GetSchemeSuccessRateMultiplier();
+        ProcessSchemeSuccessRateWithMultipliers(ref rate);
         return rate;
     }
-    private float GetSchemeSuccessRateMultiplier() {
-        return _schemeUsed.GetSuccessRateMultiplier(_targetCharacter);
+    private void ProcessSchemeSuccessRateWithMultipliers(ref float rate) {
+        _schemeUsed.ProcessSuccessRateWithMultipliers(_targetCharacter, ref rate);
     }
     #endregion
 
