@@ -353,7 +353,7 @@ public class Player : ILeader, IObjectManipulator {
             Messenger.Broadcast(PlayerSignals.PLAYER_OBTAINED_INTEL, newIntel);
         }
     }
-    private void RemoveIntel(IIntel intel) {
+    public void RemoveIntel(IIntel intel) {
         if (allIntel.Remove(intel)) {
             Messenger.Broadcast(PlayerSignals.PLAYER_REMOVED_INTEL, intel);
             intel.OnIntelRemoved();

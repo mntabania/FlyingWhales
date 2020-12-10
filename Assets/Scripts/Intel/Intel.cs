@@ -178,7 +178,25 @@ public class ActionIntel : IIntel, IDisposable {
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     public bool CanBeUsedToBlackmailCharacter(Character p_target) {
-        return p_target == actor && node.crimeType != CRIME_TYPE.None && node.crimeType != CRIME_TYPE.Unset;
+        if (p_target == actor) {
+            BLACKMAIL_TYPE blackmailType = GetBlackMailTypeConsideringTarget(p_target);
+            return blackmailType != BLACKMAIL_TYPE.None;
+        }
+        return false;
+    }
+    public BLACKMAIL_TYPE GetBlackMailTypeConsideringTarget(Character _targetCharacter) {
+        CRIME_TYPE crimeType = reactable.crimeType;
+        if(crimeType != CRIME_TYPE.None && crimeType != CRIME_TYPE.Unset && _targetCharacter.faction != null) {
+            CRIME_SEVERITY severity = _targetCharacter.faction.GetCrimeSeverity(actor, target, crimeType);
+            if(severity == CRIME_SEVERITY.Heinous) {
+                return BLACKMAIL_TYPE.Strong;
+            } else if (severity == CRIME_SEVERITY.Serious) {
+                return BLACKMAIL_TYPE.Normal;
+            } else if (severity == CRIME_SEVERITY.Misdemeanor || severity == CRIME_SEVERITY.Infraction) {
+                return BLACKMAIL_TYPE.Weak;
+            }
+        }
+        return BLACKMAIL_TYPE.None;
     }
     #endregion
 
@@ -385,7 +403,25 @@ public class InterruptIntel : IIntel, IDisposable {
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
     }
     public bool CanBeUsedToBlackmailCharacter(Character p_target) {
-        return p_target == actor && interruptHolder.crimeType != CRIME_TYPE.None && interruptHolder.crimeType != CRIME_TYPE.Unset;
+        if (p_target == actor) {
+            BLACKMAIL_TYPE blackmailType = GetBlackMailTypeConsideringTarget(p_target);
+            return blackmailType != BLACKMAIL_TYPE.None;
+        }
+        return false;
+    }
+    public BLACKMAIL_TYPE GetBlackMailTypeConsideringTarget(Character _targetCharacter) {
+        CRIME_TYPE crimeType = reactable.crimeType;
+        if(crimeType != CRIME_TYPE.None && crimeType != CRIME_TYPE.Unset && _targetCharacter.faction != null) {
+            CRIME_SEVERITY severity = _targetCharacter.faction.GetCrimeSeverity(actor, target, crimeType);
+            if(severity == CRIME_SEVERITY.Heinous) {
+                return BLACKMAIL_TYPE.Strong;
+            } else if (severity == CRIME_SEVERITY.Serious) {
+                return BLACKMAIL_TYPE.Normal;
+            } else if (severity == CRIME_SEVERITY.Misdemeanor || severity == CRIME_SEVERITY.Infraction) {
+                return BLACKMAIL_TYPE.Weak;
+            }
+        }
+        return BLACKMAIL_TYPE.None;
     }
     #endregion
 
@@ -425,6 +461,7 @@ public interface IIntel {
     /// </summary>
     void OnIntelRemoved();
     bool CanBeUsedToBlackmailCharacter(Character p_target);
+    BLACKMAIL_TYPE GetBlackMailTypeConsideringTarget(Character p_target);
 }
 
 [System.Serializable]

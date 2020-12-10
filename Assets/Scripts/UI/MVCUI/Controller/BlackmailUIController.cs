@@ -7,17 +7,20 @@ public class BlackmailUIController : MVCUIController, BlackmailUIView.IListener 
     [SerializeField] private BlackmailUIModel m_blackmailUIModel;
     private BlackmailUIView m_blackmailUIView;
 
-    private IIntel _chosenBlackmail;
-    private System.Action<IIntel> _onConfirmAction;
-    
-    private void Start() {
-        InstantiateUI();
-    }
+    private List<IIntel> _chosenBlackmail;
+    private System.Action<List<IIntel>> _onConfirmAction;
     private void OnEnable() {
         BlackmailUIItem.onChooseBlackmail += OnChooseIntel;
+        BlackmailUIItem.onHoverOverBlackmail += OnHoverOverBlackmail;
+        BlackmailUIItem.onHoverOutBlackmail += OnHoverOutBlackmail;
     }
     private void OnDisable() {
         BlackmailUIItem.onChooseBlackmail -= OnChooseIntel;
+        BlackmailUIItem.onHoverOverBlackmail -= OnHoverOverBlackmail;
+        BlackmailUIItem.onHoverOutBlackmail -= OnHoverOutBlackmail;
+    }
+    private void Awake() {
+        _chosenBlackmail = new List<IIntel>();
     }
 
     //Call this function to Instantiate the UI, on the callback you can call initialization code for the said UI
@@ -30,17 +33,39 @@ public class BlackmailUIController : MVCUIController, BlackmailUIView.IListener 
         });
     }
 
-    public void Show(List<IIntel> p_blackmail, System.Action<IIntel> p_onConfirmAction) {
+    public void ShowBlackmailUI(List<IIntel> p_blackmail, List<IIntel> p_alreadyChosenBlackmail, Action<List<IIntel>> p_onConfirmAction) {
         ShowUI();
-        m_blackmailUIView.DisplayBlackmailItems(p_blackmail);
+        _chosenBlackmail.Clear();
+        m_blackmailUIView.DisplayBlackmailItems(p_blackmail, p_alreadyChosenBlackmail);
         _onConfirmAction = p_onConfirmAction;
     }
 
     private void OnChooseIntel(IIntel p_intel, bool p_isOn) {
         if (p_isOn) {
-            _chosenBlackmail = p_intel;
+            _chosenBlackmail.Add(p_intel);
             Debug.Log($"Chosen intel {p_intel?.log.logText}");    
+        } else {
+            _chosenBlackmail.Remove(p_intel);
+            Debug.Log($"Remove intel {p_intel?.log.logText}");
         }
+    }
+    private void OnHoverOverBlackmail(IIntel p_blackmail, UIHoverPosition p_hoverPosition) {
+        string blackmailText = p_blackmail.GetIntelInfoBlackmailText();
+        string reactionText = p_blackmail.GetIntelInfoRelationshipText();
+        string text = string.Empty;
+
+        text += blackmailText;
+        if (!string.IsNullOrEmpty(text)) {
+            text += "\n";
+        }
+        text += reactionText;
+
+        if (!string.IsNullOrEmpty(text)) {
+            UIManager.Instance.ShowSmallInfo(text, p_hoverPosition);
+        }
+    }
+    private void OnHoverOutBlackmail(IIntel p_blackmail) {
+        UIManager.Instance.HideSmallInfo();
     }
 
     #region BlackmailUIView.IListener Implementation

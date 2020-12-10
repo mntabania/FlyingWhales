@@ -1142,3 +1142,6 @@ public enum SETTLEMENT_JOB_TRIGGER {
 public enum TEMPTATION {
     Dark_Blessing, Empower, Cleanse_Flaws
 }
+public enum BLACKMAIL_TYPE {
+    None, Strong, Normal, Weak,
+}

@@ -1662,7 +1662,7 @@ public class UIManager : BaseMonoBehaviour {
     public void ShowSchemeUI(Character p_targetCharacter, object p_otherTarget, SchemeData p_schemeUsed) {
         Pause();
         SetSpeedTogglesState(false);
-        _schemeUIController.Show(p_targetCharacter, p_otherTarget, p_schemeUsed);
+        _schemeUIController.Show(p_targetCharacter, p_otherTarget, p_schemeUsed, OnCloseSchemeUI);
         InputManager.Instance.AllowHotkeys(false);
     }
     private void OnCloseSchemeUI() {

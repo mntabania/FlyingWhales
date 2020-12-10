@@ -8,9 +8,8 @@ public class TemptUIController : MVCUIController, TemptUIView.IListener {
     private TemptUIView m_temptUIView;
 
     private List<TEMPTATION> _chosenTemptations;
-    private void Start() {
-        InstantiateUI();
-    }
+    private System.Action<List<TEMPTATION>> _onConfirmAction;
+
     private void Awake() {
         _chosenTemptations = new List<TEMPTATION>();
     }
@@ -31,9 +30,20 @@ public class TemptUIController : MVCUIController, TemptUIView.IListener {
     }
     #endregion
 
-    public void ShowTemptationPopup(Character p_target) {
+    public bool HasValidTemptationsForTarget(Character p_target) {
+        for (int i = 0; i < m_temptUIView.allTemptationTypes.Length; i++) {
+            TEMPTATION temptation = m_temptUIView.allTemptationTypes[i];
+            if (temptation.CanTemptCharacter(p_target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public void ShowTemptationPopup(Character p_target, Action<List<TEMPTATION>> p_onConfirmAction, List<TEMPTATION> p_alreadyChosenTemptations) {
         ShowUI();
-        m_temptUIView.UpdateShownItems(p_target);
+        m_temptUIView.UpdateShownItems(p_target, p_alreadyChosenTemptations);
+        _onConfirmAction = p_onConfirmAction;
     }
 
     #region TemptUIView.IListener Implementation
@@ -69,6 +79,7 @@ public class TemptUIController : MVCUIController, TemptUIView.IListener {
     }
     public void OnClickConfirm() {
         HideUI();
+        _onConfirmAction?.Invoke(_chosenTemptations);
     }
     #endregion
 }
