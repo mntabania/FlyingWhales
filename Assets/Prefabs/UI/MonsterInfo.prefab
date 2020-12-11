@@ -2890,7 +2890,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1284202786584909259
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2939,12 +2939,12 @@ Canvas:
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
-  m_OverrideSorting: 0
+  m_OverrideSorting: 1
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
-  m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: 1007957311
+  m_SortingOrder: 3
   m_TargetDisplay: 0
 --- !u!114 &1394337967887892051
 MonoBehaviour:
@@ -3853,7 +3853,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 386.69922, y: 1014.6}
+  m_AnchoredPosition: {x: 387, y: 1014.5}
   m_SizeDelta: {x: 36, y: 36}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1286389447524976321
@@ -5008,7 +5008,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 222.5, y: 66}
+  m_AnchoredPosition: {x: 222, y: 66}
   m_SizeDelta: {x: 446, y: 181}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9068184205627874713
@@ -6280,6 +6280,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &7801952587172980583
 GameObject:
   m_ObjectHideFlags: 0
