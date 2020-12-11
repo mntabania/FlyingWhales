@@ -8,6 +8,7 @@ public interface IContextMenuItem {
     List<IContextMenuItem> subMenus { get; }
     
     void OnPickAction();
-    bool CanBePicked();
+    bool CanBePickedRegardlessOfCooldown();
+    bool IsInCooldown();
     float GetCoverFillAmount();
 }

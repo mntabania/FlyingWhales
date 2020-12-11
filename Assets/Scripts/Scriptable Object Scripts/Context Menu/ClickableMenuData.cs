@@ -18,8 +18,11 @@ public class ClickableMenuData : ScriptableObject, IContextMenuItem
     public void OnPickAction() {
         Debug.Log($"Picked {strMenuName}");
     }
-    public bool CanBePicked() {
+    public bool CanBePickedRegardlessOfCooldown() {
         return true;
+    }
+    public bool IsInCooldown() {
+        return false;
     }
     public float GetCoverFillAmount() {
         return 1f;

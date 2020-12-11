@@ -82,14 +82,16 @@ public class PlayerAction : SpellData, IContextMenuItem {
             Activate(PlayerManager.Instance.player.currentlySelectedPlayerActionTarget);
         }
     }
-    public bool CanBePicked() {
-        if (isInCooldown) {
-            return false;
-        }
-        if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget != null && !CanPerformAbilityTo(PlayerManager.Instance.player.currentlySelectedPlayerActionTarget)) {
-            return false;
+    public bool CanBePickedRegardlessOfCooldown() {
+        if (!isInCooldown) {
+            if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget != null && !CanPerformAbilityTo(PlayerManager.Instance.player.currentlySelectedPlayerActionTarget)) {
+                return false;
+            }    
         }
         return true;
+    }
+    public bool IsInCooldown() {
+        return isInCooldown;
     }
     public float GetCoverFillAmount() {
         if (isInCooldown) {
