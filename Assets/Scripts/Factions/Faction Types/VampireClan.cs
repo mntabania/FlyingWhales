@@ -2,9 +2,13 @@
     public class VampireClan : FactionType {
         public override RESOURCE mainResource => RESOURCE.STONE;
         
-        public VampireClan() : base(FACTION_TYPE.Vampire_Clan) { }
-        public VampireClan(SaveDataFactionType saveData) : base(FACTION_TYPE.Vampire_Clan, saveData) { }
-        
+        public VampireClan() : base(FACTION_TYPE.Vampire_Clan) {
+            succession = FactionManager.Instance.GetFactionSuccession(FACTION_SUCCESSION_TYPE.Popularity);
+        }
+        public VampireClan(SaveDataFactionType saveData) : base(FACTION_TYPE.Vampire_Clan, saveData) {
+            succession = FactionManager.Instance.GetFactionSuccession(FACTION_SUCCESSION_TYPE.Popularity);
+        }
+
         public override void SetAsDefault() {
             ReveresVampires reveresVampires = FactionManager.Instance.CreateIdeology<ReveresVampires>(FACTION_IDEOLOGY.Reveres_Vampires);
             AddIdeology(reveresVampires);

@@ -1145,3 +1145,6 @@ public enum TEMPTATION {
 public enum BLACKMAIL_TYPE {
     None, Strong, Normal, Weak,
 }
+public enum FACTION_SUCCESSION_TYPE {
+    None, Lineage, Popularity, Power
+}

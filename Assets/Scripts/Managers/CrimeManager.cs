@@ -662,6 +662,8 @@ public class CrimeData : ISavable {
                     }
                 }
             }
+
+            Messenger.Broadcast(FactionSignals.BECOME_WANTED_CRIMINAL_OF_FACTION, faction, criminal);
         }
     }
     public bool IsWantedBy(Faction faction) {

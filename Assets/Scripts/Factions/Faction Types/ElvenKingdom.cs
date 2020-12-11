@@ -3,9 +3,13 @@
         
         public override RESOURCE mainResource => RESOURCE.WOOD;
         
-        public ElvenKingdom() : base(FACTION_TYPE.Elven_Kingdom) { }
-        public ElvenKingdom(SaveDataFactionType saveData) : base(FACTION_TYPE.Elven_Kingdom, saveData) { }
-        
+        public ElvenKingdom() : base(FACTION_TYPE.Elven_Kingdom) {
+            succession = FactionManager.Instance.GetFactionSuccession(FACTION_SUCCESSION_TYPE.Popularity);
+        }
+        public ElvenKingdom(SaveDataFactionType saveData) : base(FACTION_TYPE.Elven_Kingdom, saveData) {
+            succession = FactionManager.Instance.GetFactionSuccession(FACTION_SUCCESSION_TYPE.Popularity);
+        }
+
         public override void SetAsDefault() {
             Peaceful peaceful = FactionManager.Instance.CreateIdeology<Peaceful>(FACTION_IDEOLOGY.Peaceful);
             AddIdeology(peaceful);

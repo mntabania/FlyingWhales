@@ -32,6 +32,10 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
     public uint pathfindingTag;
     public uint pathfindingDoorTag;
 
+    //Components
+    public SaveDataFactionIdeologyComponent ideologyComponent;
+    public SaveDataFactionSuccessionComponent successionComponent;
+
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Faction;
     #endregion
@@ -87,6 +91,9 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
 
         partyQuestBoard = new SaveDataPartyQuestBoard();
         partyQuestBoard.Save(data.partyQuestBoard);
+
+        ideologyComponent = new SaveDataFactionIdeologyComponent(); ideologyComponent.Save(data.ideologyComponent);
+        successionComponent = new SaveDataFactionSuccessionComponent(); successionComponent.Save(data.successionComponent);
 
         // history = new List<string>();
         // for (int i = 0; i < data.history.Count; i++) {

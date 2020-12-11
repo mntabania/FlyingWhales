@@ -219,6 +219,26 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             UIManager.Instance.ShowCharacterInfo(_character, true);
         }
     }
+    public void OnHoverEnterSuccessor() {
+        if (ignoreInteractions) {
+            return;
+        }
+        SetHoverHighlightState(true);
+        if(character != null && character.faction != null) {
+            int totalWeights = character.faction.successionComponent.GetTotalWeightsOfSuccessors();
+            int weight = character.faction.successionComponent.GetWeightOfSuccessor(character);
+            float chance = (weight / (float) totalWeights) * 100f;
+            string text = $"{chance.ToString("N1")}% chance to be the next Faction Leader";
+            UIManager.Instance.ShowSmallInfo(text, header: character.name);
+        }
+    }
+    public void OnHoverExitSuccessor() {
+        if (ignoreInteractions) {
+            return;
+        }
+        SetHoverHighlightState(false);
+        UIManager.Instance.HideSmallInfo();
+    }
     #endregion
 
     #region Body Parts

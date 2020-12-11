@@ -3,9 +3,13 @@
         public override RESOURCE mainResource => RESOURCE.STONE;
         public override bool usesCorruptedStructures => true;
         
-        public DemonCult() : base(FACTION_TYPE.Demon_Cult) { }
-        public DemonCult(SaveDataFactionType saveData) : base(FACTION_TYPE.Demon_Cult, saveData) { }
-        
+        public DemonCult() : base(FACTION_TYPE.Demon_Cult) {
+            succession = FactionManager.Instance.GetFactionSuccession(FACTION_SUCCESSION_TYPE.Power);
+        }
+        public DemonCult(SaveDataFactionType saveData) : base(FACTION_TYPE.Demon_Cult, saveData) {
+            succession = FactionManager.Instance.GetFactionSuccession(FACTION_SUCCESSION_TYPE.Power);
+        }
+
         public override void SetAsDefault() {
             Warmonger warmonger = FactionManager.Instance.CreateIdeology<Warmonger>(FACTION_IDEOLOGY.Warmonger);
             AddIdeology(warmonger);

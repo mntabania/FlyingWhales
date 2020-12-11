@@ -18,6 +18,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     [SerializeField] private CharacterNameplateItem leaderNameplateItem;
     [SerializeField] private GameObject noLeaderTextGO;
     [SerializeField] private TextMeshProUGUI ideologyLbl;
+    [SerializeField] private CharacterPortrait[] successorPortraits;
 
     [Space(10)]
     [Header("Locations")]
@@ -160,6 +161,17 @@ public class FactionInfoUIV2 : MonoBehaviour {
         } else {
             leaderNameplateItem.gameObject.SetActive(false);
             noLeaderTextGO.SetActive(true);
+        }
+
+        for (int i = 0; i < successorPortraits.Length; i++) {
+            CharacterPortrait portrait = successorPortraits[i];
+            Character successor = activeFaction.successionComponent.successors[i];
+            if(successor == null) {
+                portrait.gameObject.SetActive(false);
+            } else {
+                portrait.GeneratePortrait(successor);
+                portrait.gameObject.SetActive(true);
+            }
         }
 
         ideologyLbl.text = string.Empty;
