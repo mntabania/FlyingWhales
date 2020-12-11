@@ -74,7 +74,7 @@ public class ContextMenuUIController : MVCUIController, ContextMenuUIView.IListe
 	}
 	private void OnMenuHoveredOver(IContextMenuItem p_UIMenu, bool p_isAction, int p_currentColumn) {
 		if (!p_isAction) {
-			if (p_UIMenu.CanBePicked()) {
+			if (p_UIMenu.CanBePickedRegardlessOfCooldown()) {
 				m_contextMenuUIView.DisplaySubMenu(p_UIMenu.subMenus, p_currentColumn + 1, _canvas);
 			}
 		} else {

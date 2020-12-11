@@ -140,7 +140,7 @@ namespace Traits {
                 if (HasTrait("Poisoned")) {
                     int poisonStacks = stacks["Poisoned"];
                     RemoveStatusAndStacks(addTo, "Poisoned");
-                    if (addTo is IPointOfInterest to) {
+                    if (addTo is IPointOfInterest to && addTo.gridTileLocation != null) {
                         CombatManager.Instance.PoisonExplosion(to, addTo.gridTileLocation, poisonStacks, characterResponsible);
                     }
                     shouldAddTrait = false;

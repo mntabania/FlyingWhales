@@ -1,6 +1,7 @@
 ﻿using UnityEngine.UI;
 using UnityEngine;
 using System;
+using DG.Tweening;
 using EZObjectPools;
 using Ruinarch.Custom_UI;
 using TMPro;
@@ -15,6 +16,7 @@ public class ContextMenuUIObject : PooledObject {
     public RuinarchButton btnActivate;
     public GameObject goArrow;
     public Image coverImg;
+    public Image cooldownImg;
 
     public HoverHandler hoverHandler;
 
@@ -34,11 +36,14 @@ public class ContextMenuUIObject : PooledObject {
     }
     private void Update() {
         if (m_parentUIMenu != null) {
-            bool canBePicked = m_parentUIMenu.CanBePicked();
+            bool canBePicked = m_parentUIMenu.CanBePickedRegardlessOfCooldown();
+            bool isInCooldown = m_parentUIMenu.IsInCooldown();
             coverImg.gameObject.SetActive(!canBePicked);
-            btnActivate.interactable = canBePicked;
-            if (coverImg.gameObject.activeSelf) {
-                coverImg.fillAmount = m_parentUIMenu.GetCoverFillAmount();    
+            cooldownImg.gameObject.SetActive(isInCooldown);
+            btnActivate.interactable = canBePicked && !isInCooldown;
+            if (cooldownImg.gameObject.activeSelf) {
+                // coverImg.fillAmount = m_parentUIMenu.GetCoverFillAmount();
+                cooldownImg.DOFillAmount(m_parentUIMenu.GetCoverFillAmount(), 0.4f);
             }    
         }
     }
@@ -48,11 +53,13 @@ public class ContextMenuUIObject : PooledObject {
         ImgIcon.sprite = p_parentUIMenu.contextMenuIcon;
         txtMenuName.text = p_parentUIMenu.contextMenuName;
         m_parentUIMenu = p_parentUIMenu;
-        bool canBePicked = p_parentUIMenu.CanBePicked();
-        btnActivate.interactable = canBePicked;
+        bool canBePicked = p_parentUIMenu.CanBePickedRegardlessOfCooldown();
+        bool isInCooldown = m_parentUIMenu.IsInCooldown();
         coverImg.gameObject.SetActive(!canBePicked);
-        if (coverImg.gameObject.activeSelf) {
-            coverImg.fillAmount = p_parentUIMenu.GetCoverFillAmount();    
+        cooldownImg.gameObject.SetActive(isInCooldown);
+        btnActivate.interactable = canBePicked && !isInCooldown;
+        if (cooldownImg.gameObject.activeSelf) {
+            cooldownImg.fillAmount = p_parentUIMenu.GetCoverFillAmount();    
         }
         bool hasSubMenu = m_parentUIMenu.subMenus != null && m_parentUIMenu.subMenus.Count > 0;
         goArrow.gameObject.SetActive(hasSubMenu);

@@ -7,7 +7,7 @@ using Traits;
 using TMPro;
 using Ruinarch.Custom_UI;
 
-public class PsychopathUI : PopupMenuBase {
+public class PsychopathUI : MonoBehaviour {
     public PsychopathPicker psychopathPicker;
     public RuinarchButton confirmButton;
 
@@ -52,13 +52,13 @@ public class PsychopathUI : PopupMenuBase {
         this.character = character;
         SetVictimType1(SERIAL_VICTIM_TYPE.None);
         SetVictimType2(SERIAL_VICTIM_TYPE.None);
-        base.Open();
+        gameObject.SetActive(true);
         UIManager.Instance.Pause();
         UIManager.Instance.SetSpeedTogglesState(false);
     }
     public void HidePsychopathUI() {
         character = null;
-        base.Close();
+        gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI() && !UIManager.Instance.IsObjectPickerOpen()) {
             UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
         }

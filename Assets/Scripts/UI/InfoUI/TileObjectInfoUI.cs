@@ -254,6 +254,11 @@ public class TileObjectInfoUI : InfoUIBase {
     }
     private void OnRightClickOwner(object obj) {
         if (obj is IPlayerActionTarget playerActionTarget) {
+            if (playerActionTarget is Character character) {
+                if(character.isLycanthrope) {
+                    playerActionTarget = character.lycanData.activeForm;
+                }
+            }
             UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
         }
     }
@@ -268,6 +273,11 @@ public class TileObjectInfoUI : InfoUIBase {
     }
     private void OnRightClickLocation(object obj) {
         if (obj is IPlayerActionTarget playerActionTarget) {
+            if (playerActionTarget is Character character) {
+                if(character.isLycanthrope) {
+                    playerActionTarget = character.lycanData.activeForm;
+                }
+            }
             UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
         }
     }

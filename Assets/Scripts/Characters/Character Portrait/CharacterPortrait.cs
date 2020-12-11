@@ -142,6 +142,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         SetFaceObjectStates(false);
         lvlGO.SetActive(false);
         factionEmblem.SetFaction(PlayerManager.Instance.player.playerFaction);
+        leaderIcon.SetActive(false);
     }
     private void SetWholeImageState(bool state) {
         wholeImage.gameObject.SetActive(state);
@@ -207,7 +208,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
     private void OnRightClick() {
         if (_character != null) {
-            UIManager.Instance.ShowPlayerActionContextMenu(_character, Input.mousePosition, true);    
+            UIManager.Instance.ShowPlayerActionContextMenu(_character.isLycanthrope ? _character.lycanData.activeForm : _character, Input.mousePosition, true);
         }
     }
     public void SetHoverHighlightState(bool state) {

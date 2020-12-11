@@ -8,6 +8,9 @@ using Inner_Maps.Location_Structures;
 using UtilityScripts;
 
 public class SchemeData : PlayerAction {
+
+    public static bool alwaysSuccessScheme = false;
+    
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SCHEME;
     public override string name => "Scheme";
     public override string description => $"Scheme";
@@ -87,7 +90,8 @@ public class SchemeData : PlayerAction {
     #endregion
 
     public void ProcessScheme(Character character, object target, float successRate) {
-        bool isSuccessful = GameUtilities.RollChance(successRate);
+        bool isSuccessful = alwaysSuccessScheme || GameUtilities.RollChance(successRate);
+        
         if (isSuccessful) {
             OnSuccessScheme(character, target);
         } else {
