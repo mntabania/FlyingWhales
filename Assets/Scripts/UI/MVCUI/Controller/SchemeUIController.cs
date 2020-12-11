@@ -216,7 +216,11 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
             UIManager.Instance.ShowSmallInfo(UtilityScripts.Utilities.ColorizeInvalidText($"You have no usable blackmail against {_targetCharacter.name}!"), p_hoverPos, "No Blackmail");    
         }
     }
-    public void OnHoverOverTemptBtn(UIHoverPosition p_hoverPos) { }
+    public void OnHoverOverTemptBtn(UIHoverPosition p_hoverPos) {
+        if (!temptUIController.HasValidTemptationsForTarget(_targetCharacter)) {
+            UIManager.Instance.ShowSmallInfo(UtilityScripts.Utilities.ColorizeInvalidText($"You have no usable temptations for {_targetCharacter.name}!"), p_hoverPos, "No Temptations");
+        }
+    }
     public void OnHoverOutBlackmailBtn() {
         UIManager.Instance.HideSmallInfo();
     }

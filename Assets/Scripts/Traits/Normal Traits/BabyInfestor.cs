@@ -40,6 +40,9 @@ namespace Traits {
                     if (babySummon.HasTerritory()) {
                         adult.SetTerritory(babySummon.territory);
                     }
+                    if (UIManager.Instance.IsContextMenuShowingForTarget(babySummon)) {
+                        UIManager.Instance.RefreshPlayerActionContextMenuWithNewTarget(adult);
+                    }
                 }
                 babySummon.SetDestroyMarkerOnDeath(true);
                 babySummon.SetShowNotificationOnDeath(false);

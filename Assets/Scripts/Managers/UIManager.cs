@@ -210,6 +210,8 @@ public class UIManager : BaseMonoBehaviour {
         Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.AddListener<PlayerAction>(SpellSignals.PLAYER_ACTION_ACTIVATED, OnPlayerActionActivated);
 
+        AddPlayerActionContextMenuSignals();
+        
         //notification area
         notificationSearchField.onValueChanged.AddListener(OnEndNotificationSearchEdit);
         notificationFilters = CollectionUtilities.GetEnumValues<LOG_TAG>().ToList();
@@ -1684,9 +1686,8 @@ public class UIManager : BaseMonoBehaviour {
             return;
         }
         _contextMenuUIController.SetFollowPosition(p_followTarget);
-        _contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name);
+        _contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
-        AddPlayerActionContextMenuSignals();
     }
     public void ShowPlayerActionContextMenu(IPlayerActionTarget p_target, Vector3 p_followTarget, bool p_isScreenPosition) {
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
@@ -1696,18 +1697,28 @@ public class UIManager : BaseMonoBehaviour {
             return;
         }
         _contextMenuUIController.SetFollowPosition(p_followTarget, p_isScreenPosition);
-        _contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name);
+        _contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
-        AddPlayerActionContextMenuSignals();
     }
-    
+    public void RefreshPlayerActionContextMenuWithNewTarget(IPlayerActionTarget p_target) {
+        PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
+        List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
+        if (contextMenuItems == null) {
+            HidePlayerActionContextMenu();
+            return;
+        }
+        _contextMenuUIController.ShowContextMenu(contextMenuItems, p_target.name);
+        Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
+    }
     public void HidePlayerActionContextMenu() {
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(null);
         _contextMenuUIController.HideUI();
-        RemovePlayerActionContextMenuSignals();
     }
     public bool IsContextMenuShowing() {
         return _contextMenuUIController.IsShowing();
+    }
+    public bool IsContextMenuShowingForTarget(IPlayerActionTarget p_target) {
+        return IsContextMenuShowing() && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget == p_target;
     }
     private void OnHoverOverPlayerActionContextMenuItem(IContextMenuItem p_item) {
         if (p_item is PlayerAction playerAction) {

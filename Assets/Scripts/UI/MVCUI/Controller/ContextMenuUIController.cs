@@ -85,14 +85,19 @@ public class ContextMenuUIController : MVCUIController, ContextMenuUIView.IListe
 	private void OnMenuHoveredOut(IContextMenuItem p_UIMenu, bool p_isAction, int p_currentColumn) {
 		_onHoverOutAction?.Invoke(p_UIMenu);
 	}
-	public void ShowContextMenu(List<IContextMenuItem> p_initialItems, Vector3 p_screenPos, string p_title) {
+	public void ShowContextMenu(List<IContextMenuItem> p_initialItems, Vector3 p_screenPos, string p_title, InputManager.Cursor_Type p_cursorType) {
 		m_contextMenuUIView.HideColumn(1);
 		ShowUI();
 		m_contextMenuUIView.InitializeUI(p_initialItems, _canvas);
 		m_contextMenuUIView.SetPosition(p_screenPos, _canvas);
 		RectTransform parentDisplayTransform = m_contextMenuUIView.UIModel.parentDisplay.transform as RectTransform;
-		GameUtilities.PositionTooltip(p_screenPos,  m_contextMenuUIView.UIModel.parentDisplay.gameObject, parentDisplayTransform, 
-			parentDisplayTransform, InputManager.Cursor_Type.Default, _canvas.transform as RectTransform);
+		GameUtilities.PositionTooltip(p_screenPos,  m_contextMenuUIView.UIModel.parentDisplay.gameObject, parentDisplayTransform, parentDisplayTransform, p_cursorType, _canvas.transform as RectTransform);
+		m_contextMenuUIView.SetTitleName(p_title);	
+	}
+	public void ShowContextMenu(List<IContextMenuItem> p_initialItems, string p_title) {
+		m_contextMenuUIView.HideColumn(1);
+		ShowUI();
+		m_contextMenuUIView.InitializeUI(p_initialItems, _canvas);
 		m_contextMenuUIView.SetTitleName(p_title);	
 	}
 	public void UpdateContextMenuItems(List<IContextMenuItem> p_initialItems) {

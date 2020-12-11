@@ -340,6 +340,11 @@ namespace Traits {
             lycanthropeForm.needsComponent.ResetStaminaMeter();
             lycanthropeForm.needsComponent.ResetHopeMeter();
             lycanthropeForm.traitContainer.AddTrait(lycanthropeForm, "Transitioning");
+            
+            if (UIManager.Instance.IsContextMenuShowingForTarget(originalForm)) {
+                UIManager.Instance.RefreshPlayerActionContextMenuWithNewTarget(lycanthropeForm);
+            }
+            
             Messenger.Broadcast(CharacterSignals.ON_SWITCH_FROM_LIMBO, originalForm, lycanthropeForm);
         }
 
@@ -359,6 +364,11 @@ namespace Traits {
             PutToLimbo(lycanthropeForm);
             ReleaseFromLimbo(originalForm, tile, homeRegion);
             lycanthropeForm.traitContainer.RemoveTrait(lycanthropeForm, "Transitioning");
+            
+            if (UIManager.Instance.IsContextMenuShowingForTarget(lycanthropeForm)) {
+                UIManager.Instance.RefreshPlayerActionContextMenuWithNewTarget(originalForm);
+            }
+            
             Messenger.Broadcast(CharacterSignals.ON_SWITCH_FROM_LIMBO, lycanthropeForm, originalForm);
         }
 
