@@ -277,7 +277,7 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
 
         float successRateForText = successRate;
         successRateForText = Mathf.Clamp(successRateForText, 0f, 100f);
-        m_schemeUIView.SetSuccessRate($"{successRateForText.ToString("N2")}");
+        m_schemeUIView.SetSuccessRate($"+{successRateForText.ToString("N1")}%");
     }
     #endregion
 }
