@@ -142,6 +142,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         SetFaceObjectStates(false);
         lvlGO.SetActive(false);
         factionEmblem.SetFaction(PlayerManager.Instance.player.playerFaction);
+        leaderIcon.SetActive(false);
     }
     private void SetWholeImageState(bool state) {
         wholeImage.gameObject.SetActive(state);
