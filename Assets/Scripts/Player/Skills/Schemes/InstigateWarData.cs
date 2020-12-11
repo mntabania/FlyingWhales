@@ -63,12 +63,19 @@ public class InstigateWarData : SchemeData {
         base.ProcessSuccessRateWithMultipliers(p_targetCharacter, ref p_newSuccessRate);
     }
     public override string GetSuccessRateMultiplierText(Character p_targetCharacter) {
+        string text = string.Empty;
         if (p_targetCharacter.faction != null && p_targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {
-            return $"Faction is Peaceful";
+            if (text != string.Empty) { text += "\n"; }
+            text += $"Faction is Peaceful";
         } else if (p_targetCharacter.traitContainer.HasTrait("Diplomatic")) {
-            return $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Diplomatic";
+            if (text != string.Empty) { text += "\n"; }
+            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Diplomatic";
         } else if (p_targetCharacter.faction != null && p_targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
-            return $"Faction is Warmonger";
+            if (text != string.Empty) { text += "\n"; }
+            text += $"Faction is Warmonger";
+        }
+        if (text != string.Empty) {
+            return text;
         }
         return base.GetSuccessRateMultiplierText(p_targetCharacter);
     }

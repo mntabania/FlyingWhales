@@ -381,6 +381,7 @@ public class UIManager : BaseMonoBehaviour {
     #region Tooltips
     public void ShowSmallInfo(string info, string header = "", bool autoReplaceText = true) {
         Profiler.BeginSample("Show Small Info Sample");
+        smallInfoGO.transform.SetAsLastSibling();
         string message = string.Empty;
         if (!string.IsNullOrEmpty(header)) {
             message = $"<font=\"Eczar-Medium\"><line-height=100%><size=18>{header}</font>\n";
@@ -406,6 +407,7 @@ public class UIManager : BaseMonoBehaviour {
         Profiler.EndSample();
     }
     public void ShowSmallInfo(string info, UIHoverPosition pos, string header = "", bool autoReplaceText = true) {
+        smallInfoGO.transform.SetAsLastSibling();
         string message = string.Empty;
         if (!string.IsNullOrEmpty(header)) {
             message = $"<font=\"Eczar-Medium\"><line-height=100%><size=18>{header}</font>\n";
@@ -445,6 +447,7 @@ public class UIManager : BaseMonoBehaviour {
     }
     public void ShowSmallInfo(string info, Texture visual, string header = "", UIHoverPosition pos = null) {
         Assert.IsNotNull(visual, "Small info with visual was called but no visual was provided");
+        _smallInfoWithVisual.transform.SetAsLastSibling();
         _smallInfoWithVisual.ShowSmallInfo(info, visual, header, pos);
     }
     public void HideSmallInfo() {
