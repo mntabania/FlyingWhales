@@ -30,10 +30,13 @@ public class IgniteData : PlayerAction {
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {
-        if (tileObject.gridTileLocation == null || tileObject.gridTileLocation.genericTileObject.traitContainer.HasTrait("Burning", "Wet", "Fireproof")) {
+        if (tileObject.gridTileLocation == null || tileObject.gridTileLocation.genericTileObject.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")) {
             return false;
         }
         if (!tileObject.traitContainer.HasTrait("Flammable")) {
+            return false;
+        }
+        if (tileObject.traitContainer.HasTrait("Burnt")) {
             return false;
         }
         return base.CanPerformAbilityTowards(tileObject);
