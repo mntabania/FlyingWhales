@@ -66,7 +66,7 @@ public class BreakUpData : SchemeData {
     }
     public override string GetSuccessRateMultiplierText(Character p_targetCharacter) {
         if (p_targetCharacter.traitContainer.HasTrait("Unfaithful")) {
-            return $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Unfaithful";
+            return $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Unfaithful: x2";
         }
         return base.GetSuccessRateMultiplierText(p_targetCharacter);
     }

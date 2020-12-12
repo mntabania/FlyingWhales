@@ -66,13 +66,13 @@ public class InstigateWarData : SchemeData {
         string text = string.Empty;
         if (p_targetCharacter.faction != null && p_targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {
             if (text != string.Empty) { text += "\n"; }
-            text += $"Faction is Peaceful";
+            text += $"Faction is Peaceful: x0.25";
         } else if (p_targetCharacter.traitContainer.HasTrait("Diplomatic")) {
             if (text != string.Empty) { text += "\n"; }
-            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Diplomatic";
+            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Diplomatic: x0.5";
         } else if (p_targetCharacter.faction != null && p_targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
             if (text != string.Empty) { text += "\n"; }
-            text += $"Faction is Warmonger";
+            text += $"Faction is Warmonger: x3";
         }
         if (text != string.Empty) {
             return text;

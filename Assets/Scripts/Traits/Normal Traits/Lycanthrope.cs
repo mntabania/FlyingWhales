@@ -548,10 +548,10 @@ namespace Traits {
         public bool DoesCharacterKnowThisLycan(Character character) {
             return awareCharacters.Contains(character);
         }
-        public bool DoesFactionKnowThisLycan(Faction faction) {
+        public bool DoesFactionKnowThisLycan(Faction faction, bool includeDeadMembersInChecking = true) {
             for (int i = 0; i < faction.characters.Count; i++) {
                 Character member = faction.characters[i];
-                if (member != originalForm) {
+                if (member != originalForm && (includeDeadMembersInChecking || !member.isDead)) {
                     if (DoesCharacterKnowThisLycan(member)) {
                         return true;
                     }

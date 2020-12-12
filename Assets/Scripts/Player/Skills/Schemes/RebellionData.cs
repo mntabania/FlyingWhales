@@ -64,15 +64,15 @@ public class RebellionData : SchemeData {
         if (p_targetCharacter.faction != null && p_targetCharacter.faction.leader != null && p_targetCharacter.faction.leader is Character factionLeader && p_targetCharacter != factionLeader) {
             if (p_targetCharacter.relationshipContainer.IsFriendsWith(factionLeader)) {
                 if(text != string.Empty) { text += "\n"; }
-                text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is friends with the Faction Leader";
+                text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is friends with the Faction Leader: x0.2";
             } else if (p_targetCharacter.relationshipContainer.IsEnemiesWith(factionLeader)) {
                 if (text != string.Empty) { text += "\n"; }
-                text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is enemies with the Faction Leader";
+                text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is enemies with the Faction Leader: x3";
             }
         }
         if (p_targetCharacter.traitContainer.HasTrait("Treacherous")) {
             if (text != string.Empty) { text += "\n"; }
-            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Treacherous";
+            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Treacherous: x2";
         }
         if (text != string.Empty) {
             return text;

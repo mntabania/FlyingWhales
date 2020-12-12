@@ -12,6 +12,7 @@ public class CombatComponent : CharacterComponent {
     public int maxHP { get; private set; }
     public int maxHPModification { get; private set; }
     public int attackSpeed { get; private set; }  //in milliseconds, The lower the amount the faster the attack rate
+    public int numOfKilledCharacters { get; private set; }
 
     public COMBAT_MODE combatMode { get; private set; }
     public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
@@ -64,6 +65,7 @@ public class CombatComponent : CharacterComponent {
         combatMode = data.combatMode;
         elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(data.elementalDamageType);
         willProcessCombat = data.willProcessCombat;
+        numOfKilledCharacters = data.numOfKilledCharacters;
     }
 
     #region Signals
@@ -1085,6 +1087,12 @@ public class CombatComponent : CharacterComponent {
     }
     #endregion
 
+    #region Killed Characters
+    public void AdjustNumOfKilledCharacters(int amount) {
+        numOfKilledCharacters += amount;
+    }
+    #endregion
+
     #region Loading
     public void LoadReferences(SaveDataCombatComponent data) {
         for (int i = 0; i < data.hostileCharactersInRange.Count; i++) {
@@ -1212,6 +1220,7 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
     public int maxHP;
     public int maxHPModification;
     public int attackSpeed;
+    public int numOfKilledCharacters;
 
     public COMBAT_MODE combatMode;
     public List<string> hostileCharactersInRange;
@@ -1239,6 +1248,7 @@ public class SaveDataCombatComponent : SaveData<CombatComponent> {
         combatMode = data.combatMode;
         elementalDamageType = data.elementalDamage.type;
         willProcessCombat = data.willProcessCombat;
+        numOfKilledCharacters = data.numOfKilledCharacters;
 
         hostileCharactersInRange = new List<string>();
         hostileTileObjectsInRange = new List<string>();

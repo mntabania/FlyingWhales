@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UtilityScripts;
+using Traits;
 
 namespace Factions.Faction_Succession {
     public class Power: FactionSuccession {
@@ -22,15 +23,21 @@ namespace Factions.Faction_Succession {
                 weight = GameUtilities.RandomBetweenTwoNumbers(40, 60);
 
                 //TODO: per kill of the character: +20-30
+                for (int j = 0; j < member.combatComponent.numOfKilledCharacters; j++) {
+                    weight += GameUtilities.RandomBetweenTwoNumbers(20, 30);
+                }
 
-                //if (faction.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Vampires)) {
-                //    //TODO: if character is a known Vampire
-                //    weight += 100;
-                //}
-                //if (faction.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
-                //    //TODO: if character is a known Lycan
-                //    weight += 100;
-                //}
+                if (faction.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Vampires)) {
+                    Vampire vampire = member.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                    if (vampire != null && vampire.DoesFactionKnowThisVampire(faction, false)) {
+                        weight += 100;
+                    }
+                }
+                if (faction.factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
+                    if (member.isLycanthrope && member.lycanData.DoesFactionKnowThisLycan(faction)) {
+                        weight += 100;
+                    }
+                }
 
                 if (member.characterClass.IsCombatant()) {
                     weight += GameUtilities.RandomBetweenTwoNumbers(50, 70);

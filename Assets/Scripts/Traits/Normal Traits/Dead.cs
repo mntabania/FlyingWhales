@@ -28,6 +28,14 @@ namespace Traits {
             if (addedTo is Character character) {
                 //character.IsNormalCharacter()
                 character.jobComponent.TriggerBuryMe();
+                if(responsibleCharacter != null) {
+                    responsibleCharacter.combatComponent.AdjustNumOfKilledCharacters(1);
+                } else if (responsibleCharacters != null) {
+                    for (int i = 0; i < responsibleCharacters.Count; i++) {
+                        Character responsible = responsibleCharacters[i];
+                        responsible.combatComponent.AdjustNumOfKilledCharacters(1);
+                    }
+                }
             }
         }
         
