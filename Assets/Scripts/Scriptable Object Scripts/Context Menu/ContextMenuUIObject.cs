@@ -40,7 +40,7 @@ public class ContextMenuUIObject : PooledObject {
             bool isInCooldown = m_parentUIMenu.IsInCooldown();
             coverImg.gameObject.SetActive(!canBePicked);
             cooldownImg.gameObject.SetActive(isInCooldown);
-            btnActivate.interactable = canBePicked && !isInCooldown;
+            btnActivate.interactable = canBePicked;
             if (cooldownImg.gameObject.activeSelf) {
                 // coverImg.fillAmount = m_parentUIMenu.GetCoverFillAmount();
                 cooldownImg.DOFillAmount(m_parentUIMenu.GetCoverFillAmount(), 0.4f);
@@ -57,7 +57,7 @@ public class ContextMenuUIObject : PooledObject {
         bool isInCooldown = m_parentUIMenu.IsInCooldown();
         coverImg.gameObject.SetActive(!canBePicked);
         cooldownImg.gameObject.SetActive(isInCooldown);
-        btnActivate.interactable = canBePicked && !isInCooldown;
+        btnActivate.interactable = canBePicked;
         if (cooldownImg.gameObject.activeSelf) {
             cooldownImg.fillAmount = p_parentUIMenu.GetCoverFillAmount();    
         }
