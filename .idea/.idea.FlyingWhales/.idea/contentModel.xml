@@ -1358,7 +1358,9 @@
           <e p="Extensions.cs" t="Include" />
           <e p="Factions" t="Include">
             <e p="Faction Components" t="Include">
+              <e p="FactionComponent.cs" t="Include" />
               <e p="FactionEventDispatcher.cs" t="Include" />
+              <e p="FactionSuccessionComponent.cs" t="Include" />
             </e>
             <e p="Faction Ideologies" t="Include">
               <e p="BoneGolemMakers.cs" t="Include" />
@@ -1374,6 +1376,12 @@
               <e p="ReveresVampires.cs" t="Include" />
               <e p="ReveresWerewolves.cs" t="Include" />
               <e p="Warmonger.cs" t="Include" />
+            </e>
+            <e p="Faction Succession Types" t="Include">
+              <e p="FactionSuccession.cs" t="Include" />
+              <e p="Lineage.cs" t="Include" />
+              <e p="Popularity.cs" t="Include" />
+              <e p="Power.cs" t="Include" />
             </e>
             <e p="Faction Types" t="Include">
               <e p="Bandits.cs" t="Include" />
@@ -2518,6 +2526,7 @@
                 <e p="LeaveFactionData.cs" t="Include" />
                 <e p="LeaveHomeData.cs" t="Include" />
                 <e p="LeaveVillageData.cs" t="Include" />
+                <e p="OverthrowLeaderData.cs" t="Include" />
                 <e p="RebellionData.cs" t="Include" />
                 <e p="ResignData.cs" t="Include" />
               </e>

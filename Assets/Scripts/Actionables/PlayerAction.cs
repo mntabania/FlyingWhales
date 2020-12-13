@@ -83,11 +83,9 @@ public class PlayerAction : SpellData, IContextMenuItem {
         }
     }
     public bool CanBePickedRegardlessOfCooldown() {
-        if (!isInCooldown) {
-            if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget != null && !CanPerformAbilityTo(PlayerManager.Instance.player.currentlySelectedPlayerActionTarget)) {
-                return false;
-            }    
-        }
+        if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget != null && !CanPerformAbilityTo(PlayerManager.Instance.player.currentlySelectedPlayerActionTarget)) {
+            return false;
+        }    
         return true;
     }
     public bool IsInCooldown() {
