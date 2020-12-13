@@ -48,7 +48,7 @@ public class PangatLooVillageInvaderBehaviour : CharacterBehaviourComponent {
             List<Character> charactersAtHexTile =
                 tile.GetAllCharactersInsideHexThatMeetCriteria<Character>(c =>
                     c.isNormalCharacter && c.isDead == false && !c.isInLimbo && !c.isBeingSeized && c.carryComponent.IsNotBeingCarried() &&
-                    && !c.traitContainer.HasTrait("Hibernating", "Indestructible")); //Removed checking for allied with player because undead should attack all villagers in pangat loo
+                    !c.traitContainer.HasTrait("Hibernating", "Indestructible")); //Removed checking for allied with player because undead should attack all villagers in pangat loo
             if (charactersAtHexTile != null) {
                 if(characters == null) {
                     characters = new List<Character>();
