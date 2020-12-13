@@ -107,6 +107,7 @@ public class GoapPlanner {
         if (goapThread.job != null) {
             goapThread.job.SetIsInMultithread(false);
             if (goapThread.job.shouldForceCancelUponReceiving) {
+                status = GOAP_PLANNING_STATUS.NONE;
                 ForceCancelJobAndReturnToObjectPool(goapThread.job);
                 ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
                 return;
