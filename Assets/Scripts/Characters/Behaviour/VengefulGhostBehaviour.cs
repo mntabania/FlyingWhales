@@ -123,7 +123,7 @@ public class VengefulGhostBehaviour : BaseMonsterBehaviour {
         return characters;
     }
     private bool IsCharacterValidForInvade(Character character) {
-        return !character.isDead && !character.traitContainer.HasTrait("Hibernating", "Indestructible");
+        return !character.isDead && !character.traitContainer.HasTrait("Hibernating", "Indestructible") && !character.isInLimbo && !character.isBeingSeized && character.carryComponent.IsNotBeingCarried();
     }
     private List<HexTile> GetVillageTargetsByPriority(Character p_invader) {
         List<BaseSettlement> validSettlementsInRegion = p_invader.currentRegion?.GetSettlementsInRegion(

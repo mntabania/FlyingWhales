@@ -625,7 +625,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             }
         }
 
-        if (isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait("Resting", "Unconscious") == false && !target.isDead) {
+        if (isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait("Resting", "Unconscious", "Restrained") == false && !target.isDead) {
             //trigger vigilant, only if character is NOT resting or unconscious
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "vigilant", this, LOG_TAG.Social);
             // descriptionLog.SetLogType(LOG_TYPE.Action);
@@ -690,7 +690,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             return;
         }
         //Separate calls for end effect if target is vigilang and the action is stealth because there are things that will be called in normal effect that does not apply to vigilant
-        if(isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait("Resting", "Unconscious") == false && !target.isDead) {
+        if(isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait("Resting", "Unconscious", "Restrained") == false && !target.isDead) {
             EndEffectVigilant();
         } else {
             EndEffectNormal(shouldDoAfterEffect);
