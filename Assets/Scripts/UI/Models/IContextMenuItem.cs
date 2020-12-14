@@ -11,4 +11,5 @@ public interface IContextMenuItem {
     bool CanBePickedRegardlessOfCooldown();
     bool IsInCooldown();
     float GetCoverFillAmount();
+    int GetCurrentRemainingCooldownTicks();
 }

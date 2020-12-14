@@ -12,6 +12,7 @@ using Logs;
 using Ruinarch;
 using Ruinarch.Custom_UI;
 using TMPro;
+using Traits;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -1367,6 +1368,7 @@ public class UIManager : BaseMonoBehaviour {
             Pause();
             SetSpeedTogglesState(false);    
         }
+        HidePlayerActionContextMenu();
         
         // if (pauseAndResume) {
         //     SetSpeedTogglesState(false);
@@ -1695,10 +1697,10 @@ public class UIManager : BaseMonoBehaviour {
     public void ShowPlayerActionContextMenu(IPlayerActionTarget p_target, Vector3 p_followTarget, bool p_isScreenPosition) {
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
         List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
-        if (contextMenuItems == null) {
-            HidePlayerActionContextMenu();
-            return;
-        }
+        // if (contextMenuItems == null) {
+        //     HidePlayerActionContextMenu();
+        //     return;
+        // }
         _contextMenuUIController.SetFollowPosition(p_followTarget, p_isScreenPosition);
         _contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
@@ -1706,10 +1708,10 @@ public class UIManager : BaseMonoBehaviour {
     public void RefreshPlayerActionContextMenuWithNewTarget(IPlayerActionTarget p_target) {
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
         List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
-        if (contextMenuItems == null) {
-            HidePlayerActionContextMenu();
-            return;
-        }
+        // if (contextMenuItems == null) {
+        //     HidePlayerActionContextMenu();
+        //     return;
+        // }
         _contextMenuUIController.ShowContextMenu(contextMenuItems, p_target.name);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
     }
@@ -1723,15 +1725,123 @@ public class UIManager : BaseMonoBehaviour {
     public bool IsContextMenuShowingForTarget(IPlayerActionTarget p_target) {
         return IsContextMenuShowing() && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget == p_target;
     }
-    private void OnHoverOverPlayerActionContextMenuItem(IContextMenuItem p_item) {
+    private void OnHoverOverPlayerActionContextMenuItem(IContextMenuItem p_item, UIHoverPosition p_hoverPosition) {
         if (p_item is PlayerAction playerAction) {
-            PlayerUI.Instance.OnHoverSpell(playerAction, _contextMenuTooltipHoverPosition);
+            OnHoverPlayerAction(playerAction, p_hoverPosition, PlayerManager.Instance.player.currentlySelectedPlayerActionTarget as IPointOfInterest);
+        } else if (p_item is Trait trait && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is Character targetCharacter) {
+            OnHoverEnterFlaw(trait.name,  targetCharacter, p_hoverPosition);
         }
     }
     private void OnHoverOutPlayerActionContextMenuItem(IContextMenuItem p_item) {
-        if (p_item is PlayerAction playerAction) {
-            PlayerUI.Instance.OnHoverOutSpell(playerAction);
+        HideSmallInfo();
+    }
+    private void OnHoverEnterFlaw(string traitName, Character p_character, UIHoverPosition p_hoverPosition) {
+        Trait trait = p_character.traitContainer.GetTraitOrStatus<Trait>(traitName);
+        string title = traitName;
+        string fullDescription = trait.GetTriggerFlawEffectDescription(p_character, "flaw_effect");
+        int manaCost = PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost;
+        string currencyStr = string.Empty;
+        if (manaCost != -1) {
+            currencyStr = $"{currencyStr}{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()} ";
         }
+        title = $"{title}    <size=16>{currencyStr}";
+        string additionalText = string.Empty;
+        if(PlayerManager.Instance.player.mana < manaCost) {
+            additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Not enough mana.")}\n";
+        }
+        
+        fullDescription = $"{fullDescription}\n\n{additionalText}";
+        
+        ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);
+    }
+    private void OnHoverPlayerAction(SpellData spellData, UIHoverPosition p_hoverPosition, IPointOfInterest p_target) {
+        string title = $"{spellData.name}";
+        string fullDescription = spellData.description;
+        int charges = spellData.charges;
+        int manaCost = spellData.manaCost;
+        int cooldown = spellData.cooldown;
+
+        string currencyStr = string.Empty; 
+        
+        if (manaCost != -1) {
+            currencyStr = $"{currencyStr}{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()} ";
+        }
+        if (cooldown != -1) {
+            currencyStr = $"{currencyStr}{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()} ";
+        }
+        if (charges != -1) {
+            currencyStr = $"{currencyStr}{charges.ToString()} {UtilityScripts.Utilities.ChargesIcon()} ";
+        }
+        if (spellData.threat > 0) {
+            currencyStr = $"{currencyStr}{spellData.threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()} ";
+        }
+        title = $"{title}    <size=16>{currencyStr}";
+
+        string additionalText = string.Empty;
+        if (spellData is PlayerAction) {
+            IPointOfInterest activePOI = p_target;
+            if (activePOI != null) {
+                if (activePOI is Character activeCharacter) {
+                    if (spellData.CanPerformAbilityTowards(activeCharacter) == false) {
+                        if (spellData is PlayerAction playerAction && !playerAction.canBeCastOnBlessed && activeCharacter.traitContainer.IsBlessed()) {
+                            additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Blessed Villagers are protected from your powers.")}\n";
+                        }
+                        string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeCharacter);
+                        if (string.IsNullOrEmpty(wholeReason) == false) {
+                            string[] reasons = wholeReason.Split(',');
+                            for (int i = 0; i < reasons.Length; i++) {
+                                string reason = reasons[i];
+                                additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText(reason)}\n";
+                            }
+                        }
+                    }
+                } else if (activePOI is TileObject activeTileObject) {
+                    if (activeTileObject is AnkhOfAnubis ankh && ankh.isActivated && spellData.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT) {
+                        additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Activated Ankh can no longer be seized.")}\n";
+                    }
+                }
+            }
+        }
+        if(HasEnoughMana(spellData) == false) {
+            additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Not enough mana.")}\n";
+        }
+        if(HasEnoughCharges(spellData) == false) {
+            if (spellData.hasCooldown) {
+                additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Recharging.")}\n";
+            } else {
+                additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Not enough charges.")}\n";
+            }
+        }
+        if (spellData is BrainwashData && structureRoomInfoUI.isShowing && structureRoomInfoUI.activeRoom is DefilerRoom defilerRoom && defilerRoom.charactersInRoom.Count > 0) {
+            Character targetCharacter = defilerRoom.charactersInRoom.First();
+            if (targetCharacter != null) {
+                fullDescription = $"{fullDescription}\n<b>{targetCharacter.name} Brainwash Success Rate: {DefilerRoom.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";    
+            }
+        }
+
+        fullDescription = $"{fullDescription}\n\n{additionalText}";
+        
+        ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);
+    }
+    private bool HasEnoughMana(SpellData spellData) {
+        if (spellData.hasManaCost) {
+            if (PlayerManager.Instance.player.mana >= spellData.manaCost) {
+                return true;
+            }
+            return false;
+        }
+        //if skill has no mana cost then always has enough mana
+        return true;
+    }
+    private bool HasEnoughCharges(SpellData spellData) {
+        if (spellData.hasCharges) {
+            if (spellData.charges > 0) {
+                return true;
+            }
+            return false;
+        }
+        //if skill has no charges then always has enough charges
+        return true;
     }
     private List<IContextMenuItem> GetPlayerActionContextMenuItems(IPlayerActionTarget p_target) {
         List<IContextMenuItem> contextMenuItems = null;

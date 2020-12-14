@@ -13,7 +13,7 @@ public class ContextMenuUIController : MVCUIController, ContextMenuUIView.IListe
 	private Vector3 m_vectorPositionToFollow;
 	private bool m_hasVectorPositionToFollow;
 	private bool m_isScreenVectorPosition;
-	private System.Action<IContextMenuItem> _onHoverOverAction;
+	private System.Action<IContextMenuItem, UIHoverPosition> _onHoverOverAction;
 	private System.Action<IContextMenuItem> _onHoverOutAction;
 
 	private void OnEnable() {
@@ -31,7 +31,7 @@ public class ContextMenuUIController : MVCUIController, ContextMenuUIView.IListe
 		InstantiateUI();
 		HideUI();
 	}
-	public void SetOnHoverOverAction(System.Action<IContextMenuItem> p_onHoverOverAction) {
+	public void SetOnHoverOverAction(System.Action<IContextMenuItem, UIHoverPosition> p_onHoverOverAction) {
 		_onHoverOverAction = p_onHoverOverAction;
 	}
 	public void SetOnHoverOutAction(System.Action<IContextMenuItem> p_onHoverOutAction) {
@@ -80,7 +80,7 @@ public class ContextMenuUIController : MVCUIController, ContextMenuUIView.IListe
 		} else {
 			m_contextMenuUIView.HideColumn(p_currentColumn + 1);
 		}
-		_onHoverOverAction?.Invoke(p_UIMenu);
+		_onHoverOverAction?.Invoke(p_UIMenu, m_contextMenuUIView.GetTooltipHoverPositionToUse());
 	}
 	private void OnMenuHoveredOut(IContextMenuItem p_UIMenu, bool p_isAction, int p_currentColumn) {
 		_onHoverOutAction?.Invoke(p_UIMenu);

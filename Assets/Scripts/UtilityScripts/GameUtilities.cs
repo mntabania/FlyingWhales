@@ -466,6 +466,19 @@ namespace UtilityScripts {
             }
             return true;
         }
+        public static bool IsRectFullyInCanvas(RectTransform boundsRT, Rect canvasRT) {
+            cornersOutside.Clear();
+            boundsRT.GetWorldCorners(corners);
+            for (int i = 0; i < 4; i++) {
+                Vector3 corner = corners[i];
+                // If parent (canvas) does not contain checked items any point
+                if (!canvasRT.Contains(corner)) {
+                    cornersOutside.Add(i);
+                }
+            }
+
+            return cornersOutside.Count == 0;
+        }
     }    
 }
 

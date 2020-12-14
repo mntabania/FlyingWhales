@@ -6,10 +6,10 @@ using UnityEngine.UI;
 public class ContextMenuUIModel : MVCUIModel {
 	public TextMeshProUGUI lblTitle;
 	
-	public ScrollRect[] menuParent;
+	public ContextMenuColumn[] menuParent;
 	
-	public Vector3 column2RightPos;
-	public Vector3 column2LeftPos;
+	public Vector2 column2RightPos;
+	public Vector2 column2LeftPos;
 
 	public HoverHandler hoverHandlerParentDisplay;
 

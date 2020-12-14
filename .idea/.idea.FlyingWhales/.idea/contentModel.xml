@@ -2819,6 +2819,7 @@
             </e>
             <e p="Context Menu" t="Include">
               <e p="ClickableMenuData.cs" t="Include" />
+              <e p="ContextMenuColumn.cs" t="Include" />
               <e p="ContextMenuUIObject.cs" t="Include" />
             </e>
             <e p="ElementalDamageData.cs" t="Include" />
@@ -3338,6 +3339,7 @@
             <e p="RandomNameGenerator.cs" t="Include" />
             <e p="RectDrawer.cs" t="Include" />
             <e p="ReflectiveEnumerator.cs" t="Include" />
+            <e p="RendererExtensions.cs" t="Include" />
             <e p="SerializableDictionary.cs" t="Include" />
             <e p="Signals" t="Include">
               <e p="CharacterSignals.cs" t="Include" />

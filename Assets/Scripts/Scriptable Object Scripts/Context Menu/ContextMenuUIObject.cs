@@ -16,8 +16,10 @@ public class ContextMenuUIObject : PooledObject {
     public RuinarchButton btnActivate;
     public GameObject goArrow;
     public Image coverImg;
-    public Image cooldownImg;
-
+    public Image imgCooldownRadial;
+    public Image imgCooldown;
+    public TextMeshProUGUI txtCooldownTimer;
+    
     public HoverHandler hoverHandler;
 
     private IContextMenuItem m_parentUIMenu;
@@ -39,12 +41,16 @@ public class ContextMenuUIObject : PooledObject {
             bool canBePicked = m_parentUIMenu.CanBePickedRegardlessOfCooldown();
             bool isInCooldown = m_parentUIMenu.IsInCooldown();
             coverImg.gameObject.SetActive(!canBePicked);
-            cooldownImg.gameObject.SetActive(isInCooldown);
+            imgCooldown.gameObject.SetActive(isInCooldown);
+            txtCooldownTimer.gameObject.SetActive(isInCooldown);
             btnActivate.interactable = canBePicked;
-            if (cooldownImg.gameObject.activeSelf) {
+            if (imgCooldown.gameObject.activeSelf) {
                 // coverImg.fillAmount = m_parentUIMenu.GetCoverFillAmount();
-                cooldownImg.DOFillAmount(m_parentUIMenu.GetCoverFillAmount(), 0.4f);
+                imgCooldownRadial.DOFillAmount(m_parentUIMenu.GetCoverFillAmount(), 0.4f);
             }    
+            if (txtCooldownTimer.gameObject.activeSelf) {
+                txtCooldownTimer.text = m_parentUIMenu.GetCurrentRemainingCooldownTicks().ToString();
+            }
         }
     }
     public void SetMenuDetails(IContextMenuItem p_parentUIMenu) {
@@ -56,10 +62,14 @@ public class ContextMenuUIObject : PooledObject {
         bool canBePicked = p_parentUIMenu.CanBePickedRegardlessOfCooldown();
         bool isInCooldown = m_parentUIMenu.IsInCooldown();
         coverImg.gameObject.SetActive(!canBePicked);
-        cooldownImg.gameObject.SetActive(isInCooldown);
+        imgCooldown.gameObject.SetActive(isInCooldown);
+        txtCooldownTimer.gameObject.SetActive(isInCooldown);
         btnActivate.interactable = canBePicked;
-        if (cooldownImg.gameObject.activeSelf) {
-            cooldownImg.fillAmount = p_parentUIMenu.GetCoverFillAmount();    
+        if (imgCooldown.gameObject.activeSelf) {
+            imgCooldownRadial.fillAmount = p_parentUIMenu.GetCoverFillAmount();    
+        }
+        if (txtCooldownTimer.gameObject.activeSelf) {
+            txtCooldownTimer.text = p_parentUIMenu.GetCurrentRemainingCooldownTicks().ToString();
         }
         bool hasSubMenu = m_parentUIMenu.subMenus != null && m_parentUIMenu.subMenus.Count > 0;
         goArrow.gameObject.SetActive(hasSubMenu);

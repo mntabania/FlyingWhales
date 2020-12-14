@@ -27,4 +27,7 @@ public class ClickableMenuData : ScriptableObject, IContextMenuItem
     public float GetCoverFillAmount() {
         return 1f;
     }
+    public int GetCurrentRemainingCooldownTicks() {
+        return 0;
+    }
 }

@@ -54,7 +54,7 @@ public class ContextMenuUIView : MVCUIView
 	
 	private void DisplayMenu(List<IContextMenuItem> p_UIMenu, int p_targetColumn, Canvas p_canvas) {
 		clickableMenuUIObjects.Clear();
-		ScrollRect columnScrollRect = UIModel.menuParent[p_targetColumn];
+		ScrollRect columnScrollRect = UIModel.menuParent[p_targetColumn].scrollRect;
 		columnScrollRect.gameObject.SetActive(true);
 
 		clickableMenuUIObjects.AddRange(columnScrollRect.content.GetComponentsInChildren<ContextMenuUIObject>());
@@ -73,19 +73,19 @@ public class ContextMenuUIView : MVCUIView
 	}
 	public void HideColumn(int p_targetColumn) {
 		if (p_targetColumn >= 0 && p_targetColumn < UIModel.menuParent.Length) {
-			ScrollRect columnRect = UIModel.menuParent[p_targetColumn];
+			ScrollRect columnRect = UIModel.menuParent[p_targetColumn].scrollRect;
 			columnRect.gameObject.SetActive(false);
 		}
 	}
 	public void DisplaySubMenu(List<IContextMenuItem> p_UIMenu, int p_targetColumn, Canvas p_canvas) {
 		DisplayMenu(p_UIMenu, p_targetColumn, p_canvas);
-		ScrollRect columnScrollRect = UIModel.menuParent[p_targetColumn];
+		ScrollRect columnScrollRect = UIModel.menuParent[p_targetColumn].scrollRect;
 		columnScrollRect.gameObject.SetActive(true);
 		if (p_targetColumn == 1) {
 			RectTransform columnRect = columnScrollRect.transform as RectTransform;
 			columnRect.anchoredPosition = UIModel.column2RightPos;
 			if (!GameUtilities.IsRectFullyInCanvas(columnRect, p_canvas.transform as RectTransform)) {
-				columnRect.anchoredPosition = UIModel.column2LeftPos;	
+				columnRect.anchoredPosition = UIModel.column2LeftPos;
 			}
 		}
 	}
@@ -95,9 +95,34 @@ public class ContextMenuUIView : MVCUIView
 	public void SetPosition(Vector3 p_pos, Canvas p_canvas) {
 		UIModel.parentDisplay.position = p_pos;
 	}
-	public void SetParent(Transform p_parent) {
-		UIModel.parentDisplay.transform.SetParent(p_parent);
+	private ContextMenuColumn GetLeftMostColumn() {
+		if (UIModel.menuParent[1].gameObject.activeSelf && UIModel.menuParent[1].rectTransform.anchoredPosition == UIModel.column2LeftPos) {
+			//2nd column is in left position
+			return UIModel.menuParent[1];
+		} else {
+			return UIModel.menuParent[0];	
+		}
 	}
+	private ContextMenuColumn GetRightMostColumn() {
+		if (UIModel.menuParent[1].gameObject.activeSelf && UIModel.menuParent[1].rectTransform.anchoredPosition == UIModel.column2RightPos) {
+			//2nd column is in right position
+			return UIModel.menuParent[1];
+		} else {
+			return UIModel.menuParent[0];	
+		}
+	}
+	public UIHoverPosition GetTooltipHoverPositionToUse() {
+		ContextMenuColumn leftMostColumn = GetLeftMostColumn();
+		RectTransform leftColumnLeftHoverPosRect = leftMostColumn.leftHoverPosition.transform as RectTransform;
+		Rect screenRect = new Rect (0,0, Screen.width, Screen.height);
+		if (GameUtilities.IsRectFullyInCanvas(leftColumnLeftHoverPosRect, screenRect)) {
+			return leftMostColumn.leftHoverPosition;
+		} else {
+			ContextMenuColumn rightMostColumn = GetRightMostColumn();
+			return rightMostColumn.rightHoverPosition;
+		}
+	}
+
 	
 	#region Subscribe/Unsubscribe for IListener
 	public void Subscribe(IListener p_listener)

@@ -111,8 +111,15 @@ namespace Inner_Maps {
         private void OnRightClick() {
             if (UIManager.Instance.IsMouseOnUI() == false && ReferenceEquals(currentlyShowingMap, null) == false) {
                 LocationGridTile clickedTile = GetTileFromMousePosition();
-                ISelectable selectable = GetFirstSelectableOnTile(clickedTile);
-                selectable?.RightSelectAction();
+                if (TryGetSelectablesOnTile(clickedTile, out var selectables)) {
+                    IPointOfInterest currentlySelectedPOI = UIManager.Instance.GetCurrentlySelectedPOI();
+                    if (currentlySelectedPOI != null && selectables.Contains(currentlySelectedPOI)) {
+                        currentlySelectedPOI.RightSelectAction();
+                    } else {
+                        ISelectable selectable = selectables.FirstOrDefault();
+                        selectable?.RightSelectAction();
+                    }
+                }
             }
         }
         private void OnMiddleClick() {
@@ -209,9 +216,8 @@ namespace Inner_Maps {
         }
         private bool TryGetSelectablesOnTile(LocationGridTile tile, out List<ISelectable> selectables) {
             selectables = new List<ISelectable>();
-            
-            PointerEventData pointer = new PointerEventData(EventSystem.current);
-            pointer.position = Input.mousePosition;
+
+            PointerEventData pointer = new PointerEventData(EventSystem.current) {position = Input.mousePosition};
 
             raycastResults.Clear();
             EventSystem.current.RaycastAll(pointer, raycastResults);
