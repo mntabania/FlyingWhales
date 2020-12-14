@@ -18,6 +18,7 @@ public class MonsterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private TextMeshProUGUI subLbl;
     [SerializeField] private TextMeshProUGUI plansLbl;
+    [SerializeField] private EventLabel plansEventLabel;
     [SerializeField] private LogItem plansLblLogItem;
     [SerializeField] private Image raceIcon;
 
@@ -68,7 +69,20 @@ public class MonsterInfoUI : InfoUIBase {
         statusTraitsEventLbl.SetShouldColorHighlight(false);
         normalTraitsEventLbl.SetShouldColorHighlight(false);
         
+        plansEventLabel.SetOnRightClickAction(OnRightClickThoughtBubble);
+        
         logsWindow.Initialize();
+    }
+    
+    private void OnRightClickThoughtBubble(object obj) {
+        if (obj is IPlayerActionTarget playerActionTarget) {
+            if (playerActionTarget is Character character) {
+                if(character.isLycanthrope) {
+                    playerActionTarget = character.lycanData.activeForm;
+                }
+            }
+            UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
+        }
     }
 
     #region Overrides

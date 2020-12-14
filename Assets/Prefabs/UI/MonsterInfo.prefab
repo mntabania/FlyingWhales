@@ -2984,6 +2984,7 @@ MonoBehaviour:
   nameLbl: {fileID: 2371022818862714327}
   subLbl: {fileID: 3557571631082994583}
   plansLbl: {fileID: 2118143760871425054}
+  plansEventLabel: {fileID: 8768757550652463909}
   plansLblLogItem: {fileID: 2611868667683638106}
   raceIcon: {fileID: 2227784602211805242}
   logsWindow: {fileID: 3685719476176165500}

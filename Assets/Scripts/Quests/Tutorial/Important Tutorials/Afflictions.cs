@@ -32,13 +32,12 @@ namespace Tutorial {
                         .SetOnTopmostActions(OnTopMostVampirism, OnNoLongerTopMostVampirism)
                 ),
                 new QuestStepCollection(
-                    new PlayerActionContextMenuShown(IsCharacterValid, $"Right click on Afflicted Villager"),
-                    new ButtonClickedStep("Trigger Flaw", "Click on Trigger Flaw")
-                        .SetOnTopmostActions(OnTopMostTriggerFlawButton, OnNoLongerTopMostTriggerFlawButton)
-                        .SetCompleteAction(OnCompleteTriggerFlaw)
+                    new PlayerActionContextMenuShown(IsCharacterValid, $"Right click on Afflicted Villager")
                         .SetObjectsToCenter(TriggerFlawTargetCenterGetter),
-                    new FlawTriggeredStep("Select Vampirism", "Vampire")
+                    // new ButtonClickedStep("Trigger Flaw", "Click on Trigger Flaw")
+                    new FlawTriggeredStep("Choose Trigger Flaw then Vampirism", "Vampire")
                         .SetOnTopmostActions(OnTopMostTriggerVampiric, OnNoLongerTopMostTriggerVampiric)
+                        .SetCompleteAction(OnCompleteTriggerFlaw)
                 )
                 
             };
@@ -86,15 +85,6 @@ namespace Tutorial {
         }
         #endregion
 
-        #region Trigger Flaw Button
-        private void OnTopMostTriggerFlawButton() {
-            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Trigger Flaw");
-        }
-        private void OnNoLongerTopMostTriggerFlawButton() {
-            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Trigger Flaw");
-        }
-        #endregion
-
         #region Vampirism Button
         private void OnTopMostVampirism() {
             Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Vampirism");
@@ -112,9 +102,11 @@ namespace Tutorial {
         
         #region Vampiric Trigger Flaw
         private void OnTopMostTriggerVampiric() {
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Trigger Flaw");
             Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Vampire");
         }
         private void OnNoLongerTopMostTriggerVampiric() {
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Trigger Flaw");
             Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Vampire");
         }
         private List<ISelectable> TriggerFlawTargetCenterGetter() {
