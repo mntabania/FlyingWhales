@@ -33,14 +33,11 @@ namespace Traits {
             }
         }
         public override bool PerTickWhileStationaryOrUnoccupied() {
-            int stumbleChance = UnityEngine.Random.Range(0, 100);
-            //bool hasCreatedJob = false;
-            if (stumbleChance < 2) {
-                return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Stumble, owner);
-                //if (owner.currentActionNode == null || (owner.currentActionNode.action.goapType != INTERACTION_TYPE.STUMBLE && owner.currentActionNode.action.goapType != INTERACTION_TYPE.ACCIDENT)) {
-                //    DoStumble();
-                //    hasCreatedJob = true;
-                //}
+            if (owner.marker != null && owner.marker.isMoving) {
+                int stumbleChance = UnityEngine.Random.Range(0, 100);
+                if (stumbleChance < 2) {
+                    return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Stumble, owner);
+                }    
             }
             return false;
         }
