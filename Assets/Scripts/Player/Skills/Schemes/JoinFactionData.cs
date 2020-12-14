@@ -21,7 +21,9 @@ public class JoinFactionData : SchemeData {
             List<Faction> choices = ObjectPoolManager.Instance.CreateNewFactionList();
             for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                 Faction faction = FactionManager.Instance.allFactions[i];
-                if (faction != sourceFaction && faction.factionType.type != FACTION_TYPE.Vagrants && faction.factionType.type != FACTION_TYPE.Demons
+                if (faction != sourceFaction && faction.factionType.type != FACTION_TYPE.Vagrants && faction.factionType.type != FACTION_TYPE.Demons && faction.factionType.type != FACTION_TYPE.Wild_Monsters
+                    && faction.factionType.type != FACTION_TYPE.Undead
+                    && !faction.IsCharacterBannedFromJoining(sourceCharacter)
                     && faction.HasMemberThatMeetCriteria(c => !c.isDead)) {
                     choices.Add(faction);
                 }
@@ -60,8 +62,16 @@ public class JoinFactionData : SchemeData {
         return true;
     }
     private void OnHoverEnter(Character source, Faction target) {
+        string text = string.Empty;
         if (!target.ideologyComponent.DoesCharacterFitCurrentIdeologies(source)) {
-            UIManager.Instance.ShowSmallInfo(UtilityScripts.Utilities.InvalidColorize($"This faction will not accept {source.name}."));
+            text += UtilityScripts.Utilities.InvalidColorize($"This faction will not accept {source.name}.");
+        }
+        if (target.IsCharacterBannedFromJoining(source)) {
+            if(text != string.Empty) { text += "\n"; }
+            text += UtilityScripts.Utilities.InvalidColorize($"This faction already banned {source.name} from joining.");
+        }
+        if (text != string.Empty) {
+            UIManager.Instance.ShowSmallInfo(text);
         }
     }
     private void OnHoverExit(Faction source) {
