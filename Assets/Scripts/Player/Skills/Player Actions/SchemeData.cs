@@ -89,7 +89,8 @@ public class SchemeData : PlayerAction {
     }
     #endregion
 
-    public void ProcessScheme(Character character, object target, float successRate) {
+    //Return true if Scheme is successful
+    public bool ProcessScheme(Character character, object target, float successRate) {
         bool isSuccessful = alwaysSuccessScheme || GameUtilities.RollChance(successRate);
         
         if (isSuccessful) {
@@ -105,6 +106,7 @@ public class SchemeData : PlayerAction {
         //Also start cooldown of SchemeData itself
         //Called this because calling OnExecutePlayerSkill() directly will only start the cooldown of the specific scheme itself (ex. Resign), but will not start the cooldown of SchemeData
         PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.SCHEME).OnExecutePlayerSkill();
+        return isSuccessful;
     }
 
     protected void ShowSchemeConversation(List<ConversationData> conversationList, string titleText) {

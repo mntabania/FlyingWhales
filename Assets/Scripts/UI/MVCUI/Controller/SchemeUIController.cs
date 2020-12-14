@@ -170,17 +170,21 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
     }
     public void OnClickConfirm() {
         HideUI();
-        //Process all activate temptations also
-        for (int i = 0; i < _chosenTemptations.Count; i++) {
-            TEMPTATION temptation = _chosenTemptations[i];
-            ActivateTemptationEffect(temptation);
-        }
         //Consume blackmail intels
         for (int i = 0; i < _chosenBlackmail.Count; i++) {
             IIntel blackmail = _chosenBlackmail[i];
             PlayerManager.Instance.player.RemoveIntel(blackmail);
         }
-        _schemeUsed.ProcessScheme(_targetCharacter, _otherTarget, _successRate);
+        bool isSuccessful = _schemeUsed.ProcessScheme(_targetCharacter, _otherTarget, _successRate);
+        
+        //Only activate temptation effects if scheme is successful
+        if (isSuccessful) {
+            //Process all activate temptations also
+            for (int i = 0; i < _chosenTemptations.Count; i++) {
+                TEMPTATION temptation = _chosenTemptations[i];
+                ActivateTemptationEffect(temptation);
+            }
+        }
     }
     public void OnClickBlackmail() {
         //Show Blackmail UI
