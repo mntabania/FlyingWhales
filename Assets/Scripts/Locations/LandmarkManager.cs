@@ -302,11 +302,11 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         }
         return null;
     }
-    public NPCSettlement GetRandomActiveVillageSettlement() {
+    public NPCSettlement GetRandomActiveSapientSettlement() {
         List<NPCSettlement> villages = null;
         for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
             NPCSettlement settlement = allNonPlayerSettlements[i];
-            if(settlement.locationType == LOCATION_TYPE.VILLAGE && settlement.owner != null && settlement.residents.Count > 0) {
+            if(settlement.locationType == LOCATION_TYPE.VILLAGE && settlement.owner != null && settlement.residents.Count > 0 && settlement.owner.race.IsSapient()) {
                 if(villages == null) { villages = new List<NPCSettlement>(); }
                 villages.Add(settlement);
             }

@@ -1149,16 +1149,6 @@ public class Region : ISavable, ILogFiller {
             }
         }
     }
-    public bool HasActiveSettlement() {
-        for (int i = 0; i < settlementsInRegion.Count; i++) {
-            BaseSettlement settlement = settlementsInRegion[i];
-            if (settlement is NPCSettlement npcSettlement && 
-                npcSettlement.owner != null && npcSettlement.owner.race.IsSapient()) {
-                return true;
-            }
-        }
-        return false;
-    }
     public List<BaseSettlement> GetSettlementsInRegion(System.Func<BaseSettlement, bool> validityChecker) {
         List<BaseSettlement> settlements = null;
         for (int i = 0; i < settlementsInRegion.Count; i++) {

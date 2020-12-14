@@ -72,9 +72,6 @@ namespace Tutorial {
         #endregion
         
         #region Step Helpers
-        private bool IsSelectedAreaValid(HexTile tile) {
-            return tile.region.HasActiveSettlement();
-        }
         private void OnHoverEmptyArea(QuestStepItem item) {
             UIManager.Instance.ShowSmallInfo("In order to effectively use The Eye. It must be built at a region that " +
                                              "has an active settlement.", TutorialManager.Instance.villageVideoClip, 

@@ -66,6 +66,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                     return RACE.HUMANS;
                 case FACTION_TYPE.Demons:
                     return RACE.DEMON;
+                case FACTION_TYPE.Ratmen:
+                    return RACE.RATMAN;
                 default:
                     if (leader is Character character) {
                         return character.race;

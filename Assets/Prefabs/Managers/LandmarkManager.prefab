@@ -345,8 +345,16 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
       animation: {fileID: 9100000, guid: 5e52831c99093c9429a7012fe80475b7, type: 2}
       overrideLandmarkPortrait: {fileID: 0}
-    humansLandmarkTileSprites: []
-    elvenLandmarkTileSprites: []
+    humansLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: e25182124429402469751b740445d966, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 9100000, guid: 5e52831c99093c9429a7012fe80475b7, type: 2}
+      overrideLandmarkPortrait: {fileID: 0}
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: e25182124429402469751b740445d966, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 9100000, guid: 5e52831c99093c9429a7012fe80475b7, type: 2}
+      overrideLandmarkPortrait: {fileID: 0}
     monsterGenerationChance: 100
     monsterGenerationSetting: {fileID: 11400000, guid: 533fdcbeedd9f6f48b4b96677448f355,
       type: 2}
@@ -877,24 +885,4 @@ MonoBehaviour:
     monsterGenerationChance: 0
     monsterGenerationSetting: {fileID: 0}
     itemGenerationSetting: {fileID: 0}
-  areaData:
-  - locationType: 0
-    baseAreaType: 0
-  - locationType: 1
-    baseAreaType: 0
-  - locationType: 2
-    baseAreaType: 0
-  - locationType: 3
-    baseAreaType: 2
-  - locationType: 4
-    baseAreaType: 1
-  - locationType: 5
-    baseAreaType: 1
   landmarkGO: {fileID: 1000010040247426, guid: 62f5adf3c35fcea45a8e702a164cf60d, type: 3}
-  locationPortraits:
-    m_keys: 00000000010000000300000002000000
-    m_values:
-    - {fileID: 21300000, guid: 9cf9fb20030d8b6408dd1563a08e2045, type: 3}
-    - {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094, type: 3}
-    - {fileID: 21300000, guid: 4f117727fece67040a6c3082f72b0111, type: 3}
-    - {fileID: 21300000, guid: 4f117727fece67040a6c3082f72b0111, type: 3}

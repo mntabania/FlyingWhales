@@ -181,7 +181,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     public BaseLandmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType) {
         SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, landmarkType));
         //Create Landmark Game Object on tile
-        CreateLandmarkVisual(landmarkType);
+        CreateLandmarkVisual();
         SetElevation(landmarkType == LANDMARK_TYPE.CAVE ? ELEVATION.MOUNTAIN : ELEVATION.PLAIN);
         Biomes.Instance.UpdateTileVisuals(this);
         return landmarkOnTile;
@@ -189,10 +189,10 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     public BaseLandmark CreateLandmarkOfType(SaveDataLandmark saveData) {
         SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, saveData));
         //Create Landmark Game Object on tile
-        CreateLandmarkVisual(saveData.landmarkType);
+        CreateLandmarkVisual();
         return landmarkOnTile;
     }
-    private void CreateLandmarkVisual(LANDMARK_TYPE landmarkType) {
+    private void CreateLandmarkVisual() {
         GameObject landmarkGO = Instantiate(LandmarkManager.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
         landmarkGO.transform.localPosition = Vector3.zero;
         landmarkGO.transform.localScale = Vector3.one;
@@ -260,6 +260,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         }
     }
     private void HideLandmarkTileSprites() {
+        Debug.Log($"Hid landmark tile sprites at {this}");
         mainStructure.gameObject.SetActive(false);
         structureTint.gameObject.SetActive(false);
     }
