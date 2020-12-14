@@ -104,30 +104,26 @@ public class GoapPlanner {
         }
     }
     public void ReceivePlanFromGoapThread(GoapThread goapThread) {
+        status = GOAP_PLANNING_STATUS.NONE;
         if (goapThread.job != null) {
             goapThread.job.SetIsInMultithread(false);
             if (goapThread.job.shouldForceCancelUponReceiving) {
-                status = GOAP_PLANNING_STATUS.NONE;
                 ForceCancelJobAndReturnToObjectPool(goapThread.job);
                 ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
                 return;
             }
         }
         if (owner.isDead || !owner.marker) {
-            status = GOAP_PLANNING_STATUS.NONE;
             ForceCancelJobAndReturnToObjectPool(goapThread.job);
             ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
             return;
         }
         if (goapThread.recalculationPlan != null && goapThread.recalculationPlan.isEnd) {
-            status = GOAP_PLANNING_STATUS.NONE;
             ForceCancelJobAndReturnToObjectPool(goapThread.job);
             ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
             return;
         }
-
         //status = GOAP_PLANNING_STATUS.PROCESSING_RESULT;
-        status = GOAP_PLANNING_STATUS.NONE;
 
         //owner.ExecutePendingActionsAfterMultithread();
         string additionalLog = string.Empty;

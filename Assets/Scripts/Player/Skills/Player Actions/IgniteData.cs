@@ -17,13 +17,18 @@ public class IgniteData : PlayerAction {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        //IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
-        // LocationGridTile tile = targetPOI.gridTileLocation;
-        BurningSource bs = new BurningSource();
-        Burning burning = new Burning();
-        burning.InitializeInstancedTrait();
-        burning.SetSourceOfBurning(bs, targetPOI);
-        targetPOI.traitContainer.AddTrait(targetPOI, burning, bypassElementalChance: true);
+        LocationGridTile targetTile = targetPOI.gridTileLocation;
+
+        if (targetTile != null) {
+            BurningSource bs = null;
+            targetTile.PerformActionOnTraitables((traitable) => IgniteEffect(traitable, ref bs));
+        }
+
+        //BurningSource bs = new BurningSource();
+        //Burning burning = new Burning();
+        //burning.InitializeInstancedTrait();
+        //burning.SetSourceOfBurning(bs, targetPOI);
+        //targetPOI.traitContainer.AddTrait(targetPOI, burning, bypassElementalChance: true);
         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", name, "activated", null, LOG_TAG.Player);
         log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
@@ -42,4 +47,12 @@ public class IgniteData : PlayerAction {
         return base.CanPerformAbilityTowards(tileObject);
     }
     #endregion
+
+    private void IgniteEffect(ITraitable traitable, ref BurningSource bs) {
+        if (traitable.gridTileLocation == null) { return; }
+        Trait trait = null;
+        if (traitable.traitContainer.AddTrait(traitable, "Burning", out trait, bypassElementalChance: true)) {
+            TraitManager.Instance.ProcessBurningTrait(traitable, trait, ref bs);
+        }
+    }
 }
