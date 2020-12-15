@@ -276,6 +276,7 @@ public class GenericTileObject : TileObject {
         blueprintOnTile.OnBuiltStructureObjectPlaced(gridTileLocation.parentMap, structure, out int createdWalls, out int totalWalls);
         structure.CreateRoomsBasedOnStructureObject(blueprintOnTile);
         structure.OnBuiltNewStructure();
+        structure.OnBuiltNewStructureFromBlueprint();
 
         CancelBlueprintExpiry();
         blueprintOnTile = null;

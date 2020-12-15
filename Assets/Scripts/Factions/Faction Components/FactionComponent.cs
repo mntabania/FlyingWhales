@@ -6,7 +6,7 @@ public class FactionComponent {
     //Base class for all faction components
     public Faction owner { get; private set; }
 
-    public virtual void SetOwner(Faction owner) {
+    public void SetOwner(Faction owner) {
         this.owner = owner;
     }
 }

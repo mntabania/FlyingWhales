@@ -21,6 +21,9 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
     public bool hasPeasants;
     public bool hasWorkers;
 
+    //Components
+    public SaveDataSettlementVillageMigrationComponent migrationComponent;
+
     public override void Save(BaseSettlement baseSettlement) {
         base.Save(baseSettlement);
         NPCSettlement npcSettlement = baseSettlement as NPCSettlement;
@@ -65,6 +68,8 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
         }
         hasPeasants = npcSettlement.hasPeasants;
         hasWorkers = npcSettlement.hasWorkers;
+
+        migrationComponent = new SaveDataSettlementVillageMigrationComponent(); migrationComponent.Save(npcSettlement.migrationComponent);
     }
     public override BaseSettlement Load() {
         return LandmarkManager.Instance.LoadNPCSettlement(this);

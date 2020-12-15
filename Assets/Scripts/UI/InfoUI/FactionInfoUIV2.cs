@@ -210,9 +210,10 @@ public class FactionInfoUIV2 : MonoBehaviour {
         locationItems.Add(item);
     }
     private void OnClickSettlementItem(BaseSettlement settlement) {
-        if (settlement.allStructures.Count > 0) {
-            UIManager.Instance.ShowStructureInfo(settlement.allStructures.First());
-        }
+        //if (settlement.allStructures.Count > 0) {
+        //    UIManager.Instance.ShowStructureInfo(settlement.allStructures.First());
+        //}
+        UIManager.Instance.ShowSettlementInfo(settlement);
         // if (settlement.tiles.Count > 0) {
         //     HexTile tile = settlement.tiles[0];
         //     if (InnerMapManager.Instance.isAnInnerMapShowing) {

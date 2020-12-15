@@ -7,6 +7,7 @@ using DG.Tweening;
 using Factions;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using JetBrains.Annotations;
 using Logs;
 using Ruinarch;
@@ -265,6 +266,7 @@ public class UIManager : BaseMonoBehaviour {
         UpdateRegionInfo();
         UpdateHextileInfo();
         UpdateStructureInfo();
+        UpdateSettlementInfo();
         UpdatePartyInfo();
     }
 
@@ -612,9 +614,10 @@ public class UIManager : BaseMonoBehaviour {
         if (obj is Character character) {
             ShowCharacterInfo(character, true);
         } else if (obj is NPCSettlement settlement) {
-            if (settlement.allStructures.Count > 0) {
-                ShowStructureInfo(settlement.allStructures.First());
-            }
+            ShowSettlementInfo(settlement);
+            //if (settlement.allStructures.Count > 0) {
+            //    ShowStructureInfo(settlement.allStructures.First());
+            //}
             // ShowRegionInfo(settlement.region);
         } else if (obj is Faction faction) {
             ShowFactionInfo(faction);
@@ -857,6 +860,9 @@ public class UIManager : BaseMonoBehaviour {
         if (structureInfoUI.isShowing) {
             structureInfoUI.OnClickCloseMenu();
         }
+        if (settlementInfoUI.isShowing) {
+            settlementInfoUI.OnClickCloseMenu();
+        }
     }
     #endregion
 
@@ -1004,7 +1010,35 @@ public class UIManager : BaseMonoBehaviour {
         }
     }
     #endregion
-    
+
+    #region Settlement Info
+    [Space(10)]
+    [Header("Settlement Info")]
+    [SerializeField] public SettlementInfoUI settlementInfoUI;
+    public void ShowSettlementInfo(BaseSettlement settlement) {
+        //Only show settlement info on village type settlements
+        //If settlement is a dungeon, etc., show structure info instead
+        if (settlement.locationType != LOCATION_TYPE.VILLAGE) {
+            if (settlement.allStructures.Count > 0) {
+                ShowStructureInfo(settlement.allStructures.First());
+            }
+            return;
+        }
+
+        if (tempDisableShowInfoUI) {
+            SetTempDisableShowInfoUI(false);
+            return;
+        }
+        settlementInfoUI.SetData(settlement);
+        settlementInfoUI.OpenMenu();
+    }
+    public void UpdateSettlementInfo() {
+        if (settlementInfoUI.isShowing) {
+            settlementInfoUI.UpdateSettlementInfoUI();
+        }
+    }
+    #endregion
+
     #region Console
     [Space(10)]
     [Header("Console")]

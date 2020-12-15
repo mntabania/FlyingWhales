@@ -40,6 +40,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public bool hasPeasants { get; private set; }
     public bool hasWorkers { get; private set; }
 
+    //Components
+    public SettlementVillageMigrationComponent migrationComponent { get; private set; }
+
     private readonly Region _region;
     private readonly WeightedDictionary<Character> newRulerDesignationWeights;
     private int newRulerDesignationChance;
@@ -71,6 +74,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             TILE_OBJECT_TYPE.TOOL,
             TILE_OBJECT_TYPE.ANTIDOTE
         };
+
+        migrationComponent = new SettlementVillageMigrationComponent(); migrationComponent.SetOwner(this);
     }
     public NPCSettlement(SaveDataBaseSettlement saveDataBaseSettlement) : base (saveDataBaseSettlement) {
         SaveDataNPCSettlement saveData = saveDataBaseSettlement as SaveDataNPCSettlement;
@@ -88,6 +93,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         npcSettlementEventDispatcher = new NPCSettlementEventDispatcher();
         _plaguedExpiryKey = string.Empty;
         _neededObjects = new List<TILE_OBJECT_TYPE>(saveData.neededObjects);
+
+        migrationComponent = saveData.migrationComponent.Load(); migrationComponent.SetOwner(this);
     }
 
     #region Loading
@@ -351,6 +358,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
         npcSettlementEventDispatcher.ExecuteHourStartedEvent(this);
+        migrationComponent.OnHourStarted();
     }
     #endregion
 
@@ -822,6 +830,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         base.OnStructureRemoved(structure);
         UpdatePrison();
         UpdateMainStorage();
+    }
+    public void OnStructureBuilt(LocationStructure structure) {
+        migrationComponent.OnStructureBuilt(structure);
     }
     private void OnCharacterSaw(Character character, IPointOfInterest seenPOI) {
         if (character.homeSettlement == this && character.currentSettlement == this) {
@@ -1532,19 +1543,23 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #endregion
 
     #region Settlement Type
-    public void SetSettlementType(SETTLEMENT_TYPE settlementType) {
+    public void SetSettlementType(SETTLEMENT_TYPE type) {
         if (locationType == LOCATION_TYPE.VILLAGE) {
             //Only set settlement type for villages. Do not include Dungeons. NOTE: Might be better to separate villages and dungeons into their own classes.
-            this.settlementType = LandmarkManager.Instance.CreateSettlementType(settlementType);
-            //NOTE: For now always apply default settings. This will change in the future.
-            this.settlementType.ApplyDefaultSettings();    
+            if(settlementType == null || settlementType.settlementType != type) {
+                //Only change settlement type if the currrent type is not the same as the one being set, if for example, the current type is Human Village, and the type to be set is also Human Village, there is no need to change the settlement type because they are the same
+                settlementType = LandmarkManager.Instance.CreateSettlementType(type);
+                //NOTE: For now always apply default settings. This will change in the future.
+                settlementType.ApplyDefaultSettings();
+
+                migrationComponent.OnSettlementTypeChanged();
+            }
+  
         }
     }
     private void ChangeSettlementTypeAccordingTo(Character character) {
         SETTLEMENT_TYPE typeToSet = LandmarkManager.Instance.GetSettlementTypeForCharacter(character);
-        if (settlementType == null || settlementType.settlementType != typeToSet) {
-            SetSettlementType(typeToSet);
-        }
+        SetSettlementType(typeToSet);
         // if (character.race == RACE.HUMANS && (settlementType == null || settlementType.settlementType != SETTLEMENT_TYPE.Default_Human)) {
         //     SetSettlementType(SETTLEMENT_TYPE.Default_Human);
         // } else if (character.race == RACE.ELVES && (settlementType == null || settlementType.settlementType != SETTLEMENT_TYPE.Default_Elf)) {

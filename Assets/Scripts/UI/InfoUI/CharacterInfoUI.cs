@@ -299,9 +299,10 @@ public class CharacterInfoUI : InfoUIBase {
     }
     private void OnClickHomeVillage(object obj) {
         if (_activeCharacter.homeSettlement != null) {
-            if (_activeCharacter.homeSettlement.allStructures.Count > 0) {
-                UIManager.Instance.ShowStructureInfo(_activeCharacter.homeSettlement.allStructures.First());
-            }
+            UIManager.Instance.ShowSettlementInfo(_activeCharacter.homeSettlement);
+            //if (_activeCharacter.homeSettlement.allStructures.Count > 0) {
+            //    UIManager.Instance.ShowStructureInfo(_activeCharacter.homeSettlement.allStructures.First());
+            //}
         }
     }
     private void OnLeftClickHomeStructure(object obj) {

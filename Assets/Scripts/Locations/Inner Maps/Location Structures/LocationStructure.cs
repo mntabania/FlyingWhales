@@ -1194,6 +1194,14 @@ namespace Inner_Maps.Location_Structures {
         }
         #endregion
 
+        #region Building
+        public void OnBuiltNewStructureFromBlueprint() {
+            if (settlementLocation is NPCSettlement settlement) {
+                settlement.OnStructureBuilt(this);
+            }
+        }
+        #endregion
+
         public virtual void OnCharacterUnSeizedHere(Character character) { }
     }
 }

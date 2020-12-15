@@ -32,7 +32,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 
 	#region Events
 	private IEnumerator CreateWorldEvents() {
-		WorldEventManager.Instance.AddActiveEvent(new VillagerMigration());
+		//WorldEventManager.Instance.AddActiveEvent(new VillagerMigration());
 		WorldEventManager.Instance.AddActiveEvent(new CultLeaderEvent());
 		yield return null;
 	}

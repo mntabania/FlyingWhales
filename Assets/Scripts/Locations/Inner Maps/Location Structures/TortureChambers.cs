@@ -60,6 +60,7 @@ namespace Inner_Maps.Location_Structures {
             _tortureChamberStructureObject = structureObj as TortureChamberStructureObject;
         }
         public override void OnBuiltNewStructure() {
+            base.OnBuiltNewStructure();
             _tortureChamberStructureObject.SetEntrance(region.innerMap);
         }
         public override void OnDoneLoadStructure() {
