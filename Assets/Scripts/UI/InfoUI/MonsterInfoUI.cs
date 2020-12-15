@@ -45,6 +45,7 @@ public class MonsterInfoUI : InfoUIBase {
     [Space(10)]
     [Header("Items")]
     [SerializeField] private TextMeshProUGUI itemsLbl;
+    [SerializeField] private EventLabel itemsEventLbl;
     
     private Character _activeMonster;
 
@@ -70,6 +71,9 @@ public class MonsterInfoUI : InfoUIBase {
         normalTraitsEventLbl.SetShouldColorHighlight(false);
         
         plansEventLabel.SetOnRightClickAction(OnRightClickThoughtBubble);
+        
+        itemsEventLbl.SetOnLeftClickAction(OnLeftClickItem);
+        itemsEventLbl.SetOnRightClickAction(OnRightClickItem);
         
         logsWindow.Initialize();
     }
@@ -305,11 +309,29 @@ public class MonsterInfoUI : InfoUIBase {
             UpdateInventoryInfo();
         }
     }
+    private void OnLeftClickItem(object obj) {
+        if (obj is string text) {
+            int index = int.Parse(text);
+            TileObject tileObject = _activeMonster.items.ElementAtOrDefault(index);
+            if (tileObject != null) {
+                UIManager.Instance.ShowTileObjectInfo(tileObject);    
+            }
+        }
+    }
+    private void OnRightClickItem(object obj) {
+        if (obj is string text) {
+            int index = int.Parse(text);
+            TileObject tileObject = _activeMonster.items.ElementAtOrDefault(index);
+            if (tileObject != null) {
+                UIManager.Instance.ShowPlayerActionContextMenu(tileObject, Input.mousePosition, true);    
+            }
+        }
+    }
     private void UpdateInventoryInfo() {
         itemsLbl.text = string.Empty;
         for (int i = 0; i < _activeMonster.items.Count; i++) {
             TileObject currInventoryItem = _activeMonster.items[i];
-            itemsLbl.text = $"{itemsLbl.text}{currInventoryItem.name}";
+            itemsLbl.text = $"{itemsLbl.text}<link=\"{i.ToString()}\">{UtilityScripts.Utilities.ColorizeAndBoldName(currInventoryItem.name)}</link>";
             if (i < _activeMonster.items.Count - 1) {
                 itemsLbl.text = $"{itemsLbl.text}, ";
             }

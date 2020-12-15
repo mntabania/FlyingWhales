@@ -1068,7 +1068,7 @@ public class CombatComponent : CharacterComponent {
     }
     public void AdjustMaxHPModifier(int modification) {
         maxHPModification += modification;
-        UpdateMaxHP();
+        UpdateMaxHPAndProportionateHP();
     }
     public void AdjustAttackModifier(int modification) {
         attackModification += modification;

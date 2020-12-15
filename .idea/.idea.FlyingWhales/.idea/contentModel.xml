@@ -3290,6 +3290,7 @@
             <e p="TheFingersUI.cs" t="Include" />
             <e p="TheNeedlesUI.cs" t="Include" />
             <e p="TheProfaneUI.cs" t="Include" />
+            <e p="TileObjectPortrait.cs" t="Include" />
             <e p="TimerHubItem.cs" t="Include" />
             <e p="ToolTips" t="Include">
               <e p="ToolTip.cs" t="Include" />

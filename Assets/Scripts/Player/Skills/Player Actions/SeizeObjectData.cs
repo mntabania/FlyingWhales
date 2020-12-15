@@ -30,8 +30,7 @@ public class SeizeObjectData : PlayerAction {
             if(targetTileObject is CultAltar) {
                 return false;
             }
-            return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && targetTileObject.mapVisual != null && 
-                   (targetTileObject.isBeingCarriedBy != null || targetTileObject.gridTileLocation != null);
+            return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && (targetTileObject.mapVisual != null || targetTileObject.isBeingCarriedBy != null);
         }
         return false;
     }
@@ -43,8 +42,9 @@ public class SeizeObjectData : PlayerAction {
             if (targetTileObject is WurmHole) {
                 return false;
             }
+            return targetTileObject.mapVisual != null || targetTileObject.isBeingCarriedBy != null; //allow tile object to be seized even if it does not yet have a map visual, but make sure it hasn't been destroyed yet  
         }
-        return base.IsValid(target);
+        return false;
     }
     #endregion
 }

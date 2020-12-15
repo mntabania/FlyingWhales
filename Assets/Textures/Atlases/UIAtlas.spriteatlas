@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8379071
+    totalSpriteSurfaceArea: 8391615
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -364,6 +364,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 70a9302eac8b89042a5b9b01b68c601b, type: 3}
   - {fileID: 21300000, guid: aa3b632e938f5e046bb0948ebd754783, type: 3}
   - {fileID: 21300000, guid: 0b0d5c3e24b6ea144b0993ddee8a432a, type: 3}
+  - {fileID: 21300000, guid: 1a17044e721f43d498d158ee13300891, type: 3}
   - {fileID: 21300000, guid: 4cbf394e3257b5245a7d29d972cd7313, type: 3}
   - {fileID: 21300000, guid: 6c12e94effe2ef2459ea2f122f107c62, type: 3}
   - {fileID: 21300000, guid: 1721f25e3f54f78489f9a120a49a68f7, type: 3}
@@ -722,6 +723,7 @@ SpriteAtlas:
   - trait_sad
   - pause_button_disabled
   - pause_button_default
+  - I-Generic
   - nameplate_default
   - location_ui_residents_icon
   - 5-Earth
