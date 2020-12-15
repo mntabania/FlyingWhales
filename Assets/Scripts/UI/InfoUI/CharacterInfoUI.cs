@@ -53,6 +53,7 @@ public class CharacterInfoUI : InfoUIBase {
 
     [Space(10)] [Header("Items")]
     [SerializeField] private TextMeshProUGUI itemsLbl;
+    [SerializeField] private EventLabel itemsEventLbl;
     
     [Space(10)] [Header("Relationships")]
     [SerializeField] private EventLabel relationshipNamesEventLbl;
@@ -95,8 +96,6 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_STACKED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
-        Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<InfoUIBase>(UISignals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener(UISignals.ON_OPEN_CONVERSATION_MENU, OnOpenConversationMenu);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
@@ -111,7 +110,6 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<MoodComponent>(CharacterSignals.MOOD_SUMMARY_MODIFIED, OnMoodModified);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
 
-        //normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
         actionEventLabel.SetOnRightClickAction(OnRightClickThoughtBubble);
         relationshipNamesEventLbl.SetOnLeftClickAction(OnLeftClickRelationship);
         relationshipNamesEventLbl.SetOnRightClickAction(OnRightClickRelationship);
@@ -122,6 +120,10 @@ public class CharacterInfoUI : InfoUIBase {
         houseEventLbl.SetOnLeftClickAction(OnLeftClickHomeStructure);
         houseEventLbl.SetOnRightClickAction(OnRightClickHomeStructure);
         partyEventLbl.SetOnLeftClickAction(OnClickParty);
+        
+        itemsEventLbl.SetOnLeftClickAction(OnLeftClickItem);
+        itemsEventLbl.SetOnRightClickAction(OnRightClickItem);
+        
         opinionsEventLabel.SetShouldColorHighlight(false);
         statusTraitsEventLbl.SetShouldColorHighlight(false);
         normalTraitsEventLbl.SetShouldColorHighlight(false);
@@ -141,7 +143,6 @@ public class CharacterInfoUI : InfoUIBase {
         fullnessMeter.AddMark(CharacterNeedsComponent.STARVING_UPPER_LIMIT/100f, Color.red);
         
         happinessMeter.ResetMarks();
-        // happinessMeter.AddMark(CharacterNeedsComponent.ENTERTAINED_LOWER_LIMIT/100f, Color.green);
         happinessMeter.AddMark(CharacterNeedsComponent.BORED_UPPER_LIMIT/100f, Color.yellow);
         happinessMeter.AddMark(CharacterNeedsComponent.SULKING_UPPER_LIMIT/100f, Color.red);
         
@@ -219,19 +220,6 @@ public class CharacterInfoUI : InfoUIBase {
     #endregion
 
     #region Utilities
-    // private void InitializeLogsMenu() {
-    //     logHistoryItems = new LogHistoryItem[CharacterManager.MAX_HISTORY_LOGS];
-    //     //populate history logs table
-    //     for (int i = 0; i < CharacterManager.MAX_HISTORY_LOGS; i++) {
-    //         GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
-    //         logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
-    //         newLogItem.transform.localScale = Vector3.one;
-    //         newLogItem.SetActive(true);
-    //     }
-    //     for (int i = 0; i < logHistoryItems.Length; i++) {
-    //         logHistoryItems[i].gameObject.SetActive(false);
-    //     }
-    // }
     private void ResetAllScrollPositions() {
         _logsWindow.ResetScrollPosition();
     }
@@ -259,7 +247,6 @@ public class CharacterInfoUI : InfoUIBase {
     public void UpdateBasicInfo() {
         nameLbl.text = $"<b>{_activeCharacter.firstNameWithColor}</b>";
         UpdateSubTextAndIcon();
-        // leaderIcon.SetActive(_activeCharacter.isFactionLeader || _activeCharacter.isSettlementRuler);
         UpdateThoughtBubble();
     }
     private void UpdateSubTextAndIcon() {
@@ -274,19 +261,7 @@ public class CharacterInfoUI : InfoUIBase {
     }
     public void UpdateThoughtBubble() {
         actionLbl.text = activeCharacter.visuals.GetThoughtBubble();
-        // if (log != null) {
-        //     plansLblLogItem.SetLog(log);
-        // }
     }
-    //public void OnHoverLeaderIcon() {
-    //    string message = string.Empty;
-    //    if (activeCharacter.isSettlementRuler) {
-    //        message = $"<b>{activeCharacter.name}</b> is the Settlement Ruler of <b>{activeCharacter.homeSettlement.name}</b>\n";
-    //    }
-    //    if (activeCharacter.isFactionLeader) {
-    //        message += $"<b>{activeCharacter.name}</b> is the Faction Leader of <b>{activeCharacter.faction.name}</b>";
-    //    }
-    //}
     private void OnRightClickThoughtBubble(object obj) {
         if (obj is IPlayerActionTarget playerActionTarget) {
             if (playerActionTarget is Character character) {
@@ -306,9 +281,6 @@ public class CharacterInfoUI : InfoUIBase {
         speedLbl.text =  $"{_activeCharacter.combatComponent.attackSpeed / 1000f}s";
         raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(_activeCharacter.race)}";
         elementLbl.text = $"{_activeCharacter.combatComponent.elementalDamage.type.ToString()}";
-        //if(characterPortrait.character != null) {
-        //    characterPortrait.UpdateLvl();
-        //}
     }
     #endregion
 
@@ -317,8 +289,6 @@ public class CharacterInfoUI : InfoUIBase {
         factionLbl.text = _activeCharacter.faction != null ? $"<link=\"faction\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.faction.name)}</link>" : "Factionless";
         currentLocationLbl.text = _activeCharacter.currentRegion != null ? $"{_activeCharacter.currentRegion.name}" : "None";
         homeRegionLbl.text = _activeCharacter.homeSettlement != null ? $"<link=\"home\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.homeSettlement.name)}</link>" : "Homeless";
-        //currentLocationLbl.text = $"<link=\"currLocation\">{UtilityScripts.Utilities.ColorizeName(_activeCharacter.currentRegion.name)}</link>";
-        //homeRegionLbl.text = _activeCharacter.homeRegion != null ? $"<link=\"home\">{UtilityScripts.Utilities.ColorizeName(_activeCharacter.homeRegion.name)}</link>" : "Homeless";
         houseLbl.text = _activeCharacter.homeStructure != null ? $"<link=\"house\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.homeStructure.name)}</link>" : "Homeless";
     }
     private void OnClickFaction(object obj) {
@@ -351,6 +321,7 @@ public class CharacterInfoUI : InfoUIBase {
         }
         UpdateTraits();
         UpdateThoughtBubble();
+        UpdateStatInfo();
     }
     private void UpdateThoughtBubbleFromSignal(Character character) {
         if (isShowing && _activeCharacter == character) {
@@ -448,11 +419,29 @@ public class CharacterInfoUI : InfoUIBase {
             UpdateInventoryInfo();
         }
     }
+    private void OnLeftClickItem(object obj) {
+        if (obj is string text) {
+            int index = int.Parse(text);
+            TileObject tileObject = _activeCharacter.items.ElementAtOrDefault(index);
+            if (tileObject != null) {
+                UIManager.Instance.ShowTileObjectInfo(tileObject);    
+            }
+        }
+    }
+    private void OnRightClickItem(object obj) {
+        if (obj is string text) {
+            int index = int.Parse(text);
+            TileObject tileObject = _activeCharacter.items.ElementAtOrDefault(index);
+            if (tileObject != null) {
+                UIManager.Instance.ShowPlayerActionContextMenu(tileObject, Input.mousePosition, true);    
+            }
+        }
+    }
     private void UpdateInventoryInfo() {
         itemsLbl.text = string.Empty;
         for (int i = 0; i < _activeCharacter.items.Count; i++) {
             TileObject currInventoryItem = _activeCharacter.items[i];
-            itemsLbl.text = $"{itemsLbl.text}{currInventoryItem.name}";
+            itemsLbl.text = $"{itemsLbl.text}<link=\"{i.ToString()}\">{UtilityScripts.Utilities.ColorizeAndBoldName(currInventoryItem.name)}</link>";
             if (i < _activeCharacter.items.Count - 1) {
                 itemsLbl.text = $"{itemsLbl.text}, ";
             }
@@ -478,30 +467,9 @@ public class CharacterInfoUI : InfoUIBase {
     #endregion   
 
     #region Listeners
-    private void OnMenuOpened(InfoUIBase openedBase) {
-        //if (this.isShowing) {
-        //    if (openedMenu is PartyInfoUI) {
-        //        CheckIfMenuShouldBeHidden();
-        //    }
-        //}
-    }
-    private void OnMenuClosed(InfoUIBase closedBase) {
-        //if (this.isShowing) {
-        //    if (closedMenu is PartyInfoUI) {
-        //        CheckIfMenuShouldBeHidden();
-        //    }
-        //}
-    }
     private void OnOpenConversationMenu() {
         backButton.interactable = false;
     }
-    //private void OnCloseShareIntelMenu() { }
-    //private void OnCharacterChangedAlterEgo(Character character) {
-    //    if (isShowing && activeCharacter == character) {
-    //        UpdateCharacterInfo();
-    //        UpdateTraits();
-    //    }
-    //}
     private void OnCharacterDied(Character character) {
         if (isShowing) {
             if (activeCharacter.id == character.id) {
@@ -609,45 +577,6 @@ public class CharacterInfoUI : InfoUIBase {
                                               $"<color={BaseRelationshipContainer.OpinionColor(opinionOfOther)}>({opinionText})</color></link>\n";
             }
         }
-        
-        // for (int i = 0; i < orderedRels.Keys.Count; i++) {
-        //     int targetID = orderedRels.Keys.ElementAt(i);
-        //     int actualIndex = keys.IndexOf(targetID);
-        //     IRelationshipData relationshipData = _activeCharacter.relationshipContainer.GetRelationshipDataWith(targetID);
-        //     string relationshipName = _activeCharacter.relationshipContainer.GetRelationshipNameWith(targetID);
-        //     Character target = CharacterManager.Instance.GetCharacterByID(targetID);
-        //
-        //     
-        //     //Hide relationship in UI if both consider each other an Acquaintance and no other special relationships (relative, lover, etc)
-        //     //Reference: https://trello.com/c/7uR4Iwya/1874-hide-relationship-in-ui-if-both-consider-each-other-an-acquaintance-and-no-other-special-relationships-relative-lover-etc
-        //     bool shouldShowRelationship = relationshipName != RelationshipManager.Acquaintance;
-        //     if (!shouldShowRelationship) {
-        //         //if active character considers target an acquaintance, then check if target also considers active character as an Acquaintance  
-        //         if (target != null) {
-        //             string targetRelationshipName = target.relationshipContainer.GetRelationshipNameWith(_activeCharacter.id);
-        //             shouldShowRelationship = targetRelationshipName != RelationshipManager.Acquaintance;
-        //         }    
-        //     }
-        //
-        //     if (!shouldShowRelationship) {
-        //         continue; //skip
-        //     }
-        //
-        //     relationshipTypesLbl.text += $"{relationshipName}\n";
-        //     
-        //     int opinionOfOther = 0;
-        //     string opinionText;
-        //     if (target != null && target.relationshipContainer.HasRelationshipWith(activeCharacter)) {
-        //         opinionOfOther = target.relationshipContainer.GetTotalOpinion(activeCharacter);
-        //         opinionText = GetOpinionText(opinionOfOther);
-        //     } else {
-        //         opinionText = "???";
-        //     }
-        //     
-        //     relationshipNamesLbl.text += $"<link=\"{actualIndex.ToString()}\">{UtilityScripts.Utilities.ColorizeAndBoldName(relationshipData.targetName)}</link>\n";
-        //     relationshipValuesLbl.text +=
-        //         $"<link=\"{actualIndex.ToString()}\"><color={BaseRelationshipContainer.OpinionColor(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}> {GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}</color> <color={BaseRelationshipContainer.OpinionColor(opinionOfOther)}>({opinionText})</color></link>\n";
-        // }
     }
     private bool DoesRelationshipMeetFilters(int id, IRelationshipData data) {
         Character target = CharacterManager.Instance.GetCharacterByID(id);

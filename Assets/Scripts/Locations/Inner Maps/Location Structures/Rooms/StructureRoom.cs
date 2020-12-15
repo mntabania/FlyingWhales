@@ -73,7 +73,8 @@ namespace Inner_Maps.Location_Structures {
             UIManager.Instance.ShowStructureRoomInfo(this);
         }
         public void RightSelectAction() {
-            UIManager.Instance.ShowPlayerActionContextMenu(this, Input.mousePosition, true);
+            Vector3 worldPos = InnerMapCameraMove.Instance.camera.ScreenToWorldPoint(Input.mousePosition);
+            UIManager.Instance.ShowPlayerActionContextMenu(this, worldPos, false);
         }
         public void MiddleSelectAction() { }
         public bool CanBeSelected() {

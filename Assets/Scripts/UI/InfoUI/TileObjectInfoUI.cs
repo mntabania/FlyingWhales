@@ -26,6 +26,7 @@ public class TileObjectInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI normalTraitsLbl;
     [SerializeField] private EventLabel statusTraitsEventLbl;
     [SerializeField] private EventLabel normalTraitsEventLbl;
+    [SerializeField] private TileObjectPortrait tileObjectPortrait;
 
     [Space(10)]
     [Header("Characters")]
@@ -58,6 +59,7 @@ public class TileObjectInfoUI : InfoUIBase {
         
         carriedByEventLbl.SetOnLeftClickAction(OnLeftClickLocation);
         carriedByEventLbl.SetOnRightClickAction(OnRightClickLocation);
+        tileObjectPortrait.SetRightClickAction(OnRightClickPortrait);
 
         logsWindow.Initialize();
     }
@@ -144,6 +146,10 @@ public class TileObjectInfoUI : InfoUIBase {
 
         ownerLbl.text = activeTileObject.characterOwner != null ? $"<link=\"1\">{UtilityScripts.Utilities.ColorizeAndBoldName(activeTileObject.characterOwner.name)}</link>" : "None";
         UpdateLocationInfo();
+        tileObjectPortrait.SetTileObject(activeTileObject);
+    }
+    private void OnRightClickPortrait(TileObject p_tileObject) {
+        UIManager.Instance.ShowPlayerActionContextMenu(p_tileObject, Input.mousePosition, true);
     }
     private void UpdateLocationInfo() {
         if (activeTileObject.isBeingCarriedBy != null) {

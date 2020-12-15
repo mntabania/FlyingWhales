@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 namespace Traits {
     [System.Serializable]
-    public class Trait : IMoodModifier, ISavable{
+    public class Trait : IMoodModifier, ISavable, IContextMenuItem {
         //Non-changeable values
         public string name;
         public string description;
@@ -39,6 +39,10 @@ namespace Traits {
         public string descriptionInUI => GetDescriptionInUI();
         public virtual bool isPersistent => false; //should this trait persist through all a character's alter egos
         public virtual bool isSingleton => false;
+        public Sprite contextMenuIcon => null;
+        public string contextMenuName => name;
+        public int contextMenuColumn => 1;
+        public List<IContextMenuItem> subMenus => null;
         #endregion
         
         #region Initialization
@@ -276,7 +280,37 @@ namespace Traits {
         public virtual void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) { }
         #endregion
 
-        
+        #region IContextMenuItem Implementation
+        public void OnPickAction() {
+            if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is Character targetCharacter) {
+                ActivateTriggerFlawConfirmation(targetCharacter);
+            }
+        }
+        public bool CanBePickedRegardlessOfCooldown() {
+            if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is Character targetCharacter) {
+                return CanFlawBeTriggered(targetCharacter);
+            }
+            return true;
+        }
+        public bool IsInCooldown() {
+            return false;
+        }
+        public float GetCoverFillAmount() {
+            return 0f;
+        }
+        public int GetCurrentRemainingCooldownTicks() {
+            return 0;
+        }
+        private void ActivateTriggerFlawConfirmation(Character p_character) {
+            string traitName = name;
+            Trait trait = p_character.traitContainer.GetTraitOrStatus<Trait>(traitName);
+            string question = "Are you sure you want to trigger " + traitName + "?";
+            string effect = $"<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(p_character, "flaw_effect")}";
+            string manaCost = $"{PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
+
+            UIManager.Instance.ShowTriggerFlawConfirmation(question, effect, manaCost, () => TriggerFlawData.ActivateTriggerFlaw(trait, p_character), layer: 26, showCover: true, pauseAndResume: true);
+        }
+        #endregion
     }
 }
 

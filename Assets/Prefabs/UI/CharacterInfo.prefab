@@ -4400,6 +4400,7 @@ GameObject:
   - component: {fileID: 224295692171965066}
   - component: {fileID: 222051247658243252}
   - component: {fileID: 114244840825870226}
+  - component: {fileID: 2425887572096037000}
   m_Layer: 5
   m_Name: ItemsLbl
   m_TagString: Untagged
@@ -4449,7 +4450,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -4524,6 +4525,28 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &2425887572096037000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1242322817380550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: {fileID: 0}
+  allowClickAction: 1
+  hoverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  hoverOutAction:
+    m_PersistentCalls:
+      m_Calls: []
+  isHovering: 0
+  wasHoveringPreviousFrame: 0
 --- !u!1 &1252103836818224
 GameObject:
   m_ObjectHideFlags: 0
@@ -5308,6 +5331,7 @@ MonoBehaviour:
   statusTraitsEventLbl: {fileID: 114801503303010800}
   normalTraitsEventLbl: {fileID: 114971320316732150}
   itemsLbl: {fileID: 114244840825870226}
+  itemsEventLbl: {fileID: 2425887572096037000}
   relationshipNamesEventLbl: {fileID: 114787274946791508}
   relationshipTypesLbl: {fileID: 114275151068229390}
   relationshipNamesLbl: {fileID: 114489570979958644}

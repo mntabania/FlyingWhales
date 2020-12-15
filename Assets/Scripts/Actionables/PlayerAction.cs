@@ -97,5 +97,8 @@ public class PlayerAction : SpellData, IContextMenuItem {
         }
         return 1f;
     }
+    public int GetCurrentRemainingCooldownTicks() {
+        return cooldown - currentCooldownTick;
+    }
     #endregion
 }

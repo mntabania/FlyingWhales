@@ -33,7 +33,14 @@ public class SeizeComponent {
         //     return;
         // }
         if (seizedPOI == null) {
-            poi.isBeingCarriedBy?.UncarryPOI();
+            if (poi.isBeingCarriedBy != null) {
+                if (poi.isBeingCarriedBy.carryComponent.isCarryingAnyPOI && poi.isBeingCarriedBy.carryComponent.carriedPOI == poi) {
+                    poi.isBeingCarriedBy.UncarryPOI();
+                } else {
+                    poi.isBeingCarriedBy.UncarryPOI(poi);    
+                }
+            }
+            // poi.isBeingCarriedBy?.UncarryPOI();
             if (poi.gridTileLocation != null) {
                 Messenger.Broadcast(CharacterSignals.BEFORE_SEIZING_POI, poi);
                 seizedPOI = poi;
