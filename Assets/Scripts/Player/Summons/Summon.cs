@@ -221,6 +221,13 @@ public class Summon : Character {
         behaviourComponent.SetIsHarassing(false, null);
         behaviourComponent.SetIsInvading(false, null);
         behaviourComponent.SetIsDefending(false, null);
+        List<Trait> afterDeathTraitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.After_Death);
+        if (afterDeathTraitOverrideFunctions != null) {
+            for (int i = 0; i < afterDeathTraitOverrideFunctions.Count; i++) {
+                Trait trait = afterDeathTraitOverrideFunctions[i];
+                trait.AfterDeath(this);
+            }
+        }
     }
     public virtual void OnSummonAsPlayerMonster() {
         combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);

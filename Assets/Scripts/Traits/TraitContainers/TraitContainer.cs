@@ -141,7 +141,7 @@ namespace Traits {
                     int poisonStacks = stacks["Poisoned"];
                     RemoveStatusAndStacks(addTo, "Poisoned");
                     if (addTo is IPointOfInterest to && addTo.gridTileLocation != null) {
-                        CombatManager.Instance.PoisonExplosion(to, addTo.gridTileLocation, poisonStacks, characterResponsible);
+                        CombatManager.Instance.PoisonExplosion(to, addTo.gridTileLocation, poisonStacks, characterResponsible, 1);
                     }
                     shouldAddTrait = false;
                 }

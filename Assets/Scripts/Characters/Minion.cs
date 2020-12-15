@@ -147,6 +147,13 @@ public class Minion {
                 deathLog = _deathLog;
             }
             character.SetDeathLog(deathLog);
+            List<Trait> afterDeathTraitOverrideFunctions = character.traitContainer.GetTraitOverrideFunctions(TraitManager.After_Death);
+            if (afterDeathTraitOverrideFunctions != null) {
+                for (int i = 0; i < afterDeathTraitOverrideFunctions.Count; i++) {
+                    Trait trait = afterDeathTraitOverrideFunctions[i];
+                    trait.AfterDeath(character);
+                }
+            }
             Unsummon();
             GameManager.Instance.CreateParticleEffectAt(deathTile, PARTICLE_EFFECT.Minion_Dissipate);
         }

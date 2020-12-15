@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
+  m_Name: Fast Zombie Data
+  m_EditorClassIdentifier: 
+  defaultSprites:
+    stillSprite: {fileID: 21300000, guid: 515f5416410c86d4d9c23ad7dfef2888, type: 3}
+    animationSprites:
+    - {fileID: 21300000, guid: de53a09667401bf47a5d79288ca39df1, type: 3}
+    - {fileID: 21300000, guid: 515f5416410c86d4d9c23ad7dfef2888, type: 3}
+    - {fileID: 21300000, guid: 60f787de3b8a99f4da10fd33e006c88e, type: 3}
+  raceSprites:
+    m_keys: 
+    m_values: []

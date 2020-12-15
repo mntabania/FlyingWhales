@@ -719,13 +719,23 @@ public class CharacterManager : BaseMonoBehaviour {
     public void RaiseFromDeadRetainCharacterInstance(Character target, Faction faction, RACE race, string className, Action<Character> onRaisedFromDeadAction = null) {
         //Since we no longer see the raise dead animation putting raise dead in a coroutine might have some problems like:
         //https://trello.com/c/Qu1VHS2A/3044-dev-03355-null-reference-charactermanagerraised
-        if (className.Contains("Zombie")) {
+        RACE chosenRace = race;
+        string chosenClassName = className;
+
+        if(chosenRace == RACE.NONE) {
+            chosenRace = target.race;
+        }
+        if (string.IsNullOrEmpty(className)) {
+            chosenClassName = target.characterClass.className;
+        }
+
+        if (chosenClassName.Contains("Zombie")) {
             //Raise from dead as zombie
             target.SetHasRisen(true);
             target.SetRaisedFromDeadAsSkeleton(true);
             LocationGridTile tile = target.grave != null ? target.grave.gridTileLocation : target.gridTileLocation;
             GameManager.Instance.CreateParticleEffectAt(tile, PARTICLE_EFFECT.Zombie_Transformation);
-            target.ReturnToLife(faction, race, className);
+            target.ReturnToLife(faction, chosenRace, chosenClassName);
             target.MigrateHomeStructureTo(null);
             target.needsComponent.SetTirednessForcedTick(0);
             target.needsComponent.SetFullnessForcedTick(0);
