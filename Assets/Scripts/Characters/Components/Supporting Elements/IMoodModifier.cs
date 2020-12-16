@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public interface IMoodModifier {
-	string moodModificationDescription { get; }
+	
+	string modifierName { get; }
 	int moodModifier { get; }
+
+	Log GetMoodEffectFlavorText(Character p_characterResponsible);
 }

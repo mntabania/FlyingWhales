@@ -19,9 +19,9 @@ namespace Traits {
         public bool isTangible;
 
         #region Mood Effects
-        public void ApplyStackedMoodEffect(ITraitable addedTo, GameDate expiryDate) {
+        public void ApplyStackedMoodEffect(ITraitable addedTo, GameDate expiryDate, Character characterResponsible) {
             if (addedTo is Character character) {
-                character.moodComponent.AddMoodEffect(Mathf.RoundToInt(moodEffect * stackModifier), this, expiryDate);
+                character.moodComponent.AddMoodEffect(Mathf.RoundToInt(moodEffect * stackModifier), this, expiryDate, characterResponsible);
             }
         }
         public void UnapplyStackedMoodEffect(ITraitable addedTo) {

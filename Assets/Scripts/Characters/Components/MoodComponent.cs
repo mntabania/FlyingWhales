@@ -21,7 +21,6 @@ public class MoodComponent : CharacterComponent {
     public bool hasMoodChanged { get; private set; }
     public string mentalBreakName { get; private set; }
 
-    public Dictionary<string, int> moodModificationsSummary { get; private set; }
     public Dictionary<string, MoodModification> allMoodModifications { get; private set; }
 
     #region getters
@@ -55,7 +54,6 @@ public class MoodComponent : CharacterComponent {
 
     public MoodComponent() {
 		EnableMoodEffects();
-		moodModificationsSummary = new Dictionary<string, int>();
 		allMoodModifications = new Dictionary<string, MoodModification>();
 		isInNormalMood = true; //set as initially in normal mood
 	}
@@ -77,7 +75,6 @@ public class MoodComponent : CharacterComponent {
         isInMinorMentalBreak = data.isInMinorMentalBreak;
         hasMoodChanged = data.hasMoodChanged;
         mentalBreakName = data.mentalBreakName;
-        moodModificationsSummary = data.moodModificationsSummary;
         allMoodModifications = data.allMoodModifications;
 
         if (!string.IsNullOrEmpty(mentalBreakName)) {
@@ -113,26 +110,25 @@ public class MoodComponent : CharacterComponent {
 	public void SetMoodValue(int amount) {
 		moodValue = amount;
         hasMoodChanged = true;
-        //OnMoodChanged();
 	}
-	public void AddMoodEffect(int amount, IMoodModifier modifier, GameDate expiryDate) {
-		// if (amount == 0) {
-		// 	return; //ignore
-		// }
+	public void AddMoodEffect(int amount, IMoodModifier modifier, GameDate expiryDate, Character characterResponsible) {
+		if (amount == 0) {
+			Debug.Log($"Added mood effect with 0 amount! {modifier.modifierName}");
+		}
 		//NOTE: Allowed addition of zero values because of the expiry dates.
 		//statuses, even if they have no mood effects, can extend the expiry of that status, and so the mood summary needs to be updated
 		//normal traits on the other hand usually don't have mood effects so moved checking of 0 values there.
 		moodValue += amount;
-		AddModificationToSummary(modifier.moodModificationDescription, amount, expiryDate);
+		AddModificationToSummary(modifier.modifierName, amount, expiryDate, modifier.GetMoodEffectFlavorText(characterResponsible));
         hasMoodChanged = true;
         //OnMoodChanged();
 	}
 	public void RescheduleMoodEffect(IMoodModifier p_modifier, GameDate p_rescheduledDate) {
-		if (allMoodModifications.ContainsKey(p_modifier.moodModificationDescription)) {
-			if (allMoodModifications[p_modifier.moodModificationDescription].expiryDates.Count > 0) {
-				allMoodModifications[p_modifier.moodModificationDescription].expiryDates.RemoveAt(0);	
+		if (allMoodModifications.ContainsKey(p_modifier.modifierName)) {
+			if (allMoodModifications[p_modifier.modifierName].expiryDates.Count > 0) {
+				allMoodModifications[p_modifier.modifierName].expiryDates.RemoveAt(0);	
 			}
-			allMoodModifications[p_modifier.moodModificationDescription].expiryDates.Add(p_rescheduledDate);
+			allMoodModifications[p_modifier.modifierName].expiryDates.Add(p_rescheduledDate);
 		}
 	}
 	public void RemoveMoodEffect(int amount, IMoodModifier modifier) {
@@ -140,7 +136,7 @@ public class MoodComponent : CharacterComponent {
 		// 	return; //ignore
 		// }
 		moodValue += amount;
-		RemoveModificationFromSummary(modifier.moodModificationDescription, amount);
+		RemoveModificationFromSummary(modifier.modifierName, amount);
         hasMoodChanged = true;
         //OnMoodChanged();
 	}
@@ -383,18 +379,6 @@ public class MoodComponent : CharacterComponent {
 	#endregion
 
 	#region Minor Mental Break
-	// private void CheckForMinorMentalBreak() {
-	// 	IncreaseMinorMentalBreakChance();
-	// 	if (owner.limiterComponent.canPerform && _isInMinorMentalBreak == false && _isInMajorMentalBreak == false) {
-	// 		float roll = Random.Range(0f, 100f);
-	// 		Debug.Log(
-	// 			$"<color=green>{GameManager.Instance.TodayLogString()}{owner.name} is checking for <b>MINOR</b> mental break. Roll is <b>{roll.ToString(CultureInfo.InvariantCulture)}</b>. Chance is <b>{currentLowMoodEffectChance.ToString(CultureInfo.InvariantCulture)}</b></color>");
-	// 		if (roll <= currentLowMoodEffectChance) {
-	// 			//Trigger Minor Mental Break.
-	// 			TriggerMinorMentalBreak();
-	// 		}	
-	// 	}
-	// }
 	private void AdjustMinorMentalBreakChance(float amount) {
 		currentLowMoodEffectChance = currentLowMoodEffectChance + amount;
 		currentLowMoodEffectChance = Mathf.Clamp(currentLowMoodEffectChance, 0, 100f);
@@ -402,92 +386,19 @@ public class MoodComponent : CharacterComponent {
 			Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseMinorMentalBreakChance);
 		}
 	}
-	// private void SetMinorMentalBreakChance(float amount) {
-	// 	_currentLowMoodEffectChance = amount;
-	// 	_currentLowMoodEffectChance = Mathf.Clamp(currentLowMoodEffectChance, 0, 100f);
-	// 	if (currentLowMoodEffectChance <= 0f) {
-	// 		Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseMinorMentalBreakChance);
-	// 	}
-	// }
-	// private void IncreaseMinorMentalBreakChance() {
-	// 	AdjustMinorMentalBreakChance(GetMinorMentalBreakChanceIncrease());
-	// }
 	private void DecreaseMinorMentalBreakChance() {
 		AdjustMinorMentalBreakChance(GetMinorMentalBreakChanceDecrease());
 	}
-	// private float GetMinorMentalBreakChanceIncrease() {
-	// 	return 100f / (EditableValuesManager.Instance.minorMentalBreakDayThreshold * 24f); //because there are 24 hours in a day
-	// }
 	private float GetMinorMentalBreakChanceDecrease() {
 		return (100f / (EditableValuesManager.Instance.minorMentalBreakDayThreshold * 24f)) * -1f; //because there are 24 hours in a day
 	}
-	// private void ResetMinorMentalBreakChance() {
-	// 	Debug.Log($"<color=blue>{GameManager.Instance.TodayLogString()}{owner.name} reset minor mental break chance.</color>");
-	// 	SetMinorMentalBreakChance(0f);
-	// }
-	// private void TriggerMinorMentalBreak() {
-	// 	if (_isInMinorMentalBreak) {
-	// 		throw new Exception($"{GameManager.Instance.TodayLogString()}{owner.name} is already in a minor mental break, but is trying to trigger another one!");
-	// 	}
-	// 	int roll = Random.Range(0, 2);
-	// 	string summary = $"{GameManager.Instance.TodayLogString()}{owner.name} triggered minor mental break.";
-	// 	_isInMinorMentalBreak = true;
-	// 	if (roll == 0) {
-	// 		summary += "Chosen break is <b>Hide at Home</b>";
-	// 		TriggerHideAtHome();	
-	// 	} else if (roll == 1) {
-	// 		summary += "Chosen break is <b>dazed</b>";
-	// 		TriggerDazed();
-	// 	}
-	// 	owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, owner);
-	// 	Debug.Log($"<color=red>{summary}</color>");
-	// 	//StopCheckingForMinorMentalBreak();
-	// }
-	// private void TriggerHideAtHome() {
-	// 	if (owner.traitContainer.AddTrait(owner, "Hiding")) {
-	// 		mentalBreakName = "Desires Isolation";
-	// 		Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfHidingLost);	
-	// 	} else {
-	// 		Debug.LogWarning($"{owner.name} triggered hide at home mental break but could not add hiding trait to its traits!");
-	// 	}
-	// }
-	// private void CheckIfHidingLost(ITraitable traitable, Trait trait, Character removedBy) {
-	// 	if (traitable == owner && trait is Hiding) {
-	// 		//gain catharsis
-	// 		owner.traitContainer.AddTrait(owner, "Catharsis");
-	// 		Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfHidingLost);
-	// 		OnMentalBreakDone();
-	// 	}
-	// }
-	// private void TriggerDazed() {
-	// 	if (owner.traitContainer.AddTrait(owner, "Dazed")) {
-	// 		mentalBreakName = "Dazed";
-	// 		Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfDazedLost);	
-	// 	} else {
-	// 		Debug.LogWarning($"{owner.name} triggered berserk mental break but could not add berserk trait to its traits!");
-	// 	}
-	// }
-	// private void CheckIfDazedLost(ITraitable traitable, Trait trait, Character removedBy) {
-	// 	if (traitable == owner && trait is Dazed) {
-	// 		//gain catharsis
-	// 		owner.traitContainer.AddTrait(owner, "Catharsis");
-	// 		Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfDazedLost);
-	// 		OnMentalBreakDone();
-	// 	}
-	// }
 	#endregion
 
 	#region Mental Break Shared
 	private void OnMentalBreakDone() {
-		//_isInMinorMentalBreak = false;
 		isInMajorMentalBreak = false;
 		ResetMajorMentalBreakChance();
 		mentalBreakName = string.Empty;
-		//ResetMinorMentalBreakChance();
-		// if (_isInLowMood) {
-		// 	Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} is still in low mood state after mental break, starting check for minor mental break again...");
-		// 	StartCheckingForMinorMentalBreak();
-		// }else 
 		if (isInCriticalMood) {
 			Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} is still in critical mood state after mental break, starting check for major mental break again...");
 			StartCheckingForMajorMentalBreak();
@@ -524,37 +435,30 @@ public class MoodComponent : CharacterComponent {
 	#endregion
 
 	#region Summary
-	private void AddModificationToSummary(string modificationKey, int modificationValue, GameDate expiryDate) {
-		if (!moodModificationsSummary.ContainsKey(modificationKey)) {
-			moodModificationsSummary.Add(modificationKey, 0);
-		}
-		if (!allMoodModifications.ContainsKey(modificationKey)) {
-			allMoodModifications.Add(modificationKey, new MoodModification(modificationValue, expiryDate));
+	private void AddModificationToSummary(string p_modifierName, int p_modificationValue, GameDate p_expiryDate, Log p_modificationFlavorText) {
+		if (!allMoodModifications.ContainsKey(p_modifierName)) {
+			allMoodModifications.Add(p_modifierName, new MoodModification(p_modificationValue, p_expiryDate, p_modificationFlavorText));
 		} else {
-			allMoodModifications[modificationKey].AddModification(modificationValue, expiryDate);
+			allMoodModifications[p_modifierName].AddModification(p_modificationValue, p_expiryDate, p_modificationFlavorText);
 		}
-		Debug.Log($"<color=blue>{owner.name} Added mood modification {modificationKey} {modificationValue.ToString()}</color>");
-		moodModificationsSummary[modificationKey] += modificationValue;
+		Debug.Log($"<color=blue>{owner.name} Added mood modification {p_modifierName} {p_modificationValue.ToString()}</color>");
 		Messenger.Broadcast(CharacterSignals.MOOD_SUMMARY_MODIFIED, this);
 	}
 	private void RemoveModificationFromSummary(string modificationKey, int modificationValue) {
-		if (moodModificationsSummary.ContainsKey(modificationKey)) {
+		if (allMoodModifications.ContainsKey(modificationKey)) {
 			Debug.Log($"<color=red>{owner.name} Removed mood modification {modificationKey} {modificationValue.ToString()}</color>");
-			moodModificationsSummary[modificationKey] += modificationValue;
-			if (moodModificationsSummary[modificationKey] == 0) {
-				moodModificationsSummary.Remove(modificationKey);
+			allMoodModifications[modificationKey].RemoveLatestModification();
+			if (allMoodModifications[modificationKey].IsEmpty()) {
+				allMoodModifications.Remove(modificationKey);
 			}
-			
-			if (allMoodModifications.ContainsKey(modificationKey)) {
-				MoodModification modification = allMoodModifications[modificationKey];
-				modification.expiryDates.RemoveAt(0); //remove oldest date.
-				modification.modifications.RemoveAt(modification.modifications.Count - 1); //remove latest modification. Because stacking statuses are first in last out.
-				if (allMoodModifications[modificationKey].IsEmpty()) {
-					allMoodModifications.Remove(modificationKey);	
-				}
-			}
-			
 			Messenger.Broadcast(CharacterSignals.MOOD_SUMMARY_MODIFIED, this);
+		}
+	}
+	public void UpdateMoodSummaryLogsOnCharacterChangedName(Character p_character) {
+		foreach (var moodModification in allMoodModifications) {
+			for (int i = 0; i < moodModification.Value.flavorTexts.Count; i++) {
+				moodModification.Value.flavorTexts[i].TryUpdateLogAfterRename(p_character);
+			}
 		}
 	}
 	#endregion
@@ -591,7 +495,7 @@ public class SaveDataMoodComponent : SaveData<MoodComponent> {
         isInMinorMentalBreak = data.isInMinorMentalBreak;
         hasMoodChanged = data.hasMoodChanged;
         mentalBreakName = data.mentalBreakName;
-        moodModificationsSummary = data.moodModificationsSummary;
+        // moodModificationsSummary = data.moodModificationsSummary;
         allMoodModifications = data.allMoodModifications;
     }
 
@@ -606,18 +510,28 @@ public class SaveDataMoodComponent : SaveData<MoodComponent> {
 public struct MoodModification {
 	public List<int> modifications;
 	public List<GameDate> expiryDates;
-	public MoodModification(int modification, GameDate expiryDate) {
+	public List<Log> flavorTexts;
+	public MoodModification(int modification, GameDate expiryDate, Log flavorText) {
 		modifications = new List<int>();
 		expiryDates = new List<GameDate>();
-		AddModification(modification, expiryDate);
+		flavorTexts = new List<Log>();
+		AddModification(modification, expiryDate, flavorText);
 	}
 
-	public void AddModification(int modification, GameDate expiryDate) {
+	public void AddModification(int modification, GameDate expiryDate, Log flavorText) {
 		modifications.Add(modification);
 		expiryDates.Add(expiryDate);
+		flavorTexts.Add(flavorText);
+	}
+	public void RemoveLatestModification() {
+		if (modifications.Count > 0) {
+			modifications.RemoveAt(modifications.Count - 1); //remove latest modification. Because stacking statuses are first in last out.
+			flavorTexts.RemoveAt(flavorTexts.Count - 1); //remove latest flavor text. Because stacking statuses are first in last out.
+			expiryDates.RemoveAt(0); //remove oldest date.
+		}
 	}
 
 	public bool IsEmpty() {
-		return expiryDates.Count == 0 && modifications.Count == 0;
+		return expiryDates.Count == 0 && modifications.Count == 0 && flavorTexts.Count == 0;
 	}
 }

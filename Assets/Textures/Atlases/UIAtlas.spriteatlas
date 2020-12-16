@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8391615
+    totalSpriteSurfaceArea: 9243333
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -66,6 +66,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 687a3a90788a6d745ba1b50b087069c6, type: 3}
   - {fileID: 21300000, guid: 507710a0bfe21854686e9815d989cb94, type: 3}
   - {fileID: 21300000, guid: 1b71e4a07e951b847946063b916275e7, type: 3}
+  - {fileID: 21300000, guid: e8291ca0a293d7745a64f1a1823f669d, type: 3}
   - {fileID: 21300000, guid: 9ec882b08ff43914985bfa22b9a521d3, type: 3}
   - {fileID: 21300000, guid: 4c6a6eb03a95ec244bdc3a7ee4b661b3, type: 3}
   - {fileID: 21300000, guid: 8d587cc03c7e32d4aa2884c70b55e689, type: 3}
@@ -96,6 +97,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 32961622a5d8f21419cf1e02fc3f5f74, type: 3}
   - {fileID: 21300000, guid: cedec622ca7c924479b4d362719e2991, type: 3}
   - {fileID: 21300000, guid: ba0ca722388b4d6418352e1a37ae38a6, type: 3}
+  - {fileID: 21300000, guid: 211fbe32857460642bd324112b3acd94, type: 3}
   - {fileID: 21300000, guid: a8c4df329d4e4384bac5c14f093055f3, type: 3}
   - {fileID: 21300000, guid: 289de14257e60d54fb65f5b2271c259c, type: 3}
   - {fileID: 21300000, guid: e551cb52afd081a4cbd63246155d090e, type: 3}
@@ -231,6 +233,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f56d96586b6f4de4684742593e1e1275, type: 3}
   - {fileID: 21300000, guid: 8aa19a68d3ea1d54e8ab581e3d5dd5ff, type: 3}
   - {fileID: 21300000, guid: 1f589b68222dcea4fa1e1d129cd7cbf5, type: 3}
+  - {fileID: 21300000, guid: fdcedf6864b516345b3766218524ae81, type: 3}
   - {fileID: 21300000, guid: cade4378599559146b85acb8faea84d2, type: 3}
   - {fileID: 21300000, guid: e73b98880b3bac5428be2c89e7e93810, type: 3}
   - {fileID: 21300000, guid: 5b1e7e88a307b3d4a8c5ac3c9915e850, type: 3}
@@ -389,6 +392,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 78db681f8586d404db68e5023e213627, type: 3}
   - {fileID: 21300000, guid: 1c33a62fa2c9c5442b45980b517848da, type: 3}
   - {fileID: 21300000, guid: 01b1ed2fd2b7d0d4fabc61acffbe0bf7, type: 3}
+  - {fileID: 21300000, guid: 3b52a23f8fb6d5e40b58461867258f91, type: 3}
   - {fileID: 21300000, guid: 3145af3f181558e47b5e936e34f9fc18, type: 3}
   - {fileID: 21300000, guid: 10a1c45fa9617864ebe1dd6f16d2ac94, type: 3}
   - {fileID: 21300000, guid: f16eaf5f3ece5a442a66279536ef0123, type: 3}
@@ -400,6 +404,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: eaeda79f85936bf4380b4d1f63ca658e, type: 3}
   - {fileID: 21300000, guid: 2764e6af55896cd47b3df12d138bb2cf, type: 3}
   - {fileID: 21300000, guid: 26ca39cf2c4aefc45882e0028f698aa1, type: 3}
+  - {fileID: 21300000, guid: 478b1fcfe075071498952f16a2d70068, type: 3}
   - {fileID: 21300000, guid: 1f9183ef5eee83c44bfcc98f7274c048, type: 3}
   - {fileID: 21300000, guid: f7360fef095dd304eb1a955e31c6959b, type: 3}
   - {fileID: 21300000, guid: 7a9533ffeedeb3443924db0e8be0bf6f, type: 3}
@@ -425,6 +430,7 @@ SpriteAtlas:
   - trait_unconscious
   - button_invade_clicked
   - scroll_button_left_off
+  - thought_container_positive
   - button_arrow2_right_default
   - Arrow-Faction-Btn-Hover
   - button_skills_default
@@ -455,6 +461,7 @@ SpriteAtlas:
   - tab_relations_inactive
   - minion_tab_skill_active
   - nameplate_disabled
+  - thoughts_mockup
   - NotificationBarNoBorder
   - minion_tab_spells_default
   - tab_relations_default
@@ -590,6 +597,7 @@ SpriteAtlas:
   - Enlarged-Border-Gray
   - button_back_disabled
   - text_scroll_thumb
+  - thought_container_negative
   - Icon-Lich-2
   - defense_icon
   - button_base_hover
@@ -748,6 +756,7 @@ SpriteAtlas:
   - traveller_hover
   - loadout_button_clicked
   - button_back_disabled
+  - thought_container_neutral
   - Icon_Informed
   - spell_slot_clicked
   - tutorial_goal_checkbox_incomplete
@@ -759,6 +768,7 @@ SpriteAtlas:
   - nameplate_hover
   - scroll_button_right_on
   - 1x_button_disabled
+  - mood_container
   - Icon_Witness
   - nameplate_charging
   - world_button_default
