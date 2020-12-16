@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Ruinarch.MVCFramework;
 using UnityEngine;
 using UtilityScripts;
+using Traits;
 
 public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
 
@@ -142,7 +143,14 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
         } else if (temptationType == TEMPTATION.Empower) {
             rate = 25f;
         } else if (temptationType == TEMPTATION.Cleanse_Flaws) {
-            rate = 20f;
+            int flawCount = 0;
+            for (int i = 0; i < _targetCharacter.traitContainer.traits.Count; i++) {
+                Trait trait = _targetCharacter.traitContainer.traits[i];
+                if(trait.type == TRAIT_TYPE.FLAW) {
+                    flawCount++;
+                }
+            }
+            rate = 20f * flawCount;
         }
         ProcessSchemeSuccessRateWithMultipliers(ref rate);
         return rate;
