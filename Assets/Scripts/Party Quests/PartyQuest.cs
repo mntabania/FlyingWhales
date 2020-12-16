@@ -11,6 +11,7 @@ public class PartyQuest : ISavable {
     public System.Type relatedBehaviour { get; protected set; }
     public Party assignedParty { get; protected set; }
     public BaseSettlement madeInLocation { get; protected set; } //Where was this party quest created?
+    public bool isSuccessful { get; protected set; }
 
     #region getters
     public virtual IPartyQuestTarget target => null;
@@ -29,6 +30,7 @@ public class PartyQuest : ISavable {
         partyQuestType = data.partyQuestType;
         minimumPartySize = data.minimumPartySize;
         isWaitTimeOver = data.isWaitTimeOver;
+        isSuccessful = data.isSuccessful;
         relatedBehaviour = System.Type.GetType(data.relatedBehaviour);
     }
 
@@ -37,7 +39,11 @@ public class PartyQuest : ISavable {
     public virtual void OnWaitTimeOver() {
         isWaitTimeOver = true;
     }
-    protected virtual void OnEndQuest() { }
+    protected virtual void OnEndQuest() {
+        if(madeInLocation != null && madeInLocation is NPCSettlement npcSettlement) {
+            npcSettlement.OnFinishedQuest(this);
+        }
+    }
     public virtual void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {
         if(fromState == PARTY_STATE.Waiting && toState == PARTY_STATE.Moving) {
             OnWaitTimeOver();
@@ -56,6 +62,9 @@ public class PartyQuest : ISavable {
     }
     public void SetMadeInLocation(BaseSettlement settlement) {
         madeInLocation = settlement;
+    }
+    public void SetIsSuccessful(bool state) {
+        isSuccessful = state;
     }
     public void EndQuest(string reason) {
         OnEndQuest();
@@ -83,6 +92,7 @@ public class SaveDataPartyQuest : SaveData<PartyQuest>, ISavableCounterpart {
     public string relatedBehaviour;
     public string assignedParty;
     public string madeInLocation;
+    public bool isSuccessful;
 
     public OBJECT_TYPE objectType => OBJECT_TYPE.Party_Quest;
 
@@ -93,6 +103,7 @@ public class SaveDataPartyQuest : SaveData<PartyQuest>, ISavableCounterpart {
         partyQuestType = data.partyQuestType;
         minimumPartySize = data.minimumPartySize;
         isWaitTimeOver = data.isWaitTimeOver;
+        isSuccessful = data.isSuccessful;
         relatedBehaviour = data.relatedBehaviour.ToString();
         if(data.assignedParty != null) {
             assignedParty = data.assignedParty.persistentID;

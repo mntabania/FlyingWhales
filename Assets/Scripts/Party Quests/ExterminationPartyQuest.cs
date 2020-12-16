@@ -38,7 +38,8 @@ public class ExterminationPartyQuest : PartyQuest {
             EndQuest("Target is destroyed");
         } else {
             Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
-            StartExterminationTimer();
+            //Removed this because the quest should start timer when the characters arrived at target location
+            //StartExterminationTimer();
         }
     }
     public override IPartyTargetDestination GetTargetDestination() {
@@ -46,6 +47,13 @@ public class ExterminationPartyQuest : PartyQuest {
     }
     public override string GetPartyQuestTextInLog() {
         return "Exterminate " + targetStructure.name;
+    }
+    public override void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {
+        base.OnAssignedPartySwitchedState(fromState, toState);
+        if (toState == PARTY_STATE.Working) {
+            SetIsSuccessful(true);
+            StartExterminationTimer();
+        }
     }
     //protected override void OnAddMember(Character member) {
     //    base.OnAddMember(member);

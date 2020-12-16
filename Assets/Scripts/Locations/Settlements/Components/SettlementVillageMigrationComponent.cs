@@ -34,6 +34,13 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
             AdjustVillageMigarationMeter(GameUtilities.RandomBetweenTwoNumbers(60, 80));
         }
     }
+    public void OnFinishedQuest(PartyQuest quest) {
+        if(quest.madeInLocation == owner) {
+            if (quest.isSuccessful) {
+                AdjustVillageMigarationMeter(GameUtilities.RandomBetweenTwoNumbers(80, 120));
+            }
+        }
+    }
     #endregion
 
     #region Migration Meter

@@ -1580,6 +1580,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     #endregion
 
+    #region Party Quests
+    public void OnFinishedQuest(PartyQuest quest) {
+        migrationComponent.OnFinishedQuest(quest);
+    }
+    #endregion
+
     public override string ToString() {
         return name;
     }

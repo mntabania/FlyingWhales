@@ -221,6 +221,7 @@ namespace Traits {
                                 if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
                                     if (owner.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueParty) {
                                         if (rescueParty.targetCharacter == targetCharacter) {
+                                            //rescueParty.SetIsSuccessful(true);
                                             rescueParty.SetIsReleasing(false);
                                             if (rescueParty.isWaitTimeOver) {
                                                 owner.partyComponent.currentParty.GoBackHomeAndEndQuest();

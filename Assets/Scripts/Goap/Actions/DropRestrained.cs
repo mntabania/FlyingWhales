@@ -189,7 +189,8 @@ public class DropRestrained : GoapAction {
         }
 
         if (goapNode.associatedJobType == JOB_TYPE.KIDNAP_RAID) {
-            if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive && goapNode.actor.partyComponent.currentParty.currentQuest is RaidPartyQuest) {
+            if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive && goapNode.actor.partyComponent.currentParty.currentQuest is RaidPartyQuest quest) {
+                quest.SetIsSuccessful(true);
                 goapNode.actor.partyComponent.currentParty.RemoveMemberThatJoinedQuest(goapNode.actor);
             }
         }

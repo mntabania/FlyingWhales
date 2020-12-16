@@ -103,6 +103,7 @@ public class ReleaseCharacter : GoapAction {
 
         if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive && goapNode.actor.partyComponent.currentParty.currentQuest is RescuePartyQuest quest) {
             if(quest.targetCharacter == goapNode.poiTarget) {
+                quest.SetIsSuccessful(true);
                 quest.SetIsReleasing(false);
                 goapNode.actor.partyComponent.currentParty.GoBackHomeAndEndQuest();
             }
