@@ -616,7 +616,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private void OnCharacterChangedName(Character p_character) {
         if (p_character != this) {
-            UpdateCurrentLogsBasedOnUpdatedCharacter(p_character);    
+            UpdateCurrentLogsBasedOnUpdatedCharacter(p_character);
+            moodComponent.UpdateMoodSummaryLogsOnCharacterChangedName(p_character);
         }
     }
     private void UpdateCurrentLogsBasedOnUpdatedCharacter(Character p_character) {

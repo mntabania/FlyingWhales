@@ -1,15 +1,10 @@
-﻿using System;
-using UnityEngine;
-using System.Collections;
+﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using TMPro;
 using UnityEngine.UI;
 using Traits;
-using UnityEngine.Serialization;
 using UtilityScripts;
 
 public class CharacterInfoUI : InfoUIBase {
@@ -22,7 +17,6 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private EventLabel actionEventLabel;
     [SerializeField] private TextMeshProUGUI partyLbl;
     [SerializeField] private EventLabel partyEventLbl;
-    [SerializeField] private LogItem plansLblLogItem;
     [SerializeField] private Image raceIcon;
 
     [Space(10)] [Header("Location")]
@@ -69,6 +63,8 @@ public class CharacterInfoUI : InfoUIBase {
     [Space(10)] [Header("Mood")] 
     [SerializeField] private MarkedMeter moodMeter;
     [SerializeField] private TextMeshProUGUI moodSummary;
+    [SerializeField] private ScrollRect scrollViewMoodSummary;
+    [SerializeField] private GameObject prefabMoodThought;
     
     [Space(10)] [Header("Needs")] 
     [SerializeField] private MarkedMeter energyMeter;
@@ -86,6 +82,7 @@ public class CharacterInfoUI : InfoUIBase {
     private bool aliveRelationsOnly;
     private List<RELATIONS_FILTER> filters;
     private RELATIONS_FILTER[] allFilters;
+    private Dictionary<string, MoodSummaryEntry> _dictMoodSummary;
 
     internal override void Initialize() {
         base.Initialize();
@@ -132,13 +129,15 @@ public class CharacterInfoUI : InfoUIBase {
         moodMeter.AddMark(EditableValuesManager.Instance.criticalMoodHighThreshold/100f, Color.red);
         moodMeter.AddMark(EditableValuesManager.Instance.lowMoodHighThreshold/100f, Color.yellow);
 
+        Color green = new Color(0f / 255f, 91f / 255f, 0f / 255f);
+        
         energyMeter.ResetMarks();
-        energyMeter.AddMark(CharacterNeedsComponent.REFRESHED_LOWER_LIMIT/100f, Color.green);
+        energyMeter.AddMark(CharacterNeedsComponent.REFRESHED_LOWER_LIMIT/100f, green);
         energyMeter.AddMark(CharacterNeedsComponent.TIRED_UPPER_LIMIT/100f, Color.yellow);
         energyMeter.AddMark(CharacterNeedsComponent.EXHAUSTED_UPPER_LIMIT/100f, Color.red);
         
         fullnessMeter.ResetMarks();
-        fullnessMeter.AddMark(CharacterNeedsComponent.FULL_LOWER_LIMIT/100f, Color.green);
+        fullnessMeter.AddMark(CharacterNeedsComponent.FULL_LOWER_LIMIT/100f, green);
         fullnessMeter.AddMark(CharacterNeedsComponent.HUNGRY_UPPER_LIMIT/100f, Color.yellow);
         fullnessMeter.AddMark(CharacterNeedsComponent.STARVING_UPPER_LIMIT/100f, Color.red);
         
@@ -146,21 +145,22 @@ public class CharacterInfoUI : InfoUIBase {
         happinessMeter.AddMark(CharacterNeedsComponent.BORED_UPPER_LIMIT/100f, Color.yellow);
         happinessMeter.AddMark(CharacterNeedsComponent.SULKING_UPPER_LIMIT/100f, Color.red);
         
-        staminaMeter.ResetMarks();
-        staminaMeter.AddMark(CharacterNeedsComponent.SPRIGHTLY_LOWER_LIMIT/100f, Color.green);
-        staminaMeter.AddMark(CharacterNeedsComponent.SPENT_UPPER_LIMIT/100f, Color.yellow);
-        staminaMeter.AddMark(CharacterNeedsComponent.DRAINED_UPPER_LIMIT/100f, Color.red);
+        // staminaMeter.ResetMarks();
+        // staminaMeter.AddMark(CharacterNeedsComponent.SPRIGHTLY_LOWER_LIMIT/100f, Color.green);
+        // staminaMeter.AddMark(CharacterNeedsComponent.SPENT_UPPER_LIMIT/100f, Color.yellow);
+        // staminaMeter.AddMark(CharacterNeedsComponent.DRAINED_UPPER_LIMIT/100f, Color.red);
         
-        hopeMeter.ResetMarks();
-        hopeMeter.AddMark(CharacterNeedsComponent.HOPEFUL_LOWER_LIMIT/100f, Color.green);
-        hopeMeter.AddMark(CharacterNeedsComponent.DISCOURAGED_UPPER_LIMIT/100f, Color.yellow);
-        hopeMeter.AddMark(CharacterNeedsComponent.HOPELESS_UPPER_LIMIT/100f, Color.red);
+        // hopeMeter.ResetMarks();
+        // hopeMeter.AddMark(CharacterNeedsComponent.HOPEFUL_LOWER_LIMIT/100f, Color.green);
+        // hopeMeter.AddMark(CharacterNeedsComponent.DISCOURAGED_UPPER_LIMIT/100f, Color.yellow);
+        // hopeMeter.AddMark(CharacterNeedsComponent.HOPELESS_UPPER_LIMIT/100f, Color.red);
 
         _logsWindow.Initialize();
 
         InitializeRelationships();
         
         afflictions = new List<SpellData>();
+        _dictMoodSummary = new Dictionary<string, MoodSummaryEntry>();
     }
 
     #region Overrides
@@ -202,21 +202,6 @@ public class CharacterInfoUI : InfoUIBase {
         ResetAllScrollPositions();
         UpdateMoodSummary();
     }
-    // protected override void LoadActions(IPlayerActionTarget target) {
-    //     UtilityScripts.Utilities.DestroyChildren(actionsTransform);
-    //     activeActionItems.Clear();
-    //     for (int i = 0; i < target.actions.Count; i++) {
-    //         PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(target.actions[i]);
-    //         if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
-    //             //if (action.actionName == PlayerDB.Combat_Mode_Action) {
-    //             //    action.SetLabelText(action.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeCharacter.combatComponent.combatMode.ToString()));
-    //             //}
-    //             ActionItem actionItem = AddNewAction(action, target);
-    //             actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
-    //             actionItem.ForceUpdateCooldown();
-    //         }
-    //     }
-    // }
     #endregion
 
     #region Utilities
@@ -786,10 +771,6 @@ public class CharacterInfoUI : InfoUIBase {
         PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.AFFLICT).OnExecutePlayerSkill();
     }
     private bool CanActivateAffliction(SpellData spellData) {
-        // if (WorldConfigManager.Instance.isTutorialWorld) {
-        //     return WorldConfigManager.Instance.availableSpellsInTutorial.Contains(spellData.type) 
-        //            && spellData.CanPerformAbilityTowards(activeCharacter);
-        // }
         return spellData.CanPerformAbilityTowards(activeCharacter);
     }
     private void OnHoverAffliction(SpellData spellData) {
@@ -812,47 +793,84 @@ public class CharacterInfoUI : InfoUIBase {
         moodMeter.SetFillAmount(_activeCharacter.moodComponent.moodValue/100f);
     }
     private void UpdateMoodSummary() {
-        moodSummary.text = string.Empty;
-        string summary = string.Empty;
-        int index = 0;
-        foreach (KeyValuePair<string, int> pair in _activeCharacter.moodComponent.moodModificationsSummary) {
-            string color = "green";
-            string text = "+" + pair.Value;
-            if (pair.Value < 0) {
-                color = "red";
-                text = pair.Value.ToString();
+        UtilityScripts.Utilities.DestroyChildren(scrollViewMoodSummary.content);
+        _dictMoodSummary.Clear();
+        foreach (var modification in _activeCharacter.moodComponent.allMoodModifications) {
+            MoodModification moodModification = modification.Value;
+            for (int i = 0; i < moodModification.flavorTexts.Count; i++) {
+                Log flavorLog = moodModification.flavorTexts[i];
+                int modificationAmount = moodModification.modifications[i];
+                GameDate expiryDate = moodModification.expiryDates.ElementAtOrDefault(moodModification.expiryDates.Count - 1 - i);
+                MoodSummaryEntry moodSummaryEntry;
+                if (!_dictMoodSummary.ContainsKey(flavorLog.logText)) {
+                    moodSummaryEntry = new MoodSummaryEntry() { amount = modificationAmount, expiryDate = expiryDate };
+                    _dictMoodSummary.Add(flavorLog.logText, moodSummaryEntry);
+                } else {
+                    moodSummaryEntry = _dictMoodSummary[flavorLog.logText];
+                    moodSummaryEntry.amount += modificationAmount;
+                    if (expiryDate.IsAfter(moodSummaryEntry.expiryDate)) {
+                        moodSummaryEntry.expiryDate = expiryDate;    
+                    }
+                    _dictMoodSummary[flavorLog.logText] = moodSummaryEntry;
+                }
             }
-            summary += $"<color={color}>{text}</color> <link=\"{index}\">{pair.Key}</link>\n";
-            index++;
         }
-        moodSummary.text = summary;
+        foreach (var mood in _dictMoodSummary) {
+            GameObject moodItemGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefabMoodThought.name, Vector3.zero, Quaternion.identity, scrollViewMoodSummary.content);
+            MoodThoughtUIItem moodItem = moodItemGO.GetComponent<MoodThoughtUIItem>();
+            moodItem.SetItemDetails(mood.Key, mood.Value.amount, mood.Value.expiryDate, OnHoverOverMoodEffect, OnHoverOutMoodEffect);
+        }
+        // moodSummary.text = string.Empty;
+        // string summary = string.Empty;
+        // int index = 0;
+        // foreach (KeyValuePair<string, int> pair in _activeCharacter.moodComponent.moodModificationsSummary) {
+        //     string color = "green";
+        //     string text = "+" + pair.Value;
+        //     if (pair.Value < 0) {
+        //         color = "red";
+        //         text = pair.Value.ToString();
+        //     }
+        //     summary += $"<color={color}>{text}</color> <link=\"{index}\">{pair.Key}</link>\n";
+        //     index++;
+        // }
+        // moodSummary.text = summary;
+    }
+    private void OnHoverOverMoodEffect(GameDate expiryDate) {
+        string expiryText;
+        if (expiryDate.hasValue) {
+            GameDate today = GameManager.Instance.Today();
+            expiryText = $"Lasts for: {today.GetTimeDifferenceString(expiryDate)}";
+        } else {
+            expiryText = "Lasts until: Linked to Needs";
+        }
+        UIManager.Instance.ShowSmallInfo(expiryText, autoReplaceText: false);
     }
     public void OnHoverMoodEffect(object obj) {
         if (obj is string text) {
             int index = int.Parse(text);
-            if (index < _activeCharacter.moodComponent.allMoodModifications.Count) {
-                var kvp = _activeCharacter.moodComponent.allMoodModifications.ElementAt(index);
-                MoodModification modifications = kvp.Value;
-                int total = _activeCharacter.moodComponent.moodModificationsSummary[kvp.Key];
-                string modificationSign = string.Empty;
-                if (total > 0) {
-                    modificationSign = "+";
-                }
-                string color = "green";
-                if (total < 0) {
-                    color = "red";
-                }
-                GameDate expiryDate = modifications.expiryDates.Last();
-                string expiryText;
-                if (expiryDate.hasValue) {
-                    GameDate today = GameManager.Instance.Today();
-                    expiryText = $"Lasts for: {today.GetTimeDifferenceString(expiryDate)}";
-                } else {
-                    expiryText = "Lasts until: Linked to Needs";
-                }
-                string summary = $"<color={color}>{modificationSign}{total.ToString()}</color> {expiryText}";
-                UIManager.Instance.ShowSmallInfo(summary, autoReplaceText: false);    
-            }
+            // if (index < _activeCharacter.moodComponent.allMoodModifications.Count) {
+            //     var kvp = _activeCharacter.moodComponent.allMoodModifications.ElementAt(index);
+            //     MoodModification modifications = kvp.Value;
+            //     int total = _activeCharacter.moodComponent.moodModificationsSummary[kvp.Key];
+            //     string modificationSign = string.Empty;
+            //     if (total > 0) {
+            //         modificationSign = "+";
+            //     }
+            //     string color = "green";
+            //     if (total < 0) {
+            //         color = "red";
+            //     }
+            //     GameDate expiryDate = modifications.expiryDates.Last();
+            //     string expiryText;
+            //     if (expiryDate.hasValue) {
+            //         GameDate today = GameManager.Instance.Today();
+            //         expiryText = $"Lasts for: {today.GetTimeDifferenceString(expiryDate)}";
+            //     } else {
+            //         expiryText = "Lasts until: Linked to Needs";
+            //     }
+            //     string summary = $"<color={color}>{modificationSign}{total.ToString()}</color> {expiryText}";
+            //     UIManager.Instance.ShowSmallInfo(summary, autoReplaceText: false);    
+            // }
         }
     }
     public void OnHoverOutMoodEffect() {
@@ -861,8 +879,6 @@ public class CharacterInfoUI : InfoUIBase {
     public void ShowMoodTooltip() {
         string summary = $"Represents the Villagers' overall state of mind. Lower a Villagers' Mood to make them less effective and more volatile.\n\n" +
                          $"{_activeCharacter.moodComponent.moodValue.ToString()}/100\nBrainwash Success Rate: {DefilerRoom.GetBrainwashSuccessRate(_activeCharacter).ToString("N0")}%";
-        // summary +=
-        //     $"\nChance to trigger Major Mental Break {_activeCharacter.moodComponent.currentCriticalMoodEffectChance.ToString(CultureInfo.InvariantCulture)}";
         UIManager.Instance.ShowSmallInfo(summary, $"MOOD: {_activeCharacter.moodComponent.moodStateName}");
     }
     public void HideSmallInfo() {
@@ -875,8 +891,8 @@ public class CharacterInfoUI : InfoUIBase {
         energyMeter.SetFillAmount(_activeCharacter.needsComponent.tiredness/CharacterNeedsComponent.TIREDNESS_DEFAULT);
         fullnessMeter.SetFillAmount(_activeCharacter.needsComponent.fullness/CharacterNeedsComponent.FULLNESS_DEFAULT);
         happinessMeter.SetFillAmount(_activeCharacter.needsComponent.happiness/CharacterNeedsComponent.HAPPINESS_DEFAULT);
-        hopeMeter.SetFillAmount(_activeCharacter.needsComponent.hope/CharacterNeedsComponent.HOPE_DEFAULT);
-        staminaMeter.SetFillAmount(_activeCharacter.needsComponent.stamina/CharacterNeedsComponent.STAMINA_DEFAULT);
+        // hopeMeter.SetFillAmount(_activeCharacter.needsComponent.hope/CharacterNeedsComponent.HOPE_DEFAULT);
+        // staminaMeter.SetFillAmount(_activeCharacter.needsComponent.stamina/CharacterNeedsComponent.STAMINA_DEFAULT);
     }
     public void ShowEnergyTooltip() {
         string summary = $"Villagers will become Unconscious once this Meter is empty. This is replenished through rest.\n\n" +
@@ -906,30 +922,14 @@ public class CharacterInfoUI : InfoUIBase {
     #endregion
 
     #region Tabs
-    public void OnToggleInfo(bool isOn) {
-        // if (isOn) {
-        //     Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Info");    
-        // }
-    }
-    public void OnToggleMood(bool isOn) {
-        // if (isOn) {
-        //     Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Mood");    
-        // }
-    }
-    public void OnToggleRelations(bool isOn) {
-        // if (isOn) {
-        //     Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Relations");    
-        // }
-    }
-    public void OnToggleLogs(bool isOn) {
-        // if (isOn) {
-        //     Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Logs");    
-        // }
-    }
+    public void OnToggleInfo(bool isOn) { }
+    public void OnToggleMood(bool isOn) { }
+    public void OnToggleRelations(bool isOn) { }
+    public void OnToggleLogs(bool isOn) { }
     #endregion
 
     #region Party
-    public void UpdatePartyInfo() {
+    private void UpdatePartyInfo() {
         string text = "None";
         if (activeCharacter.partyComponent.hasParty) {
             text = $"<link=\"party\">{UtilityScripts.Utilities.ColorizeAndBoldName(activeCharacter.partyComponent.currentParty.partyName)}</link>";
@@ -961,4 +961,9 @@ public class CharacterInfoUI : InfoUIBase {
         UIManager.Instance.HideSmallInfo();
     }
     #endregion
+    
+    private struct MoodSummaryEntry {
+        public int amount;
+        public GameDate expiryDate;
+    }
 }

@@ -2252,8 +2252,10 @@
             <e p="Settlements" t="Include">
               <e p="BaseSettlement.cs" t="Include" />
               <e p="Components" t="Include">
+                <e p="NPCSettlementComponent.cs" t="Include" />
                 <e p="NPCSettlementEventDispatcher.cs" t="Include" />
                 <e p="SettlementJobPriorityComponent.cs" t="Include" />
+                <e p="SettlementVillageMigrationComponent.cs" t="Include" />
               </e>
               <e p="NPCSettlement.cs" t="Include" />
               <e p="PlayerSettlement.cs" t="Include" />
@@ -2906,6 +2908,7 @@
               <e p="Berserked.cs" t="Include" />
               <e p="Betrayed.cs" t="Include" />
               <e p="BoobyTrapped.cs" t="Include" />
+              <e p="BoomerZombie.cs" t="Include" />
               <e p="Bored.cs" t="Include" />
               <e p="Burning.cs" t="Include" />
               <e p="BurningAtStake.cs" t="Include" />
@@ -2936,6 +2939,7 @@
               <e p="Ensnared.cs" t="Include" />
               <e p="Feeble.cs" t="Include" />
               <e p="Fervor.cs" t="Include" />
+              <e p="FiniteZombie.cs" t="Include" />
               <e p="FireProne.cs" t="Include" />
               <e p="Forlorn.cs" t="Include" />
               <e p="Freezing.cs" t="Include" />
@@ -3125,6 +3129,7 @@
               <e p="MonsterInfoUI.cs" t="Include" />
               <e p="PartyInfoUI.cs" t="Include" />
               <e p="RegionInfoUI.cs" t="Include" />
+              <e p="SettlementInfoUI.cs" t="Include" />
               <e p="StructureInfoUI.cs" t="Include" />
               <e p="StructureRoomInfoUI.cs" t="Include" />
               <e p="TileObjectInfoUI.cs" t="Include" />
@@ -3163,6 +3168,7 @@
               <e p="IContextMenuItem.cs" t="Include" />
               <e p="LogItem.cs" t="Include" />
             </e>
+            <e p="MoodThoughtUIItem.cs" t="Include" />
             <e p="MVCFramework" t="Include">
               <e p="MVCUIController.cs" t="Include" />
               <e p="MVCUIModel.cs" t="Include" />

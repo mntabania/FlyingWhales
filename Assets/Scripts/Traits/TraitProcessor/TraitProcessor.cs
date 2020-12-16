@@ -28,7 +28,7 @@ namespace Traits {
                 traitable.traitContainer.AddScheduleTicket(trait.name, ticket, removeDate);
                 //trait.SetExpiryTicket(traitable, ticket);
             }
-            trait.ApplyMoodEffects(traitable, removeDate);
+            trait.ApplyMoodEffects(traitable, removeDate, characterResponsible);
             if(trait.traitOverrideFunctionIdentifiers != null && trait.traitOverrideFunctionIdentifiers.Count > 0) {
                 for (int i = 0; i < trait.traitOverrideFunctionIdentifiers.Count; i++) {
                     string identifier = trait.traitOverrideFunctionIdentifiers[i];
@@ -87,7 +87,7 @@ namespace Traits {
                 status.SetGainedFromDoing(gainedFromDoing);
                 status.AddCharacterResponsibleForTrait(characterResponsible);
                 status.OnStackStatus(traitable);
-                status.ApplyStackedMoodEffect(traitable, removeDate);
+                status.ApplyStackedMoodEffect(traitable, removeDate, characterResponsible);
                 return true;
             } else {
                 status.OnStackStatusAddedButStackIsAtLimit(traitable);

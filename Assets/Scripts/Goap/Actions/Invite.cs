@@ -132,7 +132,7 @@ public class Invite : GoapAction {
                     goapActionInvalidity.stateName = "Invite Rejected";
 
                     actor.relationshipContainer.AdjustOpinion(actor, targetCharacter, "Base", -3, "rejected sexual advances");
-                    actor.traitContainer.AddTrait(actor, "Annoyed");
+                    actor.traitContainer.AddTrait(actor, "Annoyed", targetCharacter);
                     if (actor.faction?.factionType.type == FACTION_TYPE.Disguised) {
                         actor.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
                         if (targetCharacter.marker && !targetCharacter.marker.HasUnprocessedPOI(actor)) {
@@ -190,7 +190,7 @@ public class Invite : GoapAction {
             target.combatComponent.Fight(goapNode.actor, CombatManager.Hostility);
         } else {
             //**After Effect 1**: Actor gains Annoyed trait.
-            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Annoyed");
+            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Annoyed", goapNode.poiTarget as Character);
         }
     }
     #endregion

@@ -14,7 +14,7 @@ public class Disappointment : Emotion {
         if (target is Character) {
             Character targetCharacter = target as Character;
             witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Disappointment", -4);
-            witness.traitContainer.AddTrait(witness, "Annoyed");
+            witness.traitContainer.AddTrait(witness, "Annoyed", targetCharacter);
         }
         return base.ProcessEmotion(witness, target, status, goapNode, reason);
     }
