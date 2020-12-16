@@ -68,21 +68,22 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
     }
 
     #region Blackmail
-    private void AddBlackmail(IIntel intel) {
-        BLACKMAIL_TYPE blackmailType = intel.GetBlackMailTypeConsideringTarget(_targetCharacter);
+    private void AddBlackmail(IIntel p_intel) {
+        BLACKMAIL_TYPE blackmailType = p_intel.GetBlackMailTypeConsideringTarget(_targetCharacter);
         if(blackmailType == BLACKMAIL_TYPE.None) {
-            CreateAndAddNewSchemeUIItem("Non-Blackmail Material", 0f, item => {
+            CreateAndAddNewSchemeUIItem("Non-Blackmail Material", 0f, 0f, item => {
                 OnClickMinusSchemeUIItem(item);
-                _chosenBlackmail.Remove(intel);
+                _chosenBlackmail.Remove(p_intel);
             }, OnHoverEnterSchemeUIItem, OnHoverExitSchemeUIItem);
         } else {
             float successRate = GetSchemeSuccessRate(blackmailType);
-            CreateAndAddNewSchemeUIItem($"{blackmailType.ToString()} Blackmail", successRate, item => {
+            float baseSuccessRate = GetBaseSchemeSuccessRate(blackmailType);
+            CreateAndAddNewSchemeUIItem($"{blackmailType.ToString()} Blackmail", successRate, baseSuccessRate, item => {
                 OnClickMinusSchemeUIItem(item);
-                _chosenBlackmail.Remove(intel);
+                _chosenBlackmail.Remove(p_intel);
             }, OnHoverEnterSchemeUIItem, OnHoverExitSchemeUIItem);
         }
-        _chosenBlackmail.Add(intel);
+        _chosenBlackmail.Add(p_intel);
         UpdateSuccessRate();
     }
     private List<IIntel> GetValidBlackmailForTarget(Character p_target) {
@@ -110,7 +111,8 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
     #region Temptation
     private void AddTemptation(TEMPTATION p_temptation) {
         float successRate = GetSchemeSuccessRate(p_temptation);
-        CreateAndAddNewSchemeUIItem(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(p_temptation.ToString()), successRate, item => {
+        float baseSuccessRate = GetBaseSchemeSuccessRate(p_temptation);
+        CreateAndAddNewSchemeUIItem(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(p_temptation.ToString()), successRate, baseSuccessRate, item => {
             OnClickMinusSchemeUIItem(item);
             _chosenTemptations.Remove(p_temptation);
         }, OnHoverEnterSchemeUIItem, OnHoverExitSchemeUIItem);
@@ -137,6 +139,11 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
 
     #region Scheme
     private float GetSchemeSuccessRate(TEMPTATION temptationType) {
+        float rate = GetBaseSchemeSuccessRate(temptationType);
+        ProcessSchemeSuccessRateWithMultipliers(ref rate);
+        return rate;
+    }
+    private float GetBaseSchemeSuccessRate(TEMPTATION temptationType) {
         float rate = 0f;
         if (temptationType == TEMPTATION.Dark_Blessing) {
             rate = 50f;
@@ -146,25 +153,28 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
             int flawCount = 0;
             for (int i = 0; i < _targetCharacter.traitContainer.traits.Count; i++) {
                 Trait trait = _targetCharacter.traitContainer.traits[i];
-                if(trait.type == TRAIT_TYPE.FLAW) {
+                if (trait.type == TRAIT_TYPE.FLAW) {
                     flawCount++;
                 }
             }
             rate = 20f * flawCount;
         }
-        ProcessSchemeSuccessRateWithMultipliers(ref rate);
         return rate;
     }
     private float GetSchemeSuccessRate(BLACKMAIL_TYPE blackmailType) {
+        float rate = GetBaseSchemeSuccessRate(blackmailType);
+        ProcessSchemeSuccessRateWithMultipliers(ref rate);
+        return rate;
+    }
+    private float GetBaseSchemeSuccessRate(BLACKMAIL_TYPE blackmailType) {
         float rate = 0f;
-        if(blackmailType == BLACKMAIL_TYPE.Strong) {
+        if (blackmailType == BLACKMAIL_TYPE.Strong) {
             rate = 50f;
         } else if (blackmailType == BLACKMAIL_TYPE.Normal) {
             rate = 35f;
         } else if (blackmailType == BLACKMAIL_TYPE.Weak) {
             rate = 20f;
         }
-        ProcessSchemeSuccessRateWithMultipliers(ref rate);
         return rate;
     }
     private void ProcessSchemeSuccessRateWithMultipliers(ref float rate) {
@@ -256,21 +266,23 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
             UpdateSuccessRate();
         }
     }
-    private void CreateAndAddNewSchemeUIItem(string text, float successRate, System.Action<SchemeUIItem> onClickMinusAction, System.Action<SchemeUIItem> onHoverEnterAction, System.Action<SchemeUIItem> onHoverExitAction) {
+    private void CreateAndAddNewSchemeUIItem(string p_text, float p_successRate, float p_baseSuccessRate, System.Action<SchemeUIItem> p_onClickMinusAction, System.Action<SchemeUIItem> p_onHoverEnterAction, System.Action<SchemeUIItem> p_onHoverExitAction) {
         GameObject go = UIManager.Instance.InstantiateUIObject(m_schemeUIView.UIModel.schemeUIItemPrefab.name, m_schemeUIView.UIModel.scrollViewSchemes.content);
         SchemeUIItem item = go.GetComponent<SchemeUIItem>();
-        item.SetItemDetails(text, successRate);
-        item.SetClickMinusAction(onClickMinusAction);
-        item.SetOnHoverEnterAction(onHoverEnterAction);
-        item.SetOnHoverExitAction(onHoverExitAction);
+        item.SetItemDetails(p_text, p_successRate, p_baseSuccessRate);
+        item.SetClickMinusAction(p_onClickMinusAction);
+        item.SetOnHoverEnterAction(p_onHoverEnterAction);
+        item.SetOnHoverExitAction(p_onHoverExitAction);
         _schemeUIItems.Add(item);
     }
     private void OnClickMinusSchemeUIItem(SchemeUIItem item) {
         RemoveSchemeUIItem(item);
     }
     private void OnHoverEnterSchemeUIItem(SchemeUIItem item) {
-        string text = _schemeUsed.GetSuccessRateMultiplierText(_targetCharacter);
-        if (!string.IsNullOrEmpty(text)) {
+        string baseText = $"Base Value: +{item.baseSuccessRate.ToString("N1")}%";
+        string multiplierText = _schemeUsed.GetSuccessRateMultiplierText(_targetCharacter);
+        if (!string.IsNullOrEmpty(multiplierText)) {
+            string text = baseText + "\n" + multiplierText;
             UIManager.Instance.ShowSmallInfo(text);
         }
     }

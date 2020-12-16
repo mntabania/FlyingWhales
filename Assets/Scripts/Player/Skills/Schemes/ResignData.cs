@@ -25,10 +25,8 @@ public class ResignData : SchemeData {
             if(character.faction?.factionType.type == FACTION_TYPE.Undead) {
                 return false;
             }
-            if (!character.isFactionLeader) {
-                return false;
-            }
-            if (!character.isSettlementRuler) {
+            bool isFactionLeaderOrSettlementRuler = character.isFactionLeader || character.isSettlementRuler;
+            if (!isFactionLeaderOrSettlementRuler) {
                 return false;
             }
         }

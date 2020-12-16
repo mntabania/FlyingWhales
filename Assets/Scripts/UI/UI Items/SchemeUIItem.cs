@@ -15,9 +15,11 @@ public class SchemeUIItem : PooledObject {
     public RuinarchButton btnMinus;
 
     private float _successRate;
+    private float _baseSuccessRate;
 
     #region getters
     public float successRate => _successRate;
+    public float baseSuccessRate => _baseSuccessRate;
     #endregion
 
     private void OnEnable() {
@@ -27,10 +29,11 @@ public class SchemeUIItem : PooledObject {
         btnMinus.onClick.RemoveListener(OnClickMinus);
     }
 
-    public void SetItemDetails(string text, float successRate) {
-        _successRate = successRate;
-        txtName.text = text;
-        txtSucessRate.text = $"+{successRate.ToString("N1")}%";
+    public void SetItemDetails(string p_text, float p_successRate, float p_baseSuccessRate) {
+        _successRate = p_successRate;
+        _baseSuccessRate = p_baseSuccessRate;
+        txtName.text = p_text;
+        txtSucessRate.text = $"+{p_successRate.ToString("N1")}%";
     }
     public void SetClickMinusAction(System.Action<SchemeUIItem> action) {
         onClickMinusAction = action;
