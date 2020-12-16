@@ -1,4 +1,5 @@
-﻿namespace Traits {
+﻿using System.Collections.Generic;
+namespace Traits {
     public class AbominationGerm : Status {
 
         private IPointOfInterest _owner;

@@ -34,7 +34,7 @@ namespace Traits {
         #region Getters
         public virtual Type serializedData => typeof(SaveDataTrait);
         public Character responsibleCharacter => responsibleCharacters?.FirstOrDefault();
-        public string moodModificationDescription => name;
+        public string modifierName => name;
         public int moodModifier => moodEffect;
         public string descriptionInUI => GetDescriptionInUI();
         public virtual bool isPersistent => false; //should this trait persist through all a character's alter egos
@@ -63,10 +63,10 @@ namespace Traits {
         #endregion
 
         #region Mood Effects
-        public void ApplyMoodEffects(ITraitable addedTo, GameDate expiryDate) {
+        public void ApplyMoodEffects(ITraitable addedTo, GameDate expiryDate, Character characterResponsible) {
             if(addedTo is Character character) {
                 if (moodEffect != 0) {
-                    character.moodComponent.AddMoodEffect(moodEffect, this, expiryDate);    
+                    character.moodComponent.AddMoodEffect(moodEffect, this, expiryDate, characterResponsible);    
                 }
             }
         }
@@ -309,6 +309,22 @@ namespace Traits {
             string manaCost = $"{PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
 
             UIManager.Instance.ShowTriggerFlawConfirmation(question, effect, manaCost, () => TriggerFlawData.ActivateTriggerFlaw(trait, p_character), layer: 26, showCover: true, pauseAndResume: true);
+        }
+        #endregion
+        
+        #region IMoodModifier Implementation
+        public Log GetMoodEffectFlavorText(Character p_characterResponsible) {
+            if (LocalizationManager.Instance.HasLocalizedValue("Trait", name, "mood_effect")) {
+                Log log = new Log(GameManager.Instance.Today(), "Trait", name, "mood_effect");
+                if (p_characterResponsible != null) {
+                    log.AddToFillers(p_characterResponsible, p_characterResponsible.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);    
+                } else {
+                    //if no character was passed assume that the player is the one that applied the status
+                    log.AddToFillers(null, "Demons", LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                }
+                return log;
+            }
+            return default;
         }
         #endregion
     }
