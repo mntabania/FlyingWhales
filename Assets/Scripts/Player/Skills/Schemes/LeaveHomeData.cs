@@ -38,5 +38,8 @@ public class LeaveHomeData : SchemeData {
     public override void ProcessSuccessRateWithMultipliers(Character p_targetCharacter, ref float p_newSuccessRate) {
         p_newSuccessRate *= 2f;
     }
+    public override string GetSuccessRateMultiplierText(Character p_targetCharacter) {
+        return $"Leave Home: x2";
+    }
     #endregion
 }
