@@ -256,6 +256,9 @@ public class GoapAction {
         return REACTABLE_EFFECT.Neutral;
     }
     public virtual void OnMoveToDoAction(ActualGoapNode node) { }
+    public virtual string GetActionIconString(ActualGoapNode node) {
+        return actionIconString;
+    }
     #endregion
 
     #region Utilities

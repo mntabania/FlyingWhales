@@ -76,10 +76,16 @@ public class BedMarkerNameplate : PooledObject {
             }    
         }
         if (showActionIcon) {
+            bool shouldShowIcon = true;
             Character user = bedTileObject.users[0];
             ActualGoapNode actionNode = user.currentActionNode;
             if (actionNode != null && (actionNode.actionStatus == ACTION_STATUS.PERFORMING || actionNode.actionStatus == ACTION_STATUS.STARTED)) {
-                UpdateActionIcon(InteractionManager.Instance.actionIconDictionary[actionNode.action.actionIconString]);
+                string actionIconString = actionNode.action.GetActionIconString(actionNode);
+                if (actionIconString != GoapActionStateDB.No_Icon) {
+                    UpdateActionIcon(InteractionManager.Instance.actionIconDictionary[actionIconString]);
+                } else {
+                    shouldShowIcon = false;
+                }
             } else {
                 if (user.traitContainer.HasTrait("Quarantined")) {
                     UpdateActionIcon(InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Sick_Icon]);
@@ -87,7 +93,11 @@ public class BedMarkerNameplate : PooledObject {
                     UpdateActionIcon(InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Sleep_Icon]);    
                 }
             }
-            ShowMarkerNameplate();
+            if (shouldShowIcon) {
+                ShowMarkerNameplate();
+            } else {
+                HideMarkerNameplate();
+            }
         } else {
             HideMarkerNameplate();
         }

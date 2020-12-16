@@ -830,7 +830,7 @@ public class CombatComponent : CharacterComponent {
             if (combatData != null) {
                 key = combatData.reasonForCombat;
                 if (key == CombatManager.Action) {
-                    key = GetCombatActionReason(combatData, target);
+                    key = GetCombatActionReason(combatData.connectedAction, target);
                 } else {
                     if (key == CombatManager.Anger) {
                         if (owner.traitContainer.HasTrait("Angry")) {
@@ -854,21 +854,40 @@ public class CombatComponent : CharacterComponent {
         if(target != null) {
             CombatData combatData = GetCombatData(target);
             if (combatData != null && combatData.connectedAction != null) {
-                switch (combatData.connectedAction.associatedJobType) {
-                    case JOB_TYPE.MONSTER_ABDUCT:
-                        iconString = GoapActionStateDB.Stealth_Icon;
-                        break;
-                    case JOB_TYPE.PRODUCE_FOOD:
-                        iconString = GoapActionStateDB.Butcher_Icon;
-                        break;
-                }
+                iconString = GetCombatStateIconString(target, combatData.connectedAction);
             }
         }
         return iconString;
     }
-    private string GetCombatActionReason(CombatData combatData, IPointOfInterest target) {
-       if(combatData != null && combatData.connectedAction != null) {
-            switch (combatData.connectedAction.associatedJobType) {
+    public string GetCombatStateIconString(IPointOfInterest target, ActualGoapNode action) {
+        string iconString = GoapActionStateDB.Hostile_Icon;
+        switch (action.associatedJobType) {
+            case JOB_TYPE.MONSTER_ABDUCT:
+            case JOB_TYPE.RITUAL_KILLING:
+            case JOB_TYPE.CAPTURE_CHARACTER:
+            case JOB_TYPE.KIDNAP_RAID:
+                iconString = GoapActionStateDB.Stealth_Icon;
+                break;
+            case JOB_TYPE.PRODUCE_FOOD:
+            case JOB_TYPE.PRODUCE_FOOD_FOR_CAMP:
+            case JOB_TYPE.MONSTER_BUTCHER:
+                iconString = GoapActionStateDB.Butcher_Icon;
+                break;
+            case JOB_TYPE.RESTRAIN:
+            case JOB_TYPE.APPREHEND:
+                iconString = GoapActionStateDB.Restrain_Icon;
+                break;
+            case JOB_TYPE.BERSERK_ATTACK:
+            case JOB_TYPE.BRAWL:
+            case JOB_TYPE.DESTROY:
+                iconString = GoapActionStateDB.Anger_Icon;
+                break;
+        }
+        return iconString;
+    }
+    public string GetCombatActionReason(ActualGoapNode action, IPointOfInterest target) {
+       if(action != null) {
+            switch (action.associatedJobType) {
                 case JOB_TYPE.RESTRAIN:
                     return "Restrain";
                 case JOB_TYPE.PRODUCE_FOOD:
@@ -920,7 +939,7 @@ public class CombatComponent : CharacterComponent {
                 if (!string.IsNullOrEmpty(reason)) {
                     string key = string.Empty;
                     if (reason == CombatManager.Action) {
-                        key = targetCharacter.combatComponent.GetCombatActionReason(targetCombatData, owner);
+                        key = targetCharacter.combatComponent.GetCombatActionReason(targetCombatData.connectedAction, owner);
                     }
                     if (key == CombatManager.Apprehend) {
                         return CombatManager.Resisting_Arrest;

@@ -301,6 +301,16 @@ public class Assault : GoapAction {
         }
         return base.GetCrimeType(actor, target, crime);
     }
+    public override string GetActionIconString(ActualGoapNode node) {
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        return actor.combatComponent.GetCombatStateIconString(target, node);
+    }
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
+        string reason = GetReason(node);
+        log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
+    }
     #endregion
 
     #region Requirements
@@ -327,14 +337,8 @@ public class Assault : GoapAction {
         //goapNode.actor.combatComponent.SetActionAndJobThatTriggeredCombat(goapNode, goapNode.actor.currentJob as GoapPlanJob);
         goapNode.actor.combatComponent.Fight(goapNode.poiTarget, combatReason, connectedAction: goapNode, isLethal: isLethal);
 
-        string key = goapNode.actor.combatComponent.GetCombatLogKeyReason(goapNode.poiTarget);
-        JOB_TYPE jobType = goapNode.associatedJobType;
-        if(!string.IsNullOrEmpty(key) && LocalizationManager.Instance.HasLocalizedValue("Character", "Combat", key)) {
-            string reason = LocalizationManager.Instance.GetLocalizedValue("Character", "Combat", key);
-            goapNode.descriptionLog.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
-        } else {
-            goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString()) + ".", LOG_IDENTIFIER.STRING_1);
-        }
+        string reason = GetReason(goapNode);
+        goapNode.descriptionLog.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
         // if(goapNode.poiTarget is Character) {
         //     Character targetCharacter = goapNode.poiTarget as Character;
         //     if (goapNode.associatedJobType != JOB_TYPE.APPREHEND && !goapNode.actor.IsHostileWith(targetCharacter)) {
@@ -343,4 +347,16 @@ public class Assault : GoapAction {
         // }
     }
     #endregion
+
+    private string GetReason(ActualGoapNode action) {
+        string key = action.actor.combatComponent.GetCombatActionReason(action, action.poiTarget);
+        JOB_TYPE jobType = action.associatedJobType;
+        string reason = string.Empty;
+        if (!string.IsNullOrEmpty(key) && LocalizationManager.Instance.HasLocalizedValue("Character", "Combat", key)) {
+            reason = LocalizationManager.Instance.GetLocalizedValue("Character", "Combat", key);
+        } else {
+            reason = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString()) + ".";
+        }
+        return reason;
+    }
 }
