@@ -174,7 +174,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Faction factionOwner => _faction;
     public Minion minion => _minion;
     public BaseSettlement currentSettlement => gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap ? gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile : null;
-    public ProjectileReceiver projectileReceiver => marker.visionTrigger.projectileReceiver;
+    public ProjectileReceiver projectileReceiver {
+        get {
+            if (marker != null && marker.visionTrigger != null) {
+                return marker.visionTrigger.projectileReceiver;
+            }
+            return null;
+        }
+    }
     public Character isBeingCarriedBy => carryComponent.isBeingCarriedBy;
     public JobTriggerComponent jobTriggerComponent => jobComponent;
     public GameObject visualGO => marker.gameObject;
