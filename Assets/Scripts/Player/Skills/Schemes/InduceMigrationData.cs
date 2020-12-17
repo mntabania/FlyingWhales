@@ -30,7 +30,7 @@ public class InduceMigrationData : SchemeData {
         }
     }
     public override bool IsValid(IPlayerActionTarget target) {
-        return target is NPCSettlement npcSettlement && npcSettlement.migrationComponent.IsMigrationEventAllowed() && base.IsValid(target);
+        return target is NPCSettlement npcSettlement && npcSettlement.migrationComponent.IsMigrationEventAllowed() && npcSettlement.GetUnoccupiedDwellingCount() > 0 && base.IsValid(target);
     }
     #endregion
 }

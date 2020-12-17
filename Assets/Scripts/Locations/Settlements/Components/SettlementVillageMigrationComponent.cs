@@ -73,8 +73,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
 
     #region Migration
     public bool IsMigrationEventAllowed() {
-        int unoccupiedDwellings = owner.GetUnoccupiedDwellingCount();
-        return owner.owner != null && owner.residents.Count > 0 && owner.owner.race.IsSapient() && unoccupiedDwellings > 0;
+        return owner.owner != null && owner.residents.Count > 0 && owner.owner.race.IsSapient();
     }
     private void VillageMigrationEvent() {
         string debugLog = $"{GameManager.Instance.TodayLogString()}Village Migration Event for {owner.name} is triggered";
