@@ -24,7 +24,7 @@ public class OverthrowLeaderData : SchemeData {
         if (target is Character character) {
             return character.faction != null && character.faction.leader != null && character.faction.leader is Character && character.faction.successionComponent.IsSuccessor(character);
         }
-        return base.IsValid(target);
+        return false;
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);

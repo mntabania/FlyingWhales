@@ -35,7 +35,7 @@ public class InstigateWarData : SchemeData {
         if (target is Character character) {
             return character.isFactionLeader;
         }
-        return base.IsValid(target);
+        return false;
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);

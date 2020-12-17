@@ -25,7 +25,7 @@ public class RebellionData : SchemeData {
         if (target is Character character) {
             return character.faction != null && !character.isFactionLeader && character.isSettlementRuler && character.faction.HasOwnedSettlementThatMeetCriteria(s => s != character.homeSettlement && s.HasResidentThatMeetsCriteria(c => !c.isDead));
         }
-        return base.IsValid(target);
+        return false;
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);

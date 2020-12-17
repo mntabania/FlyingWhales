@@ -2522,6 +2522,7 @@
               <e p="RavenousSpiritData.cs" t="Include" />
               <e p="Schemes" t="Include">
                 <e p="BreakUpData.cs" t="Include" />
+                <e p="InduceMigrationData.cs" t="Include" />
                 <e p="InstigateWarData.cs" t="Include" />
                 <e p="JoinFactionData.cs" t="Include" />
                 <e p="LeaveFactionData.cs" t="Include" />
@@ -2530,6 +2531,7 @@
                 <e p="OverthrowLeaderData.cs" t="Include" />
                 <e p="RebellionData.cs" t="Include" />
                 <e p="ResignData.cs" t="Include" />
+                <e p="StifleMigrationData.cs" t="Include" />
               </e>
               <e p="SnareTrapData.cs" t="Include" />
               <e p="SpawnBoulder.cs" t="Include" />

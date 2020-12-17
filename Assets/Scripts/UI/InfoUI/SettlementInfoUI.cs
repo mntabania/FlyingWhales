@@ -87,6 +87,7 @@ public class SettlementInfoUI : InfoUIBase {
             typeLbl.text = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(activeSettlement.locationType.ToString())}";
         }
 
+        locationPortrait.SetLocation(activeSettlement);
         LocationStructure firstStructure = activeSettlement.allStructures.FirstOrDefault();
         if(firstStructure != null) {
             locationPortrait.SetPortrait(firstStructure.structureType.GetLandmarkType());

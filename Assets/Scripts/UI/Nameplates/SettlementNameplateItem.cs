@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps.Location_Structures;
@@ -11,11 +12,18 @@ public class SettlementNameplateItem : NameplateItem<BaseSettlement> {
     [SerializeField] private LocationPortrait portrait;
 
     private BaseSettlement _settlement;
+    private void OnEnable() {
+        AddOnRightClickAction(OnRightClickItem);
+    }
+    private void OnDisable() {
+        RemoveOnRightClickAction(OnRightClickItem);
+    }
     
     public override void SetObject(BaseSettlement o) {
         base.SetObject(o);
         _settlement = o;
         UpdateVisuals();
+        
     }
     private void UpdateVisuals() {
         if (_settlement.tiles.Count > 0) {
@@ -35,6 +43,9 @@ public class SettlementNameplateItem : NameplateItem<BaseSettlement> {
         } else {
             subLbl.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(_settlement.locationType.ToString());    
         }
-        
+    }
+
+    private void OnRightClickItem(BaseSettlement p_settlement) {
+        UIManager.Instance.ShowPlayerActionContextMenu(p_settlement, Input.mousePosition, true);
     }
 }

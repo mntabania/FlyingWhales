@@ -29,7 +29,7 @@ public class LeaveFactionData : SchemeData {
                 return false;
             }
         }
-        return base.IsValid(target);
+        return false;
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);

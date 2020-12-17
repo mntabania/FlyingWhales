@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using UnityEngine;
 
 public class PlayerAction : SpellData, IContextMenuItem {
@@ -54,6 +55,8 @@ public class PlayerAction : SpellData, IContextMenuItem {
             ActivateAbility(targetStructure);
         } else if (target is StructureRoom room) {
             ActivateAbility(room);
+        } else if (target is BaseSettlement settlement) {
+            ActivateAbility(settlement);
         }
         Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ACTIVATED, this);
 	}
@@ -66,6 +69,8 @@ public class PlayerAction : SpellData, IContextMenuItem {
             return CanPerformAbilityTowards(targetStructure);
         } else if (target is StructureRoom room) {
             return CanPerformAbilityTowards(room);
+        } else if (target is BaseSettlement settlement) {
+            return CanPerformAbilityTowards(settlement);
         }
         return CanPerformAbility();
     }

@@ -113,7 +113,8 @@ public class CharacterInfoUI : InfoUIBase {
         
         factionEventLbl.SetOnLeftClickAction(OnClickFaction);
         currentLocationEventLbl.SetOnLeftClickAction(OnClickCurrentLocation);
-        homeRegionEventLbl.SetOnLeftClickAction(OnClickHomeVillage);
+        homeRegionEventLbl.SetOnLeftClickAction(OnLeftClickHomeVillage);
+        homeRegionEventLbl.SetOnRightClickAction(OnRightClickHomeVillage);
         houseEventLbl.SetOnLeftClickAction(OnLeftClickHomeStructure);
         houseEventLbl.SetOnRightClickAction(OnRightClickHomeStructure);
         partyEventLbl.SetOnLeftClickAction(OnClickParty);
@@ -282,12 +283,14 @@ public class CharacterInfoUI : InfoUIBase {
     private void OnClickCurrentLocation(object obj) {
         UIManager.Instance.ShowRegionInfo(activeCharacter.currentRegion);
     }
-    private void OnClickHomeVillage(object obj) {
+    private void OnLeftClickHomeVillage(object obj) {
         if (_activeCharacter.homeSettlement != null) {
             UIManager.Instance.ShowSettlementInfo(_activeCharacter.homeSettlement);
-            //if (_activeCharacter.homeSettlement.allStructures.Count > 0) {
-            //    UIManager.Instance.ShowStructureInfo(_activeCharacter.homeSettlement.allStructures.First());
-            //}
+        }
+    }
+    private void OnRightClickHomeVillage(object obj) {
+        if (_activeCharacter.homeSettlement != null) {
+            UIManager.Instance.ShowPlayerActionContextMenu(_activeCharacter.homeSettlement, Input.mousePosition, true);
         }
     }
     private void OnLeftClickHomeStructure(object obj) {

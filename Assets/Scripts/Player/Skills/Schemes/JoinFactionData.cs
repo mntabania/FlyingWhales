@@ -37,7 +37,7 @@ public class JoinFactionData : SchemeData {
         if (target is Character character) {
             return character.isVagrant;
         }
-        return base.IsValid(target);
+        return false;
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);

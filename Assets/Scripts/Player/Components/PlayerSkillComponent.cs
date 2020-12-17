@@ -117,7 +117,7 @@ public class PlayerSkillComponent {
 
     #region Utilities
     public bool CanDoPlayerAction(PLAYER_SKILL_TYPE type) {
-        return PlayerSkillManager.Instance.GetPlayerActionData(type).isInUse;
+        return PlayerSkillManager.Instance.GetPlayerSkillData(type).isInUse;
     }
     public bool CanBuildDemonicStructure(PLAYER_SKILL_TYPE type) {
         return PlayerSkillManager.Instance.GetDemonicStructureSkillData(type).isInUse;

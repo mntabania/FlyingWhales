@@ -43,7 +43,7 @@ public class BreakUpData : SchemeData {
         if (target is Character character) {
             return character.isNormalCharacter && character.relationshipContainer.HasActiveRelationship(RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
         }
-        return base.IsValid(target);
+        return false;
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);

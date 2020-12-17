@@ -1881,8 +1881,8 @@ public class UIManager : BaseMonoBehaviour {
         List<IContextMenuItem> contextMenuItems = null;
         for (int i = 0; i < p_target.actions.Count; i++) {
             PLAYER_SKILL_TYPE skillType = p_target.actions[i];
-            PlayerAction playerAction = PlayerSkillManager.Instance.GetPlayerActionData(skillType);
-            if (playerAction.IsValid(p_target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(skillType)) {
+            PlayerAction playerAction = PlayerSkillManager.Instance.GetPlayerSkillData(skillType) as PlayerAction;
+            if (playerAction != null && playerAction.IsValid(p_target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(skillType)) {
                 if (contextMenuItems == null) { contextMenuItems = new List<IContextMenuItem>(); }
                 contextMenuItems.Add(playerAction);
             }
