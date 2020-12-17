@@ -229,7 +229,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             int weight = character.faction.successionComponent.GetWeightOfSuccessor(character);
             float chance = (weight / (float) totalWeights) * 100f;
             string text = $"{chance.ToString("N1")}% chance to be the next Faction Leader";
-            UIManager.Instance.ShowSmallInfo(text, header: character.name);
+            UIManager.Instance.ShowSmallInfo(text, header: character.visuals.GetCharacterNameWithIconAndColor());
         }
     }
     public void OnHoverExitSuccessor() {

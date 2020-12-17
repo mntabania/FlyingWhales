@@ -99,6 +99,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
         Messenger.AddListener<Faction>(FactionSignals.FACTION_IDEOLOGIES_CHANGED, OnFactionIdeologiesChanged);
         Messenger.AddListener<Faction>(FactionSignals.FACTION_CRIMES_CHANGED, OnFactionCrimesChanged);
         Messenger.AddListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
+        Messenger.AddListener<Character, Character>(CharacterSignals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
         Messenger.AddListener<Faction>(FactionSignals.UPDATED_SUCCESSORS, OnFactionUpdatedSuccessors);
         logsWindow.Initialize();
     }
@@ -133,6 +134,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     private void OnFactionLeaderChanged(Character character, ILeader previousLeader) {
         if (activeFaction != null) {
             UpdateOverview();
+            UpdateAllCharacters();
         }
     }
     private void OnFactionIdeologiesChanged(Faction faction) {
@@ -325,6 +327,14 @@ public class FactionInfoUIV2 : MonoBehaviour {
     #endregion
 
     #region Characters
+    private void OnCharacterSetAsSettlementRuler(Character character, Character previousRuler) {
+        if(activeFaction != null) {
+            if ((character != null && character.faction == activeFaction) || (previousRuler != null && previousRuler.faction == activeFaction)) {
+                UpdateAllCharacters();
+            }
+        }
+
+    }
     private void OnCharacterSwitchFromLimbo(Character toLimbo, Character fromLimbo) {
         if(toLimbo.isLycanthrope) {
             Faction factionToBeFollowed = toLimbo.lycanData.originalForm.faction;

@@ -28,7 +28,14 @@ public class OverthrowLeaderData : SchemeData {
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);
+        Character previousLeader = character.faction.leader as Character;
         character.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, character);
+
+        //Overthrown leaders should also not become settlement rulers
+        //Reason: It's weird that if a character is overthrown as faction leader they will stay as settlement rulers
+        if(previousLeader != null && previousLeader.isSettlementRuler) {
+            previousLeader.homeSettlement.SetRuler(null);
+        }
     }
     protected override void PopulateSchemeConversation(List<ConversationData> conversationList, Character character, object target, bool isSuccessful) {
         if(character.faction != null && character.faction.leader != null) {
