@@ -92,15 +92,16 @@ public class SchemeData : PlayerAction {
     //Return true if Scheme is successful
     public bool ProcessScheme(Character character, object target, float successRate) {
         bool isSuccessful = alwaysSuccessScheme || GameUtilities.RollChance(successRate);
-        
+
+        List<ConversationData> conversationList = ObjectPoolManager.Instance.CreateNewConversationDataList();
+        PopulateSchemeConversation(conversationList, character, target, isSuccessful);
+        ShowSchemeConversation(conversationList, name);
+
         if (isSuccessful) {
             OnSuccessScheme(character, target);
         } else {
             OnFailScheme(character, target);
         }
-        List<ConversationData> conversationList = ObjectPoolManager.Instance.CreateNewConversationDataList();
-        PopulateSchemeConversation(conversationList, character, target, isSuccessful);
-        ShowSchemeConversation(conversationList, name);
         OnExecutePlayerSkill();
 
         //Also start cooldown of SchemeData itself

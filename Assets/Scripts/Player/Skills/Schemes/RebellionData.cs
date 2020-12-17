@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
 using Logs;
+using Locations.Settlements;
 
 public class RebellionData : SchemeData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.REBELLION;
@@ -28,16 +29,14 @@ public class RebellionData : SchemeData {
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);
-        character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Faction, character);
-        if(character.homeSettlement != null) {
-            for (int i = 0; i < character.homeSettlement.residents.Count; i++) {
-                Character resident = character.homeSettlement.residents[i];
+        BaseSettlement homeSettlement = character.homeSettlement;
+        character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Faction, character, "own_settlement");
+        if(homeSettlement != null) {
+            for (int i = 0; i < homeSettlement.residents.Count; i++) {
+                Character resident = homeSettlement.residents[i];
                 if(resident.faction != character.faction && character != resident) {
                     resident.ChangeFactionTo(character.faction, true);
                 }
-            }
-            if(character.homeSettlement.owner != character.faction) {
-                LandmarkManager.Instance.OwnSettlement(character.faction, character.homeSettlement);
             }
         }
     }

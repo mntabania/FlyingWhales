@@ -37,7 +37,11 @@ namespace Interrupts {
             //Validate crimes
             FactionManager.Instance.RevalidateFactionCrimes(faction, interruptHolder.actor);
             
-            interruptHolder.actor.ChangeFactionTo(faction);
+            if(!string.IsNullOrEmpty(interruptHolder.identifier) && interruptHolder.identifier == "own_settlement" && interruptHolder.actor.homeSettlement != null) {
+                LandmarkManager.Instance.OwnSettlement(faction, interruptHolder.actor.homeSettlement);
+            }
+
+            interruptHolder.actor.ChangeFactionTo(faction, true);
             faction.SetLeader(interruptHolder.actor);
             
             //create relationships
