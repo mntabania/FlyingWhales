@@ -9,6 +9,7 @@ using TMPro;
 using UnityEngine.UI;
 using Traits;
 using UnityEngine.Serialization;
+using UtilityScripts;
 
 public class MonsterInfoUI : InfoUIBase {
     
@@ -370,87 +371,89 @@ public class MonsterInfoUI : InfoUIBase {
 
     #region For Testing
     public void ShowCharacterTestingInfo() {
-#if UNITY_EDITOR
-        string summary = $"Home structure: {activeMonster.homeStructure?.ToString() ?? "None"}" ?? "None";
-        summary = $"{summary}\nHome Settlement: {activeMonster.homeSettlement?.name ?? "None"}";
-        summary = $"{summary}{$"\nTerritory: {activeMonster.territory?.name ?? "None"}"}";
-        summary = $"{summary}{($"\nCurrent structure: {activeMonster.currentStructure}" ?? "None")}";
-        summary = $"{summary}{("\nPOI State: " + activeMonster.state.ToString())}";
-        summary = $"{summary}{("\nDo Not Get Hungry: " + activeMonster.needsComponent.doNotGetHungry.ToString())}";
-        summary = $"{summary}{("\nDo Not Get Tired: " + activeMonster.needsComponent.doNotGetTired.ToString())}";
-        summary = $"{summary}{("\nDo Not Get Bored: " + activeMonster.needsComponent.doNotGetBored.ToString())}";
-        summary = $"{summary}{("\nDo Not Recover HP: " + activeMonster.doNotRecoverHP.ToString())}";
-        summary = $"{summary}{("\nCan Move: " + activeMonster.limiterComponent.canMove)}";
-        summary = $"{summary}{("\nCan Witness: " + activeMonster.limiterComponent.canWitness)}";
-        summary = $"{summary}{("\nCan Be Attacked: " + activeMonster.limiterComponent.canBeAttacked)}";
-        summary = $"{summary}{("\nCan Perform: " + activeMonster.limiterComponent.canPerform)}";
-        //summary = $"{summary}{("\nIs Missing: " + activeMonster.isMissing)}";
-        summary = $"{summary}{("\nIs Running: " + activeMonster.movementComponent.isRunning)}";
-        summary = $"{summary}{("\nPOI State: " + activeMonster.state.ToString())}";
-        summary = $"{summary}{("\n" + activeMonster.needsComponent.GetNeedsSummary())}";
-        summary = $"{summary}{("\nFullness Time: " + (activeMonster.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeMonster.needsComponent.fullnessForcedTick)))}";
-        summary = $"{summary}{("\nTiredness Time: " + (activeMonster.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeMonster.needsComponent.tirednessForcedTick)))}";
-        summary = $"{summary}{("\nRemaining Sleep Ticks: " + activeMonster.needsComponent.currentSleepTicks.ToString())}";
-        //summary = $"{summary}{("\nFood: " + activeMonster.food.ToString())}";
-        summary = $"{summary}{("\nSexuality: " + activeMonster.sexuality.ToString())}";
-        // summary = $"{summary}{("\nMood: " + activeMonster.moodComponent.moodValue + "/100" + "(" + activeMonster.moodComponent.moodState.ToString() + ")")}";
-        // summary = $"{summary}{("\nHP: " + activeMonster.currentHP.ToString() + "/" + activeMonster.maxHP.ToString())}";
-        summary = $"{summary}{("\nAttack Range: " + activeMonster.characterClass.attackRange.ToString(CultureInfo.InvariantCulture))}";
-        summary = $"{summary}{("\nAttack Speed: " + activeMonster.combatComponent.attackSpeed.ToString())}";
-        summary = $"{summary}{("\nCombat Mode: " + activeMonster.combatComponent.combatMode.ToString())}";
-        summary = $"{summary}{("\nElemental Type: " + activeMonster.combatComponent.elementalDamage.name)}";
-        summary = $"{summary}{("\nPrimary Job: " + activeMonster.jobComponent.primaryJob.ToString())}";
-        summary = $"{summary}{("\nPriority Jobs: " + activeMonster.jobComponent.GetPriorityJobs())}";
-        summary = $"{summary}{("\nSecondary Jobs: " + activeMonster.jobComponent.GetSecondaryJobs())}";
-        summary = $"{summary}{("\nAble Jobs: " + activeMonster.jobComponent.GetAbleJobs())}";
-        summary = $"{summary}{("\nParty: " + (activeMonster.partyComponent.hasParty ? activeMonster.partyComponent.currentParty.partyName : "None") + ", State: " + activeMonster.partyComponent.currentParty?.partyState.ToString() + ", Members: " + activeMonster.partyComponent.currentParty?.members.Count)}";
-        summary = $"{summary}{("\nPrimary Bed: " + (activeMonster.tileObjectComponent.primaryBed != null ? activeMonster.tileObjectComponent.primaryBed.name : "None"))}";
-        summary = $"{summary}{("\nEnable Digging: " + (activeMonster.movementComponent.enableDigging))}";
-        summary = $"{summary}{("\nAvoid Settlements: " + (activeMonster.movementComponent.avoidSettlements))}";
-
-        if (activeMonster.stateComponent.currentState != null) {
-            summary = $"{summary}\nCurrent State: {activeMonster.stateComponent.currentState}";
-            summary = $"{summary}\n\tDuration in state: {activeMonster.stateComponent.currentState.currentDuration.ToString()}/{activeMonster.stateComponent.currentState.duration.ToString()}";
-        }
-
-        summary += "\nBehaviour Components: ";
-        for (int i = 0; i < activeMonster.behaviourComponent.currentBehaviourComponents.Count; i++) {
-            CharacterBehaviourComponent component = activeMonster.behaviourComponent.currentBehaviourComponents[i];
-            summary += $"{component}, ";
-        }
-
-        summary += "\nInterested Items: ";
-        for (int i = 0; i < activeMonster.interestedItemNames.Count; i++) {
-            summary += $"{activeMonster.interestedItemNames[i]}, ";
-        }
-
-        summary += "\nPersonal Job Queue: ";
-        if (activeMonster.jobQueue.jobsInQueue.Count > 0) {
-            for (int i = 0; i < activeMonster.jobQueue.jobsInQueue.Count; i++) {
-                JobQueueItem poi = activeMonster.jobQueue.jobsInQueue[i];
-                summary += $"{poi}, ";
-            }
-        } else {
-            summary += "None";
-        }
-
-        // summary += "\nCharacters with opinion: ";
-        // if (activeMonster.relationshipContainer.charactersWithOpinion.Count > 0) {
-        //     for (int i = 0; i < activeMonster.relationshipContainer.charactersWithOpinion.Count; i++) {
-        //         Character characterWithOpinion = activeMonster.relationshipContainer.charactersWithOpinion[i];
-        //         summary += $"{characterWithOpinion}, ";
-        //     }
-        // } else {
-        //     summary += "None";
-        // }
-        // summary += "\n" + activeMonster.needsComponent.GetNeedsSummary();
-        UIManager.Instance.ShowSmallInfo(summary);
-#endif
+        TestingUtilities.ShowCharacterTestingInfo(activeMonster);
+// #if UNITY_EDITOR
+//         string summary = $"Home structure: {activeMonster.homeStructure?.ToString() ?? "None"}" ?? "None";
+//         summary = $"{summary}\nHome Settlement: {activeMonster.homeSettlement?.name ?? "None"}";
+//         summary = $"{summary}{$"\nTerritory: {activeMonster.territory?.name ?? "None"}"}";
+//         summary = $"{summary}{($"\nCurrent structure: {activeMonster.currentStructure}" ?? "None")}";
+//         summary = $"{summary}{("\nPOI State: " + activeMonster.state.ToString())}";
+//         summary = $"{summary}{("\nDo Not Get Hungry: " + activeMonster.needsComponent.doNotGetHungry.ToString())}";
+//         summary = $"{summary}{("\nDo Not Get Tired: " + activeMonster.needsComponent.doNotGetTired.ToString())}";
+//         summary = $"{summary}{("\nDo Not Get Bored: " + activeMonster.needsComponent.doNotGetBored.ToString())}";
+//         summary = $"{summary}{("\nDo Not Recover HP: " + activeMonster.doNotRecoverHP.ToString())}";
+//         summary = $"{summary}{("\nCan Move: " + activeMonster.limiterComponent.canMove)}";
+//         summary = $"{summary}{("\nCan Witness: " + activeMonster.limiterComponent.canWitness)}";
+//         summary = $"{summary}{("\nCan Be Attacked: " + activeMonster.limiterComponent.canBeAttacked)}";
+//         summary = $"{summary}{("\nCan Perform: " + activeMonster.limiterComponent.canPerform)}";
+//         //summary = $"{summary}{("\nIs Missing: " + activeMonster.isMissing)}";
+//         summary = $"{summary}{("\nIs Running: " + activeMonster.movementComponent.isRunning)}";
+//         summary = $"{summary}{("\nPOI State: " + activeMonster.state.ToString())}";
+//         summary = $"{summary}{("\n" + activeMonster.needsComponent.GetNeedsSummary())}";
+//         summary = $"{summary}{("\nFullness Time: " + (activeMonster.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeMonster.needsComponent.fullnessForcedTick)))}";
+//         summary = $"{summary}{("\nTiredness Time: " + (activeMonster.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeMonster.needsComponent.tirednessForcedTick)))}";
+//         summary = $"{summary}{("\nRemaining Sleep Ticks: " + activeMonster.needsComponent.currentSleepTicks.ToString())}";
+//         //summary = $"{summary}{("\nFood: " + activeMonster.food.ToString())}";
+//         summary = $"{summary}{("\nSexuality: " + activeMonster.sexuality.ToString())}";
+//         // summary = $"{summary}{("\nMood: " + activeMonster.moodComponent.moodValue + "/100" + "(" + activeMonster.moodComponent.moodState.ToString() + ")")}";
+//         // summary = $"{summary}{("\nHP: " + activeMonster.currentHP.ToString() + "/" + activeMonster.maxHP.ToString())}";
+//         summary = $"{summary}{("\nAttack Range: " + activeMonster.characterClass.attackRange.ToString(CultureInfo.InvariantCulture))}";
+//         summary = $"{summary}{("\nAttack Speed: " + activeMonster.combatComponent.attackSpeed.ToString())}";
+//         summary = $"{summary}{("\nCombat Mode: " + activeMonster.combatComponent.combatMode.ToString())}";
+//         summary = $"{summary}{("\nElemental Type: " + activeMonster.combatComponent.elementalDamage.name)}";
+//         summary = $"{summary}{("\nPrimary Job: " + activeMonster.jobComponent.primaryJob.ToString())}";
+//         summary = $"{summary}{("\nPriority Jobs: " + activeMonster.jobComponent.GetPriorityJobs())}";
+//         summary = $"{summary}{("\nSecondary Jobs: " + activeMonster.jobComponent.GetSecondaryJobs())}";
+//         summary = $"{summary}{("\nAble Jobs: " + activeMonster.jobComponent.GetAbleJobs())}";
+//         summary = $"{summary}{("\nParty: " + (activeMonster.partyComponent.hasParty ? activeMonster.partyComponent.currentParty.partyName : "None") + ", State: " + activeMonster.partyComponent.currentParty?.partyState.ToString() + ", Members: " + activeMonster.partyComponent.currentParty?.members.Count)}";
+//         summary = $"{summary}{("\nPrimary Bed: " + (activeMonster.tileObjectComponent.primaryBed != null ? activeMonster.tileObjectComponent.primaryBed.name : "None"))}";
+//         summary = $"{summary}{("\nEnable Digging: " + (activeMonster.movementComponent.enableDigging))}";
+//         summary = $"{summary}{("\nAvoid Settlements: " + (activeMonster.movementComponent.avoidSettlements))}";
+//
+//         if (activeMonster.stateComponent.currentState != null) {
+//             summary = $"{summary}\nCurrent State: {activeMonster.stateComponent.currentState}";
+//             summary = $"{summary}\n\tDuration in state: {activeMonster.stateComponent.currentState.currentDuration.ToString()}/{activeMonster.stateComponent.currentState.duration.ToString()}";
+//         }
+//
+//         summary += "\nBehaviour Components: ";
+//         for (int i = 0; i < activeMonster.behaviourComponent.currentBehaviourComponents.Count; i++) {
+//             CharacterBehaviourComponent component = activeMonster.behaviourComponent.currentBehaviourComponents[i];
+//             summary += $"{component}, ";
+//         }
+//
+//         summary += "\nInterested Items: ";
+//         for (int i = 0; i < activeMonster.interestedItemNames.Count; i++) {
+//             summary += $"{activeMonster.interestedItemNames[i]}, ";
+//         }
+//
+//         summary += "\nPersonal Job Queue: ";
+//         if (activeMonster.jobQueue.jobsInQueue.Count > 0) {
+//             for (int i = 0; i < activeMonster.jobQueue.jobsInQueue.Count; i++) {
+//                 JobQueueItem poi = activeMonster.jobQueue.jobsInQueue[i];
+//                 summary += $"{poi}, ";
+//             }
+//         } else {
+//             summary += "None";
+//         }
+//
+//         // summary += "\nCharacters with opinion: ";
+//         // if (activeMonster.relationshipContainer.charactersWithOpinion.Count > 0) {
+//         //     for (int i = 0; i < activeMonster.relationshipContainer.charactersWithOpinion.Count; i++) {
+//         //         Character characterWithOpinion = activeMonster.relationshipContainer.charactersWithOpinion[i];
+//         //         summary += $"{characterWithOpinion}, ";
+//         //     }
+//         // } else {
+//         //     summary += "None";
+//         // }
+//         // summary += "\n" + activeMonster.needsComponent.GetNeedsSummary();
+//         UIManager.Instance.ShowSmallInfo(summary);
+// #endif
     }
     public void HideCharacterTestingInfo() {
-#if UNITY_EDITOR
-        UIManager.Instance.HideSmallInfo();
-#endif
+        TestingUtilities.HideCharacterTestingInfo();
+// #if UNITY_EDITOR
+//         UIManager.Instance.HideSmallInfo();
+// #endif
         
     }
     #endregion

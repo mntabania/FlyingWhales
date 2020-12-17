@@ -27,7 +27,7 @@ public class MovementComponent : CharacterComponent {
     public int avoidSettlementsCounter { get; private set; }
     public int traversableTags { get; private set; } 
     public int[] tagPenalties { get; private set; }
-
+    
     #region getters
     public float walkSpeed => owner.raceSetting.walkSpeed + (owner.raceSetting.walkSpeed * walkSpeedModifier);
     public float runSpeed => owner.raceSetting.runSpeed + (owner.raceSetting.runSpeed * runSpeedModifier);
@@ -38,7 +38,7 @@ public class MovementComponent : CharacterComponent {
     public MovementComponent() {
         structuresToAvoid = new List<LocationStructure>();
         tagPenalties = new int[32];
-        traversableTags = InnerMapManager.All_Tags; //enable all tags for now 
+        traversableTags = InnerMapManager.All_Tags; //enable all tags for now
         SetTagAsUnTraversable(InnerMapManager.Obstacle_Tag); //by default all units cannot traverse obstacle tag
     }
     public MovementComponent(SaveDataMovementComponent data) {
@@ -547,18 +547,41 @@ public class MovementComponent : CharacterComponent {
             owner.marker.UpdateTagPenalties();
         }
     }
-    public void AvoidAllFactions() {
+    private void AvoidAllFactions() {
         for (int i = InnerMapManager.Starting_Tag_Index - 1; i < 32; i++) {
             SetPenaltyForTag(i, 500);
         }
     }
-    public void DoNotAvoidFaction(Faction p_faction) {
-        SetPenaltyForTag((int)p_faction.pathfindingTag, 0);
-        SetPenaltyForTag((int)p_faction.pathfindingDoorTag, 0);
+    private void DoNotAvoidFaction(Faction p_faction) {
+        if (DoesFactionUsePathfindingTag(p_faction)) {
+            int pathfindingTag = (int)p_faction.pathfindingTag;
+            SetPenaltyForTag(pathfindingTag, 0);
+            SetPenaltyForTag((int)p_faction.pathfindingDoorTag, 0);    
+        }
     }
-    public void AvoidFaction(Faction p_faction) {
-        SetPenaltyForTag((int)p_faction.pathfindingTag, 500);
-        SetPenaltyForTag((int)p_faction.pathfindingDoorTag, 500);
+    private void AvoidFaction(Faction p_faction) {
+        if (DoesFactionUsePathfindingTag(p_faction)) {
+            int pathfindingTag = (int)p_faction.pathfindingTag;
+            SetPenaltyForTag(pathfindingTag, 500);
+            SetPenaltyForTag((int)p_faction.pathfindingDoorTag, 500);    
+        }
+    }
+    public void RedetermineFactionsToAvoid(Character p_character) {
+        if (p_character.faction != null) {
+            foreach (var relationship in p_character.faction.relationships) {
+                if (relationship.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile) {
+                    AvoidFaction(relationship.Key);
+                } else {
+                    DoNotAvoidFaction(relationship.Key);
+                }
+            }
+        }
+    }
+    private bool DoesFactionUsePathfindingTag(Faction p_faction) {
+        if (!p_faction.isMajorFaction) {
+            return p_faction.factionType.type == FACTION_TYPE.Ratmen || p_faction.factionType.type == FACTION_TYPE.Undead; //Only undead and ratmen factions use pathfinding tags
+        }
+        return true; //All Major factions use pathfinding tags.
     }
     #endregion
 
@@ -592,7 +615,11 @@ public class MovementComponent : CharacterComponent {
     }
     #endregion
 
-    
+    public void OnChangeFactionTo(Faction newFaction) {
+        if (newFaction != null) {
+            DoNotAvoidFaction(newFaction);    
+        }
+    }
 }
 
 [System.Serializable]

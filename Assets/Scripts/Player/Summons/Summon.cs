@@ -58,7 +58,7 @@ public class Summon : Character {
         needsComponent.SetTirednessForcedTick(0);
         needsComponent.SetHappinessForcedTick(0);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Monster_Behaviour);
-        movementComponent.AvoidAllFactions();
+        // movementComponent.AvoidAllFactions();
     }
     public override void OnActionPerformed(ActualGoapNode node) { } //overridden OnActionStateSet so that summons cannot witness other events.
     public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = default, LogFillerStruct[] deathLogFillers = null,

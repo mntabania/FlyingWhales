@@ -472,6 +472,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<IPointOfInterest, int>(CharacterSignals.INCREASE_THREAT_THAT_SEES_POI, IncreaseThreatThatSeesPOI);
         Messenger.AddListener<Faction, Character>(FactionSignals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
         Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+        Messenger.AddListener<Faction, Faction, FACTION_RELATIONSHIP_STATUS, FACTION_RELATIONSHIP_STATUS>(FactionSignals.CHANGE_FACTION_RELATIONSHIP, OnChangeFactionRelationship);
         
         
         needsComponent.SubscribeToSignals();
@@ -1327,25 +1328,30 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (newFaction?.factionType.type == FACTION_TYPE.Undead) {
             behaviourComponent.AddBehaviourComponent(typeof(UndeadBehaviour));
         }
-        if (newFaction != null && newFaction.isMajorFaction) {
-            //if character is now part of a faction, then set its movement to not avoid that faction
-            movementComponent.DoNotAvoidFaction(newFaction);    
-        }
+        movementComponent.OnChangeFactionTo(newFaction);
+        movementComponent.RedetermineFactionsToAvoid(this);
+        // if (newFaction != null && newFaction.isMajorFaction) {
+        //     //if character is now part of a faction, then set its movement to not avoid that faction
+        //     movementComponent.DoNotAvoidFaction(newFaction);    
+        // }
         // Debug.Log($"{name} changed faction from {prevFaction?.name ?? "Null"} to {newFaction?.name ?? "Null"}");
         // if (PlayerManager.Instance.player != null && this.faction == PlayerManager.Instance.player.playerFaction) {
         //     ClearPlayerActions();
         // }
     }
-    private void OnChangeFactionRelationship(Faction faction1, Faction faction2, FACTION_RELATIONSHIP_STATUS newStatus, FACTION_RELATIONSHIP_STATUS oldStatus) {
-        if(faction1 == faction) {
-            if(newStatus == FACTION_RELATIONSHIP_STATUS.Hostile) {
-                //If at war with another faction, decrease hope 
-                needsComponent.AdjustHope(-5f);
-            }else if(oldStatus == FACTION_RELATIONSHIP_STATUS.Hostile && newStatus != FACTION_RELATIONSHIP_STATUS.Hostile) {
-                //If no longer at war with another faction, increase hope
-                needsComponent.AdjustHope(-5f);
-            }
+    private void OnChangeFactionRelationship(Faction p_faction1, Faction p_faction2, FACTION_RELATIONSHIP_STATUS p_newStatus, FACTION_RELATIONSHIP_STATUS p_oldStatus) {
+        if (p_faction1 == _faction || p_faction2 == _faction) {
+            movementComponent.RedetermineFactionsToAvoid(this);
         }
+        // if(faction1 == faction) {
+        //     if(newStatus == FACTION_RELATIONSHIP_STATUS.Hostile) {
+        //         //If at war with another faction, decrease hope 
+        //         needsComponent.AdjustHope(-5f);
+        //     }else if(oldStatus == FACTION_RELATIONSHIP_STATUS.Hostile && newStatus != FACTION_RELATIONSHIP_STATUS.Hostile) {
+        //         //If no longer at war with another faction, increase hope
+        //         needsComponent.AdjustHope(-5f);
+        //     }
+        // }
     }
     public Faction JoinFactionProcessing() {
         Faction chosenFaction = null;
