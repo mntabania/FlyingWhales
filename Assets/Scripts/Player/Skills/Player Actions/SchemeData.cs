@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using Inner_Maps.Location_Structures;
 using UtilityScripts;
+using Locations.Settlements;
 
 public class SchemeData : PlayerAction {
 
@@ -66,6 +67,10 @@ public class SchemeData : PlayerAction {
     public override bool IsValid(IPlayerActionTarget target) {
         if(target is Character character) {
             if (!character.isNormalCharacter || (character.race == RACE.RATMAN && (character.faction == null || !character.faction.isMajorNonPlayer))) {
+                return false;
+            }
+        } else if (target is BaseSettlement settlement) {
+            if(settlement.locationType != LOCATION_TYPE.VILLAGE) {
                 return false;
             }
         }
