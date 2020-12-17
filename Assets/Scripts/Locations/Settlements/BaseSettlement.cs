@@ -10,7 +10,7 @@ using UtilityScripts;
 using Logs;
 
 namespace Locations.Settlements {
-    public abstract class BaseSettlement : IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ISavable, ILogFiller {
+    public abstract class BaseSettlement : IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ISavable, ILogFiller, IPlayerActionTarget {
         public string persistentID { get; private set; }
         public int id { get; }
         public LOCATION_TYPE locationType { get; private set; }
@@ -22,7 +22,8 @@ namespace Locations.Settlements {
         public List<IPointOfInterest> firesInSettlement { get; }
         public List<LocationStructure> allStructures { get; protected set; }
         public List<Party> parties { get; protected set; }
-        
+        public List<PLAYER_SKILL_TYPE> actions { get; private set; }
+
         #region getters
         public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
         public virtual Type serializedData => typeof(SaveDataBaseSettlement);
@@ -45,6 +46,7 @@ namespace Locations.Settlements {
             parties = new List<Party>();
             SetLocationType(locationType);
             StartListeningForFires();
+            ConstructDefaultActions();
         }
         protected BaseSettlement(SaveDataBaseSettlement saveDataBaseSettlement) {
             persistentID = saveDataBaseSettlement._persistentID;
@@ -58,6 +60,7 @@ namespace Locations.Settlements {
             parties = new List<Party>();
             SetLocationType(saveDataBaseSettlement.locationType);
             StartListeningForFires();
+            ConstructDefaultActions();
         }
 
         #region Settlement Info
@@ -710,6 +713,26 @@ namespace Locations.Settlements {
         }
         public bool IsAtTargetDestination(Character character) {
             return character.currentSettlement == this;
+        }
+        #endregion
+
+        #region Player Action Target
+        public virtual void ConstructDefaultActions() {
+            actions = new List<PLAYER_SKILL_TYPE>();
+        }
+        public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
+            if (actions.Contains(action) == false) {
+                actions.Add(action);
+                Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);
+            }
+        }
+        public void RemovePlayerAction(PLAYER_SKILL_TYPE action) {
+            if (actions.Remove(action)) {
+                Messenger.Broadcast(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+            }
+        }
+        public void ClearPlayerActions() {
+            actions.Clear();
         }
         #endregion
 

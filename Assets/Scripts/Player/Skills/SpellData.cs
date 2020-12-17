@@ -1,6 +1,7 @@
 ﻿using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
+using Locations.Settlements;
 
 public class SpellData : IPlayerSkill {
     public virtual PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.NONE;
@@ -53,6 +54,9 @@ public class SpellData : IPlayerSkill {
     public virtual void ActivateAbility(StructureRoom room) {
         OnExecutePlayerSkill();
     }
+    public virtual void ActivateAbility(BaseSettlement targetSettlement) {
+        OnExecutePlayerSkill();
+    }
     public virtual string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) { return null; }
     public virtual bool CanPerformAbilityTowards(Character targetCharacter) {
         //(targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES)
@@ -66,6 +70,7 @@ public class SpellData : IPlayerSkill {
     public virtual bool CanPerformAbilityTowards(HexTile targetHex) { return CanPerformAbility(); }
     public virtual bool CanPerformAbilityTowards(LocationStructure targetStructure) { return CanPerformAbility(); }
     public virtual bool CanPerformAbilityTowards(StructureRoom room) { return CanPerformAbility(); }
+    public virtual bool CanPerformAbilityTowards(BaseSettlement targetSettlement) { return CanPerformAbility(); }
     /// <summary>
     /// Highlight the affected area of this spell given a tile.
     /// </summary>
@@ -131,6 +136,9 @@ public class SpellData : IPlayerSkill {
     }
     public bool CanTarget(HexTile hex) {
         return CanPerformAbilityTowards(hex);
+    }
+    public bool CanTarget(BaseSettlement p_targetSettlement) {
+        return CanPerformAbilityTowards(p_targetSettlement);
     }
     protected void IncreaseThreatForEveryCharacterThatSeesPOI(IPointOfInterest poi, int amount) {
         Messenger.Broadcast(CharacterSignals.INCREASE_THREAT_THAT_SEES_POI, poi, amount);

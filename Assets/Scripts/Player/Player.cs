@@ -325,6 +325,17 @@ public class Player : ILeader, IObjectManipulator {
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
                     }
                     break;
+                case SPELL_TARGET.SETTLEMENT:
+                    hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
+                    BaseSettlement settlement = null;
+                    if (hoveredTile != null && hoveredTile.IsPartOfSettlement(out settlement)) {
+                        if (currentActivePlayerSpell.CanPerformAbilityTowards(settlement)) {
+                            currentActivePlayerSpell.ActivateAbility(settlement);
+                            activatedAction = true;
+                        }
+                        UIManager.Instance.SetTempDisableShowInfoUI(true);
+                    }
+                    break;
                 default:
                     break;
             }

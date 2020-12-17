@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af6b250ddb9365c4a924f945cd5f95b6, type: 3}
-  m_Name: Break Up
+  m_Name: Stifle Migration
   m_EditorClassIdentifier: 
-  skill: 164
-  manaCost: -1
+  skill: 169
+  manaCost: 50
   charges: -1
   cooldown: -1
   threat: 0

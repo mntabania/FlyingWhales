@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Locations.Settlements;
 
 namespace Ruinarch {
     public class InputManager : MonoBehaviour {
@@ -99,7 +100,13 @@ namespace Ruinarch {
                                     if (hoveredTile != null && hoveredTile.collectionOwner.isPartOfParentRegionMap && hoveredTile.collectionOwner.partOfHextile.hexTileOwner) { 
                                         canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredTile.collectionOwner.partOfHextile.hexTileOwner); 
                                     } 
-                                    break; 
+                                    break;
+                                case SPELL_TARGET.SETTLEMENT:
+                                    BaseSettlement settlement = null;
+                                    if (hoveredTile != null && hoveredTile.IsPartOfSettlement(out settlement)) {
+                                        canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(settlement);
+                                    }
+                                    break;
                                 default: 
                                     break; 
                             }
