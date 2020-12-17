@@ -25,6 +25,7 @@ public class StifleMigrationData : SchemeData {
                 log.AddToFillers(npcSettlement.owner, npcSettlement.owner.name, LOG_IDENTIFIER.FACTION_1);
             }
             log.AddLogToDatabase();
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
             base.ActivateAbility(targetSettlement);
         }
     }
