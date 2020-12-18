@@ -29,8 +29,26 @@ public class InduceMigrationData : SchemeData {
             base.ActivateAbility(targetSettlement);
         }
     }
-    public override bool IsValid(IPlayerActionTarget target) {
-        return target is NPCSettlement npcSettlement && npcSettlement.migrationComponent.IsMigrationEventAllowed() && npcSettlement.GetUnoccupiedDwellingCount() > 0 && base.IsValid(target);
+    public override bool CanPerformAbilityTowards(BaseSettlement targetSettlement) {
+        if (targetSettlement is NPCSettlement npcSettlement && !npcSettlement.migrationComponent.IsMigrationEventAllowed()) {
+            return false;
+        }
+        return base.CanPerformAbilityTowards(targetSettlement);
+    }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(BaseSettlement p_targetSettlement) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(p_targetSettlement);
+        if (p_targetSettlement is NPCSettlement npcSettlement && !npcSettlement.migrationComponent.IsMigrationEventAllowed()) {
+            if(npcSettlement.owner == null) {
+                reasons += $"{p_targetSettlement.name} does not have a faction owner,";
+            }
+            if (npcSettlement.residents.Count <= 0) {
+                reasons += $"{p_targetSettlement.name} does not have any residents,";
+            }
+            if (npcSettlement.owner != null && !npcSettlement.owner.isMajorNonPlayer) {
+                reasons += $"{p_targetSettlement.name} is not owned by a major faction,";
+            }
+        }
+        return reasons;
     }
     #endregion
 }

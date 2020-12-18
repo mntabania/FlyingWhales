@@ -22,13 +22,23 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
 
     #region Listeners
     public void OnHourStarted() {
+        if (!IsMigrationEventAllowed()) {
+            //If village does not allow villager migration, reset meter back to zero
+            if(villageMigrationMeter > 0) {
+                SetVillageMigrationMeter(0);
+            }
+            return;
+        }
         AdjustVillageMigarationMeter(perHourIncrement);
     }
     public void OnSettlementTypeChanged() {
         RandomizePerHourIncrement();
     }
     public void OnStructureBuilt(LocationStructure structure) {
-        if(structure is Dwelling) {
+        if (!IsMigrationEventAllowed()) {
+            return;
+        }
+        if (structure is Dwelling) {
             AdjustVillageMigarationMeter(GameUtilities.RandomBetweenTwoNumbers(40, 60));
         } else {
             AdjustVillageMigarationMeter(GameUtilities.RandomBetweenTwoNumbers(60, 80));
@@ -37,6 +47,9 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     public void OnFinishedQuest(PartyQuest quest) {
         if(quest.madeInLocation == owner) {
             if (quest.isSuccessful) {
+                if (!IsMigrationEventAllowed()) {
+                    return;
+                }
                 AdjustVillageMigarationMeter(GameUtilities.RandomBetweenTwoNumbers(80, 120));
             }
         }
@@ -73,20 +86,15 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
 
     #region Migration
     public bool IsMigrationEventAllowed() {
-        return owner.owner != null && owner.residents.Count > 0 && owner.owner.race.IsSapient();
+        return owner.owner != null && owner.residents.Count > 0 && owner.owner.isMajorNonPlayer;
     }
     private void VillageMigrationEvent() {
         string debugLog = $"{GameManager.Instance.TodayLogString()}Village Migration Event for {owner.name} is triggered";
 
         if (IsMigrationEventAllowed()) {
-            int unoccupiedDwellings = owner.GetUnoccupiedDwellingCount();
-            debugLog += $"\nIt has {unoccupiedDwellings.ToString()} unoccupied dwellings.";
-
-            int availableCapacity = unoccupiedDwellings; //to get available capacity, get all unoccupied dwellings multiplied by the maximum number of residents per dwelling (2)
             int randomAmount = UnityEngine.Random.Range(1, 4);
-            randomAmount = Mathf.Min(randomAmount, availableCapacity);
-            if (randomAmount > 0) {
-                List<PreCharacterData> unspawnedCharacters = DatabaseManager.Instance.familyTreeDatabase.ForceGetAllUnspawnedCharactersThatFitFaction(owner.owner.race, owner.owner);
+            List<PreCharacterData> unspawnedCharacters = DatabaseManager.Instance.familyTreeDatabase.ForceGetAllUnspawnedCharactersThatFitFaction(owner.owner.race, owner.owner);
+            if (unspawnedCharacters.Count > 0) {
                 LocationGridTile edgeTile = CollectionUtilities.GetRandomElement(owner.region.innerMap.allEdgeTiles);
                 debugLog += $"\nWill spawn {randomAmount.ToString()} characters at {edgeTile}";
                 for (int i = 0; i < randomAmount; i++) {
@@ -125,6 +133,8 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
                     log.AddLogToDatabase();
                     PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
                 }
+            } else {
+                debugLog += $"\nNo unspawned character to spawn for {owner.owner.race.ToString()}/{owner.owner.name}";
             }
         }
         Debug.Log(debugLog);

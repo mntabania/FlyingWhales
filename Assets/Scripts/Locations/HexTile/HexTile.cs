@@ -798,8 +798,8 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
                     return UIManager.Instance.regionInfoUI;
                 }
             } else if (UIManager.Instance.hexTileInfoUI.isShowing) {
-                if (UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile.region == region) {
-                    if (UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile == this) {
+                if (UIManager.Instance.hexTileInfoUI.activeHex.region == region) {
+                    if (UIManager.Instance.hexTileInfoUI.activeHex == this) {
                         return UIManager.Instance.regionInfoUI;
                     } else {
                         return UIManager.Instance.hexTileInfoUI;
@@ -1453,7 +1453,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     #region Selectable
     public bool IsCurrentlySelected() {
         return UIManager.Instance.hexTileInfoUI.isShowing &&
-               UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile == this;
+               UIManager.Instance.hexTileInfoUI.activeHex == this;
     }
     public void LeftSelectAction() {
         UIManager.Instance.ShowHexTileInfo(this);

@@ -9,6 +9,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Video;
 using UtilityScripts;
+using Locations.Settlements;
 using Debug = System.Diagnostics.Debug;
 
 public class PlayerSkillDetailsTooltip : MonoBehaviour {
@@ -133,9 +134,9 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
 
         additionalText.text = string.Empty;
         if (spellData is PlayerAction) {
-            IPointOfInterest activePOI = UIManager.Instance.GetCurrentlySelectedPOI();
-            if (activePOI != null) {
-                if (activePOI is Character activeCharacter) {
+            object activeObj = UIManager.Instance.GetCurrentlySelectedObject();
+            if (activeObj != null) {
+                if (activeObj is Character activeCharacter) {
                     if (spellData.CanPerformAbilityTowards(activeCharacter) == false) {
                         if (spellData is PlayerAction playerAction && !playerAction.canBeCastOnBlessed && activeCharacter.traitContainer.IsBlessed()) {
                             additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText("Blessed Villagers are protected from your powers.")}\n";
@@ -150,9 +151,21 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                             }
                         }
                     }
-                } else if (activePOI is TileObject activeTileObject) {
+                } else if (activeObj is TileObject activeTileObject) {
                     if (activeTileObject is AnkhOfAnubis ankh && ankh.isActivated && spellData.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT) {
                         additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText("Activated Ankh can no longer be seized.")}\n";
+                    }
+                } else if (activeObj is BaseSettlement activeSettlement) {
+                    if (spellData.CanPerformAbilityTowards(activeSettlement) == false) {
+                        string wholeReason = spellData
+                            .GetReasonsWhyCannotPerformAbilityTowards(activeSettlement);
+                        if (string.IsNullOrEmpty(wholeReason) == false) {
+                            string[] reasons = wholeReason.Split(',');
+                            for (int i = 0; i < reasons.Length; i++) {
+                                string reason = reasons[i];
+                                additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText(reason)}\n";
+                            }
+                        }
                     }
                 }
             }

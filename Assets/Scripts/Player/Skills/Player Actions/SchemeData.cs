@@ -70,7 +70,7 @@ public class SchemeData : PlayerAction {
                 return false;
             }
         } else if (target is BaseSettlement settlement) {
-            if(settlement.locationType != LOCATION_TYPE.VILLAGE) {
+            if(settlement.locationType != LOCATION_TYPE.VILLAGE || !(settlement is NPCSettlement)) {
                 return false;
             }
         }

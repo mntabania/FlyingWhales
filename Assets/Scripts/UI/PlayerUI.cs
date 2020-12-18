@@ -346,7 +346,7 @@ public class PlayerUI : BaseMonoBehaviour {
             if (UIManager.Instance.regionInfoUI.isShowing) {
                 location = UIManager.Instance.regionInfoUI.activeRegion;
             } else if (UIManager.Instance.hexTileInfoUI.isShowing) {
-                location = UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile.region;
+                location = UIManager.Instance.hexTileInfoUI.activeHex.region;
             } else {
                 location = InnerMapManager.Instance.currentlyShowingMap.region as Region;
             }

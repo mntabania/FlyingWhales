@@ -320,6 +320,7 @@ public class CharacterInfoUI : InfoUIBase {
     private void UpdateTraits() {
         string statusTraits = string.Empty;
         string normalTraits = string.Empty;
+        bool isNormalCharacter = _activeCharacter.isNormalCharacter;
 
         for (int i = 0; i < _activeCharacter.traitContainer.statuses.Count; i++) {
             Status currStatus = _activeCharacter.traitContainer.statuses[i];
@@ -327,8 +328,14 @@ public class CharacterInfoUI : InfoUIBase {
             // if (currStatus.isHidden) {
             //     continue; //skip
             // }
+            if (currStatus.IsNeeds() && !isNormalCharacter) {
+                continue; //skip
+            }
 #else
             if (currStatus.isHidden) {
+                continue; //skip
+            }
+            if (currStatus.IsNeeds() && !isNormalCharacter) {
                 continue; //skip
             }
 #endif
@@ -346,6 +353,9 @@ public class CharacterInfoUI : InfoUIBase {
         for (int i = 0; i < _activeCharacter.traitContainer.traits.Count; i++) {
             Trait currTrait = _activeCharacter.traitContainer.traits[i];
             if (currTrait.isHidden) {
+                continue; //skip
+            }
+            if (currTrait.IsNeeds() && !isNormalCharacter) {
                 continue; //skip
             }
             string color = UIManager.normalTextColor;

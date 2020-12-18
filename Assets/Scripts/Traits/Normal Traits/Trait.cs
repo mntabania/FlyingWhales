@@ -262,6 +262,12 @@ namespace Traits {
                 traitOverrideFunctionIdentifiers.Add(identifier);
             }
         }
+        public bool IsNeeds() {
+            return name == "Refreshed" || name == "Exhausted" || name == "Tired"
+                || name == "Entertained" || name == "Bored" || name == "Sulking"
+                || name == "Full" || name == "Hungry" || name == "Starving"
+                || name == "Sprightly" || name == "Spent" || name == "Drained";
+        }
         #endregion
 
         #region Actions

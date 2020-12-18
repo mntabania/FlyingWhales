@@ -709,6 +709,23 @@ public class UIManager : BaseMonoBehaviour {
         }
         return null;
     }
+    public object GetCurrentlySelectedObject() {
+        IPointOfInterest poi = GetCurrentlySelectedPOI();
+        if(poi == null) {
+            if (settlementInfoUI.isShowing) {
+                return settlementInfoUI.activeSettlement;
+            } else if (structureInfoUI.isShowing) {
+                return structureInfoUI.activeStructure;
+            } else if (structureRoomInfoUI.isShowing) {
+                return structureRoomInfoUI.activeRoom;
+            } else if (partyInfoUI.isShowing) {
+                return partyInfoUI.activeParty;
+            } else if (hexTileInfoUI.isShowing) {
+                return hexTileInfoUI.activeHex;
+            }
+        }
+        return null;
+    }
     #endregion
 
     #region Object Pooling
@@ -1120,9 +1137,9 @@ public class UIManager : BaseMonoBehaviour {
         } else {
             if(regionInfoUI.activeRegion != null) {
                 InnerMapManager.Instance.TryShowLocationMap(regionInfoUI.activeRegion);
-            } else if(hexTileInfoUI.currentlyShowingHexTile != null) {
-                InnerMapManager.Instance.TryShowLocationMap(hexTileInfoUI.currentlyShowingHexTile.region);
-                InnerMapCameraMove.Instance.CenterCameraOnTile(hexTileInfoUI.currentlyShowingHexTile);
+            } else if(hexTileInfoUI.activeHex != null) {
+                InnerMapManager.Instance.TryShowLocationMap(hexTileInfoUI.activeHex.region);
+                InnerMapCameraMove.Instance.CenterCameraOnTile(hexTileInfoUI.activeHex);
             }
         }
     }
@@ -1132,8 +1149,8 @@ public class UIManager : BaseMonoBehaviour {
         } else {
             if (regionInfoUI.activeRegion != null) {
                 ShowSmallInfo($"Click to enter {regionInfoUI.activeRegion.name}.", returnToWorldBtnTooltipPos);
-            } else if(hexTileInfoUI.currentlyShowingHexTile != null) {
-                ShowSmallInfo($"Click to enter {hexTileInfoUI.currentlyShowingHexTile.region.name}.", returnToWorldBtnTooltipPos);
+            } else if(hexTileInfoUI.activeHex != null) {
+                ShowSmallInfo($"Click to enter {hexTileInfoUI.activeHex.region.name}.", returnToWorldBtnTooltipPos);
             }
         }
     }
