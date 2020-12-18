@@ -4,6 +4,7 @@ using Locations.Settlements;
 using Traits;
 using UnityEngine;
 using UtilityScripts;
+using Inner_Maps.Location_Structures;
 
 public class DefaultFactionRelated : CharacterBehaviourComponent {
     public DefaultFactionRelated() {
@@ -87,7 +88,7 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
         for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
             Faction faction = FactionManager.Instance.allFactions[i];
             if(faction.factionType.type == factionType) {
-                if (faction.HasMemberThatMeetCriteria(member => !member.isDead && member.homeSettlement != null && member.homeSettlement.GetFirstUnoccupiedDwelling() != null)) {
+                if (faction.HasMemberThatMeetCriteria(member => !member.isDead && member.homeSettlement != null && member.homeSettlement.GetFirstStructureThatMeetCriteria(s => !s.IsOccupied() && s is Dwelling) != null)) {
                     return true;
                 }
             }

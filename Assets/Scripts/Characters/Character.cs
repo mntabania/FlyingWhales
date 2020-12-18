@@ -1367,7 +1367,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             viableFactions.Clear();
             for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                 Faction faction = FactionManager.Instance.allFactions[i];
-                if (faction.factionType.type == FACTION_TYPE.Demon_Cult) {
+                if (faction.factionType.type == FACTION_TYPE.Demon_Cult && faction != prevFaction) {
                     bool hasCultLeader = faction.HasMemberThatMeetCriteria(m => !m.isDead && m.characterClass.className == "Cult Leader");
                     if (hasCultLeader) {
                         chosenFaction = faction;
@@ -1388,7 +1388,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     Faction potentialFaction = currentRegion.factionsHere[i];
                     if (potentialFaction.isMajorNonPlayer && !potentialFaction.isDestroyed
                         && !potentialFaction.IsCharacterBannedFromJoining(this)
-                        && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeologies(this)) {
+                        && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeologies(this)
+                        && potentialFaction != prevFaction) {
                         if (potentialFaction.HasOwnedSettlementInRegion(currentRegion)) {
                             bool hasRelativeOrLoverThatIsNotEnemyRival = faction.HasMemberThatMeetCriteria(m => !m.isDead && (relationshipContainer.IsFamilyMember(m) || relationshipContainer.HasRelationshipWith(m, RELATIONSHIP_TYPE.LOVER)) && !relationshipContainer.IsEnemiesWith(m));
                             if (hasRelativeOrLoverThatIsNotEnemyRival) {
@@ -3121,7 +3122,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         } else {
             if (CanPerformEndTickJobs() && HasSameOrHigherPriorityJobThanBehaviour()) {
-                if (jobQueue.jobsInQueue[0].ProcessJob() == false && jobQueue.jobsInQueue.Count > 0) {
+                if (jobQueue.jobsInQueue.Count > 0 && jobQueue.jobsInQueue[0].ProcessJob() == false) {
                     PerformTopPriorityJob();
                 }
             }

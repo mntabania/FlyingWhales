@@ -785,22 +785,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return null;
     }
-    public LocationStructure GetFirstStructureOfTypeFromOwnedSettlementsWithLeastVillagers(STRUCTURE_TYPE structureType) {
-        BaseSettlement leastVillagersSettlement = null;
-        LocationStructure structure = null;
-        for (int i = 0; i < ownedSettlements.Count; i++) {
-            BaseSettlement settlement = ownedSettlements[i];
-            LocationStructure structureOfType = settlement.GetFirstStructureOfType(structureType);
-            //if settlement has structure of type
-            if (structureOfType != null) {
-                if (leastVillagersSettlement == null || settlement.residents.Count < leastVillagersSettlement.residents.Count) {
-                    leastVillagersSettlement = settlement;
-                    structure = structureOfType;
-                }
-            }
-        }
-        return structure;
-    }
     //public bool HasOwnedStructures() {
     //    return ownedStructures.Count > 0;
     //}

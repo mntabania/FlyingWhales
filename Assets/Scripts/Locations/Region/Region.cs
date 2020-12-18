@@ -781,23 +781,6 @@ public class Region : ISavable, ILogFiller {
         ObjectPoolManager.Instance.ReturnStructuresListToPool(structureChoices);
         return chosenStructure;
     }
-    public LocationStructure GetRandomUnoccupiedStructureWithTag(params STRUCTURE_TAG[] tag) {
-        List<LocationStructure> structuresWithTag = ObjectPoolManager.Instance.CreateNewStructuresList();
-        LocationStructure chosenStructure = null;
-        for (int i = 0; i < allStructures.Count; i++) {
-            LocationStructure currStructure = allStructures[i];
-            if (!currStructure.IsOccupied()) {
-                if (currStructure.HasStructureTag(tag)) {
-                    structuresWithTag.Add(currStructure);
-                }
-            }
-        }
-        if(structuresWithTag != null && structuresWithTag.Count > 0) {
-            chosenStructure = structuresWithTag[UnityEngine.Random.Range(0, structuresWithTag.Count)];
-        }
-        ObjectPoolManager.Instance.ReturnStructuresListToPool(structuresWithTag);
-        return chosenStructure;
-    }
     public LocationStructure GetRandomSpecialStructureExcept(List<LocationStructure> exceptions) {
         List<LocationStructure> specialStructures = ObjectPoolManager.Instance.CreateNewStructuresList();
         LocationStructure chosenStructure = null;

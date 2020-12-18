@@ -899,20 +899,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return default;
     }
-    public LocationStructure GetFirstUnoccupiedDwelling() {
-        LocationStructure chosenDwelling = null;
-        List<LocationStructure> dwellings = GetStructuresOfType(STRUCTURE_TYPE.DWELLING);
-        if (dwellings != null) {
-            for (int i = 0; i < dwellings.Count; i++) {
-                LocationStructure currDwelling = dwellings[i];
-                if (!currDwelling.IsOccupied()) {
-                    chosenDwelling = currDwelling;
-                    break;
-                }
-            }
-        }
-        return chosenDwelling;
-    }
     public int GetUnoccupiedDwellingCount() {
         int count = 0;
         List<LocationStructure> dwellings = GetStructuresOfType(STRUCTURE_TYPE.DWELLING);
