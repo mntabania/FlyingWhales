@@ -142,8 +142,11 @@ namespace UtilityScripts {
         summary = $"{summary}{"\nPrimary Bed: " + (activeCharacter.tileObjectComponent.primaryBed != null ? activeCharacter.tileObjectComponent.primaryBed.name : "None")}";
         summary = $"{summary}{"\nEnable Digging: " + activeCharacter.movementComponent.enableDigging.ToString()}";
         summary = $"{summary}{"\nAvoid Settlements: " + activeCharacter.movementComponent.avoidSettlements.ToString()}";
+        summary = $"{summary}{"\nPlanner Status: " + activeCharacter.planner.status.ToString()}";
+        summary = $"{summary}{"\nNum of action being performed: " + activeCharacter.numOfActionsBeingPerformedOnThis}";
 
-        if (activeCharacter.stateComponent.currentState != null) {
+
+            if (activeCharacter.stateComponent.currentState != null) {
             summary = $"{summary}\nCurrent State: {activeCharacter.stateComponent.currentState}";
             summary = $"{summary}\n\tDuration in state: {activeCharacter.stateComponent.currentState.currentDuration.ToString()}/{activeCharacter.stateComponent.currentState.duration.ToString()}";
         }

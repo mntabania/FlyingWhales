@@ -351,6 +351,15 @@ namespace Locations.Settlements {
             }
             return null;
         }
+        public LocationStructure GetFirstStructureThatMeetCriteria(Func<LocationStructure, bool> criteria) {
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure structure = allStructures[i];
+                if (criteria.Invoke(structure)) {
+                    return structure;
+                }
+            }
+            return null;
+        }
         public bool HasStructure(STRUCTURE_TYPE type) {
             return structures.ContainsKey(type);
         }
