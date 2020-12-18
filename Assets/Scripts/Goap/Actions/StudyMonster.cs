@@ -9,11 +9,13 @@ public class StudyMonster : GoapAction {
         actionIconString = GoapActionStateDB.Inspect_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.DEMON };
-        isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Work};
     }
 
     #region Override
+    public override bool ShouldActionBeAnIntel(ActualGoapNode node) {
+        return true;
+    }
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", target = GOAP_EFFECT_TARGET.TARGET }, HasUnconscious);
     }

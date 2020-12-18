@@ -12,12 +12,14 @@ public class VampiricEmbrace : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Drink_Blood_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        isNotificationAnIntel = true;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         logTags = new[] {LOG_TAG.Life_Changes};
     }
 
     #region Overrides
+    public override bool ShouldActionBeAnIntel(ActualGoapNode node) {
+        return true;
+    }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Embrace Success", goapNode);

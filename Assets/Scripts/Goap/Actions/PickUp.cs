@@ -16,6 +16,12 @@ public class PickUp : GoapAction {
     }
 
     #region Overrides
+    public override bool ShouldActionBeAnIntel(ActualGoapNode node) {
+        if (node.crimeType != CRIME_TYPE.None && node.crimeType != CRIME_TYPE.Unset) {
+            return true;
+        }
+        return base.ShouldActionBeAnIntel(node);
+    }
     protected override void ConstructBasePreconditionsAndEffects() {
         //SpecialToken token = poiTarget as SpecialToken;
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = poiTarget, targetPOI = actor });

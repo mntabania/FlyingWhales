@@ -24,7 +24,7 @@ public class GoapAction {
     public bool showNotification { get; protected set; } //should this action show a notification when it is done by its actor or when it receives a plan with this action as it's end node?
     public bool shouldAddLogs { get; protected set; } //should this action add logs to it's actor?
     // public bool shouldIntelNotificationOnlyIfActorIsActive { get; protected set; }
-    public bool isNotificationAnIntel { get; protected set; }
+    // public bool isNotificationAnIntel { get; protected set; }
     public string actionIconString { get; protected set; }
     public string animationName { get; protected set; } //what animation should the character be playing while doing this action
     public bool doesNotStopTargetCharacter { get; protected set; }
@@ -258,6 +258,9 @@ public class GoapAction {
     public virtual void OnMoveToDoAction(ActualGoapNode node) { }
     public virtual string GetActionIconString(ActualGoapNode node) {
         return actionIconString;
+    }
+    public virtual bool ShouldActionBeAnIntel(ActualGoapNode node) {
+        return false;
     }
     #endregion
 

@@ -10,8 +10,7 @@ namespace Interrupts {
             duration = 1;
             doesStopCurrentAction = true;
             interruptIconString = GoapActionStateDB.Sick_Icon;
-            // duration = 0;
-            // interruptIconString = GoapActionStateDB.Shock_Icon;
+            isIntel = true;
             logTags = new[] {LOG_TAG.Life_Changes};
         }
 

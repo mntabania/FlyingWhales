@@ -701,7 +701,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             if (descriptionLog.hasValue && action.shouldAddLogs && CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType)) { //only add logs if both the parent action and this state should add logs
                 descriptionLog.AddLogToDatabase();
                 //Only show notif if an action can be stored as an intel to reduce notifications and info overload to the player
-                if (action.isNotificationAnIntel) {
+                if (action.ShouldActionBeAnIntel(this)) {
                     bool cannotBeStoredAsIntel = !actor.isNormalCharacter && (!(poiTarget is Character) || !(poiTarget as Character).isNormalCharacter);
                     if (!cannotBeStoredAsIntel) {
                         PlayerManager.Instance.player.ShowNotificationFrom(actor, InteractionManager.Instance.CreateNewIntel(this) as IIntel);
@@ -889,7 +889,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if (crimeType != CRIME_TYPE.None) {
             tags.Add(LOG_TAG.Crimes);
         }
-        if (action.isNotificationAnIntel) {
+        if (action.ShouldActionBeAnIntel(this)) {
             tags.Add(LOG_TAG.Intel);
         }
         return tags;

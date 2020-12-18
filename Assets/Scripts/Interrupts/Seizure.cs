@@ -10,6 +10,7 @@ namespace Interrupts {
             duration = 6;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
+            isIntel = true;
             logTags = new[] {LOG_TAG.Life_Changes};
         }
 
