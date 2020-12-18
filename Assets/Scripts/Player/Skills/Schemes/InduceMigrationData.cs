@@ -50,5 +50,11 @@ public class InduceMigrationData : SchemeData {
         }
         return reasons;
     }
+    public override bool IsValid(IPlayerActionTarget target) {
+        if (!(target is NPCSettlement)) {
+            return false;
+        }
+        return base.IsValid(target);
+    }
     #endregion
 }
