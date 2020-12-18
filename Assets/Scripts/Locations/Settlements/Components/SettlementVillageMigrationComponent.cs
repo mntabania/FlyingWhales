@@ -86,7 +86,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
 
     #region Migration
     public bool IsMigrationEventAllowed() {
-        return owner.owner != null && owner.residents.Count > 0 && owner.owner.isMajorNonPlayer;
+        return owner.owner != null && owner.residents.Count > 0 && owner.owner.isMajorNonPlayer && (owner.owner.factionType.type == FACTION_TYPE.Human_Empire || owner.owner.factionType.type == FACTION_TYPE.Elven_Kingdom);
     }
     private void VillageMigrationEvent() {
         string debugLog = $"{GameManager.Instance.TodayLogString()}Village Migration Event for {owner.name} is triggered";

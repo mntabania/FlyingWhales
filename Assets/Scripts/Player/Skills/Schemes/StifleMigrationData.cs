@@ -47,6 +47,9 @@ public class StifleMigrationData : SchemeData {
             if (npcSettlement.owner != null && !npcSettlement.owner.isMajorNonPlayer) {
                 reasons += $"{p_targetSettlement.name} is not owned by a major faction,";
             }
+            if (npcSettlement.owner != null && npcSettlement.owner.factionType.type != FACTION_TYPE.Human_Empire && npcSettlement.owner.factionType.type != FACTION_TYPE.Elven_Kingdom) {
+                reasons += $"{p_targetSettlement.name} is not owned by a Human Empire or Elven Kingdom faction,";
+            }
         }
         return reasons;
     }
