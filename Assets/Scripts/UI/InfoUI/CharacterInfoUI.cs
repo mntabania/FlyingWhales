@@ -130,7 +130,7 @@ public class CharacterInfoUI : InfoUIBase {
         moodMeter.AddMark(EditableValuesManager.Instance.criticalMoodHighThreshold/100f, Color.red);
         moodMeter.AddMark(EditableValuesManager.Instance.lowMoodHighThreshold/100f, Color.yellow);
 
-        Color green = new Color(0f / 255f, 91f / 255f, 0f / 255f);
+        Color green = Color.green;//new Color(0f / 255f, 91f / 255f, 0f / 255f);
         
         energyMeter.ResetMarks();
         energyMeter.AddMark(CharacterNeedsComponent.REFRESHED_LOWER_LIMIT/100f, green);
