@@ -472,7 +472,8 @@ public class CharacterInfoUI : InfoUIBase {
     private void OnCharacterDied(Character character) {
         if (isShowing) {
             if (activeCharacter.id == character.id) {
-                InnerMapCameraMove.Instance.CenterCameraOn(null);    
+                InnerMapCameraMove.Instance.CenterCameraOn(null);
+                UpdateMoodSummary();
             }
             if (activeCharacter.relationshipContainer.HasRelationshipWith(character)) {
                 UpdateRelationships();
@@ -807,6 +808,10 @@ public class CharacterInfoUI : InfoUIBase {
     }
     private void UpdateMoodSummary() {
         UtilityScripts.Utilities.DestroyChildren(scrollViewMoodSummary.content);
+        if (_activeCharacter.isDead) {
+            //do not show mood thoughts of dead character
+            return;
+        }
         _dictMoodSummary.Clear();
         foreach (var modification in _activeCharacter.moodComponent.allMoodModifications) {
             MoodModification moodModification = modification.Value;
