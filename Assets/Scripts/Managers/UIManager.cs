@@ -1778,7 +1778,7 @@ public class UIManager : BaseMonoBehaviour {
     }
     private void OnHoverOverPlayerActionContextMenuItem(IContextMenuItem p_item, UIHoverPosition p_hoverPosition) {
         if (p_item is PlayerAction playerAction) {
-            OnHoverPlayerAction(playerAction, p_hoverPosition, PlayerManager.Instance.player.currentlySelectedPlayerActionTarget as IPointOfInterest);
+            OnHoverPlayerAction(playerAction, p_hoverPosition, PlayerManager.Instance.player.currentlySelectedPlayerActionTarget);
         } else if (p_item is Trait trait && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is Character targetCharacter) {
             OnHoverEnterFlaw(trait.name,  targetCharacter, p_hoverPosition);
         }
