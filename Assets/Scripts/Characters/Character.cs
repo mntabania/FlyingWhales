@@ -2835,11 +2835,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         traitContainer.AddTrait(this, "Character Trait");
         traitContainer.AddTrait(this, "Flammable");
         defaultCharacterTrait = traitContainer.GetTraitOrStatus<CharacterTrait>("Character Trait");
-        
-        //TODO: Move or remove depending on decision made after balancing pass.
-        if (isNormalCharacter && race.IsSapient()) {
-            combatComponent.AdjustMaxHPModifier(combatComponent.unModifiedMaxHP);
-        }
     }
     public void CreateRandomInitialTraits(List<string> buffPool = null, List<string> neutralPool = null, List<string> flawPool = null) {
         if (minion == null && race != RACE.DEMON && !(this is Summon) && race != RACE.RATMAN) { //only generate buffs and flaws for non minion characters. Reference: https://trello.com/c/pC9hBih0/2781-demonic-minions-should-not-have-pregenerated-buff-and-flaw-traits
