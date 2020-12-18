@@ -293,6 +293,11 @@ namespace Traits {
                                         //removed vagrant trespassing because it causes an issue whenever a character leaves its current faction while it is still inside its previous settlement.
                                         willCreateAssumption = false;
                                     }
+                                    if (targetCharacter.traitContainer.HasTrait("Cultist") && owner.traitContainer.HasTrait("Cultist")) {
+                                        //Do not assume that character is trespassing if both characters are cultists.
+                                        //This is a fix for this issue: https://trello.com/c/SBNxYdlY/3085-live-03363-cultist-reporting-other-cultists
+                                        willCreateAssumption = false;
+                                    }
                                     if (willCreateAssumption) {
                                         owner.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, owner, INTERACTION_TYPE.TRESPASSING, REACTION_STATUS.WITNESSED);
                                     }
