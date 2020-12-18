@@ -279,12 +279,11 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
         RemoveSchemeUIItem(item);
     }
     private void OnHoverEnterSchemeUIItem(SchemeUIItem item) {
-        string baseText = $"Base Value: +{item.baseSuccessRate.ToString("N1")}%";
+        string successRate = $"<b><size=24>Success Rate: <color=green>+{item.successRate.ToString("N1")}%</color></size></b>";
+        string baseText = $"Base Value: <color=white>+{item.baseSuccessRate.ToString("N1")}%</color>";
         string multiplierText = _schemeUsed.GetSuccessRateMultiplierText(_targetCharacter);
-        if (!string.IsNullOrEmpty(multiplierText)) {
-            string text = baseText + "\n" + multiplierText;
-            UIManager.Instance.ShowSmallInfo(text);
-        }
+        string text = successRate + "\n" + baseText + "\n" + multiplierText;
+        UIManager.Instance.ShowSmallInfo(text);
     }
     private void OnHoverExitSchemeUIItem(SchemeUIItem item) {
         UIManager.Instance.HideSmallInfo();
@@ -301,7 +300,7 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
 
         float successRateForText = successRate;
         successRateForText = Mathf.Clamp(successRateForText, 0f, 100f);
-        m_schemeUIView.SetSuccessRate($"+{successRateForText.ToString("N1")}%");
+        m_schemeUIView.SetSuccessRate($"<color=green>+{successRateForText.ToString("N1")}%</color>");
     }
     #endregion
 }

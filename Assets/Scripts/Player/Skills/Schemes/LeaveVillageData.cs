@@ -7,7 +7,7 @@ using Logs;
 public class LeaveVillageData : SchemeData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.LEAVE_VILLAGE;
     public override string name => "Leave Village";
-    public override string description => "Leave Village";
+    public override string description => "Convince a Villager to leave their current Village.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SCHEME;
 
     public LeaveVillageData() : base() {

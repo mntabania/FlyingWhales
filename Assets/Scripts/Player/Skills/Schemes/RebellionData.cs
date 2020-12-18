@@ -8,7 +8,7 @@ using Locations.Settlements;
 public class RebellionData : SchemeData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.REBELLION;
     public override string name => "Rebellion";
-    public override string description => "Rebellion";
+    public override string description => "Convince a Settlement Ruler to split off from current Faction.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SCHEME;
 
     public RebellionData() : base() {
@@ -63,15 +63,15 @@ public class RebellionData : SchemeData {
         if (p_targetCharacter.faction != null && p_targetCharacter.faction.leader != null && p_targetCharacter.faction.leader is Character factionLeader && p_targetCharacter != factionLeader) {
             if (p_targetCharacter.relationshipContainer.IsFriendsWith(factionLeader)) {
                 if(text != string.Empty) { text += "\n"; }
-                text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is friends with the Faction Leader: x0.2";
+                text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is friends with the Faction Leader: <color=yellow>x0.2</color>";
             } else if (p_targetCharacter.relationshipContainer.IsEnemiesWith(factionLeader)) {
                 if (text != string.Empty) { text += "\n"; }
-                text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is enemies with the Faction Leader: x3";
+                text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is enemies with the Faction Leader: <color=yellow>x3</color>";
             }
         }
         if (p_targetCharacter.traitContainer.HasTrait("Treacherous")) {
             if (text != string.Empty) { text += "\n"; }
-            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Treacherous: x2";
+            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Treacherous: <color=yellow>x2</color>";
         }
         if (text != string.Empty) {
             return text;

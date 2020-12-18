@@ -7,7 +7,7 @@ using Logs;
 public class JoinFactionData : SchemeData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.JOIN_FACTION;
     public override string name => "Join Faction";
-    public override string description => "Join Faction";
+    public override string description => "Convince a Villager to join a target Faction.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SCHEME;
 
     public JoinFactionData() : base() {

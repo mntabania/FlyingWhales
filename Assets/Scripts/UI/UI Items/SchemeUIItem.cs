@@ -33,7 +33,7 @@ public class SchemeUIItem : PooledObject {
         _successRate = p_successRate;
         _baseSuccessRate = p_baseSuccessRate;
         txtName.text = p_text;
-        txtSucessRate.text = $"+{p_successRate.ToString("N1")}%";
+        txtSucessRate.text = $"<color=green>+{p_successRate.ToString("N1")}%</color>";
     }
     public void SetClickMinusAction(System.Action<SchemeUIItem> action) {
         onClickMinusAction = action;

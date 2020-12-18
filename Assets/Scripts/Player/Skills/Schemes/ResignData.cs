@@ -7,7 +7,7 @@ using Logs;
 public class ResignData : SchemeData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.RESIGN;
     public override string name => "Resign";
-    public override string description => "Resign";
+    public override string description => "Force a Faction Leader or Settlement Ruler to resign.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SCHEME;
 
     public ResignData() : base() {

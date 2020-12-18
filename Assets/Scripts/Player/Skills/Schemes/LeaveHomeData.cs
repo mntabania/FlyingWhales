@@ -7,7 +7,7 @@ using Logs;
 public class LeaveHomeData : SchemeData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.LEAVE_HOME;
     public override string name => "Leave Home";
-    public override string description => "Leave Home";
+    public override string description => "Convince a Villager to leave their current Home.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SCHEME;
 
     public LeaveHomeData() : base() {
@@ -39,7 +39,7 @@ public class LeaveHomeData : SchemeData {
         p_newSuccessRate *= 2f;
     }
     public override string GetSuccessRateMultiplierText(Character p_targetCharacter) {
-        return $"Leave Home: x2";
+        return $"Leave Home: <color=yellow>x2</color>";
     }
     #endregion
 }

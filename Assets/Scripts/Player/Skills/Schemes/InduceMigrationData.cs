@@ -8,7 +8,7 @@ using Locations.Settlements;
 public class InduceMigrationData : SchemeData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.INDUCE_MIGRATION;
     public override string name => "Induce Migration";
-    public override string description => "Induce Migration";
+    public override string description => "Force a Migration Event on the current Village.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SCHEME;
 
     public InduceMigrationData() : base() {

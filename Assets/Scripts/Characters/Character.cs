@@ -2477,7 +2477,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //If the hostile reaches 0 hp, evaluate if he/she dies, get knock out, or get injured
         if (currentHP <= 0) {
             attackSummary += $"\n{name}'s hp has reached 0.";
-            if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
+            if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this) && !traitContainer.HasTrait("Sturdy")) {
+                //If combat is non lethal and target has no sturdy trait, knockout
+                //However, even if the combat is non lethal, if the target has sturdy trait, target dies
                 traitContainer.AddTrait(this, "Unconscious", GetCharacterResponsibleForUnconsciousness(characterThatAttacked, combatStateOfAttacker));
             } else {
                 if (!isDead) {
@@ -2492,7 +2494,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //Each non lethal attack has a 15% chance of unconscious
             //https://trello.com/c/qxXVulZl/1126-each-non-lethal-attack-has-a-15-chance-of-making-target-unconscious
             if(GameUtilities.RollChance(chanceToKnockout)) {
-                if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
+                if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this) && !traitContainer.HasTrait("Sturdy")) {
                     traitContainer.AddTrait(this, "Unconscious", GetCharacterResponsibleForUnconsciousness(characterThatAttacked, combatStateOfAttacker));
                 }
             }

@@ -8,7 +8,7 @@ using Locations.Settlements;
 public class StifleMigrationData : SchemeData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.STIFLE_MIGRATION;
     public override string name => "Stifle Migration";
-    public override string description => "Stifle Migration";
+    public override string description => "Reset the current Village's Migration Meter to zero.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SCHEME;
 
     public StifleMigrationData() : base() {

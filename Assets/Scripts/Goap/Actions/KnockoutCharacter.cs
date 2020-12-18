@@ -165,6 +165,10 @@ public class KnockoutCharacter : GoapAction {
             if (actor == poiTarget) {
                 return false;
             }
+            if (poiTarget.traitContainer.HasTrait("Sturdy")) {
+                //Cannot knock out sturdy characters
+                return false;
+            }
             if (job != null && job.jobType == JOB_TYPE.SNATCH) { //&& actor.traitContainer.HasTrait("Cultist")
                 return true; //only allow cultists to use knock out if it is for snatching 
             }
