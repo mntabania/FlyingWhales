@@ -285,8 +285,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             isUnderSiege = state;
             Debug.Log($"{GameManager.Instance.TodayLogString()}{name} Under Siege state changed to {isUnderSiege.ToString()}");
             Messenger.Broadcast(SettlementSignals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, this, isUnderSiege);
-            if (isUnderSiege) {
-            } else {
+            if (!isUnderSiege) {
                 if(exterminateTargetStructure != null) {
                     if(owner != null && !owner.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, exterminateTargetStructure)) {
                         if(exterminateTargetStructure.settlementLocation == null || exterminateTargetStructure.settlementLocation.HasResidentThatMeetsCriteria(resident => !resident.isDead
