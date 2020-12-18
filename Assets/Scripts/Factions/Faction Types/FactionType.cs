@@ -4,7 +4,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UtilityScripts;
 using Factions.Faction_Succession;
-
+using Locations.Settlements;
 namespace Factions.Faction_Types {
     public abstract class FactionType {
         public readonly string name;
@@ -186,6 +186,12 @@ namespace Factions.Faction_Types {
         }
         public bool IsCivilian(string className) {
             return civilianClasses != null && civilianClasses.Contains(className);
+        }
+        #endregion
+
+        #region Migration
+        public virtual int GetAdditionalMigrationMeterGain(NPCSettlement p_settlement) {
+            return 0;
         }
         #endregion
 

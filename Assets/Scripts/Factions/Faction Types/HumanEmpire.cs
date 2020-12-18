@@ -1,4 +1,6 @@
-﻿namespace Factions.Faction_Types {
+﻿using Locations.Settlements;
+using UnityEngine;
+namespace Factions.Faction_Types {
     public class HumanEmpire : FactionType {
         
         public override RESOURCE mainResource => RESOURCE.STONE;
@@ -106,6 +108,10 @@
                     return CRIME_SEVERITY.Heinous;
             }
             return CRIME_SEVERITY.None;
+        }
+        public override int GetAdditionalMigrationMeterGain(NPCSettlement p_settlement) {
+            int unoccupiedDwellings = p_settlement.GetUnoccupiedDwellingCount();
+            return Mathf.Min(unoccupiedDwellings, 3);
         }
     }
 }

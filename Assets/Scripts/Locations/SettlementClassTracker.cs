@@ -10,7 +10,7 @@ namespace Locations {
         }
         #endregion
         
-        private static readonly string[] _characterClassOrder = new[] { "Craftsman", "Peasant", "Combatant", "Civilian", "Combatant", "Combatant", "Noble", "Combatant" };
+        private static readonly string[] _characterClassOrder = new[] { "Peasant", "Combatant", "Civilian", "Combatant", "Combatant", "Noble", "Combatant" };
         private readonly List<string> _neededClasses;
         private readonly List<string> _currentResidentClasses;
         private int _currentClassOrderIndex;

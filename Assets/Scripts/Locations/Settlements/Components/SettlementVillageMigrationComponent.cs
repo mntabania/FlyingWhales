@@ -21,7 +21,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     }
 
     #region Listeners
-    public void OnHourStarted() {
+    public void OnHourStarted(NPCSettlement p_settlement) {
         if (!IsMigrationEventAllowed()) {
             //If village does not allow villager migration, reset meter back to zero
             if(villageMigrationMeter > 0) {
@@ -29,7 +29,8 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
             }
             return;
         }
-        AdjustVillageMigarationMeter(perHourIncrement);
+        int migrationMeterModification = p_settlement.owner?.factionType.GetAdditionalMigrationMeterGain(p_settlement) ?? 0;
+        AdjustVillageMigarationMeter(perHourIncrement + migrationMeterModification);
     }
     public void OnSettlementTypeChanged() {
         RandomizePerHourIncrement();
@@ -92,7 +93,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
         string debugLog = $"{GameManager.Instance.TodayLogString()}Village Migration Event for {owner.name} is triggered";
 
         if (IsMigrationEventAllowed()) {
-            int randomAmount = UnityEngine.Random.Range(1, 4);
+            int randomAmount = UnityEngine.Random.Range(2, 6);
             List<PreCharacterData> unspawnedCharacters = DatabaseManager.Instance.familyTreeDatabase.ForceGetAllUnspawnedCharactersThatFitFaction(owner.owner.race, owner.owner);
             if (unspawnedCharacters.Count > 0) {
                 LocationGridTile edgeTile = CollectionUtilities.GetRandomElement(owner.region.innerMap.allEdgeTiles);
@@ -104,18 +105,18 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
                     unspawnedCharacters.Remove(characterToSpawn);
 
                     string classToCreate;
-                    if (i == 0) {
-                        //always ensure that first villager is a civilian type 
-                        //https://trello.com/c/I53VfSsC/2688-one-of-the-migrants-should-always-be-a-non-combatant-the-rest-should-be-combatants
-                        classToCreate = CollectionUtilities.GetRandomElement(owner.owner.factionType.civilianClasses);
+                    if (owner.settlementClassTracker.GetCurrentResidentClassAmount("Peasant") > 0) {
+                        //village already has at least 1 peasant
+                        classToCreate = GameUtilities.RollChance(90) ? CollectionUtilities.GetRandomElement(owner.owner.factionType.combatantClasses) : "Noble";
                     } else {
-                        classToCreate = CollectionUtilities.GetRandomElement(owner.owner.factionType.combatantClasses);
+                        if (i == 0) {
+                            //one of the migrants should always be a peasant
+                            classToCreate = "Peasant";
+                        } else {
+                            classToCreate = GameUtilities.RollChance(90) ? CollectionUtilities.GetRandomElement(owner.owner.factionType.combatantClasses) : "Noble";
+                        }    
                     }
-                    // if (GameUtilities.RollChance(50)) {
-                    //     classToCreate = CollectionUtilities.GetRandomElement(randomSettlement.owner.factionType.combatantClasses);
-                    // } else {
-                    //     classToCreate = CollectionUtilities.GetRandomElement(randomSettlement.owner.factionType.civilianClasses);
-                    // }
+                    
                     Character newCharacter = CharacterManager.Instance.CreateNewCharacter(characterToSpawn, classToCreate, owner.owner, owner);
                     RelationshipManager.Instance.ApplyPreGeneratedRelationships(WorldConfigManager.Instance.mapGenerationData, characterToSpawn, newCharacter);
                     newCharacter.CreateRandomInitialTraits();

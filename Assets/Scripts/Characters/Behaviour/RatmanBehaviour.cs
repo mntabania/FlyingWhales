@@ -35,21 +35,21 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
         TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
         if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT) {
             //Night time
-            int chance = 15;
+            int chance = 10;
             if(HasResidentFromSameHomeThatMeetCriteria(character, r => !r.isDead && r.traitContainer.HasTrait("Enslaved"))) {
-                chance -= 11;
+                chance -= 7;
             }
             if (HasFoodPileInHomeStorage(character)) {
-                chance -= 6;
+                chance -= 4;
             }
             if (GameUtilities.RollChance(chance)) {
                 if (isInHome) {
                     Character prisoner = GetFirstPrisonerAtHome(character);
                     if (prisoner == null && !HasResidentFromSameHomeThatMeetCriteria(character, r => r.jobQueue.HasJob(JOB_TYPE.MONSTER_ABDUCT))) {
-                    character.behaviourComponent.SetAbductionTarget(null);
+                        character.behaviourComponent.SetAbductionTarget(null);
 
-                    //set abduction target if none, and chance met
-                    if (character.behaviourComponent.currentAbductTarget == null && character.currentRegion != null) {
+                        //set abduction target if none, and chance met
+                        if (character.behaviourComponent.currentAbductTarget == null && character.currentRegion != null) {
                             List<Character> characterChoices = ObjectPoolManager.Instance.CreateNewCharactersList();
                             for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                                 Character characterAtRegion = character.currentRegion.charactersAtLocation[i];

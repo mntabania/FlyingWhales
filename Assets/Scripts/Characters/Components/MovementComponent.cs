@@ -517,7 +517,7 @@ public class MovementComponent : CharacterComponent {
             GameDate expiryDate = GameManager.Instance.Today();
             expiryDate.AddDays(1);
             SchedulingManager.Instance.AddEntry(expiryDate, () => RemoveStructureToAvoid(locationStructure), this);
-            if (owner.homeSettlement != null && GameUtilities.RollChance(25) && owner.faction != null && !owner.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, locationStructure)) {
+            if (owner.homeSettlement != null && owner.faction != null && !owner.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, locationStructure)) {
                 if (locationStructure.settlementLocation == null || locationStructure.settlementLocation.HasResidentThatMeetsCriteria(resident => resident != owner && !resident.isDead
                     && (resident.faction == null || owner.faction == null || owner.faction.IsHostileWith(resident.faction)))) {
                     owner.faction.partyQuestBoard.CreateExterminatePartyQuest(owner, owner.homeSettlement, locationStructure, owner.homeSettlement);
