@@ -35,7 +35,7 @@ namespace Tutorial {
                     new PlayerActionContextMenuShown(IsCharacterValid, $"Right click on Afflicted Villager")
                         .SetObjectsToCenter(TriggerFlawTargetCenterGetter),
                     // new ButtonClickedStep("Trigger Flaw", "Click on Trigger Flaw")
-                    new FlawTriggeredStep("Choose Trigger Flaw then Vampirism", "Vampire")
+                    new FlawTriggeredStep("Choose Trigger Flaw then Vampire", "Vampire")
                         .SetOnTopmostActions(OnTopMostTriggerVampiric, OnNoLongerTopMostTriggerVampiric)
                         .SetCompleteAction(OnCompleteTriggerFlaw)
                 )

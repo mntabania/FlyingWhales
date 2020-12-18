@@ -37,20 +37,20 @@ public class ContextMenuUIController : MVCUIController, ContextMenuUIView.IListe
 	public void SetOnHoverOutAction(System.Action<IContextMenuItem> p_onHoverOutAction) {
 		_onHoverOutAction = p_onHoverOutAction;
 	}
-	private void LateUpdate() {
-		if (m_hasVectorPositionToFollow) {
-			if (m_isScreenVectorPosition) {
-				m_contextMenuUIView.SetPosition(m_vectorPositionToFollow, _canvas);
-			} else {
-				Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(m_camera, m_vectorPositionToFollow);
-				m_contextMenuUIView.SetPosition(screenPos, _canvas);	
-			}
-		} else if (!ReferenceEquals(m_transformToFollow, null)) {
-            //follow current target
-            Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(m_camera, m_transformToFollow.position); 
-            m_contextMenuUIView.SetPosition(screenPos, _canvas);
-		}
-	}
+	// private void LateUpdate() {
+	// 	if (m_hasVectorPositionToFollow) {
+	// 		if (m_isScreenVectorPosition) {
+	// 			m_contextMenuUIView.SetPosition(m_vectorPositionToFollow, _canvas);
+	// 		} else {
+	// 			Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(m_camera, m_vectorPositionToFollow);
+	// 			m_contextMenuUIView.SetPosition(screenPos, _canvas);	
+	// 		}
+	// 	} else if (!ReferenceEquals(m_transformToFollow, null)) {
+ //            //follow current target
+ //            Vector3 screenPos = RectTransformUtility.WorldToScreenPoint(m_camera, m_transformToFollow.position); 
+ //            m_contextMenuUIView.SetPosition(screenPos, _canvas);
+	// 	}
+	// }
 	public override void HideUI() {
 		base.HideUI();
 		m_contextMenuUIView.HideColumn(1);
@@ -119,7 +119,7 @@ public class ContextMenuUIController : MVCUIController, ContextMenuUIView.IListe
 	}
 	public void OnHoverOverParentDisplay() { }
 	public void OnHoverOutParentDisplay() {
-		m_contextMenuUIView.HideColumn(1);
+		// m_contextMenuUIView.HideColumn(1);
 	}
 	
 }

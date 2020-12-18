@@ -424,15 +424,15 @@ public class UIManager : BaseMonoBehaviour {
         } else {
             smallInfoLbl.text = message;
         }
-        
+
         PositionTooltip(pos, smallInfoGO, smallInfoRT);
         
         if (!IsSmallInfoShowing()) {
+            // if (gameObject.activeInHierarchy) {
+            //     StartCoroutine(ReLayout(smallInfoBGParentLG));
+            //     StartCoroutine(ReLayout(smallInfoVerticalLG));    
+            // }
             smallInfoGO.SetActive(true);
-            if (gameObject.activeInHierarchy) {
-                StartCoroutine(ReLayout(smallInfoBGParentLG));
-                StartCoroutine(ReLayout(smallInfoVerticalLG));    
-            }
         }
     }
     private IEnumerator ReLayout(LayoutGroup layoutGroup) {
@@ -1854,7 +1854,6 @@ public class UIManager : BaseMonoBehaviour {
         }
 
         fullDescription = $"{fullDescription}\n\n{additionalText}";
-        
         ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);
     }
     private bool HasEnoughMana(SpellData spellData) {

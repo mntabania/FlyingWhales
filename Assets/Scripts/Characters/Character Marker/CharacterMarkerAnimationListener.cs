@@ -64,7 +64,7 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
         }
     }
     public void CreateProjectile(IDamageable target, CombatState state, Action<IDamageable, CombatState, Projectile> onHitAction = null) {
-        if (target == null || target.currentHP <= 0) {
+        if (target == null || target.currentHP <= 0 || target.projectileReceiver == null) {
             return;
         }
         //Create projectile here and set the on hit action to combat state OnAttackHit
