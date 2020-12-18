@@ -9,6 +9,7 @@ public class Assumption : IReactable {
     public Character characterThatCreatedAssumption { get; private set; }
     public Character targetCharacter { get; private set; }
     public ActualGoapNode assumedAction { get; private set; }
+    public Log assumptionLog { get; private set; }
 
     #region getters
     public string name => assumedAction.name;
@@ -31,6 +32,9 @@ public class Assumption : IReactable {
 
     public void SetAssumedAction(ActualGoapNode assumedAction) {
         this.assumedAction = assumedAction;
+    }
+    public void SetAssumptionLog(Log p_log) {
+        assumptionLog = p_log;
     }
 
     #region IReactable
@@ -66,17 +70,20 @@ public class Assumption : IReactable {
 public class SaveDataAssumption : SaveData<Assumption> {
     public string characterThatCreatedAssumptionID;
     public string targetCharacterID;
+    public Log assumptionLog;
 
     #region Overrides
     public override void Save(Assumption data) {
         characterThatCreatedAssumptionID = data.characterThatCreatedAssumption.persistentID;
         targetCharacterID = data.targetCharacter.persistentID;
+        assumptionLog = data.assumptionLog;
     }
 
     public override Assumption Load() {
         Character characterThatCreatedAssumption = CharacterManager.Instance.GetCharacterByPersistentID(characterThatCreatedAssumptionID);
         Character targetCharacter = CharacterManager.Instance.GetCharacterByPersistentID(targetCharacterID);
         Assumption rumor = new Assumption(characterThatCreatedAssumption, targetCharacter);
+        rumor.SetAssumptionLog(assumptionLog);
         return rumor;
     }
     #endregion

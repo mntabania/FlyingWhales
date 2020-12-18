@@ -2988,6 +2988,7 @@
               <e p="PlagueCaring.cs" t="Include" />
               <e p="Plagued.cs" t="Include" />
               <e p="Poisoned.cs" t="Include" />
+              <e p="Poisonous.cs" t="Include" />
               <e p="Prisoner.cs" t="Include" />
               <e p="Psychopath.cs" t="Include" />
               <e p="Pyrophobic.cs" t="Include" />
@@ -3013,7 +3014,6 @@
               <e p="Unfaithful.cs" t="Include" />
               <e p="Vampire.cs" t="Include" />
               <e p="Venomous.cs" t="Include" />
-              <e p="Vigilant.cs" t="Include" />
               <e p="WalkerZombie.cs" t="Include" />
               <e p="Webbed.cs" t="Include" />
               <e p="Wet.cs" t="Include" />

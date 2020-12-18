@@ -11,7 +11,7 @@ public class ActionIntel : IIntel, IDisposable {
 
     #region getters
     public IReactable reactable => node;
-    public Log log => node.descriptionLog;
+    public Log log => node.isAssumption? node.assumption.assumptionLog : node.descriptionLog;
     public Character actor => node.actor;
     public IPointOfInterest target => node.target;
     #endregion
