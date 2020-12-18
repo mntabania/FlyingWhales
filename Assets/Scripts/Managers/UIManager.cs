@@ -1805,7 +1805,7 @@ public class UIManager : BaseMonoBehaviour {
         
         ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);
     }
-    private void OnHoverPlayerAction(SpellData spellData, UIHoverPosition p_hoverPosition, IPointOfInterest p_target) {
+    private void OnHoverPlayerAction(SpellData spellData, UIHoverPosition p_hoverPosition, IPlayerActionTarget p_target) {
         string title = $"{spellData.name}";
         string fullDescription = spellData.description;
         int charges = spellData.charges;
@@ -1830,7 +1830,7 @@ public class UIManager : BaseMonoBehaviour {
 
         string additionalText = string.Empty;
         if (spellData is PlayerAction) {
-            IPointOfInterest activePOI = p_target;
+            IPlayerActionTarget activePOI = p_target;
             if (activePOI != null) {
                 if (activePOI is Character activeCharacter) {
                     if (spellData.CanPerformAbilityTowards(activeCharacter) == false) {
@@ -1849,6 +1849,18 @@ public class UIManager : BaseMonoBehaviour {
                 } else if (activePOI is TileObject activeTileObject) {
                     if (activeTileObject is AnkhOfAnubis ankh && ankh.isActivated && spellData.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT) {
                         additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Activated Ankh can no longer be seized.")}\n";
+                    }
+                } else if (activePOI is BaseSettlement activeSettlement) {
+                    if (spellData.CanPerformAbilityTowards(activeSettlement) == false) {
+                        string wholeReason = spellData
+                            .GetReasonsWhyCannotPerformAbilityTowards(activeSettlement);
+                        if (string.IsNullOrEmpty(wholeReason) == false) {
+                            string[] reasons = wholeReason.Split(',');
+                            for (int i = 0; i < reasons.Length; i++) {
+                                string reason = reasons[i];
+                                additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText(reason)}\n";
+                            }
+                        }
                     }
                 }
             }
