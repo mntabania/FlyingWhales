@@ -995,10 +995,10 @@ namespace UtilityScripts {
             return $"<color=#FE3E83>{str}</color>";
         }
         public static string MonsterIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Monster_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Monster_Icon\">";
         }
         public static string VillagerIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Villager_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Villager_Icon\">";
         }
         public static string ManaIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Mana_Icon\"> ";
@@ -1013,22 +1013,22 @@ namespace UtilityScripts {
             return "<sprite=\"Text_Sprites\" name=\"Cooldown_Icon\"> ";
         }
         public static string CultistIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Cultist_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Cultist_Icon\">";
         }
         public static string LeaderIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Leader_Icon\"> ";
         }
         public static string DemonIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Demon_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Demon_Icon\">";
         }
         public static string UndeadIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Undead_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Undead_Icon\">";
         }
         public static string PlagueIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Plague_Icon\">";
         }
         public static string RatmanIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Ratman_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Ratman_Icon\">";
         }
         public static string ColorizeAction(string actionString) {
             return $"<color=#f87f43>{actionString}</color>";
