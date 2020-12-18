@@ -193,7 +193,7 @@ public class CombatManager : BaseMonoBehaviour {
         AudioManager.Instance.CreatePoisonExplosionAudio(targetTile);
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Poison_Explosion);
         List<ITraitable> traitables = new List<ITraitable>();
-        List<LocationGridTile> affectedTiles = targetTile.GetTilesInRadius(radius, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> affectedTiles = targetTile.GetTilesInRadius(radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         float damagePercentage = 0.1f * stacks;
         if (damagePercentage > 1) {
             damagePercentage = 1;

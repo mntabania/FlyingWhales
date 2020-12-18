@@ -201,6 +201,9 @@ MonoBehaviour:
   tglDarkBlessing: {fileID: 3869888760806246606}
   tglEmpower: {fileID: 3869888761091647173}
   tglCleanseFlaws: {fileID: 3869888760880860016}
+  hvrDarkBlessing: {fileID: 5281366723775158243}
+  hvrEmpower: {fileID: 1704681043505140400}
+  hvrCleanseFlaws: {fileID: 420018204133387202}
   coverDarkBlessing: {fileID: 6491087295416569019}
   coverEmpower: {fileID: 5765105566624097567}
   coverCleanseFlaws: {fileID: 230931520293085026}
@@ -1046,6 +1049,7 @@ GameObject:
   - component: {fileID: 3869888760806246592}
   - component: {fileID: 3869888760806246593}
   - component: {fileID: 3869888760806246606}
+  - component: {fileID: 5281366723775158243}
   m_Layer: 5
   m_Name: Dark Blessing
   m_TagString: Untagged
@@ -1160,6 +1164,28 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+--- !u!114 &5281366723775158243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3869888760806246604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &3869888760880860030
 GameObject:
   m_ObjectHideFlags: 0
@@ -1172,6 +1198,7 @@ GameObject:
   - component: {fileID: 3869888760880860018}
   - component: {fileID: 3869888760880860019}
   - component: {fileID: 3869888760880860016}
+  - component: {fileID: 420018204133387202}
   m_Layer: 5
   m_Name: Cleanse Flaws
   m_TagString: Untagged
@@ -1286,6 +1313,28 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+--- !u!114 &420018204133387202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3869888760880860030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &3869888761048467530
 GameObject:
   m_ObjectHideFlags: 0
@@ -1432,6 +1481,7 @@ GameObject:
   - component: {fileID: 3869888761091647175}
   - component: {fileID: 3869888761091647172}
   - component: {fileID: 3869888761091647173}
+  - component: {fileID: 1704681043505140400}
   m_Layer: 5
   m_Name: Empower
   m_TagString: Untagged
@@ -1546,6 +1596,28 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_IsOn: 0
+--- !u!114 &1704681043505140400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3869888761091647171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!1 &3869888761135149292
 GameObject:
   m_ObjectHideFlags: 0

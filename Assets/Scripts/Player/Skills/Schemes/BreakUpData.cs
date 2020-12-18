@@ -7,7 +7,7 @@ using Logs;
 public class BreakUpData : SchemeData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.BREAK_UP;
     public override string name => "Break Up";
-    public override string description => "Break Up";
+    public override string description => "Force a Villager to break up with his/her lover.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SCHEME;
 
     public BreakUpData() : base() {
@@ -66,7 +66,7 @@ public class BreakUpData : SchemeData {
     }
     public override string GetSuccessRateMultiplierText(Character p_targetCharacter) {
         if (p_targetCharacter.traitContainer.HasTrait("Unfaithful")) {
-            return $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Unfaithful: x2";
+            return $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Unfaithful: <color=yellow>x2</color>";
         }
         return base.GetSuccessRateMultiplierText(p_targetCharacter);
     }

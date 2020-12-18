@@ -19,12 +19,12 @@ namespace Traits {
         }
 
         #region Override
-        public override void OnAddTrait(ITraitable addedTo) {
-            base.OnAddTrait(addedTo);
-            for (int i = 0; i < 5; i++) {
-                addedTo.traitContainer.AddTrait(addedTo, "Poisoned", bypassElementalChance: true, overrideDuration: 0);
-            }
-        }
+        //public override void OnAddTrait(ITraitable addedTo) {
+        //    base.OnAddTrait(addedTo);
+        //    for (int i = 0; i < 5; i++) {
+        //        addedTo.traitContainer.AddTrait(addedTo, "Poisoned", bypassElementalChance: true, overrideDuration: 0);
+        //    }
+        //}
         public override bool OnDeath(Character character) {
             if (character.traitContainer.HasTrait("Poisoned")) {
                 int poisonStacks = character.traitContainer.GetStacks("Poisoned");
@@ -32,8 +32,8 @@ namespace Traits {
                 if (character.gridTileLocation != null) {
                     CombatManager.Instance.PoisonExplosion(character, character.gridTileLocation, poisonStacks, character, 2);
                 }
+                character.SetDestroyMarkerOnDeath(true);
             }
-            character.SetDestroyMarkerOnDeath(true);
             return base.OnDeath(character);
         }
         #endregion

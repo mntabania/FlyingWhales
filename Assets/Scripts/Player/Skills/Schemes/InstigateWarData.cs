@@ -7,7 +7,7 @@ using Logs;
 public class InstigateWarData : SchemeData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.INSTIGATE_WAR;
     public override string name => "Instigate War";
-    public override string description => "Instigate War";
+    public override string description => "Force a Faction Leader to declare war on another faction.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SCHEME;
 
     public InstigateWarData() : base() {
@@ -66,14 +66,14 @@ public class InstigateWarData : SchemeData {
         string text = string.Empty;
         if (p_targetCharacter.faction != null && p_targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {
             if (text != string.Empty) { text += "\n"; }
-            text += $"{p_targetCharacter.faction.name} has Peaceful ideology: x0.25";
+            text += $"{p_targetCharacter.faction.name} has Peaceful ideology: <color=yellow>x0.25</color>";
         } else if (p_targetCharacter.traitContainer.HasTrait("Diplomatic")) {
             if (text != string.Empty) { text += "\n"; }
-            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Diplomatic: x0.5";
+            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Diplomatic: <color=yellow>x0.5</color>";
         }
         if (p_targetCharacter.faction != null && p_targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
             if (text != string.Empty) { text += "\n"; }
-            text += $"{p_targetCharacter.faction.name} has Warmonger ideology: x3";
+            text += $"{p_targetCharacter.faction.name} has Warmonger ideology: <color=yellow>x3</color>";
         }
         if (text != string.Empty) {
             return text;

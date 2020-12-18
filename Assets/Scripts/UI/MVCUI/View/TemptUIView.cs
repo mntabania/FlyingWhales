@@ -12,6 +12,10 @@ public class TemptUIView : MVCUIView {
         void OnToggleDarkBlessing(bool p_isOn);
         void OnToggleEmpower(bool p_isOn);
         void OnToggleCleanseFlaws(bool p_isOn);
+        void OnHoverDarkBlessing();
+        void OnHoverEmpower();
+        void OnHoverCleanseFlaws();
+        void OnHoverOutTemptation();
         void OnClickClose();
         void OnClickConfirm();
     }
@@ -45,6 +49,10 @@ public class TemptUIView : MVCUIView {
         UIModel.onToggleDarkBlessing += p_listener.OnToggleDarkBlessing;
         UIModel.onToggleEmpower += p_listener.OnToggleEmpower;
         UIModel.onToggleCleanseFlaws += p_listener.OnToggleCleanseFlaws;
+        UIModel.onHoverDarkBlessing += p_listener.OnHoverDarkBlessing;
+        UIModel.onHoverEmpower += p_listener.OnHoverEmpower;
+        UIModel.onHoverCleanseFlaws += p_listener.OnHoverCleanseFlaws;
+        UIModel.onHoverOutTemptation += p_listener.OnHoverOutTemptation;
         UIModel.onClickClose += p_listener.OnClickClose;
         UIModel.onClickConfirm += p_listener.OnClickConfirm;
     }
@@ -52,6 +60,10 @@ public class TemptUIView : MVCUIView {
         UIModel.onToggleDarkBlessing -= p_listener.OnToggleDarkBlessing;
         UIModel.onToggleEmpower -= p_listener.OnToggleEmpower;
         UIModel.onToggleCleanseFlaws -= p_listener.OnToggleCleanseFlaws;
+        UIModel.onHoverDarkBlessing -= p_listener.OnHoverDarkBlessing;
+        UIModel.onHoverEmpower -= p_listener.OnHoverEmpower;
+        UIModel.onHoverCleanseFlaws -= p_listener.OnHoverCleanseFlaws;
+        UIModel.onHoverOutTemptation -= p_listener.OnHoverOutTemptation;
         UIModel.onClickClose -= p_listener.OnClickClose;
         UIModel.onClickConfirm -= p_listener.OnClickConfirm;
     }

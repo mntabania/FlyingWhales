@@ -7,7 +7,7 @@ using Logs;
 public class LeaveFactionData : SchemeData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.LEAVE_FACTION;
     public override string name => "Leave Faction";
-    public override string description => "Leave Faction";
+    public override string description => "Convince a Villager to leave their current Faction.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SCHEME;
 
     public LeaveFactionData() : base() {

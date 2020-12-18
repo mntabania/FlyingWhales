@@ -10,6 +10,8 @@ public class TemptUIController : MVCUIController, TemptUIView.IListener {
     private List<TEMPTATION> _chosenTemptations;
     private System.Action<List<TEMPTATION>> _onConfirmAction;
 
+    private Character _targetCharacter;
+
     private void Awake() {
         _chosenTemptations = new List<TEMPTATION>();
     }
@@ -41,6 +43,7 @@ public class TemptUIController : MVCUIController, TemptUIView.IListener {
     }
     
     public void ShowTemptationPopup(Character p_target, Action<List<TEMPTATION>> p_onConfirmAction, List<TEMPTATION> p_alreadyChosenTemptations) {
+        _targetCharacter = p_target;
         ShowUI();
         m_temptUIView.UpdateShownItems(p_target, p_alreadyChosenTemptations);
         _onConfirmAction = p_onConfirmAction;
@@ -73,6 +76,21 @@ public class TemptUIController : MVCUIController, TemptUIView.IListener {
             _chosenTemptations.Remove(TEMPTATION.Cleanse_Flaws);
             Debug.Log("Removed Cleanse Flaws");
         }
+    }
+    public void OnHoverDarkBlessing() {
+        string text = $"Offer to grant Dark Blessing to {_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} - a promise to protect them from further interferences.";
+        UIManager.Instance.ShowSmallInfo(text);
+    }
+    public void OnHoverEmpower() {
+        string text = $"Offer to make {_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} mighty - increasing HP and Strength.";
+        UIManager.Instance.ShowSmallInfo(text);
+    }
+    public void OnHoverCleanseFlaws() {
+        string text = $"Offer to remove all Flaws of {_targetCharacter.visuals.GetCharacterNameWithIconAndColor()}.";
+        UIManager.Instance.ShowSmallInfo(text);
+    }
+    public void OnHoverOutTemptation() {
+        UIManager.Instance.HideSmallInfo();
     }
     public void OnClickClose() {
         HideUI();

@@ -7,7 +7,7 @@ using Logs;
 public class OverthrowLeaderData : SchemeData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.OVERTHROW_LEADER;
     public override string name => "Overthrow Leader";
-    public override string description => "Overthrow Leader";
+    public override string description => "Convince a Successor to depose the current Faction Leader.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SCHEME;
 
     public OverthrowLeaderData() : base() {
@@ -57,11 +57,11 @@ public class OverthrowLeaderData : SchemeData {
         string text = string.Empty;
         if (p_targetCharacter.traitContainer.HasTrait("Treacherous")) {
             if (text != string.Empty) { text += "\n"; }
-            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Treacherous: x2";
+            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Treacherous: <color=yellow>x2</color>";
         }
         if (p_targetCharacter.traitContainer.HasTrait("Ambitious")) {
             if (text != string.Empty) { text += "\n"; }
-            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Ambitious: x2";
+            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Ambitious: <color=yellow>x2</color>";
         }
         if (text != string.Empty) {
             return text;
