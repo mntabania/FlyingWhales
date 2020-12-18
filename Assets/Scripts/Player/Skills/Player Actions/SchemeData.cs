@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -66,11 +67,17 @@ public class SchemeData : PlayerAction {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if(target is Character character) {
+            if (!targetTypes.Contains(SPELL_TARGET.CHARACTER)) {
+                return false;
+            }
             if (!character.isNormalCharacter || (character.race == RACE.RATMAN && (character.faction == null || !character.faction.isMajorNonPlayer))) {
                 return false;
             }
         } else if (target is BaseSettlement settlement) {
-            if(settlement.locationType != LOCATION_TYPE.VILLAGE || !(settlement is NPCSettlement)) {
+            if (!targetTypes.Contains(SPELL_TARGET.SETTLEMENT)) {
+                return false;
+            }
+            if (settlement.locationType != LOCATION_TYPE.VILLAGE || !(settlement is NPCSettlement)) {
                 return false;
             }
         }

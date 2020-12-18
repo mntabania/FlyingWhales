@@ -277,6 +277,8 @@ namespace UtilityScripts {
                             if (obj is Character character) {
                                 wordToReplace = $"{wordToReplace}{character.visuals.GetCharacterStringIcon()}" +
                                                 $"{ColorizeName($"<b><link={logFiller.GetLinkText()}>{logFiller.value}</link></b>", CharacterManager.Instance.GetCharacterNameColorHex(character))}";
+                            } else if (obj is Faction faction) {
+                                wordToReplace = $"{wordToReplace}{ColorizeName($"<b><link={i}>{logFiller.value}</link></b>", FactionManager.Instance.GetFactionNameColorHex())}";
                             } else {
                                 wordToReplace = $"{wordToReplace}{ColorizeName($"<b><link={logFiller.GetLinkText()}>{logFiller.value}</link></b>")}";    
                             }
@@ -308,7 +310,9 @@ namespace UtilityScripts {
                             wordToReplace = $"<b><link={logFiller.GetLinkText()}>{logFiller.value}</link></b>";
                             if (obj is Character c) {
                                 wordToReplace = ColorizeName(wordToReplace, CharacterManager.Instance.GetCharacterNameColorHex(c));
-                            } else if (obj is TileObject || obj is Faction) {
+                            } else if (obj is Faction) {
+                                wordToReplace = ColorizeName(wordToReplace, FactionManager.Instance.GetFactionNameColorHex());
+                            } else if (obj is TileObject) {
                                 wordToReplace = ColorizeName(wordToReplace);
                             }
                             if (obj is Character character) {
@@ -513,6 +517,8 @@ namespace UtilityScripts {
                             if (logFiller.obj is Character character) {
                                 wordToReplace = $"{wordToReplace}{character.visuals.GetCharacterStringIcon()}" +
                                                 $"{ColorizeName($"<b><link={i}>{logFiller.value}</link></b>", CharacterManager.Instance.GetCharacterNameColorHex(character))}";
+                            } else if (logFiller.obj is Faction faction) {
+                                wordToReplace = $"{wordToReplace}{ColorizeName($"<b><link={i}>{logFiller.value}</link></b>", FactionManager.Instance.GetFactionNameColorHex())}";
                             } else {
                                 wordToReplace = $"{wordToReplace}{ColorizeName($"<b><link={i}>{logFiller.value}</link></b>")}";    
                             }
@@ -543,7 +549,9 @@ namespace UtilityScripts {
                             wordToReplace = $"<b><link={i}>{logFiller.value}</link></b>";
                             if (logFiller.obj is Character c) {
                                 wordToReplace = ColorizeName(wordToReplace, CharacterManager.Instance.GetCharacterNameColorHex(c));
-                            } else if (logFiller.obj is TileObject || logFiller.obj is Faction) {
+                            } else if (logFiller.obj is Faction) {
+                                wordToReplace = ColorizeName(wordToReplace, FactionManager.Instance.GetFactionNameColorHex());
+                            } else if (logFiller.obj is TileObject) {
                                 wordToReplace = ColorizeName(wordToReplace);
                             }
                             if (logFiller.obj is Character character) {
@@ -1039,6 +1047,9 @@ namespace UtilityScripts {
         }
         public static string ColorizeAndBoldName(string name) {
             return $"<b>{ColorizeName(name)}</b>";
+        }
+        public static string ColorizeAndBoldName(string name, string color) {
+            return $"<b>{ColorizeName(name, color)}</b>";
         }
         public static string GetFirstFewEmotionsAndComafy(string emotionsStr, int emotionCount) {
             string[] emotions = emotionsStr.Split(' ');

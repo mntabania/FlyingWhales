@@ -559,7 +559,7 @@ public class CrimeData : ISavable {
                 if(i > 0) {
                     text += ", ";
                 }
-                text += factionsThatConsidersWanted[i].name;
+                text += factionsThatConsidersWanted[i].nameWithColor;
             }
         }
         return text;

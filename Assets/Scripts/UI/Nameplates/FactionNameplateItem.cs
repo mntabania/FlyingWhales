@@ -15,7 +15,7 @@ public class FactionNameplateItem : NameplateItem<Faction> {
     public override void SetObject(Faction o) {
         base.SetObject(o);
         factionData = o;
-        mainLbl.text = o.name;
+        mainLbl.text = o.nameWithColor;
         subLbl.text = o.GetRaceText();
         emblemImg.sprite = o.emblem;
     }

@@ -25,6 +25,7 @@ public class LeaveFactionData : SchemeData {
             bool isNonVagrant = character.faction != null && character.faction.isMajorNonPlayer;
             bool isRatman = character.isConsideredRatman;
             if ((isNonVagrant || isRatman) && !character.isFactionLeader && !character.isSettlementRuler) {
+                return true;
             } else {
                 return false;
             }

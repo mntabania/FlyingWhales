@@ -41,7 +41,7 @@ public class RebellionData : SchemeData {
         }
     }
     protected override void PopulateSchemeConversation(List<ConversationData> conversationList, Character character, object target, bool isSuccessful) {
-        ConversationData data = ObjectPoolManager.Instance.CreateNewConversationData($"You must rebel against {character.faction.name} and start your own Faction.", null, DialogItem.Position.Right);
+        ConversationData data = ObjectPoolManager.Instance.CreateNewConversationData($"You must rebel against {character.faction.nameWithColor} and start your own Faction.", null, DialogItem.Position.Right);
         conversationList.Add(data);
         base.PopulateSchemeConversation(conversationList, character, target, isSuccessful);
     }

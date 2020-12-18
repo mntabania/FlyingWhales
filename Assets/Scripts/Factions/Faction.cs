@@ -54,6 +54,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public bool isNonMajorOrPlayer => !isMajorFaction || isPlayerFaction;
     public JobTriggerComponent jobTriggerComponent => factionJobTriggerComponent;
     public bool isPlayerFaction => factionType.type == FACTION_TYPE.Demons;
+    public string nameWithColor => GetNameWithColor();
     public JOB_OWNER ownerType => JOB_OWNER.FACTION;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Faction;
     public System.Type serializedData => typeof(SaveDataFaction);
@@ -604,6 +605,13 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     private void OnDayStarted() {
         ClearAllBlacklistToAllExistingJobs();
         successionComponent.OnDayStarted();
+    }
+    private string GetNameWithColor() {
+        if (FactionManager.Instance != null) {
+            string color = FactionManager.Instance.GetFactionNameColorHex();
+            return $"<color=#{color}>{name}</color>";
+        }
+        return name;
     }
     #endregion
 

@@ -31,6 +31,11 @@ public class FactionManager : BaseMonoBehaviour {
     [SerializeField] private Sprite cultFactionEmblem;
     [SerializeField] private Sprite ratmenFactionEmblem;
 
+    [Space(10)]
+    [Header("Character Name Colors")]
+    public Color factionNameColor;
+    private string _factionNameColorHex;
+
     private List<Sprite> _usedEmblems = new List<Sprite>();
 
     private Dictionary<FACTION_SUCCESSION_TYPE, FactionSuccession> _factionSuccessions = new Dictionary<FACTION_SUCCESSION_TYPE, FactionSuccession>();
@@ -58,6 +63,7 @@ public class FactionManager : BaseMonoBehaviour {
         Instance = this;
     }
     private void Start() {
+        _factionNameColorHex = ColorUtility.ToHtmlStringRGB(factionNameColor);
         ConstructFactionSuccessionTypes();
     }
     protected override void OnDestroy() {
@@ -297,6 +303,9 @@ public class FactionManager : BaseMonoBehaviour {
     }
     public List<Faction> GetMajorFactionWithRace(RACE race) {
         return DatabaseManager.Instance.factionDatabase.GetMajorFactionWithRace(race);
+    }
+    public string GetFactionNameColorHex() {
+        return _factionNameColorHex;
     }
     #endregion
 

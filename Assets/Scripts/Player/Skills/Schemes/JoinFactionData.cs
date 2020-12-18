@@ -48,7 +48,7 @@ public class JoinFactionData : SchemeData {
     }
     protected override void PopulateSchemeConversation(List<ConversationData> conversationList, Character character, object target, bool isSuccessful) {
         if (target is Faction targetFaction) {
-            ConversationData data = ObjectPoolManager.Instance.CreateNewConversationData($"Why don't you try and join {targetFaction.name}?", null, DialogItem.Position.Right);
+            ConversationData data = ObjectPoolManager.Instance.CreateNewConversationData($"Why don't you try and join {targetFaction.nameWithColor}?", null, DialogItem.Position.Right);
             conversationList.Add(data);
         }
         base.PopulateSchemeConversation(conversationList, character, target, isSuccessful);

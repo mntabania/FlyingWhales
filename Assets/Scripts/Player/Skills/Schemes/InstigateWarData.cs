@@ -46,7 +46,7 @@ public class InstigateWarData : SchemeData {
     }
     protected override void PopulateSchemeConversation(List<ConversationData> conversationList, Character character, object target, bool isSuccessful) {
         if (target is Faction targetFaction) {
-            ConversationData data = ObjectPoolManager.Instance.CreateNewConversationData($"I need you to declare war on {targetFaction.name}.", null, DialogItem.Position.Right);
+            ConversationData data = ObjectPoolManager.Instance.CreateNewConversationData($"I need you to declare war on {targetFaction.nameWithColor}.", null, DialogItem.Position.Right);
             conversationList.Add(data);
         }
         base.PopulateSchemeConversation(conversationList, character, target, isSuccessful);
@@ -66,14 +66,14 @@ public class InstigateWarData : SchemeData {
         string text = string.Empty;
         if (p_targetCharacter.faction != null && p_targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {
             if (text != string.Empty) { text += "\n"; }
-            text += $"{p_targetCharacter.faction.name} has Peaceful ideology: <color=yellow>x0.25</color>";
+            text += $"{p_targetCharacter.faction.nameWithColor} is Peaceful: <color=yellow>x0.25</color>";
         } else if (p_targetCharacter.traitContainer.HasTrait("Diplomatic")) {
             if (text != string.Empty) { text += "\n"; }
             text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Diplomatic: <color=yellow>x0.5</color>";
         }
         if (p_targetCharacter.faction != null && p_targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
             if (text != string.Empty) { text += "\n"; }
-            text += $"{p_targetCharacter.faction.name} has Warmonger ideology: <color=yellow>x3</color>";
+            text += $"{p_targetCharacter.faction.nameWithColor} is Warmonger: <color=yellow>x3</color>";
         }
         if (text != string.Empty) {
             return text;
