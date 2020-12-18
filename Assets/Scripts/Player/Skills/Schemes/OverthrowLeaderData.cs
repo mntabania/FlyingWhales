@@ -57,11 +57,11 @@ public class OverthrowLeaderData : SchemeData {
         string text = string.Empty;
         if (p_targetCharacter.traitContainer.HasTrait("Treacherous")) {
             if (text != string.Empty) { text += "\n"; }
-            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Treacherous: <color=yellow>x2</color>";
+            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Treacherous: <color=white>x2</color>";
         }
         if (p_targetCharacter.traitContainer.HasTrait("Ambitious")) {
             if (text != string.Empty) { text += "\n"; }
-            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Ambitious: <color=yellow>x2</color>";
+            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Ambitious: <color=white>x2</color>";
         }
         if (text != string.Empty) {
             return text;

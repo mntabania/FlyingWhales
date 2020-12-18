@@ -39,7 +39,7 @@ public class LeaveHomeData : SchemeData {
         p_newSuccessRate *= 2f;
     }
     public override string GetSuccessRateMultiplierText(Character p_targetCharacter) {
-        return $"Leave Home: <color=yellow>x2</color>";
+        return $"Leave Home: <color=white>x2</color>";
     }
     #endregion
 }

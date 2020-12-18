@@ -66,14 +66,14 @@ public class InstigateWarData : SchemeData {
         string text = string.Empty;
         if (p_targetCharacter.faction != null && p_targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {
             if (text != string.Empty) { text += "\n"; }
-            text += $"{p_targetCharacter.faction.nameWithColor} is Peaceful: <color=yellow>x0.25</color>";
+            text += $"{p_targetCharacter.faction.nameWithColor} is Peaceful: <color=white>x0.25</color>";
         } else if (p_targetCharacter.traitContainer.HasTrait("Diplomatic")) {
             if (text != string.Empty) { text += "\n"; }
-            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Diplomatic: <color=yellow>x0.5</color>";
+            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Diplomatic: <color=white>x0.5</color>";
         }
         if (p_targetCharacter.faction != null && p_targetCharacter.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
             if (text != string.Empty) { text += "\n"; }
-            text += $"{p_targetCharacter.faction.nameWithColor} is Warmonger: <color=yellow>x3</color>";
+            text += $"{p_targetCharacter.faction.nameWithColor} is Warmonger: <color=white>x3</color>";
         }
         if (text != string.Empty) {
             return text;

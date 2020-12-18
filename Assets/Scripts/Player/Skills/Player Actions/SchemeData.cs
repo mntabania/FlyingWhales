@@ -15,7 +15,7 @@ public class SchemeData : PlayerAction {
     
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SCHEME;
     public override string name => "Scheme";
-    public override string description => $"Scheme";
+    public override string description => $"This Action can be used to manipulate events.";
 
     public SchemeData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };

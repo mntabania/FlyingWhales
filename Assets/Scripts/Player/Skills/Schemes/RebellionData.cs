@@ -63,15 +63,15 @@ public class RebellionData : SchemeData {
         if (p_targetCharacter.faction != null && p_targetCharacter.faction.leader != null && p_targetCharacter.faction.leader is Character factionLeader && p_targetCharacter != factionLeader) {
             if (p_targetCharacter.relationshipContainer.IsFriendsWith(factionLeader)) {
                 if(text != string.Empty) { text += "\n"; }
-                text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is friends with the Faction Leader: <color=yellow>x0.2</color>";
+                text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is friends with the Faction Leader: <color=white>x0.2</color>";
             } else if (p_targetCharacter.relationshipContainer.IsEnemiesWith(factionLeader)) {
                 if (text != string.Empty) { text += "\n"; }
-                text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is enemies with the Faction Leader: <color=yellow>x3</color>";
+                text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is enemies with the Faction Leader: <color=white>x3</color>";
             }
         }
         if (p_targetCharacter.traitContainer.HasTrait("Treacherous")) {
             if (text != string.Empty) { text += "\n"; }
-            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Treacherous: <color=yellow>x2</color>";
+            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Treacherous: <color=white>x2</color>";
         }
         if (text != string.Empty) {
             return text;

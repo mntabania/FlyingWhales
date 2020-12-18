@@ -7,7 +7,7 @@ using UnityEngine;
 public class HotheadedData : AfflictData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.HOTHEADED;
     public override string name { get { return "Hotheaded"; } }
-    public override string description { get { return "Hotheaded"; } }
+    public override string description { get { return "This Affliction will make the Villager more prone to angry fits."; } }
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.AFFLICTION;
 
     public HotheadedData() : base() {

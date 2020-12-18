@@ -279,10 +279,10 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
         RemoveSchemeUIItem(item);
     }
     private void OnHoverEnterSchemeUIItem(SchemeUIItem item) {
-        string successRate = $"<b><size=24>Success Rate: <color=green>+{item.successRate.ToString("N1")}%</color></size></b>";
+        string successRate = $"<b><size=18>Success Rate: <color=green>+{item.successRate.ToString("N1")}%</color></size></b>";
         string baseText = $"Base Value: <color=white>+{item.baseSuccessRate.ToString("N1")}%</color>";
         string multiplierText = _schemeUsed.GetSuccessRateMultiplierText(_targetCharacter);
-        string text = successRate + "\n" + baseText + "\n" + multiplierText;
+        string text = "<line-height=100%>" + successRate + "\n<line-height=70%>" + baseText + "\n<line-height=70%>" + multiplierText;
         UIManager.Instance.ShowSmallInfo(text);
     }
     private void OnHoverExitSchemeUIItem(SchemeUIItem item) {
