@@ -21,8 +21,9 @@ public class Disable : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override bool IsInvalidOnVision(ActualGoapNode node) {
+    public override bool IsInvalidOnVision(ActualGoapNode node, out string reason) {
         //this action should not be considered invalid if the target is in combat.
+        reason = string.Empty;
         return false;
     }
     #endregion

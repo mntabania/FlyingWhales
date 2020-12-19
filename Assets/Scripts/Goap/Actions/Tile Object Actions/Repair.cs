@@ -41,7 +41,7 @@ public class Repair : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         string stateName = "Target Missing";
         bool defaultTargetMissing = IsRepairTargetMissing(node);
-        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
         //if (defaultTargetMissing == false) {
         //    //check the target's traits, if any of them can make this action invalid
         //    for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {

@@ -171,6 +171,7 @@ public class Sleep : GoapAction {
             // } else 
             if (poiTarget.IsAvailable() == false) {
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "no_space_bed";
             }
         }
         return goapActionInvalidity;

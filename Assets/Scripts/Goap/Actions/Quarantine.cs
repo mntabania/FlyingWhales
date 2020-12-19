@@ -52,6 +52,7 @@ public class Quarantine : GoapAction {
             }
             if (targetBed == null) {
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "no_space_bed";
             }
         }
         return goapActionInvalidity;

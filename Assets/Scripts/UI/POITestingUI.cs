@@ -164,6 +164,14 @@ public class POITestingUI : MonoBehaviour {
         }
         HideUI();
     }
+    public void GoToCharacter() {
+        if (poi is Character) {
+            activeCharacter.jobComponent.CreateGoToJob(poi);
+        } else {
+            Debug.LogError($"{poi.name} is not a character!");
+        }
+        HideUI();
+    }
     #endregion
 
     #region Tile Object Testing
@@ -239,10 +247,14 @@ public class POITestingUI : MonoBehaviour {
 
     #region Grid Tile Testing
     public void GoHere() {
-        //Debug.LogWarning(activeCharacter.movementComponent.HasPathToEvenIfDiffRegion(this.poi.gridTileLocation));
-        //STRUCTURE_TYPE[] _notAllowedStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.INN, STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.PRISON };
-        activeCharacter.marker.GoTo(this.poi.gridTileLocation/*, notAllowedStructures: _notAllowedStructures*/);
-        HideUI();
+        if (poi is Character) {
+            GoToCharacter();
+        } else {
+            //Debug.LogWarning(activeCharacter.movementComponent.HasPathToEvenIfDiffRegion(this.poi.gridTileLocation));
+            //STRUCTURE_TYPE[] _notAllowedStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.INN, STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.PRISON };
+            activeCharacter.marker.GoTo(this.poi.gridTileLocation/*, notAllowedStructures: _notAllowedStructures*/);
+            HideUI();
+        }
     }
     public void AddRandomArtifact() {
         //STRUCTURE_TYPE[] _notAllowedStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.INN, STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.PRISON };

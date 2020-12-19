@@ -31,7 +31,7 @@ public class Carry : GoapAction {
 
         string stateName = "Target Missing";
         bool defaultTargetMissing = TargetMissingForCarry(node);
-        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
         //if (defaultTargetMissing == false) {
         //    //check the target's traits, if any of them can make this action invalid
         //    for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
@@ -45,6 +45,7 @@ public class Carry : GoapAction {
             if(poiTarget is Character) {
                 if ((poiTarget as Character).carryComponent.IsNotBeingCarried() == false) {
                     goapActionInvalidity.isInvalid = true;
+                    goapActionInvalidity.reason = "target_carried";
                 }
             }
         }

@@ -1292,7 +1292,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Debug.Log(summary);
     }
     private void OnAddPOIAsInVisionRange(IPointOfInterest poi) {
-        if (character.currentActionNode != null && character.currentActionNode.target == poi && character.currentActionNode.action.IsInvalidOnVision(character.currentActionNode)) {
+        if (character.currentActionNode != null && character.currentActionNode.target == poi && character.currentActionNode.action.IsInvalidOnVision(character.currentActionNode, out var reason)) {
+            if (!string.IsNullOrEmpty(reason)) {
+                GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(true, "Target Missing", reason);
+                character.currentActionNode.action.LogActionInvalid(goapActionInvalidity, character.currentActionNode, false);
+            }
             character.currentActionNode.associatedJob?.CancelJob(false);
         }
         if (character.currentActionNode != null && character.currentActionNode.action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION && character.currentActionNode.poiTarget == poi) {

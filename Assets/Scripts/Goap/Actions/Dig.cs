@@ -38,7 +38,7 @@ public class Dig : GoapAction {
 
         string stateName = "Target Missing";
         bool defaultTargetMissing = IsTargetMissing(node);
-        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
         return goapActionInvalidity;
     }
     #endregion

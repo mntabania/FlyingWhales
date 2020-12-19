@@ -131,32 +131,21 @@ public class GoapAction {
         //     log.AddToFillers(actor.currentRegion, actor.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
         // }
     }
-    public virtual bool IsInvalidOnVision(ActualGoapNode node) {
-        Character actor = node.actor;
+    public virtual bool IsInvalidOnVision(ActualGoapNode node, out string reason) {
         IPointOfInterest poiTarget = node.poiTarget;
         if(poiTarget is Character targetCharacter) {
             if (targetCharacter.combatComponent.isInActualCombat) {
+                reason = "target_in_combat";
                 return true;
             }
         }
+        reason = string.Empty;
         return false;
     }
     public virtual GoapActionInvalidity IsInvalid(ActualGoapNode node) {
-        Character actor = node.actor;
-        IPointOfInterest poiTarget = node.poiTarget;
-
         string stateName = "Target Missing";
         bool defaultTargetMissing = IsTargetMissing(node);
-        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
-        //if (defaultTargetMissing == false) {
-        //    //check the target's traits, if any of them can make this action invalid
-        //    for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
-        //        Trait trait = poiTarget.traitContainer.allTraits[i];
-        //        if (trait.TryStopAction(goapType, actor, poiTarget, ref goapActionInvalidity)) {
-        //            break; //a trait made this action invalid, stop loop
-        //        }
-        //    }
-        //}
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
         return goapActionInvalidity;
     }
     public virtual void OnInvalidAction(ActualGoapNode node) { }
@@ -554,10 +543,10 @@ public struct GoapActionInvalidity {
     public string stateName;
     public string reason;
 
-    public GoapActionInvalidity(bool isInvalid, string stateName) {
+    public GoapActionInvalidity(bool isInvalid, string stateName, string reason = null) {
         this.isInvalid = isInvalid;
         this.stateName = stateName;
-        reason = null;
+        this.reason = reason;
     }
     public bool IsReasonForCancellationShouldDropJob() {
         if (!string.IsNullOrEmpty(reason)) {

@@ -36,6 +36,7 @@ public class CarryPatient : GoapAction {
                 actor.logComponent.PrintLogIfActive(debugLog);
 
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "target_unavailable";
             }
         }
         return goapActionInvalidity;

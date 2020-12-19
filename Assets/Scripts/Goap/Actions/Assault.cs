@@ -39,7 +39,8 @@ public class Assault : GoapAction {
             if (actor.IsHealthCriticallyLow()) {
                 //only block assault action if character is not berserked
                 if (actor.traitContainer.HasTrait("Berserked") == false) {
-                    goapActionInvalidity.isInvalid = true;    
+                    goapActionInvalidity.isInvalid = true;
+                    goapActionInvalidity.reason = "low_health";
                 }
             }
         }
@@ -267,7 +268,8 @@ public class Assault : GoapAction {
             return REACTABLE_EFFECT.Negative;
         }
     }
-    public override bool IsInvalidOnVision(ActualGoapNode node) {
+    public override bool IsInvalidOnVision(ActualGoapNode node, out string reason) {
+        reason = string.Empty;
         return false;
     }
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
