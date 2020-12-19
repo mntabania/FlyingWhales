@@ -83,6 +83,9 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     public float GetNormalizedMigrationMeterValue() {
         return villageMigrationMeter / (float) MAX_MIGRATION_METER;
     }
+    public string GetMigrationMeterValueInText() {
+        return $"{villageMigrationMeter}/{MAX_MIGRATION_METER}";
+    }
     #endregion
 
     #region Migration
