@@ -29,6 +29,7 @@ public class ResignData : SchemeData {
             if (!isFactionLeaderOrSettlementRuler) {
                 return false;
             }
+            return true;
         }
         return false;
     }

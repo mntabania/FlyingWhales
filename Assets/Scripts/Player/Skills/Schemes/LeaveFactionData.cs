@@ -41,5 +41,22 @@ public class LeaveFactionData : SchemeData {
         conversationList.Add(data);
         base.PopulateSchemeConversation(conversationList, character, target, isSuccessful);
     }
+    public override void ProcessSuccessRateWithMultipliers(Character p_targetCharacter, ref float p_newSuccessRate) {
+        if (p_targetCharacter.traitContainer.HasTrait("Treacherous")) {
+            p_newSuccessRate *= 2f;
+        }
+        base.ProcessSuccessRateWithMultipliers(p_targetCharacter, ref p_newSuccessRate);
+    }
+    public override string GetSuccessRateMultiplierText(Character p_targetCharacter) {
+        string text = string.Empty;
+        if (p_targetCharacter.traitContainer.HasTrait("Treacherous")) {
+            if (text != string.Empty) { text += "\n"; }
+            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Treacherous: <color=white>x2</color>";
+        }
+        if (text != string.Empty) {
+            return text;
+        }
+        return base.GetSuccessRateMultiplierText(p_targetCharacter);
+    }
     #endregion
 }
