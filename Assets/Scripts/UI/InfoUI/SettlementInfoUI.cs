@@ -116,6 +116,19 @@ public class SettlementInfoUI : InfoUIBase {
     //    }
     //}
 
+    #region Hover
+    public void OnHoverEnterMigrationMeter() {
+        if(activeSettlement is NPCSettlement npcSettlement) {
+            string text = $"Current Value: {npcSettlement.migrationComponent.GetMigrationMeterValueInText()}";
+            text += $"\nIncrease Rate Per Hour: {npcSettlement.migrationComponent.perHourIncrement}";
+            UIManager.Instance.ShowSmallInfo(text);
+        }
+    }
+    public void OnHoverExitMigrationMeter() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
+
     #region Listeners
     //private void UpdateResidentsFromSignal(Character resident, LocationStructure structure) {
     //    if (isShowing && activeSettlement == structure) {
@@ -128,21 +141,21 @@ public class SettlementInfoUI : InfoUIBase {
     //    }
     //}
     #endregion
-    
+
     #region For Testing
-//    public void ShowSettlementTestingInfo() {
-//#if UNITY_EDITOR
-//        string summary = $"{activeSettlement.name} Info:";
-//        summary += "\nDamage Contributing Objects:";
-//        for (int i = 0; i < activeSettlement.objectsThatContributeToDamage.Count; i++) {
-//            IDamageable damageable = activeSettlement.objectsThatContributeToDamage.ElementAt(i);
-//            summary += $"\n\t- {damageable}";
-//        }
-//        UIManager.Instance.ShowSmallInfo(summary);
-//#endif
-//    }
-//    public void HideSettlementTestingInfo() {
-//        UIManager.Instance.HideSmallInfo();
-//    }
+    //    public void ShowSettlementTestingInfo() {
+    //#if UNITY_EDITOR
+    //        string summary = $"{activeSettlement.name} Info:";
+    //        summary += "\nDamage Contributing Objects:";
+    //        for (int i = 0; i < activeSettlement.objectsThatContributeToDamage.Count; i++) {
+    //            IDamageable damageable = activeSettlement.objectsThatContributeToDamage.ElementAt(i);
+    //            summary += $"\n\t- {damageable}";
+    //        }
+    //        UIManager.Instance.ShowSmallInfo(summary);
+    //#endif
+    //    }
+    //    public void HideSettlementTestingInfo() {
+    //        UIManager.Instance.HideSmallInfo();
+    //    }
     #endregion
 }

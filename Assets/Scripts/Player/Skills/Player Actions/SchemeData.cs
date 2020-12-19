@@ -67,7 +67,8 @@ public class SchemeData : PlayerAction {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if(target is Character character) {
-            if (!character.isNormalCharacter || (character.race == RACE.RATMAN && (character.faction == null || !character.faction.isMajorNonPlayer))) {
+            bool isNormalOrRatman = character.isNormalCharacter || character.isConsideredRatman;
+            if (!isNormalOrRatman) {
                 return false;
             }
         } else if (target is BaseSettlement settlement) {

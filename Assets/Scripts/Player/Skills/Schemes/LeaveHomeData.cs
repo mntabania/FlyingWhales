@@ -22,7 +22,7 @@ public class LeaveHomeData : SchemeData {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character character) {
-            return character.homeStructure != null;
+            return character.homeStructure != null && !character.isConsideredRatman;
         }
         return false;
     }

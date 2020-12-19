@@ -22,7 +22,7 @@ public class LeaveVillageData : SchemeData {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character character) {
-            return character.homeSettlement != null;
+            return character.homeSettlement != null && !character.isConsideredRatman;
         }
         return false;
     }
