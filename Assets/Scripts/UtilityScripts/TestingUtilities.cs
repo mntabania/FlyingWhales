@@ -20,13 +20,6 @@ namespace UtilityScripts {
                     summary += $"\n<b>{npcSettlement.name}</b> Settlement Type: {npcSettlement.settlementType?.settlementType.ToString() ?? "None"}";
                     summary += $"\nHas Peasants: {npcSettlement.hasPeasants.ToString()}, Has Workers: {npcSettlement.hasWorkers.ToString()}";
                     summary += $"\nStorage: {npcSettlement.mainStorage?.name ?? "None"}. Prison: {npcSettlement.prison?.name ?? "None"}";
-                    // if (npcSettlement.settlementType != null) {
-                    //     summary += $"\n<b>Max Dwellings: {npcSettlement.settlementType.maxDwellings.ToString()}</b>, <b>Max Facilities: {npcSettlement.settlementType.maxFacilities.ToString()}</b>";
-                    //     summary += $"\n<b>Facility Weights and Caps:</b>";
-                    //     foreach (var kvp in npcSettlement.settlementType.facilityWeights.dictionary) {
-                    //         summary += $"\n\t{kvp.Key.ToString()} - {kvp.Value.ToString()} - {npcSettlement.settlementType.facilityCaps[kvp.Key].ToString()}";
-                    //     }
-                    // }
                     summary += $"\nNeeded Items: ";
                     for (int j = 0; j < npcSettlement.neededObjects.Count; j++) {
                         summary += $"|{npcSettlement.neededObjects[j].ToString()}|";
@@ -55,6 +48,7 @@ namespace UtilityScripts {
                 }
                 if (!isRatmanFaction) {
                     if (npcSettlement.owner != null) {
+                        summary += $"\nAdditional Migration Gain: {npcSettlement.owner.factionType.GetAdditionalMigrationMeterGain(npcSettlement)}";
                         summary += $"\n-----------------------------";
                         summary += $"\n{npcSettlement.owner.name} Faction Job Queue:";
                         if (npcSettlement.owner.availableJobs.Count > 0) {

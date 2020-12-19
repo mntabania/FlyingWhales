@@ -1,4 +1,5 @@
-﻿namespace Factions.Faction_Types {
+﻿using UnityEngine;
+namespace Factions.Faction_Types {
     public class ElvenKingdom : FactionType {
         
         public override RESOURCE mainResource => RESOURCE.WOOD;
@@ -104,6 +105,10 @@
                     return CRIME_SEVERITY.Heinous;
             }
             return CRIME_SEVERITY.None;
+        }
+        public override int GetAdditionalMigrationMeterGain(NPCSettlement p_settlement) {
+            int nobleAmount = p_settlement.settlementClassTracker.GetCurrentResidentClassAmount("Noble");
+            return Mathf.Min(nobleAmount, 4);
         }
     }
 }

@@ -1724,6 +1724,14 @@
           "resource": "STONE",
           "structureType": "DWELLING"
         },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
       ],
       "minimumVillagerCount": 0,
       "factionRace": "HUMANS",

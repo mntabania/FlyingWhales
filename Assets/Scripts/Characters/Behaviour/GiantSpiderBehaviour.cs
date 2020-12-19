@@ -19,7 +19,7 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
         if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) >= 0 && 
             GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) <= 3) {
             List<Character> webbedCharacters = GetWebbedCharactersAtHome(character);
-            if (webbedCharacters == null || webbedCharacters.Count <= 2) { //check if there are only 2 or less abducted "Food" at home structure
+            if (webbedCharacters == null || webbedCharacters.Count <= 1) { //check if there are only 1 or less abducted "Food" at home structure
                 if (character.behaviourComponent.currentAbductTarget != null 
                     && (character.behaviourComponent.currentAbductTarget.isDead 
                         || character.behaviourComponent.currentAbductTarget.traitContainer.HasTrait("Restrained"))) {
@@ -27,7 +27,7 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
                 }
             
                 //set abduction target if none, and chance met
-                if (character.homeStructure != null && character.behaviourComponent.currentAbductTarget == null  && GameUtilities.RollChance(2)) {
+                if (character.homeStructure != null && character.behaviourComponent.currentAbductTarget == null  && GameUtilities.RollChance(1)) {
                     List<Character> characterChoices = ObjectPoolManager.Instance.CreateNewCharactersList();
                     for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                         Character c = character.currentRegion.charactersAtLocation[i];
@@ -51,7 +51,7 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
         }
 
         //try to lay an egg
-        if (GameUtilities.RollChance(2) && (character.IsInHomeSettlement() || character.isAtHomeStructure || character.IsInTerritory()) && !(character.currentStructure is RuinedZoo)) {
+        if (GameUtilities.RollChance(1) && (character.IsInHomeSettlement() || character.isAtHomeStructure || character.IsInTerritory()) && !(character.currentStructure is RuinedZoo)) {
             if (TryTriggerLayEgg(character, 4, out producedJob)) {
                 return true;
             }

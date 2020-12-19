@@ -196,12 +196,12 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 				chosenTemplate = new WorldMapTemplate() {
 					regionCount = 2,
-					worldMapWidth = 8,
+					worldMapWidth = 10,
 					worldMapHeight = 6,
 					regions = new Dictionary<int, RegionTemplate[]>() {
 						{
 							0, new[] {
-								new RegionTemplate(4, 6),
+								new RegionTemplate(6, 6),
 								new RegionTemplate(4, 6),
 							}
 						}
