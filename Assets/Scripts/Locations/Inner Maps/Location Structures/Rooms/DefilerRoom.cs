@@ -135,7 +135,7 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
-        private bool IsValidBrainwashTarget(Character character) {
+        public bool IsValidBrainwashTarget(Character character) {
             return character.isNormalCharacter && character.isDead == false
                     && character.traitContainer.HasTrait("Cultist") == false;
         } 
@@ -145,6 +145,16 @@ namespace Inner_Maps.Location_Structures {
             door?.Close();
             Character chosenTarget = CollectionUtilities.GetRandomElement(charactersInRoom.Where(x => IsValidBrainwashTarget(x)));
             currentBrainwashTarget = chosenTarget;
+            currentBrainwashTarget.interruptComponent.ForceEndNonSimultaneousInterrupt();
+            currentBrainwashTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Brainwashed, currentBrainwashTarget);
+            Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+        }
+        public void StartBrainwash(Character p_target) {
+            wasBrainwashStartedInTutorial = TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Create_A_Cultist);
+            DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
+            door?.Close();
+            currentBrainwashTarget = p_target;
             currentBrainwashTarget.interruptComponent.ForceEndNonSimultaneousInterrupt();
             currentBrainwashTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Brainwashed, currentBrainwashTarget);
             Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);

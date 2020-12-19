@@ -37,7 +37,7 @@ namespace Tutorial {
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostSeizeVillager, OnNoLongerTopMostSeizeVillager),
                     new DropCharacterAtStructureRoomStep<PrisonCell>("Drop at a Cell"),
-                    new PlayerActionContextMenuShown(IsClickedRoomValid, $"Right click on that Cell"),
+                    new PlayerActionContextMenuShown(IsClickedTargetValid, $"Right click on Character or Cell"),
                     new ExecutedPlayerActionStep(PLAYER_SKILL_TYPE.TORTURE, "Click on Torture option")
                         .SetHoverOverAction(OnHoverBeginTorture)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
@@ -58,8 +58,10 @@ namespace Tutorial {
         }
         
         #region Step Helpers
-        private bool IsClickedRoomValid(IPlayerActionTarget p_target) {
-            if (p_target is PrisonCell tortureRoom) {
+        private bool IsClickedTargetValid(IPlayerActionTarget p_target) {
+            if (p_target is Character character) {
+                return character.gridTileLocation != null && character.gridTileLocation.structure.IsTilePartOfARoom(character.gridTileLocation, out var room) && room is PrisonCell;    
+            } else  if (p_target is PrisonCell tortureRoom) {
                 return tortureRoom.HasValidTortureTarget();    
             }
             return false;

@@ -11,6 +11,7 @@ public class StructureRoomInfoUI : InfoUIBase {
     [Space(10)]
     [Header("Basic Info")]
     [SerializeField] private TextMeshProUGUI nameLbl;
+    [SerializeField] private LocationPortrait locationPortrait;
 
     public StructureRoom activeRoom { get; private set; }
 
@@ -18,6 +19,7 @@ public class StructureRoomInfoUI : InfoUIBase {
     internal override void Initialize() {
         base.Initialize();
         Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+        ListenToPlayerActionSignals();
     }
     public override void CloseMenu() {
         base.CloseMenu();
@@ -35,6 +37,7 @@ public class StructureRoomInfoUI : InfoUIBase {
         base.OpenMenu();
         Selector.Instance.Select(activeRoom);
         UpdateInfo();
+        LoadActions(activeRoom);
     }
     #endregion
 
@@ -55,5 +58,8 @@ public class StructureRoomInfoUI : InfoUIBase {
     }
     private void UpdateBasicInfo() {
         nameLbl.text = $"{activeRoom.name}";
+        if (activeRoom.parentStructure != null) {
+            locationPortrait.SetPortrait(activeRoom.parentStructure.structureType.GetLandmarkType());    
+        }
     }
 }

@@ -10,7 +10,7 @@ public class TortureData : PlayerAction {
     public override string name => "Torture";
     public override string description => $"Torture a Villager to afflict it with a random negative Trait and a random negative Status.";
     public TortureData() : base() {
-        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.ROOM };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.ROOM, SPELL_TARGET.CHARACTER };
     }
 
     #region Overrides
@@ -19,6 +19,14 @@ public class TortureData : PlayerAction {
             tortureRoom.BeginTorture();
         }
         base.ActivateAbility(room);
+    }
+    public override void ActivateAbility(IPointOfInterest targetPOI) {
+        if (targetPOI is Character targetCharacter) {
+            if (targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room) && room is PrisonCell tortureRoom) {
+                tortureRoom.BeginTorture(targetCharacter);
+            }
+        }
+        base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(StructureRoom room) {
         bool canPerform = base.CanPerformAbilityTowards(room);
@@ -29,6 +37,31 @@ public class TortureData : PlayerAction {
             return false;
         }
         return canPerform;
+    }
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerform) {
+            if (targetCharacter.gridTileLocation != null && 
+                targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room) && room is PrisonCell tortureRoom) {
+                return tortureRoom.currentTortureTarget == null && tortureRoom.IsValidTortureTarget(targetCharacter);
+            }
+            return false;
+        }
+        return false;
+    }
+    public override bool IsValid(IPlayerActionTarget target) {
+        bool isValid = base.IsValid(target);
+        if (isValid) {
+            if (target is Character targetCharacter) {
+                if (targetCharacter.gridTileLocation != null && 
+                    targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room) && room is PrisonCell tortureRoom) {
+                    return tortureRoom.IsValidTortureTarget(targetCharacter);
+                }
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
     #endregion
 }

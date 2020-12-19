@@ -32,6 +32,7 @@ public class StructureInfoUI : InfoUIBase {
         Messenger.AddListener<Character, LocationStructure>(StructureSignals.ADDED_STRUCTURE_RESIDENT, UpdateResidentsFromSignal);
         Messenger.AddListener<Character, LocationStructure>(StructureSignals.REMOVED_STRUCTURE_RESIDENT, UpdateResidentsFromSignal);
         Messenger.AddListener<DemonicStructure>(StructureSignals.DEMONIC_STRUCTURE_REPAIRED, OnDemonicStructureRepaired);
+        ListenToPlayerActionSignals();
     }
     public override void CloseMenu() {
         base.CloseMenu();
@@ -56,6 +57,7 @@ public class StructureInfoUI : InfoUIBase {
         activeStructure.ShowSelectorOnStructure();
         UpdateStructureInfoUI();
         UpdateResidents();
+        LoadActions(activeStructure);
     }
     #endregion
 
