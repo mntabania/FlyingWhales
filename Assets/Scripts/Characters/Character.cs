@@ -3116,8 +3116,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         } else {
             if (CanPerformEndTickJobs() && HasSameOrHigherPriorityJobThanBehaviour()) {
-                if (jobQueue.jobsInQueue.Count > 0 && jobQueue.jobsInQueue[0].ProcessJob() == false) {
-                    PerformTopPriorityJob();
+                JobQueueItem job = null;
+                if (jobQueue.jobsInQueue.Count > 0) {
+                    job = jobQueue.jobsInQueue[0];
+                }
+                if (job != null && job.ProcessJob() == false) {
+                    PerformJob(job);
                 }
             }
         }
@@ -4022,7 +4026,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    }
     //    return false;
     //}
-    public void PerformTopPriorityJob() {
+    public void PerformJob(JobQueueItem job) {
         string log = $"PERFORMING GOAP PLANS OF {name}";
         if (currentActionNode != null) {
             log =
@@ -4030,7 +4034,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             logComponent.PrintLogIfActive(log);
             return;
         }
-        GoapPlanJob currentTopPrioJob = jobQueue.jobsInQueue[0] as GoapPlanJob;
+        
+        GoapPlanJob currentTopPrioJob = job as GoapPlanJob;
         if(currentTopPrioJob?.assignedPlan != null) {
             GoapPlan plan = currentTopPrioJob.assignedPlan;
             ActualGoapNode currentNode = plan.currentActualNode;
@@ -6070,8 +6075,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
         if (CanPerformEndTickJobs()) {
-            if (jobQueue.jobsInQueue[0].ProcessJob() == false && jobQueue.jobsInQueue.Count > 0) {
-                PerformTopPriorityJob();
+            JobQueueItem job = null;
+            if (jobQueue.jobsInQueue.Count > 0) {
+                job = jobQueue.jobsInQueue[0];
+            }
+            if (job != null && job.ProcessJob() == false) {
+                PerformJob(job);
             }
         }
     }

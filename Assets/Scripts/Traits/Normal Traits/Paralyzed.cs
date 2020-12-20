@@ -65,7 +65,10 @@ namespace Traits {
                 if (!owner.CanPerformEndTickJobs()) {
                     return;
                 }
-                owner.PerformTopPriorityJob();
+                JobQueueItem job = owner.jobQueue.jobsInQueue[0];
+                if (job != null) {
+                    owner.PerformJob(job);
+                }
             } else {
                 if (!PlanTirednessRecovery()) {
                     PlanHappinessRecovery();
