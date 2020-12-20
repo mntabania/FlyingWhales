@@ -7,7 +7,7 @@ public class WellJump : GoapAction {
 
     public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.DIRECT;
     public WellJump() : base(INTERACTION_TYPE.WELL_JUMP) {
-        actionIconString = GoapActionStateDB.Injured_Icon;
+        actionIconString = GoapActionStateDB.Death_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Life_Changes};

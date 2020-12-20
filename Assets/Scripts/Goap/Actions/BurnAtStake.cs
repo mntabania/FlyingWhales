@@ -11,7 +11,7 @@ public class BurnAtStake : GoapAction {
 
     public BurnAtStake() : base(INTERACTION_TYPE.BURN_AT_STAKE) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
-        actionIconString = GoapActionStateDB.Hostile_Icon;
+        actionIconString = GoapActionStateDB.Burn_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         logTags = new[] {LOG_TAG.Work};
     }

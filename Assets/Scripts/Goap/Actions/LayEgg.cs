@@ -8,7 +8,7 @@ using Inner_Maps;
 public class LayEgg : GoapAction {
 
     public LayEgg() : base(INTERACTION_TYPE.LAY_EGG) {
-        actionIconString = GoapActionStateDB.Happy_Icon;
+        actionIconString = GoapActionStateDB.Question_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] {

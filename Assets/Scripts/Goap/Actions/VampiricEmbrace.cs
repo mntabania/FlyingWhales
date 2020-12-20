@@ -10,7 +10,7 @@ public class VampiricEmbrace : GoapAction {
 
     public VampiricEmbrace() : base(INTERACTION_TYPE.VAMPIRIC_EMBRACE) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
-        actionIconString = GoapActionStateDB.Drink_Blood_Icon;
+        actionIconString = GoapActionStateDB.Vampire_Turn_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         logTags = new[] {LOG_TAG.Life_Changes};

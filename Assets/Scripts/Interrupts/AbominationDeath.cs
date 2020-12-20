@@ -9,7 +9,7 @@ namespace Interrupts {
         public AbominationDeath() : base(INTERRUPT.Abomination_Death) {
             duration = 3;
             doesStopCurrentAction = true;
-            interruptIconString = GoapActionStateDB.Injured_Icon;
+            interruptIconString = GoapActionStateDB.Death_Icon;
             logTags = new[] {LOG_TAG.Life_Changes};
         }
 
