@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
+using Inner_Maps;
 using Logs;
 
 public class LeaveVillageData : SchemeData {
@@ -29,6 +30,11 @@ public class LeaveVillageData : SchemeData {
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);
         character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Village, character);
+        HexTile chosenHex = character.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
+        if (chosenHex != null) {
+            LocationGridTile chosenTile = chosenHex.GetRandomPassableTile();
+            character.jobComponent.CreateGoToJob(chosenTile);
+        }
     }
     protected override void PopulateSchemeConversation(List<ConversationData> conversationList, Character targetCharacter, object target, bool isSuccessful) {
         ConversationData data = ObjectPoolManager.Instance.CreateNewConversationData("I want you to abandon your current Village.", null, DialogItem.Position.Right);

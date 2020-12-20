@@ -159,7 +159,7 @@ public class CombatState : CharacterState {
                 if (!stateComponent.owner.traitContainer.HasTrait("Berserked")) {
                     HexTile chosenHex = stateComponent.owner.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
                     if (chosenHex != null) {
-                        LocationGridTile chosenTile = chosenHex.GetRandomTile();
+                        LocationGridTile chosenTile = chosenHex.GetRandomPassableTile();
                         stateComponent.owner.jobComponent.CreateFleeCrimeJob(chosenTile);
                         return;
                     }

@@ -2067,14 +2067,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    producedJob = null;
 	    return false;
     }
-    public bool CreateFleeToJob(LocationGridTile tile, out JobQueueItem producedJob) {
+    public bool CreateGoToJob(LocationGridTile tile) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.GO_TO)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, owner);
             job.SetCannotBePushedBack(true);
-            producedJob = job;
-            return true;
+            return owner.jobQueue.AddJobInQueue(job);
         }
-        producedJob = null;
         return false;
     }
     public bool CreatePartyGoToJob(LocationGridTile tile, out JobQueueItem producedJob) {
