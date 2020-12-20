@@ -14,14 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skill: 23
   manaCost: 10
-  charges: 3
-  cooldown: 48
+  charges: 2
+  cooldown: 144
   threat: 15
   threatPerHour: 0
   expCost: 300
   buttonSprite: {fileID: 21300000, guid: 2e4df33af4860f64294a4996c64ed080, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: fe93d2c868609304880632137115e0cd, type: 3}
   tooltipImage: {fileID: 0}
+  contextMenuIcon: {fileID: 0}
+  contextMenuColumn: 0
   thunderAudioClips:
   - {fileID: 8300000, guid: 613c9bbaa7fc8d447b629354111f388b, type: 3}
   - {fileID: 8300000, guid: 953a816924eff6f458c0800c37d729ad, type: 3}

@@ -152,7 +152,12 @@ public class ActionIntel : IIntel, IDisposable {
         Character actor = this.actor;
         if(node.crimeType != CRIME_TYPE.None && node.crimeType != CRIME_TYPE.Unset) {
             CrimeType crime = CrimeManager.Instance.GetCrimeType(node.crimeType);
-            text = $"Blackmail material: Evidence that {actor.visuals.GetCharacterNameWithIconAndColor()} committed <b>{crime.name}</b> crime.";
+            BLACKMAIL_TYPE blackmailType = GetBlackMailTypeConsideringTarget(actor);
+            if(blackmailType != BLACKMAIL_TYPE.None) {
+                //Only show evidence hover if the actor's faction considers this intel as a crime
+                //Reason: It is confusing when the intel is being hovered and it says that it is an evidence but when you try to use it in Meddler, it does not show up as one of the blackmail materials since the faction does not consider it a crime
+                text = $"Blackmail material: Evidence that {actor.visuals.GetCharacterNameWithIconAndColor()} committed <b>{crime.name}</b> crime.";
+            }
         }
         return text;
     }

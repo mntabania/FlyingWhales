@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skill: 51
   manaCost: 30
-  charges: 1
-  cooldown: 24
-  threat: 10
+  charges: 2
+  cooldown: 288
+  threat: 20
   threatPerHour: 0
   expCost: 0
   buttonSprite: {fileID: 21300000, guid: e82f28130057b894cb52771c34d33c2d, type: 3}
