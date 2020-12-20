@@ -573,6 +573,7 @@
             <e p="LineOfSightTester.cs" t="Include" />
             <e p="RuinarchTextTester.cs" t="Include" />
             <e p="SQLTester.cs" t="Include" />
+            <e p="TooltipTestter.cs" t="Include" />
           </e>
         </e>
         <e p="JsonDotNet" t="Include">
