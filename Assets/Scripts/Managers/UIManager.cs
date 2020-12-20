@@ -31,7 +31,8 @@ public class UIManager : BaseMonoBehaviour {
     public const string buffTextColor = "#39FF14";
     public const string flawTextColor = "#FF073A";
 
-    public RectTransform mainRT;
+    public Canvas canvas;
+    public RectTransform canvasRectTransform;
     private InfoUIBase[] allMenus;
 
     [Space(10)]
@@ -57,7 +58,7 @@ public class UIManager : BaseMonoBehaviour {
     public CharacterPortrait characterPortraitHoverInfo;
     public RectTransform characterPortraitHoverInfoRT;
     private List<int> cornersOutside = new List<int>();
-    private Vector3[] corners = new Vector3[4]; //bottom-left, top-left, top-right, bottom-right
+    private Vector3[] cornerVectors = new Vector3[4]; //bottom-left, top-left, top-right, bottom-right
 
     [Header("Small Info with Visual")] 
     [SerializeField] private SmallInfoWithVisual _smallInfoWithVisual;
@@ -390,9 +391,9 @@ public class UIManager : BaseMonoBehaviour {
             message = $"<font=\"Eczar-Medium\"><line-height=100%><size=18>{header}</font>\n";
         }
         message = $"{message}<line-height=70%><size=16>{info}";
-
+        
         message = message.Replace("\\n", "\n");
-
+        
         if (autoReplaceText) {
             smallInfoLbl.SetTextAndReplaceWithIcons(message);    
         } else {
@@ -416,15 +417,15 @@ public class UIManager : BaseMonoBehaviour {
             message = $"<font=\"Eczar-Medium\"><line-height=100%><size=18>{header}</font>\n";
         }
         message = $"{message}<line-height=70%><size=16>{info}";
-
+        
         message = message.Replace("\\n", "\n");
-
+        
         if (autoReplaceText) {
             smallInfoLbl.SetTextAndReplaceWithIcons(message);    
         } else {
             smallInfoLbl.text = message;
         }
-
+        
         PositionTooltip(pos, smallInfoGO, smallInfoRT);
         
         if (!IsSmallInfoShowing()) {
@@ -475,10 +476,86 @@ public class UIManager : BaseMonoBehaviour {
     public void PositionTooltip(GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT) {
         PositionTooltip(Input.mousePosition, tooltipParent, rtToReposition, boundsRT);
     }
+    // private void PositionTooltip(Vector3 position, GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT) {
+    //     var v3 = position;
+    //
+    //     rtToReposition.pivot = new Vector2(0f, 1f);
+    //     smallInfoBGParentLG.childAlignment = TextAnchor.UpperLeft;
+    //
+    //     // if (InputManager.Instance.currentCursorType == InputManager.Cursor_Type.Cross 
+    //     //     || InputManager.Instance.currentCursorType == InputManager.Cursor_Type.Check 
+    //     //     || InputManager.Instance.currentCursorType == InputManager.Cursor_Type.Link) {
+    //     //     v3.x += 100f;
+    //     //     v3.y -= 32f;
+    //     // } else {
+    //     //     v3.x += 25f;
+    //     //     v3.y -= 25f;
+    //     // }
+    //     
+    //     // tooltipParent.transform.position = v3;
+    //     //
+    //     // if (rtToReposition.sizeDelta.y >= Screen.height) {
+    //     //     return;
+    //     // }
+    //
+    //     Vector3 clampedPos = KeepFullyOnScreen(smallInfoBGRT, v3, canvasRectTransform);
+    //     tooltipParent.transform.position = clampedPos;
+    //
+    //     // cornersOutside.Clear();
+    //     // boundsRT.GetWorldCorners(cornerVectors);
+    //     // for (int i = 0; i < 4; i++) {
+    //     //     Vector3 localSpacePoint = mainRT.InverseTransformPoint(cornerVectors[i]);
+    //     //     // If parent (canvas) does not contain checked items any point
+    //     //     if (!mainRT.rect.Contains(localSpacePoint)) {
+    //     //         cornersOutside.Add(i);
+    //     //     }
+    //     // }
+    //
+    //     // boundsRT.GetLocalCorners(cornerVectors);
+    //     // for (int i = 0; i < cornersOutside.Count; i++) {
+    //     //     int corner = cornersOutside[i];
+    //     //     if (corner == 0) {
+    //     //         //bottom left or bottom right corner is outside, adjust y position upwards
+    //     //         Vector3 cornerWorldPos = cornerVectors[corner];
+    //     //         Debug.Log($"Corner screen pos: {cornerWorldPos}.");
+    //     //         //move position up by pixels outside + buffer
+    //     //         RectTransform tooltipParentRT = tooltipParent.transform as RectTransform;
+    //     //         Vector3 newPos = tooltipParentRT.anchoredPosition;
+    //     //         newPos.y += Mathf.Abs(cornerWorldPos.y);
+    //     //         tooltipParentRT.anchoredPosition = newPos;
+    //     //     }
+    //     // }
+    //
+    //     // if (cornersOutside.Count != 0) {
+    //     //     if (cornersOutside.Contains(2) && cornersOutside.Contains(3)) {
+    //     //         if (cornersOutside.Contains(0)) {
+    //     //             //bottom side and right side are outside, move anchor to bottom right
+    //     //             rtToReposition.pivot = new Vector2(1f, 0f);
+    //     //             smallInfoBGParentLG.childAlignment = TextAnchor.LowerRight;
+    //     //         } else {
+    //     //             //right side is outside, move anchor to top right side
+    //     //             rtToReposition.pivot = new Vector2(1f, 1f);
+    //     //             smallInfoBGParentLG.childAlignment = TextAnchor.UpperRight;
+    //     //         }
+    //     //     } else if (cornersOutside.Contains(0) && cornersOutside.Contains(3)) {
+    //     //         //bottom side is outside, move anchor to bottom left
+    //     //         rtToReposition.pivot = new Vector2(0f, 0f);
+    //     //         smallInfoBGParentLG.childAlignment = TextAnchor.LowerLeft;
+    //     //     }
+    //     //     rtToReposition.localPosition = Vector3.zero;
+    //     // }
+    // }
     private void PositionTooltip(Vector3 position, GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT) {
         var v3 = position;
 
         rtToReposition.pivot = new Vector2(0f, 1f);
+        RectTransform tooltipParentRT = tooltipParent.transform as RectTransform;
+        tooltipParentRT.pivot = new Vector2(0f, 0f);
+
+        UtilityScripts.Utilities.GetAnchorMinMax(TextAnchor.LowerLeft, out var anchorMin, out var anchorMax);
+        tooltipParentRT.anchorMin = anchorMin;
+        tooltipParentRT.anchorMax = anchorMax;
+
         smallInfoBGParentLG.childAlignment = TextAnchor.UpperLeft;
 
         if (InputManager.Instance.currentCursorType == InputManager.Cursor_Type.Cross 
@@ -491,41 +568,22 @@ public class UIManager : BaseMonoBehaviour {
             v3.y -= 25f;
         }
         
-        tooltipParent.transform.position = v3;
-
-        if (rtToReposition.sizeDelta.y >= Screen.height) {
-            return;
-        }
-
-        cornersOutside.Clear();
-        boundsRT.GetWorldCorners(corners);
-        for (int i = 0; i < 4; i++) {
-            Vector3 localSpacePoint = mainRT.InverseTransformPoint(corners[i]);
-            // If parent (canvas) does not contain checked items any point
-            if (!mainRT.rect.Contains(localSpacePoint)) {
-                cornersOutside.Add(i);
-            }
-        }
-
-        if (cornersOutside.Count != 0) {
-            if (cornersOutside.Contains(2) && cornersOutside.Contains(3)) {
-                if (cornersOutside.Contains(0)) {
-                    //bottom side and right side are outside, move anchor to bottom right
-                    rtToReposition.pivot = new Vector2(1f, 0f);
-                    smallInfoBGParentLG.childAlignment = TextAnchor.LowerRight;
-                } else {
-                    //right side is outside, move anchor to top right side
-                    rtToReposition.pivot = new Vector2(1f, 1f);
-                    smallInfoBGParentLG.childAlignment = TextAnchor.UpperRight;
-                }
-            } else if (cornersOutside.Contains(0) && cornersOutside.Contains(3)) {
-                //bottom side is outside, move anchor to bottom left
-                rtToReposition.pivot = new Vector2(0f, 0f);
-                smallInfoBGParentLG.childAlignment = TextAnchor.LowerLeft;
-            }
-            rtToReposition.localPosition = Vector3.zero;
-        }
+        Vector3 clampedPos = KeepFullyOnScreen(smallInfoBGRT, v3, canvasRectTransform);
+        (tooltipParent.transform as RectTransform).anchoredPosition = clampedPos;
     }
+     private Vector3 KeepFullyOnScreen(RectTransform rect, Vector3 newPos, RectTransform CanvasRect) {
+         float border = 10f;
+         
+         float minX = 0f + border;
+         float maxX = (CanvasRect.sizeDelta.x - rect.sizeDelta.x) - border; //* 0.5f;
+         float minY = rect.sizeDelta.y + border; //* -0.5f;
+         float maxY = CanvasRect.sizeDelta.y - border; //* 0.5f;
+        
+         newPos.x = Mathf.Clamp(newPos.x, minX, maxX);
+         newPos.y = Mathf.Clamp(newPos.y, minY, maxY);
+        
+         return newPos;
+     }
     public void PositionTooltip(UIHoverPosition position, GameObject tooltipParent, RectTransform rt) {
         tooltipParent.transform.SetParent(position.transform);
         RectTransform tooltipParentRT = tooltipParent.transform as RectTransform;
