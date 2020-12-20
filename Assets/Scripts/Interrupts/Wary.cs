@@ -6,7 +6,7 @@ using Traits;
 namespace Interrupts {
     public class Wary : Interrupt {
         public Wary() : base(INTERRUPT.Wary) {
-            interruptIconString = GoapActionStateDB.Shock_Icon;
+            interruptIconString = GoapActionStateDB.Question_Icon;
             duration = 2;
             doesStopCurrentAction = true;
             shouldAddLogs = false;

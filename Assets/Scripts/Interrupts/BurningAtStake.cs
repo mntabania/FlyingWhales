@@ -9,7 +9,7 @@ namespace Interrupts {
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
             shouldEndOnSeize = true;
-            interruptIconString = GoapActionStateDB.Cowering_Icon;
+            interruptIconString = GoapActionStateDB.Burn_Icon;
             logTags = new[] {LOG_TAG.Life_Changes};
         }
 

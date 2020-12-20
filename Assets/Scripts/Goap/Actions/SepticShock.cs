@@ -6,7 +6,7 @@ using Traits;
 public class SepticShock : GoapAction {
 
     public SepticShock() : base(INTERACTION_TYPE.SEPTIC_SHOCK) {
-        actionIconString = GoapActionStateDB.No_Icon;
+        actionIconString = GoapActionStateDB.Death_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };

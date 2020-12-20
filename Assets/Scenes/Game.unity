@@ -93120,6 +93120,19 @@ MonoBehaviour:
     - Report
     - Found
     - Divine
+    - Burn
+    - Train
+    - Vampire Turn
+    - Change
+    - Agree
+    - Abduct
+    - Argue
+    - Death
+    - Question
+    - Daydream
+    - Judge
+    - Read
+    - Sing
     m_values:
     - {fileID: 21300000, guid: 5a786d93d2807cf40b59d2f8e2175578, type: 3}
     - {fileID: 21300000, guid: 95f79231f93a3f0499e46aa40e19fcef, type: 3}
@@ -93174,6 +93187,19 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 58ccbf4bb5536fc44ab51686d544ee85, type: 3}
     - {fileID: 21300000, guid: df5474484b3a7f94fa07b1bbbba26db7, type: 3}
     - {fileID: 21300000, guid: 2767033a3ce1cb343ae5a14147503175, type: 3}
+    - {fileID: 21300000, guid: 8560aacd94b57c14db723335079fe0fd, type: 3}
+    - {fileID: 21300000, guid: 8f16cfe170ba6ee4490e0ca03caaa3b4, type: 3}
+    - {fileID: 21300000, guid: 6998e6a9648c4304ca4ed7563f4a7c98, type: 3}
+    - {fileID: 21300000, guid: 77d51a169eb271343aaf9fe3237e71b4, type: 3}
+    - {fileID: 21300000, guid: 4c87862c7ec68c1468f25b416584e081, type: 3}
+    - {fileID: 21300000, guid: 7770c370a22c25a4a819eaa67cd5896d, type: 3}
+    - {fileID: 21300000, guid: 7795543b6f6ab4a46b6922c2801176d6, type: 3}
+    - {fileID: 21300000, guid: aa474f927d6557d4c9afe389c90a4624, type: 3}
+    - {fileID: 21300000, guid: 024caf318795ed04e93dde8cd6288f9b, type: 3}
+    - {fileID: 21300000, guid: 704b5ebaf00ca3042843295e980b5fb2, type: 3}
+    - {fileID: 21300000, guid: 779ee33d53fcbdd48bef329b86242e03, type: 3}
+    - {fileID: 21300000, guid: 3a8f8538bfc9fca40861c45d17e2c259, type: 3}
+    - {fileID: 21300000, guid: 75b58331080090c46b8ea860758574dd, type: 3}
 --- !u!1 &1682166116
 GameObject:
   m_ObjectHideFlags: 0

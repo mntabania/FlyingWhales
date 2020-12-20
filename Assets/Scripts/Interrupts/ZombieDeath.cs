@@ -8,7 +8,7 @@ namespace Interrupts {
         public ZombieDeath() : base(INTERRUPT.Zombie_Death) {
             duration = 3;
             doesStopCurrentAction = true;
-            interruptIconString = GoapActionStateDB.Sick_Icon;
+            interruptIconString = GoapActionStateDB.Death_Icon;
             isIntel = true;
             logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Player};
         }

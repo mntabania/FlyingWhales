@@ -6,7 +6,7 @@ using Traits;
 namespace Interrupts {
     public class HeatstrokeDeath : Interrupt {
         public HeatstrokeDeath() : base(INTERRUPT.Heatstroke_Death) {
-            interruptIconString = GoapActionStateDB.Injured_Icon;
+            interruptIconString = GoapActionStateDB.Death_Icon;
             duration = 4;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
