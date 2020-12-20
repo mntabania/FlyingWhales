@@ -68,7 +68,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool hasSeenPoisoned { get; protected set; }
     public bool destroyMarkerOnDeath { get; protected set; }
     public bool isWanderer { get; private set; }
-    public bool hasRisen { get; private set; }
+    public bool hasBeenRaisedFromDead { get; private set; }
     public bool hasSubscribedToSignals { get; private set; }
     public bool shouldDoActionOnFirstTickUponLoadGame { get; private set; } //This should not be saved. Upon loading the game, this is always set to true so that if the character has a saved current action, it should resume on first tick
     public bool isPreplaced { get; private set; }
@@ -82,7 +82,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public POI_STATE state { get; private set; }
 
     //misc
-    public bool raisedFromDeadAsSkeleton { get; private set; }
     public Tombstone grave { get; private set; }
 
     //For Testing
@@ -369,10 +368,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         isLimboCharacter = data.isLimboCharacter;
         destroyMarkerOnDeath = data.destroyMarkerOnDeath;
         isWanderer = data.isWanderer;
-        hasRisen = data.hasRisen;
+        hasBeenRaisedFromDead = data.hasBeenRaisedFromDead;
         interestedItemNames = data.interestedItemNames;
         state = data.state;
-        raisedFromDeadAsSkeleton = data.raisedFromDeadAsSkeleton;
         previousClassName = data.previousClassName;
         isPreplaced = data.isPreplaced;
 
@@ -595,7 +593,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
         int numOfGhosts = UnityEngine.Random.Range(1, 4);
-        revenant.AdjustNumOfSummonedGhosts(numOfGhosts);
         for (int i = 0; i < numOfGhosts; i++) {
             Character betrayer = revenant.GetRandomBetrayer();
             Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.undeadFaction, homeLocation: homeSettlement, homeRegion: homeRegion, homeStructure: currentStructure);
@@ -2090,11 +2087,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    public void SetHasRisen(bool state) {
-        hasRisen = state;
-    }
-    public void SetRaisedFromDeadAsSkeleton(bool state) {
-        raisedFromDeadAsSkeleton = state;
+    public void SetHasBeenRaisedFromDead(bool state) {
+        hasBeenRaisedFromDead = state;
     }
     public bool IsConsideredInDangerBy(Character character) {
         if (traitContainer.HasTrait("Enslaved") && faction != character.faction) {

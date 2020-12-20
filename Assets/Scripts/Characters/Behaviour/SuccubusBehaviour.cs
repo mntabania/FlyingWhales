@@ -91,7 +91,7 @@ public class SuccubusBehaviour : BaseMonsterBehaviour {
     }
     private bool CanTargetCharacterForMakeLove(Character source, Character c) {
         if(c.gender == GENDER.MALE && !c.isDead && (source.tileObjectComponent.primaryBed != null || c.tileObjectComponent.primaryBed != null) && c.homeSettlement != null && !c.partyComponent.isActiveMember) {
-            if(c.limiterComponent.canPerform && !c.combatComponent.isInCombat && !c.raisedFromDeadAsSkeleton && !c.carryComponent.masterCharacter.movementComponent.isTravellingInWorld && c.currentRegion == source.currentRegion) {
+            if(c.limiterComponent.canPerform && !c.combatComponent.isInCombat && !c.hasBeenRaisedFromDead && !c.carryComponent.masterCharacter.movementComponent.isTravellingInWorld && c.currentRegion == source.currentRegion) {
                 return c.homeSettlement.GetFirstTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.IsAvailable() && b.GetActiveUserCount() == 0) != null;
             }
         }
@@ -99,7 +99,7 @@ public class SuccubusBehaviour : BaseMonsterBehaviour {
     }
     private bool CanTargetCharacterForMakeLoveTamed(Character source, Character c) {
         if(c.gender == GENDER.MALE && !c.isDead && (source.tileObjectComponent.primaryBed != null || c.tileObjectComponent.primaryBed != null) && c.homeSettlement != null && !c.partyComponent.isActiveMember && c.faction != source.faction && c.homeRegion == source.currentRegion) {
-            if(c.limiterComponent.canPerform && !c.combatComponent.isInCombat && !c.raisedFromDeadAsSkeleton && !c.carryComponent.masterCharacter.movementComponent.isTravellingInWorld && c.currentRegion == source.currentRegion) {
+            if(c.limiterComponent.canPerform && !c.combatComponent.isInCombat && !c.hasBeenRaisedFromDead && !c.carryComponent.masterCharacter.movementComponent.isTravellingInWorld && c.currentRegion == source.currentRegion) {
                 return c.homeSettlement.GetFirstTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.IsAvailable() && b.GetActiveUserCount() == 0) != null;
             }
         }

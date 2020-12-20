@@ -54,9 +54,9 @@ public class RaiseCorpse : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             if (poiTarget is Character targetCharacter) {
-                return targetCharacter.isDead && !(targetCharacter is Summon) && !targetCharacter.hasRisen && !targetCharacter.raisedFromDeadAsSkeleton && targetCharacter.marker != null;
+                return targetCharacter.isDead && !(targetCharacter is Summon) && !targetCharacter.hasBeenRaisedFromDead && targetCharacter.marker != null;
             } else if (poiTarget is Tombstone tombstone) {
-                return tombstone.gridTileLocation != null && tombstone.mapObjectVisual && !(tombstone.character is Summon) && !tombstone.character.hasRisen && !tombstone.character.raisedFromDeadAsSkeleton && tombstone.character.marker != null;
+                return tombstone.gridTileLocation != null && tombstone.mapObjectVisual && !(tombstone.character is Summon) && !tombstone.character.hasBeenRaisedFromDead && tombstone.character.marker != null;
             }
         }
         return false;

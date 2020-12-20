@@ -47,13 +47,11 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public bool isLimboCharacter;
     public bool destroyMarkerOnDeath;
     public bool isWanderer;
-    public bool hasRisen;
+    public bool hasBeenRaisedFromDead;
     public bool isPreplaced;
     public List<string> interestedItemNames;
 
     public POI_STATE state;
-
-    public bool raisedFromDeadAsSkeleton;
 
     public SaveDataLycanthropeData lycanData;
     public bool hasLycan;
@@ -139,10 +137,9 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         isLimboCharacter = data.isLimboCharacter;
         destroyMarkerOnDeath = data.destroyMarkerOnDeath;
         isWanderer = data.isWanderer;
-        hasRisen = data.hasRisen;
+        hasBeenRaisedFromDead = data.hasBeenRaisedFromDead;
         interestedItemNames = data.interestedItemNames;
         state = data.state;
-        raisedFromDeadAsSkeleton = data.raisedFromDeadAsSkeleton;
         previousClassName = data.previousClassName;
         isPreplaced = data.isPreplaced;
 

@@ -15,7 +15,6 @@ namespace Traits {
         public bool isVenomous { get; private set; }
         
         private Character characterOwner;
-        private StatusIcon _statusIcon;
         private GameObject _poisonedEffect;
         
 
