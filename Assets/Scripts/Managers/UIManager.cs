@@ -233,6 +233,9 @@ public class UIManager : BaseMonoBehaviour {
         UpdateUI();
     }
     private void OnPlayerActionActivated(PlayerAction p_playerAction) {
+        if (IsContextMenuShowing()) {
+            ForceReloadPlayerActions();
+        }
         // if (p_playerAction.type != PLAYER_SKILL_TYPE.BREED_MONSTER) {
         //     HidePlayerActionContextMenu();    
         // }
