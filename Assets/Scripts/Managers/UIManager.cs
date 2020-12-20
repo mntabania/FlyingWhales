@@ -165,12 +165,12 @@ public class UIManager : BaseMonoBehaviour {
             HidePlayerActionContextMenu();
         }
     }
-    #endregion
-
     protected override void OnDestroy() {
         base.OnDestroy();
         Instance = null;
     }
+    #endregion
+    
     internal void InitializeUI() {
         _pointer = new PointerEventData(EventSystem.current);
         _raycastResults = new List<RaycastResult>();
@@ -233,9 +233,9 @@ public class UIManager : BaseMonoBehaviour {
         UpdateUI();
     }
     private void OnPlayerActionActivated(PlayerAction p_playerAction) {
-        if (p_playerAction.type != PLAYER_SKILL_TYPE.BREED_MONSTER) {
-            HidePlayerActionContextMenu();    
-        }
+        // if (p_playerAction.type != PLAYER_SKILL_TYPE.BREED_MONSTER) {
+        //     HidePlayerActionContextMenu();    
+        // }
     }
     private void TryUpdateFactionLog(Faction faction) {
         if (factionInfoUI.isShowing && factionInfoUI.currentlyShowingFaction == faction) {
@@ -1797,10 +1797,10 @@ public class UIManager : BaseMonoBehaviour {
     public void ShowPlayerActionContextMenu(IPlayerActionTarget p_target, Transform p_followTarget) {
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
         List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
-        if (contextMenuItems == null) {
-            HidePlayerActionContextMenu();
-            return;
-        }
+        // if (contextMenuItems == null) {
+        //     HidePlayerActionContextMenu();
+        //     return;
+        // }
         _contextMenuUIController.SetFollowPosition(p_followTarget);
         _contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
@@ -1853,7 +1853,7 @@ public class UIManager : BaseMonoBehaviour {
         int manaCost = PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost;
         string currencyStr = string.Empty;
         if (manaCost != -1) {
-            currencyStr = $"{currencyStr}{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()} ";
+            currencyStr = $"{currencyStr}{manaCost.ToString()}{UtilityScripts.Utilities.ManaIcon()}  ";
         }
         title = $"{title}    <size=16>{currencyStr}";
         string additionalText = string.Empty;
@@ -1875,16 +1875,16 @@ public class UIManager : BaseMonoBehaviour {
         string currencyStr = string.Empty; 
         
         if (manaCost != -1) {
-            currencyStr = $"{currencyStr}{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()} ";
-        }
-        if (cooldown != -1) {
-            currencyStr = $"{currencyStr}{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()} ";
+            currencyStr = $"{currencyStr}{manaCost.ToString()}{UtilityScripts.Utilities.ManaIcon()}  ";
         }
         if (charges != -1) {
-            currencyStr = $"{currencyStr}{charges.ToString()} {UtilityScripts.Utilities.ChargesIcon()} ";
+            currencyStr = $"{currencyStr}{charges.ToString()}/{spellData.maxCharges.ToString()}{UtilityScripts.Utilities.ChargesIcon()}  ";
+        }
+        if (cooldown != -1) {
+            currencyStr = $"{currencyStr}{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)}{UtilityScripts.Utilities.CooldownIcon()}  ";
         }
         if (spellData.threat > 0) {
-            currencyStr = $"{currencyStr}{spellData.threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()} ";
+            currencyStr = $"{currencyStr}{spellData.threat.ToString()}{UtilityScripts.Utilities.ThreatIcon()}  ";
         }
         title = $"{title}    <size=16>{currencyStr}";
 
@@ -2011,10 +2011,10 @@ public class UIManager : BaseMonoBehaviour {
     }
     private void UpdatePlayerActionContextMenuItems(IPlayerActionTarget p_target) {
         List<IContextMenuItem> contextMenuItems = GetPlayerActionContextMenuItems(p_target);
-        if (contextMenuItems == null) {
-            HidePlayerActionContextMenu();
-            return;
-        }
+        // if (contextMenuItems == null) {
+        //     HidePlayerActionContextMenu();
+        //     return;
+        // }
         _contextMenuUIController.UpdateContextMenuItems(contextMenuItems);
     }
     private bool IsMouseOnContextMenu() {

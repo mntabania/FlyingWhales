@@ -2481,7 +2481,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //So we need to check the knockout chance before applying damage
         int chanceToKnockout = 15;
         if (!limiterComponent.canPerform || !limiterComponent.canMove) {
-            chanceToKnockout = 100;
+            //https://trello.com/c/QTYC0Rb4/3161-non-lethal-attack-of-sleeping-characters-should-only-have-50-instant-knockout-rate
+            chanceToKnockout = 50;
         }
 
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;

@@ -96,11 +96,11 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         if (manaCost != -1) {
             currencyStr += $"{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}  ";
         }
+        if (charges != -1) {
+            currencyStr += $"{charges.ToString()}/{spellData.maxCharges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
+        }
         if (cooldown != -1) {
             currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
-        }
-        if (charges != -1) {
-            currencyStr += $"{charges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
         }
         if (skillData.threat > 0) {
             currencyStr += $"{skillData.threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
@@ -121,11 +121,11 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         if (manaCost != -1) {
             currencyStr += $"{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}  ";
         }
+        if (charges != -1) {
+            currencyStr += $"{charges.ToString()}/{spellData.maxCharges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
+        }
         if (cooldown != -1) {
             currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
-        }
-        if (charges != -1) {
-            currencyStr += $"{charges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
         }
         if (spellData.threat > 0) {
             currencyStr += $"{spellData.threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
@@ -199,11 +199,11 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         if (manaCost != -1) {
             currencyStr += $"{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}  ";
         }
-        if (cooldown != -1) {
-            currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
-        }
         if (charges != -1) {
             currencyStr += $"{charges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
+        }
+        if (cooldown != -1) {
+            currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
         }
         if (threat > 0) {
             currencyStr += $"{threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
