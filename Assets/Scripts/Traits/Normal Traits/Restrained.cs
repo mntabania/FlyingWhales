@@ -118,7 +118,7 @@ namespace Traits {
                character.lycanData.activeForm == character.lycanData.lycanthropeForm) {
                 //only transform back to human/elf if restrained
                 int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 100) { //25
+                if (chance < 25) { //25
                     character.lycanData.Transform(character);
                 }
             }
