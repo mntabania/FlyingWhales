@@ -26,6 +26,8 @@ public class InduceMigrationData : SchemeData {
             }
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+
+            LogSchemeVillage(npcSettlement);
             base.ActivateAbility(targetSettlement);
         }
     }
