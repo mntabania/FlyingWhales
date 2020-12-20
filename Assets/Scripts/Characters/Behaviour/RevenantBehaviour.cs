@@ -57,7 +57,6 @@ public class RevenantBehaviour : BaseMonsterBehaviour {
                 Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, targetFaction, homeLocation: revenant.homeSettlement, homeRegion: revenant.homeRegion, bypassIdeologyChecking: true);
                 (ghost as Ghost).SetBetrayedBy(betrayer);
                 CharacterManager.Instance.PlaceSummon(ghost, tile);
-                revenant.AdjustNumOfSummonedGhosts(1);
                 return true;
             } else {
                 p_log += $"\n-Already reached maximum number of spawned ghosts: 5";

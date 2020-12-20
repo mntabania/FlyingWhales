@@ -684,8 +684,7 @@ public class CharacterManager : BaseMonoBehaviour {
     public void RaiseFromDeadReplaceCharacterWithSkeleton(Character target, Faction faction, string className = "", Action<Character> onRaisedFromDeadAction = null) {
         //Since we no longer see the raise dead animation putting raise dead in a coroutine might have some problems like:
         //https://trello.com/c/Qu1VHS2A/3044-dev-03355-null-reference-charactermanagerraised
-        target.SetHasRisen(true);
-        target.SetRaisedFromDeadAsSkeleton(true);
+        target.SetHasBeenRaisedFromDead(true);
         //target.marker.PlayAnimation("Raise Dead");
         //yield return new WaitForSeconds(0.7f);
         LocationGridTile tile = target.gridTileLocation;
@@ -699,8 +698,7 @@ public class CharacterManager : BaseMonoBehaviour {
             }
             Summon summon = CreateNewSummon(SUMMON_TYPE.Skeleton, faction, homeRegion: target.homeRegion, className: target.characterClass.className);
             summon.SetFirstAndLastName(target.firstName, target.surName);
-            summon.SetHasRisen(true);
-            summon.SetRaisedFromDeadAsSkeleton(true);
+            summon.SetHasBeenRaisedFromDead(true);
             summon.CreateMarker();
 
             summon.InitialCharacterPlacement(tile);
@@ -731,8 +729,7 @@ public class CharacterManager : BaseMonoBehaviour {
 
         if (chosenClassName.Contains("Zombie")) {
             //Raise from dead as zombie
-            target.SetHasRisen(true);
-            target.SetRaisedFromDeadAsSkeleton(true);
+            target.SetHasBeenRaisedFromDead(true);
             LocationGridTile tile = target.grave != null ? target.grave.gridTileLocation : target.gridTileLocation;
             GameManager.Instance.CreateParticleEffectAt(tile, PARTICLE_EFFECT.Zombie_Transformation);
             target.ReturnToLife(faction, chosenRace, chosenClassName);

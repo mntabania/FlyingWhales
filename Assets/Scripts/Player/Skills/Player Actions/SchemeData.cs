@@ -22,8 +22,12 @@ public class SchemeData : PlayerAction {
     }
 
     #region Virtuals
-    protected virtual void OnSuccessScheme(Character character, object target) { }
-    protected virtual void OnFailScheme(Character character, object target) { }
+    protected virtual void OnSuccessScheme(Character character, object target) {
+        LogSchemeCharacter(character, true);
+    }
+    protected virtual void OnFailScheme(Character character, object target) {
+        LogSchemeCharacter(character, false);
+    }
     protected virtual void PopulateSchemeConversation(List<ConversationData> conversationList, Character character, object target, bool isSuccessful) {
         if (isSuccessful) {
             ConversationData data = ObjectPoolManager.Instance.CreateNewConversationData("If you say so.", character, DialogItem.Position.Left);
@@ -124,5 +128,26 @@ public class SchemeData : PlayerAction {
             ObjectPoolManager.Instance.ReturnConversationDataToPool(conversationList[i]);
         }
         ObjectPoolManager.Instance.ReturnConversationDataListToPool(conversationList);
+    }
+
+    protected void LogSchemeCharacter(Character p_targetCharacter, bool isSuccessful) {
+        string key = "success_scheme_character";
+        if (!isSuccessful) {
+            key = "fail_scheme_character";
+        }
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", key, null, LOG_TAG.Player);
+        log.AddToFillers(p_targetCharacter, p_targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(name), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, name, LOG_IDENTIFIER.STRING_2);
+        log.AddLogToDatabase();
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+    }
+    protected void LogSchemeVillage(BaseSettlement p_targetSettlement) {
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "player_scheme_village", null, LOG_TAG.Player);
+        log.AddToFillers(p_targetSettlement, p_targetSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
+        log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(name), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, name, LOG_IDENTIFIER.STRING_2);
+        log.AddLogToDatabase();
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
     }
 }

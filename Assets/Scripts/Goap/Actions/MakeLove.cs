@@ -385,7 +385,7 @@ public class MakeLove : GoapAction {
             if (target.stateComponent.currentState is CombatState) { //do not invite characters that are currently in combat
                 return false;
             }
-            if (target.raisedFromDeadAsSkeleton) { //do not woo characters that have been raised from the dead
+            if (target.hasBeenRaisedFromDead) { //do not woo characters that have been raised from the dead
                 return false;
             }
             if (target.carryComponent.masterCharacter.movementComponent.isTravellingInWorld || target.currentRegion != actor.currentRegion) {

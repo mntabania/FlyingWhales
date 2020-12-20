@@ -240,9 +240,9 @@ public class ReactionComponent : CharacterComponent {
                     // owner.logComponent.AddHistory(witnessLog);
                 }
             }
-        } else if (reactable.target == owner) {
-            if (!reactable.isStealth || reactable.target.traitContainer.HasTrait("Vigilant")) {
-                string emotionsOfTarget = reactable.ReactionOfTarget(actor, reactable.target, REACTION_STATUS.WITNESSED);
+        } else if (target == owner) {
+            if (!reactable.isStealth || target.traitContainer.HasTrait("Vigilant")) {
+                string emotionsOfTarget = reactable.ReactionOfTarget(actor, target, REACTION_STATUS.WITNESSED);
                 if (emotionsOfTarget != string.Empty) {
                     if (!CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
                         string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";
@@ -347,8 +347,8 @@ public class ReactionComponent : CharacterComponent {
                 informedLog.AddLogToDatabase();
                 // owner.logComponent.AddHistory(informedLog);
             }
-        } else if(reactable.target == owner && reactable.target is Character) {
-            string emotionsOfTarget = reactable.ReactionOfTarget(actor, reactable.target, REACTION_STATUS.INFORMED);
+        } else if(target == owner && target is Character) {
+            string emotionsOfTarget = reactable.ReactionOfTarget(actor, target, REACTION_STATUS.INFORMED);
             if (emotionsOfTarget != string.Empty) {
                 if (!CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
                     string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";

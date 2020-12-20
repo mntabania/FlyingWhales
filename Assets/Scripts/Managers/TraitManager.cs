@@ -250,7 +250,7 @@ public class TraitManager : BaseMonoBehaviour {
     /// <returns></returns>
     public bool CanStillTriggerFlaws(Character character) {
         if (character.isDead || character.faction.isPlayerFaction || UtilityScripts.GameUtilities.IsRaceBeast(character.race) || character is Summon 
-            || character.raisedFromDeadAsSkeleton) {
+            || character.hasBeenRaisedFromDead) {
             return false;
         }
         //if(doNotDisturb > 0) {

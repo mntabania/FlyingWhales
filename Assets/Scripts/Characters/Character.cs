@@ -68,7 +68,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool hasSeenPoisoned { get; protected set; }
     public bool destroyMarkerOnDeath { get; protected set; }
     public bool isWanderer { get; private set; }
-    public bool hasRisen { get; private set; }
+    public bool hasBeenRaisedFromDead { get; private set; }
     public bool hasSubscribedToSignals { get; private set; }
     public bool shouldDoActionOnFirstTickUponLoadGame { get; private set; } //This should not be saved. Upon loading the game, this is always set to true so that if the character has a saved current action, it should resume on first tick
     public bool isPreplaced { get; private set; }
@@ -82,7 +82,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public POI_STATE state { get; private set; }
 
     //misc
-    public bool raisedFromDeadAsSkeleton { get; private set; }
     public Tombstone grave { get; private set; }
 
     //For Testing
@@ -369,10 +368,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         isLimboCharacter = data.isLimboCharacter;
         destroyMarkerOnDeath = data.destroyMarkerOnDeath;
         isWanderer = data.isWanderer;
-        hasRisen = data.hasRisen;
+        hasBeenRaisedFromDead = data.hasBeenRaisedFromDead;
         interestedItemNames = data.interestedItemNames;
         state = data.state;
-        raisedFromDeadAsSkeleton = data.raisedFromDeadAsSkeleton;
         previousClassName = data.previousClassName;
         isPreplaced = data.isPreplaced;
 
@@ -595,7 +593,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
         int numOfGhosts = UnityEngine.Random.Range(1, 4);
-        revenant.AdjustNumOfSummonedGhosts(numOfGhosts);
         for (int i = 0; i < numOfGhosts; i++) {
             Character betrayer = revenant.GetRandomBetrayer();
             Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.undeadFaction, homeLocation: homeSettlement, homeRegion: homeRegion, homeStructure: currentStructure);
@@ -2090,11 +2087,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    public void SetHasRisen(bool state) {
-        hasRisen = state;
-    }
-    public void SetRaisedFromDeadAsSkeleton(bool state) {
-        raisedFromDeadAsSkeleton = state;
+    public void SetHasBeenRaisedFromDead(bool state) {
+        hasBeenRaisedFromDead = state;
     }
     public bool IsConsideredInDangerBy(Character character) {
         if (traitContainer.HasTrait("Enslaved") && faction != character.faction) {
@@ -3123,8 +3117,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         } else {
             if (CanPerformEndTickJobs() && HasSameOrHigherPriorityJobThanBehaviour()) {
-                if (jobQueue.jobsInQueue.Count > 0 && jobQueue.jobsInQueue[0].ProcessJob() == false) {
-                    PerformTopPriorityJob();
+                JobQueueItem job = null;
+                if (jobQueue.jobsInQueue.Count > 0) {
+                    job = jobQueue.jobsInQueue[0];
+                }
+                if (job != null && job.ProcessJob() == false) {
+                    PerformJob(job);
                 }
             }
         }
@@ -4029,7 +4027,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    }
     //    return false;
     //}
-    public void PerformTopPriorityJob() {
+    public void PerformJob(JobQueueItem job) {
         string log = $"PERFORMING GOAP PLANS OF {name}";
         if (currentActionNode != null) {
             log =
@@ -4037,19 +4035,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             logComponent.PrintLogIfActive(log);
             return;
         }
-        GoapPlanJob currentTopPrioJob = jobQueue.jobsInQueue[0] as GoapPlanJob;
+        
+        GoapPlanJob currentTopPrioJob = job as GoapPlanJob;
         if(currentTopPrioJob?.assignedPlan != null) {
             GoapPlan plan = currentTopPrioJob.assignedPlan;
             ActualGoapNode currentNode = plan.currentActualNode;
             if (RaceManager.Instance.CanCharacterDoGoapAction(this, currentNode.action.goapType)
                 && InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentNode.action.goapType, currentNode.actor, currentNode.poiTarget, currentNode.otherData, currentTopPrioJob)) {
-                bool preconditionsSatisfied = plan.currentActualNode.action.CanSatisfyAllPreconditions(currentNode.actor, currentNode.poiTarget, currentNode.otherData, currentTopPrioJob.jobType);
+                bool preconditionsSatisfied = currentNode.action.CanSatisfyAllPreconditions(currentNode.actor, currentNode.poiTarget, currentNode.otherData, currentTopPrioJob.jobType);
                 if (!preconditionsSatisfied) {
                     log =
-                        $"{log}\n - {plan.currentActualNode} Action's preconditions are not all satisfied, trying to recalculate plan...";
+                        $"{log}\n - {currentNode} Action's preconditions are not all satisfied, trying to recalculate plan...";
                     if (plan.doNotRecalculate) {
                         log =
-                            $"{log}\n - {plan.currentActualNode} Action's plan has doNotRecalculate state set to true, dropping plan...";
+                            $"{log}\n - {currentNode} Action's plan has doNotRecalculate state set to true, dropping plan...";
                         logComponent.PrintLogIfActive(log);
                         currentNode.action.OnStopWhileStarted(currentNode);
                         currentTopPrioJob.CancelJob(false);
@@ -6077,8 +6076,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
         if (CanPerformEndTickJobs()) {
-            if (jobQueue.jobsInQueue[0].ProcessJob() == false && jobQueue.jobsInQueue.Count > 0) {
-                PerformTopPriorityJob();
+            JobQueueItem job = null;
+            if (jobQueue.jobsInQueue.Count > 0) {
+                job = jobQueue.jobsInQueue[0];
+            }
+            if (job != null && job.ProcessJob() == false) {
+                PerformJob(job);
             }
         }
     }
