@@ -50,6 +50,7 @@ public class FeedSelf : GoapAction {
         if (goapActionInvalidity.isInvalid == false) {
             if ((poiTarget as Character).carryComponent.IsNotBeingCarried() == false) {
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "target_carried";
             }
         }
         return goapActionInvalidity;

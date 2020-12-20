@@ -212,7 +212,7 @@ public class Butcher : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         string stateName = "Target Missing";
         bool defaultTargetMissing = this.IsTargetMissing(actor, poiTarget);
-        return new GoapActionInvalidity(defaultTargetMissing, stateName);
+        return new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
     }
     private bool IsTargetMissing(Character actor, IPointOfInterest poiTarget) {
         return poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion

@@ -29,6 +29,7 @@ public class BuildNewVillage : GoapAction {
                 string prefabName = (string)node.otherData[0].obj;
                 if (!LandmarkManager.Instance.HasEnoughSpaceForStructure(prefabName, genericTileObject.gridTileLocation)) {
                     invalidity.isInvalid = true;
+                    invalidity.reason = "no_space_village";
                 }    
             }
         }

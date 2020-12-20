@@ -35,7 +35,7 @@ namespace Tutorial {
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostSeizeVillager, OnNoLongerTopMostSeizeVillager),
                     new DropCharacterAtStructureRoomStep<DefilerRoom>("Drop at the Chamber"),
-                    new PlayerActionContextMenuShown(IsClickedRoomValid, $"Right click on the Chamber"),
+                    new PlayerActionContextMenuShown(IsClickedTargetValid, $"Right click on Character or Chamber"),
                     new ExecutedPlayerActionStep(PLAYER_SKILL_TYPE.BRAINWASH, "Click on Brainwash option")
                         .SetHoverOverAction(OnHoverBrainwash)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
@@ -57,8 +57,10 @@ namespace Tutorial {
         }
 
         #region Step Helpers
-        private bool IsClickedRoomValid(IPlayerActionTarget p_target) {
-            if (p_target is DefilerRoom defilerRoom) {
+        private bool IsClickedTargetValid(IPlayerActionTarget p_target) {
+            if (p_target is Character character) {
+                return character.gridTileLocation != null && character.gridTileLocation.structure.IsTilePartOfARoom(character.gridTileLocation, out var room) && room is DefilerRoom;    
+            } else if (p_target is DefilerRoom defilerRoom) {
                 return defilerRoom.HasValidBrainwashTarget();    
             }
             return false;

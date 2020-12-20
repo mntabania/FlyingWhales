@@ -63,7 +63,7 @@ public class DropItem : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         string stateName = "Target Missing";
         bool defaultTargetMissing = IsTargetMissingOverride(node);
-        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
         return goapActionInvalidity;
     }
     #endregion

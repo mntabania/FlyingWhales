@@ -69,7 +69,7 @@ public class DropCorpse : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         string stateName = "Target Missing";
         bool defaultTargetMissing = IsDropTargetMissing(node);
-        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
         return goapActionInvalidity;
     }
     private bool IsDropTargetMissing(ActualGoapNode node) {

@@ -42,6 +42,7 @@ public class RestrainCharacter : GoapAction {
             Character target = poiTarget as Character;
             if (target.carryComponent.IsNotBeingCarried() == false) {
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "target_carried";
             }
         }
         return goapActionInvalidity;

@@ -12,7 +12,7 @@ namespace Inner_Maps.Location_Structures {
         public Vector3 worldPosition { get; }
         public Vector2 selectableSize { get; protected set; }
         public List<Character> charactersInRoom => GetCharactersInRoom();
-        public LocationStructure parentStructure => tilesInRoom[0].structure;
+        public LocationStructure parentStructure => tilesInRoom?[0].structure;
         
         protected StructureRoom(string name, List<LocationGridTile> tilesInRoom) {
             this.name = name;

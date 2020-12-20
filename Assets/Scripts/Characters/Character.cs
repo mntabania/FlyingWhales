@@ -5358,6 +5358,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddPlayerAction(PLAYER_SKILL_TYPE.SEIZE_CHARACTER);
             AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH);
             AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
+            AddPlayerAction(PLAYER_SKILL_TYPE.TORTURE);
+            AddPlayerAction(PLAYER_SKILL_TYPE.BRAINWASH);
         }
     }
     public void AddPlayerAction(PLAYER_SKILL_TYPE action) {

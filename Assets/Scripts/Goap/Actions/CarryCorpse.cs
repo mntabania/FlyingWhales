@@ -31,7 +31,7 @@ public class CarryCorpse : GoapAction {
 
         string stateName = "Target Missing";
         bool defaultTargetMissing = TargetMissingForCarry(node);
-        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
         //if (defaultTargetMissing == false) {
         //    //check the target's traits, if any of them can make this action invalid
         //    for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
@@ -45,10 +45,13 @@ public class CarryCorpse : GoapAction {
             if (poiTarget.isBeingCarriedBy != null && poiTarget.isBeingCarriedBy != actor) {
                 //If the target is already being carried by another character, fail this carry
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "target_carried";
             } else if (poiTarget.numOfActionsBeingPerformedOnThis > 0) {
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "target_unavailable";
             } else if (poiTarget is Tombstone tombstone && tombstone.character != null && tombstone.character.numOfActionsBeingPerformedOnThis > 0) {
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "target_unavailable";
             }
         }
         return goapActionInvalidity;

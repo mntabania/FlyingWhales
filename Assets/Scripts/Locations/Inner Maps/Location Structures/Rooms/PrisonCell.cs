@@ -65,16 +65,22 @@ namespace Inner_Maps.Location_Structures {
             Character chosenTarget = CollectionUtilities.GetRandomElement(characters);
             StartTorture(chosenTarget);
         }
+        public void BeginTorture(Character p_character) {
+            StartTorture(p_character);
+        }
         public bool HasValidTortureTarget() {
             List<Character> characters = charactersInRoom;
             for (int i = 0; i < characters.Count; i++) {
                 Character character = characters[i];
-                if (character.isNormalCharacter && character.isDead == false) {
+                if (IsValidTortureTarget(character)) {
                     return true;
                 }
             }
             return false;
         }
+        public bool IsValidTortureTarget(Character p_character) {
+            return p_character.isNormalCharacter && p_character.isDead == false;
+        } 
         private void StartTorture(Character target) {
             currentTortureTarget = target;
             currentTortureTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Tortured, currentTortureTarget);
