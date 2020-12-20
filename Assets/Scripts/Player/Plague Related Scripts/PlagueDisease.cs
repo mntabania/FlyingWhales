@@ -323,9 +323,10 @@ public class PlagueDisease : ISingletonPattern, ISavable {
         for (int i = 0; i < 2; i++) {
             if (transmissionChoices.Count == 0) { break; }
             PLAGUE_TRANSMISSION transmissionTypeToUpgrade = CollectionUtilities.GetRandomElement(transmissionChoices);
-            _transmissionLevels[transmissionTypeToUpgrade] = 2;
+            int level = i == 0 ? 1 : 2;
+            _transmissionLevels[transmissionTypeToUpgrade] = level;
             transmissionChoices.Remove(transmissionTypeToUpgrade);
-            randomizeSummary = $"{randomizeSummary}\nUpgraded {transmissionTypeToUpgrade.ToString()} to Level 2";
+            randomizeSummary = $"{randomizeSummary}\nUpgraded {transmissionTypeToUpgrade.ToString()} to Level {level}";
         }
         List<string> lifespanChoices = new List<string>() { "Tile Object", "Monster", "Undead", "Human", "Elf" };
         for (int i = 0; i < 2; i++) {
@@ -347,7 +348,7 @@ public class PlagueDisease : ISingletonPattern, ISavable {
         randomizeSummary = $"{randomizeSummary}\nUnlocked {chosenFatality.ToString()} Fatality";
         
         List<PLAGUE_SYMPTOM> symptomChoices = CollectionUtilities.GetEnumValues<PLAGUE_SYMPTOM>().ToList();
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 1; i++) {
             if (symptomChoices.Count == 0) { break; }
             PLAGUE_SYMPTOM symptomToUpgrade = CollectionUtilities.GetRandomElement(symptomChoices);
             AddAndInitializeSymptom(symptomToUpgrade);

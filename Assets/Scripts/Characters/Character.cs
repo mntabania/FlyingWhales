@@ -2115,6 +2115,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return firstName;
     }
+    public bool IsRatmanThatIsPartOfMajorFaction() {
+        return race == RACE.RATMAN && faction != null && faction.isMajorNonPlayer;
+    }
     #endregion    
 
     #region History/Logs
