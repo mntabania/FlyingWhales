@@ -1032,7 +1032,14 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         //If action is stealth and there is a character in vision that can witness and considers the action as a crime, then return false, this means that the actor must not do the action because there are witnesses
         //Only do this if the actor is a Villager, otherwise, it does not make sense for monsters to be stealthy
         if (poiTarget != actor && isStealth && actor.isNormalCharacter) {
-            if (actor.marker && actor.marker.IsPOIInVision(poiTarget) && !actor.marker.CanDoStealthCrimeToTarget(poiTarget, crimeType)) {
+            IPointOfInterest trueTarget = poiTarget;
+            //If action is steal, we must check the carrier of the item (poiTarget) that is being stolen, instead of the item itself
+            if (action.goapType == INTERACTION_TYPE.STEAL) {
+                if (poiTarget.isBeingCarriedBy != null) {
+                    trueTarget = poiTarget.isBeingCarriedBy;
+                }
+            }
+            if (actor.marker && actor.marker.IsPOIInVision(trueTarget) && !actor.marker.CanDoStealthCrimeToTarget(trueTarget, crimeType)) {
                 return true;
             }
         }

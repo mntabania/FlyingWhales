@@ -4036,13 +4036,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             ActualGoapNode currentNode = plan.currentActualNode;
             if (RaceManager.Instance.CanCharacterDoGoapAction(this, currentNode.action.goapType)
                 && InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentNode.action.goapType, currentNode.actor, currentNode.poiTarget, currentNode.otherData, currentTopPrioJob)) {
-                bool preconditionsSatisfied = plan.currentActualNode.action.CanSatisfyAllPreconditions(currentNode.actor, currentNode.poiTarget, currentNode.otherData, currentTopPrioJob.jobType);
+                bool preconditionsSatisfied = currentNode.action.CanSatisfyAllPreconditions(currentNode.actor, currentNode.poiTarget, currentNode.otherData, currentTopPrioJob.jobType);
                 if (!preconditionsSatisfied) {
                     log =
-                        $"{log}\n - {plan.currentActualNode} Action's preconditions are not all satisfied, trying to recalculate plan...";
+                        $"{log}\n - {currentNode} Action's preconditions are not all satisfied, trying to recalculate plan...";
                     if (plan.doNotRecalculate) {
                         log =
-                            $"{log}\n - {plan.currentActualNode} Action's plan has doNotRecalculate state set to true, dropping plan...";
+                            $"{log}\n - {currentNode} Action's plan has doNotRecalculate state set to true, dropping plan...";
                         logComponent.PrintLogIfActive(log);
                         currentNode.action.OnStopWhileStarted(currentNode);
                         currentTopPrioJob.CancelJob(false);
