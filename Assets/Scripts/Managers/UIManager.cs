@@ -233,7 +233,9 @@ public class UIManager : BaseMonoBehaviour {
         UpdateUI();
     }
     private void OnPlayerActionActivated(PlayerAction p_playerAction) {
-        HidePlayerActionContextMenu();
+        if (p_playerAction.type != PLAYER_SKILL_TYPE.BREED_MONSTER) {
+            HidePlayerActionContextMenu();    
+        }
     }
     private void TryUpdateFactionLog(Faction faction) {
         if (factionInfoUI.isShowing && factionInfoUI.currentlyShowingFaction == faction) {

@@ -32,8 +32,8 @@ namespace Tutorial {
                         .SetOnTopmostActions(OnTopMostVampirism, OnNoLongerTopMostVampirism)
                 ),
                 new QuestStepCollection(
-                    new PlayerActionContextMenuShown(IsCharacterValid, $"Right click on Afflicted Villager")
-                        .SetObjectsToCenter(TriggerFlawTargetCenterGetter),
+                    new PlayerActionContextMenuShown(IsCharacterValid, $"Right click on Afflicted Villager"),
+                        // .SetObjectsToCenter(TriggerFlawTargetCenterGetter),
                     // new ButtonClickedStep("Trigger Flaw", "Click on Trigger Flaw")
                     new FlawTriggeredStep("Choose Trigger Flaw then Vampire", "Vampire")
                         .SetOnTopmostActions(OnTopMostTriggerVampiric, OnNoLongerTopMostTriggerVampiric)
