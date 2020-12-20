@@ -334,6 +334,7 @@ namespace Traits {
             Region homeRegion = originalForm.homeRegion;
             PutToLimbo(originalForm);
             ReleaseFromLimbo(lycanthropeForm, tile, homeRegion);
+            CopyImportantTraits(originalForm, lycanthropeForm);
             lycanthropeForm.needsComponent.ResetFullnessMeter();
             lycanthropeForm.needsComponent.ResetTirednessMeter();
             lycanthropeForm.needsComponent.ResetHappinessMeter();
@@ -363,6 +364,7 @@ namespace Traits {
             Region homeRegion = lycanthropeForm.homeRegion;
             PutToLimbo(lycanthropeForm);
             ReleaseFromLimbo(originalForm, tile, homeRegion);
+            CopyImportantTraits(lycanthropeForm, originalForm);
             lycanthropeForm.traitContainer.RemoveTrait(lycanthropeForm, "Transitioning");
             
             if (UIManager.Instance.IsContextMenuShowingForTarget(lycanthropeForm)) {
@@ -371,7 +373,16 @@ namespace Traits {
             
             Messenger.Broadcast(CharacterSignals.ON_SWITCH_FROM_LIMBO, lycanthropeForm, originalForm);
         }
-
+        private void CopyImportantTraits(Character p_copyFrom, Character p_copyTo) {
+            if (p_copyFrom.traitContainer.HasTrait("Restrained")) {
+                Trait restrained = p_copyFrom.traitContainer.GetTraitOrStatus<Trait>("Restrained");
+                TraitManager.Instance.CopyTraitOrStatus(restrained, p_copyFrom, p_copyTo);
+            }
+            if (p_copyFrom.traitContainer.HasTrait("Prisoner")) {
+                Trait prisoner = p_copyFrom.traitContainer.GetTraitOrStatus<Trait>("Prisoner");
+                TraitManager.Instance.CopyTraitOrStatus(prisoner, p_copyFrom, p_copyTo);
+            }
+        }
         private void PutToLimbo(Character form) {
             if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == form) {
                 UIManager.Instance.characterInfoUI.CloseMenu();

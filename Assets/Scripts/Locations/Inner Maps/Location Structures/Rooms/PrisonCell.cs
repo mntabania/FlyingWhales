@@ -148,7 +148,9 @@ namespace Inner_Maps.Location_Structures {
                 
                 //kill skeleton
                 // GameManager.Instance.CreateParticleEffectAt(_skeleton.gridTileLocation, PARTICLE_EFFECT.Zombie_Transformation);
+                LocationStructure deathLocation = skeleton.currentStructure;
                 skeleton.Death();
+                deathLocation?.RemoveCharacterAtLocation(skeleton);
                 currentTortureTarget.traitContainer.RemoveRestrainAndImprison(currentTortureTarget);
                 currentTortureTarget.jobComponent.DisableReportStructure();
                 if (!currentTortureTarget.traitContainer.HasTrait("Paralyzed")) {

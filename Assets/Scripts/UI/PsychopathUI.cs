@@ -176,7 +176,7 @@ public class PsychopathUI : MonoBehaviour {
     public void OnClickConfirm() {
         Psychopath psychopathTrait = TraitManager.Instance.CreateNewInstancedTraitClass<Psychopath>("Psychopath");
         character.traitContainer.AddTrait(character, psychopathTrait);
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted", null, LOG_TAG.Life_Changes);
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "player_afflicted", null, LOG_TAG.Life_Changes);
         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "Psychopath", LOG_IDENTIFIER.STRING_1);
         log.AddLogToDatabase();

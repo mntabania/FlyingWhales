@@ -219,7 +219,9 @@ namespace Inner_Maps.Location_Structures {
                 door?.Close();
                 
                 //kill skeleton
+                LocationStructure deathLocation = skeleton.currentStructure;
                 skeleton.Death();
+                deathLocation?.RemoveCharacterAtLocation(skeleton);
                 currentBrainwashTarget.traitContainer.RemoveRestrainAndImprison(currentBrainwashTarget);
                 currentBrainwashTarget.jobComponent.DisableReportStructure();
                 if (!currentBrainwashTarget.traitContainer.HasTrait("Paralyzed")) {

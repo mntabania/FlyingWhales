@@ -18,7 +18,7 @@ public class LycanthropyData : AfflictData {
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         //targetPOI.traitContainer.AddTrait(targetPOI, "Lycanthrope");
         LycanthropeData lycanthropeData = new LycanthropeData(targetPOI as Character);
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted", null, LOG_TAG.Player, LOG_TAG.Life_Changes);
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "player_afflicted", null, LOG_TAG.Player, LOG_TAG.Life_Changes);
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "Lycanthrope", LOG_IDENTIFIER.STRING_1);
         log.AddLogToDatabase();
