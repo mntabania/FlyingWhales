@@ -48,7 +48,7 @@ public class SpawnSkeleton : GoapAction {
         if(gridTile == null) {
             gridTile = goapNode.actor.gridTileLocation;
         }
-        Character skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.undeadFaction, homeRegion: gridTile.parentMap.region);
+        Character skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, goapNode.actor.faction, homeRegion: gridTile.parentMap.region, bypassIdeologyChecking: true);
         skeleton.CreateMarker();
         skeleton.InitialCharacterPlacement(gridTile);
     }

@@ -696,7 +696,7 @@ public class CharacterManager : BaseMonoBehaviour {
                 tile.structure.RemovePOI(target.grave);
                 target.SetGrave(null);
             }
-            Summon summon = CreateNewSummon(SUMMON_TYPE.Skeleton, faction, homeRegion: target.homeRegion, className: target.characterClass.className);
+            Summon summon = CreateNewSummon(SUMMON_TYPE.Skeleton, faction, homeRegion: target.homeRegion, className: target.characterClass.className, bypassIdeologyChecking: true);
             summon.SetFirstAndLastName(target.firstName, target.surName);
             summon.SetHasBeenRaisedFromDead(true);
             summon.CreateMarker();

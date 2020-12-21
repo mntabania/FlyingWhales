@@ -686,6 +686,10 @@ public class ReactionComponent : CharacterComponent {
                                         debugLog = $"{debugLog}\n-Character cannot do apprehend and has not yet reacted to the target, will become wary instead";
                                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, targetCharacter);    
                                     }
+                                    BaseSettlement homeSettlement = actor.homeSettlement;
+                                    if(homeSettlement != null && homeSettlement.locationType == LOCATION_TYPE.VILLAGE && homeSettlement is NPCSettlement npcSettlement) {
+                                        npcSettlement.settlementJobTriggerComponent.TryCreateApprehend(targetCharacter);
+                                    }
                                 }
                             }
                         }

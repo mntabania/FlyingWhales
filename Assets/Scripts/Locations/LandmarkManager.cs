@@ -319,10 +319,10 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public NPCSettlement GetFirstVillageSettlementInRegionWithAliveResident(Region region, Faction faction) {
         for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
             NPCSettlement settlement = allNonPlayerSettlements[i];
-            if (settlement.region == region && (settlement.locationType == LOCATION_TYPE.VILLAGE)
+            if (settlement.region == region && settlement.locationType == LOCATION_TYPE.VILLAGE
                 && settlement.HasAliveResident()
-                && (settlement.owner == null || faction == null || !faction.IsFriendlyWith(settlement.owner))
-                && (settlement.owner != faction || (settlement.owner == null && faction == null))) {
+                && settlement.owner != faction
+                && (settlement.owner == null || faction == null || faction.IsHostileWith(settlement.owner))) {
                 return settlement;
             }
         }
