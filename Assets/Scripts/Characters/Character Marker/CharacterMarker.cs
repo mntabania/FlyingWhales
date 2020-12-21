@@ -1830,10 +1830,20 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private RaycastHit2D[] lineOfSightHitObjects;
     public bool IsCharacterInLineOfSightWith(IPointOfInterest target, float rayDistance = 5f) {
         Profiler.BeginSample($"{character.name} IsCharacterInLineOfSightWith Pre Check");
-        if (target is BlockWall == false) {
-            //only Check in vision list if target is NOT Block Wall. 
-            //TODO: Rework this after build. This issue arises when angels try to attack demonic structures.
-            if (IsPOIInVision(target) == false) { return false; }    
+        //if (target is BlockWall == false) {
+        //    //only Check in vision list if target is NOT Block Wall. 
+        //    //TODO: Rework this after build. This issue arises when angels try to attack demonic structures.
+
+        //    //if (IsPOIInVision(target) == false) { return false; } 
+        //}
+
+        //No longer checks if target is in vision, rather, it should check if target has a map visual object, if it does not, there will be no line of sight
+        //Also, there is no line of sight if actor and target is in a different region
+        if (target.mapObjectVisual == null) {
+            return false;
+        }
+        if (character == null || character.currentRegion == null || target.gridTileLocation == null || character.currentRegion != target.gridTileLocation.structure.region) {
+            return false;
         }
         Profiler.EndSample();
         

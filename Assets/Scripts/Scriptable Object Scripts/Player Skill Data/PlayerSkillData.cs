@@ -19,6 +19,9 @@ public class PlayerSkillData : ScriptableObject {
     [Header("Context Menu")]
     public Sprite contextMenuIcon;
     public int contextMenuColumn;
+
+    [Header("Player Action Icon")]
+    public Sprite playerActionIcon;
 }
 
 //[System.Serializable]

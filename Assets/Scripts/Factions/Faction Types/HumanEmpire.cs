@@ -111,7 +111,7 @@ namespace Factions.Faction_Types {
         }
         public override int GetAdditionalMigrationMeterGain(NPCSettlement p_settlement) {
             int unoccupiedDwellings = p_settlement.GetUnoccupiedDwellingCount();
-            return Mathf.Min(unoccupiedDwellings, 3);
+            return Mathf.Min(unoccupiedDwellings, 2);
         }
     }
 }

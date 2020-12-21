@@ -70,13 +70,19 @@ public class SchemeData : PlayerAction {
         return reasons;
     }
     public override bool IsValid(IPlayerActionTarget target) {
-        if(target is Character character) {
+        BaseSettlement targetSettlement = null;
+        if (target is LocationStructure structure) {
+            targetSettlement = structure.settlementLocation;
+        } else if (target is BaseSettlement settlement) {
+            targetSettlement = settlement;
+        }
+        if (target is Character character) {
             bool isNormalOrRatman = character.isNormalCharacter || character.isConsideredRatman;
             if (!isNormalOrRatman) {
                 return false;
             }
-        } else if (target is BaseSettlement settlement) {
-            if (settlement.locationType != LOCATION_TYPE.VILLAGE || !(settlement is NPCSettlement)) {
+        } else if (targetSettlement != null) {
+            if (targetSettlement.locationType != LOCATION_TYPE.VILLAGE || !(targetSettlement is NPCSettlement)) {
                 return false;
             }
         }

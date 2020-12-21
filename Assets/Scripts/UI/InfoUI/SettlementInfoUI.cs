@@ -119,9 +119,10 @@ public class SettlementInfoUI : InfoUIBase {
     #region Hover
     public void OnHoverEnterMigrationMeter() {
         if(activeSettlement is NPCSettlement npcSettlement) {
-            string text = $"Current Value: {npcSettlement.migrationComponent.GetMigrationMeterValueInText()}";
-            text += $"\nIncrease Rate Per Hour: {npcSettlement.migrationComponent.perHourIncrement}";
-            UIManager.Instance.ShowSmallInfo(text);
+            string text = npcSettlement.migrationComponent.GetHoverTextOfMigrationMeter();
+            if (!string.IsNullOrEmpty(text)) {
+                UIManager.Instance.ShowSmallInfo(text);
+            }
         }
     }
     public void OnHoverExitMigrationMeter() {

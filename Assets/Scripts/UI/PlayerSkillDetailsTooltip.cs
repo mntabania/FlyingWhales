@@ -143,13 +143,8 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                         }
                         string wholeReason = spellData
                             .GetReasonsWhyCannotPerformAbilityTowards(activeCharacter);
-                        if (string.IsNullOrEmpty(wholeReason) == false) {
-                            string[] reasons = wholeReason.Split(',');
-                            for (int i = 0; i < reasons.Length; i++) {
-                                string reason = reasons[i];
-                                additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText(reason)}\n";
-                            }
-                        }
+                        wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+                        additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
                     }
                 } else if (activeObj is TileObject activeTileObject) {
                     if (activeTileObject is AnkhOfAnubis ankh && ankh.isActivated && spellData.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT) {
@@ -157,15 +152,15 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                     }
                 } else if (activeObj is BaseSettlement activeSettlement) {
                     if (spellData.CanPerformAbilityTowards(activeSettlement) == false) {
-                        string wholeReason = spellData
-                            .GetReasonsWhyCannotPerformAbilityTowards(activeSettlement);
-                        if (string.IsNullOrEmpty(wholeReason) == false) {
-                            string[] reasons = wholeReason.Split(',');
-                            for (int i = 0; i < reasons.Length; i++) {
-                                string reason = reasons[i];
-                                additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText(reason)}\n";
-                            }
-                        }
+                        string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeSettlement);
+                        wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+                        additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
+                    }
+                } else if (activeObj is LocationStructure activeStructure) {
+                    if (spellData.CanPerformAbilityTowards(activeStructure) == false) {
+                        string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeStructure);
+                        wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+                        additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
                     }
                 }
             }

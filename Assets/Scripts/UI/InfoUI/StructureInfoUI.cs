@@ -18,6 +18,13 @@ public class StructureInfoUI : InfoUIBase {
     [Space(10)]
     [Header("Info")]
     [SerializeField] private TextMeshProUGUI hpLbl;
+    [SerializeField] private TextMeshProUGUI villageLbl;
+    [SerializeField] private EventLabel villageEventLbl;
+    [SerializeField] private GameObject villageParentGO;
+
+    [Header("City Center Info")]
+    [SerializeField] private Image migrationMeterImg;
+    [SerializeField] private GameObject migrationMeterGO;
 
     [Space(10)]
     [Header("Characters")]
@@ -33,6 +40,9 @@ public class StructureInfoUI : InfoUIBase {
         Messenger.AddListener<Character, LocationStructure>(StructureSignals.REMOVED_STRUCTURE_RESIDENT, UpdateResidentsFromSignal);
         Messenger.AddListener<DemonicStructure>(StructureSignals.DEMONIC_STRUCTURE_REPAIRED, OnDemonicStructureRepaired);
         ListenToPlayerActionSignals();
+
+        villageEventLbl.SetOnLeftClickAction(OnLeftClickVillage);
+        villageEventLbl.SetOnRightClickAction(OnRightClickVillage);
     }
     public override void CloseMenu() {
         base.CloseMenu();
@@ -79,6 +89,25 @@ public class StructureInfoUI : InfoUIBase {
     }
     private void UpdateInfo() {
         hpLbl.text = $"{activeStructure.currentHP}/{activeStructure.maxHP}";
+        if(activeStructure.settlementLocation != null && activeStructure.settlementLocation.locationType == LOCATION_TYPE.VILLAGE) {
+            villageLbl.text = $"<link=\"village\">{UtilityScripts.Utilities.ColorizeAndBoldName(activeStructure.settlementLocation.name)}</link>";
+            villageParentGO.SetActive(true);
+        } else {
+            villageParentGO.SetActive(false);
+        }
+        UpdateInfoIfCityCenter();
+    }
+    private void UpdateInfoIfCityCenter() {
+        if (activeStructure.structureType == STRUCTURE_TYPE.CITY_CENTER && activeStructure.settlementLocation != null) {
+            if(activeStructure.settlementLocation is NPCSettlement npcSettlement) {
+                migrationMeterImg.fillAmount = npcSettlement.migrationComponent.GetNormalizedMigrationMeterValue();
+                migrationMeterGO.SetActive(true);
+            } else {
+                migrationMeterGO.SetActive(false);
+            }
+        } else {
+            migrationMeterGO.SetActive(false);
+        }
     }
     private void UpdateResidents() {
         UtilityScripts.Utilities.DestroyChildren(charactersScrollView.content);
@@ -107,7 +136,34 @@ public class StructureInfoUI : InfoUIBase {
         }
     }
     #endregion
-    
+
+    #region Village
+    private void OnLeftClickVillage(object obj) {
+        if (activeStructure.settlementLocation != null && activeStructure.settlementLocation.locationType == LOCATION_TYPE.VILLAGE) {
+            UIManager.Instance.ShowSettlementInfo(activeStructure.settlementLocation);
+        }
+    }
+    private void OnRightClickVillage(object obj) {
+        if (activeStructure.settlementLocation != null && activeStructure.settlementLocation.locationType == LOCATION_TYPE.VILLAGE) {
+            UIManager.Instance.ShowPlayerActionContextMenu(activeStructure.settlementLocation, Input.mousePosition, true);
+        }
+    }
+    #endregion
+
+    #region Hover
+    public void OnHoverEnterMigrationMeter() {
+        if (activeStructure.settlementLocation != null && activeStructure.settlementLocation is NPCSettlement npcSettlement) {
+            string text = npcSettlement.migrationComponent.GetHoverTextOfMigrationMeter();
+            if (!string.IsNullOrEmpty(text)) {
+                UIManager.Instance.ShowSmallInfo(text);
+            }
+        }
+    }
+    public void OnHoverExitMigrationMeter() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
+
     #region For Testing
     public void ShowStructureTestingInfo() {
 #if UNITY_EDITOR

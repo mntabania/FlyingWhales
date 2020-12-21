@@ -127,29 +127,35 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
     private bool TryAddPOIToVision(IPointOfInterest poi) {
         //(parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState is CombatState && 
         //parentMarker.character.movementComponent.HasPathTo(poi.gridTileLocation))|| 
-        if (parentMarker && poi.gridTileLocation != null && parentMarker.character.gridTileLocation != null) {
-            //if it is, just follow the normal procedure when a poi becomes in range
-            if (poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure ||
-                (poi.mapObjectVisual != null && poi.mapObjectVisual.visionTrigger != null && poi.mapObjectVisual.visionTrigger is POIVisionTrigger poiVisionTrigger && poiVisionTrigger.IgnoresStructureDifference())) {
-                bool shouldAddToVisionBasedOnRoom = ShouldAddToVisionBasedOnRoom(poi);
-                if (shouldAddToVisionBasedOnRoom) {
-                    NormalEnterHandling(poi);
-                    return true;    
+        LocationStructure actorStructure = parentMarker.character.gridTileLocation?.structure;
+        LocationStructure targetStructure = poi.gridTileLocation?.structure;
+        if(parentMarker && actorStructure != null && targetStructure != null) {
+            if (actorStructure.region == targetStructure.region) {
+                //if same structure or ignores structure difference, add in vision
+                if (ShouldBeConsideredInVision(poi) ||
+                    (poi.mapObjectVisual != null && poi.mapObjectVisual.visionTrigger != null && poi.mapObjectVisual.visionTrigger is POIVisionTrigger poiVisionTrigger && poiVisionTrigger.IgnoresStructureDifference())) {
+                    bool shouldAddToVisionBasedOnRoom = ShouldAddToVisionBasedOnRoom(poi);
+                    if (shouldAddToVisionBasedOnRoom) {
+                        NormalEnterHandling(poi);
+                        return true;
+                    }
                 }
+                //if (actorStructure.structureType.IsOpenSpace() && targetStructure.structureType.IsOpenSpace()) {
+                //    //if both the character that owns this and the object is part of a structure that is open space
+                //    //process as if normal
+                //    NormalEnterHandling(poi);
+                //    return true;
+                //}
+                //if (parentMarker.IsCharacterInLineOfSightWith(poi)) {
+                //    //If actor is in line of sight with target, add it in vision even if they are in different structures
+                //    NormalEnterHandling(poi);
+                //    return true;
+                //}
+                parentMarker.AddPOIAsInRangeButDifferentStructure(poi);
+                return false;
             }
         }
-        if (poi.gridTileLocation?.structure != null && 
-            parentMarker.character.gridTileLocation?.structure != null && 
-            poi.gridTileLocation.structure.structureType.IsOpenSpace() && 
-            parentMarker.character.gridTileLocation.structure.structureType.IsOpenSpace()) {
-            //if both the character that owns this and the object is part of a structure that is open space
-            //process as if normal
-            NormalEnterHandling(poi);
-            return true;
-        } else {
-            parentMarker.AddPOIAsInRangeButDifferentStructure(poi);
-            return false;
-        }
+        return false;
     }
     private bool ShouldAddToVisionBasedOnRoom(IPointOfInterest seenObject) {
         bool shouldAddToVision = true;
@@ -171,23 +177,26 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         //if the character that arrived at the new structure is in this character different structure list
         //check if that character now has the same structure as this character,
         if (parentMarker.inVisionPOIsButDiffStructure.Contains(character) && 
-            (structure == parentMarker.character.currentStructure || (structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace()))) {
+            ShouldBeConsideredInVision(structure, character)) {
+            //(structure == parentMarker.character.currentStructure || (structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace()))
+
             //if it does, add as normal
             bool shouldAddToVisionBasedOnRoom = ShouldAddToVisionBasedOnRoom(character);
             if (shouldAddToVisionBasedOnRoom) {
                 NormalEnterHandling(character);
                 parentMarker.RemovePOIAsInRangeButDifferentStructure(character);
             }
-            
-            // NormalEnterHandling(character);
-            // parentMarker.RemovePOIAsInRangeButDifferentStructure(character);
         }
         //else if the character that arrived at the new structure is in this character's vision list and the character no longer has the same structure as this character, 
-        else if (parentMarker.IsPOIInVision(character) && structure != parentMarker.character.currentStructure) {
-            //if both characters are in open space, do not remove from vision
-            if (structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace()) {
-                return;
-            }
+        else if (parentMarker.IsPOIInVision(character) && !ShouldBeConsideredInVision(structure, character)) {
+            //if (structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace()) {
+            //    //if both characters are in open space, do not remove from vision
+            //    return;
+            //}
+            //if (parentMarker.IsCharacterInLineOfSightWith(character)) {
+            //    //if actor is still in line of sight with target, do not remove from vision even if they are in diff structure
+            //    return;
+            //}
             //remove from vision and hostile range
             parentMarker.RemovePOIFromInVisionRange(character);
             parentMarker.AddPOIAsInRangeButDifferentStructure(character);
@@ -201,8 +210,7 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
                     if (parentMarker.RemovePOIAsInRangeButDifferentStructure(poi)) {
                         i--;
                     }
-                } else if (poi.gridTileLocation.structure == parentMarker.character.currentStructure || 
-                           (poi.gridTileLocation.structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace())) {
+                } else if (ShouldBeConsideredInVision(poi)) {
                     bool shouldAddToVisionBasedOnRoom = ShouldAddToVisionBasedOnRoom(poi);
                     if (shouldAddToVisionBasedOnRoom) {
                         NormalEnterHandling(poi);
@@ -219,8 +227,7 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
                     if (parentMarker.RemovePOIFromInVisionRange(poi)) {
                         i--;
                     }
-                } else if (poi.gridTileLocation.structure != parentMarker.character.currentStructure 
-                    && (!poi.gridTileLocation.structure.structureType.IsOpenSpace() || !parentMarker.character.currentStructure.structureType.IsOpenSpace())) {
+                } else if (!ShouldBeConsideredInVision(poi)) {
                     //if the character in vision no longer has the same structure as the character, and at least one of them is not in an open space structure
                     if (parentMarker.RemovePOIFromInVisionRange(poi)) {
                         i--;
@@ -234,6 +241,16 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
                 character.PerformGoapAction();
             }
         }
+    }
+    private bool ShouldBeConsideredInVision(IPointOfInterest target) {
+        LocationStructure targetStructure = target.gridTileLocation?.structure;
+        return ShouldBeConsideredInVision(targetStructure, target);
+    }
+    private bool ShouldBeConsideredInVision(LocationStructure targetStructure, IPointOfInterest target) {
+        //if same structure, or both in open space, or is in line of sight, add in vision
+        LocationStructure actorStructure = parentMarker.character.currentStructure;
+        return actorStructure != null && targetStructure != null
+            && (actorStructure == targetStructure || (actorStructure.structureType.IsOpenSpace() && targetStructure.structureType.IsOpenSpace()) || parentMarker.IsCharacterInLineOfSightWith(target));
     }
     #endregion
 

@@ -59,7 +59,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
 
     #region Migration Meter
     private void RandomizePerHourIncrement() {
-        perHourIncrement = GameUtilities.RandomBetweenTwoNumbers(3, 9);
+        perHourIncrement = GameUtilities.RandomBetweenTwoNumbers(2, 5);
     }
     public void AdjustVillageMigarationMeter(int amount) {
         villageMigrationMeter += amount;
@@ -85,6 +85,11 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     }
     public string GetMigrationMeterValueInText() {
         return $"{villageMigrationMeter}/{MAX_MIGRATION_METER}";
+    }
+    public string GetHoverTextOfMigrationMeter() {
+        string text = $"Current Value: {GetMigrationMeterValueInText()}";
+        text += $"\nIncrease Rate Per Hour: {perHourIncrement}";
+        return text;
     }
     #endregion
 

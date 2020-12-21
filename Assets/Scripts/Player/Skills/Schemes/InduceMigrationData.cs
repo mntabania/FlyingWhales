@@ -12,7 +12,7 @@ public class InduceMigrationData : SchemeData {
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SCHEME;
 
     public InduceMigrationData() : base() {
-        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.SETTLEMENT };
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.SETTLEMENT, SPELL_TARGET.STRUCTURE };
     }
 
     #region Overrides
@@ -31,11 +31,22 @@ public class InduceMigrationData : SchemeData {
             base.ActivateAbility(targetSettlement);
         }
     }
+    public override void ActivateAbility(LocationStructure targetStructure) {
+        if(targetStructure.settlementLocation != null) {
+            ActivateAbility(targetStructure.settlementLocation);
+        }
+    }
     public override bool CanPerformAbilityTowards(BaseSettlement targetSettlement) {
         if (targetSettlement is NPCSettlement npcSettlement && !npcSettlement.migrationComponent.IsMigrationEventAllowed()) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetSettlement);
+    }
+    public override bool CanPerformAbilityTowards(LocationStructure targetStructure) {
+        if (targetStructure.settlementLocation != null) {
+            return CanPerformAbilityTowards(targetStructure.settlementLocation);
+        }
+        return base.CanPerformAbilityTowards(targetStructure);
     }
     public override string GetReasonsWhyCannotPerformAbilityTowards(BaseSettlement p_targetSettlement) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(p_targetSettlement);
@@ -55,11 +66,11 @@ public class InduceMigrationData : SchemeData {
         }
         return reasons;
     }
-    public override bool IsValid(IPlayerActionTarget target) {
-        if (!(target is NPCSettlement)) {
-            return false;
+    public override string GetReasonsWhyCannotPerformAbilityTowards(LocationStructure p_targetStructure) {
+        if (p_targetStructure.settlementLocation != null) {
+            return GetReasonsWhyCannotPerformAbilityTowards(p_targetStructure.settlementLocation);
         }
-        return base.IsValid(target);
+        return base.GetReasonsWhyCannotPerformAbilityTowards(p_targetStructure);
     }
     #endregion
 }
