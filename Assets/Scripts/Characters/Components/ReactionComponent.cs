@@ -687,8 +687,8 @@ public class ReactionComponent : CharacterComponent {
                                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, targetCharacter);    
                                     }
                                     BaseSettlement homeSettlement = actor.homeSettlement;
-                                    if(homeSettlement != null && homeSettlement.locationType == LOCATION_TYPE.VILLAGE) {
-                                        homeSettlement.settlementJobTriggerComponent.TryCreateApprehend(targetCharacter);
+                                    if(homeSettlement != null && homeSettlement.locationType == LOCATION_TYPE.VILLAGE && homeSettlement is NPCSettlement npcSettlement) {
+                                        npcSettlement.settlementJobTriggerComponent.TryCreateApprehend(targetCharacter);
                                     }
                                 }
                             }
