@@ -69,6 +69,19 @@ public class StructureInfoUI : InfoUIBase {
         UpdateResidents();
         LoadActions(activeStructure);
     }
+    protected override void LoadActions(IPlayerActionTarget target) {
+        UtilityScripts.Utilities.DestroyChildren(actionsTransform);
+        activeActionItems.Clear();
+        for (int i = 0; i < target.actions.Count; i++) {
+            PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(target.actions[i]);
+            if (action.type == PLAYER_SKILL_TYPE.SCHEME) { continue; }
+            if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
+                ActionItem actionItem = AddNewAction(action, target);
+                actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);    
+                actionItem.ForceUpdateCooldown();
+            }
+        }
+    }
     #endregion
 
     public void UpdateStructureInfoUI() {
@@ -124,6 +137,7 @@ public class StructureInfoUI : InfoUIBase {
             }
         }
     }
+    
     #region Listeners
     private void UpdateResidentsFromSignal(Character resident, LocationStructure structure) {
         if (isShowing && activeStructure == structure) {

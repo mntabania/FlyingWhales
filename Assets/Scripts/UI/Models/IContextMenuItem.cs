@@ -12,4 +12,5 @@ public interface IContextMenuItem {
     bool IsInCooldown();
     float GetCoverFillAmount();
     int GetCurrentRemainingCooldownTicks();
+    int GetManaCost();
 }

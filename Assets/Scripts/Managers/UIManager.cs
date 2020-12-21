@@ -233,12 +233,13 @@ public class UIManager : BaseMonoBehaviour {
         UpdateUI();
     }
     private void OnPlayerActionActivated(PlayerAction p_playerAction) {
-        if (IsContextMenuShowing()) {
-            ForceReloadPlayerActions();
+        if (p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_CHARACTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_MONSTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT) {
+            HidePlayerActionContextMenu();    
+        } else {
+            if (IsContextMenuShowing()) {
+                ForceReloadPlayerActions();
+            }    
         }
-        // if (p_playerAction.type != PLAYER_SKILL_TYPE.BREED_MONSTER) {
-        //     HidePlayerActionContextMenu();    
-        // }
     }
     private void TryUpdateFactionLog(Faction faction) {
         if (factionInfoUI.isShowing && factionInfoUI.currentlyShowingFaction == faction) {

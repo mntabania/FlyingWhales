@@ -72,5 +72,11 @@ public class StifleMigrationData : SchemeData {
         }
         return base.GetReasonsWhyCannotPerformAbilityTowards(p_targetStructure);
     }
+    public override bool IsValid(IPlayerActionTarget target) {
+        if (target is Character) {
+            return false;
+        }
+        return base.IsValid(target);
+    }
     #endregion
 }

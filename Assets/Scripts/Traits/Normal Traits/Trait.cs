@@ -316,6 +316,9 @@ namespace Traits {
 
             UIManager.Instance.ShowTriggerFlawConfirmation(question, effect, manaCost, () => TriggerFlawData.ActivateTriggerFlaw(trait, p_character), layer: 26, showCover: true, pauseAndResume: true);
         }
+        public int GetManaCost() {
+            return PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost;
+        }
         #endregion
         
         #region IMoodModifier Implementation

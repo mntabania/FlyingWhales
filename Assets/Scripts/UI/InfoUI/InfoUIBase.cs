@@ -101,7 +101,7 @@ public abstract class InfoUIBase : MonoBehaviour {
 
     #region Actions
     protected List<ActionItem> activeActionItems = new List<ActionItem>();
-    protected void LoadActions(IPlayerActionTarget target) {
+    protected virtual void LoadActions(IPlayerActionTarget target) {
         UtilityScripts.Utilities.DestroyChildren(actionsTransform);
         activeActionItems.Clear();
         for (int i = 0; i < target.actions.Count; i++) {

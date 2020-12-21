@@ -48,6 +48,12 @@ public class InduceMigrationData : SchemeData {
         }
         return base.CanPerformAbilityTowards(targetStructure);
     }
+    public override bool IsValid(IPlayerActionTarget target) {
+        if (target is Character) {
+            return false;
+        }
+        return base.IsValid(target);
+    }
     public override string GetReasonsWhyCannotPerformAbilityTowards(BaseSettlement p_targetSettlement) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(p_targetSettlement);
         if (p_targetSettlement is NPCSettlement npcSettlement && !npcSettlement.migrationComponent.IsMigrationEventAllowed()) {

@@ -97,7 +97,8 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             currencyStr += $"{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}  ";
         }
         if (charges != -1) {
-            currencyStr += $"{charges.ToString()}/{spellData.maxCharges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
+            //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
+            currencyStr += $"{charges.ToString()}/{charges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
         }
         if (cooldown != -1) {
             currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
