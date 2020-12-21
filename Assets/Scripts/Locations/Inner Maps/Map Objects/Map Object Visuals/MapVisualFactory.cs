@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 public class MapVisualFactory {
@@ -89,5 +90,21 @@ public class MapVisualFactory {
                 break;
         }
         return obj;
+    }
+
+    public CharacterVisionTrigger CreateAndInittializeCharacterVisionTrigger(Character p_character) {
+        GameObject collisionTriggerGO;
+        switch (p_character.race) {
+            case RACE.DRAGON:
+                collisionTriggerGO = GameObject.Instantiate(InnerMapManager.Instance.dragonCollisionTriggerPrefab, p_character.marker.transform);
+                break;
+            default:
+                collisionTriggerGO = GameObject.Instantiate(InnerMapManager.Instance.characterCollisionTriggerPrefab, p_character.marker.transform);
+                break;
+        }
+        collisionTriggerGO.transform.localPosition = Vector3.zero;
+        CharacterVisionTrigger characterVisionTrigger = collisionTriggerGO.GetComponent<CharacterVisionTrigger>();
+        characterVisionTrigger.Initialize(p_character);
+        return characterVisionTrigger;
     }
 }

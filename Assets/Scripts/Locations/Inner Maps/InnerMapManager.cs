@@ -48,6 +48,7 @@ namespace Inner_Maps {
         
         private Vector3 _nextMapPos = Vector3.zero;
         public GameObject characterCollisionTriggerPrefab;
+        public GameObject dragonCollisionTriggerPrefab;
 
         [Header("Pathfinding")]
         [SerializeField] private AstarPath pathfinder;

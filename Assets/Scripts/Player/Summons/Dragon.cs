@@ -24,6 +24,7 @@ public class Dragon : Summon {
         traitContainer.AddTrait(this, "Immune");
         traitContainer.AddTrait(this, "Hibernating");
         traitContainer.AddTrait(this, "Fireproof");
+        traitContainer.AddTrait(this, "Sturdy");
         //traitContainer.AddTrait(this, "Indestructible");
         _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(8);
         charactersThatAreWary = new List<Character>();
@@ -38,6 +39,7 @@ public class Dragon : Summon {
         traitContainer.AddTrait(this, "Immune");
         traitContainer.AddTrait(this, "Hibernating");
         traitContainer.AddTrait(this, "Fireproof");
+        traitContainer.AddTrait(this, "Sturdy");
         //traitContainer.AddTrait(this, "Indestructible");
         _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(8);
         charactersThatAreWary = new List<Character>();

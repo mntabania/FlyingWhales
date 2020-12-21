@@ -12,7 +12,7 @@ namespace Goap.Job_Checkers {
             
             bool isApplicable = !target.traitContainer.HasTrait("Restrained"); //|| target.currentStructure != _owner.prison; //Removed check for structure must be in prison because restrain job only puts restrains on the target they dont actually carry them to the prison
             if (target.gridTileLocation != null && isApplicable) {
-                if (target.gridTileLocation.IsPartOfSettlement(settlement)) {
+                if (target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(settlement)) {
                     //if target is within settlement job is always valid
                     return true;
                 } else {
