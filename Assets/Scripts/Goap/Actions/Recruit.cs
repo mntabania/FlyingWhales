@@ -61,7 +61,7 @@ public class Recruit : GoapAction {
     public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
         if (target is Character targetCharacter) {
-            if (targetCharacter.prevFaction != null && witness.prevFaction.leader == witness) {
+            if (targetCharacter.prevFaction != null && targetCharacter.prevFaction.leader == witness) {
                 reactions.Add(EMOTION.Anger);
             }
         }

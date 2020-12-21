@@ -1854,6 +1854,9 @@ public class UIManager : BaseMonoBehaviour {
         Trait trait = p_character.traitContainer.GetTraitOrStatus<Trait>(traitName);
         string title = traitName;
         string fullDescription = trait.GetTriggerFlawEffectDescription(p_character, "flaw_effect");
+        if (string.IsNullOrEmpty(fullDescription)) {
+            fullDescription = "Flaw cannot be triggered.";
+        }
         int manaCost = PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost;
         string currencyStr = string.Empty;
         if (manaCost != -1) {
