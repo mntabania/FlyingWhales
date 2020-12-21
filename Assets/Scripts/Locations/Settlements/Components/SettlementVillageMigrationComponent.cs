@@ -21,7 +21,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     }
 
     #region Listeners
-    public void OnHourStarted(NPCSettlement p_settlement) {
+    public void OnHourStarted() {
         if (!IsMigrationEventAllowed()) {
             //If village does not allow villager migration, reset meter back to zero
             if(villageMigrationMeter > 0) {
@@ -29,7 +29,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
             }
             return;
         }
-        int migrationMeterModification = p_settlement.owner?.factionType.GetAdditionalMigrationMeterGain(p_settlement) ?? 0;
+        int migrationMeterModification = GetAdditionalMigrationMeterRatePerHour();
         AdjustVillageMigarationMeter(perHourIncrement + migrationMeterModification);
     }
     public void OnSettlementTypeChanged() {
@@ -88,8 +88,11 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     }
     public string GetHoverTextOfMigrationMeter() {
         string text = $"Current Value: {GetMigrationMeterValueInText()}";
-        text += $"\nIncrease Rate Per Hour: {perHourIncrement}";
+        text += $"\nIncrease Rate Per Hour: {perHourIncrement + GetAdditionalMigrationMeterRatePerHour()}";
         return text;
+    }
+    private int GetAdditionalMigrationMeterRatePerHour() {
+        return owner.owner?.factionType.GetAdditionalMigrationMeterGain(owner) ?? 0;
     }
     #endregion
 
