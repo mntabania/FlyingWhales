@@ -233,12 +233,13 @@ public class UIManager : BaseMonoBehaviour {
         UpdateUI();
     }
     private void OnPlayerActionActivated(PlayerAction p_playerAction) {
-        if (IsContextMenuShowing()) {
-            ForceReloadPlayerActions();
+        if (p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_CHARACTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_MONSTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT) {
+            HidePlayerActionContextMenu();    
+        } else {
+            if (IsContextMenuShowing()) {
+                ForceReloadPlayerActions();
+            }    
         }
-        // if (p_playerAction.type != PLAYER_SKILL_TYPE.BREED_MONSTER) {
-        //     HidePlayerActionContextMenu();    
-        // }
     }
     private void TryUpdateFactionLog(Faction faction) {
         if (factionInfoUI.isShowing && factionInfoUI.currentlyShowingFaction == faction) {
@@ -1853,6 +1854,9 @@ public class UIManager : BaseMonoBehaviour {
         Trait trait = p_character.traitContainer.GetTraitOrStatus<Trait>(traitName);
         string title = traitName;
         string fullDescription = trait.GetTriggerFlawEffectDescription(p_character, "flaw_effect");
+        if (string.IsNullOrEmpty(fullDescription)) {
+            fullDescription = "Flaw cannot be triggered.";
+        }
         int manaCost = PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost;
         string currencyStr = string.Empty;
         if (manaCost != -1) {

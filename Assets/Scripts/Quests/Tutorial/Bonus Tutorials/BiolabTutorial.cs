@@ -26,7 +26,7 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                        new ClickOnStructureStep("Click on a the Biolab", validityChecker: structure => structure.structureType == STRUCTURE_TYPE.BIOLAB)
+                        new ClickOnStructureStep("Click on the Biolab", validityChecker: structure => structure.structureType == STRUCTURE_TYPE.BIOLAB)
                             .SetCompleteAction(OnCompleteClickBiolab),
                         new ButtonClickedStep("Upgrade", "Click on Upgrade button")
                             .SetOnTopmostActions(OnTopMostClickUpgrade, OnNoLongerTopMostClickUpgrade),

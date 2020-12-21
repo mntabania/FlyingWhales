@@ -30,4 +30,7 @@ public class ClickableMenuData : ScriptableObject, IContextMenuItem
     public int GetCurrentRemainingCooldownTicks() {
         return 0;
     }
+    public int GetManaCost() {
+        return -1;
+    }
 }

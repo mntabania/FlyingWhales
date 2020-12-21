@@ -105,5 +105,8 @@ public class PlayerAction : SpellData, IContextMenuItem {
     public int GetCurrentRemainingCooldownTicks() {
         return cooldown - currentCooldownTick;
     }
+    public int GetManaCost() {
+        return manaCost;
+    }
     #endregion
 }

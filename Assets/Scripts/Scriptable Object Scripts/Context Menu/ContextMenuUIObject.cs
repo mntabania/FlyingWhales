@@ -5,6 +5,7 @@ using DG.Tweening;
 using EZObjectPools;
 using Ruinarch.Custom_UI;
 using TMPro;
+using Traits;
 
 public class ContextMenuUIObject : PooledObject {
     public static Action<IContextMenuItem, bool, int> onMenuPress;
@@ -69,7 +70,12 @@ public class ContextMenuUIObject : PooledObject {
             txtMenuFullName.gameObject.SetActive(false);
             txtMenuName.gameObject.SetActive(true);
         } else {
-            txtMenuFullName.text = p_parentUIMenu.contextMenuName;
+            string fullName = string.Empty;
+            if (p_parentUIMenu.GetManaCost() > 0) {
+                fullName = $"{p_parentUIMenu.GetManaCost()}{UtilityScripts.Utilities.ManaIcon()}  ";
+            }
+            fullName = $"{fullName}{p_parentUIMenu.contextMenuName}";
+            txtMenuFullName.text = fullName;
             txtMenuFullName.gameObject.SetActive(true);
             txtMenuName.gameObject.SetActive(false);
         }

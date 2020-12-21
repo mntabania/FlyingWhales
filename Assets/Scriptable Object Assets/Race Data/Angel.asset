@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Angel
   m_EditorClassIdentifier: 
   race: 32
-  hpMultiplier: 0
+  hpMultiplier: 1.5
   attackMultiplier: 0
   attackSpeedMultiplier: 0
   staminaReductionMultiplier: 0
