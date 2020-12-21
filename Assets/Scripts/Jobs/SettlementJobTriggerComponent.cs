@@ -220,9 +220,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		}
 	}
 	private void OnCharacterEnteredHexTile(Character character, HexTile tile) {
-		if (_owner.tiles.Contains(tile)) {
-			TryCreateApprehend(character);
-		}
+        //Note: No more apprehension in settlement when criminal enters the settlement hex tiles
+        //Now, creation of apprehend job towards criminal in settlement job queue is done in ReactionComponent, so this means, it is only added in settlement job queue when another character sees the criminal
+        //The reason for this is due to a bug in burn at stake that when a criminal is brought outside to be burnt, when the criminal is dropped this will create another apprehend job in settlement even though the criminal is already being burnt at stake
+
+		//if (_owner.tiles.Contains(tile)) {
+		//	TryCreateApprehend(character);
+		//}
 	}
 	private void OnFoodInDwellingChanged(Table table) {
 		if (table.gridTileLocation.IsPartOfSettlement(_owner)) {
