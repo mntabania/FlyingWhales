@@ -216,8 +216,16 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
       overrideLandmarkPortrait: {fileID: 0}
-    humansLandmarkTileSprites: []
-    elvenLandmarkTileSprites: []
+    humansLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 228ea757cdc15b14ab93bba87d0237ac, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 228ea757cdc15b14ab93bba87d0237ac, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
     monsterGenerationChance: 0
     monsterGenerationSetting: {fileID: 11400000, guid: baa9efab444793b4b8a31f058c89963a,
       type: 2}
@@ -838,8 +846,16 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
       overrideLandmarkPortrait: {fileID: 0}
-    humansLandmarkTileSprites: []
-    elvenLandmarkTileSprites: []
+    humansLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 6cb6c592c031ca945917b7754e0e1441, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 6cb6c592c031ca945917b7754e0e1441, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
     monsterGenerationChance: 50
     monsterGenerationSetting: {fileID: 0}
     itemGenerationSetting: {fileID: 0}
@@ -859,8 +875,16 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
       overrideLandmarkPortrait: {fileID: 0}
-    humansLandmarkTileSprites: []
-    elvenLandmarkTileSprites: []
+    humansLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 3bc5ae8edcf5dfc4ca9f51fdc0a28946, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 3bc5ae8edcf5dfc4ca9f51fdc0a28946, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
     monsterGenerationChance: 0
     monsterGenerationSetting: {fileID: 0}
     itemGenerationSetting: {fileID: 0}

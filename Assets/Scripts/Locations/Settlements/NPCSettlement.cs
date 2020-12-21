@@ -130,7 +130,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             Initialize();
             if (tiles.Count <= 0) {
                 UnsubscribeToSignals(); //make sure that settlements that have no more areas should no longer listen to signals.
+            } else {
+                //Update tile nameplates
+                //Fix for: https://trello.com/c/gAqpeACf/3194-loading-the-game-erases-the-faction-symbol-on-the-world-map
+                for (int i = 0; i < tiles.Count; i++) {
+                    HexTile tile = tiles[i];
+                    tile.landmarkOnTile?.nameplate.UpdateVisuals();
+                }    
             }
+            
         }
     }
     private void LoadJobs(SaveDataNPCSettlement data) {
