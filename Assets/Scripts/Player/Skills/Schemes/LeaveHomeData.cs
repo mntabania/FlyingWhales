@@ -1,7 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
+using Inner_Maps;
+using UtilityScripts;
+using Locations.Settlements;
 using Logs;
 
 public class LeaveHomeData : SchemeData {
@@ -29,6 +33,18 @@ public class LeaveHomeData : SchemeData {
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);
         character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Home, character);
+
+        BaseSettlement homeSettlement = character.homeSettlement;
+        if (homeSettlement != null) {
+            LocationStructure chosenStructure = homeSettlement.GetRandomStructureThatMeetCriteria(s => s != character.previousCharacterDataComponent.previousHomeStructure && s != character.homeStructure && character.movementComponent.HasPathToEvenIfDiffRegion(s.GetRandomPassableTile()));
+            if (chosenStructure != null) {
+                LocationGridTile chosenTile = chosenStructure.GetRandomPassableTile();
+                if(chosenTile != null) {
+                    character.jobComponent.CreateGoToJob(chosenTile);
+                }
+            }
+        }
+        
     }
     protected override void PopulateSchemeConversation(List<ConversationData> conversationList, Character targetCharacter, object target, bool isSuccessful) {
         ConversationData data = ObjectPoolManager.Instance.CreateNewConversationData("I want you to abandon your current home.", null, DialogItem.Position.Right);

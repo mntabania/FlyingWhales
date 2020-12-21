@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
 using Logs;
+using Inner_Maps;
 
 public class LeaveFactionData : SchemeData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.LEAVE_FACTION;
@@ -35,6 +36,13 @@ public class LeaveFactionData : SchemeData {
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);
         character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_normal");
+        HexTile chosenHex = character.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
+        if (chosenHex != null) {
+            LocationGridTile chosenTile = chosenHex.GetRandomPassableTile();
+            if (chosenTile != null) {
+                character.jobComponent.CreateGoToJob(chosenTile);
+            }
+        }
     }
     protected override void PopulateSchemeConversation(List<ConversationData> conversationList, Character character, object target, bool isSuccessful) {
         ConversationData data = ObjectPoolManager.Instance.CreateNewConversationData("You have to leave your current faction immediately.", null, DialogItem.Position.Right);
