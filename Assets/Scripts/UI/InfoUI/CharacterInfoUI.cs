@@ -833,6 +833,7 @@ public class CharacterInfoUI : InfoUIBase {
                 }
             }
         }
+        _dictMoodSummary = _dictMoodSummary.OrderByDescending(x => x.Value.amount).ToDictionary(k => k.Key, v => v.Value);
         foreach (var mood in _dictMoodSummary) {
             GameObject moodItemGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefabMoodThought.name, Vector3.zero, Quaternion.identity, scrollViewMoodSummary.content);
             MoodThoughtUIItem moodItem = moodItemGO.GetComponent<MoodThoughtUIItem>();

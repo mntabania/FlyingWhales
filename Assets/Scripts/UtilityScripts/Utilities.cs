@@ -1012,16 +1012,16 @@ namespace UtilityScripts {
             return "<sprite=\"Text_Sprites\" name=\"Villager_Icon\">";
         }
         public static string ManaIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Mana_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Mana_Icon\">";
         }
         public static string ChargesIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Charges_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Charges_Icon\">";
         }
         public static string ThreatIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Threat_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Threat_Icon\">";
         }
         public static string CooldownIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Cooldown_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Cooldown_Icon\">";
         }
         public static string CultistIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Cultist_Icon\">";

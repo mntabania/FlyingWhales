@@ -13,12 +13,14 @@ public class ContextMenuUIObject : PooledObject {
     
     public Image ImgIcon;
     public TextMeshProUGUI txtMenuName;
+    public TextMeshProUGUI txtMenuFullName;
     public RuinarchButton btnActivate;
     public GameObject goArrow;
     public Image coverImg;
     public Image imgCooldownRadial;
     public Image imgCooldown;
     public TextMeshProUGUI txtCooldownTimer;
+    public TextMeshProUGUI txtCharges;
     
     public HoverHandler hoverHandler;
 
@@ -51,13 +53,28 @@ public class ContextMenuUIObject : PooledObject {
             if (txtCooldownTimer.gameObject.activeSelf) {
                 txtCooldownTimer.text = m_parentUIMenu.GetCurrentRemainingCooldownTicks().ToString();
             }
+            if (m_parentUIMenu is PlayerAction playerAction && playerAction.charges > 0) {
+                txtCharges.text = $"{playerAction.charges}{UtilityScripts.Utilities.ChargesIcon()}";
+                txtCharges.gameObject.SetActive(true);
+            } else {
+                txtCharges.gameObject.SetActive(false);
+            }
+            
         }
     }
     public void SetMenuDetails(IContextMenuItem p_parentUIMenu) {
         ImgIcon.gameObject.SetActive(p_parentUIMenu.contextMenuIcon != null);
+        if (ImgIcon.gameObject.activeSelf) {
+            txtMenuName.text = p_parentUIMenu.contextMenuName;
+            txtMenuFullName.gameObject.SetActive(false);
+            txtMenuName.gameObject.SetActive(true);
+        } else {
+            txtMenuFullName.text = p_parentUIMenu.contextMenuName;
+            txtMenuFullName.gameObject.SetActive(true);
+            txtMenuName.gameObject.SetActive(false);
+        }
         btnActivate.name = p_parentUIMenu.contextMenuName;
         ImgIcon.sprite = p_parentUIMenu.contextMenuIcon;
-        txtMenuName.text = p_parentUIMenu.contextMenuName;
         m_parentUIMenu = p_parentUIMenu;
         bool canBePicked = p_parentUIMenu.CanBePickedRegardlessOfCooldown();
         bool isInCooldown = m_parentUIMenu.IsInCooldown();
@@ -70,6 +87,12 @@ public class ContextMenuUIObject : PooledObject {
         }
         if (txtCooldownTimer.gameObject.activeSelf) {
             txtCooldownTimer.text = p_parentUIMenu.GetCurrentRemainingCooldownTicks().ToString();
+        }
+        if (m_parentUIMenu is PlayerAction playerAction && playerAction.charges > 0) {
+            txtCharges.text = $"{playerAction.charges}{UtilityScripts.Utilities.ChargesIcon()}";
+            txtCharges.gameObject.SetActive(true);
+        } else {
+            txtCharges.gameObject.SetActive(false);
         }
         bool hasSubMenu = m_parentUIMenu.subMenus != null && m_parentUIMenu.subMenus.Count > 0;
         goArrow.gameObject.SetActive(hasSubMenu);

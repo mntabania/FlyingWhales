@@ -20,7 +20,7 @@ public class MusicHaterData : AfflictData {
         OnExecutePlayerSkill();
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Music Lover")) {
+        if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Music Lover") || targetCharacter.traitContainer.HasTrait("Music Hater")) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);

@@ -67,19 +67,21 @@ public class ContextMenuUIController : MVCUIController, ContextMenuUIView.IListe
 	
 	private void OnMenuClicked(IContextMenuItem p_UIMenu, bool p_isAction, int p_currentColumn) {
 		if (!p_isAction) {
-			m_contextMenuUIView.DisplaySubMenu(p_UIMenu.subMenus, p_currentColumn + 1, _canvas);
+			if (p_UIMenu.CanBePickedRegardlessOfCooldown()) {
+				m_contextMenuUIView.DisplaySubMenu(p_UIMenu.subMenus, p_currentColumn + 1, _canvas);
+			}
 		} else {
 			p_UIMenu.OnPickAction();
 		}
 	}
 	private void OnMenuHoveredOver(IContextMenuItem p_UIMenu, bool p_isAction, int p_currentColumn) {
-		if (!p_isAction) {
-			if (p_UIMenu.CanBePickedRegardlessOfCooldown()) {
-				m_contextMenuUIView.DisplaySubMenu(p_UIMenu.subMenus, p_currentColumn + 1, _canvas);
-			}
-		} else {
-			m_contextMenuUIView.HideColumn(p_currentColumn + 1);
-		}
+		// if (!p_isAction) {
+		// 	if (p_UIMenu.CanBePickedRegardlessOfCooldown()) {
+		// 		m_contextMenuUIView.DisplaySubMenu(p_UIMenu.subMenus, p_currentColumn + 1, _canvas);
+		// 	}
+		// } else {
+		// 	m_contextMenuUIView.HideColumn(p_currentColumn + 1);
+		// }
 		_onHoverOverAction?.Invoke(p_UIMenu, m_contextMenuUIView.GetTooltipHoverPositionToUse());
 	}
 	private void OnMenuHoveredOut(IContextMenuItem p_UIMenu, bool p_isAction, int p_currentColumn) {
