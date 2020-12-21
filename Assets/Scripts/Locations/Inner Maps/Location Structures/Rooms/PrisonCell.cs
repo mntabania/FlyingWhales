@@ -119,20 +119,22 @@ namespace Inner_Maps.Location_Structures {
                 skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
                 skeleton.SetDestroyMarkerOnDeath(true);
                 skeleton.ClearPlayerActions();
+                skeleton.movementComponent.SetEnableDigging(true);
                 
-                int modifiedX = tortureChamber.entrance.localPlace.x - 2;
-                modifiedX = Mathf.Max(modifiedX, 0);
-                LocationGridTile outsideTile = tortureChamber.region.innerMap.map[modifiedX, tortureChamber.entrance.localPlace.y];
+                // int modifiedX = tortureChamber.entrance.localPlace.x - 2;
+                // modifiedX = Mathf.Max(modifiedX, 0);
+                // LocationGridTile outsideTile = tortureChamber.region.innerMap.map[modifiedX, tortureChamber.entrance.localPlace.y];
 
-                List<LocationGridTile> dropChoices = outsideTile
-                    .GetTilesInRadius(7, includeCenterTile: true, includeTilesInDifferentStructure: false).Where(t =>
-                         t.objHere == null && t.structure.structureType == STRUCTURE_TYPE.WILDERNESS).ToList(); //&& t.collectionOwner.partOfHextile != parentStructure.occupiedHexTile
+                List<LocationGridTile> dropChoices = parentStructure.occupiedHexTile.hexTileOwner.locationGridTiles.Where(t => 
+                    t.structure.structureType == STRUCTURE_TYPE.WILDERNESS).ToList();
+
+                LocationGridTile chosenDropTile = CollectionUtilities.GetRandomElement(dropChoices);
                 
                 CharacterManager.Instance.PlaceSummon(skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, character, skeleton);
                 job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {
                     skeleton.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), 
-                    CollectionUtilities.GetRandomElement(dropChoices)
+                    chosenDropTile
                 });
                 skeleton.jobQueue.AddJobInQueue(job);
                 
