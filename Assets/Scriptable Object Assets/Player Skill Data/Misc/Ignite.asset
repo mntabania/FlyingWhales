@@ -24,3 +24,4 @@ MonoBehaviour:
   tooltipImage: {fileID: 0}
   contextMenuIcon: {fileID: 21300000, guid: 3026bb2d2f440b841898d958712340a3, type: 3}
   contextMenuColumn: 0
+  playerActionIcon: {fileID: 21300000, guid: 00c146ecfee6b7c4fb1138f861d0a9f4, type: 3}
