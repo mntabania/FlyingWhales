@@ -8,7 +8,7 @@ using Locations.Settlements;
 public class RebellionData : SchemeData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.REBELLION;
     public override string name => "Rebellion";
-    public override string description => "Convince a Settlement Ruler to split off from current Faction.";
+    public override string description => "Convince a Settlement Ruler to split off their entire Village from current Faction.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SCHEME;
 
     public RebellionData() : base() {
@@ -46,6 +46,7 @@ public class RebellionData : SchemeData {
         base.PopulateSchemeConversation(conversationList, character, target, isSuccessful);
     }
     public override void ProcessSuccessRateWithMultipliers(Character p_targetCharacter, ref float p_newSuccessRate) {
+        p_newSuccessRate *= 0.5f;
         if (p_targetCharacter.faction != null && p_targetCharacter.faction.leader != null && p_targetCharacter.faction.leader is Character factionLeader && p_targetCharacter != factionLeader) {
             if (p_targetCharacter.relationshipContainer.IsFriendsWith(factionLeader)) {
                 p_newSuccessRate *= 0.2f;
@@ -60,6 +61,7 @@ public class RebellionData : SchemeData {
     }
     public override string GetSuccessRateMultiplierText(Character p_targetCharacter) {
         string text = string.Empty;
+        text += $"Rebellion: <color=white>x0.5</color>";
         if (p_targetCharacter.faction != null && p_targetCharacter.faction.leader != null && p_targetCharacter.faction.leader is Character factionLeader && p_targetCharacter != factionLeader) {
             if (p_targetCharacter.relationshipContainer.IsFriendsWith(factionLeader)) {
                 if(text != string.Empty) { text += "\n"; }

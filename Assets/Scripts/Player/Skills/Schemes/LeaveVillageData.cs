@@ -33,7 +33,9 @@ public class LeaveVillageData : SchemeData {
         HexTile chosenHex = character.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
         if (chosenHex != null) {
             LocationGridTile chosenTile = chosenHex.GetRandomPassableTile();
-            character.jobComponent.CreateGoToJob(chosenTile);
+            if (chosenTile != null) {
+                character.jobComponent.CreateGoToJob(chosenTile);
+            }
         }
     }
     protected override void PopulateSchemeConversation(List<ConversationData> conversationList, Character targetCharacter, object target, bool isSuccessful) {
