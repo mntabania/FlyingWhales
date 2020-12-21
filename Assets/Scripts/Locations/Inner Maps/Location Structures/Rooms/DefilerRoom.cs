@@ -119,6 +119,11 @@ namespace Inner_Maps.Location_Structures {
             if (actor.isSettlementRuler) {
                 failWeight += 600;
             }
+
+            if (actor.characterClass.className == "Hero" || actor.traitContainer.IsBlessed()) {
+                successWeight = 0;
+                failWeight = 100;
+            }
         }
         public static float GetBrainwashSuccessRate(Character character) {
             GetBrainwashSuccessAndFailWeights(character, out int successWeight, out int failWeight);

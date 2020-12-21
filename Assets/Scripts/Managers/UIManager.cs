@@ -1937,11 +1937,8 @@ public class UIManager : BaseMonoBehaviour {
                 additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Not enough charges.")}\n";
             }
         }
-        if (spellData is BrainwashData && structureRoomInfoUI.isShowing && structureRoomInfoUI.activeRoom is DefilerRoom defilerRoom && defilerRoom.charactersInRoom.Count > 0) {
-            Character targetCharacter = defilerRoom.charactersInRoom.First();
-            if (targetCharacter != null) {
-                fullDescription = $"{fullDescription}\n<b>{targetCharacter.name} Brainwash Success Rate: {DefilerRoom.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";    
-            }
+        if (spellData is BrainwashData && p_target is Character targetCharacter) {
+            fullDescription = $"{fullDescription}\n<b>{targetCharacter.name} Brainwash Success Rate: {DefilerRoom.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";
         }
 
         fullDescription = $"{fullDescription}\n\n{additionalText}";
