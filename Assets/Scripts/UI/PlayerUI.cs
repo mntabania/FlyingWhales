@@ -78,8 +78,6 @@ public class PlayerUI : BaseMonoBehaviour {
     public UIHoverPosition minionListHoverPosition;
     private readonly List<string> factionActionsList = new List<string>() { "Manage Cult", "Meddle" };
 
-    [Header("Player Actions")]
-    public SpellSpriteDictionary playerActionsIconDictionary;
     private List<System.Action> pendingUIToShow { get; set; }
 
     [Header("Spells")]

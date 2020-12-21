@@ -1898,13 +1898,8 @@ public class UIManager : BaseMonoBehaviour {
                             additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Blessed Villagers are protected from your powers.")}\n";
                         }
                         string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeCharacter);
-                        if (string.IsNullOrEmpty(wholeReason) == false) {
-                            string[] reasons = wholeReason.Split(',');
-                            for (int i = 0; i < reasons.Length; i++) {
-                                string reason = reasons[i];
-                                additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText(reason)}\n";
-                            }
-                        }
+                        wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+                        additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
                     }
                 } else if (activePOI is TileObject activeTileObject) {
                     if (activeTileObject is AnkhOfAnubis ankh && ankh.isActivated && spellData.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT) {
@@ -1912,15 +1907,15 @@ public class UIManager : BaseMonoBehaviour {
                     }
                 } else if (activePOI is BaseSettlement activeSettlement) {
                     if (spellData.CanPerformAbilityTowards(activeSettlement) == false) {
-                        string wholeReason = spellData
-                            .GetReasonsWhyCannotPerformAbilityTowards(activeSettlement);
-                        if (string.IsNullOrEmpty(wholeReason) == false) {
-                            string[] reasons = wholeReason.Split(',');
-                            for (int i = 0; i < reasons.Length; i++) {
-                                string reason = reasons[i];
-                                additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText(reason)}\n";
-                            }
-                        }
+                        string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeSettlement);
+                        wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+                        additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
+                    }
+                } else if (activePOI is LocationStructure activeStructure) {
+                    if (spellData.CanPerformAbilityTowards(activeStructure) == false) {
+                        string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeStructure);
+                        wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+                        additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
                     }
                 }
             }

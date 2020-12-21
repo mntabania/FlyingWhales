@@ -969,6 +969,17 @@ namespace UtilityScripts {
 
             return parts.ToArray();
         }
+        public static string SplitStringIntoNewLines(string s, params char[] delimiters) {
+            string newText = string.Empty;
+            if (string.IsNullOrEmpty(s) == false) {
+                string[] reasons = s.Split(delimiters);
+                for (int i = 0; i < reasons.Length; i++) {
+                    string reason = reasons[i];
+                    newText += $"{reason}\n";
+                }
+            }
+            return newText;
+        }
         #endregion
 
         #region Sprite Utilities

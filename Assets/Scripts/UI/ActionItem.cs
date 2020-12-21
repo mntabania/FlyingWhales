@@ -27,7 +27,7 @@ public class ActionItem : PooledObject {
         this.playerAction = playerAction;
         this.playerActionTarget = playerActionTarget;
         UnToggleHighlight();
-        actionImg.sprite = PlayerUI.Instance.playerActionsIconDictionary[playerAction.type];
+        actionImg.sprite = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(playerAction.type).playerActionIcon;
         actionLbl.text = playerAction.GetLabelName(playerActionTarget);
         gameObject.SetActive(true);
         Messenger.AddListener<SpellData>(SpellSignals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);

@@ -108,7 +108,7 @@ namespace Factions.Faction_Types {
         }
         public override int GetAdditionalMigrationMeterGain(NPCSettlement p_settlement) {
             int nobleAmount = p_settlement.settlementClassTracker.GetCurrentResidentClassAmount("Noble");
-            return Mathf.Min(nobleAmount, 4);
+            return Mathf.Min(nobleAmount, 3);
         }
     }
 }

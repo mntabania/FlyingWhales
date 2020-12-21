@@ -24,5 +24,12 @@ namespace Inner_Maps.Location_Structures {
         public LocationStructure GetLocationStructure() {
             return this;
         }
+
+        #region IPlayerActionTarget
+        public override void ConstructDefaultActions() {
+            base.ConstructDefaultActions();
+            AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
+        }
+        #endregion
     }
 }

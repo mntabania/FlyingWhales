@@ -59,6 +59,7 @@ public class SpellData : IPlayerSkill {
     }
     public virtual string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) { return null; }
     public virtual string GetReasonsWhyCannotPerformAbilityTowards(BaseSettlement p_targetSettlement) { return string.Empty; }
+    public virtual string GetReasonsWhyCannotPerformAbilityTowards(LocationStructure p_targetStructure) { return string.Empty; }
     public virtual bool CanPerformAbilityTowards(Character targetCharacter) {
         //(targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES)
         if(targetCharacter.traitContainer.IsBlessed()) {
