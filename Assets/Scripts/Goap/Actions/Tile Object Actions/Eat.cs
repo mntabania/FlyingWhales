@@ -132,23 +132,23 @@ public class Eat : GoapAction {
                     } else if (actor.needsComponent.isStarving) {
                         Character tableOwner = table.characterOwner;
                         if (tableOwner != null) {
-                            if (actor.relationshipContainer.IsFriendsWith(tableOwner)) {
+                            if (tableOwner == actor) {
                                 cost = UtilityScripts.Utilities.Rng.Next(400, 451);
-                                costLog += $" +{cost}(Travelling, Table is owned by friend/close friend and actor is starving)";
+                                costLog += $" +{cost}(Travelling, Table is personally owned)";
                             } else if (actor.relationshipContainer.IsEnemiesWith(tableOwner)) {
-                                cost = 800;
+                                cost = 996;
                                 costLog += $" +{cost}(Travelling, Table is owned by friend/close friend and actor is starving)";
                             } else {
-                                cost = UtilityScripts.Utilities.Rng.Next(450, 501);
-                                costLog += $" +{cost}(Travelling, Table owned by someone that is not friend or enemy and actor is starving)";
+                                cost = 994;
+                                costLog += $" +{cost}(Travelling, Table is not owned by actor and is not owned by Enemy/Rival)";
                             }
                         } else {
-                            cost = UtilityScripts.Utilities.Rng.Next(450, 501);
-                            costLog += $" +{cost}(Travelling, Table not owned)";
+                            cost = 994;
+                            costLog += $" +{cost}(Travelling, Table is not owned)";
                         }
                     } else {
                         cost += 2000;
-                        costLog += $" +{cost}(Travelling but not starving)";
+                        costLog += $" +{cost}(Travelling but not starving and target is table)";
                     }
                 } else if (table.gridTileLocation != null && table.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)) {
                     if (table.structureLocation == actor.homeStructure) {
@@ -187,10 +187,10 @@ public class Eat : GoapAction {
                     }
                 } else {
                     if (table.characterOwner != null && !table.IsOwnedBy(actor) && actor.relationshipContainer.IsFriendsWith(table.characterOwner)) {
-                        cost = UtilityScripts.Utilities.Rng.Next(500, 551); ;
+                        cost = 988;
                         costLog += $" {cost}(Otherwise, if Table personally owned by Friend or Close Friend)";
                     } else {
-                        cost += UtilityScripts.Utilities.Rng.Next(800, 851); ;
+                        cost = 996;
                         costLog += $" {cost}(Otherwise, if Table is NOT owned by Friend or Close Friend)";
                     }
                 }
@@ -201,16 +201,24 @@ public class Eat : GoapAction {
                         costLog += $" +{cost}(Target is human/elven meat and actor is cannibal)";
                     } else {
                         if (actor.needsComponent.isStarving) {
-                            cost = UtilityScripts.Utilities.Rng.Next(700, 751);
+                            cost = UtilityScripts.Utilities.Rng.Next(970, 981);
                             costLog += $" +{cost}(Target is human/elven meat and actor is not cannibal but is starving)";
                         } else {
                             cost = 2000;
                             costLog += $" +{cost}(Target is human/elven meat and actor is not cannibal and is not starving)";
                         }
                     }
+                } else if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(out var settlement) && settlement.owner != null && settlement.owner != actor.faction){
+                    if (target.gridTileLocation.structure.structureType == STRUCTURE_TYPE.TAVERN) {
+                        cost = UtilityScripts.Utilities.Rng.Next(600, 651);
+                        costLog += $" +{cost}(Target is inside of tavern owned by a different faction)";    
+                    } else {
+                        cost += 2000;
+                        costLog += $" +{cost}(Target is inside settlement owned by a different faction)";
+                    }
                 } else {
-                    cost = UtilityScripts.Utilities.Rng.Next(400, 451);
-                    costLog += $" +{cost}(Not Table)";
+                    cost = UtilityScripts.Utilities.Rng.Next(950, 961);
+                    costLog += $" +{cost}(Target is not Human/Elf Meat and is not part of a settlement owned by a different faction)";
                 }
             }
         }
