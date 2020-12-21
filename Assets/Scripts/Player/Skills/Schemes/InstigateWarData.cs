@@ -21,7 +21,7 @@ public class InstigateWarData : SchemeData {
             List<Faction> choices = ObjectPoolManager.Instance.CreateNewFactionList();
             for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                 Faction faction = FactionManager.Instance.allFactions[i];
-                if(faction != sourceFaction && faction.factionType.type != FACTION_TYPE.Vagrants && faction.factionType.type != FACTION_TYPE.Demons
+                if(faction != sourceFaction && faction.factionType.type != FACTION_TYPE.Vagrants && faction.factionType.type != FACTION_TYPE.Demons && faction.factionType.type != FACTION_TYPE.Wild_Monsters
                     && faction.HasMemberThatMeetCriteria(c => !c.isDead)) {
                     choices.Add(faction);
                 }

@@ -357,7 +357,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
         npcSettlementEventDispatcher.ExecuteHourStartedEvent(this);
-        migrationComponent.OnHourStarted(this);
+        migrationComponent.OnHourStarted();
     }
     #endregion
 
