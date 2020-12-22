@@ -2610,6 +2610,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AdjustHP(Mathf.CeilToInt(maxHPPercentage * maxHP), ELEMENTAL_TYPE.Normal);
         }
     }
+    public void HPRecovery(int p_amount) {
+        if (doNotRecoverHP <= 0 && currentHP < maxHP && currentHP > 0) {
+            AdjustHP(p_amount, ELEMENTAL_TYPE.Normal);
+        }
+    }
     public bool IsHealthFull() {
         return currentHP >= maxHP;
     }

@@ -48,7 +48,7 @@ namespace Traits {
         #endregion
 
         private void RecoverHP(Character character) {
-            character.HPRecovery(0.02f);
+            character.HPRecovery(1); //0.02
         }
 
         private void CheckForLycanthropy(Character character) {
