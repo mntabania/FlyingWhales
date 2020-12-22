@@ -1226,10 +1226,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Vision Collision
     private void CreateCollisionTrigger() {
-        GameObject collisionTriggerGO = GameObject.Instantiate(InnerMapManager.Instance.characterCollisionTriggerPrefab, this.transform);
-        collisionTriggerGO.transform.localPosition = Vector3.zero;
-        visionTrigger = collisionTriggerGO.GetComponent<CharacterVisionTrigger>();
-        visionTrigger.Initialize(character);
+        visionTrigger = InnerMapManager.Instance.mapObjectFactory.CreateAndInittializeCharacterVisionTrigger(character);
     }
     public void AddPOIAsInVisionRange(IPointOfInterest poi) {
         if (!IsPOIInVision(poi)) {

@@ -164,7 +164,7 @@ public class RestrainCharacter : GoapAction {
         if (satisfied) {
             if (actor != poiTarget) {
                 if(poiTarget is Character target) {
-                    return !target.isDead && !target.traitContainer.HasTrait("Restrained") && !(target is Dragon);
+                    return !target.isDead && !target.traitContainer.HasTrait("Restrained"); //&& !(target is Dragon);
                 }
             }
             return false;

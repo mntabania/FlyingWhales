@@ -81814,6 +81814,8 @@ MonoBehaviour:
   currentTagIndex: 12
   characterCollisionTriggerPrefab: {fileID: 1745477595920248, guid: b561293b149dfb44a8798a971c7596c6,
     type: 3}
+  dragonCollisionTriggerPrefab: {fileID: 1745477595920248, guid: 90aea6282c2abbc4cb631bfee800d043,
+    type: 3}
   pathfinder: {fileID: 1536722385}
   tileObjectSlotSettings:
     m_keys:

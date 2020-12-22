@@ -1238,17 +1238,19 @@ public class ReactionComponent : CharacterComponent {
         }
         debugLog = $"{debugLog}{actor.name} is reacting to {targetTileObject.nameWithID}";
         if (!actor.combatComponent.isInActualCombat && !actor.hasSeenFire) {
-            if (targetTileObject.traitContainer.HasTrait("Burning")
+            bool hasHigherPrioJob = actor.jobQueue.jobsInQueue.Count > 0 && actor.jobQueue.jobsInQueue[0].priority > JOB_TYPE.DOUSE_FIRE.GetJobTypePriority();
+
+            if (!hasHigherPrioJob && targetTileObject.traitContainer.HasTrait("Burning")
                 && targetTileObject.gridTileLocation != null
                 && actor.homeSettlement != null
                 && targetTileObject.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
                 && !actor.traitContainer.HasTrait("Pyrophobic")
                 && !actor.traitContainer.HasTrait("Dousing")
-                && actor.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE) == false) {
+                && !actor.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE)) {
                 debugLog = $"{debugLog}\n-Target is Burning and Character is not Pyrophobic";
                 actor.SetHasSeenFire(true);
                 actor.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
-                if (actor.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE) == false) {
+                if (!actor.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE)) {
                     Debug.LogWarning($"{actor.name} saw a fire in a settlement but no douse fire jobs were created.");
                 }
 

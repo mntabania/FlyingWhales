@@ -255,6 +255,7 @@ namespace Locations.Settlements {
                 tile.SetCorruption(isCorrupted);
                 if (tile.landmarkOnTile != null) {
                     tile.UpdateLandmarkVisuals();
+                    tile.landmarkOnTile?.nameplate.UpdateVisuals();
                 }
                 tile.UpdatePathfindingGraph();
             }
