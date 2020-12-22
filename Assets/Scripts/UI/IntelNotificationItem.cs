@@ -64,6 +64,8 @@ public class IntelNotificationItem : PlayerNotificationItem {
         }
         if (!string.IsNullOrEmpty(_intelHoverText)) {
             UIManager.Instance.ShowSmallInfo(_intelHoverText, autoReplaceText: false);
+        } else {
+            UIManager.Instance.ShowSmallInfo("Doesn't seem very useful, but...", autoReplaceText: false);   
         }
     }
     public void OnHoverExit() {

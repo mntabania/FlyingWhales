@@ -37,13 +37,19 @@ public class DryTilesBehaviour : CharacterBehaviourComponent {
         for (int i = 0; i < character.behaviourComponent.dryingTilesForSettlement.settlementJobTriggerComponent.wetTiles.Count; i++) {
             LocationGridTile wetTile = character.behaviourComponent.dryingTilesForSettlement.settlementJobTriggerComponent.wetTiles[i];
             Wet wet = wetTile.genericTileObject.traitContainer.GetTraitOrStatus<Wet>("Wet");
-            if (wet != null && wet.dryer == null) {
-                //only consider dousing fire that is not yet assigned
-                float dist = Vector2.Distance(character.worldObject.transform.position, wetTile.worldLocation);
-                if (dist < nearest) {
-                    nearestTile = wetTile;
-                    nearest = dist;
-                }    
+            if (wet != null) {
+                if (wet.dryer == null) {
+                    //only consider dousing fire that is not yet assigned
+                    float dist = Vector2.Distance(character.worldObject.transform.position, wetTile.worldLocation);
+                    if (dist < nearest) {
+                        nearestTile = wetTile;
+                        nearest = dist;
+                    }    
+                }
+            } else {
+                //TODO: Find out why non wet tiles are still in list
+                character.behaviourComponent.dryingTilesForSettlement.settlementJobTriggerComponent.wetTiles.RemoveAt(i);
+                i--;
             }
         }
         if (nearestTile != null) {
