@@ -5505,6 +5505,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AssignClass(className);
 
             ReturnToLife();
+
         }
     }
     public bool ReturnToLife() {

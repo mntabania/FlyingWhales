@@ -733,6 +733,7 @@ public class CharacterManager : BaseMonoBehaviour {
             LocationGridTile tile = target.grave != null ? target.grave.gridTileLocation : target.gridTileLocation;
             GameManager.Instance.CreateParticleEffectAt(tile, PARTICLE_EFFECT.Zombie_Transformation);
             target.ReturnToLife(faction, chosenRace, chosenClassName);
+            target.traitContainer.RemoveTrait(target, "Transitioning"); //Remove transitioning status if the character turns into a zombie so that they will attack characters immediately
             target.MigrateHomeStructureTo(null);
             target.needsComponent.SetTirednessForcedTick(0);
             target.needsComponent.SetFullnessForcedTick(0);
