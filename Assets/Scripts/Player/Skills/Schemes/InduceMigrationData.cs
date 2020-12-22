@@ -28,6 +28,8 @@ public class InduceMigrationData : SchemeData {
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
 
             LogSchemeVillage(npcSettlement);
+
+            PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.SCHEME).OnExecutePlayerSkill();
             base.ActivateAbility(targetSettlement);
         }
     }
