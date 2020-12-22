@@ -71,8 +71,8 @@ public class DropRestrained : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         string stateName = "Target Missing";
-        bool defaultTargetMissing = IsDropTargetMissing(node);
-        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
+        bool defaultTargetMissing = IsDropTargetMissing(node) || IsTargetMissing(node);
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "unable_to_do");
         //if (defaultTargetMissing == false) {
         //    //check the target's traits, if any of them can make this action invalid
         //    for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
