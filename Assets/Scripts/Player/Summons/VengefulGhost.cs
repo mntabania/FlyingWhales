@@ -22,5 +22,9 @@ public class VengefulGhost : Summon {
         base.Initialize();
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Vengeful_Ghost_Behaviour);
     }
+    protected override void OnChangeFaction(Faction prevFaction, Faction newFaction) {
+        base.OnChangeFaction(prevFaction, newFaction);
+        behaviourComponent.SetInvadeVillageTarget(null);
+    }
     #endregion
 }

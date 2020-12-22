@@ -32,6 +32,7 @@ public class UIManager : BaseMonoBehaviour {
     public const string flawTextColor = "#FF073A";
 
     public Canvas canvas;
+    public RectTransform smallInfoCanvas;
     public RectTransform canvasRectTransform;
     private InfoUIBase[] allMenus;
 
@@ -553,6 +554,9 @@ public class UIManager : BaseMonoBehaviour {
     // }
     private void PositionTooltip(Vector3 position, GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT) {
         var v3 = position;
+        if (tooltipParent.transform.parent != smallInfoCanvas) {
+            tooltipParent.transform.SetParent(smallInfoCanvas);    
+        }
 
         rtToReposition.pivot = new Vector2(0f, 1f);
         RectTransform tooltipParentRT = tooltipParent.transform as RectTransform;
@@ -578,12 +582,10 @@ public class UIManager : BaseMonoBehaviour {
         (tooltipParent.transform as RectTransform).anchoredPosition = clampedPos;
     }
      private Vector3 KeepFullyOnScreen(RectTransform rect, Vector3 newPos, RectTransform CanvasRect) {
-         float border = 10f;
-         
-         float minX = 0f + border;
-         float maxX = (CanvasRect.sizeDelta.x - rect.sizeDelta.x) - border; //* 0.5f;
-         float minY = rect.sizeDelta.y + border; //* -0.5f;
-         float maxY = CanvasRect.sizeDelta.y - border; //* 0.5f;
+         float minX = 0f;
+         float maxX = (CanvasRect.sizeDelta.x - rect.sizeDelta.x); //* 0.5f;
+         float minY = rect.sizeDelta.y; //* -0.5f;
+         float maxY = CanvasRect.sizeDelta.y; //* 0.5f;
         
          newPos.x = Mathf.Clamp(newPos.x, minX, maxX);
          newPos.y = Mathf.Clamp(newPos.y, minY, maxY);

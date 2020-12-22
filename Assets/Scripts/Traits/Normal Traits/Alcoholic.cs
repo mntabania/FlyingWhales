@@ -2,9 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps.Location_Structures;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UtilityScripts;
 namespace Traits {
     public class Alcoholic : Trait {
 
@@ -71,10 +73,19 @@ namespace Traits {
                     if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
                         character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY);
                     }
-
-                    //TileObject to = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN).GetTileObjectsThatAdvertise(INTERACTION_TYPE.DRINK).First();
-                    GoapPlanJob drinkJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.DRINK, character, character);
-                    character.jobQueue.AddJobInQueue(drinkJob);
+                    if (character.homeSettlement != null && character.homeSettlement.HasStructure(STRUCTURE_TYPE.TAVERN)) {
+                        LocationStructure tavern = character.homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.TAVERN);
+                        List<TileObject> choices = tavern.GetTileObjectsThatAdvertise(INTERACTION_TYPE.DRINK);
+                        if (choices.Count > 0) {
+                            TileObject target = CollectionUtilities.GetRandomElement(choices);
+                            GoapPlanJob drinkJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.DRINK, target, character);
+                            character.jobQueue.AddJobInQueue(drinkJob);    
+                        } else {
+                            return "no_target";            
+                        }
+                    } else {
+                        return "no_target";
+                    }
                 } else {
                     heartbroken.TriggerBrokenhearted();
                 }
