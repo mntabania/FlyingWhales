@@ -26,14 +26,17 @@ namespace Traits {
         }
 
         #region Loading
-        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
-            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
-            if (p_saveDataTrait is SaveDataFiniteZombie finiteZombie) {
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
+            if (saveDataTrait is SaveDataFiniteZombie finiteZombie) {
                 _hasTurnedAtLeastOnce = finiteZombie.hasTurnedAtLeastOnce;
             } else {
                 //Had to do this because had to handle incompatible saves
                 _hasTurnedAtLeastOnce = true;
             }
+        }
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
             if (!_hasTurnedAtLeastOnce) {
                 owner.visuals.UsePreviousClassAsset(true);
                 owner.visuals.UpdateAllVisuals(owner);
