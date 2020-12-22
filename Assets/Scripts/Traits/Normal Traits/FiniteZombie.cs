@@ -43,7 +43,9 @@ namespace Traits {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is Character character) {
                 owner = character;
-                Messenger.AddListener(Signals.HOUR_STARTED, HourlyCheck);
+                if (!_hasTurnedAtLeastOnce) {
+                    Messenger.AddListener(Signals.HOUR_STARTED, HourlyCheck);
+                }
             }
         }
         #endregion
