@@ -289,6 +289,10 @@ public class CrimeComponent : CharacterComponent {
                 Character inVision = owner.marker.inVisionCharacters[i];
                 if (inVision != owner && except != inVision) {
                     if (!owner.IsHostileWith(inVision) && inVision.limiterComponent.canWitness) {
+                        if(!owner.marker.visionCollider.IsTheSameStructureOrSameOpenSpaceWithPOI(inVision) && !owner.marker.IsCharacterInLineOfSightWith(inVision)) {
+                            //Do not evaluate characters in vision that are not in same space and not in line of sight
+                            continue;
+                        }
                         CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(inVision, owner, owner, crimeType);
                         if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
                             return true;
