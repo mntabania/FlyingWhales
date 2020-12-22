@@ -79,23 +79,28 @@ namespace Factions.Faction_Succession {
                     weight = 0;
                 }
 
-                weightedDictionary.AddElement(member, weight);
+                if(weight > 0) {
+                    //Do not add character as successor if they have 0 or less weight, because they will have 0% chance of becoming faction leader
+                    //This might also cause a NaN in the chances because if all successors have 0 weights, then the total weight will be 0
+                    //To get the percentage you will have to divide the successor weight from the total weight, so it will be 0/0 = NaN
+                    weightedDictionary.AddElement(member, weight);
 
-                if(successorList.Count > 0) {
-                    bool hasInserted = false;
-                    for (int j = 0; j < successorList.Count; j++) {
-                        int currWeight = weightedDictionary.GetElementWeight(successorList[j]);
-                        if (weight > currWeight) {
-                            hasInserted = true;
-                            successorList.Insert(j, member);
-                            break;
+                    if (successorList.Count > 0) {
+                        bool hasInserted = false;
+                        for (int j = 0; j < successorList.Count; j++) {
+                            int currWeight = weightedDictionary.GetElementWeight(successorList[j]);
+                            if (weight > currWeight) {
+                                hasInserted = true;
+                                successorList.Insert(j, member);
+                                break;
+                            }
                         }
-                    }
-                    if (!hasInserted) {
+                        if (!hasInserted) {
+                            successorList.Add(member);
+                        }
+                    } else {
                         successorList.Add(member);
                     }
-                } else {
-                    successorList.Add(member);
                 }
             }
         }

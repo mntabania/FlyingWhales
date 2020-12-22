@@ -171,10 +171,14 @@ public class FactionInfoUIV2 : MonoBehaviour {
             noLeaderTextGO.SetActive(true);
         }
 
+        Character[] successors = activeFaction.successionComponent.successors;
         for (int i = 0; i < successorPortraits.Length; i++) {
             CharacterPortrait portrait = successorPortraits[i];
-            Character successor = activeFaction.successionComponent.successors[i];
-            if(successor == null) {
+            Character successor = null;
+            if(i >= 0 && i < successors.Length) {
+                successor = successors[i];
+            }
+            if (successor == null) {
                 portrait.gameObject.SetActive(false);
             } else {
                 portrait.GeneratePortrait(successor);

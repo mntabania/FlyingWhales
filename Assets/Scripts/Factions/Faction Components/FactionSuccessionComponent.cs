@@ -7,6 +7,7 @@ public class FactionSuccessionComponent : FactionComponent {
     private const int SUCCESSOR_LIMIT = 3;
     public Character[] successors { get; private set; }
     public int[] successorWeights { get; private set; }
+    public bool hasFirstDayStartedTriggered { get; private set; }
 
     private WeightedDictionary<Character> _successionWeightedDictionary;
 
@@ -19,6 +20,7 @@ public class FactionSuccessionComponent : FactionComponent {
         successors = new Character[SUCCESSOR_LIMIT];
         successorWeights = new int[SUCCESSOR_LIMIT];
         _successionWeightedDictionary = new WeightedDictionary<Character>();
+        hasFirstDayStartedTriggered = data.hasFirstDayStartedTriggered;
     }
 
     #region Listeners
@@ -64,7 +66,13 @@ public class FactionSuccessionComponent : FactionComponent {
         }
     }
     public void OnDayStarted() {
-        UpdateSuccessors();
+        //On the first Day Started broadcast of signal, do not update successors
+        //The reason for this is there are already successors at the start of the game, so we do not need to update it again at the start of game progression
+        if(!hasFirstDayStartedTriggered) {
+            hasFirstDayStartedTriggered = true;
+        } else {
+            UpdateSuccessors();
+        }
     }
     #endregion
 
@@ -76,8 +84,8 @@ public class FactionSuccessionComponent : FactionComponent {
         owner.factionType.succession.PopulateSuccessorListWeightsInOrder(successorList, _successionWeightedDictionary, owner);
 
         if(successorList.Count > 0) {
-            for (int i = 0; i < SUCCESSOR_LIMIT; i++) {
-                if(i < successorList.Count) {
+            for (int i = 0; i < successorList.Count; i++) {
+                if(i < SUCCESSOR_LIMIT) {
                     Character successor = successorList[i];
                     SetSuccessor(successor, _successionWeightedDictionary.GetElementWeight(successor), i);
                 }
@@ -150,9 +158,12 @@ public class FactionSuccessionComponent : FactionComponent {
 public class SaveDataFactionSuccessionComponent : SaveData<FactionSuccessionComponent> {
     public string[] successors;
     public int[] successorWeights;
+    public bool hasFirstDayStartedTriggered;
 
     #region Overrides
     public override void Save(FactionSuccessionComponent data) {
+        hasFirstDayStartedTriggered = data.hasFirstDayStartedTriggered;
+
         successors = new string[data.successors.Length];
         for (int i = 0; i < data.successors.Length; i++) {
             Character successor = data.successors[i];
