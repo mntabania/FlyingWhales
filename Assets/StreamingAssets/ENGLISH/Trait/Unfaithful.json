@@ -1,1 +1,16 @@
-{"items":[{"key":"flaw_effect","value":"%00@ will have an affair. If %83b is already in one, %83b will make love."},{"key":"fail","value":"Trigger flaw failed because %00@ does not have a lover to be unfaithful with."},{"key":"fail_no_paramour","value":"Trigger flaw failed because %00@ could not find a character to have an affair with."}]}
+{
+  "items": [
+    {
+      "key": "flaw_effect",
+      "value": "%00@ will have an affair. If %83b is already in one, %83b will make love."
+    },
+    {
+      "key": "fail",
+      "value": "Trigger flaw failed because %00@ does not have a lover to be unfaithful with."
+    },
+    {
+      "key": "fail_no_paramour",
+      "value": "Trigger flaw failed because %00@ could not find a character to have an affair with."
+    }
+  ]
+}
