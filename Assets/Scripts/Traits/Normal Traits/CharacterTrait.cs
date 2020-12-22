@@ -211,7 +211,7 @@ namespace Traits {
                                                         owner.partyComponent.currentParty.RemoveMemberThatJoinedQuest(owner);
                                                     }
                                                 }
-                                            } else if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {
+                                            } else if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful) && !owner.faction.IsHostileWith(targetCharacter.faction)) {
                                                 owner.jobComponent.TriggerReleaseJob(targetCharacter);
                                             }
                                         }
