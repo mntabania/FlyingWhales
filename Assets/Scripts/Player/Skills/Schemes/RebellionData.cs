@@ -29,6 +29,7 @@ public class RebellionData : SchemeData {
     }
     protected override void OnSuccessScheme(Character character, object target) {
         base.OnSuccessScheme(character, target);
+        Faction previousFaction = character.faction;
         BaseSettlement homeSettlement = character.homeSettlement;
         character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Faction, character, "own_settlement");
         if(homeSettlement != null) {
@@ -38,6 +39,9 @@ public class RebellionData : SchemeData {
                     resident.ChangeFactionTo(character.faction, true);
                 }
             }
+        }
+        if (previousFaction != character.faction && previousFaction.leader is Character previousLeader) {
+            previousLeader.traitContainer.AddTrait(previousLeader, "Betrayed", character);
         }
     }
     protected override void PopulateSchemeConversation(List<ConversationData> conversationList, Character character, object target, bool isSuccessful) {
