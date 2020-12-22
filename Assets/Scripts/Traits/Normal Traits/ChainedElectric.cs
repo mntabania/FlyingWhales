@@ -58,7 +58,7 @@ namespace Traits {
         #endregion
 
         private IEnumerator InflictDamageEnumerator (ITraitable traitable) {
-            while (GameManager.Instance.isPaused) {
+            while (GameManager.Instance.isPaused || !GameManager.Instance.gameHasStarted) {
                 //Pause coroutine while game is paused
                 //Might be performance heavy, needs testing
                 yield return null;
