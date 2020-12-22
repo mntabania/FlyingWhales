@@ -75,7 +75,7 @@ namespace Traits {
                 if (targetCharacter.isDead) {
                     return false;
                 }
-                if (!targetCharacter.traitContainer.HasTrait("Criminal")) {
+                if (!targetCharacter.traitContainer.HasTrait("Criminal") && !characterThatWillDoJob.IsHostileWith(targetCharacter)) {
                     if (characterThatWillDoJob.traitContainer.HasTrait("Psychopath")) {
                         //Psychopath psychopath = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Psychopath") as Psychopath;
                         //psychopath.PsychopathSawButWillNotAssist(targetCharacter, this);
