@@ -52,7 +52,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
                 if (!IsMigrationEventAllowed()) {
                     return;
                 }
-                AdjustVillageMigarationMeter(GameUtilities.RandomBetweenTwoNumbers(40, 60));
+                AdjustVillageMigarationMeter(GameUtilities.RandomBetweenTwoNumbers(20, 30));
             }
         }
     }
