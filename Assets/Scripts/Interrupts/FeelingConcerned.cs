@@ -14,12 +14,17 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            if (interruptHolder.actor.marker != null && !interruptHolder.actor.marker.inVisionPOIs.Contains(interruptHolder.target)) {
-                return interruptHolder.actor.jobComponent.CreateGoToJob(interruptHolder.target);    
-            }
-            return false;
-        }
+        //Note: Removed this temporarily because if the target is being carried by another character when the actor becomes feeling concerned,
+        //the actor will not do anything because he will wait until the target is dropped before doing the job
+        //This is because we do not let another character do an action to another character if it is being carried by another character to avoid conflicts in action
+        //see PerformJob in Character script in line 4095
+
+        //public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+        //    if (interruptHolder.actor.marker != null && !interruptHolder.actor.marker.inVisionPOIs.Contains(interruptHolder.target)) {
+        //        return interruptHolder.actor.jobComponent.CreateGoToJob(interruptHolder.target);    
+        //    }
+        //    return false;
+        //}
         #endregion
     }
 }
