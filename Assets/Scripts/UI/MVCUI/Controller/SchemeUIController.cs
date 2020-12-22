@@ -61,6 +61,15 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
         m_schemeUIView.SetTitle(_schemeUsed.name);
         m_schemeUIView.SetBlackmailBtnInteractableState(HasValidBlackmailForTarget(p_targetCharacter));
         m_schemeUIView.SetTemptBtnInteractableState(temptUIController.HasValidTemptationsForTarget(p_targetCharacter));
+
+        if (_targetCharacter.traitContainer.HasTrait("Cultist")) {
+            //Cultist have a base success rate of 100% in all schemes
+            float baseSuccessRate = 100f;
+            float successRate = baseSuccessRate;
+            ProcessSchemeSuccessRateWithMultipliers(ref successRate);
+            SchemeUIItem item = CreateAndAddNewSchemeUIItem("Cultist", successRate, baseSuccessRate, null, OnHoverEnterSchemeUIItem, OnHoverExitSchemeUIItem);
+            item.btnMinus.interactable = false;
+        }
     }
     public override void HideUI() {
         base.HideUI();
@@ -266,7 +275,7 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
             UpdateSuccessRate();
         }
     }
-    private void CreateAndAddNewSchemeUIItem(string p_text, float p_successRate, float p_baseSuccessRate, System.Action<SchemeUIItem> p_onClickMinusAction, System.Action<SchemeUIItem> p_onHoverEnterAction, System.Action<SchemeUIItem> p_onHoverExitAction) {
+    private SchemeUIItem CreateAndAddNewSchemeUIItem(string p_text, float p_successRate, float p_baseSuccessRate, System.Action<SchemeUIItem> p_onClickMinusAction, System.Action<SchemeUIItem> p_onHoverEnterAction, System.Action<SchemeUIItem> p_onHoverExitAction) {
         GameObject go = UIManager.Instance.InstantiateUIObject(m_schemeUIView.UIModel.schemeUIItemPrefab.name, m_schemeUIView.UIModel.scrollViewSchemes.content);
         SchemeUIItem item = go.GetComponent<SchemeUIItem>();
         item.SetItemDetails(p_text, p_successRate, p_baseSuccessRate);
@@ -274,6 +283,7 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
         item.SetOnHoverEnterAction(p_onHoverEnterAction);
         item.SetOnHoverExitAction(p_onHoverExitAction);
         _schemeUIItems.Add(item);
+        return item;
     }
     private void OnClickMinusSchemeUIItem(SchemeUIItem item) {
         RemoveSchemeUIItem(item);

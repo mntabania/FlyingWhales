@@ -271,7 +271,7 @@ public class GoapAction {
         actor.logComponent.AppendCostLog($"+{distanceCost.ToString()}(Distance Cost)");
         return (baseCost * PreconditionCostMultiplier()) + distanceCost;
     }
-    private bool IsTargetMissing(ActualGoapNode node) {
+    protected bool IsTargetMissing(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         //Action is invalid if the target is unavailable and the action cannot be advertised if target is unavailable

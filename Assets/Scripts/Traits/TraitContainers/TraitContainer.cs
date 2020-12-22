@@ -305,10 +305,12 @@ namespace Traits {
                 }
             } else if (traitName == "Poisoned") {
                 chance = 100;
-                if (addTo is Character) {
-                    chance = bypassElementalChance ? 100 : 25;
-                    if (HasTrait("Poisoned")) {
-                        chance = 15;
+                if (!bypassElementalChance) {
+                    if (addTo is Character) {
+                        chance = 25;
+                        if (HasTrait("Poisoned")) {
+                            chance = 15;
+                        }
                     }
                 }
             } else if (traitName == "Frozen") {

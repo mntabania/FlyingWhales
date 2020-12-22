@@ -70,12 +70,19 @@ public class Drop : GoapAction {
         Character targetCharacter = poiTarget as Character;
         actor.UncarryPOI(targetCharacter);
     }
+    public override void OnInvalidAction(ActualGoapNode node) {
+        base.OnInvalidAction(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        Character targetCharacter = poiTarget as Character;
+        actor.UncarryPOI(targetCharacter);
+    }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         string stateName = "Target Missing";
-        bool defaultTargetMissing = IsDropTargetMissing(node);
-        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
+        bool defaultTargetMissing = IsDropTargetMissing(node) || IsTargetMissing(node);
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "unable_to_do");
         return goapActionInvalidity;
     }
     private bool IsDropTargetMissing(ActualGoapNode node) {

@@ -75,11 +75,15 @@ namespace Traits {
             }
             if (!hasInflictedDamage) {
                 hasInflictedDamage = true;
+                LocationGridTile currentTile = traitable.gridTileLocation;
+                if(currentTile == null) {
+                    return;
+                }
                 int chainDamage = Mathf.RoundToInt(damage * 0.8f);
                 if (chainDamage >= 0) {
                     chainDamage = -1;
                 }
-                List<LocationGridTile> neighbours = traitable.gridTileLocation.neighbourList;
+                List<LocationGridTile> neighbours = currentTile.neighbourList;
                 for (int i = 0; i < neighbours.Count; i++) {
                     LocationGridTile tile = neighbours[i];
                     if (tile.genericTileObject.traitContainer.HasTrait("Wet") && !tile.genericTileObject.traitContainer.HasTrait("Zapped", "Chained Electric")) {
