@@ -57,7 +57,7 @@ public class BrainwashData : PlayerAction {
             if (target is Character targetCharacter) {
                 if (targetCharacter.gridTileLocation != null && 
                     targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room) && room is DefilerRoom defilerRoom) {
-                    return defilerRoom.IsValidBrainwashTarget(targetCharacter);
+                    return true;
                 }
                 return false;
             }

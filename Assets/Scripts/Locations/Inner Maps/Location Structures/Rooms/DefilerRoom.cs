@@ -141,8 +141,7 @@ namespace Inner_Maps.Location_Structures {
             return false;
         }
         public bool IsValidBrainwashTarget(Character character) {
-            return character.isNormalCharacter && character.isDead == false
-                    && character.traitContainer.HasTrait("Cultist") == false;
+            return character.isNormalCharacter && !character.isDead && !character.traitContainer.HasTrait("Cultist") && !character.traitContainer.IsBlessed();
         } 
         public void StartBrainwash() {
             wasBrainwashStartedInTutorial = TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Create_A_Cultist);
