@@ -1366,9 +1366,17 @@ public class CharacterMarker : MapObjectVisual<Character> {
                         continue;
                     }
                     if(poi is Character target) {
+                        //After dropping a character, the carrier should not immediately react to the recently dropped character
                         if(target.carryComponent.justGotCarriedBy != null && target.carryComponent.justGotCarriedBy == character) {
-                            log += $"\n-{poi.nameWithID} is jost got dropped. Skipping...";
+                            log += $"\n-{poi.nameWithID} is just got dropped. Skipping...";
                             target.carryComponent.SetJustGotCarriedBy(null);
+                            continue;
+                        }
+                    }
+                    if(!visionCollider.IsTheSameStructureOrSameOpenSpaceWithPOI(poi)) {
+                        //Before reacting to a character check first if he is in vision list, if he is not and he is not in line of sight, do not react
+                        if (!IsCharacterInLineOfSightWith(poi)) {
+                            log += $"\n-{poi.nameWithID} is not in same space and no longer in line of sight with actor. Skipping...";
                             continue;
                         }
                     }
@@ -1388,7 +1396,15 @@ public class CharacterMarker : MapObjectVisual<Character> {
             if (!character.isDead) {
                 for (int i = 0; i < unprocessedActionsOnly.Count; i++) {
                     ActualGoapNode action = unprocessedActionsOnly[i];
-                    log += $"\n-{action.goapName}";
+                    Character actor = action.actor;
+                    log += $"\n-{action.goapName} of {actor.name} towards {action.poiTarget.name}";
+                    if (!visionCollider.IsTheSameStructureOrSameOpenSpaceWithPOI(actor)) {
+                        //Before reacting to a character check first if he is in vision list, if he is not and he is not in line of sight, do not react
+                        if (!IsCharacterInLineOfSightWith(actor)) {
+                            log += $"\n-{actor.nameWithID} is not in same space and no longer in line of sight with actor. Skipping...";
+                            continue;
+                        }
+                    }
                     character.ThisCharacterSawAction(action);
                 }
             } else {

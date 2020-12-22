@@ -243,14 +243,23 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         }
     }
     private bool ShouldBeConsideredInVision(IPointOfInterest target) {
-        LocationStructure targetStructure = target.gridTileLocation?.structure;
+        LocationStructure targetStructure = target?.gridTileLocation?.structure;
         return ShouldBeConsideredInVision(targetStructure, target);
     }
     private bool ShouldBeConsideredInVision(LocationStructure targetStructure, IPointOfInterest target) {
         //if same structure, or both in open space, or is in line of sight, add in vision
-        LocationStructure actorStructure = parentMarker.character.currentStructure;
+        LocationStructure actorStructure = parentMarker.character?.currentStructure;
         return actorStructure != null && targetStructure != null
-            && (actorStructure == targetStructure || (actorStructure.structureType.IsOpenSpace() && targetStructure.structureType.IsOpenSpace()) || parentMarker.IsCharacterInLineOfSightWith(target));
+            && (IsTheSameStructureOrSameOpenSpace(actorStructure, targetStructure) || parentMarker.IsCharacterInLineOfSightWith(target));
+    }
+    public bool IsTheSameStructureOrSameOpenSpaceWithPOI(IPointOfInterest poi) {
+        LocationStructure actorStructure = parentMarker.character?.currentStructure;
+        LocationStructure targetStructure = poi?.gridTileLocation?.structure;
+
+        return IsTheSameStructureOrSameOpenSpace(actorStructure, targetStructure);
+    }
+    private bool IsTheSameStructureOrSameOpenSpace(LocationStructure structure1, LocationStructure structure2) {
+        return structure1 != null && structure2 != null && (structure1 == structure2 || (structure1.structureType.IsOpenSpace() && structure2.structureType.IsOpenSpace()));
     }
     #endregion
 
