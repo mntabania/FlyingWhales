@@ -258,6 +258,10 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             //Minions or Summons cannot have opinions
             return;
         }
+        if (target.minion != null || target is Summon) {
+            //Minions or Summons cannot have opinions
+            return;
+        }
         if(owner == target) {
             //Cannot adjust opinion to self
             //Therefore, must not have a relationship with self
@@ -301,6 +305,10 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             //Minions or Summons cannot have opinions
             return;
         }
+        if (target.minion != null || target is Summon) {
+            //Minions or Summons cannot have opinions
+            return;
+        }
         IRelationshipData relationshipData = GetOrCreateRelationshipDataWith(owner, target);
         string opinionLabelBeforeChange = GetOpinionLabel(target);
         if (owner.traitContainer.HasTrait("Psychopath")) {
@@ -334,6 +342,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             //Minions or Summons cannot have opinions
             return;
         }
+        
         Character targetCharacter = CharacterManager.Instance.GetCharacterByID(targetID);
         if (targetCharacter != null) {
             SetOpinion(owner, targetCharacter, opinionText, opinionValue, lastStrawReason);
