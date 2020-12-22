@@ -122,7 +122,10 @@ public class Eat : GoapAction {
             if (target is Table table) {
                 bool isTrapped = actor.trapStructure.IsTrapStructure(table.gridTileLocation.structure)
                     || (table.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrapHex(table.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner));
-                if (isTrapped) {
+                if (table.gridTileLocation != null && table.gridTileLocation.IsPartOfSettlement(out var settlement) && actor.faction != null && settlement.owner != null && settlement.owner.IsHostileWith(actor.faction)) {
+                    cost += 2000;
+                    costLog += $" +{cost}(Table is inside settlement owned by hostile faction)";
+                } else if (isTrapped) {
                     cost = UtilityScripts.Utilities.Rng.Next(50, 71);
                     costLog += $" +{cost}(Actor is currently visiting)";
                 } else if (actor.traitContainer.HasTrait("Travelling")) {
@@ -208,17 +211,22 @@ public class Eat : GoapAction {
                             costLog += $" +{cost}(Target is human/elven meat and actor is not cannibal and is not starving)";
                         }
                     }
-                } else if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(out var settlement) && settlement.owner != null && settlement.owner != actor.faction){
-                    if (target.gridTileLocation.structure.structureType == STRUCTURE_TYPE.TAVERN) {
-                        cost = UtilityScripts.Utilities.Rng.Next(600, 651);
-                        costLog += $" +{cost}(Target is inside of tavern owned by a different faction)";    
+                } else if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(out var settlement) && settlement.owner != null && actor.faction != null){
+                    if (!actor.faction.IsHostileWith(settlement.owner)) {
+                        if (target.gridTileLocation.structure.structureType == STRUCTURE_TYPE.TAVERN) {
+                            cost = UtilityScripts.Utilities.Rng.Next(600, 651);
+                            costLog += $" +{cost}(Target is inside of tavern owned by a different faction)";    
+                        } else {
+                            cost += 2000;
+                            costLog += $" +{cost}(Target is inside settlement owned by a non hostile faction)";
+                        }    
                     } else {
                         cost += 2000;
-                        costLog += $" +{cost}(Target is inside settlement owned by a different faction)";
+                        costLog += $" +{cost}(Target is inside settlement owned by a hostile faction)";
                     }
                 } else {
                     cost = UtilityScripts.Utilities.Rng.Next(950, 961);
-                    costLog += $" +{cost}(Target is not Human/Elf Meat and is not part of a settlement owned by a different faction)";
+                    costLog += $" +{cost}(Target is not Human/Elf Meat and is not part of a settlement owned by a faction)";
                 }
             }
         }
