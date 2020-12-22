@@ -1527,6 +1527,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public override void SetOwner(Faction p_newOwner) {
         Faction previousOwner = this.owner;
         base.SetOwner(p_newOwner);
+        if(p_newOwner != previousOwner) {
+            migrationComponent.ResetLongTermModifier();
+        }
         if (p_newOwner == null) {
             //if owner of settlement becomes null, then set the settlement as no longer under siege
             SetIsUnderSiege(false);
