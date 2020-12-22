@@ -96,17 +96,19 @@ public class Tooltip : MonoBehaviour {
         tooltipParentRT.anchorMax = anchorMax;
         
         smallInfoBGParentLG.childAlignment = TextAnchor.UpperLeft;
-        
-        if (InputManager.Instance.currentCursorType == InputManager.Cursor_Type.Cross 
-            || InputManager.Instance.currentCursorType == InputManager.Cursor_Type.Check 
-            || InputManager.Instance.currentCursorType == InputManager.Cursor_Type.Link) {
-            v3.x += 100f;
-            v3.y -= 32f;
-        } else {
-            v3.x += 25f;
-            v3.y -= 25f;
+
+        if (InputManager.Instance != null) {
+            if (InputManager.Instance.currentCursorType == InputManager.Cursor_Type.Cross 
+                || InputManager.Instance.currentCursorType == InputManager.Cursor_Type.Check 
+                || InputManager.Instance.currentCursorType == InputManager.Cursor_Type.Link) {
+                v3.x += 100f;
+                v3.y -= 32f;
+            } else {
+                v3.x += 25f;
+                v3.y -= 25f;
+            }    
         }
-        
+
 
         Vector3 clampedPos = KeepFullyOnScreen(smallInfoBGRT, v3, mainRT);
         (tooltipParent.transform as RectTransform).anchoredPosition = clampedPos;
