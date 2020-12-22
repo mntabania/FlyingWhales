@@ -1325,7 +1325,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         faction?.LeaveFaction(this);
         return newFaction.JoinFaction(this, bypassIdeologyChecking: bypassIdeologyChecking);
     }
-    private void OnChangeFaction(Faction prevFaction, Faction newFaction) {
+    protected virtual void OnChangeFaction(Faction prevFaction, Faction newFaction) {
         if(prevFaction?.factionType.type == FACTION_TYPE.Undead) {
             behaviourComponent.RemoveBehaviourComponent(typeof(UndeadBehaviour));
         }
