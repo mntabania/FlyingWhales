@@ -1,14 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Traits;
-using UnityEngine;
-using UnityEngine.Assertions;
-using Inner_Maps.Location_Structures;
+﻿using System.Collections.Generic;
 
 public class AfflictData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.AFFLICT;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.AFFLICT;
     public override string name => "Afflict";
     public override string description => $"Afflict a Villager with a negative Trait.";
+
     public AfflictData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
@@ -34,5 +30,29 @@ public class AfflictData : PlayerAction {
         }
         return base.IsValid(target);
     }
+    protected override List<IContextMenuItem> GetSubMenus(List<IContextMenuItem> p_contextMenuItems) {
+        if (type == PLAYER_SKILL_TYPE.AFFLICT && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget != null) {
+            p_contextMenuItems.Clear();
+            List<PLAYER_SKILL_TYPE> afflictionTypes = PlayerManager.Instance.player.playerSkillComponent.afflictions;
+            for (int i = 0; i < afflictionTypes.Count; i++) {
+                PLAYER_SKILL_TYPE spellType = afflictionTypes[i];
+                PlayerAction spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType) as PlayerAction;
+                if (spellData != null && spellData.IsValid(PlayerManager.Instance.player.currentlySelectedPlayerActionTarget)) {
+                    p_contextMenuItems.Add(spellData);
+                }
+            }
+            return p_contextMenuItems;    
+        }
+        return null;
+    }
     #endregion
+
+    protected void AfflictPOIWith(string traitName, IPointOfInterest target, string logName) {
+        target.traitContainer.AddTrait(target, traitName);
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "player_afflicted", null, LOG_TAG.Player, LOG_TAG.Life_Changes);
+        log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(null, logName, LOG_IDENTIFIER.STRING_1);
+        log.AddLogToDatabase();
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+    }
 }

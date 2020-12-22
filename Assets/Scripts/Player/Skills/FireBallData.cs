@@ -1,10 +1,10 @@
 ﻿using Inner_Maps;
 
 public class FireBallData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.FIRE_BALL;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.FIRE_BALL;
     public override string name => "Fire Ball";
     public override string description => "This Spell spawns a floating ball of fire that will move around randomly for a few hours, dealing Fire damage to everything in its path.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public FireBallData() : base() {

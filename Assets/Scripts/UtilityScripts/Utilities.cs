@@ -277,6 +277,8 @@ namespace UtilityScripts {
                             if (obj is Character character) {
                                 wordToReplace = $"{wordToReplace}{character.visuals.GetCharacterStringIcon()}" +
                                                 $"{ColorizeName($"<b><link={logFiller.GetLinkText()}>{logFiller.value}</link></b>", CharacterManager.Instance.GetCharacterNameColorHex(character))}";
+                            } else if (obj is Faction faction) {
+                                wordToReplace = $"{wordToReplace}{ColorizeName($"<b><link={i}>{logFiller.value}</link></b>", FactionManager.Instance.GetFactionNameColorHex())}";
                             } else {
                                 wordToReplace = $"{wordToReplace}{ColorizeName($"<b><link={logFiller.GetLinkText()}>{logFiller.value}</link></b>")}";    
                             }
@@ -308,7 +310,9 @@ namespace UtilityScripts {
                             wordToReplace = $"<b><link={logFiller.GetLinkText()}>{logFiller.value}</link></b>";
                             if (obj is Character c) {
                                 wordToReplace = ColorizeName(wordToReplace, CharacterManager.Instance.GetCharacterNameColorHex(c));
-                            } else if (obj is TileObject || obj is Faction) {
+                            } else if (obj is Faction) {
+                                wordToReplace = ColorizeName(wordToReplace, FactionManager.Instance.GetFactionNameColorHex());
+                            } else if (obj is TileObject) {
                                 wordToReplace = ColorizeName(wordToReplace);
                             }
                             if (obj is Character character) {
@@ -513,6 +517,8 @@ namespace UtilityScripts {
                             if (logFiller.obj is Character character) {
                                 wordToReplace = $"{wordToReplace}{character.visuals.GetCharacterStringIcon()}" +
                                                 $"{ColorizeName($"<b><link={i}>{logFiller.value}</link></b>", CharacterManager.Instance.GetCharacterNameColorHex(character))}";
+                            } else if (logFiller.obj is Faction faction) {
+                                wordToReplace = $"{wordToReplace}{ColorizeName($"<b><link={i}>{logFiller.value}</link></b>", FactionManager.Instance.GetFactionNameColorHex())}";
                             } else {
                                 wordToReplace = $"{wordToReplace}{ColorizeName($"<b><link={i}>{logFiller.value}</link></b>")}";    
                             }
@@ -543,7 +549,9 @@ namespace UtilityScripts {
                             wordToReplace = $"<b><link={i}>{logFiller.value}</link></b>";
                             if (logFiller.obj is Character c) {
                                 wordToReplace = ColorizeName(wordToReplace, CharacterManager.Instance.GetCharacterNameColorHex(c));
-                            } else if (logFiller.obj is TileObject || logFiller.obj is Faction) {
+                            } else if (logFiller.obj is Faction) {
+                                wordToReplace = ColorizeName(wordToReplace, FactionManager.Instance.GetFactionNameColorHex());
+                            } else if (logFiller.obj is TileObject) {
                                 wordToReplace = ColorizeName(wordToReplace);
                             }
                             if (logFiller.obj is Character character) {
@@ -961,6 +969,17 @@ namespace UtilityScripts {
 
             return parts.ToArray();
         }
+        public static string SplitStringIntoNewLines(string s, params char[] delimiters) {
+            string newText = string.Empty;
+            if (string.IsNullOrEmpty(s) == false) {
+                string[] reasons = s.Split(delimiters);
+                for (int i = 0; i < reasons.Length; i++) {
+                    string reason = reasons[i];
+                    newText += $"{reason}\n";
+                }
+            }
+            return newText;
+        }
         #endregion
 
         #region Sprite Utilities
@@ -987,46 +1006,49 @@ namespace UtilityScripts {
             return $"<color=#FE3E83>{str}</color>";
         }
         public static string MonsterIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Monster_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Monster_Icon\">";
         }
         public static string VillagerIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Villager_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Villager_Icon\">";
         }
         public static string ManaIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Mana_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Mana_Icon\">";
         }
         public static string ChargesIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Charges_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Charges_Icon\">";
         }
         public static string ThreatIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Threat_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Threat_Icon\">";
         }
         public static string CooldownIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Cooldown_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Cooldown_Icon\">";
         }
         public static string CultistIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Cultist_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Cultist_Icon\">";
         }
         public static string LeaderIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Leader_Icon\"> ";
         }
         public static string DemonIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Demon_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Demon_Icon\">";
         }
         public static string UndeadIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Undead_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Undead_Icon\">";
         }
         public static string PlagueIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Plague_Icon\">";
         }
         public static string RatmanIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Ratman_Icon\"> ";
+            return "<sprite=\"Text_Sprites\" name=\"Ratman_Icon\">";
         }
         public static string ColorizeAction(string actionString) {
             return $"<color=#f87f43>{actionString}</color>";
         }
         public static string ColorizeActionInLog(string actionString) {
             return $"<color=#FFC700>{actionString}</color>";
+        }
+        public static string ColorizeInvalidText(string p_text) {
+            return $"<color=#FE3E83>{p_text}</color>";
         }
         public static string ColorizeName(string name) {
             return $"<color=#f8ed43>{name}</color>";
@@ -1036,6 +1058,9 @@ namespace UtilityScripts {
         }
         public static string ColorizeAndBoldName(string name) {
             return $"<b>{ColorizeName(name)}</b>";
+        }
+        public static string ColorizeAndBoldName(string name, string color) {
+            return $"<b>{ColorizeName(name, color)}</b>";
         }
         public static string GetFirstFewEmotionsAndComafy(string emotionsStr, int emotionCount) {
             string[] emotions = emotionsStr.Split(' ');
@@ -1326,6 +1351,41 @@ namespace UtilityScripts {
                     return $"{s}s";
                 }
             }
+        }
+        public static string FormulateTextFromEmotions(string emotions, Character actor, IPointOfInterest target, Character reactor) {
+            if (string.IsNullOrEmpty(emotions)) {
+                //character had no reaction
+                return actor == target ? "I know what I did." : "A proper response to this information has not been implemented yet.";
+            } else {
+                if (emotions == "aware") {
+                    return $"{ColorizeAndBoldName(reactor.name)} already knows this.";
+                } else {
+                    string[] emotionsToActorAndTarget = emotions.Split('/');
+
+                    string emotionsTowardsActor = emotionsToActorAndTarget.ElementAtOrDefault(0);
+                    string emotionsTowardsTarget = emotionsToActorAndTarget.ElementAtOrDefault(1);
+
+                    bool hasReactionToActor = string.IsNullOrEmpty(emotionsTowardsActor) == false;
+                    bool hasReactionToTarget = string.IsNullOrEmpty(emotionsTowardsTarget) == false;
+
+                    if (hasReactionToActor == false && hasReactionToTarget == false) {
+                        //has no reactions to actor and target
+                        return $"{reactor.visuals.GetCharacterStringIcon()}{ColorizeAndBoldName(reactor.name)} seemed Disinterested about this.";
+                    } else {
+                        if (hasReactionToActor) {
+                            return $"{reactor.visuals.GetCharacterStringIcon()}{ColorizeAndBoldName(reactor.name)} seemed {GetFirstFewEmotionsAndComafy(emotionsTowardsActor, 2)} at {actor.visuals.GetCharacterStringIcon()}{ColorizeAndBoldName(actor.name)} after receiving the new information.";
+                        }
+                        if (hasReactionToTarget) {
+                            if (target is Character targetCharacter) {
+                                return $"{reactor.visuals.GetCharacterStringIcon()}{ColorizeAndBoldName(reactor.name)} seemed {GetFirstFewEmotionsAndComafy(emotionsTowardsTarget, 2)} at {targetCharacter.visuals.GetCharacterStringIcon()}{ColorizeAndBoldName(targetCharacter.name)} after receiving the new information.";
+                            } else {
+                                return $"{reactor.visuals.GetCharacterStringIcon()}{ColorizeAndBoldName(reactor.name)} seemed {ColorizeAndBoldName(target.name)} after receiving the new information.";
+                            }
+                        }
+                    }
+                }
+            }
+            return string.Empty;
         }
         #endregion
 

@@ -1,11 +1,17 @@
-﻿namespace Factions.Faction_Types {
+﻿using Locations.Settlements;
+using UnityEngine;
+namespace Factions.Faction_Types {
     public class HumanEmpire : FactionType {
         
         public override RESOURCE mainResource => RESOURCE.STONE;
         
-        public HumanEmpire() : base(FACTION_TYPE.Human_Empire) { }
-        public HumanEmpire(SaveDataFactionType saveData) : base(FACTION_TYPE.Human_Empire, saveData) { }
-        
+        public HumanEmpire() : base(FACTION_TYPE.Human_Empire) {
+            succession = FactionManager.Instance.GetFactionSuccession(FACTION_SUCCESSION_TYPE.Power);
+        }
+        public HumanEmpire(SaveDataFactionType saveData) : base(FACTION_TYPE.Human_Empire, saveData) {
+            succession = FactionManager.Instance.GetFactionSuccession(FACTION_SUCCESSION_TYPE.Power);
+        }
+
         public override void SetAsDefault() {
             Peaceful peaceful = FactionManager.Instance.CreateIdeology<Peaceful>(FACTION_IDEOLOGY.Peaceful);
             AddIdeology(peaceful);
@@ -102,6 +108,10 @@
                     return CRIME_SEVERITY.Heinous;
             }
             return CRIME_SEVERITY.None;
+        }
+        public override int GetAdditionalMigrationMeterGain(NPCSettlement p_settlement) {
+            int unoccupiedDwellings = p_settlement.GetUnoccupiedDwellingCount();
+            return Mathf.Min(unoccupiedDwellings, 2);
         }
     }
 }

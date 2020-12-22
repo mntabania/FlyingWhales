@@ -96,7 +96,10 @@ namespace Traits {
                 return;
             }
             if (owner.jobQueue.jobsInQueue.Count > 0) {
-                owner.PerformTopPriorityJob();
+                JobQueueItem job = owner.jobQueue.jobsInQueue[0];
+                if (job != null) {
+                    owner.PerformJob(job);
+                }
             } else {
                 PlanTirednessRecovery();
             }

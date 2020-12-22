@@ -38,16 +38,13 @@ public class WaterWell : TileObject {
         if (traitName == "Wet") {
             return true; //allow water well to be wet.
         }
-        return structureLocation.structureType != STRUCTURE_TYPE.POND && 
-               structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
+        return structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
     }
     public override bool CanBeDamaged() {
-        return structureLocation.structureType != STRUCTURE_TYPE.POND && 
-               structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
+        return structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
     }
     public override bool CanBeSelected() {
-        return structureLocation.structureType != STRUCTURE_TYPE.POND && 
-               structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
+        return structureLocation != null && structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
     }
     public override string ToString() {
         return $"Well {id.ToString()}";

@@ -18,6 +18,9 @@ public class PlagueComponent {
 
     #region Plague Points
     public void AdjustPlaguePoints(int amount) {
+        if(WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.omnipotentMode) {
+            return;
+        }
         _plaguePoints += amount;
         Messenger.Broadcast(PlayerSignals.UPDATED_PLAGUE_POINTS, _plaguePoints);
     }

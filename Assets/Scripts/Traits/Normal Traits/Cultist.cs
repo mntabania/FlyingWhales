@@ -23,11 +23,11 @@ namespace Traits {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is Character character) {
                 //character.AddPlayerAction(SPELL_TYPE.CULTIST_TRANSFORM);
-                character.AddPlayerAction(SPELL_TYPE.CULTIST_POISON);
-                character.AddPlayerAction(SPELL_TYPE.CULTIST_BOOBY_TRAP);
-                character.AddPlayerAction(SPELL_TYPE.EVANGELIZE);
-                character.AddPlayerAction(SPELL_TYPE.SPREAD_RUMOR);
-                character.AddPlayerAction(SPELL_TYPE.FOUND_CULT);
+                character.AddPlayerAction(PLAYER_SKILL_TYPE.CULTIST_POISON);
+                character.AddPlayerAction(PLAYER_SKILL_TYPE.CULTIST_BOOBY_TRAP);
+                character.AddPlayerAction(PLAYER_SKILL_TYPE.EVANGELIZE);
+                character.AddPlayerAction(PLAYER_SKILL_TYPE.SPREAD_RUMOR);
+                character.AddPlayerAction(PLAYER_SKILL_TYPE.FOUND_CULT);
                 character.jobComponent.AddPriorityJob(JOB_TYPE.STEAL_CORPSE);
                 character.jobComponent.AddPriorityJob(JOB_TYPE.SUMMON_BONE_GOLEM);
             }
@@ -41,11 +41,11 @@ namespace Traits {
                 character.behaviourComponent.AddBehaviourComponent(typeof(CultistBehaviour));
                 character.AddItemAsInteresting("Cultist Kit");
                 //character.AddPlayerAction(SPELL_TYPE.CULTIST_TRANSFORM);
-                character.AddPlayerAction(SPELL_TYPE.CULTIST_POISON);
-                character.AddPlayerAction(SPELL_TYPE.CULTIST_BOOBY_TRAP);
-                character.AddPlayerAction(SPELL_TYPE.EVANGELIZE);
-                character.AddPlayerAction(SPELL_TYPE.SPREAD_RUMOR);
-                character.AddPlayerAction(SPELL_TYPE.FOUND_CULT);
+                character.AddPlayerAction(PLAYER_SKILL_TYPE.CULTIST_POISON);
+                character.AddPlayerAction(PLAYER_SKILL_TYPE.CULTIST_BOOBY_TRAP);
+                character.AddPlayerAction(PLAYER_SKILL_TYPE.EVANGELIZE);
+                character.AddPlayerAction(PLAYER_SKILL_TYPE.SPREAD_RUMOR);
+                character.AddPlayerAction(PLAYER_SKILL_TYPE.FOUND_CULT);
                 character.jobComponent.AddPriorityJob(JOB_TYPE.STEAL_CORPSE);
                 character.jobComponent.AddPriorityJob(JOB_TYPE.SUMMON_BONE_GOLEM);
                 character.traitContainer.AddTrait(character, "Nocturnal");
@@ -64,11 +64,11 @@ namespace Traits {
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(CultistBehaviour));
                 character.RemoveItemAsInteresting("Cultist Kit");
                 //character.RemovePlayerAction(SPELL_TYPE.CULTIST_TRANSFORM);
-                character.RemovePlayerAction(SPELL_TYPE.CULTIST_POISON);
-                character.RemovePlayerAction(SPELL_TYPE.CULTIST_BOOBY_TRAP);
-                character.RemovePlayerAction(SPELL_TYPE.EVANGELIZE);
-                character.RemovePlayerAction(SPELL_TYPE.SPREAD_RUMOR);
-                character.RemovePlayerAction(SPELL_TYPE.FOUND_CULT);
+                character.RemovePlayerAction(PLAYER_SKILL_TYPE.CULTIST_POISON);
+                character.RemovePlayerAction(PLAYER_SKILL_TYPE.CULTIST_BOOBY_TRAP);
+                character.RemovePlayerAction(PLAYER_SKILL_TYPE.EVANGELIZE);
+                character.RemovePlayerAction(PLAYER_SKILL_TYPE.SPREAD_RUMOR);
+                character.RemovePlayerAction(PLAYER_SKILL_TYPE.FOUND_CULT);
                 character.jobComponent.RemovePriorityJob(JOB_TYPE.STEAL_CORPSE);
                 character.jobComponent.RemovePriorityJob(JOB_TYPE.SUMMON_BONE_GOLEM);
                 

@@ -19,6 +19,20 @@ public class Eat : GoapAction {
     }
 
     #region Overrides
+    public override bool ShouldActionBeAnIntel(ActualGoapNode node) {
+        if (node.crimeType != CRIME_TYPE.None && node.crimeType != CRIME_TYPE.Unset) {
+            return true;
+        }
+        return base.ShouldActionBeAnIntel(node);
+    }
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
+        if (node.target is Table) {
+            log.AddToFillers(node.target, "at a Table", LOG_IDENTIFIER.TARGET_CHARACTER);
+        } else {
+            log.AddToFillers(node.target, node.target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        }
+    }
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.STAMINA_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
@@ -118,23 +132,23 @@ public class Eat : GoapAction {
                     } else if (actor.needsComponent.isStarving) {
                         Character tableOwner = table.characterOwner;
                         if (tableOwner != null) {
-                            if (actor.relationshipContainer.IsFriendsWith(tableOwner)) {
+                            if (tableOwner == actor) {
                                 cost = UtilityScripts.Utilities.Rng.Next(400, 451);
-                                costLog += $" +{cost}(Travelling, Table is owned by friend/close friend and actor is starving)";
+                                costLog += $" +{cost}(Travelling, Table is personally owned)";
                             } else if (actor.relationshipContainer.IsEnemiesWith(tableOwner)) {
-                                cost = 800;
+                                cost = 996;
                                 costLog += $" +{cost}(Travelling, Table is owned by friend/close friend and actor is starving)";
                             } else {
-                                cost = UtilityScripts.Utilities.Rng.Next(450, 501);
-                                costLog += $" +{cost}(Travelling, Table owned by someone that is not friend or enemy and actor is starving)";
+                                cost = 994;
+                                costLog += $" +{cost}(Travelling, Table is not owned by actor and is not owned by Enemy/Rival)";
                             }
                         } else {
-                            cost = UtilityScripts.Utilities.Rng.Next(450, 501);
-                            costLog += $" +{cost}(Travelling, Table not owned)";
+                            cost = 994;
+                            costLog += $" +{cost}(Travelling, Table is not owned)";
                         }
                     } else {
                         cost += 2000;
-                        costLog += $" +{cost}(Travelling but not starving)";
+                        costLog += $" +{cost}(Travelling but not starving and target is table)";
                     }
                 } else if (table.gridTileLocation != null && table.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)) {
                     if (table.structureLocation == actor.homeStructure) {
@@ -173,10 +187,10 @@ public class Eat : GoapAction {
                     }
                 } else {
                     if (table.characterOwner != null && !table.IsOwnedBy(actor) && actor.relationshipContainer.IsFriendsWith(table.characterOwner)) {
-                        cost = UtilityScripts.Utilities.Rng.Next(500, 551); ;
+                        cost = 988;
                         costLog += $" {cost}(Otherwise, if Table personally owned by Friend or Close Friend)";
                     } else {
-                        cost += UtilityScripts.Utilities.Rng.Next(800, 851); ;
+                        cost = 996;
                         costLog += $" {cost}(Otherwise, if Table is NOT owned by Friend or Close Friend)";
                     }
                 }
@@ -187,16 +201,24 @@ public class Eat : GoapAction {
                         costLog += $" +{cost}(Target is human/elven meat and actor is cannibal)";
                     } else {
                         if (actor.needsComponent.isStarving) {
-                            cost = UtilityScripts.Utilities.Rng.Next(700, 751);
+                            cost = UtilityScripts.Utilities.Rng.Next(970, 981);
                             costLog += $" +{cost}(Target is human/elven meat and actor is not cannibal but is starving)";
                         } else {
                             cost = 2000;
                             costLog += $" +{cost}(Target is human/elven meat and actor is not cannibal and is not starving)";
                         }
                     }
+                } else if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(out var settlement) && settlement.owner != null && settlement.owner != actor.faction){
+                    if (target.gridTileLocation.structure.structureType == STRUCTURE_TYPE.TAVERN) {
+                        cost = UtilityScripts.Utilities.Rng.Next(600, 651);
+                        costLog += $" +{cost}(Target is inside of tavern owned by a different faction)";    
+                    } else {
+                        cost += 2000;
+                        costLog += $" +{cost}(Target is inside settlement owned by a different faction)";
+                    }
                 } else {
-                    cost = UtilityScripts.Utilities.Rng.Next(400, 451);
-                    costLog += $" +{cost}(Not Table)";
+                    cost = UtilityScripts.Utilities.Rng.Next(950, 961);
+                    costLog += $" +{cost}(Target is not Human/Elf Meat and is not part of a settlement owned by a different faction)";
                 }
             }
         }
@@ -228,6 +250,51 @@ public class Eat : GoapAction {
             }
         }
         return REACTABLE_EFFECT.Neutral;
+    }
+    public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
+        if (actor.race.IsSapient()) {
+            if (target is Character targetCharacter && targetCharacter.race.IsSapient()) {
+                return CRIME_TYPE.Cannibalism;    
+            } else if (target is HumanMeat || target is ElfMeat) {
+                return CRIME_TYPE.Cannibalism;
+            }
+        }
+        return base.GetCrimeType(actor, target, crime);
+    }
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+        Character targetCharacter = target as Character;
+        if (!witness.traitContainer.HasTrait("Cannibal") && ((targetCharacter != null && targetCharacter.race.IsSapient()) || target is HumanMeat || target is ElfMeat)) {
+            reactions.Add(EMOTION.Shock);
+            reactions.Add(EMOTION.Disgust);
+
+            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
+            if (opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
+                reactions.Add(EMOTION.Disappointment);
+            }
+            if (!witness.traitContainer.HasTrait("Psychopath")) {
+                reactions.Add(EMOTION.Fear);
+            }
+        }
+        
+        if (targetCharacter != null) {
+            string witnessOpinionToTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
+            if (witnessOpinionToTarget == RelationshipManager.Friend || witnessOpinionToTarget == RelationshipManager.Close_Friend) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
+                    reactions.Add(EMOTION.Rage);
+                }
+            } else if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER))
+                && witnessOpinionToTarget != RelationshipManager.Rival) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
+                    reactions.Add(EMOTION.Rage);
+                }
+            } else if (witnessOpinionToTarget == RelationshipManager.Acquaintance
+                || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
+                    reactions.Add(EMOTION.Anger);
+                }
+            }
+        }
     }
     #endregion
 

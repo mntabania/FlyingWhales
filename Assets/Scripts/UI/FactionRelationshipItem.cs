@@ -10,7 +10,7 @@ public class FactionRelationshipItem : MonoBehaviour {
 
     public void SetData(Faction faction, FactionRelationship rel) {
         emblem.SetFaction(faction);
-        nameLbl.text = faction.name;
+        nameLbl.text = faction.nameWithColor;
         statusLbl.text = $"<color={rel.relationshipStatus.FactionRelationshipColor()}>{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(rel.relationshipStatus.ToString())}</color>" ;
     }
 }

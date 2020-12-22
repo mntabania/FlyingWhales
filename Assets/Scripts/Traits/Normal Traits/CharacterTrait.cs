@@ -221,6 +221,7 @@ namespace Traits {
                                 if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
                                     if (owner.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueParty) {
                                         if (rescueParty.targetCharacter == targetCharacter) {
+                                            //rescueParty.SetIsSuccessful(true);
                                             rescueParty.SetIsReleasing(false);
                                             if (rescueParty.isWaitTimeOver) {
                                                 owner.partyComponent.currentParty.GoBackHomeAndEndQuest();
@@ -290,6 +291,11 @@ namespace Traits {
                                     }
                                     if (targetCharacter.isVagrant) {
                                         //removed vagrant trespassing because it causes an issue whenever a character leaves its current faction while it is still inside its previous settlement.
+                                        willCreateAssumption = false;
+                                    }
+                                    if (targetCharacter.traitContainer.HasTrait("Cultist") && owner.traitContainer.HasTrait("Cultist")) {
+                                        //Do not assume that character is trespassing if both characters are cultists.
+                                        //This is a fix for this issue: https://trello.com/c/SBNxYdlY/3085-live-03363-cultist-reporting-other-cultists
                                         willCreateAssumption = false;
                                     }
                                     if (willCreateAssumption) {

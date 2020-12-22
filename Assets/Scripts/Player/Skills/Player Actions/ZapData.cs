@@ -5,7 +5,7 @@ using Traits;
 using UnityEngine;
 
 public class ZapData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.ZAP;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.ZAP;
     public override string name => "Zap";
     public override string description => "This Action can be used to apply Zapped on any living character.";
     public ZapData() : base() {

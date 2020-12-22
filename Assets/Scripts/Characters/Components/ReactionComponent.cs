@@ -240,9 +240,9 @@ public class ReactionComponent : CharacterComponent {
                     // owner.logComponent.AddHistory(witnessLog);
                 }
             }
-        } else if (reactable.target == owner) {
-            if (!reactable.isStealth || reactable.target.traitContainer.HasTrait("Vigilant")) {
-                string emotionsOfTarget = reactable.ReactionOfTarget(actor, reactable.target, REACTION_STATUS.WITNESSED);
+        } else if (target == owner) {
+            if (!reactable.isStealth || target.traitContainer.HasTrait("Vigilant")) {
+                string emotionsOfTarget = reactable.ReactionOfTarget(actor, target, REACTION_STATUS.WITNESSED);
                 if (emotionsOfTarget != string.Empty) {
                     if (!CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
                         string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";
@@ -347,8 +347,8 @@ public class ReactionComponent : CharacterComponent {
                 informedLog.AddLogToDatabase();
                 // owner.logComponent.AddHistory(informedLog);
             }
-        } else if(reactable.target == owner && reactable.target is Character) {
-            string emotionsOfTarget = reactable.ReactionOfTarget(actor, reactable.target, REACTION_STATUS.INFORMED);
+        } else if(target == owner && target is Character) {
+            string emotionsOfTarget = reactable.ReactionOfTarget(actor, target, REACTION_STATUS.INFORMED);
             if (emotionsOfTarget != string.Empty) {
                 if (!CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
                     string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";
@@ -686,6 +686,10 @@ public class ReactionComponent : CharacterComponent {
                                         debugLog = $"{debugLog}\n-Character cannot do apprehend and has not yet reacted to the target, will become wary instead";
                                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, targetCharacter);    
                                     }
+                                    BaseSettlement homeSettlement = actor.homeSettlement;
+                                    if(homeSettlement != null && homeSettlement.locationType == LOCATION_TYPE.VILLAGE && homeSettlement is NPCSettlement npcSettlement) {
+                                        npcSettlement.settlementJobTriggerComponent.TryCreateApprehend(targetCharacter);
+                                    }
                                 }
                             }
                         }
@@ -931,7 +935,7 @@ public class ReactionComponent : CharacterComponent {
                         if(factionRel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Neutral || factionRel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Friendly) {
                             //If actor's faction is friendly/neutral with prisoner's faction and prisoner is restrained
                             Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-                            if(prisoner != null) {
+                            if(prisoner != null && !prisoner.IsConsideredPrisonerOf(disguisedActor)) {
                                 bool isRestrained = targetCharacter.traitContainer.HasTrait("Restrained");
                                 if (isRestrained) {
                                     Faction factionThatImprisoned = prisoner.GetFactionThatImprisoned();
@@ -1215,10 +1219,15 @@ public class ReactionComponent : CharacterComponent {
             if (resourcePile.gridTileLocation.IsPartOfSettlement(actor.homeSettlement) == false ||
                 resourcePile.gridTileLocation.structure != actor.homeSettlement.mainStorage) {
                 //do not create haul job for human and elven meat if actor is part of major faction
-                bool cannotCreateHaulJob = (resourcePile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || resourcePile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && actor.faction != null && actor.faction.isMajorNonPlayer;
-                bool isRatmanAndFoodPile = actor.faction?.factionType.type == FACTION_TYPE.Ratmen && resourcePile is FoodPile;
-                if (!cannotCreateHaulJob || isRatmanAndFoodPile) {
-                    actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
+                if(actor.faction?.factionType.type == FACTION_TYPE.Ratmen) {
+                    if(resourcePile is FoodPile) {
+                        actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
+                    }
+                } else {
+                    bool cannotCreateHaulJob = (resourcePile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || resourcePile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && actor.faction != null && actor.faction.isMajorNonPlayer;
+                    if (!cannotCreateHaulJob) {
+                        actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
+                    }
                 }
             }
         }
@@ -1229,17 +1238,19 @@ public class ReactionComponent : CharacterComponent {
         }
         debugLog = $"{debugLog}{actor.name} is reacting to {targetTileObject.nameWithID}";
         if (!actor.combatComponent.isInActualCombat && !actor.hasSeenFire) {
-            if (targetTileObject.traitContainer.HasTrait("Burning")
+            bool hasHigherPrioJob = actor.jobQueue.jobsInQueue.Count > 0 && actor.jobQueue.jobsInQueue[0].priority > JOB_TYPE.DOUSE_FIRE.GetJobTypePriority();
+
+            if (!hasHigherPrioJob && targetTileObject.traitContainer.HasTrait("Burning")
                 && targetTileObject.gridTileLocation != null
                 && actor.homeSettlement != null
                 && targetTileObject.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
                 && !actor.traitContainer.HasTrait("Pyrophobic")
                 && !actor.traitContainer.HasTrait("Dousing")
-                && actor.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE) == false) {
+                && !actor.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE)) {
                 debugLog = $"{debugLog}\n-Target is Burning and Character is not Pyrophobic";
                 actor.SetHasSeenFire(true);
                 actor.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
-                if (actor.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE) == false) {
+                if (!actor.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE)) {
                     Debug.LogWarning($"{actor.name} saw a fire in a settlement but no douse fire jobs were created.");
                 }
 
@@ -1747,34 +1758,20 @@ public class ReactionComponent : CharacterComponent {
 
         reactor.logComponent.PrintLogIfActive(log);
     }
-    // private void ReactTo(SpecialToken targetItem, ref string debugLog) {
-    //     if (owner.minion != null || owner is Summon) {
-    //         //Minions or Summons cannot react to items
-    //         return;
-    //     }
-    //     debuglog = log +owner.name + " is reacting to " + targetItem.nameWithID;
-    //     if (!owner.hasSeenFire) {
-    //         if (targetItem.traitContainer.HasTrait("Burning")
-    //             && targetItem.gridTileLocation != null
-    //             && targetItem.gridTileLocation.IsPartOfSettlement(owner.homeNpcSettlement)
-    //             && !owner.traitContainer.HasTrait("Pyrophobic")) {
-    //             debuglog = log +"\n-Target is Burning and Character is not Pyrophobic";
-    //             owner.SetHasSeenFire(true);
-    //             owner.homeNpcSettlement.settlementJobTriggerComponent.TriggerDouseFire();
-    //             for (int i = 0; i < owner.homeNpcSettlement.availableJobs.Count; i++) {
-    //                 JobQueueItem job = owner.homeNpcSettlement.availableJobs[i];
-    //                 if (job.jobType == JOB_TYPE.DOUSE_FIRE) {
-    //                     if (job.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(job)) {
-    //                         owner.jobQueue.AddJobInQueue(job);
-    //                     } else {
-    //                         owner.combatComponent.Flight(targetItem);
-    //                     }
-    //                     return;
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
+    #endregion
+
+    #region Reaction To Intel
+    public string ReactToIntel(IIntel intel) {
+        string response = owner.reactionComponent.ReactTo(intel.reactable, REACTION_STATUS.INFORMED);
+        if ((string.IsNullOrEmpty(response) || string.IsNullOrWhiteSpace(response)) && intel.actor != owner) {
+            ActualGoapNode action = null;
+            if (intel is ActionIntel actionIntel) {
+                action = actionIntel.node;
+            }
+            response = CharacterManager.Instance.TriggerEmotion(EMOTION.Disinterest, owner, intel.actor, REACTION_STATUS.INFORMED, action);
+        }
+        return response;
+    }
     #endregion
 
     #region General

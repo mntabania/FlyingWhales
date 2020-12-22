@@ -35,6 +35,7 @@ public class Watch : GoapAction {
             Character targetCharacter = poiTarget as Character;
             if (targetCharacter.carryComponent.IsNotBeingCarried() == false) {
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "target_carried";
             }
         }
         return goapActionInvalidity;

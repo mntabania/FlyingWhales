@@ -173,9 +173,11 @@ public class PartyInfoUI : InfoUIBase {
         //     }
         //     UIManager.Instance.ShowHexTileInfo(tile);
         // }
-        if (settlement.allStructures.Count > 0) {
-            UIManager.Instance.ShowStructureInfo(settlement.allStructures.First());
-        }
+        UIManager.Instance.ShowSettlementInfo(settlement);
+
+        //if (settlement.allStructures.Count > 0) {
+        //    UIManager.Instance.ShowStructureInfo(settlement.allStructures.First());
+        //}
     }
     #endregion
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 using Inner_Maps.Location_Structures;
 
 public class RepairData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.REPAIR;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.REPAIR;
     public override string name => "Repair";
     public override string description => "This Action can be used to fully repair all damages to a demonic structure.";
     public RepairData() : base() {

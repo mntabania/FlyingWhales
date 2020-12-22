@@ -684,8 +684,7 @@ public class CharacterManager : BaseMonoBehaviour {
     public void RaiseFromDeadReplaceCharacterWithSkeleton(Character target, Faction faction, string className = "", Action<Character> onRaisedFromDeadAction = null) {
         //Since we no longer see the raise dead animation putting raise dead in a coroutine might have some problems like:
         //https://trello.com/c/Qu1VHS2A/3044-dev-03355-null-reference-charactermanagerraised
-        target.SetHasRisen(true);
-        target.SetRaisedFromDeadAsSkeleton(true);
+        target.SetHasBeenRaisedFromDead(true);
         //target.marker.PlayAnimation("Raise Dead");
         //yield return new WaitForSeconds(0.7f);
         LocationGridTile tile = target.gridTileLocation;
@@ -697,10 +696,9 @@ public class CharacterManager : BaseMonoBehaviour {
                 tile.structure.RemovePOI(target.grave);
                 target.SetGrave(null);
             }
-            Summon summon = CreateNewSummon(SUMMON_TYPE.Skeleton, faction, homeRegion: target.homeRegion, className: target.characterClass.className);
+            Summon summon = CreateNewSummon(SUMMON_TYPE.Skeleton, faction, homeRegion: target.homeRegion, className: target.characterClass.className, bypassIdeologyChecking: true);
             summon.SetFirstAndLastName(target.firstName, target.surName);
-            summon.SetHasRisen(true);
-            summon.SetRaisedFromDeadAsSkeleton(true);
+            summon.SetHasBeenRaisedFromDead(true);
             summon.CreateMarker();
 
             summon.InitialCharacterPlacement(tile);
@@ -719,13 +717,23 @@ public class CharacterManager : BaseMonoBehaviour {
     public void RaiseFromDeadRetainCharacterInstance(Character target, Faction faction, RACE race, string className, Action<Character> onRaisedFromDeadAction = null) {
         //Since we no longer see the raise dead animation putting raise dead in a coroutine might have some problems like:
         //https://trello.com/c/Qu1VHS2A/3044-dev-03355-null-reference-charactermanagerraised
-        if (className.Contains("Zombie")) {
+        RACE chosenRace = race;
+        string chosenClassName = className;
+
+        if(chosenRace == RACE.NONE) {
+            chosenRace = target.race;
+        }
+        if (string.IsNullOrEmpty(className)) {
+            chosenClassName = target.characterClass.className;
+        }
+
+        if (chosenClassName.Contains("Zombie")) {
             //Raise from dead as zombie
-            target.SetHasRisen(true);
-            target.SetRaisedFromDeadAsSkeleton(true);
+            target.SetHasBeenRaisedFromDead(true);
             LocationGridTile tile = target.grave != null ? target.grave.gridTileLocation : target.gridTileLocation;
             GameManager.Instance.CreateParticleEffectAt(tile, PARTICLE_EFFECT.Zombie_Transformation);
-            target.ReturnToLife(faction, race, className);
+            target.ReturnToLife(faction, chosenRace, chosenClassName);
+            target.traitContainer.RemoveTrait(target, "Transitioning"); //Remove transitioning status if the character turns into a zombie so that they will attack characters immediately
             target.MigrateHomeStructureTo(null);
             target.needsComponent.SetTirednessForcedTick(0);
             target.needsComponent.SetFullnessForcedTick(0);
@@ -1391,6 +1399,9 @@ public class CharacterManager : BaseMonoBehaviour {
             //Non villager characters cannot feel emotion
             return string.Empty;
         }
+    }
+    public string GetEmotionText(EMOTION emotionType) {
+        return $"{GetEmotion(emotionType).GetRandomResponseText()}";
     }
     public Emotion GetEmotion(string name) {
         for (int i = 0; i < allEmotions.Count; i++) {

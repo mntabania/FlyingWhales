@@ -5,10 +5,10 @@ using Traits;
 using UtilityScripts;
 
 public class WindBlastData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.WIND_BLAST;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.WIND_BLAST;
     public override string name => "Wind Blast";
     public override string description => "This Spell blasts a powerful wave of air outward from a target spot, dealing Wind damage to anything it hits.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
 
     public WindBlastData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
@@ -16,7 +16,7 @@ public class WindBlastData : SpellData {
 
     public override void ActivateAbility(LocationGridTile targetTile) {
         AudioManager.Instance.TryCreateAudioObject(
-            PlayerSkillManager.Instance.GetPlayerSkillData<WindBlastSkillData>(SPELL_TYPE.WIND_BLAST).blastSound,
+            PlayerSkillManager.Instance.GetPlayerSkillData<WindBlastSkillData>(PLAYER_SKILL_TYPE.WIND_BLAST).blastSound,
             targetTile, 3, false
         );
         

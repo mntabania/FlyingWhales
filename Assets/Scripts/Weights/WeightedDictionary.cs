@@ -99,6 +99,12 @@ public class WeightedDictionary<T> {
     public bool HasElement(T key) {
         return _dictionary.ContainsKey(key);
     }
+    public int GetElementWeight(T key) {
+        if (_dictionary.ContainsKey(key)) {
+            return _dictionary[key];
+        }
+        return 0;
+    }
     /*
      * This will get a random element in the weighted
      * dictionary.
@@ -116,9 +122,8 @@ public class WeightedDictionary<T> {
     internal int GetTotalOfWeights() {
         return UtilityScripts.Utilities.GetTotalOfWeights(_dictionary);
     }
-
 	internal void Clear(){
-		_dictionary.Clear ();
+		_dictionary.Clear();
 	}
 }
 

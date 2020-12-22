@@ -140,8 +140,8 @@ namespace Traits {
                 if (HasTrait("Poisoned")) {
                     int poisonStacks = stacks["Poisoned"];
                     RemoveStatusAndStacks(addTo, "Poisoned");
-                    if (addTo is IPointOfInterest to) {
-                        CombatManager.Instance.PoisonExplosion(to, addTo.gridTileLocation, poisonStacks, characterResponsible);
+                    if (addTo is IPointOfInterest to && addTo.gridTileLocation != null) {
+                        CombatManager.Instance.PoisonExplosion(to, addTo.gridTileLocation, poisonStacks, characterResponsible, 1);
                     }
                     shouldAddTrait = false;
                 }
@@ -305,10 +305,12 @@ namespace Traits {
                 }
             } else if (traitName == "Poisoned") {
                 chance = 100;
-                if (addTo is Character) {
-                    chance = bypassElementalChance ? 100 : 25;
-                    if (HasTrait("Poisoned")) {
-                        chance = 15;
+                if (!bypassElementalChance) {
+                    if (addTo is Character) {
+                        chance = 25;
+                        if (HasTrait("Poisoned")) {
+                            chance = 15;
+                        }
                     }
                 }
             } else if (traitName == "Frozen") {
@@ -464,7 +466,9 @@ namespace Traits {
             for (int i = 0; i < traits.Count; i++) {
                 Trait trait = traits[i];
                 if (trait.type == traitType) {
-                    RemoveTrait(removeFrom, i);
+                    if (RemoveTrait(removeFrom, i)) {
+                        i--;
+                    }
                 }
             }
         }
@@ -625,6 +629,9 @@ namespace Traits {
                 return stacks[traitName];
             }
             return 0;
+        }
+        public bool IsBlessed() {
+            return HasTrait("Blessed") || HasTrait("Dark Blessing");
         }
         #endregion
 

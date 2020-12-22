@@ -28,7 +28,6 @@ public class Region : ISavable, ILogFiller {
     public List<Character> residents { get; private set; }
     public List<Character> charactersAtLocation { get; private set; }
     public HexTile[,] hexTileMap { get; private set; }
-    public bool canShowNotifications { get; private set; }
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
     public List<IPointOfInterest> pendingAddAwareness { get; private set; }
     public List<IPointOfInterest> pendingRemoveAwareness { get; private set; }
@@ -49,12 +48,14 @@ public class Region : ISavable, ILogFiller {
     private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an npcSettlement. 
     private string _activeEventAfterEffectScheduleId;
     private List<Border> _borders;
+    private int _canShowNotificationVotes;
 
     #region getter/setter
     public BaseLandmark mainLandmark => coreTile.landmarkOnTile;
     public InnerTileMap innerMap => _regionInnerTileMap;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Region;
     public Type serializedData => typeof(SaveDataRegion);
+    public bool canShowNotifications => _canShowNotificationVotes > 0;
     #endregion
 
     private Region() {
@@ -780,23 +781,6 @@ public class Region : ISavable, ILogFiller {
         ObjectPoolManager.Instance.ReturnStructuresListToPool(structureChoices);
         return chosenStructure;
     }
-    public LocationStructure GetRandomUnoccupiedStructureWithTag(params STRUCTURE_TAG[] tag) {
-        List<LocationStructure> structuresWithTag = ObjectPoolManager.Instance.CreateNewStructuresList();
-        LocationStructure chosenStructure = null;
-        for (int i = 0; i < allStructures.Count; i++) {
-            LocationStructure currStructure = allStructures[i];
-            if (!currStructure.IsOccupied()) {
-                if (currStructure.HasStructureTag(tag)) {
-                    structuresWithTag.Add(currStructure);
-                }
-            }
-        }
-        if(structuresWithTag != null && structuresWithTag.Count > 0) {
-            chosenStructure = structuresWithTag[UnityEngine.Random.Range(0, structuresWithTag.Count)];
-        }
-        ObjectPoolManager.Instance.ReturnStructuresListToPool(structuresWithTag);
-        return chosenStructure;
-    }
     public LocationStructure GetRandomSpecialStructureExcept(List<LocationStructure> exceptions) {
         List<LocationStructure> specialStructures = ObjectPoolManager.Instance.CreateNewStructuresList();
         LocationStructure chosenStructure = null;
@@ -911,10 +895,10 @@ public class Region : ISavable, ILogFiller {
         return false;
     }
     public void AllowNotifications() {
-        canShowNotifications = true;
+        _canShowNotificationVotes++;
     }
     public void BlockNotifications() {
-        canShowNotifications = false;
+        _canShowNotificationVotes--;
     }
     public List<TileObject> GetTileObjectsOfType(TILE_OBJECT_TYPE type) {
         List<TileObject> objs = new List<TileObject>();
@@ -1147,16 +1131,6 @@ public class Region : ISavable, ILogFiller {
                 }
             }
         }
-    }
-    public bool HasActiveSettlement() {
-        for (int i = 0; i < settlementsInRegion.Count; i++) {
-            BaseSettlement settlement = settlementsInRegion[i];
-            if (settlement is NPCSettlement npcSettlement && 
-                npcSettlement.owner != null && npcSettlement.owner.race.IsSapient()) {
-                return true;
-            }
-        }
-        return false;
     }
     public List<BaseSettlement> GetSettlementsInRegion(System.Func<BaseSettlement, bool> validityChecker) {
         List<BaseSettlement> settlements = null;

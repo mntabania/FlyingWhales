@@ -18,6 +18,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     [SerializeField] private CharacterNameplateItem leaderNameplateItem;
     [SerializeField] private GameObject noLeaderTextGO;
     [SerializeField] private TextMeshProUGUI ideologyLbl;
+    [SerializeField] private CharacterPortrait[] successorPortraits;
 
     [Space(10)]
     [Header("Locations")]
@@ -98,6 +99,8 @@ public class FactionInfoUIV2 : MonoBehaviour {
         Messenger.AddListener<Faction>(FactionSignals.FACTION_IDEOLOGIES_CHANGED, OnFactionIdeologiesChanged);
         Messenger.AddListener<Faction>(FactionSignals.FACTION_CRIMES_CHANGED, OnFactionCrimesChanged);
         Messenger.AddListener<Character, Character>(CharacterSignals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
+        Messenger.AddListener<Character, Character>(CharacterSignals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
+        Messenger.AddListener<Faction>(FactionSignals.UPDATED_SUCCESSORS, OnFactionUpdatedSuccessors);
         logsWindow.Initialize();
     }
     public void SetFaction(Faction faction) {
@@ -131,6 +134,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     private void OnFactionLeaderChanged(Character character, ILeader previousLeader) {
         if (activeFaction != null) {
             UpdateOverview();
+            UpdateAllCharacters();
         }
     }
     private void OnFactionIdeologiesChanged(Faction faction) {
@@ -148,6 +152,11 @@ public class FactionInfoUIV2 : MonoBehaviour {
             UpdateOverview();
         }
     }
+    private void OnFactionUpdatedSuccessors(Faction faction) {
+        if (activeFaction != null) {
+            UpdateOverview();
+        }
+    }
     private void UpdateOverview() {
         if (activeFaction.leader is Character leader) {
             Character characterToShow = leader;
@@ -160,6 +169,21 @@ public class FactionInfoUIV2 : MonoBehaviour {
         } else {
             leaderNameplateItem.gameObject.SetActive(false);
             noLeaderTextGO.SetActive(true);
+        }
+
+        Character[] successors = activeFaction.successionComponent.successors;
+        for (int i = 0; i < successorPortraits.Length; i++) {
+            CharacterPortrait portrait = successorPortraits[i];
+            Character successor = null;
+            if(i >= 0 && i < successors.Length) {
+                successor = successors[i];
+            }
+            if (successor == null) {
+                portrait.gameObject.SetActive(false);
+            } else {
+                portrait.GeneratePortrait(successor);
+                portrait.gameObject.SetActive(true);
+            }
         }
 
         ideologyLbl.text = string.Empty;
@@ -198,9 +222,10 @@ public class FactionInfoUIV2 : MonoBehaviour {
         locationItems.Add(item);
     }
     private void OnClickSettlementItem(BaseSettlement settlement) {
-        if (settlement.allStructures.Count > 0) {
-            UIManager.Instance.ShowStructureInfo(settlement.allStructures.First());
-        }
+        //if (settlement.allStructures.Count > 0) {
+        //    UIManager.Instance.ShowStructureInfo(settlement.allStructures.First());
+        //}
+        UIManager.Instance.ShowSettlementInfo(settlement);
         // if (settlement.tiles.Count > 0) {
         //     HexTile tile = settlement.tiles[0];
         //     if (InnerMapManager.Instance.isAnInnerMapShowing) {
@@ -306,6 +331,14 @@ public class FactionInfoUIV2 : MonoBehaviour {
     #endregion
 
     #region Characters
+    private void OnCharacterSetAsSettlementRuler(Character character, Character previousRuler) {
+        if(activeFaction != null) {
+            if ((character != null && character.faction == activeFaction) || (previousRuler != null && previousRuler.faction == activeFaction)) {
+                UpdateAllCharacters();
+            }
+        }
+
+    }
     private void OnCharacterSwitchFromLimbo(Character toLimbo, Character fromLimbo) {
         if(toLimbo.isLycanthrope) {
             Faction factionToBeFollowed = toLimbo.lycanData.originalForm.faction;

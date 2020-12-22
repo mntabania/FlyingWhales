@@ -38,15 +38,13 @@ namespace Interrupts {
 
 			return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
 		}
-        public override string ReactionToActor(Character actor, IPointOfInterest target,
-	        Character witness,
-	        InterruptHolder interrupt, REACTION_STATUS status) {
-            string response = base.ReactionToActor(actor, target, witness, interrupt, status);
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+        public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
+            base.PopulateReactionsToActor(reactions, actor, target, witness, interrupt, status);
+
+            reactions.Add(EMOTION.Shock);
             if (!witness.relationshipContainer.IsEnemiesWith(actor)) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
+                reactions.Add(EMOTION.Concern);
             }
-            return response;
         }
         #endregion
     }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 [System.Serializable]
 public class SaveDataPlayerSkill : SaveData<SpellData> {
-    public SPELL_TYPE type;
+    public PLAYER_SKILL_TYPE type;
     public int maxCharges;
     public int charges;
     public int manaCost;
@@ -26,7 +26,7 @@ public class SaveDataPlayerSkill : SaveData<SpellData> {
         currentCooldownTick = data.currentCooldownTick;
     }
     public override SpellData Load() {
-        SpellData data = PlayerSkillManager.Instance.GetPlayerSpellData(type);
+        SpellData data = PlayerSkillManager.Instance.GetPlayerSkillData(type);
         data.SetCharges(charges);
         data.SetCooldown(cooldown);
         data.SetManaCost(manaCost);

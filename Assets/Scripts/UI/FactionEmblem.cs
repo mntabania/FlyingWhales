@@ -20,9 +20,9 @@ public class FactionEmblem : MonoBehaviour, IPointerClickHandler{
         if (this.faction == null) {
             return;
         }
-        string text = $"{this.faction.name}\nRelationship Summary:";
+        string text = $"{this.faction.nameWithColor}\nRelationship Summary:";
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in faction.relationships) {
-            text += $"\n{kvp.Key.name} - {kvp.Value.relationshipStatus}";
+            text += $"\n{kvp.Key.nameWithColor} - {kvp.Value.relationshipStatus}";
         }
 // #if UNITY_EDITOR || DEVELOPMENT_BUILD
 //         text = $"{text}\n Crimes:";

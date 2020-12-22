@@ -28,12 +28,13 @@ namespace Tutorial {
                     new StructureBuiltStep(STRUCTURE_TYPE.KENNEL, "Place on an unoccupied Area")
                 ),
                 new QuestStepCollection(
-                    new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_MONSTER, $"Seize a {UtilityScripts.Utilities.MonsterIcon()}monster")
+                    new PlayerActionContextMenuShown(IsMonsterValid, $"Right click on a {UtilityScripts.Utilities.MonsterIcon()}Monster"),
+                    new ExecutedPlayerActionStep(PLAYER_SKILL_TYPE.SEIZE_MONSTER, $"Seize a {UtilityScripts.Utilities.MonsterIcon()}monster")
                         .SetOnTopmostActions(OnTopMostSeizeMonster, OnNoLongerTopMostSeizeMonster),
                     new DropPOIAtStructureStep((structure, pointOfInterest) => structure.structureType == STRUCTURE_TYPE.KENNEL,
                         poi => poi is Summon, "Drop at the Kennel."),
-                    new ClickOnCharacterStep($"Click on the monster", IsCharacterValid),
-                    new ExecutedPlayerActionStep(SPELL_TYPE.BREED_MONSTER, "Breed it.")
+                    new PlayerActionContextMenuShown(IsMonsterInsideKennel, $"Right click on the dropped {UtilityScripts.Utilities.MonsterIcon()}Monster"),
+                    new ExecutedPlayerActionStep(PLAYER_SKILL_TYPE.BREED_MONSTER, "Breed it.")
                         .SetHoverOverAction(OnHoverBreed)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostBreedMonster, OnNoLongerTopMostBreedMonster)
@@ -44,10 +45,19 @@ namespace Tutorial {
             base.Activate();
             Messenger.Broadcast(UISignals.UPDATE_BUILD_LIST);
         }
-
+        
         #region Step Completion Actions
-        private bool IsCharacterValid(Character character) {
-            return character is Summon && character.currentStructure is Inner_Maps.Location_Structures.Kennel;
+        private bool IsMonsterValid(IPlayerActionTarget p_target) {
+            if (p_target is Summon summon) {
+                return !summon.isDead;
+            }
+            return false;
+        }
+        private bool IsMonsterInsideKennel(IPlayerActionTarget p_target) {
+            if (p_target is Summon summon) {
+                return summon.currentStructure is Kennel;
+            }
+            return false;
         }
         #endregion
 

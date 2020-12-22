@@ -112,9 +112,12 @@ public class SmallSpider : Summon {
         TraitManager.Instance.CopyStatuses(this, summon);
 
         Death("Transform Giant Spider");
-        if (UIManager.Instance.characterInfoUI.isShowing && 
-            UIManager.Instance.characterInfoUI.activeCharacter == this) {
-            UIManager.Instance.characterInfoUI.CloseMenu();    
+        if (UIManager.Instance.IsContextMenuShowingForTarget(this)) {
+            UIManager.Instance.RefreshPlayerActionContextMenuWithNewTarget(summon);
+        }
+        if (UIManager.Instance.monsterInfoUI.isShowing && 
+            UIManager.Instance.monsterInfoUI.activeMonster == this) {
+            UIManager.Instance.monsterInfoUI.CloseMenu();    
         }
     }
 }

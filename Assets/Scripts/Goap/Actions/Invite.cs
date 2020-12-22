@@ -132,7 +132,7 @@ public class Invite : GoapAction {
                     goapActionInvalidity.stateName = "Invite Rejected";
 
                     actor.relationshipContainer.AdjustOpinion(actor, targetCharacter, "Base", -3, "rejected sexual advances");
-                    actor.traitContainer.AddTrait(actor, "Annoyed");
+                    actor.traitContainer.AddTrait(actor, "Annoyed", targetCharacter);
                     if (actor.faction?.factionType.type == FACTION_TYPE.Disguised) {
                         actor.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
                         if (targetCharacter.marker && !targetCharacter.marker.HasUnprocessedPOI(actor)) {
@@ -151,33 +151,31 @@ public class Invite : GoapAction {
             target.combatComponent.Fight(node.actor, CombatManager.Hostility);
         }
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, target, witness, node, status);
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
         if (target != witness && target is Character targetCharacter) {
             bool isActorLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
             bool isTargetLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
 
             if (isActorLoverOrAffairOfWitness) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status);
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                reactions.Add(EMOTION.Rage);
+                reactions.Add(EMOTION.Betrayal);
             } else if (isTargetLoverOrAffairOfWitness) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status);
-                //response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                reactions.Add(EMOTION.Rage);
                 if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.IsFamilyMember(actor)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                    reactions.Add(EMOTION.Betrayal);
                 }
             } else {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, witness, actor, status);
+                reactions.Add(EMOTION.Embarassment);
                 Character loverOfActor = actor.relationshipContainer.GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER);
                 if (loverOfActor != null && loverOfActor != targetCharacter) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
+                    reactions.Add(EMOTION.Disapproval);
+                    reactions.Add(EMOTION.Disgust);
                 } else if (witness.relationshipContainer.IsFriendsWith(actor)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
+                    reactions.Add(EMOTION.Scorn);
                 }
             }
         }
-        return response;
     }
     #endregion
 
@@ -192,7 +190,7 @@ public class Invite : GoapAction {
             target.combatComponent.Fight(goapNode.actor, CombatManager.Hostility);
         } else {
             //**After Effect 1**: Actor gains Annoyed trait.
-            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Annoyed");
+            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Annoyed", goapNode.poiTarget as Character);
         }
     }
     #endregion
@@ -220,7 +218,7 @@ public class Invite : GoapAction {
             if (target.stateComponent.currentState is CombatState) { //do not invite characters that are currently in combat
                 return false;
             }
-            if (target.raisedFromDeadAsSkeleton) { //do not woo characters that have been raised from the dead
+            if (target.hasBeenRaisedFromDead) { //do not woo characters that have been raised from the dead
                 return false;
             }
             if (target.carryComponent.masterCharacter.movementComponent.isTravellingInWorld || target.currentRegion != actor.currentRegion) {

@@ -47,20 +47,17 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public bool isLimboCharacter;
     public bool destroyMarkerOnDeath;
     public bool isWanderer;
-    public bool hasRisen;
+    public bool hasBeenRaisedFromDead;
     public bool isPreplaced;
     public List<string> interestedItemNames;
 
     public POI_STATE state;
-
-    public bool raisedFromDeadAsSkeleton;
 
     public SaveDataLycanthropeData lycanData;
     public bool hasLycan;
 
     //References
     public string grave;
-    public string ruledSettlement;
     public Log deathLog;
     public string homeRegion;
     public string homeSettlement;
@@ -68,7 +65,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public string currentRegion;
     public string currentStructure;
     public string faction;
-    public string prevFaction;
 
     public string currentJob;
     public string currentActionNode;
@@ -106,6 +102,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataCrimeComponent crimeComponent;
     public SaveDataReligionComponent religionComponent;
     public SaveDataLimiterComponent limiterComponent;
+    public SaveDataPreviousCharacterDataComponent previousCharacterDataComponent;
 
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
@@ -140,10 +137,9 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         isLimboCharacter = data.isLimboCharacter;
         destroyMarkerOnDeath = data.destroyMarkerOnDeath;
         isWanderer = data.isWanderer;
-        hasRisen = data.hasRisen;
+        hasBeenRaisedFromDead = data.hasBeenRaisedFromDead;
         interestedItemNames = data.interestedItemNames;
         state = data.state;
-        raisedFromDeadAsSkeleton = data.raisedFromDeadAsSkeleton;
         previousClassName = data.previousClassName;
         isPreplaced = data.isPreplaced;
 
@@ -181,6 +177,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         crimeComponent = new SaveDataCrimeComponent(); crimeComponent.Save(data.crimeComponent);
         religionComponent = new SaveDataReligionComponent(); religionComponent.Save(data.religionComponent);
         limiterComponent = new SaveDataLimiterComponent(); limiterComponent.Save(data.limiterComponent);
+        previousCharacterDataComponent = new SaveDataPreviousCharacterDataComponent(); previousCharacterDataComponent.Save(data.previousCharacterDataComponent);
 
         if (data.currentJob != null && data.currentJob.jobType != JOB_TYPE.NONE) {
             currentJob = data.currentJob.persistentID;
@@ -212,9 +209,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         if(data.grave != null) {
             grave = data.grave.persistentID;
         }
-        if (data.ruledSettlement != null) {
-            ruledSettlement = data.ruledSettlement.persistentID;
-        }
         if (data.deathLog.hasValue) {
             deathLog = data.deathLog;
             // SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.deathLog);
@@ -236,9 +230,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         }
         if (data.faction != null) {
             faction = data.faction.persistentID;
-        }
-        if (data.prevFaction != null) {
-            prevFaction = data.prevFaction.persistentID;
         }
 
         territory = string.Empty;

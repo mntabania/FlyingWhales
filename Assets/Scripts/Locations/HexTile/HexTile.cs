@@ -181,7 +181,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     public BaseLandmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType) {
         SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, landmarkType));
         //Create Landmark Game Object on tile
-        CreateLandmarkVisual(landmarkType);
+        CreateLandmarkVisual();
         SetElevation(landmarkType == LANDMARK_TYPE.CAVE ? ELEVATION.MOUNTAIN : ELEVATION.PLAIN);
         Biomes.Instance.UpdateTileVisuals(this);
         return landmarkOnTile;
@@ -189,10 +189,10 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     public BaseLandmark CreateLandmarkOfType(SaveDataLandmark saveData) {
         SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, saveData));
         //Create Landmark Game Object on tile
-        CreateLandmarkVisual(saveData.landmarkType);
+        CreateLandmarkVisual();
         return landmarkOnTile;
     }
-    private void CreateLandmarkVisual(LANDMARK_TYPE landmarkType) {
+    private void CreateLandmarkVisual() {
         GameObject landmarkGO = Instantiate(LandmarkManager.Instance.GetLandmarkGO(), structureParentGO.transform) as GameObject;
         landmarkGO.transform.localPosition = Vector3.zero;
         landmarkGO.transform.localScale = Vector3.one;
@@ -260,6 +260,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         }
     }
     private void HideLandmarkTileSprites() {
+        Debug.Log($"Hid landmark tile sprites at {this}");
         mainStructure.gameObject.SetActive(false);
         structureTint.gameObject.SetActive(false);
     }
@@ -797,8 +798,8 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
                     return UIManager.Instance.regionInfoUI;
                 }
             } else if (UIManager.Instance.hexTileInfoUI.isShowing) {
-                if (UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile.region == region) {
-                    if (UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile == this) {
+                if (UIManager.Instance.hexTileInfoUI.activeHex.region == region) {
+                    if (UIManager.Instance.hexTileInfoUI.activeHex == this) {
                         return UIManager.Instance.regionInfoUI;
                     } else {
                         return UIManager.Instance.hexTileInfoUI;
@@ -1326,9 +1327,9 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     #endregion
     
     #region Player Action Target
-    public List<SPELL_TYPE> actions { get; private set; }
+    public List<PLAYER_SKILL_TYPE> actions { get; private set; }
     public void ConstructDefaultActions() {
-        actions = new List<SPELL_TYPE>();
+        actions = new List<PLAYER_SKILL_TYPE>();
         //PlayerAction harassAction = new PlayerAction(PlayerDB.Harass_Action, CanDoHarass, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "harass"));
         //PlayerAction raidAction = new PlayerAction(PlayerDB.Raid_Action, CanDoRaid, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "raid"));
         //PlayerAction invadeAction = new PlayerAction(PlayerDB.Invade_Action, CanDoInvade, IsHarassRaidInvadeValid, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "invade"));
@@ -1339,13 +1340,13 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         // AddPlayerAction(SPELL_TYPE.INVADE);
         // AddPlayerAction(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE);
     }
-    public void AddPlayerAction(SPELL_TYPE action) {
+    public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Contains(action) == false) {
             actions.Add(action);
             Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
         }
     }
-    public void RemovePlayerAction(SPELL_TYPE action) {
+    public void RemovePlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Remove(action)) {
             Messenger.Broadcast(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
         }
@@ -1366,7 +1367,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
             return CanBuildDemonicStructureHere() && InnerMapManager.Instance.currentlyShowingLocation != null && !InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.EYE); //only 1 eye per region.
         }
         if (structureType == STRUCTURE_TYPE.MEDDLER) {
-            return CanBuildDemonicStructureHere() && InnerMapManager.Instance.currentlyShowingLocation != null && !InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.MEDDLER); //only 1 finger at a time.
+            return CanBuildDemonicStructureHere() && !PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.MEDDLER); //Only 1 meddler should exist in the world
         }
         if (structureType == STRUCTURE_TYPE.BIOLAB) {
             return CanBuildDemonicStructureHere() && !PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.BIOLAB); //Only 1 biolab should exist in the world
@@ -1396,14 +1397,14 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         // }
         // return false;
     }
-    public void StartBuild(SPELL_TYPE structureType) {
+    public void StartBuild(PLAYER_SKILL_TYPE structureType) {
         _buildParticles = GameManager.Instance.CreateParticleEffectAt(GetCenterLocationGridTile(), PARTICLE_EFFECT.Build_Demonic_Structure).GetComponent<AutoDestroyParticle>();
         DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
-        demonicStructureSkill.OnExecuteSpellActionAffliction();
+        demonicStructureSkill.OnExecutePlayerSkill();
         StartCoroutine(BuildCoroutine(structureType));
         PlayerManager.Instance.player.SetIsCurrentlyBuildingDemonicStructure(true);
     }
-    private IEnumerator BuildCoroutine(SPELL_TYPE structureType) {
+    private IEnumerator BuildCoroutine(PLAYER_SKILL_TYPE structureType) {
         yield return new WaitForSeconds(3f);
         _buildParticles.StopEmission();
         DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
@@ -1452,14 +1453,13 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     #region Selectable
     public bool IsCurrentlySelected() {
         return UIManager.Instance.hexTileInfoUI.isShowing &&
-               UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile == this;
+               UIManager.Instance.hexTileInfoUI.activeHex == this;
     }
     public void LeftSelectAction() {
         UIManager.Instance.ShowHexTileInfo(this);
     }
-    public void RightSelectAction() {
-        //Nothing happens
-    }
+    public void RightSelectAction() { }
+    public void MiddleSelectAction() { }
     public bool CanBeSelected() {
         return true;
     }

@@ -21,6 +21,7 @@ public class ObjectPicker : PopupMenuBase {
     [SerializeField] private GameObject objectPickerSpellItemPrefab;
     [FormerlySerializedAs("objectPickerArtifactSlotItemPrefab")] [SerializeField] private GameObject objectPickerArtifactItemPrefab;
     [SerializeField] private GameObject objectPickerStructureItemPrefab;
+    [SerializeField] private GameObject objectPickerFactionItemPrefab;
     [SerializeField] private TextMeshProUGUI titleLbl;
     [SerializeField] private GameObject cover;
     [SerializeField] private Button closeBtn;
@@ -86,6 +87,8 @@ public class ObjectPicker : PopupMenuBase {
             ShowRaceClassItems(validItems.Cast<RaceClass>().ToList(), invalidItems.Cast<RaceClass>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, asButton);
         } else if (type == typeof(LocationStructure)) {
             ShowStructureItems(validItems.Cast<LocationStructure>().ToList(), invalidItems.Cast<LocationStructure>().ToList(), onHoverItemAction, onHoverExitItemAction, asButton);
+        } else if (type == typeof(Faction)) {
+            ShowFactionItems(validItems.Cast<Faction>().ToList(), invalidItems.Cast<Faction>().ToList(), onHoverItemAction, onHoverExitItemAction, asButton);
         }
         titleLbl.text = title;
         base.Open();
@@ -702,7 +705,7 @@ public class ObjectPicker : PopupMenuBase {
             item.transform.SetAsFirstSibling();
         }
     }
-     private void ShowStructureItems<T>(List<LocationStructure> validItems, List<LocationStructure> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, bool asButton) {
+    private void ShowStructureItems<T>(List<LocationStructure> validItems, List<LocationStructure> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, bool asButton) {
         Action<LocationStructure> convertedHoverAction = null;
         if (onHoverItemAction != null) {
             convertedHoverAction = ConvertToStructure(onHoverItemAction);
@@ -742,6 +745,65 @@ public class ObjectPicker : PopupMenuBase {
             GameObject areaItemGO = UIManager.Instance.InstantiateUIObject(objectPickerStructureItemPrefab.name, objectPickerScrollView.content);
             StructureNameplateItem item = areaItemGO.GetComponent<StructureNameplateItem>();
             item.SetObject(currRegion);
+            item.ClearAllOnClickActions();
+
+            item.ClearAllHoverEnterActions();
+            if (convertedHoverAction != null) {
+                item.AddHoverEnterAction(convertedHoverAction.Invoke);
+            }
+
+            item.ClearAllHoverExitActions();
+            if (convertedHoverExitAction != null) {
+                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
+            }
+            if (asButton) {
+                item.SetAsButton();
+            } else {
+                item.SetAsToggle();
+            }
+            item.SetInteractableState(false);
+        }
+    }
+    private void ShowFactionItems<T>(List<Faction> validItems, List<Faction> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, bool asButton) {
+        Action<Faction> convertedHoverAction = null;
+        if (onHoverItemAction != null) {
+            convertedHoverAction = ConvertToFaction(onHoverItemAction);
+        }
+        Action<Faction> convertedHoverExitAction = null;
+        if (onHoverExitItemAction != null) {
+            convertedHoverExitAction = ConvertToFaction(onHoverExitItemAction);
+        }
+        for (int i = 0; i < validItems.Count; i++) {
+            Faction currItem = validItems[i];
+            GameObject itemGO = UIManager.Instance.InstantiateUIObject(objectPickerFactionItemPrefab.name, objectPickerScrollView.content);
+            FactionNameplateItem item = itemGO.GetComponent<FactionNameplateItem>();
+            item.SetObject(currItem);
+            item.ClearAllOnClickActions();
+
+            item.ClearAllHoverEnterActions();
+            if (convertedHoverAction != null) {
+                item.AddHoverEnterAction(convertedHoverAction.Invoke);
+            }
+
+            item.ClearAllHoverExitActions();
+            if (convertedHoverExitAction != null) {
+                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
+            }
+            if (asButton) {
+                item.AddOnClickAction(OnPickObject);
+                item.SetAsButton();
+            } else {
+                item.AddOnToggleAction(OnPickObject);
+                item.SetAsToggle();
+                item.SetToggleGroup(toggleGroup);
+            }
+
+        }
+        for (int i = 0; i < invalidItems.Count; i++) {
+            Faction currUtem = invalidItems[i];
+            GameObject areaItemGO = UIManager.Instance.InstantiateUIObject(objectPickerFactionItemPrefab.name, objectPickerScrollView.content);
+            FactionNameplateItem item = areaItemGO.GetComponent<FactionNameplateItem>();
+            item.SetObject(currUtem);
             item.ClearAllOnClickActions();
 
             item.ClearAllHoverEnterActions();
@@ -853,6 +915,10 @@ public class ObjectPicker : PopupMenuBase {
     private Action<LocationStructure> ConvertToStructure<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
         else return new Action<LocationStructure>(o => myActionT((T)(object)o));
+    }
+    private Action<Faction> ConvertToFaction<T>(Action<T> myActionT) {
+        if (myActionT == null) return null;
+        else return new Action<Faction>(o => myActionT((T) (object) o));
     }
     #endregion
 }

@@ -67,7 +67,7 @@ public class TheProfaneUI : MonoBehaviour {
     }
     private void OnClickInstruct(bool isOn) {
         if (isOn) {
-            List<Character> cultists = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.raisedFromDeadAsSkeleton && !x.isDead && x.traitContainer.HasTrait("Cultist") && x.minion == null));
+            List<Character> cultists = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.hasBeenRaisedFromDead && !x.isDead && x.traitContainer.HasTrait("Cultist") && x.minion == null));
             UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character>(cultists, "Choose cultist to instruct", CanDoActionsToCharacter, null, null, OnChooseCultistToInstruct, OnConfirmInstruct, "Instruct");
         }
     }

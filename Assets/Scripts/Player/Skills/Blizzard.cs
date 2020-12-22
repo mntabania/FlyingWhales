@@ -4,10 +4,10 @@ using Locations.Tile_Features;
 using UnityEngine;
 
 public class BlizzardData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.BLIZZARD;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.BLIZZARD;
     public override string name => "Blizzard";
     public override string description => "This Spell summons a chilling Blizzard over a large area. Characters caught outside within the Blizzard may get stacks of Freezing, eventually causing them to be Frozen in place. It does not affect characters inside structures. Blizzard cannot be cast on a desert area.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public BlizzardData() : base() {

@@ -19,11 +19,11 @@ public class HextileInfoUI : InfoUIBase {
     [Header("Content")]
     [SerializeField] private TextMeshProUGUI featuresLbl;
     
-    public HexTile currentlyShowingHexTile { get; private set; }
+    public HexTile activeHex { get; private set; }
     
     public override void OpenMenu() {
         // currentlyShowingHexTile?.SetBordersState(false, false, Color.red);
-        currentlyShowingHexTile = _data as HexTile;
+        activeHex = _data as HexTile;
         base.OpenMenu();
         // Selector.Instance.Select(currentlyShowingHexTile);
         // currentlyShowingHexTile.SetBordersState(true, true, Color.yellow);
@@ -40,27 +40,27 @@ public class HextileInfoUI : InfoUIBase {
         // currentlyShowingHexTile.SetBordersState(false, false, Color.red);
         // Selector.Instance.Deselect();
         base.CloseMenu();
-        currentlyShowingHexTile = null;
+        activeHex = null;
     }
     private void UpdateBasicInfo() {
-        if (currentlyShowingHexTile.landmarkOnTile != null) {
-            _locationPortrait.SetPortrait(currentlyShowingHexTile.landmarkOnTile.landmarkPortrait);    
+        if (activeHex.landmarkOnTile != null) {
+            _locationPortrait.SetPortrait(activeHex.landmarkOnTile.landmarkPortrait);    
         } else {
-            _locationPortrait.SetPortrait(currentlyShowingHexTile.elevationType == ELEVATION.MOUNTAIN
+            _locationPortrait.SetPortrait(activeHex.elevationType == ELEVATION.MOUNTAIN
                 ? LANDMARK_TYPE.CAVE
                 : LANDMARK_TYPE.NONE);
         }
-        nameLbl.text = currentlyShowingHexTile.GetDisplayName();
-        tileTypeLbl.text = currentlyShowingHexTile.GetSubName();
+        nameLbl.text = activeHex.GetDisplayName();
+        tileTypeLbl.text = activeHex.GetSubName();
     }
     
     public void UpdateHexTileInfo() {
         featuresLbl.text = string.Empty;
-        if (currentlyShowingHexTile.featureComponent.features.Count == 0) {
+        if (activeHex.featureComponent.features.Count == 0) {
             featuresLbl.text = $"{featuresLbl.text}None";
         } else {
-            for (int i = 0; i < currentlyShowingHexTile.featureComponent.features.Count; i++) {
-                TileFeature feature = currentlyShowingHexTile.featureComponent.features[i];
+            for (int i = 0; i < activeHex.featureComponent.features.Count; i++) {
+                TileFeature feature = activeHex.featureComponent.features[i];
                 if (i != 0) {
                     featuresLbl.text = $"{featuresLbl.text}, ";
                 }
@@ -72,7 +72,7 @@ public class HextileInfoUI : InfoUIBase {
     public void OnHoverFeature(object obj) {
         if (obj is string) {
             int index = System.Int32.Parse((string)obj);
-            UIManager.Instance.ShowSmallInfo(currentlyShowingHexTile.featureComponent.features[index].description);
+            UIManager.Instance.ShowSmallInfo(activeHex.featureComponent.features[index].description);
         }
     }
     public void OnHoverExitFeature() {
@@ -82,8 +82,8 @@ public class HextileInfoUI : InfoUIBase {
     #region For Testing
     public void ShowTestingInfo() {
 #if UNITY_EDITOR
-        string summary = currentlyShowingHexTile.ToString();
-        if (currentlyShowingHexTile.settlementOnTile is NPCSettlement npcSettlement) {
+        string summary = activeHex.ToString();
+        if (activeHex.settlementOnTile is NPCSettlement npcSettlement) {
             summary = $"Settlement Ruler: {npcSettlement.ruler?.name ?? "None"}";
             summary += $"\n{npcSettlement.name} Job Assignments: ";
             summary += npcSettlement.jobPriorityComponent.GetJobAssignments();

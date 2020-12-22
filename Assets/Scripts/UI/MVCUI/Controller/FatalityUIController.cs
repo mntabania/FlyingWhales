@@ -119,7 +119,7 @@ public class FatalityUIController : MVCUIController, FatalityUIView.IListener
 	}
 	private bool CanAffordSymptom(PLAGUE_FATALITY p_fatalityType) {
 		if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
-			return PlayerManager.Instance.player.plagueComponent.plaguePoints >= p_fatalityType.GetFatalityCost();
+			return PlayerManager.Instance.player.plagueComponent.plaguePoints >= p_fatalityType.GetFatalityCost() || (WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.omnipotentMode);
 		} else {
 			return true;
 		}

@@ -58,7 +58,7 @@ public class Summon : Character {
         needsComponent.SetTirednessForcedTick(0);
         needsComponent.SetHappinessForcedTick(0);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Monster_Behaviour);
-        movementComponent.AvoidAllFactions();
+        // movementComponent.AvoidAllFactions();
     }
     public override void OnActionPerformed(ActualGoapNode node) { } //overridden OnActionStateSet so that summons cannot witness other events.
     public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = default, LogFillerStruct[] deathLogFillers = null,
@@ -221,6 +221,13 @@ public class Summon : Character {
         behaviourComponent.SetIsHarassing(false, null);
         behaviourComponent.SetIsInvading(false, null);
         behaviourComponent.SetIsDefending(false, null);
+        List<Trait> afterDeathTraitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.After_Death);
+        if (afterDeathTraitOverrideFunctions != null) {
+            for (int i = 0; i < afterDeathTraitOverrideFunctions.Count; i++) {
+                Trait trait = afterDeathTraitOverrideFunctions[i];
+                trait.AfterDeath(this);
+            }
+        }
     }
     public virtual void OnSummonAsPlayerMonster() {
         combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
@@ -230,15 +237,15 @@ public class Summon : Character {
     #region Player Action Target
     public override void ConstructDefaultActions() {
         if (actions == null) {
-            actions = new List<SPELL_TYPE>();
+            actions = new List<PLAYER_SKILL_TYPE>();
         } else {
             actions.Clear();
         }
-        AddPlayerAction(SPELL_TYPE.SEIZE_MONSTER);
-        AddPlayerAction(SPELL_TYPE.BREED_MONSTER);
-        AddPlayerAction(SPELL_TYPE.AGITATE);
-        AddPlayerAction(SPELL_TYPE.SNATCH);
-        AddPlayerAction(SPELL_TYPE.SACRIFICE);
+        AddPlayerAction(PLAYER_SKILL_TYPE.SEIZE_MONSTER);
+        AddPlayerAction(PLAYER_SKILL_TYPE.BREED_MONSTER);
+        AddPlayerAction(PLAYER_SKILL_TYPE.AGITATE);
+        AddPlayerAction(PLAYER_SKILL_TYPE.SNATCH);
+        AddPlayerAction(PLAYER_SKILL_TYPE.SACRIFICE);
     }
     #endregion
 

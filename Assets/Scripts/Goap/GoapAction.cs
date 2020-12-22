@@ -24,7 +24,7 @@ public class GoapAction {
     public bool showNotification { get; protected set; } //should this action show a notification when it is done by its actor or when it receives a plan with this action as it's end node?
     public bool shouldAddLogs { get; protected set; } //should this action add logs to it's actor?
     // public bool shouldIntelNotificationOnlyIfActorIsActive { get; protected set; }
-    public bool isNotificationAnIntel { get; protected set; }
+    // public bool isNotificationAnIntel { get; protected set; }
     public string actionIconString { get; protected set; }
     public string animationName { get; protected set; } //what animation should the character be playing while doing this action
     public bool doesNotStopTargetCharacter { get; protected set; }
@@ -131,32 +131,21 @@ public class GoapAction {
         //     log.AddToFillers(actor.currentRegion, actor.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
         // }
     }
-    public virtual bool IsInvalidOnVision(ActualGoapNode node) {
-        Character actor = node.actor;
+    public virtual bool IsInvalidOnVision(ActualGoapNode node, out string reason) {
         IPointOfInterest poiTarget = node.poiTarget;
         if(poiTarget is Character targetCharacter) {
             if (targetCharacter.combatComponent.isInActualCombat) {
+                reason = "target_in_combat";
                 return true;
             }
         }
+        reason = string.Empty;
         return false;
     }
     public virtual GoapActionInvalidity IsInvalid(ActualGoapNode node) {
-        Character actor = node.actor;
-        IPointOfInterest poiTarget = node.poiTarget;
-
         string stateName = "Target Missing";
         bool defaultTargetMissing = IsTargetMissing(node);
-        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
-        //if (defaultTargetMissing == false) {
-        //    //check the target's traits, if any of them can make this action invalid
-        //    for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
-        //        Trait trait = poiTarget.traitContainer.allTraits[i];
-        //        if (trait.TryStopAction(goapType, actor, poiTarget, ref goapActionInvalidity)) {
-        //            break; //a trait made this action invalid, stop loop
-        //        }
-        //    }
-        //}
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
         return goapActionInvalidity;
     }
     public virtual void OnInvalidAction(ActualGoapNode node) { }
@@ -202,23 +191,66 @@ public class GoapAction {
     public virtual string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
         CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
-        return string.Empty;
+
+        List<EMOTION> emotions = ObjectPoolManager.Instance.CreateNewEmotionList();
+        PopulateReactionsToActor(emotions, actor, target, witness, node, status);
+        string response = string.Empty;
+        if(emotions != null) {
+            for (int i = 0; i < emotions.Count; i++) {
+                response += CharacterManager.Instance.TriggerEmotion(emotions[i], witness, actor, status, node);
+            }
+        }
+        ObjectPoolManager.Instance.ReturnEmotionListToPool(emotions);
+        return response;
     }
     public virtual string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) { return string.Empty; }
+        ActualGoapNode node, REACTION_STATUS status) {
+        List<EMOTION> emotions = ObjectPoolManager.Instance.CreateNewEmotionList();
+        PopulateReactionsToTarget(emotions, actor, target, witness, node, status);
+        string response = string.Empty;
+        if (emotions != null) {
+            for (int i = 0; i < emotions.Count; i++) {
+                response += CharacterManager.Instance.TriggerEmotion(emotions[i], witness, target, status, node);
+            }
+        }
+        ObjectPoolManager.Instance.ReturnEmotionListToPool(emotions);
+        return response;
+    }
     public virtual string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node,
         REACTION_STATUS status) {
         if(target is Character targetCharacter) {
             CrimeManager.Instance.ReactToCrime(targetCharacter, actor, target, target.factionOwner, node.crimeType, node, status);
+            List<EMOTION> emotions = ObjectPoolManager.Instance.CreateNewEmotionList();
+            PopulateReactionsOfTarget(emotions, actor, target, node, status);
+            string response = string.Empty;
+            if (emotions != null) {
+                for (int i = 0; i < emotions.Count; i++) {
+                    response += CharacterManager.Instance.TriggerEmotion(emotions[i], targetCharacter, actor, status, node);
+                }
+            }
+            ObjectPoolManager.Instance.ReturnEmotionListToPool(emotions);
+            return response;
         }
         return string.Empty;
     }
+    public virtual void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness,
+        ActualGoapNode node, REACTION_STATUS status) { }
+    public virtual void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness,
+    ActualGoapNode node, REACTION_STATUS status) { }
+    public virtual void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target,
+    ActualGoapNode node, REACTION_STATUS status) { }
     public virtual void OnActionStarted(ActualGoapNode node) { }
     public virtual void OnStoppedInterrupt(ActualGoapNode node) { }
     public virtual REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Neutral;
     }
     public virtual void OnMoveToDoAction(ActualGoapNode node) { }
+    public virtual string GetActionIconString(ActualGoapNode node) {
+        return actionIconString;
+    }
+    public virtual bool ShouldActionBeAnIntel(ActualGoapNode node) {
+        return false;
+    }
     #endregion
 
     #region Utilities
@@ -239,7 +271,7 @@ public class GoapAction {
         actor.logComponent.AppendCostLog($"+{distanceCost.ToString()}(Distance Cost)");
         return (baseCost * PreconditionCostMultiplier()) + distanceCost;
     }
-    private bool IsTargetMissing(ActualGoapNode node) {
+    protected bool IsTargetMissing(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         //Action is invalid if the target is unavailable and the action cannot be advertised if target is unavailable
@@ -249,13 +281,20 @@ public class GoapAction {
         if (actionLocationType != ACTION_LOCATION_TYPE.IN_PLACE && actor.currentRegion != poiTarget.gridTileLocation.structure.region) {
             return true;
         }
+        LocationGridTile targetTile = poiTarget.gridTileLocation;
         if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
             //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
             if (actor.gridTileLocation != poiTarget.gridTileLocation && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true) == false) {
                 return true;
             }
         } else if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
-            //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
+            //if the action type is NEAR_OTHER_TARGET, then check if the actor is near the target, if not, this action is invalid.
+            if (actor.gridTileLocation != node.targetTile && actor.gridTileLocation.IsNeighbour(node.targetTile, true) == false) {
+                return true;
+            }
+        } else if (actionLocationType == ACTION_LOCATION_TYPE.NEARBY || actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION
+            || actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B || actionLocationType == ACTION_LOCATION_TYPE.OVERRIDE) {
+            //if the action type is NEARBY, RANDOM_LOCATION, RANDOM_LOCATION_B, OVERRIDE, then check if the actor is near the target, if not, this action is invalid.
             if (actor.gridTileLocation != node.targetTile && actor.gridTileLocation.IsNeighbour(node.targetTile, true) == false) {
                 return true;
             }
@@ -504,10 +543,10 @@ public struct GoapActionInvalidity {
     public string stateName;
     public string reason;
 
-    public GoapActionInvalidity(bool isInvalid, string stateName) {
+    public GoapActionInvalidity(bool isInvalid, string stateName, string reason = null) {
         this.isInvalid = isInvalid;
         this.stateName = stateName;
-        reason = null;
+        this.reason = reason;
     }
     public bool IsReasonForCancellationShouldDropJob() {
         if (!string.IsNullOrEmpty(reason)) {

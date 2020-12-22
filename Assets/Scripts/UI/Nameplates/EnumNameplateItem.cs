@@ -21,20 +21,20 @@ public class EnumNameplateItem : NameplateItem<Enum> {
         subLbl.text = string.Empty;
 
         //TODO: Make this better
-        if (o is SPELL_TYPE spellType) {
+        if (o is PLAYER_SKILL_TYPE spellType) {
             // if (WorldConfigManager.Instance.isTutorialWorld) {
             //     SetLockedState(WorldConfigManager.Instance.availableSpellsInTutorial.Contains(spellType) == false);
             // }
-            SpellData spellData;
-            if (PlayerSkillManager.Instance.IsAffliction(spellType)) {
-                spellData = PlayerSkillManager.Instance.GetAfflictionData(spellType);
-            } else if (PlayerSkillManager.Instance.IsPlayerAction(spellType)) {
-                spellData = PlayerSkillManager.Instance.GetPlayerSpellData(spellType);
-            } else if (PlayerSkillManager.Instance.IsDemonicStructure(spellType)) {
-                spellData = PlayerSkillManager.Instance.GetDemonicStructureSkillData(spellType);
-            } else {
-                spellData = PlayerSkillManager.Instance.GetSpellData(spellType);
-            }
+            SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType);
+            //if (PlayerSkillManager.Instance.IsAffliction(spellType)) {
+            //    spellData = PlayerSkillManager.Instance.GetAfflictionData(spellType);
+            //} else if (PlayerSkillManager.Instance.IsPlayerAction(spellType)) {
+            //    spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType);
+            //} else if (PlayerSkillManager.Instance.IsDemonicStructure(spellType)) {
+            //    spellData = PlayerSkillManager.Instance.GetDemonicStructureSkillData(spellType);
+            //} else {
+            //    spellData = PlayerSkillManager.Instance.GetSpellData(spellType);
+            //}
             Assert.IsNotNull(spellData, $"There is no spellData for {spellType.ToString()}");
             if (spellData.hasCharges && spellData.charges <= 0) {
                 //if spell uses charges, but has no more, do not show cooldown icon even if it is in cooldown

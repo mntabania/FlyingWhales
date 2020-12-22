@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Locations.Settlements;
 
 namespace Ruinarch {
     public class InputManager : MonoBehaviour {
@@ -99,7 +100,13 @@ namespace Ruinarch {
                                     if (hoveredTile != null && hoveredTile.collectionOwner.isPartOfParentRegionMap && hoveredTile.collectionOwner.partOfHextile.hexTileOwner) { 
                                         canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredTile.collectionOwner.partOfHextile.hexTileOwner); 
                                     } 
-                                    break; 
+                                    break;
+                                case SPELL_TARGET.SETTLEMENT:
+                                    BaseSettlement settlement = null;
+                                    if (hoveredTile != null && hoveredTile.IsPartOfSettlement(out settlement)) {
+                                        canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(settlement);
+                                    }
+                                    break;
                                 default: 
                                     break; 
                             }
@@ -143,7 +150,9 @@ namespace Ruinarch {
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Mouse0);
             } else if (Input.GetMouseButtonDown(1)) {
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Mouse1);
-                CancelActionsByPriority();
+                CancelSpellsByPriority();
+            } else if (Input.GetMouseButtonDown(2)) {
+                Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.Mouse2);
             } else if (Input.GetKeyDown(KeyCode.BackQuote)) {
                 Messenger.Broadcast(ControlsSignals.KEY_DOWN, KeyCode.BackQuote);
             } else if (Input.GetKeyDown(KeyCode.Space)) {
@@ -310,31 +319,22 @@ namespace Ruinarch {
             //     return true;
             // }
             UIManager.Instance.SetTempDisableShowInfoUI(false);
-            if (UIManager.Instance.IsOptionsMenuShowing()) {
-                //if options menu is showing, check if load window is showing, if it is close load window.
-                if (UIManager.Instance.optionsMenu.IsLoadWindowShowing()) {
-                    UIManager.Instance.optionsMenu.CloseLoadWindow();
+            if (!CancelSpellsByPriority()) {
+                if (UIManager.Instance.IsOptionsMenuShowing()) {
+                    //if options menu is showing, check if load window is showing, if it is close load window.
+                    if (UIManager.Instance.optionsMenu.IsLoadWindowShowing()) {
+                        UIManager.Instance.optionsMenu.CloseLoadWindow();
+                        return true;
+                    }
+                    //if load window is not showing then close options menu
+                    UIManager.Instance.CloseOptionsMenu();
                     return true;
                 }
-                //if load window is not showing then close options menu
-                UIManager.Instance.CloseOptionsMenu();
-                return true;
-            }
-            if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.currentActivePlayerSpell != null) {
-                //cancel current spell
-                PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
-                return true;
-            } else if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.currentActiveIntel != null) {
-                //cancel current intel
-                PlayerManager.Instance.player.SetCurrentActiveIntel(null);
-                return true;
-            } else if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.currentActiveItem != TILE_OBJECT_TYPE.NONE) {
-                PlayerManager.Instance.player.SetCurrentlyActiveItem(TILE_OBJECT_TYPE.NONE);
-                return true;
-            } else if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.currentActiveArtifact != ARTIFACT_TYPE.None) {
-                PlayerManager.Instance.player.SetCurrentlyActiveArtifact(ARTIFACT_TYPE.None);
-                return true;
-            } else {
+                if (UIManager.Instance.IsContextMenuShowing()) {
+                    UIManager.Instance.HidePlayerActionContextMenu();
+                    return true;
+                }
+            
                 CustomStandaloneInputModule customModule = EventSystem.current.currentInputModule as CustomStandaloneInputModule;
                 if (ignoreCursor || !EventSystem.current.IsPointerOverGameObject() || customModule.GetPointerData().pointerEnter.GetComponent<Button>() == null) {
                     if (UIManager.Instance.openedPopups.Count > 0) {
@@ -355,20 +355,30 @@ namespace Ruinarch {
                     }
                 }
                 return false;
-                //if (UIManager.Instance.openedPopups.Count > 0) {
-                //    //close latest popup
-                //    UIManager.Instance.openedPopups.Last().Close();
-                //} else {
-                //    if (UIManager.Instance.poiTestingUI.gameObject.activeSelf ||
-                //        UIManager.Instance.minionCommandsUI.gameObject.activeSelf) {
-                //        return;
-                //    }
-                //    //close all other menus
-                //    Messenger.Broadcast(Signals.HIDE_MENUS);
-                //}
+            } else {
+                //cancelled a spell
+                return true;
             }
         }
-
+        private bool CancelSpellsByPriority() {
+            if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.currentActivePlayerSpell != null) {
+                //cancel current spell
+                PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
+                return true;
+            } else if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.currentActiveIntel != null) {
+                //cancel current intel
+                PlayerManager.Instance.player.SetCurrentActiveIntel(null);
+                return true;
+            } else if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.currentActiveItem != TILE_OBJECT_TYPE.NONE) {
+                PlayerManager.Instance.player.SetCurrentlyActiveItem(TILE_OBJECT_TYPE.NONE);
+                return true;
+            } else if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.currentActiveArtifact != ARTIFACT_TYPE.None) {
+                PlayerManager.Instance.player.SetCurrentlyActiveArtifact(ARTIFACT_TYPE.None);
+                return true;
+            }
+            return false;
+        }
+        
         #region Utilities
         private void OnActiveSceneChanged(Scene current, Scene next) {
             if (next.name == "Game") {
@@ -385,7 +395,8 @@ namespace Ruinarch {
             return buttonsToHighlight.Contains(button.name);
         }
         public bool HasSelectedUIObject() {
-            return EventSystem.current.currentSelectedGameObject != null;
+            var currentSelectedGameObject = EventSystem.current.currentSelectedGameObject;
+            return currentSelectedGameObject != null && currentSelectedGameObject.activeInHierarchy;
         }
         #endregion
 

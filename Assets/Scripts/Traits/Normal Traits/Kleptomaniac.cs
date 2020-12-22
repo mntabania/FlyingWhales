@@ -4,6 +4,7 @@ using System.Linq;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UtilityScripts;
+using Inner_Maps;
 
 namespace Traits {
     public class Kleptomaniac : Trait {
@@ -54,24 +55,32 @@ namespace Traits {
                     }
                     
                     //NOTE: Might be heavy on performance, optimize this!
-                    foreach (KeyValuePair<STRUCTURE_TYPE,List<LocationStructure>> pair in character.currentRegion.structures) {
-                        for (int i = 0; i < pair.Value.Count; i++) {
-                            LocationStructure structure = pair.Value[i];
-                            for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
-                                IPointOfInterest poi = structure.pointsOfInterest.ElementAt(j);
-                                if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                                    TileObject item = poi as TileObject;
-                                    if (CanBeStolen(item)) {
-                                        choices.Add(item);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    //foreach (KeyValuePair<STRUCTURE_TYPE,List<LocationStructure>> pair in character.currentRegion.structures) {
+                    //    for (int i = 0; i < pair.Value.Count; i++) {
+                    //        LocationStructure structure = pair.Value[i];
+                    //        for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
+                    //            IPointOfInterest poi = structure.pointsOfInterest.ElementAt(j);
+                    //            if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                    //                TileObject item = poi as TileObject;
+                    //                if (CanBeStolen(item)) {
+                    //                    choices.Add(item);
+                    //                }
+                    //            }
+                    //        }
+                    //    }
+                    //}
                     if (choices.Count > 0) {
                         IPointOfInterest target = CollectionUtilities.GetRandomElement(choices);
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEAL, target, character);
-                        character.jobQueue.AddJobInQueue(job);
+                        LocationGridTile targetTile = target.gridTileLocation;
+                        if(target.isBeingCarriedBy != null) {
+                            targetTile = target.isBeingCarriedBy.gridTileLocation;
+                        }
+                        if (!character.movementComponent.HasPathToEvenIfDiffRegion(targetTile)) {
+                            return "no_path_to_target";
+                        } else {
+                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEAL, target, character);
+                            character.jobQueue.AddJobInQueue(job);
+                        }
                     } else {
                         return "no_target";
                     }

@@ -28,13 +28,11 @@ public class ConsoleBase : InfoUIBase {
     [SerializeField] private GameObject commandHistoryGO;
     [SerializeField] private TextMeshProUGUI commandHistoryLbl;
 
-    [SerializeField] private Dropdown raceDropdown;
-    [SerializeField] private Dropdown classDropdown;
-    [SerializeField] private InputField levelInput;
-
     [SerializeField] private GameObject fullDebugGO;
     [SerializeField] private TextMeshProUGUI fullDebugLbl;
     [SerializeField] private TextMeshProUGUI fullDebug2Lbl;
+
+    [SerializeField] private Toggle tglAlwaysSuccessScheme;
 
     void Awake() {
         Initialize();
@@ -102,12 +100,11 @@ public class ConsoleBase : InfoUIBase {
             {"/trigger_quarantine", TriggerQuarantine},
             {"/add_ideology", AddFactionIdeology},
         };
-
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-        //Messenger.AddListener(Signals.TICK_ENDED, CheckForWrongCharacterData);
-        Messenger.AddListener<Character, ActualGoapNode>(JobSignals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
-#endif
-        InitializeMinion();
+        
+        SchemeData.alwaysSuccessScheme = false;
+        tglAlwaysSuccessScheme.SetIsOnWithoutNotify(SchemeData.alwaysSuccessScheme);
+        tglAlwaysSuccessScheme.onValueChanged.RemoveAllListeners();
+        tglAlwaysSuccessScheme.onValueChanged.AddListener(OnToggleAlwaysSuccessScheme);
     }
     private void Update() {
         fullDebugLbl.text = string.Empty;
@@ -284,66 +281,6 @@ public class ConsoleBase : InfoUIBase {
         commandHistoryLbl.text += $"<color=#00FF00>{successMessage}</color>\n";
         ShowCommandHistory();
     }
-
-    #region Listeners
-    private void OnCharacterDoingAction(Character character, ActualGoapNode actionNode) {
-        if (typesSubscribedTo.Contains(actionNode.goapType)) {
-            Messenger.Broadcast<string, int, UnityAction>(UISignals.SHOW_DEVELOPER_NOTIFICATION,
-                $"{character.name} is doing {actionNode.goapType}",
-                100, () => UIManager.Instance.ShowCharacterInfo(character, true));
-            UIManager.Instance.Pause();
-        }
-    }
-    //private void CheckForWrongCharacterData() {
-    //    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-    //        NPCSettlement currNpcSettlement = LandmarkManager.Instance.allAreas[i];
-    //        if (currNpcSettlement == PlayerManager.Instance.player.playerNpcSettlement) {
-    //            continue;
-    //        }
-    //        for (int j = 0; j < currNpcSettlement.charactersAtLocation.Count; j++) {
-    //            Character character = currNpcSettlement.charactersAtLocation[j];
-    //            if (character.isDead) {
-    //                Debug.LogWarning("There is still a dead character at " + currNpcSettlement.name + " : " + character.name);
-    //                //UIManager.Instance.Pause();
-    //            }
-    //        }
-    //        //for (int j = 0; j < currNpcSettlement.possibleSpecialTokenSpawns.Count; j++) {
-    //        //    SpecialToken token = currNpcSettlement.possibleSpecialTokenSpawns[j];
-    //        //    if (token.structureLocation == null) {
-    //        //        Debug.LogWarning("There is token at " + currNpcSettlement.name + " that doesn't have a structure location : " + token.name);
-    //        //        //UIManager.Instance.Pause();
-    //        //    }
-    //        //}
-    //    }
-    //    for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-    //        Character currCharacter = CharacterManager.Instance.allCharacters[i];
-    //        if (!currCharacter.isDead) {
-    //            if (currCharacter.faction == null) {
-    //                Debug.LogWarning("There is an alive character with a null faction! " + currCharacter.name);
-    //                UIManager.Instance.Pause();
-    //            }
-    //            //if (currCharacter.homeStructure == null) {
-    //            //    Debug.LogWarning("There is an alive character with a null home structure! " + currCharacter.name);
-    //            //    UIManager.Instance.Pause();
-    //            //}
-    //            //if (currCharacter.currentStructure == null && currCharacter.minion == null) {
-    //            //    Debug.LogWarning("There is an alive character with a null current structure! " + currCharacter.name);
-    //            //    //UIManager.Instance.Pause();
-    //            //}
-    //            if (currCharacter.marker) {
-    //                for (int j = 0; j < currCharacter.combatComponent.hostilesInRange.Count; j++) {
-    //                    Character hostileInRange = currCharacter.combatComponent.hostilesInRange[j];
-    //                    if (hostileInRange.isDead) {
-    //                        Debug.LogWarning("There is a dead character (" + hostileInRange.name + ") in " + currCharacter.name + "'s hostile range!");
-    //                        UIManager.Instance.Pause();
-    //                    }
-    //                }
-    //            }
-
-    //        }
-    //    }
-    //}
-    #endregion
 
     #region Misc
     private void ShowHelp(string[] parameters) {
@@ -1248,40 +1185,6 @@ public class ConsoleBase : InfoUIBase {
     }
     #endregion
 
-    #region Minion
-    private void InitializeMinion() {
-        levelInput.text = "1";
-        ConstructRaceDropdown();
-        ConstructClassDropdown();
-    }
-    private void ConstructRaceDropdown() {
-        raceDropdown.ClearOptions();
-        string[] races = System.Enum.GetNames(typeof(RACE));
-        raceDropdown.AddOptions(races.ToList());
-    }
-    private void ConstructClassDropdown() {
-        List<string> allClasses = new List<string>();
-        string path = $"{UtilityScripts.Utilities.dataPath}CharacterClasses/";
-        foreach (string file in Directory.GetFiles(path, "*.json")) {
-            allClasses.Add(Path.GetFileNameWithoutExtension(file));
-        }
-        classDropdown.ClearOptions();
-        classDropdown.AddOptions(allClasses);
-    }
-    public void AddMinion() {
-        RACE race = (RACE)System.Enum.Parse(typeof(RACE), raceDropdown.options[raceDropdown.value].text);
-        string className = classDropdown.options[classDropdown.value].text;
-        int level = int.Parse(levelInput.text);
-        if (race != RACE.NONE) {
-            Minion minion = CharacterManager.Instance.CreateNewMinion(className, race);
-            //if (level > 1) {
-            //    minion.character.LevelUp(level - 1);
-            //}
-            //PlayerManager.Instance.player.AddMinion(minion);
-        }
-    }
-    #endregion
-
     #region Summons
     private void GainSummon(string[] parameters) {
         if (parameters.Length != 1) {
@@ -1373,7 +1276,7 @@ public class ConsoleBase : InfoUIBase {
             return;
         }
         string typeParameterString = parameters[0];
-        SPELL_TYPE type;
+        PLAYER_SKILL_TYPE type;
         if (Enum.TryParse(typeParameterString, out type)) {
             //PlayerManager.Instance.player.GainNewInterventionAbility(type, true);
             //AddSuccessMessage($"Gained new Spell: {type}");
@@ -1695,6 +1598,12 @@ public class ConsoleBase : InfoUIBase {
             AddErrorMessage($"Could not find NPCSettlement with name {settlementName}");
         }
         
+    }
+    #endregion
+
+    #region Scheme
+    private void OnToggleAlwaysSuccessScheme(bool p_isOn) {
+        SchemeData.alwaysSuccessScheme = p_isOn;
     }
     #endregion
 }

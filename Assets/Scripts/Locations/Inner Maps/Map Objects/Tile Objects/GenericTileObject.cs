@@ -61,6 +61,12 @@ public class GenericTileObject : TileObject {
         return false;
     }
     public override void OnTileObjectGainedTrait(Trait trait) {
+        if (trait.name != "Flammable") {
+            //Whenever a generic tile object gains a trait that is NOT flammable, then set it as not Default
+            //This checking is necessary because the tile's flammability is determined by it's ground type, and it being flammable
+            //could be its default, so that case is handled by changes in ground type.
+            _owner.SetIsDefault(false);
+        }
         if (trait is Status status) {
             if(status.isTangible) {
                 //if status is wet, and this tile is not part of a settlement, then do not create a map visual, since
@@ -75,12 +81,6 @@ public class GenericTileObject : TileObject {
                     return;
                 }
             }
-        }
-        if (trait.name != "Flammable") {
-            //Whenever a generic tile object gains a trait that is NOT flammable, then set it as not Default
-            //This checking is necessary because the tile's flammability is determined by it's ground type, and it being flammable
-            //could be its default, so that case is handled by changes in ground type.
-            _owner.SetIsDefault(false);
         }
         base.OnTileObjectGainedTrait(trait);
     }
@@ -276,6 +276,7 @@ public class GenericTileObject : TileObject {
         blueprintOnTile.OnBuiltStructureObjectPlaced(gridTileLocation.parentMap, structure, out int createdWalls, out int totalWalls);
         structure.CreateRoomsBasedOnStructureObject(blueprintOnTile);
         structure.OnBuiltNewStructure();
+        structure.OnBuiltNewStructureFromBlueprint();
 
         CancelBlueprintExpiry();
         blueprintOnTile = null;

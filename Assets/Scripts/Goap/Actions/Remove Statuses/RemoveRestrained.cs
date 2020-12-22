@@ -39,7 +39,7 @@ public class RemoveRestrained : GoapAction {
 
     #region State Effects
     public void AfterRemoveSuccess(ActualGoapNode goapNode) {
-        goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Restrained");
+        goapNode.poiTarget.traitContainer.RemoveRestrainAndImprison(goapNode.poiTarget, goapNode.actor);
     }
     #endregion
 

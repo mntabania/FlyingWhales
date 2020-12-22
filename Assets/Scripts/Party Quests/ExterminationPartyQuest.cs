@@ -38,7 +38,8 @@ public class ExterminationPartyQuest : PartyQuest {
             EndQuest("Target is destroyed");
         } else {
             Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
-            StartExterminationTimer();
+            //Removed this because the quest should start timer when the characters arrived at target location
+            //StartExterminationTimer();
         }
     }
     public override IPartyTargetDestination GetTargetDestination() {
@@ -46,6 +47,13 @@ public class ExterminationPartyQuest : PartyQuest {
     }
     public override string GetPartyQuestTextInLog() {
         return "Exterminate " + targetStructure.name;
+    }
+    public override void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {
+        base.OnAssignedPartySwitchedState(fromState, toState);
+        if (toState == PARTY_STATE.Working) {
+            SetIsSuccessful(true);
+            StartExterminationTimer();
+        }
     }
     //protected override void OnAddMember(Character member) {
     //    base.OnAddMember(member);
@@ -78,7 +86,7 @@ public class ExterminationPartyQuest : PartyQuest {
     private void ProcessExterminationOrDisbandment() {
         if (assignedParty != null && assignedParty.isActive && assignedParty.currentQuest == this) {
             Faction faction = assignedParty.partySettlement.owner;
-            if (!targetStructure.settlementLocation.HasResidentThatMeetsCriteria(resident => !resident.isDead
+            if (targetStructure == null || targetStructure.hasBeenDestroyed || targetStructure.tiles.Count <= 0 || !targetStructure.settlementLocation.HasResidentThatMeetsCriteria(resident => !resident.isDead
                     && !resident.partyComponent.IsAMemberOfParty(assignedParty)
                     && !resident.isBeingSeized
                     && resident.gridTileLocation != null
@@ -141,6 +149,10 @@ public class ExterminationPartyQuest : PartyQuest {
             //}
             if (!string.IsNullOrEmpty(subData.originSettlement)) {
                 originSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(subData.originSettlement) as NPCSettlement;
+            }
+            if (isWaitTimeOver && assignedParty != null) {
+                //Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+                Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
             }
         }
     }

@@ -1663,7 +1663,7 @@ namespace Inner_Maps {
         }
         private void TriggerFreezingTrap(Character triggeredBy) {
             GameManager.Instance.CreateParticleEffectAt(triggeredBy, PARTICLE_EFFECT.Freezing_Trap_Explosion);
-            AudioManager.Instance.TryCreateAudioObject(PlayerSkillManager.Instance.GetPlayerSkillData<FreezingTrapSkillData>(SPELL_TYPE.FREEZING_TRAP).trapExplosionSound, this, 1, false);
+            AudioManager.Instance.TryCreateAudioObject(PlayerSkillManager.Instance.GetPlayerSkillData<FreezingTrapSkillData>(PLAYER_SKILL_TYPE.FREEZING_TRAP).trapExplosionSound, this, 1, false);
             SetHasFreezingTrap(false);
             for (int i = 0; i < 3; i++) {
                 if (triggeredBy.traitContainer.HasTrait("Frozen")) {

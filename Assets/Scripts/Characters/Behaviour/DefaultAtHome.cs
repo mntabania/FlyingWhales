@@ -37,7 +37,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                             character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Party, character);
                         }
                     } else {
-                        if (GameUtilities.RollChance(25)) { //15
+                        if (GameUtilities.RollChance(45)) { //15
                             character.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Party, unfullParty.members[0]);
                         }
                     }
@@ -83,7 +83,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                         if (character.faction != null && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)) {
                             int chance = Random.Range(0, 100);
                             log += $"\nRoll: {chance}";
-                            if (chance < 5) {
+                            if (chance < 20) {
                                 if (missingCharacter.IsConsideredInDangerBy(character)) {
                                     character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
                                     return true;
@@ -101,7 +101,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                         if (character.faction != null && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)) {
                             int chance = Random.Range(0, 100);
                             log += $"\nRoll: {chance}";
-                            if (chance < 5) {
+                            if (chance < 20) {
                                 if (missingCharacter.IsConsideredInDangerBy(character)) {
                                     character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
                                     return true;
@@ -140,7 +140,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                         if (character.faction != null && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)) {
                             int chance = Random.Range(0, 100);
                             log += $"\nRoll: {chance}";
-                            if (chance < 15) {
+                            if (chance < 40) {
                                 if (missingCharacter.IsConsideredInDangerBy(character)) {
                                     character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
                                     return true;

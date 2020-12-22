@@ -20,8 +20,6 @@ namespace Inner_Maps {
         public static InnerMapManager Instance;
         
         public static readonly Vector2Int BuildingSpotSize = new Vector2Int(7, 7);
-        public static readonly int BuildingSpotBorderSize = 1; //how many tiles, per side of the build spot, should not be occupied by the structure.
-        
         public const int DefaultCharacterSortingOrder = 82;
         public const int GroundTilemapSortingOrder = 10;
         public const int DetailsTilemapSortingOrder = 40;
@@ -50,6 +48,7 @@ namespace Inner_Maps {
         
         private Vector3 _nextMapPos = Vector3.zero;
         public GameObject characterCollisionTriggerPrefab;
+        public GameObject dragonCollisionTriggerPrefab;
 
         [Header("Pathfinding")]
         [SerializeField] private AstarPath pathfinder;
@@ -104,6 +103,8 @@ namespace Inner_Maps {
                 OnClickMapObject();
             } else if (keyCode == KeyCode.Mouse1) {
                 OnRightClick();
+            } else if (keyCode == KeyCode.Mouse2) {
+                OnMiddleClick();
             } else if (keyCode == KeyCode.R) {
                 CycleRegions();
             }
@@ -111,8 +112,22 @@ namespace Inner_Maps {
         private void OnRightClick() {
             if (UIManager.Instance.IsMouseOnUI() == false && ReferenceEquals(currentlyShowingMap, null) == false) {
                 LocationGridTile clickedTile = GetTileFromMousePosition();
+                if (TryGetSelectablesOnTile(clickedTile, out var selectables)) {
+                    IPointOfInterest currentlySelectedPOI = UIManager.Instance.GetCurrentlySelectedPOI();
+                    if (currentlySelectedPOI != null && selectables.Contains(currentlySelectedPOI)) {
+                        currentlySelectedPOI.RightSelectAction();
+                    } else {
+                        ISelectable selectable = selectables.FirstOrDefault();
+                        selectable?.RightSelectAction();
+                    }
+                }
+            }
+        }
+        private void OnMiddleClick() {
+            if (UIManager.Instance.IsMouseOnUI() == false && ReferenceEquals(currentlyShowingMap, null) == false) {
+                LocationGridTile clickedTile = GetTileFromMousePosition();
                 ISelectable selectable = GetFirstSelectableOnTile(clickedTile);
-                selectable?.RightSelectAction();
+                selectable?.MiddleSelectAction();
             }
         }
         private void OnClickMapObject() {
@@ -202,9 +217,8 @@ namespace Inner_Maps {
         }
         private bool TryGetSelectablesOnTile(LocationGridTile tile, out List<ISelectable> selectables) {
             selectables = new List<ISelectable>();
-            
-            PointerEventData pointer = new PointerEventData(EventSystem.current);
-            pointer.position = Input.mousePosition;
+
+            PointerEventData pointer = new PointerEventData(EventSystem.current) {position = Input.mousePosition};
 
             raycastResults.Clear();
             EventSystem.current.RaycastAll(pointer, raycastResults);
@@ -313,18 +327,6 @@ namespace Inner_Maps {
             mainGraphMask = mainGraphMask | GraphMask.FromGraph(newMap.pathfindingGraph);
             _nextMapPos = new Vector3(_nextMapPos.x, _nextMapPos.y + newMap.height + 50, _nextMapPos.z);
             newMap.OnMapGenerationFinished();
-        }
-        public void DestroyInnerMap(Region location) {
-            foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in location.structures) {
-                for (var i = 0; i < keyValuePair.Value.Count; i++) {
-                    keyValuePair.Value[i].DoCleanup();
-                }
-            }
-            pathfinder.data.RemoveGraph(location.innerMap.pathfindingGraph);
-            location.innerMap.CleanUp();
-            innerMaps.Remove(location.innerMap);
-            GameObject.Destroy(location.innerMap.gameObject);
-            Debug.LogError($"NPCSettlement map of {location.name} is destroyed!");
         }
         #endregion
 
@@ -646,9 +648,6 @@ namespace Inner_Maps {
         #region Structures
         public List<GameObject> GetStructurePrefabsForStructure(STRUCTURE_TYPE type, RESOURCE resource) {
             StructureSetting structureSetting = new StructureSetting(type, resource);
-            return structurePrefabs[structureSetting];
-        }
-        public List<GameObject> GetStructurePrefabsForStructure(StructureSetting structureSetting) {
             return structurePrefabs[structureSetting];
         }
         public List<GameObject> GetIndividualStructurePrefabsForStructure(StructureSetting structureSetting) {

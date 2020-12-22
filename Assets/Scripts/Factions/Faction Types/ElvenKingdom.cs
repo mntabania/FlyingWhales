@@ -1,11 +1,16 @@
-﻿namespace Factions.Faction_Types {
+﻿using UnityEngine;
+namespace Factions.Faction_Types {
     public class ElvenKingdom : FactionType {
         
         public override RESOURCE mainResource => RESOURCE.WOOD;
         
-        public ElvenKingdom() : base(FACTION_TYPE.Elven_Kingdom) { }
-        public ElvenKingdom(SaveDataFactionType saveData) : base(FACTION_TYPE.Elven_Kingdom, saveData) { }
-        
+        public ElvenKingdom() : base(FACTION_TYPE.Elven_Kingdom) {
+            succession = FactionManager.Instance.GetFactionSuccession(FACTION_SUCCESSION_TYPE.Popularity);
+        }
+        public ElvenKingdom(SaveDataFactionType saveData) : base(FACTION_TYPE.Elven_Kingdom, saveData) {
+            succession = FactionManager.Instance.GetFactionSuccession(FACTION_SUCCESSION_TYPE.Popularity);
+        }
+
         public override void SetAsDefault() {
             Peaceful peaceful = FactionManager.Instance.CreateIdeology<Peaceful>(FACTION_IDEOLOGY.Peaceful);
             AddIdeology(peaceful);
@@ -100,6 +105,10 @@
                     return CRIME_SEVERITY.Heinous;
             }
             return CRIME_SEVERITY.None;
+        }
+        public override int GetAdditionalMigrationMeterGain(NPCSettlement p_settlement) {
+            int nobleAmount = p_settlement.settlementClassTracker.GetCurrentResidentClassAmount("Noble");
+            return Mathf.Min(nobleAmount, 3);
         }
     }
 }

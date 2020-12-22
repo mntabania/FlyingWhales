@@ -26,6 +26,7 @@ public class TileObjectInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI normalTraitsLbl;
     [SerializeField] private EventLabel statusTraitsEventLbl;
     [SerializeField] private EventLabel normalTraitsEventLbl;
+    [SerializeField] private TileObjectPortrait tileObjectPortrait;
 
     [Space(10)]
     [Header("Characters")]
@@ -53,8 +54,12 @@ public class TileObjectInfoUI : InfoUIBase {
         Messenger.AddListener<TileObject, Trait>(TileObjectSignals.TILE_OBJECT_TRAIT_STACKED, UpdateTraitsFromSignal);
         Messenger.AddListener<TileObject, Trait>(TileObjectSignals.TILE_OBJECT_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
 
-        ownerEventLbl.SetOnClickAction(OnClickOwner);
-        carriedByEventLbl.SetOnClickAction(OnClickLocation);
+        ownerEventLbl.SetOnLeftClickAction(OnLeftClickOwner);
+        ownerEventLbl.SetOnRightClickAction(OnRightClickOwner);
+        
+        carriedByEventLbl.SetOnLeftClickAction(OnLeftClickLocation);
+        carriedByEventLbl.SetOnRightClickAction(OnRightClickLocation);
+        tileObjectPortrait.SetRightClickAction(OnRightClickPortrait);
 
         logsWindow.Initialize();
     }
@@ -141,6 +146,10 @@ public class TileObjectInfoUI : InfoUIBase {
 
         ownerLbl.text = activeTileObject.characterOwner != null ? $"<link=\"1\">{UtilityScripts.Utilities.ColorizeAndBoldName(activeTileObject.characterOwner.name)}</link>" : "None";
         UpdateLocationInfo();
+        tileObjectPortrait.SetTileObject(activeTileObject);
+    }
+    private void OnRightClickPortrait(TileObject p_tileObject) {
+        UIManager.Instance.ShowPlayerActionContextMenu(p_tileObject, Input.mousePosition, true);
     }
     private void UpdateLocationInfo() {
         if (activeTileObject.isBeingCarriedBy != null) {
@@ -244,18 +253,38 @@ public class TileObjectInfoUI : InfoUIBase {
     #endregion
 
     #region Event Labels
-    private void OnClickOwner(object obj) {
+    private void OnLeftClickOwner(object obj) {
         if(activeTileObject.characterOwner != null) {
             UIManager.Instance.ShowCharacterInfo(activeTileObject.characterOwner, true);
         }
     }
-    private void OnClickLocation(object obj) {
+    private void OnRightClickOwner(object obj) {
+        if (obj is IPlayerActionTarget playerActionTarget) {
+            if (playerActionTarget is Character character) {
+                if(character.isLycanthrope) {
+                    playerActionTarget = character.lycanData.activeForm;
+                }
+            }
+            UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
+        }
+    }
+    private void OnLeftClickLocation(object obj) {
         if (activeTileObject.isBeingCarriedBy != null) {
             UIManager.Instance.ShowCharacterInfo(activeTileObject.isBeingCarriedBy, true);
         } else if (activeTileObject.gridTileLocation != null) {
             if (!(activeTileObject.gridTileLocation.structure is Wilderness)) {
                 UIManager.Instance.ShowStructureInfo(activeTileObject.gridTileLocation.structure);
             }
+        }
+    }
+    private void OnRightClickLocation(object obj) {
+        if (obj is IPlayerActionTarget playerActionTarget) {
+            if (playerActionTarget is Character character) {
+                if(character.isLycanthrope) {
+                    playerActionTarget = character.lycanData.activeForm;
+                }
+            }
+            UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
         }
     }
     public void OnHoverTrait(object obj) {

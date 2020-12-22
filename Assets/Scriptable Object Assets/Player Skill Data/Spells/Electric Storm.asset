@@ -15,10 +15,12 @@ MonoBehaviour:
   skill: 35
   manaCost: 5
   charges: 2
-  cooldown: 72
-  threat: 5
+  cooldown: 144
+  threat: 10
   threatPerHour: 0
   expCost: 300
   buttonSprite: {fileID: 21300000, guid: 2e4df33af4860f64294a4996c64ed080, type: 3}
   tooltipVideoClip: {fileID: 32900000, guid: eb9b0cf342db4f242996861a944bf25c, type: 3}
   tooltipImage: {fileID: 0}
+  contextMenuIcon: {fileID: 0}
+  contextMenuColumn: 0

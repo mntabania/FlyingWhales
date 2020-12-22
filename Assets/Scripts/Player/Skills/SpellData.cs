@@ -1,12 +1,13 @@
 ﻿using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
+using Locations.Settlements;
 
 public class SpellData : IPlayerSkill {
-    public virtual SPELL_TYPE type => SPELL_TYPE.NONE;
+    public virtual PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.NONE;
     public virtual string name { get { return string.Empty; } }
     public virtual string description { get { return string.Empty; } }
-    public virtual SPELL_CATEGORY category { get { return SPELL_CATEGORY.NONE; } }
+    public virtual PLAYER_SKILL_CATEGORY category { get { return PLAYER_SKILL_CATEGORY.NONE; } }
     //public virtual INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.NONE;
     public SPELL_TARGET[] targetTypes { get; protected set; }
     //public int radius { get; protected set; }
@@ -31,13 +32,13 @@ public class SpellData : IPlayerSkill {
 
     #region Virtuals
     public virtual void ActivateAbility(IPointOfInterest targetPOI) {
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
     }
     public virtual void ActivateAbility(LocationGridTile targetTile) {
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
     }
     public virtual void ActivateAbility(LocationGridTile targetTile, ref Character spawnedCharacter) {
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
     }
     public virtual void ActivateAbility(HexTile targetHex) {
         //if(targetHex.settlementOnTile != null) {
@@ -45,18 +46,23 @@ public class SpellData : IPlayerSkill {
         //        PlayerManager.Instance.player.threatComponent.AdjustThreat(20);
         //    }
         //}
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
     }
     public virtual void ActivateAbility(LocationStructure targetStructure) {
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
     }
     public virtual void ActivateAbility(StructureRoom room) {
-        OnExecuteSpellActionAffliction();
+        OnExecutePlayerSkill();
+    }
+    public virtual void ActivateAbility(BaseSettlement targetSettlement) {
+        OnExecutePlayerSkill();
     }
     public virtual string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) { return null; }
+    public virtual string GetReasonsWhyCannotPerformAbilityTowards(BaseSettlement p_targetSettlement) { return string.Empty; }
+    public virtual string GetReasonsWhyCannotPerformAbilityTowards(LocationStructure p_targetStructure) { return string.Empty; }
     public virtual bool CanPerformAbilityTowards(Character targetCharacter) {
         //(targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES)
-        if(targetCharacter.traitContainer.HasTrait("Blessed")) {
+        if(targetCharacter.traitContainer.IsBlessed()) {
             return false;
         }
         return CanPerformAbility();
@@ -66,6 +72,7 @@ public class SpellData : IPlayerSkill {
     public virtual bool CanPerformAbilityTowards(HexTile targetHex) { return CanPerformAbility(); }
     public virtual bool CanPerformAbilityTowards(LocationStructure targetStructure) { return CanPerformAbility(); }
     public virtual bool CanPerformAbilityTowards(StructureRoom room) { return CanPerformAbility(); }
+    public virtual bool CanPerformAbilityTowards(BaseSettlement targetSettlement) { return CanPerformAbility(); }
     /// <summary>
     /// Highlight the affected area of this spell given a tile.
     /// </summary>
@@ -112,7 +119,7 @@ public class SpellData : IPlayerSkill {
     /// <param name="poi">The target poi</param>
     /// <returns>true or false</returns>
     public bool CanTarget(IPointOfInterest poi, ref string hoverText) {
-        if (poi.traitContainer.HasTrait("Blessed")) {
+        if (poi.traitContainer.IsBlessed()) {
             hoverText = "Blessed characters cannot be targeted.";
             return false;
         }
@@ -132,6 +139,9 @@ public class SpellData : IPlayerSkill {
     public bool CanTarget(HexTile hex) {
         return CanPerformAbilityTowards(hex);
     }
+    public bool CanTarget(BaseSettlement p_targetSettlement) {
+        return CanPerformAbilityTowards(p_targetSettlement);
+    }
     protected void IncreaseThreatForEveryCharacterThatSeesPOI(IPointOfInterest poi, int amount) {
         Messenger.Broadcast(CharacterSignals.INCREASE_THREAT_THAT_SEES_POI, poi, amount);
     }
@@ -147,7 +157,7 @@ public class SpellData : IPlayerSkill {
             }
         }
     }
-    public void OnExecuteSpellActionAffliction() {
+    public void OnExecutePlayerSkill() {
         if (PlayerSkillManager.Instance.unlimitedCast == false) {
             if(hasCharges && charges > 0) {
                 AdjustCharges(-1);
@@ -162,12 +172,12 @@ public class SpellData : IPlayerSkill {
         PlayerManager.Instance.player.threatComponent.AdjustThreat(threat);
         //PlayerManager.Instance.player.threatComponent.AdjustThreat(20);
 
-        if (category == SPELL_CATEGORY.PLAYER_ACTION) {
+        if (category == PLAYER_SKILL_CATEGORY.PLAYER_ACTION) {
             Messenger.Broadcast(SpellSignals.ON_EXECUTE_PLAYER_ACTION, this as PlayerAction);
-        } else if (category == SPELL_CATEGORY.AFFLICTION) {
+        } else if (category == PLAYER_SKILL_CATEGORY.AFFLICTION) {
             Messenger.Broadcast(SpellSignals.ON_EXECUTE_AFFLICTION, this);
-        } else if (category == SPELL_CATEGORY.SPELL || category == SPELL_CATEGORY.MINION || category == SPELL_CATEGORY.SUMMON) {
-            Messenger.Broadcast(SpellSignals.ON_EXECUTE_SPELL, this);
+        } else {
+            Messenger.Broadcast(SpellSignals.ON_EXECUTE_PLAYER_SKILL, this);
         }
     }
     private void StartCooldown() {

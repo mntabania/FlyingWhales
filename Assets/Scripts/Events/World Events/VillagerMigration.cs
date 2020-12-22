@@ -19,7 +19,7 @@ namespace Events.World_Events {
             var hoursBasedOnTicks = GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick);
             if (hoursBasedOnTicks == 9 || hoursBasedOnTicks == 13) {
                 string debugLog = $"{GameManager.Instance.TodayLogString()}Checking for villager migration:";
-                NPCSettlement randomSettlement = LandmarkManager.Instance.GetRandomActiveVillageSettlement();
+                NPCSettlement randomSettlement = LandmarkManager.Instance.GetRandomActiveSapientSettlement();
                 if(randomSettlement != null) {
                     int unoccupiedDwellings = randomSettlement.GetUnoccupiedDwellingCount();
                     debugLog = $"{debugLog}\n{randomSettlement.name} was chosen. It has {unoccupiedDwellings.ToString()} unoccupied dwellings.";

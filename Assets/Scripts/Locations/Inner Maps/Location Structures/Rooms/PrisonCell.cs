@@ -17,7 +17,7 @@ namespace Inner_Maps.Location_Structures {
         
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
-            AddPlayerAction(SPELL_TYPE.TORTURE);
+            AddPlayerAction(PLAYER_SKILL_TYPE.TORTURE);
         }
 
         #region Loading
@@ -65,16 +65,22 @@ namespace Inner_Maps.Location_Structures {
             Character chosenTarget = CollectionUtilities.GetRandomElement(characters);
             StartTorture(chosenTarget);
         }
+        public void BeginTorture(Character p_character) {
+            StartTorture(p_character);
+        }
         public bool HasValidTortureTarget() {
             List<Character> characters = charactersInRoom;
             for (int i = 0; i < characters.Count; i++) {
                 Character character = characters[i];
-                if (character.isNormalCharacter && character.isDead == false) {
+                if (IsValidTortureTarget(character)) {
                     return true;
                 }
             }
             return false;
         }
+        public bool IsValidTortureTarget(Character p_character) {
+            return p_character.isNormalCharacter && p_character.isDead == false;
+        } 
         private void StartTorture(Character target) {
             currentTortureTarget = target;
             currentTortureTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Tortured, currentTortureTarget);
@@ -113,20 +119,22 @@ namespace Inner_Maps.Location_Structures {
                 skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
                 skeleton.SetDestroyMarkerOnDeath(true);
                 skeleton.ClearPlayerActions();
+                skeleton.movementComponent.SetEnableDigging(true);
                 
-                int modifiedX = tortureChamber.entrance.localPlace.x - 2;
-                modifiedX = Mathf.Max(modifiedX, 0);
-                LocationGridTile outsideTile = tortureChamber.region.innerMap.map[modifiedX, tortureChamber.entrance.localPlace.y];
+                // int modifiedX = tortureChamber.entrance.localPlace.x - 2;
+                // modifiedX = Mathf.Max(modifiedX, 0);
+                // LocationGridTile outsideTile = tortureChamber.region.innerMap.map[modifiedX, tortureChamber.entrance.localPlace.y];
 
-                List<LocationGridTile> dropChoices = outsideTile
-                    .GetTilesInRadius(7, includeCenterTile: true, includeTilesInDifferentStructure: false).Where(t =>
-                         t.objHere == null && t.structure.structureType == STRUCTURE_TYPE.WILDERNESS).ToList(); //&& t.collectionOwner.partOfHextile != parentStructure.occupiedHexTile
+                List<LocationGridTile> dropChoices = parentStructure.occupiedHexTile.hexTileOwner.locationGridTiles.Where(t => 
+                    t.structure.structureType == STRUCTURE_TYPE.WILDERNESS).ToList();
+
+                LocationGridTile chosenDropTile = CollectionUtilities.GetRandomElement(dropChoices);
                 
                 CharacterManager.Instance.PlaceSummon(skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, character, skeleton);
                 job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {
                     skeleton.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), 
-                    CollectionUtilities.GetRandomElement(dropChoices)
+                    chosenDropTile
                 });
                 skeleton.jobQueue.AddJobInQueue(job);
                 
@@ -142,7 +150,9 @@ namespace Inner_Maps.Location_Structures {
                 
                 //kill skeleton
                 // GameManager.Instance.CreateParticleEffectAt(_skeleton.gridTileLocation, PARTICLE_EFFECT.Zombie_Transformation);
+                LocationStructure deathLocation = skeleton.currentStructure;
                 skeleton.Death();
+                deathLocation?.RemoveCharacterAtLocation(skeleton);
                 currentTortureTarget.traitContainer.RemoveRestrainAndImprison(currentTortureTarget);
                 currentTortureTarget.jobComponent.DisableReportStructure();
                 if (!currentTortureTarget.traitContainer.HasTrait("Paralyzed")) {

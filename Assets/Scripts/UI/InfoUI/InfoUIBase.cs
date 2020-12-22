@@ -23,12 +23,14 @@ public abstract class InfoUIBase : MonoBehaviour {
     #region virtuals
     internal virtual void Initialize() {
         Messenger.AddListener<InfoUIBase>(UISignals.BEFORE_MENU_OPENED, BeforeMenuOpens);
+        _toggles = GetComponentsInChildren<RuinarchToggle>(true);
+    }
+    protected void ListenToPlayerActionSignals() {
         Messenger.AddListener<PlayerAction>(SpellSignals.ON_EXECUTE_PLAYER_ACTION, OnExecutePlayerAction);
         Messenger.AddListener<IPlayerActionTarget>(SpellSignals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
         Messenger.AddListener(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS, ForceReloadPlayerActions);
-        Messenger.AddListener<SPELL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
-        Messenger.AddListener<SPELL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
-        _toggles = GetComponentsInChildren<RuinarchToggle>(true);
+        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
+        Messenger.AddListener<PLAYER_SKILL_TYPE, IPlayerActionTarget>(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
     }
     private void OnReceiveHideMenuSignal() {
         if (isShowing) {
@@ -65,9 +67,9 @@ public abstract class InfoUIBase : MonoBehaviour {
         } else {
             _playerActionTarget = _data as IPlayerActionTarget;
         }
-        if (_playerActionTarget != null) {
-            LoadActions(_playerActionTarget);    
-        }
+        // if (_playerActionTarget != null) {
+        //     LoadActions(_playerActionTarget);    
+        // }
         //FactionInfoHubUI.Instance.OnClickClose();
     }
     public virtual void CloseMenu() {
@@ -106,14 +108,8 @@ public abstract class InfoUIBase : MonoBehaviour {
             PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(target.actions[i]);
             if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
                 ActionItem actionItem = AddNewAction(action, target);
-
-                // if (WorldConfigManager.Instance.isDemoWorld && WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(action.type) == false) {
-                //     //if demo world, and action is not set as available, then disable button.
-                //     actionItem.SetInteractable(false);
-                // } else {
-                    actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);    
-                    actionItem.ForceUpdateCooldown();
-                // }
+                actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);    
+                actionItem.ForceUpdateCooldown();
             }
         }
     }
@@ -136,12 +132,12 @@ public abstract class InfoUIBase : MonoBehaviour {
         }
         return null;
     }
-    private void OnPlayerActionAddedToTarget(SPELL_TYPE playerAction, IPlayerActionTarget actionTarget) {
+    private void OnPlayerActionAddedToTarget(PLAYER_SKILL_TYPE playerAction, IPlayerActionTarget actionTarget) {
         if (_playerActionTarget == actionTarget && isShowing) {
             LoadActions(actionTarget);
         }
     }
-    private void OnPlayerActionRemovedFromTarget(SPELL_TYPE playerAction, IPlayerActionTarget actionTarget) {
+    private void OnPlayerActionRemovedFromTarget(PLAYER_SKILL_TYPE playerAction, IPlayerActionTarget actionTarget) {
         if (_playerActionTarget == actionTarget && isShowing) {
             LoadActions(actionTarget);
         }

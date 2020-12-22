@@ -27,26 +27,10 @@ namespace Interrupts {
         public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
             InterruptHolder interrupt, REACTION_STATUS status) {
             string response = base.ReactionToActor(actor, target, witness, interrupt, status);
-            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
-            if (opinionLabel == RelationshipManager.Acquaintance) {
-                if (!witness.traitContainer.HasTrait("Psychopath")) {
-                    if (UnityEngine.Random.Range(0, 2) == 0) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
-                    }
-                }
-            } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
-                if (!witness.traitContainer.HasTrait("Psychopath")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
-                }
-            } else if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
-                if (UnityEngine.Random.Range(0, 2) == 0) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
-                }
-            }
-            if(actor != target && witness != target && target is Character targetCharacter) {
-                if(actor.relationshipContainer.GetAwarenessState(targetCharacter) == AWARENESS_STATE.Missing) {
+            if (actor != target && witness != target && target is Character targetCharacter) {
+                if (actor.relationshipContainer.GetAwarenessState(targetCharacter) == AWARENESS_STATE.Missing) {
                     if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                        if(witness.faction != null && !witness.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, targetCharacter)) {
+                        if (witness.faction != null && !witness.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, targetCharacter)) {
                             if (targetCharacter.IsConsideredInDangerBy(witness)) {
                                 witness.faction.partyQuestBoard.CreateRescuePartyQuest(witness, witness.homeSettlement, targetCharacter);
                             }
@@ -56,6 +40,26 @@ namespace Interrupts {
                 }
             }
             return response;
+        }
+        public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
+            base.PopulateReactionsToActor(reactions, actor, target, witness, interrupt, status);
+
+            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
+            if (opinionLabel == RelationshipManager.Acquaintance) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
+                    if (UnityEngine.Random.Range(0, 2) == 0) {
+                        reactions.Add(EMOTION.Concern);
+                    }
+                }
+            } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
+                    reactions.Add(EMOTION.Concern);
+                }
+            } else if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
+                if (UnityEngine.Random.Range(0, 2) == 0) {
+                    reactions.Add(EMOTION.Scorn);
+                }
+            }
         }
         #endregion
     }

@@ -21,7 +21,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public Character characterOwner { get; protected set; }
     public List<INTERACTION_TYPE> advertisedActions { get; protected set; }
     public Region currentRegion => gridTileLocation.structure.region.coreTile.region;
-    public LocationStructure structureLocation => gridTileLocation.structure;
+    public LocationStructure structureLocation => gridTileLocation?.structure;
     public bool isPreplaced { get; private set; }
     /// <summary>
     /// All currently in progress jobs targeting this.
@@ -48,7 +48,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public LocationGridTile previousTile { get; private set; }
     public Dictionary<RESOURCE, int> storedResources { get; private set; }
     protected Dictionary<RESOURCE, int> maxResourceValues { get; set; }
-    public List<SPELL_TYPE> actions { get; protected set; }
+    public List<PLAYER_SKILL_TYPE> actions { get; protected set; }
     public int repairCounter { get; protected set; } //If greater than zero, this tile object cannot be repaired
     public int numOfActionsBeingPerformedOnThis { get; private set; } //this is increased, when the action of another character stops this characters movement
 
@@ -440,17 +440,17 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     protected virtual string GenerateName() { return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectType.ToString()); }
     public virtual void Neutralize() { }
     public virtual void ConstructDefaultActions() {
-        actions = new List<SPELL_TYPE>();
+        actions = new List<PLAYER_SKILL_TYPE>();
 
         if (tileObjectType == TILE_OBJECT_TYPE.RAVENOUS_SPIRIT || tileObjectType == TILE_OBJECT_TYPE.FEEBLE_SPIRIT ||
             tileObjectType == TILE_OBJECT_TYPE.FORLORN_SPIRIT) {
             return;
         }
 
-        AddPlayerAction(SPELL_TYPE.DESTROY);
-        AddPlayerAction(SPELL_TYPE.IGNITE);
-        AddPlayerAction(SPELL_TYPE.POISON);
-        AddPlayerAction(SPELL_TYPE.SEIZE_OBJECT);
+        AddPlayerAction(PLAYER_SKILL_TYPE.DESTROY);
+        AddPlayerAction(PLAYER_SKILL_TYPE.IGNITE);
+        AddPlayerAction(PLAYER_SKILL_TYPE.POISON);
+        AddPlayerAction(PLAYER_SKILL_TYPE.SEIZE_OBJECT);
     }
     public virtual void ActivateTileObject() {
         //Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_POI, this as IPointOfInterest, 5);
@@ -1186,13 +1186,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
 
     #region Player Action Target
-    public void AddPlayerAction(SPELL_TYPE action) {
+    public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Contains(action) == false) {
             actions.Add(action);
             Messenger.Broadcast(SpellSignals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
         }
     }
-    public void RemovePlayerAction(SPELL_TYPE action) {
+    public void RemovePlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Remove(action)) {
             Messenger.Broadcast(SpellSignals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
         }
@@ -1216,6 +1216,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public void RightSelectAction() {
         mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Right);
+    }
+    public void MiddleSelectAction() {
+        mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Middle);
     }
     public virtual bool CanBeSelected() {
         return true;

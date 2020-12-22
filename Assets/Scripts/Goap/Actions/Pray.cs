@@ -16,6 +16,9 @@ public class Pray : GoapAction {
     }
 
     #region Overrides
+    public override bool ShouldActionBeAnIntel(ActualGoapNode node) {
+        return true;
+    }
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
     }
@@ -62,31 +65,29 @@ public class Pray : GoapAction {
         }
         return base.GetCrimeType(actor, target, crime);
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, target, witness, node, status);
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
         Character targetCharacter = target as Character;
 
         CRIME_SEVERITY severity = node.crimeType == CRIME_TYPE.None ? CRIME_SEVERITY.None : CrimeManager.Instance.GetCrimeSeverity(witness, actor, target, node.crimeType);
 
         if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
-            //CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
+            reactions.Add(EMOTION.Shock);
             if (witness.relationshipContainer.IsFriendsWith(actor)) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, actor, status, node);    
+                reactions.Add(EMOTION.Despair);
             }
             if (witness.traitContainer.HasTrait("Coward")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status, node);
+                reactions.Add(EMOTION.Fear);
             } else if (!witness.traitContainer.HasTrait("Psychopath")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
+                reactions.Add(EMOTION.Threatened);
             }
 
             if (targetCharacter != null && !witness.relationshipContainer.IsEnemiesWith(targetCharacter)) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                reactions.Add(EMOTION.Disapproval);
             }
         } else if (witness.religionComponent.religion == actor.religionComponent.religion) {
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
+            reactions.Add(EMOTION.Approval);
         }
-        return response;
     }
     #endregion
 

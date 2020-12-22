@@ -13,11 +13,13 @@ public class Feed : GoapAction {
         actionIconString = GoapActionStateDB.FirstAid_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
-        isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Needs};
     }
 
     #region Overrides
+    public override bool ShouldActionBeAnIntel(ActualGoapNode node) {
+        return true;
+    }
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_POI, conditionKey = "Food Pile", isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR }, ActorHasFood);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET });
@@ -49,56 +51,54 @@ public class Feed : GoapAction {
         if (goapActionInvalidity.isInvalid == false) {
             if ((poiTarget as Character).carryComponent.IsNotBeingCarried() == false) {
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "target_carried";
             }
         }
         return goapActionInvalidity;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, target, witness, node, status);
-        if(target is Character targetCharacter) {
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
+        if (target is Character targetCharacter) {
             FeedUAD uniqueData = node.GetConvertedUniqueActionData<FeedUAD>();
             string opinionOfTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (uniqueData.usedPoisonedFood) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
+                reactions.Add(EMOTION.Shock);
                 if (opinionOfTarget == RelationshipManager.Friend || opinionOfTarget == RelationshipManager.Close_Friend) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);    
+                    reactions.Add(EMOTION.Anger);
                 }
             } else {
                 if (opinionOfTarget == RelationshipManager.Friend || opinionOfTarget == RelationshipManager.Close_Friend) {
                     if (!witness.traitContainer.HasTrait("Psychopath")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, witness, actor, status, node);
+                        reactions.Add(EMOTION.Gratefulness);
                     }
                 } else if (opinionOfTarget == RelationshipManager.Rival) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
-                }    
+                    reactions.Add(EMOTION.Disapproval);
+                }
             }
         }
-        return response;
     }
-    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionOfTarget(actor, target, node, status);
+    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
         if (target is Character targetCharacter) {
             FeedUAD uniqueData = node.GetConvertedUniqueActionData<FeedUAD>();
             if (uniqueData.usedPoisonedFood) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor, status, node);
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status, node);
+                reactions.Add(EMOTION.Shock);
+                reactions.Add(EMOTION.Betrayal);
             } else {
                 if (!targetCharacter.traitContainer.HasTrait("Psychopath")) {
                     if (targetCharacter.relationshipContainer.IsEnemiesWith(actor)) {
                         if (UnityEngine.Random.Range(0, 100) < 30) {
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status, node);
+                            reactions.Add(EMOTION.Gratefulness);
                         }
                         if (UnityEngine.Random.Range(0, 100) < 20) {
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, targetCharacter, actor, status, node);
+                            reactions.Add(EMOTION.Embarassment);
                         }
                     } else {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status, node);
+                        reactions.Add(EMOTION.Gratefulness);
                     }
-                }    
+                }
             }
-            
         }
-        return response;
     }
     public override void OnActionStarted(ActualGoapNode node) {
         base.OnActionStarted(node);

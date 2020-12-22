@@ -8,8 +8,9 @@ namespace Interrupts {
         public MentalBreak() : base(INTERRUPT.Mental_Break) {
             duration = 0;
             isSimulateneous = true;
+            shouldShowNotif = true;
             interruptIconString = GoapActionStateDB.Anger_Icon;
-            logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Needs};
+            logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Needs, LOG_TAG.Major};
         }
 
         #region Overrides

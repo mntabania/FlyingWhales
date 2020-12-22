@@ -10,14 +10,16 @@ public class Sing : GoapAction {
     public Sing() : base(INTERACTION_TYPE.SING) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
-        actionIconString = GoapActionStateDB.Entertain_Icon;
+        actionIconString = GoapActionStateDB.Sing_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
-        isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Needs};
     }
 
     #region Overrides
+    public override bool ShouldActionBeAnIntel(ActualGoapNode node) {
+        return true;
+    }
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
     }
@@ -55,28 +57,26 @@ public class Sing : GoapAction {
         Character actor = node.actor;
         actor.needsComponent.AdjustDoNotGetBored(-1);
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, target, witness, node, status);
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
         Trait trait = witness.traitContainer.GetTraitOrStatus<Trait>("Music Hater", "Music Lover");
         if (trait != null) {
             if (trait.name == "Music Hater") {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                reactions.Add(EMOTION.Disapproval);
             } else {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
-                if (RelationshipManager.Instance.GetCompatibilityBetween(witness, actor) >= 4 && 
+                reactions.Add(EMOTION.Approval);
+                if (RelationshipManager.Instance.GetCompatibilityBetween(witness, actor) >= 4 &&
                     RelationshipManager.IsSexuallyCompatible(witness, actor) && witness.moodComponent.moodState != MOOD_STATE.Critical) {
                     int value = 50;
                     if (actor.traitContainer.HasTrait("Unattractive")) {
                         value = 20;
                     }
                     if (UnityEngine.Random.Range(0, 100) < value) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status, node);
+                        reactions.Add(EMOTION.Arousal);
                     }
                 }
             }
         }
-        return response;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         if (witness.traitContainer.HasTrait("Music Hater")) {

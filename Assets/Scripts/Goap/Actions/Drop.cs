@@ -70,12 +70,19 @@ public class Drop : GoapAction {
         Character targetCharacter = poiTarget as Character;
         actor.UncarryPOI(targetCharacter);
     }
+    public override void OnInvalidAction(ActualGoapNode node) {
+        base.OnInvalidAction(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        Character targetCharacter = poiTarget as Character;
+        actor.UncarryPOI(targetCharacter);
+    }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         string stateName = "Target Missing";
-        bool defaultTargetMissing = IsDropTargetMissing(node);
-        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
+        bool defaultTargetMissing = IsDropTargetMissing(node) || IsTargetMissing(node);
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName, "unable_to_do");
         return goapActionInvalidity;
     }
     private bool IsDropTargetMissing(ActualGoapNode node) {
@@ -189,7 +196,8 @@ public class Drop : GoapAction {
         }
 
         if (goapNode.associatedJobType == JOB_TYPE.KIDNAP_RAID) {
-            if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive && goapNode.actor.partyComponent.currentParty.currentQuest is RaidPartyQuest) {
+            if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive && goapNode.actor.partyComponent.currentParty.currentQuest is RaidPartyQuest quest) {
+                quest.SetIsSuccessful(true);
                 goapNode.actor.partyComponent.currentParty.RemoveMemberThatJoinedQuest(goapNode.actor);
             }
         }

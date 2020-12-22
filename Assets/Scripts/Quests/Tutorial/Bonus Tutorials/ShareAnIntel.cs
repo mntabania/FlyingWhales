@@ -17,7 +17,7 @@ namespace Tutorial {
         protected override bool HasMetAllCriteria() {
             bool hasMetAllCriteria = base.HasMetAllCriteria();
             if (hasMetAllCriteria) {
-                return PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.EYE).isInUse;
+                return PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.EYE).isInUse;
             }
             return false;
         }
@@ -26,7 +26,7 @@ namespace Tutorial {
         #region Overrides
         protected override void MakeAvailable() {
             if (!PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.EYE)) {
-                 SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.EYE);
+                 SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.EYE);
                  if (spellData.charges <= 0) {
                      //if player does not yet have an eye structure and does not have an eye charge, then give them one so they can build one for this tutorial
                      spellData.AdjustCharges(1);
@@ -72,9 +72,6 @@ namespace Tutorial {
         #endregion
         
         #region Step Helpers
-        private bool IsSelectedAreaValid(HexTile tile) {
-            return tile.region.HasActiveSettlement();
-        }
         private void OnHoverEmptyArea(QuestStepItem item) {
             UIManager.Instance.ShowSmallInfo("In order to effectively use The Eye. It must be built at a region that " +
                                              "has an active settlement.", TutorialManager.Instance.villageVideoClip, 

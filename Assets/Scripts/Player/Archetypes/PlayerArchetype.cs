@@ -8,12 +8,12 @@ namespace Archetype {
         public PLAYER_ARCHETYPE type { get; protected set; }
         public string selectorDescription { get; protected set; }
         public List<string> minionClasses { get; protected set; }
-        public List<SPELL_TYPE> spells { get; protected set; }
-        public List<SPELL_TYPE> afflictions { get; protected set; }
-        public List<SPELL_TYPE> playerActions { get; protected set; }
-        public List<SPELL_TYPE> demonicStructuresSkills { get; protected set; }
-        public List<SPELL_TYPE> minionPlayerSkills { get; protected set; }
-        public List<SPELL_TYPE> summonPlayerSkills { get; protected set; }
+        public List<PLAYER_SKILL_TYPE> spells { get; protected set; }
+        public List<PLAYER_SKILL_TYPE> afflictions { get; protected set; }
+        public List<PLAYER_SKILL_TYPE> playerActions { get; protected set; }
+        public List<PLAYER_SKILL_TYPE> demonicStructuresSkills { get; protected set; }
+        public List<PLAYER_SKILL_TYPE> minionPlayerSkills { get; protected set; }
+        public List<PLAYER_SKILL_TYPE> summonPlayerSkills { get; protected set; }
         public List<RaceClass> monsters { get; protected set; }
         public bool canTriggerFlaw { get; protected set; }
         public bool canRemoveTraits { get; protected set; }
@@ -24,19 +24,19 @@ namespace Archetype {
         }
 
         #region Virtuals
-        public virtual bool CanAfflict(SPELL_TYPE type) {
+        public virtual bool CanAfflict(PLAYER_SKILL_TYPE type) {
             return afflictions.Contains(type);
         }
-        public virtual bool CanDoPlayerAction(SPELL_TYPE type) {
+        public virtual bool CanDoPlayerAction(PLAYER_SKILL_TYPE type) {
             return playerActions.Contains(type);
         }
         public virtual bool CanSummonMinion(Minion minion) {
             return minionClasses.Contains(minion.character.characterClass.className);
         }
-        public virtual bool CanBuildDemonicStructure(SPELL_TYPE type) {
+        public virtual bool CanBuildDemonicStructure(PLAYER_SKILL_TYPE type) {
             return demonicStructuresSkills.Contains(type);
         }
-        public virtual bool CanCastSpell(SPELL_TYPE type) {
+        public virtual bool CanCastSpell(PLAYER_SKILL_TYPE type) {
             return spells.Contains(type);
         }
         #endregion
@@ -51,14 +51,14 @@ namespace Archetype {
         #endregion
 
         #region Actions
-        public void AddAction(SPELL_TYPE action) {
+        public void AddAction(PLAYER_SKILL_TYPE action) {
             if(playerActions == null) { return; }
             if (!playerActions.Contains(action)) {
                 playerActions.Add(action);
                 Debug.Log($"Action was added to player {action.ToString()}");
             }
         }
-        public bool RemoveAction(SPELL_TYPE action) {
+        public bool RemoveAction(PLAYER_SKILL_TYPE action) {
             if (playerActions == null) { return false; }
             bool wasRemoved = playerActions.Remove(action);
             if (wasRemoved) {
@@ -82,27 +82,27 @@ namespace Archetype {
         #endregion
 
         #region Afflictions
-        public void AddAffliction(SPELL_TYPE type) {
+        public void AddAffliction(PLAYER_SKILL_TYPE type) {
             if (afflictions == null) { return; }
             if (!afflictions.Contains(type)) {
                 afflictions.Add(type);
             }
         }
-        public bool RemoveAffliction(SPELL_TYPE type) {
+        public bool RemoveAffliction(PLAYER_SKILL_TYPE type) {
             if (afflictions == null) { return false; }
             return afflictions.Remove(type);
         }
         #endregion
 
         #region Spells
-        public void AddSpell(SPELL_TYPE type) {
+        public void AddSpell(PLAYER_SKILL_TYPE type) {
             if (spells == null) { return; }
             if (!spells.Contains(type)) {
                 spells.Add(type);
                 Messenger.Broadcast(SpellSignals.PLAYER_GAINED_SPELL, type);
             }
         }
-        public bool RemoveSpell(SPELL_TYPE type) {
+        public bool RemoveSpell(PLAYER_SKILL_TYPE type) {
             if (spells == null) { return false; }
             if (spells.Remove(type)) {
                 Messenger.Broadcast(SpellSignals.PLAYER_LOST_SPELL, type);
@@ -141,14 +141,14 @@ namespace Archetype {
         #endregion
 
         #region Demonic Structures
-        public void AddDemonicStructure(SPELL_TYPE type) {
+        public void AddDemonicStructure(PLAYER_SKILL_TYPE type) {
             if (demonicStructuresSkills == null) { return; }
             if (!demonicStructuresSkills.Contains(type)) {
                 demonicStructuresSkills.Add(type);
                 Debug.Log($"Demonic structure was added to player {type.ToString()}");
             }
         }
-        public bool RemoveDemonicStructure(SPELL_TYPE type) {
+        public bool RemoveDemonicStructure(PLAYER_SKILL_TYPE type) {
             if (demonicStructuresSkills == null) { return false; }
             bool wasRemoved = demonicStructuresSkills.Remove(type);
             if (wasRemoved) {

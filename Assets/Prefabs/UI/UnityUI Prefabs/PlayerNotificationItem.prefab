@@ -247,6 +247,7 @@ MonoBehaviour:
   _bg: {fileID: 114639453176050232}
   _normalSprite: {fileID: 21300000, guid: a8c4df329d4e4384bac5c14f093055f3, type: 3}
   _importantSprite: {fileID: 21300000, guid: a1ef9a56d54a4894d959259906e35cda, type: 3}
+  _logEventLbl: {fileID: 114407101890031138}
 --- !u!114 &6372031855221266969
 MonoBehaviour:
   m_ObjectHideFlags: 0

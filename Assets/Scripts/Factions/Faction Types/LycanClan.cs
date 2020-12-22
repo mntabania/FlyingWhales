@@ -2,9 +2,13 @@
     public class LycanClan : FactionType {
         public override RESOURCE mainResource => RESOURCE.WOOD;
         
-        public LycanClan() : base(FACTION_TYPE.Lycan_Clan) { }
-        public LycanClan(SaveDataFactionType saveData) : base(FACTION_TYPE.Lycan_Clan, saveData) { }
-        
+        public LycanClan() : base(FACTION_TYPE.Lycan_Clan) {
+            succession = FactionManager.Instance.GetFactionSuccession(FACTION_SUCCESSION_TYPE.Power);
+        }
+        public LycanClan(SaveDataFactionType saveData) : base(FACTION_TYPE.Lycan_Clan, saveData) {
+            succession = FactionManager.Instance.GetFactionSuccession(FACTION_SUCCESSION_TYPE.Power);
+        }
+
         public override void SetAsDefault() {
             Warmonger warmonger = FactionManager.Instance.CreateIdeology<Warmonger>(FACTION_IDEOLOGY.Warmonger);
             AddIdeology(warmonger);

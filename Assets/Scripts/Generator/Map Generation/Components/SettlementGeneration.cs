@@ -83,7 +83,6 @@ public class SettlementGeneration : MapGenerationComponent {
 				structureSettings = new List<StructureSetting>() {
 					new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE),
 					new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE),
-					new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE),
 					new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE),
 					new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE),
 					new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE),
@@ -93,7 +92,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				};
 			} else {
 				structureSettings = GenerateFacilities(npcSettlement, faction, Random.Range(2, 4));
-				int randomDwellings = Random.Range(4, 11);
+				int randomDwellings = Random.Range(6, 15);
 				for (int i = 0; i < randomDwellings; i++) {
 					structureSettings.Add(new StructureSetting(STRUCTURE_TYPE.DWELLING, faction.factionType.mainResource));
 				}

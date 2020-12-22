@@ -559,7 +559,7 @@ public class CrimeData : ISavable {
                 if(i > 0) {
                     text += ", ";
                 }
-                text += factionsThatConsidersWanted[i].name;
+                text += factionsThatConsidersWanted[i].nameWithColor;
             }
         }
         return text;
@@ -621,8 +621,8 @@ public class CrimeData : ISavable {
             }
 
             if (criminal.isSettlementRuler) {
-                if(criminal.ruledSettlement.owner == faction) {
-                    criminal.ruledSettlement.SetRuler(null);
+                if(criminal.homeSettlement.owner == faction) {
+                    criminal.homeSettlement.SetRuler(null);
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_settlement_ruler", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
                     log.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     criminal.logComponent.RegisterLog(log, onlyClickedCharacter: false);
@@ -662,6 +662,8 @@ public class CrimeData : ISavable {
                     }
                 }
             }
+
+            Messenger.Broadcast(FactionSignals.BECOME_WANTED_CRIMINAL_OF_FACTION, faction, criminal);
         }
     }
     public bool IsWantedBy(Faction faction) {

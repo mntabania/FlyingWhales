@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 891be410796e8554eafb2611643cc64f, type: 3}
-    totalSpriteSurfaceArea: 3440486
+    totalSpriteSurfaceArea: 3478118
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -99,6 +99,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 362b5aa2e37e9da499ca8a81f43cdae7, type: 3}
   - {fileID: 21300000, guid: 3446cbb2f691a6e459dede63d06ba416, type: 3}
   - {fileID: 21300000, guid: aed80cb2f9f2f8d4fbff72fff6c6a95e, type: 3}
+  - {fileID: 21300000, guid: 80b6fcb2b7b287a4297e7b15c0e256a7, type: 3}
   - {fileID: 21300000, guid: 12f193c25cad8824a978c1a8d9d8377f, type: 3}
   - {fileID: 21300000, guid: 470eebd2a50dd5749a5319c8ae215e0c, type: 3}
   - {fileID: 21300000, guid: 23155af263f488645bbff2c93b8d7979, type: 3}
@@ -232,10 +233,12 @@ SpriteAtlas:
   - {fileID: 21300000, guid: c8e0472ad1dfbec49b485182c69ba18b, type: 3}
   - {fileID: 21300000, guid: 2a37343a77ef6d84c86192ce1b15113b, type: 3}
   - {fileID: 21300000, guid: c6756a4a1e068244bbb0505a07406409, type: 3}
+  - {fileID: 21300000, guid: 0c701f4a29f2ef044bbbefc8067a1cfd, type: 3}
   - {fileID: 21300000, guid: 1e82455a81caebb48bcc4204465c36c6, type: 3}
   - {fileID: 21300000, guid: bb8b107ac1619d143a08088b4382bc9f, type: 3}
   - {fileID: 21300000, guid: 586bb47a7165eab459c9a955f1e8c274, type: 3}
   - {fileID: 21300000, guid: 14f5f78aab59afe418b8b464da3f9a32, type: 3}
+  - {fileID: 21300000, guid: 42a41a8a384b71f48bdfef91a5786d1f, type: 3}
   - {fileID: 21300000, guid: 0eee50aade62d9146b483bfbfd3b234b, type: 3}
   - {fileID: 21300000, guid: 7514cfaa8b6928c49ae846264fccba01, type: 3}
   - {fileID: 21300000, guid: f7f2c2ba22cbeae4db852c466b31d36d, type: 3}
@@ -381,6 +384,7 @@ SpriteAtlas:
   - Head
   - TheForge
   - king
+  - M-BoomerZombie
   - demon_envy_portrait
   - female_elf_head3
   - female_human_brows5
@@ -514,10 +518,12 @@ SpriteAtlas:
   - mail_human_hair3
   - female_human_hair2
   - Head
+  - M-TankZombie
   - portrait_border_locked_dissuader
   - female_elf_hair7
   - portrait_border_locked_explorer
   - portrait_border_locked_spy
+  - M-FastZombie
   - portrait_bg_instigator
   - portrait_border_locked_diplomat
   - female_elf_head4

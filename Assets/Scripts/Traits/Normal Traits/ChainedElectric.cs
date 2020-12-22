@@ -26,8 +26,13 @@ namespace Traits {
         public override void OnAddTrait(ITraitable sourcePOI) {
             base.OnAddTrait(sourcePOI);
             traitable = sourcePOI;
-            GameDate dueDate = GameManager.Instance.Today().AddTicks(1);
-            SchedulingManager.Instance.AddEntry(dueDate, () => InflictDamage(sourcePOI), sourcePOI);
+            GameManager.Instance.StartCoroutine(InflictDamageEnumerator(traitable));
+            //GameDate dueDate = GameManager.Instance.Today().AddTicks(1);
+            //SchedulingManager.Instance.AddEntry(dueDate, () => InflictDamage(sourcePOI), sourcePOI);
+        }
+        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+            base.OnRemoveTrait(removedFrom, removedBy);
+            traitable = null;
         }
         #endregion
 
@@ -45,23 +50,40 @@ namespace Traits {
         public override void LoadSecondWaveInstancedTrait(SaveDataTrait p_saveDataTrait) {
             base.LoadSecondWaveInstancedTrait(p_saveDataTrait);
             if (!hasInflictedDamage) {
-                GameDate dueDate = GameManager.Instance.Today().AddTicks(1);
-                SchedulingManager.Instance.AddEntry(dueDate, () => InflictDamage(traitable), traitable);
+                GameManager.Instance.StartCoroutine(InflictDamageEnumerator(traitable));
+                //GameDate dueDate = GameManager.Instance.Today().AddTicks(1);
+                //SchedulingManager.Instance.AddEntry(dueDate, () => InflictDamage(traitable), traitable);
             }
         }
         #endregion
 
+        private IEnumerator InflictDamageEnumerator (ITraitable traitable) {
+            while (GameManager.Instance.isPaused || !GameManager.Instance.gameHasStarted) {
+                //Pause coroutine while game is paused
+                //Might be performance heavy, needs testing
+                yield return null;
+            }
+            yield return new WaitForSeconds(0.5f * GameManager.Instance.progressionSpeed); // * GameManager.Instance.progressionSpeed);
+            InflictDamage(traitable);
+        }
         public void SetDamage(int amount) {
             damage = amount;
         }
         private void InflictDamage(ITraitable traitable) {
+            if(traitable == null) {
+                return;
+            }
             if (!hasInflictedDamage) {
                 hasInflictedDamage = true;
+                LocationGridTile currentTile = traitable.gridTileLocation;
+                if(currentTile == null) {
+                    return;
+                }
                 int chainDamage = Mathf.RoundToInt(damage * 0.8f);
                 if (chainDamage >= 0) {
                     chainDamage = -1;
                 }
-                List<LocationGridTile> neighbours = traitable.gridTileLocation.neighbourList;
+                List<LocationGridTile> neighbours = currentTile.neighbourList;
                 for (int i = 0; i < neighbours.Count; i++) {
                     LocationGridTile tile = neighbours[i];
                     if (tile.genericTileObject.traitContainer.HasTrait("Wet") && !tile.genericTileObject.traitContainer.HasTrait("Zapped", "Chained Electric")) {

@@ -2,10 +2,10 @@
 using Logs;
 
 public class SpreadRumorData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.SPREAD_RUMOR;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SPREAD_RUMOR;
     public override string name => "Spread Rumor";
     public override string description => "This Action instructs the character to Spread a Rumor about someone they know.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.PLAYER_ACTION;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.PLAYER_ACTION;
     public override bool canBeCastOnBlessed => true;
 
     
@@ -16,10 +16,11 @@ public class SpreadRumorData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character character) {
-            List<Character> choices = character.GetListOfCultistTargets(x => x.isNormalCharacter && x.race.IsSapient() && !x.isDead);
-            if (choices == null) { choices = new List<Character>(); }
+            List<Character> choices = ObjectPoolManager.Instance.CreateNewCharactersList();
+            character.PopulateListOfCultistTargets(choices, x => x.isNormalCharacter && x.race.IsSapient() && !x.isDead);
             UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), validityChecker: t => CanBeRumored(character, t), onHoverAction: t => OnHoverEnter(character, t), onHoverExitAction: OnHoverExit, showCover: true,
                 shouldShowConfirmationWindowOnPick: false, layer: 25, asButton: false);
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(choices);
         }
         // base.ActivateAbility(targetPOI);
     }

@@ -84,8 +84,8 @@ public class PartyQuestBoard {
 
     #region Party Quest Creations
     public void CreateExplorationPartyQuest(Character questCreator, BaseSettlement madeInLocation, Region region) {
-        if(owner.factionType.type == FACTION_TYPE.Ratmen) {
-            //Cannot post quests on Ratmen faction
+        if(!owner.isMajorNonPlayer) {
+            //Cannot post quests on faction that are not major
             return;
         }
         ExplorationPartyQuest quest = PartyManager.Instance.CreateNewPartyQuest(PARTY_QUEST_TYPE.Exploration) as ExplorationPartyQuest;
@@ -95,8 +95,8 @@ public class PartyQuestBoard {
         AddPartyQuest(quest, questCreator);
     }
     public void CreateRescuePartyQuest(Character questCreator, BaseSettlement madeInLocation, Character targetCharacter) {
-        if (owner.factionType.type == FACTION_TYPE.Ratmen) {
-            //Cannot post quests on Ratmen faction
+        if (!owner.isMajorNonPlayer) {
+            //Cannot post quests on faction that are not major
             return;
         }
         RescuePartyQuest quest = PartyManager.Instance.CreateNewPartyQuest(PARTY_QUEST_TYPE.Rescue) as RescuePartyQuest;
@@ -105,8 +105,8 @@ public class PartyQuestBoard {
         AddPartyQuest(quest, questCreator);
     }
     public void CreateExterminatePartyQuest(Character questCreator, BaseSettlement madeInLocation, LocationStructure targetStructure, NPCSettlement originSettlement) {
-        if (owner.factionType.type == FACTION_TYPE.Ratmen) {
-            //Cannot post quests on Ratmen faction
+        if (!owner.isMajorNonPlayer) {
+            //Cannot post quests on faction that are not major
             return;
         }
         ExterminationPartyQuest quest = PartyManager.Instance.CreateNewPartyQuest(PARTY_QUEST_TYPE.Extermination) as ExterminationPartyQuest;
@@ -116,8 +116,8 @@ public class PartyQuestBoard {
         AddPartyQuest(quest, questCreator);
     }
     public void CreateCounterattackPartyQuest(Character questCreator, BaseSettlement madeInLocation, LocationStructure targetStructure) {
-        if (owner.factionType.type == FACTION_TYPE.Ratmen) {
-            //Cannot post quests on Ratmen faction
+        if (!owner.isMajorNonPlayer) {
+            //Cannot post quests on faction that are not major
             return;
         }
         CounterattackPartyQuest quest = PartyManager.Instance.CreateNewPartyQuest(PARTY_QUEST_TYPE.Counterattack) as CounterattackPartyQuest;
@@ -126,8 +126,8 @@ public class PartyQuestBoard {
         AddPartyQuest(quest, questCreator);
     }
     public void CreateRaidPartyQuest(Character questCreator, BaseSettlement madeInLocation, BaseSettlement targetSettlement) {
-        if (owner.factionType.type == FACTION_TYPE.Ratmen) {
-            //Cannot post quests on Ratmen faction
+        if (!owner.isMajorNonPlayer) {
+            //Cannot post quests on faction that are not major
             return;
         }
         RaidPartyQuest quest = PartyManager.Instance.CreateNewPartyQuest(PARTY_QUEST_TYPE.Raid) as RaidPartyQuest;

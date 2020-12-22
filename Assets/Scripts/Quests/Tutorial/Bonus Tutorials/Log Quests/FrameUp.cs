@@ -31,8 +31,8 @@ namespace Tutorial {
         protected override bool HasMetAllCriteria() {
             bool hasMetCriteria = base.HasMetAllCriteria();
             if (hasMetCriteria) {
-                return PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.SEIZE_OBJECT).isInUse &&
-                       PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.SEIZE_CHARACTER).isInUse;
+                return PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.SEIZE_OBJECT).isInUse &&
+                       PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.SEIZE_CHARACTER).isInUse;
             }
             return false;
         }
@@ -51,11 +51,11 @@ namespace Tutorial {
                 new QuestStepCollection(
                     new SeizePOIStep("Take someone's item", 
                             poi => poi is TileObject tileObject && tileObject.characterOwner != null 
-                            && tileObject.characterOwner.isDead == false && tileObject.characterOwner.traitContainer.HasTrait("Blessed") == false)
+                            && tileObject.characterOwner.isDead == false && tileObject.characterOwner.traitContainer.IsBlessed() == false)
                         .SetHoverOverAction(OnHoverOwnership)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
                     new DropPOIAtStructureStep(IsDroppedAtStructureValid, poi => poi is TileObject tileObject && tileObject.characterOwner != null
-                            && tileObject.characterOwner.isDead == false && tileObject.characterOwner.traitContainer.HasTrait("Blessed") == false,
+                            && tileObject.characterOwner.isDead == false && tileObject.characterOwner.traitContainer.IsBlessed() == false,
                         "Drop at another one's house")
                         .SetHoverOverAction(OnHoverStructureOwnership)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)

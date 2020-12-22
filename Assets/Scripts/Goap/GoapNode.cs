@@ -375,10 +375,15 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     }
     public void PerformAction() {
         GoapActionInvalidity goapActionInvalidity = action.IsInvalid(this);
-        bool isInvalidOnVision = action.IsInvalidOnVision(this);
+        string invalidVisionReason = string.Empty;
+        bool isInvalidOnVision = action.IsInvalidOnVision(this, out invalidVisionReason);
         bool isInvalidStealth = IsInvalidStealth();
         if (goapActionInvalidity.isInvalid || isInvalidOnVision || isInvalidStealth) {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{actor.name}'s action {action.goapType.ToString()} was invalid!");
+            if (!string.IsNullOrEmpty(invalidVisionReason) && string.IsNullOrEmpty(goapActionInvalidity.reason)) {
+                //if goap action invalidity reason is empty and invalidity reason for vision is not, then copy over value of vision invalidity, so that it will be used for the invalid log.
+                goapActionInvalidity.reason = invalidVisionReason;
+            }
             action.LogActionInvalid(goapActionInvalidity, this, isInvalidStealth);
             actor.GoapActionResult(InteractionManager.Goap_State_Fail, this);
             action.OnInvalidAction(this);
@@ -625,7 +630,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             }
         }
 
-        if (isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait("Resting", "Unconscious") == false && !target.isDead) {
+        if (isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait("Resting", "Unconscious", "Restrained") == false && !target.isDead) {
             //trigger vigilant, only if character is NOT resting or unconscious
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "vigilant", this, LOG_TAG.Social);
             // descriptionLog.SetLogType(LOG_TYPE.Action);
@@ -690,7 +695,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             return;
         }
         //Separate calls for end effect if target is vigilang and the action is stealth because there are things that will be called in normal effect that does not apply to vigilant
-        if(isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait("Resting", "Unconscious") == false && !target.isDead) {
+        if(isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait("Resting", "Unconscious", "Restrained") == false && !target.isDead) {
             EndEffectVigilant();
         } else {
             EndEffectNormal(shouldDoAfterEffect);
@@ -701,7 +706,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             if (descriptionLog.hasValue && action.shouldAddLogs && CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType)) { //only add logs if both the parent action and this state should add logs
                 descriptionLog.AddLogToDatabase();
                 //Only show notif if an action can be stored as an intel to reduce notifications and info overload to the player
-                if (action.isNotificationAnIntel) {
+                if (action.ShouldActionBeAnIntel(this)) {
                     bool cannotBeStoredAsIntel = !actor.isNormalCharacter && (!(poiTarget is Character) || !(poiTarget as Character).isNormalCharacter);
                     if (!cannotBeStoredAsIntel) {
                         PlayerManager.Instance.player.ShowNotificationFrom(actor, InteractionManager.Instance.CreateNewIntel(this) as IIntel);
@@ -889,7 +894,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if (crimeType != CRIME_TYPE.None) {
             tags.Add(LOG_TAG.Crimes);
         }
-        if (action.isNotificationAnIntel) {
+        if (action.ShouldActionBeAnIntel(this)) {
             tags.Add(LOG_TAG.Intel);
         }
         return tags;
@@ -969,14 +974,21 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public string ReactionToActor(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
         return action.ReactionToActor(actor, target, witness, this, status);
     }
-
     public string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
         REACTION_STATUS status) {
         return action.ReactionToTarget(actor, target, witness, this, status);
     }
-
     public string ReactionOfTarget(Character actor, IPointOfInterest target, REACTION_STATUS status) {
         return action.ReactionOfTarget(actor, target, this, status);
+    }
+    public void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
+        action.PopulateReactionsToActor(reactions, actor, target, witness, this, status);
+    }
+    public void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
+        action.PopulateReactionsToTarget(reactions, actor, target, witness, this, status);
+    }
+    public void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, REACTION_STATUS status) {
+        action.PopulateReactionsOfTarget(reactions, actor, target, this, status);
     }
     public REACTABLE_EFFECT GetReactableEffect(Character witness) {
         return action.GetReactableEffect(this, witness);
@@ -1020,7 +1032,14 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         //If action is stealth and there is a character in vision that can witness and considers the action as a crime, then return false, this means that the actor must not do the action because there are witnesses
         //Only do this if the actor is a Villager, otherwise, it does not make sense for monsters to be stealthy
         if (poiTarget != actor && isStealth && actor.isNormalCharacter) {
-            if (actor.marker && actor.marker.IsPOIInVision(poiTarget) && !actor.marker.CanDoStealthCrimeToTarget(poiTarget, crimeType)) {
+            IPointOfInterest trueTarget = poiTarget;
+            //If action is steal, we must check the carrier of the item (poiTarget) that is being stolen, instead of the item itself
+            if (action.goapType == INTERACTION_TYPE.STEAL) {
+                if (poiTarget.isBeingCarriedBy != null) {
+                    trueTarget = poiTarget.isBeingCarriedBy;
+                }
+            }
+            if (actor.marker && actor.marker.IsPOIInVision(trueTarget) && !actor.marker.CanDoStealthCrimeToTarget(trueTarget, crimeType)) {
                 return true;
             }
         }

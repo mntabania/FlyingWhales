@@ -9,6 +9,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Video;
 using UtilityScripts;
+using Locations.Settlements;
 using Debug = System.Diagnostics.Debug;
 
 public class PlayerSkillDetailsTooltip : MonoBehaviour {
@@ -33,13 +34,13 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     public void ShowPlayerSkillDetails(string title, string description, int charges = -1, int manaCost = -1, 
         int cooldown = -1, int threat = -1, string additionalText = "", UIHoverPosition position = null) {
         UpdateData(title, description, charges, manaCost, cooldown, threat, additionalText);
-        UpdatePositionAndVideo(position, SPELL_TYPE.NONE);
+        UpdatePositionAndVideo(position, PLAYER_SKILL_TYPE.NONE);
     }
     public void HidePlayerSkillDetails() {
         gameObject.SetActive(false);
         tooltipVideoPlayer.Stop();
     }
-    private void UpdatePositionAndVideo(UIHoverPosition position, SPELL_TYPE spellType) {
+    private void UpdatePositionAndVideo(UIHoverPosition position, PLAYER_SKILL_TYPE spellType) {
         bool wasActiveBefore = gameObject.activeSelf;
         gameObject.SetActive(true);
         UIHoverPosition positionToUse = position;
@@ -57,7 +58,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         thisRect.anchoredPosition = Vector2.zero;
 
         if (wasActiveBefore == false) {
-            SPELL_TYPE skillType = spellType;
+            PLAYER_SKILL_TYPE skillType = spellType;
             PlayerSkillData data = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType);
             if (data != null) {
                 if (data.tooltipImage != null) {
@@ -83,7 +84,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         }
     }
     private void UpdateData(PlayerSkillData skillData) {
-        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(skillData.skill);
+        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
         titleText.SetText(spellData.name);
         descriptionText.SetTextAndReplaceWithIcons(spellData.description);
         int charges = skillData.charges;
@@ -95,11 +96,12 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         if (manaCost != -1) {
             currencyStr += $"{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}  ";
         }
+        if (charges != -1) {
+            //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
+            currencyStr += $"{charges.ToString()}/{charges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
+        }
         if (cooldown != -1) {
             currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
-        }
-        if (charges != -1) {
-            currencyStr += $"{charges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
         }
         if (skillData.threat > 0) {
             currencyStr += $"{skillData.threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
@@ -120,11 +122,11 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         if (manaCost != -1) {
             currencyStr += $"{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}  ";
         }
+        if (charges != -1) {
+            currencyStr += $"{charges.ToString()}/{spellData.maxCharges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
+        }
         if (cooldown != -1) {
             currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
-        }
-        if (charges != -1) {
-            currencyStr += $"{charges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
         }
         if (spellData.threat > 0) {
             currencyStr += $"{spellData.threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
@@ -132,27 +134,34 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         currenciesText.text = currencyStr;
 
         additionalText.text = string.Empty;
-        if (spellData is PlayerAction  || spellData.category == SPELL_CATEGORY.AFFLICTION) {
-            IPointOfInterest activePOI = UIManager.Instance.GetCurrentlySelectedPOI();
-            if (activePOI != null) {
-                if (activePOI is Character activeCharacter) {
+        if (spellData is PlayerAction) {
+            object activeObj = UIManager.Instance.GetCurrentlySelectedObject();
+            if (activeObj != null) {
+                if (activeObj is Character activeCharacter) {
                     if (spellData.CanPerformAbilityTowards(activeCharacter) == false) {
-                        if (spellData is PlayerAction playerAction && !playerAction.canBeCastOnBlessed && activeCharacter.traitContainer.HasTrait("Blessed")) {
-                            additionalText.text += $"<color=#FE3E83>Blessed Villagers are protected from your powers.</color>\n";
+                        if (spellData is PlayerAction playerAction && !playerAction.canBeCastOnBlessed && activeCharacter.traitContainer.IsBlessed()) {
+                            additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText("Blessed Villagers are protected from your powers.")}\n";
                         }
                         string wholeReason = spellData
                             .GetReasonsWhyCannotPerformAbilityTowards(activeCharacter);
-                        if (string.IsNullOrEmpty(wholeReason) == false) {
-                            string[] reasons = wholeReason.Split(',');
-                            for (int i = 0; i < reasons.Length; i++) {
-                                string reason = reasons[i];
-                                additionalText.text += $"<color=#FE3E83>{reason}</color>\n";
-                            }
-                        }
+                        wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+                        additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
                     }
-                } else if (activePOI is TileObject activeTileObject) {
-                    if (activeTileObject is AnkhOfAnubis ankh && ankh.isActivated && spellData.type == SPELL_TYPE.SEIZE_OBJECT) {
-                        additionalText.text += "<color=#FE3E83>Activated Ankh can no longer be seized.</color>\n";
+                } else if (activeObj is TileObject activeTileObject) {
+                    if (activeTileObject is AnkhOfAnubis ankh && ankh.isActivated && spellData.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT) {
+                        additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText("Activated Ankh can no longer be seized.")}\n";
+                    }
+                } else if (activeObj is BaseSettlement activeSettlement) {
+                    if (spellData.CanPerformAbilityTowards(activeSettlement) == false) {
+                        string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeSettlement);
+                        wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+                        additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
+                    }
+                } else if (activeObj is LocationStructure activeStructure) {
+                    if (spellData.CanPerformAbilityTowards(activeStructure) == false) {
+                        string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeStructure);
+                        wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+                        additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
                     }
                 }
             }
@@ -168,13 +177,13 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         descriptionText.SetTextAndReplaceWithIcons(fullDescription);
         
         if(HasEnoughMana(spellData) == false) {
-            additionalText.text += "<color=#FE3E83>Not enough mana.</color>\n";
+            additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText("Not enough mana.")}\n";
         }
         if(HasEnoughCharges(spellData) == false) {
             if (spellData.hasCooldown) {
-                additionalText.text += "<color=#FE3E83>Recharging.</color>\n";
+                additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText("Recharging.")}\n";
             } else {
-                additionalText.text += "<color=#FE3E83>Not enough charges.</color>\n";
+                additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText("Not enough charges.")}\n";
             }
         }
     }
@@ -186,11 +195,11 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         if (manaCost != -1) {
             currencyStr += $"{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}  ";
         }
-        if (cooldown != -1) {
-            currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
-        }
         if (charges != -1) {
             currencyStr += $"{charges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
+        }
+        if (cooldown != -1) {
+            currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
         }
         if (threat > 0) {
             currencyStr += $"{threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
@@ -200,16 +209,16 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
 
         if (manaCost != -1) {
             if(HasEnoughMana(manaCost) == false) {
-                additionalText.text += "<color=#FE3E83>Not enough mana.</color>\n";
+                additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText("Not enough mana.")}\n";
             }    
         }
 
         if (charges != -1) {
             if(HasEnoughCharges(charges) == false) {
                 if (cooldown != -1) {
-                    additionalText.text += "<color=#FE3E83>Recharging.</color>\n";
+                    additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText("Recharging.")}\n";
                 } else {
-                    additionalText.text += "<color=#FE3E83>Not enough charges.</color>\n";
+                    additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText("Not enough charges.")}\n";
                 }
             }    
         }

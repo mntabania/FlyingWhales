@@ -23,20 +23,18 @@ namespace Interrupts {
             interruptHolder.actor.traitContainer.RemoveTrait(interruptHolder.actor, "Resting");
             return true;
         }
-        public override string ReactionToActor(Character actor, IPointOfInterest target,
-            Character witness,
-            InterruptHolder interrupt, REACTION_STATUS status) {
-            string response = base.ReactionToActor(actor, target, witness, interrupt, status);
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+        public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
+            base.PopulateReactionsToActor(reactions, actor, target, witness, interrupt, status);
+
+            reactions.Add(EMOTION.Shock);
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
             if (opinionLabel == RelationshipManager.Enemy) {
                 if (UnityEngine.Random.Range(0, 2) == 0) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
+                    reactions.Add(EMOTION.Scorn);
                 }
             } else if (opinionLabel == RelationshipManager.Rival) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
+                reactions.Add(EMOTION.Scorn);
             }
-            return response;
         }
         #endregion
     }

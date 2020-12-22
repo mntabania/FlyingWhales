@@ -34,8 +34,8 @@ namespace Quests {
                     new CharactersRemovedBehaviourStep($"Defend {_targetStructure.name}", new List<Character>(attackers), attackDemonicStructureBehaviour)
                         .SetObjectsToCenter(_targetStructure),
                     new CharactersRemovedBehaviourStep(GetStopCharactersDescription, new List<Character>(attackers), attackDemonicStructureBehaviour)
-                        .SetHoverOverAction(OnHoverStopItem)
-                        .SetHoverOutAction(() => UIManager.Instance.HideSmallInfo())
+                        // .SetHoverOverAction(OnHoverStopItem)
+                        // .SetHoverOutAction(() => UIManager.Instance.HideSmallInfo())
                         .SetObjectsToCenter(attackers.Select(x => x as ISelectable).ToArray())    
                 )
             };

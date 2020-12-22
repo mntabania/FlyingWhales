@@ -25,23 +25,13 @@ public class Player : ILeader, IObjectManipulator {
     public List<IIntel> allIntel { get; private set; }
     public List<Minion> minions { get; private set; }
     public List<Summon> summons { get; private set; }
-    //public List<Artifact> artifacts { get; private set; }
-    //private int currentCorruptionDuration { get; set; }
-    //private int currentCorruptionTick { get; set; }
-    //private bool isTileCurrentlyBeingCorrupted { get; set; }
-    //public HexTile currentTileBeingCorrupted { get; private set; }
     public CombatAbility currentActiveCombatAbility { get; private set; }
     public IIntel currentActiveIntel { get; private set; }
-    //public int maxSummonSlots { get; private set; } //how many summons can the player have
-    //public int maxArtifactSlots { get; private set; } //how many artifacts can the player have
-    //public PlayerJobActionSlot[] interventionAbilitySlots { get; }
     public HexTile portalTile { get; private set; }
-    //public float constructionRatePercentageModifier { get; private set; }
-    public List<SPELL_TYPE> unlearnedSpells { get; }
-    public List<SPELL_TYPE> unlearnedAfflictions { get; }
     public TILE_OBJECT_TYPE currentActiveItem { get; private set; }
     public bool isCurrentlyBuildingDemonicStructure { get; private set; }
-
+    public IPlayerActionTarget currentlySelectedPlayerActionTarget { get; private set; }
+    
     //Components
     public SeizeComponent seizeComponent { get; }
     public ThreatComponent threatComponent { get; }
@@ -64,18 +54,11 @@ public class Player : ILeader, IObjectManipulator {
         allIntel = new List<IIntel>();
         minions = new List<Minion>();
         summons = new List<Summon>();
-        //artifacts = new List<Artifact>();
-        //interventionAbilitySlots = new PlayerJobActionSlot[PlayerDB.MAX_INTERVENTION_ABILITIES];
-        //maxSummonSlots = 0;
-        //maxArtifactSlots = 0;
-        unlearnedSpells = new List<SPELL_TYPE>(PlayerDB.spells);
-        unlearnedAfflictions = new List<SPELL_TYPE>(PlayerDB.afflictions);
         mana = EditableValuesManager.Instance.startingMana;
         seizeComponent = new SeizeComponent();
         threatComponent = new ThreatComponent(this);
         playerSkillComponent = new PlayerSkillComponent(this);
         plagueComponent = new PlagueComponent();
-        //ConstructAllInterventionAbilitySlots();
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
         AddListeners();
     }
@@ -83,8 +66,6 @@ public class Player : ILeader, IObjectManipulator {
         allIntel = new List<IIntel>();
         minions = new List<Minion>();
         summons = new List<Summon>();
-        unlearnedSpells = new List<SPELL_TYPE>(PlayerDB.spells);
-        unlearnedAfflictions = new List<SPELL_TYPE>(PlayerDB.afflictions);
         seizeComponent = data.seizeComponent.Load();
         threatComponent = data.threatComponent.Load();
         playerSkillComponent = data.playerSkillComponent.Load();
@@ -344,6 +325,17 @@ public class Player : ILeader, IObjectManipulator {
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
                     }
                     break;
+                case SPELL_TARGET.SETTLEMENT:
+                    hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
+                    BaseSettlement settlement = null;
+                    if (hoveredTile != null && hoveredTile.IsPartOfSettlement(out settlement)) {
+                        if (currentActivePlayerSpell.CanPerformAbilityTowards(settlement)) {
+                            currentActivePlayerSpell.ActivateAbility(settlement);
+                            activatedAction = true;
+                        }
+                        UIManager.Instance.SetTempDisableShowInfoUI(true);
+                    }
+                    break;
                 default:
                     break;
             }
@@ -372,7 +364,7 @@ public class Player : ILeader, IObjectManipulator {
             Messenger.Broadcast(PlayerSignals.PLAYER_OBTAINED_INTEL, newIntel);
         }
     }
-    private void RemoveIntel(IIntel intel) {
+    public void RemoveIntel(IIntel intel) {
         if (allIntel.Remove(intel)) {
             Messenger.Broadcast(PlayerSignals.PLAYER_REMOVED_INTEL, intel);
             intel.OnIntelRemoved();
@@ -415,9 +407,28 @@ public class Player : ILeader, IObjectManipulator {
         string hoverText = string.Empty;
         if (CanShareIntel(InnerMapManager.Instance.currentlyHoveredPoi, ref hoverText)) {
             Character targetCharacter = InnerMapManager.Instance.currentlyHoveredPoi as Character;
-            UIManager.Instance.OpenShareIntelMenu(targetCharacter, null, currentActiveIntel);
+            List<ConversationData> conversationList = ObjectPoolManager.Instance.CreateNewConversationDataList();
+            ConversationData targetOpeningLine = ObjectPoolManager.Instance.CreateNewConversationData("What do you want from me?", targetCharacter, DialogItem.Position.Left);
+            ConversationData demonOpeningLine = ObjectPoolManager.Instance.CreateNewConversationData(currentActiveIntel.log.logText, null, DialogItem.Position.Right);
+
+            string targetCharacterEmotions = targetCharacter.reactionComponent.ReactToIntel(currentActiveIntel);
+            string emotionText = UtilityScripts.Utilities.FormulateTextFromEmotions(targetCharacterEmotions, currentActiveIntel.actor, currentActiveIntel.target, targetCharacter);
+
+            ConversationData targetEmotionResponse = ObjectPoolManager.Instance.CreateNewConversationData(emotionText, targetCharacter, DialogItem.Position.Left);
+
+            conversationList.Add(targetOpeningLine);
+            conversationList.Add(demonOpeningLine);
+            conversationList.Add(targetEmotionResponse);
+
+            UIManager.Instance.OpenConversationMenu(conversationList, $"Share Intel with {targetCharacter.name}");
+            Messenger.Broadcast(UISignals.ON_SHARE_INTEL);
             RemoveIntel(currentActiveIntel);
             SetCurrentActiveIntel(null);
+
+            ObjectPoolManager.Instance.ReturnConversationDataToPool(targetOpeningLine);
+            ObjectPoolManager.Instance.ReturnConversationDataToPool(demonOpeningLine);
+            ObjectPoolManager.Instance.ReturnConversationDataToPool(targetEmotionResponse);
+            ObjectPoolManager.Instance.ReturnConversationDataListToPool(conversationList);
         }
     }
     public bool CanShareIntel(IPointOfInterest poi, ref string hoverText) {
@@ -683,7 +694,7 @@ public class Player : ILeader, IObjectManipulator {
         Messenger.Broadcast(PlayerSignals.PLAYER_ADJUSTED_MANA, amount, mana);
         Messenger.Broadcast(SpellSignals.FORCE_RELOAD_PLAYER_ACTIONS);
     }
-    public int GetManaCostForInterventionAbility(SPELL_TYPE ability) {
+    public int GetManaCostForInterventionAbility(PLAYER_SKILL_TYPE ability) {
         int tier = PlayerManager.Instance.GetSpellTier(ability);
         return PlayerManager.Instance.GetManaCostForSpell(tier);
     }
@@ -723,6 +734,9 @@ public class Player : ILeader, IObjectManipulator {
                || PlayerManager.Instance.player.currentActiveIntel != null
                || PlayerManager.Instance.player.currentActiveItem != TILE_OBJECT_TYPE.NONE
                || PlayerManager.Instance.player.currentActiveArtifact != ARTIFACT_TYPE.None;
+    }
+    public void SetCurrentPlayerActionTarget(IPlayerActionTarget p_target) {
+        currentlySelectedPlayerActionTarget = p_target;
     }
     #endregion
 

@@ -25,6 +25,7 @@ namespace Traits {
             hindersAttackTarget = true;
             hindersPerform = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Hour_Started_Trait);
         }
 
         #region Loading
@@ -104,7 +105,24 @@ namespace Traits {
             }
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
         }
+        public override void OnHourStarted(ITraitable traitable) {
+            base.OnHourStarted(traitable);
+            if(traitable is Character character) {
+                CheckForLycanthropy(character);
+            }
+        }
         #endregion
+        
+        private void CheckForLycanthropy(Character character) {
+            if(character.isLycanthrope && !character.lycanData.isMaster && 
+               character.lycanData.activeForm == character.lycanData.lycanthropeForm) {
+                //only transform back to human/elf if restrained
+                int chance = UnityEngine.Random.Range(0, 100);
+                if (chance < 25) { //25
+                    character.lycanData.Transform(character);
+                }
+            }
+        }
 
         // private void CreateJudgementJob() {
         //     if (!owner.HasJobTargetingThis(JOB_TYPE.JUDGE_PRISONER)) {

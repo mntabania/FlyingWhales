@@ -27,8 +27,9 @@
     public static string DRAG_OBJECT_DESTROYED = "OnDragObjectDestroyed"; //Parameters (DragObject obj)
     public static string SHOW_INTEL_NOTIFICATION = "ShowIntelNotification"; //Parameters (Intel)
     public static string SHOW_PLAYER_NOTIFICATION = "ShowPlayerNotification"; //Parameters (Log)
-    public static string ON_OPEN_SHARE_INTEL = "OnOpenShareIntel";
-    public static string ON_CLOSE_SHARE_INTEL = "OnCloseShareIntel";
+    public static string ON_SHARE_INTEL = "OnShareIntel";
+    public static string ON_OPEN_CONVERSATION_MENU = "OnOpenConversationMenu";
+    public static string ON_CLOSE_CONVERSATION_MENU = "OnOpenConversationMenu";
     public static string REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT = "OnAreaInfoUIUpdateAppropriateContent";
     public static string UPDATE_THOUGHT_BUBBLE = "OnUpdateThoughtBubble";
     /// <summary>
@@ -124,4 +125,8 @@
     /// </summary>
     public static string UPDATE_QUEST_STEP_ITEM = "UpdateQuestStepItem";
     public static string BUTTON_SHOWN = "OnButtonShown";
+    /// <summary>
+    /// Parameters (IPlayerActionTarget)
+    /// </summary>
+    public static string PLAYER_ACTION_CONTEXT_MENU_SHOWN = "OnPlayerActionContextMenuShown";
 }

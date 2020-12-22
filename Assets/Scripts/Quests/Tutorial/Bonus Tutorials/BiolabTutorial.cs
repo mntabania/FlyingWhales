@@ -26,7 +26,7 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                        new ClickOnStructureStep("Click on a the Biolab", validityChecker: structure => structure.structureType == STRUCTURE_TYPE.BIOLAB)
+                        new ClickOnStructureStep("Click on the Biolab", validityChecker: structure => structure.structureType == STRUCTURE_TYPE.BIOLAB)
                             .SetCompleteAction(OnCompleteClickBiolab),
                         new ButtonClickedStep("Upgrade", "Click on Upgrade button")
                             .SetOnTopmostActions(OnTopMostClickUpgrade, OnNoLongerTopMostClickUpgrade),
@@ -40,7 +40,7 @@ namespace Tutorial {
                     new ToggleTurnedOnStep("Monsters Tab", "Click on the Monsters tab")
                         .SetOnTopmostActions(OnTopMostClickMonstersTab, OnNoLongerTopMostClickMonstersTab)
                         .SetCompleteAction(OnCompleteClickMonstersTab),
-                    new ExecuteSpellStep(SPELL_TYPE.PLAGUED_RAT, "Summon a Plagued Rat")
+                    new ExecuteSpellStep(PLAYER_SKILL_TYPE.PLAGUED_RAT, "Summon a Plagued Rat")
                 )
             };
         }

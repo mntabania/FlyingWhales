@@ -32,9 +32,10 @@ public class Nap : GoapAction {
         if (goapActionInvalidity.isInvalid == false) {
             if (CanSleepInBed(actor, poiTarget as TileObject) == false) {
                 goapActionInvalidity.isInvalid = true;
-                goapActionInvalidity.stateName = "Nap Fail";
+                goapActionInvalidity.reason = "no_space_bed";
             } else if (poiTarget.IsAvailable() == false) {
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "target_unavailable";
             }
         }
         return goapActionInvalidity;

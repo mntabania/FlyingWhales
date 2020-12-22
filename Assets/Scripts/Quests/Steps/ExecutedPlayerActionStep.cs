@@ -1,9 +1,9 @@
 ﻿namespace Quests.Steps {
     public class ExecutedPlayerActionStep : QuestStep {
 
-        private readonly SPELL_TYPE actionType;
+        private readonly PLAYER_SKILL_TYPE actionType;
         
-        public ExecutedPlayerActionStep(SPELL_TYPE actionType, string stepDescription = "Click on a button")
+        public ExecutedPlayerActionStep(PLAYER_SKILL_TYPE actionType, string stepDescription = "Click on a button")
             : base(stepDescription) {
             this.actionType = actionType;
         }

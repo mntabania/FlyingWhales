@@ -6,10 +6,10 @@ using UnityEngine;
 using UtilityScripts;
 
 public class FoundCultData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.FOUND_CULT;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.FOUND_CULT;
     public override string name => "Found Cult";
     public override string description => "This Action forces the character to create a new Demon Cult faction.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.PLAYER_ACTION;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.PLAYER_ACTION;
     public override bool canBeCastOnBlessed => true;
     
     public FoundCultData() : base() {
@@ -32,7 +32,7 @@ public class FoundCultData : PlayerAction {
                 }    
             } else {
                 PlayerUI.Instance.ShowGeneralConfirmation("Village Capacity Reached", 
-                    $"{character.visuals.GetCharacterNameWithIconAndColor()} has founded a new faction: {character.faction.name}, but can no longer build a village on " +
+                    $"{character.visuals.GetCharacterNameWithIconAndColor()} has founded a new faction: {character.faction.nameWithColor}, but can no longer build a village on " +
                     $"{character.currentRegion.name} since the limit has been reached!");
             }
         }

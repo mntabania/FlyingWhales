@@ -5,10 +5,10 @@ using Inner_Maps;
 using UnityEngine;
 using Traits;
 public class MeteorData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.METEOR;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.METEOR;
     public override string name => "Meteor";
     public override string description => "This Spell spawns a flaming Meteor that will crash down and deal major Fire damage to a small target area.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;
 

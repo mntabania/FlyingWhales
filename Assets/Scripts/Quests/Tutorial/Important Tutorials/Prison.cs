@@ -17,7 +17,7 @@ namespace Tutorial {
         protected override bool HasMetAllCriteria() {
             bool hasMetCriteria = base.HasMetAllCriteria();
             if (hasMetCriteria) {
-                return PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.SEIZE_CHARACTER).isInUse;
+                return PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.SEIZE_CHARACTER).isInUse;
             }
             return false;
         }
@@ -25,27 +25,20 @@ namespace Tutorial {
       
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
-                // new QuestStepCollection(
-                //     new ToggleTurnedOnStep("Build Tab", "Open Build Menu")
-                //         .SetOnTopmostActions(OnTopMostBuildTab, OnNoLongerTopMostBuildTab),
-                //     new ToggleTurnedOnStep("Prison", "Choose Prison")
-                //         .SetOnTopmostActions(OnTopMostChooseTorture, OnNoLongerTopMostChooseTorture),
-                //     new StructureBuiltStep(STRUCTURE_TYPE.TORTURE_CHAMBERS, "Place on an unoccupied Area.")
-                //         .SetCompleteAction(OnStructureBuilt)
-                // ),
                 new QuestStepCollection(
                     new ClickOnRoomStep("Click on a Cell", room => room is PrisonCell)
                         .SetHoverOverAction(OnHoverChamber)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                 ),
                 new QuestStepCollection(
-                    new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_CHARACTER, $"Seize a {UtilityScripts.Utilities.VillagerIcon()}Villager")
+                    new PlayerActionContextMenuShown(target => target is Character character && character.isNormalCharacter, $"Right click on a Villager"),
+                    new ExecutedPlayerActionStep(PLAYER_SKILL_TYPE.SEIZE_CHARACTER, $"Seize the {UtilityScripts.Utilities.VillagerIcon()}Villager")
                         .SetHoverOverAction(OnHoverSeizeCharacter)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostSeizeVillager, OnNoLongerTopMostSeizeVillager),
                     new DropCharacterAtStructureRoomStep<PrisonCell>("Drop at a Cell"),
-                new ClickOnRoomStep("Click on that Cell", IsClickedRoomValid),
-                    new ExecutedPlayerActionStep(SPELL_TYPE.TORTURE, "Click on Begin Torture button")
+                    new PlayerActionContextMenuShown(IsClickedTargetValid, $"Right click on Character or Cell"),
+                    new ExecutedPlayerActionStep(PLAYER_SKILL_TYPE.TORTURE, "Click on Torture option")
                         .SetHoverOverAction(OnHoverBeginTorture)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostTorture, OnNoLongerTopMostTorture)
@@ -65,8 +58,13 @@ namespace Tutorial {
         }
         
         #region Step Helpers
-        private bool IsClickedRoomValid(StructureRoom room) {
-            return room is PrisonCell tortureRoom && tortureRoom.HasValidTortureTarget();
+        private bool IsClickedTargetValid(IPlayerActionTarget p_target) {
+            if (p_target is Character character) {
+                return character.gridTileLocation != null && character.gridTileLocation.structure.IsTilePartOfARoom(character.gridTileLocation, out var room) && room is PrisonCell;    
+            } else  if (p_target is PrisonCell tortureRoom) {
+                return tortureRoom.HasValidTortureTarget();    
+            }
+            return false;
         }
         private void OnHoverClickEmptyTile(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo("Suggestion: choose an empty area far away from the Village", 

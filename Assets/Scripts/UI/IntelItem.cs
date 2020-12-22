@@ -12,6 +12,8 @@ public class IntelItem : MonoBehaviour {
     private OnClickAction onClickAction;
 
     private List<System.Action> otherClickActions;
+    private System.Action onHoverEnterAction;
+    private System.Action onHoverExitAction;
 
     [SerializeField] private TextMeshProUGUI infoLbl;
     [SerializeField] private Toggle shareToggle;
@@ -52,7 +54,22 @@ public class IntelItem : MonoBehaviour {
         }
     }
     #endregion
-    
+
+    #region Hover
+    public void SetOnHoverEnterAction(System.Action action) {
+        onHoverEnterAction = action;
+    }
+    public void SetOnHoverExitAction(System.Action action) {
+        onHoverExitAction = action;
+    }
+    public void OnHoverEnter() {
+        onHoverEnterAction?.Invoke();
+    }
+    public void OnHoverExit() {
+        onHoverExitAction?.Invoke();
+    }
+    #endregion
+
     public void SetClickAction(OnClickAction clickAction) {
         onClickAction = clickAction;
     }

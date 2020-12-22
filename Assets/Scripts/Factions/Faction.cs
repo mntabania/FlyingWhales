@@ -4,6 +4,7 @@ using System.Linq;
 using Factions.Faction_Components;
 using UnityEngine;
 using Factions.Faction_Types;
+using Factions.Faction_Succession;
 using Locations.Settlements;
 using Traits;
 using Inner_Maps.Location_Structures;
@@ -30,7 +31,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public bool isActive { get; private set; }
     // public List<Log> history { get; }
     public List<JobQueueItem> availableJobs { get; }
-    public FactionIdeologyComponent ideologyComponent { get; }
     public FactionJobTriggerComponent factionJobTriggerComponent { get; private set; }
     public PartyQuestBoard partyQuestBoard { get; private set; }
     public int newLeaderDesignationChance { get; private set; }
@@ -38,8 +38,12 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public uint pathfindingDoorTag { get; private set; }
     public Heirloom factionHeirloom { get; private set; }
     public FactionEventDispatcher factionEventDispatcher { get; private set; }
-    
-    private readonly WeightedDictionary<Character> newLeaderDesignationWeights;
+
+    //Components
+    public FactionIdeologyComponent ideologyComponent { get; private set; }
+    public FactionSuccessionComponent successionComponent { get; private set; }
+
+    //private readonly WeightedDictionary<Character> newLeaderDesignationWeights;
     
 
     #region getters/setters
@@ -50,6 +54,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public bool isNonMajorOrPlayer => !isMajorFaction || isPlayerFaction;
     public JobTriggerComponent jobTriggerComponent => factionJobTriggerComponent;
     public bool isPlayerFaction => factionType.type == FACTION_TYPE.Demons;
+    public string nameWithColor => GetNameWithColor();
     public JOB_OWNER ownerType => JOB_OWNER.FACTION;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Faction;
     public System.Type serializedData => typeof(SaveDataFaction);
@@ -62,6 +67,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                     return RACE.HUMANS;
                 case FACTION_TYPE.Demons:
                     return RACE.DEMON;
+                case FACTION_TYPE.Ratmen:
+                    return RACE.RATMAN;
                 default:
                     if (leader is Character character) {
                         return character.race;
@@ -84,22 +91,29 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         ownedSettlements = new List<BaseSettlement>();
         bannedCharacters = new List<Character>();
         availableJobs = new List<JobQueueItem>();
-        newLeaderDesignationWeights = new WeightedDictionary<Character>();
+        //newLeaderDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
-        ideologyComponent = new FactionIdeologyComponent(this);
-        factionJobTriggerComponent = new FactionJobTriggerComponent(this);
         partyQuestBoard = new PartyQuestBoard(this);
         factionEventDispatcher = new FactionEventDispatcher();
+        factionJobTriggerComponent = new FactionJobTriggerComponent(this);
+
+        //Components
+        ideologyComponent = new FactionIdeologyComponent(); ideologyComponent.SetOwner(this);
+        successionComponent = new FactionSuccessionComponent(); successionComponent.SetOwner(this);
+
         ResetNewLeaderDesignationChance();
         AddListeners();
     }
     public Faction(SaveDataFaction data) {
         persistentID = data.persistentID;
         id = UtilityScripts.Utilities.SetID(this, data.id);
-        ideologyComponent = new FactionIdeologyComponent(this);
         factionJobTriggerComponent = new FactionJobTriggerComponent(this);
         factionType = data.factionType.Load();
         partyQuestBoard = data.partyQuestBoard.Load();
+
+        //Components
+        ideologyComponent = data.ideologyComponent.Load(); ideologyComponent.SetOwner(this);
+        successionComponent = data.successionComponent.Load(); successionComponent.SetOwner(this);
 
         name = data.name;
         description = data.description;
@@ -117,7 +131,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         ownedSettlements = new List<BaseSettlement>();
         bannedCharacters = new List<Character>();
         availableJobs = new List<JobQueueItem>();
-        newLeaderDesignationWeights = new WeightedDictionary<Character>();
+        //newLeaderDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         factionEventDispatcher = new FactionEventDispatcher();
 
@@ -127,7 +141,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     #region Characters
     public bool JoinFaction(Character character, bool broadcastSignal = true, bool bypassIdeologyChecking = false, bool isInitial = false) {
         if (bypassIdeologyChecking || ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
-            Faction prevFaction = character.prevFaction;
             if (AddCharacter(character)) {
                 //Once a character joins any faction and the faction is not the owner of the character's current home settlement, leave the settlement also
                 //Reason: One village = One faction, no other faction can co exist in a village, for simplification
@@ -189,20 +202,48 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                     }
                 }
             }
+            Character newCharacterLeader = leader as Character;
             if(leader != null) {
-                if(leader is Character characterLeader) {
+                if(newCharacterLeader != null) {
                     if (isMajorNonPlayer) {
-                        characterLeader.behaviourComponent.AddBehaviourComponent(typeof(FactionLeaderBehaviour));
-                        characterLeader.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
+                        newCharacterLeader.behaviourComponent.AddBehaviourComponent(typeof(FactionLeaderBehaviour));
+                        newCharacterLeader.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
                     }
                 }
             }
-            if (newLeader is Character character) {
-                Messenger.Broadcast(CharacterSignals.ON_SET_AS_FACTION_LEADER, character, prevLeader);
+            if (newCharacterLeader != null) {
+                Messenger.Broadcast(CharacterSignals.ON_SET_AS_FACTION_LEADER, newCharacterLeader, prevLeader);
             } else if (newLeader == null) {
                 Messenger.Broadcast(CharacterSignals.ON_FACTION_LEADER_REMOVED, this, prevLeader);
             }
             factionEventDispatcher.ExecuteFactionLeaderChangedEvent(newLeader);
+
+            //https://trello.com/c/KDgydAWd/3005-faction-leader-also-doubles-as-the-settlement-ruler-of-its-current-settlement
+            if (newCharacterLeader != null) {
+                NPCSettlement homeSettlement = newCharacterLeader.homeSettlement as NPCSettlement;
+                if (homeSettlement != null) {
+                    Character previousRuler = homeSettlement.ruler;
+                    if(previousRuler != newCharacterLeader) {
+                        if (GameManager.Instance.gameHasStarted) {
+                            if (previousRuler == null) {
+                                newCharacterLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Settlement_Ruler, newCharacterLeader);
+                            } else {
+                                //Do not trigger Become_Settlement_Ruler because we have a special log for this
+                                homeSettlement.SetRuler(newCharacterLeader);
+
+                                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "replace_ruler", null, LOG_TAG.Life_Changes);
+                                log.AddToFillers(newCharacterLeader, newCharacterLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                log.AddToFillers(previousRuler, previousRuler.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                log.AddToFillers(homeSettlement, homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
+                                log.AddLogToDatabase();
+                            }
+                        } else {
+                            //If the game has not yet started yet, just set the ruler and do not log it because this is the first state of the world/game
+                            homeSettlement.SetRuler(newCharacterLeader);
+                        }
+                    }
+                }
+            }
         }
     }
     private void OnCharacterRaceChange(Character character) {
@@ -219,7 +260,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     }
     //Returns true if character left the faction, otherwise return false
     public void CheckIfCharacterStillFitsIdeology(Character character, bool willLog = true) {
-        if (character.faction == this && !character.isDead && !ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
+        if (character.faction == this && !character.isDead && !ideologyComponent.DoesCharacterFitCurrentIdeologies(character) && character.race.IsSapient()) {
+            //Character will only leave faction here if they are sapients
             if (willLog) {
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_not_fit");
             } else {
@@ -278,6 +320,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         if (leader != null && deadCharacter == leader) {
             SetLeader(null);
         }
+        successionComponent.OnCharacterDied(deadCharacter);
     }
     public void SetLeader(ILeader newLeader) {
         if(!isMajorFaction && !isPlayerFaction) {
@@ -312,140 +355,150 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     }
     public void DesignateNewLeader(bool willLog = true) {
         string log = $"Designating a new npcSettlement faction leader for: {name}(chance it triggered: {newLeaderDesignationChance.ToString()})";
-        newLeaderDesignationWeights.Clear();
-        for (int i = 0; i < characters.Count; i++) {
-            Character member = characters[i];
-            log += $"\n\n-{member.name}";
-            if (member.isDead /*|| member.isMissing*/ || member.isBeingSeized || member.isInLimbo) {
-                log += "\nEither dead, missing, in limbo, seized or enslaved, will not be part of candidates for faction leader";
-                continue;
-            }
-            if (member.crimeComponent.IsWantedBy(this)) {
-                log += "\nMember is wanted by this faction, skipping...";
-                continue;
-            }
 
-            bool isInHome = member.IsAtHome();
-            bool isInAnActiveParty = member.partyComponent.isMemberThatJoinedQuest;
-
-            if (!isInHome && !isInAnActiveParty) {
-                log += "\nMember is not inside home and not in active party, skipping...";
-                continue;
-            }
-
-            int weight = 50;
-            log += "\n  -Base Weight: +50";
-            if (factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Vampires)) {
-                Vampire vampire = member.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
-                if (vampire != null && vampire.DoesFactionKnowThisVampire(this)) {
-                    weight += 100;
-                    log += "\n  -Faction reveres vampires and member is a known vampire: +100";
-                }
-            }
-            if (factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
-                if (member.isLycanthrope && member.lycanData.DoesFactionKnowThisLycan(this)) {
-                    weight += 100;
-                    log += "\n  -Faction reveres werewolves and member is a known Lycanthrope: +100";
-                }
-            }
-            if (member.isSettlementRuler) {
-                weight += 30;
-                log += "\n  -NPCSettlement Ruler: +30";
-            }
-            if (member.characterClass.className == "Noble") {
-                weight += 40;
-                log += "\n  -Noble: +40";
-            }
-            int numberOfFriends = 0;
-            int numberOfEnemies = 0;
-            for (int j = 0; j < member.relationshipContainer.charactersWithOpinion.Count; j++) {
-                Character otherCharacter = member.relationshipContainer.charactersWithOpinion[j];
-                if (otherCharacter.faction == this) {
-                    if (otherCharacter.relationshipContainer.IsFriendsWith(member)) {
-                        numberOfFriends++;
-                    } else if (otherCharacter.relationshipContainer.IsEnemiesWith(member)) {
-                        numberOfEnemies++;
-                    }
-                }
-            }
-            if (numberOfFriends > 0) {
-                int weightToAdd = 0;
-                if (member.traitContainer.HasTrait("Worker")) {
-                    weightToAdd = Mathf.FloorToInt((numberOfFriends * 20) * 0.2f);
-                } else {
-                    weightToAdd = (numberOfFriends * 20);    
-                }
-                weight += weightToAdd;
-                log += $"\n  -Num of Friend/Close Friend in the NPCSettlement: {numberOfFriends}, +{weightToAdd}";
-            }
-            if (member.traitContainer.HasTrait("Inspiring")) {
-                weight += 25;
-                log += "\n  -Inspiring: +25";
-            }
-            if (member.traitContainer.HasTrait("Authoritative")) {
-                weight += 50;
-                log += "\n  -Authoritative: +50";
-            }
-
-
-            if (numberOfEnemies > 0) {
-                weight += (numberOfEnemies * -10);
-                log += $"\n  -Num of Enemies/Rivals in the NPCSettlement: {numberOfEnemies}, +{(numberOfEnemies * -10)}";
-            }
-            if (member.traitContainer.HasTrait("Unattractive")) {
-                weight += -20;
-                log += "\n  -Unattractive: -20";
-            }
-            if (member.hasUnresolvedCrime) {
-                weight += -50;
-                log += "\n  -Has Unresolved Crime: -50";
-            }
-            if (member.traitContainer.HasTrait("Worker")) {
-                weight += -40;
-                log += "\n  -Civilian: -40";
-            }
-            if (member.traitContainer.HasTrait("Ambitious")) {
-                weight = Mathf.RoundToInt(weight * 1.5f);
-                log += "\n  -Ambitious: x1.5";
-            }
-            if(weight < 1) {
-                weight = 1;
-                log += "\n  -Weight cannot be less than 1, setting weight to 1";
-            }
-            if (member.traitContainer.HasTrait("Ambitious")) {
-                weight = Mathf.RoundToInt(weight * 1.5f);
-                log += "\n  -Ambitious: x1.5";
-            }
-            if (member is Summon || member.characterClass.IsZombie()) {
-                if (HasMemberThatMeetCriteria(c => c.race.IsSapient() && (c.IsAtHome() || c.partyComponent.isMemberThatJoinedQuest))) {
-                    weight *= 0;
-                    log += "\n  -Member is a Summon and there is atleast 1 Sapient resident inside home settlement or in active party: x0";
-                }
-            }
-            if (member.traitContainer.HasTrait("Enslaved")) {
-                weight *= 0;
-                log += "\n  -Enslaved: x0";
-            }
-            log += $"\n  -TOTAL WEIGHT: {weight}";
-            if (weight > 0) {
-                newLeaderDesignationWeights.AddElement(member, weight);
-            }
-        }
-        if (newLeaderDesignationWeights.Count > 0) {
-            Character chosenLeader = newLeaderDesignationWeights.PickRandomElementGivenWeights();
-            if (chosenLeader != null) {
-                log += $"\nCHOSEN LEADER: {chosenLeader.name}";
-                if (willLog) {
-                    chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, chosenLeader);
-                } else {
-                    SetLeader(chosenLeader);
-                }
+        Character chosenLeader = successionComponent.PickSuccessor();
+        if(chosenLeader != null) {
+            log += $"\nCHOSEN LEADER: {chosenLeader.name}";
+            if (willLog) {
+                chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, chosenLeader);
             } else {
-                log += "\nCHOSEN LEADER: NONE";
+                SetLeader(chosenLeader);
             }
-        } else {
-            log += "\nCHOSEN LEADER: NONE";
         }
+        //newLeaderDesignationWeights.Clear();
+        //for (int i = 0; i < characters.Count; i++) {
+        //    Character member = characters[i];
+        //    log += $"\n\n-{member.name}";
+        //    if (member.isDead /*|| member.isMissing*/ || member.isBeingSeized || member.isInLimbo) {
+        //        log += "\nEither dead, missing, in limbo, seized or enslaved, will not be part of candidates for faction leader";
+        //        continue;
+        //    }
+        //    if (member.crimeComponent.IsWantedBy(this)) {
+        //        log += "\nMember is wanted by this faction, skipping...";
+        //        continue;
+        //    }
+
+        //    bool isInHome = member.IsAtHome();
+        //    bool isInAnActiveParty = member.partyComponent.isMemberThatJoinedQuest;
+
+        //    if (!isInHome && !isInAnActiveParty) {
+        //        log += "\nMember is not inside home and not in active party, skipping...";
+        //        continue;
+        //    }
+
+        //    int weight = 50;
+        //    log += "\n  -Base Weight: +50";
+        //    if (factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Vampires)) {
+        //        Vampire vampire = member.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+        //        if (vampire != null && vampire.DoesFactionKnowThisVampire(this)) {
+        //            weight += 100;
+        //            log += "\n  -Faction reveres vampires and member is a known vampire: +100";
+        //        }
+        //    }
+        //    if (factionType.HasIdeology(FACTION_IDEOLOGY.Reveres_Werewolves)) {
+        //        if (member.isLycanthrope && member.lycanData.DoesFactionKnowThisLycan(this)) {
+        //            weight += 100;
+        //            log += "\n  -Faction reveres werewolves and member is a known Lycanthrope: +100";
+        //        }
+        //    }
+        //    if (member.isSettlementRuler) {
+        //        weight += 30;
+        //        log += "\n  -NPCSettlement Ruler: +30";
+        //    }
+        //    if (member.characterClass.className == "Noble") {
+        //        weight += 40;
+        //        log += "\n  -Noble: +40";
+        //    }
+        //    int numberOfFriends = 0;
+        //    int numberOfEnemies = 0;
+        //    for (int j = 0; j < member.relationshipContainer.charactersWithOpinion.Count; j++) {
+        //        Character otherCharacter = member.relationshipContainer.charactersWithOpinion[j];
+        //        if (otherCharacter.faction == this) {
+        //            if (otherCharacter.relationshipContainer.IsFriendsWith(member)) {
+        //                numberOfFriends++;
+        //            } else if (otherCharacter.relationshipContainer.IsEnemiesWith(member)) {
+        //                numberOfEnemies++;
+        //            }
+        //        }
+        //    }
+        //    if (numberOfFriends > 0) {
+        //        int weightToAdd = 0;
+        //        if (member.traitContainer.HasTrait("Worker")) {
+        //            weightToAdd = Mathf.FloorToInt((numberOfFriends * 20) * 0.2f);
+        //        } else {
+        //            weightToAdd = (numberOfFriends * 20);    
+        //        }
+        //        weight += weightToAdd;
+        //        log += $"\n  -Num of Friend/Close Friend in the NPCSettlement: {numberOfFriends}, +{weightToAdd}";
+        //    }
+        //    if (member.traitContainer.HasTrait("Inspiring")) {
+        //        weight += 25;
+        //        log += "\n  -Inspiring: +25";
+        //    }
+        //    if (member.traitContainer.HasTrait("Authoritative")) {
+        //        weight += 50;
+        //        log += "\n  -Authoritative: +50";
+        //    }
+
+
+        //    if (numberOfEnemies > 0) {
+        //        weight += (numberOfEnemies * -10);
+        //        log += $"\n  -Num of Enemies/Rivals in the NPCSettlement: {numberOfEnemies}, +{(numberOfEnemies * -10)}";
+        //    }
+        //    if (member.traitContainer.HasTrait("Unattractive")) {
+        //        weight += -20;
+        //        log += "\n  -Unattractive: -20";
+        //    }
+        //    if (member.hasUnresolvedCrime) {
+        //        weight += -50;
+        //        log += "\n  -Has Unresolved Crime: -50";
+        //    }
+        //    if (member.traitContainer.HasTrait("Worker")) {
+        //        weight += -40;
+        //        log += "\n  -Civilian: -40";
+        //    }
+        //    if (member.traitContainer.HasTrait("Ambitious")) {
+        //        weight = Mathf.RoundToInt(weight * 1.5f);
+        //        log += "\n  -Ambitious: x1.5";
+        //    }
+        //    if(weight < 1) {
+        //        weight = 1;
+        //        log += "\n  -Weight cannot be less than 1, setting weight to 1";
+        //    }
+        //    if (member.traitContainer.HasTrait("Ambitious")) {
+        //        weight = Mathf.RoundToInt(weight * 1.5f);
+        //        log += "\n  -Ambitious: x1.5";
+        //    }
+        //    if (member is Summon || member.characterClass.IsZombie()) {
+        //        if (HasMemberThatMeetCriteria(c => c.race.IsSapient() && (c.IsAtHome() || c.partyComponent.isMemberThatJoinedQuest))) {
+        //            weight *= 0;
+        //            log += "\n  -Member is a Summon and there is atleast 1 Sapient resident inside home settlement or in active party: x0";
+        //        }
+        //    }
+        //    if (member.traitContainer.HasTrait("Enslaved")) {
+        //        weight *= 0;
+        //        log += "\n  -Enslaved: x0";
+        //    }
+        //    log += $"\n  -TOTAL WEIGHT: {weight}";
+        //    if (weight > 0) {
+        //        newLeaderDesignationWeights.AddElement(member, weight);
+        //    }
+        //}
+        //if (newLeaderDesignationWeights.Count > 0) {
+        //    Character chosenLeader = newLeaderDesignationWeights.PickRandomElementGivenWeights();
+        //    if (chosenLeader != null) {
+        //        log += $"\nCHOSEN LEADER: {chosenLeader.name}";
+        //        if (willLog) {
+        //            chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, chosenLeader);
+        //        } else {
+        //            SetLeader(chosenLeader);
+        //        }
+        //    } else {
+        //        log += "\nCHOSEN LEADER: NONE";
+        //    }
+        //} else {
+        //    log += "\nCHOSEN LEADER: NONE";
+        //}
         ResetNewLeaderDesignationChance();
         Debug.Log(GameManager.Instance.TodayLogString() + log);
     }
@@ -494,6 +547,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
+
+        successionComponent.AddListeners();
     }
     private void RemoveListeners() {
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_REMOVED, OnCharacterRemoved);
@@ -503,6 +558,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
+
+        successionComponent.RemoveListeners();
     }
     private void SetFactionColor(Color color) {
         factionColor = color;
@@ -548,6 +605,14 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     }
     private void OnDayStarted() {
         ClearAllBlacklistToAllExistingJobs();
+        successionComponent.OnDayStarted();
+    }
+    private string GetNameWithColor() {
+        if (FactionManager.Instance != null) {
+            string color = FactionManager.Instance.GetFactionNameColorHex();
+            return $"<color=#{color}>{name}</color>";
+        }
+        return name;
     }
     #endregion
 
@@ -698,6 +763,14 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return false;
     }
+    public bool HasOwnedSettlementThatMeetCriteria(Func<BaseSettlement, bool> criteria) {
+        for (int i = 0; i < ownedSettlements.Count; i++) {
+            if (criteria.Invoke(ownedSettlements[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
     public BaseSettlement GetRandomOwnedSettlement() {
         if(ownedSettlements.Count > 0) {
             return ownedSettlements[UnityEngine.Random.Range(0, ownedSettlements.Count)];
@@ -712,22 +785,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
         }
         return null;
-    }
-    public LocationStructure GetFirstStructureOfTypeFromOwnedSettlementsWithLeastVillagers(STRUCTURE_TYPE structureType) {
-        BaseSettlement leastVillagersSettlement = null;
-        LocationStructure structure = null;
-        for (int i = 0; i < ownedSettlements.Count; i++) {
-            BaseSettlement settlement = ownedSettlements[i];
-            LocationStructure structureOfType = settlement.GetFirstStructureOfType(structureType);
-            //if settlement has structure of type
-            if (structureOfType != null) {
-                if (leastVillagersSettlement == null || settlement.residents.Count < leastVillagersSettlement.residents.Count) {
-                    leastVillagersSettlement = settlement;
-                    structure = structureOfType;
-                }
-            }
-        }
-        return structure;
     }
     //public bool HasOwnedStructures() {
     //    return ownedStructures.Count > 0;
@@ -1123,6 +1180,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
 
         partyQuestBoard.LoadReferences(data.partyQuestBoard);
+        successionComponent.LoadReferences(data.successionComponent);
+
     }
     #endregion
 }

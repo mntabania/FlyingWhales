@@ -304,10 +304,10 @@ namespace Traits {
         public bool DoesCharacterKnowThisVampire(Character character) {
             return awareCharacters.Contains(character);
         }
-        public bool DoesFactionKnowThisVampire(Faction faction) {
+        public bool DoesFactionKnowThisVampire(Faction faction, bool includeDeadMembersInChecking = true) {
             for (int i = 0; i < faction.characters.Count; i++) {
                 Character member = faction.characters[i];
-                if (member != _owner) {
+                if (member != _owner && (includeDeadMembersInChecking || !member.isDead)) {
                     if (DoesCharacterKnowThisVampire(member)) {
                         return true;
                     }

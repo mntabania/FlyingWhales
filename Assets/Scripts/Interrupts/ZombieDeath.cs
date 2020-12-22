@@ -8,7 +8,7 @@ namespace Interrupts {
         public ZombieDeath() : base(INTERRUPT.Zombie_Death) {
             duration = 3;
             doesStopCurrentAction = true;
-            interruptIconString = GoapActionStateDB.Sick_Icon;
+            interruptIconString = GoapActionStateDB.Death_Icon;
             isIntel = true;
             logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Player};
         }
@@ -18,24 +18,21 @@ namespace Interrupts {
             interruptHolder.actor.Death("Zombie Virus", _deathLog: interruptHolder.effectLog, interrupt: this);
             return true;
         }
-        public override string ReactionToActor(Character actor, IPointOfInterest target,
-            Character witness,
-            InterruptHolder interrupt, REACTION_STATUS status) {
-            string response = base.ReactionToActor(actor, target, witness, interrupt, status);
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+        public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
+            base.PopulateReactionsToActor(reactions, actor, target, witness, interrupt, status);
+            reactions.Add(EMOTION.Shock);
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
             if (opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Friend ||
                 opinionLabel == RelationshipManager.Close_Friend) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
+                reactions.Add(EMOTION.Concern);
             } else if (opinionLabel == RelationshipManager.Rival) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
+                reactions.Add(EMOTION.Scorn);
             }
-            if(status == REACTION_STATUS.WITNESSED) {
+            if (status == REACTION_STATUS.WITNESSED) {
                 if (witness.traitContainer.HasTrait("Coward")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
+                    reactions.Add(EMOTION.Fear);
                 }
             }
-            return response;
         }
         #endregion
     }

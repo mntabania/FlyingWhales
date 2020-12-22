@@ -25,32 +25,30 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                    new ClickOnCharacterStep($"Click on a Villager", IsCharacterValid)
+                    new PlayerActionContextMenuShown(IsCharacterValid, $"Right click on a Villager")
                         .SetHoverOverAction(OnHoverSelectCharacterStep)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
-                    new ButtonClickedStep("Afflict", "Click on Afflict button")
-                        .SetHoverOverAction(OnHoverAfflictButtonStep)
-                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
-                        .SetOnTopmostActions(OnTopMostAfflict, OnNoLongerTopMostAfflict)
-                        .SetCompleteAction(OnCompleteExecuteAffliction),
-                    new ExecuteAfflictionStep("Apply Vampirism", SPELL_TYPE.VAMPIRISM, OnApplyVampirism)
+                    new ExecuteAfflictionStep("Choose Affliction then Vampirism", PLAYER_SKILL_TYPE.VAMPIRISM, OnApplyVampirism)
                         .SetOnTopmostActions(OnTopMostVampirism, OnNoLongerTopMostVampirism)
                 ),
                 new QuestStepCollection(
-                    new ButtonClickedStep("Trigger Flaw", "Click on Trigger Flaw button")
-                        .SetOnTopmostActions(OnTopMostTriggerFlawButton, OnNoLongerTopMostTriggerFlawButton)
-                        .SetCompleteAction(OnCompleteTriggerFlaw)
-                        .SetObjectsToCenter(TriggerFlawTargetCenterGetter),
-                    new FlawTriggeredStep("Select Vampirism", "Vampire")
+                    new PlayerActionContextMenuShown(IsCharacterValid, $"Right click on Afflicted Villager"),
+                        // .SetObjectsToCenter(TriggerFlawTargetCenterGetter),
+                    // new ButtonClickedStep("Trigger Flaw", "Click on Trigger Flaw")
+                    new FlawTriggeredStep("Choose Trigger Flaw then Vampire", "Vampire")
                         .SetOnTopmostActions(OnTopMostTriggerVampiric, OnNoLongerTopMostTriggerVampiric)
+                        .SetCompleteAction(OnCompleteTriggerFlaw)
                 )
                 
             };
         }
 
         #region Step Helpers
-        private bool IsCharacterValid(Character character) {
-            return character.isNormalCharacter;
+        private bool IsCharacterValid(IPlayerActionTarget p_target) {
+            if (p_target is Character character) {
+                return character.isNormalCharacter;    
+            }
+            return false;
         }
         private void OnHoverSelectCharacterStep(QuestStepItem item) {
             UIManager.Instance.ShowSmallInfo("There are some characters that are <color=\"green\">Blessed</color>. " +
@@ -87,30 +85,14 @@ namespace Tutorial {
         }
         #endregion
 
-        #region Trigger Flaw Button
-        private void OnTopMostTriggerFlawButton() {
-            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Trigger Flaw");
-        }
-        private void OnNoLongerTopMostTriggerFlawButton() {
-            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Trigger Flaw");
-        }
-        #endregion
-        
-        #region Affliction Button
-        private void OnTopMostAfflict() {
-            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Afflict");
-        }
-        private void OnNoLongerTopMostAfflict() {
-            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Afflict");
-        }
-        #endregion
-        
         #region Vampirism Button
         private void OnTopMostVampirism() {
             Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Vampirism");
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Afflict");
         }
         private void OnNoLongerTopMostVampirism() {
             Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Vampirism");
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Afflict");
         }
         private Character _afflictedCharacter;
         private void OnApplyVampirism(Character character) {
@@ -120,9 +102,11 @@ namespace Tutorial {
         
         #region Vampiric Trigger Flaw
         private void OnTopMostTriggerVampiric() {
+            Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Trigger Flaw");
             Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "Vampire");
         }
         private void OnNoLongerTopMostTriggerVampiric() {
+            Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Trigger Flaw");
             Messenger.Broadcast(UISignals.HIDE_SELECTABLE_GLOW, "Vampire");
         }
         private List<ISelectable> TriggerFlawTargetCenterGetter() {

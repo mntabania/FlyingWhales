@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using Inner_Maps;
+using Ruinarch;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -374,6 +375,109 @@ namespace UtilityScripts {
         }
         public static Color GetUpgradeButtonTextColor(bool p_interactable) {
             return p_interactable ? _normalColor : _grayedOutColor;
+        }
+        private static List<int> cornersOutside = new List<int>();
+        private static Vector3[] corners = new Vector3[4];
+        public static void PositionTooltip(Vector3 position, GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT, InputManager.Cursor_Type cursorType, RectTransform canvasRT) {
+            var v3 = position;
+
+            rtToReposition.pivot = new Vector2(0f, 1f);
+
+            if (cursorType == InputManager.Cursor_Type.Cross || cursorType == InputManager.Cursor_Type.Check || cursorType == InputManager.Cursor_Type.Link) {
+                v3.x += 100f;
+                v3.y -= 32f;
+            } else {
+                v3.x += 25f;
+                v3.y -= 25f;
+            }
+            
+            rtToReposition.transform.position = v3;
+
+            // if (rtToReposition.sizeDelta.y >= Screen.height) {
+            //     return;
+            // }
+
+            // float currentMaxXPos = rtToReposition.anchoredPosition.x + rtToReposition.sizeDelta.x;
+            // float currentMaxYPos = rtToReposition.anchoredPosition.y - rtToReposition.sizeDelta.y;
+            //
+            // if (currentMaxXPos > Screen.width || rtToReposition.anchoredPosition.x < 0) {
+            //     float xPos = Mathf.Clamp(currentMaxXPos, 0, Screen.width - rtToReposition.sizeDelta.x);
+            //     Vector3 newPos = new Vector3(xPos, rtToReposition.anchoredPosition.y);
+            //     rtToReposition.anchoredPosition = newPos;
+            // }
+            // if (currentMaxYPos < -Screen.height) {
+            //     float yPos = Mathf.Clamp(currentMaxYPos, -Screen.height + rtToReposition.sizeDelta.y, 0);
+            //     Vector3 newPos = new Vector3(rtToReposition.anchoredPosition.x, yPos);
+            //     rtToReposition.anchoredPosition = newPos;
+            // }
+            
+            cornersOutside.Clear();
+            boundsRT.GetWorldCorners(corners);
+            for (int i = 0; i < 4; i++) {
+                Vector3 corner = corners[i];
+                Vector3 localSpacePoint = canvasRT.InverseTransformPoint(corner);
+                // If parent (canvas) does not contain checked items any point
+                if (!canvasRT.rect.Contains(localSpacePoint)) {
+                    cornersOutside.Add(i);
+                }
+            }
+            
+            if (cornersOutside.Count != 0) {
+                if (cornersOutside.Contains(2) && cornersOutside.Contains(3)) {
+                    if (cornersOutside.Contains(0)) {
+                        //bottom side and right side are outside, move anchor to bottom right
+                        rtToReposition.pivot = new Vector2(1f, 0f);
+                    } else {
+                        //right side is outside, move anchor to top right side
+                        rtToReposition.pivot = new Vector2(1f, 1f);
+                    }
+                } else if (cornersOutside.Contains(0) && cornersOutside.Contains(3)) {
+                    //bottom side is outside, move anchor to bottom left
+                    rtToReposition.pivot = new Vector2(0f, 0f);
+                }    
+            }
+        }
+
+        public static bool IsRectFullyInCanvas(RectTransform boundsRT, RectTransform canvasRT) {
+            cornersOutside.Clear();
+            boundsRT.GetWorldCorners(corners);
+            for (int i = 0; i < 4; i++) {
+                Vector3 corner = corners[i];
+                Vector3 localSpacePoint = canvasRT.InverseTransformPoint(corner);
+                // If parent (canvas) does not contain checked items any point
+                if (!canvasRT.rect.Contains(localSpacePoint)) {
+                    cornersOutside.Add(i);
+                }
+            }
+            
+            if (cornersOutside.Count != 0) {
+                if (cornersOutside.Contains(2) && cornersOutside.Contains(3)) {
+                    if (cornersOutside.Contains(0)) {
+                        //bottom side and right side are outside, move anchor to bottom right
+                        return false;
+                    } else {
+                        //right side is outside, move anchor to top right side
+                        return false;
+                    }
+                } else if (cornersOutside.Contains(0) && cornersOutside.Contains(3)) {
+                    //bottom side is outside, move anchor to bottom left
+                    return false;
+                }    
+            }
+            return true;
+        }
+        public static bool IsRectFullyInCanvas(RectTransform boundsRT, Rect canvasRT) {
+            cornersOutside.Clear();
+            boundsRT.GetWorldCorners(corners);
+            for (int i = 0; i < 4; i++) {
+                Vector3 corner = corners[i];
+                // If parent (canvas) does not contain checked items any point
+                if (!canvasRT.Contains(corner)) {
+                    cornersOutside.Add(i);
+                }
+            }
+
+            return cornersOutside.Count == 0;
         }
     }    
 }

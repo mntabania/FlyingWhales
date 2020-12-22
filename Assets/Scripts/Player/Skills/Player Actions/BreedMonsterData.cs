@@ -5,7 +5,7 @@ using UnityEngine;
 using Inner_Maps.Location_Structures;
 
 public class BreedMonsterData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.BREED_MONSTER;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.BREED_MONSTER;
     public override string name => "Breed Monster";
     public override string description => $"This Action adds 1 Charge of the current monster to the player's Monsters List.";
     public BreedMonsterData() : base() {
@@ -15,9 +15,9 @@ public class BreedMonsterData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if(targetPOI is Summon summon) {
-            SPELL_TYPE summonPlayerSkillType = SPELL_TYPE.NONE;
+            PLAYER_SKILL_TYPE summonPlayerSkillType = PLAYER_SKILL_TYPE.NONE;
             if(summon is Rat) {
-                summonPlayerSkillType = SPELL_TYPE.PLAGUED_RAT;
+                summonPlayerSkillType = PLAYER_SKILL_TYPE.PLAGUED_RAT;
             } else {
                 SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(summon.race, summon.characterClass.className);
                 summonPlayerSkillType = summonPlayerSkill.type;

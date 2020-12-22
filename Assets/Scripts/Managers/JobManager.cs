@@ -7,9 +7,6 @@ using UnityEngine;
 public class JobManager : BaseMonoBehaviour {
     public static JobManager Instance;
 
-    private List<GoapPlanJob> goapJobPool;
-    private List<CharacterStateJob> stateJobPool;
-
     private Dictionary<string, CanTakeJobChecker> _canTakeJobCheckers;
     private Dictionary<string, JobApplicabilityChecker> _applicabilityCheckers;
     
@@ -62,7 +59,6 @@ public class JobManager : BaseMonoBehaviour {
     }
 
     public void Initialize() {
-        ConstructInitialJobPool();
         _canTakeJobCheckers = new Dictionary<string, CanTakeJobChecker>() {
             {Can_Take_Join_Gathering, new CanTakeJoinGathering()},
             {Can_Take_Remove_Status, new CanTakeRemoveStatus()},
@@ -106,26 +102,21 @@ public class JobManager : BaseMonoBehaviour {
             {Restrain_Applicability, new RestrainApplicabilityChecker()},
         };
     }
-
-    private void ConstructInitialJobPool() {
-        goapJobPool = new List<GoapPlanJob>();
-        stateJobPool = new List<CharacterStateJob>();
-        for (int i = 0; i < 20; i++) {
-            goapJobPool.Add(new GoapPlanJob());
-            stateJobPool.Add(new CharacterStateJob());
-        }
-    }
     public void OnFinishJob(JobQueueItem job) {
         if (job is GoapPlanJob planJob) {
-            ReturnGoapPlanJobToPool(planJob);
-        } else if (job is CharacterStateJob stateJob) { //
-            ReturnCharacterStateJobToPool(stateJob);
+            if (planJob.isInMultithread) {
+                planJob.SetShouldForceCancelJobUponReceiving(true);
+            } else {
+                ObjectPoolManager.Instance.ReturnGoapPlanJobToPool(planJob);
+            }
+        } else if (job is CharacterStateJob stateJob) {
+            ObjectPoolManager.Instance.ReturnCharacterStateJobToPool(stateJob);
         }
     }
 
     #region Goap Plan Job
     public GoapPlanJob CreateNewGoapPlanJob(JOB_TYPE jobType, GoapEffect goal, IPointOfInterest targetPOI, IJobOwner owner) {
-        GoapPlanJob job = GetGoapPlanJobFromPool();
+        GoapPlanJob job = ObjectPoolManager.Instance.CreateNewGoapPlanJob();
         job.Initialize(jobType, goal, targetPOI, owner);
         return job;
     }
@@ -135,7 +126,7 @@ public class JobManager : BaseMonoBehaviour {
     //    return job;
     //}
     public GoapPlanJob CreateNewGoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI, IJobOwner owner) {
-        GoapPlanJob job = GetGoapPlanJobFromPool();
+        GoapPlanJob job = ObjectPoolManager.Instance.CreateNewGoapPlanJob();
         job.Initialize(jobType, targetInteractionType, targetPOI, owner);
         return job;
     }
@@ -145,52 +136,27 @@ public class JobManager : BaseMonoBehaviour {
     //    return job;
     //}
     public GoapPlanJob CreateNewGoapPlanJob(SaveDataGoapPlanJob data) {
-        GoapPlanJob job = GetGoapPlanJobFromPool();
+        GoapPlanJob job = ObjectPoolManager.Instance.CreateNewGoapPlanJob();
         job.Initialize(data);
         return job;
-    }
-    private GoapPlanJob GetGoapPlanJobFromPool() {
-        if(goapJobPool.Count > 0) {
-            GoapPlanJob job = goapJobPool[0];
-            goapJobPool.RemoveAt(0);
-            return job;
-        }
-        return new GoapPlanJob();
-    }
-    private void ReturnGoapPlanJobToPool(GoapPlanJob job) {
-        job.Reset();
-        goapJobPool.Add(job);
     }
     #endregion
 
     #region Character State Jobs
     public CharacterStateJob CreateNewCharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, IPointOfInterest targetPOI, IJobOwner owner) {
-        CharacterStateJob job = GetCharacterStateJobFromPool();
+        CharacterStateJob job = ObjectPoolManager.Instance.CreateNewCharacterStateJob();
         job.Initialize(jobType, state, targetPOI, owner);
         return job;
     }
     public CharacterStateJob CreateNewCharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, IJobOwner owner) {
-        CharacterStateJob job = GetCharacterStateJobFromPool();
+        CharacterStateJob job = ObjectPoolManager.Instance.CreateNewCharacterStateJob();
         job.Initialize(jobType, state, owner);
         return job;
     }
     public CharacterStateJob CreateNewCharacterStateJob(SaveDataCharacterStateJob data) {
-        CharacterStateJob job = GetCharacterStateJobFromPool();
+        CharacterStateJob job = ObjectPoolManager.Instance.CreateNewCharacterStateJob();
         job.Initialize(data);
         return job;
-    }
-
-    private CharacterStateJob GetCharacterStateJobFromPool() {
-        if (stateJobPool.Count > 0) {
-            CharacterStateJob job = stateJobPool[0];
-            stateJobPool.RemoveAt(0);
-            return job;
-        }
-        return new CharacterStateJob();
-    }
-    private void ReturnCharacterStateJobToPool(CharacterStateJob job) {
-        job.Reset();
-        stateJobPool.Add(job);
     }
     #endregion
 

@@ -2198,6 +2198,10 @@
         },
         {
           "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
           "structureType": "FARM"
         },
         {

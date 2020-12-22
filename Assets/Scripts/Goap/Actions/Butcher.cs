@@ -12,11 +12,13 @@ public class Butcher : GoapAction {
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.KOBOLD, RACE.TROLL, RACE.RATMAN };
-        isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Work, LOG_TAG.Needs};
     }
 
     #region Overrides
+    public override bool ShouldActionBeAnIntel(ActualGoapNode node) {
+        return true;
+    }
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsTargetDead);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.PRODUCE_FOOD, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
@@ -92,17 +94,17 @@ public class Butcher : GoapAction {
                                 int currCost = UtilityScripts.Utilities.Rng.Next(100, 151);
                                 cost += currCost;
                                 costLog += $" +{currCost}(Cannibal, Malnourished, Friend/Close)";
-                            } else if (targetCharacter.race.IsSapient()) {
+                            } else if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
                                 cost += 300;
-                                costLog += " +300(Cannibal, Malnourished, Human/Elf)";
+                                costLog += " +300(Cannibal, Malnourished, Human/Elf/Sapient Ratman)";
                             }
                         } else {
                             if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
                                 cost += 2000;
                                 costLog += " +2000(Cannibal, Friend/Close)";
-                            } else if (targetCharacter.race.IsSapient() && !actor.needsComponent.isStarving) {
+                            } else if ((targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) && !actor.needsComponent.isStarving) {
                                 cost += 400;
-                                costLog += " +2000(Cannibal, Human/Elf, not Starving)";
+                                costLog += " +2000(Cannibal, Human/Elf/Sapient Ratman, not Starving)";
                             }
                         }
                     } else {
@@ -112,9 +114,9 @@ public class Butcher : GoapAction {
                                 int currCost = UtilityScripts.Utilities.Rng.Next(100, 151);
                                 cost += currCost;
                                 costLog += $" +{currCost}(not Cannibal, Malnourished, Friend/Close)";
-                            } else if (targetCharacter.race.IsSapient()) {
+                            } else if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
                                 cost += 500;
-                                costLog += " +500(not Cannibal, Malnourished, Human/Elf)";
+                                costLog += " +500(not Cannibal, Malnourished, Human/Elf/Sapient Ratman)";
                             }
                         } else {
                             if (actor.needsComponent.isStarving) {
@@ -124,9 +126,9 @@ public class Butcher : GoapAction {
                                     costLog += $" +300(not Cannibal, not Malnourished but starving, Friend/Close)";
                                 }
                             } else {
-                                if (targetCharacter.race.IsSapient()) {
+                                if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
                                     cost += 2000;
-                                    costLog += " +2000(not Cannibal, not malnourished or starving, Human/Elf)";
+                                    costLog += " +2000(not Cannibal, not malnourished or starving, Human/Elf/Sapient Ratman)";
                                 }    
                             }
                         }
@@ -210,71 +212,65 @@ public class Butcher : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         string stateName = "Target Missing";
         bool defaultTargetMissing = this.IsTargetMissing(actor, poiTarget);
-        return new GoapActionInvalidity(defaultTargetMissing, stateName);
+        return new GoapActionInvalidity(defaultTargetMissing, stateName, "target_unavailable");
     }
     private bool IsTargetMissing(Character actor, IPointOfInterest poiTarget) {
         return poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion
               || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation, true)) 
               || (poiTarget is Character character && !character.isDead) || poiTarget.numOfActionsBeingPerformedOnThis > 0 || poiTarget.isBeingCarriedBy != null || (poiTarget is Character c && c.grave?.isBeingCarriedBy != null);
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, target, witness, node, status);
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
         Character targetCharacter = GetDeadCharacter(target);
         if (targetCharacter != null) {
             if (!witness.traitContainer.HasTrait("Cannibal") && targetCharacter.race.IsSapient()) {
-                //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Heinous);
-                //CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
+                reactions.Add(EMOTION.Shock);
+                reactions.Add(EMOTION.Disgust);
 
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status, node);
-            
                 string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
                 if (opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status, node);
+                    reactions.Add(EMOTION.Disappointment);
                 }
                 if (!witness.traitContainer.HasTrait("Psychopath")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status, node);
+                    reactions.Add(EMOTION.Fear);
                 }
             }
             string witnessOpinionToTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (witnessOpinionToTarget == RelationshipManager.Friend || witnessOpinionToTarget == RelationshipManager.Close_Friend) {
                 if (!witness.traitContainer.HasTrait("Psychopath")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status, node);
+                    reactions.Add(EMOTION.Rage);
                 }
             } else if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER))
                 && witnessOpinionToTarget != RelationshipManager.Rival) {
                 if (!witness.traitContainer.HasTrait("Psychopath")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status, node);
+                    reactions.Add(EMOTION.Rage);
                 }
-            } else if (witnessOpinionToTarget == RelationshipManager.Acquaintance 
+            } else if (witnessOpinionToTarget == RelationshipManager.Acquaintance
                 || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
                 if (!witness.traitContainer.HasTrait("Psychopath")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                    reactions.Add(EMOTION.Anger);
                 }
             }
         }
-        return response;
     }
-    public override string ReactionToTarget(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToTarget(actor, target, witness, node, status);
+    public override void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToTarget(reactions, actor, target, witness, node, status);
         Character targetCharacter = GetDeadCharacter(target);
         if (targetCharacter != null) {
             string witnessOpinionToTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (witnessOpinionToTarget == RelationshipManager.Friend || witnessOpinionToTarget == RelationshipManager.Close_Friend) {
                 if (!witness.traitContainer.HasTrait("Psychopath")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, targetCharacter, status, node);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, targetCharacter, status, node);
+                    reactions.Add(EMOTION.Despair);
+                    reactions.Add(EMOTION.Sadness);
                 }
             } else if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
                 && witnessOpinionToTarget != RelationshipManager.Rival) {
                 if (!witness.traitContainer.HasTrait("Psychopath")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, targetCharacter, status, node);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, targetCharacter, status, node);
+                    reactions.Add(EMOTION.Despair);
+                    reactions.Add(EMOTION.Sadness);
                 }
             }
         }
-        return response;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         if (node.poiTarget is Character character) {
@@ -392,8 +388,8 @@ public class Butcher : GoapAction {
             goapNode.descriptionLog.AddInvolvedObjectManual(foodPile.persistentID);    
             //if produced human/elf meat and the actor is not a cannibal, make him/her traumatized
             if((foodPile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT || foodPile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT) 
-               && !goapNode.actor.traitContainer.HasTrait("Cannibal") && goapNode.actor.isNormalCharacter) {
-                goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Traumatized");
+               && !goapNode.actor.traitContainer.HasTrait("Cannibal") && goapNode.actor.isNormalCharacter && poiTarget is Character targetCharacter) {
+                goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Traumatized", targetCharacter);
             }
         }
     }

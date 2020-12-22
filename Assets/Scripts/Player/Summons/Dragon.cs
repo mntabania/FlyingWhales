@@ -24,6 +24,7 @@ public class Dragon : Summon {
         traitContainer.AddTrait(this, "Immune");
         traitContainer.AddTrait(this, "Hibernating");
         traitContainer.AddTrait(this, "Fireproof");
+        traitContainer.AddTrait(this, "Sturdy");
         //traitContainer.AddTrait(this, "Indestructible");
         _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(8);
         charactersThatAreWary = new List<Character>();
@@ -38,6 +39,7 @@ public class Dragon : Summon {
         traitContainer.AddTrait(this, "Immune");
         traitContainer.AddTrait(this, "Hibernating");
         traitContainer.AddTrait(this, "Fireproof");
+        traitContainer.AddTrait(this, "Sturdy");
         //traitContainer.AddTrait(this, "Indestructible");
         _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(8);
         charactersThatAreWary = new List<Character>();
@@ -81,7 +83,7 @@ public class Dragon : Summon {
     }
     public override void ConstructDefaultActions() {
         base.ConstructDefaultActions();
-        RemovePlayerAction(SPELL_TYPE.SNATCH);
+        RemovePlayerAction(PLAYER_SKILL_TYPE.SNATCH);
     }
     public override void LoadReferences(SaveDataCharacter data) {
         if(data is SaveDataDragon savedData) {

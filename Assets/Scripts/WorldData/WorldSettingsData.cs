@@ -23,12 +23,12 @@ public class WorldSettingsData {
     public List<RACE> races;
     public List<BIOMES> biomes;
     public World_Type worldType;
-    public List<SPELL_TYPE> disabledSpells;
+    public List<PLAYER_SKILL_TYPE> disabledSpells;
     
     public WorldSettingsData() {
         races = new List<RACE>();
         biomes = new List<BIOMES>();
-        disabledSpells = new List<SPELL_TYPE>();
+        disabledSpells = new List<PLAYER_SKILL_TYPE>();
         worldType = World_Type.Custom;
     }
 
@@ -180,7 +180,7 @@ public class WorldSettingsData {
     #endregion
 
     #region Spells
-    public void DisableSpellForWorld(SPELL_TYPE spellType) {
+    public void DisableSpellForWorld(PLAYER_SKILL_TYPE spellType) {
         disabledSpells.Add(spellType);
     }
     #endregion

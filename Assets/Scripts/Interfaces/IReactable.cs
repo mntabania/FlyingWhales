@@ -12,11 +12,15 @@ public interface IReactable {
     Character disguisedTarget { get; }
     Log informationLog { get; }
     bool isStealth { get; }
+    CRIME_TYPE crimeType { get; }
     List<Character> awareCharacters { get; }
     LOG_TAG[] logTags { get; }
     string ReactionToActor(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status);
     string ReactionToTarget(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status);
     string ReactionOfTarget(Character actor, IPointOfInterest target, REACTION_STATUS status);
+    void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status);
+    void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status);
+    void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, REACTION_STATUS status);
     void AddAwareCharacter(Character character);
     REACTABLE_EFFECT GetReactableEffect(Character witness);
 }
@@ -32,6 +36,7 @@ public interface IRumorable {
     Character disguisedTarget { get; }
     Log informationLog { get; }
     bool isStealth { get; }
+    CRIME_TYPE crimeType { get; }
     List<Character> awareCharacters { get; }
     LOG_TAG[] logTags { get; }
     void SetAsRumor(Rumor rumor);
@@ -39,4 +44,7 @@ public interface IRumorable {
     string ReactionToActor(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status);
     string ReactionToTarget(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status);
     string ReactionOfTarget(Character actor, IPointOfInterest target, REACTION_STATUS status);
+    void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status);
+    void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status);
+    void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, REACTION_STATUS status);
 }

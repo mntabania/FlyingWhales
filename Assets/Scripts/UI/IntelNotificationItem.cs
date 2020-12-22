@@ -15,6 +15,8 @@ public class IntelNotificationItem : PlayerNotificationItem {
     [SerializeField] private GameObject convertTooltip;
     [SerializeField] private GameObject effectPrefab;
 
+    private string _intelHoverText;
+
     public void Initialize(IIntel intel, System.Action<PlayerNotificationItem> onDestroyAction = null) {
         this.intel = intel;
         base.Initialize(intel.log, onDestroyAction);
@@ -46,12 +48,37 @@ public class IntelNotificationItem : PlayerNotificationItem {
         ObjectPoolManager.Instance.DestroyObject(effectGO);
         PlayerManager.Instance.player.AddIntel(intel);
     }
+
+    #region Hover
+    public void OnHoverEnter() {
+        if(intel != null) {
+            string blackmailText = intel.GetIntelInfoBlackmailText();
+            string reactionText = intel.GetIntelInfoRelationshipText();
+            _intelHoverText = string.Empty;
+
+            _intelHoverText += blackmailText;
+            if (!string.IsNullOrEmpty(_intelHoverText)) {
+                _intelHoverText += "\n";
+            }
+            _intelHoverText += reactionText;
+        }
+        if (!string.IsNullOrEmpty(_intelHoverText)) {
+            UIManager.Instance.ShowSmallInfo(_intelHoverText, autoReplaceText: false);
+        }
+    }
+    public void OnHoverExit() {
+        _intelHoverText = string.Empty;
+        UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
+
     public override void DeleteOldestNotification() {
         intel.OnIntelRemoved(); //cleanup intel
         base.DeleteOldestNotification();
     }
     public override void Reset() {
         base.Reset();
+        _intelHoverText = string.Empty;
         convertTooltip.SetActive(false);
     }
 }

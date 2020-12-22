@@ -102,6 +102,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public bool isMainVisualActive => mainImg.gameObject.activeSelf;
     public CharacterMarkerAnimationListener animationListener => _animationListener;
     public int sortingOrder => mainImg.sortingOrder;
+    public CharacterMarkerNameplate nameplate => _nameplate;
     #endregion
     
     public void SetCharacter(Character character) {
@@ -283,10 +284,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     protected override void OnPointerRightClick(Character poi) {
         base.OnPointerRightClick(poi);
-        Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter;
-        if (activeCharacter == null) {
-            activeCharacter = UIManager.Instance.monsterInfoUI.activeMonster;
-        }
+        UIManager.Instance.ShowPlayerActionContextMenu(poi, poi.worldPosition, false);
+    }
+    protected override void OnPointerMiddleClick(Character poi) {
+        base.OnPointerMiddleClick(poi);
+        Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter ?? UIManager.Instance.monsterInfoUI.activeMonster;
         if (activeCharacter != null) {
             if (activeCharacter.minion == null) {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1224,10 +1226,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Vision Collision
     private void CreateCollisionTrigger() {
-        GameObject collisionTriggerGO = GameObject.Instantiate(InnerMapManager.Instance.characterCollisionTriggerPrefab, this.transform);
-        collisionTriggerGO.transform.localPosition = Vector3.zero;
-        visionTrigger = collisionTriggerGO.GetComponent<CharacterVisionTrigger>();
-        visionTrigger.Initialize(character);
+        visionTrigger = InnerMapManager.Instance.mapObjectFactory.CreateAndInittializeCharacterVisionTrigger(character);
     }
     public void AddPOIAsInVisionRange(IPointOfInterest poi) {
         if (!IsPOIInVision(poi)) {
@@ -1290,7 +1289,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Debug.Log(summary);
     }
     private void OnAddPOIAsInVisionRange(IPointOfInterest poi) {
-        if (character.currentActionNode != null && character.currentActionNode.target == poi && character.currentActionNode.action.IsInvalidOnVision(character.currentActionNode)) {
+        if (character.currentActionNode != null && character.currentActionNode.target == poi && character.currentActionNode.action.IsInvalidOnVision(character.currentActionNode, out var reason)) {
+            if (!string.IsNullOrEmpty(reason)) {
+                GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(true, "Target Missing", reason);
+                character.currentActionNode.action.LogActionInvalid(goapActionInvalidity, character.currentActionNode, false);
+            }
             character.currentActionNode.associatedJob?.CancelJob(false);
         }
         if (character.currentActionNode != null && character.currentActionNode.action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION && character.currentActionNode.poiTarget == poi) {
@@ -1363,9 +1366,17 @@ public class CharacterMarker : MapObjectVisual<Character> {
                         continue;
                     }
                     if(poi is Character target) {
+                        //After dropping a character, the carrier should not immediately react to the recently dropped character
                         if(target.carryComponent.justGotCarriedBy != null && target.carryComponent.justGotCarriedBy == character) {
-                            log += $"\n-{poi.nameWithID} is jost got dropped. Skipping...";
+                            log += $"\n-{poi.nameWithID} is just got dropped. Skipping...";
                             target.carryComponent.SetJustGotCarriedBy(null);
+                            continue;
+                        }
+                    }
+                    if(!visionCollider.IsTheSameStructureOrSameOpenSpaceWithPOI(poi)) {
+                        //Before reacting to a character check first if he is in vision list, if he is not and he is not in line of sight, do not react
+                        if (!IsCharacterInLineOfSightWith(poi)) {
+                            log += $"\n-{poi.nameWithID} is not in same space and no longer in line of sight with actor. Skipping...";
                             continue;
                         }
                     }
@@ -1385,7 +1396,15 @@ public class CharacterMarker : MapObjectVisual<Character> {
             if (!character.isDead) {
                 for (int i = 0; i < unprocessedActionsOnly.Count; i++) {
                     ActualGoapNode action = unprocessedActionsOnly[i];
-                    log += $"\n-{action.goapName}";
+                    Character actor = action.actor;
+                    log += $"\n-{action.goapName} of {actor.name} towards {action.poiTarget.name}";
+                    if (!visionCollider.IsTheSameStructureOrSameOpenSpaceWithPOI(actor)) {
+                        //Before reacting to a character check first if he is in vision list, if he is not and he is not in line of sight, do not react
+                        if (!IsCharacterInLineOfSightWith(actor)) {
+                            log += $"\n-{actor.nameWithID} is not in same space and no longer in line of sight with actor. Skipping...";
+                            continue;
+                        }
+                    }
                     character.ThisCharacterSawAction(action);
                 }
             } else {
@@ -1824,10 +1843,20 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private RaycastHit2D[] lineOfSightHitObjects;
     public bool IsCharacterInLineOfSightWith(IPointOfInterest target, float rayDistance = 5f) {
         Profiler.BeginSample($"{character.name} IsCharacterInLineOfSightWith Pre Check");
-        if (target is BlockWall == false) {
-            //only Check in vision list if target is NOT Block Wall. 
-            //TODO: Rework this after build. This issue arises when angels try to attack demonic structures.
-            if (IsPOIInVision(target) == false) { return false; }    
+        //if (target is BlockWall == false) {
+        //    //only Check in vision list if target is NOT Block Wall. 
+        //    //TODO: Rework this after build. This issue arises when angels try to attack demonic structures.
+
+        //    //if (IsPOIInVision(target) == false) { return false; } 
+        //}
+
+        //No longer checks if target is in vision, rather, it should check if target has a map visual object, if it does not, there will be no line of sight
+        //Also, there is no line of sight if actor and target is in a different region
+        if (target.mapObjectVisual == null) {
+            return false;
+        }
+        if (character == null || character.currentRegion == null || target.gridTileLocation == null || character.currentRegion != target.gridTileLocation.structure.region) {
+            return false;
         }
         Profiler.EndSample();
         

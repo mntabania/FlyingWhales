@@ -136,7 +136,7 @@ public class TransmissionUIController : MVCUIController, TransmissionUIView.ILis
 				throw new ArgumentOutOfRangeException(nameof(p_transmissionType), p_transmissionType, null);
 		}
 		if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
-			return PlayerManager.Instance.player.plagueComponent.plaguePoints >= upgradeCost;
+			return PlayerManager.Instance.player.plagueComponent.plaguePoints >= upgradeCost || (WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.omnipotentMode);
 		} else {
 			return true;
 		}

@@ -40,6 +40,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public bool hasPeasants { get; private set; }
     public bool hasWorkers { get; private set; }
 
+    //Components
+    public SettlementVillageMigrationComponent migrationComponent { get; private set; }
+
     private readonly Region _region;
     private readonly WeightedDictionary<Character> newRulerDesignationWeights;
     private int newRulerDesignationChance;
@@ -71,6 +74,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             TILE_OBJECT_TYPE.TOOL,
             TILE_OBJECT_TYPE.ANTIDOTE
         };
+
+        migrationComponent = new SettlementVillageMigrationComponent(); migrationComponent.SetOwner(this);
     }
     public NPCSettlement(SaveDataBaseSettlement saveDataBaseSettlement) : base (saveDataBaseSettlement) {
         SaveDataNPCSettlement saveData = saveDataBaseSettlement as SaveDataNPCSettlement;
@@ -88,6 +93,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         npcSettlementEventDispatcher = new NPCSettlementEventDispatcher();
         _plaguedExpiryKey = string.Empty;
         _neededObjects = new List<TILE_OBJECT_TYPE>(saveData.neededObjects);
+
+        migrationComponent = saveData.migrationComponent.Load(); migrationComponent.SetOwner(this);
     }
 
     #region Loading
@@ -123,7 +130,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             Initialize();
             if (tiles.Count <= 0) {
                 UnsubscribeToSignals(); //make sure that settlements that have no more areas should no longer listen to signals.
+            } else {
+                //Update tile nameplates
+                //Fix for: https://trello.com/c/gAqpeACf/3194-loading-the-game-erases-the-faction-symbol-on-the-world-map
+                for (int i = 0; i < tiles.Count; i++) {
+                    HexTile tile = tiles[i];
+                    tile.landmarkOnTile?.nameplate.UpdateVisuals();
+                }    
             }
+            
         }
     }
     private void LoadJobs(SaveDataNPCSettlement data) {
@@ -278,8 +293,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             isUnderSiege = state;
             Debug.Log($"{GameManager.Instance.TodayLogString()}{name} Under Siege state changed to {isUnderSiege.ToString()}");
             Messenger.Broadcast(SettlementSignals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, this, isUnderSiege);
-            if (isUnderSiege) {
-            } else {
+            if (!isUnderSiege) {
                 if(exterminateTargetStructure != null) {
                     if(owner != null && !owner.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, exterminateTargetStructure)) {
                         if(exterminateTargetStructure.settlementLocation == null || exterminateTargetStructure.settlementLocation.HasResidentThatMeetsCriteria(resident => !resident.isDead
@@ -351,6 +365,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
         npcSettlementEventDispatcher.ExecuteHourStartedEvent(this);
+        migrationComponent.OnHourStarted();
     }
     #endregion
 
@@ -419,10 +434,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     public void SetRuler(Character newRuler) {
         Character previousRuler = ruler; 
-        ruler?.SetRuledSettlement(null);
         ruler = newRuler;
+        if(previousRuler != null) {
+            previousRuler.behaviourComponent.RemoveBehaviourComponent(typeof(SettlementRulerBehaviour));
+            if (!previousRuler.isFactionLeader) {
+                previousRuler.jobComponent.RemovePriorityJob(JOB_TYPE.JUDGE_PRISONER);
+            }
+        }
         if(ruler != null) {
-            ruler.SetRuledSettlement(this);
+            ruler.behaviourComponent.AddBehaviourComponent(typeof(SettlementRulerBehaviour));
+            ruler.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
             //ResetNewRulerDesignationChance();
             Messenger.Broadcast(CharacterSignals.ON_SET_AS_SETTLEMENT_RULER, ruler, previousRuler);
         } else {
@@ -817,13 +838,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         UpdatePrison();
         UpdateMainStorage();
     }
+    public void OnStructureBuilt(LocationStructure structure) {
+        migrationComponent.OnStructureBuilt(structure);
+    }
     private void OnCharacterSaw(Character character, IPointOfInterest seenPOI) {
         if (character.homeSettlement == this && character.currentSettlement == this) {
             if (seenPOI is Character target) {
                 if(target.reactionComponent.disguisedCharacter != null) {
                     target = target.reactionComponent.disguisedCharacter;
                 }
-                if(owner != null && target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(this)) {
+                if(owner != null && target.gridTileLocation != null && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(this)) {
                     if (ShouldBeUnderSiegeIfCharacterEntersSettlement(target)) {
                         SetIsUnderSiege(true);
                         if(target.homeStructure != null 
@@ -853,7 +877,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             Character character = region.charactersAtLocation[i];
             if(character.homeSettlement != this) {
-                if (character.gridTileLocation != null && character.gridTileLocation.IsPartOfSettlement(this) && !character.isDead 
+                if (character.gridTileLocation != null && character.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(this) && !character.isDead 
                     && !character.traitContainer.HasTrait("Restrained", "Paralyzed") && character.combatComponent.combatMode != COMBAT_MODE.Passive) {
                     if (owner.IsHostileWith(character.faction)) {
                         stillUnderSiege = true;
@@ -882,20 +906,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             return facilityWeights.PickRandomElementGivenWeights();
         }
         return default;
-    }
-    public LocationStructure GetFirstUnoccupiedDwelling() {
-        LocationStructure chosenDwelling = null;
-        List<LocationStructure> dwellings = GetStructuresOfType(STRUCTURE_TYPE.DWELLING);
-        if (dwellings != null) {
-            for (int i = 0; i < dwellings.Count; i++) {
-                LocationStructure currDwelling = dwellings[i];
-                if (!currDwelling.IsOccupied()) {
-                    chosenDwelling = currDwelling;
-                    break;
-                }
-            }
-        }
-        return chosenDwelling;
     }
     public int GetUnoccupiedDwellingCount() {
         int count = 0;
@@ -1526,19 +1536,23 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #endregion
 
     #region Settlement Type
-    public void SetSettlementType(SETTLEMENT_TYPE settlementType) {
+    public void SetSettlementType(SETTLEMENT_TYPE type) {
         if (locationType == LOCATION_TYPE.VILLAGE) {
             //Only set settlement type for villages. Do not include Dungeons. NOTE: Might be better to separate villages and dungeons into their own classes.
-            this.settlementType = LandmarkManager.Instance.CreateSettlementType(settlementType);
-            //NOTE: For now always apply default settings. This will change in the future.
-            this.settlementType.ApplyDefaultSettings();    
+            if(settlementType == null || settlementType.settlementType != type) {
+                //Only change settlement type if the currrent type is not the same as the one being set, if for example, the current type is Human Village, and the type to be set is also Human Village, there is no need to change the settlement type because they are the same
+                settlementType = LandmarkManager.Instance.CreateSettlementType(type);
+                //NOTE: For now always apply default settings. This will change in the future.
+                settlementType.ApplyDefaultSettings();
+
+                migrationComponent.OnSettlementTypeChanged();
+            }
+  
         }
     }
     private void ChangeSettlementTypeAccordingTo(Character character) {
         SETTLEMENT_TYPE typeToSet = LandmarkManager.Instance.GetSettlementTypeForCharacter(character);
-        if (settlementType == null || settlementType.settlementType != typeToSet) {
-            SetSettlementType(typeToSet);
-        }
+        SetSettlementType(typeToSet);
         // if (character.race == RACE.HUMANS && (settlementType == null || settlementType.settlementType != SETTLEMENT_TYPE.Default_Human)) {
         //     SetSettlementType(SETTLEMENT_TYPE.Default_Human);
         // } else if (character.race == RACE.ELVES && (settlementType == null || settlementType.settlementType != SETTLEMENT_TYPE.Default_Elf)) {
@@ -1556,6 +1570,21 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     public void RemoveNeededItems(TILE_OBJECT_TYPE tileObjectType) {
         neededObjects.Remove(tileObjectType);
+    }
+    #endregion
+
+    #region Party Quests
+    public void OnFinishedQuest(PartyQuest quest) {
+        migrationComponent.OnFinishedQuest(quest);
+    }
+    #endregion
+
+    #region IPlayerActionTarget
+    public override void ConstructDefaultActions() {
+        base.ConstructDefaultActions();
+        AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
+        // AddPlayerAction(PLAYER_SKILL_TYPE.INDUCE_MIGRATION);
+        // AddPlayerAction(PLAYER_SKILL_TYPE.STIFLE_MIGRATION);
     }
     #endregion
 

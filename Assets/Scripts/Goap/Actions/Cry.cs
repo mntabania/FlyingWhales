@@ -16,11 +16,13 @@ public class Cry : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
-        isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Needs};
     }
 
     #region Overrides
+    public override bool ShouldActionBeAnIntel(ActualGoapNode node) {
+        return true;
+    }
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
     }
@@ -55,24 +57,22 @@ public class Cry : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, target, witness, node, status);
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
         string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
         if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
             if (UnityEngine.Random.Range(0, 2) == 0) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status, node);
+                reactions.Add(EMOTION.Scorn);
             }
         } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
             if (!witness.traitContainer.HasTrait("Psychopath")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status, node);
-            }        
+                reactions.Add(EMOTION.Concern);
+            }
         } else if (opinionLabel == RelationshipManager.Acquaintance) {
             if (!witness.traitContainer.HasTrait("Psychopath") && UnityEngine.Random.Range(0, 2) == 0) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status, node);
-            }        
-        } 
-        return response;
+                reactions.Add(EMOTION.Concern);
+            }
+        }
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;

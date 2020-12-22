@@ -14,11 +14,13 @@ public class RememberFallen : GoapAction {
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.EARLY_NIGHT, TIME_IN_WORDS.LATE_NIGHT, TIME_IN_WORDS.AFTER_MIDNIGHT, };
-        isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Social};
     }
 
     #region Overrides
+    public override bool ShouldActionBeAnIntel(ActualGoapNode node) {
+        return true;
+    }
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
     }
@@ -93,23 +95,21 @@ public class RememberFallen : GoapAction {
         Character actor = node.actor;
         actor.needsComponent.AdjustDoNotGetBored(-1);
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, target, witness, node, status);
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
         if (target is Tombstone) {
             Character targetCharacter = (target as Tombstone).character;
             string witnessOpinionLabelToDead = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if ((witnessOpinionLabelToDead == RelationshipManager.Friend || witnessOpinionLabelToDead == RelationshipManager.Close_Friend)
                 && !witness.traitContainer.HasTrait("Psychopath")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
+                reactions.Add(EMOTION.Approval);
             } else if (witnessOpinionLabelToDead == RelationshipManager.Rival) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status, node);
+                reactions.Add(EMOTION.Resentment);
                 if (witness.relationshipContainer.IsFriendsWith(actor)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status, node);
+                    reactions.Add(EMOTION.Disappointment);
                 }
             }
         }
-        return response;
     }
     #endregion
 

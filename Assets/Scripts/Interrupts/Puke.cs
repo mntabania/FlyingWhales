@@ -38,23 +38,26 @@ namespace Interrupts {
         }
         public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
             string response = base.ReactionToActor(actor, target, witness, interrupt, status);
-
-            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
-            if (opinionLabel == RelationshipManager.Close_Friend) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
-            } else if (opinionLabel != RelationshipManager.Rival && 
-                       (witness.relationshipContainer.IsFamilyMember(actor) || 
-                        witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER))) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
-            } else {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
-            }
-
             if (GameUtilities.RollChance(25) && witness.homeSettlement is NPCSettlement npcSettlement && npcSettlement.eventManager.HasActiveEvent(SETTLEMENT_EVENT.Plagued_Event) && 
                 !witness.relationshipContainer.IsFriendsWith(actor)) {
                 witness.assumptionComponent.CreateAndReactToNewAssumption(actor, actor, INTERACTION_TYPE.IS_PLAGUED, REACTION_STATUS.WITNESSED);
             }
             return response;
+        }
+        public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
+            base.PopulateReactionsToActor(reactions, actor, target, witness, interrupt, status);
+
+            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
+            if (opinionLabel == RelationshipManager.Close_Friend) {
+                reactions.Add(EMOTION.Concern);
+            } else if (opinionLabel != RelationshipManager.Rival &&
+                       (witness.relationshipContainer.IsFamilyMember(actor) ||
+                        witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER))) {
+                reactions.Add(EMOTION.Concern);
+            } else {
+                reactions.Add(EMOTION.Disgust);
+            }
+
         }
         #endregion
     }

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e6d539796c490aa0efea676d6fae59, type: 3}
+  m_Name: Boomer Zombie Data
+  m_EditorClassIdentifier: 
+  defaultSprites:
+    stillSprite: {fileID: 21300000, guid: d0e91fce9ddc7d041b91dcd10c7c65a0, type: 3}
+    animationSprites:
+    - {fileID: 21300000, guid: 0ee48ab5160991749b983db336304ba4, type: 3}
+    - {fileID: 21300000, guid: d0e91fce9ddc7d041b91dcd10c7c65a0, type: 3}
+    - {fileID: 21300000, guid: f376d4019bda91644a7110401034982d, type: 3}
+  raceSprites:
+    m_keys: 
+    m_values: []

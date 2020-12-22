@@ -38,6 +38,7 @@ public class DouseFire : GoapAction {
         if (goapActionInvalidity.isInvalid == false) {
             if (poiTarget.traitContainer.HasTrait("Burning") == false) {
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "not_burning";
             }
         }
         return goapActionInvalidity;

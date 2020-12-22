@@ -209,15 +209,17 @@ public class CharacterMarkerNameplate : PooledObject {
         }
         
         if (character.currentActionNode != null) {
-            if (character.currentActionNode.action.actionIconString != GoapActionStateDB.No_Icon) {
-                actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[character.currentActionNode.action.actionIconString];
+            string actionIconString = character.currentActionNode.action.GetActionIconString(character.currentActionNode);
+            if (actionIconString != GoapActionStateDB.No_Icon) {
+                actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[actionIconString];
                 actionIcon.gameObject.SetActive(true);
             } else {
                 actionIcon.gameObject.SetActive(false);
             }
         } else if (character.stateComponent.currentState != null) {
-            if (character.stateComponent.currentState.actionIconString != GoapActionStateDB.No_Icon) {
-                actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[character.stateComponent.currentState.actionIconString];
+            string actionIconString = character.stateComponent.currentState.actionIconString;
+            if (actionIconString != GoapActionStateDB.No_Icon) {
+                actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[actionIconString];
                 actionIcon.gameObject.SetActive(true);
             } else {
                 actionIcon.gameObject.SetActive(false);

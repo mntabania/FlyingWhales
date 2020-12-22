@@ -1,15 +1,10 @@
-﻿using System;
-using UnityEngine;
-using System.Collections;
+﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using TMPro;
 using UnityEngine.UI;
 using Traits;
-using UnityEngine.Serialization;
 using UtilityScripts;
 
 public class CharacterInfoUI : InfoUIBase {
@@ -19,9 +14,9 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private TextMeshProUGUI subLbl;
     [SerializeField] private TextMeshProUGUI actionLbl;
+    [SerializeField] private EventLabel actionEventLabel;
     [SerializeField] private TextMeshProUGUI partyLbl;
     [SerializeField] private EventLabel partyEventLbl;
-    [SerializeField] private LogItem plansLblLogItem;
     [SerializeField] private Image raceIcon;
 
     [Space(10)] [Header("Location")]
@@ -52,6 +47,7 @@ public class CharacterInfoUI : InfoUIBase {
 
     [Space(10)] [Header("Items")]
     [SerializeField] private TextMeshProUGUI itemsLbl;
+    [SerializeField] private EventLabel itemsEventLbl;
     
     [Space(10)] [Header("Relationships")]
     [SerializeField] private EventLabel relationshipNamesEventLbl;
@@ -67,6 +63,8 @@ public class CharacterInfoUI : InfoUIBase {
     [Space(10)] [Header("Mood")] 
     [SerializeField] private MarkedMeter moodMeter;
     [SerializeField] private TextMeshProUGUI moodSummary;
+    [SerializeField] private ScrollRect scrollViewMoodSummary;
+    [SerializeField] private GameObject prefabMoodThought;
     
     [Space(10)] [Header("Needs")] 
     [SerializeField] private MarkedMeter energyMeter;
@@ -81,12 +79,10 @@ public class CharacterInfoUI : InfoUIBase {
     public Character activeCharacter => _activeCharacter;
     public Character previousCharacter => _previousCharacter;
     private List<SpellData> afflictions;
-    private List<string> combatModes;
-    private List<string> triggerFlawPool;
-    private List<LogFiller> triggerFlawLogFillers;
     private bool aliveRelationsOnly;
     private List<RELATIONS_FILTER> filters;
     private RELATIONS_FILTER[] allFilters;
+    private Dictionary<string, MoodSummaryEntry> _dictMoodSummary;
 
     internal override void Initialize() {
         base.Initialize();
@@ -97,9 +93,7 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_STACKED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
-        Messenger.AddListener<InfoUIBase>(UISignals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<InfoUIBase>(UISignals.MENU_CLOSED, OnMenuClosed);
-        Messenger.AddListener(UISignals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
+        Messenger.AddListener(UISignals.ON_OPEN_CONVERSATION_MENU, OnOpenConversationMenu);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
@@ -113,14 +107,21 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<MoodComponent>(CharacterSignals.MOOD_SUMMARY_MODIFIED, OnMoodModified);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
 
-        //normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
-        relationshipNamesEventLbl.SetOnClickAction(OnClickCharacter);
+        actionEventLabel.SetOnRightClickAction(OnRightClickThoughtBubble);
+        relationshipNamesEventLbl.SetOnLeftClickAction(OnLeftClickRelationship);
+        relationshipNamesEventLbl.SetOnRightClickAction(OnRightClickRelationship);
         
-        factionEventLbl.SetOnClickAction(OnClickFaction);
-        currentLocationEventLbl.SetOnClickAction(OnClickCurrentLocation);
-        homeRegionEventLbl.SetOnClickAction(OnClickHomeVillage);
-        houseEventLbl.SetOnClickAction(OnClickHomeStructure);
-        partyEventLbl.SetOnClickAction(OnClickParty);
+        factionEventLbl.SetOnLeftClickAction(OnClickFaction);
+        currentLocationEventLbl.SetOnLeftClickAction(OnClickCurrentLocation);
+        homeRegionEventLbl.SetOnLeftClickAction(OnLeftClickHomeVillage);
+        homeRegionEventLbl.SetOnRightClickAction(OnRightClickHomeVillage);
+        houseEventLbl.SetOnLeftClickAction(OnLeftClickHomeStructure);
+        houseEventLbl.SetOnRightClickAction(OnRightClickHomeStructure);
+        partyEventLbl.SetOnLeftClickAction(OnClickParty);
+        
+        itemsEventLbl.SetOnLeftClickAction(OnLeftClickItem);
+        itemsEventLbl.SetOnRightClickAction(OnRightClickItem);
+        
         opinionsEventLabel.SetShouldColorHighlight(false);
         statusTraitsEventLbl.SetShouldColorHighlight(false);
         normalTraitsEventLbl.SetShouldColorHighlight(false);
@@ -129,39 +130,38 @@ public class CharacterInfoUI : InfoUIBase {
         moodMeter.AddMark(EditableValuesManager.Instance.criticalMoodHighThreshold/100f, Color.red);
         moodMeter.AddMark(EditableValuesManager.Instance.lowMoodHighThreshold/100f, Color.yellow);
 
+        Color green = Color.green;//new Color(0f / 255f, 91f / 255f, 0f / 255f);
+        
         energyMeter.ResetMarks();
-        energyMeter.AddMark(CharacterNeedsComponent.REFRESHED_LOWER_LIMIT/100f, Color.green);
+        energyMeter.AddMark(CharacterNeedsComponent.REFRESHED_LOWER_LIMIT/100f, green);
         energyMeter.AddMark(CharacterNeedsComponent.TIRED_UPPER_LIMIT/100f, Color.yellow);
         energyMeter.AddMark(CharacterNeedsComponent.EXHAUSTED_UPPER_LIMIT/100f, Color.red);
         
         fullnessMeter.ResetMarks();
-        fullnessMeter.AddMark(CharacterNeedsComponent.FULL_LOWER_LIMIT/100f, Color.green);
+        fullnessMeter.AddMark(CharacterNeedsComponent.FULL_LOWER_LIMIT/100f, green);
         fullnessMeter.AddMark(CharacterNeedsComponent.HUNGRY_UPPER_LIMIT/100f, Color.yellow);
         fullnessMeter.AddMark(CharacterNeedsComponent.STARVING_UPPER_LIMIT/100f, Color.red);
         
         happinessMeter.ResetMarks();
-        // happinessMeter.AddMark(CharacterNeedsComponent.ENTERTAINED_LOWER_LIMIT/100f, Color.green);
         happinessMeter.AddMark(CharacterNeedsComponent.BORED_UPPER_LIMIT/100f, Color.yellow);
         happinessMeter.AddMark(CharacterNeedsComponent.SULKING_UPPER_LIMIT/100f, Color.red);
         
-        staminaMeter.ResetMarks();
-        staminaMeter.AddMark(CharacterNeedsComponent.SPRIGHTLY_LOWER_LIMIT/100f, Color.green);
-        staminaMeter.AddMark(CharacterNeedsComponent.SPENT_UPPER_LIMIT/100f, Color.yellow);
-        staminaMeter.AddMark(CharacterNeedsComponent.DRAINED_UPPER_LIMIT/100f, Color.red);
+        // staminaMeter.ResetMarks();
+        // staminaMeter.AddMark(CharacterNeedsComponent.SPRIGHTLY_LOWER_LIMIT/100f, Color.green);
+        // staminaMeter.AddMark(CharacterNeedsComponent.SPENT_UPPER_LIMIT/100f, Color.yellow);
+        // staminaMeter.AddMark(CharacterNeedsComponent.DRAINED_UPPER_LIMIT/100f, Color.red);
         
-        hopeMeter.ResetMarks();
-        hopeMeter.AddMark(CharacterNeedsComponent.HOPEFUL_LOWER_LIMIT/100f, Color.green);
-        hopeMeter.AddMark(CharacterNeedsComponent.DISCOURAGED_UPPER_LIMIT/100f, Color.yellow);
-        hopeMeter.AddMark(CharacterNeedsComponent.HOPELESS_UPPER_LIMIT/100f, Color.red);
+        // hopeMeter.ResetMarks();
+        // hopeMeter.AddMark(CharacterNeedsComponent.HOPEFUL_LOWER_LIMIT/100f, Color.green);
+        // hopeMeter.AddMark(CharacterNeedsComponent.DISCOURAGED_UPPER_LIMIT/100f, Color.yellow);
+        // hopeMeter.AddMark(CharacterNeedsComponent.HOPELESS_UPPER_LIMIT/100f, Color.red);
 
         _logsWindow.Initialize();
 
         InitializeRelationships();
         
         afflictions = new List<SpellData>();
-        triggerFlawPool = new List<string>();
-        triggerFlawLogFillers = new List<LogFiller>();
-        ConstructCombatModes();
+        _dictMoodSummary = new Dictionary<string, MoodSummaryEntry>();
     }
 
     #region Overrides
@@ -184,7 +184,7 @@ public class CharacterInfoUI : InfoUIBase {
         if (_previousCharacter != null && _previousCharacter.marker != null) {
             _previousCharacter.marker.UpdateNameplateElementsState();
         }
-        if (UIManager.Instance.IsShareIntelMenuOpen()) {
+        if (UIManager.Instance.IsConversationMenuOpen()) {
             backButton.interactable = false;
         }
         if (UIManager.Instance.IsObjectPickerOpen()) {
@@ -203,43 +203,9 @@ public class CharacterInfoUI : InfoUIBase {
         ResetAllScrollPositions();
         UpdateMoodSummary();
     }
-    protected override void OnExecutePlayerAction(PlayerAction action) {
-        base.OnExecutePlayerAction(action);
-        if(action.type == SPELL_TYPE.CHANGE_COMBAT_MODE) {
-            SetCombatModeUIPosition(action);
-        }
-    }
-    protected override void LoadActions(IPlayerActionTarget target) {
-        UtilityScripts.Utilities.DestroyChildren(actionsTransform);
-        activeActionItems.Clear();
-        for (int i = 0; i < target.actions.Count; i++) {
-            PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(target.actions[i]);
-            if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
-                //if (action.actionName == PlayerDB.Combat_Mode_Action) {
-                //    action.SetLabelText(action.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeCharacter.combatComponent.combatMode.ToString()));
-                //}
-                ActionItem actionItem = AddNewAction(action, target);
-                actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
-                actionItem.ForceUpdateCooldown();
-            }
-        }
-    }
     #endregion
 
     #region Utilities
-    // private void InitializeLogsMenu() {
-    //     logHistoryItems = new LogHistoryItem[CharacterManager.MAX_HISTORY_LOGS];
-    //     //populate history logs table
-    //     for (int i = 0; i < CharacterManager.MAX_HISTORY_LOGS; i++) {
-    //         GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
-    //         logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
-    //         newLogItem.transform.localScale = Vector3.one;
-    //         newLogItem.SetActive(true);
-    //     }
-    //     for (int i = 0; i < logHistoryItems.Length; i++) {
-    //         logHistoryItems[i].gameObject.SetActive(false);
-    //     }
-    // }
     private void ResetAllScrollPositions() {
         _logsWindow.ResetScrollPosition();
     }
@@ -267,7 +233,6 @@ public class CharacterInfoUI : InfoUIBase {
     public void UpdateBasicInfo() {
         nameLbl.text = $"<b>{_activeCharacter.firstNameWithColor}</b>";
         UpdateSubTextAndIcon();
-        // leaderIcon.SetActive(_activeCharacter.isFactionLeader || _activeCharacter.isSettlementRuler);
         UpdateThoughtBubble();
     }
     private void UpdateSubTextAndIcon() {
@@ -282,22 +247,16 @@ public class CharacterInfoUI : InfoUIBase {
     }
     public void UpdateThoughtBubble() {
         actionLbl.text = activeCharacter.visuals.GetThoughtBubble();
-        // if (log != null) {
-        //     plansLblLogItem.SetLog(log);
-        // }
     }
-    public void OnHoverLeaderIcon() {
-        string message = string.Empty;
-        if (activeCharacter.isSettlementRuler) {
-            message = $"<b>{activeCharacter.name}</b> is the Settlement Ruler of <b>{activeCharacter.ruledSettlement.name}</b>\n";
-        } 
-        if (activeCharacter.isFactionLeader) {
-            message += $"<b>{activeCharacter.name}</b> is the Faction Leader of <b>{activeCharacter.faction.name}</b>";
+    private void OnRightClickThoughtBubble(object obj) {
+        if (obj is IPlayerActionTarget playerActionTarget) {
+            if (playerActionTarget is Character character) {
+                if(character.isLycanthrope) {
+                    playerActionTarget = character.lycanData.activeForm;
+                }
+            }
+            UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
         }
-        UIManager.Instance.ShowSmallInfo(message);
-    }
-    public void OnHoverExitLeaderIcon() {
-        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 
@@ -308,19 +267,14 @@ public class CharacterInfoUI : InfoUIBase {
         speedLbl.text =  $"{_activeCharacter.combatComponent.attackSpeed / 1000f}s";
         raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(_activeCharacter.race)}";
         elementLbl.text = $"{_activeCharacter.combatComponent.elementalDamage.type.ToString()}";
-        //if(characterPortrait.character != null) {
-        //    characterPortrait.UpdateLvl();
-        //}
     }
     #endregion
 
     #region Location
     private void UpdateLocationInfo() {
-        factionLbl.text = _activeCharacter.faction != null ? $"<link=\"faction\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.faction.name)}</link>" : "Factionless";
+        factionLbl.text = _activeCharacter.faction != null ? $"<link=\"faction\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.faction.name, FactionManager.Instance.GetFactionNameColorHex())}</link>" : "Factionless";
         currentLocationLbl.text = _activeCharacter.currentRegion != null ? $"{_activeCharacter.currentRegion.name}" : "None";
         homeRegionLbl.text = _activeCharacter.homeSettlement != null ? $"<link=\"home\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.homeSettlement.name)}</link>" : "Homeless";
-        //currentLocationLbl.text = $"<link=\"currLocation\">{UtilityScripts.Utilities.ColorizeName(_activeCharacter.currentRegion.name)}</link>";
-        //homeRegionLbl.text = _activeCharacter.homeRegion != null ? $"<link=\"home\">{UtilityScripts.Utilities.ColorizeName(_activeCharacter.homeRegion.name)}</link>" : "Homeless";
         houseLbl.text = _activeCharacter.homeStructure != null ? $"<link=\"house\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.homeStructure.name)}</link>" : "Homeless";
     }
     private void OnClickFaction(object obj) {
@@ -329,18 +283,23 @@ public class CharacterInfoUI : InfoUIBase {
     private void OnClickCurrentLocation(object obj) {
         UIManager.Instance.ShowRegionInfo(activeCharacter.currentRegion);
     }
-    private void OnClickHomeVillage(object obj) {
+    private void OnLeftClickHomeVillage(object obj) {
         if (_activeCharacter.homeSettlement != null) {
-            if (_activeCharacter.homeSettlement.allStructures.Count > 0) {
-                UIManager.Instance.ShowStructureInfo(_activeCharacter.homeSettlement.allStructures.First());
-            }
+            UIManager.Instance.ShowSettlementInfo(_activeCharacter.homeSettlement);
         }
     }
-    private void OnClickHomeStructure(object obj) {
-        if (activeCharacter.homeStructure != null) {
-            activeCharacter.homeStructure.CenterOnStructure();
+    private void OnRightClickHomeVillage(object obj) {
+        if (_activeCharacter.homeSettlement != null) {
+            UIManager.Instance.ShowPlayerActionContextMenu(_activeCharacter.homeSettlement, Input.mousePosition, true);
         }
-        
+    }
+    private void OnLeftClickHomeStructure(object obj) {
+        activeCharacter.homeStructure?.CenterOnStructure();
+    }
+    private void OnRightClickHomeStructure(object obj) {
+        if (obj is IPlayerActionTarget playerActionTarget) {
+            UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
+        }
     }
     #endregion
 
@@ -351,6 +310,7 @@ public class CharacterInfoUI : InfoUIBase {
         }
         UpdateTraits();
         UpdateThoughtBubble();
+        UpdateStatInfo();
     }
     private void UpdateThoughtBubbleFromSignal(Character character) {
         if (isShowing && _activeCharacter == character) {
@@ -360,6 +320,7 @@ public class CharacterInfoUI : InfoUIBase {
     private void UpdateTraits() {
         string statusTraits = string.Empty;
         string normalTraits = string.Empty;
+        bool isNormalCharacter = _activeCharacter.isNormalCharacter;
 
         for (int i = 0; i < _activeCharacter.traitContainer.statuses.Count; i++) {
             Status currStatus = _activeCharacter.traitContainer.statuses[i];
@@ -367,8 +328,14 @@ public class CharacterInfoUI : InfoUIBase {
             // if (currStatus.isHidden) {
             //     continue; //skip
             // }
+            if (currStatus.IsNeeds() && !isNormalCharacter) {
+                continue; //skip
+            }
 #else
             if (currStatus.isHidden) {
+                continue; //skip
+            }
+            if (currStatus.IsNeeds() && !isNormalCharacter) {
                 continue; //skip
             }
 #endif
@@ -386,6 +353,9 @@ public class CharacterInfoUI : InfoUIBase {
         for (int i = 0; i < _activeCharacter.traitContainer.traits.Count; i++) {
             Trait currTrait = _activeCharacter.traitContainer.traits[i];
             if (currTrait.isHidden) {
+                continue; //skip
+            }
+            if (currTrait.IsNeeds() && !isNormalCharacter) {
                 continue; //skip
             }
             string color = UIManager.normalTextColor;
@@ -448,11 +418,29 @@ public class CharacterInfoUI : InfoUIBase {
             UpdateInventoryInfo();
         }
     }
+    private void OnLeftClickItem(object obj) {
+        if (obj is string text) {
+            int index = int.Parse(text);
+            TileObject tileObject = _activeCharacter.items.ElementAtOrDefault(index);
+            if (tileObject != null) {
+                UIManager.Instance.ShowTileObjectInfo(tileObject);    
+            }
+        }
+    }
+    private void OnRightClickItem(object obj) {
+        if (obj is string text) {
+            int index = int.Parse(text);
+            TileObject tileObject = _activeCharacter.items.ElementAtOrDefault(index);
+            if (tileObject != null) {
+                UIManager.Instance.ShowPlayerActionContextMenu(tileObject, Input.mousePosition, true);    
+            }
+        }
+    }
     private void UpdateInventoryInfo() {
         itemsLbl.text = string.Empty;
         for (int i = 0; i < _activeCharacter.items.Count; i++) {
             TileObject currInventoryItem = _activeCharacter.items[i];
-            itemsLbl.text = $"{itemsLbl.text}{currInventoryItem.name}";
+            itemsLbl.text = $"{itemsLbl.text}<link=\"{i.ToString()}\">{UtilityScripts.Utilities.ColorizeAndBoldName(currInventoryItem.name)}</link>";
             if (i < _activeCharacter.items.Count - 1) {
                 itemsLbl.text = $"{itemsLbl.text}, ";
             }
@@ -478,34 +466,14 @@ public class CharacterInfoUI : InfoUIBase {
     #endregion   
 
     #region Listeners
-    private void OnMenuOpened(InfoUIBase openedBase) {
-        //if (this.isShowing) {
-        //    if (openedMenu is PartyInfoUI) {
-        //        CheckIfMenuShouldBeHidden();
-        //    }
-        //}
-    }
-    private void OnMenuClosed(InfoUIBase closedBase) {
-        //if (this.isShowing) {
-        //    if (closedMenu is PartyInfoUI) {
-        //        CheckIfMenuShouldBeHidden();
-        //    }
-        //}
-    }
-    private void OnOpenShareIntelMenu() {
+    private void OnOpenConversationMenu() {
         backButton.interactable = false;
     }
-    //private void OnCloseShareIntelMenu() { }
-    //private void OnCharacterChangedAlterEgo(Character character) {
-    //    if (isShowing && activeCharacter == character) {
-    //        UpdateCharacterInfo();
-    //        UpdateTraits();
-    //    }
-    //}
     private void OnCharacterDied(Character character) {
         if (isShowing) {
             if (activeCharacter.id == character.id) {
-                InnerMapCameraMove.Instance.CenterCameraOn(null);    
+                InnerMapCameraMove.Instance.CenterCameraOn(null);
+                UpdateMoodSummary();
             }
             if (activeCharacter.relationshipContainer.HasRelationshipWith(character)) {
                 UpdateRelationships();
@@ -517,86 +485,12 @@ public class CharacterInfoUI : InfoUIBase {
     #region For Testing
     public void ShowCharacterTestingInfo() {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-        string summary = $"Home structure: {activeCharacter.homeStructure?.ToString() ?? "None"}" ?? "None";
-        summary = $"{summary} {$"Territory: {activeCharacter.territory?.name ?? "None"}"}";
-        summary = $"{summary} {$"Current structure: {activeCharacter.currentStructure}" ?? "None"}";
-        summary = $"{summary} {"POI State: " + activeCharacter.state.ToString()}";
-        summary = $"{summary} {"Do Not Get Hungry: " + activeCharacter.needsComponent.doNotGetHungry.ToString()}";
-        summary = $"{summary} {"Do Not Get Tired: " + activeCharacter.needsComponent.doNotGetTired.ToString()}";
-        summary = $"{summary} {"Do Not Get Bored: " + activeCharacter.needsComponent.doNotGetBored.ToString()}";
-        summary = $"{summary} {"Do Not Recover HP: " + activeCharacter.doNotRecoverHP.ToString()}";
-        summary = $"{summary} {"Can Move: " + activeCharacter.limiterComponent.canMove.ToString()}";
-        summary = $"{summary} {"Can Witness: " + activeCharacter.limiterComponent.canWitness.ToString()}";
-        summary = $"{summary} {"Can Be Attacked: " + activeCharacter.limiterComponent.canBeAttacked.ToString()}";
-        summary = $"{summary} {"Can Perform: " + activeCharacter.limiterComponent.canPerform.ToString()}";
-        summary = $"{summary} {"Is Sociable: " + activeCharacter.limiterComponent.isSociable.ToString()}";
-        summary = $"{summary} {"Is Running: " + activeCharacter.movementComponent.isRunning.ToString()}";
-        summary = $"{summary} {"POI State: " + activeCharacter.state.ToString()}";
-        summary = $"{summary} {"Personal Religion: " + activeCharacter.religionComponent.religion.ToString()}";
-        summary = $"{summary}{"\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick))}";
-        summary = $"{summary}{"\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick))}";
-        summary = $"{summary}{"\nHappiness Time: " + (activeCharacter.needsComponent.happinessSecondForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.happinessSecondForcedTick))} - Satisfied Schedule Today ({activeCharacter.needsComponent.hasForcedSecondHappiness.ToString()})";
-        summary = $"{summary}{"\nRemaining Sleep Ticks: " + activeCharacter.needsComponent.currentSleepTicks.ToString()}";
-        //summary = $"{summary}{("\nFood: " + activeCharacter.food.ToString())}";
-        summary = $"{summary}{"\nSexuality: " + activeCharacter.sexuality.ToString()}";
-        // summary = $"{summary}{("\nMood: " + activeCharacter.moodComponent.moodValue + "/100" + "(" + activeCharacter.moodComponent.moodState.ToString() + ")")}";
-        // summary = $"{summary}{("\nHP: " + activeCharacter.currentHP.ToString() + "/" + activeCharacter.maxHP.ToString())}";
-        summary = $"{summary}{"\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString(CultureInfo.InvariantCulture)}";
-        summary = $"{summary}{"\nAttack Speed: " + activeCharacter.combatComponent.attackSpeed.ToString()}";
-        summary = $"{summary}{"\nCombat Mode: " + activeCharacter.combatComponent.combatMode.ToString()}";
-        summary = $"{summary}{"\nElemental Type: " + activeCharacter.combatComponent.elementalDamage.name}";
-        summary = $"{summary}{"\nPrimary Job: " + activeCharacter.jobComponent.primaryJob.ToString()}";
-        summary = $"{summary}{"\nPriority Jobs: " + activeCharacter.jobComponent.GetPriorityJobs()}";
-        summary = $"{summary}{"\nSecondary Jobs: " + activeCharacter.jobComponent.GetSecondaryJobs()}";
-        summary = $"{summary}{"\nAble Jobs: " + activeCharacter.jobComponent.GetAbleJobs()}";
-        summary = $"{summary}{"\nAdditional Priority Jobs: " + activeCharacter.jobComponent.GetAdditionalPriorityJobs()}";
-        summary = $"{summary}{("\nParty: " + (activeCharacter.partyComponent.hasParty ? activeCharacter.partyComponent.currentParty.partyName : "None") + ", State: " + activeCharacter.partyComponent.currentParty?.partyState.ToString() + ", Members: " + activeCharacter.partyComponent.currentParty?.members.Count)}";
-        summary = $"{summary}{"\nPrimary Bed: " + (activeCharacter.tileObjectComponent.primaryBed != null ? activeCharacter.tileObjectComponent.primaryBed.name : "None")}";
-        summary = $"{summary}{"\nEnable Digging: " + activeCharacter.movementComponent.enableDigging.ToString()}";
-        summary = $"{summary}{"\nAvoid Settlements: " + activeCharacter.movementComponent.avoidSettlements.ToString()}";
-
-        if (activeCharacter.stateComponent.currentState != null) {
-            summary = $"{summary}\nCurrent State: {activeCharacter.stateComponent.currentState}";
-            summary = $"{summary}\n\tDuration in state: {activeCharacter.stateComponent.currentState.currentDuration.ToString()}/{activeCharacter.stateComponent.currentState.duration.ToString()}";
-        }
-        
-        summary += "\nBehaviour Components: ";
-        for (int i = 0; i < activeCharacter.behaviourComponent.currentBehaviourComponents.Count; i++) {
-            CharacterBehaviourComponent component = activeCharacter.behaviourComponent.currentBehaviourComponents[i];
-            summary += $"{component}, ";
-        }
-        
-        summary += "\nInterested Items: ";
-        for (int i = 0; i < activeCharacter.interestedItemNames.Count; i++) {
-            summary += $"{activeCharacter.interestedItemNames[i]}, ";
-        }
-        
-        summary += "\nPersonal Job Queue: ";
-        if (activeCharacter.jobQueue.jobsInQueue.Count > 0) {
-            for (int i = 0; i < activeCharacter.jobQueue.jobsInQueue.Count; i++) {
-                JobQueueItem poi = activeCharacter.jobQueue.jobsInQueue[i];
-                summary += $"{poi}, ";
-            }
-        } else {
-            summary += "None";
-        }
-        
-        // summary += "\nCharacters with opinion: ";
-        // if (activeCharacter.relationshipContainer.charactersWithOpinion.Count > 0) {
-        //     for (int i = 0; i < activeCharacter.relationshipContainer.charactersWithOpinion.Count; i++) {
-        //         Character characterWithOpinion = activeCharacter.relationshipContainer.charactersWithOpinion[i];
-        //         summary += $"{characterWithOpinion}, ";
-        //     }
-        // } else {
-        //     summary += "None";
-        // }
-        // summary += "\n" + activeCharacter.needsComponent.GetNeedsSummary();
-        UIManager.Instance.ShowSmallInfo(summary);
+        TestingUtilities.ShowCharacterTestingInfo(activeCharacter);
 #endif
     }
     public void HideCharacterTestingInfo() {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-        UIManager.Instance.HideSmallInfo();
+        TestingUtilities.HideCharacterTestingInfo();
 #endif
     }
     #endregion
@@ -683,45 +577,6 @@ public class CharacterInfoUI : InfoUIBase {
                                               $"<color={BaseRelationshipContainer.OpinionColor(opinionOfOther)}>({opinionText})</color></link>\n";
             }
         }
-        
-        // for (int i = 0; i < orderedRels.Keys.Count; i++) {
-        //     int targetID = orderedRels.Keys.ElementAt(i);
-        //     int actualIndex = keys.IndexOf(targetID);
-        //     IRelationshipData relationshipData = _activeCharacter.relationshipContainer.GetRelationshipDataWith(targetID);
-        //     string relationshipName = _activeCharacter.relationshipContainer.GetRelationshipNameWith(targetID);
-        //     Character target = CharacterManager.Instance.GetCharacterByID(targetID);
-        //
-        //     
-        //     //Hide relationship in UI if both consider each other an Acquaintance and no other special relationships (relative, lover, etc)
-        //     //Reference: https://trello.com/c/7uR4Iwya/1874-hide-relationship-in-ui-if-both-consider-each-other-an-acquaintance-and-no-other-special-relationships-relative-lover-etc
-        //     bool shouldShowRelationship = relationshipName != RelationshipManager.Acquaintance;
-        //     if (!shouldShowRelationship) {
-        //         //if active character considers target an acquaintance, then check if target also considers active character as an Acquaintance  
-        //         if (target != null) {
-        //             string targetRelationshipName = target.relationshipContainer.GetRelationshipNameWith(_activeCharacter.id);
-        //             shouldShowRelationship = targetRelationshipName != RelationshipManager.Acquaintance;
-        //         }    
-        //     }
-        //
-        //     if (!shouldShowRelationship) {
-        //         continue; //skip
-        //     }
-        //
-        //     relationshipTypesLbl.text += $"{relationshipName}\n";
-        //     
-        //     int opinionOfOther = 0;
-        //     string opinionText;
-        //     if (target != null && target.relationshipContainer.HasRelationshipWith(activeCharacter)) {
-        //         opinionOfOther = target.relationshipContainer.GetTotalOpinion(activeCharacter);
-        //         opinionText = GetOpinionText(opinionOfOther);
-        //     } else {
-        //         opinionText = "???";
-        //     }
-        //     
-        //     relationshipNamesLbl.text += $"<link=\"{actualIndex.ToString()}\">{UtilityScripts.Utilities.ColorizeAndBoldName(relationshipData.targetName)}</link>\n";
-        //     relationshipValuesLbl.text +=
-        //         $"<link=\"{actualIndex.ToString()}\"><color={BaseRelationshipContainer.OpinionColor(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}> {GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}</color> <color={BaseRelationshipContainer.OpinionColor(opinionOfOther)}>({opinionText})</color></link>\n";
-        // }
     }
     private bool DoesRelationshipMeetFilters(int id, IRelationshipData data) {
         Character target = CharacterManager.Instance.GetCharacterByID(id);
@@ -861,7 +716,7 @@ public class CharacterInfoUI : InfoUIBase {
         }
         return $"+{number.ToString()}";
     }
-    private void OnClickCharacter(object obj) {
+    private void OnLeftClickRelationship(object obj) {
         if (obj is string) {
             string text = (string)obj;
             int index = int.Parse(text);
@@ -870,6 +725,16 @@ public class CharacterInfoUI : InfoUIBase {
             if (target != null) {
                 UIManager.Instance.ShowCharacterInfo(target,true);    
             }
+        }
+    }
+    private void OnRightClickRelationship(object obj) {
+        if (obj is IPlayerActionTarget playerActionTarget) {
+            if (playerActionTarget is Character character) {
+                if(character.isLycanthrope) {
+                    playerActionTarget = character.lycanData.activeForm;
+                }
+            }
+            UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
         }
     }
     private void OnHoverCharacterNameInRelationships(int id) {
@@ -893,10 +758,10 @@ public class CharacterInfoUI : InfoUIBase {
     #region Afflict
     public void ShowAfflictUI() {
         afflictions.Clear();
-        List<SPELL_TYPE> afflictionTypes = PlayerManager.Instance.player.playerSkillComponent.afflictions;
+        List<PLAYER_SKILL_TYPE> afflictionTypes = PlayerManager.Instance.player.playerSkillComponent.afflictions;
         for (int i = 0; i < afflictionTypes.Count; i++) {
-            SPELL_TYPE spellType = afflictionTypes[i];
-            SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(spellType);
+            PLAYER_SKILL_TYPE spellType = afflictionTypes[i];
+            SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType);
             afflictions.Add(spellData);
         }
         UIManager.Instance.ShowClickableObjectPicker(afflictions, ActivateAfflictionConfirmation, null, CanActivateAffliction,
@@ -908,22 +773,18 @@ public class CharacterInfoUI : InfoUIBase {
     }
     private void ActivateAfflictionConfirmation(object o) {
         SpellData affliction = (SpellData)o;
-        SPELL_TYPE afflictionType = affliction.type;
+        PLAYER_SKILL_TYPE afflictionType = affliction.type;
         string afflictionName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(afflictionType.ToString());
         UIManager.Instance.ShowYesNoConfirmation("Affliction Confirmation",
             "Are you sure you want to afflict " + afflictionName + "?", () => ActivateAffliction(afflictionType),
             layer: 26, showCover: true, pauseAndResume: true);
     }
-    private void ActivateAffliction(SPELL_TYPE afflictionType) {
+    private void ActivateAffliction(PLAYER_SKILL_TYPE afflictionType) {
         UIManager.Instance.HideObjectPicker();
         PlayerSkillManager.Instance.GetAfflictionData(afflictionType).ActivateAbility(activeCharacter);
-        PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.AFFLICT).OnExecuteSpellActionAffliction();
+        PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.AFFLICT).OnExecutePlayerSkill();
     }
     private bool CanActivateAffliction(SpellData spellData) {
-        // if (WorldConfigManager.Instance.isTutorialWorld) {
-        //     return WorldConfigManager.Instance.availableSpellsInTutorial.Contains(spellData.type) 
-        //            && spellData.CanPerformAbilityTowards(activeCharacter);
-        // }
         return spellData.CanPerformAbilityTowards(activeCharacter);
     }
     private void OnHoverAffliction(SpellData spellData) {
@@ -934,132 +795,7 @@ public class CharacterInfoUI : InfoUIBase {
         PlayerUI.Instance.OnHoverOutSpell(null);
     }
     #endregion
-
-    #region Trigger Flaw
-    public void ShowTriggerFlawUI() {
-        triggerFlawPool.Clear();
-        for (int i = 0; i < activeCharacter.traitContainer.traits.Count; i++) {
-            Trait trait = activeCharacter.traitContainer.traits[i];
-            if(trait.type == TRAIT_TYPE.FLAW) {
-                triggerFlawPool.Add(trait.name);
-            }
-        }
-        UIManager.Instance.ShowClickableObjectPicker(triggerFlawPool, ActivateTriggerFlawConfirmation, null, CanActivateTriggerFlaw,
-            $"Select Flaw ({PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()})", 
-            OnHoverEnterFlaw, OnHoverExitFlaw, showCover: true, layer: 25, shouldShowConfirmationWindowOnPick: true, asButton: true, identifier: "Trigger Flaw");
-    }
-    private void ActivateTriggerFlawConfirmation(object o) {
-        string traitName = (string) o;
-        Trait trait = activeCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
-        string question = "Are you sure you want to trigger " + traitName + "?";
-        string effect = $"<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
-        string manaCost = $"{PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
-
-        UIManager.Instance.ShowTriggerFlawConfirmation(question, effect, manaCost, () => ActivateTriggerFlaw(trait), layer: 26, showCover: true, pauseAndResume: true);
-    }
-    private void ActivateTriggerFlaw(Trait trait) {
-        UIManager.Instance.HideObjectPicker();
-        string result = trait.TriggerFlaw(activeCharacter);
-        //When flaw is triggered, leave from party
-        if (result == "flaw_effect") {
-            if (activeCharacter.partyComponent.hasParty) {
-                activeCharacter.partyComponent.currentParty.RemoveMemberThatJoinedQuest(activeCharacter);
-            }
-            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).OnExecuteSpellActionAffliction();
-        } else {
-            string log = "Failed to trigger flaw. Some requirements might be unmet.";
-            if (LocalizationManager.Instance.HasLocalizedValue("Trigger Flaw", trait.name, result)) {
-                triggerFlawLogFillers.Clear();
-                triggerFlawLogFillers.Add(new LogFiller(activeCharacter, activeCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
-
-                string reason = LocalizationManager.Instance.GetLocalizedValue("Trigger Flaw", trait.name, result);
-                log = UtilityScripts.Utilities.StringReplacer(reason, triggerFlawLogFillers);
-            }
-            PlayerUI.Instance.ShowGeneralConfirmation("Trigger Flaw Failed", log);
-        }
-        Messenger.Broadcast(SpellSignals.FLAW_TRIGGERED_BY_PLAYER, trait);
-    }
-    private bool CanActivateTriggerFlaw(string traitName) {
-        Trait trait = activeCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
-        if (trait != null) {
-            return trait.CanFlawBeTriggered(activeCharacter);
-        }
-        return false;
-    }
-    private void OnHoverEnterFlaw(string traitName) {
-        Trait trait = activeCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
-        PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(
-            traitName, trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect"), 
-            manaCost: PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost
-        );
-    }
-    private void OnHoverExitFlaw(string traitName) {
-        PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
-    }
-    //    private void OnClickTrait(object obj) {
-//#if UNITY_EDITOR
-//        if (obj is string text) {
-//            int index = int.Parse(text);
-//            Trait trait = activeCharacter.traitContainer.traits[index];
-//            string traitDescription = trait.description;
-//            if (trait.canBeTriggered) {
-//                traitDescription +=
-//                    $"\n{trait.GetRequirementDescription(activeCharacter)}\n\n<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
-//            }
-
-//            StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
-//            UIManager.Instance.ShowYesNoConfirmation(trait.name, traitDescription,
-//                onClickYesAction: () => OnClickTriggerFlaw(trait),
-//                onClickNoAction: () => OnClickRemoveTrait(trait),
-//                showCover: true, layer: 25,
-//                yesBtnText: $"Trigger ({EditableValuesManager.Instance.triggerFlawManaCost.ToString()} Mana)",
-//                noBtnText: "Remove Trait",
-//                yesBtnInteractable: PlayerManager.Instance.player.playerSkillComponent.canTriggerFlaw && trait.canBeTriggered && trait.CanFlawBeTriggered(activeCharacter) && TraitManager.Instance.CanStillTriggerFlaws(activeCharacter),
-//                noBtnInteractable: PlayerManager.Instance.player.playerSkillComponent.canRemoveTraits,
-//                pauseAndResume: true,
-//                //noBtnActive: false,
-//                //yesBtnActive: trait.canBeTriggered,
-//                yesBtnInactiveHoverAction: () => ShowCannotTriggerFlawReason(trait),
-//                yesBtnInactiveHoverExitAction: UIManager.Instance.HideSmallInfo
-//            );
-//            normalTraitsEventLbl.ResetHighlightValues();
-//            if (trait.type == TRAIT_TYPE.FLAW) {
-//                Messenger.Broadcast(Signals.FLAW_CLICKED, trait);
-//            }
-//        }
-//#endif
-//    }
-//    private IEnumerator HoverOutTraitAfterClick() {
-//        yield return new WaitForEndOfFrame();
-//        OnHoverOutTrait();
-//    }
-//    private void ShowCannotTriggerFlawReason(Trait trait) {
-//        string reason = $"You cannot trigger {activeCharacter.name}'s flaw because: ";
-//        List<string> reasons = trait.GetCannotTriggerFlawReasons(activeCharacter);
-//        for (int i = 0; i < reasons.Count; i++) {
-//            reason = $"{reason}\n\t- {reasons[i]}";
-//        }
-//        UIManager.Instance.ShowSmallInfo(reason);
-//    }
-//    private void OnClickTriggerFlaw(Trait trait) {
-//        string logKey = trait.TriggerFlaw(activeCharacter);
-//        int manaCost = EditableValuesManager.Instance.triggerFlawManaCost;
-//        PlayerManager.Instance.player.AdjustMana(-manaCost);
-//        if (logKey != "flaw_effect") {
-//            UIManager.Instance.ShowYesNoConfirmation(
-//                trait.name,
-//                trait.GetTriggerFlawEffectDescription(activeCharacter, logKey),
-//                showCover: true,
-//                layer: 25,
-//                yesBtnText: "OK",
-//                pauseAndResume: true,
-//                noBtnActive: false
-//            );
-//        }
-//        Messenger.Broadcast(Signals.FLAW_TRIGGERED_BY_PLAYER);
-//    }
-    #endregion
-
+    
     #region Mood
     private void OnMoodModified(MoodComponent moodComponent) {
         if (_activeCharacter != null && _activeCharacter.moodComponent == moodComponent) {
@@ -1071,47 +807,89 @@ public class CharacterInfoUI : InfoUIBase {
         moodMeter.SetFillAmount(_activeCharacter.moodComponent.moodValue/100f);
     }
     private void UpdateMoodSummary() {
-        moodSummary.text = string.Empty;
-        string summary = string.Empty;
-        int index = 0;
-        foreach (KeyValuePair<string, int> pair in _activeCharacter.moodComponent.moodModificationsSummary) {
-            string color = "green";
-            string text = "+" + pair.Value;
-            if (pair.Value < 0) {
-                color = "red";
-                text = pair.Value.ToString();
-            }
-            summary += $"<color={color}>{text}</color> <link=\"{index}\">{pair.Key}</link>\n";
-            index++;
+        UtilityScripts.Utilities.DestroyChildren(scrollViewMoodSummary.content);
+        if (_activeCharacter.isDead) {
+            //do not show mood thoughts of dead character
+            return;
         }
-        moodSummary.text = summary;
+        _dictMoodSummary.Clear();
+        foreach (var modification in _activeCharacter.moodComponent.allMoodModifications) {
+            MoodModification moodModification = modification.Value;
+            for (int i = 0; i < moodModification.flavorTexts.Count; i++) {
+                Log flavorLog = moodModification.flavorTexts[i];
+                int modificationAmount = moodModification.modifications[i];
+                GameDate expiryDate = moodModification.expiryDates.ElementAtOrDefault(moodModification.expiryDates.Count - 1 - i);
+                MoodSummaryEntry moodSummaryEntry;
+                if (!_dictMoodSummary.ContainsKey(flavorLog.logText)) {
+                    moodSummaryEntry = new MoodSummaryEntry() { amount = modificationAmount, expiryDate = expiryDate };
+                    _dictMoodSummary.Add(flavorLog.logText, moodSummaryEntry);
+                } else {
+                    moodSummaryEntry = _dictMoodSummary[flavorLog.logText];
+                    moodSummaryEntry.amount += modificationAmount;
+                    if (expiryDate.IsAfter(moodSummaryEntry.expiryDate)) {
+                        moodSummaryEntry.expiryDate = expiryDate;    
+                    }
+                    _dictMoodSummary[flavorLog.logText] = moodSummaryEntry;
+                }
+            }
+        }
+        _dictMoodSummary = _dictMoodSummary.OrderByDescending(x => x.Value.amount).ToDictionary(k => k.Key, v => v.Value);
+        foreach (var mood in _dictMoodSummary) {
+            GameObject moodItemGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefabMoodThought.name, Vector3.zero, Quaternion.identity, scrollViewMoodSummary.content);
+            MoodThoughtUIItem moodItem = moodItemGO.GetComponent<MoodThoughtUIItem>();
+            moodItem.SetItemDetails(mood.Key, mood.Value.amount, mood.Value.expiryDate, OnHoverOverMoodEffect, OnHoverOutMoodEffect);
+        }
+        // moodSummary.text = string.Empty;
+        // string summary = string.Empty;
+        // int index = 0;
+        // foreach (KeyValuePair<string, int> pair in _activeCharacter.moodComponent.moodModificationsSummary) {
+        //     string color = "green";
+        //     string text = "+" + pair.Value;
+        //     if (pair.Value < 0) {
+        //         color = "red";
+        //         text = pair.Value.ToString();
+        //     }
+        //     summary += $"<color={color}>{text}</color> <link=\"{index}\">{pair.Key}</link>\n";
+        //     index++;
+        // }
+        // moodSummary.text = summary;
+    }
+    private void OnHoverOverMoodEffect(GameDate expiryDate) {
+        string expiryText;
+        if (expiryDate.hasValue) {
+            GameDate today = GameManager.Instance.Today();
+            expiryText = $"Lasts for: {today.GetTimeDifferenceString(expiryDate)}";
+        } else {
+            expiryText = "Lasts until: Linked to Needs";
+        }
+        UIManager.Instance.ShowSmallInfo(expiryText, autoReplaceText: false);
     }
     public void OnHoverMoodEffect(object obj) {
         if (obj is string text) {
             int index = int.Parse(text);
-            if (index < _activeCharacter.moodComponent.allMoodModifications.Count) {
-                var kvp = _activeCharacter.moodComponent.allMoodModifications.ElementAt(index);
-                MoodModification modifications = kvp.Value;
-                int total = _activeCharacter.moodComponent.moodModificationsSummary[kvp.Key];
-                string modificationSign = string.Empty;
-                if (total > 0) {
-                    modificationSign = "+";
-                }
-                string color = "green";
-                if (total < 0) {
-                    color = "red";
-                }
-                GameDate expiryDate = modifications.expiryDates.Last();
-                string expiryText;
-                if (expiryDate.hasValue) {
-                    GameDate today = GameManager.Instance.Today();
-                    expiryText = $"Lasts for: {today.GetTimeDifferenceString(expiryDate)}";
-                } else {
-                    expiryText = "Lasts until: Linked to Needs";
-                }
-                string summary = $"<color={color}>{modificationSign}{total.ToString()}</color> {expiryText}";
-                UIManager.Instance.ShowSmallInfo(summary, autoReplaceText: false);    
-            }
+            // if (index < _activeCharacter.moodComponent.allMoodModifications.Count) {
+            //     var kvp = _activeCharacter.moodComponent.allMoodModifications.ElementAt(index);
+            //     MoodModification modifications = kvp.Value;
+            //     int total = _activeCharacter.moodComponent.moodModificationsSummary[kvp.Key];
+            //     string modificationSign = string.Empty;
+            //     if (total > 0) {
+            //         modificationSign = "+";
+            //     }
+            //     string color = "green";
+            //     if (total < 0) {
+            //         color = "red";
+            //     }
+            //     GameDate expiryDate = modifications.expiryDates.Last();
+            //     string expiryText;
+            //     if (expiryDate.hasValue) {
+            //         GameDate today = GameManager.Instance.Today();
+            //         expiryText = $"Lasts for: {today.GetTimeDifferenceString(expiryDate)}";
+            //     } else {
+            //         expiryText = "Lasts until: Linked to Needs";
+            //     }
+            //     string summary = $"<color={color}>{modificationSign}{total.ToString()}</color> {expiryText}";
+            //     UIManager.Instance.ShowSmallInfo(summary, autoReplaceText: false);    
+            // }
         }
     }
     public void OnHoverOutMoodEffect() {
@@ -1120,8 +898,6 @@ public class CharacterInfoUI : InfoUIBase {
     public void ShowMoodTooltip() {
         string summary = $"Represents the Villagers' overall state of mind. Lower a Villagers' Mood to make them less effective and more volatile.\n\n" +
                          $"{_activeCharacter.moodComponent.moodValue.ToString()}/100\nBrainwash Success Rate: {DefilerRoom.GetBrainwashSuccessRate(_activeCharacter).ToString("N0")}%";
-        // summary +=
-        //     $"\nChance to trigger Major Mental Break {_activeCharacter.moodComponent.currentCriticalMoodEffectChance.ToString(CultureInfo.InvariantCulture)}";
         UIManager.Instance.ShowSmallInfo(summary, $"MOOD: {_activeCharacter.moodComponent.moodStateName}");
     }
     public void HideSmallInfo() {
@@ -1134,8 +910,8 @@ public class CharacterInfoUI : InfoUIBase {
         energyMeter.SetFillAmount(_activeCharacter.needsComponent.tiredness/CharacterNeedsComponent.TIREDNESS_DEFAULT);
         fullnessMeter.SetFillAmount(_activeCharacter.needsComponent.fullness/CharacterNeedsComponent.FULLNESS_DEFAULT);
         happinessMeter.SetFillAmount(_activeCharacter.needsComponent.happiness/CharacterNeedsComponent.HAPPINESS_DEFAULT);
-        hopeMeter.SetFillAmount(_activeCharacter.needsComponent.hope/CharacterNeedsComponent.HOPE_DEFAULT);
-        staminaMeter.SetFillAmount(_activeCharacter.needsComponent.stamina/CharacterNeedsComponent.STAMINA_DEFAULT);
+        // hopeMeter.SetFillAmount(_activeCharacter.needsComponent.hope/CharacterNeedsComponent.HOPE_DEFAULT);
+        // staminaMeter.SetFillAmount(_activeCharacter.needsComponent.stamina/CharacterNeedsComponent.STAMINA_DEFAULT);
     }
     public void ShowEnergyTooltip() {
         string summary = $"Villagers will become Unconscious once this Meter is empty. This is replenished through rest.\n\n" +
@@ -1164,63 +940,15 @@ public class CharacterInfoUI : InfoUIBase {
     }
     #endregion
 
-    #region Combat Modes
-    private void ConstructCombatModes() {
-        combatModes = new List<string>();
-        for (int i = 0; i < CharacterManager.Instance.combatModes.Length; i++) {
-            combatModes.Add(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(CharacterManager.Instance.combatModes[i].ToString()));
-        }
-    }
-    public void ShowSwitchCombatModeUI() {
-        UIManager.Instance.customDropdownList.ShowDropdown(combatModes, OnClickChooseCombatMode, CanChoostCombatMode);
-    }
-    private void SetCombatModeUIPosition(PlayerAction action) {
-        ActionItem actionItem = GetActiveActionItem(action);
-        if(actionItem != null) {
-            Vector3 actionWorldPos = actionItem.transform.localPosition;
-            UIManager.Instance.customDropdownList.SetPosition(new Vector3(actionWorldPos.x, actionWorldPos.y + 10f, actionWorldPos.z));
-        }
-    }
-    private bool CanChoostCombatMode(string mode) {
-        if(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeCharacter.combatComponent.combatMode.ToString()) == mode) {
-            return false;
-        }
-        return true;
-    }
-    private void OnClickChooseCombatMode(string mode) {
-        COMBAT_MODE combatMode = (COMBAT_MODE) System.Enum.Parse(typeof(COMBAT_MODE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(mode));
-        UIManager.Instance.characterInfoUI.activeCharacter.combatComponent.SetCombatMode(combatMode);
-        Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, activeCharacter as IPlayerActionTarget);
-        UIManager.Instance.customDropdownList.Close();
-        PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.CHANGE_COMBAT_MODE).OnExecuteSpellActionAffliction();
-    }
-    #endregion
-
     #region Tabs
-    public void OnToggleInfo(bool isOn) {
-        // if (isOn) {
-        //     Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Info");    
-        // }
-    }
-    public void OnToggleMood(bool isOn) {
-        // if (isOn) {
-        //     Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Mood");    
-        // }
-    }
-    public void OnToggleRelations(bool isOn) {
-        // if (isOn) {
-        //     Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Relations");    
-        // }
-    }
-    public void OnToggleLogs(bool isOn) {
-        // if (isOn) {
-        //     Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Logs");    
-        // }
-    }
+    public void OnToggleInfo(bool isOn) { }
+    public void OnToggleMood(bool isOn) { }
+    public void OnToggleRelations(bool isOn) { }
+    public void OnToggleLogs(bool isOn) { }
     #endregion
 
     #region Party
-    public void UpdatePartyInfo() {
+    private void UpdatePartyInfo() {
         string text = "None";
         if (activeCharacter.partyComponent.hasParty) {
             text = $"<link=\"party\">{UtilityScripts.Utilities.ColorizeAndBoldName(activeCharacter.partyComponent.currentParty.partyName)}</link>";
@@ -1252,4 +980,9 @@ public class CharacterInfoUI : InfoUIBase {
         UIManager.Instance.HideSmallInfo();
     }
     #endregion
+    
+    private struct MoodSummaryEntry {
+        public int amount;
+        public GameDate expiryDate;
+    }
 }

@@ -14,6 +14,9 @@ public class BoobyTrap : GoapAction {
     }
 
     #region Overrides
+    public override bool ShouldActionBeAnIntel(ActualGoapNode node) {
+        return true;
+    }
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET));
     }
@@ -28,32 +31,30 @@ public class BoobyTrap : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, target, witness, node, status);
-
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
         BoobyTrapped boobyTrapped = target.traitContainer.GetTraitOrStatus<BoobyTrapped>("Booby Trapped");
         boobyTrapped?.AddAwareCharacter(witness);
-        
+
         if (target is TileObject tileObject) {
             if (tileObject.IsOwnedBy(witness)) {
                 if (witness.traitContainer.HasTrait("Coward")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status, node);
+                    reactions.Add(EMOTION.Fear);
                 } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
+                    reactions.Add(EMOTION.Anger);
+                    reactions.Add(EMOTION.Threatened);
                 }
-                if(witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
+                if (witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
                     || witness.relationshipContainer.IsFriendsWith(actor)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status, node);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
+                    reactions.Add(EMOTION.Betrayal);
+                    reactions.Add(EMOTION.Shock);
                 }
             } else if (actor.traitContainer.HasTrait("Cultist") && witness.traitContainer.HasTrait("Cultist")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
-                if(RelationshipManager.IsSexuallyCompatibleOneSided(witness, actor)) {
+                reactions.Add(EMOTION.Approval);
+                if (RelationshipManager.IsSexuallyCompatibleOneSided(witness, actor)) {
                     int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(witness, actor);
-                    if(UtilityScripts.GameUtilities.RollChance(compatibility * 10)) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status, node);
+                    if (UtilityScripts.GameUtilities.RollChance(compatibility * 10)) {
+                        reactions.Add(EMOTION.Arousal);
                     }
                 }
             } else if (tileObject.characterOwner != null) {
@@ -61,38 +62,35 @@ public class BoobyTrap : GoapAction {
                 if (witness.relationshipContainer.HasRelationshipWith(owner, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
                     || witness.relationshipContainer.IsFriendsWith(owner)) {
                     if (witness.traitContainer.HasTrait("Coward")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status, node);
+                        reactions.Add(EMOTION.Fear);
                     } else {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                        reactions.Add(EMOTION.Shock);
+                        reactions.Add(EMOTION.Disapproval);
 
                         if (witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
                             || witness.relationshipContainer.IsFriendsWith(actor)) {
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status, node);
+                            reactions.Add(EMOTION.Disappointment);
                         }
                     }
                 } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                    reactions.Add(EMOTION.Disapproval);
 
                     if (witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
                         || witness.relationshipContainer.IsFriendsWith(actor)) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status, node);
+                        reactions.Add(EMOTION.Shock);
+                        reactions.Add(EMOTION.Disappointment);
                     }
                 }
             } else {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                reactions.Add(EMOTION.Disapproval);
 
                 if (witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
                     || witness.relationshipContainer.IsFriendsWith(actor)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status, node);
+                    reactions.Add(EMOTION.Shock);
+                    reactions.Add(EMOTION.Disappointment);
                 }
             }
         }
-        //CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
-        //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Misdemeanor);
-        return response;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;

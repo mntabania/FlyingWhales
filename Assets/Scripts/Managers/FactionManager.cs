@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Factions.Faction_Types;
+using Factions.Faction_Succession;
 using Inner_Maps;
 using UnityEngine.UI;
 using UtilityScripts;
@@ -30,7 +31,14 @@ public class FactionManager : BaseMonoBehaviour {
     [SerializeField] private Sprite cultFactionEmblem;
     [SerializeField] private Sprite ratmenFactionEmblem;
 
+    [Space(10)]
+    [Header("Character Name Colors")]
+    public Color factionNameColor;
+    private string _factionNameColorHex;
+
     private List<Sprite> _usedEmblems = new List<Sprite>();
+
+    private Dictionary<FACTION_SUCCESSION_TYPE, FactionSuccession> _factionSuccessions = new Dictionary<FACTION_SUCCESSION_TYPE, FactionSuccession>();
 
     public readonly string[] exclusiveIdeologyTraitRequirements = new string[] { "Worker", "Combatant", "Royalty" };
     public readonly FACTION_IDEOLOGY[][] categorizedFactionIdeologies = new FACTION_IDEOLOGY[][] { 
@@ -54,11 +62,17 @@ public class FactionManager : BaseMonoBehaviour {
     private void Awake() {
         Instance = this;
     }
+    private void Start() {
+        _factionNameColorHex = ColorUtility.ToHtmlStringRGB(factionNameColor);
+        ConstructFactionSuccessionTypes();
+    }
     protected override void OnDestroy() {
         neutralFaction = null;
         vagrantFaction = null;
         disguisedFaction = null;
         _undeadFaction = null;
+        _factionSuccessions?.Clear();
+        _factionSuccessions = null;
         base.OnDestroy();
         Instance = null;
     }
@@ -289,6 +303,9 @@ public class FactionManager : BaseMonoBehaviour {
     }
     public List<Faction> GetMajorFactionWithRace(RACE race) {
         return DatabaseManager.Instance.factionDatabase.GetMajorFactionWithRace(race);
+    }
+    public string GetFactionNameColorHex() {
+        return _factionNameColorHex;
     }
     #endregion
 
@@ -706,7 +723,38 @@ public class FactionManager : BaseMonoBehaviour {
         }
     }
     #endregion
-    
+
+    #region Faction Succession
+    private void ConstructFactionSuccessionTypes() {
+        FACTION_SUCCESSION_TYPE[] types = CollectionUtilities.GetEnumValues<FACTION_SUCCESSION_TYPE>();
+        for (int i = 0; i < types.Length; i++) {
+            FACTION_SUCCESSION_TYPE type = types[i];
+            if(type == FACTION_SUCCESSION_TYPE.None) {
+                _factionSuccessions.Add(type, new FactionSuccession(type));
+            } else {
+                _factionSuccessions.Add(type, CreateFactionSuccession(type));
+            }
+        }
+    }
+    public FactionSuccession CreateFactionSuccession(FACTION_SUCCESSION_TYPE successionType) {
+        string enumStr = successionType.ToString();
+        var typeName = $"Factions.Faction_Succession.{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(enumStr)}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        Type type = Type.GetType(typeName);
+        if (type != null) {
+            FactionSuccession data = Activator.CreateInstance(type) as FactionSuccession;
+            return data;
+        } else {
+            throw new Exception($"{typeName} has no data!");
+        }
+    }
+    public FactionSuccession GetFactionSuccession (FACTION_SUCCESSION_TYPE type) {
+        if (_factionSuccessions.ContainsKey(type)) {
+            return _factionSuccessions[type];
+        }
+        return null;
+    }
+    #endregion
+
     public int GetActiveVillagerFactionCount() {
         int count = 0;
         for (int i = 0; i < DatabaseManager.Instance.factionDatabase.allFactionsList.Count; i++) {

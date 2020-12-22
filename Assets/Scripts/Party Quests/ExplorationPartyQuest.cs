@@ -75,6 +75,7 @@ public class ExplorationPartyQuest : PartyQuest {
     public override void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {
         base.OnAssignedPartySwitchedState(fromState, toState);
         if(toState == PARTY_STATE.Working) {
+            SetIsSuccessful(true);
             StartExplorationTimer();
         }
     }

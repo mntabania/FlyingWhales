@@ -21,7 +21,8 @@ public class LogHistoryItem : LogItem {
         logLbl.text = log.logText;
         // log.fillers.Count > 0 ? UtilityScripts.Utilities.LogReplacer(log) : LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
         logsTagButton.SetTags(log.tags);
-        eventLabel.SetOnClickAction(OnClickObjectInLog);
+        eventLabel.SetOnLeftClickAction(OnLeftClickObjectInLog);
+        eventLabel.SetOnRightClickAction(OnRightClickObjectInLog);
         EnvelopContentExecute();
     }
     private void EnvelopContentExecute() {
@@ -31,12 +32,22 @@ public class LogHistoryItem : LogItem {
         _hoverPosition = hoverPosition;
     }
 
-    private void OnClickObjectInLog(object obj) {
+    private void OnLeftClickObjectInLog(object obj) {
         IPointOfInterest pointOfInterest = UIManager.Instance.GetCurrentlySelectedPOI();
         if (pointOfInterest != null) {
             Messenger.Broadcast(UISignals.LOG_HISTORY_OBJECT_CLICKED, obj, logLbl.text, pointOfInterest);    
         }
         UIManager.Instance.OpenObjectUI(obj);
+    }
+    private void OnRightClickObjectInLog(object obj) {
+        if (obj is IPlayerActionTarget playerActionTarget) {
+            if (playerActionTarget is Character character) {
+                if(character.isLycanthrope) {
+                    playerActionTarget = character.lycanData.activeForm;
+                }
+            }
+            UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
+        }
     }
     public void OnHoverOverLog(object obj) {
         if (obj is Character character && _hoverPosition != null) {

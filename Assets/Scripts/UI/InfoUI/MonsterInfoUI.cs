@@ -9,6 +9,7 @@ using TMPro;
 using UnityEngine.UI;
 using Traits;
 using UnityEngine.Serialization;
+using UtilityScripts;
 
 public class MonsterInfoUI : InfoUIBase {
     
@@ -18,6 +19,7 @@ public class MonsterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private TextMeshProUGUI subLbl;
     [SerializeField] private TextMeshProUGUI plansLbl;
+    [SerializeField] private EventLabel plansEventLabel;
     [SerializeField] private LogItem plansLblLogItem;
     [SerializeField] private Image raceIcon;
 
@@ -44,11 +46,11 @@ public class MonsterInfoUI : InfoUIBase {
     [Space(10)]
     [Header("Items")]
     [SerializeField] private TextMeshProUGUI itemsLbl;
+    [SerializeField] private EventLabel itemsEventLbl;
     
     private Character _activeMonster;
 
     public Character activeMonster => _activeMonster;
-    private List<string> combatModes;
 
     internal override void Initialize() {
         base.Initialize();
@@ -59,7 +61,7 @@ public class MonsterInfoUI : InfoUIBase {
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_STACKED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_UNSTACKED, UpdateTraitsFromSignal);
-        Messenger.AddListener(UISignals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
+        Messenger.AddListener(UISignals.ON_OPEN_CONVERSATION_MENU, OnOpenConversationMenu);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<TileObject, Character>(CharacterSignals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
@@ -69,8 +71,23 @@ public class MonsterInfoUI : InfoUIBase {
         statusTraitsEventLbl.SetShouldColorHighlight(false);
         normalTraitsEventLbl.SetShouldColorHighlight(false);
         
+        plansEventLabel.SetOnRightClickAction(OnRightClickThoughtBubble);
+        
+        itemsEventLbl.SetOnLeftClickAction(OnLeftClickItem);
+        itemsEventLbl.SetOnRightClickAction(OnRightClickItem);
+        
         logsWindow.Initialize();
-        ConstructCombatModes();
+    }
+    
+    private void OnRightClickThoughtBubble(object obj) {
+        if (obj is IPlayerActionTarget playerActionTarget) {
+            if (playerActionTarget is Character character) {
+                if(character.isLycanthrope) {
+                    playerActionTarget = character.lycanData.activeForm;
+                }
+            }
+            UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
+        }
     }
 
     #region Overrides
@@ -94,7 +111,7 @@ public class MonsterInfoUI : InfoUIBase {
         if (previousMonster != null && previousMonster.marker != null) {
             previousMonster.marker.UpdateNameplateElementsState();
         }
-        if (UIManager.Instance.IsShareIntelMenuOpen()) {
+        if (UIManager.Instance.IsConversationMenuOpen()) {
             backButton.interactable = false;
         }
         if (UIManager.Instance.IsObjectPickerOpen()) {
@@ -111,27 +128,21 @@ public class MonsterInfoUI : InfoUIBase {
         UpdateAllHistoryInfo();
         ResetAllScrollPositions();
     }
-    protected override void OnExecutePlayerAction(PlayerAction action) {
-        base.OnExecutePlayerAction(action);
-        if(action.type == SPELL_TYPE.CHANGE_COMBAT_MODE) {
-            SetCombatModeUIPosition(action);
-        }
-    }
-    protected override void LoadActions(IPlayerActionTarget target) {
-        UtilityScripts.Utilities.DestroyChildren(actionsTransform);
-        activeActionItems.Clear();
-        for (int i = 0; i < target.actions.Count; i++) {
-            PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(target.actions[i]);
-            if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
-                //if (action.actionName == PlayerDB.Combat_Mode_Action) {
-                //    action.SetLabelText(action.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeMonster.combatComponent.combatMode.ToString()));
-                //}
-                ActionItem actionItem = AddNewAction(action, target);
-                actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
-                actionItem.ForceUpdateCooldown();
-            }
-        }
-    }
+    // protected override void LoadActions(IPlayerActionTarget target) {
+    //     UtilityScripts.Utilities.DestroyChildren(actionsTransform);
+    //     activeActionItems.Clear();
+    //     for (int i = 0; i < target.actions.Count; i++) {
+    //         PlayerAction action = PlayerSkillManager.Instance.GetPlayerActionData(target.actions[i]);
+    //         if (action.IsValid(target) && PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(action.type)) {
+    //             //if (action.actionName == PlayerDB.Combat_Mode_Action) {
+    //             //    action.SetLabelText(action.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeMonster.combatComponent.combatMode.ToString()));
+    //             //}
+    //             ActionItem actionItem = AddNewAction(action, target);
+    //             actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
+    //             actionItem.ForceUpdateCooldown();
+    //         }
+    //     }
+    // }
     #endregion
 
     #region Utilities
@@ -299,11 +310,29 @@ public class MonsterInfoUI : InfoUIBase {
             UpdateInventoryInfo();
         }
     }
+    private void OnLeftClickItem(object obj) {
+        if (obj is string text) {
+            int index = int.Parse(text);
+            TileObject tileObject = _activeMonster.items.ElementAtOrDefault(index);
+            if (tileObject != null) {
+                UIManager.Instance.ShowTileObjectInfo(tileObject);    
+            }
+        }
+    }
+    private void OnRightClickItem(object obj) {
+        if (obj is string text) {
+            int index = int.Parse(text);
+            TileObject tileObject = _activeMonster.items.ElementAtOrDefault(index);
+            if (tileObject != null) {
+                UIManager.Instance.ShowPlayerActionContextMenu(tileObject, Input.mousePosition, true);    
+            }
+        }
+    }
     private void UpdateInventoryInfo() {
         itemsLbl.text = string.Empty;
         for (int i = 0; i < _activeMonster.items.Count; i++) {
             TileObject currInventoryItem = _activeMonster.items[i];
-            itemsLbl.text = $"{itemsLbl.text}{currInventoryItem.name}";
+            itemsLbl.text = $"{itemsLbl.text}<link=\"{i.ToString()}\">{UtilityScripts.Utilities.ColorizeAndBoldName(currInventoryItem.name)}</link>";
             if (i < _activeMonster.items.Count - 1) {
                 itemsLbl.text = $"{itemsLbl.text}, ";
             }
@@ -329,7 +358,7 @@ public class MonsterInfoUI : InfoUIBase {
     #endregion   
 
     #region Listeners
-    private void OnOpenShareIntelMenu() {
+    private void OnOpenConversationMenu() {
         backButton.interactable = false;
     }
     //private void OnCloseShareIntelMenu() { }
@@ -342,120 +371,90 @@ public class MonsterInfoUI : InfoUIBase {
 
     #region For Testing
     public void ShowCharacterTestingInfo() {
-#if UNITY_EDITOR
-        string summary = $"Home structure: {activeMonster.homeStructure?.ToString() ?? "None"}" ?? "None";
-        summary = $"{summary}\nHome Settlement: {activeMonster.homeSettlement?.name ?? "None"}";
-        summary = $"{summary}{$"\nTerritory: {activeMonster.territory?.name ?? "None"}"}";
-        summary = $"{summary}{($"\nCurrent structure: {activeMonster.currentStructure}" ?? "None")}";
-        summary = $"{summary}{("\nPOI State: " + activeMonster.state.ToString())}";
-        summary = $"{summary}{("\nDo Not Get Hungry: " + activeMonster.needsComponent.doNotGetHungry.ToString())}";
-        summary = $"{summary}{("\nDo Not Get Tired: " + activeMonster.needsComponent.doNotGetTired.ToString())}";
-        summary = $"{summary}{("\nDo Not Get Bored: " + activeMonster.needsComponent.doNotGetBored.ToString())}";
-        summary = $"{summary}{("\nDo Not Recover HP: " + activeMonster.doNotRecoverHP.ToString())}";
-        summary = $"{summary}{("\nCan Move: " + activeMonster.limiterComponent.canMove)}";
-        summary = $"{summary}{("\nCan Witness: " + activeMonster.limiterComponent.canWitness)}";
-        summary = $"{summary}{("\nCan Be Attacked: " + activeMonster.limiterComponent.canBeAttacked)}";
-        summary = $"{summary}{("\nCan Perform: " + activeMonster.limiterComponent.canPerform)}";
-        //summary = $"{summary}{("\nIs Missing: " + activeMonster.isMissing)}";
-        summary = $"{summary}{("\nIs Running: " + activeMonster.movementComponent.isRunning)}";
-        summary = $"{summary}{("\nPOI State: " + activeMonster.state.ToString())}";
-        summary = $"{summary}{("\n" + activeMonster.needsComponent.GetNeedsSummary())}";
-        summary = $"{summary}{("\nFullness Time: " + (activeMonster.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeMonster.needsComponent.fullnessForcedTick)))}";
-        summary = $"{summary}{("\nTiredness Time: " + (activeMonster.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeMonster.needsComponent.tirednessForcedTick)))}";
-        summary = $"{summary}{("\nRemaining Sleep Ticks: " + activeMonster.needsComponent.currentSleepTicks.ToString())}";
-        //summary = $"{summary}{("\nFood: " + activeMonster.food.ToString())}";
-        summary = $"{summary}{("\nSexuality: " + activeMonster.sexuality.ToString())}";
-        // summary = $"{summary}{("\nMood: " + activeMonster.moodComponent.moodValue + "/100" + "(" + activeMonster.moodComponent.moodState.ToString() + ")")}";
-        // summary = $"{summary}{("\nHP: " + activeMonster.currentHP.ToString() + "/" + activeMonster.maxHP.ToString())}";
-        summary = $"{summary}{("\nAttack Range: " + activeMonster.characterClass.attackRange.ToString(CultureInfo.InvariantCulture))}";
-        summary = $"{summary}{("\nAttack Speed: " + activeMonster.combatComponent.attackSpeed.ToString())}";
-        summary = $"{summary}{("\nCombat Mode: " + activeMonster.combatComponent.combatMode.ToString())}";
-        summary = $"{summary}{("\nElemental Type: " + activeMonster.combatComponent.elementalDamage.name)}";
-        summary = $"{summary}{("\nPrimary Job: " + activeMonster.jobComponent.primaryJob.ToString())}";
-        summary = $"{summary}{("\nPriority Jobs: " + activeMonster.jobComponent.GetPriorityJobs())}";
-        summary = $"{summary}{("\nSecondary Jobs: " + activeMonster.jobComponent.GetSecondaryJobs())}";
-        summary = $"{summary}{("\nAble Jobs: " + activeMonster.jobComponent.GetAbleJobs())}";
-        summary = $"{summary}{("\nParty: " + (activeMonster.partyComponent.hasParty ? activeMonster.partyComponent.currentParty.partyName : "None") + ", State: " + activeMonster.partyComponent.currentParty?.partyState.ToString() + ", Members: " + activeMonster.partyComponent.currentParty?.members.Count)}";
-        summary = $"{summary}{("\nPrimary Bed: " + (activeMonster.tileObjectComponent.primaryBed != null ? activeMonster.tileObjectComponent.primaryBed.name : "None"))}";
-        summary = $"{summary}{("\nEnable Digging: " + (activeMonster.movementComponent.enableDigging))}";
-        summary = $"{summary}{("\nAvoid Settlements: " + (activeMonster.movementComponent.avoidSettlements))}";
-
-        if (activeMonster.stateComponent.currentState != null) {
-            summary = $"{summary}\nCurrent State: {activeMonster.stateComponent.currentState}";
-            summary = $"{summary}\n\tDuration in state: {activeMonster.stateComponent.currentState.currentDuration.ToString()}/{activeMonster.stateComponent.currentState.duration.ToString()}";
-        }
-
-        summary += "\nBehaviour Components: ";
-        for (int i = 0; i < activeMonster.behaviourComponent.currentBehaviourComponents.Count; i++) {
-            CharacterBehaviourComponent component = activeMonster.behaviourComponent.currentBehaviourComponents[i];
-            summary += $"{component}, ";
-        }
-
-        summary += "\nInterested Items: ";
-        for (int i = 0; i < activeMonster.interestedItemNames.Count; i++) {
-            summary += $"{activeMonster.interestedItemNames[i]}, ";
-        }
-
-        summary += "\nPersonal Job Queue: ";
-        if (activeMonster.jobQueue.jobsInQueue.Count > 0) {
-            for (int i = 0; i < activeMonster.jobQueue.jobsInQueue.Count; i++) {
-                JobQueueItem poi = activeMonster.jobQueue.jobsInQueue[i];
-                summary += $"{poi}, ";
-            }
-        } else {
-            summary += "None";
-        }
-
-        // summary += "\nCharacters with opinion: ";
-        // if (activeMonster.relationshipContainer.charactersWithOpinion.Count > 0) {
-        //     for (int i = 0; i < activeMonster.relationshipContainer.charactersWithOpinion.Count; i++) {
-        //         Character characterWithOpinion = activeMonster.relationshipContainer.charactersWithOpinion[i];
-        //         summary += $"{characterWithOpinion}, ";
-        //     }
-        // } else {
-        //     summary += "None";
-        // }
-        // summary += "\n" + activeMonster.needsComponent.GetNeedsSummary();
-        UIManager.Instance.ShowSmallInfo(summary);
-#endif
+        TestingUtilities.ShowCharacterTestingInfo(activeMonster);
+// #if UNITY_EDITOR
+//         string summary = $"Home structure: {activeMonster.homeStructure?.ToString() ?? "None"}" ?? "None";
+//         summary = $"{summary}\nHome Settlement: {activeMonster.homeSettlement?.name ?? "None"}";
+//         summary = $"{summary}{$"\nTerritory: {activeMonster.territory?.name ?? "None"}"}";
+//         summary = $"{summary}{($"\nCurrent structure: {activeMonster.currentStructure}" ?? "None")}";
+//         summary = $"{summary}{("\nPOI State: " + activeMonster.state.ToString())}";
+//         summary = $"{summary}{("\nDo Not Get Hungry: " + activeMonster.needsComponent.doNotGetHungry.ToString())}";
+//         summary = $"{summary}{("\nDo Not Get Tired: " + activeMonster.needsComponent.doNotGetTired.ToString())}";
+//         summary = $"{summary}{("\nDo Not Get Bored: " + activeMonster.needsComponent.doNotGetBored.ToString())}";
+//         summary = $"{summary}{("\nDo Not Recover HP: " + activeMonster.doNotRecoverHP.ToString())}";
+//         summary = $"{summary}{("\nCan Move: " + activeMonster.limiterComponent.canMove)}";
+//         summary = $"{summary}{("\nCan Witness: " + activeMonster.limiterComponent.canWitness)}";
+//         summary = $"{summary}{("\nCan Be Attacked: " + activeMonster.limiterComponent.canBeAttacked)}";
+//         summary = $"{summary}{("\nCan Perform: " + activeMonster.limiterComponent.canPerform)}";
+//         //summary = $"{summary}{("\nIs Missing: " + activeMonster.isMissing)}";
+//         summary = $"{summary}{("\nIs Running: " + activeMonster.movementComponent.isRunning)}";
+//         summary = $"{summary}{("\nPOI State: " + activeMonster.state.ToString())}";
+//         summary = $"{summary}{("\n" + activeMonster.needsComponent.GetNeedsSummary())}";
+//         summary = $"{summary}{("\nFullness Time: " + (activeMonster.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeMonster.needsComponent.fullnessForcedTick)))}";
+//         summary = $"{summary}{("\nTiredness Time: " + (activeMonster.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeMonster.needsComponent.tirednessForcedTick)))}";
+//         summary = $"{summary}{("\nRemaining Sleep Ticks: " + activeMonster.needsComponent.currentSleepTicks.ToString())}";
+//         //summary = $"{summary}{("\nFood: " + activeMonster.food.ToString())}";
+//         summary = $"{summary}{("\nSexuality: " + activeMonster.sexuality.ToString())}";
+//         // summary = $"{summary}{("\nMood: " + activeMonster.moodComponent.moodValue + "/100" + "(" + activeMonster.moodComponent.moodState.ToString() + ")")}";
+//         // summary = $"{summary}{("\nHP: " + activeMonster.currentHP.ToString() + "/" + activeMonster.maxHP.ToString())}";
+//         summary = $"{summary}{("\nAttack Range: " + activeMonster.characterClass.attackRange.ToString(CultureInfo.InvariantCulture))}";
+//         summary = $"{summary}{("\nAttack Speed: " + activeMonster.combatComponent.attackSpeed.ToString())}";
+//         summary = $"{summary}{("\nCombat Mode: " + activeMonster.combatComponent.combatMode.ToString())}";
+//         summary = $"{summary}{("\nElemental Type: " + activeMonster.combatComponent.elementalDamage.name)}";
+//         summary = $"{summary}{("\nPrimary Job: " + activeMonster.jobComponent.primaryJob.ToString())}";
+//         summary = $"{summary}{("\nPriority Jobs: " + activeMonster.jobComponent.GetPriorityJobs())}";
+//         summary = $"{summary}{("\nSecondary Jobs: " + activeMonster.jobComponent.GetSecondaryJobs())}";
+//         summary = $"{summary}{("\nAble Jobs: " + activeMonster.jobComponent.GetAbleJobs())}";
+//         summary = $"{summary}{("\nParty: " + (activeMonster.partyComponent.hasParty ? activeMonster.partyComponent.currentParty.partyName : "None") + ", State: " + activeMonster.partyComponent.currentParty?.partyState.ToString() + ", Members: " + activeMonster.partyComponent.currentParty?.members.Count)}";
+//         summary = $"{summary}{("\nPrimary Bed: " + (activeMonster.tileObjectComponent.primaryBed != null ? activeMonster.tileObjectComponent.primaryBed.name : "None"))}";
+//         summary = $"{summary}{("\nEnable Digging: " + (activeMonster.movementComponent.enableDigging))}";
+//         summary = $"{summary}{("\nAvoid Settlements: " + (activeMonster.movementComponent.avoidSettlements))}";
+//
+//         if (activeMonster.stateComponent.currentState != null) {
+//             summary = $"{summary}\nCurrent State: {activeMonster.stateComponent.currentState}";
+//             summary = $"{summary}\n\tDuration in state: {activeMonster.stateComponent.currentState.currentDuration.ToString()}/{activeMonster.stateComponent.currentState.duration.ToString()}";
+//         }
+//
+//         summary += "\nBehaviour Components: ";
+//         for (int i = 0; i < activeMonster.behaviourComponent.currentBehaviourComponents.Count; i++) {
+//             CharacterBehaviourComponent component = activeMonster.behaviourComponent.currentBehaviourComponents[i];
+//             summary += $"{component}, ";
+//         }
+//
+//         summary += "\nInterested Items: ";
+//         for (int i = 0; i < activeMonster.interestedItemNames.Count; i++) {
+//             summary += $"{activeMonster.interestedItemNames[i]}, ";
+//         }
+//
+//         summary += "\nPersonal Job Queue: ";
+//         if (activeMonster.jobQueue.jobsInQueue.Count > 0) {
+//             for (int i = 0; i < activeMonster.jobQueue.jobsInQueue.Count; i++) {
+//                 JobQueueItem poi = activeMonster.jobQueue.jobsInQueue[i];
+//                 summary += $"{poi}, ";
+//             }
+//         } else {
+//             summary += "None";
+//         }
+//
+//         // summary += "\nCharacters with opinion: ";
+//         // if (activeMonster.relationshipContainer.charactersWithOpinion.Count > 0) {
+//         //     for (int i = 0; i < activeMonster.relationshipContainer.charactersWithOpinion.Count; i++) {
+//         //         Character characterWithOpinion = activeMonster.relationshipContainer.charactersWithOpinion[i];
+//         //         summary += $"{characterWithOpinion}, ";
+//         //     }
+//         // } else {
+//         //     summary += "None";
+//         // }
+//         // summary += "\n" + activeMonster.needsComponent.GetNeedsSummary();
+//         UIManager.Instance.ShowSmallInfo(summary);
+// #endif
     }
     public void HideCharacterTestingInfo() {
-#if UNITY_EDITOR
-        UIManager.Instance.HideSmallInfo();
-#endif
+        TestingUtilities.HideCharacterTestingInfo();
+// #if UNITY_EDITOR
+//         UIManager.Instance.HideSmallInfo();
+// #endif
         
-    }
-    #endregion
-
-    #region Combat Modes
-    private void ConstructCombatModes() {
-        combatModes = new List<string>();
-        for (int i = 0; i < CharacterManager.Instance.combatModes.Length; i++) {
-            combatModes.Add(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(CharacterManager.Instance.combatModes[i].ToString()));
-        }
-    }
-    public void ShowSwitchCombatModeUI() {
-        UIManager.Instance.customDropdownList.ShowDropdown(combatModes, OnClickChooseCombatMode, CanChoostCombatMode);
-    }
-    private void SetCombatModeUIPosition(PlayerAction action) {
-        ActionItem actionItem = GetActiveActionItem(action);
-        if (actionItem != null) {
-            Vector3 actionWorldPos = actionItem.transform.localPosition;
-            UIManager.Instance.customDropdownList.SetPosition(new Vector3(actionWorldPos.x, actionWorldPos.y + 10f, actionWorldPos.z));
-        }
-    }
-    private bool CanChoostCombatMode(string mode) {
-        if(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeMonster.combatComponent.combatMode.ToString())
-            == mode) {
-            return false;
-        }
-        return true;
-    }
-    private void OnClickChooseCombatMode(string mode) {
-        COMBAT_MODE combatMode = (COMBAT_MODE) System.Enum.Parse(typeof(COMBAT_MODE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(mode));
-        UIManager.Instance.characterInfoUI.activeCharacter.combatComponent.SetCombatMode(combatMode);
-        Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, activeMonster as IPlayerActionTarget);
-        UIManager.Instance.customDropdownList.Close();
     }
     #endregion
 

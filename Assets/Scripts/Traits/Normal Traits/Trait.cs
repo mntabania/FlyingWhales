@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 namespace Traits {
     [System.Serializable]
-    public class Trait : IMoodModifier, ISavable{
+    public class Trait : IMoodModifier, ISavable, IContextMenuItem {
         //Non-changeable values
         public string name;
         public string description;
@@ -34,11 +34,15 @@ namespace Traits {
         #region Getters
         public virtual Type serializedData => typeof(SaveDataTrait);
         public Character responsibleCharacter => responsibleCharacters?.FirstOrDefault();
-        public string moodModificationDescription => name;
+        public string modifierName => name;
         public int moodModifier => moodEffect;
         public string descriptionInUI => GetDescriptionInUI();
         public virtual bool isPersistent => false; //should this trait persist through all a character's alter egos
         public virtual bool isSingleton => false;
+        public Sprite contextMenuIcon => null;
+        public string contextMenuName => name;
+        public int contextMenuColumn => 1;
+        public List<IContextMenuItem> subMenus => null;
         #endregion
         
         #region Initialization
@@ -59,10 +63,10 @@ namespace Traits {
         #endregion
 
         #region Mood Effects
-        public void ApplyMoodEffects(ITraitable addedTo, GameDate expiryDate) {
+        public void ApplyMoodEffects(ITraitable addedTo, GameDate expiryDate, Character characterResponsible) {
             if(addedTo is Character character) {
                 if (moodEffect != 0) {
-                    character.moodComponent.AddMoodEffect(moodEffect, this, expiryDate);    
+                    character.moodComponent.AddMoodEffect(moodEffect, this, expiryDate, characterResponsible);    
                 }
             }
         }
@@ -159,8 +163,7 @@ namespace Traits {
 
             return canBeTriggered && PlayerManager.Instance.player.mana >= manaCost
                 && character.limiterComponent.canPerform
-                //&& !character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER) //disabled characters cannot be triggered
-                && !character.traitContainer.HasTrait("Blessed")
+                && !character.traitContainer.IsBlessed()
                 && !character.carryComponent.masterCharacter.movementComponent.isTravellingInWorld; //characters travelling outside cannot be triggered
         }
         public virtual string GetRequirementDescription(Character character) {
@@ -174,7 +177,7 @@ namespace Traits {
             if (PlayerManager.Instance.player.mana < EditableValuesManager.Instance.triggerFlawManaCost) {
                 reasons.Add("You do not have enough mana.");
             }
-            if (character.traitContainer.HasTrait("Blessed")) {
+            if (character.traitContainer.IsBlessed()) {
                 reasons.Add("Blessed characters cannot be targeted by Trigger Flaw.");
             }
             if (!character.limiterComponent.canPerform) {
@@ -259,6 +262,12 @@ namespace Traits {
                 traitOverrideFunctionIdentifiers.Add(identifier);
             }
         }
+        public bool IsNeeds() {
+            return name == "Refreshed" || name == "Exhausted" || name == "Tired"
+                || name == "Entertained" || name == "Bored" || name == "Sulking"
+                || name == "Full" || name == "Hungry" || name == "Starving"
+                || name == "Sprightly" || name == "Spent" || name == "Drained";
+        }
         #endregion
 
         #region Actions
@@ -277,7 +286,56 @@ namespace Traits {
         public virtual void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) { }
         #endregion
 
+        #region IContextMenuItem Implementation
+        public void OnPickAction() {
+            if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is Character targetCharacter) {
+                ActivateTriggerFlawConfirmation(targetCharacter);
+            }
+        }
+        public bool CanBePickedRegardlessOfCooldown() {
+            if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is Character targetCharacter) {
+                return CanFlawBeTriggered(targetCharacter);
+            }
+            return true;
+        }
+        public bool IsInCooldown() {
+            return false;
+        }
+        public float GetCoverFillAmount() {
+            return 0f;
+        }
+        public int GetCurrentRemainingCooldownTicks() {
+            return 0;
+        }
+        private void ActivateTriggerFlawConfirmation(Character p_character) {
+            string traitName = name;
+            Trait trait = p_character.traitContainer.GetTraitOrStatus<Trait>(traitName);
+            string question = "Are you sure you want to trigger " + traitName + "?";
+            string effect = $"<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(p_character, "flaw_effect")}";
+            string manaCost = $"{PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
+
+            UIManager.Instance.ShowTriggerFlawConfirmation(question, effect, manaCost, () => TriggerFlawData.ActivateTriggerFlaw(trait, p_character), layer: 26, showCover: true, pauseAndResume: true);
+        }
+        public int GetManaCost() {
+            return PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost;
+        }
+        #endregion
         
+        #region IMoodModifier Implementation
+        public Log GetMoodEffectFlavorText(Character p_characterResponsible) {
+            if (LocalizationManager.Instance.HasLocalizedValue("Trait", name, "mood_effect")) {
+                Log log = new Log(GameManager.Instance.Today(), "Trait", name, "mood_effect");
+                if (p_characterResponsible != null) {
+                    log.AddToFillers(p_characterResponsible, p_characterResponsible.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);    
+                } else {
+                    //if no character was passed assume that the player is the one that applied the status
+                    log.AddToFillers(null, "Demons", LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                }
+                return log;
+            }
+            return default;
+        }
+        #endregion
     }
 }
 

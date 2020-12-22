@@ -140,13 +140,26 @@ public class BaseRelationshipContainer : IRelationshipContainer {
     public bool HasRelationship(params RELATIONSHIP_TYPE[] type) {
         return GetRelatablesWithRelationshipCount(type) > 0;
     }
+    public bool HasActiveRelationship(params RELATIONSHIP_TYPE[] type) {
+        for (int i = 0; i < type.Length; i++) {
+            RELATIONSHIP_TYPE relationshipType = type[i];
+            Character character = GetFirstCharacterWithRelationship(relationshipType);
+            if (character != null) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Getting
     public Character GetFirstCharacterWithRelationship(params RELATIONSHIP_TYPE[] type) {
         foreach (KeyValuePair<int, IRelationshipData> kvp in relationships) {
             if (kvp.Value.HasRelationship(type)) {
-                return CharacterManager.Instance.GetCharacterByID(kvp.Key);
+                Character character = CharacterManager.Instance.GetCharacterByID(kvp.Key);
+                if (character != null) {
+                    return character;    
+                }
             }
         }
         return null;
@@ -245,6 +258,10 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             //Minions or Summons cannot have opinions
             return;
         }
+        if (target.minion != null || target is Summon) {
+            //Minions or Summons cannot have opinions
+            return;
+        }
         if(owner == target) {
             //Cannot adjust opinion to self
             //Therefore, must not have a relationship with self
@@ -288,6 +305,10 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             //Minions or Summons cannot have opinions
             return;
         }
+        if (target.minion != null || target is Summon) {
+            //Minions or Summons cannot have opinions
+            return;
+        }
         IRelationshipData relationshipData = GetOrCreateRelationshipDataWith(owner, target);
         string opinionLabelBeforeChange = GetOpinionLabel(target);
         if (owner.traitContainer.HasTrait("Psychopath")) {
@@ -321,6 +342,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             //Minions or Summons cannot have opinions
             return;
         }
+        
         Character targetCharacter = CharacterManager.Instance.GetCharacterByID(targetID);
         if (targetCharacter != null) {
             SetOpinion(owner, targetCharacter, opinionText, opinionValue, lastStrawReason);

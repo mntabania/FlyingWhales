@@ -63,7 +63,8 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
         return characters;
     }
     private bool IsCharacterValidForInvade(Character character) {
-        return character.isNormalCharacter && character.isDead == false && character.isAlliedWithPlayer == false && !character.traitContainer.HasTrait("Hibernating", "Indestructible");
+        return character.isNormalCharacter && character.isDead == false && character.isAlliedWithPlayer == false && !character.traitContainer.HasTrait("Hibernating", "Indestructible")
+            && !character.isInLimbo && !character.isBeingSeized && character.carryComponent.IsNotBeingCarried();
     }
     private List<HexTile> GetVillageTargetsByPriority(Character owner) {
         //get settlements in region that have normal characters living there.

@@ -26,13 +26,14 @@ public class PlayerSkillManager : MonoBehaviour {
 
     [SerializeField] private PlayerSkillDataDictionary _playerSkillDataDictionary;
 
-    public Dictionary<SPELL_TYPE, SpellData> allSpellsData { get; private set; }
-    public Dictionary<SPELL_TYPE, PlayerAction> allPlayerActionsData { get; private set; }
-    public Dictionary<SPELL_TYPE, SpellData> allAfflictionsData { get; private set; }
-    public Dictionary<SPELL_TYPE, DemonicStructurePlayerSkill> allDemonicStructureSkillsData { get; private set; }
-    public Dictionary<SPELL_TYPE, MinionPlayerSkill> allMinionPlayerSkillsData { get; private set; }
-    public Dictionary<SPELL_TYPE, SummonPlayerSkill> allSummonPlayerSkillsData { get; private set; }
-    public Dictionary<SPELL_TYPE, SpellData> allPlayerSkillsData { get; private set; }
+    public Dictionary<PLAYER_SKILL_TYPE, SpellData> allSpellsData { get; private set; }
+    public Dictionary<PLAYER_SKILL_TYPE, PlayerAction> allPlayerActionsData { get; private set; }
+    public Dictionary<PLAYER_SKILL_TYPE, AfflictData> allAfflictionsData { get; private set; }
+    public Dictionary<PLAYER_SKILL_TYPE, SchemeData> allSchemesData { get; private set; }
+    public Dictionary<PLAYER_SKILL_TYPE, DemonicStructurePlayerSkill> allDemonicStructureSkillsData { get; private set; }
+    public Dictionary<PLAYER_SKILL_TYPE, MinionPlayerSkill> allMinionPlayerSkillsData { get; private set; }
+    public Dictionary<PLAYER_SKILL_TYPE, SummonPlayerSkill> allSummonPlayerSkillsData { get; private set; }
+    public Dictionary<PLAYER_SKILL_TYPE, SpellData> allPlayerSkillsData { get; private set; }
     public Dictionary<PASSIVE_SKILL, PassiveSkill> passiveSkillsData { get; private set; }
 
     #region getters
@@ -40,62 +41,70 @@ public class PlayerSkillManager : MonoBehaviour {
     #endregion
 
     [NonSerialized]
-    public List<SPELL_TYPE> constantSkills = new List<SPELL_TYPE> { SPELL_TYPE.AFFLICT, SPELL_TYPE.BUILD_DEMONIC_STRUCTURE, SPELL_TYPE.UNSUMMON, 
-        SPELL_TYPE.BREED_MONSTER, SPELL_TYPE.TORTURE, SPELL_TYPE.BRAINWASH, SPELL_TYPE.EVANGELIZE,/*, SPELL_TYPE.CULTIST_TRANSFORM,*/ SPELL_TYPE.CULTIST_POISON,
-        SPELL_TYPE.SACRIFICE, SPELL_TYPE.REPAIR, SPELL_TYPE.FOUND_CULT, SPELL_TYPE.SPREAD_RUMOR, SPELL_TYPE.CULTIST_BOOBY_TRAP, SPELL_TYPE.UPGRADE,
+    public List<PLAYER_SKILL_TYPE> constantSkills = new List<PLAYER_SKILL_TYPE> { PLAYER_SKILL_TYPE.AFFLICT, PLAYER_SKILL_TYPE.BUILD_DEMONIC_STRUCTURE, PLAYER_SKILL_TYPE.UNSUMMON, 
+        PLAYER_SKILL_TYPE.BREED_MONSTER, PLAYER_SKILL_TYPE.TORTURE, PLAYER_SKILL_TYPE.BRAINWASH, PLAYER_SKILL_TYPE.EVANGELIZE,/*, SPELL_TYPE.CULTIST_TRANSFORM,*/ PLAYER_SKILL_TYPE.CULTIST_POISON,
+        PLAYER_SKILL_TYPE.SACRIFICE, PLAYER_SKILL_TYPE.REPAIR, PLAYER_SKILL_TYPE.FOUND_CULT, PLAYER_SKILL_TYPE.SPREAD_RUMOR, PLAYER_SKILL_TYPE.CULTIST_BOOBY_TRAP, PLAYER_SKILL_TYPE.UPGRADE,
+        PLAYER_SKILL_TYPE.INSTIGATE_WAR, PLAYER_SKILL_TYPE.RESIGN, PLAYER_SKILL_TYPE.LEAVE_FACTION, PLAYER_SKILL_TYPE.LEAVE_HOME, PLAYER_SKILL_TYPE.LEAVE_VILLAGE, PLAYER_SKILL_TYPE.BREAK_UP,
+        PLAYER_SKILL_TYPE.JOIN_FACTION, PLAYER_SKILL_TYPE.REBELLION, PLAYER_SKILL_TYPE.SCHEME, PLAYER_SKILL_TYPE.OVERTHROW_LEADER, PLAYER_SKILL_TYPE.STIFLE_MIGRATION, PLAYER_SKILL_TYPE.INDUCE_MIGRATION
     };
 
     [NonSerialized]
-    public SPELL_TYPE[] allSpells = { SPELL_TYPE.METEOR
-            , SPELL_TYPE.TORNADO, SPELL_TYPE.RAVENOUS_SPIRIT, SPELL_TYPE.FEEBLE_SPIRIT, SPELL_TYPE.FORLORN_SPIRIT
-            , SPELL_TYPE.LIGHTNING, SPELL_TYPE.POISON_CLOUD, SPELL_TYPE.EARTHQUAKE
-            , SPELL_TYPE.SPAWN_BOULDER, SPELL_TYPE.WATER_BOMB, SPELL_TYPE.MANIFEST_FOOD
-            , SPELL_TYPE.BRIMSTONES, SPELL_TYPE.SPLASH_POISON, SPELL_TYPE.LOCUST_SWARM, SPELL_TYPE.BLIZZARD, SPELL_TYPE.RAIN
-            , SPELL_TYPE.BALL_LIGHTNING, SPELL_TYPE.ELECTRIC_STORM, SPELL_TYPE.FROSTY_FOG, SPELL_TYPE.VAPOR, SPELL_TYPE.FIRE_BALL
-            , SPELL_TYPE.POISON_BLOOM, SPELL_TYPE.LANDMINE, SPELL_TYPE.TERRIFYING_HOWL, SPELL_TYPE.FREEZING_TRAP, SPELL_TYPE.SNARE_TRAP, SPELL_TYPE.WIND_BLAST
-            , SPELL_TYPE.ICETEROIDS, SPELL_TYPE.HEAT_WAVE, SPELL_TYPE.SPLASH_WATER, SPELL_TYPE.WALL
+    public PLAYER_SKILL_TYPE[] allSpells = { PLAYER_SKILL_TYPE.METEOR
+            , PLAYER_SKILL_TYPE.TORNADO, PLAYER_SKILL_TYPE.RAVENOUS_SPIRIT, PLAYER_SKILL_TYPE.FEEBLE_SPIRIT, PLAYER_SKILL_TYPE.FORLORN_SPIRIT
+            , PLAYER_SKILL_TYPE.LIGHTNING, PLAYER_SKILL_TYPE.POISON_CLOUD, PLAYER_SKILL_TYPE.EARTHQUAKE
+            , PLAYER_SKILL_TYPE.WATER_BOMB, PLAYER_SKILL_TYPE.MANIFEST_FOOD
+            , PLAYER_SKILL_TYPE.BRIMSTONES, PLAYER_SKILL_TYPE.SPLASH_POISON, PLAYER_SKILL_TYPE.LOCUST_SWARM, PLAYER_SKILL_TYPE.BLIZZARD, PLAYER_SKILL_TYPE.RAIN
+            , PLAYER_SKILL_TYPE.BALL_LIGHTNING, PLAYER_SKILL_TYPE.ELECTRIC_STORM, PLAYER_SKILL_TYPE.FROSTY_FOG, PLAYER_SKILL_TYPE.VAPOR, PLAYER_SKILL_TYPE.FIRE_BALL
+            , PLAYER_SKILL_TYPE.POISON_BLOOM, PLAYER_SKILL_TYPE.LANDMINE, PLAYER_SKILL_TYPE.TERRIFYING_HOWL, PLAYER_SKILL_TYPE.FREEZING_TRAP, PLAYER_SKILL_TYPE.SNARE_TRAP, PLAYER_SKILL_TYPE.WIND_BLAST
+            , PLAYER_SKILL_TYPE.ICETEROIDS, PLAYER_SKILL_TYPE.HEAT_WAVE, PLAYER_SKILL_TYPE.SPLASH_WATER, PLAYER_SKILL_TYPE.WALL
     };
 
     [NonSerialized]
-    public SPELL_TYPE[] allPlayerActions = { SPELL_TYPE.ZAP, SPELL_TYPE.RAISE_DEAD, SPELL_TYPE.DESTROY, SPELL_TYPE.IGNITE, SPELL_TYPE.POISON
-            , SPELL_TYPE.TORTURE, SPELL_TYPE.SUMMON_MINION, SPELL_TYPE.STOP, SPELL_TYPE.SEIZE_OBJECT, SPELL_TYPE.SEIZE_CHARACTER, SPELL_TYPE.SEIZE_MONSTER
-            , SPELL_TYPE.LEARN_SPELL
-            , SPELL_TYPE.BUILD_DEMONIC_STRUCTURE, SPELL_TYPE.AFFLICT, SPELL_TYPE.BREED_MONSTER //, SPELL_TYPE.ACTIVATE
-            //, SPELL_TYPE.INTERFERE
-            , SPELL_TYPE.AGITATE/*, SPELL_TYPE.HEAL, SPELL_TYPE.ANIMATE, SPELL_TYPE.EMPOWER*/
-            , SPELL_TYPE.BRAINWASH, SPELL_TYPE.UNSUMMON, SPELL_TYPE.TRIGGER_FLAW/*, SPELL_TYPE.CULTIST_TRANSFORM*/, SPELL_TYPE.CULTIST_POISON
-            , SPELL_TYPE.CULTIST_BOOBY_TRAP, SPELL_TYPE.SNATCH, SPELL_TYPE.SACRIFICE, SPELL_TYPE.REPAIR, SPELL_TYPE.SPREAD_RUMOR, SPELL_TYPE.EVANGELIZE
-            , SPELL_TYPE.FOUND_CULT, SPELL_TYPE.UPGRADE,
+    public PLAYER_SKILL_TYPE[] allPlayerActions = { PLAYER_SKILL_TYPE.ZAP, PLAYER_SKILL_TYPE.RAISE_DEAD, PLAYER_SKILL_TYPE.DESTROY, PLAYER_SKILL_TYPE.IGNITE, PLAYER_SKILL_TYPE.POISON
+            , PLAYER_SKILL_TYPE.TORTURE, PLAYER_SKILL_TYPE.SEIZE_OBJECT, PLAYER_SKILL_TYPE.SEIZE_CHARACTER, PLAYER_SKILL_TYPE.SEIZE_MONSTER
+            , PLAYER_SKILL_TYPE.BUILD_DEMONIC_STRUCTURE, PLAYER_SKILL_TYPE.AFFLICT, PLAYER_SKILL_TYPE.BREED_MONSTER //, SPELL_TYPE.ACTIVATE
+            , PLAYER_SKILL_TYPE.AGITATE/*, SPELL_TYPE.HEAL, SPELL_TYPE.ANIMATE, SPELL_TYPE.EMPOWER*/
+            , PLAYER_SKILL_TYPE.BRAINWASH, PLAYER_SKILL_TYPE.UNSUMMON, PLAYER_SKILL_TYPE.TRIGGER_FLAW/*, SPELL_TYPE.CULTIST_TRANSFORM*/, PLAYER_SKILL_TYPE.CULTIST_POISON
+            , PLAYER_SKILL_TYPE.CULTIST_BOOBY_TRAP, PLAYER_SKILL_TYPE.SNATCH, PLAYER_SKILL_TYPE.SACRIFICE, PLAYER_SKILL_TYPE.REPAIR, PLAYER_SKILL_TYPE.SPREAD_RUMOR, PLAYER_SKILL_TYPE.EVANGELIZE
+            , PLAYER_SKILL_TYPE.FOUND_CULT, PLAYER_SKILL_TYPE.UPGRADE, PLAYER_SKILL_TYPE.SCHEME
     };
 
     [NonSerialized]
-    public SPELL_TYPE[] allAfflictions = { SPELL_TYPE.CANNIBALISM
-            , SPELL_TYPE.LYCANTHROPY, SPELL_TYPE.VAMPIRISM, SPELL_TYPE.KLEPTOMANIA
-            , SPELL_TYPE.UNFAITHFULNESS, SPELL_TYPE.ALCOHOLIC
-            , SPELL_TYPE.AGORAPHOBIA, SPELL_TYPE.PARALYSIS/*, SPELL_TYPE.ZOMBIE_VIRUS*/
-            , SPELL_TYPE.PLAGUE, SPELL_TYPE.PSYCHOPATHY, SPELL_TYPE.COWARDICE, SPELL_TYPE.PYROPHOBIA
-            , SPELL_TYPE.NARCOLEPSY, SPELL_TYPE.HOTHEADED, SPELL_TYPE.LAZINESS, SPELL_TYPE.MUSIC_HATER, SPELL_TYPE.GLUTTONY
+    public PLAYER_SKILL_TYPE[] allAfflictions = { PLAYER_SKILL_TYPE.CANNIBALISM
+            , PLAYER_SKILL_TYPE.LYCANTHROPY, PLAYER_SKILL_TYPE.VAMPIRISM, PLAYER_SKILL_TYPE.KLEPTOMANIA
+            , PLAYER_SKILL_TYPE.UNFAITHFULNESS, PLAYER_SKILL_TYPE.ALCOHOLIC
+            , PLAYER_SKILL_TYPE.AGORAPHOBIA, PLAYER_SKILL_TYPE.PARALYSIS/*, SPELL_TYPE.ZOMBIE_VIRUS*/
+            , PLAYER_SKILL_TYPE.PLAGUE, PLAYER_SKILL_TYPE.PSYCHOPATHY, PLAYER_SKILL_TYPE.COWARDICE, PLAYER_SKILL_TYPE.PYROPHOBIA
+            , PLAYER_SKILL_TYPE.NARCOLEPSY, PLAYER_SKILL_TYPE.HOTHEADED, PLAYER_SKILL_TYPE.LAZINESS, PLAYER_SKILL_TYPE.MUSIC_HATER, PLAYER_SKILL_TYPE.GLUTTONY
     };
 
     [NonSerialized]
-    public SPELL_TYPE[] allDemonicStructureSkills = { /*SPELL_TYPE.MEDDLER,*/ SPELL_TYPE.EYE, /*SPELL_TYPE.CRYPT,*/
-        SPELL_TYPE.KENNEL, /*SPELL_TYPE.OSTRACIZER,*/ SPELL_TYPE.TORTURE_CHAMBERS, /*SPELL_TYPE.DEMONIC_PRISON,*/ SPELL_TYPE.DEFILER, SPELL_TYPE.BIOLAB
+    public PLAYER_SKILL_TYPE[] allSchemes = { PLAYER_SKILL_TYPE.INSTIGATE_WAR
+            , PLAYER_SKILL_TYPE.RESIGN, PLAYER_SKILL_TYPE.LEAVE_FACTION, PLAYER_SKILL_TYPE.LEAVE_HOME
+            , PLAYER_SKILL_TYPE.LEAVE_VILLAGE, PLAYER_SKILL_TYPE.BREAK_UP
+            , PLAYER_SKILL_TYPE.JOIN_FACTION, PLAYER_SKILL_TYPE.REBELLION, PLAYER_SKILL_TYPE.OVERTHROW_LEADER
+            , PLAYER_SKILL_TYPE.INDUCE_MIGRATION, PLAYER_SKILL_TYPE.STIFLE_MIGRATION
     };
 
     [NonSerialized]
-    public SPELL_TYPE[] allMinionPlayerSkills = { SPELL_TYPE.DEMON_WRATH, SPELL_TYPE.DEMON_PRIDE, SPELL_TYPE.DEMON_LUST
-        , SPELL_TYPE.DEMON_GLUTTONY, SPELL_TYPE.DEMON_SLOTH, SPELL_TYPE.DEMON_ENVY, SPELL_TYPE.DEMON_GREED,
+    public PLAYER_SKILL_TYPE[] allDemonicStructureSkills = { PLAYER_SKILL_TYPE.MEDDLER, PLAYER_SKILL_TYPE.EYE, /*SPELL_TYPE.CRYPT,*/
+        PLAYER_SKILL_TYPE.KENNEL, /*SPELL_TYPE.OSTRACIZER,*/ PLAYER_SKILL_TYPE.TORTURE_CHAMBERS, /*SPELL_TYPE.DEMONIC_PRISON,*/ PLAYER_SKILL_TYPE.DEFILER, PLAYER_SKILL_TYPE.BIOLAB
     };
 
     [NonSerialized]
-    public SPELL_TYPE[] allSummonPlayerSkills = { SPELL_TYPE.SKELETON_MARAUDER, SPELL_TYPE.WOLF, SPELL_TYPE.GOLEM, SPELL_TYPE.INCUBUS, SPELL_TYPE.SUCCUBUS, SPELL_TYPE.FIRE_ELEMENTAL, SPELL_TYPE.KOBOLD, SPELL_TYPE.GHOST,
-    SPELL_TYPE.ABOMINATION, SPELL_TYPE.MIMIC, SPELL_TYPE.PIG, SPELL_TYPE.CHICKEN, SPELL_TYPE.SHEEP, SPELL_TYPE.SLUDGE,
-    SPELL_TYPE.WATER_NYMPH, SPELL_TYPE.WIND_NYMPH, SPELL_TYPE.ICE_NYMPH,
-    SPELL_TYPE.ELECTRIC_WISP, SPELL_TYPE.EARTHEN_WISP, SPELL_TYPE.FIRE_WISP,
-    SPELL_TYPE.GRASS_ENT, SPELL_TYPE.SNOW_ENT, SPELL_TYPE.CORRUPT_ENT, SPELL_TYPE.DESERT_ENT, SPELL_TYPE.FOREST_ENT,
-    SPELL_TYPE.GIANT_SPIDER, SPELL_TYPE.SMALL_SPIDER,
-    SPELL_TYPE.SKELETON_ARCHER, SPELL_TYPE.SKELETON_BARBARIAN, SPELL_TYPE.SKELETON_CRAFTSMAN, SPELL_TYPE.SKELETON_DRUID, SPELL_TYPE.SKELETON_HUNTER, SPELL_TYPE.SKELETON_MAGE, SPELL_TYPE.SKELETON_KNIGHT, SPELL_TYPE.SKELETON_MINER, SPELL_TYPE.SKELETON_NOBLE, SPELL_TYPE.SKELETON_PEASANT, SPELL_TYPE.SKELETON_SHAMAN, SPELL_TYPE.SKELETON_STALKER,
-    SPELL_TYPE.VENGEFUL_GHOST, SPELL_TYPE.WURM, SPELL_TYPE.TROLL, SPELL_TYPE.REVENANT, SPELL_TYPE.BONE_GOLEM, SPELL_TYPE.PLAGUED_RAT };
+    public PLAYER_SKILL_TYPE[] allMinionPlayerSkills = { PLAYER_SKILL_TYPE.DEMON_WRATH, PLAYER_SKILL_TYPE.DEMON_PRIDE, PLAYER_SKILL_TYPE.DEMON_LUST
+        , PLAYER_SKILL_TYPE.DEMON_GLUTTONY, PLAYER_SKILL_TYPE.DEMON_SLOTH, PLAYER_SKILL_TYPE.DEMON_ENVY, PLAYER_SKILL_TYPE.DEMON_GREED,
+    };
+
+    [NonSerialized]
+    public PLAYER_SKILL_TYPE[] allSummonPlayerSkills = { PLAYER_SKILL_TYPE.SKELETON_MARAUDER, PLAYER_SKILL_TYPE.WOLF, PLAYER_SKILL_TYPE.GOLEM, PLAYER_SKILL_TYPE.INCUBUS, PLAYER_SKILL_TYPE.SUCCUBUS, PLAYER_SKILL_TYPE.FIRE_ELEMENTAL, PLAYER_SKILL_TYPE.KOBOLD, PLAYER_SKILL_TYPE.GHOST,
+    PLAYER_SKILL_TYPE.ABOMINATION, PLAYER_SKILL_TYPE.MIMIC, PLAYER_SKILL_TYPE.PIG, PLAYER_SKILL_TYPE.CHICKEN, PLAYER_SKILL_TYPE.SHEEP, PLAYER_SKILL_TYPE.SLUDGE,
+    PLAYER_SKILL_TYPE.WATER_NYMPH, PLAYER_SKILL_TYPE.WIND_NYMPH, PLAYER_SKILL_TYPE.ICE_NYMPH,
+    PLAYER_SKILL_TYPE.ELECTRIC_WISP, PLAYER_SKILL_TYPE.EARTHEN_WISP, PLAYER_SKILL_TYPE.FIRE_WISP,
+    PLAYER_SKILL_TYPE.GRASS_ENT, PLAYER_SKILL_TYPE.SNOW_ENT, PLAYER_SKILL_TYPE.CORRUPT_ENT, PLAYER_SKILL_TYPE.DESERT_ENT, PLAYER_SKILL_TYPE.FOREST_ENT,
+    PLAYER_SKILL_TYPE.GIANT_SPIDER, PLAYER_SKILL_TYPE.SMALL_SPIDER,
+    PLAYER_SKILL_TYPE.SKELETON_ARCHER, PLAYER_SKILL_TYPE.SKELETON_BARBARIAN, PLAYER_SKILL_TYPE.SKELETON_CRAFTSMAN, PLAYER_SKILL_TYPE.SKELETON_DRUID, PLAYER_SKILL_TYPE.SKELETON_HUNTER, PLAYER_SKILL_TYPE.SKELETON_MAGE, PLAYER_SKILL_TYPE.SKELETON_KNIGHT, PLAYER_SKILL_TYPE.SKELETON_MINER, PLAYER_SKILL_TYPE.SKELETON_NOBLE, PLAYER_SKILL_TYPE.SKELETON_PEASANT, PLAYER_SKILL_TYPE.SKELETON_SHAMAN, PLAYER_SKILL_TYPE.SKELETON_STALKER,
+    PLAYER_SKILL_TYPE.VENGEFUL_GHOST, PLAYER_SKILL_TYPE.WURM, PLAYER_SKILL_TYPE.TROLL, PLAYER_SKILL_TYPE.REVENANT, PLAYER_SKILL_TYPE.BONE_GOLEM, PLAYER_SKILL_TYPE.PLAGUED_RAT };
 
     [NonSerialized]
     public PASSIVE_SKILL[] allPassiveSkillTypes = { PASSIVE_SKILL.Enemies_Chaos_Orb, PASSIVE_SKILL.Monster_Chaos_Orb, PASSIVE_SKILL.Undead_Chaos_Orb, PASSIVE_SKILL.Auto_Absorb_Chaos_Orb, 
@@ -115,10 +124,11 @@ public class PlayerSkillManager : MonoBehaviour {
 
     public void Initialize() {
         // SPELL_TYPE[] allSpellTypes = UtilityScripts.CollectionUtilities.GetEnumValues<SPELL_TYPE>();
-        allPlayerSkillsData = new Dictionary<SPELL_TYPE, SpellData>();
+        allPlayerSkillsData = new Dictionary<PLAYER_SKILL_TYPE, SpellData>();
         ConstructAllSpellsData();
         ConstructAllPlayerActionsData();
         ConstructAllAfflictionsData();
+        ConstructAllSchemesData();
         ConstructAllDemonicStructureSkillsData();
         ConstructAllMinionPlayerSkillsData();
         ConstructAllSummonPlayerSkillsData();
@@ -127,10 +137,10 @@ public class PlayerSkillManager : MonoBehaviour {
 
     #region Utilities
     private void ConstructAllSpellsData() {
-        allSpellsData = new Dictionary<SPELL_TYPE, SpellData>();
+        allSpellsData = new Dictionary<PLAYER_SKILL_TYPE, SpellData>();
         for (int i = 0; i < allSpells.Length; i++) {
-            SPELL_TYPE spellType = allSpells[i];
-            if (spellType != SPELL_TYPE.NONE) {
+            PLAYER_SKILL_TYPE spellType = allSpells[i];
+            if (spellType != PLAYER_SKILL_TYPE.NONE) {
                 var typeName =
                     $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
                 SpellData spellData = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
@@ -141,7 +151,7 @@ public class PlayerSkillManager : MonoBehaviour {
         }
     }
     private void ConstructAllPlayerActionsData() {
-        allPlayerActionsData = new Dictionary<SPELL_TYPE, PlayerAction>();
+        allPlayerActionsData = new Dictionary<PLAYER_SKILL_TYPE, PlayerAction>();
         //SPELL_TYPE[] allPlayerActions = { SPELL_TYPE.ZAP, SPELL_TYPE.RAISE_DEAD, SPELL_TYPE.DESTROY, SPELL_TYPE.IGNITE, SPELL_TYPE.POISON
         //    , SPELL_TYPE.TORTURE, SPELL_TYPE.SUMMON_MINION, SPELL_TYPE.STOP, SPELL_TYPE.SEIZE_OBJECT, SPELL_TYPE.SEIZE_CHARACTER, SPELL_TYPE.SEIZE_MONSTER
         //    /*, SPELL_TYPE.RETURN_TO_PORTAL*/, SPELL_TYPE.DEFEND, SPELL_TYPE.HARASS, SPELL_TYPE.INVADE, SPELL_TYPE.LEARN_SPELL/*, SPELL_TYPE.CHANGE_COMBAT_MODE*/
@@ -151,8 +161,8 @@ public class PlayerSkillManager : MonoBehaviour {
         //    , SPELL_TYPE.BRAINWASH, SPELL_TYPE.UNSUMMON,
         //};
         for (int i = 0; i < allPlayerActions.Length; i++) {
-            SPELL_TYPE spellType = allPlayerActions[i];
-            if (spellType != SPELL_TYPE.NONE) {
+            PLAYER_SKILL_TYPE spellType = allPlayerActions[i];
+            if (spellType != PLAYER_SKILL_TYPE.NONE) {
                 var typeName =
                     $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
@@ -164,10 +174,10 @@ public class PlayerSkillManager : MonoBehaviour {
         }
     }
     private void ConstructAllDemonicStructureSkillsData() {
-        allDemonicStructureSkillsData = new Dictionary<SPELL_TYPE, DemonicStructurePlayerSkill>();
+        allDemonicStructureSkillsData = new Dictionary<PLAYER_SKILL_TYPE, DemonicStructurePlayerSkill>();
         for (int i = 0; i < allDemonicStructureSkills.Length; i++) {
-            SPELL_TYPE spellType = allDemonicStructureSkills[i];
-            if (spellType != SPELL_TYPE.NONE) {
+            PLAYER_SKILL_TYPE spellType = allDemonicStructureSkills[i];
+            if (spellType != PLAYER_SKILL_TYPE.NONE) {
                 var typeName =
                     $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
                 DemonicStructurePlayerSkill demonicStructureSkill = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
@@ -178,24 +188,36 @@ public class PlayerSkillManager : MonoBehaviour {
         }
     }
     private void ConstructAllAfflictionsData() {
-        allAfflictionsData = new Dictionary<SPELL_TYPE, SpellData>();
+        allAfflictionsData = new Dictionary<PLAYER_SKILL_TYPE, AfflictData>();
         for (int i = 0; i < allAfflictions.Length; i++) {
-            SPELL_TYPE spellType = allAfflictions[i];
-            if (spellType != SPELL_TYPE.NONE) {
+            PLAYER_SKILL_TYPE spellType = allAfflictions[i];
+            if (spellType != PLAYER_SKILL_TYPE.NONE) {
                 var typeName =
                     $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-                SpellData affliction = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
-                   throw new Exception($"Problem with creating spell data for {typeName}")) as SpellData;
+                AfflictData affliction = System.Activator.CreateInstance(System.Type.GetType(typeName) ?? throw new Exception($"Problem with creating spell data for {typeName}")) as AfflictData;
                 allAfflictionsData.Add(spellType, affliction);
                 allPlayerSkillsData.Add(spellType, affliction);
             }
         }
     }
+    private void ConstructAllSchemesData() {
+        allSchemesData = new Dictionary<PLAYER_SKILL_TYPE, SchemeData>();
+        for (int i = 0; i < allSchemes.Length; i++) {
+            PLAYER_SKILL_TYPE spellType = allSchemes[i];
+            if (spellType != PLAYER_SKILL_TYPE.NONE) {
+                var typeName =
+                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+                SchemeData scheme = System.Activator.CreateInstance(System.Type.GetType(typeName) ?? throw new Exception($"Problem with creating spell data for {typeName}")) as SchemeData;
+                allSchemesData.Add(spellType, scheme);
+                allPlayerSkillsData.Add(spellType, scheme);
+            }
+        }
+    }
     private void ConstructAllMinionPlayerSkillsData() {
-        allMinionPlayerSkillsData = new Dictionary<SPELL_TYPE, MinionPlayerSkill>();
+        allMinionPlayerSkillsData = new Dictionary<PLAYER_SKILL_TYPE, MinionPlayerSkill>();
         for (int i = 0; i < allMinionPlayerSkills.Length; i++) {
-            SPELL_TYPE spellType = allMinionPlayerSkills[i];
-            if (spellType != SPELL_TYPE.NONE) {
+            PLAYER_SKILL_TYPE spellType = allMinionPlayerSkills[i];
+            if (spellType != PLAYER_SKILL_TYPE.NONE) {
                 var typeName =
                     $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
                 MinionPlayerSkill minionPlayerSkill = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
@@ -206,10 +228,10 @@ public class PlayerSkillManager : MonoBehaviour {
         }
     }
     private void ConstructAllSummonPlayerSkillsData() {
-        allSummonPlayerSkillsData = new Dictionary<SPELL_TYPE, SummonPlayerSkill>();
+        allSummonPlayerSkillsData = new Dictionary<PLAYER_SKILL_TYPE, SummonPlayerSkill>();
         for (int i = 0; i < allSummonPlayerSkills.Length; i++) {
-            SPELL_TYPE spellType = allSummonPlayerSkills[i];
-            if (spellType != SPELL_TYPE.NONE) {
+            PLAYER_SKILL_TYPE spellType = allSummonPlayerSkills[i];
+            if (spellType != PLAYER_SKILL_TYPE.NONE) {
                 var typeName = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
                 SummonPlayerSkill summonPlayerSkill = System.Activator.CreateInstance(System.Type.GetType(typeName) ?? throw new Exception($"Problem with creating spell data for {typeName}")) as SummonPlayerSkill;
                 allSummonPlayerSkillsData.Add(spellType, summonPlayerSkill);
@@ -217,58 +239,67 @@ public class PlayerSkillManager : MonoBehaviour {
             }
         }
     }
-    public bool IsSpell(SPELL_TYPE type) {
+    public bool IsSpell(PLAYER_SKILL_TYPE type) {
         return allSpells.Contains(type);
     }
-    public bool IsAffliction(SPELL_TYPE type) {
+    public bool IsAffliction(PLAYER_SKILL_TYPE type) {
         return allAfflictions.Contains(type);
     }
-    public bool IsMinion(SPELL_TYPE type) {
+    public bool IsScheme(PLAYER_SKILL_TYPE type) {
+        return allSchemes.Contains(type);
+    }
+    public bool IsMinion(PLAYER_SKILL_TYPE type) {
         return allMinionPlayerSkills.Contains(type);
     }
-    public bool IsPlayerAction(SPELL_TYPE type) {
+    public bool IsPlayerAction(PLAYER_SKILL_TYPE type) {
         return allPlayerActions.Contains(type);
     }
-    public bool IsDemonicStructure(SPELL_TYPE type) {
+    public bool IsDemonicStructure(PLAYER_SKILL_TYPE type) {
         return allDemonicStructureSkills.Contains(type);
     }
-    public SpellData GetPlayerSpellData(SPELL_TYPE type) {
+    public SpellData GetPlayerSkillData(PLAYER_SKILL_TYPE type) {
         if (allPlayerSkillsData.ContainsKey(type)) {
             return allPlayerSkillsData[type];
         }
         return null;
     }
-    public SpellData GetSpellData(SPELL_TYPE type) {
+    public SpellData GetSpellData(PLAYER_SKILL_TYPE type) {
         if (allSpellsData.ContainsKey(type)) {
             return allSpellsData[type];
         }
         return null;
     }
-    public SpellData GetAfflictionData(SPELL_TYPE type) {
+    public AfflictData GetAfflictionData(PLAYER_SKILL_TYPE type) {
         if (allAfflictionsData.ContainsKey(type)) {
             return allAfflictionsData[type];
         }
         return null;
     }
-    public PlayerAction GetPlayerActionData(SPELL_TYPE type) {
+    public SchemeData GetSchemeData(PLAYER_SKILL_TYPE type) {
+        if (allSchemesData.ContainsKey(type)) {
+            return allSchemesData[type];
+        }
+        return null;
+    }
+    public PlayerAction GetPlayerActionData(PLAYER_SKILL_TYPE type) {
         if (allPlayerActionsData.ContainsKey(type)) {
             return allPlayerActionsData[type];
         }
         return null;
     }
-    public DemonicStructurePlayerSkill GetDemonicStructureSkillData(SPELL_TYPE type) {
+    public DemonicStructurePlayerSkill GetDemonicStructureSkillData(PLAYER_SKILL_TYPE type) {
         if (allDemonicStructureSkillsData.ContainsKey(type)) {
             return allDemonicStructureSkillsData[type];
         }
         return null;
     }
-    public MinionPlayerSkill GetMinionPlayerSkillData(SPELL_TYPE type) {
+    public MinionPlayerSkill GetMinionPlayerSkillData(PLAYER_SKILL_TYPE type) {
         if (allMinionPlayerSkillsData.ContainsKey(type)) {
             return allMinionPlayerSkillsData[type];
         }
         return null;
     }
-    public SummonPlayerSkill GetSummonPlayerSkillData(SPELL_TYPE type) {
+    public SummonPlayerSkill GetSummonPlayerSkillData(PLAYER_SKILL_TYPE type) {
         if (allSummonPlayerSkillsData.ContainsKey(type)) {
             return allSummonPlayerSkillsData[type];
         }
@@ -282,7 +313,7 @@ public class PlayerSkillManager : MonoBehaviour {
         }
         return null;
     }
-    public PlayerSkillTreeNode GetPlayerSkillTreeNode(SPELL_TYPE skillType) {
+    public PlayerSkillTreeNode GetPlayerSkillTreeNode(PLAYER_SKILL_TYPE skillType) {
         for (int i = 0; i < allSkillTrees.Length; i++) {
             PlayerSkillTree skillTree = allSkillTrees[i];
             if (skillTree.nodes.ContainsKey(skillType)) {
@@ -315,7 +346,7 @@ public class PlayerSkillManager : MonoBehaviour {
     #endregion
 
     #region Assets
-    public T GetPlayerSkillData<T>(SPELL_TYPE spellType) where T : PlayerSkillData {
+    public T GetPlayerSkillData<T>(PLAYER_SKILL_TYPE spellType) where T : PlayerSkillData {
         if (_playerSkillDataDictionary.ContainsKey(spellType)) {
             return _playerSkillDataDictionary[spellType] as T;    
         }

@@ -67,7 +67,9 @@ public class BoneGolemBehaviour : CharacterBehaviourComponent {
                     c => defender.IsHostileWith(c) && 
                          c.isDead == false && c.isAlliedWithPlayer == false && 
                          c.marker.isMainVisualActive && 
-                         defender.movementComponent.HasPathTo(c.gridTileLocation)
+                         defender.movementComponent.HasPathTo(c.gridTileLocation) &&
+                         !c.isInLimbo && !c.isBeingSeized && c.carryComponent.IsNotBeingCarried() &&
+                         !c.traitContainer.HasTrait("Hibernating", "Indestructible")
                 );
             if (charactersAtHexTile != null) {
                 if (characters == null) {

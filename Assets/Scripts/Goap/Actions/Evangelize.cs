@@ -11,11 +11,13 @@ public class Evangelize : GoapAction {
         actionIconString = GoapActionStateDB.Cult_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
-        isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Player, LOG_TAG.Crimes};
     }
     
     #region Overrides
+    public override bool ShouldActionBeAnIntel(ActualGoapNode node) {
+        return true;
+    }
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR), HasCultistKit);
     }
@@ -31,40 +33,36 @@ public class Evangelize : GoapAction {
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, target, witness, node, status);
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
         Character poiTarget = target as Character;
         if (witness.traitContainer.HasTrait("Cultist") == false) {
-            //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Serious);
-            //CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
+            reactions.Add(EMOTION.Shock);
             if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasOpinion(actor, RelationshipManager.Acquaintance)) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, actor, status, node);    
+                reactions.Add(EMOTION.Despair);
             }
             if (witness.traitContainer.HasTrait("Coward")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status, node);
+                reactions.Add(EMOTION.Fear);
             } else if (witness.traitContainer.HasTrait("Psychopath") == false) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
+                reactions.Add(EMOTION.Threatened);
             }
 
             if (poiTarget != null && witness.relationshipContainer.IsEnemiesWith(poiTarget) == false) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                reactions.Add(EMOTION.Disapproval);
             }
-        }
-        else {
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
+        } else {
+            reactions.Add(EMOTION.Approval);
             if (RelationshipManager.IsSexuallyCompatible(witness, actor)) {
                 int chance = 10 * witness.relationshipContainer.GetCompatibility(actor);
                 int roll = UnityEngine.Random.Range(0, 100);
                 if (roll < chance) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status, node);                    
+                    reactions.Add(EMOTION.Arousal);
                 }
             }
         }
-        return response;
     }
     #endregion
-    
+
     #region Preconditions
     private bool HasCultistKit(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem("Cultist Kit");
@@ -122,7 +120,7 @@ public class Evangelize : GoapAction {
         if (targetCharacter.traitContainer.HasTrait("Vigilant")) {
             fail += 50;
         }
-        if (targetCharacter.traitContainer.HasTrait("Blessed")) {
+        if (targetCharacter.traitContainer.IsBlessed()) {
             fail += 100;
         }
         if (targetCharacter.isSettlementRuler) {

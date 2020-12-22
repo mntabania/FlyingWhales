@@ -1,10 +1,10 @@
 ﻿using System;
 namespace Quests.Steps {
     public class ExecuteAfflictionStep : QuestStep {
-        private readonly SPELL_TYPE _requiredAffliction;
+        private readonly PLAYER_SKILL_TYPE _requiredAffliction;
         private readonly Action<Character> _onAfflictCallback;
         
-        public ExecuteAfflictionStep(string stepDescription, SPELL_TYPE requiredAffliction = SPELL_TYPE.NONE, 
+        public ExecuteAfflictionStep(string stepDescription, PLAYER_SKILL_TYPE requiredAffliction = PLAYER_SKILL_TYPE.NONE, 
             System.Action<Character> onAfflictCallback = null) : base(stepDescription) {
             _requiredAffliction = requiredAffliction;
             _onAfflictCallback = onAfflictCallback;
@@ -18,7 +18,7 @@ namespace Quests.Steps {
 
         #region Listeners
         private void CheckForCompletion(SpellData spellData) {
-            if (_requiredAffliction == SPELL_TYPE.NONE || _requiredAffliction == spellData.type) {
+            if (_requiredAffliction == PLAYER_SKILL_TYPE.NONE || _requiredAffliction == spellData.type) {
                 Complete();
                 if (_onAfflictCallback != null) {
                     Character currentlySelectedCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();

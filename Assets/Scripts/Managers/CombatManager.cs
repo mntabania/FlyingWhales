@@ -177,13 +177,13 @@ public class CombatManager : BaseMonoBehaviour {
     }
     
     #region Explosion
-    public void PoisonExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible) {
-        StartCoroutine(PoisonExplosionCoroutine(target, targetTile, stacks, characterResponsible));
+    public void PoisonExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible, int radius) {
+        StartCoroutine(PoisonExplosionCoroutine(target, targetTile, stacks, characterResponsible, radius));
         if (characterResponsible == null) {
             Messenger.Broadcast(PlayerSignals.POISON_EXPLOSION_TRIGGERED_BY_PLAYER, target);    
         }
     }
-    private IEnumerator PoisonExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible) {
+    private IEnumerator PoisonExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks, Character characterResponsible, int radius) {
         while (GameManager.Instance.isPaused) {
             //Pause coroutine while game is paused
             //Might be performance heavy, needs testing
@@ -193,7 +193,7 @@ public class CombatManager : BaseMonoBehaviour {
         AudioManager.Instance.CreatePoisonExplosionAudio(targetTile);
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Poison_Explosion);
         List<ITraitable> traitables = new List<ITraitable>();
-        List<LocationGridTile> affectedTiles = targetTile.GetTilesInRadius(1, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> affectedTiles = targetTile.GetTilesInRadius(radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         float damagePercentage = 0.1f * stacks;
         if (damagePercentage > 1) {
             damagePercentage = 1;

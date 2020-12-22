@@ -12,5 +12,5 @@ public class PlayerSkillTreeNode {
     //public int threatPerHour;
     //public int expCost;
     //public Sprite buttonSprite;
-    public SPELL_TYPE[] unlockedSkills;
+    public PLAYER_SKILL_TYPE[] unlockedSkills;
 }

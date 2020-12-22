@@ -44,7 +44,7 @@ public class MeteorParticleEffect : BaseParticleEffect {
         hasMeteorFell = true;
         AudioManager.Instance.TryCreateAudioObject(
             CollectionUtilities.GetRandomElement(PlayerSkillManager.Instance
-                .GetPlayerSkillData<MeteorSkillData>(SPELL_TYPE.METEOR).impactSounds),
+                .GetPlayerSkillData<MeteorSkillData>(PLAYER_SKILL_TYPE.METEOR).impactSounds),
             targetTile, 3, false
         );
         //for (int i = 0; i < meteorExplosionParticles.Length; i++) {
@@ -52,6 +52,7 @@ public class MeteorParticleEffect : BaseParticleEffect {
         //}
         BurningSource bs = null;
         //List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, 0, true, true); //radius
+        targetTile.PerformActionOnTraitables((traitable) => MeteorEffect(traitable, ref bs));
         for (int i = 0; i < targetTile.neighbourList.Count; i++) {
             LocationGridTile tile = targetTile.neighbourList[i];
             tile.PerformActionOnTraitables((traitable) => MeteorEffect(traitable, ref bs));

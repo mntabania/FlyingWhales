@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Collections.Generic;
 using Goap.Unique_Action_Data;
 
 public class CureCharacter : GoapAction {
@@ -10,11 +11,13 @@ public class CureCharacter : GoapAction {
         actionIconString = GoapActionStateDB.Cure_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.RATMAN };
-        isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Work};
     }
 
     #region Overrides
+    public override bool ShouldActionBeAnIntel(ActualGoapNode node) {
+        return true;
+    }
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Healing Potion", false, GOAP_EFFECT_TARGET.ACTOR), HasItemInInventory);
         //AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Poisoned", false, GOAP_EFFECT_TARGET.TARGET));
@@ -43,55 +46,53 @@ public class CureCharacter : GoapAction {
         if (goapActionInvalidity.isInvalid == false) {
             if ((poiTarget as Character).carryComponent.IsNotBeingCarried() == false) {
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "target_carried";
             }
         }
         return goapActionInvalidity;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, target, witness, node, status);
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
         Character targetCharacter = target as Character;
         string opinionOfTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
         CureCharacterUAD data = node.GetConvertedUniqueActionData<CureCharacterUAD>();
         if (data.usedPoisonedHealingPotion) {
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
+            reactions.Add(EMOTION.Shock);
             if (opinionOfTarget == RelationshipManager.Friend || opinionOfTarget == RelationshipManager.Close_Friend) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);    
+                reactions.Add(EMOTION.Anger);
             }
         } else {
             if (opinionOfTarget == RelationshipManager.Friend || opinionOfTarget == RelationshipManager.Close_Friend) {
                 if (!witness.traitContainer.HasTrait("Psychopath")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, witness, actor, status, node);
+                    reactions.Add(EMOTION.Gratefulness);
                 }
             } else if (opinionOfTarget == RelationshipManager.Rival) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
-            }    
+                reactions.Add(EMOTION.Disapproval);
+            }
         }
-        
-        return response;
     }
-    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionOfTarget(actor, target, node, status);
+    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
         Character targetCharacter = target as Character;
         Debug.Assert(targetCharacter != null, nameof(targetCharacter) + " != null");
         CureCharacterUAD data = node.GetConvertedUniqueActionData<CureCharacterUAD>();
         if (data.usedPoisonedHealingPotion) {
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor, status, node);
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status, node);
+            reactions.Add(EMOTION.Shock);
+            reactions.Add(EMOTION.Betrayal);
         } else {
             if (!targetCharacter.traitContainer.HasTrait("Psychopath")) {
                 if (targetCharacter.relationshipContainer.IsEnemiesWith(actor)) {
-                    if(UnityEngine.Random.Range(0, 100) < 30) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status, node);
+                    if (UnityEngine.Random.Range(0, 100) < 30) {
+                        reactions.Add(EMOTION.Gratefulness);
                     }
                     if (UnityEngine.Random.Range(0, 100) < 20) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, targetCharacter, actor, status, node);
+                        reactions.Add(EMOTION.Embarassment);
                     }
                 } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status, node);
+                    reactions.Add(EMOTION.Gratefulness);
                 }
             }
         }
-        return response;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         if (node.poiTarget is Character character) {

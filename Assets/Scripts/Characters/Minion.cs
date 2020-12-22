@@ -16,7 +16,7 @@ public class Minion {
     //public Region assignedRegion { get; private set; } //the landmark that this minion is currently invading. NOTE: This is set on both npcSettlement and non npcSettlement landmarks
     //public int spellExtractionCount { get; private set; } //the number of times a spell was extracted from this minion.
     public bool isSummoned { get; private set; }
-    public SPELL_TYPE minionPlayerSkillType { get; private set; }
+    public PLAYER_SKILL_TYPE minionPlayerSkillType { get; private set; }
 
     #region getters
     public DeadlySin deadlySin => CharacterManager.Instance.GetDeadlySin(character.characterClass.className);
@@ -147,6 +147,13 @@ public class Minion {
                 deathLog = _deathLog;
             }
             character.SetDeathLog(deathLog);
+            List<Trait> afterDeathTraitOverrideFunctions = character.traitContainer.GetTraitOverrideFunctions(TraitManager.After_Death);
+            if (afterDeathTraitOverrideFunctions != null) {
+                for (int i = 0; i < afterDeathTraitOverrideFunctions.Count; i++) {
+                    Trait trait = afterDeathTraitOverrideFunctions[i];
+                    trait.AfterDeath(character);
+                }
+            }
             Unsummon();
             GameManager.Instance.CreateParticleEffectAt(deathTile, PARTICLE_EFFECT.Minion_Dissipate);
         }
@@ -199,24 +206,24 @@ public class Minion {
     #endregion
 
     #region Utilities
-    public void SetMinionPlayerSkillType(SPELL_TYPE skillType) {
+    public void SetMinionPlayerSkillType(PLAYER_SKILL_TYPE skillType) {
         minionPlayerSkillType = skillType;
     }
-    public string GetMinionClassName(SPELL_TYPE skillType) {
+    public string GetMinionClassName(PLAYER_SKILL_TYPE skillType) {
         switch (skillType) {
-            case SPELL_TYPE.DEMON_WRATH:
+            case PLAYER_SKILL_TYPE.DEMON_WRATH:
                 return "Wrath";
-            case SPELL_TYPE.DEMON_ENVY:
+            case PLAYER_SKILL_TYPE.DEMON_ENVY:
                 return "Envy";
-            case SPELL_TYPE.DEMON_GLUTTONY:
+            case PLAYER_SKILL_TYPE.DEMON_GLUTTONY:
                 return "Gluttony";
-            case SPELL_TYPE.DEMON_GREED:
+            case PLAYER_SKILL_TYPE.DEMON_GREED:
                 return "Greed";
-            case SPELL_TYPE.DEMON_LUST:
+            case PLAYER_SKILL_TYPE.DEMON_LUST:
                 return "Lust";
-            case SPELL_TYPE.DEMON_PRIDE:
+            case PLAYER_SKILL_TYPE.DEMON_PRIDE:
                 return "Pride";
-            case SPELL_TYPE.DEMON_SLOTH:
+            case PLAYER_SKILL_TYPE.DEMON_SLOTH:
                 return "Sloth";
             default:
                 return "Wrath";
@@ -350,7 +357,7 @@ public struct UnsummonedMinionData {
     public string minionName;
     public string className;
     public COMBAT_ABILITY combatAbility;
-    public List<SPELL_TYPE> interventionAbilitiesToResearch;
+    public List<PLAYER_SKILL_TYPE> interventionAbilitiesToResearch;
 
     public override bool Equals(object obj) {
         if (obj is UnsummonedMinionData) {

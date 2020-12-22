@@ -58,16 +58,13 @@ public class Recruit : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, target, witness, node, status);
-
+    public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
         if (target is Character targetCharacter) {
-            if (targetCharacter.prevFaction != null && witness.prevFaction.leader == witness) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+            if (targetCharacter.prevFaction != null && targetCharacter.prevFaction.leader == witness) {
+                reactions.Add(EMOTION.Anger);
             }
         }
-        return response;
     }
     #endregion
 
@@ -86,6 +83,7 @@ public class Recruit : GoapAction {
             //Just to make sure that vengeful ghosts will stop attacking a demonic structure once they  are recruited.
             //This can happen if vengeful ghost already has a target demonic structure but is restrained and recruited on its way there
             targetCharacter.behaviourComponent.SetIsAttackingDemonicStructure(false, null);
+            targetCharacter.behaviourComponent.UpdateDefaultBehaviourSet();
         }
         targetCharacter.traitContainer.RemoveRestrainAndImprison(targetCharacter, goapNode.actor);
         targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Criminal");

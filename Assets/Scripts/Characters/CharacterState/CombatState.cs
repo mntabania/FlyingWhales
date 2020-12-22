@@ -159,7 +159,7 @@ public class CombatState : CharacterState {
                 if (!stateComponent.owner.traitContainer.HasTrait("Berserked")) {
                     HexTile chosenHex = stateComponent.owner.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
                     if (chosenHex != null) {
-                        LocationGridTile chosenTile = chosenHex.GetRandomTile();
+                        LocationGridTile chosenTile = chosenHex.GetRandomPassableTile();
                         stateComponent.owner.jobComponent.CreateFleeCrimeJob(chosenTile);
                         return;
                     }
@@ -167,11 +167,13 @@ public class CombatState : CharacterState {
             }
 
             //Made it so that dead characters no longer check invision characters after exiting a state.
-            for (int i = 0; i < stateComponent.owner.marker.inVisionPOIs.Count; i++) {
-                IPointOfInterest currPOI = stateComponent.owner.marker.inVisionPOIs[i];
-                if (!stateComponent.owner.marker.unprocessedVisionPOIs.Contains(currPOI)) {
-                    // stateComponent.character.CreateJobsOnEnterVisionWith(currCharacter);
-                    stateComponent.owner.marker.AddUnprocessedPOI(currPOI);
+            if (stateComponent.owner.marker) {
+                for (int i = 0; i < stateComponent.owner.marker.inVisionPOIs.Count; i++) {
+                    IPointOfInterest currPOI = stateComponent.owner.marker.inVisionPOIs[i];
+                    if (!stateComponent.owner.marker.unprocessedVisionPOIs.Contains(currPOI)) {
+                        // stateComponent.character.CreateJobsOnEnterVisionWith(currCharacter);
+                        stateComponent.owner.marker.AddUnprocessedPOI(currPOI);
+                    }
                 }
             }
             stateComponent.owner.needsComponent.CheckExtremeNeeds();

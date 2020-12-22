@@ -19,6 +19,7 @@ TagManager:
   - Structure_Wall
   - Spell
   - Moving Object
+  - Context Menu
   layers:
   - Default
   - TransparentFX

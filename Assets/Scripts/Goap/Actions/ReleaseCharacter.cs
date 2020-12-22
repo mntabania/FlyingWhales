@@ -36,6 +36,7 @@ public class ReleaseCharacter : GoapAction {
         if (goapActionInvalidity.isInvalid == false) {
             if ((poiTarget as Character).carryComponent.IsNotBeingCarried() == false) {
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "target_carried";
             }
         }
         return goapActionInvalidity;
@@ -95,14 +96,15 @@ public class ReleaseCharacter : GoapAction {
     public void AfterReleaseSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.poiTarget as Character;
         bool isEnslaved = target.traitContainer.HasTrait("Enslaved");
-        target.traitContainer.RemoveStatusAndStacks(target, "Restrained");
-        target.traitContainer.RemoveStatusAndStacks(target, "Unconscious");
-        target.traitContainer.RemoveStatusAndStacks(target, "Frozen");
-        target.traitContainer.RemoveStatusAndStacks(target, "Ensnared");
-        target.traitContainer.RemoveStatusAndStacks(target, "Enslaved");
+        target.traitContainer.RemoveRestrainAndImprison(target, goapNode.actor);
+        target.traitContainer.RemoveStatusAndStacks(target, "Unconscious", goapNode.actor);
+        target.traitContainer.RemoveStatusAndStacks(target, "Frozen", goapNode.actor);
+        target.traitContainer.RemoveStatusAndStacks(target, "Ensnared", goapNode.actor);
+        target.traitContainer.RemoveStatusAndStacks(target, "Enslaved", goapNode.actor);
 
         if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive && goapNode.actor.partyComponent.currentParty.currentQuest is RescuePartyQuest quest) {
             if(quest.targetCharacter == goapNode.poiTarget) {
+                quest.SetIsSuccessful(true);
                 quest.SetIsReleasing(false);
                 goapNode.actor.partyComponent.currentParty.GoBackHomeAndEndQuest();
             }
@@ -113,6 +115,8 @@ public class ReleaseCharacter : GoapAction {
                 target.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, goapNode.actor, "join_faction_normal");
             }
         }
+        target.combatComponent.RemoveHostileInRange(goapNode.actor);
+        target.combatComponent.RemoveAvoidInRange(goapNode.actor);
     }
     #endregion
 }

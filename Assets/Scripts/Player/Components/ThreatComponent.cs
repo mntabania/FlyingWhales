@@ -87,7 +87,11 @@ public class ThreatComponent {
         if (QuestManager.Instance.IsQuestActive<DivineIntervention>()) {
             return; //do not decrease threat per hour if divine intervention quest is active
         }
-        AdjustThreat(-1);
+        int hour = GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick);
+        if (UtilityScripts.Utilities.IsEven(hour)) {
+            //only decrease threat every other hour
+            AdjustThreat(-1);    
+        }
     }
     private void OnQuestDeactivated(Quest quest) {
         if (quest is DivineIntervention) {

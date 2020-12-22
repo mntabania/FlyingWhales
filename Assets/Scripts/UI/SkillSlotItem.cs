@@ -37,7 +37,7 @@ public class SkillSlotItem : MonoBehaviour {
         this.archetype = archetype;
         UpdateSkillSlotItem();
     }
-    public void SetSkillSlotItem(PLAYER_ARCHETYPE archetype, SPELL_TYPE skillType, bool isFixed) {
+    public void SetSkillSlotItem(PLAYER_ARCHETYPE archetype, PLAYER_SKILL_TYPE skillType, bool isFixed) {
         SetSkillSlotItem(archetype, PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType), isFixed);
     }
     public void SetOnHoverEnterAction(Action<PlayerSkillData> onHoverEnter) {
@@ -89,7 +89,7 @@ public class SkillSlotItem : MonoBehaviour {
     }
     private void UpdateText() {
         if(skillData != null) {
-            spellText.text = PlayerSkillManager.Instance.GetPlayerSpellData(skillData.skill).name;
+            spellText.text = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill).name;
         } else {
             if (!isFixed) {
                 spellText.text = "Click to Assign a Skill";

@@ -3,6 +3,8 @@ using System.Collections.Specialized;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UtilityScripts;
+using Factions.Faction_Succession;
+using Locations.Settlements;
 namespace Factions.Faction_Types {
     public abstract class FactionType {
         public readonly string name;
@@ -12,6 +14,7 @@ namespace Factions.Faction_Types {
         public readonly List<string> combatantClasses;
         public readonly List<string> civilianClasses;
         public readonly Dictionary<CRIME_TYPE, CRIME_SEVERITY> crimes; //FOR RESTRUCTURE: data must be Dictionary<CRIME_SEVERITY, List<CRIME_TYPE>>. Must restructure after build on Nov. 6, 2020. This will change save data that is why deletion must occur after build
+        public FactionSuccession succession { get; protected set; }
         public bool hasCrimes { get; protected set; }
 
         #region getters
@@ -27,6 +30,7 @@ namespace Factions.Faction_Types {
             combatantClasses = new List<string>();
             civilianClasses = new List<string>();
             crimes = new Dictionary<CRIME_TYPE, CRIME_SEVERITY>();
+            succession = FactionManager.Instance.GetFactionSuccession(FACTION_SUCCESSION_TYPE.None);
         }
         public FactionType(FACTION_TYPE type, SaveDataFactionType data) {
             this.type = type;
@@ -35,12 +39,16 @@ namespace Factions.Faction_Types {
             // neededStructures = new List<StructureSetting>();
             combatantClasses = new List<string>();
             civilianClasses = new List<string>();
+            succession = FactionManager.Instance.GetFactionSuccession(FACTION_SUCCESSION_TYPE.None);
+
             for (int i = 0; i < data.ideologies.Count; i++) {
                 SaveDataFactionIdeology saveIdeology = data.ideologies[i];
                 ideologies.Add(saveIdeology.Load());
             }
             crimes = data.crimes != null ? new Dictionary<CRIME_TYPE, CRIME_SEVERITY>(data.crimes) : new Dictionary<CRIME_TYPE, CRIME_SEVERITY>();
             hasCrimes = data.hasCrimes;
+            succession = FactionManager.Instance.GetFactionSuccession(FACTION_SUCCESSION_TYPE.None);
+
         }
 
         #region Initialization
@@ -175,6 +183,15 @@ namespace Factions.Faction_Types {
         }
         public void RemoveCivilianClass(string className) {
             civilianClasses.Remove(className);
+        }
+        public bool IsCivilian(string className) {
+            return civilianClasses != null && civilianClasses.Contains(className);
+        }
+        #endregion
+
+        #region Migration
+        public virtual int GetAdditionalMigrationMeterGain(NPCSettlement p_settlement) {
+            return 0;
         }
         #endregion
 

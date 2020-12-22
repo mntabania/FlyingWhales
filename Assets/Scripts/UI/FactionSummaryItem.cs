@@ -16,7 +16,7 @@ public class FactionSummaryItem : PooledObject, IPointerClickHandler {
 
     public void SetFaction(Faction faction) {
         _faction = faction;
-        factionNameLbl.text = _faction.name;
+        factionNameLbl.text = _faction.nameWithColor;
         emblem.SetFaction(_faction);
         //emblemBG.sprite = faction.emblemBG;
     }

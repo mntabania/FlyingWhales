@@ -142,6 +142,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         SetFaceObjectStates(false);
         lvlGO.SetActive(false);
         factionEmblem.SetFaction(PlayerManager.Instance.player.playerFaction);
+        leaderIcon.SetActive(false);
     }
     private void SetWholeImageState(bool state) {
         wholeImage.gameObject.SetActive(state);
@@ -187,15 +188,14 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     #region Pointer Actions
     public void OnPointerClick(PointerEventData eventData) {
-#if !WORLD_CREATION_TOOL
         if (ignoreInteractions) {
             return;
         }
-        if (eventData.button == interactionBtn) {
-            OnClick();
+        if (eventData.button == PointerEventData.InputButton.Left) {
+            OnLeftClick();
+        } else if (eventData.button == PointerEventData.InputButton.Right) {
+            OnRightClick();
         }
-        
-#endif
     }
     public void OnClick(BaseEventData eventData) {
         if (ignoreInteractions || !gameObject.activeSelf) {
@@ -203,8 +203,13 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         }
         OnPointerClick(eventData as PointerEventData);
     }
-    public void OnClick() {
+    public void OnLeftClick() {
         ShowCharacterMenu();
+    }
+    private void OnRightClick() {
+        if (_character != null) {
+            UIManager.Instance.ShowPlayerActionContextMenu(_character.isLycanthrope ? _character.lycanData.activeForm : _character, Input.mousePosition, true);
+        }
     }
     public void SetHoverHighlightState(bool state) {
         hoverObj.SetActive(state);
@@ -213,6 +218,26 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         if (_character != null) {
             UIManager.Instance.ShowCharacterInfo(_character, true);
         }
+    }
+    public void OnHoverEnterSuccessor() {
+        if (ignoreInteractions) {
+            return;
+        }
+        SetHoverHighlightState(true);
+        if(character != null && character.faction != null) {
+            int totalWeights = character.faction.successionComponent.GetTotalWeightsOfSuccessors();
+            int weight = character.faction.successionComponent.GetWeightOfSuccessor(character);
+            float chance = (weight / (float) totalWeights) * 100f;
+            string text = $"{chance.ToString("N1")}% chance to be the next Faction Leader";
+            UIManager.Instance.ShowSmallInfo(text, header: character.visuals.GetCharacterNameWithIconAndColor());
+        }
+    }
+    public void OnHoverExitSuccessor() {
+        if (ignoreInteractions) {
+            return;
+        }
+        SetHoverHighlightState(false);
+        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 
@@ -310,7 +335,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         if (character != null) {
             string message = string.Empty;
             if (character.isSettlementRuler) {
-                message = $"<b>{character.name}</b> is the Settlement Ruler of <b>{character.ruledSettlement.name}</b>\n";
+                message = $"<b>{character.name}</b> is the Settlement Ruler of <b>{character.homeSettlement.name}</b>\n";
             } 
             if (character.isFactionLeader) {
                 message += $"<b>{character.name}</b> is the Faction Leader of <b>{character.faction.name}</b>";

@@ -77,11 +77,14 @@ public class Cook : GoapAction {
             if (poiTarget is Character targetCharacter) {
                 if (!targetCharacter.isDead) {
                     goapActionInvalidity.isInvalid = true;
+                    goapActionInvalidity.reason = "target_dead";
                 } else if (!node.actor.carryComponent.IsPOICarried(targetCharacter)) {
                     goapActionInvalidity.isInvalid = true;
+                    goapActionInvalidity.reason = "target_unavailable";
                 }
             } else {
                 goapActionInvalidity.isInvalid = true;
+                goapActionInvalidity.reason = "target_unavailable";
             }
         }
         return goapActionInvalidity;

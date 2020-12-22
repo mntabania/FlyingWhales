@@ -12,7 +12,7 @@ public class FactionItem : PooledObject {
     public TextMeshProUGUI typeLbl;
 
     public Material grayscaleMat;
-    private Color origColorName = new Color(248f/255f, 225f/255f, 169f / 255f);
+    private Color origColorName;
     private Color origColorType = new Color(206f/255f, 182f/255f, 124f/255f);
 
     public Faction faction { get; private set; }
@@ -20,6 +20,7 @@ public class FactionItem : PooledObject {
     private bool isInGrayscale;
 
     public void SetFaction(Faction faction) {
+        origColorName = FactionManager.Instance.factionNameColor;
         this.faction = faction;
         emblem.sprite = faction.emblem;
         nameLbl.text = faction.name;

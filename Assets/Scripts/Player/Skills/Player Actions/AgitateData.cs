@@ -5,7 +5,7 @@ using Inner_Maps.Location_Structures;
 using Logs;
 
 public class AgitateData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.AGITATE;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.AGITATE;
     public override string name => "Agitate";
     public override string description => "This Action can be used on a monster. The target will enter a state of frenzy and will terrorize nearby Residents.";
     public AgitateData() : base() {

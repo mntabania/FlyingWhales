@@ -81,3 +81,4 @@ MonoBehaviour:
   cultFactionEmblem: {fileID: 21300000, guid: 54569c2c5213b5e4ab5a1ee42e943161, type: 3}
   ratmenFactionEmblem: {fileID: 21300000, guid: 58f4bc47b92ebcf46abb889d279c49d0,
     type: 3}
+  factionNameColor: {r: 0.52156866, g: 0.74053586, b: 1, a: 1}

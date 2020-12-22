@@ -7,10 +7,11 @@ using UnityEngine;
 /// </summary>
 public interface IPlayerActionTarget {
 
-    List<SPELL_TYPE> actions { get; }
+    string name { get; }
+    List<PLAYER_SKILL_TYPE> actions { get; }
 
     void ConstructDefaultActions();
-    void AddPlayerAction(SPELL_TYPE action);
-    void RemovePlayerAction(SPELL_TYPE action);
+    void AddPlayerAction(PLAYER_SKILL_TYPE action);
+    void RemovePlayerAction(PLAYER_SKILL_TYPE action);
     void ClearPlayerActions();
 }

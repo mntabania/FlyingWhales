@@ -69,7 +69,7 @@ public class FactionInfoUI : InfoUIBase {
         Faction previousArea = activeFaction;
         activeFaction = _data as Faction;
         base.OpenMenu();
-        if (UIManager.Instance.IsShareIntelMenuOpen()) {
+        if (UIManager.Instance.IsConversationMenuOpen()) {
             backButton.interactable = false;
         }
         UpdateOverview();
@@ -96,7 +96,7 @@ public class FactionInfoUI : InfoUIBase {
 
     #region Basic Info
     private void UpdateBasicInfo() {
-        factionNameLbl.text = activeFaction.name;
+        factionNameLbl.text = activeFaction.nameWithColor;
         factionTypeLbl.text = activeFaction.GetRaceText();
         emblem.SetFaction(activeFaction);
     }
@@ -315,7 +315,7 @@ public class FactionInfoUI : InfoUIBase {
         }
     }
     private void UpdateOverview() {
-        overviewFactionNameLbl.text = activeFaction.name;
+        overviewFactionNameLbl.text = activeFaction.nameWithColor;
         overviewFactionTypeLbl.text = activeFaction.factionType.name;
 
         if (activeFaction.leader is Character leader) {

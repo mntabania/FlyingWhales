@@ -7,7 +7,7 @@ using Traits;
 using TMPro;
 using Ruinarch.Custom_UI;
 
-public class PsychopathUI : PopupMenuBase {
+public class PsychopathUI : MonoBehaviour {
     public PsychopathPicker psychopathPicker;
     public RuinarchButton confirmButton;
 
@@ -52,13 +52,13 @@ public class PsychopathUI : PopupMenuBase {
         this.character = character;
         SetVictimType1(SERIAL_VICTIM_TYPE.None);
         SetVictimType2(SERIAL_VICTIM_TYPE.None);
-        base.Open();
+        gameObject.SetActive(true);
         UIManager.Instance.Pause();
         UIManager.Instance.SetSpeedTogglesState(false);
     }
     public void HidePsychopathUI() {
         character = null;
-        base.Close();
+        gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI() && !UIManager.Instance.IsObjectPickerOpen()) {
             UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
         }
@@ -176,7 +176,7 @@ public class PsychopathUI : PopupMenuBase {
     public void OnClickConfirm() {
         Psychopath psychopathTrait = TraitManager.Instance.CreateNewInstancedTraitClass<Psychopath>("Psychopath");
         character.traitContainer.AddTrait(character, psychopathTrait);
-        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted", null, LOG_TAG.Life_Changes);
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "General", "Player", "player_afflicted", null, LOG_TAG.Life_Changes);
         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "Psychopath", LOG_IDENTIFIER.STRING_1);
         log.AddLogToDatabase();
@@ -196,6 +196,6 @@ public class PsychopathUI : PopupMenuBase {
         psychopathTrait.SetVictimRequirements(victimType1, victimDescription1, victimType2, victimDescription2);
 
         HidePsychopathUI();
-        PlayerSkillManager.Instance.GetAfflictionData(SPELL_TYPE.PSYCHOPATHY).OnExecuteSpellActionAffliction();
+        PlayerSkillManager.Instance.GetAfflictionData(PLAYER_SKILL_TYPE.PSYCHOPATHY).OnExecutePlayerSkill();
     }
 }

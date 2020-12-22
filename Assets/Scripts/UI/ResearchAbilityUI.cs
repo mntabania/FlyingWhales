@@ -45,7 +45,7 @@ public class ResearchAbilityUI : PopupMenuBase {
 
         base.Open();
     }
-    public void SetAbility1(SPELL_TYPE ability) {
+    public void SetAbility1(PLAYER_SKILL_TYPE ability) {
         //ability1 = ability;
         string name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
         ability1Icon.sprite = PlayerManager.Instance.GetJobActionSprite(name);
@@ -54,7 +54,7 @@ public class ResearchAbilityUI : PopupMenuBase {
         //text += "\nTier: " + PlayerManager.Instance.GetInterventionAbilityTier(ability);
         ability1Text.text = text;
     }
-    public void SetAbility2(SPELL_TYPE ability) {
+    public void SetAbility2(PLAYER_SKILL_TYPE ability) {
         //ability2 = ability;
         string name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
         ability2Icon.sprite = PlayerManager.Instance.GetJobActionSprite(name);
@@ -63,7 +63,7 @@ public class ResearchAbilityUI : PopupMenuBase {
         //text += "\nTier: " + PlayerManager.Instance.GetInterventionAbilityTier(ability);
         ability2Text.text = text;
     }
-    public void SetAbility3(SPELL_TYPE ability) {
+    public void SetAbility3(PLAYER_SKILL_TYPE ability) {
         //ability3 = ability;
         string name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
         ability3Icon.sprite = PlayerManager.Instance.GetJobActionSprite(name);

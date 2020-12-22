@@ -5,10 +5,10 @@ using Traits;
 using UtilityScripts;
 
 public class SplashPoisonData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.SPLASH_POISON;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SPLASH_POISON;
     public override string name => "Splash Poison";
     public override string description => "This Spell applies Poisoned to a 3x3 tile floor.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
 
     public SplashPoisonData() : base() {
@@ -18,7 +18,7 @@ public class SplashPoisonData : SpellData {
     public override void ActivateAbility(LocationGridTile targetTile) {
         AudioManager.Instance.TryCreateAudioObject(
             CollectionUtilities.GetRandomElement(PlayerSkillManager.Instance
-                .GetPlayerSkillData<SplashPoisonSkillData>(SPELL_TYPE.SPLASH_POISON).splashSounds),
+                .GetPlayerSkillData<SplashPoisonSkillData>(PLAYER_SKILL_TYPE.SPLASH_POISON).splashSounds),
             targetTile, 3, false
         );
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);

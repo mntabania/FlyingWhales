@@ -30,6 +30,7 @@ public class LandmarkNameplate : PooledObject {
             gameObject.SetActive(false);
         }
         nameLbl.text = landmark.tileLocation.GetDisplayName();
+        UpdateFactionEmblem();
     }
 
     private void UpdatePosition() {

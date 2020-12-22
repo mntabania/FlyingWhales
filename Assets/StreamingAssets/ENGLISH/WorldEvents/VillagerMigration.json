@@ -1,1 +1,1 @@
-{"items":[{"key":"new_villager","value":"%00@ has arrived at %04@."}]}
+{"items":[{"key":"new_villager","value":"%00@ has arrived at %04@."},{"key":"induced_migration","value":"Player triggered Villager Migration event on %04@."},{"key":"stifle_migration","value":"The Migration Meter of %04@ has been reduced back to zero!"}]}

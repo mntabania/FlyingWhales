@@ -2,10 +2,10 @@
 using Logs;
 
 public class CultistPoisonData : PlayerAction {
-    public override SPELL_TYPE type => SPELL_TYPE.CULTIST_POISON;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.CULTIST_POISON;
     public override string name => "Poison Neighbor";
     public override string description => "This Action instructs the character to Poison an object owned by someone they know.";
-    public override SPELL_CATEGORY category => SPELL_CATEGORY.PLAYER_ACTION;
+    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.PLAYER_ACTION;
     public override bool canBeCastOnBlessed => true;
     
     public CultistPoisonData() : base() {
@@ -15,10 +15,11 @@ public class CultistPoisonData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character character) {
-            List<Character> choices = character.GetListOfCultistTargets(x => x.isNormalCharacter && x.race.IsSapient() && !x.isDead);
-            if(choices == null) { choices = new List<Character>(); }
+            List<Character> choices = ObjectPoolManager.Instance.CreateNewCharactersList();
+            character.PopulateListOfCultistTargets(choices, x => x.isNormalCharacter && x.race.IsSapient() && !x.isDead);
             UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), validityChecker: t => CanBePoisoned(character, t), onHoverAction: t => OnHoverEnter(character, t), onHoverExitAction: OnHoverExit, showCover: true,
                 shouldShowConfirmationWindowOnPick: false, layer: 25, asButton: false);
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(choices);
         }
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {

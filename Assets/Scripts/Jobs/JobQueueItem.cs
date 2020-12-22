@@ -28,6 +28,9 @@ public abstract class JobQueueItem : ISavable {
     public bool cannotBePushedBack { get; protected set; }
     public bool shouldBeRemovedFromSettlementWhenUnassigned { get; protected set; }
     public bool forceCancelOnInvalid { get; protected set; }
+    public bool isInMultithread { get; protected set; }
+    public bool shouldForceCancelUponReceiving { get; protected set; }
+
     //object pool
     /// <summary>
     /// Has this job been returned to the pool?
@@ -330,6 +333,12 @@ public abstract class JobQueueItem : ISavable {
     public void SetIsThisAGatheringJob(bool state) {
         isThisAGatheringJob = state;
     }
+    public void SetIsInMultithread(bool state) {
+        isInMultithread = state;
+    }
+    public void SetShouldForceCancelJobUponReceiving(bool state) {
+        shouldForceCancelUponReceiving = state;
+    }
     #endregion
 
     #region Job Object Pool
@@ -355,6 +364,8 @@ public abstract class JobQueueItem : ISavable {
         SetIsThisAPartyJob(false);
         SetIsThisAGatheringJob(false);
         SetForceCancelOnInvalid(false);
+        SetIsInMultithread(false);
+        SetShouldForceCancelJobUponReceiving(false);
         ResetInvalidCounter();
         Messenger.RemoveListener<JOB_TYPE, IPointOfInterest>(JobSignals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
         Messenger.RemoveListener<IPointOfInterest>(JobSignals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);

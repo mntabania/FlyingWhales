@@ -28,6 +28,7 @@ namespace Inner_Maps.Location_Structures {
 
         #region Overrides
         public override void OnBuiltNewStructure() {
+            base.OnBuiltNewStructure();
             Assert.IsTrue(orderedMonsters.Length == rooms.Length, $"Ruined zoo rooms are inconsistent with monster list! Monsters: {orderedMonsters}. Rooms: {rooms}");
             for (int i = 0; i < rooms.Length; i++) {
                 StructureRoom structureRoom = rooms[i];

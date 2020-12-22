@@ -45,7 +45,7 @@ namespace Inner_Maps.Location_Structures {
         #region Overrides
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
-            AddPlayerAction(SPELL_TYPE.BRAINWASH);
+            AddPlayerAction(PLAYER_SKILL_TYPE.BRAINWASH);
         }
         #endregion
         
@@ -119,6 +119,11 @@ namespace Inner_Maps.Location_Structures {
             if (actor.isSettlementRuler) {
                 failWeight += 600;
             }
+
+            if (actor.characterClass.className == "Hero" || actor.traitContainer.IsBlessed()) {
+                successWeight = 0;
+                failWeight = 100;
+            }
         }
         public static float GetBrainwashSuccessRate(Character character) {
             GetBrainwashSuccessAndFailWeights(character, out int successWeight, out int failWeight);
@@ -135,9 +140,8 @@ namespace Inner_Maps.Location_Structures {
             }
             return false;
         }
-        private bool IsValidBrainwashTarget(Character character) {
-            return character.isNormalCharacter && character.isDead == false
-                    && character.traitContainer.HasTrait("Cultist") == false;
+        public bool IsValidBrainwashTarget(Character character) {
+            return character.isNormalCharacter && !character.isDead && !character.traitContainer.HasTrait("Cultist") && !character.traitContainer.IsBlessed();
         } 
         public void StartBrainwash() {
             wasBrainwashStartedInTutorial = TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Create_A_Cultist);
@@ -145,6 +149,16 @@ namespace Inner_Maps.Location_Structures {
             door?.Close();
             Character chosenTarget = CollectionUtilities.GetRandomElement(charactersInRoom.Where(x => IsValidBrainwashTarget(x)));
             currentBrainwashTarget = chosenTarget;
+            currentBrainwashTarget.interruptComponent.ForceEndNonSimultaneousInterrupt();
+            currentBrainwashTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Brainwashed, currentBrainwashTarget);
+            Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
+            Messenger.Broadcast(SpellSignals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+        }
+        public void StartBrainwash(Character p_target) {
+            wasBrainwashStartedInTutorial = TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Create_A_Cultist);
+            DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
+            door?.Close();
+            currentBrainwashTarget = p_target;
             currentBrainwashTarget.interruptComponent.ForceEndNonSimultaneousInterrupt();
             currentBrainwashTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Brainwashed, currentBrainwashTarget);
             Messenger.AddListener<INTERRUPT, Character>(CharacterSignals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
@@ -184,10 +198,11 @@ namespace Inner_Maps.Location_Structures {
                     skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
                     skeleton.SetDestroyMarkerOnDeath(true);
                     skeleton.ClearPlayerActions();
+                    skeleton.movementComponent.SetEnableDigging(true);
 
                     List<LocationGridTile> dropChoices = parentStructure.occupiedHexTile.hexTileOwner.locationGridTiles.Where(t => 
                         t.structure.structureType == STRUCTURE_TYPE.WILDERNESS).ToList();
-                    
+
                     CharacterManager.Instance.PlaceSummon(skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, chosenTarget, skeleton);
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {
@@ -209,7 +224,9 @@ namespace Inner_Maps.Location_Structures {
                 door?.Close();
                 
                 //kill skeleton
+                LocationStructure deathLocation = skeleton.currentStructure;
                 skeleton.Death();
+                deathLocation?.RemoveCharacterAtLocation(skeleton);
                 currentBrainwashTarget.traitContainer.RemoveRestrainAndImprison(currentBrainwashTarget);
                 currentBrainwashTarget.jobComponent.DisableReportStructure();
                 if (!currentBrainwashTarget.traitContainer.HasTrait("Paralyzed")) {

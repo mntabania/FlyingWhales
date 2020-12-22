@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UtilityScripts;
 
-public class FactionIdeologyComponent {
-    public Faction owner { get; private set; }
+public class FactionIdeologyComponent : FactionComponent {
     public List<FactionIdeology> currentIdeologies => owner.factionType.ideologies;
 
-    public FactionIdeologyComponent(Faction owner) {
-        this.owner = owner;
-    }
+    public FactionIdeologyComponent() { }
+    public FactionIdeologyComponent(SaveDataFactionIdeologyComponent data) { }
     
     public bool DoesCharacterFitCurrentIdeologies(Character character) {
         if(currentIdeologies == null) { return true; }
@@ -76,4 +74,19 @@ public class FactionIdeologyComponent {
         Messenger.Broadcast(FactionSignals.FACTION_IDEOLOGIES_CHANGED, owner);
         Messenger.Broadcast(FactionSignals.FACTION_CRIMES_CHANGED, owner);
     }
+}
+
+[System.Serializable]
+public class SaveDataFactionIdeologyComponent : SaveData<FactionIdeologyComponent> {
+    //No unique data as of now
+
+    #region Overrides
+    public override void Save(FactionIdeologyComponent data) {
+    }
+
+    public override FactionIdeologyComponent Load() {
+        FactionIdeologyComponent component = new FactionIdeologyComponent(this);
+        return component;
+    }
+    #endregion
 }

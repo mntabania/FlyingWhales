@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DemonicPrisonData : DemonicStructurePlayerSkill {
     public override string name => "Demonic Prison";
-    public override SPELL_TYPE type => SPELL_TYPE.DEMONIC_PRISON;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.DEMONIC_PRISON;
 
     public DemonicPrisonData() {
         structureType = STRUCTURE_TYPE.DEMONIC_PRISON;

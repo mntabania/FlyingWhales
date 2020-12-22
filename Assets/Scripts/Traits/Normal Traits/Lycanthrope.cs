@@ -334,12 +334,18 @@ namespace Traits {
             Region homeRegion = originalForm.homeRegion;
             PutToLimbo(originalForm);
             ReleaseFromLimbo(lycanthropeForm, tile, homeRegion);
+            CopyImportantTraits(originalForm, lycanthropeForm);
             lycanthropeForm.needsComponent.ResetFullnessMeter();
             lycanthropeForm.needsComponent.ResetTirednessMeter();
             lycanthropeForm.needsComponent.ResetHappinessMeter();
             lycanthropeForm.needsComponent.ResetStaminaMeter();
             lycanthropeForm.needsComponent.ResetHopeMeter();
             lycanthropeForm.traitContainer.AddTrait(lycanthropeForm, "Transitioning");
+            
+            if (UIManager.Instance.IsContextMenuShowingForTarget(originalForm)) {
+                UIManager.Instance.RefreshPlayerActionContextMenuWithNewTarget(lycanthropeForm);
+            }
+            
             Messenger.Broadcast(CharacterSignals.ON_SWITCH_FROM_LIMBO, originalForm, lycanthropeForm);
         }
 
@@ -358,10 +364,25 @@ namespace Traits {
             Region homeRegion = lycanthropeForm.homeRegion;
             PutToLimbo(lycanthropeForm);
             ReleaseFromLimbo(originalForm, tile, homeRegion);
+            CopyImportantTraits(lycanthropeForm, originalForm);
             lycanthropeForm.traitContainer.RemoveTrait(lycanthropeForm, "Transitioning");
+            
+            if (UIManager.Instance.IsContextMenuShowingForTarget(lycanthropeForm)) {
+                UIManager.Instance.RefreshPlayerActionContextMenuWithNewTarget(originalForm);
+            }
+            
             Messenger.Broadcast(CharacterSignals.ON_SWITCH_FROM_LIMBO, lycanthropeForm, originalForm);
         }
-
+        private void CopyImportantTraits(Character p_copyFrom, Character p_copyTo) {
+            if (p_copyFrom.traitContainer.HasTrait("Restrained")) {
+                Trait restrained = p_copyFrom.traitContainer.GetTraitOrStatus<Trait>("Restrained");
+                TraitManager.Instance.CopyTraitOrStatus(restrained, p_copyFrom, p_copyTo);
+            }
+            if (p_copyFrom.traitContainer.HasTrait("Prisoner")) {
+                Trait prisoner = p_copyFrom.traitContainer.GetTraitOrStatus<Trait>("Prisoner");
+                TraitManager.Instance.CopyTraitOrStatus(prisoner, p_copyFrom, p_copyTo);
+            }
+        }
         private void PutToLimbo(Character form) {
             if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == form) {
                 UIManager.Instance.characterInfoUI.CloseMenu();
@@ -538,10 +559,10 @@ namespace Traits {
         public bool DoesCharacterKnowThisLycan(Character character) {
             return awareCharacters.Contains(character);
         }
-        public bool DoesFactionKnowThisLycan(Faction faction) {
+        public bool DoesFactionKnowThisLycan(Faction faction, bool includeDeadMembersInChecking = true) {
             for (int i = 0; i < faction.characters.Count; i++) {
                 Character member = faction.characters[i];
-                if (member != originalForm) {
+                if (member != originalForm && (includeDeadMembersInChecking || !member.isDead)) {
                     if (DoesCharacterKnowThisLycan(member)) {
                         return true;
                     }

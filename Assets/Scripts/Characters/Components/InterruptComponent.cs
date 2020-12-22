@@ -258,7 +258,7 @@ public class InterruptComponent : CharacterComponent {
             //     // }    
             // }
             if (interruptHolder.interrupt.shouldShowNotif) {
-                if (interruptHolder.interrupt.type == INTERRUPT.Create_Party) {
+                if (interruptHolder.interrupt.type == INTERRUPT.Create_Party || interruptHolder.interrupt.type == INTERRUPT.Mental_Break) {
                     PlayerManager.Instance.player.ShowNotificationFromPlayer(interruptHolder.effectLog);
                 } else {
                     if (interruptHolder.interrupt.isIntel) {

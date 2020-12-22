@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SkeletonMarauderData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.SKELETON_MARAUDER;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_MARAUDER;
     public override string name => "Skeleton Marauder";
     public override string description => "Skeleton Marauder";
     public override string bredBehaviour => "Snatcher";
@@ -15,7 +15,7 @@ public class SkeletonMarauderData : SummonPlayerSkill {
     }
 }
 public class SkeletonArcherData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.SKELETON_ARCHER;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_ARCHER;
     public override string name => "Skeleton Archer";
     public override string description => "Skeleton Archer";
     public override string bredBehaviour => "Snatcher";
@@ -27,7 +27,7 @@ public class SkeletonArcherData : SummonPlayerSkill {
     }
 }
 public class SkeletonBarbarianData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.SKELETON_BARBARIAN;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_BARBARIAN;
     public override string name => "Skeleton Barbarian";
     public override string description => "Skeleton Barbarian";
     public override string bredBehaviour => "Snatcher";
@@ -39,7 +39,7 @@ public class SkeletonBarbarianData : SummonPlayerSkill {
     }
 }
 public class SkeletonCraftsmanData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.SKELETON_CRAFTSMAN;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_CRAFTSMAN;
     public override string name => "Skeleton Craftsman";
     public override string description => "Skeleton Craftsman";
     public override string bredBehaviour => "Snatcher";
@@ -51,7 +51,7 @@ public class SkeletonCraftsmanData : SummonPlayerSkill {
     }
 }
 public class SkeletonDruidData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.SKELETON_DRUID;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_DRUID;
     public override string name => "Skeleton Druid";
     public override string description => "Skeleton Druid";
     public override string bredBehaviour => "Snatcher";
@@ -63,7 +63,7 @@ public class SkeletonDruidData : SummonPlayerSkill {
     }
 }
 public class SkeletonHunterData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.SKELETON_HUNTER;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_HUNTER;
     public override string name => "Skeleton Hunter";
     public override string description => "Skeleton Hunter";
     public override string bredBehaviour => "Snatcher";
@@ -75,7 +75,7 @@ public class SkeletonHunterData : SummonPlayerSkill {
     }
 }
 public class SkeletonMageData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.SKELETON_MAGE;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_MAGE;
     public override string name => "Skeleton Mage";
     public override string description => "Skeleton Mage";
     public override string bredBehaviour => "Snatcher";
@@ -87,7 +87,7 @@ public class SkeletonMageData : SummonPlayerSkill {
     }
 }
 public class SkeletonKnightData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.SKELETON_KNIGHT;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_KNIGHT;
     public override string name => "Skeleton Knight";
     public override string description => "Skeleton Knight";
     public override string bredBehaviour => "Snatcher";
@@ -99,7 +99,7 @@ public class SkeletonKnightData : SummonPlayerSkill {
     }
 }
 public class SkeletonMinerData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.SKELETON_MINER;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_MINER;
     public override string name => "Skeleton Miner";
     public override string description => "Skeleton Miner";
     public override string bredBehaviour => "Snatcher";
@@ -111,7 +111,7 @@ public class SkeletonMinerData : SummonPlayerSkill {
     }
 }
 public class SkeletonNobleData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.SKELETON_NOBLE;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_NOBLE;
     public override string name => "Skeleton Noble";
     public override string description => "Skeleton Noble";
     public override string bredBehaviour => "Snatcher";
@@ -123,7 +123,7 @@ public class SkeletonNobleData : SummonPlayerSkill {
     }
 }
 public class SkeletonPeasantData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.SKELETON_PEASANT;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_PEASANT;
     public override string name => "Skeleton Peasant";
     public override string description => "Skeleton Peasant";
     public override string bredBehaviour => "Snatcher";
@@ -135,7 +135,7 @@ public class SkeletonPeasantData : SummonPlayerSkill {
     }
 }
 public class SkeletonShamanData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.SKELETON_SHAMAN;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_SHAMAN;
     public override string name => "Skeleton Shaman";
     public override string description => "Skeleton Shaman";
     public override string bredBehaviour => "Snatcher";
@@ -147,7 +147,7 @@ public class SkeletonShamanData : SummonPlayerSkill {
     }
 }
 public class SkeletonStalkerData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.SKELETON_STALKER;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SKELETON_STALKER;
     public override string name => "Skeleton Stalker";
     public override string description => "Skeleton Stalker";
     public override string bredBehaviour => "Snatcher";
@@ -159,7 +159,7 @@ public class SkeletonStalkerData : SummonPlayerSkill {
     }
 }
 public class WolfData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.WOLF;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.WOLF;
     public override string name => "Wolf";
     public override string description => "Wolf";
     public WolfData() {
@@ -169,7 +169,7 @@ public class WolfData : SummonPlayerSkill {
     }
 }
 public class GolemData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.GOLEM;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.GOLEM;
     public override string name => "Golem";
     public override string description => "Golem";
     public GolemData() {
@@ -179,7 +179,7 @@ public class GolemData : SummonPlayerSkill {
     }
 }
 public class BoneGolemData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.BONE_GOLEM;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.BONE_GOLEM;
     public override string name => "Bone Golem";
     public override string description => "Bone Golem";
     public BoneGolemData() {
@@ -189,7 +189,7 @@ public class BoneGolemData : SummonPlayerSkill {
     }
 }
 public class IncubusData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.INCUBUS;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.INCUBUS;
     public override string name => "Incubus";
     public override string description => "Incubus";
     public IncubusData() {
@@ -199,7 +199,7 @@ public class IncubusData : SummonPlayerSkill {
     }
 }
 public class SuccubusData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.SUCCUBUS;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SUCCUBUS;
     public override string name => "Succubus";
     public override string description => "Succubus";
     public SuccubusData() {
@@ -209,7 +209,7 @@ public class SuccubusData : SummonPlayerSkill {
     }
 }
 public class FireElementalData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.FIRE_ELEMENTAL;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.FIRE_ELEMENTAL;
     public override string name => "Fire Elemental";
     public override string description => "Fire Elemental";
     public FireElementalData() {
@@ -219,7 +219,7 @@ public class FireElementalData : SummonPlayerSkill {
     }
 }
 public class KoboldData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.KOBOLD;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.KOBOLD;
     public override string name => "Kobold";
     public override string description => "Kobold";
     public KoboldData() {
@@ -229,7 +229,7 @@ public class KoboldData : SummonPlayerSkill {
     }
 }
 public class GhostData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.GHOST;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.GHOST;
     public override string name => "Ghost";
     public override string description => "Ghost";
     public GhostData() {
@@ -239,7 +239,7 @@ public class GhostData : SummonPlayerSkill {
     }
 }
 public class VengefulGhostData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.VENGEFUL_GHOST;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.VENGEFUL_GHOST;
     public override string name => "Vengeful Ghost";
     public override string description => "Vengeful Ghost";
     public VengefulGhostData() {
@@ -249,7 +249,7 @@ public class VengefulGhostData : SummonPlayerSkill {
     }
 }
 public class AbominationData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.ABOMINATION;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.ABOMINATION;
     public override string name => "Abomination";
     public override string description => "Abomination";
     public AbominationData() {
@@ -259,7 +259,7 @@ public class AbominationData : SummonPlayerSkill {
     }
 }
 public class MimicData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.MIMIC;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.MIMIC;
     public override string name => "Mimic";
     public override string description => "Mimic";
     public MimicData() {
@@ -269,7 +269,7 @@ public class MimicData : SummonPlayerSkill {
     }
 }
 public class PigData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.PIG;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.PIG;
     public override string name => "Pig";
     public override string description => "Pig";
     public PigData() {
@@ -279,7 +279,7 @@ public class PigData : SummonPlayerSkill {
     }
 }
 public class ChickenData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.CHICKEN;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.CHICKEN;
     public override string name => "Chicken";
     public override string description => "Chicken";
     public ChickenData() {
@@ -289,7 +289,7 @@ public class ChickenData : SummonPlayerSkill {
     }
 }
 public class SheepData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.SHEEP;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SHEEP;
     public override string name => "Sheep";
     public override string description => "Sheep";
     public SheepData() {
@@ -299,7 +299,7 @@ public class SheepData : SummonPlayerSkill {
     }
 }
 public class PlaguedRatData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.PLAGUED_RAT;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.PLAGUED_RAT;
     public override string name => "Plagued Rat";
     public override string description => "Plagued Rat";
     public PlaguedRatData() {
@@ -309,7 +309,7 @@ public class PlaguedRatData : SummonPlayerSkill {
     }
 }
 public class SludgeData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.SLUDGE;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SLUDGE;
     public override string name => "Sludge";
     public override string description => "Sludge";
     public SludgeData() {
@@ -319,7 +319,7 @@ public class SludgeData : SummonPlayerSkill {
     }
 }
 public class WaterNymphData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.WATER_NYMPH;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.WATER_NYMPH;
     public override string name => "Water Nymph";
     public override string description => "Water Nymph";
     public WaterNymphData() {
@@ -329,7 +329,7 @@ public class WaterNymphData : SummonPlayerSkill {
     }
 }
 public class WindNymphData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.WIND_NYMPH;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.WIND_NYMPH;
     public override string name => "Wind Nymph";
     public override string description => "Wind Nymph";
     public WindNymphData() {
@@ -339,7 +339,7 @@ public class WindNymphData : SummonPlayerSkill {
     }
 }
 public class IceNymphData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.ICE_NYMPH;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.ICE_NYMPH;
     public override string name => "Ice Nymph";
     public override string description => "Ice Nymph";
     public IceNymphData() {
@@ -349,7 +349,7 @@ public class IceNymphData : SummonPlayerSkill {
     }
 }
 public class ElectricWispData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.ELECTRIC_WISP;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.ELECTRIC_WISP;
     public override string name => "Electric Wisp";
     public override string description => "Electric Wisp";
     public ElectricWispData() {
@@ -359,7 +359,7 @@ public class ElectricWispData : SummonPlayerSkill {
     }
 }
 public class EarthenWispData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.EARTHEN_WISP;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.EARTHEN_WISP;
     public override string name => "Earthen Wisp";
     public override string description => "Earthen Wisp";
     public EarthenWispData() {
@@ -369,7 +369,7 @@ public class EarthenWispData : SummonPlayerSkill {
     }
 }
 public class FireWispData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.FIRE_WISP;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.FIRE_WISP;
     public override string name => "Fire Wisp";
     public override string description => "Fire Wisp";
     public FireWispData() {
@@ -379,7 +379,7 @@ public class FireWispData : SummonPlayerSkill {
     }
 }
 public class GrassEntData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.GRASS_ENT;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.GRASS_ENT;
     public override string name => "Grass Ent";
     public override string description => "Grass Ent";
     public GrassEntData() {
@@ -389,7 +389,7 @@ public class GrassEntData : SummonPlayerSkill {
     }
 }
 public class SnowEntData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.SNOW_ENT;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SNOW_ENT;
     public override string name => "Snow Ent";
     public override string description => "Snow Ent";
     public SnowEntData() {
@@ -399,7 +399,7 @@ public class SnowEntData : SummonPlayerSkill {
     }
 }
 public class CorruptEntData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.CORRUPT_ENT;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.CORRUPT_ENT;
     public override string name => "Corrupt Ent";
     public override string description => "Corrupt Ent";
     public CorruptEntData() {
@@ -409,7 +409,7 @@ public class CorruptEntData : SummonPlayerSkill {
     }
 }
 public class ForestEntData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.FOREST_ENT;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.FOREST_ENT;
     public override string name => "Forest Ent";
     public override string description => "Forest Ent";
     public ForestEntData() {
@@ -419,7 +419,7 @@ public class ForestEntData : SummonPlayerSkill {
     }
 }
 public class DesertEntData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.DESERT_ENT;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.DESERT_ENT;
     public override string name => "Desert Ent";
     public override string description => "Desert Ent";
     public DesertEntData() {
@@ -429,7 +429,7 @@ public class DesertEntData : SummonPlayerSkill {
     }
 }
 public class GiantSpiderData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.GIANT_SPIDER;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.GIANT_SPIDER;
     public override string name => "Giant Spider";
     public override string description => "Giant Spider";
     public GiantSpiderData() {
@@ -439,7 +439,7 @@ public class GiantSpiderData : SummonPlayerSkill {
     }
 }
 public class SmallSpiderData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.SMALL_SPIDER;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SMALL_SPIDER;
     public override string name => "Small Spider";
     public override string description => "Small Spider";
     public SmallSpiderData() {
@@ -449,7 +449,7 @@ public class SmallSpiderData : SummonPlayerSkill {
     }
 }
 public class WurmData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.WURM;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.WURM;
     public override string name => "Wurm";
     public override string description => "Wurm";
     public WurmData() {
@@ -459,7 +459,7 @@ public class WurmData : SummonPlayerSkill {
     }
 }
 public class TrollData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.TROLL;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.TROLL;
     public override string name => "Troll";
     public override string description => "Troll";
     public TrollData() {
@@ -469,7 +469,7 @@ public class TrollData : SummonPlayerSkill {
     }
 }
 public class RevenantData : SummonPlayerSkill {
-    public override SPELL_TYPE type => SPELL_TYPE.REVENANT;
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.REVENANT;
     public override string name => "Revenant";
     public override string description => "Revenant";
     public RevenantData() {

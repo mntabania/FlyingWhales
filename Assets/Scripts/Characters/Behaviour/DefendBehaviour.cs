@@ -40,7 +40,8 @@ public class DefendBehaviour : CharacterBehaviourComponent {
             for (int i = 0; i < actor.homeStructure.charactersHere.Count; i++) {
                 Character target = actor.homeStructure.charactersHere[i];
                 if(actor != target && actor.IsHostileWith(target) && !target.isDead && !target.isAlliedWithPlayer 
-                    && target.marker && target.marker.isMainVisualActive && actor.movementComponent.HasPathTo(target.gridTileLocation)) {
+                    && target.marker && target.marker.isMainVisualActive && actor.movementComponent.HasPathTo(target.gridTileLocation)
+                    && !target.isInLimbo && !target.isBeingSeized && target.carryComponent.IsNotBeingCarried()) {
                     return target;
                 }
             }
@@ -48,7 +49,7 @@ public class DefendBehaviour : CharacterBehaviourComponent {
             HexTile hex = actor.hexTileLocation;
             if(hex != null) {
                 Character chosenTarget = hex.GetFirstCharacterInsideHexThatMeetCriteria<Character>(target => actor != target && actor.IsHostileWith(target) && !target.isDead && !target.isAlliedWithPlayer
-                    && target.marker && target.marker.isMainVisualActive && actor.movementComponent.HasPathTo(target.gridTileLocation));
+                    && target.marker && target.marker.isMainVisualActive && actor.movementComponent.HasPathTo(target.gridTileLocation) && !target.isInLimbo && !target.isBeingSeized && target.carryComponent.IsNotBeingCarried());
                 if(chosenTarget != null) {
                     return chosenTarget;
                 }
@@ -65,7 +66,9 @@ public class DefendBehaviour : CharacterBehaviourComponent {
                     c => defender.IsHostileWith(c) && 
                          c.isDead == false && c.isAlliedWithPlayer == false && 
                          c.marker.isMainVisualActive && 
-                         defender.movementComponent.HasPathTo(c.gridTileLocation)
+                         defender.movementComponent.HasPathTo(c.gridTileLocation) && 
+                         !c.isInLimbo && !c.isBeingSeized && c.carryComponent.IsNotBeingCarried() &&
+                         !c.traitContainer.HasTrait("Hibernating", "Indestructible")
                 );
             if (charactersAtHexTile != null) {
                 if (characters == null) {

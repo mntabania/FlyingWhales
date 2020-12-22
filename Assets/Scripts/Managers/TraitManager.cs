@@ -39,7 +39,7 @@ public class TraitManager : BaseMonoBehaviour {
         "Restrained", "Injured", "Kleptomaniac", "Lycanthrope", "Vampire",
         "Poisoned", "Resting", "Sick", "Unconscious", "Zapped", "Spooked", "Cannibal", "Lethargic",
         "Dead", "Unfaithful", "Drunk", "Burning", "Burnt", "Agoraphobic", "Music Lover", "Music Hater", 
-        "Psychopath", "Plagued", "Vigilant", "Diplomatic", "Wet", "Character Trait", "Nocturnal", "Glutton", 
+        "Psychopath", "Plagued", "Poisonous", "Diplomatic", "Wet", "Character Trait", "Nocturnal", "Glutton", 
         "Suspicious", "Narcoleptic", "Hothead", "Inspiring", "Pyrophobic", "Angry", "Alcoholic", "Pessimist", "Lazy", 
         "Coward", "Berserked", "Catatonic", "Griefstricken", "Heartbroken", "Chaste", "Lustful", "Edible", "Paralyzed", 
         "Malnourished", "Withdrawal", "Suicidal", "Criminal", "Dazed", "Hiding", "Bored", "Overheating",
@@ -49,8 +49,8 @@ public class TraitManager : BaseMonoBehaviour {
         "Webbed", "Cultist", "Stealthy", "Invisible", "Noxious Wanderer", "DeMooder", "Defender", "Invader", "Disabler", "Infestor",
         "Abductor", "Arsonist", "Hibernating", "Baby Infestor", "Tower", "Mighty", "Stoned", "Transforming", "Subterranean", "Petrasol",
         "Snatcher", "Agitated", "Hunting", "Chained Electric", "Prisoner", "Hemophiliac", "Hemophobic", "Burning At Stake",
-        "Lycanphiliac", "Lycanphobic", "Interesting", "Pest", "Night Zombie", "Walker Zombie", "Plague Reservoir", "Quarantined", 
-        "Plague Caring", "Plague Cared", "Enslaved", "Travelling"
+        "Lycanphiliac", "Lycanphobic", "Interesting", "Pest", "Night Zombie", "Finite Zombie", "Plague Reservoir", "Quarantined", 
+        "Plague Caring", "Plague Cared", "Enslaved", "Travelling", "Walker Zombie", "Boomer Zombie"
     };
 
     //public static string[] unhiddenInstancedTraits = new string[] {
@@ -250,7 +250,7 @@ public class TraitManager : BaseMonoBehaviour {
     /// <returns></returns>
     public bool CanStillTriggerFlaws(Character character) {
         if (character.isDead || character.faction.isPlayerFaction || UtilityScripts.GameUtilities.IsRaceBeast(character.race) || character is Summon 
-            || character.raisedFromDeadAsSkeleton) {
+            || character.hasBeenRaisedFromDead) {
             return false;
         }
         //if(doNotDisturb > 0) {

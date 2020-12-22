@@ -9,7 +9,7 @@ namespace Interrupts {
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
             shouldEndOnSeize = true;
-            interruptIconString = GoapActionStateDB.Cowering_Icon;
+            interruptIconString = GoapActionStateDB.Burn_Icon;
             logTags = new[] {LOG_TAG.Life_Changes};
         }
 
@@ -44,22 +44,21 @@ namespace Interrupts {
             interruptHolder.actor.traitContainer.RemoveTrait(interruptHolder.actor, "Burning At Stake");
             return true;
         }
-        public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
-            string response = base.ReactionToActor(actor, target, witness, interrupt, status);
+        public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
+            base.PopulateReactionsToActor(reactions, actor, target, witness, interrupt, status);
 
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
             if (opinionLabel == RelationshipManager.Close_Friend) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, actor, status);
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
+                reactions.Add(EMOTION.Sadness);
+                reactions.Add(EMOTION.Concern);
             } else if (opinionLabel != RelationshipManager.Rival &&
                        (witness.relationshipContainer.IsFamilyMember(actor) ||
                         witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER))) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, actor, status);
+                reactions.Add(EMOTION.Concern);
+                reactions.Add(EMOTION.Despair);
             } else {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+                reactions.Add(EMOTION.Shock);
             }
-            return response;
         }
         #endregion
     }

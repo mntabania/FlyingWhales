@@ -40,7 +40,7 @@ public class AudioManager : MonoBehaviour {
     [SerializeField] private AudioSource questNotificationSound;
     [SerializeField] private AudioSource positiveNotificationSound;
     [SerializeField] private AudioSource negativeNotificationSound;
-    [SerializeField] private AudioSource shareIntel;
+    [SerializeField] private AudioSource conversationMenuOpened;
     [SerializeField] private AudioSource particleMagnet;
     [SerializeField] private AudioSource worldSelectableClick;
     
@@ -111,7 +111,7 @@ public class AudioManager : MonoBehaviour {
         Messenger.AddListener(PlayerSignals.START_THREAT_EFFECT, OnStartThreatEffect);
         Messenger.AddListener(PlayerSignals.STOP_THREAT_EFFECT, OnStopThreatEffect);
         Messenger.AddListener<IIntel>(PlayerSignals.PLAYER_OBTAINED_INTEL, OnObtainIntel);
-        Messenger.AddListener(UISignals.ON_OPEN_SHARE_INTEL, OnOpenShareIntel);
+        Messenger.AddListener(UISignals.ON_OPEN_CONVERSATION_MENU, OnOpenConversationMenu);
         Messenger.AddListener<ISelectable>(ControlsSignals.SELECTABLE_LEFT_CLICKED, WorldSelectableLeftClicked);
         Messenger.AddListener<Quest>(PlayerQuestSignals.QUEST_ACTIVATED, OnQuestActivated);
         Messenger.AddListener<Quest>(PlayerQuestSignals.QUEST_DEACTIVATED, OnQuestDeactivated);
@@ -215,8 +215,8 @@ public class AudioManager : MonoBehaviour {
     private void OnObtainIntel(IIntel intel) {
         particleMagnet.Play();
     }
-    private void OnOpenShareIntel() {
-        shareIntel.Play();
+    private void OnOpenConversationMenu() {
+        conversationMenuOpened.Play();
     }
     public void PlayParticleMagnet() {
         particleMagnet.Play();

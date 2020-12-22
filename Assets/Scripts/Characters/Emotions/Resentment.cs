@@ -14,7 +14,7 @@ public class Resentment : Emotion {
         if (target is Character) {
             Character targetCharacter = target as Character;
             witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Resentment", -15);
-            witness.traitContainer.AddTrait(witness, "Annoyed");
+            witness.traitContainer.AddTrait(witness, "Annoyed", targetCharacter);
         }
         return base.ProcessEmotion(witness, target, status, goapNode, reason);
     }
