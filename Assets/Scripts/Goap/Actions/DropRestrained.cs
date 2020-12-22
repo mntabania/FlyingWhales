@@ -67,6 +67,13 @@ public class DropRestrained : GoapAction {
         Character targetCharacter = poiTarget as Character;
         actor.UncarryPOI(targetCharacter);
     }
+    public override void OnInvalidAction(ActualGoapNode node) {
+        base.OnInvalidAction(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        Character targetCharacter = poiTarget as Character;
+        actor.UncarryPOI(targetCharacter);
+    }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
