@@ -242,6 +242,9 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
                 AddTemptation(temptation);    
             }
         }
+        if (p_temptations.Count > 0) {
+            Messenger.Broadcast(UISignals.TEMPTATIONS_OFFERED);
+        }
     }
     public void OnHoverOverBlackmailBtn(UIHoverPosition p_hoverPos) {
         if (!HasValidBlackmailForTarget(_targetCharacter)) {

@@ -91,12 +91,15 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
         }
     }
     public int GetPerHourMigrationRate() {
-        int migrationMeterModification = GetAdditionalMigrationMeterRatePerHour();
-        int perHour = perHourIncrement + migrationMeterModification + longTermModifier;
-        if(perHour < 1) {
-            perHour = 1;
+        if (IsMigrationEventAllowed()) {
+            int migrationMeterModification = GetAdditionalMigrationMeterRatePerHour();
+            int perHour = perHourIncrement + migrationMeterModification + longTermModifier;
+            if(perHour < 1) {
+                perHour = 1;
+            }
+            return perHour;    
         }
-        return perHour;
+        return 0;
     }
     public void AdjustLongTermModifier(int amount) {
         longTermModifier += amount;

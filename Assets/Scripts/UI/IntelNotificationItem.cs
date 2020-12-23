@@ -63,9 +63,9 @@ public class IntelNotificationItem : PlayerNotificationItem {
             _intelHoverText += reactionText;
         }
         if (!string.IsNullOrEmpty(_intelHoverText)) {
-            UIManager.Instance.ShowSmallInfo(_intelHoverText, autoReplaceText: false);
+            UIManager.Instance.ShowSmallInfo(_intelHoverText, pos: _hoverPosition, autoReplaceText: false, relayout:true);
         } else {
-            UIManager.Instance.ShowSmallInfo("Doesn't seem very useful, but...", autoReplaceText: false);   
+            UIManager.Instance.ShowSmallInfo("Doesn't seem very useful, but...", pos: _hoverPosition, autoReplaceText: false, relayout:true);   
         }
     }
     public void OnHoverExit() {

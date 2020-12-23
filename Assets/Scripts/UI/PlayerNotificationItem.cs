@@ -26,7 +26,7 @@ public class PlayerNotificationItem : PooledObject {
     [SerializeField] private Sprite _normalSprite;
     [SerializeField] private Sprite _importantSprite;
     [SerializeField] private EventLabel _logEventLbl;
-    private UIHoverPosition _hoverPosition;
+    protected UIHoverPosition _hoverPosition;
 
     private Action<PlayerNotificationItem> onDestroyAction;
     private bool _adjustHeightOnEnable;
