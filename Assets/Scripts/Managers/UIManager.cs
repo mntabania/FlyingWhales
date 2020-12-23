@@ -417,7 +417,7 @@ public class UIManager : BaseMonoBehaviour {
         PositionTooltip(smallInfoGO, smallInfoRT, smallInfoBGRT);
         Profiler.EndSample();
     }
-    public void ShowSmallInfo(string info, UIHoverPosition pos, string header = "", bool autoReplaceText = true) {
+    public void ShowSmallInfo(string info, UIHoverPosition pos, string header = "", bool autoReplaceText = true, bool relayout = false) {
         smallInfoGO.transform.SetAsLastSibling();
         string message = string.Empty;
         if (!string.IsNullOrEmpty(header)) {
@@ -436,11 +436,16 @@ public class UIManager : BaseMonoBehaviour {
         PositionTooltip(pos, smallInfoGO, smallInfoRT);
         
         if (!IsSmallInfoShowing()) {
-            // if (gameObject.activeInHierarchy) {
-            //     StartCoroutine(ReLayout(smallInfoBGParentLG));
-            //     StartCoroutine(ReLayout(smallInfoVerticalLG));    
-            // }
-            smallInfoGO.SetActive(true);
+            if (relayout) {
+                smallInfoGO.SetActive(true);
+                if (gameObject.activeInHierarchy) {
+                    StartCoroutine(ReLayout(smallInfoBGParentLG));
+                    StartCoroutine(ReLayout(smallInfoVerticalLG));    
+                }
+            }
+            else {
+                smallInfoGO.SetActive(true);
+            }
         }
     }
     private IEnumerator ReLayout(LayoutGroup layoutGroup) {
@@ -1788,6 +1793,7 @@ public class UIManager : BaseMonoBehaviour {
         SetSpeedTogglesState(false);
         _schemeUIController.Show(p_targetCharacter, p_otherTarget, p_schemeUsed, OnCloseSchemeUI);
         InputManager.Instance.AllowHotkeys(false);
+        Messenger.Broadcast(UISignals.SCHEME_UI_SHOWN);
     }
     private void OnCloseSchemeUI() {
         SetSpeedTogglesState(true);

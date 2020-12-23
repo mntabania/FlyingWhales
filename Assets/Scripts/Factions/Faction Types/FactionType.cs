@@ -195,5 +195,9 @@ namespace Factions.Faction_Types {
         }
         #endregion
 
+        #region Members
+        public virtual void ProcessNewMember(Character character) { }
+        #endregion
+        
     }
 }

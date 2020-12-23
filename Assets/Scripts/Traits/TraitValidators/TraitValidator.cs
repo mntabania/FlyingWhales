@@ -63,6 +63,12 @@ namespace Traits {
             return CanAddTrait(obj, trait, traitContainer);
         }
         public static bool CanAddTraitGeneric(ITraitable obj, string traitName, ITraitContainer traitContainer) {
+            if(traitName == "Unconscious") {
+                //Unconscious trait can never be added on dead characters
+                if(obj is Character character && character.isDead) {
+                    return false;
+                }
+            }
             if(obj is Dragon) {
                 if(traitName == "Restrained" || traitName == "Zapped" || traitName == "Ensnared") {
                     return false;

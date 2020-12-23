@@ -51,20 +51,10 @@ public class IntelNotificationItem : PlayerNotificationItem {
 
     #region Hover
     public void OnHoverEnter() {
-        if(intel != null) {
-            string blackmailText = intel.GetIntelInfoBlackmailText();
-            string reactionText = intel.GetIntelInfoRelationshipText();
-            _intelHoverText = string.Empty;
-
-            _intelHoverText += blackmailText;
-            if (!string.IsNullOrEmpty(_intelHoverText)) {
-                _intelHoverText += "\n";
-            }
-            _intelHoverText += reactionText;
+        if(intel != null && string.IsNullOrEmpty(_intelHoverText)) {
+            _intelHoverText = intel.GetFullIntelTooltip();
         }
-        if (!string.IsNullOrEmpty(_intelHoverText)) {
-            UIManager.Instance.ShowSmallInfo(_intelHoverText, autoReplaceText: false);
-        }
+        UIManager.Instance.ShowSmallInfo(_intelHoverText, _hoverPosition, autoReplaceText: false, relayout:true);
     }
     public void OnHoverExit() {
         _intelHoverText = string.Empty;

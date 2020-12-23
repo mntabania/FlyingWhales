@@ -550,7 +550,7 @@ namespace Databases.SQLDatabase {
             var dllPath = Application.dataPath + "/Plugins";
 #endif
             if (currentPath != null && currentPath.Contains(dllPath) == false)
-                Environment.SetEnvironmentVariable("PATH", currentPath + Path.PathSeparator + dllPath, EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("PATH", currentPath + "/" + dllPath, EnvironmentVariableTarget.Process); //Path.PathSeparator
         }
         #endregion
     }

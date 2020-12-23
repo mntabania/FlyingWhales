@@ -69,6 +69,7 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
             ProcessSchemeSuccessRateWithMultipliers(ref successRate);
             SchemeUIItem item = CreateAndAddNewSchemeUIItem("Cultist", successRate, baseSuccessRate, null, OnHoverEnterSchemeUIItem, OnHoverExitSchemeUIItem);
             item.btnMinus.interactable = false;
+            UpdateSuccessRate();
         }
     }
     public override void HideUI() {
@@ -240,6 +241,9 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
             if (!_chosenTemptations.Contains(temptation)) {
                 AddTemptation(temptation);    
             }
+        }
+        if (p_temptations.Count > 0) {
+            Messenger.Broadcast(UISignals.TEMPTATIONS_OFFERED);
         }
     }
     public void OnHoverOverBlackmailBtn(UIHoverPosition p_hoverPos) {

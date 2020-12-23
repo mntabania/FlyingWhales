@@ -364,6 +364,7 @@ GameObject:
   - component: {fileID: 5230042260322791223}
   - component: {fileID: 2310147977404683673}
   - component: {fileID: 1827233499325232591}
+  - component: {fileID: 8112759873418676186}
   m_Layer: 5
   m_Name: TemptationButton
   m_TagString: Untagged
@@ -494,6 +495,32 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   executeHoverEnterActionPerFrame: 0
+--- !u!114 &8112759873418676186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4496577709864403311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f19b7e2285c104f6ca47d583f3e5444f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectFactor: 0
+  m_Width: 0.25
+  m_Rotation: 135
+  m_Softness: 1
+  m_Brightness: 1
+  m_Gloss: 1
+  m_EffectArea: 0
+  m_Player:
+    play: 0
+    initialPlayDelay: 0
+    duration: 1
+    loop: 1
+    loopDelay: 0
+    updateMode: 0
 --- !u!1 &5754952691634030203
 GameObject:
   m_ObjectHideFlags: 0
@@ -1868,8 +1895,9 @@ GameObject:
   - component: {fileID: 7235584817605602862}
   - component: {fileID: 5294287177115251699}
   - component: {fileID: 697609480979382565}
+  - component: {fileID: 8563763414548853200}
   m_Layer: 5
-  m_Name: ConfirmBtn
+  m_Name: TemptConfirmBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1987,6 +2015,32 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &8563763414548853200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8418774954786035064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f19b7e2285c104f6ca47d583f3e5444f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectFactor: 0
+  m_Width: 0.25
+  m_Rotation: 135
+  m_Softness: 1
+  m_Brightness: 1
+  m_Gloss: 1
+  m_EffectArea: 0
+  m_Player:
+    play: 0
+    initialPlayDelay: 0
+    duration: 1
+    loop: 1
+    loopDelay: 0
+    updateMode: 0
 --- !u!1 &8678797395492974441
 GameObject:
   m_ObjectHideFlags: 0

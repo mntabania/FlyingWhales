@@ -2696,10 +2696,12 @@
               <e p="MinionSummonedStep.cs" t="Include" />
               <e p="NameplateClickedStep.cs" t="Include" />
               <e p="ObjectPickerShownStep.cs" t="Include" />
+              <e p="ParameterlessSignalReceived.cs" t="Include" />
               <e p="PlayerActionContextMenuShown.cs" t="Include" />
               <e p="QuestStep.cs" t="Include" />
               <e p="QuestStepCollection.cs" t="Include" />
               <e p="QuestStepHoveredStep.cs" t="Include" />
+              <e p="SchemeUIShown.cs" t="Include" />
               <e p="SeizePOIStep.cs" t="Include" />
               <e p="SelectIntelStep.cs" t="Include" />
               <e p="SelectRegionStep.cs" t="Include" />
@@ -2708,6 +2710,7 @@
               <e p="ShowSpellMenuStep.cs" t="Include" />
               <e p="StoreIntelStep.cs" t="Include" />
               <e p="StructureBuiltStep.cs" t="Include" />
+              <e p="TemptationsPopupShown.cs" t="Include" />
               <e p="ToggleTurnedOnStep.cs" t="Include" />
               <e p="TriggerElectricChainStep.cs" t="Include" />
               <e p="TriggerPoisonExplosionStep.cs" t="Include" />
@@ -2742,6 +2745,7 @@
                 <e p="ElementalInteractions.cs" t="Include" />
                 <e p="FactionInfo.cs" t="Include" />
                 <e p="ImportantTutorial.cs" t="Include" />
+                <e p="MeddlerTutorial.cs" t="Include" />
                 <e p="Prison.cs" t="Include" />
                 <e p="RegionalMap.cs" t="Include" />
                 <e p="SpawnAnInvader.cs" t="Include" />

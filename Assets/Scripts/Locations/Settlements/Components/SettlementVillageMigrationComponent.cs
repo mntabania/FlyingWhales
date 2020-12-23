@@ -4,10 +4,12 @@ using UnityEngine;
 using UtilityScripts;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 
 public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     public int villageMigrationMeter { get; private set; }
     public int perHourIncrement { get; private set; }
+    public int longTermModifier { get; private set; }
 
     private const int MAX_MIGRATION_METER = 1000;
 
@@ -18,6 +20,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     public SettlementVillageMigrationComponent(SaveDataSettlementVillageMigrationComponent data) {
         villageMigrationMeter = data.villageMigrationMeter;
         perHourIncrement = data.perHourIncrement;
+        longTermModifier = data.longTermModifier;
     }
 
     #region Listeners
@@ -29,8 +32,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
             }
             return;
         }
-        int migrationMeterModification = GetAdditionalMigrationMeterRatePerHour();
-        AdjustVillageMigarationMeter(perHourIncrement + migrationMeterModification);
+        AdjustVillageMigarationMeter(GetPerHourMigrationRate());
     }
     public void OnSettlementTypeChanged() {
         RandomizePerHourIncrement();
@@ -40,9 +42,9 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
             return;
         }
         if (structure is Dwelling) {
-            AdjustVillageMigarationMeter(GameUtilities.RandomBetweenTwoNumbers(40, 60));
+            AdjustVillageMigarationMeter(GameUtilities.RandomBetweenTwoNumbers(20, 30));
         } else {
-            AdjustVillageMigarationMeter(GameUtilities.RandomBetweenTwoNumbers(60, 80));
+            AdjustVillageMigarationMeter(GameUtilities.RandomBetweenTwoNumbers(30, 40));
         }
     }
     public void OnFinishedQuest(PartyQuest quest) {
@@ -51,15 +53,59 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
                 if (!IsMigrationEventAllowed()) {
                     return;
                 }
-                AdjustVillageMigarationMeter(GameUtilities.RandomBetweenTwoNumbers(80, 120));
+                AdjustVillageMigarationMeter(GameUtilities.RandomBetweenTwoNumbers(20, 30));
             }
         }
     }
     #endregion
 
     #region Migration Meter
+    public void ForceRandomizePerHourIncrement() {
+        RandomizePerHourIncrement();
+    }
     private void RandomizePerHourIncrement() {
-        perHourIncrement = GameUtilities.RandomBetweenTwoNumbers(2, 5);
+        // perHourIncrement = GameUtilities.RandomBetweenTwoNumbers(2, 5);
+        List<Faction> humanAndElvenFactions =  DatabaseManager.Instance.factionDatabase.GetFactionsWithFactionType(FACTION_TYPE.Human_Empire, FACTION_TYPE.Elven_Kingdom);
+        if (humanAndElvenFactions != null) {
+            int humanAndElevenVillagesCount = 0;
+            for (int i = 0; i < humanAndElvenFactions.Count; i++) {
+                Faction faction = humanAndElvenFactions[i];
+                for (int j = 0; j < faction.ownedSettlements.Count; j++) {
+                    BaseSettlement settlement = faction.ownedSettlements[j];
+                    if (settlement.locationType == LOCATION_TYPE.VILLAGE) {
+                        humanAndElevenVillagesCount++;
+                    }
+                }
+            }
+            if (humanAndElevenVillagesCount <= 1) {
+                perHourIncrement = GameUtilities.RandomBetweenTwoNumbers(4, 9);
+            } else if (humanAndElevenVillagesCount >= 2 && humanAndElevenVillagesCount <= 3) {
+                perHourIncrement = GameUtilities.RandomBetweenTwoNumbers(2, 7);
+            } else if (humanAndElevenVillagesCount >= 4 && humanAndElevenVillagesCount <= 5) {
+                perHourIncrement = GameUtilities.RandomBetweenTwoNumbers(1, 5);
+            } else {
+                perHourIncrement = GameUtilities.RandomBetweenTwoNumbers(1, 4);
+            }
+        } else {
+            perHourIncrement = GameUtilities.RandomBetweenTwoNumbers(4, 9);
+        }
+    }
+    public int GetPerHourMigrationRate() {
+        if (IsMigrationEventAllowed()) {
+            int migrationMeterModification = GetAdditionalMigrationMeterRatePerHour();
+            int perHour = perHourIncrement + migrationMeterModification + longTermModifier;
+            if(perHour < 1) {
+                perHour = 1;
+            }
+            return perHour;    
+        }
+        return 0;
+    }
+    public void AdjustLongTermModifier(int amount) {
+        longTermModifier += amount;
+    }
+    public void ResetLongTermModifier() {
+        longTermModifier = 0;
     }
     public void AdjustVillageMigarationMeter(int amount) {
         villageMigrationMeter += amount;
@@ -88,7 +134,15 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     }
     public string GetHoverTextOfMigrationMeter() {
         string text = $"Current Value: {GetMigrationMeterValueInText()}";
-        text += $"\nIncrease Rate Per Hour: {perHourIncrement + GetAdditionalMigrationMeterRatePerHour()}";
+        text += $"\nIncrease Rate Per Hour: {GetPerHourMigrationRate()}";
+        if (!IsMigrationEventAllowed()) {
+            text += $"\n{UtilityScripts.Utilities.ColorizeInvalidText("Only Human and Elven Villages can trigger migration!")}";    
+        }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        text += $"\nBase Per Hour: {perHourIncrement}";
+        text += $"\nLong Term Modifier: {longTermModifier}";
+        text += $"\nFaction Type Modification: {GetAdditionalMigrationMeterRatePerHour()}";
+#endif
         return text;
     }
     private int GetAdditionalMigrationMeterRatePerHour() {
@@ -104,9 +158,10 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
         string debugLog = $"{GameManager.Instance.TodayLogString()}Village Migration Event for {owner.name} is triggered";
 
         if (IsMigrationEventAllowed()) {
-            int randomAmount = UnityEngine.Random.Range(2, 6);
             List<PreCharacterData> unspawnedCharacters = DatabaseManager.Instance.familyTreeDatabase.ForceGetAllUnspawnedCharactersThatFitFaction(owner.owner.race, owner.owner);
             if (unspawnedCharacters.Count > 0) {
+                AdjustLongTermModifier(-1);
+                int randomAmount = UnityEngine.Random.Range(2, 6);
                 LocationGridTile edgeTile = CollectionUtilities.GetRandomElement(owner.region.innerMap.allEdgeTiles);
                 debugLog += $"\nWill spawn {randomAmount.ToString()} characters at {edgeTile}";
                 for (int i = 0; i < randomAmount; i++) {
@@ -159,11 +214,13 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
 public class SaveDataSettlementVillageMigrationComponent : SaveData<SettlementVillageMigrationComponent> {
     public int villageMigrationMeter;
     public int perHourIncrement;
+    public int longTermModifier;
 
     #region Overrides
     public override void Save(SettlementVillageMigrationComponent data) {
         villageMigrationMeter = data.villageMigrationMeter;
         perHourIncrement = data.perHourIncrement;
+        longTermModifier = data.longTermModifier;
     }
 
     public override SettlementVillageMigrationComponent Load() {

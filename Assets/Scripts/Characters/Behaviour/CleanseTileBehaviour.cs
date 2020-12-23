@@ -15,6 +15,9 @@ public class CleanseTileBehaviour : CharacterBehaviourComponent {
         if (StillHasPoisonedTile(character)) {
             //cleanse nearest poisoned tile
             producedJob = CleanseNearestTile(character);
+            if (producedJob == null) {
+                character.traitContainer.RemoveTrait(character, "Cleansing");
+            }
         } else {
             producedJob = null;
             character.traitContainer.RemoveTrait(character, "Cleansing");
@@ -33,12 +36,18 @@ public class CleanseTileBehaviour : CharacterBehaviourComponent {
         for (int i = 0; i < character.behaviourComponent.cleansingTilesForSettlement.settlementJobTriggerComponent.poisonedTiles.Count; i++) {
             LocationGridTile tile = character.behaviourComponent.cleansingTilesForSettlement.settlementJobTriggerComponent.poisonedTiles[i];
             Poisoned poisoned = tile.genericTileObject.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
-            if (poisoned != null && poisoned.cleanser == null) {
-                float dist = Vector2.Distance(character.worldObject.transform.position, tile.worldLocation);
-                if (dist < nearest) {
-                    nearestTile = tile;
-                    nearest = dist;
-                }    
+            if (poisoned != null) {
+                if (poisoned.cleanser == null) {
+                    float dist = Vector2.Distance(character.worldObject.transform.position, tile.worldLocation);
+                    if (dist < nearest) {
+                        nearestTile = tile;
+                        nearest = dist;
+                    }    
+                }
+            } else {
+                //TODO: Find out why non poisoned tiles are still in list
+                character.behaviourComponent.cleansingTilesForSettlement.settlementJobTriggerComponent.poisonedTiles.RemoveAt(i);
+                i--;
             }
         }
         if (nearestTile != null) {

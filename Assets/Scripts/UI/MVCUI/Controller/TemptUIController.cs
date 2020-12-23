@@ -47,6 +47,7 @@ public class TemptUIController : MVCUIController, TemptUIView.IListener {
         ShowUI();
         m_temptUIView.UpdateShownItems(p_target, p_alreadyChosenTemptations);
         _onConfirmAction = p_onConfirmAction;
+        Messenger.Broadcast(UISignals.TEMPTATIONS_POPUP_SHOWN);
     }
 
     #region TemptUIView.IListener Implementation

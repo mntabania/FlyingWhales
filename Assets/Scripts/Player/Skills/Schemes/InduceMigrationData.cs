@@ -28,6 +28,8 @@ public class InduceMigrationData : SchemeData {
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
 
             LogSchemeVillage(npcSettlement);
+
+            PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.SCHEME).OnExecutePlayerSkill();
             base.ActivateAbility(targetSettlement);
         }
     }
@@ -38,6 +40,9 @@ public class InduceMigrationData : SchemeData {
     }
     public override bool CanPerformAbilityTowards(BaseSettlement targetSettlement) {
         if (targetSettlement is NPCSettlement npcSettlement && !npcSettlement.migrationComponent.IsMigrationEventAllowed()) {
+            return false;
+        }
+        if (PlayerSkillManager.Instance.GetPlayerSkillData(PLAYER_SKILL_TYPE.SCHEME).charges <= 0) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetSettlement);

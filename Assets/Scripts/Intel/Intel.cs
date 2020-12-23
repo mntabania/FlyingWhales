@@ -175,7 +175,8 @@ public class ActionIntel : IIntel, IDisposable {
         return string.Empty;
     }
     private bool CanBeConsideredWitnessInIntelInfoRelationshipText(Character actor, Character witness1, Character witness2, Character witness3, Character target) {
-        return target != null && target != actor && target != witness1 && target != witness2 && target != witness3;
+        //Is Dead checking is due to bug https://trello.com/c/LdNxY1iL/3361-dead-people-show-up-in-the-new-quick-hint-tooltip-for-intel-the-one-that-tells-the-player-how-up-to-three-people-will-react-if-i
+        return target != null && !target.isDead && target != actor && target != witness1 && target != witness2 && target != witness3;
     }
     public void OnIntelRemoved() {
         //set is intel in database to false, so that it can be overwritten.
@@ -202,6 +203,23 @@ public class ActionIntel : IIntel, IDisposable {
             }
         }
         return BLACKMAIL_TYPE.None;
+    }
+    public string GetFullIntelTooltip() {
+        string blackmailText = GetIntelInfoBlackmailText();
+        string reactionText = GetIntelInfoRelationshipText();
+        string text = string.Empty;
+
+        text += blackmailText;
+        if (!string.IsNullOrEmpty(text)) {
+            text += "\n";
+        }
+        text += reactionText;
+
+        if (!string.IsNullOrEmpty(text)) {
+            return text;
+        } else {
+            return "Doesn't seem very useful, but...";   
+        }
     }
     #endregion
 
@@ -400,7 +418,8 @@ public class InterruptIntel : IIntel, IDisposable {
         return string.Empty;
     }
     private bool CanBeConsideredWitnessInIntelInfoRelationshipText(Character actor, Character witness1, Character witness2, Character witness3, Character target) {
-        return target != null && target != actor && target != witness1 && target != witness2 && target != witness3;
+        //Is Dead checking is due to bug https://trello.com/c/LdNxY1iL/3361-dead-people-show-up-in-the-new-quick-hint-tooltip-for-intel-the-one-that-tells-the-player-how-up-to-three-people-will-react-if-i
+        return target != null && !target.isDead && target != actor && target != witness1 && target != witness2 && target != witness3;
     }
     public void OnIntelRemoved() {
         //set is intel in database to false, so that it can be overwritten.
@@ -427,6 +446,23 @@ public class InterruptIntel : IIntel, IDisposable {
             }
         }
         return BLACKMAIL_TYPE.None;
+    }
+    public string GetFullIntelTooltip() {
+        string blackmailText = GetIntelInfoBlackmailText();
+        string reactionText = GetIntelInfoRelationshipText();
+        string text = string.Empty;
+
+        text += blackmailText;
+        if (!string.IsNullOrEmpty(text)) {
+            text += "\n";
+        }
+        text += reactionText;
+
+        if (!string.IsNullOrEmpty(text)) {
+            return text;
+        } else {
+            return "Doesn't seem very useful, but...";   
+        }
     }
     #endregion
 
@@ -467,6 +503,7 @@ public interface IIntel {
     void OnIntelRemoved();
     bool CanBeUsedToBlackmailCharacter(Character p_target);
     BLACKMAIL_TYPE GetBlackMailTypeConsideringTarget(Character p_target);
+    string GetFullIntelTooltip();
 }
 
 [System.Serializable]

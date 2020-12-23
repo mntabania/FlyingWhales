@@ -1353,9 +1353,9 @@ namespace UtilityScripts {
             }
         }
         public static string FormulateTextFromEmotions(string emotions, Character actor, IPointOfInterest target, Character reactor) {
-            if (string.IsNullOrEmpty(emotions)) {
+            if (string.IsNullOrEmpty(emotions) || string.IsNullOrWhiteSpace(emotions)) {
                 //character had no reaction
-                return actor == target ? "I know what I did." : "A proper response to this information has not been implemented yet.";
+                return actor == reactor ? "I know what I did." : "A proper response to this information has not been implemented yet.";
             } else {
                 if (emotions == "aware") {
                     return $"{ColorizeAndBoldName(reactor.name)} already knows this.";

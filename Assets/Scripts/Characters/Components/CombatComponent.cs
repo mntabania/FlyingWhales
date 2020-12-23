@@ -925,6 +925,10 @@ public class CombatComponent : CharacterComponent {
                     break;
                 case JOB_TYPE.KIDNAP_RAID:
                     return CombatManager.Raid;
+                case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
+                case JOB_TYPE.FULLNESS_RECOVERY_URGENT:
+                case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
+                    return CombatManager.Fullness_Recovery;
             }
        }
        return string.Empty;

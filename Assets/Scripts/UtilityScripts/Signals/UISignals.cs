@@ -129,4 +129,7 @@
     /// Parameters (IPlayerActionTarget)
     /// </summary>
     public static string PLAYER_ACTION_CONTEXT_MENU_SHOWN = "OnPlayerActionContextMenuShown";
+    public static string SCHEME_UI_SHOWN = "OnSchemeUIShown";
+    public static string TEMPTATIONS_POPUP_SHOWN = "OnTemptationsPopupShown";
+    public static string TEMPTATIONS_OFFERED = "OnTemptationsOffered";
 }
