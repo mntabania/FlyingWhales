@@ -1793,6 +1793,7 @@ public class UIManager : BaseMonoBehaviour {
         SetSpeedTogglesState(false);
         _schemeUIController.Show(p_targetCharacter, p_otherTarget, p_schemeUsed, OnCloseSchemeUI);
         InputManager.Instance.AllowHotkeys(false);
+        Messenger.Broadcast(UISignals.SCHEME_UI_SHOWN);
     }
     private void OnCloseSchemeUI() {
         SetSpeedTogglesState(true);
