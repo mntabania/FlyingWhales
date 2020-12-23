@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class FactionDatabase {
     
@@ -68,6 +69,19 @@ public class FactionDatabase {
         for (int i = 0; i < allFactionsList.Count; i++) {
             Faction faction = allFactionsList[i];
             if (faction.race == race && faction.isMajorFaction) {
+                if (factions == null) {
+                    factions = new List<Faction>();
+                }
+                factions.Add(faction);
+            }
+        }
+        return factions;
+    }
+    public List<Faction> GetFactionsWithFactionType(params FACTION_TYPE[] p_factionType) {
+        List<Faction> factions = null;
+        for (int i = 0; i < allFactionsList.Count; i++) {
+            Faction faction = allFactionsList[i];
+            if (p_factionType.Contains(faction.factionType.type)) {
                 if (factions == null) {
                     factions = new List<Faction>();
                 }

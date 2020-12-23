@@ -1534,6 +1534,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             //if owner of settlement becomes null, then set the settlement as no longer under siege
             SetIsUnderSiege(false);
         }
+        migrationComponent.ForceRandomizePerHourIncrement();
         npcSettlementEventDispatcher.ExecuteFactionOwnerChangedEvent(previousOwner, p_newOwner, this);
     }
     #endregion

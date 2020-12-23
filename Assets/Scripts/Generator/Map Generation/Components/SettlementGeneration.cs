@@ -24,6 +24,10 @@ public class SettlementGeneration : MapGenerationComponent {
 			// region.innerMap.PlaceBuildSpotTileObjects();
 		}
 		ApplyPreGeneratedRelationships(data);
+		for (int i = 0; i < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; i++) {
+			NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[i];
+			settlement.migrationComponent.ForceRandomizePerHourIncrement();
+		}
 		yield return null;
 	}
 	private IEnumerator CreateSettlement(Region region, MapGenerationData data) {
@@ -231,6 +235,10 @@ public class SettlementGeneration : MapGenerationComponent {
 				yield return null;
 			}
 			ApplyPreGeneratedRelationships(data);
+			for (int i = 0; i < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; i++) {
+				NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[i];
+				settlement.migrationComponent.ForceRandomizePerHourIncrement();
+			}
 		}
 	}
 	private Faction GetFactionForScenario(SettlementTemplate settlementTemplate) {
