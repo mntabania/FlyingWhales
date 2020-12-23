@@ -16,7 +16,7 @@ MonoBehaviour:
   manaCost: 10
   charges: 2
   cooldown: 144
-  threat: 5
+  threat: 4
   threatPerHour: 0
   expCost: 300
   buttonSprite: {fileID: 21300000, guid: dd9654e584df8c445b6bc2411c7b6c47, type: 3}
@@ -24,6 +24,7 @@ MonoBehaviour:
   tooltipImage: {fileID: 0}
   contextMenuIcon: {fileID: 0}
   contextMenuColumn: 0
+  playerActionIcon: {fileID: 0}
   impactClips:
   - {fileID: 8300000, guid: 223a75f1a728b7b41a220ffb28352a14, type: 3}
   - {fileID: 8300000, guid: 3db7dde05eba5e647b04319782e405c5, type: 3}
