@@ -204,6 +204,23 @@ public class ActionIntel : IIntel, IDisposable {
         }
         return BLACKMAIL_TYPE.None;
     }
+    public string GetFullIntelTooltip() {
+        string blackmailText = GetIntelInfoBlackmailText();
+        string reactionText = GetIntelInfoRelationshipText();
+        string text = string.Empty;
+
+        text += blackmailText;
+        if (!string.IsNullOrEmpty(text)) {
+            text += "\n";
+        }
+        text += reactionText;
+
+        if (!string.IsNullOrEmpty(text)) {
+            return text;
+        } else {
+            return "Doesn't seem very useful, but...";   
+        }
+    }
     #endregion
 
     #region Listeners
@@ -430,6 +447,23 @@ public class InterruptIntel : IIntel, IDisposable {
         }
         return BLACKMAIL_TYPE.None;
     }
+    public string GetFullIntelTooltip() {
+        string blackmailText = GetIntelInfoBlackmailText();
+        string reactionText = GetIntelInfoRelationshipText();
+        string text = string.Empty;
+
+        text += blackmailText;
+        if (!string.IsNullOrEmpty(text)) {
+            text += "\n";
+        }
+        text += reactionText;
+
+        if (!string.IsNullOrEmpty(text)) {
+            return text;
+        } else {
+            return "Doesn't seem very useful, but...";   
+        }
+    }
     #endregion
 
     #region Listeners
@@ -469,6 +503,7 @@ public interface IIntel {
     void OnIntelRemoved();
     bool CanBeUsedToBlackmailCharacter(Character p_target);
     BLACKMAIL_TYPE GetBlackMailTypeConsideringTarget(Character p_target);
+    string GetFullIntelTooltip();
 }
 
 [System.Serializable]

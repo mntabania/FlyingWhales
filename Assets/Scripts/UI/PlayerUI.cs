@@ -430,19 +430,8 @@ public class PlayerUI : BaseMonoBehaviour {
         }
     }
     private void OnHoverEnterStoredIntel(IIntel intel) {
-        string blackmailText = intel.GetIntelInfoBlackmailText();
-        string reactionText = intel.GetIntelInfoRelationshipText();
-        string text = string.Empty;
-
-        text += blackmailText;
-        if (!string.IsNullOrEmpty(text)) {
-            text += "\n";
-        }
-        text += reactionText;
-
-        if (!string.IsNullOrEmpty(text)) {
-            UIManager.Instance.ShowSmallInfo(text);
-        }
+        string text = intel.GetFullIntelTooltip();
+        UIManager.Instance.ShowSmallInfo(text, autoReplaceText: false);
     }
     private void OnHoverExitStoredIntel() {
         UIManager.Instance.HideSmallInfo();

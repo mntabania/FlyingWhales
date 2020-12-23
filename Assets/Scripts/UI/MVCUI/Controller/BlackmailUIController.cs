@@ -50,19 +50,8 @@ public class BlackmailUIController : MVCUIController, BlackmailUIView.IListener 
         }
     }
     private void OnHoverOverBlackmail(IIntel p_blackmail, UIHoverPosition p_hoverPosition) {
-        string blackmailText = p_blackmail.GetIntelInfoBlackmailText();
-        string reactionText = p_blackmail.GetIntelInfoRelationshipText();
-        string text = string.Empty;
-
-        text += blackmailText;
-        if (!string.IsNullOrEmpty(text)) {
-            text += "\n";
-        }
-        text += reactionText;
-
-        if (!string.IsNullOrEmpty(text)) {
-            UIManager.Instance.ShowSmallInfo(text, p_hoverPosition);
-        }
+        string text = p_blackmail.GetFullIntelTooltip();
+        UIManager.Instance.ShowSmallInfo(text, p_hoverPosition, autoReplaceText: false, relayout:true);
     }
     private void OnHoverOutBlackmail(IIntel p_blackmail) {
         UIManager.Instance.HideSmallInfo();
