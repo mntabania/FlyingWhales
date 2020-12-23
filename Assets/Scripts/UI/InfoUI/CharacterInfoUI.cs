@@ -59,6 +59,7 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private GameObject relationFiltersGO;
     [SerializeField] private Toggle allRelationshipFiltersToggle;
     [SerializeField] private EventLabel opinionsEventLabel;
+    [SerializeField] private ScrollRect relationshipsScrollView;
     
     [Space(10)] [Header("Mood")] 
     [SerializeField] private MarkedMeter moodMeter;
@@ -577,6 +578,9 @@ public class CharacterInfoUI : InfoUIBase {
                                               $"<color={BaseRelationshipContainer.OpinionColor(opinionOfOther)}>({opinionText})</color></link>\n";
             }
         }
+        if (relationshipsScrollView.gameObject.activeInHierarchy) {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(relationshipsScrollView.content);    
+        }
     }
     private bool DoesRelationshipMeetFilters(int id, IRelationshipData data) {
         Character target = CharacterManager.Instance.GetCharacterByID(id);
@@ -943,7 +947,9 @@ public class CharacterInfoUI : InfoUIBase {
     #region Tabs
     public void OnToggleInfo(bool isOn) { }
     public void OnToggleMood(bool isOn) { }
-    public void OnToggleRelations(bool isOn) { }
+    public void OnToggleRelations(bool isOn) {
+        LayoutRebuilder.ForceRebuildLayoutImmediate(relationshipsScrollView.content);
+    }
     public void OnToggleLogs(bool isOn) { }
     #endregion
 
