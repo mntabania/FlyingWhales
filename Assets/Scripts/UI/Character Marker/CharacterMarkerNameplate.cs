@@ -39,9 +39,15 @@ public class CharacterMarkerNameplate : PooledObject {
         Messenger.AddListener<Character, Region>(RegionSignals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
         Messenger.AddListener<Character, Region>(RegionSignals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
         Messenger.AddListener(UISignals.UI_STATE_SET, UpdateElementsStateBasedOnActiveCharacter);
+        Messenger.AddListener<Character>(FactionSignals.FACTION_SET, OnCharacterSetFaction);
     }
 
     #region Listeners
+    private void OnCharacterSetFaction(Character p_character) {
+        if (p_character == _parentMarker.character) {
+            UpdateName();
+        }
+    }
     private void OnCameraZoomChanged(Camera camera, float amount) {
         if (camera == InnerMapCameraMove.Instance.camera) {
             UpdateSizeBasedOnZoom();
@@ -107,6 +113,7 @@ public class CharacterMarkerNameplate : PooledObject {
         Messenger.RemoveListener<Character, Region>(RegionSignals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
         Messenger.RemoveListener<Character, Region>(RegionSignals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
         Messenger.RemoveListener(UISignals.UI_STATE_SET, UpdateElementsStateBasedOnActiveCharacter);
+        Messenger.RemoveListener<Character>(FactionSignals.FACTION_SET, OnCharacterSetFaction);
     }
     #endregion
 

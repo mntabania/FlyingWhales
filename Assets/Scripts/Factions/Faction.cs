@@ -183,6 +183,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         if (!characters.Contains(character)) {
             characters.Add(character);
             character.SetFaction(this);
+            factionType.ProcessNewMember(character);
             if (isPlayerFaction && character is Summon summon) {
                 Messenger.Broadcast(PlayerSignals.PLAYER_GAINED_SUMMON, summon);
             }

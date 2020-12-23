@@ -73,5 +73,11 @@
             }
             return CRIME_SEVERITY.None;
         }
+        public override void ProcessNewMember(Character character) {
+            if (!character.traitContainer.HasTrait("Cultist")) {
+                //https://trello.com/c/au0rNNT6/3219-non-cultist-in-demon-cult
+                character.traitContainer.AddTrait(character, "Cultist");
+            }
+        }
     }
 }

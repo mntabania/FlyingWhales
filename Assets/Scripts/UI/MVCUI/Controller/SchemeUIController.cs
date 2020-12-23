@@ -69,6 +69,7 @@ public class SchemeUIController : MVCUIController, SchemeUIView.IListener {
             ProcessSchemeSuccessRateWithMultipliers(ref successRate);
             SchemeUIItem item = CreateAndAddNewSchemeUIItem("Cultist", successRate, baseSuccessRate, null, OnHoverEnterSchemeUIItem, OnHoverExitSchemeUIItem);
             item.btnMinus.interactable = false;
+            UpdateSuccessRate();
         }
     }
     public override void HideUI() {
