@@ -356,7 +356,9 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         if (_preconditionsListPool.Count > 0) {
             List<Precondition> data = _preconditionsListPool[0];
             _preconditionsListPool.RemoveAt(0);
-            return data;
+            if (data != null) { //TODO: Find out why this can happen
+                return data;    
+            }
         }
         return new List<Precondition>();
     }

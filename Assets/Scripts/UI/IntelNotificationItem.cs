@@ -51,7 +51,7 @@ public class IntelNotificationItem : PlayerNotificationItem {
 
     #region Hover
     public void OnHoverEnter() {
-        if(intel != null) {
+        if(intel != null && string.IsNullOrEmpty(_intelHoverText)) {
             string blackmailText = intel.GetIntelInfoBlackmailText();
             string reactionText = intel.GetIntelInfoRelationshipText();
             _intelHoverText = string.Empty;
