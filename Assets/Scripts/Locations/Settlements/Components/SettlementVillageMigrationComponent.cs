@@ -135,6 +135,9 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     public string GetHoverTextOfMigrationMeter() {
         string text = $"Current Value: {GetMigrationMeterValueInText()}";
         text += $"\nIncrease Rate Per Hour: {GetPerHourMigrationRate()}";
+        if (!IsMigrationEventAllowed()) {
+            text += $"\n{UtilityScripts.Utilities.ColorizeInvalidText("Only Human and Elven Villages can trigger migration!")}";    
+        }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         text += $"\nBase Per Hour: {perHourIncrement}";
         text += $"\nLong Term Modifier: {longTermModifier}";
