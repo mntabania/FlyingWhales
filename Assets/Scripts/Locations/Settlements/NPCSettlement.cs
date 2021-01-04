@@ -369,6 +369,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     #endregion
 
+    #region Tiles
+    public override bool RemoveTileFromSettlement(HexTile tile) {
+        if (base.RemoveTileFromSettlement(tile)) {
+            npcSettlementEventDispatcher.ExecuteTileRemovedEvent(tile, this);
+            return true;
+        }
+        return false;
+    }
+    #endregion
+
     #region Characters
     public int GetNumberOfUnoccupiedStructure(STRUCTURE_TYPE structureType) {
         if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerSettlement.id == id) {

@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Goap.Job_Checkers;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
-using Interrupts;
 using Jobs;
 using Locations;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Locations.Settlements;
-using UtilityScripts;
+using Locations.Settlements.Components;
 
-public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClassTracker.ISettlementTrackerListener {
+public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClassTracker.ISettlementTrackerListener, NPCSettlementEventDispatcher.ITileListener {
 
 	private readonly NPCSettlement _owner;
 
@@ -77,6 +75,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		Messenger.AddListener<NPCSettlement>(SettlementSignals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
 		Messenger.AddListener<BurningSource>(InnerMapSignals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
 		Messenger.AddListener(Signals.GAME_LOADED, OnGameLoadedVillage);
+		_owner.npcSettlementEventDispatcher.SubscribeToTileRemovedEvent(this);
 	}
 	public void UnsubscribeFromVillageListeners() {
 		Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
@@ -94,6 +93,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		Messenger.RemoveListener<NPCSettlement>(SettlementSignals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
 		Messenger.RemoveListener<BurningSource>(InnerMapSignals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoadedVillage);
+        _owner.npcSettlementEventDispatcher.UnsubscribeToTileRemovedEvent(this);
     }
     public void SubscribeToDungeonListeners() {
         Messenger.AddListener<ResourcePile>(TileObjectSignals.RESOURCE_IN_PILE_CHANGED, OnResourceInPileChangedDungeon);
@@ -198,7 +198,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 			//	TryCreateApprehend(target);
 			//}
 		} else if (traitable is TileObject) {
-			if (traitable is GenericTileObject) {
+			if (traitable is GenericTileObject && traitable.gridTileLocation.IsPartOfSettlement(_owner)) {
 				if (trait is Wet) {
 					AddWetTile(traitable.gridTileLocation);
 				} else if (trait is Poisoned) {
@@ -209,7 +209,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	}
 	private void OnTraitableLostTrait(ITraitable traitable, Trait trait, Character character) {
 		if (traitable is TileObject) {
-			if (traitable is GenericTileObject) {
+			if (traitable is GenericTileObject && traitable.gridTileLocation.IsPartOfSettlement(_owner)) {
 				if (trait is Wet) {
 					RemoveWetTile(traitable.gridTileLocation);
 				} else if (trait is Poisoned) {
@@ -287,6 +287,22 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	public void OnItemAddedToStructure(TileObject item, LocationStructure structure) {
 		if (structure is CityCenter && item is WaterWell) {
 			CheckIfShouldStopWaterWellCheck();
+		}
+	}
+	public void OnSettlementTileRemoved(HexTile p_hexTile, NPCSettlement p_settlement) {
+		for (int i = 0; i < poisonedTiles.Count; i++) {
+			LocationGridTile tile = poisonedTiles[i];
+			if (p_hexTile.locationGridTiles.Contains(tile)) {
+				RemovePoisonedTile(tile);
+				i--;
+			}
+		}
+		for (int i = 0; i < wetTiles.Count; i++) {
+			LocationGridTile tile = wetTiles[i];
+			if (p_hexTile.locationGridTiles.Contains(tile)) {
+				RemoveWetTile(tile);
+				i--;
+			}
 		}
 	}
 	#endregion
@@ -776,18 +792,14 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 
 	#region Dry Tiles
 	private void AddWetTile(LocationGridTile tile) {
-		if (tile.IsPartOfSettlement(_owner)) {
-			if (wetTiles.Contains(tile) == false) {
-				wetTiles.Add(tile);
-			}	
-		}
+		if (!wetTiles.Contains(tile)) {
+			wetTiles.Add(tile);
+		}	
 	}
 	private void RemoveWetTile(LocationGridTile tile) {
-		if (tile.IsPartOfSettlement(_owner)) {
-			if (wetTiles.Remove(tile)) {
-				CheckDryTilesValidity();
-			}	
-		}
+		if (wetTiles.Remove(tile)) {
+			CheckDryTilesValidity();
+		}	
 	}
 	public void TriggerDryTiles() {
 		if (wetTiles.Count > 0) {
@@ -827,18 +839,14 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	
 	#region Cleanse Tiles
 	private void AddPoisonedTile(LocationGridTile tile) {
-		if (tile.IsPartOfSettlement(_owner)) {
-			if (poisonedTiles.Contains(tile) == false) {
-				poisonedTiles.Add(tile);
-			}	
-		}
+		if (!poisonedTiles.Contains(tile)) {
+			poisonedTiles.Add(tile);
+		}	
 	}
 	private void RemovePoisonedTile(LocationGridTile tile) {
-		if (tile.IsPartOfSettlement(_owner)) {
-			if (poisonedTiles.Remove(tile)) {
-				CheckCleanseTilesValidity();
-			}	
-		}
+		if (poisonedTiles.Remove(tile)) {
+			CheckCleanseTilesValidity();
+		}	
 	}
 	public void TriggerCleanseTiles() {
 		if (poisonedTiles.Count > 0) {

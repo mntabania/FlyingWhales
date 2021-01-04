@@ -433,7 +433,7 @@ namespace Locations.Settlements {
                 AddTileToSettlement(tile);
             }
         }
-        public void RemoveTileFromSettlement(HexTile tile) {
+        public virtual bool RemoveTileFromSettlement(HexTile tile) {
             if (tiles.Remove(tile)) {
                 tile.SetSettlementOnTile(null);
                 if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
@@ -443,7 +443,9 @@ namespace Locations.Settlements {
                     //when a settlement loses all its tiles consider it as wiped out
                     SettlementWipedOut();
                 }
+                return true;
             }
+            return false;
         }
         public bool HasTileInRegion(Region region) {
             for (int i = 0; i < tiles.Count; i++) {
