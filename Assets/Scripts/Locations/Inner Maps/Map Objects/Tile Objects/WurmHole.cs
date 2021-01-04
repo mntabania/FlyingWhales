@@ -37,13 +37,12 @@ public class WurmHole : TileObject{
             GameManager.Instance.CreateParticleEffectAt(gridTileLocation, PARTICLE_EFFECT.Teleport);    
         }
 
-        CharacterManager.Instance.Teleport(character, wurmHoleConnection.gridTileLocation);
+        character.jobQueue.CancelAllJobs();
         Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character as IPointOfInterest, "");
         Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, character as IPointOfInterest, "");
-        character.jobQueue.CancelAllJobs();
         character.combatComponent.ClearHostilesInRange();
         character.combatComponent.ClearAvoidInRange();
-        
+        CharacterManager.Instance.Teleport(character, wurmHoleConnection.gridTileLocation);
     }
 
     #region Loading
