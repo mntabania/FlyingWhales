@@ -32,7 +32,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
     [SerializeField] private ParticleSystem bloodSplatterEffect;
     [SerializeField] private ParticleSystemRenderer bloodSplatterEffectRenderer;
     [SerializeField] private SpriteRenderer additionalEffectsImg;
-    public Transform particleEffectParent;
     public Transform particleEffectParentAllowRotation;
 
     [Header("Animation")]
@@ -555,11 +554,15 @@ public class CharacterMarker : MapObjectVisual<Character> {
         RemoveListeners();
         HideHPBar();
         HideAdditionalEffect();
-        PooledObject[] pooledObjects = GameUtilities.GetComponentsInDirectChildren<PooledObject>(particleEffectParent.gameObject);
-        for (int i = 0; i < pooledObjects.Length; i++) {
-            PooledObject pooledObject = pooledObjects[i];
-            ObjectPoolManager.Instance.DestroyObject(pooledObject);
-        }
+        //PooledObject[] pooledObjects = GameUtilities.GetComponentsInDirectChildren<PooledObject>(particleEffectParent.gameObject);
+        //for (int i = 0; i < pooledObjects.Length; i++) {
+        //    PooledObject pooledObject = pooledObjects[i];
+        //    ObjectPoolManager.Instance.DestroyObject(pooledObject);
+        //}
+
+        //When a map visual object is object pooled, all particles must be destroyed so that when it is used again there will no residual particle effects that will linger
+        DestroyAllParticles();
+
         Messenger.Broadcast(CharacterSignals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
         visionCollider.Reset();
         GameObject.Destroy(visionTrigger.gameObject);
@@ -578,6 +581,20 @@ public class CharacterMarker : MapObjectVisual<Character> {
         collider = null;
         character = null;
         base.OnDestroy();
+    }
+    private void DestroyAllParticles() {
+        Transform[] particleGOs = GameUtilities.GetComponentsInDirectChildren<Transform>(particleEffectParent.gameObject);
+        if (particleGOs != null) {
+            for (int i = 0; i < particleGOs.Length; i++) {
+                ObjectPoolManager.Instance.DestroyObject(particleGOs[i].gameObject);
+            }
+        }
+        particleGOs = GameUtilities.GetComponentsInDirectChildren<Transform>(particleEffectParentAllowRotation.gameObject);
+        if (particleGOs != null) {
+            for (int i = 0; i < particleGOs.Length; i++) {
+                ObjectPoolManager.Instance.DestroyObject(particleGOs[i].gameObject);
+            }
+        }
     }
     #endregion
 

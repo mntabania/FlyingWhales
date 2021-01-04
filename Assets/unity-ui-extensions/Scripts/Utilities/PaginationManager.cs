@@ -56,7 +56,7 @@ namespace UnityEngine.UI.Extensions
 
         public void ReInitializeChildren() {
             // add selectables to list
-            m_PaginationChildren = GetComponentsInChildren<Toggle>().ToList<Toggle>();
+            m_PaginationChildren = GetComponentsInChildren<Toggle>().ToList();
             for (int i = 0; i < m_PaginationChildren.Count; i++) {
                 m_PaginationChildren[i].onValueChanged.AddListener(ToggleClick);
                 m_PaginationChildren[i].group = this;

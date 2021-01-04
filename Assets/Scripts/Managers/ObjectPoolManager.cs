@@ -125,11 +125,12 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         for (int i = 0; i < pooledObjects.Length; i++) {
             pooledObjects[i].BeforeDestroyActions();
         }
-        pooledObject.SendObjectBackToPool();
+        //pooledObject.SendObjectBackToPool();
         for (int i = 0; i < pooledObjects.Length; i++) {
             pooledObjects[i].Reset();
         }
-        pooledObject.transform.SetParent(pooledObject.ParentPool.transform);
+        pooledObject.SendObjectBackToPool();
+        //pooledObject.transform.SetParent(pooledObject.ParentPool.transform);
     }
     public void DestroyObject(GameObject gameObject) {
         PooledObject[] pooledObjects = gameObject.GetComponents<PooledObject>();
@@ -137,11 +138,12 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         for (int i = 0; i < pooledObjects.Length; i++) {
             pooledObjects[i].BeforeDestroyActions();
         }
-        pooledObjects[0].SendObjectBackToPool();
+        //pooledObjects[0].SendObjectBackToPool();
         for (int i = 0; i < pooledObjects.Length; i++) {
             pooledObjects[i].Reset();
         }
-        pooledObjects[0].transform.SetParent(pooledObjects[0].ParentPool.transform);
+        pooledObjects[0].SendObjectBackToPool();
+        //pooledObjects[0].transform.SetParent(pooledObjects[0].ParentPool.transform);
     }
 
     public EZObjectPool CreateNewPool(GameObject template, string poolName, int size, bool autoResize, bool instantiateImmediate, bool shared) {

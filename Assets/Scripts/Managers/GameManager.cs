@@ -537,7 +537,7 @@ public class GameManager : MonoBehaviour {
             go.SetActive(true);
         } else {
             if (poi.mapObjectVisual) {
-                go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefab.name, Vector3.zero, Quaternion.identity, poi.mapObjectVisual.transform);
+                go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefab.name, Vector3.zero, Quaternion.identity, poi.mapObjectVisual.particleEffectParent.transform);
                 go.transform.localPosition = Vector3.zero;
             } else {
                 if (poi.gridTileLocation == null) { // || poi.mapObjectVisual == null

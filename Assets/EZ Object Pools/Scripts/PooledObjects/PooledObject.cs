@@ -25,7 +25,11 @@ namespace EZObjectPools
             gameObject.SetActive(false);
             transform.position = Vector3.zero;
             if (ParentPool) {
-                ParentPool.AddToAvailableObjects(this.gameObject);
+                if(ParentPool.transform != transform.parent) {
+                    //To avoid duplicates in the available objects list, we must check if the game object is already in the object pool, if it is, do not add to available object anymore
+                    transform.SetParent(ParentPool.transform);
+                    ParentPool.AddToAvailableObjects(this.gameObject);
+                }
             } else {
                 throw new Exception(
                     $"PooledObject {gameObject.name} does not have a parent pool. If this occurred during a scene transition, ignore this. Otherwise report to developer.");
