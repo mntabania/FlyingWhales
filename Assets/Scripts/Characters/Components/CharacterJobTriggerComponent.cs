@@ -1645,13 +1645,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Report Demonic Structure
     public void CreateReportDemonicStructure(LocationStructure structureToReport) {
-	    if (canReportDemonicStructure && !owner.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
+        NPCSettlement homeSettlement = owner.homeSettlement;
+	    if (canReportDemonicStructure && homeSettlement != null && homeSettlement.mainStorage != null && !owner.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
 		    // UIManager.Instance.ShowYesNoConfirmation("Demonic Structure Seen", 
 			   //  $"Your demonic structure {structureToReport.name} has been seen by {_owner.name}!", 
 			   //  onClickNoAction: _owner.CenterOnCharacter, yesBtnText: "OK", noBtnText: $"Jump to {_owner}", 
 			   //  showCover:true, pauseAndResume: true);
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE, INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE, owner, owner);
-            job.AddOtherData(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE, new object[] { structureToReport });
+            job.AddOtherData(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE, new object[] { structureToReport, homeSettlement.mainStorage });
             owner.jobQueue.AddJobInQueue(job);
             Messenger.Broadcast(JobSignals.DEMONIC_STRUCTURE_DISCOVERED, structureToReport, owner, job);
         }
@@ -1707,17 +1708,17 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
     
     #region Undermine
-    public bool CreatePoisonFoodJob(Character targetCharacter, JOB_TYPE jobType = JOB_TYPE.POISON_FOOD) {
-	    if (owner.jobQueue.HasJob(jobType, targetCharacter)) {
-		    return false;
-	    }
-	    if (targetCharacter.isDead) {
-		    return false;
-	    }
-	    if (targetCharacter.homeRegion == null) {
-		    targetCharacter.logComponent.PrintLogIfActive(owner.name + " cannot poison food " + targetCharacter.name + " because he/she does not have a home region");
-		    return false;
-	    }
+    private GoapPlanJob CreatePoisonFood(Character targetCharacter, JOB_TYPE jobType) {
+        if (owner.jobQueue.HasJob(jobType, targetCharacter)) {
+            return null;
+        }
+        if (targetCharacter.isDead) {
+            return null;
+        }
+        if (targetCharacter.homeRegion == null) {
+            targetCharacter.logComponent.PrintLogIfActive(owner.name + " cannot poison food " + targetCharacter.name + " because he/she does not have a home region");
+            return null;
+        }
         IPointOfInterest chosenObject = null;
         for (int i = 0; i < targetCharacter.ownedItems.Count; i++) {
             TileObject item = targetCharacter.ownedItems[i];
@@ -1727,79 +1728,34 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             }
         }
         if (chosenObject == null) {
-	        //if no owned items was found, check the items in character's home structure if he/she has one
-	        if (targetCharacter.homeStructure != null) {
-		        List<TileObject> tileObjects = targetCharacter.homeStructure.GetTileObjectsOfType<TileObject>(
-			        item => item.gridTileLocation != null && item.mapVisual &&
-			                item.advertisedActions.Contains(INTERACTION_TYPE.EAT));
-		        if (tileObjects.Count > 0) {
-			        chosenObject = CollectionUtilities.GetRandomElement(tileObjects);
-		        }
-	        }
-	        if (chosenObject == null) {
-		        targetCharacter.logComponent.PrintLogIfActive(owner.name + " cannot poison food " +
-		                                                      targetCharacter.name +
-		                                                      " because he/she does not have an owned item on the floor in his/her home region");
-		        return false;
-	        }
+            //if no owned items was found, check the items in character's home structure if he/she has one
+            if (targetCharacter.homeStructure != null) {
+                List<TileObject> tileObjects = targetCharacter.homeStructure.GetTileObjectsOfType<TileObject>(
+                    item => item.gridTileLocation != null && item.mapVisual &&
+                            item.advertisedActions.Contains(INTERACTION_TYPE.EAT));
+                if (tileObjects.Count > 0) {
+                    chosenObject = CollectionUtilities.GetRandomElement(tileObjects);
+                }
+            }
+            if (chosenObject == null) {
+                targetCharacter.logComponent.PrintLogIfActive(owner.name + " cannot poison food " +
+                                                              targetCharacter.name +
+                                                              " because he/she does not have an owned item on the floor in his/her home region");
+                return null;
+            }
         }
-	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Poisoned", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, owner);
-	    owner.jobQueue.AddJobInQueue(job);
-
-	    // Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "poison_undermine");
-	    // log.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-	    // log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-	    // _owner.logComponent.AddHistory(log);
-	    return true;
+        return JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Poisoned", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, owner);
+    }
+    public bool CreatePoisonFoodJob(Character targetCharacter, JOB_TYPE jobType = JOB_TYPE.POISON_FOOD) {
+        GoapPlanJob job = CreatePoisonFood(targetCharacter, jobType);
+        if(job != null) {
+            return owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
     }
     public bool CreatePoisonFoodJob(Character targetCharacter, out JobQueueItem producedJob) {
-	    if (owner.jobQueue.HasJob(JOB_TYPE.POISON_FOOD, targetCharacter)) {
-		    producedJob = null;
-		    return false;
-	    }
-	    if (targetCharacter.isDead) {
-		    producedJob = null;
-		    return false;
-	    }
-	    if (targetCharacter.homeRegion == null) {
-		    targetCharacter.logComponent.PrintLogIfActive(owner.name + " cannot poison food " + targetCharacter.name + " because he/she does not have a home region");
-		    producedJob = null;
-		    return false;
-	    }
-	    IPointOfInterest chosenObject = null;
-	    for (int i = 0; i < targetCharacter.ownedItems.Count; i++) {
-		    TileObject item = targetCharacter.ownedItems[i];
-		    if (item.gridTileLocation != null && item.mapVisual && item.advertisedActions.Contains(INTERACTION_TYPE.EAT)) {
-			    chosenObject = item;
-			    break;
-		    }
-	    }
-	    if (chosenObject == null) {
-		    //if no owned items was found, check the items in character's home structure if he/she has one
-		    if (targetCharacter.homeStructure != null) {
-			    List<TileObject> tileObjects = targetCharacter.homeStructure.GetTileObjectsOfType<TileObject>(
-				    item => item.gridTileLocation != null && item.mapVisual &&
-				            item.advertisedActions.Contains(INTERACTION_TYPE.EAT));
-			    if (tileObjects.Count > 0) {
-				    chosenObject = CollectionUtilities.GetRandomElement(tileObjects);
-			    }
-		    }
-		    if (chosenObject == null) {
-			    targetCharacter.logComponent.PrintLogIfActive(owner.name + " cannot poison food " +
-			                                                  targetCharacter.name +
-			                                                  " because he/she does not have an owned item on the floor in his/her home region");
-			    producedJob = null;
-			    return false;
-		    }
-	    }
-	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.POISON_FOOD, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Poisoned", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, owner);
-	    producedJob = job;
-
-	    // Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "poison_undermine");
-	    // log.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-	    // log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-	    // _owner.logComponent.AddHistory(log);
-	    return true;
+	    producedJob = CreatePoisonFood(targetCharacter, JOB_TYPE.POISON_FOOD);
+	    return producedJob != null;
     }
     #endregion
 
@@ -2047,16 +2003,6 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
-    public bool CreateGoToJob(IPointOfInterest target, out JobQueueItem producedJob) {
-	    if(!owner.jobQueue.HasJob(JOB_TYPE.GO_TO, target)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO, target, owner);
-            job.SetCannotBePushedBack(true);
-            producedJob = job;
-		    return true;
-	    }
-	    producedJob = null;
-	    return false;
-    }
     public bool CreateGoToJob(LocationGridTile tile, out JobQueueItem producedJob) {
 	    if(!owner.jobQueue.HasJob(JOB_TYPE.GO_TO)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, owner);
@@ -2085,6 +2031,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         producedJob = null;
         return false;
     }
+    public bool CreatePartyGoToJob(LocationGridTile tile) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.PARTY_GO_TO)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTY_GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, owner);
+            job.SetCannotBePushedBack(true);
+            return owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
+    }
     public bool CreatePartyGoToSpecificTileJob(LocationGridTile tile, out JobQueueItem producedJob) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.PARTY_GO_TO)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTY_GO_TO, INTERACTION_TYPE.GO_TO_SPECIFIC_TILE, tile.genericTileObject, owner);
@@ -2093,14 +2047,6 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             return true;
         }
         producedJob = null;
-        return false;
-    }
-    public bool CreatePartyGoToJob(LocationGridTile tile) {
-        if (!owner.jobQueue.HasJob(JOB_TYPE.PARTY_GO_TO)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTY_GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, owner);
-            job.SetCannotBePushedBack(true);
-            return owner.jobQueue.AddJobInQueue(job);
-        }
         return false;
     }
     public bool CreateGoToWaitingJob(LocationGridTile tile, out JobQueueItem producedJob) {
@@ -2227,14 +2173,6 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         producedJob = null;
         return false;
     }
-    public bool TriggerMeditate() {
-        if (!owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.MEDITATE, owner, owner);
-            owner.jobQueue.AddJobInQueue(job);
-            return true;
-        }
-        return false;
-    }
     public bool TriggerMeditate(out JobQueueItem producedJob) {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.MEDITATE, owner, owner);
@@ -2243,14 +2181,6 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    }
 	    producedJob = null;
 	    return false;
-    }
-    public bool TriggerRegainEnergy() {
-        if (!owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.REGAIN_ENERGY, owner, owner);
-            owner.jobQueue.AddJobInQueue(job);
-            return true;
-        }
-        return false;
     }
     public bool TriggerRegainEnergy(out JobQueueItem producedJob) {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
