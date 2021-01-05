@@ -15,14 +15,15 @@ public class CreateCultistKit : GoapAction {
         // AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasStone);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR));
     }
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
-        List<Precondition> baseP = base.GetPreconditions(actor, target, otherData, out isOverridden);
-        List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
-        p.AddRange(baseP);
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+        //List<Precondition> baseP = base.GetPrecondition(actor, target, otherData, out isOverridden);
+        //List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
+        Precondition p = null;
+        //p.AddRange(baseP);
         if (actor.race == RACE.HUMANS) {
-            p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasStone));
+            p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasStone);
         } else {
-            p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasWood));
+            p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasWood);
         }
         isOverridden = true;
         return p;

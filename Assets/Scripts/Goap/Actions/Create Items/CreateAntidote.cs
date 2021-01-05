@@ -15,7 +15,7 @@ public class CreateAntidote : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Poison Flask", false, GOAP_EFFECT_TARGET.ACTOR), HasPoisonFlask);
+        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Poison Flask", false, GOAP_EFFECT_TARGET.ACTOR), HasPoisonFlask);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Antidote", false, GOAP_EFFECT_TARGET.ACTOR));
     }
     public override void Perform(ActualGoapNode goapNode) {

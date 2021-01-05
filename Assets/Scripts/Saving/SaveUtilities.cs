@@ -84,11 +84,7 @@ public static class SaveUtilities {
     }
 
     public static SaveDataJobNode createSaveDataJobNode(JobNode jobNode) {
-        if (jobNode is SingleJobNode) {
-            return new SaveDataSingleJobNode();
-        } else {
-            return new SaveDataMultiJobNode();
-        }
+        return new SaveDataSingleJobNode();
     }
 
     #region Tile Objects

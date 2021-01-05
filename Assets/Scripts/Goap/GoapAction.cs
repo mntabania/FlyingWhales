@@ -15,7 +15,7 @@ public class GoapAction {
     public INTERACTION_TYPE goapType { get; private set; }
     public virtual ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
     public string goapName { get; protected set; }
-    public List<Precondition> basePreconditions { get; private set; }
+    public Precondition basePrecondition { get; private set; }
     public List<GoapEffect> baseExpectedEffects { get; private set; }
     public List<GoapEffectConditionTypeAndTargetType> possibleExpectedEffectsTypeAndTargetMatching { get; private set; }
     public RACE[] racesThatCanDoAction { get; protected set; }
@@ -44,7 +44,7 @@ public class GoapAction {
         this.goapName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(goapType.ToString());
         showNotification = false;
         shouldAddLogs = true;
-        basePreconditions = new List<Precondition>();
+        basePrecondition = null;
         baseExpectedEffects = new List<GoapEffect>();
         possibleExpectedEffectsTypeAndTargetMatching = new List<GoapEffectConditionTypeAndTargetType>();
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
@@ -421,31 +421,35 @@ public class GoapAction {
     #endregion
 
     #region Preconditions
-    protected void AddPrecondition(GoapEffect effect, Func<Character, IPointOfInterest, OtherData[], JOB_TYPE, bool> condition) {
-        basePreconditions.Add(new Precondition(effect, condition));
+    protected void SetPrecondition(GoapEffect effect, Func<Character, IPointOfInterest, OtherData[], JOB_TYPE, bool> condition) {
+        basePrecondition = new Precondition(effect, condition);
     }
     public bool CanSatisfyAllPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType) {
         bool isOverridden = false;
         bool canSatisfy = true;
-        List<Precondition> preconditions = GetPreconditions(actor, target, otherData, out isOverridden);
-        if(preconditions != null) {
-            for (int i = 0; i < preconditions.Count; i++) {
-                Precondition precondition = preconditions[i];
-                if (precondition != null && !precondition.CanSatisfyCondition(actor, target, otherData, jobType)) {
-                    canSatisfy = false;
-                    break;
-                }
-            }
+        Precondition precondition = GetPrecondition(actor, target, otherData, out isOverridden);
+        if (precondition != null && !precondition.CanSatisfyCondition(actor, target, otherData, jobType)) {
+            canSatisfy = false;
         }
 
-        if (isOverridden) {
-            ObjectPoolManager.Instance.ReturnPreconditionsListToPool(preconditions);
-        }
+        //if (precondition != null) {
+        //    for (int i = 0; i < precondition.Count; i++) {
+        //        Precondition precondition = precondition[i];
+        //        if (precondition != null && !precondition.CanSatisfyCondition(actor, target, otherData, jobType)) {
+        //            canSatisfy = false;
+        //            break;
+        //        }
+        //    }
+        //}
+
+        //if (isOverridden) {
+        //    ObjectPoolManager.Instance.ReturnPreconditionsListToPool(precondition);
+        //}
         return canSatisfy;
     }
-    public virtual List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+    public virtual Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
         isOverridden = false; 
-        return basePreconditions;
+        return basePrecondition;
     }
     #endregion
 

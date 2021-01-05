@@ -2,7 +2,6 @@
 
 public class SingleJobNode : JobNode {
     public override ActualGoapNode singleNode { get { return node; } }
-    public override ActualGoapNode[] multiNode { get { return null;} }
     public override int currentNodeIndex { get { return -1; } }
     public ActualGoapNode node { get; }
     

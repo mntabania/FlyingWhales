@@ -447,122 +447,31 @@ public class GoapPlanner {
         List<GoapNode> rawPlan = new List<GoapNode>();
 
         JobNode currentJobNode = currentPlan.currentNode;
-        if (currentJobNode.singleNode != null) {
-            //Recalculate for single node
-            ActualGoapNode actualNode = currentJobNode.singleNode;
-            GoapAction goalAction = actualNode.action;
-            IPointOfInterest target = actualNode.poiTarget;
-            OtherData[] otherData = actualNode.otherData;
-            if (target == job.targetPOI || target.IsStillConsideredPartOfAwarenessByCharacter(owner)) {
-                //POI must either be the job's target or the actor is still aware of it
-                int cost = 0;
-                if (target.CanAdvertiseActionToActor(owner, goalAction, job, job.otherData, ref cost)) {
-                    GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
-                    BuildGoapTree(goalNode, owner, job, rawPlan, allGoapActionAdvertisements, awareness, ref log); //
-                    if (rawPlan != null && rawPlan.Count > 0) {
-                        //has a created plan
-                        string rawPlanSummary = $"Recalculated raw plan for job { job.name } { owner.name }";
-                        for (int i = 0; i < rawPlan.Count; i++) {
-                            GoapNode currNode = rawPlan[i];
-                            rawPlanSummary += $"\n - {currNode.action.goapName }";
-                        }
-                        Debug.Log(rawPlanSummary);
-                        List<JobNode> plannedNodes = TransformRawPlanToActualNodes(rawPlan, job.otherData, currentPlan);
-                        currentPlan.Reset(plannedNodes);
-                        return true;
+        ActualGoapNode actualNode = currentJobNode.singleNode;
+        GoapAction goalAction = actualNode.action;
+        IPointOfInterest target = actualNode.poiTarget;
+        OtherData[] otherData = actualNode.otherData;
+        if (target == job.targetPOI || target.IsStillConsideredPartOfAwarenessByCharacter(owner)) {
+            //POI must either be the job's target or the actor is still aware of it
+            int cost = 0;
+            if (target.CanAdvertiseActionToActor(owner, goalAction, job, job.otherData, ref cost)) {
+                GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
+                BuildGoapTree(goalNode, owner, job, rawPlan, allGoapActionAdvertisements, awareness, ref log); //
+                if (rawPlan != null && rawPlan.Count > 0) {
+                    //has a created plan
+                    string rawPlanSummary = $"Recalculated raw plan for job { job.name } { owner.name }";
+                    for (int i = 0; i < rawPlan.Count; i++) {
+                        GoapNode currNode = rawPlan[i];
+                        rawPlanSummary += $"\n - {currNode.action.goapName }";
                     }
+                    Debug.Log(rawPlanSummary);
+                    List<JobNode> plannedNodes = TransformRawPlanToActualNodes(rawPlan, job.otherData, currentPlan);
+                    currentPlan.Reset(plannedNodes);
+                    return true;
                 }
             }
-        } else {
-            //Recalculate for multi node
-            ActualGoapNode[] actualNodes = currentJobNode.multiNode;
-            for (int i = 0; i < actualNodes.Length; i++) {
-                ActualGoapNode actualNode = actualNodes[i];
-                GoapAction goalAction = actualNode.action;
-                IPointOfInterest target = actualNode.poiTarget;
-                OtherData[] otherData = actualNode.otherData;
-                if (target != job.targetPOI && !target.IsStillConsideredPartOfAwarenessByCharacter(owner)) {
-                    rawPlan.Clear();
-                    break;
-                }
-                int cost = 0;
-                if (!target.CanAdvertiseActionToActor(owner, goalAction, job, job.otherData, ref cost)) {
-                    rawPlan.Clear();
-                    break;
-                } else {
-                    GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
-                    BuildGoapTree(goalNode, owner, job, rawPlan, allGoapActionAdvertisements, awareness, ref log);
-                }
-            }
-            if (rawPlan != null && rawPlan.Count > 0) {
-                //has a created plan
-                string rawPlanSummary = $"Recalculated raw plan for job { job.name } { owner.name }";
-                for (int i = 0; i < rawPlan.Count; i++) {
-                    GoapNode currNode = rawPlan[i];
-                    rawPlanSummary += $"\n - {currNode.action.goapName }";
-                }
-                owner.logComponent.PrintCostLog();
-                List<JobNode> plannedNodes = TransformRawPlanToActualNodes(rawPlan, job.otherData, currentPlan);
-                currentPlan.Reset(plannedNodes);
-                return true;
-            }
-            owner.logComponent.PrintCostLog();
         }
         return false;
-        //List of all starting nodes that can do the goal
-        //List<GoapNode> startingNodes = new List<GoapNode>();
-        //bool success = false;
-        //if (currentPlan.isPersonalPlan) {
-        //    string log = string.Empty;
-        //    success = BuildGoapTree(currentPlan.endNode, startingNodes, usableActions, ref log, currentPlan.job);
-        //} else {
-        //    GoapNode currentLeafNode = null;
-        //    bool hasUsableAction = false;
-        //    success = true;
-        //    for (int i = currentPlan.endNode.index; i >= 0; i--) {
-        //        GoapNode failedNode = currentPlan.allNodes[i];
-        //        hasUsableAction = false;
-        //        for (int j = 0; j < usableActions.Count; j++) {
-        //            GoapAction currentUsableAction = usableActions[j];
-        //            if(failedNode.action.goapType == currentUsableAction.goapType && failedNode.action.poiTarget == currentUsableAction.poiTarget) {
-        //                hasUsableAction = true;
-        //                if(currentLeafNode == null) {
-        //                    currentLeafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(failedNode.parent, failedNode.parent.runningCost + currentUsableAction.cost, currentUsableAction);
-        //                } else {
-        //                    GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(currentLeafNode.parent, currentLeafNode.parent.runningCost + currentUsableAction.cost, currentUsableAction);
-        //                    currentLeafNode = leafNode;
-        //                }
-        //                break;
-        //            }
-        //        }
-        //        if (!hasUsableAction) {
-        //            //No usable action for the current failed node, fail recalculation
-        //            success = false;
-        //            break;
-        //        }
-        //    }
-        //    if(currentLeafNode != null) {
-        //        startingNodes.Add(currentLeafNode);
-        //    } else {
-        //        success = false;
-        //    }
-        //}
-        //if (!success) {
-        //    return false;
-        //}
-
-        //GoapNode cheapestStartingNode = null;
-        //for (int i = 0; i < startingNodes.Count; i++) {
-        //    if (cheapestStartingNode == null) {
-        //        cheapestStartingNode = startingNodes[i];
-        //    } else {
-        //        if (startingNodes[i].cost < cheapestStartingNode.cost) {
-        //            cheapestStartingNode = startingNodes[i];
-        //        }
-        //    }
-        //}
-        //currentPlan.Reset(cheapestStartingNode);
-        //return true;
     }
     //Note: The target specified here is the target for the precondition not the job itself
     private void BuildGoapTree(GoapNode node, Character actor, GoapPlanJob job, List<GoapNode> rawPlan, Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements
@@ -578,7 +487,7 @@ public class GoapPlanner {
             rawPlan.Clear();
             return;
         }
-        List<Precondition> preconditions = null;
+        Precondition precondition = null;
         OtherData[] otherData = null;
         if (job.otherData != null) {
             if (job.otherData.ContainsKey(action.goapType)) {
@@ -589,9 +498,9 @@ public class GoapPlanner {
             }
         }
         bool isOverriden = false;
-        preconditions = action.GetPreconditions(actor, target, otherData, out isOverriden);
-        if (preconditions.Count > 0) {
-            log += $"\n--Node {node.action.goapName} has preconditions: {preconditions.Count}";
+        precondition = action.GetPrecondition(actor, target, otherData, out isOverriden);
+        if (precondition != null) {
+            log += $"\n--Node {node.action.goapName} has precondition";
             //get other data for current action
             OtherData[] preconditionActionData = null;
             if (job.otherData != null) {
@@ -602,8 +511,8 @@ public class GoapPlanner {
                 }
             }
 
-            for (int i = 0; i < preconditions.Count; i++) {
-                Precondition precondition = preconditions[i];
+            //for (int i = 0; i < precondition.Count; i++) {
+            //    Precondition precondition = precondition[i];
                 if (!precondition.CanSatisfyCondition(actor, target, preconditionActionData, job.jobType)) {
                     GoapEffect preconditionEffect = precondition.goapEffect;
                     log +=
@@ -625,9 +534,9 @@ public class GoapPlanner {
                             //Fail - rawPlan must be set to null so the plan will fail
                             rawPlan.Clear();
                             //rawPlan = null;
-                            if (isOverriden) {
-                                ObjectPoolManager.Instance.ReturnPreconditionsListToPool(preconditions);
-                            }
+                            //if (isOverriden) {
+                            //    ObjectPoolManager.Instance.ReturnPreconditionsListToPool(precondition);
+                            //}
                             log += "\n--Could not find action to satisfy precondition, setting raw plan to null and exiting goap tree...";
                             return;
                         }
@@ -702,9 +611,9 @@ public class GoapPlanner {
                             //Fail - rawPlan must be set to null so the plan will fail
                             rawPlan.Clear();
                             //rawPlan = null;
-                            if (isOverriden) {
-                                ObjectPoolManager.Instance.ReturnPreconditionsListToPool(preconditions);
-                            }
+                            //if (isOverriden) {
+                            //    ObjectPoolManager.Instance.ReturnPreconditionsListToPool(precondition);
+                            //}
                             log += "\n--Could not find action to satisfy precondition, setting raw plan to null and exiting goap tree...";
                             return;
                         }
@@ -723,15 +632,15 @@ public class GoapPlanner {
                         //}
                     }
                 } else {
-                    log += $"\n--Condition {i} satisfied, checking next precondition...";
+                    log += $"\n--Precondition satisfied, exit goap tree...";
                 }
-            }
+            //}
         } else {
             log += $"\n--Node {node.action.goapName} has no preconditions, exiting goap tree...";
         }
-        if (isOverriden) {
-            ObjectPoolManager.Instance.ReturnPreconditionsListToPool(preconditions);
-        }
+        //if (isOverriden) {
+        //    ObjectPoolManager.Instance.ReturnPreconditionsListToPool(precondition);
+        //}
     }
 
     private List<JobNode> TransformRawPlanToActualNodes(List<GoapNode> rawPlan, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, GoapPlan currentPlan = null) { //actualPlan is for recalculation only, so that it will no longer create a new list, since in recalculation we already have a list of job nodes
@@ -755,50 +664,22 @@ public class GoapPlanner {
                 }
             }
             if(tempNodeIndexHolder.Count > 0) {
-                if(tempNodeIndexHolder.Count == 1) {
-                    //Single Job Node
-                    int nodeIndex = tempNodeIndexHolder[0];
-                    GoapNode rawNode = rawPlan[nodeIndex];
-                    OtherData[] data = null;
-                    if (otherData != null) {
-                        if (otherData.ContainsKey(rawNode.action.goapType)) {
-                            data = otherData[rawNode.action.goapType];
-                        } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                            data = otherData[INTERACTION_TYPE.NONE];
-                        }
+                int nodeIndex = tempNodeIndexHolder[0];
+                GoapNode rawNode = rawPlan[nodeIndex];
+                OtherData[] data = null;
+                if (otherData != null) {
+                    if (otherData.ContainsKey(rawNode.action.goapType)) {
+                        data = otherData[rawNode.action.goapType];
+                    } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+                        data = otherData[INTERACTION_TYPE.NONE];
                     }
-                    ActualGoapNode actualNode = new ActualGoapNode(rawNode.action, owner, rawNode.target, data, rawNode.cost);
-                    SingleJobNode singleJobNode = new SingleJobNode(actualNode);
-                    actualPlan.Insert(0, singleJobNode);
-                    GoapNode node = rawPlan[nodeIndex];
-                    rawPlan.RemoveAt(nodeIndex);
-                    ObjectPoolManager.Instance.ReturnGoapNodeToPool(node);
-                } else {
-                    //Multi Job Node
-                    discardedNodes.Clear();
-                    ActualGoapNode[] actualNodes = new ActualGoapNode[tempNodeIndexHolder.Count];
-                    for (int i = 0; i < tempNodeIndexHolder.Count; i++) {
-                        int nodeIndex = tempNodeIndexHolder[i];
-                        GoapNode rawNode = rawPlan[nodeIndex];
-                        OtherData[] data = null;
-                        if (otherData != null) {
-                            if (otherData.ContainsKey(rawNode.action.goapType)) {
-                                data = otherData[rawNode.action.goapType];
-                            } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                                data = otherData[INTERACTION_TYPE.NONE];
-                            }
-                        }
-                        ActualGoapNode actualNode = new ActualGoapNode(rawNode.action, owner, rawNode.target, data, rawNode.cost);
-                        actualNodes[i] = actualNode;
-                        discardedNodes.Add(rawNode);
-                    }
-                    for (int i = 0; i < discardedNodes.Count; i++) {
-                        rawPlan.Remove(discardedNodes[i]);
-                        ObjectPoolManager.Instance.ReturnGoapNodeToPool(discardedNodes[i]);
-                    }
-                    MultiJobNode multiJobNode = new MultiJobNode(actualNodes);
-                    actualPlan.Insert(0, multiJobNode);
                 }
+                ActualGoapNode actualNode = new ActualGoapNode(rawNode.action, owner, rawNode.target, data, rawNode.cost);
+                SingleJobNode singleJobNode = new SingleJobNode(actualNode);
+                actualPlan.Insert(0, singleJobNode);
+                GoapNode node = rawPlan[nodeIndex];
+                rawPlan.RemoveAt(nodeIndex);
+                ObjectPoolManager.Instance.ReturnGoapNodeToPool(node);
             }
             index++;
         }

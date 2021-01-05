@@ -44,11 +44,11 @@ public class DepositResourcePile : GoapAction {
     //    }
     //    return ee;
     //}
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
-        List<Precondition> baseP = base.GetPreconditions(actor, target, otherData, out isOverridden);
-        List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
-        p.AddRange(baseP);
-        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, target.name, false, GOAP_EFFECT_TARGET.TARGET), IsCarriedOrInInventory));
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+        //List<Precondition> baseP = base.GetPrecondition(actor, target, otherData, out isOverridden);
+        //List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
+        //p.AddRange(baseP);
+        Precondition p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, target.name, false, GOAP_EFFECT_TARGET.TARGET), IsCarriedOrInInventory);
         isOverridden = true;
         return p;
     }

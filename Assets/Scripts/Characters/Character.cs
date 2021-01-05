@@ -3940,9 +3940,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.SCREAM_FOR_HELP);
             //AddAdvertisedAction(INTERACTION_TYPE.CHANGE_CLASS);
             AddAdvertisedAction(INTERACTION_TYPE.STUDY_MONSTER);
-            AddAdvertisedAction(INTERACTION_TYPE.CREATE_HEALING_POTION);
-            AddAdvertisedAction(INTERACTION_TYPE.CREATE_ANTIDOTE);
-            AddAdvertisedAction(INTERACTION_TYPE.CREATE_POISON_FLASK);
+
+            //NOTE: Removed the creation of healing potion, etc. on the fly because it conflicts with the current crafting of objects
+            //It is confusing to have a crafting then another one the creates them in the inventory without any crafting
+            //Also, we already decided to not have a very deep branching of plans when goap planning
+            //Example: When a character wants to heal himself he needs healing potion, if he does not have one, he must get a healing potion, but if there is none, the plan should be discarded
+            //It should not continue further like getting ingredients to create a healing potion
+            //AddAdvertisedAction(INTERACTION_TYPE.CREATE_HEALING_POTION);
+            //AddAdvertisedAction(INTERACTION_TYPE.CREATE_ANTIDOTE);
+            //AddAdvertisedAction(INTERACTION_TYPE.CREATE_POISON_FLASK);
+
             //AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
             //AddAdvertisedAction(INTERACTION_TYPE.REMOVE_FREEZING);
             AddAdvertisedAction(INTERACTION_TYPE.SHARE_INFORMATION);

@@ -21,7 +21,7 @@ public class DropRestrained : GoapAction {
     
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = "Carry Restrained", target = GOAP_EFFECT_TARGET.TARGET }, IsCarriedOrInInventory);
+        SetPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = "Carry Restrained", target = GOAP_EFFECT_TARGET.TARGET }, IsCarriedOrInInventory);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode actionNode) {

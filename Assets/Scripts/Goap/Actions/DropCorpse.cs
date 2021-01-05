@@ -21,7 +21,7 @@ public class DropCorpse : GoapAction {
     
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Carry Corpse", false, GOAP_EFFECT_TARGET.TARGET), IsCarriedOrInInventory);
+        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Carry Corpse", false, GOAP_EFFECT_TARGET.TARGET), IsCarriedOrInInventory);
     }
     public override void Perform(ActualGoapNode actionNode) {
         base.Perform(actionNode);

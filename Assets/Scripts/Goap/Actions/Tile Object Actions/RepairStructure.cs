@@ -23,26 +23,28 @@ public class RepairStructure : GoapAction {
         //AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", false, GOAP_EFFECT_TARGET.TARGET));
         // AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
     }
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
         Assert.IsTrue(target is StructureTileObject, $"Repair structure is being advertised by something that is not a StructureTileObject! {target}");
-        List<Precondition> baseP = base.GetPreconditions(actor, target, otherData, out isOverridden);
-        List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
-        p.AddRange(baseP);
+        //List<Precondition> baseP = base.GetPrecondition(actor, target, otherData, out isOverridden);
+        //List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
+        //p.AddRange(baseP);
+
+        Precondition p = null;
 
         StructureTileObject structureTileObject = target as StructureTileObject;
         if (structureTileObject.structureParent is ManMadeStructure manMadeStructure) {
             switch (manMadeStructure.wallsAreMadeOf) {
                 case RESOURCE.WOOD:
-                    p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
+                    p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
                     break;
                 case RESOURCE.STONE:
-                    p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
+                    p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
                     break;
                 case RESOURCE.METAL:
-                    p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Metal Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
+                    p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Metal Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
                     break;
                 default:
-                    p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
+                    p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
                     break;
             }
         }
