@@ -132,7 +132,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
         }
     }
     private void OnFactionLeaderChanged(Character character, ILeader previousLeader) {
-        if (activeFaction != null) {
+        if (activeFaction != null && character.faction == activeFaction) {
             UpdateOverview();
             UpdateAllCharacters();
         }

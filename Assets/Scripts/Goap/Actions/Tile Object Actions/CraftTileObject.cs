@@ -37,8 +37,8 @@ public class CraftTileObject : GoapAction {
             Precondition p = null;
             //p.AddRange(baseP);
             if (recipe.hasValue) {
-                if(recipe.ingredients.Length > 0) {
-                    TileObjectRecipeIngredient ingredient = recipe.ingredients[0];
+                if(!string.IsNullOrEmpty(recipe.ingredient.ingredientName)) {
+                    TileObjectRecipeIngredient ingredient = recipe.ingredient;
                     string req = ingredient.ingredientName;
                     if (req == "Wood Pile") {
                         p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, req, false, GOAP_EFFECT_TARGET.ACTOR), HasWood);
@@ -129,8 +129,8 @@ public class CraftTileObject : GoapAction {
         }
         
         if (recipe.hasValue) {
-            if (recipe.ingredients.Length > 0) {
-                TileObjectRecipeIngredient ingredient = recipe.ingredients[0];
+            if (!string.IsNullOrEmpty(recipe.ingredient.ingredientName)) {
+                TileObjectRecipeIngredient ingredient = recipe.ingredient;
                 string neededItem = ingredient.ingredientName;
                 if (neededItem == "Wood Pile") {
                     ResourcePile resourcePile = actor.GetItem(TILE_OBJECT_TYPE.WOOD_PILE) as ResourcePile;

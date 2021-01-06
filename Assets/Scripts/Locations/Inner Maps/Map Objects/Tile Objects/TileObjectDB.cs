@@ -99,7 +99,7 @@ public static class TileObjectDB {
             neededCharacterClass = null,
             craftRecipes = new [] {
                 new TileObjectRecipe(
-                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WATER_FLASK, 1),
+                    //new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WATER_FLASK, 1),
                     new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.HERB_PLANT, 1)
                 ),
             }
@@ -109,8 +109,8 @@ public static class TileObjectDB {
             neededCharacterClass = null,
             craftRecipes = new [] {
                 new TileObjectRecipe(
-                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WATER_FLASK, 1),
-                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.HERB_PLANT, 1)
+                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WATER_FLASK, 1)
+                    //new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.HERB_PLANT, 1)
                 ),
             }
         } },
@@ -249,8 +249,8 @@ public static class TileObjectDB {
             neededCharacterClass = null,
             craftRecipes = new [] {
                 new TileObjectRecipe(
-                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.STONE_PILE, 10),
-                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WOOD_PILE, 10)
+                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.STONE_PILE, 10)
+                    //new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WOOD_PILE, 10)
                 ),
             }
         } },
@@ -315,14 +315,16 @@ public class TileObjectData {
     public bool TryGetPossibleRecipe(Region region, out TileObjectRecipe possibleRecipe) {
         for (int i = 0; i < craftRecipes.Length; i++) { 
             TileObjectRecipe recipe = craftRecipes[i];
-            bool hasAllIngredients = true;
-            for (int j = 0; j < recipe.ingredients.Length; j++) {
-                TileObjectRecipeIngredient ingredient = recipe.ingredients[j];
-                if (region.GetTileObjectInRegionCount(ingredient.ingredient) <= 0) {
-                    hasAllIngredients = false;
-                    break;
-                }
-            }
+            bool hasAllIngredients = region.GetTileObjectInRegionCount(recipe.ingredient.ingredient) > 0;
+
+            //bool hasAllIngredients = true;
+            //for (int j = 0; j < recipe.ingredient.Length; j++) {
+            //    TileObjectRecipeIngredient ingredient = recipe.ingredient[j];
+            //    if (region.GetTileObjectInRegionCount(ingredient.ingredient) <= 0) {
+            //        hasAllIngredients = false;
+            //        break;
+            //    }
+            //}
             if (hasAllIngredients) {
                 possibleRecipe = recipe;
                 return true;
@@ -345,29 +347,37 @@ public class TileObjectData {
 }
 
 public struct TileObjectRecipe {
-    public TileObjectRecipeIngredient[] ingredients;
+    public TileObjectRecipeIngredient ingredient;
     public bool hasValue;
-    public TileObjectRecipe(params TileObjectRecipeIngredient[] ingredients) {
-        this.ingredients = ingredients;
+    public TileObjectRecipe(TileObjectRecipeIngredient ingredient) {
+        this.ingredient = ingredient;
         hasValue = true;
     }
 
     public int GetNeededAmountForIngredient(TILE_OBJECT_TYPE ingredient) {
-        for (int i = 0; i < ingredients.Length; i++) {
-            TileObjectRecipeIngredient recipeIngredient = ingredients[i];
-            if (recipeIngredient.ingredient == ingredient) {
-                return recipeIngredient.amount;
-            }
+        TileObjectRecipeIngredient recipeIngredient = this.ingredient;
+        if (recipeIngredient.ingredient == ingredient) {
+            return recipeIngredient.amount;
         }
+        //for (int i = 0; i < this.ingredient.Length; i++) {
+        //    TileObjectRecipeIngredient recipeIngredient = this.ingredient[i];
+        //    if (recipeIngredient.ingredient == ingredient) {
+        //        return recipeIngredient.amount;
+        //    }
+        //}
         return 0;
     }
     public bool UsesIngredient(TILE_OBJECT_TYPE tileObjectType) {
-        for (int i = 0; i < ingredients.Length; i++) {
-            TileObjectRecipeIngredient recipeIngredient = ingredients[i];
-            if (recipeIngredient.ingredient == tileObjectType) {
-                return true;
-            }
+        TileObjectRecipeIngredient recipeIngredient = ingredient;
+        if (recipeIngredient.ingredient == tileObjectType) {
+            return true;
         }
+        //for (int i = 0; i < ingredient.Length; i++) {
+        //    TileObjectRecipeIngredient recipeIngredient = ingredient[i];
+        //    if (recipeIngredient.ingredient == tileObjectType) {
+        //        return true;
+        //    }
+        //}
         return false;
     }
     

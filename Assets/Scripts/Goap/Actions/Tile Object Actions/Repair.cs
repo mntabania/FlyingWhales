@@ -107,8 +107,8 @@ public class Repair : GoapAction {
         TileObjectData data = TileObjectDB.GetTileObjectData(obj.tileObjectType);
         if (data != null && data.craftRecipes != null) {
             TileObjectRecipe recipe = data.mainRecipe;
-            for (int i = 0; i < recipe.ingredients.Length; i++) {
-                TileObjectRecipeIngredient ingredient = recipe.ingredients[i];
+            if (!string.IsNullOrEmpty(recipe.ingredient.ingredientName)) {
+                TileObjectRecipeIngredient ingredient = recipe.ingredient;
                 string neededItem = ingredient.ingredientName;
                 if (neededItem == "Wood Pile") {
                     ResourcePile resourcePile = actor.GetItem(TILE_OBJECT_TYPE.WOOD_PILE) as ResourcePile;
@@ -143,8 +143,8 @@ public class Repair : GoapAction {
         TileObjectData data = TileObjectDB.GetTileObjectData(obj.tileObjectType);
         if (data != null && data.craftRecipes != null) {
             TileObjectRecipe recipe = data.mainRecipe;
-            for (int i = 0; i < recipe.ingredients.Length; i++) {
-                TileObjectRecipeIngredient ingredient = recipe.ingredients[i];
+            if(!string.IsNullOrEmpty(recipe.ingredient.ingredientName)) {
+                TileObjectRecipeIngredient ingredient = recipe.ingredient;
                 string neededItem = ingredient.ingredientName;
                 if (neededItem == "Wood Pile") {
                     obj.AdjustResource(RESOURCE.WOOD, -ingredient.amount);
