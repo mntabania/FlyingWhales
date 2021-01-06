@@ -82,7 +82,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public Faction(FACTION_TYPE _factionType) {
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         id = UtilityScripts.Utilities.SetID(this);
-        SetName(RandomNameGenerator.GenerateKingdomName());
+        SetName(RandomNameGenerator.GenerateFactionName());
         SetFactionColor(UtilityScripts.Utilities.GetColorForFaction());
         SetFactionActiveState(true);
         SetFactionType(_factionType);

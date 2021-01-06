@@ -53,7 +53,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	public static void ScenarioItemGenerationAfterPickingLoadout() {
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			//spawn 1 desert rose
-			Region region = GridMap.Instance.allRegions[1];
+			Region region = GridMap.Instance.allRegions[0];
 			LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
 			List<LocationGridTile> locationChoices = wilderness.unoccupiedTiles.Where(t =>
 				t.collectionOwner.isPartOfParentRegionMap && !t.IsAtEdgeOfMap() &&
@@ -336,7 +336,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			// Debug.Log($"Placed Excalibur at {excalibur.gridTileLocation}");
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			//always spawn Necronomicon
-			Region randomRegion = GridMap.Instance.allRegions[1];
+			Region randomRegion = GridMap.Instance.allRegions[0];
 			//tutorial should always have 2 ancient graveyards.
 			LocationStructure structure = randomRegion.structures[STRUCTURE_TYPE.ANCIENT_GRAVEYARD][1];
 			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);

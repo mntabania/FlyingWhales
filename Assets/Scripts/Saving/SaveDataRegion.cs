@@ -12,7 +12,6 @@ public class SaveDataRegion : SaveData<Region> {
     public string name;
     public int coreTileID;
     public ColorSave regionColor;
-    public RegionTemplate regionTemplate;
     public string[] residentIDs;
     public string[] charactersAtLocationIDs;
     public SaveDataInnerMap innerMapSave;
@@ -26,7 +25,6 @@ public class SaveDataRegion : SaveData<Region> {
         name = region.name;
         coreTileID = region.coreTile.id;
         regionColor = region.regionColor;
-        regionTemplate = region.regionTemplate;
         
         //residents
         residentIDs = new string[region.residents.Count];

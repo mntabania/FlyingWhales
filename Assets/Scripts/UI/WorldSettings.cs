@@ -178,34 +178,6 @@ public class WorldSettings : MonoBehaviour {
     #endregion
 
     #region UI References
-    #region Number of Regions
-    public void OnToggleRegion1(bool state) {
-        if (state) {
-            worldSettingsData.SetNumOfRegions(1);
-        }
-    }
-    public void OnToggleRegion2(bool state) {
-        if (state) {
-            worldSettingsData.SetNumOfRegions(2);
-        }
-    }
-    public void OnToggleRegion3(bool state) {
-        if (state) {
-            worldSettingsData.SetNumOfRegions(3);
-        }
-    }
-    public void OnToggleRegion4(bool state) {
-        if (state) {
-            worldSettingsData.SetNumOfRegions(4);
-        }
-    }
-    public void OnToggleRegion6(bool state) {
-        if (state) {
-            worldSettingsData.SetNumOfRegions(6);
-        }
-    }
-    #endregion
-
     #region Races
     public void OnToggleHumans(bool state) {
         UpdateRaces(RACE.HUMANS, state);
@@ -235,9 +207,6 @@ public class WorldSettings : MonoBehaviour {
     }
     public void OnToggleNoThreatMode(bool state) {
         worldSettingsData.SetNoThreatMode(state);
-    }
-    public void OnToggleChaosVictoryMode(bool state) {
-        worldSettingsData.SetChaosVictoryMode(state);
     }
     public void OnClickContinue() {
         if (mainWindow.activeSelf) {

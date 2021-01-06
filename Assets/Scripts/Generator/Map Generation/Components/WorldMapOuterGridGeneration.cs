@@ -32,8 +32,8 @@ public class WorldMapOuterGridGeneration : MapGenerationComponent {
         int newWidth = data.width + (_borderThickness * 2);
         int newHeight = data.height + (_borderThickness * 2);
 
-        float newX = MapGenerationData.xOffset * (newWidth / 2f);
-        float newY = MapGenerationData.yOffset * (newHeight / 2f);
+        float newX = MapGenerationData.XOffset * (newWidth / 2f);
+        float newY = MapGenerationData.YOffset * (newHeight / 2f);
 
         int id = 0;
 
@@ -47,16 +47,16 @@ public class WorldMapOuterGridGeneration : MapGenerationComponent {
                 if ((x >= _borderThickness && x < newWidth - _borderThickness) && (y >= _borderThickness && y < newHeight - _borderThickness)) {
                     continue;
                 }
-                float xPosition = x * MapGenerationData.xOffset;
+                float xPosition = x * MapGenerationData.XOffset;
 
-                float yPosition = y * MapGenerationData.yOffset;
+                float yPosition = y * MapGenerationData.YOffset;
                 if (y % 2 == 1) {
-                    xPosition += MapGenerationData.xOffset / 2;
+                    xPosition += MapGenerationData.XOffset / 2;
                 }
 
                 GameObject hex = Object.Instantiate(GridMap.Instance.goHex, GridMap.Instance.borderParent, true) as GameObject;
                 hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
-                hex.transform.localScale = new Vector3(MapGenerationData.tileSize, MapGenerationData.tileSize, 0f);
+                hex.transform.localScale = new Vector3(MapGenerationData.TileSize, MapGenerationData.TileSize, 0f);
                 HexTile currHex = hex.GetComponent<HexTile>();
                 currHex.Initialize(false);
                 currHex.data.id = id;

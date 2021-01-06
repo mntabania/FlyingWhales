@@ -115,7 +115,7 @@ namespace Inner_Maps {
             TileBase[] groundTilesArray = new TileBase[width * height];
 
             int count = 0;
-            TileBase regionOutsideTile = InnerMapManager.Instance.assetManager.GetOutsideFloorTile(region);
+            TileBase regionOutsideTile = InnerMapManager.Instance.assetManager.outsideTile;
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
                     var position = new Vector3Int(x, y, 0);
@@ -178,7 +178,7 @@ namespace Inner_Maps {
             TileBase[] groundTilesArray = new TileBase[width * height];
             int count = 0;
             LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-            TileBase regionOutsideTile = InnerMapManager.Instance.assetManager.GetOutsideFloorTile(region);
+            TileBase regionOutsideTile = InnerMapManager.Instance.assetManager.outsideTile;
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
                     SaveDataLocationGridTile existingSaveData = saveDataInnerMap.GetSaveDataForTile(new Point(x, y));
@@ -633,13 +633,6 @@ namespace Inner_Maps {
         protected IEnumerator GenerateDetails(MapGenerationComponent mapGenerationComponent) {
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
-            //Generate details for the outside map
-            // List<LocationGridTile> tilesToPerlin = allTiles.Where(x =>
-            //     x.objHere == null
-            //     && (x.structure == null || x.structure.structureType == STRUCTURE_TYPE.WILDERNESS)
-            //     && x.tileType != LocationGridTile.Tile_Type.Wall
-            //     && !x.IsAdjacentTo(typeof(MagicCircle))
-            // ).ToList();
             int minX = allTiles.Min(t => t.localPlace.x);
             int maxX = allTiles.Max(t => t.localPlace.x);
             int minY = allTiles.Min(t => t.localPlace.y);
@@ -657,17 +650,13 @@ namespace Inner_Maps {
             
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile currTile = tiles[i];
-                HexTile hex = region.coreTile;
-                if(currTile.collectionOwner != null && currTile.collectionOwner.isPartOfParentRegionMap) {
-                    hex = currTile.collectionOwner.partOfHextile.hexTileOwner;
-                }
                 float xCoord = (float)currTile.localPlace.x / xSize * 11f + xSeed;
                 float yCoord = (float)currTile.localPlace.y / ySize * 11f + ySeed;
 
                 float floorSample = Mathf.PerlinNoise(xCoord, yCoord);
                 positionArray[i] = currTile.localPlace;
                 currTile.SetFloorSample(floorSample);
-                groundTilesArray[i] = GetGroundAssetPerlin(floorSample, hex.biomeType);
+                groundTilesArray[i] = GetGroundAssetPerlin(floorSample, currTile.biomeType);
             }
 
             //Mass Update tiles
@@ -701,34 +690,16 @@ namespace Inner_Maps {
                 
                 //trees and shrubs
                 if (currTile.objHere == null && currTile.HasNeighbouringWalledStructure() == false) {
-                    //if (sampleDetail < 0.5f) {
-                    //    if (currTile.groundType == LocationGridTile.Ground_Type.Grass || currTile.groundType == LocationGridTile.Ground_Type.Snow) {
-                    //        if (Random.Range(0, 100) < 50) {
-                    //            //shrubs
-                    //            if (region.coreTile.biomeType != BIOMES.SNOW && region.coreTile.biomeType != BIOMES.TUNDRA) {
-                    //                TileBase tileBase = null;
-                    //                //plant or herb plant
-                    //                tileBase = Random.Range(0, 2) == 0 ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
-                    //                detailsTilemap.SetTile(currTile.localPlace, tileBase);
-                    //                Assert.IsNotNull(currTile.structure);
-                    //                //place tile object
-                    //                ConvertDetailToTileObject(currTile);
-                    //                continue; //skip next processing, since detail was already placed.
-                    //            }
-                    //        }
-                    //    }
-                    //} 
-
                     if (sampleDetail < 0.55f) {
                         if (Random.Range(0, 100) < 50) {
                             //shrubs
-                            if (currTile.groundType == LocationGridTile.Ground_Type.Grass && region.coreTile.biomeType != BIOMES.SNOW && region.coreTile.biomeType != BIOMES.TUNDRA && region.coreTile.biomeType != BIOMES.DESERT) {
+                            if (currTile.groundType == LocationGridTile.Ground_Type.Grass && currTile.biomeType != BIOMES.SNOW && currTile.biomeType != BIOMES.TUNDRA && currTile.biomeType != BIOMES.DESERT) {
                                 Assert.IsNotNull(currTile.structure);
                                 TileBase tileBase = null;
                                 //plant or herb plant
                                 
                                 tileBase = UtilityScripts.GameUtilities.RollChance(35) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
-                                if (region.coreTile.biomeType == BIOMES.FOREST || region.coreTile.biomeType == BIOMES.GRASSLAND) {
+                                if (currTile.biomeType == BIOMES.FOREST || currTile.biomeType == BIOMES.GRASSLAND) {
                                     if(tileBase == InnerMapManager.Instance.assetManager.herbPlantTile) {
                                         if (UtilityScripts.GameUtilities.RollChance(10)) {
                                             TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BERRY_SHRUB);
@@ -746,17 +717,17 @@ namespace Inner_Maps {
                     }
 
                     if (Random.Range(0, 100) < 3) {
-                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetFlowerTile(region));
+                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetFlowerTile(currTile.biomeType));
                         Assert.IsNotNull(currTile.structure);
                         ConvertDetailToTileObject(currTile);
                         // TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WEREWOLF_PELT);
                         // currTile.structure.AddPOI(obj, currTile);
                     } else if (Random.Range(0, 100) < 4) {
-                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetRockTile(region));
+                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetRockTile(currTile.biomeType));
                         Assert.IsNotNull(currTile.structure);
                         ConvertDetailToTileObject(currTile);
                     } else if (Random.Range(0, 100) < 3) {
-                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetGarbTile(region));
+                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetGarbTile(currTile.biomeType));
                         Assert.IsNotNull(currTile.structure);
                         ConvertDetailToTileObject(currTile);
                     }
@@ -807,7 +778,7 @@ namespace Inner_Maps {
         #region Monobehaviours
         public void Update() {
             Character activeCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
-            if (activeCharacter != null && activeCharacter.currentRegion == region.coreTile.region
+            if (activeCharacter != null && activeCharacter.currentRegion == region
                 && !activeCharacter.isDead
                 && activeCharacter.marker
                 && activeCharacter.marker.pathfindingAI.hasPath

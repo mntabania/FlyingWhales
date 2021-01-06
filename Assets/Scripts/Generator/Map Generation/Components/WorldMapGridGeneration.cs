@@ -11,18 +11,16 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 	/// <summary>
 	/// Dictionary of world templates, grouped by the number of regions.
 	/// </summary>
-	private Dictionary<int, List<WorldMapTemplate>> worldMapTemplates = new Dictionary<int, List<WorldMapTemplate>>() {
+	private Dictionary<MAP_SIZE, List<WorldMapTemplate>> worldMapTemplates = new Dictionary<MAP_SIZE, List<WorldMapTemplate>>() {
 		//1 region
-		{ 1, new List<WorldMapTemplate>() 
+		{ MAP_SIZE.Small, new List<WorldMapTemplate>() 
 			{
 				new WorldMapTemplate() 
 				{
 					regionCount = 1,
-					worldMapWidth = 8,
-					worldMapHeight = 10,
 					regions = new Dictionary<int, RegionTemplate[]>() {
 						{ 0, new [] {
-								new RegionTemplate(8, 10), 
+								new RegionTemplate(8, 8), 
 							}
 						}	
 					}	
@@ -30,17 +28,15 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 			}
 		},
 		//2 regions
-		{ 2, new List<WorldMapTemplate>()
+		{ MAP_SIZE.Medium, new List<WorldMapTemplate>()
 			{
 				new WorldMapTemplate()
 				{
 					regionCount = 2,
-					worldMapWidth = 12,
-					worldMapHeight = 10,
 					regions = new Dictionary<int, RegionTemplate[]>() {
 						{ 0, new [] {
-								new RegionTemplate(6, 10),
-								new RegionTemplate(6, 10),  
+								new RegionTemplate(6, 8),
+								new RegionTemplate(6, 8),  
 							}
 						}	
 					}	
@@ -48,17 +44,15 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 			}
 		},
 		//3 regions
-		{ 3, new List<WorldMapTemplate>()
+		{ MAP_SIZE.Large, new List<WorldMapTemplate>()
 			{
 				new WorldMapTemplate()
 				{
 					regionCount = 3,
-					worldMapWidth = 18,
-					worldMapHeight = 10,
 					regions = new Dictionary<int, RegionTemplate[]>() {
 						{ 0, new [] {
 								new RegionTemplate(6, 10),
-								new RegionTemplate(6, 10),
+								new RegionTemplate(4, 10),
 								new RegionTemplate(6, 10),  
 							}
 						}	
@@ -67,74 +61,23 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 			}
 		},
 		//4 regions
-		{ 4, new List<WorldMapTemplate>()
+		{ MAP_SIZE.Extra_Large, new List<WorldMapTemplate>()
 			{
 				new WorldMapTemplate()
 				{
 					regionCount = 4,
-					worldMapWidth = 16,
-					worldMapHeight = 12,
 					regions = new Dictionary<int, RegionTemplate[]>() {
 						{ 0, new [] {
-								new RegionTemplate(8, 6),
-								new RegionTemplate(8, 6),
+								new RegionTemplate(8, 8),
+								new RegionTemplate(8, 8),
 							}
 						},
 						{ 1, new [] {
-								new RegionTemplate(8, 6),
-								new RegionTemplate(8, 6),
+								new RegionTemplate(8, 8),
+								new RegionTemplate(8, 8),
 							}
 						}
 					}	
-				}
-			}
-		},
-		//5 regions
-		{ 5, new List<WorldMapTemplate>()
-			{
-				new WorldMapTemplate()
-				{
-					regionCount = 5,
-					worldMapWidth = 10,
-					worldMapHeight = 12,
-					regions = new Dictionary<int, RegionTemplate[]>() {
-						{0, new[] {
-								new RegionTemplate(5, 6),
-								new RegionTemplate(5, 6),
-							}
-						},
-						{1, new[] {
-								new RegionTemplate(3, 6),
-								new RegionTemplate(4, 6),
-								new RegionTemplate(3, 6),
-							}
-						}
-					}
-				}
-			}
-		},
-		//6 regions
-		{ 6, new List<WorldMapTemplate>()
-			{
-				new WorldMapTemplate()
-				{
-					regionCount = 6,
-					worldMapWidth = 21,
-					worldMapHeight = 12,
-					regions = new Dictionary<int, RegionTemplate[]>() {
-						{0, new[] {
-								new RegionTemplate(6, 6),
-								new RegionTemplate(8, 6),
-								new RegionTemplate(7, 6),
-							}
-						},
-						{1, new[] {
-								new RegionTemplate(8, 6),
-								new RegionTemplate(7, 6),
-								new RegionTemplate(6, 6),
-							}
-						}
-					}
 				}
 			}
 		},
@@ -143,116 +86,117 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 	#region Random World
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating world map...");
-		int regionCount = WorldSettings.Instance.worldSettingsData.numOfRegions;
-		if (worldMapTemplates.ContainsKey(regionCount)) {
-			List<WorldMapTemplate> choices = worldMapTemplates[regionCount];
-			WorldMapTemplate chosenTemplate;
-			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
-				chosenTemplate = new WorldMapTemplate() {
-					regionCount = 1,
-					worldMapWidth = 24,
-					worldMapHeight = 10,
-					regions = new Dictionary<int, RegionTemplate[]>() {
-						{
-							0, new[] {
-								new RegionTemplate(24, 10),
-							}
+		WorldMapTemplate chosenTemplate;
+		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+			chosenTemplate = new WorldMapTemplate() {
+				regionCount = 1,
+				worldMapWidth = 24,
+				worldMapHeight = 10,
+				regions = new Dictionary<int, RegionTemplate[]>() {
+					{
+						0, new[] {
+							new RegionTemplate(24, 10),
 						}
 					}
-				};
-			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
-				chosenTemplate = new WorldMapTemplate() {
-					regionCount = 1,
-					worldMapWidth = 13,
-					worldMapHeight = 8,
-					regions = new Dictionary<int, RegionTemplate[]>() {
-						{
-							0, new[] {
-								new RegionTemplate(13, 8),
-							}
+				}
+			};
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
+			chosenTemplate = new WorldMapTemplate() {
+				regionCount = 1,
+				worldMapWidth = 13,
+				worldMapHeight = 8,
+				regions = new Dictionary<int, RegionTemplate[]>() {
+					{
+						0, new[] {
+							new RegionTemplate(13, 8),
 						}
 					}
-				};
-			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
-				chosenTemplate = new WorldMapTemplate() {
-					regionCount = 4,
-					worldMapWidth = 14,
-					worldMapHeight = 12,
-					regions = new Dictionary<int, RegionTemplate[]>() {
-						{
-							0, new[] {
-								new RegionTemplate(7, 6),
-								new RegionTemplate(7, 6),
-							}
-						},
-						{
-							1, new[] {
-								new RegionTemplate(7, 6),
-								new RegionTemplate(7, 6),
-							}
+				}
+			};
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
+			chosenTemplate = new WorldMapTemplate() {
+				regionCount = 4,
+				worldMapWidth = 14,
+				worldMapHeight = 12,
+				regions = new Dictionary<int, RegionTemplate[]>() {
+					{
+						0, new[] {
+							new RegionTemplate(7, 6),
+							new RegionTemplate(7, 6),
+						}
+					},
+					{
+						1, new[] {
+							new RegionTemplate(7, 6),
+							new RegionTemplate(7, 6),
 						}
 					}
-				};
-			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
-				chosenTemplate = new WorldMapTemplate() {
-					regionCount = 2,
-					worldMapWidth = 10,
-					worldMapHeight = 6,
-					regions = new Dictionary<int, RegionTemplate[]>() {
-						{
-							0, new[] {
-								new RegionTemplate(6, 6),
-								new RegionTemplate(4, 6),
-							}
+				}
+			};
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+			chosenTemplate = new WorldMapTemplate() {
+				regionCount = 2,
+				worldMapWidth = 10,
+				worldMapHeight = 6,
+				regions = new Dictionary<int, RegionTemplate[]>() {
+					{
+						0, new[] {
+							new RegionTemplate(6, 6),
+							new RegionTemplate(4, 6),
 						}
 					}
-				};
-			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
-				chosenTemplate = new WorldMapTemplate() {
-					regionCount = 2,
-					worldMapWidth = 12,
-					worldMapHeight = 10,
-					regions = new Dictionary<int, RegionTemplate[]>() {
-						{
-							0, new[] {
-								new RegionTemplate(12, 5),
-							}
-						},
-						{
-							1, new[] {
-								new RegionTemplate(12, 5),
-							}
+				}
+			};
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+			chosenTemplate = new WorldMapTemplate() {
+				regionCount = 2,
+				worldMapWidth = 12,
+				worldMapHeight = 10,
+				regions = new Dictionary<int, RegionTemplate[]>() {
+					{
+						0, new[] {
+							new RegionTemplate(12, 5),
+						}
+					},
+					{
+						1, new[] {
+							new RegionTemplate(12, 5),
 						}
 					}
-				};
-			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
-				chosenTemplate = new WorldMapTemplate() {
-					regionCount = 1,
-					worldMapWidth = 13,
-					worldMapHeight = 6,
-					regions = new Dictionary<int, RegionTemplate[]>() {
-						{
-							0, new[] {
-								new RegionTemplate(13, 6),
-							}
-						},
-					}
-				};
-			} else {
-				chosenTemplate = CollectionUtilities.GetRandomElement(choices);
-			}
-
-			data.chosenWorldMapTemplate = chosenTemplate;
-			Debug.Log($"Width: {data.width.ToString()} Height: {data.height.ToString()} Region Count: {data.regionCount.ToString()}");
-			yield return MapGenerator.Instance.StartCoroutine(GenerateGrid(data));	
+				}
+			};
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+			chosenTemplate = new WorldMapTemplate() {
+				regionCount = 1,
+				worldMapWidth = 13,
+				worldMapHeight = 6,
+				regions = new Dictionary<int, RegionTemplate[]>() {
+					{
+						0, new[] {
+							new RegionTemplate(13, 6),
+						}
+					},
+				}
+			};
 		} else {
-			throw new Exception($"No provided world map template for {WorldSettings.Instance.worldSettingsData.numOfRegions.ToString()} regions.");	
+			MAP_SIZE mapSize = WorldSettings.Instance.worldSettingsData.mapSize;
+			List<WorldMapTemplate> choices = worldMapTemplates[mapSize];
+			WorldMapTemplate randomTemplate = CollectionUtilities.GetRandomElement(choices);
+			Vector2 mapVector = WorldSettings.Instance.worldSettingsData.GetMapSize();
+			randomTemplate.worldMapWidth = (int)mapVector.x;
+			randomTemplate.worldMapHeight = (int)mapVector.y;
+			
+			chosenTemplate = randomTemplate;
 		}
+
+		data.chosenWorldMapTemplate = chosenTemplate;
+		Debug.Log($"Width: {data.width.ToString()} Height: {data.height.ToString()} Region Count: {data.regionCount.ToString()}");
+		yield return MapGenerator.Instance.StartCoroutine(GenerateGrid(data));
 	}
 	private IEnumerator GenerateGrid(MapGenerationData data) {
 		GridMap.Instance.SetupInitialData(data.width, data.height);
-		float newX = MapGenerationData.xOffset * (data.width / 2f);
-		float newY = MapGenerationData.yOffset * (data.height / 2f);
+		float newX = MapGenerationData.XOffset * (data.width / 2f);
+		float newY = MapGenerationData.YOffset * (data.height / 2f);
 		GridMap.Instance.transform.localPosition = new Vector2(-newX, -newY);
 		HexTile[,] map = new HexTile[data.width, data.height];
 		List<HexTile> normalHexTiles = new List<HexTile>();
@@ -261,16 +205,16 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 		int batchCount = 0;
 		for (int x = 0; x < data.width; x++) {
 			for (int y = 0; y < data.height; y++) {
-				float xPosition = x * MapGenerationData.xOffset;
+				float xPosition = x * MapGenerationData.XOffset;
 
-				float yPosition = y * MapGenerationData.yOffset;
+				float yPosition = y * MapGenerationData.YOffset;
 				if (y % 2 == 1) {
-					xPosition += MapGenerationData.xOffset / 2;
+					xPosition += MapGenerationData.XOffset / 2;
 				}
 
 				GameObject hex = Object.Instantiate(GridMap.Instance.goHex, GridMap.Instance.transform, true) as GameObject;
 				hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
-				hex.transform.localScale = new Vector3(MapGenerationData.tileSize, MapGenerationData.tileSize, 0f);
+				hex.transform.localScale = new Vector3(MapGenerationData.TileSize, MapGenerationData.TileSize, 0f);
 				hex.name = $"{x},{y}";
 				HexTile currHex = hex.GetComponent<HexTile>();
 				currHex.Initialize();
@@ -310,8 +254,8 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 	}
 	private IEnumerator GenerateGrid(MapGenerationData data, ScenarioMapData scenarioMapData) {
 		GridMap.Instance.SetupInitialData(data.width, data.height);
-		float newX = MapGenerationData.xOffset * (data.width / 2f);
-		float newY = MapGenerationData.yOffset * (data.height / 2f);
+		float newX = MapGenerationData.XOffset * (data.width / 2f);
+		float newY = MapGenerationData.YOffset * (data.height / 2f);
 		GridMap.Instance.transform.localPosition = new Vector2(-newX, -newY);
 		HexTile[,] map = new HexTile[data.width, data.height];
 		List<HexTile> normalHexTiles = new List<HexTile>();
@@ -321,18 +265,18 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 		int batchCount = 0;
 		for (int x = 0; x < data.width; x++) {
 			for (int y = 0; y < data.height; y++) {
-				float xPosition = x * MapGenerationData.xOffset;
+				float xPosition = x * MapGenerationData.XOffset;
 
-				float yPosition = y * MapGenerationData.yOffset;
+				float yPosition = y * MapGenerationData.YOffset;
 				if (y % 2 == 1) {
-					xPosition += MapGenerationData.xOffset / 2;
+					xPosition += MapGenerationData.XOffset / 2;
 				}
 
 				SaveDataHextile savedHexTile = savedMap[x, y];
 				
 				GameObject hex = Object.Instantiate(GridMap.Instance.goHex, GridMap.Instance.transform, true) as GameObject;
 				hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
-				hex.transform.localScale = new Vector3(MapGenerationData.tileSize, MapGenerationData.tileSize, 0f);
+				hex.transform.localScale = new Vector3(MapGenerationData.TileSize, MapGenerationData.TileSize, 0f);
 				hex.name = $"{x},{y}";
 				HexTile currHex = hex.GetComponent<HexTile>();
 				currHex.Initialize();
@@ -369,8 +313,8 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 	}
 	private IEnumerator GenerateGrid(MapGenerationData data, SaveDataCurrentProgress saveData) {
 		GridMap.Instance.SetupInitialData(data.width, data.height);
-		float newX = MapGenerationData.xOffset * (data.width / 2f);
-		float newY = MapGenerationData.yOffset * (data.height / 2f);
+		float newX = MapGenerationData.XOffset * (data.width / 2f);
+		float newY = MapGenerationData.YOffset * (data.height / 2f);
 		GridMap.Instance.transform.localPosition = new Vector2(-newX, -newY);
 		HexTile[,] map = new HexTile[data.width, data.height];
 		List<HexTile> normalHexTiles = new List<HexTile>();
@@ -380,18 +324,18 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 		int batchCount = 0;
 		for (int x = 0; x < data.width; x++) {
 			for (int y = 0; y < data.height; y++) {
-				float xPosition = x * MapGenerationData.xOffset;
+				float xPosition = x * MapGenerationData.XOffset;
 
-				float yPosition = y * MapGenerationData.yOffset;
+				float yPosition = y * MapGenerationData.YOffset;
 				if (y % 2 == 1) {
-					xPosition += MapGenerationData.xOffset / 2;
+					xPosition += MapGenerationData.XOffset / 2;
 				}
 
 				SaveDataHextile savedHexTile = savedMap[x, y];
 				
 				GameObject hex = Object.Instantiate(GridMap.Instance.goHex, GridMap.Instance.transform, true) as GameObject;
 				hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
-				hex.transform.localScale = new Vector3(MapGenerationData.tileSize, MapGenerationData.tileSize, 0f);
+				hex.transform.localScale = new Vector3(MapGenerationData.TileSize, MapGenerationData.TileSize, 0f);
 				hex.name = $"{x},{y}";
 				HexTile currHex = hex.GetComponent<HexTile>();
 				currHex.Initialize();

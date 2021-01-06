@@ -126,10 +126,8 @@ public class TreeObject : TileObject {
             if (location.isCorrupted) {
                 entType = SUMMON_TYPE.Corrupt_Ent;
             } else {
-                BIOMES biome = location.parentMap.region.coreTile.biomeType;
-                if (location.collectionOwner.isPartOfParentRegionMap) {
-                    biome = location.collectionOwner.partOfHextile.hexTileOwner.biomeType;
-                }
+                HexTile hex = location.collectionOwner.GetConnectedHextileOrNearestHextile();
+                BIOMES biome = hex.biomeType;
                 switch (biome) {
                     case BIOMES.DESERT:
                         entType = SUMMON_TYPE.Desert_Ent;

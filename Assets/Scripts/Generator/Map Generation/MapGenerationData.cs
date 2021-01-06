@@ -27,19 +27,41 @@ public class MapGenerationData {
 	
 	//world map
 	public WorldMapTemplate chosenWorldMapTemplate;
-	public const float xOffset = 2.56f;
-	public const float yOffset = 1.93f;
-	public const int tileSize = 1;
+	public const float XOffset = 2.56f;
+	public const float YOffset = 1.93f;
+	public const int TileSize = 1;
+	public const int MinimumHabitabilityForVillage = 8;
 	public int width => chosenWorldMapTemplate.worldMapWidth;
 	public int height => chosenWorldMapTemplate.worldMapHeight;
 	public int regionCount => chosenWorldMapTemplate.regionCount;
 	public int[,] habitabilityValues;
+	public List<HexTile> villageSpots;
 	public HexTile portal;
-	public LocationStructure portalStructure;
 
+	public MapGenerationData() {
+		villageSpots = new List<HexTile>();
+	}
+	
 	#region Habitability
 	public int GetHabitabilityValue(HexTile hexTile) {
 		return habitabilityValues[hexTile.xCoordinate, hexTile.yCoordinate];
+	}
+	#endregion
+
+	#region Village Spots
+	public void AddVillageSpot(HexTile p_villageSpot) {
+		if (!villageSpots.Contains(p_villageSpot)) {
+			villageSpots.Add(p_villageSpot);
+		}
+	}
+	public void RemoveVillageSpots(HexTile p_villageSpot) {
+		villageSpots.Remove(p_villageSpot);
+	}
+	public void RemoveVillageSpots(List<HexTile> p_villageSpot) {
+		for (int i = 0; i < p_villageSpot.Count; i++) {
+			HexTile tile = p_villageSpot[i];
+			RemoveVillageSpots(tile);
+		}
 	}
 	#endregion
 }

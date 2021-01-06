@@ -71,12 +71,11 @@ public class Region : ISavable, ILogFiller {
         neighboursWithDirection = new Dictionary<GridNeighbourDirection, Region>();
         objectsInRegionCount = new Dictionary<TILE_OBJECT_TYPE, int>();
     }
-    public Region(HexTile coreTile, RegionTemplate regionTemplate) : this() {
+    public Region(HexTile coreTile) : this() {
         persistentID = System.Guid.NewGuid().ToString();
         id = UtilityScripts.Utilities.SetID(this);
         name = RandomNameGenerator.GetRegionName();
         this.coreTile = coreTile;
-        this.regionTemplate = regionTemplate;
         tiles = new List<HexTile>();
         shuffledNonMountainWaterTiles = new List<HexTile>();
         AddTile(coreTile);
@@ -85,7 +84,6 @@ public class Region : ISavable, ILogFiller {
     }
     public Region(SaveDataRegion data) : this() {
         persistentID = data.persistentID;
-        regionTemplate = data.regionTemplate;
         id = UtilityScripts.Utilities.SetID(this, data.id);
         name = data.name;
         coreTile = GridMap.Instance.normalHexTiles[data.coreTileID];
@@ -199,30 +197,6 @@ public class Region : ISavable, ILogFiller {
     }
     public void GenerateOuterBorders() {
         _borders = GetOuterBorders();
-    }
-    public void RedetermineCore() {
-        int maxX = tiles.Max(t => t.data.xCoordinate);
-        int minX = tiles.Min(t => t.data.xCoordinate);
-        int maxY = tiles.Max(t => t.data.yCoordinate);
-        int minY = tiles.Min(t => t.data.yCoordinate);
-
-        int x = (minX + maxX) / 2;
-        int y = (minY + maxY) / 2;
-
-        HexTile newCoreTile = GridMap.Instance.map[x, y];
-        if (newCoreTile.IsAtEdgeOfMap() == false) {
-            coreTile = newCoreTile;
-        }
-        
-        //clear all tiles again after redetermining core
-        List<HexTile> allTiles = new List<HexTile>(tiles);
-        for (int i = 0; i < allTiles.Count; i++) {
-            HexTile currTile = allTiles[i];
-            if (currTile != coreTile) {
-                RemoveTile(currTile);
-            }
-        }
-        
     }
     private List<HexTile> GetOuterTiles() {
         List<HexTile> outerTiles = new List<HexTile>();

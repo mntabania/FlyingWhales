@@ -57,10 +57,7 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     
     
     public override void UpdateTileObjectVisual(TileObject tileObject) {
-        HexTile hex = tileObject.structureLocation.region.coreTile;
-        if (tileObject.gridTileLocation.collectionOwner != null && tileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            hex = tileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-        }
+        HexTile hex = tileObject.gridTileLocation.collectionOwner.GetConnectedHextileOrNearestHextile();
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
             tileObject.state,
             hex.biomeType,
