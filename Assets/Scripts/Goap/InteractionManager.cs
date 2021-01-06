@@ -19,7 +19,8 @@ public partial class InteractionManager : BaseMonoBehaviour {
 
     private string dailyInteractionSummary;
     public Dictionary<INTERACTION_TYPE, GoapAction> goapActionData { get; private set; }
-    public Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements { get; private set; }
+    //public Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements { get; private set; }
+    public Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect { get; private set; }
     public Dictionary<INTERRUPT, Interrupt> interruptData { get; private set; }
     public HashSet<string> actionNames { get; private set; }
 
@@ -42,27 +43,28 @@ public partial class InteractionManager : BaseMonoBehaviour {
     }
     public void Initialize() {
         ConstructGoapActionData();
-        ConstructAllGoapActionAdvertisements();
+        //ConstructAllGoapActionAdvertisements();
         ConstructInterruptData();
     }
 
-    private void ConstructAllGoapActionAdvertisements() {
-        POINT_OF_INTEREST_TYPE[] poiTypes = CollectionUtilities.GetEnumValues<POINT_OF_INTEREST_TYPE>();
-        allGoapActionAdvertisements = new Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>>();
-        for (int i = 0; i < poiTypes.Length; i++) {
-            POINT_OF_INTEREST_TYPE currType = poiTypes[i];
-            allGoapActionAdvertisements.Add(currType, new List<GoapAction>());
-        }
-        for (int i = 0; i < goapActionData.Values.Count; i++) {
-            GoapAction currAction = goapActionData.Values.ElementAt(i);
-            for (int j = 0; j < currAction.advertisedBy.Length; j++) {
-                POINT_OF_INTEREST_TYPE currType = currAction.advertisedBy[j];
-                allGoapActionAdvertisements[currType].Add(currAction);
-            }
-        }
-    }
+    //private void ConstructAllGoapActionAdvertisements() {
+    //    POINT_OF_INTEREST_TYPE[] poiTypes = CollectionUtilities.GetEnumValues<POINT_OF_INTEREST_TYPE>();
+    //    allGoapActionAdvertisements = new Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>>();
+    //    for (int i = 0; i < poiTypes.Length; i++) {
+    //        POINT_OF_INTEREST_TYPE currType = poiTypes[i];
+    //        allGoapActionAdvertisements.Add(currType, new List<GoapAction>());
+    //    }
+    //    for (int i = 0; i < goapActionData.Values.Count; i++) {
+    //        GoapAction currAction = goapActionData.Values.ElementAt(i);
+    //        for (int j = 0; j < currAction.advertisedBy.Length; j++) {
+    //            POINT_OF_INTEREST_TYPE currType = currAction.advertisedBy[j];
+    //            allGoapActionAdvertisements[currType].Add(currAction);
+    //        }
+    //    }
+    //}
     private void ConstructGoapActionData() {
         goapActionData = new Dictionary<INTERACTION_TYPE, GoapAction>();
+        actionsCategorizedByEffect = new Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>>();
         actionNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         INTERACTION_TYPE[] allGoapActions = CollectionUtilities.GetEnumValues<INTERACTION_TYPE>();
         for (int i = 0; i < allGoapActions.Length; i++) {
@@ -75,6 +77,18 @@ public partial class InteractionManager : BaseMonoBehaviour {
             if (type != null) {
                 GoapAction data = System.Activator.CreateInstance(type) as GoapAction;
                 goapActionData.Add(currType, data);
+
+                //Categorize Action by Effect
+                if(data.possibleExpectedEffectsTypeAndTargetMatching.Count > 0) {
+                    for (int j = 0; j < data.possibleExpectedEffectsTypeAndTargetMatching.Count; j++) {
+                        GoapEffectConditionTypeAndTargetType effect = data.possibleExpectedEffectsTypeAndTargetMatching[j];
+                        if (actionsCategorizedByEffect.ContainsKey(effect.conditionType)) {
+                            actionsCategorizedByEffect[effect.conditionType].Add(data);
+                        } else {
+                            actionsCategorizedByEffect.Add(effect.conditionType, new List<GoapAction>() { data });
+                        }
+                    }
+                }
             } else {
                 Debug.LogWarning($"{currType} has no data!");
             }

@@ -55,6 +55,7 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     void AdjustNumOfActionsBeingPerformedOnThis(int amount);
     bool IsPOICurrentlyTargetedByAPerformingAction();
     bool IsPOICurrentlyTargetedByAPerformingAction(params JOB_TYPE[] jobType);
+    bool Advertises(INTERACTION_TYPE type);
     /// <summary>
     /// Does this POI collect Logs aka. History
     /// </summary>
