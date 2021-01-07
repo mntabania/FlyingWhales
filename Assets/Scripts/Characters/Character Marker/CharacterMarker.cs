@@ -231,7 +231,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         visualsParent.transform.localRotation = data.rotation;
         UpdateActionIcon();
         UpdateAnimation();
-        region.AddPendingAwareness(character);
+        LocationAwarenessUtility.AddToAwarenessList(character, character.gridTileLocation);
+        //removed by aaron for awareness update region.AddPendingAwareness(character);
         if (data.hasExpiry) {
             ScheduleExpiry(data.markerExpiryDate);
         }
@@ -271,7 +272,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //}
         UpdateActionIcon();
         SetCollidersState(true);
-        tile.structure.region.AddPendingAwareness(character);
+        LocationAwarenessUtility.AddToAwarenessList(character, character.gridTileLocation);
+        //removed by aaron for awareness update tile.structure.region.AddPendingAwareness(character);
         character.reactionComponent.UpdateHiddenState();
     }
     #endregion

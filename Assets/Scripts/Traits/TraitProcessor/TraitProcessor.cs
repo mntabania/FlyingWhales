@@ -111,7 +111,8 @@ namespace Traits {
                 }
             }
             if(traitable.advertisedActions != null && traitable.advertisedActions.Count > 0 && traitable is GenericTileObject genericObj) {
-                traitable.gridTileLocation.parentMap.region.AddPendingAwareness(genericObj);
+                LocationAwarenessUtility.AddToAwarenessList(genericObj, traitable.gridTileLocation);
+                //removed by aaron for awareness update traitable.gridTileLocation.parentMap.region.AddPendingAwareness(genericObj);
             }
         }
         private void UnapplyPOITraitInteractions(ITraitable traitable, Trait trait) {
@@ -122,7 +123,8 @@ namespace Traits {
                 }
             }
             if ((traitable.advertisedActions == null || traitable.advertisedActions.Count <= 0) && traitable is GenericTileObject genericObj) {
-                traitable.gridTileLocation.parentMap.region.RemovePendingAwareness(genericObj);
+                LocationAwarenessUtility.RemoveFromAwarenessList(genericObj, traitable.gridTileLocation);
+                //removed by aaron aranas awareness update traitable.gridTileLocation.parentMap.region.RemovePendingAwareness(genericObj);
             }
         }
     }

@@ -142,11 +142,7 @@ public class GridMap : BaseMonoBehaviour {
         }
         return null;
     }
-    public void UpdateAwarenessInAllRegions() {
-        for (int i = 0; i < allRegions.Length; i++) {
-            allRegions[i].UpdateAwareness();
-        }
-    }
+   
     public Region GetRandomRegionWithFeature(string feature) {
         List<Region> choices = new List<Region>();
         for (int i = 0; i < allRegions.Length; i++) {

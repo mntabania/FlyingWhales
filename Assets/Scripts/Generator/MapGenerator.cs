@@ -89,10 +89,7 @@ public class MapGenerator : MonoBehaviour {
                     faction.GenerateInitialOpinionBetweenMembers();
                 }
             }
-            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-                Region region = GridMap.Instance.allRegions[i];
-                region.UpdateAwareness();
-            }
+            yield return StartCoroutine(LocationAwarenessUtility.UpdateAllPendingAwarenessThread());
             for (int j = 0; j < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; j++) {
                 NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[j];
                 if (settlement.locationType == LOCATION_TYPE.VILLAGE) {
@@ -193,10 +190,9 @@ public class MapGenerator : MonoBehaviour {
                     faction.GenerateInitialOpinionBetweenMembers();
                 }
             }
-            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-                Region region = GridMap.Instance.allRegions[i];
-                region.UpdateAwareness();
-            }
+
+            yield return StartCoroutine(LocationAwarenessUtility.UpdateAllPendingAwarenessThread());
+
             for (int j = 0; j < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; j++) {
                 NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[j];
                 if (settlement.locationType == LOCATION_TYPE.VILLAGE) {

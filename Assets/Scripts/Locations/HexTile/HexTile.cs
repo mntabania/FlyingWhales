@@ -16,6 +16,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.Tilemaps;
 using UtilityScripts;
+using Locations;
 
 public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarget, ISelectable, IPartyTargetDestination, ISavable {
 
@@ -68,6 +69,8 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     [Header("Colliders")]
     [SerializeField] private Collider2D[] colliders;
 
+    public LocationAwareness LocationAwareness { get; private set; }
+
     //properties
     public BaseLandmark landmarkOnTile { get; private set; }
     public Region region { get; private set; }
@@ -84,6 +87,8 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     public Vector2 selectableSize { get; private set; }
     public InnerMapHexTile innerMapHexTile { get; private set; }
     public List<TileObject> itemsInHex { get; protected set; }
+
+    public LocationAwareness locationAwareness;
 
     private List<LocationGridTile> corruptedTiles;
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
@@ -138,6 +143,8 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         _hoverHighlightSpriteRenderer = _hoverHighlightGO.GetComponent<SpriteRenderer>();
         UnityEngine.Random.ColorHSV();
         ConstructDefaultActions();
+
+        LocationAwareness = new LocationAwareness();
     }
     public void Initialize(bool listenForGameLoad = true) {
         featureComponent = new TileFeatureComponent();

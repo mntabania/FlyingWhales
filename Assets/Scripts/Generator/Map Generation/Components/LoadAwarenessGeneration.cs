@@ -28,11 +28,17 @@ public class LoadAwarenessGeneration : MapGenerationComponent {
     #region Player
     private IEnumerator LoadAwareness(MapGenerationData data, SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Updating Awareness...");
+        for (int i = 0; i < LocationAwarenessUtility.allLocationsToBeUpdated.Count; i++) {
+            LocationAwarenessUtility.allLocationsToBeUpdated[i].UpdateAwareness();
+            yield return null;
+        }
+        LocationAwarenessUtility.allLocationsToBeUpdated.Clear();
+        /* removed by aaron aranas for awareness update
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region region = GridMap.Instance.allRegions[i];
             region.UpdateAwareness();
             yield return null;
-        }
+        }*/
     }
     #endregion
 }
