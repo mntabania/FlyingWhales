@@ -360,11 +360,23 @@ public class GoapPlanJob : JobQueueItem {
         }
         return false;
     }
-    public OtherData[] GetOtherData(INTERACTION_TYPE actionType) {
+    public OtherData[] GetOtherDataSpecific(INTERACTION_TYPE actionType) {
         if (HasOtherData(actionType)) {
             return otherData[actionType];
         }
         return null;
+    }
+    public OtherData[] GetOtherDataFor(INTERACTION_TYPE actionType) {
+        OtherData[] data = null;
+        if (otherData != null) {
+            if (otherData.ContainsKey(actionType)) {
+                data = otherData[actionType];
+            } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+                //None Interaction Type means that the other data is applied to all actions in plan
+                data = otherData[INTERACTION_TYPE.NONE];
+            }
+        }
+        return data;
     }
     #endregion
 

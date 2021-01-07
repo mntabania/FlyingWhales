@@ -305,7 +305,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         return null;
     }
     //Returns the chosen action for the plan
-    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, JobQueueItem job, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, ref int cost, ref string log) {
+    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, GoapPlanJob job, ref int cost, ref string log) {
         GoapAction chosenAction = null;
         if (advertisedActions != null && advertisedActions.Count > 0) {//&& IsAvailable()
             bool isCharacterAvailable = IsAvailable();
@@ -326,35 +326,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                     tileLocation = isBeingCarriedBy.gridTileLocation;
                 }
                 if ((action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(tileLocation)) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
-                    OtherData[] data = null;
-                    if (otherData != null) {
-                        if (otherData.ContainsKey(currType)) {
-                            data = otherData[currType];
-                        } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                            data = otherData[INTERACTION_TYPE.NONE];
-                        }
-                    }
-                    //object[] otherActionData = null;
-                    //if (otherData.ContainsKey(currType)) {
-                    //    otherActionData = otherData[currType];
-                    //}
+                    OtherData[] data = job.GetOtherDataFor(currType);
                     if (action.CanSatisfyRequirements(actor, this, data, job)
-                        && action.WillEffectsSatisfyPrecondition(precondition, actor, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
-                        int actionCost = action.GetCost(actor, this, job, data);
+                        && action.WillEffectsSatisfyPrecondition(precondition, actor, this, job)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
+                        int actionCost = action.GetCost(actor, this, job);
                         log += $"({actionCost}){action.goapName}-{nameWithID}, ";
                         if (lowestCostAction == null || actionCost < currentLowestCost) {
                             lowestCostAction = action;
                             currentLowestCost = actionCost;
                         }
-                        //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
-                        //if (goapAction != null) {
-                        //    if (data != null) {
-                        //        goapAction.InitializeOtherData(data);
-                        //    }
-                        //    usableActions.Add(goapAction);
-                        //} else {
-                        //    throw new System.Exception("Goap action " + currType.ToString() + " is null!");
-                        //}
                     }
                 }
             }
@@ -364,9 +344,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return chosenAction;
     }
-    public bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, ref int cost) {
+    public bool CanAdvertiseActionToActor(Character actor, GoapAction action, GoapPlanJob job) {
         if ((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable)
-            && advertisedActions != null && advertisedActions.Contains(action.goapType)
+            //&& advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
             && actor.trapStructure.SatisfiesForcedHex(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)) {
@@ -374,17 +354,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             if (isBeingCarriedBy != null) {
                 tileLocation = isBeingCarriedBy.gridTileLocation;
             }
-            if(action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(tileLocation)) {
-                OtherData[] data = null;
-                if (otherData != null) {
-                    if (otherData.ContainsKey(action.goapType)) {
-                        data = otherData[action.goapType];
-                    } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                        data = otherData[INTERACTION_TYPE.NONE];
-                    }
-                }
+            if (action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(tileLocation)) {
+                OtherData[] data = job.GetOtherDataFor(action.goapType);
                 if (action.CanSatisfyRequirements(actor, this, data, job)) {
-                    cost = action.GetCost(actor, this, job, data);
                     return true;
                 }
             }

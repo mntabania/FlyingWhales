@@ -3732,11 +3732,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Point Of Interest
     //Returns the chosen action for the plan
-    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, JobQueueItem job, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, ref int cost, ref string log) {
+    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, GoapPlanJob job, ref int cost, ref string log) {
         GoapAction chosenAction = null;
         if (advertisedActions != null && advertisedActions.Count > 0) {//&& IsAvailable()
             bool isCharacterAvailable = IsAvailable();
-            //List<GoapAction> usableActions = new List<GoapAction>();
             GoapAction lowestCostAction = null;
             int currentLowestCost = 0;
             log += $"\n--Choices for {precondition}";
@@ -3749,35 +3748,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     continue; //skip
                 }
                 if ((action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation)) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
-                    OtherData[] data = null;
-                    if (otherData != null) {
-                        if (otherData.ContainsKey(currType)) {
-                            data = otherData[currType];
-                        } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                            data = otherData[INTERACTION_TYPE.NONE];
-                        }
-                    }
-                    //object[] otherActionData = null;
-                    //if (otherData.ContainsKey(currType)) {
-                    //    otherActionData = otherData[currType];
-                    //}
+                    OtherData[] data = job.GetOtherDataFor(currType);
                     if (action.CanSatisfyRequirements(actor, this, data, job)
-                        && action.WillEffectsSatisfyPrecondition(precondition, actor, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
-                        int actionCost = action.GetCost(actor, this, job, data);
+                        && action.WillEffectsSatisfyPrecondition(precondition, actor, this, job)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
+                        int actionCost = action.GetCost(actor, this, job);
                         log += $"({actionCost}){action.goapName}-{nameWithID}, ";
                         if (lowestCostAction == null || actionCost < currentLowestCost) {
                             lowestCostAction = action;
                             currentLowestCost = actionCost;
                         }
-                        //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
-                        //if (goapAction != null) {
-                        //    if (data != null) {
-                        //        goapAction.InitializeOtherData(data);
-                        //    }
-                        //    usableActions.Add(goapAction);
-                        //} else {
-                        //    throw new System.Exception("Goap action " + currType.ToString() + " is null!");
-                        //}
                     }
                 }
             }
@@ -3787,23 +3766,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return chosenAction;
     }
-    public bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, ref int cost) {
-        if((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable) 
-            && advertisedActions != null && advertisedActions.Contains(action.goapType)
+    public bool CanAdvertiseActionToActor(Character actor, GoapAction action, GoapPlanJob job) {
+        if ((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable)
+            //&& advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
             && actor.trapStructure.SatisfiesForcedHex(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)
             && (action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation))) {
-            OtherData[] data = null;
-            if (otherData != null) {
-                if (otherData.ContainsKey(action.goapType)) {
-                    data = otherData[action.goapType];
-                } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                    data = otherData[INTERACTION_TYPE.NONE];
-                }
-            }
+            OtherData[] data = job.GetOtherDataFor(action.goapType);
             if (action.CanSatisfyRequirements(actor, this, data, job)) {
-                cost = action.GetCost(actor, this, job, data);
                 return true;
             }
         }

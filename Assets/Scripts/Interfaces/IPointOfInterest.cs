@@ -37,8 +37,8 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     void SetPOIState(POI_STATE state);
     bool IsAvailable();
     LocationGridTile GetNearestUnoccupiedTileFromThis();
-    GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, JobQueueItem job, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, ref int cost, ref string log);
-    bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, ref int cost);
+    GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, GoapPlanJob job, ref int cost, ref string log);
+    bool CanAdvertiseActionToActor(Character actor, GoapAction action, GoapPlanJob job);
     bool IsValidCombatTargetFor(IPointOfInterest source);
     bool IsStillConsideredPartOfAwarenessByCharacter(Character character);
     bool IsOwnedBy(Character character);

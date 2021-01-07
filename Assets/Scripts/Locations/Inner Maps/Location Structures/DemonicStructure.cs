@@ -66,7 +66,7 @@ namespace Inner_Maps.Location_Structures {
         }
         private bool DoesSnatchJobTargetThisStructure(JobQueueItem job) {
             if (job is GoapPlanJob goapPlanJob) {
-                OtherData[] otherData = goapPlanJob.GetOtherData(INTERACTION_TYPE.DROP);
+                OtherData[] otherData = goapPlanJob.GetOtherDataSpecific(INTERACTION_TYPE.DROP);
                 if (otherData != null) {
                     for (int i = 0; i < otherData.Length; i++) {
                         OtherData data = otherData[i];

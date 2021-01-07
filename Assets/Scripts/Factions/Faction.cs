@@ -945,7 +945,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             Character factionMember = characters[i];
             JobQueueItem job = factionMember.jobQueue.GetJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE);
             if(job != null && job is GoapPlanJob goapJob) {
-                OtherData[] otherData = goapJob.GetOtherData(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
+                OtherData[] otherData = goapJob.GetOtherDataSpecific(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
                 if(otherData != null && otherData.Length == 1 && otherData[0].obj == demonicStructure) {
                     return true;
                 }

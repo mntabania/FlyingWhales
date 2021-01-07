@@ -254,7 +254,8 @@ public class GoapAction {
     #endregion
 
     #region Utilities
-    public int GetCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
+    public int GetCost(Character actor, IPointOfInterest target, GoapPlanJob job) {
+        OtherData[] otherData = job.GetOtherDataFor(goapType);
         int baseCost = GetBaseCost(actor, target, job, otherData);
         //modify costs based on actor's and target's traits
         //for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
@@ -461,7 +462,8 @@ public class GoapAction {
     protected void AddPossibleExpectedEffectForTypeAndTargetMatching(GoapEffectConditionTypeAndTargetType effect) {
         possibleExpectedEffectsTypeAndTargetMatching.Add(effect);
     }
-    public bool WillEffectsSatisfyPrecondition(GoapEffect precondition, Character actor, IPointOfInterest target, OtherData[] otherData) {
+    public bool WillEffectsSatisfyPrecondition(GoapEffect precondition, Character actor, IPointOfInterest target, GoapPlanJob job) {
+        OtherData[] otherData = job.GetOtherDataFor(goapType);
         bool isOverridden = false;
         List<GoapEffect> effects = GetExpectedEffects(actor, target, otherData, out isOverridden);
         bool satisfied = false;
