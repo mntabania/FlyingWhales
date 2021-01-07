@@ -28,9 +28,6 @@ public class Region : ISavable, ILogFiller {
     public List<Character> residents { get; private set; }
     public List<Character> charactersAtLocation { get; private set; }
     public HexTile[,] hexTileMap { get; private set; }
-    public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
-    public List<IPointOfInterest> pendingAddAwareness { get; private set; }
-    public List<IPointOfInterest> pendingRemoveAwareness { get; private set; }
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
     public List<LocationStructure> allStructures { get; private set; }
     public RegionFeatureComponent regionFeatureComponent { get; }
@@ -62,9 +59,6 @@ public class Region : ISavable, ILogFiller {
         charactersAtLocation = new List<Character>();
         factionsHere = new List<Faction>();
         residents = new List<Character>();
-        awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>();
-        pendingAddAwareness = new List<IPointOfInterest>();
-        pendingRemoveAwareness = new List<IPointOfInterest>();
         regionFeatureComponent = new RegionFeatureComponent();
         settlementsInRegion = new List<BaseSettlement>();
         neighbours = new List<Region>();
@@ -607,74 +601,6 @@ public class Region : ISavable, ILogFiller {
         return factionsHere.Contains(faction);
     }
     #endregion
-
-    #region Awareness
-    public void AddPendingAwareness(IPointOfInterest poi) {
-        pendingAddAwareness.Add(poi);
-    }
-    public void RemovePendingAwareness(IPointOfInterest poi) {
-        pendingRemoveAwareness.Add(poi);
-    }
-    public void UpdateAwareness() {
-        for (int i = 0; i < pendingAddAwareness.Count; i++) {
-            AddAwareness(pendingAddAwareness[i]);
-        }
-        for (int i = 0; i < pendingRemoveAwareness.Count; i++) {
-            RemoveAwareness(pendingRemoveAwareness[i]);
-        }
-        pendingAddAwareness.Clear();
-        pendingRemoveAwareness.Clear();
-    }
-    private bool AddAwareness(IPointOfInterest pointOfInterest) {
-        if(pointOfInterest == null) {
-            return false;
-        }
-        if (!HasAwareness(pointOfInterest)) {
-            if (!awareness.ContainsKey(pointOfInterest.poiType)) {
-                awareness.Add(pointOfInterest.poiType, new List<IPointOfInterest>());
-            }
-            awareness[pointOfInterest.poiType].Add(pointOfInterest);
-            //if (pointOfInterest is TreeObject) {
-            //    List<IPointOfInterest> treeAwareness = GetTileObjectAwarenessOfType(TILE_OBJECT_TYPE.TREE_OBJECT);
-            //    if (treeAwareness.Count >= Character.TREE_AWARENESS_LIMIT) {
-            //        RemoveAwareness(treeAwareness[0]);
-            //    }
-            //}
-            return true;
-        }
-        return false;
-    }
-    public void RemoveAwareness(IPointOfInterest pointOfInterest) {
-        if (awareness.ContainsKey(pointOfInterest.poiType)) {
-            List<IPointOfInterest> awarenesses = awareness[pointOfInterest.poiType];
-            for (int i = 0; i < awarenesses.Count; i++) {
-                IPointOfInterest iawareness = awarenesses[i];
-                if (iawareness == pointOfInterest) {
-                    awarenesses.RemoveAt(i);
-                    break;
-                }
-            }
-        }
-    }
-    public void RemoveAwareness(POINT_OF_INTEREST_TYPE poiType) {
-        if (awareness.ContainsKey(poiType)) {
-            awareness.Remove(poiType);
-        }
-    }
-    public bool HasAwareness(IPointOfInterest poi) {
-        if (awareness.ContainsKey(poi.poiType)) {
-            List<IPointOfInterest> awarenesses = awareness[poi.poiType];
-            for (int i = 0; i < awarenesses.Count; i++) {
-                IPointOfInterest currPOI = awarenesses[i];
-                if (currPOI == poi) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return false;
-    }
-    #endregion
     
     #region Structures
     public void CreateStructureList() {
@@ -1199,8 +1125,6 @@ public class Region : ISavable, ILogFiller {
     #endregion
 
     public void CleanUp() {
-        awareness?.Clear();
-        awareness = null;
         tiles?.Clear();
         tiles = null;
         shuffledNonMountainWaterTiles?.Clear();
@@ -1213,10 +1137,6 @@ public class Region : ISavable, ILogFiller {
         charactersAtLocation?.Clear();
         charactersAtLocation = null;
         hexTileMap = null;
-        pendingAddAwareness?.Clear();
-        pendingAddAwareness = null;
-        pendingRemoveAwareness?.Clear();
-        pendingRemoveAwareness = null;
         structures?.Clear();
         structures = null;
         settlementsInRegion?.Clear();

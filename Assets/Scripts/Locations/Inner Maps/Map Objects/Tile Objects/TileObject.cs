@@ -222,7 +222,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual bool OccupiesTile() { return true;}
     public virtual void OnDestroyPOI() {
         //DisableGameObject();
-        previousTile?.parentMap.region.RemovePendingAwareness(this);
+        if (previousTile != null) {
+            LocationAwarenessUtility.RemoveFromAwarenessList(this, previousTile);
+        }
+        //removed by aaron aranas awareness update previousTile?.parentMap.region.RemovePendingAwareness(this);
         Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "");
         OnRemoveTileObject(null, previousTile);
@@ -261,7 +264,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (mapVisual == null) {
             InitializeMapObject(this);
             OnMapObjectStateChanged(); //update visuals based on map object state
-            gridTileLocation.parentMap.region.AddPendingAwareness(this);
+            LocationAwarenessUtility.AddToAwarenessList(this, gridTileLocation);
+            //removed by aaron for awareness update gridTileLocation.parentMap.region.AddPendingAwareness(this);
         }
         PlaceMapObjectAt(gridTileLocation);
         mapVisual.UpdateSortingOrders(this);

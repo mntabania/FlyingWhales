@@ -7,7 +7,9 @@ using Locations.Settlements;
 using UnityEngine.Assertions;
 using Logs;
 using UtilityScripts;
+using Locations;
 namespace Inner_Maps.Location_Structures {
+
     [System.Serializable]
     public abstract class LocationStructure : IPlayerActionTarget, ISelectable, IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ISavable, ILogFiller {
         public string persistentID { get; }
@@ -36,6 +38,8 @@ namespace Inner_Maps.Location_Structures {
         public List<Character> residents { get; protected set; }
         public StructureRoom[] rooms { get; protected set; }
         public bool hasActiveSocialGathering { get; protected set; }
+
+        public LocationAwareness locationAwareness { get; protected set; }
 
         //protected Faction _owner;
         
@@ -83,6 +87,8 @@ namespace Inner_Maps.Location_Structures {
             //outerTiles = new List<LocationGridTile>();
             SetInteriorState(structureType.IsInterior());
             maxResidentCapacity = 5;
+
+            locationAwareness = new LocationAwareness();
         }
         protected LocationStructure(Region location, SaveDataLocationStructure data) {
             persistentID = data.persistentID;
