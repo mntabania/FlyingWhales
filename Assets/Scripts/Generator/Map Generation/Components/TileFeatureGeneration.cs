@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Locations.Tile_Features;
 using Scenario_Maps;
 using UnityEngine;
@@ -194,26 +195,74 @@ public class TileFeatureGeneration : MapGenerationComponent {
 	}
 	private bool TryAssignSettlementTiles(MapGenerationData data) {
 		int createdVillages = 0;
-		int villagesToCreate = WorldSettings.Instance.worldSettingsData.GetVillagesToCreate();
+		int villagesToCreate = WorldSettings.Instance.worldSettingsData.GetCurrentTotalVillageCount();
 		if (data.villageSpots.Count < villagesToCreate) {
 			//not enough village spots
 			return false;
 		}
-		int tilesInBetween = WorldSettings.Instance.worldSettingsData.GetTilesInBetweenVillages();
-		for (int i = 0; i < villagesToCreate; i++) {
-			if (data.villageSpots.Count == 0) {
-				return false; //not enough village spots 
+		List<HexTile> preferredTiles = new List<HexTile>();
+		for (int i = 0; i < WorldSettings.Instance.worldSettingsData.factionSettings.Count; i++) {
+			FactionSetting factionSetting = WorldSettings.Instance.worldSettingsData.factionSettings[i];
+			for (int j = 0; j < factionSetting.villageSettings.Count; j++) {
+				if (data.villageSpots.Count == 0) {
+					return false; //not enough village spots 
+				}
+				VillageSetting villageSetting = factionSetting.villageSettings[j];
+				int tilesInRange = villageSetting.GetTileCountReservedForVillage();
+				preferredTiles.Clear();
+				HexTile chosenTile = null;
+				if (j == 0) {
+					//if first village, pick from preferred tiles first
+					for (int k = 0; k < data.villageSpots.Count; k++) {
+						HexTile tile = data.villageSpots[k];
+						if (factionSetting.IsTilePreferredByFaction(tile)) {
+							preferredTiles.Add(tile);
+						}
+					}
+					//if no preferred tiles are available, then just choose at random from available village spots
+					chosenTile = CollectionUtilities.GetRandomElement(preferredTiles.Count > 0 ? preferredTiles : data.villageSpots);
+				} else {
+					//if not first village pick a spot nearest to First Village
+					float nearestDistance = Mathf.Infinity;
+					Vector3 firstVillagePos = data.determinedVillages[factionSetting][0].transform.position;
+					for (int k = 0; k < data.villageSpots.Count; k++) {
+						HexTile villageSpot = data.villageSpots[k];
+						Vector3 directionToTarget = villageSpot.transform.position - firstVillagePos;
+						float distance = directionToTarget.sqrMagnitude;
+						if (distance < nearestDistance) {
+							nearestDistance = distance;
+							chosenTile = villageSpot;
+						}
+					}
+				}
+				Assert.IsNotNull(chosenTile, $"Could not find village spot for {factionSetting.name}'s Village #{j.ToString()}");
+				data.AddDeterminedVillage(factionSetting, chosenTile);
+				chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+				//remove game feature from settlement tiles
+				chosenTile.featureComponent.RemoveFeature(TileFeatureDB.Game_Feature, chosenTile);
+				//remove chosen tile and neighbours from choices.
+				List<HexTile> neighbours = chosenTile.GetTilesInRange(tilesInRange, false);
+				neighbours.Add(chosenTile);
+				data.RemoveVillageSpots(neighbours);
+				createdVillages++;
 			}
-			HexTile chosenTile = CollectionUtilities.GetRandomElement(data.villageSpots);
-			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
-			//remove game feature from settlement tiles
-			chosenTile.featureComponent.RemoveFeature(TileFeatureDB.Game_Feature, chosenTile);
-
-			List<HexTile> neighbours = chosenTile.GetTilesInRange(tilesInBetween, false);
-			data.RemoveVillageSpots(neighbours);
-			createdVillages++;
-			chosenTile.spriteRenderer.color = Color.blue;
 		}
+		
+		
+		// for (int i = 0; i < villagesToCreate; i++) {
+		// 	if (data.villageSpots.Count == 0) {
+		// 		return false; //not enough village spots 
+		// 	}
+		// 	HexTile chosenTile = CollectionUtilities.GetRandomElement(data.villageSpots);
+		// 	chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+		// 	//remove game feature from settlement tiles
+		// 	chosenTile.featureComponent.RemoveFeature(TileFeatureDB.Game_Feature, chosenTile);
+		//
+		// 	List<HexTile> neighbours = chosenTile.GetTilesInRange(tilesInBetween, false);
+		// 	data.RemoveVillageSpots(neighbours);
+		// 	createdVillages++;
+		// 	chosenTile.spriteRenderer.color = Color.blue;
+		// }
 		
 		
 		// int createdSettlements = 0;
@@ -304,16 +353,6 @@ public class TileFeatureGeneration : MapGenerationComponent {
 	#endregion
 
 	#region Settlement Generation Utilities
-	private bool IsSettlementPossibleOnRegion(Region region) {
-		//if region biome type is forest or snow, settlement is possible if world settings allow elves
-		//if region biome type is desert or grassland, settlement is possible if world settings allow humans 
-		if (region.coreTile.biomeType == BIOMES.FOREST || region.coreTile.biomeType == BIOMES.SNOW) {
-			return WorldSettings.Instance.worldSettingsData.races.Contains(RACE.ELVES);
-		} else if (region.coreTile.biomeType == BIOMES.DESERT || region.coreTile.biomeType == BIOMES.GRASSLAND) {
-			return WorldSettings.Instance.worldSettingsData.races.Contains(RACE.HUMANS);
-		}
-		return false;
-	}
 	private List<HexTile> GetNeighbouringTiles(List<HexTile> tiles) {
 		List<HexTile> neighbouringTiles = new List<HexTile>();
 		for (int i = 0; i < tiles.Count; i++) {

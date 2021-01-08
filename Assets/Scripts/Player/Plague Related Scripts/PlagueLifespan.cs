@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
 
 public class PlagueLifespan {
     //Life span are always in hours
@@ -68,11 +69,11 @@ public class PlagueLifespan {
         int level = GetTileObjectLifespanLevelByHours(_tileObjectInfectionTimeInHours);
         switch (level) {
             case 1:
-                return 10;
+                return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.GetCostsModification());
             case 2:
-                return 25;
+                return SpellUtilities.GetModifiedSpellCost(25, WorldSettings.Instance.worldSettingsData.GetCostsModification());
             case 3:
-                return 50;
+                return SpellUtilities.GetModifiedSpellCost(50, WorldSettings.Instance.worldSettingsData.GetCostsModification());
             default:
                 return -1;
         }
@@ -125,11 +126,11 @@ public class PlagueLifespan {
         int level = GetMonsterLifespanLevelByHours(_monsterInfectionTimeInHours);
         switch (level) {
             case 1:
-                return 10;
+                return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.GetCostsModification());
             case 2:
-                return 20;
+                return SpellUtilities.GetModifiedSpellCost(20, WorldSettings.Instance.worldSettingsData.GetCostsModification());
             case 3:
-                return 30;
+                return SpellUtilities.GetModifiedSpellCost(30, WorldSettings.Instance.worldSettingsData.GetCostsModification());
             default:
                 return -1;
         }
@@ -182,11 +183,11 @@ public class PlagueLifespan {
         int level = GetUndeadLifespanLevelByHours(_undeadInfectionTimeInHours);
         switch (level) {
             case 1:
-                return 10;
+                return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.GetCostsModification());
             case 2:
-                return 20;
+                return SpellUtilities.GetModifiedSpellCost(20, WorldSettings.Instance.worldSettingsData.GetCostsModification());
             case 3:
-                return 30;
+                return SpellUtilities.GetModifiedSpellCost(30, WorldSettings.Instance.worldSettingsData.GetCostsModification());
             default:
                 return -1;
         }
@@ -245,11 +246,11 @@ public class PlagueLifespan {
         int level = GetSapientLifespanLevelByHours(p_race, currentDuration);
         switch (level) {
             case 1:
-                return 20;
+                return SpellUtilities.GetModifiedSpellCost(20, WorldSettings.Instance.worldSettingsData.GetCostsModification());
             case 2:
-                return 40;
+                return SpellUtilities.GetModifiedSpellCost(40, WorldSettings.Instance.worldSettingsData.GetCostsModification());
             case 3:
-                return 60;
+                return SpellUtilities.GetModifiedSpellCost(60, WorldSettings.Instance.worldSettingsData.GetCostsModification());
             default:
                 return -1;
         }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
@@ -30,16 +31,18 @@ public class MapGenerationData {
 	public const float XOffset = 2.56f;
 	public const float YOffset = 1.93f;
 	public const int TileSize = 1;
-	public const int MinimumHabitabilityForVillage = 8;
+	public const int MinimumHabitabilityForVillage = 6;
 	public int width => chosenWorldMapTemplate.worldMapWidth;
 	public int height => chosenWorldMapTemplate.worldMapHeight;
 	public int regionCount => chosenWorldMapTemplate.regionCount;
 	public int[,] habitabilityValues;
 	public List<HexTile> villageSpots;
+	public Dictionary<FactionSetting, List<HexTile>> determinedVillages;
 	public HexTile portal;
 
 	public MapGenerationData() {
 		villageSpots = new List<HexTile>();
+		determinedVillages = new Dictionary<FactionSetting, List<HexTile>>();
 	}
 	
 	#region Habitability
@@ -62,6 +65,12 @@ public class MapGenerationData {
 			HexTile tile = p_villageSpot[i];
 			RemoveVillageSpots(tile);
 		}
+	}
+	public void AddDeterminedVillage(FactionSetting p_faction, HexTile p_tile) {
+		if (!determinedVillages.ContainsKey(p_faction)) {
+			determinedVillages.Add(p_faction, new List<HexTile>());
+		}
+		determinedVillages[p_faction].Add(p_tile);
 	}
 	#endregion
 }

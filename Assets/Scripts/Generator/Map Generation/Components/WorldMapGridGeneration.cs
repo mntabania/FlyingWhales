@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Scenario_Maps;
 using UnityEngine;
 using UtilityScripts;
@@ -51,8 +52,8 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 					regionCount = 3,
 					regions = new Dictionary<int, RegionTemplate[]>() {
 						{ 0, new [] {
-								new RegionTemplate(6, 10),
-								new RegionTemplate(4, 10),
+								new RegionTemplate(5, 10),
+								new RegionTemplate(5, 10),
 								new RegionTemplate(6, 10),  
 							}
 						}	
@@ -237,10 +238,13 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 		
 		GridMap.Instance.SetMap(map, normalHexTiles);
 		//Find Neighbours for each hextile
-		for (int i = 0; i < normalHexTiles.Count; i++) {
-			HexTile hexTile = normalHexTiles[i];
+		Parallel.ForEach(normalHexTiles, (hexTile) => {
 			hexTile.FindNeighbours(map);
-		}
+		});
+		// for (int i = 0; i < normalHexTiles.Count; i++) {
+		// 	HexTile hexTile = normalHexTiles[i];
+		// 	hexTile.FindNeighbours(map);
+		// }
 		yield return null;
 	}
 	#endregion
@@ -294,10 +298,13 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 		
 		GridMap.Instance.SetMap(map, normalHexTiles);
 		//Find Neighbours for each hextile
-		for (int i = 0; i < normalHexTiles.Count; i++) {
-			HexTile hexTile = normalHexTiles[i];
+		Parallel.ForEach(normalHexTiles, (hexTile) => {
 			hexTile.FindNeighbours(map);
-		}
+		});
+		// for (int i = 0; i < normalHexTiles.Count; i++) {
+		// 	HexTile hexTile = normalHexTiles[i];
+		// 	hexTile.FindNeighbours(map);
+		// }
 		yield return null;
 	}
 	#endregion
@@ -353,10 +360,13 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 		
 		GridMap.Instance.SetMap(map, normalHexTiles);
 		//Find Neighbours for each hextile
-		for (int i = 0; i < normalHexTiles.Count; i++) {
-			HexTile hexTile = normalHexTiles[i];
+		Parallel.ForEach(normalHexTiles, (hexTile) => {
 			hexTile.FindNeighbours(map);
-		}
+		});
+		// for (int i = 0; i < normalHexTiles.Count; i++) {
+		// 	HexTile hexTile = normalHexTiles[i];
+		// 	hexTile.FindNeighbours(map);
+		// }
 		yield return null;
 	}
 	#endregion

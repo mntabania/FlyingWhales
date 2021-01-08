@@ -174,7 +174,7 @@ public static class RandomNameGenerator {
     private static List<string> availableFaeryMaleNames;
     private static List<string> availableGoblinFemaleNames;
     private static List<string> availableGoblinMaleNames;
-
+    
     public static void Initialize(){
         generatedHumanSurnames = new Sobriquet.Generator(2, baseHumanSurnames);
         generatedElvenSurnames = new Sobriquet.Generator(2, baseElvenSurnames);

@@ -69,6 +69,31 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		OnChangeMapSize(0);
 		UpdateAddBiomeBtn();
 	}
+	public bool IsUIShowing() {
+		return m_worldGenOptionsUIView.UIModel.gameObject.activeInHierarchy;
+	}
+	public override void HideUI() {
+		base.HideUI();
+		factionSettingVillageEditorUIController.HideUI();
+	}
+	public override void ShowUI() {
+		base.ShowUI();
+		UpdateUIBasedOnCurrentSettings(WorldSettings.Instance.worldSettingsData);
+	}
+	public void ApplyCurrentSettingsToData() {
+		//apply chosen biomes to actual data
+		WorldSettings.Instance.worldSettingsData.ApplyBiomeSettings(_chosenBiomes);
+	}
+	private void UpdateUIBasedOnCurrentSettings(WorldSettingsData p_settings) {
+		//Note: Updating map size dropdown will also update faction and biome data automatically because of on change event 
+		m_worldGenOptionsUIView.SetMapSizeDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.mapSize.ToString()));
+		m_worldGenOptionsUIView.SetMigrationDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.migrationSpeed.ToString()));
+		m_worldGenOptionsUIView.SetVictoryDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.victoryCondition.ToString()));
+		m_worldGenOptionsUIView.SetCooldownDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.cooldownSpeed.ToString()));
+		m_worldGenOptionsUIView.SetCostsDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.costAmount.ToString()));
+		m_worldGenOptionsUIView.SetChargesDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.chargeAmount.ToString()));
+		m_worldGenOptionsUIView.SetThreatDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.threatAmount.ToString()));
+	}
 
 	#region Biomes
 	private void AddBiome(string p_biome) {
@@ -134,8 +159,8 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		p_factionSetting.ChangeName(RandomNameGenerator.GenerateFactionName());
 		p_uiItem.UpdateName(p_factionSetting.name);
 	}
-	private void OnChangeFactionSettingFactionType(FactionSetting p_factionSetting, FACTION_TYPE p_factionType) {
-		p_factionSetting.ChangeFactionType(p_factionType);
+	private void OnChangeFactionSettingFactionType(FactionSetting p_factionSetting, string p_factionTypeStr) {
+		p_factionSetting.ChangeFactionType(p_factionTypeStr);
 	}
 	private void OnClickEditFactionVillages(FactionSetting p_factionSetting) {
 		factionSettingVillageEditorUIController.EditVillageSettings(p_factionSetting);
@@ -168,7 +193,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	}
 	private void UpdateVillageCount() {
 		int maxVillages = WorldSettings.Instance.worldSettingsData.GetMaxVillages();
-		int currentVillageCount = WorldSettings.Instance.worldSettingsData.GetCurrentVillageCount();
+		int currentVillageCount = WorldSettings.Instance.worldSettingsData.GetCurrentTotalVillageCount();
 		m_worldGenOptionsUIView.UpdateVillageCount(currentVillageCount, maxVillages);
 	}
 	private void OnDoneEditingVillages() {
@@ -206,7 +231,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		WorldSettings.Instance.worldSettingsData.SetCooldownSpeed(p_value);
 	}
 	public void OnChangeSkillCostAmount(SKILL_COST_AMOUNT p_value) {
-		WorldSettings.Instance.worldSettingsData.SetSkillCostAmount(p_value);
+		WorldSettings.Instance.worldSettingsData.SetManaCostAmount(p_value);
 	}
 	public void OnChangeSkillChargeAmount(SKILL_CHARGE_AMOUNT p_value) {
 		WorldSettings.Instance.worldSettingsData.SetChargeAmount(p_value);

@@ -362,10 +362,12 @@ public class PlayerUI : BaseMonoBehaviour {
 
     #region Mana
     private void OnManaAdjusted(int adjustedAmount, int mana) {
-        UpdateMana();
-        ShowManaAdjustEffect(adjustedAmount);
-        DoManaPunchEffect();
-        AudioManager.Instance.PlayParticleMagnet();
+        if (adjustedAmount != 0) {
+            UpdateMana();
+            ShowManaAdjustEffect(adjustedAmount);
+            DoManaPunchEffect();
+            AudioManager.Instance.PlayParticleMagnet();    
+        }
     }
     private void UpdateMana() {
         manaLbl.text = PlayerManager.Instance.player.mana.ToString();

@@ -17,11 +17,11 @@ public class SaveDataPlayerSkill : SaveData<SpellData> {
     #region Overrides
     public override void Save(SpellData data) {
         type = data.type;
-        maxCharges = data.maxCharges;
+        maxCharges = data.baseMaxCharges;
         charges = data.charges;
-        manaCost = data.manaCost;
-        cooldown = data.cooldown;
-        threat = data.threat;
+        manaCost = data.baseManaCost;
+        cooldown = data.baseCooldown;
+        threat = data.baseThreat;
         threatPerHour = data.threatPerHour;
         currentCooldownTick = data.currentCooldownTick;
     }

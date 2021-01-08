@@ -22,8 +22,7 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 				NPCSettlement settlement = null;
 				if (structureType == STRUCTURE_TYPE.CAVE) {
 					//only create settlement for caves
-					settlement = LandmarkManager.Instance.CreateNewSettlement(region, LOCATION_TYPE.DUNGEON,
-						currIsland.tilesInIsland.ToArray());	
+					settlement = LandmarkManager.Instance.CreateNewSettlement(region, LOCATION_TYPE.DUNGEON, currIsland.tilesInIsland.ToArray());	
 				}
 				LocationStructure elevationStructure = LandmarkManager.Instance.CreateNewStructureAt(region, structureType, settlement);
 				

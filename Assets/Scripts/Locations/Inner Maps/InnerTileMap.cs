@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using Pathfinding;
@@ -10,6 +11,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 namespace Inner_Maps {
     public abstract class InnerTileMap : BaseMonoBehaviour {
@@ -148,16 +150,19 @@ namespace Inner_Maps {
             stopwatch.Reset();
             
             stopwatch.Start();
-            batchCount = 0;
-            for (int i = 0; i < allTiles.Count; i++) {
-                LocationGridTile tile = allTiles[i];
-                tile.FindNeighbours(map);
-                batchCount++;
-                if (batchCount == MapGenerationData.InnerMapTileGenerationBatches) {
-                    batchCount = 0;
-                    yield return null;    
-                }
-            }
+            // batchCount = 0;
+            Parallel.ForEach(allTiles, (currentTile) => {
+                currentTile.FindNeighbours(map);
+            });
+            // for (int i = 0; i < allTiles.Count; i++) {
+            //     LocationGridTile tile = allTiles[i];
+            //     tile.FindNeighbours(map);
+            //     batchCount++;
+            //     if (batchCount == MapGenerationData.InnerMapTileGenerationBatches) {
+            //         batchCount = 0;
+            //         yield return null;    
+            //     }
+            // }
             stopwatch.Stop();
             mapGenerationComponent.AddLog($"{region.name} GridFindNeighbours took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
             // allTiles.ForEach(x => x.FindNeighbours(map));
@@ -216,16 +221,19 @@ namespace Inner_Maps {
             stopwatch.Reset();
             
             stopwatch.Start();
-            batchCount = 0;
-            for (int i = 0; i < allTiles.Count; i++) {
-                LocationGridTile tile = allTiles[i];
-                tile.FindNeighbours(map);
-                batchCount++;
-                if (batchCount == MapGenerationData.InnerMapTileGenerationBatches) {
-                    batchCount = 0;
-                    yield return null;    
-                }
-            }
+            // batchCount = 0;
+            Parallel.ForEach(allTiles, (currentTile) => {
+                currentTile.FindNeighbours(map);
+            });
+            // for (int i = 0; i < allTiles.Count; i++) {
+            //     LocationGridTile tile = allTiles[i];
+            //     tile.FindNeighbours(map);
+            //     batchCount++;
+            //     if (batchCount == MapGenerationData.InnerMapTileGenerationBatches) {
+            //         batchCount = 0;
+            //         yield return null;    
+            //     }
+            // }
             stopwatch.Stop();
             mapGenerationComponent.AddLog($"{region.name} GridFindNeighbours took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
@@ -456,15 +464,6 @@ namespace Inner_Maps {
             onlyPathfindingGraph = NNConstraint.Default;
             onlyPathfindingGraph.graphMask = GraphMask.FromGraph(pathfindingGraph);
         }
-        public void PredetermineGraphNodes() {
-            //predetermine graph nodes
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    LocationGridTile tile = map[x, y];
-                    tile.PredetermineGraphNode();
-                }    
-            }
-        }
         private void SpawnCenterGo() {
             centerGo = Instantiate<GameObject>(centerGoPrefab, transform);
             Vector3 centerPosition = new Vector3(width/2f, height/2f); //new Vector3((cameraBounds.x + cameraBounds.z) * 0.5f, (cameraBounds.y + cameraBounds.w) * 0.5f);
@@ -669,74 +668,79 @@ namespace Inner_Maps {
         }
         private IEnumerator MapPerlinDetails(List<LocationGridTile> tiles, int xSize, int ySize, float xSeed, float ySeed) {
             yield return StartCoroutine(GroundPerlin(tiles, xSize, ySize, xSeed, ySeed));
+            
             int batchCount = 0;
             //flower, rock and garbage
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile currTile = tiles[i];
-                if (ReferenceEquals(currTile.collectionOwner.partOfHextile, null) == false) {
-                    if ((currTile.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.MOUNTAIN 
-                         || currTile.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.WATER)) {
-                        continue; //skip other details generation for tiles belonging to mountain or water tiles, since they will be overwritten after ElevationStructureGeneration anyway.    
-                    }
-                    if (currTile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile != null 
-                        && currTile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR) {
-                        continue; //skip other details generation for tiles belonging to monster lair, since they will be overwritten anyway.    
-                    }
-                }
-                
-                float xCoordDetail = (float)currTile.localPlace.x / xSize * 8f + xSeed;
-                float yCoordDetail = (float)currTile.localPlace.y / ySize * 8f + ySeed;
-                float sampleDetail = Mathf.PerlinNoise(xCoordDetail, yCoordDetail);
-                
-                //trees and shrubs
-                if (currTile.objHere == null && currTile.HasNeighbouringWalledStructure() == false) {
-                    if (sampleDetail < 0.55f) {
-                        if (Random.Range(0, 100) < 50) {
-                            //shrubs
-                            if (currTile.groundType == LocationGridTile.Ground_Type.Grass && currTile.biomeType != BIOMES.SNOW && currTile.biomeType != BIOMES.TUNDRA && currTile.biomeType != BIOMES.DESERT) {
-                                Assert.IsNotNull(currTile.structure);
-                                TileBase tileBase = null;
-                                //plant or herb plant
-                                
-                                tileBase = UtilityScripts.GameUtilities.RollChance(35) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
-                                if (currTile.biomeType == BIOMES.FOREST || currTile.biomeType == BIOMES.GRASSLAND) {
-                                    if(tileBase == InnerMapManager.Instance.assetManager.herbPlantTile) {
-                                        if (UtilityScripts.GameUtilities.RollChance(10)) {
-                                            TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BERRY_SHRUB);
-                                            currTile.structure.AddPOI(obj, currTile);
-                                        } else {
-                                            detailsTilemap.SetTile(currTile.localPlace, tileBase);
-                                            //place tile object
-                                            ConvertDetailToTileObject(currTile);
-                                        }
-                                    }
-                                }
-                                continue; //skip next processing, since detail was already placed.
-                            }
-                        }
-                    }
-
-                    if (Random.Range(0, 100) < 3) {
-                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetFlowerTile(currTile.biomeType));
-                        Assert.IsNotNull(currTile.structure);
-                        ConvertDetailToTileObject(currTile);
-                        // TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WEREWOLF_PELT);
-                        // currTile.structure.AddPOI(obj, currTile);
-                    } else if (Random.Range(0, 100) < 4) {
-                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetRockTile(currTile.biomeType));
-                        Assert.IsNotNull(currTile.structure);
-                        ConvertDetailToTileObject(currTile);
-                    } else if (Random.Range(0, 100) < 3) {
-                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetGarbTile(currTile.biomeType));
-                        Assert.IsNotNull(currTile.structure);
-                        ConvertDetailToTileObject(currTile);
-                    }
-                }
-                
+                GenerateDetailOnTile(xSize, ySize, xSeed, ySeed, currTile);    
+            
                 batchCount++;
                 if (batchCount == MapGenerationData.InnerMapDetailBatches) {
                     batchCount = 0;
                     yield return null;    
+                }
+            }
+        }
+        private void GenerateDetailOnTile(int xSize, int ySize, float xSeed, float ySeed, LocationGridTile currTile) {
+            if (ReferenceEquals(currTile.collectionOwner.partOfHextile, null) == false) {
+                if ((currTile.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.MOUNTAIN
+                     || currTile.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.WATER)) {
+                    return;
+                }
+                if (currTile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile != null
+                    && currTile.collectionOwner.partOfHextile.hexTileOwner.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR) {
+                    return;
+                }
+            }
+
+            float xCoordDetail = (float) currTile.localPlace.x / xSize * 8f + xSeed;
+            float yCoordDetail = (float) currTile.localPlace.y / ySize * 8f + ySeed;
+            float sampleDetail = Mathf.PerlinNoise(xCoordDetail, yCoordDetail);
+
+            //trees and shrubs
+            if (currTile.objHere == null && currTile.HasNeighbouringWalledStructure() == false) {
+                if (sampleDetail < 0.55f) {
+                    if (Random.Range(0, 100) < 50) {
+                        //shrubs
+                        if (currTile.groundType == LocationGridTile.Ground_Type.Grass && currTile.biomeType != BIOMES.SNOW && currTile.biomeType != BIOMES.TUNDRA && currTile.biomeType != BIOMES.DESERT) {
+                            Assert.IsNotNull(currTile.structure);
+                            TileBase tileBase = null;
+                            //plant or herb plant
+
+                            tileBase = UtilityScripts.GameUtilities.RollChance(35) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
+                            if (currTile.biomeType == BIOMES.FOREST || currTile.biomeType == BIOMES.GRASSLAND) {
+                                if (tileBase == InnerMapManager.Instance.assetManager.herbPlantTile) {
+                                    if (UtilityScripts.GameUtilities.RollChance(10)) {
+                                        TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BERRY_SHRUB);
+                                        currTile.structure.AddPOI(obj, currTile);
+                                    }
+                                    else {
+                                        detailsTilemap.SetTile(currTile.localPlace, tileBase);
+                                        //place tile object
+                                        ConvertDetailToTileObject(currTile);
+                                    }
+                                }
+                            }
+                            return;
+                        }
+                    }
+                }
+
+                if (GameUtilities.RollChance(3)) {
+                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetFlowerTile(currTile.biomeType));
+                    Assert.IsNotNull(currTile.structure);
+                    ConvertDetailToTileObject(currTile);
+                    // TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WEREWOLF_PELT);
+                    // currTile.structure.AddPOI(obj, currTile);
+                } else if (GameUtilities.RollChance(4)) {
+                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetRockTile(currTile.biomeType));
+                    Assert.IsNotNull(currTile.structure);
+                    ConvertDetailToTileObject(currTile);
+                } else if (GameUtilities.RollChance(3)) {
+                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetGarbTile(currTile.biomeType));
+                    Assert.IsNotNull(currTile.structure);
+                    ConvertDetailToTileObject(currTile);
                 }
             }
         }

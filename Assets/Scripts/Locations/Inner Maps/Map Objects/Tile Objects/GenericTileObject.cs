@@ -260,7 +260,6 @@ public class GenericTileObject : TileObject {
         blueprintOnTile.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Built, gridTileLocation.parentMap);
         LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(gridTileLocation.parentMap.region, blueprintOnTile.structureType, npcSettlement);
         blueprintOnTile.ClearOutUnimportantObjectsBeforePlacement();
-    
         for (int j = 0; j < blueprintOnTile.tiles.Length; j++) {
             LocationGridTile tile = blueprintOnTile.tiles[j];
             tile.SetStructure(structure);

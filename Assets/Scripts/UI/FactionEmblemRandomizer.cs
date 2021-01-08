@@ -5,11 +5,24 @@ using UtilityScripts;
 
 public static class FactionEmblemRandomizer {
     
+    public static Sprite wildMonsterFactionEmblem;
+    public static Sprite vagrantFactionEmblem;
+    public static Sprite disguisedFactionEmblem;
+    public static Sprite undeadFactionEmblem;
+    public static Sprite playerFactionEmblem;
+    public static Sprite cultFactionEmblem;
+    public static Sprite ratmenFactionEmblem;
+    
     private static List<Sprite> _unusedEmblems;
     private static List<Sprite> _usedEmblems;
     private static bool hasBeenInitialized;
-    
+
+    public static List<Sprite> allEmblems;
+
     public static void Initialize(List<Sprite> p_emblems) {
+        if (allEmblems == null) {
+            allEmblems = new List<Sprite>(p_emblems);    
+        }
         if (_unusedEmblems == null) {
             _unusedEmblems = new List<Sprite>(p_emblems);    
         } else {

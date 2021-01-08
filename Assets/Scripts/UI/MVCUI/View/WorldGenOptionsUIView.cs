@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Ruinarch.MVCFramework;
 using UnityEngine;
+using UtilityScripts;
 
 public class WorldGenOptionsUIView : MVCUIView {
     #region interface for listener
@@ -74,7 +75,7 @@ public class WorldGenOptionsUIView : MVCUIView {
 
     #region User Defined Functions
     public void InitializeBiomeItems() {
-        List<string> biomeChoices = UtilityScripts.Utilities.GetEnumChoices(BIOMES.GRASSLAND, BIOMES.FOREST, BIOMES.DESERT, BIOMES.SNOW);
+        List<string> biomeChoices = UtilityScripts.Utilities.GetEnumChoices(GameUtilities.customWorldBiomeChoices);
         biomeChoices.Insert(0, "Random");
         for (int i = 0; i < UIModel.biomeDropdownUIItems.Length; i++) {
             BiomeDropdownUIItem item = UIModel.biomeDropdownUIItems[i];
@@ -83,7 +84,8 @@ public class WorldGenOptionsUIView : MVCUIView {
         }
     }
     public void InitializeFactionItems() {
-        List<string> factionTypeChoices = UtilityScripts.Utilities.GetEnumChoices(FACTION_TYPE.Human_Empire, FACTION_TYPE.Elven_Kingdom);
+        List<string> factionTypeChoices = UtilityScripts.Utilities.GetEnumChoices(GameUtilities.customWorldFactionTypeChoices);
+        factionTypeChoices.Add("Random");
         for (int i = 0; i < UIModel.factionSettingUIItems.Length; i++) {
             FactionSettingUIItem item = UIModel.factionSettingUIItems[i];
             item.Initialize(factionTypeChoices);
@@ -95,35 +97,56 @@ public class WorldGenOptionsUIView : MVCUIView {
         UIModel.dropDownMapSize.AddOptions(UtilityScripts.Utilities.GetEnumChoices<MAP_SIZE>());
         UIModel.dropDownMapSize.value = UIModel.dropDownMapSize.GetDropdownOptionIndex("Small");
     }
+    public void SetMapSizeDropdownValue(string p_value) {
+        UIModel.dropDownMapSize.value = UIModel.dropDownMapSize.GetDropdownOptionIndex(p_value);
+    }
     public void InitializeMigrationDropdown() {
         UIModel.dropDownMigration.ClearOptions();
         UIModel.dropDownMigration.AddOptions(UtilityScripts.Utilities.GetEnumChoices<MIGRATION_SPEED>());
         UIModel.dropDownMigration.value = UIModel.dropDownMigration.GetDropdownOptionIndex("Normal");
+    }
+    public void SetMigrationDropdownValue(string p_value) {
+        UIModel.dropDownMigration.value = UIModel.dropDownMigration.GetDropdownOptionIndex(p_value);
     }
     public void InitializeVictoryConditionDropdown() {
         UIModel.dropDownVictory.ClearOptions();
         UIModel.dropDownVictory.AddOptions(UtilityScripts.Utilities.GetEnumChoices<VICTORY_CONDITION>());
         UIModel.dropDownVictory.value = UIModel.dropDownVictory.GetDropdownOptionIndex("Eliminate All");
     }
+    public void SetVictoryDropdownValue(string p_value) {
+        UIModel.dropDownVictory.value = UIModel.dropDownVictory.GetDropdownOptionIndex(p_value);
+    }
     public void InitializeCooldownDropdown() {
         UIModel.dropDownCooldown.ClearOptions();
         UIModel.dropDownCooldown.AddOptions(UtilityScripts.Utilities.GetEnumChoices<SKILL_COOLDOWN_SPEED>());
         UIModel.dropDownCooldown.value = UIModel.dropDownCooldown.GetDropdownOptionIndex("Normal");
+    }
+    public void SetCooldownDropdownValue(string p_value) {
+        UIModel.dropDownCooldown.value = UIModel.dropDownCooldown.GetDropdownOptionIndex(p_value);
     }
     public void InitializeCostsDropdown() {
         UIModel.dropDownCosts.ClearOptions();
         UIModel.dropDownCosts.AddOptions(UtilityScripts.Utilities.GetEnumChoices<SKILL_COST_AMOUNT>());
         UIModel.dropDownCosts.value = UIModel.dropDownCosts.GetDropdownOptionIndex("Normal");
     }
+    public void SetCostsDropdownValue(string p_value) {
+        UIModel.dropDownCosts.value = UIModel.dropDownCosts.GetDropdownOptionIndex(p_value);
+    }
     public void InitializeChargesDropdown() {
         UIModel.dropDownCharges.ClearOptions();
         UIModel.dropDownCharges.AddOptions(UtilityScripts.Utilities.GetEnumChoices<SKILL_CHARGE_AMOUNT>());
         UIModel.dropDownCharges.value = UIModel.dropDownCharges.GetDropdownOptionIndex("Normal");
     }
+    public void SetChargesDropdownValue(string p_value) {
+        UIModel.dropDownCharges.value = UIModel.dropDownCharges.GetDropdownOptionIndex(p_value);
+    }
     public void InitializeThreatDropdown() {
         UIModel.dropDownThreat.ClearOptions();
         UIModel.dropDownThreat.AddOptions(UtilityScripts.Utilities.GetEnumChoices<THREAT_AMOUNT>());
         UIModel.dropDownThreat.value = UIModel.dropDownThreat.GetDropdownOptionIndex("Normal");
+    }
+    public void SetThreatDropdownValue(string p_value) {
+        UIModel.dropDownThreat.value = UIModel.dropDownThreat.GetDropdownOptionIndex(p_value);
     }
     public void HideBiomeItem(BiomeDropdownUIItem p_biomeItem) {
         p_biomeItem.gameObject.SetActive(false);

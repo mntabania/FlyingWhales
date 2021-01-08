@@ -12,15 +12,9 @@ public class WorldSettings : MonoBehaviour {
 
     public GameObject settingsGO;
 
-    //public GameObject raceWorldOptionItemPrefab;
-    //public GameObject biomeWorldOptionItemPrefab;
-
     public RuinarchToggle defaultRegionToggle;
     public RuinarchToggle[] racesToggles;
     public RuinarchToggle[] biomesToggles;
-
-    //public ScrollRect racesScrollRect;
-    //public ScrollRect biomesScrollRect;
 
     public RuinarchToggle omnipotentModeToggle;
     public RuinarchToggle noThreatModeToggle;
@@ -28,50 +22,36 @@ public class WorldSettings : MonoBehaviour {
 
     public RuinarchToggle defaultWorldToggle;
 
-    public GameObject invalidMessage;
     public GameObject mainWindow;
-    public GameObject customizeWorldWindow;
+    public WorldGenOptionsUIController worldGenOptionsUIController;
 
     public GameObject hoverGO;
     public RuinarchText hoverText;
     public RuinarchText hoverTitle;
     public WorldPickerItem[] worldPickerItems;
     private WorldPickerItem toggledWorldPicker;
+    public Transform parentDisplay;
     
-    
-    //private List<RaceWorldOptionItem> raceWorldOptionItems;
-    //private List<BiomeWorldOptionItem> biomeWorldOptionItems;
-    //private List<string> numOfRegions;
-
-    //private RACE[] races = { RACE.HUMANS, RACE.ELVES };
-    //private BIOMES[] biomes = { BIOMES.GRASSLAND, BIOMES.FOREST, BIOMES.SNOW, BIOMES.DESERT };
-
 
     private void Awake() {
         if (Instance == null) {
             Instance = this;
             DontDestroyOnLoad(this.gameObject);
             worldSettingsData = new WorldSettingsData();
+            worldGenOptionsUIController.InitUI();
+            worldGenOptionsUIController.HideUI();
+            worldGenOptionsUIController.SetParent(parentDisplay);
         } else {
             Destroy(this.gameObject);
         }
     }
-
-    #region Listeners
-    private void OnRaceWorldOptionItemClicked(RACE race, bool state) {
-        UpdateRaces(race, state);
-    }
-    private void OnBiomeWorldOptionItemClicked(BIOMES biome, bool state) {
-        UpdateBiomes(biome, state);
-    }
-    #endregion
 
     #region General
     public void Open() {
         settingsGO.SetActive(true);
         mainWindow.SetActive(true);
         InitializeData();
-        customizeWorldWindow.SetActive(false);
+        worldGenOptionsUIController.HideUI();
         UpdateAvailableWorldTypes();
     }
     public void Close() {
@@ -105,64 +85,14 @@ public class WorldSettings : MonoBehaviour {
         noThreatModeToggle.isOn = false;
         chaosVictoryModeToggle.isOn = false;
     }
-    //private void PopulateNumOfRegions() {
-    //    numOfRegionsDropdown.ClearOptions();
-    //    numOfRegionsDropdown.AddOptions(numOfRegions);
-    //}
-    //private void PopulateRacesAndToggleOn() {
-    //    for (int i = 0; i < races.Length; i++) {
-    //        if(races[i] != RACE.NONE) {
-    //            RaceWorldOptionItem item = CreateNewRaceWorldOptionItem(races[i]);
-    //            item.toggle.isOn = true;
-    //        }
-    //    }
-    //}
     private void ToggleAllRaces(bool state) {
-        //for (int i = 0; i < raceWorldOptionItems.Count; i++) {
-        //    raceWorldOptionItems[i].toggle.isOn = state;
-        //}
         for (int i = 0; i < racesToggles.Length; i++) {
             racesToggles[i].isOn = state;
         }
     }
-    //private void PopulateBiomesAndToggleOn() {
-    //    for (int i = 0; i < biomes.Length; i++) {
-    //        if (biomes[i] != BIOMES.NONE) {
-    //            BiomeWorldOptionItem item = CreateNewBiomeWorldOptionItem(biomes[i]);
-    //            item.toggle.isOn = true;
-    //        }
-    //    }
-    //}
     private void ToggleAllBiomes(bool state) {
-        //for (int i = 0; i < biomeWorldOptionItems.Count; i++) {
-        //    biomeWorldOptionItems[i].toggle.isOn = state;
-        //}
         for (int i = 0; i < biomesToggles.Length; i++) {
             biomesToggles[i].isOn = state;
-        }
-    }
-
-    //private RaceWorldOptionItem CreateNewRaceWorldOptionItem(RACE race) {
-    //    GameObject go = Instantiate(raceWorldOptionItemPrefab, racesScrollRect.content);
-    //    go.transform.localPosition = Vector3.zero;
-    //    RaceWorldOptionItem item = go.GetComponent<RaceWorldOptionItem>();
-    //    item.SetRace(race);
-    //    raceWorldOptionItems.Add(item);
-    //    return item;
-    //}
-    //private BiomeWorldOptionItem CreateNewBiomeWorldOptionItem(BIOMES biome) {
-    //    GameObject go = Instantiate(biomeWorldOptionItemPrefab, biomesScrollRect.content);
-    //    go.transform.localPosition = Vector3.zero;
-    //    BiomeWorldOptionItem item = go.GetComponent<BiomeWorldOptionItem>();
-    //    item.SetBiome(biome);
-    //    biomeWorldOptionItems.Add(item);
-    //    return item;
-    //}
-    private void UpdateRaces(RACE race, bool state) {
-        if (state) {
-            worldSettingsData.AddRace(race);
-        } else {
-            worldSettingsData.RemoveRace(race);
         }
     }
     private void UpdateBiomes(BIOMES biome, bool state) {
@@ -178,64 +108,45 @@ public class WorldSettings : MonoBehaviour {
     #endregion
 
     #region UI References
-    #region Races
-    public void OnToggleHumans(bool state) {
-        UpdateRaces(RACE.HUMANS, state);
-    }
-    public void OnToggleElves(bool state) {
-        UpdateRaces(RACE.ELVES, state);
-    }
-    #endregion
-
-    #region Biomes
-    public void OnToggleDesert(bool state) {
-        UpdateBiomes(BIOMES.DESERT, state);
-    }
-    public void OnToggleSnow(bool state) {
-        UpdateBiomes(BIOMES.SNOW, state);
-    }
-    public void OnToggleGrassland(bool state) {
-        UpdateBiomes(BIOMES.GRASSLAND, state);
-    }
-    public void OnToggleForest(bool state) {
-        UpdateBiomes(BIOMES.FOREST, state);
-    }
-    #endregion
-
-    public void OnToggleOmnipotentMode(bool state) {
-        worldSettingsData.SetOmnipotentMode(state);
-    }
-    public void OnToggleNoThreatMode(bool state) {
-        worldSettingsData.SetNoThreatMode(state);
-    }
+    // public void OnToggleOmnipotentMode(bool state) {
+    //     worldSettingsData.SetOmnipotentMode(state);
+    // }
+    // public void OnToggleNoThreatMode(bool state) {
+    //     worldSettingsData.SetNoThreatMode(state);
+    // }
     public void OnClickContinue() {
         if (mainWindow.activeSelf) {
             //Still in world picker
-            if(worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
+            if(toggledWorldPicker.worldType == WorldSettingsData.World_Type.Custom) {
+                //show custom map customizer
                 mainWindow.SetActive(false);
-                customizeWorldWindow.SetActive(true);
+                worldGenOptionsUIController.ShowUI();
                 InitializeCustomUI();
             } else {
+                //load scenario map
+                worldSettingsData.ApplySettingsBasedOnScenarioType(toggledWorldPicker.worldType);
                 Close();
                 MainMenuManager.Instance.StartGame();
             }
-        } else if (customizeWorldWindow.activeSelf) {
+        } else if (worldGenOptionsUIController.IsUIShowing()) {
+            worldSettingsData.SetWorldType(WorldSettingsData.World_Type.Custom);
+            worldGenOptionsUIController.ApplyCurrentSettingsToData();
             //Already in customize window
-            if (worldSettingsData.AreSettingsValid()) {
+            if (worldSettingsData.AreSettingsValid(out var invalidityReason)) {
+                //Generate Custom Map
                 Close();
                 MainMenuManager.Instance.StartGame();
             } else {
-                //show invalid message
-                invalidMessage.gameObject.SetActive(true);
+                MainMenuUI.Instance.generalConfirmation.ShowGeneralConfirmation("Invalid Settings", UtilityScripts.Utilities.InvalidColorize(invalidityReason));
             }
         }
     }
     public void OnClickBack() {
         if (mainWindow.activeSelf) {
             Close();
-        } else if (customizeWorldWindow.activeSelf) {
+        } else if (worldGenOptionsUIController.IsUIShowing()) {
             mainWindow.SetActive(true);
-            customizeWorldWindow.SetActive(false);
+            worldGenOptionsUIController.HideUI();
         }
     }
     #endregion
@@ -265,21 +176,6 @@ public class WorldSettings : MonoBehaviour {
     public void OnToggleWorldPicker(WorldPickerItem item, bool state) {
         if (state) {
             toggledWorldPicker = item;
-            if(item.worldType == WorldSettingsData.World_Type.Tutorial) {
-                worldSettingsData.SetTutorialWorldSettings();
-            } else if (item.worldType == WorldSettingsData.World_Type.Oona) {
-                worldSettingsData.SetSecondWorldSettings();
-            } else if (item.worldType == WorldSettingsData.World_Type.Icalawa) {
-                worldSettingsData.SetIcalawaWorldSettings();
-            } else if (item.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
-                worldSettingsData.SetPangatLooWorldSettings();
-            } else if (item.worldType == WorldSettingsData.World_Type.Affatt) {
-                worldSettingsData.SetAffattWorldSettings();
-            } else if (item.worldType == WorldSettingsData.World_Type.Zenko) {
-                worldSettingsData.SetZenkoWorldSettings();
-            } else if (item.worldType == WorldSettingsData.World_Type.Custom) {
-                worldSettingsData.SetDefaultCustomWorldSettings();
-            }
             ShowHover(item.worldType.ToString(), item.description);
         }
     }

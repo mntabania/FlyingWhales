@@ -8,7 +8,7 @@ public class FactionSettingUIItem : MonoBehaviour {
     public static System.Action<FactionSetting, FactionSettingUIItem> onClickMinus;
     public static System.Action<FactionSetting, string> onChangeName;
     public static System.Action<FactionSetting, FactionSettingUIItem> onClickRandomizeName;
-    public static System.Action<FactionSetting, FACTION_TYPE> onChangeFactionType;
+    public static System.Action<FactionSetting, string> onChangeFactionType;
     public static System.Action<FactionSetting> onClickEditVillages;
     public static System.Action<FactionSetting> onHoverOverEditVillages;
     public static System.Action<FactionSetting> onHoverOutEditVillages;
@@ -55,7 +55,7 @@ public class FactionSettingUIItem : MonoBehaviour {
         _factionSetting = p_factionSetting;
         imgFactionEmblem.sprite = p_factionSetting.factionEmblem;
         UpdateName(p_factionSetting.name);
-        dropDownFactionType.SetValueWithoutNotify(dropDownFactionType.GetDropdownOptionIndex(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_factionSetting.factionType.ToString())));
+        dropDownFactionType.value = dropDownFactionType.GetDropdownOptionIndex(p_factionSetting.factionTypeString);
         txtVillageCount.text = p_factionSetting.villageSettings.Count.ToString();
     }
     public void SetMinusBtnState(bool p_state) {
@@ -76,8 +76,7 @@ public class FactionSettingUIItem : MonoBehaviour {
     }
     private void OnChangeFactionType(int p_index) {
         string chosen = UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(dropDownFactionType.options[p_index].text);
-        FACTION_TYPE factionType = (FACTION_TYPE)System.Enum.Parse(typeof(FACTION_TYPE), chosen, true);
-        onChangeFactionType?.Invoke(_factionSetting, factionType);
+        onChangeFactionType?.Invoke(_factionSetting, chosen);
     }
     private void OnClickEditVillages() {
         onClickEditVillages?.Invoke(_factionSetting);

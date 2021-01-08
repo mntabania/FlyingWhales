@@ -1739,13 +1739,6 @@ namespace Inner_Maps {
         }
         #endregion
 
-        #region Pathfinding
-        public GraphNode graphNode { get; private set; }
-        public void PredetermineGraphNode() {
-            graphNode = AstarPath.active.GetNearest(centeredWorldLocation).node;
-        }
-        #endregion
-
         #region Blueprints
         public void SetHasBlueprint(bool hasBlueprint) {
             this.hasBlueprint = hasBlueprint;
@@ -1804,7 +1797,6 @@ namespace Inner_Maps {
             genericTileObject = null;
             walls?.Clear();
             walls = null;
-            graphNode = null;
         }
         #endregion
     }

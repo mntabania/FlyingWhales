@@ -101,7 +101,7 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 
 		for (int i = 0; i < saveData.worldMapSave.regionSaves.Count; i++) {
 			SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSaves[i];
-			Region region = CreateNewRegionFromSave(saveDataRegion, lastX, lastY);
+			Region region = CreateNewRegionFromSave(saveDataRegion, lastX, lastY, saveData.worldMapSave.worldMapTemplate.worldMapWidth, saveData.worldMapSave.worldMapTemplate.worldMapHeight);
 			// lastX += saveDataRegion.regionTemplate.width;
 			// if (lastX == GridMap.Instance.width) {
 			// 	lastX = 0;
@@ -119,10 +119,7 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 		
 		yield return null;
 	}
-	private Region CreateNewRegionFromSave(SaveDataRegion saveDataRegion, int startingX, int startingY) {
-		int maxX = startingX;// + saveDataRegion.regionTemplate.width;
-		int maxY = startingY;// + saveDataRegion.regionTemplate.height;
-		
+	private Region CreateNewRegionFromSave(SaveDataRegion saveDataRegion, int startingX, int startingY, int maxX, int maxY) {
 		Region region = new Region(saveDataRegion);
 		for (int x = startingX; x < maxX; x++) {
 			for (int y = startingY; y < maxY; y++) {

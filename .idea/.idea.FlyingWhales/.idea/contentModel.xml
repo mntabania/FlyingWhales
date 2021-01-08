@@ -1222,6 +1222,7 @@
               <e p="TileObjectComponent.cs" t="Include" />
               <e p="TrapStructure.cs" t="Include" />
             </e>
+            <e p="Couple.cs" t="Include" />
             <e p="DeadlySin.cs" t="Include" />
             <e p="Emotions" t="Include">
               <e p="Anger.cs" t="Include" />
@@ -1440,6 +1441,7 @@
                 <e p="WorldMapOuterGridGeneration.cs" t="Include" />
                 <e p="WorldMapRegionGeneration.cs" t="Include" />
               </e>
+              <e p="HexTileIsland.cs" t="Include" />
               <e p="MapGenerationComponent.cs" t="Include" />
               <e p="MapGenerationData.cs" t="Include" />
             </e>
@@ -3113,6 +3115,7 @@
             <e p="EmblemBG.cs" t="Include" />
             <e p="EventLabel.cs" t="Include" />
             <e p="FactionEmblem.cs" t="Include" />
+            <e p="FactionEmblemInitializer.cs" t="Include" />
             <e p="FactionEmblemRandomizer.cs" t="Include" />
             <e p="FactionItem.cs" t="Include" />
             <e p="FactionPropertyItem.cs" t="Include" />
@@ -3293,6 +3296,7 @@
               <e p="QuestUI.cs" t="Include" />
             </e>
             <e p="RaceWorldOptionItem.cs" t="Include" />
+            <e p="RandomNameGeneratorInitializer.cs" t="Include" />
             <e p="RelationshipFilterItem.cs" t="Include" />
             <e p="ResearchAbilityUI.cs" t="Include" />
             <e p="RoleSlotItem.cs" t="Include" />
@@ -3342,6 +3346,7 @@
             <e p="DefinesManager.cs" t="Include" />
             <e p="DelegateTypes.cs" t="Include" />
             <e p="EditableValuesManager.cs" t="Include" />
+            <e p="EliminateVillagerTracker.cs" t="Include" />
             <e p="EnvelopContentUnityUI.cs" t="Include" />
             <e p="FollowerComponent.cs" t="Include" />
             <e p="FPSDisplay.cs" t="Include" />
@@ -3390,6 +3395,7 @@
               <e p="WorldEventSignals.cs" t="Include" />
             </e>
             <e p="SortingLayerExposer.cs" t="Include" />
+            <e p="SpellUtilities.cs" t="Include" />
             <e p="TestingUtilities.cs" t="Include" />
             <e p="TextTyper.cs" t="Include" />
             <e p="ToggleTextColorizer.cs" t="Include" />
@@ -3406,6 +3412,7 @@
           <e p="WorldData" t="Include">
             <e p="FactionSetting.cs" t="Include" />
             <e p="HexTileData.cs" t="Include" />
+            <e p="VillageSetting.cs" t="Include" />
             <e p="WorldSettingsData.cs" t="Include" />
           </e>
         </e>

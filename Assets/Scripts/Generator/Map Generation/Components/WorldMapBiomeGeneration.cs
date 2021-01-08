@@ -18,6 +18,7 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 			for (int i = 0; i < kvp.Value.Length; i++) {
 				RegionTemplate regionTemplate = kvp.Value[i];
 				BIOMES biome = GetBiomeForRegion(regionIndex, choices);
+				choices.Remove(biome);
 				SetBiomeForRegionTemplate(regionTemplate, lastX, lastY, biome);
 				lastX += regionTemplate.width;
 				if (lastX == GridMap.Instance.width) {
