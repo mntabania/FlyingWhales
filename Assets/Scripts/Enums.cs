@@ -694,6 +694,10 @@ public enum STRUCTURE_TYPE {
     VAMPIRE_CASTLE = 45,
     CULT_TEMPLE = 46,
     BIOLAB = 47,
+    QUARRY = 48,
+    CRAFTING = 49,
+    TAILORING = 50,
+    TANNERY = 51,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
