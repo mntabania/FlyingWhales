@@ -544,6 +544,12 @@ namespace Inner_Maps {
             this.structure = structure;
             this.structure.AddTile(this);
             genericTileObject.ManualInitialize(this);
+
+            if(objHere != null) {
+                //Whenever a grid tile changes its structure (might be because a new structure is built on top of it), the object inside must update its awareness to that new structure
+                LocationAwarenessUtility.RemoveFromAwarenessList(objHere);
+                LocationAwarenessUtility.AddToAwarenessList(objHere, this);
+            }
         }
         public void SetTileState(Tile_State state) {
             if (structure != null) {

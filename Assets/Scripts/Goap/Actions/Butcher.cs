@@ -162,38 +162,38 @@ public class Butcher : GoapAction {
                 cost *= 2;
                 costLog += $" {cost}(Still Alive)";
             }
-        }
-        if (targetCharacter is Animal || targetCharacter.race == RACE.WOLF || targetCharacter.race == RACE.SPIDER) {
-            if(!actor.characterClass.IsCombatant() && !targetCharacter.isDead && (targetCharacter.race == RACE.WOLF || targetCharacter.race == RACE.SPIDER)) {
-                cost += 2000;
-                costLog += $" +{cost}(Non-combatant actor, Alive Wolf/Spider target)";
-            }
-            CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(actor, actor, targetCharacter, CRIME_TYPE.Animal_Killing);
-            int currCost = 0;
-            if(severity == CRIME_SEVERITY.Infraction) {
-                currCost = UtilityScripts.Utilities.Rng.Next(80, 91);
-                costLog += $" +{currCost}(Animal/Infraction)";
-            } else if (severity == CRIME_SEVERITY.Misdemeanor || severity == CRIME_SEVERITY.Serious || severity == CRIME_SEVERITY.Heinous) {
-                if (actor.traitContainer.HasTrait("Malnourished")) {
-                    if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                        currCost = 200;
-                        costLog += $" +{currCost}(Animal/Misdemeanor/Serious/Heinous/Malnourished/Friend/Close Friend)";
+            if (targetCharacter is Animal || targetCharacter.race == RACE.WOLF || targetCharacter.race == RACE.SPIDER) {
+                if (!actor.characterClass.IsCombatant() && !targetCharacter.isDead && (targetCharacter.race == RACE.WOLF || targetCharacter.race == RACE.SPIDER)) {
+                    cost += 2000;
+                    costLog += $" +{cost}(Non-combatant actor, Alive Wolf/Spider target)";
+                }
+                CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(actor, actor, targetCharacter, CRIME_TYPE.Animal_Killing);
+                int currCost = 0;
+                if (severity == CRIME_SEVERITY.Infraction) {
+                    currCost = UtilityScripts.Utilities.Rng.Next(80, 91);
+                    costLog += $" +{currCost}(Animal/Infraction)";
+                } else if (severity == CRIME_SEVERITY.Misdemeanor || severity == CRIME_SEVERITY.Serious || severity == CRIME_SEVERITY.Heinous) {
+                    if (actor.traitContainer.HasTrait("Malnourished")) {
+                        if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                            currCost = 200;
+                            costLog += $" +{currCost}(Animal/Misdemeanor/Serious/Heinous/Malnourished/Friend/Close Friend)";
+                        } else {
+                            currCost = UtilityScripts.Utilities.Rng.Next(100, 111);
+                            costLog += $" +{currCost}(Animal/Misdemeanor/Serious/Heinous/Malnourished)";
+                        }
                     } else {
-                        currCost = UtilityScripts.Utilities.Rng.Next(100, 111);
-                        costLog += $" +{currCost}(Animal/Misdemeanor/Serious/Heinous/Malnourished)";
+                        currCost = 2000;
+                        costLog += $" +{currCost}(Animal/Misdemeanor/Serious/Heinous/not Malnourished)";
                     }
                 } else {
-                    currCost = 2000;
-                    costLog += $" +{currCost}(Animal/Misdemeanor/Serious/Heinous/not Malnourished)";
+                    currCost = UtilityScripts.Utilities.Rng.Next(40, 51);
+                    costLog += $" +{currCost}(Animal/No Severity)";
                 }
-            } else {
-                currCost = UtilityScripts.Utilities.Rng.Next(40, 51);
-                costLog += $" +{currCost}(Animal/No Severity)";
-            }
-            cost += currCost;
-            if (!targetCharacter.isDead) {
-                cost *= 2;
-                costLog += $" {cost}(Still Alive)";
+                cost += currCost;
+                if (!targetCharacter.isDead) {
+                    cost *= 2;
+                    costLog += $" {cost}(Still Alive)";
+                }
             }
         }
         actor.logComponent.AppendCostLog(costLog);

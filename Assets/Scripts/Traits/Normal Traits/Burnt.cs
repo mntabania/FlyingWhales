@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
+using Inner_Maps.Location_Structures;
 
 namespace Traits {
     public class Burnt : Status {
@@ -99,6 +100,7 @@ namespace Traits {
                         if (InteractionManager.Instance.CanCharacterTakeRepairJob(characterThatWillDoJob, targetPOI)) {
                             GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", false, GOAP_EFFECT_TARGET.TARGET);
                             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, effect, targetPOI, characterThatWillDoJob);
+                            UtilityScripts.JobUtilities.PopulatePriorityLocationsForTakingNonEdibleResources(characterThatWillDoJob, job, INTERACTION_TYPE.TAKE_RESOURCE);
                             job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(targetPOI.tileObjectType).mainRecipe });
                             characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                             return true;

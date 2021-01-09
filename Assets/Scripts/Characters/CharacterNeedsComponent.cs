@@ -5,6 +5,7 @@ using Interrupts;
 using Traits;
 using UnityEngine;
 using UtilityScripts;
+using Inner_Maps.Location_Structures;
 using Random = System.Random;
 
 public class CharacterNeedsComponent : CharacterComponent {
@@ -635,6 +636,9 @@ public class CharacterNeedsComponent : CharacterComponent {
         }
         if (!triggerSpooked) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
+            if (owner.homeStructure != null) {
+                job.AddPriorityLocation(INTERACTION_TYPE.SLEEP, owner.homeStructure);
+            }
             owner.jobQueue.AddJobInQueue(job);
             if (shouldSetScheduleJobID) {
                 sleepScheduleJobID = job.persistentID;
@@ -842,19 +846,20 @@ public class CharacterNeedsComponent : CharacterComponent {
                 //     value = 30;
                 // }
                 // if (chance < value || isSulking) {
-                    bool triggerBrokenhearted = false;
-                    Heartbroken heartbroken = owner.traitContainer.GetTraitOrStatus<Heartbroken>("Heartbroken");
-                    if (heartbroken != null) {
-                        triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[heartbroken.name]);
-                    }
-                    if (!triggerBrokenhearted) {
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), base.owner, base.owner);
-                        job.SetDoNotRecalculate(true);
-                        owner.jobQueue.AddJobInQueue(job);
-                    } else {
-                        heartbroken.TriggerBrokenhearted();
-                    }
-                    return true;
+            bool triggerBrokenhearted = false;
+            Heartbroken heartbroken = owner.traitContainer.GetTraitOrStatus<Heartbroken>("Heartbroken");
+            if (heartbroken != null) {
+                triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[heartbroken.name]);
+            }
+            if (!triggerBrokenhearted) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), base.owner, base.owner);
+                JobUtilities.PopulatePriorityLocationsForHappinessRecovery(owner, job);
+                job.SetDoNotRecalculate(true);
+                owner.jobQueue.AddJobInQueue(job);
+            } else {
+                heartbroken.TriggerBrokenhearted();
+            }
+            return true;
                 // }
             }
         // }
@@ -1264,6 +1269,17 @@ public class CharacterNeedsComponent : CharacterComponent {
         }
         if (!triggerGrieving) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
+            NPCSettlement homeSettlement = owner.homeSettlement;
+            LocationStructure homeStructure = owner.homeStructure;
+            if (homeStructure != null) {
+                job.AddPriorityLocation(INTERACTION_TYPE.NONE, homeStructure);
+            }
+            if (homeSettlement != null) {
+                LocationStructure cityCenter = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+                if(cityCenter != null) {
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, cityCenter);
+                }
+            }
             job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
             return job;
         } else {

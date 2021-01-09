@@ -19,6 +19,7 @@ public class GoapPlanJob : JobQueueItem {
     //if INTERACTION_TYPE is NONE, it means that it is used by all
     public Dictionary<INTERACTION_TYPE, OtherData[]> otherData { get; protected set; } //TODO: Further optimize this by moving this dictionary to the actor itself
     public bool shouldBeCancelledOnDeath { get; private set; } //should this job be cancelled when the target dies?
+    public Dictionary<INTERACTION_TYPE, List<ILocation>> priorityLocations { get; private set; }
 
     #region getters
     public override IPointOfInterest poiTarget => targetPOI;
@@ -28,6 +29,7 @@ public class GoapPlanJob : JobQueueItem {
     
     public GoapPlanJob() : base() {
         otherData = new Dictionary<INTERACTION_TYPE, OtherData[]>();
+        priorityLocations = new Dictionary<INTERACTION_TYPE, List<ILocation>>();
     }
 
     public void Initialize(JOB_TYPE jobType, GoapEffect goal, IPointOfInterest targetPOI, IJobOwner owner) {
@@ -368,13 +370,27 @@ public class GoapPlanJob : JobQueueItem {
     }
     public OtherData[] GetOtherDataFor(INTERACTION_TYPE actionType) {
         OtherData[] data = null;
-        if (otherData != null) {
-            if (otherData.ContainsKey(actionType)) {
-                data = otherData[actionType];
-            } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                //None Interaction Type means that the other data is applied to all actions in plan
-                data = otherData[INTERACTION_TYPE.NONE];
-            }
+        if (otherData.ContainsKey(actionType)) {
+            data = otherData[actionType];
+        } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+            //None Interaction Type means that the other data is applied to all actions in plan
+            data = otherData[INTERACTION_TYPE.NONE];
+        }
+        return data;
+    }
+    public void AddPriorityLocation(INTERACTION_TYPE actionType, ILocation location) {
+        if (!priorityLocations.ContainsKey(actionType)) {
+            priorityLocations.Add(actionType, ObjectPoolManager.Instance.CreateNewILocationList());
+        }
+        priorityLocations[actionType].Add(location);
+    }
+    public List<ILocation> GetPriorityLocationsFor(INTERACTION_TYPE actionType) {
+        List<ILocation> data = null;
+        if (priorityLocations.ContainsKey(actionType)) {
+            data = priorityLocations[actionType];
+        } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+            //None Interaction Type means that the other data is applied to all actions in plan
+            data = priorityLocations[INTERACTION_TYPE.NONE];
         }
         return data;
     }
@@ -404,6 +420,11 @@ public class GoapPlanJob : JobQueueItem {
         otherData.Clear();
         SetAssignedPlan(null);
         shouldBeCancelledOnDeath = true;
+        foreach (List<ILocation> list in priorityLocations.Values) {
+            //Return ILocation list to pool
+            ObjectPoolManager.Instance.ReturnILocationListToPool(list);
+        }
+        priorityLocations.Clear();
     }
     #endregion
 }

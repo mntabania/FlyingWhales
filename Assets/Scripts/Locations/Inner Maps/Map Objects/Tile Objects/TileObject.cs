@@ -9,6 +9,7 @@ using UnityEngine.Assertions;
 using UtilityScripts;
 using UnityEngine.EventSystems;
 using Locations.Settlements;
+using Locations;
 using Logs;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
@@ -51,6 +52,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public List<PLAYER_SKILL_TYPE> actions { get; protected set; }
     public int repairCounter { get; protected set; } //If greater than zero, this tile object cannot be repaired
     public int numOfActionsBeingPerformedOnThis { get; private set; } //this is increased, when the action of another character stops this characters movement
+    public ILocationAwareness currentLocationAwareness { get; private set; }
+    public bool isInPendingAwarenessList { get; private set; }
 
     private bool hasSubscribedToListeners;
 
@@ -222,9 +225,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual bool OccupiesTile() { return true;}
     public virtual void OnDestroyPOI() {
         //DisableGameObject();
-        if (previousTile != null) {
-            LocationAwarenessUtility.RemoveFromAwarenessList(this, previousTile);
-        }
+        LocationAwarenessUtility.RemoveFromAwarenessList(this);
+
         //removed by aaron aranas awareness update previousTile?.parentMap.region.RemovePendingAwareness(this);
         Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "");
@@ -264,7 +266,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (mapVisual == null) {
             InitializeMapObject(this);
             OnMapObjectStateChanged(); //update visuals based on map object state
-            LocationAwarenessUtility.AddToAwarenessList(this, gridTileLocation);
             //removed by aaron for awareness update gridTileLocation.parentMap.region.AddPendingAwareness(this);
         }
         PlaceMapObjectAt(gridTileLocation);
@@ -446,10 +447,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         if (allowDuplicates || advertisedActions.Contains(type) == false) {
             advertisedActions.Add(type);
+            LocationAwarenessUtility.AddToAwarenessList(type, this);
         }
     }
     public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
-        advertisedActions.Remove(type);
+        if (advertisedActions.Remove(type)) {
+            LocationAwarenessUtility.RemoveFromAwarenessList(type, this);
+        }
     }
     public void AddJobTargetingThis(JobQueueItem job) {
         allJobsTargetingThis.Add(job);
@@ -580,6 +584,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public void SetGridTileLocation(LocationGridTile tile) {
         previousTile = gridTileLocation;
         gridTileLocation = tile;
+        LocationAwarenessUtility.RemoveFromAwarenessList(this);
+        if (gridTileLocation != null) {
+            LocationAwarenessUtility.AddToAwarenessList(this, gridTileLocation);
+        }
     }
     public void OnSeizePOI() {
         if (UIManager.Instance.tileObjectInfoUI.isShowing && UIManager.Instance.tileObjectInfoUI.activeTileObject == this) {
@@ -655,6 +663,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             }
         }
         return false;
+    }
+    public void SetCurrentLocationAwareness(ILocationAwareness locationAwareness) {
+        currentLocationAwareness = locationAwareness;
+    }
+    public void SetIsInPendingAwarenessList(bool state) {
+        isInPendingAwarenessList = state;
     }
     #endregion
 

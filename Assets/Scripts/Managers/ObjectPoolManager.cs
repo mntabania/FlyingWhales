@@ -8,6 +8,7 @@ using Interrupts;
 using Inner_Maps.Location_Structures;
 using Inner_Maps;
 using Locations.Settlements;
+using Locations;
 
 public class ObjectPoolManager : BaseMonoBehaviour {
 
@@ -40,6 +41,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     private List<ConversationData> _conversationDataPool;
     private List<List<ConversationData>> _conversationDataListPool;
     private List<List<EMOTION>> _emotionListPool;
+    private List<List<ILocation>> _ilocationListPool;
 
     private void Awake() {
         Instance = this;
@@ -565,6 +567,24 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     }
     #endregion
 
+    #region Emotions
+    private void ConstructILocationListPool() {
+        _ilocationListPool = new List<List<ILocation>>();
+    }
+    public List<ILocation> CreateNewILocationList() {
+        if (_ilocationListPool.Count > 0) {
+            List<ILocation> data = _ilocationListPool[0];
+            _ilocationListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<ILocation>();
+    }
+    public void ReturnILocationListToPool(List<ILocation> data) {
+        data.Clear();
+        _ilocationListPool.Add(data);
+    }
+    #endregion
+
     protected override void OnDestroy() {
         if (allObjectPools != null) {
             foreach (KeyValuePair<string,EZObjectPool> pool in allObjectPools) {
@@ -615,6 +635,8 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _conversationDataListPool = null;
         _emotionListPool?.Clear();
         _emotionListPool = null;
+        _ilocationListPool?.Clear();
+        _ilocationListPool = null;
         base.OnDestroy();
         Instance = null;
     }

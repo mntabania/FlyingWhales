@@ -1105,10 +1105,15 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     _previousHexTileLocation != character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
                     if (_previousHexTileLocation != null) {
                         Messenger.Broadcast(CharacterSignals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
+                        if(character.currentLocationAwareness == _previousHexTileLocation.locationAwareness) {
+                            LocationAwarenessUtility.RemoveFromAwarenessList(character);
+                        }
                     }
                     if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                        //When character enters new hex tile it becomes the previous hex tile altogether
                         _previousHexTileLocation = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
                         Messenger.Broadcast(CharacterSignals.CHARACTER_ENTERED_HEXTILE, character, _previousHexTileLocation); //character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner
+                        LocationAwarenessUtility.AddToAwarenessList(character, character.gridTileLocation);
                     } else {
                         _previousHexTileLocation = null;
                     }

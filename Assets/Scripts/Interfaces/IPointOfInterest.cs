@@ -4,6 +4,7 @@ using Inner_Maps;
 using Logs;
 using UnityEngine;
 using Traits;
+using Locations;
 
 public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     string persistentID { get; }
@@ -15,7 +16,9 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     bool isDead { get; }
     bool isHidden { get; }
     bool isBeingSeized { get; }
+    bool isInPendingAwarenessList { get; }
     int numOfActionsBeingPerformedOnThis { get; } //this is increased, when the action of another character stops this characters movement
+    ILocationAwareness currentLocationAwareness { get; }
     POINT_OF_INTEREST_TYPE poiType { get; }
     POI_STATE state { get; }
     Region currentRegion { get; }
@@ -56,6 +59,9 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     bool IsPOICurrentlyTargetedByAPerformingAction();
     bool IsPOICurrentlyTargetedByAPerformingAction(params JOB_TYPE[] jobType);
     bool Advertises(INTERACTION_TYPE type);
+    void SetCurrentLocationAwareness(ILocationAwareness locationAwareness);
+    void SetIsInPendingAwarenessList(bool state);
+
     /// <summary>
     /// Does this POI collect Logs aka. History
     /// </summary>

@@ -37,7 +37,7 @@ public class PestBehaviour : CharacterBehaviourComponent {
                 BaseSettlement targetSettlement = character.behaviourComponent.pestVillageTarget[0].settlementOnTile;
                 if (targetSettlement != null) {
                     if (character.gridTileLocation != null && character.gridTileLocation.IsPartOfSettlement(targetSettlement)) {
-                        return character.jobComponent.CreateRatFullnessRecovery(out producedJob);
+                        return character.jobComponent.CreateRatFullnessRecovery(targetSettlement, out producedJob);
                     } else {
                         LocationStructure targetStructure = targetSettlement.GetRandomStructure();
                         if (targetStructure != null) {

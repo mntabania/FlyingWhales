@@ -4,6 +4,8 @@ using System.Linq;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
 using Inner_Maps;
+using Locations;
+using Locations.Settlements;
 
 public class GoapPlanner {
     public Character owner { get; private set; }
@@ -234,7 +236,6 @@ public class GoapPlanner {
     public GoapPlan PlanActions(IPointOfInterest target, GoapEffect goalEffect, bool isPersonalPlan, ref string log, GoapPlanJob job) {
         //Cache all needed data
         Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect = InteractionManager.Instance.actionsCategorizedByEffect;
-        Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = owner.currentRegion.awareness;
         _rawPlan.Clear();
 
         owner.logComponent.ClearCostLog();
@@ -249,7 +250,7 @@ public class GoapPlanner {
                 if (currentAction != null) {
                     //If an action is found, make it the goal node and start building the plan
                     GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(cost, 0, currentAction, target);
-                    BuildGoapTree(goalNode, owner, job, _rawPlan, actionsCategorizedByEffect, awareness, ref log); //, ref log
+                    BuildGoapTree(goalNode, owner, job, _rawPlan, actionsCategorizedByEffect, ref log); //, ref log
                 }
             }
         } else if (goalEffect.target == GOAP_EFFECT_TARGET.ACTOR) {
@@ -260,10 +261,10 @@ public class GoapPlanner {
             log = $"{log}\n--Choices for {goalEffect.ToString()}";
             log = $"{log}\n--";
 
-            ProcessFindingLowestCostActionAndTarget(job, goalEffect, target, actionsCategorizedByEffect, awareness, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
+            ProcessFindingLowestCostActionAndTarget(job, goalEffect, target, actionsCategorizedByEffect, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
             if (lowestCostAction != null) {
                 GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(lowestCost, 0, lowestCostAction, lowestCostTarget);
-                BuildGoapTree(leafNode, owner, job, _rawPlan, actionsCategorizedByEffect, awareness, ref log); //, ref log
+                BuildGoapTree(leafNode, owner, job, _rawPlan, actionsCategorizedByEffect, ref log); //, ref log
             }
         }
         if(_rawPlan.Count > 0) {
@@ -284,7 +285,6 @@ public class GoapPlanner {
     }
     public GoapPlan PlanActions(IPointOfInterest target, GoapAction goalAction, bool isPersonalPlan, ref string log, GoapPlanJob job) {
         Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect = InteractionManager.Instance.actionsCategorizedByEffect;
-        Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = owner.currentRegion.awareness;
         _rawPlan.Clear();
         owner.logComponent.ClearCostLog();
         owner.logComponent.AppendCostLog($"BASE COSTS OF {owner.name} ACTIONS ON {job.name} PLANNING");
@@ -295,7 +295,7 @@ public class GoapPlanner {
         int cost = goalAction.GetCost(owner, target, job);
         log += $"\n--Searching plan for target: {target.name} with goal action ({cost}){goalAction.goapName}";
         GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(cost, 0, goalAction, target);
-        BuildGoapTree(goalNode, owner, job, _rawPlan, actionsCategorizedByEffect, awareness, ref log); //, ref log
+        BuildGoapTree(goalNode, owner, job, _rawPlan, actionsCategorizedByEffect, ref log); //, ref log
         if (_rawPlan.Count > 0) {
             string rawPlanSummary = $"Generated raw plan for job { job.name } { owner.name }";
             for (int i = 0; i < _rawPlan.Count; i++) {
@@ -316,7 +316,6 @@ public class GoapPlanner {
         //In plan recalculation, only recalculate nodes starting from the previous node, because this means that the current node does not satisfy all preconditions, which in turn, means that somewhere in the previous nodes, the character failed to do the action
         //That is why we recalculate from the previous node up to the starting node
         Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect = InteractionManager.Instance.actionsCategorizedByEffect;
-        Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = owner.currentRegion.awareness;
         _rawPlan.Clear();
 
         JobNode currentJobNode = currentPlan.currentNode;
@@ -329,7 +328,7 @@ public class GoapPlanner {
             if (target.CanAdvertiseActionToActor(owner, goalAction, job) && target.Advertises(goalAction.goapType)) {
                 int cost = goalAction.GetCost(owner, target, job);
                 GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
-                BuildGoapTree(goalNode, owner, job, _rawPlan, actionsCategorizedByEffect, awareness, ref log); //
+                BuildGoapTree(goalNode, owner, job, _rawPlan, actionsCategorizedByEffect, ref log); //
                 if (_rawPlan.Count > 0) {
                     //has a created plan
                     string rawPlanSummary = $"Recalculated raw plan for job { job.name } { owner.name }";
@@ -347,8 +346,7 @@ public class GoapPlanner {
         return false;
     }
     //Note: The target specified here is the target for the precondition not the job itself
-    private void BuildGoapTree(GoapNode node, Character actor, GoapPlanJob job, List<GoapNode> rawPlan, Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect
-        , Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness, ref string log) { //
+    private void BuildGoapTree(GoapNode node, Character actor, GoapPlanJob job, List<GoapNode> rawPlan, Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect, ref string log) { //
         GoapAction action = node.action;
         IPointOfInterest target = node.target;
         log += $"\n--Adding node to raw plan: ({node.cost}){node.action.goapName}-{target.nameWithID}";
@@ -382,7 +380,7 @@ public class GoapPlanner {
                     if (currentAction != null) {
                         log += $"\n--Found action: {currentAction.goapName}, creating new node...";
                         GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(cost, node.level + 1, currentAction, target);
-                        BuildGoapTree(leafNode, actor, job, rawPlan, actionsCategorizedByEffect, awareness, ref log); //
+                        BuildGoapTree(leafNode, actor, job, rawPlan, actionsCategorizedByEffect, ref log); //
                     } else {
                         //Fail - rawPlan must be set to null so the plan will fail
                         rawPlan.Clear();
@@ -395,11 +393,11 @@ public class GoapPlanner {
                     int lowestCost = 0;
                     log += $"\n--Choices for {preconditionEffect}";
                     log += "\n--";
-                    ProcessFindingLowestCostActionAndTarget(job, preconditionEffect, target, actionsCategorizedByEffect, awareness, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
+                    ProcessFindingLowestCostActionAndTarget(job, preconditionEffect, target, actionsCategorizedByEffect, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
                     if (lowestCostAction != null) {
                         log += $"\n--Found action: {lowestCostAction.goapName}, creating new node...";
                         GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(lowestCost, node.level + 1, lowestCostAction, lowestCostTarget);
-                        BuildGoapTree(leafNode, actor, job, rawPlan, actionsCategorizedByEffect, awareness, ref log); //, ref log
+                        BuildGoapTree(leafNode, actor, job, rawPlan, actionsCategorizedByEffect, ref log); //, ref log
                     } else {
                         //Fail - rawPlan must be set to null so the plan will fail
                         rawPlan.Clear();
@@ -414,40 +412,79 @@ public class GoapPlanner {
             log += $"\n--Node {node.action.goapName} has no preconditions, exiting goap tree...";
         }
     }
-    private void ProcessFindingLowestCostActionAndTarget(GoapPlanJob job, GoapEffect goalEffect, IPointOfInterest target, Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect, Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness, ref int lowestCost, ref GoapAction lowestCostAction, ref IPointOfInterest lowestCostTarget, ref string log) {
+    private void ProcessFindingLowestCostActionAndTarget(GoapPlanJob job, GoapEffect goalEffect, IPointOfInterest target, Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect, ref int lowestCost, ref GoapAction lowestCostAction, ref IPointOfInterest lowestCostTarget, ref string log) {
         if (!actionsCategorizedByEffect.ContainsKey(goalEffect.conditionType)) {
             return;
         }
+
         List<GoapAction> actionsFilteredByEffect = actionsCategorizedByEffect[goalEffect.conditionType];
         for (int i = 0; i < actionsFilteredByEffect.Count; i++) {
             GoapAction currentAction = actionsFilteredByEffect[i];
-            //Further optimize this by creating a list of all poi that currently advertises this action, and loop that
             IPointOfInterest poiTarget = target;
-            if (poiTarget == job.targetPOI || poiTarget.IsStillConsideredPartOfAwarenessByCharacter(owner)) { //POI must either be the job's target or the actor is still aware of it
-                PopulateLowestCostAction(poiTarget, currentAction, job, goalEffect, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
-            }
+            bool isJobTargetEvaluated = false;
 
-            //This is temporary only, once we change the awareness we will change this
-            if (currentAction.advertisedBy != null) {
-                for (int j = 0; j < currentAction.advertisedBy.Length; j++) {
-                    List<IPointOfInterest> poisThatAdvertisesCurrentAction = awareness[currentAction.advertisedBy[j]];
-                    for (int k = 0; k < poisThatAdvertisesCurrentAction.Count; k++) {
-                        poiTarget = poisThatAdvertisesCurrentAction[k];
-                        if (poiTarget == job.targetPOI || poiTarget.IsStillConsideredPartOfAwarenessByCharacter(owner)) { //POI must either be the job's target or the actor is still aware of it
-                            PopulateLowestCostAction(poiTarget, currentAction, job, goalEffect, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
-                        }
+            SetLowestCostActionBasedOnLocationAwareness(job, currentAction, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
+
+            if (!isJobTargetEvaluated) {
+                if (poiTarget == job.targetPOI || poiTarget.IsStillConsideredPartOfAwarenessByCharacter(owner)) { //POI must either be the job's target or the actor is still aware of it
+                    if (poiTarget.Advertises(currentAction.goapType)) {
+                        PopulateLowestCostAction(poiTarget, currentAction, job, goalEffect, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
                     }
                 }
             }
         }
     }
-    private void PopulateListOfPOIToTraverseInGoapPlanning(List<IPointOfInterest> listOfPOI, IPointOfInterest target, GoapPlanJob job, GoapAction action, GoapEffect goalEffect, ref int lowestCost, ref GoapAction lowestCostAction, ref IPointOfInterest lowestCostTarget, ref string log) {
+    private void SetLowestCostActionBasedOnLocationAwareness(GoapPlanJob job, GoapAction action, GoapEffect goalEffect, ref bool isJobTargetEvaluated, ref int lowestCost, ref GoapAction lowestCostAction, ref IPointOfInterest lowestCostTarget, ref string log) {
+        //TODO: Job Location Parameter
+        List<ILocation> priorityLocations = job.GetPriorityLocationsFor(action.goapType);
+        if (priorityLocations != null) {
+            bool hasSet = false;
+            for (int i = 0; i < priorityLocations.Count; i++) {
+                ILocation location = priorityLocations[i];
+                if (location is BaseSettlement settlement) {
+                    for (int j = 0; j < settlement.allStructures.Count; j++) {
+                        LocationStructure structure = settlement.allStructures[j];
+                        if(SetLowestCostActionGivenLocationAwareness(structure.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
+                            hasSet = true;
+                        }
+                    }
+                    for (int j = 0; j < settlement.tiles.Count; j++) {
+                        HexTile hex = settlement.tiles[j];
+                        if (SetLowestCostActionGivenLocationAwareness(hex.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
+                            hasSet = true;
+                        }
+                    }
+                } else if (location is LocationStructure structure) {
+                    if (SetLowestCostActionGivenLocationAwareness(structure.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
+                        hasSet = true;
+                    }
+                } else if (location is HexTile hex) {
+                    if (SetLowestCostActionGivenLocationAwareness(hex.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
+                        hasSet = true;
+                    }
+                }
+            }
+            if (hasSet) {
+                return;
+            }
+        }
+
         LocationGridTile currentGridTile = owner.gridTileLocation;
         if(currentGridTile != null) {
             LocationStructure currentStructure = currentGridTile.structure;
+            //BaseSettlement currentSettlement = null;
+            //currentGridTile.IsPartOfSettlement(out currentSettlement);
+
+            //if(currentSettlement != null && currentSettlement == owner.homeSettlement) {
+
+            //}
+
+            //First step: Process current structure, if there is an action, skip next processing
             if (currentStructure.structureType != STRUCTURE_TYPE.WILDERNESS && currentStructure.structureType != STRUCTURE_TYPE.OCEAN) {
-                //TODO
-                //Get awareness in structure based on action then loop all poi to get lowest
+                bool hasSet = SetLowestCostActionGivenLocationAwareness(currentStructure.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
+                if(hasSet) {
+                    return;
+                }
             }
 
             HexTile currentHex = null;
@@ -455,32 +492,57 @@ public class GoapPlanner {
                 currentHex = currentGridTile.collectionOwner.partOfHextile.hexTileOwner;
             }
 
-            if(currentHex != null) {
-                //TODO
+            if (currentHex != null) {
+                //Second step: Process current hex, if there is an action, skip next processing
+                bool hasSet = SetLowestCostActionGivenLocationAwareness(currentHex.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
+                if (hasSet) {
+                    return;
+                }
 
+                //Second step: Process adjacent hexes, if there is an action, skip next processing
                 List<HexTile> adjacentHexes = currentHex.AllNeighbours;
                 for (int i = 0; i < adjacentHexes.Count; i++) {
                     HexTile hex = adjacentHexes[i];
-                    //TODO
+                    SetLowestCostActionGivenLocationAwareness(hex.locationAwareness, job, action, goalEffect, ref isJobTargetEvaluated, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
                 }
             }
         }
     }
-    private void PopulateLowestCostAction(IPointOfInterest poiTarget, GoapAction action, GoapPlanJob job, GoapEffect goalEffect, ref int lowestCost, ref GoapAction lowestCostAction, ref IPointOfInterest lowestCostTarget, ref string log) {
-        bool canDoAction = CanDoAction(poiTarget, action, job, goalEffect);
-        if (canDoAction) {
+    private bool SetLowestCostActionGivenLocationAwareness(ILocationAwareness locationAwareness, GoapPlanJob job, GoapAction action, GoapEffect goalEffect, ref bool isJobTargetEvaluated, ref int lowestCost, ref GoapAction lowestCostAction, ref IPointOfInterest lowestCostTarget, ref string log) {
+        bool hasSetAsLowest = false;
+        List<IPointOfInterest> pois = locationAwareness.GetListOfPOIBasedOnActionType(action.goapType);
+        if (pois != null) {
+            for (int i = 0; i < pois.Count; i++) {
+                IPointOfInterest poi = pois[i];
+                if(poi == job.targetPOI) {
+                    isJobTargetEvaluated = true;
+                }
+                if (poi.IsStillConsideredPartOfAwarenessByCharacter(owner)) { //POI must either be the job's target or the actor is still aware of it
+                    if(PopulateLowestCostAction(poi, action, job, goalEffect, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
+                        hasSetAsLowest = true;
+                    }
+                }
+            }
+        }
+        return hasSetAsLowest;
+    }
+    private bool PopulateLowestCostAction(IPointOfInterest poiTarget, GoapAction action, GoapPlanJob job, GoapEffect goalEffect, ref int lowestCost, ref GoapAction lowestCostAction, ref IPointOfInterest lowestCostTarget, ref string log) {
+        bool canActionBeDone = CanActionBeDoneOn(poiTarget, action, job, goalEffect);
+        if (canActionBeDone) {
             int cost = action.GetCost(owner, poiTarget, job);
             log = $"{log}({cost}){action.goapName}-{poiTarget.nameWithID}, ";
             if (lowestCostAction == null || cost < lowestCost) {
                 lowestCostAction = action;
                 lowestCostTarget = poiTarget;
                 lowestCost = cost;
+                return true;
             }
         }
+        return false;
     }
-    private bool CanDoAction(IPointOfInterest poiTarget, GoapAction action, GoapPlanJob job, GoapEffect goalEffect) {
-        bool canDoAction = poiTarget.CanAdvertiseActionToActor(owner, action, job) && action.WillEffectsSatisfyPrecondition(goalEffect, owner, poiTarget, job);
-        return canDoAction;
+    private bool CanActionBeDoneOn(IPointOfInterest poiTarget, GoapAction action, GoapPlanJob job, GoapEffect goalEffect) {
+        bool state = poiTarget.CanAdvertiseActionToActor(owner, action, job) && action.WillEffectsSatisfyPrecondition(goalEffect, owner, poiTarget, job);
+        return state;
     }
     private List<JobNode> TransformRawPlanToActualNodes(List<GoapNode> rawPlan, GoapPlanJob job, GoapPlan currentPlan = null) { //actualPlan is for recalculation only, so that it will no longer create a new list, since in recalculation we already have a list of job nodes
         List<JobNode> actualPlan = null;

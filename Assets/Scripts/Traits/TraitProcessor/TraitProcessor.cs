@@ -123,7 +123,7 @@ namespace Traits {
                 }
             }
             if ((traitable.advertisedActions == null || traitable.advertisedActions.Count <= 0) && traitable is GenericTileObject genericObj) {
-                LocationAwarenessUtility.RemoveFromAwarenessList(genericObj, traitable.gridTileLocation);
+                LocationAwarenessUtility.RemoveFromAwarenessList(genericObj);
                 //removed by aaron aranas awareness update traitable.gridTileLocation.parentMap.region.RemovePendingAwareness(genericObj);
             }
         }

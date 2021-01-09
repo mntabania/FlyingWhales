@@ -3114,10 +3114,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Rat
-    public bool CreateRatFullnessRecovery(out JobQueueItem producedJob) {
+    public bool CreateRatFullnessRecovery(BaseSettlement targetSettlement, out JobQueueItem producedJob) {
         producedJob = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
+            job.AddPriorityLocation(INTERACTION_TYPE.EAT, targetSettlement);
             producedJob = job;
             return true;
         }

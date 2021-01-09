@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Inner_Maps.Location_Structures;
 
 namespace Traits {
     public class Lazy : Trait {
@@ -48,6 +49,7 @@ namespace Traits {
                         character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY);
                     }
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR }, character, character);
+                    UtilityScripts.JobUtilities.PopulatePriorityLocationsForHappinessRecovery(character, job);
                     character.jobQueue.AddJobInQueue(job);
                 } else {
                     heartbroken.TriggerBrokenhearted();

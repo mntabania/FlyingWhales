@@ -1101,6 +1101,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
             object[] corpses = Get3CorpsesToSummonBoneGolem(cultTemple);
             if (corpses != null) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SUMMON_BONE_GOLEM, new GoapEffect(GOAP_EFFECT_CONDITION.SUMMON, "Bone Golem", false, GOAP_EFFECT_TARGET.ACTOR), null, _owner);
+                job.AddPriorityLocation(INTERACTION_TYPE.SUMMON_BONE_GOLEM, cultTemple);
                 job.AddOtherData(INTERACTION_TYPE.SUMMON_BONE_GOLEM, corpses);
                 job.SetCanTakeThisJobChecker(JobManager.Can_Summon_Bone_Golem);
                 job.SetForceCancelOnInvalid(true);

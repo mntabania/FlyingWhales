@@ -13,6 +13,7 @@ using UnityEngine.EventSystems;
 using UtilityScripts;
 using JetBrains.Annotations;
 using Plague.Transmission;
+using Locations;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyQuestTarget, IGatheringTarget, ISavable {
     private int _id;
@@ -80,6 +81,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public LycanthropeData lycanData { get; protected set; }
     public Necromancer necromancerTrait { get; protected set; }
     public POI_STATE state { get; private set; }
+    public ILocationAwareness currentLocationAwareness { get; private set; }
+    public bool isInPendingAwarenessList { get; private set; }
 
     //misc
     public Tombstone grave { get; private set; }
@@ -1622,10 +1625,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (broadcast) {
             if (newStructure != null) {
                 Messenger.Broadcast(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, this, newStructure);
+                LocationAwarenessUtility.RemoveFromAwarenessList(this);
+                LocationAwarenessUtility.AddToAwarenessList(this, gridTileLocation);
             }
             if (previousStructure != null) {
                 eventDispatcher.ExecuteCharacterLeftStructure(this, previousStructure);
                 Messenger.Broadcast(CharacterSignals.CHARACTER_LEFT_STRUCTURE, this, previousStructure);
+                if(newStructure == null && currentLocationAwareness == previousStructure.locationAwareness) {
+                    LocationAwarenessUtility.RemoveFromAwarenessList(this);
+                }
             }
         }
         // Debug.Log($"Set current structure location of {name} to {newStructure}");
@@ -3370,11 +3378,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void AddAdvertisedAction(INTERACTION_TYPE type, bool allowDuplicates = false) {
         if (allowDuplicates || advertisedActions.Contains(type) == false) {
             advertisedActions.Add(type);
+            LocationAwarenessUtility.AddToAwarenessList(type, this);
         }
         //advertisedActions.Add(type);
     }
     public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
-        advertisedActions.Remove(type);
+        if (advertisedActions.Remove(type)) {
+            LocationAwarenessUtility.RemoveFromAwarenessList(type, this);
+        }
     }
     #endregion
 
@@ -3716,17 +3727,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Awareness
     public void LogAwarenessList() {
-        string log = $"--------------AWARENESS LIST OF {name}-----------------";
-        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> kvp in currentRegion.awareness) {
-            log += $"\n{kvp.Key}: ";
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                if (i > 0) {
-                    log += ", ";
+        if (currentLocationAwareness != null) {
+            string log = $"--------------AWARENESS LIST OF {name}-----------------";
+            foreach (KeyValuePair<INTERACTION_TYPE, List<IPointOfInterest>> kvp in currentLocationAwareness.awareness) {
+                log += $"\n{kvp.Key}: ";
+                for (int i = 0; i < kvp.Value.Count; i++) {
+                    if (i > 0) {
+                        log += ", ";
+                    }
+                    log += kvp.Value[i].ToString();
                 }
-                log += kvp.Value[i].ToString();
             }
+            logComponent.PrintLogIfActive(log);
         }
-        logComponent.PrintLogIfActive(log);
     }
     #endregion
 
@@ -3966,7 +3979,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //                        hasBeenInserted = true;
     //                        break;
     //                    }
-    //                }
+    //                }re
     //            }
     //            if (!hasBeenInserted) {
     //                allGoapPlans.Add(plan);
@@ -5899,6 +5912,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
         return false;
+    }
+    public void SetCurrentLocationAwareness(ILocationAwareness locationAwareness) {
+        currentLocationAwareness = locationAwareness;
+    }
+    public void SetIsInPendingAwarenessList(bool state) {
+        isInPendingAwarenessList = state;
     }
     #endregion
 

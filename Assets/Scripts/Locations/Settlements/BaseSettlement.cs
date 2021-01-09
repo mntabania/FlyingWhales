@@ -10,7 +10,7 @@ using UtilityScripts;
 using Logs;
 
 namespace Locations.Settlements {
-    public abstract class BaseSettlement : IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ISavable, ILogFiller, IPlayerActionTarget {
+    public abstract class BaseSettlement : IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ISavable, ILogFiller, IPlayerActionTarget, ILocation {
         public string persistentID { get; private set; }
         public int id { get; }
         public LOCATION_TYPE locationType { get; private set; }
