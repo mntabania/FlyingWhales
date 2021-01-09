@@ -6,7 +6,7 @@ using Inner_Maps.Location_Structures;
 namespace UtilityScripts {
     public static class JobUtilities {
         public static void PopulatePriorityLocationsForHappinessRecovery(Character actor, GoapPlanJob job) {
-            if (actor.homeStructure != null) {
+            if (!actor.traitContainer.HasTrait("Travelling") && actor.homeStructure != null) {
                 job.AddPriorityLocation(INTERACTION_TYPE.NONE, actor.homeStructure);
 
                 LocationStructure currentStructure = actor.currentStructure;

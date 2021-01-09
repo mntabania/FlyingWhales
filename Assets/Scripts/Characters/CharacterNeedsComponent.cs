@@ -636,7 +636,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         }
         if (!triggerSpooked) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
-            if (owner.homeStructure != null) {
+            if (!owner.traitContainer.HasTrait("Travelling") && owner.homeStructure != null) {
                 job.AddPriorityLocation(INTERACTION_TYPE.SLEEP, owner.homeStructure);
             }
             owner.jobQueue.AddJobInQueue(job);
@@ -1269,15 +1269,17 @@ public class CharacterNeedsComponent : CharacterComponent {
         }
         if (!triggerGrieving) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
-            NPCSettlement homeSettlement = owner.homeSettlement;
-            LocationStructure homeStructure = owner.homeStructure;
-            if (homeStructure != null) {
-                job.AddPriorityLocation(INTERACTION_TYPE.NONE, homeStructure);
-            }
-            if (homeSettlement != null) {
-                LocationStructure cityCenter = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
-                if(cityCenter != null) {
-                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, cityCenter);
+            if (!owner.traitContainer.HasTrait("Travelling")) {
+                NPCSettlement homeSettlement = owner.homeSettlement;
+                LocationStructure homeStructure = owner.homeStructure;
+                if (homeStructure != null) {
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, homeStructure);
+                }
+                if (homeSettlement != null) {
+                    LocationStructure cityCenter = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+                    if (cityCenter != null) {
+                        job.AddPriorityLocation(INTERACTION_TYPE.NONE, cityCenter);
+                    }
                 }
             }
             job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
