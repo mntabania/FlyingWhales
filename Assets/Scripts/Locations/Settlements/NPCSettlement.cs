@@ -1243,6 +1243,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                         affectedStructure.AddPOI(item);
                         item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
+                        JobUtilities.PopulatePriorityLocationsForTakingNonEdibleResources(this, job, INTERACTION_TYPE.TAKE_RESOURCE);
                         switch (neededObject) {
                             case TILE_OBJECT_TYPE.HEALING_POTION:
                                 job.SetCanTakeThisJobChecker(JobManager.Can_Brew_Potion);

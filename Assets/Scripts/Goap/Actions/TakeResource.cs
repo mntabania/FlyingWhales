@@ -196,7 +196,7 @@ public class TakeResource : GoapAction {
             newPile.SetGridTileLocation(pile.gridTileLocation);
             newPile.InitializeMapObject(newPile);
             newPile.SetPOIState(POI_STATE.ACTIVE);
-            LocationAwarenessUtility.AddToAwarenessList(newPile, newPile.gridTileLocation);
+            UtilityScripts.LocationAwarenessUtility.AddToAwarenessList(newPile, newPile.gridTileLocation);
             //removed by aaron for awareness update newPile.gridTileLocation.structure.region.AddPendingAwareness(newPile);
             newPile.SetGridTileLocation(null);
 

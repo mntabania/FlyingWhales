@@ -249,7 +249,7 @@ public class GoapPlanner {
                 GoapAction currentAction = target.AdvertiseActionsToActor(owner, goalEffect, job, ref cost, ref log);
                 if (currentAction != null) {
                     //If an action is found, make it the goal node and start building the plan
-                    GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(cost, 0, currentAction, target);
+                    GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapNode(cost, 0, currentAction, target);
                     BuildGoapTree(goalNode, owner, job, _rawPlan, actionsCategorizedByEffect, ref log); //, ref log
                 }
             }
@@ -263,7 +263,7 @@ public class GoapPlanner {
 
             ProcessFindingLowestCostActionAndTarget(job, goalEffect, target, actionsCategorizedByEffect, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
             if (lowestCostAction != null) {
-                GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(lowestCost, 0, lowestCostAction, lowestCostTarget);
+                GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapNode(lowestCost, 0, lowestCostAction, lowestCostTarget);
                 BuildGoapTree(leafNode, owner, job, _rawPlan, actionsCategorizedByEffect, ref log); //, ref log
             }
         }
@@ -294,7 +294,7 @@ public class GoapPlanner {
         }
         int cost = goalAction.GetCost(owner, target, job);
         log += $"\n--Searching plan for target: {target.name} with goal action ({cost}){goalAction.goapName}";
-        GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(cost, 0, goalAction, target);
+        GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapNode(cost, 0, goalAction, target);
         BuildGoapTree(goalNode, owner, job, _rawPlan, actionsCategorizedByEffect, ref log); //, ref log
         if (_rawPlan.Count > 0) {
             string rawPlanSummary = $"Generated raw plan for job { job.name } { owner.name }";
@@ -327,7 +327,7 @@ public class GoapPlanner {
             //POI must either be the job's target or the actor is still aware of it
             if (target.CanAdvertiseActionToActor(owner, goalAction, job) && target.Advertises(goalAction.goapType)) {
                 int cost = goalAction.GetCost(owner, target, job);
-                GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
+                GoapNode goalNode = ObjectPoolManager.Instance.CreateNewGoapNode(actualNode.cost, currentPlan.currentNodeIndex, goalAction, target);
                 BuildGoapTree(goalNode, owner, job, _rawPlan, actionsCategorizedByEffect, ref log); //
                 if (_rawPlan.Count > 0) {
                     //has a created plan
@@ -379,7 +379,7 @@ public class GoapPlanner {
                     }
                     if (currentAction != null) {
                         log += $"\n--Found action: {currentAction.goapName}, creating new node...";
-                        GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(cost, node.level + 1, currentAction, target);
+                        GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapNode(cost, node.level + 1, currentAction, target);
                         BuildGoapTree(leafNode, actor, job, rawPlan, actionsCategorizedByEffect, ref log); //
                     } else {
                         //Fail - rawPlan must be set to null so the plan will fail
@@ -396,7 +396,7 @@ public class GoapPlanner {
                     ProcessFindingLowestCostActionAndTarget(job, preconditionEffect, target, actionsCategorizedByEffect, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log);
                     if (lowestCostAction != null) {
                         log += $"\n--Found action: {lowestCostAction.goapName}, creating new node...";
-                        GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapPlanJob(lowestCost, node.level + 1, lowestCostAction, lowestCostTarget);
+                        GoapNode leafNode = ObjectPoolManager.Instance.CreateNewGoapNode(lowestCost, node.level + 1, lowestCostAction, lowestCostTarget);
                         BuildGoapTree(leafNode, actor, job, rawPlan, actionsCategorizedByEffect, ref log); //, ref log
                     } else {
                         //Fail - rawPlan must be set to null so the plan will fail

@@ -161,8 +161,11 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                         } else {
                             if (character.necromancerTrait.lifeAbsorbed <= 0) {
                                 log += $"\n-Life absorbed is none, will try to absorb life";
-                                if (GameUtilities.RollChance(40)) {
+                                if (GameUtilities.RollChance(10)) {
                                     hasCreated = character.jobComponent.TriggerAbsorbLife(out producedJob);
+                                } else {
+                                    log += $"\n-Will roam";
+                                    character.jobComponent.TriggerRoamAroundTile(out producedJob);
                                 }
                             } else {
                                 log += $"\n-There is life absorbed, 80% to create skeleton follower, 20% chance to absorb more life";

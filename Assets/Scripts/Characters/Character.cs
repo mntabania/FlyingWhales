@@ -3285,7 +3285,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //AddPlan(goapPlan);
         //PlanGoapActions(goapAction);
     }
-    public void PlanIdle(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, out JobQueueItem producedJob, OtherData[] otherData = null) {
+    public void PlanFixedJob(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, out JobQueueItem producedJob, OtherData[] otherData = null) {
         ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[type], this, target, otherData, 0);
         GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, target);
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, type, target, this);
@@ -3294,26 +3294,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         job.SetAssignedPlan(goapPlan);
         producedJob = job;
     }
-    public void PlanIdle(JOB_TYPE jobType, GoapEffect effect, IPointOfInterest target) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, effect, target, this);
-        jobQueue.AddJobInQueue(job);
-        //if (effect.targetPOI != null && effect.targetPOI != this) {
-        //    AddAwareness(effect.targetPOI);
-        //}
-        //StartGOAP(effect, effect.targetPOI, GOAP_CATEGORY.IDLE);
-
-        //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(type, this, target);
-        //GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-        //GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
-        //goapPlan.ConstructAllNodes();
-        //AddPlan(goapPlan);
-        //PlanGoapActions(goapAction);
-    }
-    public void PlanIdle(JOB_TYPE jobType, GoapEffect effect, IPointOfInterest target, out JobQueueItem producedJob) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, effect, target, this);
-        producedJob = job;
-    }
-    public void PlanAction(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, OtherData[] otherData = null) {
+    public void PlanFixedJob(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, OtherData[] otherData = null) {
         ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[type], this, target, otherData, 0);
         GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, target);
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, type, target, this);

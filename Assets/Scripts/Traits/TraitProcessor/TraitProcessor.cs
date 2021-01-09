@@ -111,7 +111,7 @@ namespace Traits {
                 }
             }
             if(traitable.advertisedActions != null && traitable.advertisedActions.Count > 0 && traitable is GenericTileObject genericObj) {
-                LocationAwarenessUtility.AddToAwarenessList(genericObj, traitable.gridTileLocation);
+                UtilityScripts.LocationAwarenessUtility.AddToAwarenessList(genericObj, traitable.gridTileLocation);
                 //removed by aaron for awareness update traitable.gridTileLocation.parentMap.region.AddPendingAwareness(genericObj);
             }
         }
@@ -123,7 +123,7 @@ namespace Traits {
                 }
             }
             if ((traitable.advertisedActions == null || traitable.advertisedActions.Count <= 0) && traitable is GenericTileObject genericObj) {
-                LocationAwarenessUtility.RemoveFromAwarenessList(genericObj);
+                UtilityScripts.LocationAwarenessUtility.RemoveFromAwarenessList(genericObj);
                 //removed by aaron aranas awareness update traitable.gridTileLocation.parentMap.region.RemovePendingAwareness(genericObj);
             }
         }

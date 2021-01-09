@@ -64,11 +64,11 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                         log += "\n-Sit if there is still an unoccupied Table or Desk in the current location";
                         if (deskOrTable != null) {
                             log += $"\n-{character.name} will do action Sit on {deskOrTable}";
-                            character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
+                            character.PlanFixedJob(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
                         } else {
                             log += "\n-Otherwise, stand idle";
                             log += $"\n-{character.name} will do action Stand";
-                            character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
+                            character.PlanFixedJob(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
                         }
                         return true;
                     } else {
@@ -87,7 +87,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                                         log += "\n  -Character is vampiric, cannot do nap action";
                                     } else {
                                         log += $"\n  -Afternoon: {character.name} will do action Nap on {bed}";
-                                        character.PlanIdle(JOB_TYPE.IDLE_NAP, INTERACTION_TYPE.NAP, bed, out producedJob);
+                                        character.PlanFixedJob(JOB_TYPE.IDLE_NAP, INTERACTION_TYPE.NAP, bed, out producedJob);
                                         return true;
                                     }
                                 } else {
@@ -144,7 +144,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                                     LocationStructure targetStructure = targetCharacter.homeStructure;
                                     Assert.IsNotNull(targetStructure, $"Home structure of visit target {targetCharacter.name} is null!");
                                     log += $"\n  -Morning or Afternoon: {character.name} will go to dwelling of character with positive relationship, {targetCharacter.name} and set Base Structure for 2.5 hours";
-                                    character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, targetCharacter, out producedJob, 
+                                    character.PlanFixedJob(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, targetCharacter, out producedJob, 
                                         new OtherData[] { new LocationStructureOtherData(targetStructure), new CharacterOtherData(targetCharacter),  });
                                 } else {
                                     log += "\n  -No valid character to visit.";
@@ -190,14 +190,14 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                         TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                         if (deskOrTable != null) {
                             log += $"\n  -{character.name} will do action Sit on {deskOrTable}";
-                            character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
+                            character.PlanFixedJob(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
                             return true;
                         }
                         log += "\n  -No unoccupied Table or Desk";
 
                         log += "\n-Otherwise, stand idle";
                         log += $"\n  -{character.name} will do action Stand";
-                        character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
+                        character.PlanFixedJob(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
                         return true;
                     }
                 } else {

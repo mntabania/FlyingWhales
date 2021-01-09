@@ -89,7 +89,7 @@ public class MapGenerator : MonoBehaviour {
                     faction.GenerateInitialOpinionBetweenMembers();
                 }
             }
-            LocationAwarenessUtility.UpdateAllPendingAwareness();
+            UtilityScripts.LocationAwarenessUtility.UpdateAllPendingAwareness();
             //yield return StartCoroutine(LocationAwarenessUtility.UpdateAllPendingAwarenessThread());
             for (int j = 0; j < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; j++) {
                 NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[j];
@@ -192,7 +192,7 @@ public class MapGenerator : MonoBehaviour {
                 }
             }
 
-            LocationAwarenessUtility.UpdateAllPendingAwareness();
+            UtilityScripts.LocationAwarenessUtility.UpdateAllPendingAwareness();
             //yield return StartCoroutine(LocationAwarenessUtility.UpdateAllPendingAwarenessThread());
 
             for (int j = 0; j < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; j++) {

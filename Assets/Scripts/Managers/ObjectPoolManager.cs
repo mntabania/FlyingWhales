@@ -171,7 +171,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     private void ConstructGoapNodes() {
         goapNodesPool = new List<GoapNode>();
     }
-    public GoapNode CreateNewGoapPlanJob(int cost, int level, GoapAction action, IPointOfInterest target) {
+    public GoapNode CreateNewGoapNode(int cost, int level, GoapAction action, IPointOfInterest target) {
         GoapNode node = GetGoapNodeFromPool();
         node.Initialize(cost, level, action, target);
         return node;

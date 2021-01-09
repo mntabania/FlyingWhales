@@ -42,14 +42,14 @@ public class DefaultBaseStructure : CharacterBehaviourComponent {
             TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
             if (deskOrTable != null) {
                 log += $"\n  -{character.name} will do action Sit on {deskOrTable}";
-                character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
+                character.PlanFixedJob(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable, out producedJob);
                 return true;
             } else {
                 log += "\n  -No unoccupied Table or Desk";
             }
             log += "\n-Otherwise, stand idle";
             log += $"\n  -{character.name} will do action Stand";
-            character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
+            character.PlanFixedJob(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
             return true;
         }
         return false;

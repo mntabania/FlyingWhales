@@ -485,6 +485,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, 
 					new GoapEffect(GetProduceResourceGoapEffect(resourceType), string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), 
 					targetPile, _owner);
+                //TODO: Produce Resource priority locations
 				job.SetStillApplicableChecker(JobManager.Produce_Resource_Applicability);
 				_owner.AddToAvailableJobs(job);	
 			}
@@ -499,7 +500,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR, target, _owner);
 			job.SetCanTakeThisJobChecker(JobManager.Can_Take_Repair);
 			job.SetStillApplicableChecker(JobManager.Repair_Applicability);
-			if (target is TileObject tileObject) {
+            UtilityScripts.JobUtilities.PopulatePriorityLocationsForTakingNonEdibleResources(_owner, job, INTERACTION_TYPE.TAKE_RESOURCE);
+            if (target is TileObject tileObject) {
 				job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] {TileObjectDB.GetTileObjectData(tileObject.tileObjectType).repairCost});	
 			}
 			_owner.AddToAvailableJobs(job);
@@ -590,7 +592,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 			job.SetCanTakeThisJobChecker(JobManager.Can_Take_Obtain_Personal_Food);
 			job.SetStillApplicableChecker(JobManager.Obtain_Personal_Food_Applicability);
 			job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { neededFood });
-			_owner.AddToAvailableJobs(job);
+            UtilityScripts.JobUtilities.PopulatePriorityLocationsForTakingPersonalItem(_owner, job, INTERACTION_TYPE.TAKE_RESOURCE);
+            _owner.AddToAvailableJobs(job);
 		}
 	}
 	private bool CanTakeObtainPersonalFoodJob(Character character, JobQueueItem job) {
@@ -1010,7 +1013,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	    
 	    if (!_owner.HasJob(JOB_TYPE.CRAFT_OBJECT, waterWell)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, waterWell, _owner);
-		    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.WATER_WELL).mainRecipe });
+            UtilityScripts.JobUtilities.PopulatePriorityLocationsForTakingNonEdibleResources(_owner, job, INTERACTION_TYPE.TAKE_RESOURCE);
+            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.WATER_WELL).mainRecipe });
 		    job.SetCanTakeThisJobChecker(JobManager.Can_Craft_Well);
 		    _owner.AddToAvailableJobs(job); 
 	    }
