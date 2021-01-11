@@ -50,6 +50,10 @@ public class LocationStructureObject : PooledObject {
     [FormerlySerializedAs("rooms")] [Header("Rooms")] 
     public RoomTemplate[] roomTemplates; //if this is null then it means that this structure object has no rooms.
 
+    [Space]
+    [Header("Required Tile Object")]
+    public SettlementResources.StructureRequirement requiredObjectForBuilding;
+
     public bool wallsContributeToDamage = true;
     private StructureTemplate _parentTemplate;
     private StructureTemplateObjectData[] _preplacedObjs;

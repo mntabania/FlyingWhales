@@ -8100,7 +8100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
-  structureType: 48
+  structureType: 52
   _groundTileMap: {fileID: 8625087762305282739}
   _detailTileMap: {fileID: 7170504055777748978}
   _groundTileMapRenderer: {fileID: 3829207420879592895}
@@ -8119,6 +8119,7 @@ MonoBehaviour:
   - {fileID: 698848826964511622}
   - {fileID: 1003798643485803671}
   roomTemplates: []
+  requiredObjectForBuilding: 3
   wallsContributeToDamage: 1
   wallTileMap: {fileID: 6495424846022631537}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}

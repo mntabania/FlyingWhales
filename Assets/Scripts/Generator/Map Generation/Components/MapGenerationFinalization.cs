@@ -12,6 +12,7 @@ using UnityEngine;
 using UtilityScripts;
 
 public class MapGenerationFinalization : MapGenerationComponent {
+
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Finalizing world...");
 		yield return MapGenerator.Instance.StartCoroutine(FinalizeInnerMaps());

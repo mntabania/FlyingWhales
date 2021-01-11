@@ -698,6 +698,7 @@ public enum STRUCTURE_TYPE {
     CRAFTING = 49,
     TAILORING = 50,
     TANNERY = 51,
+    FISHING_SPOT = 52,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,

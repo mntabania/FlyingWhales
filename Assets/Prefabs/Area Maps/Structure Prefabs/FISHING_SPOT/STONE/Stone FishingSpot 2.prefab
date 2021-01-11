@@ -7701,7 +7701,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
-  structureType: 48
+  structureType: 52
   _groundTileMap: {fileID: 6951400017087332952}
   _detailTileMap: {fileID: 8379120355566262041}
   _groundTileMapRenderer: {fileID: 2517003390516833620}
@@ -7720,6 +7720,7 @@ MonoBehaviour:
   - {fileID: 2195766146434595693}
   - {fileID: 1883656310731928700}
   roomTemplates: []
+  requiredObjectForBuilding: 3
   wallsContributeToDamage: 1
   wallTileMap: {fileID: 5615496810019164314}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}

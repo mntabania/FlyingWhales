@@ -7537,6 +7537,7 @@ MonoBehaviour:
   - {fileID: 2575268854080829493}
   - {fileID: 1891780540846283304}
   roomTemplates: []
+  requiredObjectForBuilding: 1
   wallsContributeToDamage: 1
   wallTileMap: {fileID: 8603542396990789621}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}

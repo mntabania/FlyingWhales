@@ -5,6 +5,7 @@ using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
+using Locations.Settlements;
 
 public class TreeObject : TileObject {
     public int yield { get; private set; }
@@ -34,6 +35,23 @@ public class TreeObject : TileObject {
         Assert.IsNotNull(data);
         yield = data.yield;
         _occupiedState = data.occupiedState;
+    }
+
+    public override void UpdateSettlementResourcesParent() {
+        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+            gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
+                if (eachNeighboringHexTile.settlementOnTile != null) {
+                    if (!eachNeighboringHexTile.settlementOnTile.SettlementResources.trees.Contains(this)) {
+                        eachNeighboringHexTile.settlementOnTile.SettlementResources.trees.Add(this);
+                        parentSettlement = eachNeighboringHexTile.settlementOnTile;
+                    }
+                }
+            });
+        }
+    }
+
+    public override void RemoveFromSettlementResourcesParent() {
+        parentSettlement.SettlementResources.trees.Remove(this);
     }
 
     #region Loading
@@ -97,6 +115,7 @@ public class TreeObject : TileObject {
             ent.marker.PlaceMarkerAt(gridTileLocation);
             ent.marker.SetVisualState(false);
         }
+        UpdateSettlementResourcesParent();
     }
     #endregion
 

@@ -11,6 +11,9 @@ using Logs;
 
 namespace Locations.Settlements {
     public abstract class BaseSettlement : IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ISavable, ILogFiller, IPlayerActionTarget {
+
+        public static Action onSettlementBuilt;
+        
         public string persistentID { get; private set; }
         public int id { get; }
         public LOCATION_TYPE locationType { get; private set; }
@@ -23,6 +26,8 @@ namespace Locations.Settlements {
         public List<LocationStructure> allStructures { get; protected set; }
         public List<Party> parties { get; protected set; }
         public List<PLAYER_SKILL_TYPE> actions { get; private set; }
+
+        public virtual SettlementResources SettlementResources { set; get; }
 
         #region getters
         public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
