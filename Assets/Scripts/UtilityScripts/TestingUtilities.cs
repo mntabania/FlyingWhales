@@ -21,6 +21,9 @@ namespace UtilityScripts {
                     summary += $"\nPoisoned Tiles: {npcSettlement.settlementJobTriggerComponent.poisonedTiles.Count.ToString()}";
                     summary += $"\nHas Peasants: {npcSettlement.hasPeasants.ToString()}, Has Workers: {npcSettlement.hasWorkers.ToString()}";
                     summary += $"\nStorage: {npcSettlement.mainStorage?.name ?? "None"}. Prison: {npcSettlement.prison?.name ?? "None"}";
+                    summary += $"\nRocks Count: {npcSettlement.SettlementResources.rocks.Count}";
+                    summary += $"\nTrees Count: {npcSettlement.SettlementResources.trees.Count}";
+                    summary += $"\nWater Wells Count: {npcSettlement.SettlementResources.waterWells.Count}";
                     summary += $"\nNeeded Items: ";
                     for (int j = 0; j < npcSettlement.neededObjects.Count; j++) {
                         summary += $"|{npcSettlement.neededObjects[j].ToString()}|";

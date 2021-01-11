@@ -73,7 +73,7 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                         if (character.homeSettlement.HasHomelessResident()) {
                             chance = 7;
                         }
-                        // chance = 100;
+                        chance = 0;
                         if (GameUtilities.RollChance(chance, ref log)) {
                             log += $"\n-Chance met and dwellings not yet at maximum.";
                             //place dwelling blueprint
@@ -102,6 +102,7 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                         if (facilityCount < (character.homeSettlement.settlementType.maxFacilities/2)) {
                             chance = 3;
                         }
+                        chance = 100;
                         if (GameUtilities.RollChance(chance, ref log)) {
                             log += $"\n-Chance to build facility met.";
                             //place random facility based on weights
