@@ -52,6 +52,11 @@ public class Rock : TileObject{
             parentSettlement.SettlementResources.rocks.Remove(this);
         }
     }
+
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        UpdateSettlementResourcesParent();
+    }
 }
 #region Save Data
 public class SaveDataRock : SaveDataTileObject {
