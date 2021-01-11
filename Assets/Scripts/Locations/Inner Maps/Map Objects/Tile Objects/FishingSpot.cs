@@ -4,7 +4,14 @@ using Inner_Maps.Map_Objects.Map_Object_Visuals;
 using Locations.Settlements;
 
 public class FishingSpot : TileObject {
-    public override StructureConnector structureConnector => _fishingSpotGameObject.structureConnector;
+    public override StructureConnector structureConnector {
+        get {
+            if (_fishingSpotGameObject != null) {
+                return _fishingSpotGameObject.structureConnector;
+            }
+            return null;
+        }
+    }
     private FishingSpotGameObject _fishingSpotGameObject;
     
     public FishingShack connectedFishingShack { get; private set; }
@@ -54,7 +61,12 @@ public class FishingSpot : TileObject {
         }
     }
     public override void RemoveFromSettlementResourcesParent() {
-        parentSettlement?.SettlementResources.fishingSpots.Remove(this);
+        if (parentSettlement != null) {
+            if (parentSettlement.SettlementResources.fishingSpots.Remove(this)) {
+                parentSettlement = null;
+            }    
+        }
+        
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();

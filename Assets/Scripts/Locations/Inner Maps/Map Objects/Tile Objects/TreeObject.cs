@@ -21,7 +21,14 @@ public class TreeObject : TileObject {
     private Character[] _users;
     private Occupied_State _occupiedState;
     public override System.Type serializedData => typeof(SaveDataTreeObject);
-    public override StructureConnector structureConnector => _treeGameObject.structureConnector;
+    public override StructureConnector structureConnector {
+        get {
+            if (_treeGameObject != null) {
+                return _treeGameObject.structureConnector;
+            }
+            return null;
+        }
+    }
     public Occupied_State occupiedState => _occupiedState;
     public Ent ent => _ent;
 
@@ -57,7 +64,12 @@ public class TreeObject : TileObject {
     }
 
     public override void RemoveFromSettlementResourcesParent() {
-        parentSettlement.SettlementResources.trees.Remove(this);
+        if (parentSettlement != null) {
+            if (parentSettlement.SettlementResources.trees.Remove(this)) {
+                parentSettlement = null;
+            }    
+        }
+        
     }
 
     #region Loading

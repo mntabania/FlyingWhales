@@ -8,7 +8,14 @@ using Inner_Maps.Map_Objects.Map_Object_Visuals;
 public class Rock : TileObject{
     public int yield { get; private set; }
     public override Type serializedData => typeof(SaveDataRock);
-    public override StructureConnector structureConnector => _rockGameObject.structureConnector;
+    public override StructureConnector structureConnector {
+        get {
+            if (_rockGameObject != null) {
+                return _rockGameObject.structureConnector;
+            }
+            return null;
+        }
+    }
     
     private RockGameObject _rockGameObject;
     public Rock() {
@@ -57,7 +64,9 @@ public class Rock : TileObject{
     }
     public override void RemoveFromSettlementResourcesParent() {
         if (parentSettlement != null) {
-            parentSettlement.SettlementResources.rocks.Remove(this);
+            if (parentSettlement.SettlementResources.rocks.Remove(this)) {
+                parentSettlement = null;
+            }
         }
     }
 

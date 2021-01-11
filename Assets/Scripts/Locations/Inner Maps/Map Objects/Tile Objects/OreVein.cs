@@ -5,7 +5,14 @@ using Locations.Settlements;
 using UnityEngine;
 
 public class OreVein : TileObject {
-    public override StructureConnector structureConnector => _oreVeinGameObject.structureConnector;
+    public override StructureConnector structureConnector {
+        get {
+            if (_oreVeinGameObject != null) {
+                return _oreVeinGameObject.structureConnector;
+            }
+            return null;
+        }
+    }
     private OreVeinGameObject _oreVeinGameObject;
     
     public OreVein() {
@@ -30,7 +37,9 @@ public class OreVein : TileObject {
 
     public override void RemoveFromSettlementResourcesParent() {
         if (parentSettlement != null) {
-            parentSettlement.SettlementResources.oreVeins.Remove(this);
+            if (parentSettlement.SettlementResources.oreVeins.Remove(this)) {
+                parentSettlement = null;
+            }
         }
     }
     

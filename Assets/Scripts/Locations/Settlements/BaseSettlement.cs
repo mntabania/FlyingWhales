@@ -439,7 +439,7 @@ namespace Locations.Settlements {
             List<StructureConnector> connectors = new List<StructureConnector>();
             for (int i = 0; i < SettlementResources.rocks.Count; i++) {
                 Rock rock = SettlementResources.rocks[i];
-                if (rock.structureConnector.isOpen && rock.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                if (rock.structureConnector != null && rock.structureConnector.isOpen && rock.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                     connectors.Add(rock.structureConnector);
                 }
             }
@@ -449,7 +449,7 @@ namespace Locations.Settlements {
             List<StructureConnector> connectors = new List<StructureConnector>();
             for (int i = 0; i < SettlementResources.trees.Count; i++) {
                 TreeObject treeObject = SettlementResources.trees[i];
-                if (treeObject.structureConnector.isOpen && treeObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                if (treeObject.structureConnector != null && treeObject.structureConnector.isOpen && treeObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                     connectors.Add(treeObject.structureConnector);
                 }
             }
@@ -459,7 +459,7 @@ namespace Locations.Settlements {
             List<StructureConnector> connectors = new List<StructureConnector>();
             for (int i = 0; i < SettlementResources.fishingSpots.Count; i++) {
                 FishingSpot fishingSpot = SettlementResources.fishingSpots[i];
-                if (fishingSpot.structureConnector.isOpen && fishingSpot.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                if (fishingSpot.structureConnector != null && fishingSpot.structureConnector.isOpen && fishingSpot.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                     connectors.Add(fishingSpot.structureConnector);
                 }
             }
@@ -469,7 +469,7 @@ namespace Locations.Settlements {
             List<StructureConnector> connectors = new List<StructureConnector>();
             for (int i = 0; i < SettlementResources.oreVeins.Count; i++) {
                 OreVein oreVein = SettlementResources.oreVeins[i];
-                if (oreVein.structureConnector.isOpen && oreVein.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                if (oreVein.structureConnector != null && oreVein.structureConnector.isOpen && oreVein.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                     connectors.Add(oreVein.structureConnector);
                 }
             }
