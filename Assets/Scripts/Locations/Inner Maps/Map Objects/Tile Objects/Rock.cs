@@ -45,11 +45,11 @@ public class Rock : TileObject{
     public override void UpdateSettlementResourcesParent() {
         if (gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
             if (gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null) {
-                gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
+                gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
             }
             gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
                 if (eachNeighboringHexTile.settlementOnTile != null) {
-                    eachNeighboringHexTile.settlementOnTile.SettlementResources.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
+                    eachNeighboringHexTile.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
                     parentSettlement = eachNeighboringHexTile.settlementOnTile;
                 }
             });
@@ -64,6 +64,10 @@ public class Rock : TileObject{
     public override void OnPlacePOI() {
         base.OnPlacePOI();
         UpdateSettlementResourcesParent();
+    }
+    public override void OnDestroyPOI() {
+        base.OnDestroyPOI();
+        BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;
     }
 }
 #region Save Data

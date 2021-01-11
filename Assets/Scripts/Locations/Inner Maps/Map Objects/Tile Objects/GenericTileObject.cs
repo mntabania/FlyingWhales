@@ -201,7 +201,7 @@ public class GenericTileObject : TileObject {
         }
         hasBeenInitialized = true;
         Initialize(saveDataTileObject);
-        SetGridTileLocation(tile);
+        // SetGridTileLocation(tile);
     }
 
     #region Structure Blueprints
@@ -253,7 +253,7 @@ public class GenericTileObject : TileObject {
         }
         
     }
-    public LocationStructure BuildBlueprint(NPCSettlement npcSettlement) {
+    public LocationStructure BuildBlueprint(NPCSettlement npcSettlement, LocationGridTile p_usedConnector) {
         HexTile hexTile = gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
         npcSettlement.AddTileToSettlement(hexTile);
         
@@ -276,6 +276,9 @@ public class GenericTileObject : TileObject {
         structure.CreateRoomsBasedOnStructureObject(blueprintOnTile);
         structure.OnBuiltNewStructure();
         structure.OnBuiltNewStructureFromBlueprint();
+        if (structure is ManMadeStructure mmStructure) {
+            mmStructure.OnUseStructureConnector(p_usedConnector);    
+        }
 
         CancelBlueprintExpiry();
         blueprintOnTile = null;

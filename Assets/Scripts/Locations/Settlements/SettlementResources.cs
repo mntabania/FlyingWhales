@@ -53,8 +53,8 @@ public class SettlementResources
             }
             break;
         }
-        Debug.LogError("WELL " + fishingSpots.Count);
-        Debug.LogError("TREE " + trees.Count);
-        Debug.LogError("ROCK " + rocks.Count);
+        // Debug.LogError("WELL " + fishingSpots.Count);
+        // Debug.LogError("TREE " + trees.Count);
+        // Debug.LogError("ROCK " + rocks.Count);
     }
 }

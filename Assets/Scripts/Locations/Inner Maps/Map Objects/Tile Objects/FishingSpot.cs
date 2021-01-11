@@ -6,7 +6,7 @@ public class FishingSpot : TileObject {
     public override StructureConnector structureConnector => _fishingSpotGameObject.structureConnector;
     private FishingSpotGameObject _fishingSpotGameObject;
     
-    public FishingShack connectedStructure { get; private set; } //TODO:
+    public FishingShack connectedFishingShack { get; private set; }
     
     public FishingSpot() {
         Initialize(TILE_OBJECT_TYPE.FISHING_SPOT);
@@ -20,6 +20,16 @@ public class FishingSpot : TileObject {
     }
     public FishingSpot(SaveDataTileObject data) { }
 
+    #region Loading
+    public override void LoadSecondWave(SaveDataTileObject data) {
+        base.LoadSecondWave(data);
+        SaveDataFishingSpot saveDataFishingSpot = data as SaveDataFishingSpot;
+        if (!string.IsNullOrEmpty(saveDataFishingSpot.connectedFishingShackID)) {
+            connectedFishingShack = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataFishingSpot.connectedFishingShackID) as FishingShack;
+        }
+    }
+    #endregion
+    
     #region Overrides
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
@@ -32,11 +42,11 @@ public class FishingSpot : TileObject {
     public override void UpdateSettlementResourcesParent() {
         if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
             if (gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null) {
-                gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
+                gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
             }
             gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
                 if (eachNeighboringHexTile.settlementOnTile != null) {
-                    eachNeighboringHexTile.settlementOnTile.SettlementResources.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
+                    eachNeighboringHexTile.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
                     parentSettlement = eachNeighboringHexTile.settlementOnTile;
                 }
             });
@@ -55,6 +65,7 @@ public class FishingSpot : TileObject {
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
         Messenger.RemoveListener(Signals.HOUR_STARTED, HourStarted);
+        BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;
     }
     public override bool CanBeAffectedByElementalStatus(string traitName) {
         if (traitName == "Wet") {
@@ -81,4 +92,33 @@ public class FishingSpot : TileObject {
         
     }
     #endregion
+
+    #region Structure
+    public void SetConnectedFishingShack(FishingShack p_fishingShack) {
+        connectedFishingShack = p_fishingShack;
+        if (connectedFishingShack != null) {
+            Messenger.AddListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+        } else {
+            Messenger.RemoveListener<LocationStructure>(StructureSignals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+        }
+    }
+    private void OnStructureDestroyed(LocationStructure p_structure) {
+        if (p_structure == connectedFishingShack) {
+            SetConnectedFishingShack(null);
+        }
+    }
+    #endregion
 }
+
+#region Save Data
+public class SaveDataFishingSpot : SaveDataTileObject {
+    public string connectedFishingShackID;
+    public override void Save(TileObject data) {
+        base.Save(data);
+        FishingSpot fishingSpot = data as FishingSpot;
+        if (fishingSpot.connectedFishingShack != null) {
+            connectedFishingShackID = fishingSpot.connectedFishingShack.persistentID;
+        }
+    }
+}
+#endregion

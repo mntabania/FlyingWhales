@@ -673,7 +673,7 @@ public class LocationStructureObject : PooledObject {
     /// <param name="innerTileMap">The inner map that this structure will be placed on.</param>
     /// <param name="usedConnectorIndex">The index of the connector that was used by this structure object.</param>
     /// <returns>The first valid connector from the list of choices.</returns>
-    public StructureConnector GetFirstValidConnector(List<StructureConnector> connectionChoices, InnerTileMap innerTileMap, out int usedConnectorIndex, out LocationGridTile tileToPlaceStructure) {
+    public StructureConnector GetFirstValidConnector(List<StructureConnector> connectionChoices, InnerTileMap innerTileMap, out int usedConnectorIndex, out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile) {
         //loop through connection choices
         for (int i = 0; i < connectionChoices.Count; i++) {
             StructureConnector connectorA = connectionChoices[i];
@@ -696,12 +696,14 @@ public class LocationStructureObject : PooledObject {
                 if (centerTile != null && HasEnoughSpaceIfPlacedOn(centerTile)) {
                     tileToPlaceStructure = centerTile;
                     usedConnectorIndex = j;
+                    connectorTile = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);
                     return connectorA;
                 }
             }
         }
         tileToPlaceStructure = null;
         usedConnectorIndex = -1;
+        connectorTile = null;
         return null;
     }
     public bool HasEnoughSpaceIfPlacedOn(LocationGridTile centerTile) {

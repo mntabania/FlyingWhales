@@ -52,6 +52,7 @@ namespace Inner_Maps.Location_Structures {
         private void SetStructureTileObject(StructureTileObject structureTileObject) {
             _structureTileObject = structureTileObject;
         }
+        public virtual void OnUseStructureConnector(LocationGridTile p_usedConnector) { }
         #endregion
         
         #region HP

@@ -25,7 +25,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public Region currentRegion => gridTileLocation.structure.region;
     public LocationStructure structureLocation => gridTileLocation?.structure;
 
-    public BaseSettlement parentSettlement;
+    public BaseSettlement parentSettlement; //NOTE: This is only used in Fishing Spot, Ore Vein, Rock and Tree Object //TODO: either use this in all TileObjects or refactor
     public bool isPreplaced { get; private set; }
     /// <summary>
     /// All currently in progress jobs targeting this.

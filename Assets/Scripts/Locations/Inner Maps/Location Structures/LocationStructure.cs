@@ -1209,6 +1209,18 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         public virtual void OnCharacterUnSeizedHere(Character character) { }
+
+        #region Testing
+        public virtual string GetTestingInfo() {
+            string summary = $"{name} Info:";
+            summary += "\nDamage Contributing Objects:";
+            for (int i = 0; i < objectsThatContributeToDamage.Count; i++) {
+                IDamageable damageable = objectsThatContributeToDamage.ElementAt(i);
+                summary += $"\n\t- {damageable}";
+            }
+            return summary;
+        }
+        #endregion
     }
 }
 

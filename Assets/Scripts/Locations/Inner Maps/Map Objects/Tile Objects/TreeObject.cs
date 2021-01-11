@@ -44,9 +44,12 @@ public class TreeObject : TileObject {
 
     public override void UpdateSettlementResourcesParent() {
         if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+            if (gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null) {
+                gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
+            }
             gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
                 if (eachNeighboringHexTile.settlementOnTile != null) {
-                    eachNeighboringHexTile.settlementOnTile.SettlementResources.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
+                    eachNeighboringHexTile.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
                    parentSettlement = eachNeighboringHexTile.settlementOnTile;
                 }
             });

@@ -209,7 +209,7 @@ public class SettlementGeneration : MapGenerationComponent {
 			for (int j = 0; j < prefabChoices.Count; j++) {
 				GameObject prefabGO = prefabChoices[j];
 				LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
-				StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, region.innerMap, out var connectorIndex, out LocationGridTile tileToPlaceStructure);
+				StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, region.innerMap, out var connectorIndex, out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile);
 				if (validConnector != null) {
 					//instantiate structure object at tile.
 					LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(npcSettlement, region.innerMap, prefabGO, tileToPlaceStructure);

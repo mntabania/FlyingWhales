@@ -200,6 +200,7 @@ namespace Inner_Maps {
                         tile.CreateGenericTileObject();    
                     }
                     tile.SetStructure(wilderness);
+                    tile.genericTileObject.SetGridTileLocation(tile); //had to do this since I could not set tile location before setting structure because awareness list depends on it.
                     allTiles.Add(tile);
                     if (tile.IsAtEdgeOfWalkableMap()) {
                         allEdgeTiles.Add(tile);

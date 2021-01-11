@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Logs;
 using UnityEngine;
@@ -122,7 +123,8 @@ public class BuildBlueprint : GoapAction {
     }
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is GenericTileObject genericTileObject) {
-            genericTileObject.BuildBlueprint(goapNode.actor.homeSettlement);
+            LocationGridTile connectorTile = (LocationGridTile)goapNode.otherData[0].obj;
+            genericTileObject.BuildBlueprint(goapNode.actor.homeSettlement, connectorTile);
 
             if(genericTileObject.blueprintOnTile != null) {
                 //After successfully building house, no house faction leader/settlement ruler/nobles should have first dibs on the newly built house

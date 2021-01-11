@@ -478,7 +478,8 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public LocationStructure PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, GameObject chosenPrefab, LocationGridTile centerTile) {
         return innerTileMap.PlaceBuiltStructureTemplateAt(chosenPrefab, centerTile, settlement);
     }
-    public bool CanPlaceStructureBlueprint(NPCSettlement npcSettlement, StructureSetting structureToPlace, out LocationGridTile targetTile, out string structurePrefabName, out int connectorToUse) {
+    public bool CanPlaceStructureBlueprint(NPCSettlement npcSettlement, StructureSetting structureToPlace, out LocationGridTile targetTile, out string structurePrefabName, 
+        out int connectorToUse, out LocationGridTile connectorTile) {
         List<StructureConnector> availableStructureConnectors = npcSettlement.GetStructureConnectorsForStructureType(structureToPlace.structureType);
         availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
         List<GameObject> prefabChoices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureToPlace);
@@ -486,7 +487,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         for (int j = 0; j < prefabChoices.Count; j++) {
             GameObject prefabGO = prefabChoices[j];
             LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
-            StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, npcSettlement.region.innerMap, out var connectorIndex, out LocationGridTile tileToPlaceStructure);
+            StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, npcSettlement.region.innerMap, out var connectorIndex, out LocationGridTile tileToPlaceStructure, out connectorTile);
             if (validConnector != null) {
                 targetTile = tileToPlaceStructure;
                 structurePrefabName = prefabGO.name;
@@ -497,6 +498,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         targetTile = null;
         structurePrefabName = string.Empty;
         connectorToUse = -1;
+        connectorTile = null;
         return false;
     }
     public bool HasEnoughSpaceForStructure(string structurePrefabName, LocationGridTile tileLocation) {
