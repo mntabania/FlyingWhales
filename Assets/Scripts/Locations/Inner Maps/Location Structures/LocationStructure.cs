@@ -112,6 +112,8 @@ namespace Inner_Maps.Location_Structures {
             SetInteriorState(data.isInterior);
             maxResidentCapacity = 5;
             hasBeenDestroyed = data.hasBeenDestroyed;
+            
+            locationAwareness = new LocationAwareness();
         }
 
         #region Loading
