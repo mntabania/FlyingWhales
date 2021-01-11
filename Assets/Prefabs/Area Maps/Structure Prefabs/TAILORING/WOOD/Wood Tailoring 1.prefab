@@ -902,7 +902,7 @@ GameObject:
   - component: {fileID: 9179322445261141595}
   - component: {fileID: 963763871293087952}
   m_Layer: 14
-  m_Name: Wood Tailotring 1
+  m_Name: Wood Tailoring 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17611,7 +17611,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8876960139897341694}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.5, y: -4.5, z: 0}
+  m_LocalPosition: {x: -7.5, y: -4.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2586890935198401851}

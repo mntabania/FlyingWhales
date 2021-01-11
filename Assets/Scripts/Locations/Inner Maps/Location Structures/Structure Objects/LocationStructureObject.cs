@@ -889,6 +889,12 @@ public class LocationStructureObject : PooledObject {
             }
         }
     }
+
+    [ContextMenu("Set Pivot Point")]
+    public void SetPivotPoint() {
+        transform.Find("Content").transform.position = new Vector3((center.x + .5f) * -1f, (center.y + .5f) * -1f, 0f);
+    }
+    
     private WallVisual InstantiateWall(GameObject wallPrefab, Vector3 centeredPos, Transform parent, bool updateWallAsset) {
         GameObject wallGO = Instantiate(wallPrefab, parent);
         wallGO.transform.position = centeredPos;
