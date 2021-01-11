@@ -2725,16 +2725,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         producedJob = null;
         return false;
     }
-    public bool TriggerPartyEatJob(Table table, out JobQueueItem producedJob) { //bool forceDoAction = false
-        if (!owner.jobQueue.HasJob(JOB_TYPE.PARTYING)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTYING, INTERACTION_TYPE.EAT, table, owner);
-            job.SetCannotBePushedBack(true);
-            producedJob = job;
-            return true;
-        }
-        producedJob = null;
-        return false;
-    }
+    //public bool TriggerPartyEatJob(Table table, out JobQueueItem producedJob) { //bool forceDoAction = false
+    //    if (!owner.jobQueue.HasJob(JOB_TYPE.PARTYING)) {
+    //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTYING, INTERACTION_TYPE.EAT, table, owner);
+    //        job.SetCannotBePushedBack(true);
+    //        producedJob = job;
+    //        return true;
+    //    }
+    //    producedJob = null;
+    //    return false;
+    //}
     public bool TriggerPlayCardsJob(Desk desk, out JobQueueItem producedJob) { //bool forceDoAction = false
         if (!owner.jobQueue.HasJob(JOB_TYPE.PARTYING)) {
             ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PLAY_CARDS], owner, desk, null, 0);
