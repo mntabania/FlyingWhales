@@ -48,6 +48,7 @@ public class WaterWell : TileObject {
             AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
         }
         Messenger.AddListener(Signals.HOUR_STARTED, HourStarted);
+        UpdateSettlementResourcesParent();
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
