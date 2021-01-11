@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using Inner_Maps;
 using Locations.Settlements;
+using Inner_Maps.Location_Structures;
 
 public class Rock : TileObject{
     public int yield { get; private set; }
@@ -19,6 +20,8 @@ public class Rock : TileObject{
         BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
     public Rock(SaveDataTileObject data) { }
+
+    public override StructureConnector structureConnector { get; protected set; }
 
     public void AdjustYield(int amount) {
         yield += amount;

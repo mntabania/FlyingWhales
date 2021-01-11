@@ -172,6 +172,8 @@ public static class Extensions {
         switch (structureType) {
             case STRUCTURE_TYPE.QUARRY:
             return SettlementResources.StructureRequirement.ROCK;
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+            return SettlementResources.StructureRequirement.FEATURE_GAME;
             case STRUCTURE_TYPE.ABANDONED_MINE:
             case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
             case STRUCTURE_TYPE.ANCIENT_RUIN:

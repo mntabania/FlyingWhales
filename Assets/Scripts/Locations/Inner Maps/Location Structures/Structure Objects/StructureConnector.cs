@@ -12,6 +12,8 @@ namespace Inner_Maps.Location_Structures {
         
         #region getters
         public bool isOpen => _isOpen;
+
+        public LocationGridTile TileLocation => _tileLocation;
         public LocationStructure ownerStructure => string.IsNullOrEmpty(_ownerID) ? null : DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(_ownerID);
         #endregion
         

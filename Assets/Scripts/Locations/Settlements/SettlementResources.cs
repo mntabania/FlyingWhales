@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SettlementResources
 {
-    public enum StructureRequirement { NONE = 0, ROCK, TREE, WATER_WELL }
+    public enum StructureRequirement { NONE = 0, ROCK, TREE, WATER_WELL, FEATURE_GAME }
     public List<Rock> rocks = new List<Rock>();
     public List<TreeObject> trees = new List<TreeObject>();
     public List<WaterWell> waterWells = new List<WaterWell>();

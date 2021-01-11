@@ -61,6 +61,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     private bool hasSubscribedToListeners;
 
     public LogComponent logComponent { get; protected set; }
+
+    public virtual StructureConnector structureConnector { get; protected set; }
     
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Tile_Object;

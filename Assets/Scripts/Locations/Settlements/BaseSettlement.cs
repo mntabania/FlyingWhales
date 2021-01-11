@@ -8,6 +8,7 @@ using Traits;
 using UnityEngine;
 using UtilityScripts;
 using Logs;
+using Locations.Tile_Features;
 
 namespace Locations.Settlements {
     public abstract class BaseSettlement : IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ISavable, ILogFiller, IPlayerActionTarget, ILocation {
@@ -399,6 +400,53 @@ namespace Locations.Settlements {
             }
             return connectors;
         }
+
+        public List<StructureConnector> GetAvailableStructureConnectorsbaseOnGameFeature() {
+            List<StructureConnector> connectors = new List<StructureConnector>();
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure structure = allStructures[i];
+                if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
+                    for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
+                        StructureConnector connector = manMadeStructure.structureObj.connectors[j];
+                        if (connector.isOpen && connector.TileLocation.collectionOwner.partOfHextile.hexTileOwner.HasNeighbourWithFeature(TileFeatureDB.Game_Feature)) {
+                            connectors.Add(connector);
+                        }
+                    }
+                }
+            }
+            return connectors;
+        }
+
+        public List<StructureConnector> GetAvailableRockConnectors() {
+            List<StructureConnector> connectors = new List<StructureConnector>();
+            for (int i = 0; i < SettlementResources.rocks.Count; i++) {
+                if (SettlementResources.rocks[i].structureConnector.isOpen) {
+                    connectors.Add(SettlementResources.rocks[i].structureConnector);
+                }
+            }
+            return connectors;
+        }
+
+        public List<StructureConnector> GetAvailableTreeConnectors() {
+            List<StructureConnector> connectors = new List<StructureConnector>();
+            for (int i = 0; i < SettlementResources.trees.Count; i++) {
+                if (SettlementResources.trees[i].structureConnector.isOpen) {
+                    connectors.Add(SettlementResources.trees[i].structureConnector);
+                }
+            }
+            return connectors;
+        }
+
+        public List<StructureConnector> GetAvailableWaterWellConnectors() {
+            List<StructureConnector> connectors = new List<StructureConnector>();
+            for (int i = 0; i < SettlementResources.waterWells.Count; i++) {
+                if (SettlementResources.waterWells[i].structureConnector.isOpen) {
+                    connectors.Add(SettlementResources.waterWells[i].structureConnector);
+                }
+            }
+            return connectors;
+        }
+
         public int GetStructureCount(STRUCTURE_TYPE structureType) {
             if (HasStructure(structureType)) {
                 return structures[structureType].Count;
