@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
+using Locations.Settlements;
 
 public class BigTreeObject : TreeObject {
 	public override Vector2 selectableSize => new Vector2(1.7f, 1.7f);

@@ -11,6 +11,7 @@ using UnityEngine.EventSystems;
 using Locations.Settlements;
 using Locations;
 using Logs;
+using Locations.Settlements;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -23,6 +24,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public List<INTERACTION_TYPE> advertisedActions { get; protected set; }
     public Region currentRegion => gridTileLocation.structure.region;
     public LocationStructure structureLocation => gridTileLocation?.structure;
+
+    public BaseSettlement parentSettlement;
     public bool isPreplaced { get; private set; }
     /// <summary>
     /// All currently in progress jobs targeting this.
@@ -141,6 +144,14 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
         DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();
+    }
+
+    public virtual void UpdateSettlementResourcesParent() {
+        
+    }
+
+    public virtual void RemoveFromSettlementResourcesParent() { 
+        
     }
 
     #region Loading
@@ -297,6 +308,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                                  && previousTile.collectionOwner.partOfHextile.hexTileOwner) {
             previousTile.collectionOwner.partOfHextile.hexTileOwner.OnRemovePOIInHex(this);
         }
+        RemoveFromSettlementResourcesParent();
     }
     public virtual LocationGridTile GetNearestUnoccupiedTileFromThis() {
         if (gridTileLocation != null) {
@@ -1099,7 +1111,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         SubscribeListeners();
         if (gridTileLocation != null) {
             //add tile object to region count. This will be called at DefaultProcessOnPlacePOI
-            gridTileLocation.parentMap.region.AddTileObjectInRegion(this);    
+            gridTileLocation.parentMap.region.AddTileObjectInRegion(this);
         }
     }
     private void CheckUnbuiltObjectValidity() {

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Inner_Maps;
+using Locations.Settlements;
 
 public class Rock : TileObject{
     public int yield { get; private set; }
@@ -15,6 +16,7 @@ public class Rock : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.MINE_STONE);
 
         SetYield(50);
+        BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
     public Rock(SaveDataTileObject data) { }
 
@@ -27,8 +29,29 @@ public class Rock : TileObject{
             SetGridTileLocation(loc); //so that it can still be targetted by aware characters.
         }
     }
+
     public void SetYield(int amount) {
         yield = amount;
+    }
+
+    public override void UpdateSettlementResourcesParent() {
+        BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;
+        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+            gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
+                if (eachNeighboringHexTile.settlementOnTile != null) {
+                    if (!eachNeighboringHexTile.settlementOnTile.SettlementResources.rocks.Contains(this)) {
+                        eachNeighboringHexTile.settlementOnTile.SettlementResources.rocks.Add(this);
+                        parentSettlement = eachNeighboringHexTile.settlementOnTile;
+                    }
+                }
+            });
+        }
+    }
+
+    public override void RemoveFromSettlementResourcesParent() {
+        if (parentSettlement != null) {
+            parentSettlement.SettlementResources.rocks.Remove(this);
+        }
     }
 }
 #region Save Data

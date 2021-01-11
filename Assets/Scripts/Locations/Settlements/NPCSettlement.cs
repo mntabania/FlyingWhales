@@ -28,6 +28,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public bool hasTriedToStealCorpse { get; private set; }
     public LocationStructure exterminateTargetStructure { get; private set; }
 
+    private SettlementResources m_settlementResources;
+    public override SettlementResources SettlementResources {
+        get {
+            if (m_settlementResources == null) {
+                m_settlementResources = new SettlementResources();
+            }
+            return m_settlementResources;
+        }
+    }
+
     //structures
     public List<JobQueueItem> availableJobs { get; }
     public LocationEventManager eventManager { get; private set; }
@@ -282,6 +292,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #region Utilities
     public void Initialize() {
         SubscribeToSignals();
+        onSettlementBuilt?.Invoke();
     }
     protected override void SettlementWipedOut() {
         base.SettlementWipedOut();
@@ -908,7 +919,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         foreach (var kvp in settlementType.facilityWeights.dictionary) {
             int cap = settlementType.GetFacilityCap(kvp.Key);
             int currentAmount = GetStructureCount(kvp.Key.structureType);
-            if (currentAmount >= cap) {
+            SettlementResources.StructureRequirement required = kvp.Key.structureType.GetRequiredObjectForBuilding();
+            if (currentAmount >= cap && !m_settlementResources.IsRequirementAvailable(required)) {
                 facilityWeights.SetElementWeight(kvp.Key, 0); //remove weight of object since it is already at max.
             }
         }

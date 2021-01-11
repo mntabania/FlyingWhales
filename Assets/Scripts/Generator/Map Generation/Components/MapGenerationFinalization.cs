@@ -16,6 +16,7 @@ using UtilityScripts;
 using Debug = UnityEngine.Debug;
 
 public class MapGenerationFinalization : MapGenerationComponent {
+
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Finalizing world...");
 		Stopwatch stopwatch = new Stopwatch();
