@@ -176,12 +176,14 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
             visionTrigger.Reset();    
         }
 
-        //When a map visual object is object pooled, all particles must be destroyed so that when it is used again there will no residual particle effects that will linger
-        Transform[] particleGOs = GameUtilities.GetComponentsInDirectChildren<Transform>(particleEffectParent.gameObject);
-        if(particleGOs != null) {
-            for (int i = 0; i < particleGOs.Length; i++) {
-                ObjectPoolManager.Instance.DestroyObject(particleGOs[i].gameObject);
-            }
+        if (particleEffectParent != null) {
+            //When a map visual object is object pooled, all particles must be destroyed so that when it is used again there will no residual particle effects that will linger
+            Transform[] particleGOs = GameUtilities.GetComponentsInDirectChildren<Transform>(particleEffectParent.gameObject);
+            if(particleGOs != null) {
+                for (int i = 0; i < particleGOs.Length; i++) {
+                    ObjectPoolManager.Instance.DestroyObject(particleGOs[i].gameObject);
+                }
+            }    
         }
     }
     void OnEnable() {

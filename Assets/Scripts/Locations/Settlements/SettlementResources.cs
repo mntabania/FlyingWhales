@@ -8,6 +8,7 @@ public class SettlementResources
     public List<Rock> rocks = new List<Rock>();
     public List<TreeObject> trees = new List<TreeObject>();
     public List<WaterWell> waterWells = new List<WaterWell>();
+    public List<OreVein> oreVeins = new List<OreVein>();
 
     public TileObject GetAvailableRequiredObject(StructureRequirement p_structureRequirement) {
         switch (p_structureRequirement) {

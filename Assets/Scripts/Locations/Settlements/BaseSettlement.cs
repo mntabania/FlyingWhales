@@ -408,7 +408,7 @@ namespace Locations.Settlements {
                 if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
                     for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
                         StructureConnector connector = manMadeStructure.structureObj.connectors[j];
-                        if (connector.isOpen && connector.TileLocation.collectionOwner.partOfHextile.hexTileOwner.HasNeighbourWithFeature(TileFeatureDB.Game_Feature)) {
+                        if (connector.isOpen && connector.tileLocation.collectionOwner.partOfHextile.hexTileOwner.HasNeighbourWithFeature(TileFeatureDB.Game_Feature)) {
                             connectors.Add(connector);
                         }
                     }

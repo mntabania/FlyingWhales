@@ -148,13 +148,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         SubscribeListeners();
     }
 
-    public virtual void UpdateSettlementResourcesParent() {
-        
-    }
-
-    public virtual void RemoveFromSettlementResourcesParent() { 
-        
-    }
+    public virtual void UpdateSettlementResourcesParent() { }
+    public virtual void RemoveFromSettlementResourcesParent() { }
 
     #region Loading
     /// <summary>
@@ -310,7 +305,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                                  && previousTile.collectionOwner.partOfHextile.hexTileOwner) {
             previousTile.collectionOwner.partOfHextile.hexTileOwner.OnRemovePOIInHex(this);
         }
-        RemoveFromSettlementResourcesParent();
     }
     public virtual LocationGridTile GetNearestUnoccupiedTileFromThis() {
         if (gridTileLocation != null) {
@@ -403,6 +397,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (removeTraits) {
             traitContainer.RemoveAllTraitsAndStatuses(this);
         }
+        RemoveFromSettlementResourcesParent();
     }
     public virtual void OnTileObjectGainedTrait(Trait trait) {
         if (trait is Status status && status.isTangible && mapObjectVisual != null) {

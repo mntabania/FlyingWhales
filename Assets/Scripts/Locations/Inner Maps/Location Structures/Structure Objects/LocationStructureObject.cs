@@ -810,7 +810,6 @@ public class LocationStructureObject : PooledObject {
     private void ProcessConnectors(LocationStructure structure) {
         for (int i = 0; i < _connectors.Length; i++) {
             StructureConnector connector = _connectors[i];
-            connector.SetOwner(structure);
             connector.OnPlaceConnector(structure.region.innerMap);
         }
     }

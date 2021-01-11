@@ -211,17 +211,34 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 					}
 				}
 			}
-			
-			// for (int j = 0; j < tile.borderTiles.Count; j++) {
-			// 	LocationGridTile borderTile = tile.borderTiles[j];
-			// 	if (borderTile.objHere is BlockWall) {
-			// 		if (!borderTile.HasDifferentStructureNeighbour(true)) {
-			// 			borderTile.structure.RemovePOI(borderTile.objHere);
-			// 		}
-			// 	}
-			// }
+			yield return null;
 		}
+		//create ore veins
+		int westMost = elevationStructure.tiles.Min(t => t.localPlace.x);
+		int eastMost = elevationStructure.tiles.Max(t => t.localPlace.x);
+		int southMost = elevationStructure.tiles.Min(t => t.localPlace.y);
+		int northMost = elevationStructure.tiles.Max(t => t.localPlace.y);
 		
+		LocationGridTile northTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == northMost && t.localPlace.x != eastMost && t.localPlace.x != westMost));
+		CreateOreVeinAt(northTile);
+		
+		LocationGridTile southTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == southMost && t.localPlace.x != eastMost && t.localPlace.x != westMost));
+		CreateOreVeinAt(southTile);
+		
+		LocationGridTile westTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == westMost && t.localPlace.y != northMost && t.localPlace.y != southMost));
+		CreateOreVeinAt(westTile);
+		
+		LocationGridTile eastTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == eastMost && t.localPlace.y != northMost && t.localPlace.y != southMost));
+		CreateOreVeinAt(eastTile);
+	}
+	private void CreateOreVeinAt(LocationGridTile tile) {
+		if (tile != null) {
+			if (tile.objHere != null) {
+				tile.structure.RemovePOI(tile.objHere);
+			}
+			TileObject well = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ORE_VEIN);
+			tile.structure.AddPOI(well, tile);
+		}
 	}
 	private void SetAsMountainWall(LocationGridTile tile, LocationStructure structure) {
 		tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.caveGroundTile);

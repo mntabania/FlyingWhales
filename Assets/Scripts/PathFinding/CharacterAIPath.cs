@@ -136,12 +136,16 @@ public class CharacterAIPath : AILerp {
         // }
 
         // Alternative way of requesting the path
-        CustomABPath p = CustomABPath.Construct(currentPosition, destination, null);
-        p.traversalProvider = blockerTraversalProvider;
-        p.SetRegion(marker.character.currentRegion);
-        p.SetNotAllowedStructures(notAllowedStructures);
-        p.SetOnlyAllowedStructures(onlyAllowedStructures);
-        p.SetAvoidSettlements(marker.character.movementComponent.avoidSettlements);
+        // CustomABPath p = CustomABPath.Construct(currentPosition, destination, null);
+        // p.traversalProvider = blockerTraversalProvider;
+        // p.SetRegion(marker.character.currentRegion);
+        // p.SetNotAllowedStructures(notAllowedStructures);
+        // p.SetOnlyAllowedStructures(onlyAllowedStructures);
+        // p.SetAvoidSettlements(marker.character.movementComponent.avoidSettlements);
+        // p.calculatePartial = true;
+        // seeker.StartPath(p);
+        
+        ABPath p = ABPath.Construct(currentPosition, destination, null);
         p.calculatePartial = true;
         seeker.StartPath(p);
 

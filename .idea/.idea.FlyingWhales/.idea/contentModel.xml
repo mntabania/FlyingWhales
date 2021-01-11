@@ -1936,6 +1936,7 @@
                 <e p="Cave.cs" t="Include" />
                 <e p="Cemetery.cs" t="Include" />
                 <e p="CityCenter.cs" t="Include" />
+                <e p="CraftingStructure.cs" t="Include" />
                 <e p="Crypt.cs" t="Include" />
                 <e p="CultTemple.cs" t="Include" />
                 <e p="Defiler.cs" t="Include" />
@@ -1944,6 +1945,7 @@
                 <e p="Dwelling.cs" t="Include" />
                 <e p="Eye.cs" t="Include" />
                 <e p="Farm.cs" t="Include" />
+                <e p="FishingSpot.cs" t="Include" />
                 <e p="Granary.cs" t="Include" />
                 <e p="Hospice.cs" t="Include" />
                 <e p="HunterLodge.cs" t="Include" />
@@ -1962,6 +1964,7 @@
                 <e p="Ostracizer.cs" t="Include" />
                 <e p="Pond.cs" t="Include" />
                 <e p="Prison.cs" t="Include" />
+                <e p="Quarry.cs" t="Include" />
                 <e p="RaiderCamp.cs" t="Include" />
                 <e p="Rooms" t="Include">
                   <e p="DefilerRoom.cs" t="Include" />
@@ -1977,11 +1980,14 @@
                   <e p="PortalStructureObject.cs" t="Include" />
                   <e p="RuinedZooStructureObject.cs" t="Include" />
                   <e p="StructureConnector.cs" t="Include" />
+                  <e p="StructureItemGenerator.cs" t="Include" />
                   <e p="StructureTemplate.cs" t="Include" />
                   <e p="TheEyeStructureObject.cs" t="Include" />
                   <e p="TortureChamberStructureObject.cs" t="Include" />
                 </e>
                 <e p="StructureSetting.cs" t="Include" />
+                <e p="Tailoring.cs" t="Include" />
+                <e p="Tannery.cs" t="Include" />
                 <e p="Tavern.cs" t="Include" />
                 <e p="Temple.cs" t="Include" />
                 <e p="ThePortal.cs" t="Include" />
@@ -2011,12 +2017,15 @@
                   <e p="MapVisualFactory.cs" t="Include" />
                   <e p="MovingMapObjectVisual.cs" t="Include" />
                   <e p="MushroomObjectVisual.cs" t="Include" />
+                  <e p="OreVeinGameObject.cs" t="Include" />
                   <e p="PoisonCloudMapObjectVisual.cs" t="Include" />
                   <e p="PortalGameObject.cs" t="Include" />
                   <e p="QuicksandMapObjectVisual.cs" t="Include" />
+                  <e p="RockGameObject.cs" t="Include" />
                   <e p="TableGameObject.cs" t="Include" />
                   <e p="TileObjectGameObject.cs" t="Include" />
                   <e p="TornadoMapObjectVisual.cs" t="Include" />
+                  <e p="TreeGameObject.cs" t="Include" />
                   <e p="VaporMapObjectVisual.cs" t="Include" />
                 </e>
                 <e p="SpiritGameObject.cs" t="Include" />
@@ -2119,6 +2128,7 @@
                   <e p="Mushroom.cs" t="Include" />
                   <e p="Obelisk.cs" t="Include" />
                   <e p="Ore.cs" t="Include" />
+                  <e p="OreVein.cs" t="Include" />
                   <e p="Pew.cs" t="Include" />
                   <e p="Phylactery.cs" t="Include" />
                   <e p="Plant.cs" t="Include" />
@@ -2268,6 +2278,7 @@
                 <e p="HumanVillage.cs" t="Include" />
                 <e p="SettlementType.cs" t="Include" />
               </e>
+              <e p="SettlementResources.cs" t="Include" />
             </e>
           </e>
           <e p="Logs" t="Include">

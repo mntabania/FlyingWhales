@@ -868,6 +868,7 @@ public enum TILE_OBJECT_TYPE {
     CULT_ALTAR = 161,
     CULT_CROSS = 162,
     PROFESSION_PEDESTAL = 163,
+    ORE_VEIN = 164,
 }
 public enum POI_STATE {
     ACTIVE,
