@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Inner_Maps;
 using Locations.Settlements;
@@ -47,7 +44,6 @@ public class Rock : TileObject{
             });
         }
     }
-
     public override void RemoveFromSettlementResourcesParent() {
         if (parentSettlement != null) {
             parentSettlement.SettlementResources.rocks.Remove(this);
