@@ -115,6 +115,13 @@ public class ConsoleBase : InfoUIBase {
         worldSettingsText = $"{worldSettingsText}\nCosts: {WorldSettings.Instance.worldSettingsData.costAmount.ToString()}";
         worldSettingsText = $"{worldSettingsText}\nCharges: {WorldSettings.Instance.worldSettingsData.chargeAmount.ToString()}";
         worldSettingsText = $"{worldSettingsText}\nThreat: {WorldSettings.Instance.worldSettingsData.threatAmount.ToString()}";
+        
+        worldSettingsText = $"{worldSettingsText}\nPathfinding:";
+        if (AstarPath.active.graphs.Length > 0) {
+            worldSettingsText = $"{worldSettingsText}\nTotal Nodes: {AstarPath.active.graphs[0].CountNodes().ToString()}";    
+        }
+        
+        
         // if (GameManager.Instance.showFullDebug) {
         //     FullDebugInfo();
         // }
