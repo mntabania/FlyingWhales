@@ -1,4 +1,5 @@
-﻿using Inner_Maps.Location_Structures;
+﻿using System;
+using Inner_Maps.Location_Structures;
 using Inner_Maps.Map_Objects.Map_Object_Visuals;
 using Locations.Settlements;
 
@@ -7,7 +8,7 @@ public class FishingSpot : TileObject {
     private FishingSpotGameObject _fishingSpotGameObject;
     
     public FishingShack connectedFishingShack { get; private set; }
-    
+    public override Type serializedData => typeof(SaveDataFishingSpot);
     public FishingSpot() {
         Initialize(TILE_OBJECT_TYPE.FISHING_SPOT);
         traitContainer.RemoveTrait(this, "Flammable");
