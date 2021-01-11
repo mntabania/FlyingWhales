@@ -3,10 +3,14 @@ using UnityEngine;
 using Inner_Maps;
 using Locations.Settlements;
 using Inner_Maps.Location_Structures;
+using Inner_Maps.Map_Objects.Map_Object_Visuals;
 
 public class Rock : TileObject{
     public int yield { get; private set; }
     public override Type serializedData => typeof(SaveDataRock);
+    public override StructureConnector structureConnector => _rockGameObject.structureConnector;
+    
+    private RockGameObject _rockGameObject;
     public Rock() {
         Initialize(TILE_OBJECT_TYPE.ROCK, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
@@ -17,9 +21,14 @@ public class Rock : TileObject{
         BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
     public Rock(SaveDataTileObject data) { }
-
-    public override StructureConnector structureConnector { get; protected set; }
-
+    protected override void CreateMapObjectVisual() {
+        base.CreateMapObjectVisual();
+        _rockGameObject = mapVisual as RockGameObject;
+    }
+    public override void DestroyMapVisualGameObject() {
+        base.DestroyMapVisualGameObject();
+        _rockGameObject = null;
+    }
     public void AdjustYield(int amount) {
         yield += amount;
         yield = Mathf.Max(0, yield);
@@ -29,7 +38,6 @@ public class Rock : TileObject{
             SetGridTileLocation(loc); //so that it can still be targetted by aware characters.
         }
     }
-
     public void SetYield(int amount) {
         yield = amount;
     }

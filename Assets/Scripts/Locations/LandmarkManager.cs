@@ -479,7 +479,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         return innerTileMap.PlaceBuiltStructureTemplateAt(chosenPrefab, centerTile, settlement);
     }
     public bool CanPlaceStructureBlueprint(NPCSettlement npcSettlement, StructureSetting structureToPlace, out LocationGridTile targetTile, out string structurePrefabName, out int connectorToUse) {
-        List<StructureConnector> availableStructureConnectors = npcSettlement.GetAvailableStructureConnectors();
+        List<StructureConnector> availableStructureConnectors = npcSettlement.GetStructureConnectorsForStructureType(structureToPlace.structureType);
         availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
         List<GameObject> prefabChoices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureToPlace);
         prefabChoices = CollectionUtilities.Shuffle(prefabChoices);

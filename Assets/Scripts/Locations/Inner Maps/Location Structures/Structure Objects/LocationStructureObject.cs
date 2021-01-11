@@ -277,17 +277,17 @@ public class LocationStructureObject : PooledObject {
             List<LocationGridTile> differentStructureTiles = tile.neighbourList.Where(x => !tiles.Contains(x)).ToList();
             for (int j = 0; j < differentStructureTiles.Count; j++) {
                 LocationGridTile diffTile = differentStructureTiles[j];
-                if (diffTile.objHere != null && (diffTile.objHere is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
-                    if (diffTile.objHere.traitContainer.HasTrait("Indestructible")) {
-                        diffTile.structure.OnlyRemovePOIFromList(diffTile.objHere);
-                    } else {
-                        if (isDemonicStructure && diffTile.objHere is Tombstone tombstone) {
-                            tombstone.SetRespawnCorpseOnDestroy(false);
-                        }
-                        diffTile.structure.RemovePOI(diffTile.objHere);    
-                    }
-                    
-                }
+                // if (diffTile.objHere != null && (diffTile.objHere is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
+                //     if (diffTile.objHere.traitContainer.HasTrait("Indestructible")) {
+                //         diffTile.structure.OnlyRemovePOIFromList(diffTile.objHere);
+                //     } else {
+                //         if (isDemonicStructure && diffTile.objHere is Tombstone tombstone) {
+                //             tombstone.SetRespawnCorpseOnDestroy(false);
+                //         }
+                //         diffTile.structure.RemovePOI(diffTile.objHere);    
+                //     }
+                //     
+                // }
                 diffTile.parentMap.detailsTilemap.SetTile(diffTile.localPlace, null);
 
                 GridNeighbourDirection dir;
@@ -736,32 +736,53 @@ public class LocationStructureObject : PooledObject {
         if (tile.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
             return false; //if calculated tile that will be occupied, is not part of wilderness, then this structure object cannot be placed on given center.
         }
+
         if (tile.hasBlueprint) {
             return false; //This is to prevent overlapping blueprints. If any tile that will be occupied by this has a blueprint, then do not allow
         }
         if (tile.IsAtEdgeOfMap()) {
             return false;
         }
-        if (tile.collectionOwner.isPartOfParentRegionMap) {
-            HexTile hexTileOwner = tile.collectionOwner.partOfHextile.hexTileOwner;
-            if (hexTileOwner.elevationType == ELEVATION.WATER || hexTileOwner.elevationType == ELEVATION.MOUNTAIN) {
-                return false;
-            }
-            if (hexTileOwner.landmarkOnTile != null && hexTileOwner.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure()) {
-                return false;
-            }
+        if (GameManager.Instance.gameHasStarted) {
+            if (!tile.collectionOwner.isPartOfParentRegionMap) {
+                return false; //prevent structure placement on tiles that aren't linked to any hextile. This is to prevent errors when trying to check if a tile IsPartOfSettlement
+            }    
         } else {
-            return false; //prevent structure placement on tiles that aren't linked to any hextile. This is to prevent errors when trying to check if a tile IsPartOfSettlement 
+            //need to check this before game starts since mountains and oceans are generated after settlements, this is so structures will not be built on Mountain/Ocean tiles
+            //since we expect that they will be generated later
+            if (tile.collectionOwner.isPartOfParentRegionMap) {
+                HexTile hexTileOwner = tile.collectionOwner.partOfHextile.hexTileOwner;
+                if (hexTileOwner.elevationType == ELEVATION.WATER || hexTileOwner.elevationType == ELEVATION.MOUNTAIN) {
+                    return false;
+                }
+                if (hexTileOwner.landmarkOnTile != null && hexTileOwner.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure()) {
+                    return false;
+                }
+            } else {
+                return false; //prevent structure placement on tiles that aren't linked to any hextile. This is to prevent errors when trying to check if a tile IsPartOfSettlement 
+            }    
         }
+        
+        
         //limit so that structures will not be directly adjacent with each other
         for (int j = 0; j < tile.neighbourList.Count; j++) {
             LocationGridTile neighbour = tile.neighbourList[j];
             if (neighbour.hasBlueprint) {
                 return false; //if bordering tile has a blueprint, then do not allow this structure to be placed. This is to prevent structures from being directly adjacent with each other, while they are still blueprints.
             }
-            //only limit adjacency if adjacent tile is not wilderness and not city center (Allow adjacency with city center since it has no walls, and looks better when structures are close to it.)
-            if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER) {
-                return false;
+            if (structureType == STRUCTURE_TYPE.MINE_SHACK) {
+                if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && neighbour.structure.structureType != STRUCTURE_TYPE.CAVE) {
+                    return false;
+                }    
+            } else if (structureType == STRUCTURE_TYPE.FISHING_SHACK) {
+                if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER && neighbour.structure.structureType != STRUCTURE_TYPE.OCEAN) {
+                    return false;
+                }
+            } else {
+                //only limit adjacency if adjacent tile is not wilderness and not city center (Allow adjacency with city center since it has no walls, and looks better when structures are close to it.)
+                if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER) {
+                    return false;
+                }    
             }
         }
         return true;

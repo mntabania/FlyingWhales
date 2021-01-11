@@ -144,22 +144,22 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		int northMost = elevationStructure.tiles.Max(t => t.localPlace.y);
 		
 		LocationGridTile northTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == northMost && t.objHere == null));
-		CreateInvisibleWellAt(northTile);
+		CreateFishingSpot(northTile);
 		
 		LocationGridTile southTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == southMost && t.objHere == null));
-		CreateInvisibleWellAt(southTile);
+		CreateFishingSpot(southTile);
 		
 		LocationGridTile westTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == westMost && t.objHere == null));
-		CreateInvisibleWellAt(westTile);
+		CreateFishingSpot(westTile);
 		
 		LocationGridTile eastTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == eastMost && t.objHere == null));
-		CreateInvisibleWellAt(eastTile);
+		CreateFishingSpot(eastTile);
 		
 		yield return null;
 	}
-	private void CreateInvisibleWellAt(LocationGridTile tile) {
+	private void CreateFishingSpot(LocationGridTile tile) {
 		if (tile != null) {
-			TileObject well = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
+			TileObject well = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.FISHING_SPOT);
 			tile.structure.AddPOI(well, tile);
 			well.mapObjectVisual.SetVisual(null);	
 		}

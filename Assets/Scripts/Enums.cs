@@ -685,7 +685,7 @@ public enum STRUCTURE_TYPE {
     CRAFTING = 49,
     TAILORING = 50,
     TANNERY = 51,
-    FISHING_SPOT = 52,
+    FISHING_SHACK = 52,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
@@ -869,6 +869,7 @@ public enum TILE_OBJECT_TYPE {
     CULT_CROSS = 162,
     PROFESSION_PEDESTAL = 163,
     ORE_VEIN = 164,
+    FISHING_SPOT = 165,
 }
 public enum POI_STATE {
     ACTIVE,

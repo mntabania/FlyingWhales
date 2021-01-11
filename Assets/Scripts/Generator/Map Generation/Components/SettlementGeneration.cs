@@ -202,25 +202,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				// yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlementCoroutine(npcSettlement, region.innerMap, structureSetting));
 				continue;
 			}
-			List<StructureConnector> availableStructureConnectors;
-			switch (structureSetting.structureType) {
-				case STRUCTURE_TYPE.FISHING_SPOT:
-					availableStructureConnectors = npcSettlement.GetAvailableWaterWellConnectors();
-					break;
-				case STRUCTURE_TYPE.QUARRY:
-					availableStructureConnectors = npcSettlement.GetAvailableRockConnectors();
-					break;
-				case STRUCTURE_TYPE.LUMBERYARD:
-					availableStructureConnectors = npcSettlement.GetAvailableTreeConnectors();
-					break;
-				case STRUCTURE_TYPE.HUNTER_LODGE:
-					availableStructureConnectors = npcSettlement.GetAvailableStructureConnectorsbaseOnGameFeature();
-					break;
-				default:
-					availableStructureConnectors = npcSettlement.GetAvailableStructureConnectors();
-					break;
-			}
-			
+			List<StructureConnector> availableStructureConnectors = npcSettlement.GetStructureConnectorsForStructureType(structureSetting.structureType);
 			availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
 			List<GameObject> prefabChoices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
 			prefabChoices = CollectionUtilities.Shuffle(prefabChoices);

@@ -66,6 +66,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                             log += $"\n-Chance to build facility met.";
                             //place random facility based on weights
                             StructureSetting targetFacility = character.homeSettlement.GetMissingFacilityToBuildBasedOnWeights();
+                            log += $"\n-Will try to build facility {targetFacility.ToString()}";
                             if (targetFacility.hasValue && LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, targetFacility, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
                                 log += $"\n-Will place blueprint {structurePrefabName} at {targetTile}.";
                                 return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, targetFacility, targetTile, out producedJob);    

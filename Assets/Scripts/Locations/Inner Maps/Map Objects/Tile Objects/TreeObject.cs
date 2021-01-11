@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
+using Inner_Maps.Map_Objects.Map_Object_Visuals;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -19,9 +21,12 @@ public class TreeObject : TileObject {
     private Character[] _users;
     private Occupied_State _occupiedState;
     public override System.Type serializedData => typeof(SaveDataTreeObject);
-    
+    public override StructureConnector structureConnector => _treeGameObject.structureConnector;
     public Occupied_State occupiedState => _occupiedState;
     public Ent ent => _ent;
+
+    private TreeGameObject _treeGameObject;
+    
     public TreeObject() {
         Initialize(TILE_OBJECT_TYPE.TREE_OBJECT, false);
         AddAdvertisedAction(INTERACTION_TYPE.CHOP_WOOD);
@@ -116,6 +121,14 @@ public class TreeObject : TileObject {
             ent.marker.SetVisualState(false);
         }
         UpdateSettlementResourcesParent();
+    }
+    protected override void CreateMapObjectVisual() {
+        base.CreateMapObjectVisual();
+        _treeGameObject = mapVisual as TreeGameObject;
+    }
+    public override void DestroyMapVisualGameObject() {
+        base.DestroyMapVisualGameObject();
+        _treeGameObject = null;
     }
     #endregion
 

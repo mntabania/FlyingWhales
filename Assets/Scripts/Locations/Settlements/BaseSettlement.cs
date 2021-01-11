@@ -385,7 +385,23 @@ namespace Locations.Settlements {
             ObjectPoolManager.Instance.ReturnStructuresListToPool(choices);
             return chosenStructure;
         }
-        public List<StructureConnector> GetAvailableStructureConnectors() {
+        public List<StructureConnector> GetStructureConnectorsForStructureType(STRUCTURE_TYPE p_structureType) {
+            switch (p_structureType) {
+                case STRUCTURE_TYPE.FISHING_SHACK:
+                    return GetAvailableFishingSpotConnectors();
+                case STRUCTURE_TYPE.QUARRY:
+                    return GetAvailableRockConnectors();
+                case STRUCTURE_TYPE.LUMBERYARD:
+                    return GetAvailableTreeConnectors();
+                case STRUCTURE_TYPE.HUNTER_LODGE:
+                    return GetAvailableStructureConnectorsBasedOnGameFeature();
+                case STRUCTURE_TYPE.MINE_SHACK:
+                    return GetAvailableOreVeinConnectors();
+                default:
+                    return GetAvailableStructureConnectors();
+            }
+        }
+        private List<StructureConnector> GetAvailableStructureConnectors() {
             List<StructureConnector> connectors = new List<StructureConnector>();
             for (int i = 0; i < allStructures.Count; i++) {
                 LocationStructure structure = allStructures[i];
@@ -400,48 +416,61 @@ namespace Locations.Settlements {
             }
             return connectors;
         }
-
-        public List<StructureConnector> GetAvailableStructureConnectorsbaseOnGameFeature() {
+        private List<StructureConnector> GetAvailableStructureConnectorsBasedOnGameFeature() {
             List<StructureConnector> connectors = new List<StructureConnector>();
             for (int i = 0; i < allStructures.Count; i++) {
                 LocationStructure structure = allStructures[i];
                 if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
                     for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
                         StructureConnector connector = manMadeStructure.structureObj.connectors[j];
-                        if (connector.isOpen && connector.tileLocation.collectionOwner.partOfHextile.hexTileOwner.HasNeighbourWithFeature(TileFeatureDB.Game_Feature)) {
-                            connectors.Add(connector);
+                        if (connector.isOpen) {
+                            if (connector.tileLocation != null && connector.tileLocation.collectionOwner.isPartOfParentRegionMap &&
+                                (connector.tileLocation.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Game_Feature) || 
+                                 connector.tileLocation.collectionOwner.partOfHextile.hexTileOwner.HasNeighbourWithFeature(TileFeatureDB.Game_Feature))) {
+                                connectors.Add(connector);    
+                            }
                         }
                     }
                 }
             }
             return connectors;
         }
-
-        public List<StructureConnector> GetAvailableRockConnectors() {
+        private List<StructureConnector> GetAvailableRockConnectors() {
             List<StructureConnector> connectors = new List<StructureConnector>();
             for (int i = 0; i < SettlementResources.rocks.Count; i++) {
-                if (SettlementResources.rocks[i].structureConnector.isOpen) {
-                    connectors.Add(SettlementResources.rocks[i].structureConnector);
+                Rock rock = SettlementResources.rocks[i];
+                if (rock.structureConnector.isOpen && rock.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                    connectors.Add(rock.structureConnector);
                 }
             }
             return connectors;
         }
-
-        public List<StructureConnector> GetAvailableTreeConnectors() {
+        private List<StructureConnector> GetAvailableTreeConnectors() {
             List<StructureConnector> connectors = new List<StructureConnector>();
             for (int i = 0; i < SettlementResources.trees.Count; i++) {
-                if (SettlementResources.trees[i].structureConnector.isOpen) {
-                    connectors.Add(SettlementResources.trees[i].structureConnector);
+                TreeObject treeObject = SettlementResources.trees[i];
+                if (treeObject.structureConnector.isOpen && treeObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                    connectors.Add(treeObject.structureConnector);
                 }
             }
             return connectors;
         }
-
-        public List<StructureConnector> GetAvailableWaterWellConnectors() {
+        private List<StructureConnector> GetAvailableFishingSpotConnectors() {
             List<StructureConnector> connectors = new List<StructureConnector>();
-            for (int i = 0; i < SettlementResources.waterWells.Count; i++) {
-                if (SettlementResources.waterWells[i].structureConnector.isOpen) {
-                    connectors.Add(SettlementResources.waterWells[i].structureConnector);
+            for (int i = 0; i < SettlementResources.fishingSpots.Count; i++) {
+                FishingSpot fishingSpot = SettlementResources.fishingSpots[i];
+                if (fishingSpot.structureConnector.isOpen && fishingSpot.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                    connectors.Add(fishingSpot.structureConnector);
+                }
+            }
+            return connectors;
+        }
+        private List<StructureConnector> GetAvailableOreVeinConnectors() {
+            List<StructureConnector> connectors = new List<StructureConnector>();
+            for (int i = 0; i < SettlementResources.oreVeins.Count; i++) {
+                OreVein oreVein = SettlementResources.oreVeins[i];
+                if (oreVein.structureConnector.isOpen && oreVein.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                    connectors.Add(oreVein.structureConnector);
                 }
             }
             return connectors;

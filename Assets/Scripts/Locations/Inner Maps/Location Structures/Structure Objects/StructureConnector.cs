@@ -9,7 +9,6 @@ namespace Inner_Maps.Location_Structures {
         
         #region getters
         public bool isOpen => _isOpen;
-
         public LocationGridTile tileLocation => _tileLocation;
         #endregion
 

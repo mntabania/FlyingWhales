@@ -1,8 +1,12 @@
 ﻿using Inner_Maps;
+using Inner_Maps.Location_Structures;
+using Inner_Maps.Map_Objects.Map_Object_Visuals;
 using Locations.Settlements;
 using UnityEngine;
 
-public class OreVein : TileObject{
+public class OreVein : TileObject {
+    public override StructureConnector structureConnector => _oreVeinGameObject.structureConnector;
+    private OreVeinGameObject _oreVeinGameObject;
     
     public OreVein() {
         Initialize(TILE_OBJECT_TYPE.ORE_VEIN);
@@ -31,6 +35,14 @@ public class OreVein : TileObject{
     }
     
     #region Overrides
+    protected override void CreateMapObjectVisual() {
+        base.CreateMapObjectVisual();
+        _oreVeinGameObject = mapVisual as OreVeinGameObject;
+    }
+    public override void DestroyMapVisualGameObject() {
+        base.DestroyMapVisualGameObject();
+        _oreVeinGameObject = null;
+    }
     public override bool CanBeAffectedByElementalStatus(string traitName) {
         return false;
     }

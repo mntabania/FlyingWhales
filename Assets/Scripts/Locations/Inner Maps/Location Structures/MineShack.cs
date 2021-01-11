@@ -1,5 +1,7 @@
 ﻿namespace Inner_Maps.Location_Structures {
     public class MineShack : ManMadeStructure {
+        
+        public Cave connectedCave { get; private set; } //TODO:
         public MineShack(Region location) : base(STRUCTURE_TYPE.MINE_SHACK, location) {
             SetMaxHPAndReset(8000);
         }

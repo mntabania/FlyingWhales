@@ -57,11 +57,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public int numOfActionsBeingPerformedOnThis { get; private set; } //this is increased, when the action of another character stops this characters movement
     public ILocationAwareness currentLocationAwareness { get; private set; }
     public bool isInPendingAwarenessList { get; private set; }
-
     private bool hasSubscribedToListeners;
-
     public LogComponent logComponent { get; protected set; }
-
     public virtual StructureConnector structureConnector { get; protected set; }
     
     #region getters

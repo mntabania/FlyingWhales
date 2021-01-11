@@ -1945,7 +1945,7 @@
                 <e p="Dwelling.cs" t="Include" />
                 <e p="Eye.cs" t="Include" />
                 <e p="Farm.cs" t="Include" />
-                <e p="FishingSpot.cs" t="Include" />
+                <e p="FishingShack.cs" t="Include" />
                 <e p="Granary.cs" t="Include" />
                 <e p="Hospice.cs" t="Include" />
                 <e p="HunterLodge.cs" t="Include" />
@@ -2010,6 +2010,7 @@
                   <e p="DoorGameObject.cs" t="Include" />
                   <e p="ExcaliburGameObject.cs" t="Include" />
                   <e p="FireBallMapObjectVisual.cs" t="Include" />
+                  <e p="FishingSpotGameObject.cs" t="Include" />
                   <e p="FrostyFogMapObjectVisual.cs" t="Include" />
                   <e p="LocustSwarmMapObjectVisual.cs" t="Include" />
                   <e p="MapObject.cs" t="Include" />
@@ -2096,6 +2097,7 @@
                   <e p="FeedingTrough.cs" t="Include" />
                   <e p="FireBall.cs" t="Include" />
                   <e p="Fireplace.cs" t="Include" />
+                  <e p="FishingSpot.cs" t="Include" />
                   <e p="FishPile.cs" t="Include" />
                   <e p="Flower.cs" t="Include" />
                   <e p="FoodBaskets.cs" t="Include" />

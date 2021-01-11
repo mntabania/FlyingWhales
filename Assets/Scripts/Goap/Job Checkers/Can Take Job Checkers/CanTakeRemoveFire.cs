@@ -23,7 +23,7 @@ namespace Goap.Job_Checkers {
         }
         
         private bool HasWaterAvailable(Character character) {
-            return character.currentRegion.HasTileObjectOfType(TILE_OBJECT_TYPE.WATER_WELL);
+            return character.currentRegion.HasTileObjectOfType(TILE_OBJECT_TYPE.WATER_WELL) || character.currentRegion.HasTileObjectOfType(TILE_OBJECT_TYPE.FISHING_SPOT);
         }
     }
 }
