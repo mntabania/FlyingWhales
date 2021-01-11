@@ -1651,12 +1651,6 @@
               <e p="Whip.cs" t="Include" />
               <e p="ZombieDeath.cs" t="Include" />
             </e>
-            <e p="Awareness" t="Include">
-              <e p="CharacterAwareness.cs" t="Include" />
-              <e p="IAwareness.cs" t="Include" />
-              <e p="StructureAwareness.cs" t="Include" />
-              <e p="TileObjectAwareness.cs" t="Include" />
-            </e>
             <e p="GoapAction.cs" t="Include" />
             <e p="GoapActionState.cs" t="Include" />
             <e p="GoapActionStateDB.cs" t="Include" />
@@ -1712,7 +1706,6 @@
             </e>
             <e p="JobCheckers.cs" t="Include" />
             <e p="JobNode.cs" t="Include" />
-            <e p="MultiJobNode.cs" t="Include" />
             <e p="Other Data" t="Include">
               <e p="ActualGoapNodeOtherData.cs" t="Include" />
               <e p="CharacterOtherData.cs" t="Include" />
@@ -1756,6 +1749,8 @@
             <e p="IDwelling.cs" t="Include" />
             <e p="IJobOwner.cs" t="Include" />
             <e p="ILeader.cs" t="Include" />
+            <e p="ILocation.cs" t="Include" />
+            <e p="ILocationAwareness.cs" t="Include" />
             <e p="IObjectManipulator.cs" t="Include" />
             <e p="IPartyTarget.cs" t="Include" />
             <e p="IPlayerSkill.cs" t="Include" />
@@ -1881,6 +1876,7 @@
                 <e p="TileFeatureComponent.cs" t="Include" />
               </e>
               <e p="HexTile.cs" t="Include" />
+              <e p="LocationAwareness.cs" t="Include" />
               <e p="Tile Features" t="Include">
                 <e p="BlizzardFeature.cs" t="Include" />
                 <e p="FertileFeature.cs" t="Include" />
@@ -1897,7 +1893,6 @@
                 <e p="WoodSourceFeature.cs" t="Include" />
               </e>
             </e>
-            <e p="ILocation.cs" t="Include" />
             <e p="Inner Maps" t="Include">
               <e p="Area Maps" t="Include">
                 <e p="Structure Template Creator" t="Include">
@@ -3355,6 +3350,8 @@
             <e p="HoverHandler.cs" t="Include" />
             <e p="IMG2Sprite.cs" t="Include" />
             <e p="IntRange.cs" t="Include" />
+            <e p="JobUtilities.cs" t="Include" />
+            <e p="LocationAwarenessUtility.cs" t="Include" />
             <e p="LockRotation.cs" t="Include" />
             <e p="MinionDraggable.cs" t="Include" />
             <e p="NewMinionDraggable.cs" t="Include" />
