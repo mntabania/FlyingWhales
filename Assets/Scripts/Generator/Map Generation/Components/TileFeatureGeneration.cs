@@ -54,9 +54,9 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			}	
 		}
 
-		int stoneSourceCount = GetStoneSourceToGenerate(data.regionCount);
-		int fertileCount = GetFertileToGenerate(data.regionCount);
-		int gameCount = GetGameToGenerate(data.regionCount);
+		int stoneSourceCount = GetStoneSourceToGenerate(data.chosenWorldMapTemplate.regionCount);
+		int fertileCount = GetFertileToGenerate(data.chosenWorldMapTemplate.regionCount);
+		int gameCount = GetGameToGenerate(data.chosenWorldMapTemplate.regionCount);
 
 		//stone source
 		for (int i = 0; i < stoneSourceCount; i++) {
@@ -64,6 +64,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			HexTile tile = CollectionUtilities.GetRandomElement(flatTilesWithNoFeatures);
 			tile.featureComponent.AddFeature(TileFeatureDB.Stone_Source_Feature, tile);
 			flatTilesWithNoFeatures.Remove(tile);
+			Debug.Log($"Added stone source feature to {tile}");
 		}		
 		
 		yield return null;
