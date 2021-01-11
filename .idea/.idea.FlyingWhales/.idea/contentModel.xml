@@ -1222,6 +1222,7 @@
               <e p="TileObjectComponent.cs" t="Include" />
               <e p="TrapStructure.cs" t="Include" />
             </e>
+            <e p="Couple.cs" t="Include" />
             <e p="DeadlySin.cs" t="Include" />
             <e p="Emotions" t="Include">
               <e p="Anger.cs" t="Include" />
@@ -1440,6 +1441,7 @@
                 <e p="WorldMapOuterGridGeneration.cs" t="Include" />
                 <e p="WorldMapRegionGeneration.cs" t="Include" />
               </e>
+              <e p="HexTileIsland.cs" t="Include" />
               <e p="MapGenerationComponent.cs" t="Include" />
               <e p="MapGenerationData.cs" t="Include" />
             </e>
@@ -1862,6 +1864,7 @@
             <e p="SettlementJobTriggerComponent.cs" t="Include" />
           </e>
           <e p="JobsListExtension.cs" t="Include" />
+          <e p="ListExtension.cs" t="Include" />
           <e p="Localization" t="Include">
             <e p="LocalizationData.cs" t="Include" />
             <e p="LocalizationManager.cs" t="Include" />
@@ -2245,7 +2248,6 @@
                 <e p="VaporVentsFeature.cs" t="Include" />
               </e>
               <e p="Region.cs" t="Include" />
-              <e p="RegionConnectionData.cs" t="Include" />
             </e>
             <e p="SettlementClassTracker.cs" t="Include" />
             <e p="Settlements" t="Include">
@@ -2867,7 +2869,6 @@
             <e p="SteamManager.cs" t="Include" />
           </e>
           <e p="Structs" t="Include">
-            <e p="AreaData.cs" t="Include" />
             <e p="CubeCoordinate.cs" t="Include" />
             <e p="DateRange.cs" t="Include" />
             <e p="GameDate.cs" t="Include" />
@@ -2885,6 +2886,7 @@
             <e p="BiolabUITester.cs" t="Include" />
             <e p="ContextMenuTester.cs" t="Include" />
             <e p="ProjectileTester.cs" t="Include" />
+            <e p="WorldGenOptionsTester.cs" t="Include" />
           </e>
           <e p="Threads" t="Include">
             <e p="DatabaseThreadPool.cs" t="Include" />
@@ -3113,6 +3115,8 @@
             <e p="EmblemBG.cs" t="Include" />
             <e p="EventLabel.cs" t="Include" />
             <e p="FactionEmblem.cs" t="Include" />
+            <e p="FactionEmblemInitializer.cs" t="Include" />
+            <e p="FactionEmblemRandomizer.cs" t="Include" />
             <e p="FactionItem.cs" t="Include" />
             <e p="FactionPropertyItem.cs" t="Include" />
             <e p="FactionRegionFilterItem.cs" t="Include" />
@@ -3184,6 +3188,7 @@
                 <e p="BiolabUIController.cs" t="Include" />
                 <e p="BlackmailUIController.cs" t="Include" />
                 <e p="ContextMenuUIController.cs" t="Include" />
+                <e p="FactionSettingVillageEditorUIController.cs" t="Include" />
                 <e p="FatalityUIController.cs" t="Include" />
                 <e p="LifeSpanUIController.cs" t="Include" />
                 <e p="OnDeathUIController.cs" t="Include" />
@@ -3191,11 +3196,13 @@
                 <e p="SymptomsUIController.cs" t="Include" />
                 <e p="TemptUIController.cs" t="Include" />
                 <e p="TransmissionUIController.cs" t="Include" />
+                <e p="WorldGenOptionsUIController.cs" t="Include" />
               </e>
               <e p="Model" t="Include">
                 <e p="BiolabUIModel.cs" t="Include" />
                 <e p="BlackmailUIModel.cs" t="Include" />
                 <e p="ContextMenuUIModel.cs" t="Include" />
+                <e p="FactionSettingVillageEditorUIModel.cs" t="Include" />
                 <e p="FatalityUIModel.cs" t="Include" />
                 <e p="LifeSpanUIModel.cs" t="Include" />
                 <e p="OnDeathUIModel.cs" t="Include" />
@@ -3203,11 +3210,13 @@
                 <e p="SymptomsUIModel.cs" t="Include" />
                 <e p="TemptUIModel.cs" t="Include" />
                 <e p="TransmissionUIModel.cs" t="Include" />
+                <e p="WorldGenOptionsUIModel.cs" t="Include" />
               </e>
               <e p="View" t="Include">
                 <e p="BiolabUIView.cs" t="Include" />
                 <e p="BlackmailUIView.cs" t="Include" />
                 <e p="ContextMenuUIView.cs" t="Include" />
+                <e p="FactionSettingVillageEditorUIView.cs" t="Include" />
                 <e p="FatalityUIView.cs" t="Include" />
                 <e p="LifeSpanUIView.cs" t="Include" />
                 <e p="OnDeathUIView.cs" t="Include" />
@@ -3215,6 +3224,7 @@
                 <e p="SymptomsUIView.cs" t="Include" />
                 <e p="TemptUIView.cs" t="Include" />
                 <e p="TransmissionUIView.cs" t="Include" />
+                <e p="WorldGenOptionsUIView.cs" t="Include" />
               </e>
             </e>
             <e p="Nameplates" t="Include">
@@ -3286,6 +3296,7 @@
               <e p="QuestUI.cs" t="Include" />
             </e>
             <e p="RaceWorldOptionItem.cs" t="Include" />
+            <e p="RandomNameGeneratorInitializer.cs" t="Include" />
             <e p="RelationshipFilterItem.cs" t="Include" />
             <e p="ResearchAbilityUI.cs" t="Include" />
             <e p="RoleSlotItem.cs" t="Include" />
@@ -3308,16 +3319,19 @@
             </e>
             <e p="TraitItem.cs" t="Include" />
             <e p="UI Items" t="Include">
+              <e p="BiomeDropdownUIItem.cs" t="Include" />
               <e p="BlackmailUIItem.cs" t="Include" />
+              <e p="FactionSettingUIItem.cs" t="Include" />
               <e p="SchemeUIItem.cs" t="Include" />
+              <e p="VillageSettingUIItem.cs" t="Include" />
             </e>
             <e p="UIMenuSettings.cs" t="Include" />
             <e p="UnallowOverlaps.cs" t="Include" />
             <e p="WinGameOverItem.cs" t="Include" />
-            <e p="WorldEventIcon.cs" t="Include" />
             <e p="WorldPickerItem.cs" t="Include" />
             <e p="WorldSettings.cs" t="Include" />
           </e>
+          <e p="UIExtensions.cs" t="Include" />
           <e p="UtilityScripts" t="Include">
             <e p="ActionOptionHoverHandler.cs" t="Include" />
             <e p="BaseMonoBehaviour.cs" t="Include" />
@@ -3332,6 +3346,7 @@
             <e p="DefinesManager.cs" t="Include" />
             <e p="DelegateTypes.cs" t="Include" />
             <e p="EditableValuesManager.cs" t="Include" />
+            <e p="EliminateVillagerTracker.cs" t="Include" />
             <e p="EnvelopContentUnityUI.cs" t="Include" />
             <e p="FollowerComponent.cs" t="Include" />
             <e p="FPSDisplay.cs" t="Include" />
@@ -3340,7 +3355,6 @@
             <e p="HoverHandler.cs" t="Include" />
             <e p="IMG2Sprite.cs" t="Include" />
             <e p="IntRange.cs" t="Include" />
-            <e p="LandmarkConnection.cs" t="Include" />
             <e p="LockRotation.cs" t="Include" />
             <e p="MinionDraggable.cs" t="Include" />
             <e p="NewMinionDraggable.cs" t="Include" />
@@ -3381,6 +3395,7 @@
               <e p="WorldEventSignals.cs" t="Include" />
             </e>
             <e p="SortingLayerExposer.cs" t="Include" />
+            <e p="SpellUtilities.cs" t="Include" />
             <e p="TestingUtilities.cs" t="Include" />
             <e p="TextTyper.cs" t="Include" />
             <e p="ToggleTextColorizer.cs" t="Include" />
@@ -3395,7 +3410,9 @@
             <e p="WeightedDictionary.cs" t="Include" />
           </e>
           <e p="WorldData" t="Include">
+            <e p="FactionSetting.cs" t="Include" />
             <e p="HexTileData.cs" t="Include" />
+            <e p="VillageSetting.cs" t="Include" />
             <e p="WorldSettingsData.cs" t="Include" />
           </e>
         </e>

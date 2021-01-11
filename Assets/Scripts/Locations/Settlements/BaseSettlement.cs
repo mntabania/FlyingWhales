@@ -37,7 +37,7 @@ namespace Locations.Settlements {
         protected BaseSettlement(LOCATION_TYPE locationType) {
             persistentID = UtilityScripts.Utilities.GetNewUniqueID();
             id = UtilityScripts.Utilities.SetID(this);
-            SetName(RandomNameGenerator.GenerateCityName(RACE.HUMANS));
+            SetName(RandomNameGenerator.GenerateSettlementName(RACE.HUMANS));
             tiles = new List<HexTile>();
             residents = new List<Character>();
             structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();

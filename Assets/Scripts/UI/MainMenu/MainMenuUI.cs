@@ -44,6 +44,9 @@ public class MainMenuUI : MonoBehaviour {
     [SerializeField] private GameObject roadmapGO;
     [SerializeField] private RuinarchToggle skipEarlyAccessAnnouncementToggle;
 
+    [Header("General Confirmation")]
+    public GeneralConfirmation generalConfirmation;
+    
     private void Awake() {
         Instance = this;
     }

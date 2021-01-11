@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -104,12 +105,18 @@ namespace Cellular_Automata {
 			int ySize = (maxY - minY) + 1;
 			
 			LocationGridTile[,] arrangedMap = new LocationGridTile[xSize, ySize];
-			for (int i = 0; i < locationGridTiles.Count; i++) {
-				LocationGridTile tile = locationGridTiles[i];
+			Parallel.ForEach(locationGridTiles, (tile) => {
 				int localX = tile.localPlace.x - minX;
 				int localY = tile.localPlace.y - minY;
 				arrangedMap[localX, localY] = tile;
-			}
+			});
+			
+			// for (int i = 0; i < locationGridTiles.Count; i++) {
+			// 	LocationGridTile tile = locationGridTiles[i];
+			// 	int localX = tile.localPlace.x - minX;
+			// 	int localY = tile.localPlace.y - minY;
+			// 	arrangedMap[localX, localY] = tile;
+			// }
 
 			return arrangedMap;
 		}

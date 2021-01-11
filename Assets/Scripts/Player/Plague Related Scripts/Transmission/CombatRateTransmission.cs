@@ -15,7 +15,7 @@
                     return 0;
             }
         }
-        public override int GetTransmissionNextLevelCost(int p_currentLevel) {
+        protected override int GetTransmissionNextLevelCost(int p_currentLevel) {
             switch (p_currentLevel) {
                 case 0:
                     return 10;

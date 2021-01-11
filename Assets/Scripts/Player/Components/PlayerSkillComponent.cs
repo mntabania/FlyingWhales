@@ -217,7 +217,7 @@ public class PlayerSkillComponent {
             spellData.SetCharges(1);
         } else {
             spellData.SetMaxCharges(skillData.charges);    
-            spellData.SetCharges(skillData.charges);
+            spellData.SetCharges(spellData.maxCharges);
         }
         spellData.SetCooldown(skillData.cooldown);
         spellData.SetManaCost(skillData.manaCost);
@@ -231,7 +231,7 @@ public class PlayerSkillComponent {
             Debug.LogError(skillData.skill.ToString() + " data is null!");
         }
         spellData.SetMaxCharges(skillData.charges);
-        spellData.SetCharges(skillData.charges);
+        spellData.SetCharges(spellData.maxCharges);
         spellData.SetCooldown(skillData.cooldown);
         spellData.SetManaCost(skillData.manaCost);
         spellData.SetThreat(skillData.threat);

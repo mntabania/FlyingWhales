@@ -85,6 +85,7 @@ namespace Inner_Maps {
         public List<Trait> traits => genericTileObject.traitContainer.traits;
         public List<Status> statuses => genericTileObject.traitContainer.statuses;
         public bool isCorrupted => groundType == Ground_Type.Corrupted;
+        public BIOMES biomeType => collectionOwner.GetConnectedHextileOrNearestHextile().biomeType;
         #endregion
         
         #region Pathfinding
@@ -293,10 +294,6 @@ namespace Inner_Maps {
                 } else if (assetName.Contains("water") || assetName.Contains("pond")) {
                     return Ground_Type.Water;
                 } else if (assetName.Contains("dirt") || assetName.Contains("soil") || assetName.Contains("outside") || assetName.Contains("snow")) {
-                    BIOMES biomeType = parentMap.region.coreTile.biomeType;
-                    if (collectionOwner.isPartOfParentRegionMap) {
-                        biomeType = collectionOwner.partOfHextile.hexTileOwner.biomeType;
-                    }
                     if (biomeType == BIOMES.SNOW || biomeType == BIOMES.TUNDRA) {
                         if (assetName.Contains("dirtsnow")) {
                             return Ground_Type.Snow_Dirt;
@@ -493,7 +490,7 @@ namespace Inner_Maps {
         /// Set this tile to the ground that it originally was, aka before anything was put on it.
         /// </summary>
         public void RevertTileToOriginalPerlin() {
-             TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(floorSample, parentMap.region.coreTile.biomeType);
+             TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(floorSample, biomeType);
              SetGroundTilemapVisual(groundTile);
         }
         public void DetermineNextGroundTypeAfterDestruction() {
@@ -520,7 +517,7 @@ namespace Inner_Maps {
                 case Ground_Type.Corrupted:
                 case Ground_Type.Bone:
                     //if from structure, revert to original ground asset
-                    nextGroundAsset = InnerTileMap.GetGroundAssetPerlin(floorSample, parentMap.region.coreTile.biomeType);
+                    nextGroundAsset = InnerTileMap.GetGroundAssetPerlin(floorSample, biomeType);
                     break;
                 case Ground_Type.Desert_Grass:
                 case Ground_Type.Sand:
@@ -1748,13 +1745,6 @@ namespace Inner_Maps {
         }
         #endregion
 
-        #region Pathfinding
-        public GraphNode graphNode { get; private set; }
-        public void PredetermineGraphNode() {
-            graphNode = AstarPath.active.GetNearest(centeredWorldLocation).node;
-        }
-        #endregion
-
         #region Blueprints
         public void SetHasBlueprint(bool hasBlueprint) {
             this.hasBlueprint = hasBlueprint;
@@ -1813,7 +1803,6 @@ namespace Inner_Maps {
             genericTileObject = null;
             walls?.Clear();
             walls = null;
-            graphNode = null;
         }
         #endregion
     }

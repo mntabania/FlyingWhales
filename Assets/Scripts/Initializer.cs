@@ -31,7 +31,6 @@ public class Initializer : MonoBehaviour {
         yield return null;
         JobManager.Instance.Initialize();
         PlayerUI.Instance.Initialize();
-        RandomNameGenerator.Initialize();
         WorldEventManager.Instance.Initialize();
         yield return null;
         PlayerSkillManager.Instance.ResetSpellsInUse();
