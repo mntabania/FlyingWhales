@@ -43,14 +43,14 @@ public class Rock : TileObject{
     }
 
     public override void UpdateSettlementResourcesParent() {
-        BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;
-        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+        if (gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+            if (gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null) {
+                gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
+            }
             gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
                 if (eachNeighboringHexTile.settlementOnTile != null) {
-                    if (!eachNeighboringHexTile.settlementOnTile.SettlementResources.rocks.Contains(this)) {
-                        eachNeighboringHexTile.settlementOnTile.SettlementResources.rocks.Add(this);
-                        parentSettlement = eachNeighboringHexTile.settlementOnTile;
-                    }
+                    eachNeighboringHexTile.settlementOnTile.SettlementResources.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
+                    parentSettlement = eachNeighboringHexTile.settlementOnTile;
                 }
             });
         }

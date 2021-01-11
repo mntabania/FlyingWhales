@@ -46,10 +46,8 @@ public class TreeObject : TileObject {
         if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
             gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
                 if (eachNeighboringHexTile.settlementOnTile != null) {
-                    if (!eachNeighboringHexTile.settlementOnTile.SettlementResources.trees.Contains(this)) {
-                        eachNeighboringHexTile.settlementOnTile.SettlementResources.trees.Add(this);
-                        parentSettlement = eachNeighboringHexTile.settlementOnTile;
-                    }
+                    eachNeighboringHexTile.settlementOnTile.SettlementResources.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
+                   parentSettlement = eachNeighboringHexTile.settlementOnTile;
                 }
             });
         }

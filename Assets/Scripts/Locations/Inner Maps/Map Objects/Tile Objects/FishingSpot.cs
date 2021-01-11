@@ -30,14 +30,14 @@ public class FishingSpot : TileObject {
         _fishingSpotGameObject = null;
     }
     public override void UpdateSettlementResourcesParent() {
-        BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;
         if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+            if (gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null) {
+                gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
+            }
             gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
                 if (eachNeighboringHexTile.settlementOnTile != null) {
-                    if (!eachNeighboringHexTile.settlementOnTile.SettlementResources.fishingSpots.Contains(this)) {
-                        eachNeighboringHexTile.settlementOnTile.SettlementResources.fishingSpots.Add(this);
-                        parentSettlement = eachNeighboringHexTile.settlementOnTile;
-                    }
+                    eachNeighboringHexTile.settlementOnTile.SettlementResources.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.FISHING_SPOT, this);
+                    parentSettlement = eachNeighboringHexTile.settlementOnTile;
                 }
             });
         }

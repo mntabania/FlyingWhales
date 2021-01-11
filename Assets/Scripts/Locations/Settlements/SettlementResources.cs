@@ -29,4 +29,32 @@ public class SettlementResources
         }
         return true;
     }
+
+    public void AddToListbaseOnRequirement(StructureRequirement p_structureRequirement, TileObject p_tileObject) {
+        switch (p_structureRequirement) {
+            case StructureRequirement.ROCK:
+            if (!rocks.Contains(p_tileObject as Rock)) {
+                rocks.Add(p_tileObject as Rock);
+            }
+            break;
+            case StructureRequirement.TREE:
+            if (!trees.Contains(p_tileObject as TreeObject)) {
+                trees.Add(p_tileObject as TreeObject);
+            }
+            break;
+            case StructureRequirement.FISHING_SPOT:
+            if (!fishingSpots.Contains(p_tileObject as FishingSpot)) {
+                fishingSpots.Add(p_tileObject as FishingSpot);
+            }
+            break;
+            case StructureRequirement.ORE_VEIN:
+            if (!oreVeins.Contains(p_tileObject as OreVein)) {
+                oreVeins.Add(p_tileObject as OreVein);
+            }
+            break;
+        }
+        Debug.LogError("WELL " + fishingSpots.Count);
+        Debug.LogError("TREE " + trees.Count);
+        Debug.LogError("ROCK " + rocks.Count);
+    }
 }
