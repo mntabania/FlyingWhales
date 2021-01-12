@@ -12,7 +12,7 @@ public class SummonMinionPlayerSkillNameplateItem : SpellItem {
     [SerializeField] private TextMeshProUGUI countText;
     
     #region Overrides
-    public override void SetObject(SpellData o) {
+    public override void SetObject(SkillData o) {
         base.SetObject(o);
         mainLbl.text = spellData.name;
         subLbl.text = string.Empty;

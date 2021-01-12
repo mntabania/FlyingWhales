@@ -57,13 +57,7 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
             base.OnRemoveTrait(sourcePOI, removedBy);
             if (sourcePOI is Character targetCharacter) {
-                if (targetCharacter.minion != null) {
-                    targetCharacter.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
-                } else if (targetCharacter is Summon) {
-                    targetCharacter.ChangeFactionTo(FactionManager.Instance.neutralFaction);
-                } else {
-                    targetCharacter.ChangeFactionTo(FactionManager.Instance.vagrantFaction);
-                }
+                FactionManager.Instance.LeaveFaction(targetCharacter);
                 targetCharacter.MigrateHomeStructureTo(null);
                 targetCharacter.behaviourComponent.UpdateDefaultBehaviourSet();
                 targetCharacter.jobComponent.RemovePriorityJob(JOB_TYPE.PRODUCE_FOOD);

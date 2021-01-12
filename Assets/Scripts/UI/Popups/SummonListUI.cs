@@ -31,7 +31,7 @@ public class SummonListUI : PopupMenuBase {
         Messenger.AddListener<Summon>(PlayerSignals.PLAYER_GAINED_SUMMON, OnGainSummon);
         Messenger.AddListener<Summon>(PlayerSignals.PLAYER_LOST_SUMMON, OnLostSummon);
         Messenger.AddListener<PLAYER_SKILL_TYPE>(SpellSignals.ADDED_PLAYER_SUMMON_SKILL, OnGainPlayerSummonSkill);
-        Messenger.AddListener<SpellData>(PlayerSignals.CHARGES_ADJUSTED, OnChargesAdjusted);
+        Messenger.AddListener<SkillData>(PlayerSignals.CHARGES_ADJUSTED, OnChargesAdjusted);
     }
     public void UpdateList() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
@@ -41,7 +41,7 @@ public class SummonListUI : PopupMenuBase {
             }
         }
     }
-    private void OnChargesAdjusted(SpellData spellData) {
+    private void OnChargesAdjusted(SkillData spellData) {
         if (spellData is SummonPlayerSkill summonPlayerSkill) {
             SummonMinionPlayerSkillNameplateItem nameplateItem = GetSummonMinionPlayerSkillNameplateItem(spellData);
             if (spellData.charges > 0) {
@@ -110,7 +110,7 @@ public class SummonListUI : PopupMenuBase {
         }
         return null;
     }
-    private SummonMinionPlayerSkillNameplateItem GetSummonMinionPlayerSkillNameplateItem(SpellData spellData) {
+    private SummonMinionPlayerSkillNameplateItem GetSummonMinionPlayerSkillNameplateItem(SkillData spellData) {
         for (int i = 0; i < _summonPlayerSkillItems.Count; i++) {
             SummonMinionPlayerSkillNameplateItem item = _summonPlayerSkillItems[i];
             if (item.spellData == spellData) {
@@ -129,10 +129,10 @@ public class SummonListUI : PopupMenuBase {
     private void OnLostSummon(Summon summon) {
         DeleteSummonItem(summon);
     }
-    private void OnHoverEnterReserveSummon(SpellData spellData) {
+    private void OnHoverEnterReserveSummon(SkillData spellData) {
         PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(spellData);
     }
-    private void OnHoverExitReserveSummon(SpellData spellData) {
+    private void OnHoverExitReserveSummon(SkillData spellData) {
         PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
     }
     public void ToggleSummonList(bool isOn) {

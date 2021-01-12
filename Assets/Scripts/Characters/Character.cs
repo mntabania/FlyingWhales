@@ -194,6 +194,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// or openly (part of player faction).
     /// </summary>
     public bool isAlliedWithPlayer => IsAlliedWithPlayer();
+    public bool isNotHostileWithPlayer => IsNotHostileWithPlayer();
+
     public Region currentRegion {
         get {
             Character carrier = carryComponent.isBeingCarriedBy;
@@ -5226,6 +5228,26 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
+    private bool IsNotHostileWithPlayer() {
+        if (traitContainer.HasTrait("Cultist")) {
+            return true;
+        }
+        if (faction != null) {
+            if (faction.isPlayerFaction) {
+                return true;
+            }
+            Faction playerFaction = null;
+            if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
+                playerFaction = PlayerManager.Instance.player.playerFaction;
+            }
+            if (playerFaction != null) {
+                if (faction == playerFaction || !faction.IsHostileWith(playerFaction)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region IJobOwner
@@ -5328,6 +5350,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         if (race == RACE.DEMON) {
             AddPlayerAction(PLAYER_SKILL_TYPE.UNSUMMON);
+            AddPlayerAction(PLAYER_SKILL_TYPE.RELEASE);
+            AddPlayerAction(PLAYER_SKILL_TYPE.HEAL);
         } else {
             if (isNormalCharacter) {
                 AddPlayerAction(PLAYER_SKILL_TYPE.AFFLICT);
@@ -5340,6 +5364,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
             AddPlayerAction(PLAYER_SKILL_TYPE.TORTURE);
             AddPlayerAction(PLAYER_SKILL_TYPE.BRAINWASH);
+            AddPlayerAction(PLAYER_SKILL_TYPE.RELEASE);
+            AddPlayerAction(PLAYER_SKILL_TYPE.HEAL);
+            AddPlayerAction(PLAYER_SKILL_TYPE.EXPEL);
         }
     }
     public void AddPlayerAction(PLAYER_SKILL_TYPE action) {

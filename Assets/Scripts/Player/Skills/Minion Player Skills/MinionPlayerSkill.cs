@@ -4,7 +4,7 @@ using Inner_Maps;
 using UnityEngine;
 using Locations.Settlements;
 
-public class MinionPlayerSkill : SpellData {
+public class MinionPlayerSkill : SkillData {
     public override PLAYER_SKILL_CATEGORY category { get { return PLAYER_SKILL_CATEGORY.MINION; } }
     public RACE race { get; protected set; }
     public string className { get; protected set; }

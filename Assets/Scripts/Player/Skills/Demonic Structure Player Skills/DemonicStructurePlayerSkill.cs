@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
 
-public class DemonicStructurePlayerSkill : SpellData {
+public class DemonicStructurePlayerSkill : SkillData {
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.DEMONIC_STRUCTURE;
     public override string description => name;
 

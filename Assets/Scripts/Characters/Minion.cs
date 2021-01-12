@@ -270,7 +270,7 @@ public class Minion {
         character.combatComponent.ClearAvoidInRange(false);
         character.combatComponent.ClearHostilesInRange(false);
         
-        SpellData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
+        SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
         
         int missingHealth = character.maxHP - character.currentHP;
         int cooldown = Mathf.CeilToInt((float)missingHealth / 7);
@@ -282,7 +282,7 @@ public class Minion {
     }
     private void UnsummonedHPRecovery() {
         this.character.AdjustHP(7, ELEMENTAL_TYPE.Normal);
-        SpellData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
+        SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
         spellData.SetCurrentCooldownTick(spellData.currentCooldownTick + 1);
         if (character.currentHP >= character.maxHP) {
             //minion can be summoned again

@@ -5,7 +5,7 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 
-public class SummonPlayerSkill : SpellData {
+public class SummonPlayerSkill : SkillData {
     public override PLAYER_SKILL_CATEGORY category { get { return PLAYER_SKILL_CATEGORY.SUMMON; } }
     public RACE race { get; protected set; }
     public string className { get; protected set; }

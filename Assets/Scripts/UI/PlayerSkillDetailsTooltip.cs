@@ -23,7 +23,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     public VideoPlayer tooltipVideoPlayer;
     public RenderTexture tooltipVideoRenderTexture;
 
-    public void ShowPlayerSkillDetails(SpellData spellData, UIHoverPosition position = null) {
+    public void ShowPlayerSkillDetails(SkillData spellData, UIHoverPosition position = null) {
         UpdateData(spellData);
         UpdatePositionAndVideo(position, spellData.type);
     }
@@ -84,7 +84,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         }
     }
     private void UpdateData(PlayerSkillData skillData) {
-        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
+        SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
         titleText.SetText(spellData.name);
         descriptionText.SetTextAndReplaceWithIcons(spellData.description);
         int charges = skillData.charges;
@@ -110,7 +110,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         currenciesText.text = currencyStr;
         additionalText.text = string.Empty;
     }
-    private void UpdateData(SpellData spellData) {
+    private void UpdateData(SkillData spellData) {
         titleText.text = spellData.name;
         string fullDescription = spellData.description;
         int charges = spellData.charges;
@@ -224,7 +224,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         }
     }
 
-    private bool HasEnoughMana(SpellData spellData) {
+    private bool HasEnoughMana(SkillData spellData) {
         if (spellData.hasManaCost) {
             if (PlayerManager.Instance.player.mana >= spellData.manaCost) {
                 return true;
@@ -234,7 +234,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         //if skill has no mana cost then always has enough mana
         return true;
     }
-    private bool HasEnoughCharges(SpellData spellData) {
+    private bool HasEnoughCharges(SkillData spellData) {
         if (spellData.hasCharges) {
             if (spellData.charges > 0) {
                 return true;
