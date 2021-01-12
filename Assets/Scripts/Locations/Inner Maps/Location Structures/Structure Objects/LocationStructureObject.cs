@@ -673,7 +673,7 @@ public class LocationStructureObject : PooledObject {
     /// <param name="innerTileMap">The inner map that this structure will be placed on.</param>
     /// <param name="usedConnectorIndex">The index of the connector that was used by this structure object.</param>
     /// <returns>The first valid connector from the list of choices.</returns>
-    public StructureConnector GetFirstValidConnector(List<StructureConnector> connectionChoices, InnerTileMap innerTileMap, out int usedConnectorIndex, out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile) {
+    public StructureConnector GetFirstValidConnector(List<StructureConnector> connectionChoices, InnerTileMap innerTileMap, out int usedConnectorIndex, out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, StructureSetting p_structureSetting) {
         //loop through connection choices
         for (int i = 0; i < connectionChoices.Count; i++) {
             StructureConnector connectorA = connectionChoices[i];
@@ -693,7 +693,7 @@ public class LocationStructureObject : PooledObject {
                 Vector2Int computedCenterLocation = new Vector2Int(connectorATileLocation.localPlace.x + distanceFromCenter.x, connectorATileLocation.localPlace.y + distanceFromCenter.y);
                 
                 LocationGridTile centerTile = innerTileMap.GetTileFromMapCoordinates(computedCenterLocation.x, computedCenterLocation.y);
-                if (centerTile != null && HasEnoughSpaceIfPlacedOn(centerTile)) {
+                if (centerTile != null && p_structureSetting.structureType.IsValidCenterTileForStructure(centerTile) && HasEnoughSpaceIfPlacedOn(centerTile)) {
                     tileToPlaceStructure = centerTile;
                     usedConnectorIndex = j;
                     connectorTile = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);

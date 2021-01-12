@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System;
 using Inner_Maps;
+using Locations.Tile_Features;
 using Traits;
 using UnityEngine;
 
@@ -184,6 +185,16 @@ public static class Extensions {
                 return SettlementResources.StructureRequirement.NONE;
             default:
                 return SettlementResources.StructureRequirement.NONE;
+        }
+    }
+    public static bool IsValidCenterTileForStructure(this STRUCTURE_TYPE structureType, LocationGridTile p_tile) {
+        switch (structureType) {
+            case STRUCTURE_TYPE.LUMBERYARD:
+                return p_tile.collectionOwner.isPartOfParentRegionMap && p_tile.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Wood_Source_Feature);
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+                return p_tile.collectionOwner.isPartOfParentRegionMap && p_tile.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Game_Feature);
+            default:
+                return true;
         }
     }
     #endregion
