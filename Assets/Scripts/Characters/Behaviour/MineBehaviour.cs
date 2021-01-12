@@ -15,45 +15,52 @@ public class MineBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
-        //if (character.behaviourComponent.currentMiningPath != null) {
-        //    return true; //wait for path to finish.
-        //}
-        LocationGridTile targetTile = character.behaviourComponent.targetMiningTile;
-        if (targetTile == null) {
-            HexTile nearestCaveTile = GetNearestCaveTile(character);
-            if (nearestCaveTile != null && nearestCaveTile.locationGridTiles != null && nearestCaveTile.locationGridTiles.Count > 0) {
-                List<LocationGridTile> tileChoices = nearestCaveTile.locationGridTiles.Where(x => x.isOccupied == false && x.structure.structureType == STRUCTURE_TYPE.CAVE).ToList();
-                targetTile = CollectionUtilities.GetRandomElement(tileChoices);
-            } else {
-                if(character.currentRegion != null) {
-                    Cave cave = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CAVE) as Cave;
-                    //Assert.IsNotNull(cave, $"Cave in mine behaviour of {character} is null");
-                    if(cave != null && cave.unoccupiedTiles != null && cave.unoccupiedTiles.Count > 0) {
-                        targetTile = CollectionUtilities.GetRandomElement(cave.unoccupiedTiles);
+        NPCSettlement homeSettlement = character.homeSettlement;
+        if (homeSettlement != null) {
+            List<LocationStructure> mineShacks = homeSettlement.GetStructuresOfType(STRUCTURE_TYPE.MINE_SHACK);
+            LocationGridTile targetTile = null;
+            if(mineShacks != null) {
+                for (int i = 0; i < mineShacks.Count; i++) {
+                    MineShack mineShack = mineShacks[i] as MineShack;
+                    targetTile = mineShack.connectedCave.GetRandomPassableTileThatMeetCriteria(t => !t.isOccupied);
+                    if(targetTile != null) {
+                        break;
                     }
                 }
             }
-            character.behaviourComponent.SetTargetMiningTile(targetTile);
+            if(targetTile != null) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.MINE, targetTile.genericTileObject, character);
+                job.SetDoNotRecalculate(true);
+                job.SetCannotBePushedBack(true);
+                producedJob = job;
+                return true;
+            }
         }
-        // if (character.movementComponent.HasPathTo(character.behaviourComponent.targetMiningTile)) {
-        //     character.behaviourComponent.SetCurrentMiningPath(null);
-        //     Debug.Log($"Has Path for {character.name} towards {character.behaviourComponent.targetMiningTile}!");
-        //     //create job to mine target tile.
-        //     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.MINE,
-        //         character.behaviourComponent.targetMiningTile.genericTileObject, character);
-        //     producedJob = job;
-        // } else {
-        //     ABPath p = ABPath.Construct(character.worldPosition, targetTile.centeredWorldLocation, (path) => OnPathComplete(path, character));
-        //     AstarPath.StartPath(p);
-        //     character.behaviourComponent.SetCurrentMiningPath(p);    
-        // }
-        if (character.behaviourComponent.targetMiningTile != null) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.MINE, character.behaviourComponent.targetMiningTile.genericTileObject, character);
-            job.SetDoNotRecalculate(true);
-            job.SetCannotBePushedBack(true);
-            producedJob = job;
-            return true;    
-        }
+
+        //LocationGridTile targetTile = character.behaviourComponent.targetMiningTile;
+        //if (targetTile == null) {
+        //    HexTile nearestCaveTile = GetNearestCaveTile(character);
+        //    if (nearestCaveTile != null && nearestCaveTile.locationGridTiles != null && nearestCaveTile.locationGridTiles.Count > 0) {
+        //        List<LocationGridTile> tileChoices = nearestCaveTile.locationGridTiles.Where(x => x.isOccupied == false && x.structure.structureType == STRUCTURE_TYPE.CAVE).ToList();
+        //        targetTile = CollectionUtilities.GetRandomElement(tileChoices);
+        //    } else {
+        //        if(character.currentRegion != null) {
+        //            Cave cave = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CAVE) as Cave;
+        //            //Assert.IsNotNull(cave, $"Cave in mine behaviour of {character} is null");
+        //            if(cave != null && cave.unoccupiedTiles != null && cave.unoccupiedTiles.Count > 0) {
+        //                targetTile = CollectionUtilities.GetRandomElement(cave.unoccupiedTiles);
+        //            }
+        //        }
+        //    }
+        //    character.behaviourComponent.SetTargetMiningTile(targetTile);
+        //}
+        //if (character.behaviourComponent.targetMiningTile != null) {
+        //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.MINE, character.behaviourComponent.targetMiningTile.genericTileObject, character);
+        //    job.SetDoNotRecalculate(true);
+        //    job.SetCannotBePushedBack(true);
+        //    producedJob = job;
+        //    return true;    
+        //}
         return false;
     }
     public override void OnAddBehaviourToCharacter(Character character) {

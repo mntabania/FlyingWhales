@@ -112,6 +112,8 @@ namespace Inner_Maps.Location_Structures {
             SetInteriorState(data.isInterior);
             maxResidentCapacity = 5;
             hasBeenDestroyed = data.hasBeenDestroyed;
+            
+            locationAwareness = new LocationAwareness();
         }
 
         #region Loading
@@ -813,6 +815,22 @@ namespace Inner_Maps.Location_Structures {
             }
             return passableTiles[UtilityScripts.Utilities.Rng.Next(0, passableTiles.Count)];
         }
+        public LocationGridTile GetRandomPassableTileThatMeetCriteria(Func<LocationGridTile, bool> criteria) {
+            if (passableTiles.Count <= 0) {
+                return null;
+            }
+            List<LocationGridTile> filteredList = ObjectPoolManager.Instance.CreateNewGridTileList();
+            for (int i = 0; i < passableTiles.Count; i++) {
+                LocationGridTile tile = passableTiles[i];
+                if (criteria.Invoke(tile)) {
+                    filteredList.Add(tile);
+                }
+            }
+            if(filteredList.Count > 0) {
+                return filteredList[UtilityScripts.Utilities.Rng.Next(0, filteredList.Count)];
+            }
+            return null;
+        }
         public LocationGridTile GetRandomUnoccupiedTile() {
             if (unoccupiedTiles.Count <= 0) {
                 return null;
@@ -1209,6 +1227,18 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         public virtual void OnCharacterUnSeizedHere(Character character) { }
+
+        #region Testing
+        public virtual string GetTestingInfo() {
+            string summary = $"{name} Info:";
+            summary += "\nDamage Contributing Objects:";
+            for (int i = 0; i < objectsThatContributeToDamage.Count; i++) {
+                IDamageable damageable = objectsThatContributeToDamage.ElementAt(i);
+                summary += $"\n\t- {damageable}";
+            }
+            return summary;
+        }
+        #endregion
     }
 }
 

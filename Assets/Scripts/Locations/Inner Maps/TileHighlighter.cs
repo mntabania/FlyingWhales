@@ -63,7 +63,7 @@ public class TileHighlighter : MonoBehaviour {
         
     }
     public void PositionHighlight(int radius, LocationGridTile centerTile) {
-        SetupHighlight(radius, centerTile.parentMap.region.coreTile.biomeType);
+        SetupHighlight(radius, centerTile.biomeType);
         parentTransform.transform.position = centerTile.centeredWorldLocation;
         parentTransform.gameObject.SetActive(true);
     }

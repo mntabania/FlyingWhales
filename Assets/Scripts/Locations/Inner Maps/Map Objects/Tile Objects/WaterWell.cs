@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Traits;
+using Locations.Settlements;
 
 public class WaterWell : TileObject {
 
@@ -14,21 +15,40 @@ public class WaterWell : TileObject {
         for (int i = 0; i < 10; i++) {
             traitContainer.AddTrait(this, "Wet", overrideDuration: 0);
         }
+        // BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
-    public WaterWell(SaveDataTileObject data) {
-        
-    }
+    public WaterWell(SaveDataTileObject data) { }
+
+    // public override void UpdateSettlementResourcesParent() {
+    //     BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;
+    //     if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+    //         gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
+    //             if (eachNeighboringHexTile.settlementOnTile != null) {
+    //                 if (!eachNeighboringHexTile.settlementOnTile.SettlementResources.fishingSpots.Contains(this)) {
+    //                     eachNeighboringHexTile.settlementOnTile.SettlementResources.fishingSpots.Add(this);
+    //                     parentSettlement = eachNeighboringHexTile.settlementOnTile;
+    //                 }
+    //             }
+    //         });
+    //     }
+    // }
+    //
+    // public override void RemoveFromSettlementResourcesParent() {
+    //     parentSettlement.SettlementResources.fishingSpots.Remove(this);
+    // }
+
     public override void OnPlacePOI() {
         base.OnPlacePOI();
         if(structureLocation.structureType == STRUCTURE_TYPE.POND || structureLocation.structureType == STRUCTURE_TYPE.OCEAN) {
-            traitContainer.AddTrait(this, "Indestructible");
-            name = "a Lake";
-            AddAdvertisedAction(INTERACTION_TYPE.FISH);
+            // traitContainer.AddTrait(this, "Indestructible");
+            // name = "a Lake";
+            // AddAdvertisedAction(INTERACTION_TYPE.FISH);
         } else {
             AddAdvertisedAction(INTERACTION_TYPE.WELL_JUMP);
             AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
         }
         Messenger.AddListener(Signals.HOUR_STARTED, HourStarted);
+        UpdateSettlementResourcesParent();
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();

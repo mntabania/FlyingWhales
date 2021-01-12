@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Logs;
 using UnityEngine;
@@ -45,12 +46,14 @@ public class PlaceBlueprint : GoapAction {
     #region State Effects
     public void PrePlaceSuccess(ActualGoapNode goapNode) {
         string prefabName = (string)goapNode.otherData[0].obj;
+        LocationGridTile connectorTile = (LocationGridTile)goapNode.otherData[1].obj;
         StructureSetting structureSetting = (StructureSetting)goapNode.otherData[2].obj;
         if (goapNode.poiTarget is GenericTileObject genericTileObject) {
             if (genericTileObject.PlaceBlueprintOnTile(prefabName)) {
                 //create new build job at npcSettlement
                 GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_BLUEPRINT, INTERACTION_TYPE.BUILD_BLUEPRINT, goapNode.poiTarget, goapNode.actor.homeSettlement);
                 buildJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { genericTileObject.blueprintOnTile.craftCost });
+                buildJob.AddOtherData(INTERACTION_TYPE.BUILD_BLUEPRINT, new object[] { connectorTile });
                 // buildJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildJob);
                 goapNode.actor.homeSettlement.AddToAvailableJobs(buildJob);
                 goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureSetting.structureType.ToString()), LOG_IDENTIFIER.STRING_1);

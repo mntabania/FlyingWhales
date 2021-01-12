@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.IO;
 using System.Threading;
+using BayatGames.SaveGameFree;
 
 public class LocalizationManager : BaseMonoBehaviour {
 	public static LocalizationManager Instance;
@@ -26,6 +27,14 @@ public class LocalizationManager : BaseMonoBehaviour {
             Destroy(this.gameObject);
         }
     }
+	[ContextMenu("Save")]
+	public void SaveLocalizedTexts() {
+		Initialize();
+		foreach (var kvp in localizedText) {
+			SaveGame.Save($"{UtilityScripts.Utilities.dataPath}/{kvp.Key}.json", kvp.Value);	
+		}
+	}
+	
 	internal void Initialize(){
 		this.language = UtilityScripts.Utilities.defaultLanguage;
 		this.filePath = $"{Application.streamingAssetsPath}/{this.language}";

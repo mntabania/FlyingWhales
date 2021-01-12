@@ -32,7 +32,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
             }
             return;
         }
-        AdjustVillageMigarationMeter(GetPerHourMigrationRate());
+        IncreaseVillageMigrationMeter(GetPerHourMigrationRate());
     }
     public void OnSettlementTypeChanged() {
         RandomizePerHourIncrement();
@@ -42,9 +42,9 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
             return;
         }
         if (structure is Dwelling) {
-            AdjustVillageMigarationMeter(GameUtilities.RandomBetweenTwoNumbers(20, 30));
+            IncreaseVillageMigrationMeter(GameUtilities.RandomBetweenTwoNumbers(20, 30));
         } else {
-            AdjustVillageMigarationMeter(GameUtilities.RandomBetweenTwoNumbers(30, 40));
+            IncreaseVillageMigrationMeter(GameUtilities.RandomBetweenTwoNumbers(30, 40));
         }
     }
     public void OnFinishedQuest(PartyQuest quest) {
@@ -53,7 +53,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
                 if (!IsMigrationEventAllowed()) {
                     return;
                 }
-                AdjustVillageMigarationMeter(GameUtilities.RandomBetweenTwoNumbers(20, 30));
+                IncreaseVillageMigrationMeter(GameUtilities.RandomBetweenTwoNumbers(20, 30));
             }
         }
     }
@@ -107,7 +107,15 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     public void ResetLongTermModifier() {
         longTermModifier = 0;
     }
-    public void AdjustVillageMigarationMeter(int amount) {
+    private int ApplyVillageMigrationModifier(int p_amount) {
+        if (WorldSettings.Instance.worldSettingsData.migrationSpeed == MIGRATION_SPEED.Slow) {
+            //if migration speed is slow then half gained amount
+            p_amount = Mathf.CeilToInt(p_amount / 2f);
+        }
+        return p_amount;
+    }
+    public void IncreaseVillageMigrationMeter(int amount) {
+        amount = ApplyVillageMigrationModifier(amount);
         villageMigrationMeter += amount;
         villageMigrationMeter = Mathf.Clamp(villageMigrationMeter, 0, MAX_MIGRATION_METER);
         CheckIfMigrationMeterIsFull();
@@ -129,19 +137,23 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     public float GetNormalizedMigrationMeterValue() {
         return villageMigrationMeter / (float) MAX_MIGRATION_METER;
     }
-    public string GetMigrationMeterValueInText() {
-        return $"{villageMigrationMeter}/{MAX_MIGRATION_METER}";
+    private string GetMigrationMeterValueInText() {
+        return $"{villageMigrationMeter.ToString()}/{MAX_MIGRATION_METER.ToString()}";
     }
     public string GetHoverTextOfMigrationMeter() {
         string text = $"Current Value: {GetMigrationMeterValueInText()}";
-        text += $"\nIncrease Rate Per Hour: {GetPerHourMigrationRate()}";
+        text += $"\nIncrease Rate Per Hour: {ApplyVillageMigrationModifier(GetPerHourMigrationRate()).ToString()}";
         if (!IsMigrationEventAllowed()) {
-            text += $"\n{UtilityScripts.Utilities.ColorizeInvalidText("Only Human and Elven Villages can trigger migration!")}";    
+            if (WorldSettings.Instance.worldSettingsData.migrationSpeed == MIGRATION_SPEED.None) {
+                text += $"\n{UtilityScripts.Utilities.ColorizeInvalidText("Player has turned off Villager Migration in World Settings.")}";
+            } else {
+                text += $"\n{UtilityScripts.Utilities.ColorizeInvalidText("Only Human and Elven Villages can trigger migration!")}";        
+            }
         }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-        text += $"\nBase Per Hour: {perHourIncrement}";
-        text += $"\nLong Term Modifier: {longTermModifier}";
-        text += $"\nFaction Type Modification: {GetAdditionalMigrationMeterRatePerHour()}";
+        text += $"\nBase Per Hour: {perHourIncrement.ToString()}";
+        text += $"\nLong Term Modifier: {longTermModifier.ToString()}";
+        text += $"\nFaction Type Modification: {GetAdditionalMigrationMeterRatePerHour().ToString()}";
 #endif
         return text;
     }
@@ -152,7 +164,9 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
 
     #region Migration
     public bool IsMigrationEventAllowed() {
-        return owner.owner != null && owner.residents.Count > 0 && owner.owner.isMajorNonPlayer && (owner.owner.factionType.type == FACTION_TYPE.Human_Empire || owner.owner.factionType.type == FACTION_TYPE.Elven_Kingdom);
+        return WorldSettings.Instance.worldSettingsData.migrationSpeed != MIGRATION_SPEED.None && 
+               owner.owner != null && owner.residents.Count > 0 && owner.owner.isMajorNonPlayer && 
+               (owner.owner.factionType.type == FACTION_TYPE.Human_Empire || owner.owner.factionType.type == FACTION_TYPE.Elven_Kingdom);
     }
     private void VillageMigrationEvent() {
         string debugLog = $"{GameManager.Instance.TodayLogString()}Village Migration Event for {owner.name} is triggered";

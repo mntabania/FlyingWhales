@@ -22,8 +22,7 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 				NPCSettlement settlement = null;
 				if (structureType == STRUCTURE_TYPE.CAVE) {
 					//only create settlement for caves
-					settlement = LandmarkManager.Instance.CreateNewSettlement(region, LOCATION_TYPE.DUNGEON,
-						currIsland.tilesInIsland.ToArray());	
+					settlement = LandmarkManager.Instance.CreateNewSettlement(region, LOCATION_TYPE.DUNGEON, currIsland.tilesInIsland.ToArray());	
 				}
 				LocationStructure elevationStructure = LandmarkManager.Instance.CreateNewStructureAt(region, structureType, settlement);
 				
@@ -145,22 +144,22 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		int northMost = elevationStructure.tiles.Max(t => t.localPlace.y);
 		
 		LocationGridTile northTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == northMost && t.objHere == null));
-		CreateInvisibleWellAt(northTile);
+		CreateFishingSpot(northTile);
 		
 		LocationGridTile southTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == southMost && t.objHere == null));
-		CreateInvisibleWellAt(southTile);
+		CreateFishingSpot(southTile);
 		
 		LocationGridTile westTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == westMost && t.objHere == null));
-		CreateInvisibleWellAt(westTile);
+		CreateFishingSpot(westTile);
 		
 		LocationGridTile eastTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == eastMost && t.objHere == null));
-		CreateInvisibleWellAt(eastTile);
+		CreateFishingSpot(eastTile);
 		
 		yield return null;
 	}
-	private void CreateInvisibleWellAt(LocationGridTile tile) {
+	private void CreateFishingSpot(LocationGridTile tile) {
 		if (tile != null) {
-			TileObject well = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
+			TileObject well = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.FISHING_SPOT);
 			tile.structure.AddPOI(well, tile);
 			well.mapObjectVisual.SetVisual(null);	
 		}
@@ -212,17 +211,34 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 					}
 				}
 			}
-			
-			// for (int j = 0; j < tile.borderTiles.Count; j++) {
-			// 	LocationGridTile borderTile = tile.borderTiles[j];
-			// 	if (borderTile.objHere is BlockWall) {
-			// 		if (!borderTile.HasDifferentStructureNeighbour(true)) {
-			// 			borderTile.structure.RemovePOI(borderTile.objHere);
-			// 		}
-			// 	}
-			// }
+			yield return null;
 		}
+		//create ore veins
+		int westMost = elevationStructure.tiles.Min(t => t.localPlace.x);
+		int eastMost = elevationStructure.tiles.Max(t => t.localPlace.x);
+		int southMost = elevationStructure.tiles.Min(t => t.localPlace.y);
+		int northMost = elevationStructure.tiles.Max(t => t.localPlace.y);
 		
+		LocationGridTile northTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == northMost && t.localPlace.x != eastMost && t.localPlace.x != westMost));
+		CreateOreVeinAt(northTile);
+		
+		LocationGridTile southTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == southMost && t.localPlace.x != eastMost && t.localPlace.x != westMost));
+		CreateOreVeinAt(southTile);
+		
+		LocationGridTile westTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == westMost && t.localPlace.y != northMost && t.localPlace.y != southMost));
+		CreateOreVeinAt(westTile);
+		
+		LocationGridTile eastTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == eastMost && t.localPlace.y != northMost && t.localPlace.y != southMost));
+		CreateOreVeinAt(eastTile);
+	}
+	private void CreateOreVeinAt(LocationGridTile tile) {
+		if (tile != null) {
+			if (tile.objHere != null) {
+				tile.structure.RemovePOI(tile.objHere);
+			}
+			TileObject well = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.ORE_VEIN);
+			tile.structure.AddPOI(well, tile);
+		}
 	}
 	private void SetAsMountainWall(LocationGridTile tile, LocationStructure structure) {
 		tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.caveGroundTile);

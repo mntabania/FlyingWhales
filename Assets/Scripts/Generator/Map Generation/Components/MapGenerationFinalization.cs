@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using Events.World_Events;
 using Inner_Maps;
@@ -7,22 +9,70 @@ using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using Locations.Tile_Features;
 using Managers;
+using Pathfinding;
 using Scenario_Maps;
 using UnityEngine;
 using UtilityScripts;
+using Debug = UnityEngine.Debug;
 
 public class MapGenerationFinalization : MapGenerationComponent {
+
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Finalizing world...");
+		Stopwatch stopwatch = new Stopwatch();
+		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(FinalizeInnerMaps());
+		stopwatch.Stop();
+		AddLog($"FinalizeInnerMaps took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+		
+		stopwatch.Reset();
+		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteFeatureInitialActions());
+		stopwatch.Stop();
+		AddLog($"ExecuteFeatureInitialActions took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+		
+		stopwatch.Reset();
+		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(RegionalItemGeneration());
+		stopwatch.Stop();
+		AddLog($"RegionalItemGeneration took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+		
+		stopwatch.Reset();
+		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(LandmarkItemGeneration());
+		stopwatch.Stop();
+		AddLog($"LandmarkItemGeneration took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+		
+		stopwatch.Reset();
+		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(CaveItemGeneration());
+		stopwatch.Stop();
+		AddLog($"CaveItemGeneration took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+		
+		stopwatch.Reset();
+		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(LoadSettlementItems());
+		stopwatch.Stop();
+		AddLog($"LoadSettlementItems took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+		
+		stopwatch.Reset();
+		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(CharacterFinalization());
+		stopwatch.Stop();
+		AddLog($"CharacterFinalization took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+		
+		stopwatch.Reset();
+		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(LoadArtifacts());
+		stopwatch.Stop();
+		AddLog($"LoadArtifacts took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+		
+		stopwatch.Reset();
+		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(CreateWorldEvents());
+		stopwatch.Stop();
+		AddLog($"CreateWorldEvents took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+		
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i]; 
 			region.GenerateOuterBorders();
@@ -53,7 +103,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	public static void ScenarioItemGenerationAfterPickingLoadout() {
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			//spawn 1 desert rose
-			Region region = GridMap.Instance.allRegions[1];
+			Region region = GridMap.Instance.allRegions[0];
 			LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
 			List<LocationGridTile> locationChoices = wilderness.unoccupiedTiles.Where(t =>
 				t.collectionOwner.isPartOfParentRegionMap && !t.IsAtEdgeOfMap() &&
@@ -97,10 +147,10 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		for (int i = 0; i < InnerMapManager.Instance.innerMaps.Count; i++) {
 			InnerTileMap map = InnerMapManager.Instance.innerMaps[i];
 			yield return MapGenerator.Instance.StartCoroutine(map.CreateSeamlessEdges());
-			PathfindingManager.Instance.RescanGrid(map.pathfindingGraph);
-			PathfindingManager.Instance.RescanGrid(map.unwalkableGraph);
+			foreach (var progress in AstarPath.active.ScanAsync(new NavGraph[] {map.pathfindingGraph, map.unwalkableGraph})) ;
+				// PathfindingManager.Instance.RescanGrid(map.pathfindingGraph);
+			// PathfindingManager.Instance.RescanGrid(map.unwalkableGraph);
 			yield return null;
-			map.PredetermineGraphNodes();
 		}
 	}
 
@@ -336,7 +386,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			// Debug.Log($"Placed Excalibur at {excalibur.gridTileLocation}");
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			//always spawn Necronomicon
-			Region randomRegion = GridMap.Instance.allRegions[1];
+			Region randomRegion = GridMap.Instance.allRegions[0];
 			//tutorial should always have 2 ancient graveyards.
 			LocationStructure structure = randomRegion.structures[STRUCTURE_TYPE.ANCIENT_GRAVEYARD][1];
 			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);

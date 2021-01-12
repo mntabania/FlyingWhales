@@ -85,6 +85,19 @@ public class MapVisualFactory {
             case TILE_OBJECT_TYPE.BED_CLINIC:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("ClinicBedGameObject", Vector3.zero, Quaternion.identity);
                 break;
+            case TILE_OBJECT_TYPE.ROCK:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("RockGameObject", Vector3.zero, Quaternion.identity);
+                break;
+            case TILE_OBJECT_TYPE.TREE_OBJECT:
+            case TILE_OBJECT_TYPE.BIG_TREE_OBJECT:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("TreeGameObject", Vector3.zero, Quaternion.identity);
+                break;
+            case TILE_OBJECT_TYPE.ORE_VEIN:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("OreVeinGameObject", Vector3.zero, Quaternion.identity);
+                break;
+            case TILE_OBJECT_TYPE.FISHING_SPOT:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("FishingSpotGameObject", Vector3.zero, Quaternion.identity);
+                break;
             default:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(Tile_Object_Prefab_Name, Vector3.zero, Quaternion.identity);
                 break;

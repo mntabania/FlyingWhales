@@ -21,14 +21,8 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
     public override void Initialize(TileObject tileObject) {
         base.Initialize(tileObject);
         this.name = tileObject.ToString();
-        bool isCorrupted = false;
-        if (tileObject.gridTileLocation != null) {
-            isCorrupted = tileObject.gridTileLocation.isCorrupted;
-        }
-        HexTile hex = tileObject.structureLocation.region.coreTile;
-        if (tileObject.gridTileLocation.collectionOwner != null && tileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            hex = tileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-        }
+        bool isCorrupted = tileObject.gridTileLocation.isCorrupted;
+        HexTile hex = tileObject.gridTileLocation.collectionOwner.GetConnectedHextileOrNearestHextile();
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
             tileObject.state, 
             hex.biomeType,
@@ -71,19 +65,11 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
     
     
     public override void UpdateTileObjectVisual(TileObject tileObject) {
-        HexTile hex = tileObject.structureLocation.region.coreTile;
-        if (tileObject.gridTileLocation.collectionOwner != null && tileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            hex = tileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-        }
+        HexTile hex = tileObject.gridTileLocation.collectionOwner.GetConnectedHextileOrNearestHextile();
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject,
             tileObject.state,
             hex.biomeType,
             tileObject.gridTileLocation?.isCorrupted ?? false));
-    }
-
-    public virtual void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) {
-        this.SetRotation(furnitureSetting.rotation.z);
-        //this.OverrideVisual(furnitureSetting.assetToUse);
     }
 
     #region Inquiry

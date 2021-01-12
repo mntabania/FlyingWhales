@@ -83,8 +83,8 @@ namespace Inner_Maps {
         [Header("Demon")]
         public TileBase demonStoneRuleTile;
 
-        public TileBase GetOutsideFloorTile(Region location) {
-            switch (location.coreTile.biomeType) {
+        public TileBase GetOutsideFloorTile(BIOMES p_biomeType) {
+            switch (p_biomeType) {
                 case BIOMES.SNOW:
                 case BIOMES.TUNDRA:
                     return snowOutsideTile;
@@ -106,8 +106,8 @@ namespace Inner_Maps {
                     return null;
             }
         }
-        public TileBase GetFlowerTile(Region location) {
-            switch (location.coreTile.biomeType) {
+        public TileBase GetFlowerTile(BIOMES p_biomeType) {
+            switch (p_biomeType) {
                 case BIOMES.SNOW:
                 case BIOMES.TUNDRA:
                     return snowFlowerTile;
@@ -117,8 +117,8 @@ namespace Inner_Maps {
                     return flowerTile;
             }
         }
-        public TileBase GetGarbTile(Region location) {
-            switch (location.coreTile.biomeType) {
+        public TileBase GetGarbTile(BIOMES p_biomeType) {
+            switch (p_biomeType) {
                 case BIOMES.SNOW:
                 case BIOMES.TUNDRA:
                     return snowGarbTile;
@@ -128,8 +128,8 @@ namespace Inner_Maps {
                     return randomGarbTile;
             }
         }
-        public TileBase GetRockTile(Region location) {
-            switch (location.coreTile.biomeType) {
+        public TileBase GetRockTile(BIOMES p_biomeType) {
+            switch (p_biomeType) {
                 case BIOMES.DESERT:
                     return desertRockTile;
                 default:

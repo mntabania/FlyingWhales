@@ -87,24 +87,25 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
         titleText.SetText(spellData.name);
         descriptionText.SetTextAndReplaceWithIcons(spellData.description);
-        int charges = skillData.charges;
-        int manaCost = skillData.manaCost;
-        int cooldown = skillData.cooldown;
+        int charges =  SpellUtilities.GetModifiedSpellCost(skillData.charges, WorldSettings.Instance.worldSettingsData.GetChargeCostsModification());
+        int manaCost = SpellUtilities.GetModifiedSpellCost(skillData.manaCost, WorldSettings.Instance.worldSettingsData.GetCostsModification());
+        int cooldown = SpellUtilities.GetModifiedSpellCost(skillData.cooldown, WorldSettings.Instance.worldSettingsData.GetCooldownSpeedModification());
+        int threat = SpellUtilities.GetModifiedSpellCost(skillData.threat, WorldSettings.Instance.worldSettingsData.GetThreatModification());
 
         string currencyStr = string.Empty; 
         
-        if (manaCost != -1) {
+        if (manaCost > 0) {
             currencyStr += $"{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}  ";
         }
-        if (charges != -1) {
+        if (charges > 0) {
             //NOTE: Use charges in both max and current amount since PlayerSkillData is just the raw spell data that has not yet been used
             currencyStr += $"{charges.ToString()}/{charges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
         }
-        if (cooldown != -1) {
+        if (cooldown > 0) {
             currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
         }
-        if (skillData.threat > 0) {
-            currencyStr += $"{skillData.threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
+        if (threat > 0) {
+            currencyStr += $"{threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
         }
         
         currenciesText.text = currencyStr;
@@ -119,13 +120,13 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
 
         string currencyStr = string.Empty; 
         
-        if (manaCost != -1) {
+        if (manaCost > 0) {
             currencyStr += $"{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}  ";
         }
-        if (charges != -1) {
+        if (spellData.maxCharges > 0) {
             currencyStr += $"{charges.ToString()}/{spellData.maxCharges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
         }
-        if (cooldown != -1) {
+        if (cooldown > 0) {
             currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
         }
         if (spellData.threat > 0) {
@@ -192,13 +193,13 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         descriptionText.SetTextAndReplaceWithIcons(description);
         string currencyStr = string.Empty; 
         
-        if (manaCost != -1) {
+        if (manaCost > 0) {
             currencyStr += $"{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}  ";
         }
-        if (charges != -1) {
+        if (charges > 0) {
             currencyStr += $"{charges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
         }
-        if (cooldown != -1) {
+        if (cooldown > 0) {
             currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
         }
         if (threat > 0) {
@@ -207,7 +208,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         currenciesText.text = currencyStr;
         additionalText.text = additionalTextStr;
 
-        if (manaCost != -1) {
+        if (manaCost > 0) {
             if(HasEnoughMana(manaCost) == false) {
                 additionalText.text += $"{UtilityScripts.Utilities.ColorizeInvalidText("Not enough mana.")}\n";
             }    

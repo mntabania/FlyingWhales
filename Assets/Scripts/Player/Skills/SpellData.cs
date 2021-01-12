@@ -1,9 +1,12 @@
-﻿using Inner_Maps;
+﻿using System;
+using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Locations.Settlements;
+using UtilityScripts;
 
 public class SpellData : IPlayerSkill {
+    
     public virtual PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.NONE;
     public virtual string name { get { return string.Empty; } }
     public virtual string description { get { return string.Empty; } }
@@ -11,21 +14,23 @@ public class SpellData : IPlayerSkill {
     //public virtual INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.NONE;
     public SPELL_TARGET[] targetTypes { get; protected set; }
     //public int radius { get; protected set; }
-
-    public int maxCharges { get; private set; }
+    public int maxCharges => SpellUtilities.GetModifiedSpellCost(baseMaxCharges, WorldSettings.Instance.worldSettingsData.GetChargeCostsModification());
     public int charges { get; private set; }
-    public int manaCost { get; private set; }
-    public int cooldown { get; private set; }
-    public int threat { get; private set; }
+    public int manaCost => SpellUtilities.GetModifiedSpellCost(baseManaCost, WorldSettings.Instance.worldSettingsData.GetCostsModification());
+    public int cooldown => SpellUtilities.GetModifiedSpellCost(baseCooldown, WorldSettings.Instance.worldSettingsData.GetCooldownSpeedModification());
+    public int threat => SpellUtilities.GetModifiedSpellCost(baseThreat, WorldSettings.Instance.worldSettingsData.GetThreatModification());
     public int threatPerHour { get; private set; }
     public bool isInUse { get; private set; }
-
     public int currentCooldownTick { get; private set; }
-    public bool hasCharges => maxCharges != -1;
-    public bool hasCooldown => cooldown != -1;
-    public bool hasManaCost => manaCost != -1;
+    public bool hasCharges => baseMaxCharges != -1;
+    public bool hasCooldown => baseCooldown != -1;
+    public bool hasManaCost => baseManaCost != -1;
     public virtual bool isInCooldown => hasCooldown && currentCooldownTick < cooldown;
-
+    public int baseMaxCharges { get; private set; }
+    public int baseManaCost { get; private set; }
+    public int baseCooldown { get; private set; }
+    public int baseThreat { get; private set; }
+    
     protected SpellData() {
         ResetData();
     }
@@ -93,10 +98,10 @@ public class SpellData : IPlayerSkill {
     #region General
     public void ResetData() {
         charges = -1;
-        manaCost = -1;
-        cooldown = -1;
-        maxCharges = -1;
-        threat = 0;
+        baseManaCost = -1;
+        baseCooldown = -1;
+        baseMaxCharges = -1;
+        baseThreat = 0;
         threatPerHour = 0;
         currentCooldownTick = cooldown;
         isInUse = false;
@@ -158,14 +163,14 @@ public class SpellData : IPlayerSkill {
         }
     }
     public void OnExecutePlayerSkill() {
-        if (PlayerSkillManager.Instance.unlimitedCast == false) {
-            if(hasCharges && charges > 0) {
+        if (!PlayerSkillManager.Instance.unlimitedCast) {
+            if(hasCharges && charges > 0 && WorldSettings.Instance.worldSettingsData.chargeAmount != SKILL_CHARGE_AMOUNT.Unlimited) {
                 AdjustCharges(-1);
             }
             if (hasManaCost) {
-                if (!WorldSettings.Instance.worldSettingsData.omnipotentMode) {
+                // if (!WorldSettings.Instance.worldSettingsData.omnipotentMode) {
                     PlayerManager.Instance.player.AdjustMana(-manaCost);
-                }
+                // }
             }
         }
         // PlayerManager.Instance.player.threatComponent.AdjustThreatPerHour(threatPerHour);
@@ -214,7 +219,7 @@ public class SpellData : IPlayerSkill {
 
     #region Attributes
     public void SetMaxCharges(int amount) {
-        maxCharges = amount;
+        baseMaxCharges = amount;
     }
     public void SetCharges(int amount) {
         charges = amount;
@@ -228,17 +233,17 @@ public class SpellData : IPlayerSkill {
         }
     }
     public void SetManaCost(int amount) {
-        manaCost = amount;
+        baseManaCost = amount;
     }
     public void SetCooldown(int amount) {
-        cooldown = amount;
+        baseCooldown = amount;
         currentCooldownTick = cooldown;
     }
     public void SetCurrentCooldownTick(int amount) {
         currentCooldownTick = amount;
     }
     public void SetThreat(int amount) {
-        threat = amount;
+        baseThreat = amount;
     }
     public void SetThreatPerHour(int amount) {
         threatPerHour = amount;

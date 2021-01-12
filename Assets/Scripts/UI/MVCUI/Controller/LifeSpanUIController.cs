@@ -128,7 +128,7 @@ public class LifeSpanUIController : MVCUIController, LifeSpanUIView.IListener
 
 	private bool CanAffordUpgrade(int cost) {
 		if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
-			return PlayerManager.Instance.player.plagueComponent.plaguePoints >= cost || (WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.omnipotentMode);
+			return PlayerManager.Instance.player.plagueComponent.plaguePoints >= cost || (WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.costAmount == SKILL_COST_AMOUNT.None);
 		} else {
 			return true;
 		}

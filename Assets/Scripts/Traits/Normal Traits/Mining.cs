@@ -18,8 +18,8 @@
             if (addTo is Character character) {
                 _owner = character;
                 Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnJobAddedToQueue);
-                Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
-                Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnMineJobRemoved);
+                //Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
+                //Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnMineJobRemoved);
             }
         }
         #endregion
@@ -31,8 +31,8 @@
                 _owner = character;
                 character.behaviourComponent.AddBehaviourComponent(typeof(MineBehaviour));
                 Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_ADDED_TO_QUEUE, OnJobAddedToQueue);
-                Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
-                Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnMineJobRemoved);
+                //Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
+                //Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnMineJobRemoved);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
@@ -51,15 +51,15 @@
                 character.traitContainer.RemoveTrait(character, this);
             }
         }
-        private void OnCharacterFinishedJob(Character character, GoapPlanJob job) {
-            if (character == _owner && job.jobType == JOB_TYPE.MINE && job.targetInteractionType == INTERACTION_TYPE.MINE) {
-                character.behaviourComponent.SetTargetMiningTile(null);
-            }
-        }
-        private void OnMineJobRemoved(JobQueueItem job, Character character) {
-            if (character == _owner && job.jobType == JOB_TYPE.MINE) {
-                character.behaviourComponent.SetTargetMiningTile(null);
-            }
-        }
+        //private void OnCharacterFinishedJob(Character character, GoapPlanJob job) {
+        //    if (character == _owner && job.jobType == JOB_TYPE.MINE && job.targetInteractionType == INTERACTION_TYPE.MINE) {
+        //        character.behaviourComponent.SetTargetMiningTile(null);
+        //    }
+        //}
+        //private void OnMineJobRemoved(JobQueueItem job, Character character) {
+        //    if (character == _owner && job.jobType == JOB_TYPE.MINE) {
+        //        character.behaviourComponent.SetTargetMiningTile(null);
+        //    }
+        //}
     }
 }

@@ -1197,6 +1197,18 @@ namespace UtilityScripts {
             }
             return options;
         }
+        public static List<string> GetEnumChoices<T>(params T[] choices) {
+            List<string> options = new List<string>();
+            if (choices.Length == 0) {
+                choices = (T[]) Enum.GetValues(typeof(T));    
+            }
+            for (int i = 0; i < choices.Length; i++) {
+                T option = choices[i];
+                string normalizedStr = NormalizeStringUpperCaseFirstLetters(option.ToString());
+                options.Add(normalizedStr);
+            }
+            return options;
+        }
         public static string GetPossessivePronounForCharacter(Character character, bool capitalized = true) {
             if (character.gender == GENDER.MALE) {
                 if (capitalized) {

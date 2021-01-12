@@ -101,5 +101,80 @@ namespace UtilityScripts {
                 }
             }
         }
+
+        #region Produce Resources
+        public static void PopulatePriorityLocationsForProduceResources(NPCSettlement settlement, GoapPlanJob job, RESOURCE resourceType) {
+            if (settlement != null) {
+                List<LocationStructure> priorityStructures = ObjectPoolManager.Instance.CreateNewStructuresList();
+                switch (resourceType) {
+                    case RESOURCE.FOOD:
+                        PopulatePriorityLocationsForProduceFood(settlement, job);
+                        break;
+                    case RESOURCE.WOOD:
+                        PopulatePriorityLocationsForProduceWood(settlement, job);
+                        break;
+                    case RESOURCE.STONE:
+                        PopulatePriorityLocationsForProduceStone(settlement, job);
+                        break;
+                    case RESOURCE.METAL:
+                        PopulatePriorityLocationsForProduceMetal(settlement, job);
+                        break;
+                }
+            }
+        }
+        private static void PopulatePriorityLocationsForProduceFood(NPCSettlement settlement, GoapPlanJob job) {
+            List<LocationStructure> farms = settlement.GetStructuresOfType(STRUCTURE_TYPE.FARM);
+            List<LocationStructure> fishingShacks = settlement.GetStructuresOfType(STRUCTURE_TYPE.FISHING_SHACK);
+            List<LocationStructure> hunterLodge = settlement.GetStructuresOfType(STRUCTURE_TYPE.HUNTER_LODGE);
+
+            if (farms != null) {
+                for (int i = 0; i < farms.Count; i++) {
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, farms[i]);
+                }
+            }
+            if (fishingShacks != null) {
+                for (int i = 0; i < fishingShacks.Count; i++) {
+                    FishingShack fishingShack = fishingShacks[i] as FishingShack;
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, fishingShack.connectedOcean);
+                }
+            }
+            if (hunterLodge != null) {
+                for (int i = 0; i < hunterLodge.Count; i++) {
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, hunterLodge[i]);
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, hunterLodge[i].occupiedHexTile.hexTileOwner);
+                }
+            }
+        }
+        private static void PopulatePriorityLocationsForProduceWood(NPCSettlement settlement, GoapPlanJob job) {
+            List<LocationStructure> lumberyards = settlement.GetStructuresOfType(STRUCTURE_TYPE.LUMBERYARD);
+
+            if (lumberyards != null) {
+                for (int i = 0; i < lumberyards.Count; i++) {
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, lumberyards[i]);
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, lumberyards[i].occupiedHexTile.hexTileOwner);
+                }
+            }
+        }
+        private static void PopulatePriorityLocationsForProduceStone(NPCSettlement settlement, GoapPlanJob job) {
+            List<LocationStructure> quarries = settlement.GetStructuresOfType(STRUCTURE_TYPE.QUARRY);
+
+            if (quarries != null) {
+                for (int i = 0; i < quarries.Count; i++) {
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, quarries[i]);
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, quarries[i].occupiedHexTile.hexTileOwner);
+                }
+            }
+        }
+        private static void PopulatePriorityLocationsForProduceMetal(NPCSettlement settlement, GoapPlanJob job) {
+            List<LocationStructure> mineShacks = settlement.GetStructuresOfType(STRUCTURE_TYPE.MINE_SHACK);
+
+            if (mineShacks != null) {
+                for (int i = 0; i < mineShacks.Count; i++) {
+                    MineShack mineShack = mineShacks[i] as MineShack;
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, mineShack.connectedCave);
+                }
+            }
+        }
+        #endregion
     }
 }

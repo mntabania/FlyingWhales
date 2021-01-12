@@ -11,6 +11,7 @@ using UnityEngine.EventSystems;
 using Locations.Settlements;
 using Locations;
 using Logs;
+using Locations.Settlements;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -21,8 +22,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
     public Character characterOwner { get; protected set; }
     public List<INTERACTION_TYPE> advertisedActions { get; protected set; }
-    public Region currentRegion => gridTileLocation.structure.region.coreTile.region;
+    public Region currentRegion => gridTileLocation.structure.region;
     public LocationStructure structureLocation => gridTileLocation?.structure;
+
+    public BaseSettlement parentSettlement; //NOTE: This is only used in Fishing Spot, Ore Vein, Rock and Tree Object //TODO: either use this in all TileObjects or refactor
     public bool isPreplaced { get; private set; }
     /// <summary>
     /// All currently in progress jobs targeting this.
@@ -54,10 +57,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public int numOfActionsBeingPerformedOnThis { get; private set; } //this is increased, when the action of another character stops this characters movement
     public ILocationAwareness currentLocationAwareness { get; private set; }
     public bool isInPendingAwarenessList { get; private set; }
-
     private bool hasSubscribedToListeners;
-
     public LogComponent logComponent { get; protected set; }
+    public virtual StructureConnector structureConnector { get; protected set; }
     
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Tile_Object;
@@ -142,6 +144,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();
     }
+
+    public virtual void UpdateSettlementResourcesParent() { }
+    public virtual void RemoveFromSettlementResourcesParent() { }
 
     #region Loading
     /// <summary>
@@ -389,6 +394,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (removeTraits) {
             traitContainer.RemoveAllTraitsAndStatuses(this);
         }
+        RemoveFromSettlementResourcesParent();
     }
     public virtual void OnTileObjectGainedTrait(Trait trait) {
         if (trait is Status status && status.isTangible && mapObjectVisual != null) {
@@ -1099,7 +1105,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         SubscribeListeners();
         if (gridTileLocation != null) {
             //add tile object to region count. This will be called at DefaultProcessOnPlacePOI
-            gridTileLocation.parentMap.region.AddTileObjectInRegion(this);    
+            gridTileLocation.parentMap.region.AddTileObjectInRegion(this);
         }
     }
     private void CheckUnbuiltObjectValidity() {
