@@ -109,9 +109,23 @@ public class ConsoleBase : InfoUIBase {
     private void Update() {
         fullDebugLbl.text = string.Empty;
         fullDebug2Lbl.text = string.Empty;
-        if (GameManager.Instance.showFullDebug) {
-            FullDebugInfo();
+        string worldSettingsText = $"World Settings:";
+        worldSettingsText = $"{worldSettingsText}\nMigration: {WorldSettings.Instance.worldSettingsData.migrationSpeed.ToString()}";
+        worldSettingsText = $"{worldSettingsText}\nCooldown: {WorldSettings.Instance.worldSettingsData.cooldownSpeed.ToString()}";
+        worldSettingsText = $"{worldSettingsText}\nCosts: {WorldSettings.Instance.worldSettingsData.costAmount.ToString()}";
+        worldSettingsText = $"{worldSettingsText}\nCharges: {WorldSettings.Instance.worldSettingsData.chargeAmount.ToString()}";
+        worldSettingsText = $"{worldSettingsText}\nThreat: {WorldSettings.Instance.worldSettingsData.threatAmount.ToString()}";
+        
+        worldSettingsText = $"{worldSettingsText}\nPathfinding:";
+        if (AstarPath.active.graphs.Length > 0) {
+            worldSettingsText = $"{worldSettingsText}\nTotal Nodes: {AstarPath.active.graphs[0].CountNodes().ToString()}";    
         }
+        
+        
+        // if (GameManager.Instance.showFullDebug) {
+        //     FullDebugInfo();
+        // }
+        fullDebugLbl.text = worldSettingsText;
         fullDebugGO.SetActive(!string.IsNullOrEmpty(fullDebugLbl.text) || !string.IsNullOrEmpty(fullDebug2Lbl.text));
 
         if (isShowing && consoleInputField.text != "" && Input.GetKeyDown(KeyCode.Return)) {

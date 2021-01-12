@@ -75,7 +75,7 @@ public class ReportCorruptedStructure : GoapAction {
             //     showCover:true, pauseAndResume: true);
             // PlayerUI.Instance.ShowGeneralConfirmation("Demonic Structure Reported", "Your demonic structure " + structureToReport.name + " has been reported! They can now attack this structure!");
         }
-        PlayerManager.Instance.player.threatComponent.AdjustThreat(20); //15
+        PlayerManager.Instance.player.threatComponent.AdjustThreatAndApplyModification(20); //15
         TriggerCounterattack(goapNode.actor, structureToReport);
     }
     #endregion

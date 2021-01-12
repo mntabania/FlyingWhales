@@ -8,9 +8,13 @@ using Traits;
 using UnityEngine;
 using UtilityScripts;
 using Logs;
+using Locations.Tile_Features;
 
 namespace Locations.Settlements {
     public abstract class BaseSettlement : IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ISavable, ILogFiller, IPlayerActionTarget, ILocation {
+
+        public static Action onSettlementBuilt;
+        
         public string persistentID { get; private set; }
         public int id { get; }
         public LOCATION_TYPE locationType { get; private set; }
@@ -23,6 +27,8 @@ namespace Locations.Settlements {
         public List<LocationStructure> allStructures { get; protected set; }
         public List<Party> parties { get; protected set; }
         public List<PLAYER_SKILL_TYPE> actions { get; private set; }
+
+        public virtual SettlementResources SettlementResources { get; protected set; }
 
         #region getters
         public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
@@ -37,7 +43,7 @@ namespace Locations.Settlements {
         protected BaseSettlement(LOCATION_TYPE locationType) {
             persistentID = UtilityScripts.Utilities.GetNewUniqueID();
             id = UtilityScripts.Utilities.SetID(this);
-            SetName(RandomNameGenerator.GenerateCityName(RACE.HUMANS));
+            SetName(RandomNameGenerator.GenerateSettlementName(RACE.HUMANS));
             tiles = new List<HexTile>();
             residents = new List<Character>();
             structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
@@ -379,7 +385,23 @@ namespace Locations.Settlements {
             ObjectPoolManager.Instance.ReturnStructuresListToPool(choices);
             return chosenStructure;
         }
-        public List<StructureConnector> GetAvailableStructureConnectors() {
+        public List<StructureConnector> GetStructureConnectorsForStructureType(STRUCTURE_TYPE p_structureType) {
+            switch (p_structureType) {
+                case STRUCTURE_TYPE.FISHING_SHACK:
+                    return GetAvailableFishingSpotConnectors();
+                case STRUCTURE_TYPE.QUARRY:
+                    return GetAvailableRockConnectors();
+                case STRUCTURE_TYPE.LUMBERYARD:
+                    return GetAvailableTreeConnectors();
+                case STRUCTURE_TYPE.HUNTER_LODGE:
+                    return GetAvailableStructureConnectorsBasedOnGameFeature();
+                case STRUCTURE_TYPE.MINE_SHACK:
+                    return GetAvailableOreVeinConnectors();
+                default:
+                    return GetAvailableStructureConnectors();
+            }
+        }
+        private List<StructureConnector> GetAvailableStructureConnectors() {
             List<StructureConnector> connectors = new List<StructureConnector>();
             for (int i = 0; i < allStructures.Count; i++) {
                 LocationStructure structure = allStructures[i];
@@ -394,6 +416,66 @@ namespace Locations.Settlements {
             }
             return connectors;
         }
+        private List<StructureConnector> GetAvailableStructureConnectorsBasedOnGameFeature() {
+            List<StructureConnector> connectors = new List<StructureConnector>();
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure structure = allStructures[i];
+                if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
+                    for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
+                        StructureConnector connector = manMadeStructure.structureObj.connectors[j];
+                        if (connector.isOpen) {
+                            if (connector.tileLocation != null && connector.tileLocation.collectionOwner.isPartOfParentRegionMap &&
+                                (connector.tileLocation.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Game_Feature) || 
+                                 connector.tileLocation.collectionOwner.partOfHextile.hexTileOwner.HasNeighbourWithFeature(TileFeatureDB.Game_Feature))) {
+                                connectors.Add(connector);    
+                            }
+                        }
+                    }
+                }
+            }
+            return connectors;
+        }
+        private List<StructureConnector> GetAvailableRockConnectors() {
+            List<StructureConnector> connectors = new List<StructureConnector>();
+            for (int i = 0; i < SettlementResources.rocks.Count; i++) {
+                Rock rock = SettlementResources.rocks[i];
+                if (rock.structureConnector != null && rock.structureConnector.isOpen && rock.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                    connectors.Add(rock.structureConnector);
+                }
+            }
+            return connectors;
+        }
+        private List<StructureConnector> GetAvailableTreeConnectors() {
+            List<StructureConnector> connectors = new List<StructureConnector>();
+            for (int i = 0; i < SettlementResources.trees.Count; i++) {
+                TreeObject treeObject = SettlementResources.trees[i];
+                if (treeObject.structureConnector != null && treeObject.structureConnector.isOpen && treeObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                    connectors.Add(treeObject.structureConnector);
+                }
+            }
+            return connectors;
+        }
+        private List<StructureConnector> GetAvailableFishingSpotConnectors() {
+            List<StructureConnector> connectors = new List<StructureConnector>();
+            for (int i = 0; i < SettlementResources.fishingSpots.Count; i++) {
+                FishingSpot fishingSpot = SettlementResources.fishingSpots[i];
+                if (fishingSpot.structureConnector != null && fishingSpot.structureConnector.isOpen && fishingSpot.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                    connectors.Add(fishingSpot.structureConnector);
+                }
+            }
+            return connectors;
+        }
+        private List<StructureConnector> GetAvailableOreVeinConnectors() {
+            List<StructureConnector> connectors = new List<StructureConnector>();
+            for (int i = 0; i < SettlementResources.oreVeins.Count; i++) {
+                OreVein oreVein = SettlementResources.oreVeins[i];
+                if (oreVein.structureConnector != null && oreVein.structureConnector.isOpen && oreVein.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                    connectors.Add(oreVein.structureConnector);
+                }
+            }
+            return connectors;
+        }
+
         public int GetStructureCount(STRUCTURE_TYPE structureType) {
             if (HasStructure(structureType)) {
                 return structures[structureType].Count;

@@ -14,33 +14,45 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(DivideToRegions(chosenTemplate, data));
 	}
 	private IEnumerator DivideToRegions(WorldMapTemplate mapTemplate, MapGenerationData data) {
-		int lastX = 0;
-		int lastY = 0;
-		Region[] allRegions = new Region[data.regionCount];
-		int regionIndex = 0;
-		foreach (var mapTemplateRegion in mapTemplate.regions) {
-			for (int i = 0; i < mapTemplateRegion.Value.Length; i++) {
-				RegionTemplate regionTemplate = mapTemplateRegion.Value[i];
-				Region region = CreateNewRegionFromTemplate(regionTemplate, lastX, lastY);
-
-				lastX += regionTemplate.width;
-				if (lastX == GridMap.Instance.width) {
-					lastX = 0;
-					lastY += regionTemplate.height;
-				}
-				allRegions[regionIndex] = region;
-				regionIndex++;
-
-			}
+		// int lastX = 0;
+		// int lastY = 0;
+		// Region[] allRegions = new Region[data.regionCount];
+		// int regionIndex = 0;
+		// foreach (var mapTemplateRegion in mapTemplate.regions) {
+		// 	for (int i = 0; i < mapTemplateRegion.Value.Length; i++) {
+		// 		RegionTemplate regionTemplate = mapTemplateRegion.Value[i];
+		// 		Region region = CreateNewRegionFromTemplate(regionTemplate, lastX, lastY);
+		//
+		// 		lastX += regionTemplate.width;
+		// 		if (lastX == GridMap.Instance.width) {
+		// 			lastX = 0;
+		// 			lastY += regionTemplate.height;
+		// 		}
+		// 		allRegions[regionIndex] = region;
+		// 		regionIndex++;
+		//
+		// 	}
+		// }
+		
+		
+		int centerX = mapTemplate.worldMapWidth / 2;
+		int centerY = mapTemplate.worldMapHeight / 2;
+		HexTile center = GridMap.Instance.map[centerX, centerY];
+		Region region = new Region(center);
+		Region[] allRegions = { region };
+		for (int i = 0; i < GridMap.Instance.normalHexTiles.Count; i++) {
+			HexTile hexTile = GridMap.Instance.normalHexTiles[i];
+			region.AddTile(hexTile);
 		}
+		
 		GridMap.Instance.SetRegions(allRegions);
-		string summary = "Region Generation Summary: ";
-		for (int i = 0; i < allRegions.Length; i++) {
-			Region region = allRegions[i];
-            region.PopulateNeighbours();
-			summary += $"\n{region.name} - {region.tiles.Count.ToString()}";
-		}
-		Debug.Log(summary);
+		// string summary = "Region Generation Summary: ";
+		// for (int i = 0; i < allRegions.Length; i++) {
+		// 	Region region = allRegions[i];
+  //           region.PopulateNeighbours();
+		// 	summary += $"\n{region.name} - {region.tiles.Count.ToString()}";
+		// }
+		// Debug.Log(summary);
 		
 		yield return null;
 	}
@@ -52,7 +64,7 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 		int centerY = startingY + (template.height / 2);
 		HexTile center = GridMap.Instance.map[centerX, centerY];
 		
-		Region region = new Region(center, template);
+		Region region = new Region(center);
 		for (int x = startingX; x < maxX; x++) {
 			for (int y = startingY; y < maxY; y++) {
 				try {
@@ -89,12 +101,12 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 
 		for (int i = 0; i < saveData.worldMapSave.regionSaves.Count; i++) {
 			SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSaves[i];
-			Region region = CreateNewRegionFromSave(saveDataRegion, lastX, lastY);
-			lastX += saveDataRegion.regionTemplate.width;
-			if (lastX == GridMap.Instance.width) {
-				lastX = 0;
-				lastY += saveDataRegion.regionTemplate.height;
-			}
+			Region region = CreateNewRegionFromSave(saveDataRegion, lastX, lastY, saveData.worldMapSave.worldMapTemplate.worldMapWidth, saveData.worldMapSave.worldMapTemplate.worldMapHeight);
+			// lastX += saveDataRegion.regionTemplate.width;
+			// if (lastX == GridMap.Instance.width) {
+			// 	lastX = 0;
+			// 	lastY += saveDataRegion.regionTemplate.height;
+			// }
 			allRegions[i] = region;
 		}
 		GridMap.Instance.SetRegions(allRegions);
@@ -107,10 +119,7 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 		
 		yield return null;
 	}
-	private Region CreateNewRegionFromSave(SaveDataRegion saveDataRegion, int startingX, int startingY) {
-		int maxX = startingX + saveDataRegion.regionTemplate.width;
-		int maxY = startingY + saveDataRegion.regionTemplate.height;
-		
+	private Region CreateNewRegionFromSave(SaveDataRegion saveDataRegion, int startingX, int startingY, int maxX, int maxY) {
 		Region region = new Region(saveDataRegion);
 		for (int x = startingX; x < maxX; x++) {
 			for (int y = startingY; y < maxY; y++) {

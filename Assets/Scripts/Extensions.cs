@@ -167,6 +167,25 @@ public static class Extensions {
             return LANDMARK_TYPE.HOUSES;
         }
     }
+
+    public static SettlementResources.StructureRequirement GetRequiredObjectForBuilding(this STRUCTURE_TYPE structureType) {
+        switch (structureType) {
+            case STRUCTURE_TYPE.QUARRY:
+                return SettlementResources.StructureRequirement.ROCK;
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+                return SettlementResources.StructureRequirement.FEATURE_GAME;
+            case STRUCTURE_TYPE.ABANDONED_MINE:
+            case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
+            case STRUCTURE_TYPE.ANCIENT_RUIN:
+            case STRUCTURE_TYPE.MONSTER_LAIR:
+            case STRUCTURE_TYPE.CAVE:
+            case STRUCTURE_TYPE.TEMPLE:
+            case STRUCTURE_TYPE.RUINED_ZOO:
+                return SettlementResources.StructureRequirement.NONE;
+            default:
+                return SettlementResources.StructureRequirement.NONE;
+        }
+    }
     #endregion
 
     #region Misc

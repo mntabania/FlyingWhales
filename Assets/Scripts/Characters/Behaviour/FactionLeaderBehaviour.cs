@@ -73,14 +73,14 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                         if (character.homeSettlement.HasHomelessResident()) {
                             chance = 7;
                         }
-                        // chance = 100;
+                        // chance = 0;
                         if (GameUtilities.RollChance(chance, ref log)) {
                             log += $"\n-Chance met and dwellings not yet at maximum.";
                             //place dwelling blueprint
                             StructureSetting structureToPlace = character.homeSettlement.settlementType.GetDwellingSetting(character.faction);
-                            if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
+                            if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse, out var connectorTile)) {
                                 log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
-                                return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, out producedJob);    
+                                return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, connectorTile, out producedJob);    
                             }    
                         }
                     }
@@ -88,9 +88,9 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                         log += $"\n-Settlement has no dwelling yet, always build dwelling first";
                         //place dwelling blueprint
                         StructureSetting structureToPlace = character.homeSettlement.settlementType.GetDwellingSetting(character.faction);
-                        if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
+                        if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse, out var connectorTile)) {
                             log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
-                            return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, out producedJob);
+                            return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, connectorTile, out producedJob);
                         }
                     }
                     log += $"\n-Check chance to build a missing facility.";
@@ -102,13 +102,15 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                         if (facilityCount < (character.homeSettlement.settlementType.maxFacilities/2)) {
                             chance = 3;
                         }
+                        // chance = 100;
                         if (GameUtilities.RollChance(chance, ref log)) {
                             log += $"\n-Chance to build facility met.";
                             //place random facility based on weights
                             StructureSetting targetFacility = character.homeSettlement.GetMissingFacilityToBuildBasedOnWeights();
-                            if (targetFacility.hasValue && LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, targetFacility, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
+                            log += $"\n-Will try to build facility {targetFacility.ToString()}";
+                            if (targetFacility.hasValue && LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, targetFacility, out var targetTile, out var structurePrefabName, out var connectorToUse, out var connectorTile)) {
                                 log += $"\n-Will place blueprint {structurePrefabName} at {targetTile}.";
-                                return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, targetFacility, targetTile, out producedJob);    
+                                return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, targetFacility, targetTile, connectorTile, out producedJob);    
                             }
                         }
                     }

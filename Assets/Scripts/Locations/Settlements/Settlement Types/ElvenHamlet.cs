@@ -17,6 +17,10 @@ namespace Locations.Settlements.Settlement_Types {
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.BARRACKS, RESOURCE.WOOD), 20, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.WOOD), 30, 1);
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.HOSPICE, RESOURCE.WOOD), 10, 1);
+            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.QUARRY, RESOURCE.WOOD), 10, 1);
+            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.FISHING_SHACK, RESOURCE.WOOD), 10, 1);
+            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.WOOD), 10, 1);
+            SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.WOOD), 10, 1);
         }
         public override StructureSetting GetDwellingSetting(Faction faction) {
             return new StructureSetting(STRUCTURE_TYPE.DWELLING, RESOURCE.WOOD);

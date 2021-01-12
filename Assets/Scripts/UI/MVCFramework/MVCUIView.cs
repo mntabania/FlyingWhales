@@ -5,11 +5,13 @@ namespace Ruinarch.MVCFramework {
 	{
 
 		protected MVCUIModel _baseAssetModel;
+		public bool hasBeenInitialized;
 
 		protected virtual void Init(Canvas canvas, MVCUIModel assets) 
 		{
 			_baseAssetModel = assets;
 			_baseAssetModel.transform.SetParent(canvas.transform, false);
+			hasBeenInitialized = true;
 		}
 
 		public virtual void Destroy() 

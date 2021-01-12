@@ -12,6 +12,8 @@ namespace Quests {
 
         public static QuestManager Instance;
 
+        public EliminateVillagerTracker eliminateVillagerTracker { get; private set; }
+        
         /// <summary>
         /// List of active quests. NOTE: this does not include tutorials.
         /// </summary>
@@ -34,6 +36,7 @@ namespace Quests {
         private void Awake() {
             Instance = this;
             _activeQuests = new List<Quest>();
+            eliminateVillagerTracker = new EliminateVillagerTracker();
         }
         protected override void OnDestroy() {
             base.OnDestroy();
@@ -51,15 +54,16 @@ namespace Quests {
             Messenger.AddListener<List<Character>>(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
             Messenger.AddListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
             Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "CenterButton");
+            eliminateVillagerTracker.Initialize(CharacterManager.Instance.allCharacters);
         }
         public void InitializeAfterLoadoutPicked(){
             if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {
-                CheckEliminateAllVillagersQuest();
+                TryCreateWinConditionQuest();
                 InstantiatePendingSpecialPopups();    
             }
         }
         public void InitializeAfterStartTutorial(){
-            CheckEliminateAllVillagersQuest();
+            TryCreateWinConditionQuest();
             InstantiatePendingSpecialPopups();    
         }
         private void InstantiatePendingSpecialPopups() {
@@ -154,19 +158,34 @@ namespace Quests {
         #endregion
 
         #region Eliminate All Villagers Quest
-        private void CheckEliminateAllVillagersQuest() {
-            if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial || 
-                SettingsManager.Instance.settings.skipTutorials) {
-                CreateEliminateAllVillagersQuest();
+        private void TryCreateWinConditionQuest() {
+            if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+                if (SettingsManager.Instance.settings.skipTutorials) {
+                    SpawnWinConditionQuest();
+                } else {
+                    Messenger.AddListener(PlayerQuestSignals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);    
+                }
             } else {
-                Messenger.AddListener(PlayerQuestSignals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);
+                SpawnWinConditionQuest();
             }
         }
         private void OnImportantTutorialsFinished() {
-            CreateEliminateAllVillagersQuest();
+            SpawnWinConditionQuest();
+        }
+        private void SpawnWinConditionQuest() {
+            Messenger.RemoveListener(PlayerQuestSignals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);
+            switch (WorldSettings.Instance.worldSettingsData.victoryCondition) {
+                case VICTORY_CONDITION.Eliminate_All:
+                    CreateEliminateAllVillagersQuest();
+                    break;
+                case VICTORY_CONDITION.Sandbox:
+                    //no win condition quest
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
         private void CreateEliminateAllVillagersQuest() {
-            Messenger.RemoveListener(PlayerQuestSignals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);
             if (!IsQuestActive<EliminateAllVillagers>()) {
                 EliminateAllVillagers eliminateAllVillagers = new EliminateAllVillagers();
                 ActivateQuest(eliminateAllVillagers);    

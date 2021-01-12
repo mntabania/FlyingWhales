@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
+using Inner_Maps.Map_Objects.Map_Object_Visuals;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
+using Locations.Settlements;
 
 public class TreeObject : TileObject {
     public int yield { get; private set; }
@@ -18,9 +21,19 @@ public class TreeObject : TileObject {
     private Character[] _users;
     private Occupied_State _occupiedState;
     public override System.Type serializedData => typeof(SaveDataTreeObject);
-    
+    public override StructureConnector structureConnector {
+        get {
+            if (_treeGameObject != null) {
+                return _treeGameObject.structureConnector;
+            }
+            return null;
+        }
+    }
     public Occupied_State occupiedState => _occupiedState;
     public Ent ent => _ent;
+
+    private TreeGameObject _treeGameObject;
+    
     public TreeObject() {
         Initialize(TILE_OBJECT_TYPE.TREE_OBJECT, false);
         AddAdvertisedAction(INTERACTION_TYPE.CHOP_WOOD);
@@ -34,6 +47,29 @@ public class TreeObject : TileObject {
         Assert.IsNotNull(data);
         yield = data.yield;
         _occupiedState = data.occupiedState;
+    }
+
+    public override void UpdateSettlementResourcesParent() {
+        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+            if (gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null) {
+                gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
+            }
+            gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
+                if (eachNeighboringHexTile.settlementOnTile != null) {
+                    eachNeighboringHexTile.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.TREE, this);
+                   parentSettlement = eachNeighboringHexTile.settlementOnTile;
+                }
+            });
+        }
+    }
+
+    public override void RemoveFromSettlementResourcesParent() {
+        if (parentSettlement != null) {
+            if (parentSettlement.SettlementResources.trees.Remove(this)) {
+                parentSettlement = null;
+            }    
+        }
+        
     }
 
     #region Loading
@@ -97,6 +133,15 @@ public class TreeObject : TileObject {
             ent.marker.PlaceMarkerAt(gridTileLocation);
             ent.marker.SetVisualState(false);
         }
+        UpdateSettlementResourcesParent();
+    }
+    protected override void CreateMapObjectVisual() {
+        base.CreateMapObjectVisual();
+        _treeGameObject = mapVisual as TreeGameObject;
+    }
+    public override void DestroyMapVisualGameObject() {
+        base.DestroyMapVisualGameObject();
+        _treeGameObject = null;
     }
     #endregion
 
@@ -126,10 +171,8 @@ public class TreeObject : TileObject {
             if (location.isCorrupted) {
                 entType = SUMMON_TYPE.Corrupt_Ent;
             } else {
-                BIOMES biome = location.parentMap.region.coreTile.biomeType;
-                if (location.collectionOwner.isPartOfParentRegionMap) {
-                    biome = location.collectionOwner.partOfHextile.hexTileOwner.biomeType;
-                }
+                HexTile hex = location.collectionOwner.GetConnectedHextileOrNearestHextile();
+                BIOMES biome = hex.biomeType;
                 switch (biome) {
                     case BIOMES.DESERT:
                         entType = SUMMON_TYPE.Desert_Ent;

@@ -48,7 +48,7 @@ public class MultiThreadPool : BaseMonoBehaviour {
 
     private void RunThread() {
         while (isRunning) { // && !exitHandle.Wait(20)
-            if (this.functionsToBeRunInThread.Count > 0) {
+            if (this.functionsToBeRunInThread != null && this.functionsToBeRunInThread.Count > 0) {
                 //Thread.Sleep(20);
                 Multithread newFunction = this.functionsToBeRunInThread.Dequeue();
                 if (newFunction != null) {

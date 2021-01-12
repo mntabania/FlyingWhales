@@ -174,7 +174,7 @@ public static class RandomNameGenerator {
     private static List<string> availableFaeryMaleNames;
     private static List<string> availableGoblinFemaleNames;
     private static List<string> availableGoblinMaleNames;
-
+    
     public static void Initialize(){
         generatedHumanSurnames = new Sobriquet.Generator(2, baseHumanSurnames);
         generatedElvenSurnames = new Sobriquet.Generator(2, baseElvenSurnames);
@@ -350,7 +350,7 @@ public static class RandomNameGenerator {
         }
         return GenerateElvenName(gender);
 	}
-	public static string GenerateKingdomName(){
+	public static string GenerateFactionName(){
         if(humanKingdomNames.Count <= 0) {
             humanKingdomNames = generatedHumanKingdomNames.AllRaw(12).ToList();
         }
@@ -358,7 +358,7 @@ public static class RandomNameGenerator {
         string humanKingdomName = humanKingdomNames[index];
         return humanKingdomName.Trim();
 	}
-	public static string GenerateCityName(RACE race){
+	public static string GenerateSettlementName(RACE race){
         if (race == RACE.HUMANS) {
             if (humanKingdomNames.Count <= 0) {
                 humanKingdomNames = generatedHumanKingdomNames.AllRaw(12).ToList();

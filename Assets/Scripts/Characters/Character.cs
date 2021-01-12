@@ -549,11 +549,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (faction != null && faction.isMajorNonPlayerOrVagrant && marker) {
             if (poi is Character character) {
                 if (marker.IsPOIInVision(character)) {
-                    PlayerManager.Instance.player.threatComponent.AdjustThreat(amount);
+                    PlayerManager.Instance.player.threatComponent.AdjustThreatAndApplyModification(amount);
                 }
             } else if (poi is TileObject tileObject) {
                 if (marker.IsPOIInVision(tileObject)) {
-                    PlayerManager.Instance.player.threatComponent.AdjustThreat(amount);
+                    PlayerManager.Instance.player.threatComponent.AdjustThreatAndApplyModification(amount);
                 }
             }
         }
