@@ -237,6 +237,18 @@ public class FactionManager : BaseMonoBehaviour {
     public Faction GetRandomMajorNonPlayerFaction() {
         return DatabaseManager.Instance.factionDatabase.GetRandomMajorNonPlayerFaction();
     }
+    public bool LeaveFaction(Character character) {
+        Faction targetFaction = null;
+        if(character.minion != null) {
+            targetFaction = PlayerManager.Instance.player.playerFaction;
+        } else if (character is Summon summon) {
+            targetFaction = summon.defaultFaction;
+        } else {
+            targetFaction = vagrantFaction;
+        }
+
+        return character.ChangeFactionTo(targetFaction);
+    }
     #endregion
 
     #region Emblem

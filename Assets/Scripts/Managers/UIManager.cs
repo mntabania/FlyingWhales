@@ -1880,7 +1880,7 @@ public class UIManager : BaseMonoBehaviour {
         
         ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);
     }
-    private void OnHoverPlayerAction(SpellData spellData, UIHoverPosition p_hoverPosition, IPlayerActionTarget p_target) {
+    private void OnHoverPlayerAction(SkillData spellData, UIHoverPosition p_hoverPosition, IPlayerActionTarget p_target) {
         string title = $"{spellData.name}";
         string fullDescription = spellData.description;
         int charges = spellData.charges;
@@ -1952,7 +1952,7 @@ public class UIManager : BaseMonoBehaviour {
         fullDescription = $"{fullDescription}\n\n{additionalText}";
         ShowSmallInfo(fullDescription, pos: p_hoverPosition, header: title, autoReplaceText: false);
     }
-    private bool HasEnoughMana(SpellData spellData) {
+    private bool HasEnoughMana(SkillData spellData) {
         if (spellData.hasManaCost) {
             if (PlayerManager.Instance.player.mana >= spellData.manaCost) {
                 return true;
@@ -1962,7 +1962,7 @@ public class UIManager : BaseMonoBehaviour {
         //if skill has no mana cost then always has enough mana
         return true;
     }
-    private bool HasEnoughCharges(SpellData spellData) {
+    private bool HasEnoughCharges(SkillData spellData) {
         if (spellData.hasCharges) {
             if (spellData.charges > 0) {
                 return true;

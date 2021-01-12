@@ -839,7 +839,7 @@ public class PlayerUI : BaseMonoBehaviour {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellItemPrefab.name, Vector3.zero, Quaternion.identity, spellsScrollRect.content);
         SpellItem item = go.GetComponent<SpellItem>();
         go.SetActive(false);
-        SpellData spellData = PlayerSkillManager.Instance.GetSpellData(spell);
+        SkillData spellData = PlayerSkillManager.Instance.GetSpellData(spell);
         if (spellData != null) {
             item.SetObject(spellData);
         } else {
@@ -882,10 +882,10 @@ public class PlayerUI : BaseMonoBehaviour {
         }
         return null;
     }
-    public void OnHoverSpell(SpellData skillData, UIHoverPosition position = null) {
+    public void OnHoverSpell(SkillData skillData, UIHoverPosition position = null) {
         skillDetailsTooltip.ShowPlayerSkillDetails(skillData, position);
     }
-    public void OnHoverOutSpell(SpellData skillData) {
+    public void OnHoverOutSpell(SkillData skillData) {
         skillDetailsTooltip.HidePlayerSkillDetails();
     }
     #endregion

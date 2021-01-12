@@ -79,7 +79,7 @@ public class CharacterInfoUI : InfoUIBase {
 
     public Character activeCharacter => _activeCharacter;
     public Character previousCharacter => _previousCharacter;
-    private List<SpellData> afflictions;
+    private List<SkillData> afflictions;
     private bool aliveRelationsOnly;
     private List<RELATIONS_FILTER> filters;
     private RELATIONS_FILTER[] allFilters;
@@ -161,7 +161,7 @@ public class CharacterInfoUI : InfoUIBase {
 
         InitializeRelationships();
         
-        afflictions = new List<SpellData>();
+        afflictions = new List<SkillData>();
         _dictMoodSummary = new Dictionary<string, MoodSummaryEntry>();
     }
 
@@ -765,7 +765,7 @@ public class CharacterInfoUI : InfoUIBase {
         List<PLAYER_SKILL_TYPE> afflictionTypes = PlayerManager.Instance.player.playerSkillComponent.afflictions;
         for (int i = 0; i < afflictionTypes.Count; i++) {
             PLAYER_SKILL_TYPE spellType = afflictionTypes[i];
-            SpellData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType);
+            SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(spellType);
             afflictions.Add(spellData);
         }
         UIManager.Instance.ShowClickableObjectPicker(afflictions, ActivateAfflictionConfirmation, null, CanActivateAffliction,
@@ -776,7 +776,7 @@ public class CharacterInfoUI : InfoUIBase {
         return PlayerManager.Instance.GetJobActionSprite(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(str));
     }
     private void ActivateAfflictionConfirmation(object o) {
-        SpellData affliction = (SpellData)o;
+        SkillData affliction = (SkillData)o;
         PLAYER_SKILL_TYPE afflictionType = affliction.type;
         string afflictionName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(afflictionType.ToString());
         UIManager.Instance.ShowYesNoConfirmation("Affliction Confirmation",
@@ -788,13 +788,13 @@ public class CharacterInfoUI : InfoUIBase {
         PlayerSkillManager.Instance.GetAfflictionData(afflictionType).ActivateAbility(activeCharacter);
         PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.AFFLICT).OnExecutePlayerSkill();
     }
-    private bool CanActivateAffliction(SpellData spellData) {
+    private bool CanActivateAffliction(SkillData spellData) {
         return spellData.CanPerformAbilityTowards(activeCharacter);
     }
-    private void OnHoverAffliction(SpellData spellData) {
+    private void OnHoverAffliction(SkillData spellData) {
         PlayerUI.Instance.OnHoverSpell(spellData);
     }
-    private void OnHoverOutAffliction(SpellData spellData) {
+    private void OnHoverOutAffliction(SkillData spellData) {
         UIManager.Instance.HideSmallInfo();
         PlayerUI.Instance.OnHoverOutSpell(null);
     }

@@ -251,10 +251,10 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Role Actions
-    public SpellData currentActivePlayerSpell { get; private set; }
-    public void SetCurrentlyActivePlayerSpell(SpellData action) {
+    public SkillData currentActivePlayerSpell { get; private set; }
+    public void SetCurrentlyActivePlayerSpell(SkillData action) {
         if(currentActivePlayerSpell != action) {
-            SpellData previousActiveAction = currentActivePlayerSpell;
+            SkillData previousActiveAction = currentActivePlayerSpell;
             currentActivePlayerSpell = action;
             if (currentActivePlayerSpell == null) {
                 UIManager.Instance.SetTempDisableShowInfoUI(false); //allow UI clicks again after active spell has been set to null

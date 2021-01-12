@@ -48,7 +48,7 @@ public class PlayerResearchUI : MonoBehaviour {
         return true;
     }
     private void OnHoverAbilityChoice(string abilityName) {
-        SpellData data = null;
+        SkillData data = null;
         // for (int i = 0; i < chosenMinion.interventionAbilitiesToResearch.Count; i++) {
         //     SPELL_TYPE currAbility = chosenMinion.interventionAbilitiesToResearch[i];
         //     if (PlayerManager.Instance.allSpellsData[currAbility].name == abilityName) {

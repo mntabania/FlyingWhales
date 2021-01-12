@@ -10,14 +10,14 @@ namespace Quests.Steps {
             _onAfflictCallback = onAfflictCallback;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<SpellData>(SpellSignals.ON_EXECUTE_AFFLICTION, CheckForCompletion);
+            Messenger.AddListener<SkillData>(SpellSignals.ON_EXECUTE_AFFLICTION, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<SpellData>(SpellSignals.ON_EXECUTE_AFFLICTION, CheckForCompletion);
+            Messenger.RemoveListener<SkillData>(SpellSignals.ON_EXECUTE_AFFLICTION, CheckForCompletion);
         }
 
         #region Listeners
-        private void CheckForCompletion(SpellData spellData) {
+        private void CheckForCompletion(SkillData spellData) {
             if (_requiredAffliction == PLAYER_SKILL_TYPE.NONE || _requiredAffliction == spellData.type) {
                 Complete();
                 if (_onAfflictCallback != null) {

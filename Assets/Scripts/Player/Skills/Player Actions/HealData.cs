@@ -9,4 +9,19 @@ public class HealData : PlayerAction {
     public HealData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
+
+    #region Overrides
+    public override void ActivateAbility(IPointOfInterest targetPOI) {
+        if (targetPOI is Character targetCharacter) {
+            targetCharacter.ResetToFullHP();
+        }
+        base.ActivateAbility(targetPOI);
+    }
+    public override bool IsValid(IPlayerActionTarget target) {
+        if (target is Character targetCharacter) {
+            return targetCharacter.currentHP < targetCharacter.maxHP;
+        }
+        return false;
+    }
+    #endregion
 }

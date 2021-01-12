@@ -26,14 +26,14 @@ public class PlayerSkillManager : MonoBehaviour {
 
     [SerializeField] private PlayerSkillDataDictionary _playerSkillDataDictionary;
 
-    public Dictionary<PLAYER_SKILL_TYPE, SpellData> allSpellsData { get; private set; }
+    public Dictionary<PLAYER_SKILL_TYPE, SkillData> allSpellsData { get; private set; }
     public Dictionary<PLAYER_SKILL_TYPE, PlayerAction> allPlayerActionsData { get; private set; }
     public Dictionary<PLAYER_SKILL_TYPE, AfflictData> allAfflictionsData { get; private set; }
     public Dictionary<PLAYER_SKILL_TYPE, SchemeData> allSchemesData { get; private set; }
     public Dictionary<PLAYER_SKILL_TYPE, DemonicStructurePlayerSkill> allDemonicStructureSkillsData { get; private set; }
     public Dictionary<PLAYER_SKILL_TYPE, MinionPlayerSkill> allMinionPlayerSkillsData { get; private set; }
     public Dictionary<PLAYER_SKILL_TYPE, SummonPlayerSkill> allSummonPlayerSkillsData { get; private set; }
-    public Dictionary<PLAYER_SKILL_TYPE, SpellData> allPlayerSkillsData { get; private set; }
+    public Dictionary<PLAYER_SKILL_TYPE, SkillData> allPlayerSkillsData { get; private set; }
     public Dictionary<PASSIVE_SKILL, PassiveSkill> passiveSkillsData { get; private set; }
 
     #region getters
@@ -63,10 +63,10 @@ public class PlayerSkillManager : MonoBehaviour {
     public PLAYER_SKILL_TYPE[] allPlayerActions = { PLAYER_SKILL_TYPE.ZAP, PLAYER_SKILL_TYPE.RAISE_DEAD, PLAYER_SKILL_TYPE.DESTROY, PLAYER_SKILL_TYPE.IGNITE, PLAYER_SKILL_TYPE.POISON
             , PLAYER_SKILL_TYPE.TORTURE, PLAYER_SKILL_TYPE.SEIZE_OBJECT, PLAYER_SKILL_TYPE.SEIZE_CHARACTER, PLAYER_SKILL_TYPE.SEIZE_MONSTER
             , PLAYER_SKILL_TYPE.BUILD_DEMONIC_STRUCTURE, PLAYER_SKILL_TYPE.AFFLICT, PLAYER_SKILL_TYPE.BREED_MONSTER //, SPELL_TYPE.ACTIVATE
-            , PLAYER_SKILL_TYPE.AGITATE/*, SPELL_TYPE.HEAL, SPELL_TYPE.ANIMATE, SPELL_TYPE.EMPOWER*/
+            , PLAYER_SKILL_TYPE.AGITATE, PLAYER_SKILL_TYPE.HEAL/*, SPELL_TYPE.ANIMATE, SPELL_TYPE.EMPOWER*/
             , PLAYER_SKILL_TYPE.BRAINWASH, PLAYER_SKILL_TYPE.UNSUMMON, PLAYER_SKILL_TYPE.TRIGGER_FLAW/*, SPELL_TYPE.CULTIST_TRANSFORM*/, PLAYER_SKILL_TYPE.CULTIST_POISON
             , PLAYER_SKILL_TYPE.CULTIST_BOOBY_TRAP, PLAYER_SKILL_TYPE.SNATCH, PLAYER_SKILL_TYPE.SACRIFICE, PLAYER_SKILL_TYPE.REPAIR, PLAYER_SKILL_TYPE.SPREAD_RUMOR, PLAYER_SKILL_TYPE.EVANGELIZE
-            , PLAYER_SKILL_TYPE.FOUND_CULT, PLAYER_SKILL_TYPE.UPGRADE, PLAYER_SKILL_TYPE.SCHEME
+            , PLAYER_SKILL_TYPE.FOUND_CULT, PLAYER_SKILL_TYPE.UPGRADE, PLAYER_SKILL_TYPE.SCHEME, PLAYER_SKILL_TYPE.RELEASE, PLAYER_SKILL_TYPE.EXPEL
     };
 
     [NonSerialized]
@@ -124,7 +124,7 @@ public class PlayerSkillManager : MonoBehaviour {
 
     public void Initialize() {
         // SPELL_TYPE[] allSpellTypes = UtilityScripts.CollectionUtilities.GetEnumValues<SPELL_TYPE>();
-        allPlayerSkillsData = new Dictionary<PLAYER_SKILL_TYPE, SpellData>();
+        allPlayerSkillsData = new Dictionary<PLAYER_SKILL_TYPE, SkillData>();
         ConstructAllSpellsData();
         ConstructAllPlayerActionsData();
         ConstructAllAfflictionsData();
@@ -137,14 +137,14 @@ public class PlayerSkillManager : MonoBehaviour {
 
     #region Utilities
     private void ConstructAllSpellsData() {
-        allSpellsData = new Dictionary<PLAYER_SKILL_TYPE, SpellData>();
+        allSpellsData = new Dictionary<PLAYER_SKILL_TYPE, SkillData>();
         for (int i = 0; i < allSpells.Length; i++) {
             PLAYER_SKILL_TYPE spellType = allSpells[i];
             if (spellType != PLAYER_SKILL_TYPE.NONE) {
                 var typeName =
                     $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-                SpellData spellData = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
-                   throw new Exception($"Problem with creating spell data for {typeName}")) as SpellData;
+                SkillData spellData = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
+                   throw new Exception($"Problem with creating spell data for {typeName}")) as SkillData;
                 allSpellsData.Add(spellType, spellData);
                 allPlayerSkillsData.Add(spellType, spellData);
             }
@@ -257,13 +257,13 @@ public class PlayerSkillManager : MonoBehaviour {
     public bool IsDemonicStructure(PLAYER_SKILL_TYPE type) {
         return allDemonicStructureSkills.Contains(type);
     }
-    public SpellData GetPlayerSkillData(PLAYER_SKILL_TYPE type) {
+    public SkillData GetPlayerSkillData(PLAYER_SKILL_TYPE type) {
         if (allPlayerSkillsData.ContainsKey(type)) {
             return allPlayerSkillsData[type];
         }
         return null;
     }
-    public SpellData GetSpellData(PLAYER_SKILL_TYPE type) {
+    public SkillData GetSpellData(PLAYER_SKILL_TYPE type) {
         if (allSpellsData.ContainsKey(type)) {
             return allSpellsData[type];
         }
@@ -333,13 +333,13 @@ public class PlayerSkillManager : MonoBehaviour {
     }
     public void ResetSpellsInUse() {
         for (int i = 0; i < allPlayerSkillsData.Values.Count; i++) {
-            SpellData spellData = allPlayerSkillsData.Values.ElementAt(i);
+            SkillData spellData = allPlayerSkillsData.Values.ElementAt(i);
             spellData.SetIsInUse(false);
         }
     }
     public void ResetSummonPlayerSkills() {
         for (int i = 0; i < allSummonPlayerSkills.Length; i++) {
-            SpellData spellData = allSummonPlayerSkillsData[allSummonPlayerSkills[i]];
+            SkillData spellData = allSummonPlayerSkillsData[allSummonPlayerSkills[i]];
             spellData.ResetData();
         }
     }

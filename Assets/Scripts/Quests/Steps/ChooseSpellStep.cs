@@ -1,19 +1,19 @@
 ﻿using System;
 namespace Quests.Steps {
     public class ChooseSpellStep : QuestStep {
-        private readonly Func<SpellData, bool> _validityChecker;
-        public ChooseSpellStep(System.Func<SpellData, bool> validityChecker, string stepDescription) : base(stepDescription) {
+        private readonly Func<SkillData, bool> _validityChecker;
+        public ChooseSpellStep(System.Func<SkillData, bool> validityChecker, string stepDescription) : base(stepDescription) {
             _validityChecker = validityChecker;
         }
         protected override void SubscribeListeners() {
-            Messenger.AddListener<SpellData>(SpellSignals.PLAYER_SET_ACTIVE_SPELL, CheckForCompletion);
+            Messenger.AddListener<SkillData>(SpellSignals.PLAYER_SET_ACTIVE_SPELL, CheckForCompletion);
         }
         protected override void UnSubscribeListeners() {
-            Messenger.RemoveListener<SpellData>(SpellSignals.PLAYER_SET_ACTIVE_SPELL, CheckForCompletion);
+            Messenger.RemoveListener<SkillData>(SpellSignals.PLAYER_SET_ACTIVE_SPELL, CheckForCompletion);
         }
 
         #region Listeners
-        private void CheckForCompletion(SpellData chosenSpell) {
+        private void CheckForCompletion(SkillData chosenSpell) {
             if (_validityChecker.Invoke(chosenSpell)) {
                 Complete();
             }

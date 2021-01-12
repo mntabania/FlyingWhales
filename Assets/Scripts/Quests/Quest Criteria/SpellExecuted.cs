@@ -8,17 +8,17 @@ namespace Quests {
         }
         
         public override void Enable() {
-            Messenger.AddListener<SpellData>(SpellSignals.ON_EXECUTE_PLAYER_SKILL, OnSpellExecuted);
-            Messenger.AddListener<SpellData>(SpellSignals.ON_EXECUTE_AFFLICTION, OnSpellExecuted);
+            Messenger.AddListener<SkillData>(SpellSignals.ON_EXECUTE_PLAYER_SKILL, OnSpellExecuted);
+            Messenger.AddListener<SkillData>(SpellSignals.ON_EXECUTE_AFFLICTION, OnSpellExecuted);
             Messenger.AddListener<PlayerAction>(SpellSignals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecuted);
         }
         public override void Disable() {
-            Messenger.RemoveListener<SpellData>(SpellSignals.ON_EXECUTE_PLAYER_SKILL, OnSpellExecuted);
-            Messenger.RemoveListener<SpellData>(SpellSignals.ON_EXECUTE_AFFLICTION, OnSpellExecuted);
+            Messenger.RemoveListener<SkillData>(SpellSignals.ON_EXECUTE_PLAYER_SKILL, OnSpellExecuted);
+            Messenger.RemoveListener<SkillData>(SpellSignals.ON_EXECUTE_AFFLICTION, OnSpellExecuted);
             Messenger.RemoveListener<PlayerAction>(SpellSignals.ON_EXECUTE_PLAYER_ACTION, OnSpellExecuted);
         }
         
-        private void OnSpellExecuted(SpellData spell) {
+        private void OnSpellExecuted(SkillData spell) {
             if (_spellTypes.Contains(spell.type)) {
                 SetCriteriaAsMet();
             } else {
