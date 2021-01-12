@@ -1317,6 +1317,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void CreateProduceFoodJob() {
         if (!owner.jobQueue.HasJob(JOB_TYPE.PRODUCE_FOOD)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_FOOD, new GoapEffect(GOAP_EFFECT_CONDITION.PRODUCE_FOOD, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
+            JobUtilities.PopulatePriorityLocationsForProduceResources(owner.homeSettlement, job, RESOURCE.FOOD);
             owner.jobQueue.AddJobInQueue(job);
         }
     }
@@ -2723,16 +2724,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         producedJob = null;
         return false;
     }
-    public bool TriggerPartyEatJob(Table table, out JobQueueItem producedJob) { //bool forceDoAction = false
-        if (!owner.jobQueue.HasJob(JOB_TYPE.PARTYING)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTYING, INTERACTION_TYPE.EAT, table, owner);
-            job.SetCannotBePushedBack(true);
-            producedJob = job;
-            return true;
-        }
-        producedJob = null;
-        return false;
-    }
+    //public bool TriggerPartyEatJob(Table table, out JobQueueItem producedJob) { //bool forceDoAction = false
+    //    if (!owner.jobQueue.HasJob(JOB_TYPE.PARTYING)) {
+    //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTYING, INTERACTION_TYPE.EAT, table, owner);
+    //        job.SetCannotBePushedBack(true);
+    //        producedJob = job;
+    //        return true;
+    //    }
+    //    producedJob = null;
+    //    return false;
+    //}
     public bool TriggerPlayCardsJob(Desk desk, out JobQueueItem producedJob) { //bool forceDoAction = false
         if (!owner.jobQueue.HasJob(JOB_TYPE.PARTYING)) {
             ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PLAY_CARDS], owner, desk, null, 0);

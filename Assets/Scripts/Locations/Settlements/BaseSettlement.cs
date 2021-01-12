@@ -367,8 +367,27 @@ namespace Locations.Settlements {
             }
             return null;
         }
-        public bool HasStructure(STRUCTURE_TYPE type) {
-            return structures.ContainsKey(type);
+        public bool HasStructure(params STRUCTURE_TYPE[] type) {
+            for (int i = 0; i < type.Length; i++) {
+                if (structures.ContainsKey(type[i])) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool HasStructureForProducingResource(RESOURCE resourceType) {
+            switch (resourceType) {
+                case RESOURCE.FOOD:
+                    return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.FARM, STRUCTURE_TYPE.FISHING_SHACK);
+                case RESOURCE.WOOD:
+                    return HasStructure(STRUCTURE_TYPE.LUMBERYARD);
+                case RESOURCE.STONE:
+                    return HasStructure(STRUCTURE_TYPE.QUARRY);
+                case RESOURCE.METAL:
+                    return HasStructure(STRUCTURE_TYPE.MINE_SHACK);
+                default:
+                    return false;
+            }
         }
         public LocationStructure GetRandomStructureThatMeetCriteria(System.Func<LocationStructure, bool> criteria) {
             List<LocationStructure> choices = ObjectPoolManager.Instance.CreateNewStructuresList();
