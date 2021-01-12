@@ -549,7 +549,7 @@ public class MovementComponent : CharacterComponent {
     }
     private void AvoidAllFactions() {
         for (int i = InnerMapManager.Starting_Tag_Index - 1; i < 32; i++) {
-            SetPenaltyForTag(i, 50); //500
+            SetPenaltyForTag(i, 100); //500
         }
     }
     private void DoNotAvoidFaction(Faction p_faction) {
@@ -562,8 +562,8 @@ public class MovementComponent : CharacterComponent {
     private void AvoidFaction(Faction p_faction) {
         if (DoesFactionUsePathfindingTag(p_faction)) {
             int pathfindingTag = (int)p_faction.pathfindingTag;
-            SetPenaltyForTag(pathfindingTag, 50); //500
-            SetPenaltyForTag((int)p_faction.pathfindingDoorTag, 50); //500    
+            SetPenaltyForTag(pathfindingTag, 100); //500
+            SetPenaltyForTag((int)p_faction.pathfindingDoorTag, 100); //500    
         }
     }
     public void RedetermineFactionsToAvoid(Character p_character) {
