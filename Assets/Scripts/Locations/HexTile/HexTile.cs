@@ -960,7 +960,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         }
     }
     public override string ToString() {
-        return $"{locationName} - {biomeType.ToString()} - {landmarkOnTile?.specificLandmarkType.ToString() ?? "No Landmark"} - {region?.name ?? "No Region"}";
+        return $"{locationName} - {biomeType.ToString()} - {landmarkOnTile?.specificLandmarkType.ToString() ?? "No Landmark"} - {elevationType.ToString()} - {region?.name ?? "No Region"}";
     }
     public void ShowTileInfo() {
         string summary = $"{ToString()}";

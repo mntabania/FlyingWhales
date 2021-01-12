@@ -33,10 +33,9 @@ public class QuestStepItem : PooledObject {
         //update hover actions based on whether or not the provided step has a tooltip.
         _eventLabel.enabled = step.hasHoverAction;
         _stepLbl.raycastTarget = step.hasHoverAction;
-        
-        //update center button based on the number of selectable objects the step has.
-        centerButton.gameObject.SetActive(step.HasObjectsToCenter());
-        
+
+        UpdateCenterObjectsButton(step);
+
         Messenger.AddListener<QuestStep>(PlayerQuestSignals.QUEST_STEP_COMPLETED, OnStepCompleted);
         Messenger.AddListener<QuestStep>(PlayerQuestSignals.QUEST_STEP_FAILED, OnStepFailed);
         Messenger.AddListener<QuestStep>(UISignals.UPDATE_QUEST_STEP_ITEM, UpdateInfo);
@@ -44,10 +43,15 @@ public class QuestStepItem : PooledObject {
     private void UpdateInfo(QuestStep step) {
         if (_step == step) {
             UpdateDescription();
+            UpdateCenterObjectsButton(step);
         }
     }
     private void UpdateDescription() {
         _stepLbl.text = _step.hasHoverAction ? $"<link=\"1\"><#FFFB00>{_step.stepDescription}</color></link>" : _step.stepDescription;
+    }
+    private void UpdateCenterObjectsButton(QuestStep step) {
+        //update center button based on the number of selectable objects the step has.
+        centerButton.gameObject.SetActive(step.HasObjectsToCenter());
     }
     private void OnStepCompleted(QuestStep step) {
         if (_step == step) {

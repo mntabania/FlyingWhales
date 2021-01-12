@@ -1,13 +1,23 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Inner_Maps;
+using Locations.Settlements;
+using Inner_Maps.Location_Structures;
+using Inner_Maps.Map_Objects.Map_Object_Visuals;
 
 public class Rock : TileObject{
     public int yield { get; private set; }
     public override Type serializedData => typeof(SaveDataRock);
+    public override StructureConnector structureConnector {
+        get {
+            if (_rockGameObject != null) {
+                return _rockGameObject.structureConnector;
+            }
+            return null;
+        }
+    }
+    
+    private RockGameObject _rockGameObject;
     public Rock() {
         Initialize(TILE_OBJECT_TYPE.ROCK, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
@@ -15,9 +25,17 @@ public class Rock : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.MINE_STONE);
 
         SetYield(50);
+        BaseSettlement.onSettlementBuilt += UpdateSettlementResourcesParent;
     }
     public Rock(SaveDataTileObject data) { }
-
+    protected override void CreateMapObjectVisual() {
+        base.CreateMapObjectVisual();
+        _rockGameObject = mapVisual as RockGameObject;
+    }
+    public override void DestroyMapVisualGameObject() {
+        base.DestroyMapVisualGameObject();
+        _rockGameObject = null;
+    }
     public void AdjustYield(int amount) {
         yield += amount;
         yield = Mathf.Max(0, yield);
@@ -29,6 +47,36 @@ public class Rock : TileObject{
     }
     public void SetYield(int amount) {
         yield = amount;
+    }
+
+    public override void UpdateSettlementResourcesParent() {
+        if (gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+            if (gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null) {
+                gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
+            }
+            gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.AllNeighbours.ForEach((eachNeighboringHexTile) => {
+                if (eachNeighboringHexTile.settlementOnTile != null) {
+                    eachNeighboringHexTile.settlementOnTile.SettlementResources?.AddToListbaseOnRequirement(SettlementResources.StructureRequirement.ROCK, this);
+                    parentSettlement = eachNeighboringHexTile.settlementOnTile;
+                }
+            });
+        }
+    }
+    public override void RemoveFromSettlementResourcesParent() {
+        if (parentSettlement != null) {
+            if (parentSettlement.SettlementResources.rocks.Remove(this)) {
+                parentSettlement = null;
+            }
+        }
+    }
+
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        UpdateSettlementResourcesParent();
+    }
+    public override void OnDestroyPOI() {
+        base.OnDestroyPOI();
+        BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;
     }
 }
 #region Save Data

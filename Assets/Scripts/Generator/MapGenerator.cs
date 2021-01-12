@@ -10,6 +10,7 @@ using Generator.Map_Generation.Components;
 using Inner_Maps;
 using Scenario_Maps;
 using Debug = UnityEngine.Debug;
+using Random = UnityEngine.Random;
 
 public class MapGenerator : MonoBehaviour {
 
@@ -26,14 +27,10 @@ public class MapGenerator : MonoBehaviour {
         MapGenerationComponent[] mapGenerationComponents = {
             new WorldMapGridGeneration(), new WorldMapElevationGeneration(), new SupportingFactionGeneration(), 
             new WorldMapRegionGeneration(), new WorldMapBiomeGeneration(), new WorldMapOuterGridGeneration(),
-            new TileFeatureGeneration(), 
-            //new PlayerSettlementGeneration(), 
-            new RegionFeatureGeneration(), 
-            new WorldMapLandmarkGeneration(), new FamilyTreeGeneration(), new RegionInnerMapGeneration(), 
-            new SettlementGeneration(), new CharacterFinalization(), new LandmarkStructureGeneration(), new ElevationStructureGeneration(), 
-            new RegionFeatureActivation(), new MonsterGeneration(), new MapGenerationFinalization(), 
-            
-            //new PlayerDataGeneration(),
+            new TileFeatureGeneration(), new RegionFeatureGeneration(), new WorldMapLandmarkGeneration(), 
+            new FamilyTreeGeneration(), new RegionInnerMapGeneration(), new SettlementGeneration(), 
+            new CharacterFinalization(), new LandmarkStructureGeneration(), new ElevationStructureGeneration(), 
+            new RegionFeatureActivation(), new MonsterGeneration(), new MapGenerationFinalization(),
         };
         yield return StartCoroutine(InitializeWorldCoroutine(mapGenerationComponents));
     }
@@ -76,8 +73,7 @@ public class MapGenerator : MonoBehaviour {
             LevelLoaderManager.Instance.UpdateLoadingBar(1f, 0.5f);
             yield return new WaitForSeconds(0.5f);
             loadingWatch.Stop();
-            Debug.Log(
-                $"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
+            Debug.Log($"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
 
             for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                 Faction faction = FactionManager.Instance.allFactions[i];
@@ -102,24 +98,14 @@ public class MapGenerator : MonoBehaviour {
             }
             
             WorldConfigManager.Instance.mapGenerationData = data;
-            // WorldMapCameraMove.Instance.CenterCameraOn(data.portal.gameObject);
             AudioManager.Instance.TransitionToWorld();
             
             UIManager.Instance.initialWorldSetupMenu.Initialize();
             LevelLoaderManager.Instance.SetLoadingState(false);
             UIManager.Instance.initialWorldSetupMenu.Show();
             Messenger.Broadcast(Signals.GAME_LOADED);
-            
-            // if (WorldConfigManager.Instance.isTutorialWorld) {
-            //     Messenger.Broadcast(Signals.GAME_LOADED);
-            //     UIManager.Instance.initialWorldSetupMenu.loadOutMenu.OnClickContinue();
-            //     LevelLoaderManager.Instance.SetLoadingState(false);
-            // } else {
-            //     LevelLoaderManager.Instance.SetLoadingState(false);
-            //     Messenger.Broadcast(Signals.GAME_LOADED);
-            // }
+
             yield return new WaitForSeconds(1f);
-            // GameManager.Instance.StartProgression();
         }
     }
     #endregion

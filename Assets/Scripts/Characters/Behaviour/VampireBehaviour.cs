@@ -42,7 +42,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                     } else if (GameUtilities.RollChance(15, ref log) && character.faction?.factionType.type != FACTION_TYPE.Vagrants){ //15
                         log += $"\n-{character.homeSettlement.name} does not have an unoccupied vampire castle, and successfully rolled to build a new one";
                         //Build vampire castle
-                        if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureSetting, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
+                        if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureSetting, out var targetTile, out var structurePrefabName, out var connectorToUse, out var connectorTile)) {
                             log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
                             return character.jobComponent.TriggerBuildVampireCastle(targetTile, out producedJob, structurePrefabName);    
                         }    

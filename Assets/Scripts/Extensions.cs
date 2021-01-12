@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System;
 using Inner_Maps;
+using Locations.Tile_Features;
 using Traits;
 using UnityEngine;
 
@@ -165,6 +166,35 @@ public static class Extensions {
             return parsed;
         } else {
             return LANDMARK_TYPE.HOUSES;
+        }
+    }
+
+    public static SettlementResources.StructureRequirement GetRequiredObjectForBuilding(this STRUCTURE_TYPE structureType) {
+        switch (structureType) {
+            case STRUCTURE_TYPE.QUARRY:
+                return SettlementResources.StructureRequirement.ROCK;
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+                return SettlementResources.StructureRequirement.FEATURE_GAME;
+            case STRUCTURE_TYPE.ABANDONED_MINE:
+            case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
+            case STRUCTURE_TYPE.ANCIENT_RUIN:
+            case STRUCTURE_TYPE.MONSTER_LAIR:
+            case STRUCTURE_TYPE.CAVE:
+            case STRUCTURE_TYPE.TEMPLE:
+            case STRUCTURE_TYPE.RUINED_ZOO:
+                return SettlementResources.StructureRequirement.NONE;
+            default:
+                return SettlementResources.StructureRequirement.NONE;
+        }
+    }
+    public static bool IsValidCenterTileForStructure(this STRUCTURE_TYPE structureType, LocationGridTile p_tile) {
+        switch (structureType) {
+            case STRUCTURE_TYPE.LUMBERYARD:
+                return p_tile.collectionOwner.isPartOfParentRegionMap && p_tile.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Wood_Source_Feature);
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+                return p_tile.collectionOwner.isPartOfParentRegionMap && p_tile.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Game_Feature);
+            default:
+                return true;
         }
     }
     #endregion

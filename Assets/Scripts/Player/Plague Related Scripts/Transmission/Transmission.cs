@@ -16,7 +16,11 @@ namespace Plague.Transmission {
         public abstract PLAGUE_TRANSMISSION transmissionType { get; }
         
         protected abstract int GetTransmissionRate(int level);
-        public abstract int GetTransmissionNextLevelCost(int p_currentLevel); 
+        protected abstract int GetTransmissionNextLevelCost(int p_currentLevel);
+        public int GetFinalTransmissionNextLevelCost(int p_currentLevel) {
+            int baseCost = GetTransmissionNextLevelCost(p_currentLevel);
+            return SpellUtilities.GetModifiedSpellCost(baseCost, WorldSettings.Instance.worldSettingsData.GetCostsModification());
+        }
         public abstract void Transmit(IPointOfInterest p_infector, IPointOfInterest p_target, int p_transmissionLvl);
         protected void TryTransmitToSingleTarget(IPointOfInterest p_infector, IPointOfInterest p_target, int p_transmissionLvl) {
             int chance = GetTransmissionRate(p_transmissionLvl);

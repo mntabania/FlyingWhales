@@ -40,13 +40,13 @@ public class SpellItem : NameplateItem<SkillData> {
     public void UpdateData() {
         mainLbl.text = spellData.name;
         currencyLbl.text = string.Empty;
-        if (spellData.hasManaCost) {
+        if (spellData.manaCost > 0) {
             currencyLbl.text += $"{UtilityScripts.Utilities.ManaIcon()}{spellData.manaCost.ToString()} ";
         }
-        if (spellData.hasCharges) {
+        if (spellData.maxCharges > 0) {
             currencyLbl.text += $"{UtilityScripts.Utilities.ChargesIcon()}{spellData.charges.ToString()}  ";
         }
-        if (spellData.hasCooldown) {
+        if (spellData.cooldown > 0) {
             currencyLbl.text += $"{UtilityScripts.Utilities.CooldownIcon()}{GameManager.GetTimeAsWholeDuration(spellData.cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(spellData.cooldown)}  ";
         }
         if (spellData.threat > 0) {

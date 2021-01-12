@@ -5208,7 +5208,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 817.35, y: 434.5}
+  m_AnchoredPosition: {x: 823.18005, y: -462.05}
   m_SizeDelta: {x: 267.9342, y: 36}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &103424581
@@ -12206,7 +12206,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1614811350}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &272713901
 MonoBehaviour:
@@ -16745,7 +16745,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 850.1699, y: 474.55}
+  m_AnchoredPosition: {x: 856, y: -422}
   m_SizeDelta: {x: 202.3, y: 36}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &357402385
@@ -29835,7 +29835,7 @@ RectTransform:
   m_Children:
   - {fileID: 1536095138}
   m_Father: {fileID: 1614811350}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -50803,7 +50803,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &956836580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50949,7 +50949,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -50963,7 +50963,7 @@ MonoBehaviour:
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
-  m_textAlignment: 257
+  m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -56614,11 +56614,11 @@ RectTransform:
   m_Father: {fileID: 1762315817}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -399.95, y: -285}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0.049987793, y: 0}
   m_SizeDelta: {x: 160, y: 30}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 1}
 --- !u!114 &1071806979
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56632,7 +56632,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -56667,7 +56667,7 @@ MonoBehaviour:
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 1762315815}
-          m_ObjectArgumentAssemblyTypeName: TMPro.TextMeshProUGUI, TextMeshPro-2017.3-Runtime
+          m_ObjectArgumentAssemblyTypeName: TMPro.TextMeshProUGUI, Unity.TextMeshPro
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -59226,7 +59226,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1614811350}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -79069,7 +79069,7 @@ RectTransform:
   - {fileID: 357402384}
   - {fileID: 103424580}
   m_Father: {fileID: 1614811350}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -82223,6 +82223,46 @@ MonoBehaviour:
       structureType: 45
       hasValue: 0
       isCorrupted: 0
+    - resource: 2
+      structureType: 48
+      hasValue: 0
+      isCorrupted: 0
+    - resource: 1
+      structureType: 48
+      hasValue: 0
+      isCorrupted: 0
+    - resource: 2
+      structureType: 52
+      hasValue: 0
+      isCorrupted: 0
+    - resource: 1
+      structureType: 52
+      hasValue: 0
+      isCorrupted: 0
+    - resource: 1
+      structureType: 51
+      hasValue: 0
+      isCorrupted: 0
+    - resource: 2
+      structureType: 51
+      hasValue: 0
+      isCorrupted: 0
+    - resource: 2
+      structureType: 50
+      hasValue: 0
+      isCorrupted: 0
+    - resource: 1
+      structureType: 50
+      hasValue: 0
+      isCorrupted: 0
+    - resource: 2
+      structureType: 49
+      hasValue: 0
+      isCorrupted: 0
+    - resource: 1
+      structureType: 49
+      hasValue: 0
+      isCorrupted: 0
     m_values:
     - data:
       - {fileID: 1961635413776408567, guid: ef4bd84d533038243bed6140dfcacdcb, type: 3}
@@ -82276,8 +82316,12 @@ MonoBehaviour:
       - {fileID: 3155686037787929853, guid: f60f53f9537b49c4ca60d026b24a3c20, type: 3}
     - data:
       - {fileID: 334954033198625523, guid: 0d3c7326ab3f60c4b950be5bac572e13, type: 3}
+      - {fileID: 4975527039402339271, guid: 33a4edcf2ab2d5947abdf454f85ae72f, type: 3}
+      - {fileID: 1318641501492832096, guid: 8366f3b2df4d9fb43bd85b75561350c9, type: 3}
     - data:
       - {fileID: 8305651066923425098, guid: ec6bba2afe79685408bf71fe306dc701, type: 3}
+      - {fileID: 1488659619888436793, guid: 953bce2abf434df429ae25c5c7ca0b87, type: 3}
+      - {fileID: 4850251799321415751, guid: 634c01c526c991d409d4b677dcbfbe1c, type: 3}
     - data:
       - {fileID: 6826873561072680606, guid: 346ba03cb148cf145878bd2d586d52ea, type: 3}
       - {fileID: 6826873561072680606, guid: 377f26eeacc0ed84196436b3718f7a1c, type: 3}
@@ -82285,6 +82329,36 @@ MonoBehaviour:
       - {fileID: 3518506434238835524, guid: e70ede3228326a54d8e8df1ef93f2b45, type: 3}
     - data:
       - {fileID: 1947060716518138, guid: ad0fe2a6dd903e44199ab389ecf07e3e, type: 3}
+    - data:
+      - {fileID: 2191746159434480874, guid: 0bfb522af2ecc3f4b94b4c8af3e9355b, type: 3}
+      - {fileID: 4501931057063128544, guid: d7351e1ded5553040997992aaf5222cf, type: 3}
+    - data:
+      - {fileID: 1626073781943236392, guid: 38e3864bc1d1e1147aaaebbc3f739903, type: 3}
+      - {fileID: 2944087448530267355, guid: 2d8094e9cf8869c43a56b37e59fda17b, type: 3}
+    - data:
+      - {fileID: 3719249432437008507, guid: 3fe942fbffd53f74981680fcca9cf322, type: 3}
+      - {fileID: 5611010000193779117, guid: f90c38c558870654e8854a3f1f33df7f, type: 3}
+    - data:
+      - {fileID: 6490933079867262278, guid: c627097e9c0055741946e0c56b88cda7, type: 3}
+      - {fileID: 6021648240533701810, guid: 152a7034a1541cf4b918933415464065, type: 3}
+    - data:
+      - {fileID: 2863751949339183713, guid: 055662c8d34e8e0468bc6576bf03410d, type: 3}
+      - {fileID: 1107330343625160837, guid: 5c64500bd846d5c41aa3b8a58b0aea4a, type: 3}
+    - data:
+      - {fileID: 4858262203351583347, guid: 6e9dd36a452182642aee5371c3b108bd, type: 3}
+      - {fileID: 762231543127517003, guid: f0b0988f8440b9f46861090480630e96, type: 3}
+    - data:
+      - {fileID: 4520018521768568332, guid: 1a79e81e9c15e394f80e19fa68cedbda, type: 3}
+      - {fileID: 4550661619478650922, guid: 5efffe0b5ebbc02469707a0999005513, type: 3}
+    - data:
+      - {fileID: 622909376963519447, guid: 34fa279b29698814a9a073e22e87eca9, type: 3}
+      - {fileID: 5675963131859973808, guid: 718b4991d277a404c90d3eda3247eff9, type: 3}
+    - data:
+      - {fileID: 1108815045661547315, guid: 5818c15c055aba248b25f01312e321c8, type: 3}
+      - {fileID: 3218470358141020574, guid: 63afc78cdff86b84bba7fd87d4286f33, type: 3}
+    - data:
+      - {fileID: 1000888098339341673, guid: 44c8bf07b1de4fb429ee2f2c84c3fc41, type: 3}
+      - {fileID: 1952916598789275604, guid: 1e1e34d35b2a7534e925a1e199f8a900, type: 3}
   corruptedStructurePrefabs:
     m_keys:
     - resource: 2
@@ -82415,7 +82489,7 @@ MonoBehaviour:
   unwalkableNodeDebugSize: 0.3
   logPathResults: 4
   maxNearestNodeDistance: 300
-  scanOnStartup: 1
+  scanOnStartup: 0
   fullGetNearestSearch: 0
   prioritizeGraphs: 0
   prioritizeGraphsLimit: 1
@@ -82610,7 +82684,7 @@ MonoBehaviour:
   stoneFloorTile: {fileID: 11400000, guid: 016c45b2f2cc25a4c870fcfb895e0177, type: 2}
   poisonRuleTile: {fileID: 11400000, guid: df7f2aa1c99588d43a2c8200d6ae6c77, type: 2}
   tileObjectTiles:
-    m_keys: 00000000030000000400000005000000060000000700000008000000090000000b0000000c0000000e0000001400000015000000160000001700000018000000190000001a0000001d0000001e0000001f000000200000002100000022000000230000002400000025000000260000002700000028000000290000002a0000002b0000002c0000002d0000002e0000002f000000300000003100000032000000330000003400000035000000360000003700000038000000390000003a0000003b0000003c0000003d0000003e0000003f000000400000004100000042000000430000004400000045000000460000004700000048000000490000004a0000004b0000004c0000004d0000004e0000004f0000005000000051000000520000005300000054000000550000005600000057000000580000005900000060000000610000006200000063000000650000005c000000640000006600000067000000680000005d0000006a0000006b00000088000000890000008c0000008d0000008e0000008f0000009000000091000000920000009300000094000000950000009600000097000000980000009b0000009d0000009c0000009e0000009f000000a3000000
+    m_keys: 00000000030000000400000005000000060000000700000008000000090000000b0000000c0000000e0000001400000015000000160000001700000018000000190000001a0000001d0000001e0000001f000000200000002100000022000000230000002400000025000000260000002700000028000000290000002a0000002b0000002c0000002d0000002e0000002f000000300000003100000032000000330000003400000035000000360000003700000038000000390000003a0000003b0000003c0000003d0000003e0000003f000000400000004100000042000000430000004400000045000000460000004700000048000000490000004a0000004b0000004c0000004d0000004e0000004f0000005000000051000000520000005300000054000000550000005600000057000000580000005900000060000000610000006200000063000000650000005c000000640000006600000067000000680000005d0000006a0000006b00000088000000890000008c0000008d0000008e0000008f0000009000000091000000920000009300000094000000950000009600000097000000980000009b0000009d0000009c0000009e0000009f000000a3000000a4000000
     m_values:
     - biomeAssets:
         m_keys: 06000000
@@ -83412,6 +83486,11 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 5739df68820aaf44db588444cc9eba20, type: 3}
           inactiveTile:
           - {fileID: 21300000, guid: 5739df68820aaf44db588444cc9eba20, type: 3}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: []
+          inactiveTile: []
   corruptedTileObjectAssets:
     m_keys: 090000004b000000
     m_values:
@@ -86343,7 +86422,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 885.2, y: 514.7}
+  m_AnchoredPosition: {x: 891.0301, y: -381.84998}
   m_SizeDelta: {x: 132.32, y: 36}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1586368453
@@ -88411,7 +88490,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1613855119
 RectTransform:
   m_ObjectHideFlags: 0
@@ -88419,19 +88498,19 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1613855118}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1762315817}
   - {fileID: 956836582}
-  m_Father: {fileID: 1810423187}
+  m_Father: {fileID: 1614811350}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.012512, y: 270}
-  m_SizeDelta: {x: 1920, y: 540}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 270}
+  m_SizeDelta: {x: 0.000030517578, y: -540}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1613855120
 MonoBehaviour:
@@ -88446,7 +88525,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.39215687}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 0
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -88499,13 +88578,14 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1613855119}
   - {fileID: 2108681641}
   - {fileID: 535842905}
   - {fileID: 1494702484}
   - {fileID: 1149810665}
   - {fileID: 272713900}
   m_Father: {fileID: 1810423187}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -98796,7 +98876,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -98810,7 +98890,7 @@ MonoBehaviour:
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
-  m_textAlignment: 257
+  m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -98869,8 +98949,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 480, y: 0}
-  m_SizeDelta: {x: 960, y: 540}
+  m_AnchoredPosition: {x: 1440, y: -146.8}
+  m_SizeDelta: {x: 960, y: 833.532}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1763927463
 GameObject:
@@ -101947,7 +102027,6 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
-  - {fileID: 1613855119}
   - {fileID: 1614811350}
   m_Father: {fileID: 0}
   m_RootOrder: 7
@@ -103709,11 +103788,11 @@ RectTransform:
   m_Father: {fileID: 1762315817}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 400, y: -285}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 0, y: -30}
   m_SizeDelta: {x: 160, y: 30}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 1, y: 0}
 --- !u!114 &1861150965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103727,7 +103806,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -103762,7 +103841,7 @@ MonoBehaviour:
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 1762315815}
-          m_ObjectArgumentAssemblyTypeName: TMPro.TextMeshProUGUI, TextMeshPro-2017.3-Runtime
+          m_ObjectArgumentAssemblyTypeName: TMPro.TextMeshProUGUI, Unity.TextMeshPro
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -118948,7 +119027,7 @@ RectTransform:
   - {fileID: 1360007121}
   - {fileID: 2021444136}
   m_Father: {fileID: 1614811350}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}

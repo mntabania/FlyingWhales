@@ -656,10 +656,10 @@ namespace Pathfinding {
 					}
 					counter = 0;
 
-					// Mostly for development
-					if (searchedNodes > 1000000) {
-						throw new System.Exception("Probable infinite loop. Over 1,000,000 nodes searched");
-					}
+					// // Mostly for development
+					// if (searchedNodes > 1000000) {
+					// 	throw new System.Exception("Probable infinite loop. Over 1,000,000 nodes searched");
+					// }
 				}
 
 				counter++;

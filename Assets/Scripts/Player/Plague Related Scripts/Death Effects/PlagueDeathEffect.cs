@@ -1,12 +1,17 @@
 ﻿using System;
 using Traits;
+using UtilityScripts;
 namespace Plague.Death_Effect {
     public abstract class PlagueDeathEffect : Plagued.IPlagueDeathListener {
         public abstract PLAGUE_DEATH_EFFECT deathEffectType { get; }
         protected int _level;
 
         protected abstract void ActivateEffect(Character p_character);
-        public abstract int GetNextLevelUpgradeCost();
+        protected abstract int GetNextLevelUpgradeCost();
+        public int GetFinalNextLevelUpgradeCost() {
+            int baseCost = GetNextLevelUpgradeCost();
+            return SpellUtilities.GetModifiedSpellCost(baseCost, WorldSettings.Instance.worldSettingsData.GetCostsModification());
+        }
         public abstract string GetCurrentEffectDescription();
 
         protected void ActivateEffectOn(Character p_character) {
@@ -49,13 +54,13 @@ namespace Plague.Death_Effect {
         public static int GetUnlockCost(this PLAGUE_DEATH_EFFECT p_deathEffect) {
             switch (p_deathEffect) {
                 case PLAGUE_DEATH_EFFECT.Explosion:
-                    return 10;
+                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.GetCostsModification());
                 case PLAGUE_DEATH_EFFECT.Zombie:
-                    return 10;
+                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.GetCostsModification());
                 case PLAGUE_DEATH_EFFECT.Mana_Generator:
-                    return 10;
+                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.GetCostsModification());
                 case PLAGUE_DEATH_EFFECT.Haunted_Spirits:
-                    return 10;
+                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.GetCostsModification());
                 default:
                     throw new ArgumentOutOfRangeException(nameof(p_deathEffect), p_deathEffect, null);
             }

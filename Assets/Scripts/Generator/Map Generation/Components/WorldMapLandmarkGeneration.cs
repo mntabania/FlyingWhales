@@ -52,7 +52,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					choices = GridMap.Instance.normalHexTiles
 						.Where(x => x.elevationType == ELEVATION.PLAIN && //a random flat tile
 						            x.featureComponent.features.Count == 0 && x.landmarkOnTile == null && //with no Features yet
-						            !IsAdjacentToPortal(x) && !IsAdjacentToSettlement(x) && !IsAdjacentToSpecialStructure(x) //and not adjacent to player Portal, Settlement or other non-cave landmarks
+						            !IsAdjacentToPortal(x) && !IsInRangeOfSettlement(x, 3) && !IsAdjacentToSpecialStructure(x) //and not adjacent to player Portal, Settlement or other non-cave landmarks
 						)
 						.ToList();
 				}
@@ -475,6 +475,16 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		for (int i = 0; i < tile.AllNeighbours.Count; i++) {
 			HexTile neighbour = tile.AllNeighbours[i];
 			if (neighbour.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	private bool IsInRangeOfSettlement(HexTile tile, int range) {
+		List<HexTile> tilesInRange = tile.GetTilesInRange(range);
+		for (int i = 0; i < tilesInRange.Count; i++) {
+			HexTile tileInRange = tilesInRange[i];
+			if (tileInRange.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature)) {
 				return true;
 			}
 		}

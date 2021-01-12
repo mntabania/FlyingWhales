@@ -30,9 +30,15 @@ public class SocialGatheringBehaviour : CharacterBehaviourComponent {
                             hasJob = character.jobComponent.TriggerPartyDrinkJob(tileObject as Table, out producedJob);
                         }
                     } else if (roll >= 40 && roll < 50) {
-                        TileObject tileObject = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.TABLE);
+                        //Note: Removed eating while partying because this might lead to the character getting a food in the city center to drop at the table in the tavern
+
+                        //TileObject tileObject = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.TABLE);
+                        //if (tileObject != null) {
+                        //    hasJob = character.jobComponent.TriggerPartyEatJob(tileObject as Table, out producedJob);
+                        //}
+                        TileObject tileObject = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK);
                         if (tileObject != null) {
-                            hasJob = character.jobComponent.TriggerPartyEatJob(tileObject as Table, out producedJob);
+                            hasJob = character.jobComponent.TriggerPlayCardsJob(tileObject as Desk, out producedJob);
                         }
                     } else if (roll >= 50 && roll < 70) {
                         Character chosenCharacter = character.currentStructure.GetRandomCharacterThatMeetCriteria(

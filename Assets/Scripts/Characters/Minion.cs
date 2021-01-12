@@ -287,7 +287,7 @@ public class Minion {
         if (character.currentHP >= character.maxHP) {
             //minion can be summoned again
             spellData.SetCooldown(-1);
-            spellData.SetCharges(1);
+            spellData.AdjustCharges(1);
             Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_FINISHED, spellData);
             Messenger.RemoveListener(Signals.TICK_STARTED, UnsummonedHPRecovery);
         }

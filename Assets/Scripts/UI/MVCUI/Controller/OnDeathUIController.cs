@@ -33,7 +33,7 @@ public class OnDeathUIController : MVCUIController, OnDeathUIView.IListener
 
 	private void UpdateDeathEffectData(PLAGUE_DEATH_EFFECT p_deathEffect) {
 		if (PlagueDisease.Instance.HasMaxDeathEffect() && PlagueDisease.Instance.IsDeathEffectActive(p_deathEffect, out var deathEffect)) {
-			int upgradeCost = deathEffect.GetNextLevelUpgradeCost();
+			int upgradeCost = deathEffect.GetFinalNextLevelUpgradeCost();
 			bool isMaxLevel = upgradeCost == -1;
 			m_onDeathUIView.UpdateDeathEffectCost(p_deathEffect, isMaxLevel ? "MAX" : $"{upgradeCost.ToString()}{UtilityScripts.Utilities.PlagueIcon()}");
 			m_onDeathUIView.UpdateDeathEffectDescription(p_deathEffect, deathEffect.GetCurrentEffectDescription());
@@ -113,19 +113,13 @@ public class OnDeathUIController : MVCUIController, OnDeathUIView.IListener
 	private bool CanAffordUnlockOrUpgrade(PLAGUE_DEATH_EFFECT p_deathEffect) {
 		var cost = GetUnlockOrUpgradeCost(p_deathEffect);
 		if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
-			return PlayerManager.Instance.player.plagueComponent.plaguePoints >= cost || (WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.omnipotentMode);
+			return PlayerManager.Instance.player.plagueComponent.plaguePoints >= cost || (WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.costAmount == SKILL_COST_AMOUNT.None);
 		} else {
 			return true;	
 		}
 	}
 	private int GetUnlockOrUpgradeCost(PLAGUE_DEATH_EFFECT p_deathEffect) {
-		int cost;
-		if (PlagueDisease.Instance.activeDeathEffect != null) {
-			cost = PlagueDisease.Instance.activeDeathEffect.GetNextLevelUpgradeCost();
-		}
-		else {
-			cost = p_deathEffect.GetUnlockCost();
-		}
+		var cost = PlagueDisease.Instance.activeDeathEffect != null ? PlagueDisease.Instance.activeDeathEffect.GetFinalNextLevelUpgradeCost() : p_deathEffect.GetUnlockCost();
 		return cost;
 	}
 }

@@ -352,7 +352,7 @@ public class PlayerUI : BaseMonoBehaviour {
             regionNameTopMenuText.text = location.name;
             regionNameTopMenuGO.SetActive(true);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            regionNameHoverHandler.SetOnHoverOverAction(() => TestingUtilities.ShowLocationInfo(location.coreTile.region));
+            regionNameHoverHandler.SetOnHoverOverAction(() => TestingUtilities.ShowLocationInfo(location));
             regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
 #endif
         } else {
@@ -362,10 +362,12 @@ public class PlayerUI : BaseMonoBehaviour {
 
     #region Mana
     private void OnManaAdjusted(int adjustedAmount, int mana) {
-        UpdateMana();
-        ShowManaAdjustEffect(adjustedAmount);
-        DoManaPunchEffect();
-        AudioManager.Instance.PlayParticleMagnet();
+        if (adjustedAmount != 0) {
+            UpdateMana();
+            ShowManaAdjustEffect(adjustedAmount);
+            DoManaPunchEffect();
+            AudioManager.Instance.PlayParticleMagnet();    
+        }
     }
     private void UpdateMana() {
         manaLbl.text = PlayerManager.Instance.player.mana.ToString();

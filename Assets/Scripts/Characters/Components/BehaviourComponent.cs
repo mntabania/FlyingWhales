@@ -26,7 +26,7 @@ public class BehaviourComponent : CharacterComponent {
     //cleanse tiles
     public NPCSettlement dryingTilesForSettlement { get; private set; }
     //mining
-    public LocationGridTile targetMiningTile { get; private set; }
+    //public LocationGridTile targetMiningTile { get; private set; }
     
     //Abduct
     //public ABPath currentAbductDigPath { get; private set; }
@@ -574,11 +574,11 @@ public class BehaviourComponent : CharacterComponent {
     }
     #endregion
 
-    #region Mining
-    public void SetTargetMiningTile(LocationGridTile tile) {
-        targetMiningTile = tile;
-    }
-    #endregion
+    //#region Mining
+    //public void SetTargetMiningTile(LocationGridTile tile) {
+    //    targetMiningTile = tile;
+    //}
+    //#endregion
 
     #region Attack Village
     public void SetAttackVillageTarget(NPCSettlement npcSettlement) {
@@ -1044,9 +1044,9 @@ public class BehaviourComponent : CharacterComponent {
         if (!string.IsNullOrEmpty(data.dryingTilesForSettlement)) {
             dryingTilesForSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.dryingTilesForSettlement) as NPCSettlement;
         }
-        if (data.targetMiningTile.hasValue) {
-            targetMiningTile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(data.targetMiningTile);
-        }
+        //if (data.targetMiningTile.hasValue) {
+        //    targetMiningTile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(data.targetMiningTile);
+        //}
         if (!string.IsNullOrEmpty(data.currentAbductTarget)) {
             currentAbductTarget = CharacterManager.Instance.GetCharacterByPersistentID(data.currentAbductTarget);
         }
@@ -1116,8 +1116,8 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
     public string cleansingTilesForSettlement;
     //cleanse tiles
     public string dryingTilesForSettlement;
-    //mining
-    public TileLocationSave targetMiningTile;
+    ////mining
+    //public TileLocationSave targetMiningTile;
 
     //Abduct
     public string currentAbductTarget;
@@ -1192,9 +1192,9 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
         if (data.dryingTilesForSettlement != null) {
             dryingTilesForSettlement = data.dryingTilesForSettlement.persistentID;
         }
-        if (data.targetMiningTile != null) {
-            targetMiningTile = new TileLocationSave(data.targetMiningTile);
-        }
+        //if (data.targetMiningTile != null) {
+        //    targetMiningTile = new TileLocationSave(data.targetMiningTile);
+        //}
         if (data.currentAbductTarget != null) {
             currentAbductTarget = data.currentAbductTarget.persistentID;
         }

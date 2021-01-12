@@ -58,17 +58,16 @@ namespace Generator.Map_Generation.Components {
             List<string> flawTraits = new List<string>(TraitManager.Instance.flawTraitPool);
             
             //Up to three traits
-            
-            if (character.homeRegion.coreTile.biomeType == BIOMES.SNOW) {
+            if (character.homeSettlement.cityCenter.occupiedHexTile.hexTileOwner.biomeType == BIOMES.SNOW) {
                 //Snow villagers starts with Cold Blooded
                 character.traitContainer.AddTrait(character, "Cold Blooded");
-            } else if (character.homeRegion.coreTile.biomeType == BIOMES.DESERT) {
+            } else if (character.homeSettlement.cityCenter.occupiedHexTile.hexTileOwner.biomeType == BIOMES.DESERT) {
                 //Desert villagers starts with Fire Proof
                 character.traitContainer.AddTrait(character, "Fireproof");
-            } else if (character.homeRegion.coreTile.biomeType == BIOMES.GRASSLAND) {
+            } else if (character.homeSettlement.cityCenter.occupiedHexTile.hexTileOwner.biomeType == BIOMES.GRASSLAND) {
                 //Grassland villagers starts with Electric
                 character.traitContainer.AddTrait(character, "Electric");
-            } else if (character.homeRegion.coreTile.biomeType == BIOMES.FOREST) {
+            } else if (character.homeSettlement.cityCenter.occupiedHexTile.hexTileOwner.biomeType == BIOMES.FOREST) {
                 //Forest villagers starts with Venomous
                 character.traitContainer.AddTrait(character, "Venomous");
             }
