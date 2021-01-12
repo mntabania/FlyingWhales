@@ -81,6 +81,32 @@ public class GoapPlanJob : JobQueueItem {
             }
             otherData.Add(saveDataOtherData.Key, loadedOtherData);
         }
+        if (data.priorityLocations != null) {
+            foreach (KeyValuePair<INTERACTION_TYPE, List<ILocationSaveData>> item in data.priorityLocations) {
+                if (item.Value != null) {
+                    priorityLocations.Add(item.Key, ObjectPoolManager.Instance.CreateNewILocationList());
+                    for (int i = 0; i < item.Value.Count; i++) {
+                        ILocationSaveData ilocationSaveData = item.Value[i];
+                        if(ilocationSaveData.objectType == OBJECT_TYPE.Settlement) {
+                            BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(ilocationSaveData.persistentID);
+                            if(settlement != null) {
+                                priorityLocations[item.Key].Add(settlement);
+                            }
+                        } else if (ilocationSaveData.objectType == OBJECT_TYPE.Structure) {
+                            LocationStructure structure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(ilocationSaveData.persistentID);
+                            if (structure != null) {
+                                priorityLocations[item.Key].Add(structure);
+                            }
+                        } else if (ilocationSaveData.objectType == OBJECT_TYPE.Hextile) {
+                            HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(ilocationSaveData.persistentID);
+                            if (hex != null) {
+                                priorityLocations[item.Key].Add(hex);
+                            }
+                        }
+                    }
+                }
+            }
+        }
         if (data.saveDataGoapPlan != null) {
             GoapPlan goapPlan = data.saveDataGoapPlan.Load();
             assignedPlan = goapPlan;

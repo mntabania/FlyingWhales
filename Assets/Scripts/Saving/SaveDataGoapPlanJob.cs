@@ -10,6 +10,7 @@ public class SaveDataGoapPlanJob : SaveDataJobQueueItem {
     public Dictionary<INTERACTION_TYPE, SaveDataOtherData[]> otherData;
     public bool shouldBeCancelledOnDeath;
     public SaveDataGoapPlan saveDataGoapPlan;
+    public Dictionary<INTERACTION_TYPE, List<ILocationSaveData>> priorityLocations { get; private set; }
 
     public override void Save(JobQueueItem job) {
         base.Save(job);
@@ -31,6 +32,24 @@ public class SaveDataGoapPlanJob : SaveDataJobQueueItem {
             }
             otherData.Add(data.Key, otherDataSave);
         }
+
+        if(goapJob.priorityLocations != null) {
+            priorityLocations = new Dictionary<INTERACTION_TYPE, List<ILocationSaveData>>();
+            foreach (KeyValuePair<INTERACTION_TYPE, List<ILocation>> item in goapJob.priorityLocations) {
+                if(item.Value != null) {
+                    priorityLocations.Add(item.Key, new List<ILocationSaveData>());
+                    for (int i = 0; i < item.Value.Count; i++) {
+                        ILocation ilocation = item.Value[i];
+                        ILocationSaveData data = new ILocationSaveData() {
+                            persistentID = ilocation.persistentID,
+                            objectType = ilocation.objectType
+                        };
+                        priorityLocations[item.Key].Add(data);
+                    }
+                }
+            }
+        }
+
         shouldBeCancelledOnDeath = goapJob.shouldBeCancelledOnDeath;
         if (goapJob.assignedPlan != null) {
             saveDataGoapPlan = new SaveDataGoapPlan();
