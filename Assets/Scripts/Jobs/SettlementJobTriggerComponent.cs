@@ -307,22 +307,22 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	}
 	#endregion
 
-	#region Utilities
-	private bool HasNearbyCave() {
-		List<HexTile> nearbyTiles = new List<HexTile>();
-		for (int i = 0; i < _owner.tiles.Count; i++) {
-			HexTile tile = _owner.tiles[i];
-			nearbyTiles.AddRange(tile.GetTilesInRange(2));
-		}
-		for (int j = 0; j < nearbyTiles.Count; j++) {
-			HexTile neighbour = nearbyTiles[j];
-			if (neighbour.elevationType == ELEVATION.MOUNTAIN) {
-				return true;
-			}
-		}
-		return false;
-	}
-	#endregion
+	//#region Utilities
+	//private bool HasNearbyCave() {
+	//	List<HexTile> nearbyTiles = new List<HexTile>();
+	//	for (int i = 0; i < _owner.tiles.Count; i++) {
+	//		HexTile tile = _owner.tiles[i];
+	//		nearbyTiles.AddRange(tile.GetTilesInRange(2));
+	//	}
+	//	for (int j = 0; j < nearbyTiles.Count; j++) {
+	//		HexTile neighbour = nearbyTiles[j];
+	//		if (neighbour.elevationType == ELEVATION.MOUNTAIN) {
+	//			return true;
+	//		}
+	//	}
+	//	return false;
+	//}
+	//#endregion
 
 	#region Resources
 	public int GetTotalResource(RESOURCE resourceType) {
@@ -456,7 +456,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		}
 	}
 	private void TriggerProduceResource<T>(RESOURCE resourceType, JOB_TYPE jobType) where T : ResourcePile {
-		if (_owner.HasJob(jobType) == false) {
+		if (_owner.HasJob(jobType) == false && _owner.HasStructureForProducingResource(resourceType)) {
 			ResourcePile targetPile = _owner.mainStorage.GetTileObjectOfType<T>();
 			if (targetPile == null) {
 				TILE_OBJECT_TYPE tileObjectType;
@@ -481,16 +481,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 				newPile.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 				targetPile = newPile;
 			}
-			if (_owner.HasJob(jobType) == false) {
-				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, 
-					new GoapEffect(GetProduceResourceGoapEffect(resourceType), string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), 
-					targetPile, _owner);
-                //TODO: Produce Resource priority locations
-				job.SetStillApplicableChecker(JobManager.Produce_Resource_Applicability);
-				_owner.AddToAvailableJobs(job);	
-			}
-				
-		}
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType,
+                new GoapEffect(GetProduceResourceGoapEffect(resourceType), string.Empty, false, GOAP_EFFECT_TARGET.ACTOR),
+                targetPile, _owner);
+            UtilityScripts.JobUtilities.PopulatePriorityLocationsForProduceResources(_owner, job, resourceType);
+            job.SetStillApplicableChecker(JobManager.Produce_Resource_Applicability);
+            _owner.AddToAvailableJobs(job);
+        }
 	}
 	#endregion
 
@@ -959,7 +956,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 
 	#region Mining
 	private void TryCreateMiningJob() {
-		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6 && !_owner.HasJob(JOB_TYPE.MINE) && HasNearbyCave()) { //6
+		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6 && !_owner.HasJob(JOB_TYPE.MINE) && _owner.HasStructure(STRUCTURE_TYPE.MINE_SHACK)) { //6
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.BEGIN_MINE, null, _owner);
 			_owner.AddToAvailableJobs(job);
 		}

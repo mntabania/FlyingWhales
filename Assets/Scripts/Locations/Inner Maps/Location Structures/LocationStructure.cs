@@ -815,6 +815,22 @@ namespace Inner_Maps.Location_Structures {
             }
             return passableTiles[UtilityScripts.Utilities.Rng.Next(0, passableTiles.Count)];
         }
+        public LocationGridTile GetRandomPassableTileThatMeetCriteria(Func<LocationGridTile, bool> criteria) {
+            if (passableTiles.Count <= 0) {
+                return null;
+            }
+            List<LocationGridTile> filteredList = ObjectPoolManager.Instance.CreateNewGridTileList();
+            for (int i = 0; i < passableTiles.Count; i++) {
+                LocationGridTile tile = passableTiles[i];
+                if (criteria.Invoke(tile)) {
+                    filteredList.Add(tile);
+                }
+            }
+            if(filteredList.Count > 0) {
+                return filteredList[UtilityScripts.Utilities.Rng.Next(0, filteredList.Count)];
+            }
+            return null;
+        }
         public LocationGridTile GetRandomUnoccupiedTile() {
             if (unoccupiedTiles.Count <= 0) {
                 return null;

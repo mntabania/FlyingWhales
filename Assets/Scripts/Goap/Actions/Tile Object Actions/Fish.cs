@@ -57,6 +57,10 @@ public class Fish : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
+            if(poiTarget is FishingSpot fishingSpot) {
+                return actor.homeSettlement != null && fishingSpot.connectedFishingShack != null && fishingSpot.connectedFishingShack.settlementLocation == actor.homeSettlement
+                    && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+            }
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
         }
         return false;
