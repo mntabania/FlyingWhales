@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -18,9 +19,11 @@ public class WorldSettingsData {
     public SKILL_COST_AMOUNT costAmount;
     public SKILL_CHARGE_AMOUNT chargeAmount;
     public THREAT_AMOUNT threatAmount;
+    public List<FACTION_TYPE> disabledFactionMigrations;
+    public bool disableAllVillagerMigrations;
+    public bool disableAllMonsterMigrations;
     
-    // public bool omnipotentMode;
-    // public bool noThreatMode;
+    
     public List<BIOMES> biomes;
     public List<FactionSetting> factionSettings;
     
@@ -35,14 +38,9 @@ public class WorldSettingsData {
         chargeAmount = SKILL_CHARGE_AMOUNT.Normal;
         threatAmount = THREAT_AMOUNT.Normal;
         factionSettings = new List<FactionSetting>();
+        disabledFactionMigrations = new List<FACTION_TYPE>();
     }
     
-    // public void SetOmnipotentMode(bool state) {
-    //     omnipotentMode = state;
-    // }
-    // public void SetNoThreatMode(bool state) {
-    //     noThreatMode = state;
-    // }
     public void SetWorldType(World_Type type) {
         worldType = type;
     }
@@ -112,7 +110,7 @@ public class WorldSettingsData {
         return true;
     }
 
-    #region Scenario Maps
+    #region Maps
     public bool IsScenarioMap() {
         switch (worldType) {
             case World_Type.Custom:
@@ -149,50 +147,54 @@ public class WorldSettingsData {
     private void SetTutorialWorldSettings() {
         Debug.Log("Set world settings as Tutorial");
         worldType = World_Type.Tutorial;
-        // omnipotentMode = false;
-        // noThreatMode = false;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings();
+        EnableAllVillagerMigrations();
+        EnableAllFactionMigrations();
     }
     private void SetOonaWorldSettings() {
         Debug.Log("Set world settings as Second World");
         worldType = World_Type.Oona;
-        // omnipotentMode = false;
-        // noThreatMode = false;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings();
+        EnableAllVillagerMigrations();
+        EnableAllFactionMigrations();
     }
     private void SetIcalawaWorldSettings() {
         Debug.Log("Set world settings as Icalawa");
         worldType = World_Type.Icalawa;
-        // omnipotentMode = false;
-        // noThreatMode = false;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings();
+        EnableAllVillagerMigrations();
+        EnableAllFactionMigrations();
     }
     private void SetPangatLooWorldSettings() {
         Debug.Log("Set world settings as Pangat Loo");
         worldType = World_Type.Pangat_Loo;
-        // omnipotentMode = false;
-        // noThreatMode = false;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings();
+        EnableAllVillagerMigrations();
+        EnableAllFactionMigrations();
     }
     private void SetAffattWorldSettings() {
         Debug.Log("Set world settings as Affatt");
         worldType = World_Type.Affatt;
-        // omnipotentMode = false;
-        // noThreatMode = false;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings();
+        EnableAllVillagerMigrations();
+        EnableAllFactionMigrations();
     }
     private void SetZenkoWorldSettings() {
         Debug.Log("Set world settings as Zenko");
         worldType = World_Type.Zenko;
-        // omnipotentMode = false;
-        // noThreatMode = false;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings();
+        EnableAllVillagerMigrations();
+        EnableAllFactionMigrations();
+    }
+    public void ApplyCustomWorldSettings() {
+        EnableAllVillagerMigrations();
+        EnableAllFactionMigrations();
     }
     #endregion
 
@@ -267,11 +269,7 @@ public class WorldSettingsData {
         factionSettings.Clear();
     }
     #endregion
-
-    public void SetMigrationSpeed(MIGRATION_SPEED p_value) {
-        migrationSpeed = p_value;
-        Debug.Log($"Set Migration Speed {p_value.ToString()}");
-    }
+    
     public void SetVictoryCondition(VICTORY_CONDITION p_value) {
         victoryCondition = p_value;
         Debug.Log($"Set Victory Condition {p_value.ToString()}");
@@ -355,6 +353,31 @@ public class WorldSettingsData {
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+    #endregion
+    
+    #region Migration
+    public void SetMigrationSpeed(MIGRATION_SPEED p_value) {
+        migrationSpeed = p_value;
+        Debug.Log($"Set Migration Speed {p_value.ToString()}");
+    }
+    public void EnableAllVillagerMigrations() {
+        disableAllVillagerMigrations = false;
+    }
+    public void DisableAllVillagerMigrations() {
+        disableAllVillagerMigrations = true;
+    }
+    public void EnableVillagerMigrationForFactionType(FACTION_TYPE p_factionType) {
+        disabledFactionMigrations.Remove(p_factionType);
+    }
+    public void DisableVillagerMigrationForFactionType(FACTION_TYPE p_factionType) {
+        disabledFactionMigrations.Add(p_factionType);
+    }
+    public bool IsMigrationAllowedForFaction(FACTION_TYPE p_factionType) {
+        return !disabledFactionMigrations.Contains(p_factionType);
+    }
+    private void EnableAllFactionMigrations() {
+        disabledFactionMigrations.Clear();
     }
     #endregion
 }

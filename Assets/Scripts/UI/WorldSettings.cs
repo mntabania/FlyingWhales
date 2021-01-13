@@ -131,6 +131,7 @@ public class WorldSettings : MonoBehaviour {
         } else if (worldGenOptionsUIController.IsUIShowing()) {
             worldSettingsData.SetWorldType(WorldSettingsData.World_Type.Custom);
             worldGenOptionsUIController.ApplyCurrentSettingsToData();
+            worldSettingsData.ApplyCustomWorldSettings();
             //Already in customize window
             if (worldSettingsData.AreSettingsValid(out var invalidityReason)) {
                 //Generate Custom Map

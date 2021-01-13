@@ -566,16 +566,6 @@
             </e>
           </e>
         </e>
-        <e p="Ignore" t="Include">
-          <e p="Test Scripts" t="Include">
-            <e p="CollisionLayerTester.cs" t="Include" />
-            <e p="DelegateTester.cs" t="Include" />
-            <e p="LineOfSightTester.cs" t="Include" />
-            <e p="RuinarchTextTester.cs" t="Include" />
-            <e p="SQLTester.cs" t="Include" />
-            <e p="TooltipTestter.cs" t="Include" />
-          </e>
-        </e>
         <e p="JsonDotNet" t="Include">
           <e p="link.xml" t="Include" />
         </e>
@@ -1029,7 +1019,6 @@
         <e p="Scripts" t="Include">
           <e p="Actionables" t="Include">
             <e p="IPlayerActionTarget.cs" t="Include" />
-            <e p="PlayerAction.cs" t="Include" />
           </e>
           <e p="AdvancedC#Messenger" t="Include">
             <e p="Callback.cs" t="Include" />
@@ -2447,9 +2436,6 @@
                 <e p="UnfaithfulnessData.cs" t="Include" />
                 <e p="VampirismData.cs" t="Include" />
               </e>
-              <e p="BallLightningData.cs" t="Include" />
-              <e p="Blizzard.cs" t="Include" />
-              <e p="BrimstonesData.cs" t="Include" />
               <e p="Demonic Structure Player Skills" t="Include">
                 <e p="BiolabData.cs" t="Include" />
                 <e p="CryptData.cs" t="Include" />
@@ -2462,20 +2448,6 @@
                 <e p="OstracizerData.cs" t="Include" />
                 <e p="TortureChambersData.cs" t="Include" />
               </e>
-              <e p="EarthquakeData.cs" t="Include" />
-              <e p="ElectricStormData.cs" t="Include" />
-              <e p="FeebleSpiritData.cs" t="Include" />
-              <e p="FireBallData.cs" t="Include" />
-              <e p="ForlornSpiritData.cs" t="Include" />
-              <e p="FreezingTrapData.cs" t="Include" />
-              <e p="FrostyFogData.cs" t="Include" />
-              <e p="HeatWaveData.cs" t="Include" />
-              <e p="IceteroidsData.cs" t="Include" />
-              <e p="LandmineData.cs" t="Include" />
-              <e p="LightningData.cs" t="Include" />
-              <e p="LocustSwarmData.cs" t="Include" />
-              <e p="ManifestFoodData.cs" t="Include" />
-              <e p="MeteorData.cs" t="Include" />
               <e p="Minion Player Skills" t="Include">
                 <e p="DemonEnvyData.cs" t="Include" />
                 <e p="DemonGluttonyData.cs" t="Include" />
@@ -2494,7 +2466,6 @@
                 <e p="PassiveSkill.cs" t="Include" />
                 <e p="UndeadChaosOrb.cs" t="Include" />
               </e>
-              <e p="PlantGermData.cs" t="Include" />
               <e p="Player Actions" t="Include">
                 <e p="AfflictData.cs" t="Include" />
                 <e p="AgitateData.cs" t="Include" />
@@ -2507,11 +2478,14 @@
                 <e p="DestroyData.cs" t="Include" />
                 <e p="EmpowerData.cs" t="Include" />
                 <e p="EvangelizeData.cs" t="Include" />
+                <e p="ExpelData.cs" t="Include" />
                 <e p="FoundCultData.cs" t="Include" />
                 <e p="HealData.cs" t="Include" />
                 <e p="IgniteData.cs" t="Include" />
+                <e p="PlayerAction.cs" t="Include" />
                 <e p="PoisonData.cs" t="Include" />
                 <e p="RaiseDeadData.cs" t="Include" />
+                <e p="ReleaseData.cs" t="Include" />
                 <e p="RepairData.cs" t="Include" />
                 <e p="SacrificeData.cs" t="Include" />
                 <e p="SchemeData.cs" t="Include" />
@@ -2526,10 +2500,6 @@
                 <e p="UpgradeData.cs" t="Include" />
                 <e p="ZapData.cs" t="Include" />
               </e>
-              <e p="PoisonBloomData.cs" t="Include" />
-              <e p="PoisonCloudData.cs" t="Include" />
-              <e p="RainData.cs" t="Include" />
-              <e p="RavenousSpiritData.cs" t="Include" />
               <e p="Schemes" t="Include">
                 <e p="BreakUpData.cs" t="Include" />
                 <e p="InduceMigrationData.cs" t="Include" />
@@ -2543,21 +2513,46 @@
                 <e p="ResignData.cs" t="Include" />
                 <e p="StifleMigrationData.cs" t="Include" />
               </e>
-              <e p="SnareTrapData.cs" t="Include" />
-              <e p="SpawnBoulder.cs" t="Include" />
-              <e p="SpellData.cs" t="Include" />
-              <e p="SplashPoison.cs" t="Include" />
-              <e p="SplashWaterData.cs" t="Include" />
+              <e p="SkillData.cs" t="Include" />
+              <e p="Spells" t="Include">
+                <e p="BallLightningData.cs" t="Include" />
+                <e p="BlizzardData.cs" t="Include" />
+                <e p="BrimstonesData.cs" t="Include" />
+                <e p="EarthquakeData.cs" t="Include" />
+                <e p="ElectricStormData.cs" t="Include" />
+                <e p="FeebleSpiritData.cs" t="Include" />
+                <e p="FireBallData.cs" t="Include" />
+                <e p="ForlornSpiritData.cs" t="Include" />
+                <e p="FreezingTrapData.cs" t="Include" />
+                <e p="FrostyFogData.cs" t="Include" />
+                <e p="HeatWaveData.cs" t="Include" />
+                <e p="IceteroidsData.cs" t="Include" />
+                <e p="LandmineData.cs" t="Include" />
+                <e p="LightningData.cs" t="Include" />
+                <e p="LocustSwarmData.cs" t="Include" />
+                <e p="ManifestFoodData.cs" t="Include" />
+                <e p="MeteorData.cs" t="Include" />
+                <e p="PlantGermData.cs" t="Include" />
+                <e p="PoisonBloomData.cs" t="Include" />
+                <e p="PoisonCloudData.cs" t="Include" />
+                <e p="ProtectionData.cs" t="Include" />
+                <e p="RainData.cs" t="Include" />
+                <e p="RavenousSpiritData.cs" t="Include" />
+                <e p="SnareTrapData.cs" t="Include" />
+                <e p="SpawnBoulderData.cs" t="Include" />
+                <e p="SplashPoisonData.cs" t="Include" />
+                <e p="SplashWaterData.cs" t="Include" />
+                <e p="TerrifyingHowlData.cs" t="Include" />
+                <e p="TornadoData.cs" t="Include" />
+                <e p="VaporData.cs" t="Include" />
+                <e p="WallData.cs" t="Include" />
+                <e p="WaterBombData.cs" t="Include" />
+                <e p="WindBlastData.cs" t="Include" />
+              </e>
               <e p="Summon Player Skills" t="Include">
                 <e p="SummonPlayerSkill.cs" t="Include" />
                 <e p="SummonPlayerSkillSpecificData.cs" t="Include" />
               </e>
-              <e p="TerrifyingHowlData.cs" t="Include" />
-              <e p="TornadoData.cs" t="Include" />
-              <e p="VaporData.cs" t="Include" />
-              <e p="WallData.cs" t="Include" />
-              <e p="WaterBomb.cs" t="Include" />
-              <e p="WindBlastData.cs" t="Include" />
             </e>
             <e p="Summons" t="Include">
               <e p="Abomination.cs" t="Include" />
