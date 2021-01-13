@@ -18,7 +18,7 @@ using UnityEngine.Tilemaps;
 using UtilityScripts;
 using Locations;
 
-public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarget, ISelectable, IPartyTargetDestination, ISavable, ILocation {
+public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarget, ISelectable, IPartyTargetDestination, ILocation {
 
     public HexTileData data;
     private NPCSettlement _npcSettlementOfTile;

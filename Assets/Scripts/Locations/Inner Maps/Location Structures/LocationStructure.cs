@@ -11,7 +11,7 @@ using Locations;
 namespace Inner_Maps.Location_Structures {
 
     [System.Serializable]
-    public abstract class LocationStructure : IPlayerActionTarget, ISelectable, IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ISavable, ILogFiller, ILocation {
+    public abstract class LocationStructure : IPlayerActionTarget, ISelectable, IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ILogFiller, ILocation {
         public string persistentID { get; }
         public int id { get; private set; }
         public string name { get; protected set; }

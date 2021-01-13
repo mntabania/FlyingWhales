@@ -11,7 +11,7 @@ using Logs;
 using Locations.Tile_Features;
 
 namespace Locations.Settlements {
-    public abstract class BaseSettlement : IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ISavable, ILogFiller, IPlayerActionTarget, ILocation {
+    public abstract class BaseSettlement : IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ILogFiller, IPlayerActionTarget, ILocation {
 
         public static Action onSettlementBuilt;
         
