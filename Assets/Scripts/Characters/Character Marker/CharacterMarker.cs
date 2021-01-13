@@ -231,7 +231,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         visualsParent.transform.localRotation = data.rotation;
         UpdateActionIcon();
         UpdateAnimation();
-        LocationAwarenessUtility.AddToAwarenessList(character, character.gridTileLocation);
+        anchoredPos = transform.localPosition;
+        if (character.gridTileLocation != null) {
+            LocationAwarenessUtility.AddToAwarenessList(character, character.gridTileLocation);    
+        }
         //removed by aaron for awareness update region.AddPendingAwareness(character);
         if (data.hasExpiry) {
             ScheduleExpiry(data.markerExpiryDate);
