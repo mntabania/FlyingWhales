@@ -1160,5 +1160,5 @@ public enum THREAT_AMOUNT {
     None, Half, Normal 
 }
 public enum VICTORY_CONDITION {
-    Eliminate_All, Sandbox
+    Eliminate_All, Kill_By_Psychopath_Ritual, Sandbox
 }

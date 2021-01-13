@@ -166,6 +166,7 @@ public class RitualKilling : GoapAction {
         //goapNode.actor.needsComponent.AdjustHappiness(10000);
         if (goapNode.poiTarget is Character targetCharacter) {
             NPCSettlement settlementOfTarget = targetCharacter.homeSettlement;
+            targetCharacter.causeOfDeath = INTERACTION_TYPE.RITUAL_KILLING;
             targetCharacter.Death(deathFromAction: goapNode, responsibleCharacter: goapNode.actor);
             goapNode.actor.jobComponent.TriggerBuryPsychopathVictim(targetCharacter, settlementOfTarget);
             targetCharacter.reactionComponent.AddCharacterThatSawThisDead(goapNode.actor);

@@ -25,7 +25,7 @@ namespace Inner_Maps.Location_Structures {
         //}
         protected override void DestroyStructure() {
             base.DestroyStructure();
-            PlayerUI.Instance.LoseGameOver();
+            PlayerUI.Instance.LoseGameOver("The Portal is in ruins! \nYour invasion has ended prematurely.");
         }
         //public void SummonMinion() {
         //    validMinions.Clear();

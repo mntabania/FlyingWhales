@@ -12,8 +12,8 @@ namespace Quests {
 
         public static QuestManager Instance;
 
-        public EliminateVillagerTracker eliminateVillagerTracker { get; private set; }
-        
+        public WinconditionTracker winConditionTracker { get; private set; }
+
         /// <summary>
         /// List of active quests. NOTE: this does not include tutorials.
         /// </summary>
@@ -35,8 +35,8 @@ namespace Quests {
         
         private void Awake() {
             Instance = this;
+            InitializeQuestTracker();
             _activeQuests = new List<Quest>();
-            eliminateVillagerTracker = new EliminateVillagerTracker();
         }
         protected override void OnDestroy() {
             base.OnDestroy();
@@ -48,13 +48,26 @@ namespace Quests {
         }
 
         #region Initialization
+        private void InitializeQuestTracker() {
+            switch (WorldSettings.Instance.worldSettingsData.worldType) {
+                case WorldSettingsData.World_Type.Oona:
+                winConditionTracker = new OonaWinConditionTracker();
+                break;
+                case WorldSettingsData.World_Type.Icalawa:
+                winConditionTracker = new IcalawaWinConditionTracker();
+                break;
+                default:
+                winConditionTracker = new OonaWinConditionTracker();
+                break;
+            }
+        }
         public void InitializeAfterGameLoaded() {
             Messenger.AddListener<List<Character>, DemonicStructure>(PartySignals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
             Messenger.AddListener<LocationStructure, Character, GoapPlanJob>(JobSignals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
             Messenger.AddListener<List<Character>>(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
             Messenger.AddListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
             Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "CenterButton");
-            eliminateVillagerTracker.Initialize(CharacterManager.Instance.allCharacters);
+            winConditionTracker.Initialize(CharacterManager.Instance.allCharacters);
         }
         public void InitializeAfterLoadoutPicked(){
             if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {
@@ -176,8 +189,12 @@ namespace Quests {
             Messenger.RemoveListener(PlayerQuestSignals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);
             switch (WorldSettings.Instance.worldSettingsData.victoryCondition) {
                 case VICTORY_CONDITION.Eliminate_All:
-                    CreateEliminateAllVillagersQuest();
+                CreateEliminateAllVillagersQuest();
                     break;
+                case VICTORY_CONDITION.Kill_By_Psychopath_Ritual:
+
+                CreateKillVillagersByPsychopathQuest();
+                break;
                 case VICTORY_CONDITION.Sandbox:
                     //no win condition quest
                     break;
@@ -189,6 +206,13 @@ namespace Quests {
             if (!IsQuestActive<EliminateAllVillagers>()) {
                 EliminateAllVillagers eliminateAllVillagers = new EliminateAllVillagers();
                 ActivateQuest(eliminateAllVillagers);    
+            }
+        }
+
+        private void CreateKillVillagersByPsychopathQuest() {
+            if (!IsQuestActive<KillVillagersByPsychopath>()) {
+                KillVillagersByPsychopath killVillagersByPsychopath = new KillVillagersByPsychopath();
+                ActivateQuest(killVillagersByPsychopath);
             }
         }
         #endregion

@@ -28,6 +28,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private LocationStructure _currentStructure; //what structure is this character currently in.
     private Region _currentRegion;
 
+    public INTERACTION_TYPE causeOfDeath { set; get; }
+
     public string persistentID { get; private set; }
     //visuals
     public CharacterVisuals visuals { get; }
@@ -5776,7 +5778,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             SetDeathLog(localDeathLog);
             deathStr = localDeathLog.logText;
             Messenger.Broadcast(CharacterSignals.CHARACTER_DEATH, this);
-
+            
             List<Trait> afterDeathTraitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.After_Death);
             if (afterDeathTraitOverrideFunctions != null) {
                 for (int i = 0; i < afterDeathTraitOverrideFunctions.Count; i++) {

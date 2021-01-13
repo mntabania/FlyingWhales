@@ -49,9 +49,9 @@ public class WorldSettingsData {
     public void SetMapSize(MAP_SIZE p_mapSize) {
         mapSize = p_mapSize;
     }
-    private void SetDefaultSpellSettings() {
+    private void SetDefaultSpellSettings(VICTORY_CONDITION p_victoryCondition = VICTORY_CONDITION.Eliminate_All) {
         SetMigrationSpeed(MIGRATION_SPEED.Normal);
-        SetVictoryCondition(VICTORY_CONDITION.Eliminate_All);
+        SetVictoryCondition(p_victoryCondition);
         SetCooldownSpeed(SKILL_COOLDOWN_SPEED.Normal);
         SetManaCostAmount(SKILL_COST_AMOUNT.Normal);
         SetChargeAmount(SKILL_CHARGE_AMOUNT.Normal);
@@ -167,8 +167,8 @@ public class WorldSettingsData {
         worldType = World_Type.Icalawa;
         // omnipotentMode = false;
         // noThreatMode = false;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings();
+        victoryCondition = VICTORY_CONDITION.Kill_By_Psychopath_Ritual;
+        SetDefaultSpellSettings(victoryCondition);
     }
     private void SetPangatLooWorldSettings() {
         Debug.Log("Set world settings as Pangat Loo");

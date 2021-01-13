@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace Quests.Steps {
-    public class EliminateVillagerStep : QuestStep, EliminateVillagerTracker.IListener {
+    public class EliminateVillagerStep : QuestStep, OonaWinConditionTracker.Listener {
         private readonly Func<List<Character>, int, string> _descriptionGetter;
 
         public EliminateVillagerStep(Func<List<Character>, int, string> descriptionGetter) : base(string.Empty) {
@@ -10,10 +10,10 @@ namespace Quests.Steps {
         }
 
         protected override void SubscribeListeners() {
-            QuestManager.Instance.eliminateVillagerTracker.Subscribe(this);
+            (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).Subscribe(this);
         }
         protected override void UnSubscribeListeners() {
-            QuestManager.Instance.eliminateVillagerTracker.Unsubscribe(this);
+            (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).Unsubscribe(this);
         }
 
         #region Listeners
@@ -27,7 +27,7 @@ namespace Quests.Steps {
             Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
         }
         private void CheckForCompletion() {
-            if (QuestManager.Instance.eliminateVillagerTracker.totalCharactersToEliminate <= 0) {
+            if ((QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).totalCharactersToEliminate <= 0) {
                 Complete();
                 Messenger.Broadcast(PlayerSignals.WIN_GAME);
             }
@@ -37,12 +37,10 @@ namespace Quests.Steps {
         #region Description
         protected override string GetStepDescription() {
             if (_descriptionGetter != null) {
-                return _descriptionGetter.Invoke(QuestManager.Instance.eliminateVillagerTracker.villagersToEliminate, QuestManager.Instance.eliminateVillagerTracker.totalCharactersToEliminate);
+                return _descriptionGetter.Invoke((QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).villagersToEliminate, (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).totalCharactersToEliminate);
             }
             return base.GetStepDescription();
         }
         #endregion
-
-        
     }
 }

@@ -546,8 +546,8 @@ public class PlayerUI : BaseMonoBehaviour {
         // }
         
     }
-    public void LoseGameOver() {
-        UIManager.Instance.ShowEndDemoScreen("The Portal is in ruins! \nYour invasion has ended prematurely.");
+    public void LoseGameOver(string p_message) {
+        UIManager.Instance.ShowEndDemoScreen(p_message);
         // if (WorldConfigManager.Instance.isTutorialWorld) {
         //     UIManager.Instance.ShowEndDemoScreen("The Portal is in ruins! \nYour invasion has ended prematurely.");
         // } else {
@@ -555,6 +555,7 @@ public class PlayerUI : BaseMonoBehaviour {
             // loseGameOver.Open();
         // }
     }
+
     #endregion
 
     #region Settlement Corruption
