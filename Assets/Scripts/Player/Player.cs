@@ -243,7 +243,7 @@ public class Player : ILeader, IObjectManipulator {
         List<Faction> allUndestroyedFactions = FactionManager.Instance.allFactions.Where(
             x => x.factionType.type != FACTION_TYPE.Wild_Monsters
             && !x.isPlayerFaction
-            && x.isActive && !x.isDestroyed).ToList();
+            && x.isActive && !x.isDisbanded).ToList();
         if (allUndestroyedFactions.Count == 0) {
             Debug.LogError("All factions are destroyed! Player won!");
         }        
@@ -551,7 +551,9 @@ public class Player : ILeader, IObjectManipulator {
         }
     }
     public void ShowNotificationFromPlayer(Log log) {
-        log.AddLogToDatabase();
+        //Removed adding to database here because this function should only be for showing notification, if we want to add it to database, it should be called outside this function
+        //This is also redundant because all the outside calls of ShowNotificationFromPlayer already calls AddLogToDatabase
+        //log.AddLogToDatabase();
         ShowNotification(log);
     }
     

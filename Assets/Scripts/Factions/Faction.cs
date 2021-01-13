@@ -47,7 +47,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     
 
     #region getters/setters
-    public bool isDestroyed => characters.Count <= 0;
+    public bool isDisbanded => characters.Count <= 0;
     public bool isMajorOrVagrant => isMajorFaction || this.factionType.type == FACTION_TYPE.Vagrants;
     public bool isMajorNonPlayerOrVagrant => isMajorNonPlayer || this.factionType.type == FACTION_TYPE.Vagrants;
     public bool isMajorNonPlayer => isMajorFaction && !isPlayerFaction;
@@ -175,6 +175,13 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
             character.SetFaction(null);
             Messenger.Broadcast(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, character, this);
+            if (isDisbanded) {
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "disband", providedTags: LOG_TAG.Major);
+                log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+                log.AddLogToDatabase();
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                Messenger.Broadcast(FactionSignals.FACTION_DISBANDED, this);
+            }
             return true;
         }
         return false;

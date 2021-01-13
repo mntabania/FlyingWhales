@@ -1388,7 +1388,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (currentRegion != null) {
                 for (int i = 0; i < currentRegion.factionsHere.Count; i++) {
                     Faction potentialFaction = currentRegion.factionsHere[i];
-                    if (potentialFaction.isMajorNonPlayer && !potentialFaction.isDestroyed
+                    if (potentialFaction.isMajorNonPlayer && !potentialFaction.isDisbanded
                         && !potentialFaction.IsCharacterBannedFromJoining(this)
                         && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeologies(this)
                         && potentialFaction != prevFaction) {
@@ -1428,7 +1428,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
         }
-        
+        ObjectPoolManager.Instance.ReturnFactionListToPool(viableFactions);
         if (chosenFaction != null) {
             interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, chosenFaction.characters[0], "join_faction_normal");
             return chosenFaction;

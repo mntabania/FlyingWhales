@@ -21,4 +21,5 @@
 
     public static string BECOME_WANTED_CRIMINAL_OF_FACTION = "OnBecomeWantedCriminalOfFaction";
     public static string UPDATED_SUCCESSORS = "OnUpdatedSuccessors";
+    public static string FACTION_DISBANDED = "OnFactionDisbanded";
 }
