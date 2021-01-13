@@ -636,8 +636,16 @@ public class CharacterNeedsComponent : CharacterComponent {
         }
         if (!triggerSpooked) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
-            if (!owner.traitContainer.HasTrait("Travelling") && owner.homeStructure != null) {
-                job.AddPriorityLocation(INTERACTION_TYPE.SLEEP, owner.homeStructure);
+            if (!owner.traitContainer.HasTrait("Travelling")) {
+                if(owner.homeStructure != null) {
+                    job.AddPriorityLocation(INTERACTION_TYPE.SLEEP, owner.homeStructure);
+                }
+                //if (owner.homeSettlement != null) {
+                //    LocationStructure tavern = owner.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.TAVERN);
+                //    if (tavern != null) {
+                //        job.AddPriorityLocation(INTERACTION_TYPE.SLEEP, tavern);
+                //    }
+                //}
             }
             owner.jobQueue.AddJobInQueue(job);
             if (shouldSetScheduleJobID) {
@@ -1277,8 +1285,12 @@ public class CharacterNeedsComponent : CharacterComponent {
                 }
                 if (homeSettlement != null) {
                     LocationStructure cityCenter = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+                    LocationStructure tavern = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.TAVERN);
                     if (cityCenter != null) {
                         job.AddPriorityLocation(INTERACTION_TYPE.NONE, cityCenter);
+                    }
+                    if (tavern != null) {
+                        job.AddPriorityLocation(INTERACTION_TYPE.NONE, tavern);
                     }
                 }
             }
