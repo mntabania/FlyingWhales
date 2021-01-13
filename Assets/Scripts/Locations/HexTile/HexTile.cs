@@ -110,13 +110,12 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     public int xCoordinate => data.xCoordinate;
     public int yCoordinate => data.yCoordinate;
     public string tileName => data.tileName;
-    public string thisName => data.tileName;
     public float elevationNoise => data.elevationNoise;
     public float moistureNoise => data.moistureNoise;
     public float temperature => data.temperature;
     public BIOMES biomeType => data.biomeType;
     public ELEVATION elevationType => data.elevationType;
-    private string locationName => $"({xCoordinate.ToString()}, {yCoordinate.ToString()})";
+    public string locationName => $"({xCoordinate.ToString()}, {yCoordinate.ToString()})";
     private GameObject centerPiece => _centerPiece;
     private GameObject highlightGO => _highlightGO;
     private Dictionary<HEXTILE_DIRECTION, HexTile> neighbourDirections => _neighbourDirections;
