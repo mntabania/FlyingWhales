@@ -414,7 +414,7 @@ public class GoapPlanJob : JobQueueItem {
         List<ILocation> data = null;
         if (priorityLocations.ContainsKey(actionType)) {
             data = priorityLocations[actionType];
-        } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+        } else if (priorityLocations.ContainsKey(INTERACTION_TYPE.NONE)) {
             //None Interaction Type means that the other data is applied to all actions in plan
             data = priorityLocations[INTERACTION_TYPE.NONE];
         }

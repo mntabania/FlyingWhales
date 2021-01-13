@@ -34,6 +34,7 @@ namespace Locations.Settlements {
         public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
         public virtual Type serializedData => typeof(SaveDataBaseSettlement);
         public virtual Region region => null;
+        public string locationName => name;
         public LocationStructure currentStructure => null;
         public BaseSettlement currentSettlement => this;
         public bool hasBeenDestroyed => false;

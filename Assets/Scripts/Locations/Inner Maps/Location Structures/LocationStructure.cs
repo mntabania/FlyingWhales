@@ -55,6 +55,7 @@ namespace Inner_Maps.Location_Structures {
         
         #region getters
         public virtual string nameplateName => name;
+        public string locationName => ToString();
         public virtual bool isDwelling => false;
         public virtual Vector3 worldPosition { get; protected set; }
         public virtual Vector2 selectableSize => Vector2.zero;
