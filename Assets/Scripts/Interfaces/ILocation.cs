@@ -3,6 +3,7 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 
 public interface ILocation : ISavable {
+    string locationName { get; }
 }
 
 public struct ILocationSaveData {

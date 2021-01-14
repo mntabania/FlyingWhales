@@ -6,18 +6,31 @@ using Inner_Maps.Location_Structures;
 namespace UtilityScripts {
     public static class JobUtilities {
         public static void PopulatePriorityLocationsForHappinessRecovery(Character actor, GoapPlanJob job) {
-            if (!actor.traitContainer.HasTrait("Travelling") && actor.homeStructure != null) {
-                job.AddPriorityLocation(INTERACTION_TYPE.NONE, actor.homeStructure);
-
-                LocationStructure currentStructure = actor.currentStructure;
-                ILocation currentLocation = currentStructure;
-                if (currentStructure == null || currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || currentStructure.structureType == STRUCTURE_TYPE.OCEAN) {
-                    if (actor.gridTileLocation != null && actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                        currentLocation = actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+            if (!actor.traitContainer.HasTrait("Travelling")) {
+                bool hasPrioLocation = false;
+                if(actor.homeStructure != null) {
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, actor.homeStructure);
+                    hasPrioLocation = true;
+                }
+                if(actor.homeSettlement != null) {
+                    LocationStructure tavern = actor.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.TAVERN);
+                    if(tavern != null) {
+                        job.AddPriorityLocation(INTERACTION_TYPE.NONE, tavern);
+                        hasPrioLocation = true;
                     }
                 }
-                if (currentLocation != null) {
-                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, currentLocation);
+
+                if (hasPrioLocation) {
+                    LocationStructure currentStructure = actor.currentStructure;
+                    ILocation currentLocation = currentStructure;
+                    if (currentStructure == null || currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || currentStructure.structureType == STRUCTURE_TYPE.OCEAN) {
+                        if (actor.gridTileLocation != null && actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                            currentLocation = actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                        }
+                    }
+                    if (currentLocation != null) {
+                        job.AddPriorityLocation(INTERACTION_TYPE.NONE, currentLocation);
+                    }
                 }
             }
         }

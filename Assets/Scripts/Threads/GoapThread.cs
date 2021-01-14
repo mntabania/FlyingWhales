@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
@@ -82,6 +83,18 @@ public class GoapThread : Multithread {
             log += $"\nGOAL: {goalType}";
         } else {
             log += $"\nGOAL: {goalEffect}";
+        }
+        if(job.priorityLocations != null) {
+            log += $"\nPRIORITY LOCATIONS:";
+            foreach (KeyValuePair<INTERACTION_TYPE, List<ILocation>> kvp in job.priorityLocations) {
+                log += $"\n{kvp.Key}: ";
+                for (int i = 0; i < kvp.Value.Count; i++) {
+                    if (i > 0) {
+                        log += ", ";
+                    }
+                    log += kvp.Value[i].locationName;
+                }
+            }
         }
 
         string planLog = string.Empty;
