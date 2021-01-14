@@ -61,7 +61,7 @@ public class FishingSpot : TileObject {
         }
     }
     public override void RemoveFromSettlementResourcesParent() {
-        if (parentSettlement != null) {
+        if (parentSettlement != null && parentSettlement.SettlementResources != null) {
             if (parentSettlement.SettlementResources.fishingSpots.Remove(this)) {
                 parentSettlement = null;
             }    
