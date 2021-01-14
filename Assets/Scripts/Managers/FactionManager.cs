@@ -763,7 +763,7 @@ public class FactionManager : BaseMonoBehaviour {
         int count = 0;
         for (int i = 0; i < DatabaseManager.Instance.factionDatabase.allFactionsList.Count; i++) {
             Faction faction = DatabaseManager.Instance.factionDatabase.allFactionsList[i];
-            if (faction.isMajorNonPlayer && !faction.isDestroyed) {
+            if (faction.isMajorNonPlayer && !faction.isDisbanded) {
                 count++;
             }
         }
