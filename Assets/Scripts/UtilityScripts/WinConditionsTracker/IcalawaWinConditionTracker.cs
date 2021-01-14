@@ -1,19 +1,20 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using Ruinarch;
-using UnityEngine;
-using UtilityScripts;
 using Traits;
 
 public class IcalawaWinConditionTracker : WinconditionTracker {
 
     private System.Action<Character> _characterEliminatedAction;
     private System.Action<Character> _characterAddedAsTargetAction;
+    private System.Action<Character> _characterSuccessChangeTraitToPsychopath;
 
     #region IListener
-    public interface Listener {
+    public interface IListenerKillingEvents {
         void OnCharacterEliminated(Character p_character);
         void OnCharacterAddedAsTarget(Character p_character);
+    }
+
+    public interface IListenerChangeTraits {
+        void OnCharacterChangeTrait(Character p_character);
     }
     #endregion
 
@@ -47,6 +48,8 @@ public class IcalawaWinConditionTracker : WinconditionTracker {
                     totalCharactersToEliminate--;
                 }
             }
+        } else if (p_character == psychoPath) {
+            PlayerUI.Instance.LoseGameOver("Psychopath Died, Mission Failed");
         }
         _characterEliminatedAction?.Invoke(p_character);
     }
@@ -65,7 +68,7 @@ public class IcalawaWinConditionTracker : WinconditionTracker {
             Character character = p_allCharacters[i];
             if (character.isNormalCharacter && character.race.IsSapient() && character.traitContainer.HasTrait("Blessed")) {
                 characters.Add(character);
-            } else {
+            } else if(character.isNormalCharacter && character.race.IsSapient()) {
                 psychoPath = character;
             }
         }
@@ -74,10 +77,13 @@ public class IcalawaWinConditionTracker : WinconditionTracker {
 
     private void OnCharactertraitGain(Character p_character, Trait p_trait) {
         if (p_character == psychoPath) {
-            if (psychoPath.traitContainer.HasTrait("Blessed")) { 
-                //TODO Issue lose condition
+            if (psychoPath.traitContainer.HasTrait("Blessed")) {
+                PlayerUI.Instance.LoseGameOver("Psychopath Became blessed, Mission Failed");
+            } else if (psychoPath.traitContainer.HasTrait("Psychopath")) {
+                _characterSuccessChangeTraitToPsychopath?.Invoke(p_character);
             }
         }
+        
     }
 
     private void CheckIfCharacterIsEliminated(Character p_character) {
@@ -90,12 +96,19 @@ public class IcalawaWinConditionTracker : WinconditionTracker {
         AddVillagerToEliminate(newVillager);
     }
 
-    public void Subscribe(IcalawaWinConditionTracker.Listener p_listener) {
+    public void SubscribeToKillingEvents(IcalawaWinConditionTracker.IListenerKillingEvents p_listener) {
         _characterEliminatedAction += p_listener.OnCharacterEliminated;
         _characterAddedAsTargetAction += p_listener.OnCharacterAddedAsTarget;
     }
-    public void Unsubscribe(IcalawaWinConditionTracker.Listener p_listener) {
+    public void UnsubscribeToKillingEvents(IcalawaWinConditionTracker.IListenerKillingEvents p_listener) {
         _characterEliminatedAction -= p_listener.OnCharacterEliminated;
         _characterAddedAsTargetAction -= p_listener.OnCharacterAddedAsTarget;
+    }
+
+    public void SubscribeToChangeTraitEvents(IcalawaWinConditionTracker.IListenerChangeTraits p_listener) {
+        _characterSuccessChangeTraitToPsychopath += p_listener.OnCharacterChangeTrait;
+    }
+    public void UnsubscribeToChangeTraitEvents(IcalawaWinConditionTracker.IListenerChangeTraits p_listener) {
+        _characterSuccessChangeTraitToPsychopath -= p_listener.OnCharacterChangeTrait;
     }
 }
