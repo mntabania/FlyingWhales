@@ -187,7 +187,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		Sprite factionEmblem = FactionEmblemRandomizer.GetUnusedFactionEmblem();
 		factionTemplate.SetFactionEmblem(factionEmblem);
 		FactionEmblemRandomizer.SetEmblemAsUsed(factionEmblem);
-		m_worldGenOptionsUIView.UpdateFactionItems(WorldSettings.Instance.worldSettingsData.factionSettings.factionSettings);
+		m_worldGenOptionsUIView.UpdateFactionItems(WorldSettings.Instance.worldSettingsData.factionSettings.factionTemplates);
 		UpdateAddFactionBtn();
 		UpdateVillageCount();
 	}
@@ -198,7 +198,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	}
 	private void OnDoneEditingVillages() {
 		UpdateVillageCount();
-		m_worldGenOptionsUIView.UpdateFactionItems(WorldSettings.Instance.worldSettingsData.factionSettings.factionSettings);
+		m_worldGenOptionsUIView.UpdateFactionItems(WorldSettings.Instance.worldSettingsData.factionSettings.factionTemplates);
 	}
 	#endregion
 
@@ -218,7 +218,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		for (int i = 0; i < maxFactions; i++) {
 			AddDefaultFactionSetting();
 		}
-		m_worldGenOptionsUIView.UpdateFactionItems(WorldSettings.Instance.worldSettingsData.factionSettings.factionSettings);
+		m_worldGenOptionsUIView.UpdateFactionItems(WorldSettings.Instance.worldSettingsData.factionSettings.factionTemplates);
 		UpdateAddFactionBtn();
 	}
 	public void OnChangeMigrationSpeed(MIGRATION_SPEED p_value) {

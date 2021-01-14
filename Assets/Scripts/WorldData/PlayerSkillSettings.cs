@@ -7,11 +7,18 @@ public class PlayerSkillSettings {
     public SKILL_COST_AMOUNT costAmount;
     public SKILL_CHARGE_AMOUNT chargeAmount;
     public THREAT_AMOUNT threatAmount;
+    /// <summary>
+    /// The forced archetype setting.
+    /// If this is set to Normal, it means that the player can choose between the Pre-set archetypes. 
+    /// </summary>
+    public PLAYER_ARCHETYPE forcedArchetype;
+    
     public PlayerSkillSettings() {
         cooldownSpeed = SKILL_COOLDOWN_SPEED.Normal;
         costAmount = SKILL_COST_AMOUNT.Normal;
         chargeAmount = SKILL_CHARGE_AMOUNT.Normal;
         threatAmount = THREAT_AMOUNT.Normal;
+        forcedArchetype = PLAYER_ARCHETYPE.Normal;
     }
     public void SetCooldownSpeed(SKILL_COOLDOWN_SPEED p_value) {
         cooldownSpeed = p_value;
@@ -82,4 +89,10 @@ public class PlayerSkillSettings {
                 throw new ArgumentOutOfRangeException();
         }
     }
+
+    #region Forced Archetype
+    public void SetForcedArchetype(PLAYER_ARCHETYPE p_archetype) {
+        forcedArchetype = p_archetype;
+    }
+    #endregion
 }

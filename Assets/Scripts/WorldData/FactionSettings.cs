@@ -2,17 +2,17 @@
 
 public class FactionSettings {
     
-    public List<FactionTemplate> factionSettings;
+    public List<FactionTemplate> factionTemplates;
     public bool disableNewFactions;
     public bool disableFactionIdeologyChanges;
     
     public FactionSettings() {
-        factionSettings = new List<FactionTemplate>();
+        factionTemplates = new List<FactionTemplate>();
     }
     public int GetCurrentTotalVillageCountBasedOnFactions() {
         int villageCount = 0;
-        for (int i = 0; i < factionSettings.Count; i++) {
-            villageCount += factionSettings[i].villageSettings.Count;
+        for (int i = 0; i < factionTemplates.Count; i++) {
+            villageCount += factionTemplates[i].villageSettings.Count;
         }
         return villageCount;
     }
@@ -22,13 +22,13 @@ public class FactionSettings {
         return factionTemplate;
     }
     private void AddFactionSetting(FactionTemplate p_FactionTemplate) {
-        factionSettings.Add(p_FactionTemplate);
+        factionTemplates.Add(p_FactionTemplate);
     }
     public void RemoveFactionSetting(FactionTemplate p_FactionTemplate) {
-        factionSettings.Remove(p_FactionTemplate);
+        factionTemplates.Remove(p_FactionTemplate);
     }
     public void ClearFactionSettings() {
-        factionSettings.Clear();
+        factionTemplates.Clear();
     }
     public void AllowNewFactions() {
         disableNewFactions = false;

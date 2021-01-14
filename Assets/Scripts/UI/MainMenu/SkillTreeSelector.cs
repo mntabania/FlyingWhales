@@ -26,33 +26,19 @@ public class SkillTreeSelector : MonoBehaviour {
             playerLoadoutUI[i].Initialize();
             playerLoadoutUI[i].SetMoreLoadoutOptions(SaveManager.Instance.currentSaveDataPlayer.moreLoadoutOptions, false);
         }
-        // if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
-        //     //if second world then disable ravager and lich builds, and go to puppet master build
-        //     _horizontalScrollSnap.RemoveAllChildren(out var childrenRemoved);
-        //     for (int i = 0; i < archetypeToggles.Length; i++) {
-        //         Toggle toggle = archetypeToggles[i];
-        //         PlayerSkillLoadoutUI loadoutUI = playerLoadoutUI[i];
-        //         if (toggle.gameObject.name == "Second World") {
-        //             toggle.isOn = true;
-        //             _horizontalScrollSnap.AddChild(loadoutUI.gameObject);
-        //         } else {
-        //             toggle.gameObject.SetActive(false);
-        //             loadoutUI.gameObject.SetActive(false);
-        //         }
-        //     }
-        // } else {
-        //disable other non main loadouts
-        //Second World
-        for (int i = 0; i < archetypeToggles.Length; i++) {
+        if (WorldSettings.Instance.worldSettingsData.playerSkillSettings.forcedArchetype != PLAYER_ARCHETYPE.Normal) {
+            //world settings has a forced archetype, disable all other archetypes except forced archetype
+            for (int i = 0; i < archetypeToggles.Length; i++) {
                 Toggle toggle = archetypeToggles[i];
                 PlayerSkillLoadoutUI loadoutUI = playerLoadoutUI[i];
-                if (toggle.gameObject.name == "Second World") {
+                if (loadoutUI.loadout.archetype != WorldSettings.Instance.worldSettingsData.playerSkillSettings.forcedArchetype) {
                     toggle.gameObject.SetActive(false);
                     loadoutUI.gameObject.SetActive(false);
-                    _horizontalScrollSnap.RemoveChild(i, out var removed);
+                    _horizontalScrollSnap.RemoveChild(loadoutUI.transform.GetSiblingIndex(), out var removed);
+                    toggle.SetIsOnWithoutNotify(false);
                 }
             }
-        // }
+        }
         moreLoadoutOptionsToggle.SetIsOnWithoutNotify(SaveManager.Instance.currentSaveDataPlayer.moreLoadoutOptions);
         this.gameObject.SetActive(false);
     }
@@ -112,8 +98,9 @@ public class SkillTreeSelector : MonoBehaviour {
             return PLAYER_ARCHETYPE.Tutorial;
         } else {
             for (int i = 0; i < archetypeToggles.Length; i++) {
-                if (archetypeToggles[i].isOn) {
-                    return (PLAYER_ARCHETYPE) System.Enum.Parse(typeof(PLAYER_ARCHETYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(archetypeToggles[i].gameObject.name));
+                Toggle archetypeToggle = archetypeToggles[i];
+                if (archetypeToggle.gameObject.activeInHierarchy && archetypeToggle.isOn) {
+                    return (PLAYER_ARCHETYPE) System.Enum.Parse(typeof(PLAYER_ARCHETYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(archetypeToggle.gameObject.name));
                 }
             }
             return PLAYER_ARCHETYPE.Normal;

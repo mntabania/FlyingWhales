@@ -94,6 +94,7 @@ public class WorldSettingsData {
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     private void SetOonaWorldSettings() {
         Debug.Log("Set world settings as Second World");
@@ -106,6 +107,7 @@ public class WorldSettingsData {
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     private void SetIcalawaWorldSettings() {
         Debug.Log("Set world settings as Icalawa");
@@ -118,6 +120,7 @@ public class WorldSettingsData {
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     private void SetPangatLooWorldSettings() {
         Debug.Log("Set world settings as Pangat Loo");
@@ -130,6 +133,7 @@ public class WorldSettingsData {
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     private void SetAffattWorldSettings() {
         Debug.Log("Set world settings as Affatt");
@@ -142,6 +146,7 @@ public class WorldSettingsData {
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     private void SetZenkoWorldSettings() {
         Debug.Log("Set world settings as Zenko");
@@ -154,6 +159,7 @@ public class WorldSettingsData {
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     public void ApplyCustomWorldSettings() {
         villageSettings.EnableAllVillagerMigrations();
@@ -162,12 +168,13 @@ public class WorldSettingsData {
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     #endregion
 
     #region Factions
     public bool HasReachedMaxFactionCount() {
-        return factionSettings.factionSettings.Count >= mapSettings.GetMaxFactions();
+        return factionSettings.factionTemplates.Count >= mapSettings.GetMaxFactions();
     }
     #endregion
 

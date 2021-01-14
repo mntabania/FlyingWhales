@@ -202,8 +202,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			return false;
 		}
 		List<HexTile> preferredTiles = new List<HexTile>();
-		for (int i = 0; i < WorldSettings.Instance.worldSettingsData.factionSettings.factionSettings.Count; i++) {
-			FactionTemplate factionTemplate = WorldSettings.Instance.worldSettingsData.factionSettings.factionSettings[i];
+		for (int i = 0; i < WorldSettings.Instance.worldSettingsData.factionSettings.factionTemplates.Count; i++) {
+			FactionTemplate factionTemplate = WorldSettings.Instance.worldSettingsData.factionSettings.factionTemplates[i];
 			for (int j = 0; j < factionTemplate.villageSettings.Count; j++) {
 				if (data.villageSpots.Count == 0) {
 					return false; //not enough village spots 
