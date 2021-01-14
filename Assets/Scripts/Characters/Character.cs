@@ -1388,7 +1388,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (currentRegion != null) {
                 for (int i = 0; i < currentRegion.factionsHere.Count; i++) {
                     Faction potentialFaction = currentRegion.factionsHere[i];
-                    if (potentialFaction.isMajorNonPlayer && !potentialFaction.isDestroyed
+                    if (potentialFaction.isMajorNonPlayer && !potentialFaction.isDisbanded
                         && !potentialFaction.IsCharacterBannedFromJoining(this)
                         && potentialFaction.ideologyComponent.DoesCharacterFitCurrentIdeologies(this)
                         && potentialFaction != prevFaction) {
@@ -1428,7 +1428,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
         }
-        
+        ObjectPoolManager.Instance.ReturnFactionListToPool(viableFactions);
         if (chosenFaction != null) {
             interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, chosenFaction.characters[0], "join_faction_normal");
             return chosenFaction;
@@ -5350,8 +5350,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         if (race == RACE.DEMON) {
             AddPlayerAction(PLAYER_SKILL_TYPE.UNSUMMON);
-            AddPlayerAction(PLAYER_SKILL_TYPE.RELEASE);
-            AddPlayerAction(PLAYER_SKILL_TYPE.HEAL);
         } else {
             if (isNormalCharacter) {
                 AddPlayerAction(PLAYER_SKILL_TYPE.AFFLICT);
@@ -5364,10 +5362,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
             AddPlayerAction(PLAYER_SKILL_TYPE.TORTURE);
             AddPlayerAction(PLAYER_SKILL_TYPE.BRAINWASH);
-            AddPlayerAction(PLAYER_SKILL_TYPE.RELEASE);
-            AddPlayerAction(PLAYER_SKILL_TYPE.HEAL);
+
             AddPlayerAction(PLAYER_SKILL_TYPE.EXPEL);
         }
+        AddPlayerAction(PLAYER_SKILL_TYPE.RELEASE);
+        AddPlayerAction(PLAYER_SKILL_TYPE.HEAL);
+        AddPlayerAction(PLAYER_SKILL_TYPE.REMOVE_BUFF);
+        AddPlayerAction(PLAYER_SKILL_TYPE.REMOVE_FLAW);
     }
     public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Contains(action) == false) {

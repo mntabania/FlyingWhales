@@ -122,7 +122,8 @@ public class Eat : GoapAction {
             if (target is Table table) {
                 bool isTrapped = actor.trapStructure.IsTrapStructure(table.gridTileLocation.structure)
                     || (table.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrapHex(table.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner));
-                if (table.gridTileLocation != null && table.gridTileLocation.IsPartOfSettlement(out var settlement) && actor.faction != null && settlement.owner != null && settlement.owner.IsHostileWith(actor.faction)) {
+                BaseSettlement settlementLocation = null;
+                if (table.gridTileLocation != null && table.gridTileLocation.IsPartOfSettlement(out settlementLocation) && actor.faction != null && settlementLocation.owner != null && settlementLocation.owner.IsHostileWith(actor.faction)) {
                     cost += 2000;
                     costLog += $" +{cost}(Table is inside settlement owned by hostile faction)";
                 } else if (isTrapped) {
@@ -156,7 +157,7 @@ public class Eat : GoapAction {
                 } else if (table.structureLocation == actor.homeStructure) {
                     cost = UtilityScripts.Utilities.Rng.Next(20, 36);
                     costLog += $" +{cost}(Table is in actor's home)";
-                } else if (table.gridTileLocation != null && table.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)) {
+                } else if (settlementLocation == actor.homeSettlement) {
                     if (actor.needsComponent.isStarving) {
                         Character tableOwner = table.characterOwner;
                         if (tableOwner != null) {

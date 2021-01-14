@@ -25,7 +25,7 @@ public class LeaveFactionData : SchemeData {
         if (target is Character character) {
             bool isNonVagrant = character.faction != null && character.faction.isMajorNonPlayer;
             bool isRatman = character.isConsideredRatman;
-            if ((isNonVagrant || isRatman) && !character.isFactionLeader && !character.isSettlementRuler) {
+            if (isNonVagrant || isRatman) { // && !character.isFactionLeader && !character.isSettlementRuler
                 return true;
             } else {
                 return false;
@@ -53,6 +53,9 @@ public class LeaveFactionData : SchemeData {
         if (p_targetCharacter.traitContainer.HasTrait("Treacherous")) {
             p_newSuccessRate *= 2f;
         }
+        if (p_targetCharacter.isFactionLeader || p_targetCharacter.isSettlementRuler) {
+            p_newSuccessRate *= 0.25f;
+        }
         base.ProcessSuccessRateWithMultipliers(p_targetCharacter, ref p_newSuccessRate);
     }
     public override string GetSuccessRateMultiplierText(Character p_targetCharacter) {
@@ -60,6 +63,13 @@ public class LeaveFactionData : SchemeData {
         if (p_targetCharacter.traitContainer.HasTrait("Treacherous")) {
             if (text != string.Empty) { text += "\n"; }
             text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is Treacherous: <color=white>x2</color>";
+        }
+        if (p_targetCharacter.isFactionLeader) {
+            if (text != string.Empty) { text += "\n"; }
+            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is the Faction Leader: <color=white>x0.25</color>";
+        } else if (p_targetCharacter.isSettlementRuler) {
+            if (text != string.Empty) { text += "\n"; }
+            text += $"{p_targetCharacter.visuals.GetCharacterNameWithIconAndColor()} is a Settlement Ruler: <color=white>x0.25</color>";
         }
         if (text != string.Empty) {
             return text;

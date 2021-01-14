@@ -351,7 +351,7 @@ public class TheFingersUI : MonoBehaviour {
         UIManager.Instance.dualObjectPicker.PopulateColumn(viableFactions, (faction) => CanChooseFactionToJoin(faction, character), null, null, UIManager.Instance.dualObjectPicker.column2ScrollView, UIManager.Instance.dualObjectPicker.column2ToggleGroup, "Choose Faction");
     }
     private bool CanChooseFactionToJoin(Faction faction, Character character) {
-        return !faction.isDestroyed && faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(character);
+        return !faction.isDisbanded && faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(character);
     }
     private void ConfirmJoin(object obj1, object obj2) {
         Character character = obj1 as Character;

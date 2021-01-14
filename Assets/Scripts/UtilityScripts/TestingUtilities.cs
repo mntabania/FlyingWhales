@@ -7,6 +7,11 @@ namespace UtilityScripts {
         
         public static void ShowLocationInfo(Region region) {
             string summary = $"{region.name} Info:";
+            summary += "\nDivisions:";
+            for (int i = 0; i < region.regionDivisionComponent.divisions.Count; i++) {
+                RegionDivision division = region.regionDivisionComponent.divisions[i];
+                summary += $"\n- {division.biome.ToString()} - {division.tiles.Count.ToString()}";
+            }
             List<NPCSettlement> settlements = GetSettlementsInRegion(region);
             summary += $"\n-----------------------------";
             summary += "\nLocations Info:";
