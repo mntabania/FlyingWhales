@@ -104,14 +104,27 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 			chosenTemplate = new WorldMapTemplate() {
 				regionCount = 1,
-				worldMapWidth = 7,
+				worldMapWidth = 9,
 				worldMapHeight = 8,
 				regions = new Dictionary<int, RegionTemplate[]>() {
 					{
 						0, new[] {
-							new RegionTemplate(7, 8),
+							new RegionTemplate(9, 8),
 						}
 					}
+				}
+			};
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+			chosenTemplate = new WorldMapTemplate() {
+				regionCount = 1,
+				worldMapWidth = 11,
+				worldMapHeight = 6,
+				regions = new Dictionary<int, RegionTemplate[]>() {
+					{
+						0, new[] {
+							new RegionTemplate(11, 6),
+						}
+					},
 				}
 			};
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
@@ -164,19 +177,6 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 							new RegionTemplate(12, 5),
 						}
 					}
-				}
-			};
-		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
-			chosenTemplate = new WorldMapTemplate() {
-				regionCount = 1,
-				worldMapWidth = 13,
-				worldMapHeight = 6,
-				regions = new Dictionary<int, RegionTemplate[]>() {
-					{
-						0, new[] {
-							new RegionTemplate(13, 6),
-						}
-					},
 				}
 			};
 		} else {

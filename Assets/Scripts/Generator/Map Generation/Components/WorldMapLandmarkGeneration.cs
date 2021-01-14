@@ -44,7 +44,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				List<HexTile> choices;
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					if (i == 0) {
-						choices = new List<HexTile>() { GridMap.Instance.map[6, 3] };	
+						choices = new List<HexTile>() { GridMap.Instance.map[1, 4] };	
 					} else {
 						choices = new List<HexTile>() { GridMap.Instance.map[3, 7] };
 					}
@@ -241,7 +241,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				List<HexTile> choices;
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
 					choices = new List<HexTile>() {
-						GridMap.Instance.map[6, 2]
+						GridMap.Instance.map[3, 0]
 					};
 				} else {
 					choices = GridMap.Instance.normalHexTiles

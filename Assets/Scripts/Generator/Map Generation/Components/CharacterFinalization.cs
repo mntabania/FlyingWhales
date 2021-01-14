@@ -117,16 +117,17 @@ namespace Generator.Map_Generation.Components {
 
         #region Icalawa
         private void IcalawaCharacterRandomInitialTraits(int index, Character character, int totalCharacters) {
-            if (index < totalCharacters/2) {
-                //half of villagers are robust
-                character.traitContainer.AddTrait(character, "Robust");
-            }
+            // if (index < totalCharacters/2) {
+            //     //half of villagers are robust
+            //     character.traitContainer.AddTrait(character, "Robust");
+            // }
             if (index + 1 == totalCharacters) {
                 //last villager is Evil.
                 character.traitContainer.AddTrait(character, "Evil");
             } else {
                 //all non evil characters are blessed
                 character.traitContainer.AddTrait(character, "Blessed");
+                character.traitContainer.AddTrait(character, "Robust");
             }
             List<string> buffTraits = new List<string>(TraitManager.Instance.buffTraitPool);
             buffTraits.Remove("Blessed");

@@ -101,7 +101,6 @@ public class WorldSettingsData {
         worldType = World_Type.Oona;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings();
-        mapSettings.AddBiome(BIOMES.DESERT);
         villageSettings.EnableAllVillagerMigrations();
         villageSettings.EnableAllFactionMigrations();
         villageSettings.AllowNewVillages();
@@ -121,7 +120,7 @@ public class WorldSettingsData {
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Puppet_Master);
     }
     private void SetPangatLooWorldSettings() {
         Debug.Log("Set world settings as Pangat Loo");
