@@ -23,7 +23,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
 			DetermineSettlementsForZenko();
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
-			DetermineSettlementsForAffatt();
+			DetermineSettlementsForAffatt(data);
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
 			DetermineSettlementsForIcalawa(data);
 		} else {
@@ -497,33 +497,29 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			data.AddDeterminedVillage(factionTemplate, chosenTile);
 		}
 	}
-	private void DetermineSettlementsForAffatt() {
+	private void DetermineSettlementsForAffatt(MapGenerationData data) {
 		List<HexTile> chosenTiles = new List<HexTile> {
-			//region 1 (big forest region)
-			//first settlement
 			GridMap.Instance.map[1, 2],
-			// GridMap.Instance.map[1, 3],
-			// GridMap.Instance.map[2, 3],
-			// GridMap.Instance.map[2, 2],
-			//second settlement
-			GridMap.Instance.map[8, 1],
-			// GridMap.Instance.map[8, 3],
-			// GridMap.Instance.map[7, 1],
-			// GridMap.Instance.map[6, 3],
-			// GridMap.Instance.map[7, 2],
-			//region 4 (snow region)
-			GridMap.Instance.map[3, 6],
-			// GridMap.Instance.map[2, 6],
-			// GridMap.Instance.map[2, 7],
-			// GridMap.Instance.map[3, 7],
-			// GridMap.Instance.map[4, 6],
+			GridMap.Instance.map[3, 8],
+			GridMap.Instance.map[8, 3],
 		};
 
+		FactionTemplate factionTemplate1 = new FactionTemplate(2);
+		factionTemplate1.SetFactionEmblem(FactionEmblemRandomizer.GetUnusedFactionEmblem());
+		
+		FactionTemplate factionTemplate2 = new FactionTemplate(1);
+		factionTemplate2.SetFactionEmblem(FactionEmblemRandomizer.GetUnusedFactionEmblem());
+		
 		for (int i = 0; i < chosenTiles.Count; i++) {
 			HexTile chosenTile = chosenTiles[i];
 			chosenTile.SetElevation(ELEVATION.PLAIN);
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
 			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			if (i == 0 || i == 1) {
+				data.AddDeterminedVillage(factionTemplate1, chosenTile);
+			} else {
+				data.AddDeterminedVillage(factionTemplate2, chosenTile);
+			}
 		}
 		
 		// List<HexTile> neighbouringTiles = GetNeighbouringTiles(chosenTiles);

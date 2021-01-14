@@ -63,7 +63,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		
 		stopwatch.Reset();
 		stopwatch.Start();
-		yield return MapGenerator.Instance.StartCoroutine(LoadArtifacts());
+		yield return MapGenerator.Instance.StartCoroutine(GenerateArtifacts());
 		stopwatch.Stop();
 		AddLog($"LoadArtifacts took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
 		
@@ -365,7 +365,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	#endregion
 
 	#region Artifacts
-	private IEnumerator LoadArtifacts() {
+	private IEnumerator GenerateArtifacts() {
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			//if demo build, always spawn necronomicon at ancient ruins
 			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
