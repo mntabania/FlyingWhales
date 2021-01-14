@@ -289,12 +289,26 @@ namespace Traits {
         #region IContextMenuItem Implementation
         public void OnPickAction() {
             if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is Character targetCharacter) {
-                ActivateTriggerFlawConfirmation(targetCharacter);
+                if(UIManager.Instance.contextMenuUIController.currentlyOpenedParentContextItem is PlayerAction playerAction) {
+                    if (playerAction.type == PLAYER_SKILL_TYPE.TRIGGER_FLAW) {
+                        ActivateTriggerFlawConfirmation(targetCharacter);
+                    } else if (playerAction.type == PLAYER_SKILL_TYPE.REMOVE_BUFF) {
+                        (playerAction as RemoveBuffData).ActivateRemoveBuff(name, targetCharacter);
+                    } else if (playerAction.type == PLAYER_SKILL_TYPE.REMOVE_FLAW) {
+                        (playerAction as RemoveFlawData).ActivateRemoveFlaw(name, targetCharacter);
+                    }
+                }
             }
         }
         public bool CanBePickedRegardlessOfCooldown() {
             if (PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is Character targetCharacter) {
-                return CanFlawBeTriggered(targetCharacter);
+                if (UIManager.Instance.contextMenuUIController.currentlyOpenedParentContextItem is PlayerAction playerAction) {
+                    if (playerAction.type == PLAYER_SKILL_TYPE.TRIGGER_FLAW) {
+                        return CanFlawBeTriggered(targetCharacter);
+                    } else if (playerAction.type == PLAYER_SKILL_TYPE.REMOVE_BUFF || playerAction.type == PLAYER_SKILL_TYPE.REMOVE_FLAW) {
+                        return !targetCharacter.isDead;
+                    }
+                }
             }
             return true;
         }
@@ -317,6 +331,11 @@ namespace Traits {
             UIManager.Instance.ShowTriggerFlawConfirmation(question, effect, manaCost, () => TriggerFlawData.ActivateTriggerFlaw(trait, p_character), layer: 26, showCover: true, pauseAndResume: true);
         }
         public int GetManaCost() {
+            if (UIManager.Instance.contextMenuUIController.currentlyOpenedParentContextItem is PlayerAction playerAction) {
+                if (playerAction.type == PLAYER_SKILL_TYPE.REMOVE_BUFF || playerAction.type == PLAYER_SKILL_TYPE.REMOVE_FLAW) {
+                    return 0;
+                }
+            }
             return PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.TRIGGER_FLAW).manaCost;
         }
         #endregion
