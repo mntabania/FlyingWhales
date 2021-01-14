@@ -31,7 +31,6 @@ namespace Events.World_Events {
             Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
             Messenger.AddListener<ITraitable, Trait>(TraitSignals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
             Messenger.AddListener<ITraitable, Trait, Character>(TraitSignals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
-            // Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, OnInterruptFinished);
             Messenger.AddListener<Character>(CharacterSignals.CHARACTER_MARKER_DESTROYED, OnMarkerDestroyed);
             Messenger.AddListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterChangedClass);
         }
@@ -68,12 +67,6 @@ namespace Events.World_Events {
                 _activeCultists.Remove(character);
             }
         }
-        // private void OnInterruptFinished(INTERRUPT interrupt, Character actor) {
-        //     if (interrupt == INTERRUPT.Become_Cult_Leader) {
-        //         Assert.IsNull(_currentCultLeader, $"There is already a cult leader in the world but {actor.name} still triggered the Become cult leader interrupt.");
-        //         SetCurrentCultLeaderInWorld(actor);
-        //     }
-        // }
         private void OnMarkerDestroyed(Character character) {
             if (character.isDead) {
                 if (_activeCultists.Contains(character)) {

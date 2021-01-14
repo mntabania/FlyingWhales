@@ -108,7 +108,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
         longTermModifier = 0;
     }
     private int ApplyVillageMigrationModifier(int p_amount) {
-        if (WorldSettings.Instance.worldSettingsData.migrationSpeed == MIGRATION_SPEED.Slow) {
+        if (WorldSettings.Instance.worldSettingsData.villageSettings.migrationSpeed == MIGRATION_SPEED.Slow) {
             //if migration speed is slow then half gained amount
             p_amount = Mathf.CeilToInt(p_amount / 2f);
         }
@@ -144,10 +144,10 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
         string text = $"Current Value: {GetMigrationMeterValueInText()}";
         text += $"\nIncrease Rate Per Hour: {ApplyVillageMigrationModifier(GetPerHourMigrationRate()).ToString()}";
         if (!IsMigrationEventAllowed()) {
-            if (WorldSettings.Instance.worldSettingsData.migrationSpeed == MIGRATION_SPEED.None || WorldSettings.Instance.worldSettingsData.disableAllVillagerMigrations) {
+            if (WorldSettings.Instance.worldSettingsData.villageSettings.migrationSpeed == MIGRATION_SPEED.None || WorldSettings.Instance.worldSettingsData.villageSettings.disableAllVillagerMigrations) {
                 text += $"\n{UtilityScripts.Utilities.ColorizeInvalidText("Player has turned off Villager Migration in World Settings.")}";
-            } else if (WorldSettings.Instance.worldSettingsData.disabledFactionMigrations.Count > 0) {
-                text += $"\n{UtilityScripts.Utilities.ColorizeInvalidText($"Player has turned off Villager Migration for {WorldSettings.Instance.worldSettingsData.disabledFactionMigrations.ComafyList()} in World Settings.")}";
+            } else if (WorldSettings.Instance.worldSettingsData.villageSettings.disabledFactionMigrations.Count > 0) {
+                text += $"\n{UtilityScripts.Utilities.ColorizeInvalidText($"Player has turned off Villager Migration for {WorldSettings.Instance.worldSettingsData.villageSettings.disabledFactionMigrations.ComafyList()} in World Settings.")}";
             } else {
                 text += $"\n{UtilityScripts.Utilities.ColorizeInvalidText("Only Human and Elven Villages can trigger migration!")}";        
             }
@@ -166,9 +166,9 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
 
     #region Migration
     public bool IsMigrationEventAllowed() {
-        return WorldSettings.Instance.worldSettingsData.migrationSpeed != MIGRATION_SPEED.None && 
-               owner.owner != null && owner.residents.Count > 0 && owner.owner.isMajorNonPlayer && !WorldSettings.Instance.worldSettingsData.disableAllVillagerMigrations &&
-               WorldSettings.Instance.worldSettingsData.IsMigrationAllowedForFaction(owner.owner.factionType.type) &&  
+        return WorldSettings.Instance.worldSettingsData.villageSettings.migrationSpeed != MIGRATION_SPEED.None && 
+               owner.owner != null && owner.residents.Count > 0 && owner.owner.isMajorNonPlayer && !WorldSettings.Instance.worldSettingsData.villageSettings.disableAllVillagerMigrations &&
+               WorldSettings.Instance.worldSettingsData.villageSettings.IsMigrationAllowedForFaction(owner.owner.factionType.type) &&  
                (owner.owner.factionType.type == FACTION_TYPE.Human_Empire || owner.owner.factionType.type == FACTION_TYPE.Elven_Kingdom);
     }
     private void VillageMigrationEvent() {
@@ -203,6 +203,9 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
                     Character newCharacter = CharacterManager.Instance.CreateNewCharacter(characterToSpawn, classToCreate, owner.owner, owner);
                     RelationshipManager.Instance.ApplyPreGeneratedRelationships(WorldConfigManager.Instance.mapGenerationData, characterToSpawn, newCharacter);
                     newCharacter.CreateRandomInitialTraits();
+                    if (WorldSettings.Instance.worldSettingsData.villageSettings.blessedMigrants) {
+                        newCharacter.traitContainer.AddTrait(newCharacter, "Blessed");
+                    }
                     newCharacter.CreateMarker();
                     newCharacter.InitialCharacterPlacement(edgeTile);
                     newCharacter.MigrateHomeStructureTo(null, affectSettlement: false);

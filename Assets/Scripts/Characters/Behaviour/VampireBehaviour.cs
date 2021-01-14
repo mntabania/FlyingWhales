@@ -56,7 +56,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, unoccupiedCastle.tiles.First().genericTileObject);
                         producedJob = null;
                         return true;
-                    } else if (GameUtilities.RollChance(15, ref log) && character.faction?.factionType.type != FACTION_TYPE.Vagrants){ //15
+                    } else if (!WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages && GameUtilities.RollChance(15, ref log) && character.faction?.factionType.type != FACTION_TYPE.Vagrants){ //15
                         HexTile targetTile = GetNoStructurePlainHexInAllRegions();
                         if (targetTile != null) {
                             log += $"\n-Could not find valid castle in wild, and successfully rolled to build a new castle at {targetTile}";

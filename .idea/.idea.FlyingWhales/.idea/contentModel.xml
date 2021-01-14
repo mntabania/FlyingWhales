@@ -3415,9 +3415,13 @@
             <e p="WeightedDictionary.cs" t="Include" />
           </e>
           <e p="WorldData" t="Include">
-            <e p="FactionSetting.cs" t="Include" />
+            <e p="FactionSettings.cs" t="Include" />
+            <e p="FactionTemplate.cs" t="Include" />
             <e p="HexTileData.cs" t="Include" />
+            <e p="MapSettings.cs" t="Include" />
+            <e p="PlayerSkillSettings.cs" t="Include" />
             <e p="VillageSetting.cs" t="Include" />
+            <e p="VillageSettings.cs" t="Include" />
             <e p="WorldSettingsData.cs" t="Include" />
           </e>
         </e>

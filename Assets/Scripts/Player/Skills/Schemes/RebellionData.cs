@@ -22,6 +22,9 @@ public class RebellionData : SchemeData {
         }
     }
     public override bool IsValid(IPlayerActionTarget target) {
+        if (WorldSettings.Instance.worldSettingsData.factionSettings.disableNewFactions) {
+            return false;
+        }
         if (target is Character character) {
             return character.faction != null && !character.isFactionLeader && character.isSettlementRuler && character.faction.HasOwnedSettlementThatMeetCriteria(s => s != character.homeSettlement && s.HasResidentThatMeetsCriteria(c => !c.isDead));
         }

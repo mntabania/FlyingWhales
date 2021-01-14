@@ -196,19 +196,19 @@ public class TileFeatureGeneration : MapGenerationComponent {
 	}
 	private bool TryAssignSettlementTiles(MapGenerationData data) {
 		int createdVillages = 0;
-		int villagesToCreate = WorldSettings.Instance.worldSettingsData.GetCurrentTotalVillageCount();
+		int villagesToCreate = WorldSettings.Instance.worldSettingsData.factionSettings.GetCurrentTotalVillageCountBasedOnFactions();
 		if (data.villageSpots.Count < villagesToCreate) {
 			//not enough village spots
 			return false;
 		}
 		List<HexTile> preferredTiles = new List<HexTile>();
-		for (int i = 0; i < WorldSettings.Instance.worldSettingsData.factionSettings.Count; i++) {
-			FactionSetting factionSetting = WorldSettings.Instance.worldSettingsData.factionSettings[i];
-			for (int j = 0; j < factionSetting.villageSettings.Count; j++) {
+		for (int i = 0; i < WorldSettings.Instance.worldSettingsData.factionSettings.factionSettings.Count; i++) {
+			FactionTemplate factionTemplate = WorldSettings.Instance.worldSettingsData.factionSettings.factionSettings[i];
+			for (int j = 0; j < factionTemplate.villageSettings.Count; j++) {
 				if (data.villageSpots.Count == 0) {
 					return false; //not enough village spots 
 				}
-				VillageSetting villageSetting = factionSetting.villageSettings[j];
+				VillageSetting villageSetting = factionTemplate.villageSettings[j];
 				int tilesInRange = villageSetting.GetTileCountReservedForVillage();
 				preferredTiles.Clear();
 				HexTile chosenTile = null;
@@ -216,7 +216,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 					//if first village, pick from preferred tiles first
 					for (int k = 0; k < data.villageSpots.Count; k++) {
 						HexTile tile = data.villageSpots[k];
-						if (factionSetting.IsTilePreferredByFaction(tile)) {
+						if (factionTemplate.IsTilePreferredByFaction(tile)) {
 							preferredTiles.Add(tile);
 						}
 					}
@@ -225,7 +225,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				} else {
 					//if not first village pick a spot nearest to First Village
 					float nearestDistance = Mathf.Infinity;
-					Vector3 firstVillagePos = data.determinedVillages[factionSetting][0].transform.position;
+					Vector3 firstVillagePos = data.determinedVillages[factionTemplate][0].transform.position;
 					for (int k = 0; k < data.villageSpots.Count; k++) {
 						HexTile villageSpot = data.villageSpots[k];
 						Vector3 directionToTarget = villageSpot.transform.position - firstVillagePos;
@@ -236,8 +236,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 						}
 					}
 				}
-				Assert.IsNotNull(chosenTile, $"Could not find village spot for {factionSetting.name}'s Village #{j.ToString()}");
-				data.AddDeterminedVillage(factionSetting, chosenTile);
+				Assert.IsNotNull(chosenTile, $"Could not find village spot for {factionTemplate.name}'s Village #{j.ToString()}");
+				data.AddDeterminedVillage(factionTemplate, chosenTile);
 				chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
 				//remove game feature from settlement tiles
 				chosenTile.featureComponent.RemoveFeature(TileFeatureDB.Game_Feature, chosenTile);

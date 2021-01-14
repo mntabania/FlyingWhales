@@ -8,7 +8,7 @@ public class FactionSettingVillageEditorUIController : MVCUIController, FactionS
     private FactionSettingVillageEditorUIModel m_factionSettingVillageEditorUIModel;
     private FactionSettingVillageEditorUIView m_factionSettingVillageEditorUIView;
 
-    private FactionSetting _currentlyEditingFaction;
+    private FactionTemplate _currentlyEditingFaction;
     private System.Action onHideAction;
     
     //Call this function to Instantiate the UI, on the callback you can call initialization code for the said UI
@@ -27,8 +27,8 @@ public class FactionSettingVillageEditorUIController : MVCUIController, FactionS
         onHideAction += p_hideAction;
     }
 
-    public void EditVillageSettings(FactionSetting p_factionSetting) {
-        _currentlyEditingFaction = p_factionSetting;
+    public void EditVillageSettings(FactionTemplate p_FactionTemplate) {
+        _currentlyEditingFaction = p_FactionTemplate;
         ShowUI();
         UpdateVillageItems();
     }

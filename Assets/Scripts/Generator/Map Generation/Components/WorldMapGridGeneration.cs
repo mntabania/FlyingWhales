@@ -180,10 +180,10 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 				}
 			};
 		} else {
-			MAP_SIZE mapSize = WorldSettings.Instance.worldSettingsData.mapSize;
+			MAP_SIZE mapSize = WorldSettings.Instance.worldSettingsData.mapSettings.mapSize;
 			List<WorldMapTemplate> choices = worldMapTemplates[mapSize];
 			WorldMapTemplate randomTemplate = CollectionUtilities.GetRandomElement(choices);
-			Vector2 mapVector = WorldSettings.Instance.worldSettingsData.GetMapSize();
+			Vector2 mapVector = WorldSettings.Instance.worldSettingsData.mapSettings.GetMapSize();
 			randomTemplate.worldMapWidth = (int)mapVector.x;
 			randomTemplate.worldMapHeight = (int)mapVector.y;
 			

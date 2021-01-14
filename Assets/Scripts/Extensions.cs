@@ -1161,4 +1161,26 @@ public static class Extensions {
         }
     }
     #endregion
+
+    #region Ideologies
+    public static bool IsReligionType(this FACTION_IDEOLOGY p_factionIdeology) {
+        switch (p_factionIdeology) {
+            case FACTION_IDEOLOGY.Nature_Worship:
+            case FACTION_IDEOLOGY.Demon_Worship:
+            case FACTION_IDEOLOGY.Divine_Worship:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool IsInclusivityType(this FACTION_IDEOLOGY p_factionIdeology) {
+        switch (p_factionIdeology) {
+            case FACTION_IDEOLOGY.Exclusive:
+            case FACTION_IDEOLOGY.Inclusive:
+                return true;
+            default:
+                return false;
+        }
+    }
+    #endregion
 }

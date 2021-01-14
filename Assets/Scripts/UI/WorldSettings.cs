@@ -97,9 +97,9 @@ public class WorldSettings : MonoBehaviour {
     }
     private void UpdateBiomes(BIOMES biome, bool state) {
         if (state) {
-            worldSettingsData.AddBiome(biome);
+            worldSettingsData.mapSettings.AddBiome(biome);
         } else {
-            worldSettingsData.RemoveBiome(biome);
+            worldSettingsData.mapSettings.RemoveBiome(biome);
         }
     }
     public void SetWorldSettingsData(WorldSettingsData data) {

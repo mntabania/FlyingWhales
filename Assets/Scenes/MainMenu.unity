@@ -99,7 +99,7 @@ LightmapSettings:
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 112000002, guid: 9252122cd68805a4891073545c6d21fc,
     type: 2}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -11387,7 +11387,7 @@ MonoBehaviour:
   earlyAccessAnnouncementGO: {fileID: 500857145}
   roadmapGO: {fileID: 288756650}
   skipEarlyAccessAnnouncementToggle: {fileID: 1756221077}
-  generalConfirmation: {fileID: 0}
+  generalConfirmation: {fileID: 2115782241}
 --- !u!1 &615913016
 GameObject:
   m_ObjectHideFlags: 0
@@ -36287,6 +36287,18 @@ Canvas:
   m_SortingLayerID: 1007957311
   m_SortingOrder: 5
   m_TargetDisplay: 0
+--- !u!114 &2115782241 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1615250794623998077, guid: 7511ffd1c2e29104984bfa8e0750239f,
+    type: 3}
+  m_PrefabInstance: {fileID: 2115782236}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2115782238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cebbccf3b307e54eafde8d3d3e0f9d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2125274063
 GameObject:
   m_ObjectHideFlags: 0
@@ -36854,6 +36866,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
+        type: 3}
+      propertyPath: _unlockAllSkills
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
+        type: 3}
+      propertyPath: _unlimitedCast
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 39888b675721e8e488059363d0de61d1, type: 3}

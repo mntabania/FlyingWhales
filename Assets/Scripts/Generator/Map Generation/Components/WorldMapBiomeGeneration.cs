@@ -10,7 +10,7 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(ElevationBiomeRefinement());
 	}
 	private IEnumerator SetBiomePerRegion(MapGenerationData data) {
-		var choices = WorldSettings.Instance.worldSettingsData.biomes;
+		var choices = WorldSettings.Instance.worldSettingsData.mapSettings.biomes;
 		int lastX = 0;
 		int lastY = 0;
 		int regionIndex = 0;
