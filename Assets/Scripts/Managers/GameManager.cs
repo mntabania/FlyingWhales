@@ -117,7 +117,7 @@ public class GameManager : MonoBehaviour {
         UIManager.Instance.Pause();
         lastProgressionBeforePausing = "paused";
         SchedulingManager.Instance.StartScheduleCalls ();
-        Messenger.Broadcast(Signals.DAY_STARTED); //for the first day
+        Messenger.Broadcast<int>(Signals.DAY_STARTED, continuousDays); //for the first day
         Messenger.Broadcast(Signals.MONTH_START); //for the first month
         Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyDown);
         if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
@@ -232,7 +232,7 @@ public class GameManager : MonoBehaviour {
     private void DayStarted(bool broadcastUI = true) {
         today.day += 1;
         continuousDays += 1;
-        Messenger.Broadcast(Signals.DAY_STARTED);
+        Messenger.Broadcast(Signals.DAY_STARTED, continuousDays);
         if (today.day > daysPerMonth) {
             today.day = 1;
             today.month += 1;

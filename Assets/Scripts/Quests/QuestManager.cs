@@ -56,6 +56,9 @@ namespace Quests {
                 case WorldSettingsData.World_Type.Icalawa:
                 winConditionTracker = new IcalawaWinConditionTracker();
                 break;
+                case WorldSettingsData.World_Type.Pangat_Loo:
+                winConditionTracker = new PangatlooWinConditionTracker();
+                break;
                 default:
                 winConditionTracker = new OonaWinConditionTracker();
                 break;
@@ -195,6 +198,10 @@ namespace Quests {
 
                 CreateKillVillagersByPsychopathQuest();
                 break;
+                case VICTORY_CONDITION.Wiped_Village_On_Day8:
+
+                CreateEliminateAllVillagersOnGivenDateQuest();
+                break;
                 case VICTORY_CONDITION.Sandbox:
                     //no win condition quest
                     break;
@@ -213,6 +220,13 @@ namespace Quests {
             if (!IsQuestActive<KillVillagersByPsychopath>()) {
                 KillVillagersByPsychopath killVillagersByPsychopath = new KillVillagersByPsychopath();
                 ActivateQuest(killVillagersByPsychopath);
+            }
+        }
+
+        private void CreateEliminateAllVillagersOnGivenDateQuest() {
+            if (!IsQuestActive<EliminateAllVillagersOnGivenDate>()) {
+                EliminateAllVillagersOnGivenDate eliminateAllVillagersOnGivenDate = new EliminateAllVillagersOnGivenDate();
+                ActivateQuest(eliminateAllVillagersOnGivenDate);
             }
         }
         #endregion

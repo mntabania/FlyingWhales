@@ -545,7 +545,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
+        Messenger.AddListener<int>(Signals.DAY_STARTED, OnDayStarted);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
 
@@ -556,7 +556,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
+        Messenger.RemoveListener<int>(Signals.DAY_STARTED, OnDayStarted);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
 
@@ -604,7 +604,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     private void OnTickEnded() {
         ProcessForcedCancelJobsOnTickEnded();
     }
-    private void OnDayStarted() {
+    private void OnDayStarted(int p_currentDay) {
         ClearAllBlacklistToAllExistingJobs();
         successionComponent.OnDayStarted();
     }

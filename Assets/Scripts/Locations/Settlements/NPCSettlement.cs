@@ -211,7 +211,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         // Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         Messenger.AddListener<Character, IPointOfInterest>(CharacterSignals.CHARACTER_SAW, OnCharacterSaw);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
-        Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
+        Messenger.AddListener<int>(Signals.DAY_STARTED, OnDayStarted);
         Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
         Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         //Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
@@ -233,7 +233,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         // Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         Messenger.RemoveListener<Character, IPointOfInterest>(CharacterSignals.CHARACTER_SAW, OnCharacterSaw);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
-        Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
+        Messenger.RemoveListener<int>(Signals.DAY_STARTED, OnDayStarted);
         Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
         Messenger.RemoveListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
@@ -336,7 +336,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void OnTickEnded() {
         ProcessForcedCancelJobsOnTickEnded();
     }
-    private void OnDayStarted() {
+    private void OnDayStarted(int p_currentDay) {
         hasTriedToStealCorpse = false;
         ClearAllBlacklistToAllExistingJobs();
     }

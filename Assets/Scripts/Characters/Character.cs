@@ -465,7 +465,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
-        Messenger.AddListener(Signals.DAY_STARTED, DailyGoapProcesses);
+        Messenger.AddListener<int>(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.AddListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnLeaveArea);
         Messenger.AddListener<Character>(CharacterSignals.FINISHED_TRAVELLING_IN_WORLD, OnArrivedAtArea);
         Messenger.AddListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingPOI);
@@ -504,7 +504,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
-        Messenger.RemoveListener(Signals.DAY_STARTED, DailyGoapProcesses);
+        Messenger.RemoveListener<int>(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.RemoveListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnLeaveArea);
         Messenger.RemoveListener<Character>(CharacterSignals.FINISHED_TRAVELLING_IN_WORLD, OnArrivedAtArea);
         Messenger.RemoveListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingPOI);
@@ -2996,7 +2996,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Action Planning and Job Processing
-    private void DailyGoapProcesses() {
+    private void DailyGoapProcesses(int p_currentDay) {
         needsComponent.DailyGoapProcesses();
     }
     public virtual void OnTickStartedWhileSeized() {

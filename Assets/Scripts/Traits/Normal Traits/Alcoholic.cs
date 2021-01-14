@@ -43,7 +43,7 @@ namespace Traits {
             if(addedTo is Character) {
                 owner = addedTo as Character;
             }
-            Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
+            Messenger.AddListener<int>(Signals.DAY_STARTED, OnDayStarted);
             Messenger.AddListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnPerformAction);
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
@@ -51,13 +51,13 @@ namespace Traits {
             if(addTo is Character character) {
                 owner = character;
                 if (!character.isDead) {
-                    Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
+                    Messenger.AddListener<int>(Signals.DAY_STARTED, OnDayStarted);
                     Messenger.AddListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnPerformAction);
                 }
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
-            Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
+            Messenger.RemoveListener<int>(Signals.DAY_STARTED, OnDayStarted);
             Messenger.RemoveListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnPerformAction);
             base.OnRemoveTrait(removedFrom, removedBy);
         }
@@ -102,7 +102,7 @@ namespace Traits {
         }
         #endregion
 
-        private void OnDayStarted() {
+        private void OnDayStarted(int p_currentDay) {
             if (!hasDrankWithinTheDay) {
                 owner.traitContainer.AddTrait(owner, "Withdrawal");
             }

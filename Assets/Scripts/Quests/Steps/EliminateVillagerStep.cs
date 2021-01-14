@@ -17,17 +17,17 @@ namespace Quests.Steps {
         }
 
         #region Listeners
-        public void OnCharacterEliminated(Character p_character) {
+        public void OnCharacterEliminated(Character p_character, int p_villagerCount) {
             objectsToCenter?.Remove(p_character);
             Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
-            CheckForCompletion();
+            CheckForCompletion(p_villagerCount);
         }
         public void OnCharacterAddedAsTarget(Character p_character) {
             objectsToCenter?.Add(p_character);
             Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
         }
-        private void CheckForCompletion() {
-            if ((QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).totalCharactersToEliminate <= 0) {
+        private void CheckForCompletion(int p_villagerCount) {
+            if (p_villagerCount <= 0) {
                 Complete();
                 Messenger.Broadcast(PlayerSignals.WIN_GAME);
             }

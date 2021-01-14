@@ -4,14 +4,16 @@ using Ruinarch;
 using UnityEngine;
 using UtilityScripts;
 
-public class OonaWinConditionTracker : WinconditionTracker {
+public class PangatlooWinConditionTracker : WinconditionTracker {
 
-    private System.Action<Character, int> _characterEliminatedAction;
+    private System.Action<Character> _characterEliminatedAction;
     private System.Action<Character> _characterAddedAsTargetAction;
+    private System.Action<int, int> _onDayChangedAction;
 
     public interface Listener {
-        void OnCharacterEliminated(Character p_character, int p_villagerCount);
+        void OnCharacterEliminated(Character p_character);
         void OnCharacterAddedAsTarget(Character p_character);
+        void OnDayChangedAction(int currentDay, int p_villagersCount);
     }
 
     public List<Character> villagersToEliminate { get; private set; }
@@ -26,6 +28,7 @@ public class OonaWinConditionTracker : WinconditionTracker {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_BECOME_CULTIST, CheckIfCharacterIsEliminated);
         Messenger.AddListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_NO_LONGER_CULTIST, OnCharacterNoLongerCultist);
+        Messenger.AddListener<int>(Signals.DAY_STARTED, OnDayChange);
 
         List<Character> villagers = GetAllCharactersToBeEliminated(p_allCharacters);
         villagersToEliminate.Clear();
@@ -40,11 +43,11 @@ public class OonaWinConditionTracker : WinconditionTracker {
         if (villagersToEliminate.Remove(p_character)) {
             totalCharactersToEliminate--;
             RemoveCharacterFromTrackList(p_character);
-            _characterEliminatedAction?.Invoke(p_character, villagersToEliminate.Count);
+            _characterEliminatedAction?.Invoke(p_character);
         }
     }
     private void AddVillagerToEliminate(Character p_character) {
-        if (!villagersToEliminate.Contains(p_character)) {
+        if (!villagersToEliminate.Contains(p_character) && !p_character.isDead) {
             villagersToEliminate.Add(p_character);
             AddCharacterToTrackList(p_character);
             totalCharactersToEliminate++;
@@ -65,13 +68,22 @@ public class OonaWinConditionTracker : WinconditionTracker {
     private void OnCharacterNoLongerCultist(Character p_character) {
         AddVillagerToEliminate(p_character);
     }
+    private void OnDayChange(int p_currentDay) {
+        if (p_currentDay > 8 && villagersToEliminate.Count > 0) {
+            PlayerUI.Instance.LoseGameOver("You failed to eliminate all the villagers!");
+        } else {
+            _onDayChangedAction?.Invoke(p_currentDay, villagersToEliminate.Count);
+        }
+    }
 
-    public void Subscribe(OonaWinConditionTracker.Listener p_listener) {
+    public void Subscribe(Listener p_listener) {
         _characterEliminatedAction += p_listener.OnCharacterEliminated;
         _characterAddedAsTargetAction += p_listener.OnCharacterAddedAsTarget;
+        _onDayChangedAction += p_listener.OnDayChangedAction;
     }
-    public void Unsubscribe(OonaWinConditionTracker.Listener p_listener) {
+    public void Unsubscribe(Listener p_listener) {
         _characterEliminatedAction -= p_listener.OnCharacterEliminated;
         _characterAddedAsTargetAction -= p_listener.OnCharacterAddedAsTarget;
+        _onDayChangedAction -= p_listener.OnDayChangedAction;
     }
 }

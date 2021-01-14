@@ -3,13 +3,13 @@ using Traits;
 
 public class IcalawaWinConditionTracker : WinconditionTracker {
 
-    private System.Action<Character> _characterEliminatedAction;
+    private System.Action<Character, int> _characterEliminatedAction;
     private System.Action<Character> _characterAddedAsTargetAction;
     private System.Action<Character> _characterSuccessChangeTraitToPsychopath;
 
     #region IListener
     public interface IListenerKillingEvents {
-        void OnCharacterEliminated(Character p_character);
+        void OnCharacterEliminated(Character p_character, int p_villagerCount);
         void OnCharacterAddedAsTarget(Character p_character);
     }
 
@@ -51,7 +51,7 @@ public class IcalawaWinConditionTracker : WinconditionTracker {
         } else if (p_character == psychoPath) {
             PlayerUI.Instance.LoseGameOver("Psychopath Died, Mission Failed");
         }
-        _characterEliminatedAction?.Invoke(p_character);
+        _characterEliminatedAction?.Invoke(p_character, villagersToEliminate.Count);
     }
     private void AddVillagerToEliminate(Character p_character) {
         if (!villagersToEliminate.Contains(p_character)) {

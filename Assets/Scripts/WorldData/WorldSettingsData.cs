@@ -175,8 +175,8 @@ public class WorldSettingsData {
         worldType = World_Type.Pangat_Loo;
         // omnipotentMode = false;
         // noThreatMode = false;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings();
+        victoryCondition = VICTORY_CONDITION.Wiped_Village_On_Day8;
+        SetDefaultSpellSettings(victoryCondition);
     }
     private void SetAffattWorldSettings() {
         Debug.Log("Set world settings as Affatt");
