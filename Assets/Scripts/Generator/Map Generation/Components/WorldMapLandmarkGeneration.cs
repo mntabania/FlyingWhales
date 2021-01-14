@@ -44,7 +44,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				List<HexTile> choices;
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					if (i == 0) {
-						choices = new List<HexTile>() { GridMap.Instance.map[11, 3] };	
+						choices = new List<HexTile>() { GridMap.Instance.map[6, 3] };	
 					} else {
 						choices = new List<HexTile>() { GridMap.Instance.map[3, 7] };
 					}
@@ -114,7 +114,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 			if (Random.Range(0, 100) < chance) {
 				List<HexTile> choices;
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
-					choices = new List<HexTile>() { GridMap.Instance.map[7, 1] };	
+					choices = new List<HexTile>() { GridMap.Instance.map[6, 1] };	
 				} else {
 					choices = GridMap.Instance.normalHexTiles
 						.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null && 

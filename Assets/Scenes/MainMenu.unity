@@ -26325,7 +26325,7 @@ MonoBehaviour:
     type: 2}
   initialArtifactChoices: 010000000200000003000000
   _disableLogs: 0
-  useRandomGenerationForScenarioMaps: 0
+  useRandomGenerationForScenarioMaps: 1
 --- !u!1 &1654958421
 GameObject:
   m_ObjectHideFlags: 0

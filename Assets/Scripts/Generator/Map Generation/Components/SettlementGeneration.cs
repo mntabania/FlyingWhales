@@ -129,6 +129,9 @@ public class SettlementGeneration : MapGenerationComponent {
 				new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE),
 				new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE),
 			};
+			for (int i = 0; i < 9; i++) {
+				structureSettings.Add(new StructureSetting(STRUCTURE_TYPE.DWELLING, p_faction.factionType.mainResource));
+			}
 		}
 		else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			structureSettings = new List<StructureSetting>() {

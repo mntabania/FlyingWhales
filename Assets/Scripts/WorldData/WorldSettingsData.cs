@@ -101,6 +101,7 @@ public class WorldSettingsData {
         worldType = World_Type.Oona;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings();
+        mapSettings.AddBiome(BIOMES.DESERT);
         villageSettings.EnableAllVillagerMigrations();
         villageSettings.EnableAllFactionMigrations();
         villageSettings.AllowNewVillages();

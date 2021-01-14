@@ -104,12 +104,12 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 			chosenTemplate = new WorldMapTemplate() {
 				regionCount = 1,
-				worldMapWidth = 13,
+				worldMapWidth = 7,
 				worldMapHeight = 8,
 				regions = new Dictionary<int, RegionTemplate[]>() {
 					{
 						0, new[] {
-							new RegionTemplate(13, 8),
+							new RegionTemplate(7, 8),
 						}
 					}
 				}
