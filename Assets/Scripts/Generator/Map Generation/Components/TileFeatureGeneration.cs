@@ -19,7 +19,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 			DetermineSettlementsForOona(data);
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
-			DetermineSettlementsForPangatLoo();
+			DetermineSettlementsForPangatLoo(data);
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
 			DetermineSettlementsForZenko();
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
@@ -472,25 +472,29 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			data.AddDeterminedVillage(factionTemplate, chosenTile);
 		}
 	}
-	private void DetermineSettlementsForPangatLoo() {
+	private void DetermineSettlementsForPangatLoo(MapGenerationData data) {
 		List<HexTile> chosenTiles = new List<HexTile> {
 			//region 1 (grassland)
-			GridMap.Instance.map[0, 1],
-			GridMap.Instance.map[1, 2],
-			GridMap.Instance.map[1, 3],
-			GridMap.Instance.map[1, 4],
-			GridMap.Instance.map[0, 2],
-			GridMap.Instance.map[2, 2],
 			GridMap.Instance.map[2, 3],
-			GridMap.Instance.map[2, 4],
-			GridMap.Instance.map[0, 3],
+			// GridMap.Instance.map[1, 2],
+			// GridMap.Instance.map[1, 3],
+			// GridMap.Instance.map[1, 4],
+			// GridMap.Instance.map[0, 2],
+			// GridMap.Instance.map[2, 2],
+			// GridMap.Instance.map[2, 3],
+			// GridMap.Instance.map[2, 4],
+			// GridMap.Instance.map[0, 3],
 		};
 
+		FactionTemplate factionTemplate = new FactionTemplate(1);
+		factionTemplate.SetFactionEmblem(FactionEmblemRandomizer.GetUnusedFactionEmblem());
+		
 		for (int i = 0; i < chosenTiles.Count; i++) {
 			HexTile chosenTile = chosenTiles[i];
 			chosenTile.SetElevation(ELEVATION.PLAIN);
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
 			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			data.AddDeterminedVillage(factionTemplate, chosenTile);
 		}
 	}
 	private void DetermineSettlementsForAffatt() {

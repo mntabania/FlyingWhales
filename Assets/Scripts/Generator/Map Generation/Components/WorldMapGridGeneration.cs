@@ -127,36 +127,16 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 					},
 				}
 			};
-		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
-			chosenTemplate = new WorldMapTemplate() {
-				regionCount = 4,
-				worldMapWidth = 14,
-				worldMapHeight = 12,
-				regions = new Dictionary<int, RegionTemplate[]>() {
-					{
-						0, new[] {
-							new RegionTemplate(7, 6),
-							new RegionTemplate(7, 6),
-						}
-					},
-					{
-						1, new[] {
-							new RegionTemplate(7, 6),
-							new RegionTemplate(7, 6),
-						}
-					}
-				}
-			};
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			chosenTemplate = new WorldMapTemplate() {
 				regionCount = 2,
-				worldMapWidth = 10,
+				worldMapWidth = 13,
 				worldMapHeight = 6,
 				regions = new Dictionary<int, RegionTemplate[]>() {
 					{
 						0, new[] {
-							new RegionTemplate(6, 6),
-							new RegionTemplate(4, 6),
+							new RegionTemplate(8, 6),
+							new RegionTemplate(5, 6),
 						}
 					}
 				}
@@ -175,6 +155,26 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 					{
 						1, new[] {
 							new RegionTemplate(12, 5),
+						}
+					}
+				}
+			};
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
+			chosenTemplate = new WorldMapTemplate() {
+				regionCount = 4,
+				worldMapWidth = 14,
+				worldMapHeight = 12,
+				regions = new Dictionary<int, RegionTemplate[]>() {
+					{
+						0, new[] {
+							new RegionTemplate(7, 6),
+							new RegionTemplate(7, 6),
+						}
+					},
+					{
+						1, new[] {
+							new RegionTemplate(7, 6),
+							new RegionTemplate(7, 6),
 						}
 					}
 				}
