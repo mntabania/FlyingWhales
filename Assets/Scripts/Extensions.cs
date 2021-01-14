@@ -1183,4 +1183,17 @@ public static class Extensions {
         }
     }
     #endregion
+
+    #region Archetypes
+    public static bool IsMainArchetype(this PLAYER_ARCHETYPE p_archetype) {
+        switch (p_archetype) {
+            case PLAYER_ARCHETYPE.Ravager:
+            case PLAYER_ARCHETYPE.Lich:
+            case PLAYER_ARCHETYPE.Puppet_Master:
+                return true;
+            default:
+                return false;
+        }
+    }
+    #endregion
 }

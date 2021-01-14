@@ -39,6 +39,19 @@ public class SkillTreeSelector : MonoBehaviour {
                 }
             }
         }
+        else {
+            //only enable the main archetypes
+            for (int i = 0; i < archetypeToggles.Length; i++) {
+                Toggle toggle = archetypeToggles[i];
+                PlayerSkillLoadoutUI loadoutUI = playerLoadoutUI[i];
+                if (!loadoutUI.loadout.archetype.IsMainArchetype()) {
+                    toggle.gameObject.SetActive(false);
+                    loadoutUI.gameObject.SetActive(false);
+                    _horizontalScrollSnap.RemoveChild(loadoutUI.transform.GetSiblingIndex(), out var removed);
+                    toggle.SetIsOnWithoutNotify(false);
+                }
+            }
+        }
         moreLoadoutOptionsToggle.SetIsOnWithoutNotify(SaveManager.Instance.currentSaveDataPlayer.moreLoadoutOptions);
         this.gameObject.SetActive(false);
     }
