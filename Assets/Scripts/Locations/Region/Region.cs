@@ -32,7 +32,7 @@ public class Region : ISavable, ILogFiller {
     public List<LocationStructure> allStructures { get; private set; }
     public RegionFeatureComponent regionFeatureComponent { get; }
     public List<BaseSettlement> settlementsInRegion { get; private set; }
-    public RegionTemplate regionTemplate { get; }
+    public RegionDivisionComponent regionDivisionComponent { get; }
     /// <summary>
     /// Number of tile objects in this region categorized by type.
     /// NOTE: This isn't saved/loaded since this is updated every time a new tile object is placed.
@@ -64,6 +64,7 @@ public class Region : ISavable, ILogFiller {
         neighbours = new List<Region>();
         neighboursWithDirection = new Dictionary<GridNeighbourDirection, Region>();
         objectsInRegionCount = new Dictionary<TILE_OBJECT_TYPE, int>();
+        regionDivisionComponent = new RegionDivisionComponent();
     }
     public Region(HexTile coreTile) : this() {
         persistentID = System.Guid.NewGuid().ToString();
