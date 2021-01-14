@@ -711,8 +711,12 @@
         "moistureNoise": 0.4712994,
         "temperature": 0.3980058,
         "biomeType": "DESERT",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
         "landmarkType": "NONE",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
@@ -883,8 +887,12 @@
         "moistureNoise": 0.4163849,
         "temperature": 0.6476095,
         "biomeType": "DESERT",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
         "landmarkType": "NONE",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
@@ -907,8 +915,12 @@
         "moistureNoise": 0.5806625,
         "temperature": 0.4240039,
         "biomeType": "DESERT",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
         "landmarkType": "NONE",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
@@ -1967,7 +1979,7 @@
           "isCorrupted": false
         },
       ],
-      "minimumVillagerCount": 0,
+      "minimumVillagerCount": 12,
       "factionRace": "HUMANS",
       "settlementType": "Human_Village"
     }

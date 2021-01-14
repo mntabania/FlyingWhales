@@ -486,12 +486,8 @@
         "moistureNoise": 0.4014538,
         "temperature": 0.4745001,
         "biomeType": "FOREST",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "InhabitedFeature"
-          }
-        ],
+        "elevationType": "WATER",
+        "tileFeatureSaveData": [],
         "landmarkType": "HOUSES"
       },
       {
@@ -504,12 +500,8 @@
         "moistureNoise": 0.366203,
         "temperature": 0.4203825,
         "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
+        "elevationType": "WATER",
+        "tileFeatureSaveData": [],
         "landmarkType": "NONE"
       },
       {
@@ -628,12 +620,8 @@
         "moistureNoise": 0.2976874,
         "temperature": 0.9046434,
         "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
+        "elevationType": "MOUNTAIN",
+        "tileFeatureSaveData": [],
         "landmarkType": "NONE"
       },
       {
@@ -836,12 +824,8 @@
         "moistureNoise": 0.6261605,
         "temperature": 0.9728473,
         "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
+        "elevationType": "MOUNTAIN",
+        "tileFeatureSaveData": [],
         "landmarkType": "NONE"
       },
       {
@@ -1054,12 +1038,8 @@
         "moistureNoise": 0.3054812,
         "temperature": 0.8705171,
         "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
+        "elevationType": "WATER",
+        "tileFeatureSaveData": [],
         "landmarkType": "NONE"
       },
       {
@@ -1072,12 +1052,8 @@
         "moistureNoise": 0.7169189,
         "temperature": 0.7330697,
         "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
+        "elevationType": "WATER",
+        "tileFeatureSaveData": [],
         "landmarkType": "NONE"
       },
       {
@@ -1108,13 +1084,9 @@
         "moistureNoise": 0.4157717,
         "temperature": 0.6104292,
         "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE"
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [],
+        "landmarkType": "ABANDONED_MINE"
       },
       {
         "persistentID": "a2bfe231-526b-4c9b-a599-4a18bf6d14c0",
@@ -1680,10 +1652,10 @@
         "moistureNoise": 0.46007,
         "temperature": 0.7812302,
         "biomeType": "DESERT",
-        "elevationType": "MOUNTAIN",
+        "elevationType": "PLAIN",
         "tileFeatureSaveData": [
           {
-            "tileFeatureName": "MetalSourceFeature"
+            "tileFeatureName": "InhabitedFeature"
           }
         ],
         "landmarkType": "NONE"
@@ -1882,7 +1854,7 @@
         "biomeType": "DESERT",
         "elevationType": "PLAIN",
         "tileFeatureSaveData": [],
-        "landmarkType": "MAGE_TOWER"
+        "landmarkType": "NONE"
       },
       {
         "persistentID": "f15d149f-755a-4939-b90b-0b10dc476f60",
@@ -2185,7 +2157,11 @@
         "temperature": 0.4126352,
         "biomeType": "GRASSLAND",
         "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
+         "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "InhabitedFeature"
+          }
+        ],
         "landmarkType": "NONE"
       },
       {
@@ -2296,7 +2272,7 @@
         "biomeType": "DESERT",
         "elevationType": "PLAIN",
         "tileFeatureSaveData": [],
-        "landmarkType": "NONE"
+        "landmarkType": "MAGE_TOWER"
       },
       {
         "persistentID": "d2bec651-b3c0-4055-9a06-2f48e677feef",
@@ -2865,7 +2841,7 @@
           "structureType": "DWELLING"
         },
       ],
-      "minimumVillagerCount": 0,
+      "minimumVillagerCount": 12,
       "factionRace": "ELVES",
       "settlementType": "Default_Elf"
     },
@@ -2873,20 +2849,8 @@
       "hexTiles": [
         {
           "X": 8,
-          "Y": 4
+          "Y": 2
         },
-        {
-          "X": 9,
-          "Y": 4
-        },
-        {
-          "X": 9,
-          "Y": 5
-        },
-        {
-          "X": 10,
-          "Y": 4
-        }
       ],
       "structureSettings": [
         {
@@ -2934,7 +2898,7 @@
           "structureType": "DWELLING"
         },
       ],
-      "minimumVillagerCount": 0,
+      "minimumVillagerCount": 12,
       "factionRace": "HUMANS",
       "settlementType": "Default_Human"
     },
@@ -3003,26 +2967,14 @@
           "structureType": "DWELLING"
         },
       ],
-      "minimumVillagerCount": 0,
+      "minimumVillagerCount": 12,
       "factionRace": "ELVES",
       "settlementType": "Default_Elf"
     },
     {
       "hexTiles": [
         {
-          "X": 8,
-          "Y": 7
-        },
-        {
-          "X": 8,
-          "Y": 8
-        },
-        {
-          "X": 9,
-          "Y": 7
-        },
-        {
-          "X": 9,
+          "X": 10,
           "Y": 8
         }
       ],
@@ -3072,7 +3024,7 @@
           "structureType": "DWELLING"
         },
       ],
-      "minimumVillagerCount": 0,
+      "minimumVillagerCount": 12,
       "factionRace": "HUMANS",
       "settlementType": "Default_Human"
     }
