@@ -63,7 +63,7 @@ public class Rock : TileObject{
         }
     }
     public override void RemoveFromSettlementResourcesParent() {
-        if (parentSettlement != null) {
+        if (parentSettlement != null && parentSettlement.SettlementResources != null) {
             if (parentSettlement.SettlementResources.rocks.Remove(this)) {
                 parentSettlement = null;
             }
