@@ -94,7 +94,7 @@ public class MonsterGeneration : MapGenerationComponent {
 				continue;
 			}
 
-			if (WorldConfigManager.Instance.isTutorialWorld) {
+			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 				//sludge
 				int randomSludge = 3;
 				for (int k = 0; k < randomSludge; k++) {
@@ -114,6 +114,8 @@ public class MonsterGeneration : MapGenerationComponent {
 				ZenkoRegionalMonsters(i, ref locationChoices);
 			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 				PangatLooRegionalMonsters(i, ref locationChoices);
+			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Aneem) {
+				AneemRegionalMonsters(i, ref locationChoices);
 			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
 				if (region.regionFeatureComponent.HasFeature<HauntedFeature>()) {
 					//spawn 4-8 ghosts
@@ -169,6 +171,8 @@ public class MonsterGeneration : MapGenerationComponent {
 			PangatLooLandmarkMonsterGeneration();
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
 			ZenkoLandmarkMonsterGeneration();
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Aneem) {
+			AneemLandmarkMonsterGeneration();
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
 			List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks();
 			for (int i = 0; i < allLandmarks.Count; i++) {
@@ -211,6 +215,8 @@ public class MonsterGeneration : MapGenerationComponent {
 					IcalawaCaveMonsterGeneration(caves);
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 					PangatLooCaveMonsterGeneration(caves);
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Aneem) {
+					AneemCaveMonsterGeneration(caves);
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
 					if (region.regionFeatureComponent.HasFeature<HauntedFeature>()) {
 						for (int j = 0; j < caves.Count; j++) {
@@ -487,6 +493,78 @@ public class MonsterGeneration : MapGenerationComponent {
             return true;
         }
         return false;
+    }
+    #endregion
+
+    #region Aneem Generation
+    private void AneemRegionalMonsters(int regionIndex, ref List<LocationGridTile> locationChoices) {
+	    if (regionIndex == 0) {
+		    //Sludge
+		    int randomAmount = 8;
+		    for (int k = 0; k < randomAmount; k++) {
+			    if (locationChoices.Count == 0) { break; }
+			    Summon summon = CreateMonster(SUMMON_TYPE.Sludge, locationChoices);
+			    locationChoices.Remove(summon.gridTileLocation);
+		    }
+	    } else if (regionIndex == 1) {
+		    //Fire Elemental
+		    int randomAmount = 5;
+		    for (int k = 0; k < randomAmount; k++) {
+			    if (locationChoices.Count == 0) { break; }
+			    Summon summon = CreateMonster(SUMMON_TYPE.Fire_Elemental, locationChoices);
+			    locationChoices.Remove(summon.gridTileLocation);
+		    }
+	    }
+    }
+    private void AneemLandmarkMonsterGeneration() {
+	    List<BaseLandmark> lairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
+	    for (int i = 0; i < lairs.Count; i++) {
+		    BaseLandmark landmark = lairs[i];
+		    if (i == 0) {
+			    //Kobolds
+			    LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+			    int randomAmount = 4;
+			    for (int k = 0; k < randomAmount; k++) {
+				    CreateMonster(SUMMON_TYPE.Kobold, landmark.tileLocation.settlementOnTile, landmark, structure, FactionManager.Instance.neutralFaction);
+			    }
+		    } else if (i == 1) {
+			    LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+			    int randomAmount = 3;
+			    for (int k = 0; k < randomAmount; k++) {
+				    CreateMonster(SUMMON_TYPE.Giant_Spider, landmark.tileLocation.settlementOnTile, landmark, structure, FactionManager.Instance.neutralFaction);
+			    }
+		    }
+	    }
+	    List<BaseLandmark> mageTowers = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MAGE_TOWER);
+	    for (int i = 0; i < mageTowers.Count; i++) {
+		    BaseLandmark landmark = mageTowers[i];
+		    if (i == 0) {
+			    //Golems
+			    LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+			    int randomAmount = 4;
+			    for (int k = 0; k < randomAmount; k++) {
+				    CreateMonster(SUMMON_TYPE.Golem, landmark.tileLocation.settlementOnTile, landmark, structure, FactionManager.Instance.neutralFaction);
+			    }
+		    }
+	    }
+    }
+    private void AneemCaveMonsterGeneration(List<LocationStructure> caves) {
+	    for (int j = 0; j < caves.Count; j++) {
+		    LocationStructure cave = caves[j];
+		    if (cave.residents.Count > 0) {
+			    //if cave already has occupants, then do not generate monsters for that cave
+			    continue;
+		    }
+		    List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
+		    if (j == 0) {
+			    for (int k = 0; k < 8; k++) {
+				    CreateMonster(SUMMON_TYPE.Wurm, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
+			    }
+		    }
+		    else {
+			    break;
+		    }
+	    }
     }
     #endregion
 }

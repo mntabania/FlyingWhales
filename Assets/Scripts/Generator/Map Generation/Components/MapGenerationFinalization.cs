@@ -416,6 +416,23 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			LocationStructure structure = landmarks[0].tileLocation.GetMostImportantStructureOnTile();
 			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Berserk_Orb);
 			structure.AddPOI(artifact);
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Aneem) {
+			int artifactCount = 4;
+			List<ARTIFACT_TYPE> artifactChoices = new List<ARTIFACT_TYPE>() {
+				ARTIFACT_TYPE.Necronomicon, ARTIFACT_TYPE.Heart_Of_The_Wind, ARTIFACT_TYPE.Gorgon_Eye, ARTIFACT_TYPE.Berserk_Orb, ARTIFACT_TYPE.Ankh_Of_Anubis
+			};
+			//randomly generate Artifacts
+			for (int i = 0; i < artifactCount; i++) {
+				if (artifactChoices.Count == 0) { break; }
+				Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
+				LocationStructure specialStructure = randomRegion.GetRandomStructureThatMeetCriteria(currStructure => currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0);
+				if (specialStructure != null) {
+					ARTIFACT_TYPE randomArtifact = CollectionUtilities.GetRandomElement(artifactChoices);
+					Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(randomArtifact);
+					specialStructure.AddPOI(artifact);
+					artifactChoices.Remove(randomArtifact);	
+				}
+			}
 		} else {
 			int artifactCount = GridMap.Instance.allRegions.Length <= 2 ? 1 : 2;
 			List<ARTIFACT_TYPE> artifactChoices = WorldConfigManager.Instance.initialArtifactChoices;

@@ -179,6 +179,20 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 					}
 				}
 			};
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Aneem) {
+			chosenTemplate = new WorldMapTemplate() {
+				regionCount = 2,
+				worldMapWidth = 15,
+				worldMapHeight = 6,
+				regions = new Dictionary<int, RegionTemplate[]>() {
+					{
+						0, new[] {
+							new RegionTemplate(7, 6),
+							new RegionTemplate(8, 6),
+						}
+					}
+				}
+			};
 		} else {
 			MAP_SIZE mapSize = WorldSettings.Instance.worldSettingsData.mapSettings.mapSize;
 			List<WorldMapTemplate> choices = worldMapTemplates[mapSize];

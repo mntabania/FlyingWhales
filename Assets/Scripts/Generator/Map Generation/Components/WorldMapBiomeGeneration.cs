@@ -80,6 +80,18 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 	private BIOMES GetBiomeForRegion(int p_regionIndex, List<BIOMES> p_biomeChoices) {
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			return BIOMES.GRASSLAND;
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+			if (p_regionIndex == 0) {
+				return BIOMES.GRASSLAND;
+			} else {
+				return BIOMES.DESERT;
+			} 
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+			if (p_regionIndex == 0) {
+				return BIOMES.FOREST;
+			} else {
+				return BIOMES.SNOW;
+			}
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
 			if (p_regionIndex == 0) {
 				return BIOMES.FOREST;
@@ -90,13 +102,7 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 			} else {
 				return BIOMES.GRASSLAND;
 			}
-		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
-			if (p_regionIndex == 0) {
-				return BIOMES.GRASSLAND;
-			} else {
-				return BIOMES.DESERT;
-			} 
-		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Aneem) {
 			if (p_regionIndex == 0) {
 				return BIOMES.FOREST;
 			} else {

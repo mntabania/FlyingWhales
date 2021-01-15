@@ -5,7 +5,7 @@ using UnityEngine.Assertions;
 [System.Serializable]
 public class WorldSettingsData {
 
-    public enum World_Type { Tutorial, Oona, Custom, Zenko, Pangat_Loo, Affatt, Icalawa };
+    public enum World_Type { Tutorial, Oona, Custom, Zenko, Pangat_Loo, Affatt, Icalawa, Aneem, Pitto };
 
     public World_Type worldType;
     public VICTORY_CONDITION victoryCondition;
@@ -78,6 +78,9 @@ public class WorldSettingsData {
                 break;
             case World_Type.Zenko:
                 SetZenkoWorldSettings();
+                break;
+            case World_Type.Aneem:
+                SetAneemWorldSettings();
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(p_worldType), p_worldType, null);
@@ -160,6 +163,19 @@ public class WorldSettingsData {
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
         playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
+    }
+    private void SetAneemWorldSettings() {
+        Debug.Log("Set world settings as Aneem");
+        worldType = World_Type.Aneem;
+        victoryCondition = VICTORY_CONDITION.Eliminate_All;
+        SetDefaultSpellSettings();
+        villageSettings.EnableAllVillagerMigrations();
+        villageSettings.EnableAllFactionMigrations();
+        villageSettings.AllowNewVillages();
+        factionSettings.AllowNewFactions();
+        villageSettings.SetBlessedMigrantsState(false);
+        factionSettings.AllowFactionIdeologyChanges();
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Lich);
     }
     public void ApplyCustomWorldSettings() {
         villageSettings.EnableAllVillagerMigrations();

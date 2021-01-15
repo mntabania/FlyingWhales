@@ -61,24 +61,9 @@ public class WorldSettings : MonoBehaviour {
         defaultWorldToggle.isOn = true;
     }
     private void InitializeCustomUI() {
-        //if (raceWorldOptionItems.Count <= 0) {
-        //    worldSettingsData.ClearRaces();
-        //    PopulateRacesAndToggleOn();
-        //} else {
-        //    ToggleAllRaces(true);
-        //}
-        //if (biomeWorldOptionItems.Count <= 0) {
-        //    worldSettingsData.ClearBiomes();
-        //    PopulateBiomesAndToggleOn();
-        //} else {
-        //    ToggleAllBiomes(true);
-        //}
-
         ToggleAllRaces(true);
         ToggleAllBiomes(true);
 
-        //PopulateNumOfRegions();
-        //numOfRegionsDropdown.value = 2;
         defaultRegionToggle.isOn = true;
 
         omnipotentModeToggle.isOn = false;
@@ -108,12 +93,6 @@ public class WorldSettings : MonoBehaviour {
     #endregion
 
     #region UI References
-    // public void OnToggleOmnipotentMode(bool state) {
-    //     worldSettingsData.SetOmnipotentMode(state);
-    // }
-    // public void OnToggleNoThreatMode(bool state) {
-    //     worldSettingsData.SetNoThreatMode(state);
-    // }
     public void OnClickContinue() {
         if (mainWindow.activeSelf) {
             //Still in world picker

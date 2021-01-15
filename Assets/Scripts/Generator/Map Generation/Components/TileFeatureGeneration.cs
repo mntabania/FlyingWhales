@@ -26,6 +26,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			DetermineSettlementsForAffatt(data);
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
 			DetermineSettlementsForIcalawa(data);
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Aneem) {
+			DetermineSettlementsForAneem(data);
 		} else {
 			yield return MapGenerator.Instance.StartCoroutine(ComputeHabitabilityValues(data));
 			yield return MapGenerator.Instance.StartCoroutine(DetermineVillageSpots(data));
@@ -577,7 +579,30 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		// 	}
 		// }
 	}
-	
+	private void DetermineSettlementsForAneem(MapGenerationData data) {
+		List<HexTile> chosenTiles = new List<HexTile> {
+			GridMap.Instance.map[2, 5],
+			GridMap.Instance.map[12, 2],
+		};
+
+		FactionTemplate factionTemplate1 = new FactionTemplate(1);
+		factionTemplate1.SetFactionEmblem(FactionEmblemRandomizer.GetUnusedFactionEmblem());
+		
+		FactionTemplate factionTemplate2 = new FactionTemplate(1);
+		factionTemplate2.SetFactionEmblem(FactionEmblemRandomizer.GetUnusedFactionEmblem());
+		
+		for (int i = 0; i < chosenTiles.Count; i++) {
+			HexTile chosenTile = chosenTiles[i];
+			chosenTile.SetElevation(ELEVATION.PLAIN);
+			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
+			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			if (i == 0) {
+				data.AddDeterminedVillage(factionTemplate1, chosenTile);
+			} else {
+				data.AddDeterminedVillage(factionTemplate2, chosenTile);
+			}
+		}
+	}
 	#endregion
 	
 	#region Saved World
