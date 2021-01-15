@@ -144,7 +144,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
         string text = $"Current Value: {GetMigrationMeterValueInText()}";
         text += $"\nIncrease Rate Per Hour: {ApplyVillageMigrationModifier(GetPerHourMigrationRate()).ToString()}";
         if (!IsMigrationEventAllowed()) {
-            if (WorldSettings.Instance.worldSettingsData.villageSettings.migrationSpeed == MIGRATION_SPEED.None || WorldSettings.Instance.worldSettingsData.villageSettings.disableAllVillagerMigrations) {
+            if (WorldSettings.Instance.worldSettingsData.villageSettings.migrationSpeed == MIGRATION_SPEED.None) {
                 text += $"\n{UtilityScripts.Utilities.ColorizeInvalidText("Player has turned off Villager Migration in World Settings.")}";
             } else if (WorldSettings.Instance.worldSettingsData.villageSettings.disabledFactionMigrations.Count > 0) {
                 text += $"\n{UtilityScripts.Utilities.ColorizeInvalidText($"Player has turned off Villager Migration for {WorldSettings.Instance.worldSettingsData.villageSettings.disabledFactionMigrations.ComafyList()} in World Settings.")}";
@@ -167,7 +167,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
     #region Migration
     public bool IsMigrationEventAllowed() {
         return WorldSettings.Instance.worldSettingsData.villageSettings.migrationSpeed != MIGRATION_SPEED.None && 
-               owner.owner != null && owner.residents.Count > 0 && owner.owner.isMajorNonPlayer && !WorldSettings.Instance.worldSettingsData.villageSettings.disableAllVillagerMigrations &&
+               owner.owner != null && owner.residents.Count > 0 && owner.owner.isMajorNonPlayer &&
                WorldSettings.Instance.worldSettingsData.villageSettings.IsMigrationAllowedForFaction(owner.owner.factionType.type) &&  
                (owner.owner.factionType.type == FACTION_TYPE.Human_Empire || owner.owner.factionType.type == FACTION_TYPE.Elven_Kingdom);
     }

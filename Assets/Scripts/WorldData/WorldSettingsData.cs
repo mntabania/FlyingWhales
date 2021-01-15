@@ -94,10 +94,9 @@ public class WorldSettingsData {
         worldType = World_Type.Tutorial;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings();
-        villageSettings.EnableAllVillagerMigrations();
-        villageSettings.EnableAllFactionMigrations();
-        villageSettings.AllowNewVillages();
-        factionSettings.AllowNewFactions();
+        villageSettings.BlockAllFactionMigrations();
+        villageSettings.BlockNewVillages();
+        factionSettings.BlockNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
         playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
@@ -107,8 +106,7 @@ public class WorldSettingsData {
         worldType = World_Type.Oona;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings();
-        villageSettings.EnableAllVillagerMigrations();
-        villageSettings.EnableAllFactionMigrations();
+        villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
@@ -120,11 +118,11 @@ public class WorldSettingsData {
         worldType = World_Type.Icalawa;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings();
-        villageSettings.EnableAllVillagerMigrations();
-        villageSettings.EnableAllFactionMigrations();
+        //TODO: No Monster Migration
+        villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
         factionSettings.AllowNewFactions();
-        villageSettings.SetBlessedMigrantsState(false);
+        villageSettings.SetBlessedMigrantsState(true);
         factionSettings.AllowFactionIdeologyChanges();
         playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Puppet_Master);
     }
@@ -133,10 +131,9 @@ public class WorldSettingsData {
         worldType = World_Type.Pangat_Loo;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings();
-        villageSettings.EnableAllVillagerMigrations();
-        villageSettings.EnableAllFactionMigrations();
-        villageSettings.AllowNewVillages();
-        factionSettings.AllowNewFactions();
+        villageSettings.AllowAllFactionMigrations();
+        villageSettings.BlockNewVillages();
+        factionSettings.BlockNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
         playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Lich);
@@ -146,12 +143,12 @@ public class WorldSettingsData {
         worldType = World_Type.Affatt;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings();
-        villageSettings.EnableAllVillagerMigrations();
-        villageSettings.EnableAllFactionMigrations();
+        villageSettings.AllowAllFactionMigrations();
+        villageSettings.BlockVillagerMigrationForFactionType(FACTION_TYPE.Human_Empire);
         villageSettings.AllowNewVillages();
-        factionSettings.AllowNewFactions();
+        factionSettings.BlockNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
-        factionSettings.AllowFactionIdeologyChanges();
+        factionSettings.BlockFactionIdeologyChanges();
         playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     private void SetZenkoWorldSettings() {
@@ -159,10 +156,9 @@ public class WorldSettingsData {
         worldType = World_Type.Zenko;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings();
-        villageSettings.EnableAllVillagerMigrations();
-        villageSettings.EnableAllFactionMigrations();
-        villageSettings.AllowNewVillages();
-        factionSettings.AllowNewFactions();
+        villageSettings.AllowAllFactionMigrations();
+        villageSettings.BlockNewVillages();
+        factionSettings.BlockNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
         playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
@@ -172,8 +168,7 @@ public class WorldSettingsData {
         worldType = World_Type.Aneem;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings();
-        villageSettings.EnableAllVillagerMigrations();
-        villageSettings.EnableAllFactionMigrations();
+        villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
@@ -185,8 +180,7 @@ public class WorldSettingsData {
         worldType = World_Type.Pitto;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings();
-        villageSettings.EnableAllVillagerMigrations();
-        villageSettings.EnableAllFactionMigrations();
+        villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
@@ -194,8 +188,7 @@ public class WorldSettingsData {
         playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     public void ApplyCustomWorldSettings() {
-        villageSettings.EnableAllVillagerMigrations();
-        villageSettings.EnableAllFactionMigrations();
+        villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
