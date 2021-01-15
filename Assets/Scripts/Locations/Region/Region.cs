@@ -64,7 +64,6 @@ public class Region : ISavable, ILogFiller {
         neighbours = new List<Region>();
         neighboursWithDirection = new Dictionary<GridNeighbourDirection, Region>();
         objectsInRegionCount = new Dictionary<TILE_OBJECT_TYPE, int>();
-        regionDivisionComponent = new RegionDivisionComponent();
     }
     public Region(HexTile coreTile) : this() {
         persistentID = System.Guid.NewGuid().ToString();
@@ -75,6 +74,7 @@ public class Region : ISavable, ILogFiller {
         shuffledNonMountainWaterTiles = new List<HexTile>();
         AddTile(coreTile);
         regionColor = GenerateRandomRegionColor();
+        regionDivisionComponent = new RegionDivisionComponent();
         Debug.Log($"Created region {this.name} with core tile {coreTile.ToString()}");
     }
     public Region(SaveDataRegion data) : this() {
@@ -86,6 +86,9 @@ public class Region : ISavable, ILogFiller {
         shuffledNonMountainWaterTiles = new List<HexTile>();
         regionColor = data.regionColor;
         objectsInRegionCount = new Dictionary<TILE_OBJECT_TYPE, int>();
+
+        //Components
+        regionDivisionComponent = data.regionDivisionComponent.Load();
     }
 
     #region Loading

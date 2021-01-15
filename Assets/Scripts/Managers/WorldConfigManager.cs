@@ -15,8 +15,6 @@ public class WorldConfigManager : MonoBehaviour {
     [Header("Item Generation")] 
     public ItemGenerationSetting worldWideItemGenerationSetting;
     public List<ARTIFACT_TYPE> initialArtifactChoices;
-    [Header("Monster Migration")]
-    public MonsterMigrationBiomeDictionary monsterMigrationBiomeDictionary;
 
     [Header("Testing")] 
     [SerializeField] private bool _disableLogs;

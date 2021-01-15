@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Grassland Monster Migration List
   m_EditorClassIdentifier: 
   dataList:
-  - monsterType: 1
+  - monsterType: 4
     minRange: 1
     maxRange: 5
     weight: 10
@@ -21,11 +21,15 @@ MonoBehaviour:
     minRange: 1
     maxRange: 5
     weight: 10
-  - monsterType: 8
+  - monsterType: 18
     minRange: 1
     maxRange: 5
     weight: 10
   - monsterType: 26
+    minRange: 1
+    maxRange: 5
+    weight: 10
+  - monsterType: 34
     minRange: 1
     maxRange: 5
     weight: 10

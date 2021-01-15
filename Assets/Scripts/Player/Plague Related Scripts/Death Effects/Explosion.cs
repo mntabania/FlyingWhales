@@ -78,7 +78,7 @@ namespace Plague.Death_Effect {
             LocationGridTile chosenTile = p_character.gridTileLocation; 
             if (chosenTile != null) {
                 Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Fire_Elemental, FactionManager.Instance.neutralFaction, null, chosenTile.parentMap.region);
-                CharacterManager.Instance.PlaceSummon(summon, chosenTile);
+                CharacterManager.Instance.PlaceSummonInitially(summon, chosenTile);
                 summon.SetTerritory(chosenTile.collectionOwner.partOfHextile.hexTileOwner, false);
             }
         }

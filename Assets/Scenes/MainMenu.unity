@@ -99,7 +99,7 @@ LightmapSettings:
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 112000002, guid: 9252122cd68805a4891073545c6d21fc,
     type: 2}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -26324,16 +26324,6 @@ MonoBehaviour:
   worldWideItemGenerationSetting: {fileID: 11400000, guid: acfbe38be903c424aa99c568054c1231,
     type: 2}
   initialArtifactChoices: 010000000200000003000000
-  monsterMigrationBiomeDictionary:
-    m_keys: 00000000010000000200000003000000040000000500000007000000
-    m_values:
-    - {fileID: 11400000, guid: 911d8ff061adb4b40af00e829df38452, type: 2}
-    - {fileID: 11400000, guid: 3b713c58ae4467e489f34f2e153dde98, type: 2}
-    - {fileID: 11400000, guid: b56b9f1600177a04794a8d6c634671d6, type: 2}
-    - {fileID: 11400000, guid: 869ea734cd0fb6f41bf6fc7c7f8e1c63, type: 2}
-    - {fileID: 11400000, guid: be9b175432c1d1e48be5a0e7f21174b9, type: 2}
-    - {fileID: 11400000, guid: 54698e225223b4742ad5765b48364226, type: 2}
-    - {fileID: 11400000, guid: a11d3cfa35d3e3a479690ac812978b9b, type: 2}
   _disableLogs: 0
   useRandomGenerationForScenarioMaps: 0
 --- !u!1 &1654958421
@@ -36868,12 +36858,12 @@ PrefabInstance:
     - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
         type: 3}
       propertyPath: _unlockAllSkills
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
         type: 3}
       propertyPath: _unlimitedCast
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 39888b675721e8e488059363d0de61d1, type: 3}
@@ -36892,11 +36882,6 @@ PrefabInstance:
     - target: {fileID: 8277815899201242394, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8277815899201242394, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
-        type: 3}
-      propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8277815899201242394, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,

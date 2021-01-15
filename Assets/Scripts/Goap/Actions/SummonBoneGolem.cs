@@ -118,9 +118,8 @@ public class SummonBoneGolem : GoapAction {
         if(gridTile == null) {
             gridTile = goapNode.actor.gridTileLocation;
         }
-        Character boneGolem = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Bone_Golem, goapNode.actor.faction, homeLocation: goapNode.actor.homeSettlement, homeRegion: gridTile.parentMap.region, bypassIdeologyChecking: true);
-        boneGolem.CreateMarker();
-        boneGolem.InitialCharacterPlacement(gridTile);
+        Summon boneGolem = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Bone_Golem, goapNode.actor.faction, homeLocation: goapNode.actor.homeSettlement, homeRegion: gridTile.parentMap.region, bypassIdeologyChecking: true);
+        CharacterManager.Instance.PlaceSummonInitially(boneGolem, gridTile);
     }
     #endregion
 

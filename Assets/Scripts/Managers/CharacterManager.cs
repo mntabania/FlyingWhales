@@ -699,9 +699,9 @@ public class CharacterManager : BaseMonoBehaviour {
             Summon summon = CreateNewSummon(SUMMON_TYPE.Skeleton, faction, homeRegion: target.homeRegion, className: target.characterClass.className, bypassIdeologyChecking: true);
             summon.SetFirstAndLastName(target.firstName, target.surName);
             summon.SetHasBeenRaisedFromDead(true);
-            summon.CreateMarker();
-
-            summon.InitialCharacterPlacement(tile);
+            PlaceSummonInitially(summon, tile);
+            //summon.CreateMarker();
+            //summon.InitialCharacterPlacement(tile);
             if (target.currentRegion != null) {
                 target.currentRegion.RemoveCharacterFromLocation(target);
             }
@@ -939,10 +939,11 @@ public class CharacterManager : BaseMonoBehaviour {
     public ArtifactSettings GetArtifactSettings(ARTIFACT_TYPE type) {
         return artifactSettings[type];
     }
-    public void PlaceSummon(Summon summon, LocationGridTile locationTile) {
+    public void PlaceSummonInitially(Summon summon, LocationGridTile locationTile) {
         summon.currentRegion?.RemoveCharacterFromLocation(summon);
-        summon.CreateMarker();    
-        summon.marker.InitialPlaceMarkerAt(locationTile);
+        summon.CreateMarker();
+        //summon.marker.InitialPlaceMarkerAt(locationTile); //Replace with InitialCharacterPlacement
+        summon.InitialCharacterPlacement(locationTile);
         summon.OnPlaceSummon(locationTile);
     }
     public void Teleport(Character character, LocationGridTile tile) {

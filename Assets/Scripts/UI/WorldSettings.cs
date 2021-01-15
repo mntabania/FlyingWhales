@@ -31,7 +31,12 @@ public class WorldSettings : MonoBehaviour {
     public WorldPickerItem[] worldPickerItems;
     private WorldPickerItem toggledWorldPicker;
     public Transform parentDisplay;
-    
+
+    [Header("Monster Migration")]
+    public MonsterMigrationBiomeDictionary monsterMigrationBiomeDictionary;
+
+    [Header("Scenarios")]
+    public ScenarioSettingsDataDictionary scenarioSettingsDictionary;
 
     private void Awake() {
         if (Instance == null) {
@@ -189,6 +194,24 @@ public class WorldSettings : MonoBehaviour {
     }
     public void HideHover() {
         hoverGO.SetActive(false);
+    }
+    #endregion
+
+    #region Monster Migration
+    public MonsterMigrationBiomeData GetMonsterMigrationBiomeDataByBiomeType(BIOMES p_biomeType) {
+        if (monsterMigrationBiomeDictionary.ContainsKey(p_biomeType)) {
+            return monsterMigrationBiomeDictionary[p_biomeType];
+        }
+        return null;
+    }
+    #endregion
+
+    #region Scenarios
+    public ScenarioData GetScenarioDataByWorldType(WorldSettingsData.World_Type p_worldType) {
+        if (scenarioSettingsDictionary.ContainsKey(p_worldType)) {
+            return scenarioSettingsDictionary[p_worldType];
+        }
+        return null;
     }
     #endregion
 }

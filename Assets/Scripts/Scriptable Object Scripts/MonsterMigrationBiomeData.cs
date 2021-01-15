@@ -8,7 +8,7 @@ public class MonsterMigrationBiomeData : ScriptableObject {
 }
 
 [System.Serializable]
-public struct MonsterMigrationBiomeAtomizedData {
+public class MonsterMigrationBiomeAtomizedData {
     public SUMMON_TYPE monsterType;
     public int minRange;
     public int maxRange;

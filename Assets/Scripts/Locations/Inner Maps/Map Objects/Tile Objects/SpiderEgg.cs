@@ -20,9 +20,7 @@ public class SpiderEgg : MonsterEgg {
                 monster.traitContainer.RemoveTrait(monster, monster.bredBehaviour);
                 monster.traitContainer.AddTrait(monster, "Baby Infestor");
             }
-            monster.CreateMarker();
-            monster.InitialCharacterPlacement(gridTileLocation);
-            monster.OnPlaceSummon(gridTileLocation);
+            CharacterManager.Instance.PlaceSummonInitially(monster, gridTileLocation);
 
             BaseSettlement settlement;
             if (gridTileLocation.structure.structureType.IsSpecialStructure()) {

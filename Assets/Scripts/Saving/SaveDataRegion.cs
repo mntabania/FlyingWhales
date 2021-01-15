@@ -19,6 +19,9 @@ public class SaveDataRegion : SaveData<Region> {
     public List<string> neighbours;
     public string[] factionsHereIDs;
 
+    //Components
+    public SaveDataRegionDivisionComponent regionDivisionComponent;
+
     public override void Save(Region region) {
         persistentID = region.persistentID;
         id = region.id;
@@ -58,6 +61,8 @@ public class SaveDataRegion : SaveData<Region> {
             Faction factionHere = region.factionsHere[i];
             factionsHereIDs[i] = factionHere.persistentID;
         }
-        
+
+        //Components
+        regionDivisionComponent = new SaveDataRegionDivisionComponent(); regionDivisionComponent.Save(region.regionDivisionComponent);
     }
 }

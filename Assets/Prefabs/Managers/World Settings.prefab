@@ -9515,6 +9515,25 @@ MonoBehaviour:
   - {fileID: 6853414469538171111}
   - {fileID: 3883553889160089245}
   parentDisplay: {fileID: 9016050650819365466}
+  monsterMigrationBiomeDictionary:
+    m_keys: 00000000010000000200000003000000040000000500000007000000
+    m_values:
+    - {fileID: 11400000, guid: 911d8ff061adb4b40af00e829df38452, type: 2}
+    - {fileID: 11400000, guid: 3b713c58ae4467e489f34f2e153dde98, type: 2}
+    - {fileID: 11400000, guid: b56b9f1600177a04794a8d6c634671d6, type: 2}
+    - {fileID: 11400000, guid: 869ea734cd0fb6f41bf6fc7c7f8e1c63, type: 2}
+    - {fileID: 11400000, guid: be9b175432c1d1e48be5a0e7f21174b9, type: 2}
+    - {fileID: 11400000, guid: 54698e225223b4742ad5765b48364226, type: 2}
+    - {fileID: 11400000, guid: a11d3cfa35d3e3a479690ac812978b9b, type: 2}
+  scenarioSettingsDictionary:
+    m_keys: 000000000100000006000000040000000500000003000000
+    m_values:
+    - {fileID: 11400000, guid: 4fc9bd2eb616be94a93a59e13041c7b1, type: 2}
+    - {fileID: 11400000, guid: 13f97d4483587774880dec5529453aba, type: 2}
+    - {fileID: 11400000, guid: d4c525bf915827148b5ee0a252ee7164, type: 2}
+    - {fileID: 11400000, guid: 464827d60df43b045b1d9f782b5ec17a, type: 2}
+    - {fileID: 11400000, guid: 25b83b690aa0d364eaf8d9a7ea9bed67, type: 2}
+    - {fileID: 11400000, guid: 2796d2194a4efba4ea92ce8cda800de3, type: 2}
 --- !u!1 &9016050650650487234
 GameObject:
   m_ObjectHideFlags: 0

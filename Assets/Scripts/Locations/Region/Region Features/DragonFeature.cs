@@ -9,7 +9,7 @@ namespace Locations.Region_Features {
                 //Spawn Dragon
                 Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Dragon, FactionManager.Instance.neutralFaction, 
                     null, region, cave);
-                CharacterManager.Instance.PlaceSummon(summon, CollectionUtilities.GetRandomElement(cave.unoccupiedTiles));
+                CharacterManager.Instance.PlaceSummonInitially(summon, CollectionUtilities.GetRandomElement(cave.unoccupiedTiles));
             }
         }
     }

@@ -152,12 +152,16 @@ public class CharacterNeedsComponent : CharacterComponent {
 
     #region Initialization
     public void SubscribeToSignals() {
-        Messenger.AddListener(Signals.TICK_STARTED, DecreaseNeeds);
+        if(!(owner is Summon)) {
+            Messenger.AddListener(Signals.TICK_STARTED, DecreaseNeeds); //do not make summons decrease needs
+        }
         Messenger.AddListener(Signals.HOUR_STARTED, PerHour);
         Messenger.AddListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
     }
     public void UnsubscribeToSignals() {
-        Messenger.RemoveListener(Signals.TICK_STARTED, DecreaseNeeds);
+        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, DecreaseNeeds);
+        }
         Messenger.RemoveListener(Signals.HOUR_STARTED, PerHour);
         Messenger.RemoveListener<Character, GoapPlanJob>(CharacterSignals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
     }

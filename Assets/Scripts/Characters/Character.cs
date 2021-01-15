@@ -586,7 +586,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
         Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Revenant, FactionManager.Instance.undeadFaction, homeLocation: homeSettlement, homeRegion: homeRegion);
-        CharacterManager.Instance.PlaceSummon(summon, deathTile);
+        CharacterManager.Instance.PlaceSummonInitially(summon, deathTile);
         Revenant revenant = summon as Revenant;
         if (responsibleCharacter.partyComponent.hasParty) {
             for (int i = 0; i < responsibleCharacter.partyComponent.currentParty.members.Count; i++) {
@@ -602,7 +602,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Character betrayer = revenant.GetRandomBetrayer();
             Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.undeadFaction, homeLocation: homeSettlement, homeRegion: homeRegion, homeStructure: currentStructure);
             (ghost as Ghost).SetBetrayedBy(betrayer);
-            CharacterManager.Instance.PlaceSummon(ghost, homeSettlement.GetRandomHexTile().GetRandomTile());
+            CharacterManager.Instance.PlaceSummonInitially(ghost, homeSettlement.GetRandomHexTile().GetRandomTile());
         }
 
 

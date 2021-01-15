@@ -40,7 +40,7 @@ public class MonsterGeneration : MapGenerationComponent {
 	private void CreateMonster(SUMMON_TYPE summonType, BaseSettlement settlementOnTile, BaseLandmark monsterLair, LocationStructure monsterLairStructure, Faction faction = null) {
 		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, faction ?? FactionManager.Instance.neutralFaction, settlementOnTile, monsterLair.tileLocation.region, monsterLairStructure);
 		LocationGridTile targetTile = CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles);
-		CharacterManager.Instance.PlaceSummon(summon, targetTile);
+		CharacterManager.Instance.PlaceSummonInitially(summon, targetTile);
 		//summon.AddTerritory(monsterLair.tileLocation);
         // summon.MigrateHomeStructureTo(monsterLairStructure);
         //summon.ChangeHomeStructure(monsterLairStructure);
@@ -58,7 +58,7 @@ public class MonsterGeneration : MapGenerationComponent {
 		Assert.IsTrue(chosenTile.collectionOwner.isPartOfParentRegionMap, $"Chosen tile for {summonType.ToString()} is not part of the region map!");
 		
 		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, faction ?? FactionManager.Instance.neutralFaction, null, chosenTile.parentMap.region, className: className);
-		CharacterManager.Instance.PlaceSummon(summon, chosenTile);
+		CharacterManager.Instance.PlaceSummonInitially(summon, chosenTile);
 		if (homeStructure != null) {
 			summon.MigrateHomeStructureTo(homeStructure);	
 		} else {

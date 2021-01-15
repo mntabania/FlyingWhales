@@ -9,31 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1955053e6b8a6114cb8b327121f98797, type: 3}
-  m_Name: Forest Monster Migration List
+  m_Script: {fileID: 11500000, guid: f2a5990311e0b094f8e466747668822b, type: 3}
+  m_Name: Pangat Loo
   m_EditorClassIdentifier: 
-  dataList:
-  - monsterType: 8
+  scenarioSettings: {fileID: 4900000, guid: 64539250b7564464fb59704002b88271, type: 3}
+  faunaList:
+  - monsterType: 31
     minRange: 1
     maxRange: 5
     weight: 10
-  - monsterType: 1
+  - monsterType: 27
     minRange: 1
     maxRange: 5
     weight: 10
-  - monsterType: 21
-    minRange: 1
-    maxRange: 5
-    weight: 10
-  - monsterType: 24
-    minRange: 1
-    maxRange: 5
-    weight: 10
-  - monsterType: 16
-    minRange: 1
-    maxRange: 5
-    weight: 10
-  - monsterType: 34
+  - monsterType: 2
     minRange: 1
     maxRange: 5
     weight: 10

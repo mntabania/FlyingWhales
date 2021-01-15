@@ -30,7 +30,7 @@ public class CultistTransform : GoapAction {
         summon.SetFirstAndLastName(character.firstName, character.surName);
         goapNode.descriptionLog.AddInvolvedObjectManual(summon.persistentID);
         
-        CharacterManager.Instance.PlaceSummon(summon, gridTileLocation);
+        CharacterManager.Instance.PlaceSummonInitially(summon, gridTileLocation);
         if (UIManager.Instance.characterInfoUI.isShowing && 
             UIManager.Instance.characterInfoUI.activeCharacter == character) {
             UIManager.Instance.characterInfoUI.CloseMenu();    

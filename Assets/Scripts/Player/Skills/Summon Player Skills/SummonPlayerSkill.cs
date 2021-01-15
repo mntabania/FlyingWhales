@@ -20,7 +20,7 @@ public class SummonPlayerSkill : SkillData {
     public override void ActivateAbility(LocationGridTile targetTile) {
         Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, PlayerManager.Instance.player.playerFaction, homeRegion: targetTile.parentMap.region as Region, className: className);
         summon.OnSummonAsPlayerMonster();
-        CharacterManager.Instance.PlaceSummon(summon, targetTile);
+        CharacterManager.Instance.PlaceSummonInitially(summon, targetTile);
 
         BaseSettlement settlement = null;
         if (targetTile.IsPartOfSettlement(out settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE) {
@@ -37,7 +37,7 @@ public class SummonPlayerSkill : SkillData {
     }
     public override void ActivateAbility(LocationGridTile targetTile, ref Character spawnedCharacter) {
         Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, PlayerManager.Instance.player.playerFaction, homeRegion: targetTile.parentMap.region as Region, className: className);
-        CharacterManager.Instance.PlaceSummon(summon, targetTile);
+        CharacterManager.Instance.PlaceSummonInitially(summon, targetTile);
         //summon.behaviourComponent.AddBehaviourComponent(typeof(DefaultMinion));
         spawnedCharacter = summon;
         Messenger.Broadcast(PlayerSignals.PLAYER_PLACED_SUMMON, summon);

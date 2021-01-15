@@ -29,29 +29,35 @@ public class StartupManager : MonoBehaviour {
         } else {
             LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing World...");
             if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
+                ScenarioData scenarioData = WorldSettings.Instance.GetScenarioDataByWorldType(WorldSettings.Instance.worldSettingsData.worldType);
                 ScenarioMapData scenarioMapData = null;
-                switch (WorldSettings.Instance.worldSettingsData.worldType) {
-                    case WorldSettingsData.World_Type.Tutorial:
-                        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Tutorial.sce");
-                        break;
-                    case WorldSettingsData.World_Type.Oona:
-                        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Oona.sce");
-                        break;
-                    case WorldSettingsData.World_Type.Pangat_Loo:
-                        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Pangat_Loo.sce");
-                        break;
-                    case WorldSettingsData.World_Type.Zenko:
-                        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Zenko.sce");
-                        break;
-                    case WorldSettingsData.World_Type.Affatt:
-                        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Affatt.sce");
-                        break;
-                    case WorldSettingsData.World_Type.Icalawa:
-                        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Icalawa.sce");
-                        break;
-                    default:
-                        throw new Exception($"There is no scenario map data for {WorldSettings.Instance.worldSettingsData.worldType.ToString()}");
+                if(scenarioData != null) {
+                    scenarioMapData = UtilityScripts.Utilities.Deserialize<ScenarioMapData>(scenarioData.scenarioSettings.text);
+                } else {
+                    throw new Exception($"There is no scenario map data for {WorldSettings.Instance.worldSettingsData.worldType.ToString()}");
                 }
+                //switch (WorldSettings.Instance.worldSettingsData.worldType) {
+                //    case WorldSettingsData.World_Type.Tutorial:
+                //        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Tutorial.sce");
+                //        break;
+                //    case WorldSettingsData.World_Type.Oona:
+                //        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Oona.sce");
+                //        break;
+                //    case WorldSettingsData.World_Type.Pangat_Loo:
+                //        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Pangat_Loo.sce");
+                //        break;
+                //    case WorldSettingsData.World_Type.Zenko:
+                //        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Zenko.sce");
+                //        break;
+                //    case WorldSettingsData.World_Type.Affatt:
+                //        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Affatt.sce");
+                //        break;
+                //    case WorldSettingsData.World_Type.Icalawa:
+                //        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Icalawa.sce");
+                //        break;
+                //    default:
+                //        throw new Exception($"There is no scenario map data for {WorldSettings.Instance.worldSettingsData.worldType.ToString()}");
+                //}
                 
                 if (scenarioMapData != null && !WorldConfigManager.Instance.useRandomGenerationForScenarioMaps) {
                     yield return StartCoroutine(mapGenerator.InitializeScenarioWorld(scenarioMapData));    

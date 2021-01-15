@@ -9,19 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1955053e6b8a6114cb8b327121f98797, type: 3}
-  m_Name: Forest Monster Migration List
+  m_Script: {fileID: 11500000, guid: f2a5990311e0b094f8e466747668822b, type: 3}
+  m_Name: Affatt
   m_EditorClassIdentifier: 
-  dataList:
-  - monsterType: 8
-    minRange: 1
-    maxRange: 5
-    weight: 10
-  - monsterType: 1
-    minRange: 1
-    maxRange: 5
-    weight: 10
-  - monsterType: 21
+  scenarioSettings: {fileID: 4900000, guid: 140d0d14c005ae0428bb21a7aec3ac02, type: 3}
+  faunaList:
+  - monsterType: 26
     minRange: 1
     maxRange: 5
     weight: 10
@@ -29,11 +22,7 @@ MonoBehaviour:
     minRange: 1
     maxRange: 5
     weight: 10
-  - monsterType: 16
-    minRange: 1
-    maxRange: 5
-    weight: 10
-  - monsterType: 34
+  - monsterType: 22
     minRange: 1
     maxRange: 5
     weight: 10

@@ -113,7 +113,7 @@ namespace Locations.Tile_Features {
             if(chosenTile != null) {
                 Animal newAnimal = CharacterManager.Instance.CreateNewSummon(animalTypeBeingSpawned, FactionManager.Instance.neutralFaction, homeRegion: owner.region) as Animal;
                 Assert.IsNotNull(newAnimal, $"No new animal was spawned at {owner} when spawn animal was called!");
-                CharacterManager.Instance.PlaceSummon(newAnimal, chosenTile);
+                CharacterManager.Instance.PlaceSummonInitially(newAnimal, chosenTile);
                 newAnimal.SetTerritory(owner, GameManager.Instance.gameHasStarted); //only plan return home if game has started.
                 AddOwnedAnimal(newAnimal);
             }

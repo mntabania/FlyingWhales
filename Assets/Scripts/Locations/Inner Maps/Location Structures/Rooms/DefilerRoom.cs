@@ -203,7 +203,7 @@ namespace Inner_Maps.Location_Structures {
                     List<LocationGridTile> dropChoices = parentStructure.occupiedHexTile.hexTileOwner.locationGridTiles.Where(t => 
                         t.structure.structureType == STRUCTURE_TYPE.WILDERNESS).ToList();
 
-                    CharacterManager.Instance.PlaceSummon(skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
+                    CharacterManager.Instance.PlaceSummonInitially(skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, chosenTarget, skeleton);
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {
                         skeleton.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), 

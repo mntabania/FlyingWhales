@@ -194,7 +194,7 @@ public class TreeObject : TileObject {
             }
             Ent ent = CharacterManager.Instance.CreateNewSummon(entType, FactionManager.Instance.neutralFaction, homeRegion: location.parentMap.region) as Ent;
             Assert.IsNotNull(ent);
-            CharacterManager.Instance.PlaceSummon(ent, location);
+            CharacterManager.Instance.PlaceSummonInitially(ent, location);
             ent.SetTerritory(location.GetNearestHexTileWithinRegion());
             TraitManager.Instance.CopyStatuses(this, ent);
             location.structure.RemovePOI(this);
