@@ -193,6 +193,19 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 					}
 				}
 			};
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
+			chosenTemplate = new WorldMapTemplate() {
+				regionCount = 2,
+				worldMapWidth = 14,
+				worldMapHeight = 12,
+				regions = new Dictionary<int, RegionTemplate[]>() {
+					{
+						0, new[] {
+							new RegionTemplate(14, 12),
+						}
+					}
+				}
+			};
 		} else {
 			MAP_SIZE mapSize = WorldSettings.Instance.worldSettingsData.mapSettings.mapSize;
 			List<WorldMapTemplate> choices = worldMapTemplates[mapSize];

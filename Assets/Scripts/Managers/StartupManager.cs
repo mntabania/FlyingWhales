@@ -52,6 +52,9 @@ public class StartupManager : MonoBehaviour {
                     case WorldSettingsData.World_Type.Aneem:
                         scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Aneem.sce");
                         break;
+                    case WorldSettingsData.World_Type.Pitto:
+                        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Pitto.sce");
+                        break;
                     default:
                         throw new Exception($"There is no scenario map data for {WorldSettings.Instance.worldSettingsData.worldType.ToString()}");
                 }

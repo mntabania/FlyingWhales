@@ -56,7 +56,7 @@ public class FactionInfoUI : InfoUIBase {
         Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
         Messenger.AddListener<Faction, BaseSettlement>(FactionSignals.FACTION_OWNED_SETTLEMENT_ADDED, OnFactionSettlementAdded);
         Messenger.AddListener<Faction, BaseSettlement>(FactionSignals.FACTION_OWNED_SETTLEMENT_REMOVED, OnFactionSettlementRemoved);
-        Messenger.AddListener<FactionRelationship>(FactionSignals.FACTION_RELATIONSHIP_CHANGED, OnFactionRelationshipChanged);
+        Messenger.AddListener<Faction, Faction, FACTION_RELATIONSHIP_STATUS, FACTION_RELATIONSHIP_STATUS>(FactionSignals.CHANGE_FACTION_RELATIONSHIP, OnFactionRelationshipChanged);
         Messenger.AddListener<Faction>(FactionSignals.FACTION_ACTIVE_CHANGED, OnFactionActiveChanged);
         Messenger.AddListener<Character, ILeader>(CharacterSignals.ON_SET_AS_FACTION_LEADER, OnFactionLeaderChanged);
         Messenger.AddListener<Faction, ILeader>(CharacterSignals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
@@ -245,8 +245,8 @@ public class FactionInfoUI : InfoUIBase {
             }
         }
     }
-    private void OnFactionRelationshipChanged(FactionRelationship rel) {
-        if (isShowing && (rel.faction1.id == activeFaction.id || rel.faction2.id == activeFaction.id)) {
+    private void OnFactionRelationshipChanged(Faction faction1, Faction faction2, FACTION_RELATIONSHIP_STATUS newStatus, FACTION_RELATIONSHIP_STATUS oldStatus) {
+        if (isShowing && (faction1.id == activeFaction.id || faction2.id == activeFaction.id)) {
             UpdateAllRelationships();
         }
     }

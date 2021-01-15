@@ -69,6 +69,11 @@ public static class Extensions {
             case STRUCTURE_TYPE.MINE_SHACK:
             case STRUCTURE_TYPE.TAVERN:
             case STRUCTURE_TYPE.CULT_TEMPLE:
+            case STRUCTURE_TYPE.QUARRY:
+            case STRUCTURE_TYPE.CRAFTING:
+            case STRUCTURE_TYPE.TAILORING:
+            case STRUCTURE_TYPE.TANNERY:
+            case STRUCTURE_TYPE.FISHING_SHACK:
                 return true;
             default:
                 return false;
@@ -87,6 +92,12 @@ public static class Extensions {
             case STRUCTURE_TYPE.BARRACKS:
             case STRUCTURE_TYPE.MAGE_QUARTERS:
             case STRUCTURE_TYPE.CULT_TEMPLE:
+            case STRUCTURE_TYPE.QUARRY:
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+            case STRUCTURE_TYPE.CRAFTING:
+            case STRUCTURE_TYPE.TAILORING:
+            case STRUCTURE_TYPE.TANNERY:
+            case STRUCTURE_TYPE.FISHING_SHACK:
                 return true;
             default:
                 return false;
@@ -141,6 +152,11 @@ public static class Extensions {
             case STRUCTURE_TYPE.DEFILER:
             case STRUCTURE_TYPE.RUINED_ZOO:
             case STRUCTURE_TYPE.BIOLAB:
+            case STRUCTURE_TYPE.QUARRY:
+            case STRUCTURE_TYPE.CRAFTING:
+            case STRUCTURE_TYPE.TAILORING:
+            case STRUCTURE_TYPE.TANNERY:
+            case STRUCTURE_TYPE.FISHING_SHACK:
                 return true;
             default:
                 return false;

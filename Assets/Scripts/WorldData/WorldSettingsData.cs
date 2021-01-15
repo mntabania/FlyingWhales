@@ -82,6 +82,9 @@ public class WorldSettingsData {
             case World_Type.Aneem:
                 SetAneemWorldSettings();
                 break;
+            case World_Type.Pitto:
+                SetPittoWorldSettings();
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(p_worldType), p_worldType, null);
         }
@@ -176,6 +179,19 @@ public class WorldSettingsData {
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
         playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Lich);
+    }
+    private void SetPittoWorldSettings() {
+        Debug.Log("Set world settings as Pitto");
+        worldType = World_Type.Pitto;
+        victoryCondition = VICTORY_CONDITION.Eliminate_All;
+        SetDefaultSpellSettings();
+        villageSettings.EnableAllVillagerMigrations();
+        villageSettings.EnableAllFactionMigrations();
+        villageSettings.AllowNewVillages();
+        factionSettings.AllowNewFactions();
+        villageSettings.SetBlessedMigrantsState(false);
+        factionSettings.AllowFactionIdeologyChanges();
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     public void ApplyCustomWorldSettings() {
         villageSettings.EnableAllVillagerMigrations();

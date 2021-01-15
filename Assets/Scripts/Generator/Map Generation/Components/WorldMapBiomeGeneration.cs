@@ -108,6 +108,8 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 			} else {
 				return BIOMES.SNOW;
 			}
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
+			return BIOMES.FOREST;
 		} else {
 			return CollectionUtilities.GetRandomElement(p_biomeChoices);
 		}

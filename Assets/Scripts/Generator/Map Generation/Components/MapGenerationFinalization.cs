@@ -433,6 +433,11 @@ public class MapGenerationFinalization : MapGenerationComponent {
 					artifactChoices.Remove(randomArtifact);	
 				}
 			}
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
+			List<BaseLandmark> landmarks = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MAGE_TOWER);
+			LocationStructure structure = landmarks[0].tileLocation.GetMostImportantStructureOnTile();
+			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Berserk_Orb);
+			structure.AddPOI(artifact);
 		} else {
 			int artifactCount = GridMap.Instance.allRegions.Length <= 2 ? 1 : 2;
 			List<ARTIFACT_TYPE> artifactChoices = WorldConfigManager.Instance.initialArtifactChoices;
