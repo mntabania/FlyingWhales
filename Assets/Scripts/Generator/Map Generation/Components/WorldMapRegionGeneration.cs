@@ -75,14 +75,29 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 
 		return regionDivision;
 	}
-	#endregion
+    private void PopulateRegionDivisionHexTilesFromTemplate(RegionDivision regionDivision, RegionTemplate template, int startingX, int startingY) {
+        int maxX = startingX + template.width;
+        int maxY = startingY + template.height;
 
-	#region Scenario Maps
-	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
+        int centerX = startingX + (template.width / 2);
+        int centerY = startingY + (template.height / 2);
+        HexTile center = GridMap.Instance.map[centerX, centerY];
+
+        for (int x = startingX; x < maxX; x++) {
+            for (int y = startingY; y < maxY; y++) {
+                HexTile tile = GridMap.Instance.map[x, y];
+                regionDivision.AddTile(tile);
+            }
+        }
+    }
+    #endregion
+
+    #region Scenario Maps
+    public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
-		LoadRegionDivisions(data.chosenWorldMapTemplate, GridMap.Instance.allRegions.First());
+		LoadScenarioRegionDivisions(data.chosenWorldMapTemplate, GridMap.Instance.allRegions.First());
 	}
-	private void LoadRegionDivisions(WorldMapTemplate p_template, Region p_region) {
+	private void LoadScenarioRegionDivisions(WorldMapTemplate p_template, Region p_region) {
 		int lastX = 0;
 		int lastY = 0;
 		foreach (var mapTemplateRegion in p_template.regions) {
@@ -104,7 +119,7 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Loading regions...");
 		yield return MapGenerator.Instance.StartCoroutine(LoadRegions(saveData));
-		LoadRegionDivisions(data.chosenWorldMapTemplate, GridMap.Instance.allRegions.First());
+		LoadSavedRegionDivisions(data.chosenWorldMapTemplate, GridMap.Instance.allRegions.First());
 	}
 	private IEnumerator LoadRegions(SaveDataCurrentProgress saveData) {
 		int lastX = 0;
@@ -142,7 +157,23 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 
 		return region;
 	}
-	#endregion
+    private void LoadSavedRegionDivisions(WorldMapTemplate p_template, Region p_region) {
+        int lastX = 0;
+        int lastY = 0;
+        foreach (var mapTemplateRegion in p_template.regions) {
+            for (int i = 0; i < mapTemplateRegion.Value.Length; i++) {
+                RegionTemplate regionTemplate = mapTemplateRegion.Value[i];
+                RegionDivision division = p_region.regionDivisionComponent.divisions[i];
+                PopulateRegionDivisionHexTilesFromTemplate(division, regionTemplate, lastX, lastY);
+                lastX += regionTemplate.width;
+                if (lastX == GridMap.Instance.width) {
+                    lastX = 0;
+                    lastY += regionTemplate.height;
+                }
+            }
+        }
+    }
+    #endregion
 }
 
 [Serializable]
