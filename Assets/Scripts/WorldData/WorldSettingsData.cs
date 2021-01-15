@@ -183,8 +183,8 @@ public class WorldSettingsData {
         worldType = World_Type.Affatt;
         // omnipotentMode = false;
         // noThreatMode = false;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings();
+        victoryCondition = VICTORY_CONDITION.Wipe_Elven_Kingdom_Survive_Humans;
+        SetDefaultSpellSettings(victoryCondition);
     }
     private void SetZenkoWorldSettings() {
         Debug.Log("Set world settings as Zenko");

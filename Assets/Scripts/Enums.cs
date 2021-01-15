@@ -1160,5 +1160,5 @@ public enum THREAT_AMOUNT {
     None, Half, Normal 
 }
 public enum VICTORY_CONDITION {
-    Eliminate_All, Kill_By_Psychopath_Ritual, Wiped_Village_On_Day8, Sandbox
+    Eliminate_All, Kill_By_Psychopath_Ritual, Wiped_Village_On_Day8, Wipe_Elven_Kingdom_Survive_Humans, Sandbox
 }

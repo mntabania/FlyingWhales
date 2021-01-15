@@ -59,6 +59,9 @@ namespace Quests {
                 case WorldSettingsData.World_Type.Pangat_Loo:
                 winConditionTracker = new PangatlooWinConditionTracker();
                 break;
+                case WorldSettingsData.World_Type.Affatt:
+                winConditionTracker = new AffatWinConditionTracker();
+                break;
                 default:
                 winConditionTracker = new OonaWinConditionTracker();
                 break;
@@ -202,6 +205,10 @@ namespace Quests {
 
                 CreateEliminateAllVillagersOnGivenDateQuest();
                 break;
+                case VICTORY_CONDITION.Wipe_Elven_Kingdom_Survive_Humans:
+
+                CreateWipeElvenKingdomAndSurviveHumans();
+                break;
                 case VICTORY_CONDITION.Sandbox:
                     //no win condition quest
                     break;
@@ -226,6 +233,13 @@ namespace Quests {
         private void CreateEliminateAllVillagersOnGivenDateQuest() {
             if (!IsQuestActive<EliminateAllVillagersOnGivenDate>()) {
                 EliminateAllVillagersOnGivenDate eliminateAllVillagersOnGivenDate = new EliminateAllVillagersOnGivenDate();
+                ActivateQuest(eliminateAllVillagersOnGivenDate);
+            }
+        }
+
+        private void CreateWipeElvenKingdomAndSurviveHumans() {
+            if (!IsQuestActive<WipeElvenKingdomAndSurviveHuman>()) {
+                WipeElvenKingdomAndSurviveHuman eliminateAllVillagersOnGivenDate = new WipeElvenKingdomAndSurviveHuman();
                 ActivateQuest(eliminateAllVillagersOnGivenDate);
             }
         }

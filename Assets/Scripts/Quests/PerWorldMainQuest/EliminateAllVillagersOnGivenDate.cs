@@ -13,10 +13,9 @@ namespace Quests {
         public override Type serializedData => typeof(SaveEliminateAllVillagersOnGivenDate);
         #endregion
 
-        public EliminateAllVillagersOnGivenDate() : base($"Eliminate All Villagers and Finish Day 8") { }
+        public EliminateAllVillagersOnGivenDate() : base($"Eliminate All Villagers and Survive Until Day 9") { }
         protected override void ConstructSteps() {
             _eliminateVillagerStep = new EliminateAllVillagersOnGivenDateStep(GetEliminateAllVillagersDescription);
-            Debug.LogError(_eliminateVillagerStep);
             _eliminateVillagerStep.SetObjectsToCenter((QuestManager.Instance.winConditionTracker as PangatlooWinConditionTracker).villagersToEliminate.Count > 0
                 ? (QuestManager.Instance.winConditionTracker as PangatlooWinConditionTracker).villagersToEliminate.Select(x => x as ISelectable).ToList()
                 : new List<ISelectable>());
