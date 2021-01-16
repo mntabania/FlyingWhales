@@ -89,7 +89,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
         Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
         Messenger.AddListener<Faction, BaseSettlement>(FactionSignals.FACTION_OWNED_SETTLEMENT_ADDED, OnFactionSettlementAdded);
         Messenger.AddListener<Faction, BaseSettlement>(FactionSignals.FACTION_OWNED_SETTLEMENT_REMOVED, OnFactionSettlementRemoved);
-        Messenger.AddListener<FactionRelationship>(FactionSignals.FACTION_RELATIONSHIP_CHANGED, OnFactionRelationshipChanged);
+        Messenger.AddListener<Faction, Faction, FACTION_RELATIONSHIP_STATUS, FACTION_RELATIONSHIP_STATUS>(FactionSignals.CHANGE_FACTION_RELATIONSHIP, OnFactionRelationshipChanged);
         Messenger.AddListener<Faction>(FactionSignals.FACTION_ACTIVE_CHANGED, OnFactionActiveChanged);
         Messenger.AddListener<Character, ILeader>(CharacterSignals.ON_SET_AS_FACTION_LEADER, OnFactionLeaderChanged);
         Messenger.AddListener<Faction, ILeader>(CharacterSignals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
@@ -285,8 +285,8 @@ public class FactionInfoUIV2 : MonoBehaviour {
             }
         }
     }
-    private void OnFactionRelationshipChanged(FactionRelationship rel) {
-        if (FactionInfoHubUI.Instance.IsShowing(rel.faction1) || FactionInfoHubUI.Instance.IsShowing(rel.faction2)) {
+    private void OnFactionRelationshipChanged(Faction faction1, Faction faction2, FACTION_RELATIONSHIP_STATUS newStatus, FACTION_RELATIONSHIP_STATUS oldStatus) {
+        if (FactionInfoHubUI.Instance.IsShowing(faction1) || FactionInfoHubUI.Instance.IsShowing(faction2)) {
             UpdateAllRelationships();
         }
     }

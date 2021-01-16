@@ -703,8 +703,16 @@ MonoBehaviour:
       tintSprite: {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
       animation: {fileID: 0}
       overrideLandmarkPortrait: {fileID: 0}
-    humansLandmarkTileSprites: []
-    elvenLandmarkTileSprites: []
+    humansLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 0b1a6dfee21888942b79f0008084a2b8, type: 3}
+      tintSprite: {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: a35ec4294aacc5d45a5062db0a45d55d, type: 3}
+      tintSprite: {fileID: 21300000, guid: 2676d8f62a64675408e6e640dfdf1a5c, type: 3}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
     monsterGenerationChance: 0
     monsterGenerationSetting: {fileID: 0}
     itemGenerationSetting: {fileID: 0}

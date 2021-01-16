@@ -112,7 +112,7 @@ namespace Inner_Maps {
         private void OnRightClick() {
             if (UIManager.Instance.IsMouseOnUI() == false && ReferenceEquals(currentlyShowingMap, null) == false) {
                 LocationGridTile clickedTile = GetTileFromMousePosition();
-                if (TryGetSelectablesOnTile(clickedTile, out var selectables)) {
+                if (clickedTile != null && TryGetSelectablesOnTile(clickedTile, out var selectables)) {
                     IPointOfInterest currentlySelectedPOI = UIManager.Instance.GetCurrentlySelectedPOI();
                     if (currentlySelectedPOI != null && selectables.Contains(currentlySelectedPOI)) {
                         currentlySelectedPOI.RightSelectAction();

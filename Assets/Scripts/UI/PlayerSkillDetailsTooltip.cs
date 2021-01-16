@@ -87,10 +87,10 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         SkillData spellData = PlayerSkillManager.Instance.GetPlayerSkillData(skillData.skill);
         titleText.SetText(spellData.name);
         descriptionText.SetTextAndReplaceWithIcons(spellData.description);
-        int charges =  SpellUtilities.GetModifiedSpellCost(skillData.charges, WorldSettings.Instance.worldSettingsData.GetChargeCostsModification());
-        int manaCost = SpellUtilities.GetModifiedSpellCost(skillData.manaCost, WorldSettings.Instance.worldSettingsData.GetCostsModification());
-        int cooldown = SpellUtilities.GetModifiedSpellCost(skillData.cooldown, WorldSettings.Instance.worldSettingsData.GetCooldownSpeedModification());
-        int threat = SpellUtilities.GetModifiedSpellCost(skillData.threat, WorldSettings.Instance.worldSettingsData.GetThreatModification());
+        int charges =  SpellUtilities.GetModifiedSpellCost(skillData.charges, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
+        int manaCost = SpellUtilities.GetModifiedSpellCost(skillData.manaCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+        int cooldown = SpellUtilities.GetModifiedSpellCost(skillData.cooldown, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
+        int threat = SpellUtilities.GetModifiedSpellCost(skillData.threat, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetThreatModification());
 
         string currencyStr = string.Empty; 
         

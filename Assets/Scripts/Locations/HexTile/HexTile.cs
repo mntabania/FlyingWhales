@@ -207,6 +207,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     /// <summary>
     /// Update the structure assets of this tile based on the landmark that is on this tile.
     /// </summary>
+    [ContextMenu("Update Landmark Visuals")]
     public void UpdateLandmarkVisuals() {
         RACE race = RACE.NONE;
         if (settlementOnTile?.owner != null) {

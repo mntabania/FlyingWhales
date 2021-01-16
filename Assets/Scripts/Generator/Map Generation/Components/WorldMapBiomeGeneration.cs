@@ -11,7 +11,7 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(ElevationBiomeRefinement());
 	}
 	private IEnumerator SetBiomePerRegion(MapGenerationData data) {
-		var choices = WorldSettings.Instance.worldSettingsData.biomes;
+		var choices = WorldSettings.Instance.worldSettingsData.mapSettings.biomes;
 		int lastX = 0;
 		int lastY = 0;
 		int regionIndex = 0;
@@ -84,16 +84,6 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 	private BIOMES GetBiomeForRegion(int p_regionIndex, List<BIOMES> p_biomeChoices) {
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			return BIOMES.GRASSLAND;
-		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
-			if (p_regionIndex == 0) {
-				return BIOMES.FOREST;
-			} else if (p_regionIndex == 1) {
-				return BIOMES.DESERT;
-			} else if (p_regionIndex == 2) {
-				return BIOMES.SNOW;
-			} else {
-				return BIOMES.GRASSLAND;
-			}
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			if (p_regionIndex == 0) {
 				return BIOMES.GRASSLAND;
@@ -106,6 +96,24 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 			} else {
 				return BIOMES.SNOW;
 			}
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
+			if (p_regionIndex == 0) {
+				return BIOMES.FOREST;
+			} else if (p_regionIndex == 1) {
+				return BIOMES.DESERT;
+			} else if (p_regionIndex == 2) {
+				return BIOMES.SNOW;
+			} else {
+				return BIOMES.GRASSLAND;
+			}
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Aneem) {
+			if (p_regionIndex == 0) {
+				return BIOMES.FOREST;
+			} else {
+				return BIOMES.SNOW;
+			}
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
+			return BIOMES.FOREST;
 		} else {
 			return CollectionUtilities.GetRandomElement(p_biomeChoices);
 		}

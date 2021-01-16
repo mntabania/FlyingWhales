@@ -55,10 +55,10 @@ namespace Inner_Maps {
         #region Other Data
         private Dictionary<GridNeighbourDirection, Point> possibleExits =>
             new Dictionary<GridNeighbourDirection, Point>() {
-                {GridNeighbourDirection.North, new Point(0,1) },
-                {GridNeighbourDirection.South, new Point(0,-1) },
                 {GridNeighbourDirection.West, new Point(-1,0) },
                 {GridNeighbourDirection.East, new Point(1,0) },
+                {GridNeighbourDirection.North, new Point(0,1) },
+                {GridNeighbourDirection.South, new Point(0,-1) },
                 {GridNeighbourDirection.North_West, new Point(-1,1) },
                 {GridNeighbourDirection.North_East, new Point(1,1) },
                 {GridNeighbourDirection.South_West, new Point(-1,-1) },

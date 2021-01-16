@@ -37,12 +37,12 @@ public class MapGenerationData {
 	public int regionCount => chosenWorldMapTemplate.regionCount;
 	public int[,] habitabilityValues;
 	public List<HexTile> villageSpots;
-	public Dictionary<FactionSetting, List<HexTile>> determinedVillages;
+	public Dictionary<FactionTemplate, List<HexTile>> determinedVillages;
 	public HexTile portal;
 
 	public MapGenerationData() {
 		villageSpots = new List<HexTile>();
-		determinedVillages = new Dictionary<FactionSetting, List<HexTile>>();
+		determinedVillages = new Dictionary<FactionTemplate, List<HexTile>>();
 	}
 	
 	#region Habitability
@@ -66,7 +66,7 @@ public class MapGenerationData {
 			RemoveVillageSpots(tile);
 		}
 	}
-	public void AddDeterminedVillage(FactionSetting p_faction, HexTile p_tile) {
+	public void AddDeterminedVillage(FactionTemplate p_faction, HexTile p_tile) {
 		if (!determinedVillages.ContainsKey(p_faction)) {
 			determinedVillages.Add(p_faction, new List<HexTile>());
 		}

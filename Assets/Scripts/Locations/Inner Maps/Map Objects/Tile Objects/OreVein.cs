@@ -36,7 +36,7 @@ public class OreVein : TileObject {
     }
 
     public override void RemoveFromSettlementResourcesParent() {
-        if (parentSettlement != null) {
+        if (parentSettlement != null && parentSettlement.SettlementResources != null) {
             if (parentSettlement.SettlementResources.oreVeins.Remove(this)) {
                 parentSettlement = null;
             }

@@ -69,6 +69,11 @@ public static class Extensions {
             case STRUCTURE_TYPE.MINE_SHACK:
             case STRUCTURE_TYPE.TAVERN:
             case STRUCTURE_TYPE.CULT_TEMPLE:
+            case STRUCTURE_TYPE.QUARRY:
+            case STRUCTURE_TYPE.CRAFTING:
+            case STRUCTURE_TYPE.TAILORING:
+            case STRUCTURE_TYPE.TANNERY:
+            case STRUCTURE_TYPE.FISHING_SHACK:
                 return true;
             default:
                 return false;
@@ -87,6 +92,12 @@ public static class Extensions {
             case STRUCTURE_TYPE.BARRACKS:
             case STRUCTURE_TYPE.MAGE_QUARTERS:
             case STRUCTURE_TYPE.CULT_TEMPLE:
+            case STRUCTURE_TYPE.QUARRY:
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+            case STRUCTURE_TYPE.CRAFTING:
+            case STRUCTURE_TYPE.TAILORING:
+            case STRUCTURE_TYPE.TANNERY:
+            case STRUCTURE_TYPE.FISHING_SHACK:
                 return true;
             default:
                 return false;
@@ -141,6 +152,11 @@ public static class Extensions {
             case STRUCTURE_TYPE.DEFILER:
             case STRUCTURE_TYPE.RUINED_ZOO:
             case STRUCTURE_TYPE.BIOLAB:
+            case STRUCTURE_TYPE.QUARRY:
+            case STRUCTURE_TYPE.CRAFTING:
+            case STRUCTURE_TYPE.TAILORING:
+            case STRUCTURE_TYPE.TANNERY:
+            case STRUCTURE_TYPE.FISHING_SHACK:
                 return true;
             default:
                 return false;
@@ -1158,6 +1174,41 @@ public static class Extensions {
                 return p_target.traitContainer.HasTraitOf(TRAIT_TYPE.FLAW);
             default:
                 throw new ArgumentOutOfRangeException(nameof(p_temptation), p_temptation, null);
+        }
+    }
+    #endregion
+
+    #region Ideologies
+    public static bool IsReligionType(this FACTION_IDEOLOGY p_factionIdeology) {
+        switch (p_factionIdeology) {
+            case FACTION_IDEOLOGY.Nature_Worship:
+            case FACTION_IDEOLOGY.Demon_Worship:
+            case FACTION_IDEOLOGY.Divine_Worship:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool IsInclusivityType(this FACTION_IDEOLOGY p_factionIdeology) {
+        switch (p_factionIdeology) {
+            case FACTION_IDEOLOGY.Exclusive:
+            case FACTION_IDEOLOGY.Inclusive:
+                return true;
+            default:
+                return false;
+        }
+    }
+    #endregion
+
+    #region Archetypes
+    public static bool IsMainArchetype(this PLAYER_ARCHETYPE p_archetype) {
+        switch (p_archetype) {
+            case PLAYER_ARCHETYPE.Ravager:
+            case PLAYER_ARCHETYPE.Lich:
+            case PLAYER_ARCHETYPE.Puppet_Master:
+                return true;
+            default:
+                return false;
         }
     }
     #endregion

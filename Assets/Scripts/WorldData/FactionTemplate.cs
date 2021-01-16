@@ -3,14 +3,14 @@ using UnityEngine;
 using UtilityScripts;
 
 [System.Serializable]
-public class FactionSetting {
+public class FactionTemplate {
     public string name { get; private set; }
     public string factionTypeString { get; private set; } //NOTE: This can be set as "Random"
     public Sprite factionEmblem { get; private set; }
     public List<VillageSetting> villageSettings { get; }
     public FACTION_TYPE factionType { get; private set; }
 
-    public FactionSetting(int p_villageCount) {
+    public FactionTemplate(int p_villageCount) {
         name = RandomNameGenerator.GenerateFactionName();
         factionTypeString = "Human Empire";
         factionType = FACTION_TYPE.Human_Empire;

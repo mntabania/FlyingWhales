@@ -262,7 +262,7 @@ namespace Interrupts {
                 int roll = UnityEngine.Random.Range(0, 100);
                 log += "\n-Roll: " + roll;
                 if (roll < 35) {
-                    if(actor.isFactionLeader && !actor.faction.HasOwnedSettlement() && actor.currentRegion != null && !actor.currentRegion.IsRegionVillageCapacityReached()) {
+                    if(actor.isFactionLeader && !actor.faction.HasOwnedSettlement() && actor.currentRegion != null && !WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages && !actor.currentRegion.IsRegionVillageCapacityReached()) {
                         log += $"\n-Find new village";
                         HexTile targetTile = actor.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
                         if (targetTile != null) {
@@ -279,7 +279,7 @@ namespace Interrupts {
                 log += "\n3% chance: Create a Found New Village Job if the current region's Village capacity is not yet full";
                 log += "\n-Roll: " + roll;
                 if (roll < 3) {
-                    if (actor.isFactionLeader && !actor.faction.HasOwnedSettlement() && actor.currentRegion != null && !actor.currentRegion.IsRegionVillageCapacityReached()) {
+                    if (actor.isFactionLeader && !actor.faction.HasOwnedSettlement() && actor.currentRegion != null && !WorldSettings.Instance.worldSettingsData.villageSettings.disableNewVillages && !actor.currentRegion.IsRegionVillageCapacityReached()) {
                         log += $"\n-Find new village";
                         HexTile targetTile = actor.currentRegion.GetRandomHexThatMeetCriteria(currHex => currHex.elevationType != ELEVATION.WATER && currHex.elevationType != ELEVATION.MOUNTAIN && currHex.landmarkOnTile == null && !currHex.IsNextToOrPartOfVillage() && !currHex.isCorrupted);
                         if (targetTile != null) {

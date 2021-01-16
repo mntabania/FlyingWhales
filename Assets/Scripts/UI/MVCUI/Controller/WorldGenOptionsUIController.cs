@@ -82,17 +82,17 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	}
 	public void ApplyCurrentSettingsToData() {
 		//apply chosen biomes to actual data
-		WorldSettings.Instance.worldSettingsData.ApplyBiomeSettings(_chosenBiomes);
+		WorldSettings.Instance.worldSettingsData.mapSettings.ApplyBiomeSettings(_chosenBiomes);
 	}
 	private void UpdateUIBasedOnCurrentSettings(WorldSettingsData p_settings) {
 		//Note: Updating map size dropdown will also update faction and biome data automatically because of on change event 
-		m_worldGenOptionsUIView.SetMapSizeDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.mapSize.ToString()));
-		m_worldGenOptionsUIView.SetMigrationDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.migrationSpeed.ToString()));
+		m_worldGenOptionsUIView.SetMapSizeDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.mapSettings.mapSize.ToString()));
+		m_worldGenOptionsUIView.SetMigrationDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.villageSettings.migrationSpeed.ToString()));
 		m_worldGenOptionsUIView.SetVictoryDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.victoryCondition.ToString()));
-		m_worldGenOptionsUIView.SetCooldownDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.cooldownSpeed.ToString()));
-		m_worldGenOptionsUIView.SetCostsDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.costAmount.ToString()));
-		m_worldGenOptionsUIView.SetChargesDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.chargeAmount.ToString()));
-		m_worldGenOptionsUIView.SetThreatDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.threatAmount.ToString()));
+		m_worldGenOptionsUIView.SetCooldownDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.cooldownSpeed.ToString()));
+		m_worldGenOptionsUIView.SetCostsDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.costAmount.ToString()));
+		m_worldGenOptionsUIView.SetChargesDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.chargeAmount.ToString()));
+		m_worldGenOptionsUIView.SetThreatDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.threatAmount.ToString()));
 	}
 
 	#region Biomes
@@ -130,7 +130,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		p_item.transform.SetSiblingIndex(_chosenBiomes.Count);
 	}
 	private void UpdateAddBiomeBtn() {
-		m_worldGenOptionsUIView.SetAddBiomeBtnState(_chosenBiomes.Count < WorldSettings.Instance.worldSettingsData.GetMaxBiomeCount());
+		m_worldGenOptionsUIView.SetAddBiomeBtnState(_chosenBiomes.Count < WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxBiomeCount());
 	}
 	private void AddDefaultBiomeItem() {
 		BiomeDropdownUIItem inactiveItem = m_worldGenOptionsUIView.GetInactiveBiomeDropdown();
@@ -145,60 +145,60 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	#endregion
 
 	#region Faction Settings Item
-	private void OnDeleteFactionSetting(FactionSetting p_factionSetting, FactionSettingUIItem p_uiItem) {
-		WorldSettings.Instance.worldSettingsData.RemoveFactionSetting(p_factionSetting);
+	private void OnDeleteFactionSetting(FactionTemplate p_FactionTemplate, FactionSettingUIItem p_uiItem) {
+		WorldSettings.Instance.worldSettingsData.factionSettings.RemoveFactionSetting(p_FactionTemplate);
 		m_worldGenOptionsUIView.HideFactionItem(p_uiItem);
-		FactionEmblemRandomizer.SetEmblemAsUnUsed(p_factionSetting.factionEmblem);
+		FactionEmblemRandomizer.SetEmblemAsUnUsed(p_FactionTemplate.factionEmblem);
 		UpdateAddFactionBtn();
 		UpdateVillageCount();
 	}
-	private void OnChangeFactionSettingName(FactionSetting p_factionSetting, string p_newName) {
-		p_factionSetting.ChangeName(p_newName);
+	private void OnChangeFactionSettingName(FactionTemplate p_FactionTemplate, string p_newName) {
+		p_FactionTemplate.ChangeName(p_newName);
 	}
-	private void OnClickRandomizeFactionName(FactionSetting p_factionSetting, FactionSettingUIItem p_uiItem) {
-		p_factionSetting.ChangeName(RandomNameGenerator.GenerateFactionName());
-		p_uiItem.UpdateName(p_factionSetting.name);
+	private void OnClickRandomizeFactionName(FactionTemplate p_FactionTemplate, FactionSettingUIItem p_uiItem) {
+		p_FactionTemplate.ChangeName(RandomNameGenerator.GenerateFactionName());
+		p_uiItem.UpdateName(p_FactionTemplate.name);
 	}
-	private void OnChangeFactionSettingFactionType(FactionSetting p_factionSetting, string p_factionTypeStr) {
-		p_factionSetting.ChangeFactionType(p_factionTypeStr);
+	private void OnChangeFactionSettingFactionType(FactionTemplate p_FactionTemplate, string p_factionTypeStr) {
+		p_FactionTemplate.ChangeFactionType(p_factionTypeStr);
 	}
-	private void OnClickEditFactionVillages(FactionSetting p_factionSetting) {
-		factionSettingVillageEditorUIController.EditVillageSettings(p_factionSetting);
+	private void OnClickEditFactionVillages(FactionTemplate p_FactionTemplate) {
+		factionSettingVillageEditorUIController.EditVillageSettings(p_FactionTemplate);
 	}
-	private void OnHoverOverEditFactionVillages(FactionSetting p_factionSetting) {
-		Tooltip.Instance.ShowSmallInfo($"Edit {p_factionSetting.name}'s villages");
+	private void OnHoverOverEditFactionVillages(FactionTemplate p_FactionTemplate) {
+		Tooltip.Instance.ShowSmallInfo($"Edit {p_FactionTemplate.name}'s villages");
 	}
-	private void OnHoverOutEditFactionVillages(FactionSetting p_factionSetting) {
+	private void OnHoverOutEditFactionVillages(FactionTemplate p_FactionTemplate) {
 		Tooltip.Instance.HideSmallInfo();
 	}
 	private void UpdateAddFactionBtn() {
 		m_worldGenOptionsUIView.SetAddFactionBtnState(!WorldSettings.Instance.worldSettingsData.HasReachedMaxFactionCount());
 	}
 	private void ResetFactions() {
-		WorldSettings.Instance.worldSettingsData.ClearFactionSettings();
+		WorldSettings.Instance.worldSettingsData.factionSettings.ClearFactionSettings();
 		m_worldGenOptionsUIView.ResetFactionItems();
 		FactionEmblemRandomizer.Reset();
 	}
 	private void AddDefaultFactionSetting() {
-		int maxFactions = WorldSettings.Instance.worldSettingsData.GetMaxFactions();
-		int maxVillages = WorldSettings.Instance.worldSettingsData.GetMaxVillages();
+		int maxFactions = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxFactions();
+		int maxVillages = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxVillages();
 		int dividedVillages = maxVillages / maxFactions;
-		FactionSetting factionSetting = WorldSettings.Instance.worldSettingsData.AddFactionSetting(dividedVillages);
+		FactionTemplate factionTemplate = WorldSettings.Instance.worldSettingsData.factionSettings.AddFactionSetting(dividedVillages);
 		Sprite factionEmblem = FactionEmblemRandomizer.GetUnusedFactionEmblem();
-		factionSetting.SetFactionEmblem(factionEmblem);
+		factionTemplate.SetFactionEmblem(factionEmblem);
 		FactionEmblemRandomizer.SetEmblemAsUsed(factionEmblem);
-		m_worldGenOptionsUIView.UpdateFactionItems(WorldSettings.Instance.worldSettingsData.factionSettings);
+		m_worldGenOptionsUIView.UpdateFactionItems(WorldSettings.Instance.worldSettingsData.factionSettings.factionTemplates);
 		UpdateAddFactionBtn();
 		UpdateVillageCount();
 	}
 	private void UpdateVillageCount() {
-		int maxVillages = WorldSettings.Instance.worldSettingsData.GetMaxVillages();
-		int currentVillageCount = WorldSettings.Instance.worldSettingsData.GetCurrentTotalVillageCount();
+		int maxVillages = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxVillages();
+		int currentVillageCount = WorldSettings.Instance.worldSettingsData.factionSettings.GetCurrentTotalVillageCountBasedOnFactions();
 		m_worldGenOptionsUIView.UpdateVillageCount(currentVillageCount, maxVillages);
 	}
 	private void OnDoneEditingVillages() {
 		UpdateVillageCount();
-		m_worldGenOptionsUIView.UpdateFactionItems(WorldSettings.Instance.worldSettingsData.factionSettings);
+		m_worldGenOptionsUIView.UpdateFactionItems(WorldSettings.Instance.worldSettingsData.factionSettings.factionTemplates);
 	}
 	#endregion
 
@@ -206,38 +206,38 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	public void OnChangeMapSize(MAP_SIZE p_value) {
 		ResetBiomes();
 		ResetFactions();
-		WorldSettings.Instance.worldSettingsData.SetMapSize(p_value);
-		int maxBiomes = WorldSettings.Instance.worldSettingsData.GetMaxBiomeCount();
+		WorldSettings.Instance.worldSettingsData.mapSettings.SetMapSize(p_value);
+		int maxBiomes = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxBiomeCount();
 		for (int i = 1; i < maxBiomes; i++) {
 			AddDefaultBiomeItem();
 		}
 		UpdateAddBiomeBtn();
 		
 		//reset faction settings
-		int maxFactions = WorldSettings.Instance.worldSettingsData.GetMaxFactions();
+		int maxFactions = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxFactions();
 		for (int i = 0; i < maxFactions; i++) {
 			AddDefaultFactionSetting();
 		}
-		m_worldGenOptionsUIView.UpdateFactionItems(WorldSettings.Instance.worldSettingsData.factionSettings);
+		m_worldGenOptionsUIView.UpdateFactionItems(WorldSettings.Instance.worldSettingsData.factionSettings.factionTemplates);
 		UpdateAddFactionBtn();
 	}
 	public void OnChangeMigrationSpeed(MIGRATION_SPEED p_value) {
-		WorldSettings.Instance.worldSettingsData.SetMigrationSpeed(p_value);
+		WorldSettings.Instance.worldSettingsData.villageSettings.SetMigrationSpeed(p_value);
 	}
 	public void OnChangeVictoryCondition(VICTORY_CONDITION p_value) {
 		WorldSettings.Instance.worldSettingsData.SetVictoryCondition(p_value);
 	}
 	public void OnChangeSkillCooldownSpeed(SKILL_COOLDOWN_SPEED p_value) {
-		WorldSettings.Instance.worldSettingsData.SetCooldownSpeed(p_value);
+		WorldSettings.Instance.worldSettingsData.playerSkillSettings.SetCooldownSpeed(p_value);
 	}
 	public void OnChangeSkillCostAmount(SKILL_COST_AMOUNT p_value) {
-		WorldSettings.Instance.worldSettingsData.SetManaCostAmount(p_value);
+		WorldSettings.Instance.worldSettingsData.playerSkillSettings.SetManaCostAmount(p_value);
 	}
 	public void OnChangeSkillChargeAmount(SKILL_CHARGE_AMOUNT p_value) {
-		WorldSettings.Instance.worldSettingsData.SetChargeAmount(p_value);
+		WorldSettings.Instance.worldSettingsData.playerSkillSettings.SetChargeAmount(p_value);
 	}
 	public void OnChangeThreatAmount(THREAT_AMOUNT p_value) {
-		WorldSettings.Instance.worldSettingsData.SetThreatAmount(p_value);
+		WorldSettings.Instance.worldSettingsData.playerSkillSettings.SetThreatAmount(p_value);
 	}
 	public void OnClickAddBiome() {
 		AddDefaultBiomeItem();

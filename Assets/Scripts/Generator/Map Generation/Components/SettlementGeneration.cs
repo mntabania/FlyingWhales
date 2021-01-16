@@ -31,13 +31,13 @@ public class SettlementGeneration : MapGenerationComponent {
 	}
 	private IEnumerator CreateSettlements(Region region, MapGenerationData data) {
 		foreach (var setting in data.determinedVillages) {
-			FactionSetting factionSetting = setting.Key;
-			Faction faction = FactionManager.Instance.CreateNewFaction(factionSetting.factionType, factionSetting.name, factionSetting.factionEmblem);
+			FactionTemplate factionTemplate = setting.Key;
+			Faction faction = FactionManager.Instance.CreateNewFaction(factionTemplate.factionType, factionTemplate.name, factionTemplate.factionEmblem);
 			faction.factionType.SetAsDefault();
 			LOCATION_TYPE locationType = GetLocationTypeForRace(faction.race);
 			for (int i = 0; i < setting.Value.Count; i++) {
 				HexTile settlementTile = setting.Value[i];
-				VillageSetting villageSetting = factionSetting.villageSettings[i];
+				VillageSetting villageSetting = factionTemplate.villageSettings[i];
 				NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement(region, locationType, settlementTile);
 				npcSettlement.SetName(villageSetting.villageName);
 				LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);
@@ -129,6 +129,9 @@ public class SettlementGeneration : MapGenerationComponent {
 				new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE),
 				new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE),
 			};
+			for (int i = 0; i < 9; i++) {
+				structureSettings.Add(new StructureSetting(STRUCTURE_TYPE.DWELLING, p_faction.factionType.mainResource));
+			}
 		}
 		else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			structureSettings = new List<StructureSetting>() {

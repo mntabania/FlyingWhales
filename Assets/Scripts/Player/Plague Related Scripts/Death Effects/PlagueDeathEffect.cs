@@ -10,7 +10,7 @@ namespace Plague.Death_Effect {
         protected abstract int GetNextLevelUpgradeCost();
         public int GetFinalNextLevelUpgradeCost() {
             int baseCost = GetNextLevelUpgradeCost();
-            return SpellUtilities.GetModifiedSpellCost(baseCost, WorldSettings.Instance.worldSettingsData.GetCostsModification());
+            return SpellUtilities.GetModifiedSpellCost(baseCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
         }
         public abstract string GetCurrentEffectDescription();
 
@@ -54,13 +54,13 @@ namespace Plague.Death_Effect {
         public static int GetUnlockCost(this PLAGUE_DEATH_EFFECT p_deathEffect) {
             switch (p_deathEffect) {
                 case PLAGUE_DEATH_EFFECT.Explosion:
-                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.GetCostsModification());
+                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
                 case PLAGUE_DEATH_EFFECT.Zombie:
-                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.GetCostsModification());
+                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
                 case PLAGUE_DEATH_EFFECT.Mana_Generator:
-                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.GetCostsModification());
+                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
                 case PLAGUE_DEATH_EFFECT.Haunted_Spirits:
-                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.GetCostsModification());
+                    return SpellUtilities.GetModifiedSpellCost(10, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
                 default:
                     throw new ArgumentOutOfRangeException(nameof(p_deathEffect), p_deathEffect, null);
             }

@@ -64,7 +64,7 @@ public class TreeObject : TileObject {
     }
 
     public override void RemoveFromSettlementResourcesParent() {
-        if (parentSettlement != null) {
+        if (parentSettlement != null && parentSettlement.SettlementResources != null) {
             if (parentSettlement.SettlementResources.trees.Remove(this)) {
                 parentSettlement = null;
             }    

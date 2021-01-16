@@ -66,24 +66,9 @@ public class WorldSettings : MonoBehaviour {
         defaultWorldToggle.isOn = true;
     }
     private void InitializeCustomUI() {
-        //if (raceWorldOptionItems.Count <= 0) {
-        //    worldSettingsData.ClearRaces();
-        //    PopulateRacesAndToggleOn();
-        //} else {
-        //    ToggleAllRaces(true);
-        //}
-        //if (biomeWorldOptionItems.Count <= 0) {
-        //    worldSettingsData.ClearBiomes();
-        //    PopulateBiomesAndToggleOn();
-        //} else {
-        //    ToggleAllBiomes(true);
-        //}
-
         ToggleAllRaces(true);
         ToggleAllBiomes(true);
 
-        //PopulateNumOfRegions();
-        //numOfRegionsDropdown.value = 2;
         defaultRegionToggle.isOn = true;
 
         omnipotentModeToggle.isOn = false;
@@ -102,9 +87,9 @@ public class WorldSettings : MonoBehaviour {
     }
     private void UpdateBiomes(BIOMES biome, bool state) {
         if (state) {
-            worldSettingsData.AddBiome(biome);
+            worldSettingsData.mapSettings.AddBiome(biome);
         } else {
-            worldSettingsData.RemoveBiome(biome);
+            worldSettingsData.mapSettings.RemoveBiome(biome);
         }
     }
     public void SetWorldSettingsData(WorldSettingsData data) {
@@ -113,12 +98,6 @@ public class WorldSettings : MonoBehaviour {
     #endregion
 
     #region UI References
-    // public void OnToggleOmnipotentMode(bool state) {
-    //     worldSettingsData.SetOmnipotentMode(state);
-    // }
-    // public void OnToggleNoThreatMode(bool state) {
-    //     worldSettingsData.SetNoThreatMode(state);
-    // }
     public void OnClickContinue() {
         if (mainWindow.activeSelf) {
             //Still in world picker
@@ -136,6 +115,7 @@ public class WorldSettings : MonoBehaviour {
         } else if (worldGenOptionsUIController.IsUIShowing()) {
             worldSettingsData.SetWorldType(WorldSettingsData.World_Type.Custom);
             worldGenOptionsUIController.ApplyCurrentSettingsToData();
+            worldSettingsData.ApplyCustomWorldSettings();
             //Already in customize window
             if (worldSettingsData.AreSettingsValid(out var invalidityReason)) {
                 //Generate Custom Map

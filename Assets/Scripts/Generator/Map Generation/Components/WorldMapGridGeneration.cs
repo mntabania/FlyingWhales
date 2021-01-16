@@ -104,12 +104,57 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 			chosenTemplate = new WorldMapTemplate() {
 				regionCount = 1,
-				worldMapWidth = 13,
+				worldMapWidth = 9,
 				worldMapHeight = 8,
 				regions = new Dictionary<int, RegionTemplate[]>() {
 					{
 						0, new[] {
-							new RegionTemplate(13, 8),
+							new RegionTemplate(9, 8),
+						}
+					}
+				}
+			};
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+			chosenTemplate = new WorldMapTemplate() {
+				regionCount = 1,
+				worldMapWidth = 11,
+				worldMapHeight = 6,
+				regions = new Dictionary<int, RegionTemplate[]>() {
+					{
+						0, new[] {
+							new RegionTemplate(11, 6),
+						}
+					},
+				}
+			};
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+			chosenTemplate = new WorldMapTemplate() {
+				regionCount = 2,
+				worldMapWidth = 13,
+				worldMapHeight = 6,
+				regions = new Dictionary<int, RegionTemplate[]>() {
+					{
+						0, new[] {
+							new RegionTemplate(8, 6),
+							new RegionTemplate(5, 6),
+						}
+					}
+				}
+			};
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+			chosenTemplate = new WorldMapTemplate() {
+				regionCount = 2,
+				worldMapWidth = 10,
+				worldMapHeight = 12,
+				regions = new Dictionary<int, RegionTemplate[]>() {
+					{
+						0, new[] {
+							new RegionTemplate(10, 6),
+						}
+					},
+					{
+						1, new[] {
+							new RegionTemplate(10, 6),
 						}
 					}
 				}
@@ -134,56 +179,38 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 					}
 				}
 			};
-		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Aneem) {
 			chosenTemplate = new WorldMapTemplate() {
 				regionCount = 2,
-				worldMapWidth = 10,
+				worldMapWidth = 15,
 				worldMapHeight = 6,
 				regions = new Dictionary<int, RegionTemplate[]>() {
 					{
 						0, new[] {
-							new RegionTemplate(6, 6),
-							new RegionTemplate(4, 6),
+							new RegionTemplate(7, 6),
+							new RegionTemplate(8, 6),
 						}
 					}
 				}
 			};
-		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
 			chosenTemplate = new WorldMapTemplate() {
 				regionCount = 2,
-				worldMapWidth = 12,
-				worldMapHeight = 10,
+				worldMapWidth = 14,
+				worldMapHeight = 12,
 				regions = new Dictionary<int, RegionTemplate[]>() {
 					{
 						0, new[] {
-							new RegionTemplate(12, 5),
-						}
-					},
-					{
-						1, new[] {
-							new RegionTemplate(12, 5),
+							new RegionTemplate(14, 12),
 						}
 					}
-				}
-			};
-		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
-			chosenTemplate = new WorldMapTemplate() {
-				regionCount = 1,
-				worldMapWidth = 13,
-				worldMapHeight = 6,
-				regions = new Dictionary<int, RegionTemplate[]>() {
-					{
-						0, new[] {
-							new RegionTemplate(13, 6),
-						}
-					},
 				}
 			};
 		} else {
-			MAP_SIZE mapSize = WorldSettings.Instance.worldSettingsData.mapSize;
+			MAP_SIZE mapSize = WorldSettings.Instance.worldSettingsData.mapSettings.mapSize;
 			List<WorldMapTemplate> choices = worldMapTemplates[mapSize];
 			WorldMapTemplate randomTemplate = CollectionUtilities.GetRandomElement(choices);
-			Vector2 mapVector = WorldSettings.Instance.worldSettingsData.GetMapSize();
+			Vector2 mapVector = WorldSettings.Instance.worldSettingsData.mapSettings.GetMapSize();
 			randomTemplate.worldMapWidth = (int)mapVector.x;
 			randomTemplate.worldMapHeight = (int)mapVector.y;
 			
