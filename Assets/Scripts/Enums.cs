@@ -505,6 +505,7 @@ public enum INTERACTION_TYPE {
     GO_TO_SPECIFIC_TILE = 218,
     LONG_STAND_STILL = 219,
     BURROW = 220,
+    PLAGUE_FATALITY = 221,
 }
 public enum INTERRUPT {
     None,
@@ -1160,5 +1161,5 @@ public enum THREAT_AMOUNT {
     None, Half, Normal 
 }
 public enum VICTORY_CONDITION {
-    Eliminate_All, Kill_By_Psychopath_Ritual, Wiped_Village_On_Day8, Wipe_Elven_Kingdom_Survive_Humans, Sandbox
+    Eliminate_All, Kill_By_Psychopath_Ritual, Wiped_Village_On_Day8, Wipe_Elven_Kingdom_Survive_Humans, Declare_3_Wars, Kill_By_Plague, Create_Demon_Cult, Sandbox
 }

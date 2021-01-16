@@ -8,7 +8,7 @@ using UtilityScripts;
 [System.Serializable]
 public class WorldSettingsData {
 
-    public enum World_Type { Tutorial, Oona, Custom, Zenko, Pangat_Loo, Affatt, Icalawa };
+    public enum World_Type { Tutorial, Oona, Custom, Zenko, Pangat_Loo, Affatt, Icalawa, Aneem, Pitto };
 
     public World_Type worldType;
     public MAP_SIZE mapSize;

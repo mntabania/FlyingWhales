@@ -62,6 +62,15 @@ namespace Quests {
                 case WorldSettingsData.World_Type.Affatt:
                 winConditionTracker = new AffatWinConditionTracker();
                 break;
+                case WorldSettingsData.World_Type.Zenko:
+                winConditionTracker = new AffatWinConditionTracker();
+                break;
+                case WorldSettingsData.World_Type.Aneem:
+                winConditionTracker = new AneemWinConditionTracker();
+                break;
+                case WorldSettingsData.World_Type.Pitto:
+                winConditionTracker = new PittoWinConditionTracker();
+                break;
                 default:
                 winConditionTracker = new OonaWinConditionTracker();
                 break;
@@ -195,20 +204,26 @@ namespace Quests {
             Messenger.RemoveListener(PlayerQuestSignals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);
             switch (WorldSettings.Instance.worldSettingsData.victoryCondition) {
                 case VICTORY_CONDITION.Eliminate_All:
-                CreateEliminateAllVillagersQuest();
+                    CreateEliminateAllVillagersQuest();
                     break;
                 case VICTORY_CONDITION.Kill_By_Psychopath_Ritual:
-
-                CreateKillVillagersByPsychopathQuest();
-                break;
+                    CreateKillVillagersByPsychopathQuest();
+                    break;
                 case VICTORY_CONDITION.Wiped_Village_On_Day8:
-
-                CreateEliminateAllVillagersOnGivenDateQuest();
-                break;
+                    CreateEliminateAllVillagersOnGivenDateQuest();
+                    break;
                 case VICTORY_CONDITION.Wipe_Elven_Kingdom_Survive_Humans:
-
-                CreateWipeElvenKingdomAndSurviveHumans();
-                break;
+                    CreateWipeElvenKingdomAndSurviveHumans();
+                    break;
+                case VICTORY_CONDITION.Declare_3_Wars:
+                    CreateDeclareWar();
+                    break;
+                case VICTORY_CONDITION.Kill_By_Plague:
+                    CreateKillByPlague();
+                    break;
+                case VICTORY_CONDITION.Create_Demon_Cult:
+                    CreateDemonCult();
+                    break;
                 case VICTORY_CONDITION.Sandbox:
                     //no win condition quest
                     break;
@@ -241,6 +256,27 @@ namespace Quests {
             if (!IsQuestActive<WipeElvenKingdomAndSurviveHuman>()) {
                 WipeElvenKingdomAndSurviveHuman eliminateAllVillagersOnGivenDate = new WipeElvenKingdomAndSurviveHuman();
                 ActivateQuest(eliminateAllVillagersOnGivenDate);
+            }
+        }
+
+        private void CreateDeclareWar() {
+            if (!IsQuestActive<DeclareWarQuest>()) {
+                DeclareWarQuest eliminateAllVillagersOnGivenDate = new DeclareWarQuest();
+                ActivateQuest(eliminateAllVillagersOnGivenDate);
+            }
+        }
+
+        private void CreateKillByPlague() {
+            if (!IsQuestActive<EliminateNumberOfVillagersUsingPlague>()) {
+                EliminateNumberOfVillagersUsingPlague eliminateAllVillagersOnGivenDate = new EliminateNumberOfVillagersUsingPlague();
+                ActivateQuest(eliminateAllVillagersOnGivenDate);
+            }
+        }
+
+        private void CreateDemonCult() {
+            if (!IsQuestActive<CreateDemonCultFaction>()) {
+                CreateDemonCultFaction killVillagersByPsychopath = new CreateDemonCultFaction();
+                ActivateQuest(killVillagersByPsychopath);
             }
         }
         #endregion
