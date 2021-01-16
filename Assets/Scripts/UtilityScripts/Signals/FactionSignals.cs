@@ -7,7 +7,7 @@
     public static string FACTION_OWNED_SETTLEMENT_ADDED = "OnFactionOwnedAreaAdded"; //Parameters (Faction affectedFaction, NPCSettlement addedArea)
     public static string FACTION_OWNED_SETTLEMENT_REMOVED = "OnFactionOwnedAreaRemoved"; //Parameters (Faction affectedFaction, NPCSettlement removedArea)
     public static string FACTION_ACTIVE_CHANGED = "OnFactionActiveChanged"; //Parameters (Faction affectedFaction)
-    public static string CHANGE_FACTION_RELATIONSHIP = "OnChangeFactionRelationship";
+    public static string CHANGE_FACTION_RELATIONSHIP = "OnChangeFactionRelationship"; //Parameters (Faction callerFaction, Faction subjectFaction, FactionRelationship newRelationStatus, 
     public static string CREATE_FACTION_INTERRUPT = "OnCreateFactionInterrupt"; //Parameters (Faction createdFaction, Character creator)
     /// <summary>
     /// Parameters (Faction faction)

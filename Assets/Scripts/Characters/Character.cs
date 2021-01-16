@@ -119,6 +119,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CharacterEventDispatcher eventDispatcher { get; }
     public PreviousCharacterDataComponent previousCharacterDataComponent { get; }
 
+    public INTERACTION_TYPE causeOfDeath { set; get; }
+
     #region getters / setters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
     public virtual Type serializedData => typeof(SaveDataCharacter);

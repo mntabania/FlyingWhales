@@ -30,9 +30,9 @@ public class WorldSettingsData {
     #endregion
 
     #region Utilities
-    private void SetDefaultSpellSettings() {
+    private void SetDefaultSpellSettings(VICTORY_CONDITION p_victoryCondition = VICTORY_CONDITION.Eliminate_All) {
         villageSettings.SetMigrationSpeed(MIGRATION_SPEED.Normal);
-        SetVictoryCondition(VICTORY_CONDITION.Eliminate_All);
+        SetVictoryCondition(p_victoryCondition);
         playerSkillSettings.SetCooldownSpeed(SKILL_COOLDOWN_SPEED.Normal);
         playerSkillSettings.SetManaCostAmount(SKILL_COST_AMOUNT.Normal);
         playerSkillSettings.SetChargeAmount(SKILL_CHARGE_AMOUNT.Normal);
@@ -105,7 +105,7 @@ public class WorldSettingsData {
         Debug.Log("Set world settings as Second World");
         worldType = World_Type.Oona;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings();
+        SetDefaultSpellSettings(victoryCondition);
         villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
         factionSettings.AllowNewFactions();
@@ -116,8 +116,8 @@ public class WorldSettingsData {
     private void SetIcalawaWorldSettings() {
         Debug.Log("Set world settings as Icalawa");
         worldType = World_Type.Icalawa;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings();
+        victoryCondition = VICTORY_CONDITION.Kill_By_Psychopath_Ritual;
+        SetDefaultSpellSettings(victoryCondition);
         //TODO: No Monster Migration
         villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
@@ -129,8 +129,8 @@ public class WorldSettingsData {
     private void SetPangatLooWorldSettings() {
         Debug.Log("Set world settings as Pangat Loo");
         worldType = World_Type.Pangat_Loo;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings();
+        victoryCondition = VICTORY_CONDITION.Wiped_Village_On_Day8;
+        SetDefaultSpellSettings(victoryCondition);
         villageSettings.AllowAllFactionMigrations();
         villageSettings.BlockNewVillages();
         factionSettings.BlockNewFactions();
@@ -141,8 +141,8 @@ public class WorldSettingsData {
     private void SetAffattWorldSettings() {
         Debug.Log("Set world settings as Affatt");
         worldType = World_Type.Affatt;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings();
+        victoryCondition = VICTORY_CONDITION.Wipe_Elven_Kingdom_Survive_Humans;
+        SetDefaultSpellSettings(victoryCondition);
         villageSettings.AllowAllFactionMigrations();
         villageSettings.BlockVillagerMigrationForFactionType(FACTION_TYPE.Human_Empire);
         villageSettings.AllowNewVillages();
@@ -154,8 +154,8 @@ public class WorldSettingsData {
     private void SetZenkoWorldSettings() {
         Debug.Log("Set world settings as Zenko");
         worldType = World_Type.Zenko;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings();
+        victoryCondition = VICTORY_CONDITION.Declare_3_Wars;
+        SetDefaultSpellSettings(victoryCondition);
         villageSettings.AllowAllFactionMigrations();
         villageSettings.BlockNewVillages();
         factionSettings.BlockNewFactions();
@@ -166,8 +166,8 @@ public class WorldSettingsData {
     private void SetAneemWorldSettings() {
         Debug.Log("Set world settings as Aneem");
         worldType = World_Type.Aneem;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings();
+        victoryCondition = VICTORY_CONDITION.Kill_By_Plague;
+        SetDefaultSpellSettings(victoryCondition);
         villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
         factionSettings.AllowNewFactions();
@@ -178,8 +178,8 @@ public class WorldSettingsData {
     private void SetPittoWorldSettings() {
         Debug.Log("Set world settings as Pitto");
         worldType = World_Type.Pitto;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings();
+        victoryCondition = VICTORY_CONDITION.Create_Demon_Cult;
+        SetDefaultSpellSettings(victoryCondition);
         villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
         factionSettings.AllowNewFactions();

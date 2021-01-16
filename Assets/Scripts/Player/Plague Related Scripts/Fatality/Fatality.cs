@@ -10,6 +10,7 @@ namespace Plague.Fatality {
 
         protected void ActivateFatalityOn(Character p_character) {
             if (CanActivateFatalityOn(p_character)) {
+                p_character.causeOfDeath = INTERACTION_TYPE.PLAGUE_FATALITY;
                 ActivateFatality(p_character);
             }
         }

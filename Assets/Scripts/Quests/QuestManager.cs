@@ -12,8 +12,8 @@ namespace Quests {
 
         public static QuestManager Instance;
 
-        public EliminateVillagerTracker eliminateVillagerTracker { get; private set; }
-        
+        public WinconditionTracker winConditionTracker { set; get; }
+       
         /// <summary>
         /// List of active quests. NOTE: this does not include tutorials.
         /// </summary>
@@ -35,8 +35,8 @@ namespace Quests {
         
         private void Awake() {
             Instance = this;
+            InitializeQuestTracker();
             _activeQuests = new List<Quest>();
-            eliminateVillagerTracker = new EliminateVillagerTracker();
         }
         protected override void OnDestroy() {
             base.OnDestroy();
@@ -47,6 +47,34 @@ namespace Quests {
             Messenger.RemoveListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
         }
 
+        private void InitializeQuestTracker() {
+            switch (WorldSettings.Instance.worldSettingsData.worldType) {
+                case WorldSettingsData.World_Type.Oona:
+                winConditionTracker = new OonaWinConditionTracker();
+                break;
+                case WorldSettingsData.World_Type.Icalawa:
+                winConditionTracker = new IcalawaWinConditionTracker();
+                break;
+                case WorldSettingsData.World_Type.Pangat_Loo:
+                winConditionTracker = new PangatlooWinConditionTracker();
+                break;
+                case WorldSettingsData.World_Type.Affatt:
+                winConditionTracker = new AffatWinConditionTracker();
+                break;
+                case WorldSettingsData.World_Type.Zenko:
+                winConditionTracker = new AffatWinConditionTracker();
+                break;
+                case WorldSettingsData.World_Type.Aneem:
+                winConditionTracker = new AneemWinConditionTracker();
+                break;
+                case WorldSettingsData.World_Type.Pitto:
+                winConditionTracker = new PittoWinConditionTracker();
+                break;
+                default:
+                winConditionTracker = new OonaWinConditionTracker();
+                break;
+            }
+        }
         #region Initialization
         public void InitializeAfterGameLoaded() {
             Messenger.AddListener<List<Character>, DemonicStructure>(PartySignals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
@@ -54,7 +82,7 @@ namespace Quests {
             Messenger.AddListener<List<Character>>(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
             Messenger.AddListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
             Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "CenterButton");
-            eliminateVillagerTracker.Initialize(CharacterManager.Instance.allCharacters);
+            winConditionTracker.Initialize(CharacterManager.Instance.allCharacters);
         }
         public void InitializeAfterLoadoutPicked(){
             if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {
@@ -176,19 +204,79 @@ namespace Quests {
             Messenger.RemoveListener(PlayerQuestSignals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);
             switch (WorldSettings.Instance.worldSettingsData.victoryCondition) {
                 case VICTORY_CONDITION.Eliminate_All:
-                    CreateEliminateAllVillagersQuest();
-                    break;
+                CreateEliminateAllVillagersQuest();
+                break;
+                case VICTORY_CONDITION.Kill_By_Psychopath_Ritual:
+                CreateKillVillagersByPsychopathQuest();
+                break;
+                case VICTORY_CONDITION.Wiped_Village_On_Day8:
+                CreateEliminateAllVillagersOnGivenDateQuest();
+                break;
+                case VICTORY_CONDITION.Wipe_Elven_Kingdom_Survive_Humans:
+                CreateWipeElvenKingdomAndSurviveHumans();
+                break;
+                case VICTORY_CONDITION.Declare_3_Wars:
+                CreateDeclareWar();
+                break;
+                case VICTORY_CONDITION.Kill_By_Plague:
+                CreateKillByPlague();
+                break;
+                case VICTORY_CONDITION.Create_Demon_Cult:
+                CreateDemonCult();
+                break;
                 case VICTORY_CONDITION.Sandbox:
-                    //no win condition quest
-                    break;
+                //no win condition quest
+                break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException();
             }
         }
         private void CreateEliminateAllVillagersQuest() {
             if (!IsQuestActive<EliminateAllVillagers>()) {
                 EliminateAllVillagers eliminateAllVillagers = new EliminateAllVillagers();
-                ActivateQuest(eliminateAllVillagers);    
+                ActivateQuest(eliminateAllVillagers);
+            }
+        }
+
+        private void CreateKillVillagersByPsychopathQuest() {
+            if (!IsQuestActive<KillVillagersByPsychopath>()) {
+                KillVillagersByPsychopath killVillagersByPsychopath = new KillVillagersByPsychopath();
+                ActivateQuest(killVillagersByPsychopath);
+            }
+        }
+
+        private void CreateEliminateAllVillagersOnGivenDateQuest() {
+            if (!IsQuestActive<EliminateAllVillagersOnGivenDate>()) {
+                EliminateAllVillagersOnGivenDate eliminateAllVillagersOnGivenDate = new EliminateAllVillagersOnGivenDate();
+                ActivateQuest(eliminateAllVillagersOnGivenDate);
+            }
+        }
+
+        private void CreateWipeElvenKingdomAndSurviveHumans() {
+            if (!IsQuestActive<WipeElvenKingdomAndSurviveHuman>()) {
+                WipeElvenKingdomAndSurviveHuman eliminateAllVillagersOnGivenDate = new WipeElvenKingdomAndSurviveHuman();
+                ActivateQuest(eliminateAllVillagersOnGivenDate);
+            }
+        }
+
+        private void CreateDeclareWar() {
+            if (!IsQuestActive<DeclareWarQuest>()) {
+                DeclareWarQuest eliminateAllVillagersOnGivenDate = new DeclareWarQuest();
+                ActivateQuest(eliminateAllVillagersOnGivenDate);
+            }
+        }
+
+        private void CreateKillByPlague() {
+            if (!IsQuestActive<EliminateNumberOfVillagersUsingPlague>()) {
+                EliminateNumberOfVillagersUsingPlague eliminateAllVillagersOnGivenDate = new EliminateNumberOfVillagersUsingPlague();
+                ActivateQuest(eliminateAllVillagersOnGivenDate);
+            }
+        }
+
+        private void CreateDemonCult() {
+            if (!IsQuestActive<CreateDemonCultFaction>()) {
+                CreateDemonCultFaction killVillagersByPsychopath = new CreateDemonCultFaction();
+                ActivateQuest(killVillagersByPsychopath);
             }
         }
         #endregion

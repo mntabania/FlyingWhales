@@ -2,32 +2,32 @@
 using System.Collections.Generic;
 
 namespace Quests.Steps {
-    public class EliminateVillagerStep : QuestStep, OonaWinConditionTracker.Listener {
+    public class EliminateNumberOfVillagersUsingPlagueStep : QuestStep, OonaWinConditionTracker.Listener {
         private readonly Func<List<Character>, int, string> _descriptionGetter;
 
-        public EliminateVillagerStep(Func<List<Character>, int, string> descriptionGetter) : base(string.Empty) {
+        public EliminateNumberOfVillagersUsingPlagueStep(Func<List<Character>, int, string> descriptionGetter) : base(string.Empty) {
             _descriptionGetter = descriptionGetter;
         }
 
         protected override void SubscribeListeners() {
-            (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).Subscribe(this);
+            (QuestManager.Instance.winConditionTracker as AneemWinConditionTracker).Subscribe(this);
         }
         protected override void UnSubscribeListeners() {
-            (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).Unsubscribe(this);
+            (QuestManager.Instance.winConditionTracker as AneemWinConditionTracker).Unsubscribe(this);
         }
 
         #region Listeners
-        public void OnCharacterEliminated(Character p_character, int count) {
+        public void OnCharacterEliminated(Character p_character, int p_villagerCount) {
             objectsToCenter?.Remove(p_character);
             Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
-            CheckForCompletion();
+            CheckForCompletion(p_villagerCount);
         }
         public void OnCharacterAddedAsTarget(Character p_character) {
             objectsToCenter?.Add(p_character);
             Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
         }
-        private void CheckForCompletion() {
-            if ((QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).totalCharactersToEliminate <= 0) {
+        private void CheckForCompletion(int p_villagerCount) {
+            if (p_villagerCount <= 0) {
                 Complete();
                 Messenger.Broadcast(PlayerSignals.WIN_GAME);
             }
@@ -42,7 +42,5 @@ namespace Quests.Steps {
             return base.GetStepDescription();
         }
         #endregion
-
-        
     }
 }
