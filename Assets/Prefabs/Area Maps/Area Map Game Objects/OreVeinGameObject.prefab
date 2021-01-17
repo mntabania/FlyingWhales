@@ -34,6 +34,25 @@ MonoBehaviour:
   particleEffectParent: {fileID: 1032619423266128767}
   statusIconsParent: {fileID: 3173268901581422493}
   _structureConnector: {fileID: 3185689326082575716}
+  _oreVeinSprite:
+    m_keys:
+    - {fileID: 21300000, guid: 340e1ae64b6a22f4fbde896f6081c937, type: 3}
+    - {fileID: 21300000, guid: 2d1a9f96faeb595489c0b9fa57d72df6, type: 3}
+    - {fileID: 21300000, guid: f8dca4d2ab050824792fd113aba86b3f, type: 3}
+    - {fileID: 21300000, guid: 8b976801d4e1b28449de778bbadd6ae8, type: 3}
+    - {fileID: 21300000, guid: 5e135865e9f74854b878f5c833601a9b, type: 3}
+    - {fileID: 21300000, guid: 1242d522eda04944a85b60351bcd18b9, type: 3}
+    - {fileID: 21300000, guid: 6aefb82daa2520b40ab128ca071315a6, type: 3}
+    - {fileID: 21300000, guid: d2d164b7ffc29f64fa5e1aa8421ba07c, type: 3}
+    m_values:
+    - {fileID: 21300000, guid: 247fe68038f87e844a962f5a8ec58cf1, type: 3}
+    - {fileID: 21300000, guid: 247fe68038f87e844a962f5a8ec58cf1, type: 3}
+    - {fileID: 21300000, guid: 44c1b322bcb98e24ca3e6f53dbfba886, type: 3}
+    - {fileID: 21300000, guid: 34ba4ed74a459ac47a3274e76678367e, type: 3}
+    - {fileID: 21300000, guid: 34ba4ed74a459ac47a3274e76678367e, type: 3}
+    - {fileID: 21300000, guid: be30755e1fa3c7d45ae8868456da8fda, type: 3}
+    - {fileID: 21300000, guid: 99093aaaec30e39409a057194b2c76d7, type: 3}
+    - {fileID: 21300000, guid: 0e8c03078ccf82c49a998cc203d473d1, type: 3}
 --- !u!61 &6749103177372989536
 BoxCollider2D:
   m_ObjectHideFlags: 0
