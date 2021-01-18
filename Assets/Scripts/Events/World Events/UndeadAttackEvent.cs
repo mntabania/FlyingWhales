@@ -15,7 +15,7 @@ namespace Events.World_Events {
         }
 
         public override void InitializeEvent() {
-            Messenger.AddListener<int>(Signals.DAY_STARTED, OnDayStarted);
+            Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
         
         }
 
@@ -33,7 +33,8 @@ namespace Events.World_Events {
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         }
 
-        private void OnDayStarted(int p_currentDay) {
+        private void OnDayStarted() {
+            int p_currentDay = GameManager.Instance.continuousDays;
             if (p_currentDay == 8) {
                 StartUndeadAttack();
             }
