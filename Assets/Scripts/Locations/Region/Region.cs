@@ -804,7 +804,10 @@ public class Region : ISavable, ILogFiller {
         List<TileObject> objs = new List<TileObject>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
             for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                objs.AddRange(keyValuePair.Value[i].GetTileObjectsOfType(type));
+                List<TileObject> tileObjects = keyValuePair.Value[i].GetTileObjectsOfType(type);
+                if(tileObjects != null) {
+                    objs.AddRange(tileObjects);
+                }
             }
         }
         return objs;

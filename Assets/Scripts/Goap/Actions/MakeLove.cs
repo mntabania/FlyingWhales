@@ -93,8 +93,12 @@ public class MakeLove : GoapAction {
         actor.needsComponent.AdjustDoNotGetBored(-1);
         targetCharacter.needsComponent.AdjustDoNotGetBored(-1);
 
-        Bed bed = actor.gridTileLocation.structure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).FirstOrDefault() as Bed;
-        bed?.OnDoneActionToObject(actor.currentActionNode);
+        List<TileObject> tileObjects = actor.gridTileLocation.structure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED);
+        if(tileObjects != null && tileObjects.Count > 0) {
+            Bed bed = tileObjects[0] as Bed;
+            bed?.OnDoneActionToObject(actor.currentActionNode);
+        }
+
 
         //targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
         if (targetCharacter.currentActionNode != null && targetCharacter.currentActionNode.action == this) {

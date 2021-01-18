@@ -31,6 +31,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     private List<List<GoapEffect>> _expectedEffectsListPool;
     private List<List<Precondition>> _preconditionsListPool;
     private List<List<Character>> _characterListPool;
+    private List<List<TileObject>> _tileObjectListPool;
     private List<List<HexTile>> _hexTileListPool;
     private List<List<LocationStructure>> _structureListPool;
     private List<List<LocationGridTile>> _tileListPool;
@@ -74,6 +75,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructExpectedEffectsListPool();
         ConstructPreconditionListPool();
         ConstructCharacterListPool();
+        ConstructTileObjectListPool();
         ConstructHexTileListPool();
         ConstructStructureListPool();
         ConstructGridTileListPool();
@@ -391,6 +393,24 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     }
     #endregion
 
+    #region Tile Objects
+    private void ConstructTileObjectListPool() {
+        _tileObjectListPool = new List<List<TileObject>>();
+    }
+    public List<TileObject> CreateNewTileObjectList() {
+        if (_tileObjectListPool.Count > 0) {
+            List<TileObject> data = _tileObjectListPool[0];
+            _tileObjectListPool.RemoveAt(0);
+            return data;
+        }
+        return new List<TileObject>();
+    }
+    public void ReturnTileObjectListToPool(List<TileObject> data) {
+        data.Clear();
+        _tileObjectListPool.Add(data);
+    }
+    #endregion
+
     #region HexTiles
     private void ConstructHexTileListPool() {
         _hexTileListPool = new List<List<HexTile>>();
@@ -638,6 +658,8 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         _emotionListPool = null;
         _ilocationListPool?.Clear();
         _ilocationListPool = null;
+        _tileObjectListPool?.Clear();
+        _tileObjectListPool = null;
         base.OnDestroy();
         Instance = null;
     }
