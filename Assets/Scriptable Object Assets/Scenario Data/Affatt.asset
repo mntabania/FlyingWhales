@@ -13,16 +13,4 @@ MonoBehaviour:
   m_Name: Affatt
   m_EditorClassIdentifier: 
   scenarioSettings: {fileID: 4900000, guid: 836db2db33004794298212aa45c96aa5, type: 3}
-  faunaList:
-  - monsterType: 26
-    minRange: 1
-    maxRange: 5
-    weight: 10
-  - monsterType: 24
-    minRange: 1
-    maxRange: 5
-    weight: 10
-  - monsterType: 22
-    minRange: 1
-    maxRange: 5
-    weight: 10
+  faunaList: []
