@@ -205,12 +205,12 @@ public class DrinkBlood : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        Character actor = node.actor;
-        actor.needsComponent.AdjustDoNotGetHungry(-1);
-        actor.needsComponent.AdjustDoNotGetBored(-1);
-    }
+    //public override void OnStopWhilePerforming(ActualGoapNode node) {
+    //    base.OnStopWhilePerforming(node);
+    //    Character actor = node.actor;
+    //    actor.needsComponent.AdjustDoNotGetHungry(-1);
+    //    actor.needsComponent.AdjustDoNotGetBored(-1);
+    //}
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity actionInvalidity = base.IsInvalid(node);
         Character actor = node.actor;
@@ -317,6 +317,12 @@ public class DrinkBlood : GoapAction {
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
         return CRIME_TYPE.Vampire;
     }
+    public override bool IsHappinessRecoveryAction() {
+        return true;
+    }
+    public override bool IsFullnessRecoveryAction() {
+        return true;
+    }
     #endregion
 
     #region Requirements
@@ -343,10 +349,10 @@ public class DrinkBlood : GoapAction {
     #endregion
 
     #region Effects
-    public void PreDrinkSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
-    }
+    //public void PreDrinkSuccess(ActualGoapNode goapNode) {
+    //    goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
+    //    goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+    //}
     public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
 
@@ -356,8 +362,8 @@ public class DrinkBlood : GoapAction {
     public void AfterDrinkSuccess(ActualGoapNode goapNode) {
         //poiTarget.SetPOIState(POI_STATE.ACTIVE);
         Character actor = goapNode.actor;
-        actor.needsComponent.AdjustDoNotGetHungry(-1);
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+        //actor.needsComponent.AdjustDoNotGetHungry(-1);
+        //goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
 
         if (goapNode.poiTarget is Character targetCharacter) {
             if (targetCharacter.HasItem("Phylactery")) {

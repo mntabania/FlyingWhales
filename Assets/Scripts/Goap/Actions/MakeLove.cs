@@ -90,8 +90,8 @@ public class MakeLove : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
         actor.UncarryPOI(targetCharacter);
-        actor.needsComponent.AdjustDoNotGetBored(-1);
-        targetCharacter.needsComponent.AdjustDoNotGetBored(-1);
+        //actor.needsComponent.AdjustDoNotGetBored(-1);
+        //targetCharacter.needsComponent.AdjustDoNotGetBored(-1);
 
         Bed bed = actor.gridTileLocation.structure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).FirstOrDefault() as Bed;
         bed?.OnDoneActionToObject(actor.currentActionNode);
@@ -107,8 +107,8 @@ public class MakeLove : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
         actor.UncarryPOI(targetCharacter);
-        actor.needsComponent.AdjustDoNotGetBored(-1);
-        targetCharacter.needsComponent.AdjustDoNotGetBored(-1);
+        //actor.needsComponent.AdjustDoNotGetBored(-1);
+        //targetCharacter.needsComponent.AdjustDoNotGetBored(-1);
 
         //targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
         if (targetCharacter.currentActionNode != null && targetCharacter.currentActionNode.action == this) {
@@ -272,6 +272,9 @@ public class MakeLove : GoapAction {
         }
         return base.GetCrimeType(actor, target, crime);
     }
+    public override bool IsHappinessRecoveryAction() {
+        return true;
+    }
     #endregion
 
     #region Effects
@@ -297,8 +300,8 @@ public class MakeLove : GoapAction {
 
         bed.OnDoActionToObject(goapNode);
 
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
-        targetCharacter.needsComponent.AdjustDoNotGetBored(1);
+        //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+        //targetCharacter.needsComponent.AdjustDoNotGetBored(1);
 
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
         targetCharacter.jobComponent.IncreaseNumOfTimesActionDone(this);
@@ -330,8 +333,8 @@ public class MakeLove : GoapAction {
         }
         //Bed bed = goapNode.actor.gridTileLocation.structure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).FirstOrDefault() as Bed;
         bed?.OnDoneActionToObject(goapNode);
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
-        targetCharacter.needsComponent.AdjustDoNotGetBored(-1);
+        //goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+        //targetCharacter.needsComponent.AdjustDoNotGetBored(-1);
 
         //**After Effect 1**: If Actor and Target are Lovers, they both gain Cheery trait. If Actor and Target are Affairs, they both gain Ashamed trait.
         if (actor is SeducerSummon) {

@@ -15,6 +15,10 @@ public class CharacterNeedsComponent : CharacterComponent {
     public int doNotGetDrained { get; private set; }
     public int doNotGetDiscouraged { get; private set; }
 
+    public bool doesNotGetHungry => doNotGetHungry > 0 || (owner.currentActionNode != null && owner.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING && owner.currentActionNode.action.IsFullnessRecoveryAction());
+    public bool doesNotGetTired => doNotGetTired > 0 || (owner.currentActionNode != null && owner.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING && owner.currentActionNode.action.IsTirednessRecoveryAction());
+    public bool doesNotGetBored => doNotGetBored > 0 || (owner.currentActionNode != null && owner.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING && owner.currentActionNode.action.IsHappinessRecoveryAction());
+
     public bool isStarving => fullness >= 0f && fullness <= STARVING_UPPER_LIMIT;
     public bool isExhausted => tiredness >= 0f && tiredness <= EXHAUSTED_UPPER_LIMIT;
     public bool isSulking => happiness >= 0f && happiness <= SULKING_UPPER_LIMIT;
@@ -277,13 +281,13 @@ public class CharacterNeedsComponent : CharacterComponent {
         if (HasNeeds() == false) {
             return;
         }
-        if (doNotGetHungry <= 0) {
+        if (!doesNotGetHungry) {
             AdjustFullness(-(EditableValuesManager.Instance.baseFullnessDecreaseRate + fullnessDecreaseRate));
         }
-        if (doNotGetTired <= 0) {
+        if (!doesNotGetTired) {
             AdjustTiredness(-(EditableValuesManager.Instance.baseTirednessDecreaseRate + tirednessDecreaseRate));
         }
-        if (doNotGetBored <= 0) {
+        if (!doesNotGetBored) {
             AdjustHappiness(-(EditableValuesManager.Instance.baseHappinessDecreaseRate + happinessDecreaseRate));
         }
     }
@@ -492,7 +496,6 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     public void AdjustDoNotGetTired(int amount) {
         doNotGetTired += amount;
-        doNotGetTired = Math.Max(doNotGetTired, 0);
     }
     public bool PlanTirednessRecoveryActions() {
         if (!owner.limiterComponent.canPerform) { //character.doNotDisturb > 0 || !character.limiterComponent.canWitness
@@ -585,7 +588,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         return false;
     }
     public void PlanScheduledTirednessRecovery() {
-        if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.Today().tick >= tirednessForcedTick && owner.limiterComponent.canPerform && doNotGetTired <= 0) {
+        if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.Today().tick >= tirednessForcedTick && owner.limiterComponent.canPerform && !doesNotGetTired) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
                 JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_NORMAL;
                 if (isExhausted) {
@@ -796,7 +799,6 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     public void AdjustDoNotGetBored(int amount) {
         doNotGetBored += amount;
-        doNotGetBored = Math.Max(doNotGetBored, 0);
     }
     // public bool CanPlanScheduledHappinessRecovery() {
     //     if (!hasForcedHappiness && happinessForcedTick != 0 && GameManager.Instance.currentTick >= happinessForcedTick && owner.limiterComponent.canPerform && doNotGetBored <= 0) {
@@ -808,7 +810,7 @@ public class CharacterNeedsComponent : CharacterComponent {
     //     return false;
     // }
     public void PlanScheduledSecondHappinessRecovery() {
-        if (!hasForcedSecondHappiness && happinessSecondForcedTick != 0 && GameManager.Instance.currentTick >= happinessSecondForcedTick && owner.limiterComponent.canPerform && doNotGetBored <= 0) {
+        if (!hasForcedSecondHappiness && happinessSecondForcedTick != 0 && GameManager.Instance.currentTick >= happinessSecondForcedTick && owner.limiterComponent.canPerform && !doesNotGetBored) {
             hasForcedSecondHappiness = true;
             if (!owner.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
                 PlanHappinessRecoveryActions();
@@ -1073,7 +1075,6 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     public void AdjustDoNotGetHungry(int amount) {
         doNotGetHungry += amount;
-        doNotGetHungry = Math.Max(doNotGetHungry, 0);
     }
     public void PlanScheduledFullnessRecovery() {
         if (owner.traitContainer.HasTrait("Vampire")) {
@@ -1083,7 +1084,7 @@ public class CharacterNeedsComponent : CharacterComponent {
             //Now, when a character becomes Nocturnal, after becoming a Vampire, the schedule will be on Early Night, not After Midnight
             return;
         }
-        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.currentTick >= fullnessForcedTick && owner.limiterComponent.canPerform && doNotGetHungry <= 0) {
+        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.currentTick >= fullnessForcedTick && owner.limiterComponent.canPerform && !doesNotGetHungry) {
             hasForcedFullness = true;
             //if (owner.traitContainer.HasTrait("Vampire")) {
             //    TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
@@ -1405,7 +1406,6 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     public void AdjustDoNotGetDrained(int amount) {
         doNotGetDrained += amount;
-        doNotGetDrained = Math.Max(doNotGetDrained, 0);
     }
     public void UpdateBaseStaminaDecreaseRate() {
         baseStaminaDecreaseRate = Mathf.RoundToInt(owner.characterClass.staminaReduction * (owner.raceSetting.staminaReductionMultiplier == 0f ? 1f : owner.raceSetting.staminaReductionMultiplier));
@@ -1504,7 +1504,6 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     public void AdjustDoNotGetDiscouraged(int amount) {
         doNotGetDiscouraged += amount;
-        doNotGetDiscouraged = Math.Max(doNotGetDiscouraged, 0);
     }
     #endregion
 
