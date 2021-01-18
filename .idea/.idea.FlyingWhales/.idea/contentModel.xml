@@ -2614,6 +2614,15 @@
             </e>
           </e>
           <e p="Quests" t="Include">
+            <e p="PerWorldMainQuest" t="Include">
+              <e p="CreateDemonCultFaction.cs" t="Include" />
+              <e p="DeclareWarQuest.cs" t="Include" />
+              <e p="EliminateAllVillagers.cs" t="Include" />
+              <e p="EliminateAllVillagersOnGivenDate.cs" t="Include" />
+              <e p="EliminateNumberOfVillagersUsingPlague.cs" t="Include" />
+              <e p="KillVillagersByPsychopath.cs" t="Include" />
+              <e p="WipeElvenKingdomAndSurviveHuman.cs" t="Include" />
+            </e>
             <e p="Quest Criteria" t="Include">
               <e p="ChaosOrbSpawned.cs" t="Include" />
               <e p="CharacterDied.cs" t="Include" />
@@ -2649,7 +2658,6 @@
               <e p="Counterattack.cs" t="Include" />
               <e p="DemonicStructureDiscovered.cs" t="Include" />
               <e p="DivineIntervention.cs" t="Include" />
-              <e p="EliminateAllVillagers.cs" t="Include" />
               <e p="ReactionQuest.cs" t="Include" />
             </e>
             <e p="Special Popups" t="Include">
@@ -2676,6 +2684,12 @@
               <e p="ActivateDefendStep.cs" t="Include" />
               <e p="ActivateHarassStep.cs" t="Include" />
               <e p="ActivateInvadeStep.cs" t="Include" />
+              <e p="AffatQuestSteps" t="Include">
+                <e p="WipeElvenKingdomAndSurviveHumanStep.cs" t="Include" />
+              </e>
+              <e p="AneemSteps" t="Include">
+                <e p="EliminateNumberOfVillagersUsingPlagueStep.cs" t="Include" />
+              </e>
               <e p="ButtonClickedStep.cs" t="Include" />
               <e p="CharacterAssumedStep.cs" t="Include" />
               <e p="CharactersRemovedBehaviourStep.cs" t="Include" />
@@ -2699,13 +2713,24 @@
               <e p="FlawTriggeredStep.cs" t="Include" />
               <e p="GoapJobFailed.cs" t="Include" />
               <e p="HideRegionMapStep.cs" t="Include" />
+              <e p="IcalawaQuestsSteps" t="Include">
+                <e p="KillVillagersByPsychopathStep.cs" t="Include" />
+                <e p="TurnAvillagerToPsychopathStep.cs" t="Include" />
+              </e>
               <e p="LeftClickHexTileStep.cs" t="Include" />
               <e p="LogHistoryItemClicked.cs" t="Include" />
               <e p="LookAroundStep.cs" t="Include" />
               <e p="MinionSummonedStep.cs" t="Include" />
               <e p="NameplateClickedStep.cs" t="Include" />
               <e p="ObjectPickerShownStep.cs" t="Include" />
+              <e p="PangatlooQuestsSteps" t="Include">
+                <e p="EliminateAllVillagersOnGivenDateStep.cs" t="Include" />
+              </e>
               <e p="ParameterlessSignalReceived.cs" t="Include" />
+              <e p="PittoSteps" t="Include">
+                <e p="CreateDemonCultFactionStep.cs" t="Include" />
+                <e p="RecruitFifteenMembersDemonCultStep.cs" t="Include" />
+              </e>
               <e p="PlayerActionContextMenuShown.cs" t="Include" />
               <e p="QuestStep.cs" t="Include" />
               <e p="QuestStepCollection.cs" t="Include" />
@@ -2725,6 +2750,9 @@
               <e p="TriggerPoisonExplosionStep.cs" t="Include" />
               <e p="TriggerVaporFromWindStep.cs" t="Include" />
               <e p="UnpauseStep.cs" t="Include" />
+              <e p="ZenkoSteps" t="Include">
+                <e p="DeclareWarQuestStep.cs" t="Include" />
+              </e>
               <e p="ZoomStep.cs" t="Include" />
             </e>
             <e p="Tutorial" t="Include">
@@ -3416,6 +3444,16 @@
             <e p="UnderlineHyperlink.cs" t="Include" />
             <e p="Utilities.cs" t="Include" />
             <e p="VerticalScroller.cs" t="Include" />
+            <e p="WinConditionsTracker" t="Include">
+              <e p="AffatWinConditionTracker.cs" t="Include" />
+              <e p="AneemWinConditionTracker.cs" t="Include" />
+              <e p="IcalawaWinConditionTracker.cs" t="Include" />
+              <e p="OonaWinConditionTracker.cs" t="Include" />
+              <e p="PangatlooWinConditionTracker.cs" t="Include" />
+              <e p="PittoWinConditionTracker.cs" t="Include" />
+              <e p="WinconditionTracker.cs" t="Include" />
+              <e p="ZenkoWinConditionTracker.cs" t="Include" />
+            </e>
           </e>
           <e p="Weights" t="Include">
             <e p="WeightedDictionary.cs" t="Include" />

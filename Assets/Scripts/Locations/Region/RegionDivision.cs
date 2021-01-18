@@ -40,7 +40,9 @@ public class RegionDivision {
 
     #region Listeners
     private void OnDayStarted() {
-        MonsterMigrationPerDay();
+        if (!WorldSettings.Instance.worldSettingsData.mapSettings.disableAllMonsterMigrations) {
+            MonsterMigrationPerDay();    
+        }
     }
     #endregion
 
