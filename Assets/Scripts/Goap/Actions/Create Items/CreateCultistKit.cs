@@ -15,7 +15,7 @@ public class CreateCultistKit : GoapAction {
         // AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasStone);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR));
     }
-    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
         //List<Precondition> baseP = base.GetPrecondition(actor, target, otherData, out isOverridden);
         //List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
         Precondition p = null;

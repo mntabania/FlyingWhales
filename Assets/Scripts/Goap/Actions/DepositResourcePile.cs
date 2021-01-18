@@ -44,7 +44,7 @@ public class DepositResourcePile : GoapAction {
     //    }
     //    return ee;
     //}
-    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
         //List<Precondition> baseP = base.GetPrecondition(actor, target, otherData, out isOverridden);
         //List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
         //p.AddRange(baseP);

@@ -22,7 +22,7 @@ public class DropItem : GoapAction {
     //protected override void ConstructBasePreconditionsAndEffects() {
     //    AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsItemInInventory);
     //}
-    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
         //List<Precondition> baseP = base.GetPrecondition(actor, target, otherData, out isOverridden);
         //List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
         //p.AddRange(baseP);

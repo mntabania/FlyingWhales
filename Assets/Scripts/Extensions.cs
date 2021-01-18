@@ -682,9 +682,9 @@ public static class Extensions {
             case JOB_TYPE.STEAL_RAID:
                 priority = 530;
                 break;
-            //case JOB_TYPE.MOVE_CHARACTER:
-            //    priority = 520;
-            //    break;
+            case JOB_TYPE.OBTAIN_PERSONAL_FOOD:
+                priority = 520;
+                break;
             case JOB_TYPE.TAKE_ITEM:
             case JOB_TYPE.INSPECT:
                 priority = 510;
@@ -727,9 +727,9 @@ public static class Extensions {
             case JOB_TYPE.CHECK_PARALYZED_FRIEND:
                 priority = 400;
                 break;
-            case JOB_TYPE.OBTAIN_PERSONAL_FOOD:
-                priority = 300;
-                break;
+            //case JOB_TYPE.OBTAIN_PERSONAL_FOOD:
+            //    priority = 300;
+            //    break;
             case JOB_TYPE.VISIT_FRIEND:
             case JOB_TYPE.VISIT_DIFFERENT_REGION:
                 priority = 280;

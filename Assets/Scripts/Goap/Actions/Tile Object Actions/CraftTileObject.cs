@@ -20,7 +20,7 @@ public class CraftTileObject : GoapAction {
     //protected override void ConstructBasePreconditionsAndEffects() {
     //    AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasSupply);
     //}
-    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
         if(target is TileObject tileObject) {
             TileObjectRecipe recipe = default;
             if (otherData != null && otherData.Length == 1) {
@@ -47,7 +47,7 @@ public class CraftTileObject : GoapAction {
                     } else if (req == "Metal Pile") {
                         p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, req, false, GOAP_EFFECT_TARGET.ACTOR), HasStone);
                     } else {
-                        p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, req, false, GOAP_EFFECT_TARGET.ACTOR), (thisActor, thisTarget, thisOtherData, jobType) => IsCarriedOrInInventory(thisActor, thisTarget, thisOtherData, req));
+                        p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, req, false, GOAP_EFFECT_TARGET.ACTOR), (thisActor, thisTarget, thisOtherData, thisJobType) => IsCarriedOrInInventory(thisActor, thisTarget, thisOtherData, req));
                     }
                 }
                 //for (int i = 0; i < recipe.ingredients.Length; i++) {
@@ -67,7 +67,7 @@ public class CraftTileObject : GoapAction {
             isOverridden = true;
             return p;
         }
-        return base.GetPrecondition(actor, target, otherData, out isOverridden);
+        return base.GetPrecondition(actor, target, otherData, jobType, out isOverridden);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);

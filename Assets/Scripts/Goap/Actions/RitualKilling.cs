@@ -40,7 +40,7 @@ public class RitualKilling : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
         if (target is Character) {
             //List<Precondition> baseP = base.GetPrecondition(actor, target, otherData, out isOverridden);
             //List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
@@ -57,7 +57,7 @@ public class RitualKilling : GoapAction {
             isOverridden = true;
             return p;
         }
-        return base.GetPrecondition(actor, target, otherData, out isOverridden);
+        return base.GetPrecondition(actor, target, otherData, jobType, out isOverridden);
     }
     //public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
     //    GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
