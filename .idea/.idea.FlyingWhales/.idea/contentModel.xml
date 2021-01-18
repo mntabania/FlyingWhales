@@ -1341,6 +1341,7 @@
           <e p="Events" t="Include">
             <e p="World Events" t="Include">
               <e p="CultLeaderEvent.cs" t="Include" />
+              <e p="UndeadAttackEvent.cs" t="Include" />
               <e p="VillagerMigration.cs" t="Include" />
               <e p="WorldEvent.cs" t="Include" />
             </e>

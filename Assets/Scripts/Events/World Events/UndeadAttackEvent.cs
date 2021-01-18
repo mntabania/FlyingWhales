@@ -42,7 +42,7 @@ namespace Events.World_Events {
 
         #region Saving
         public override SaveDataWorldEvent Save() {
-            SaveDataCultLeaderEvent leaderEvent = new SaveDataCultLeaderEvent();
+            SaveUndeadAttackEvent leaderEvent = new SaveUndeadAttackEvent();
             leaderEvent.Save(this);
             return leaderEvent;
         }
