@@ -54,7 +54,7 @@ public abstract class WinconditionTracker {
         List<Character> characters = new List<Character>();
         for (int i = 0; i < p_allCharacters.Count; i++) {
             Character character = p_allCharacters[i];
-            if (character.isNormalCharacter && character.race.IsSapient()) {
+            if (!character.isDead && character.isNormalCharacter && character.race.IsSapient()) {
                 characters.Add(character);
             }
         }
