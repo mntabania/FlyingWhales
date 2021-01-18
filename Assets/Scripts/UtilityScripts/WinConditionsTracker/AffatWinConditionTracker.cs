@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Ruinarch;
 using UnityEngine;
@@ -16,6 +17,7 @@ public class AffatWinConditionTracker : WinconditionTracker {
 
     public List<Character> elvensToEliminate { get; private set; }
     public List<Character> humans { get; private set; }
+    public override Type serializedData => typeof(SaveDataAffattWinConditionTracker);
     
     public override void Initialize(List<Character> p_allCharacters) {
         base.Initialize(p_allCharacters);
@@ -36,6 +38,15 @@ public class AffatWinConditionTracker : WinconditionTracker {
             AddVillagerToEliminate(villagers[i]);
         }
     }
+
+    #region Loading
+    public override void LoadReferences(SaveDataWinConditionTracker data) {
+        base.LoadReferences(data);
+        SaveDataAffattWinConditionTracker saveDataAffattWinConditionTracker = data as SaveDataAffattWinConditionTracker;
+        elvensToEliminate = SaveUtilities.ConvertIDListToCharacters(saveDataAffattWinConditionTracker.elvensToEliminate);
+        humans = SaveUtilities.ConvertIDListToCharacters(saveDataAffattWinConditionTracker.humans);
+    }
+    #endregion
 
     #region List Maintenance
     private void EliminateVillager(Character p_character) {
@@ -109,5 +120,16 @@ public class AffatWinConditionTracker : WinconditionTracker {
     public void Unsubscribe(Listener p_listener) {
         _characterEliminatedAction -= p_listener.OnCharacterEliminated;
         _characterAddedAsTargetAction -= p_listener.OnCharacterAddedAsTarget;
+    }
+}
+
+public class SaveDataAffattWinConditionTracker : SaveDataWinConditionTracker {
+    public List<string> elvensToEliminate;
+    public List<string> humans;
+    public override void Save(WinconditionTracker data) {
+        base.Save(data);
+        AffatWinConditionTracker affatWinConditionTracker = data as AffatWinConditionTracker;
+        elvensToEliminate = SaveUtilities.ConvertSavableListToIDs(affatWinConditionTracker.elvensToEliminate);
+        humans = SaveUtilities.ConvertSavableListToIDs(affatWinConditionTracker.humans);
     }
 }

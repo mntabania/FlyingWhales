@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Traits;
 
 public class PittoWinConditionTracker : WinconditionTracker {
@@ -6,7 +7,8 @@ public class PittoWinConditionTracker : WinconditionTracker {
     private System.Action<Faction> _onfactionCreated;
     private System.Action<Character> _CharacterChangeTrait;
 
-    public List<Character> culstists = new List<Character>();
+    public List<Character> cultists = new List<Character>();
+    public override Type serializedData => typeof(SaveDataPittoWinConditionTracker);
 
     #region IListener
     public interface IListenerFactionEvents {
@@ -33,6 +35,14 @@ public class PittoWinConditionTracker : WinconditionTracker {
             AddVillagerToEliminate(charactersToTrack[i]);
         }
     }
+    
+    #region Loading
+    public override void LoadReferences(SaveDataWinConditionTracker data) {
+        base.LoadReferences(data);
+        SaveDataPittoWinConditionTracker tracker = data as SaveDataPittoWinConditionTracker;
+        cultists = SaveUtilities.ConvertIDListToCharacters(tracker.cultists);
+    }
+    #endregion
 
     private void OnFactionCreated(Faction p_createdFaction) {
         if (p_createdFaction.factionType.type == FACTION_TYPE.Demon_Cult) {
@@ -62,8 +72,8 @@ public class PittoWinConditionTracker : WinconditionTracker {
 
     private void OnCharactertraitGain(Character p_character, Trait p_trait) {
         if (p_character.traitContainer.HasTrait("Cultist")) {
-            if (!culstists.Contains(p_character)) {
-                culstists.Add(p_character);
+            if (!cultists.Contains(p_character)) {
+                cultists.Add(p_character);
                 _CharacterChangeTrait?.Invoke(p_character);
             }
         }
@@ -104,5 +114,14 @@ public class PittoWinConditionTracker : WinconditionTracker {
     }
     public void UnsubscribeToChangeTraitEvents(IcalawaWinConditionTracker.IListenerChangeTraits p_listener) {
         _CharacterChangeTrait -= p_listener.OnCharacterChangeTrait;
+    }
+}
+
+public class SaveDataPittoWinConditionTracker : SaveDataWinConditionTracker {
+    public List<string> cultists;
+    public override void Save(WinconditionTracker data) {
+        base.Save(data);
+        PittoWinConditionTracker tracker = data as PittoWinConditionTracker;
+        cultists = SaveUtilities.ConvertSavableListToIDs(tracker.cultists);
     }
 }

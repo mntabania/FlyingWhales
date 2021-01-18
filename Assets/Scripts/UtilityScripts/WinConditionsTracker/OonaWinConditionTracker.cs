@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Ruinarch;
 using UnityEngine;
@@ -16,7 +17,8 @@ public class OonaWinConditionTracker : WinconditionTracker {
 
     public List<Character> villagersToEliminate { get; private set; }
     public int totalCharactersToEliminate { get; private set; }
-
+    public override Type serializedData => typeof(SaveDataOonaWinConditionTracker);
+    
     public override void Initialize(List<Character> p_allCharacters) {
         base.Initialize(p_allCharacters);
 
@@ -35,6 +37,15 @@ public class OonaWinConditionTracker : WinconditionTracker {
         totalCharactersToEliminate = villagersToEliminate.Count;
     }
 
+    #region Loading
+    public override void LoadReferences(SaveDataWinConditionTracker data) {
+        base.LoadReferences(data);
+        SaveDataOonaWinConditionTracker tracker = data as SaveDataOonaWinConditionTracker;
+        villagersToEliminate = SaveUtilities.ConvertIDListToCharacters(tracker.villagersToEliminate);
+        totalCharactersToEliminate = tracker.totalCharactersToEliminate;
+    }
+    #endregion
+    
     #region List Maintenance
     private void EliminateVillager(Character p_character) {
         if (villagersToEliminate.Remove(p_character)) {
@@ -73,5 +84,16 @@ public class OonaWinConditionTracker : WinconditionTracker {
     public void Unsubscribe(OonaWinConditionTracker.Listener p_listener) {
         _characterEliminatedAction -= p_listener.OnCharacterEliminated;
         _characterAddedAsTargetAction -= p_listener.OnCharacterAddedAsTarget;
+    }
+}
+
+public class SaveDataOonaWinConditionTracker : SaveDataWinConditionTracker {
+    public List<string> villagersToEliminate;
+    public int totalCharactersToEliminate;
+    public override void Save(WinconditionTracker data) {
+        base.Save(data);
+        OonaWinConditionTracker tracker = data as OonaWinConditionTracker;
+        villagersToEliminate = SaveUtilities.ConvertSavableListToIDs(tracker.villagersToEliminate);
+        totalCharactersToEliminate = tracker.totalCharactersToEliminate;
     }
 }

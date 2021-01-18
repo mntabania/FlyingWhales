@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class VillageSettings {
     public List<FACTION_TYPE> disabledFactionMigrations;
     public MIGRATION_SPEED migrationSpeed;

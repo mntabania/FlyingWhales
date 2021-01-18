@@ -33,6 +33,9 @@ public class SaveDataCurrentProgress {
     //Plague
     public bool hasPlagueDisease;
     public SaveDataPlagueDisease savedPlagueDisease;
+    
+    //Win Conditions
+    public SaveDataWinConditionTracker saveDataWinConditionTracker;
 
     //Pool of all saved objects
     public Dictionary<OBJECT_TYPE, BaseSaveDataHub> objectHub;
@@ -190,6 +193,15 @@ public class SaveDataCurrentProgress {
             savedPlagueDisease.Save();
         }
     }
+    public void SaveWinConditionTracker() {
+        UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving Win Conditions...");
+        saveDataWinConditionTracker = CreateNewSaveDataForWinConditionTracker(QuestManager.Instance.winConditionTracker);
+        saveDataWinConditionTracker.Save(QuestManager.Instance.winConditionTracker);
+    }
+    private SaveDataWinConditionTracker CreateNewSaveDataForWinConditionTracker(WinconditionTracker winconditionTracker) {
+        SaveDataWinConditionTracker obj = System.Activator.CreateInstance(winconditionTracker.serializedData) as SaveDataWinConditionTracker;
+        return obj;
+    }
     #endregion
 
     #region Tile Objects
@@ -220,7 +232,7 @@ public class SaveDataCurrentProgress {
             }
         }
     }
-    public static SaveDataTileObject CreateNewSaveDataForTileObject(TileObject tileObject) {
+    private static SaveDataTileObject CreateNewSaveDataForTileObject(TileObject tileObject) {
         SaveDataTileObject obj = System.Activator.CreateInstance(tileObject.serializedData) as SaveDataTileObject;
         return obj;
     }
@@ -475,6 +487,9 @@ public class SaveDataCurrentProgress {
                 }
             }
         }
+    }
+    public void LoadWinConditionTracker() {
+        QuestManager.Instance.LoadWinConditionTracker(saveDataWinConditionTracker);
     }
     #endregion
 

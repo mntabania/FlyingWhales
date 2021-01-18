@@ -34,8 +34,7 @@ namespace Quests {
         #endregion
         
         private void Awake() {
-            Instance = this;
-            InitializeQuestTracker();
+            Instance = this; ;
             _activeQuests = new List<Quest>();
         }
         protected override void OnDestroy() {
@@ -62,7 +61,7 @@ namespace Quests {
                 winConditionTracker = new AffatWinConditionTracker();
                 break;
                 case WorldSettingsData.World_Type.Zenko:
-                winConditionTracker = new AffatWinConditionTracker();
+                winConditionTracker = new ZenkoWinConditionTracker();
                 break;
                 case WorldSettingsData.World_Type.Aneem:
                 winConditionTracker = new AneemWinConditionTracker();
@@ -75,6 +74,13 @@ namespace Quests {
                 break;
             }
         }
+        public void LoadWinConditionTracker(SaveDataWinConditionTracker data) {
+            InitializeQuestTracker();
+            winConditionTracker.Initialize(CharacterManager.Instance.allCharacters);
+            winConditionTracker?.LoadReferences(data);
+        }
+        
+        
         #region Initialization
         public void InitializeAfterGameLoaded() {
             Messenger.AddListener<List<Character>, DemonicStructure>(PartySignals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
@@ -82,7 +88,11 @@ namespace Quests {
             Messenger.AddListener<List<Character>>(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
             Messenger.AddListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
             Messenger.Broadcast(UISignals.SHOW_SELECTABLE_GLOW, "CenterButton");
-            winConditionTracker.Initialize(CharacterManager.Instance.allCharacters);
+            if (!SaveManager.Instance.useSaveData) {
+                InitializeQuestTracker();
+                //TODO: Try to remove checking
+                winConditionTracker.Initialize(CharacterManager.Instance.allCharacters);    
+            }
         }
         public void InitializeAfterLoadoutPicked(){
             if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {

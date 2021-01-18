@@ -37,7 +37,7 @@ namespace Quests.Steps {
         #region Description
         protected override string GetStepDescription() {
             if (_descriptionGetter != null) {
-                return _descriptionGetter.Invoke((QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).villagersToEliminate, (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).totalCharactersToEliminate);
+                return _descriptionGetter.Invoke((QuestManager.Instance.winConditionTracker as AneemWinConditionTracker).villagersToEliminate, (QuestManager.Instance.winConditionTracker as AneemWinConditionTracker).totalCharactersToEliminate);
             }
             return base.GetStepDescription();
         }

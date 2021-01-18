@@ -7,6 +7,9 @@ using UtilityScripts;
 public abstract class WinconditionTracker {
 
     public List<Character> villagersToTrack { get; private set; }
+    
+    public abstract System.Type serializedData { get; }
+    
     public WinconditionTracker() {
         villagersToTrack = new List<Character>();
     }
@@ -23,6 +26,14 @@ public abstract class WinconditionTracker {
             }
         }
     }
+
+    #region Loading
+    public virtual void LoadReferences(SaveDataWinConditionTracker data) {
+        if (data.villagersToTrack != null) {
+            villagersToTrack = SaveUtilities.ConvertIDListToCharacters(data.villagersToTrack);    
+        }
+    } 
+    #endregion
 
     public virtual bool ShouldConsiderCharacterAsEliminated(Character character) {
         if (character.isDead) {
@@ -101,4 +112,12 @@ public abstract class WinconditionTracker {
         return objToSelect;
     }
     #endregion
+}
+
+public class SaveDataWinConditionTracker : SaveData<WinconditionTracker> {
+    public List<string> villagersToTrack;
+    public override void Save(WinconditionTracker data) {
+        base.Save(data);
+        villagersToTrack = SaveUtilities.ConvertSavableListToIDs(data.villagersToTrack);
+    }
 }

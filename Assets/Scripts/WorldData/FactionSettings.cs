@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 
+[System.Serializable]
 public class FactionSettings {
     
     public List<FactionTemplate> factionTemplates;
