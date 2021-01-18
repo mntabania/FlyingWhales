@@ -69,13 +69,13 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 					regionCount = 4,
 					regions = new Dictionary<int, RegionTemplate[]>() {
 						{ 0, new [] {
-								new RegionTemplate(8, 8),
-								new RegionTemplate(8, 8),
+								new RegionTemplate(10, 8),
+								new RegionTemplate(10, 8),
 							}
 						},
 						{ 1, new [] {
-								new RegionTemplate(8, 8),
-								new RegionTemplate(8, 8),
+								new RegionTemplate(10, 8),
+								new RegionTemplate(10, 8),
 							}
 						}
 					}	

@@ -7,9 +7,12 @@ using UtilityScripts;
 public class MapSettings {
     public MAP_SIZE mapSize;
     public List<BIOMES> biomes;
+    public bool disableAllMonsterMigrations;
+    
     public MapSettings() {
         biomes = new List<BIOMES>();
         mapSize = MAP_SIZE.Small;
+        disableAllMonsterMigrations = false;
     }
     public void SetMapSize(MAP_SIZE p_mapSize) {
         mapSize = p_mapSize;
@@ -65,7 +68,7 @@ public class MapSettings {
             case MAP_SIZE.Large:
                 return new Vector2(16, 10);
             case MAP_SIZE.Extra_Large:
-                return new Vector2(16, 16);
+                return new Vector2(20, 16);
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -98,4 +101,13 @@ public class MapSettings {
                 throw new ArgumentOutOfRangeException();
         }
     }
+
+    #region Monster Migrations
+    public void AllowMonsterMigrations() {
+        disableAllMonsterMigrations = false;
+    }
+    public void BlockMonsterMigrations() {
+        disableAllMonsterMigrations = true;
+    }
+    #endregion
 }

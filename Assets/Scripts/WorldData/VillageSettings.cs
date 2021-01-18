@@ -5,7 +5,6 @@ public class VillageSettings {
     public List<FACTION_TYPE> disabledFactionMigrations;
     public MIGRATION_SPEED migrationSpeed;
     public bool disableNewVillages;
-    public bool disableAllMonsterMigrations;
     public bool blessedMigrants;
     
     public VillageSettings() {
@@ -21,9 +20,6 @@ public class VillageSettings {
     }
     public void BlockVillagerMigrationForFactionType(FACTION_TYPE p_factionType) {
         disabledFactionMigrations.Add(p_factionType);
-    }
-    public void AllowVillagerMigrationForAllFactionTypes() {
-        disabledFactionMigrations.Clear();
     }
     public bool IsMigrationAllowedForFaction(FACTION_TYPE p_factionType) {
         return !disabledFactionMigrations.Contains(p_factionType);

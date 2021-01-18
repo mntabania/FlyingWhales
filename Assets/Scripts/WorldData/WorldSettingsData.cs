@@ -94,6 +94,7 @@ public class WorldSettingsData {
         worldType = World_Type.Tutorial;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings();
+        mapSettings.AllowMonsterMigrations();
         villageSettings.BlockAllFactionMigrations();
         villageSettings.BlockNewVillages();
         factionSettings.BlockNewFactions();
@@ -106,6 +107,7 @@ public class WorldSettingsData {
         worldType = World_Type.Oona;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings(victoryCondition);
+        mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
         factionSettings.AllowNewFactions();
@@ -118,7 +120,7 @@ public class WorldSettingsData {
         worldType = World_Type.Icalawa;
         victoryCondition = VICTORY_CONDITION.Kill_By_Psychopath_Ritual;
         SetDefaultSpellSettings(victoryCondition);
-        //TODO: No Monster Migration
+        mapSettings.BlockMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
         factionSettings.AllowNewFactions();
@@ -131,6 +133,7 @@ public class WorldSettingsData {
         worldType = World_Type.Pangat_Loo;
         victoryCondition = VICTORY_CONDITION.Wiped_Village_On_Day8;
         SetDefaultSpellSettings(victoryCondition);
+        mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.BlockNewVillages();
         factionSettings.BlockNewFactions();
@@ -143,6 +146,7 @@ public class WorldSettingsData {
         worldType = World_Type.Affatt;
         victoryCondition = VICTORY_CONDITION.Wipe_Elven_Kingdom_Survive_Humans;
         SetDefaultSpellSettings(victoryCondition);
+        mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.BlockVillagerMigrationForFactionType(FACTION_TYPE.Human_Empire);
         villageSettings.AllowNewVillages();
@@ -156,6 +160,7 @@ public class WorldSettingsData {
         worldType = World_Type.Zenko;
         victoryCondition = VICTORY_CONDITION.Declare_3_Wars;
         SetDefaultSpellSettings(victoryCondition);
+        mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.BlockNewVillages();
         factionSettings.BlockNewFactions();
@@ -168,6 +173,7 @@ public class WorldSettingsData {
         worldType = World_Type.Aneem;
         victoryCondition = VICTORY_CONDITION.Kill_By_Plague;
         SetDefaultSpellSettings(victoryCondition);
+        mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
         factionSettings.AllowNewFactions();
@@ -180,6 +186,7 @@ public class WorldSettingsData {
         worldType = World_Type.Pitto;
         victoryCondition = VICTORY_CONDITION.Create_Demon_Cult;
         SetDefaultSpellSettings(victoryCondition);
+        mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
         factionSettings.AllowNewFactions();
@@ -188,6 +195,7 @@ public class WorldSettingsData {
         playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     public void ApplyCustomWorldSettings() {
+        mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.AllowNewVillages();
         factionSettings.AllowNewFactions();
