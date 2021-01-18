@@ -84,6 +84,9 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	private IEnumerator CreateWorldEvents() {
 		//WorldEventManager.Instance.AddActiveEvent(new VillagerMigration());
 		WorldEventManager.Instance.AddActiveEvent(new CultLeaderEvent());
+		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+			WorldEventManager.Instance.AddActiveEvent(new UndeadAttackEvent());
+		}
 		yield return null;
 	}
 	private IEnumerator LoadWorldEvents(SaveDataCurrentProgress saveData) {
