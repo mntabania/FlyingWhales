@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Traits;
 
 public class IcalawaWinConditionTracker : WinconditionTracker {
@@ -19,10 +20,10 @@ public class IcalawaWinConditionTracker : WinconditionTracker {
     #endregion
 
     public Character psychoPath { set; get; }
-
     public List<Character> villagersToEliminate { get; private set; }
     public int totalCharactersToEliminate { get; private set; }
-
+    public override Type serializedData => typeof(SaveDataIcalawaWinConditionTracker);
+    
     public override void Initialize(List<Character> p_allCharacters) {
         base.Initialize(p_allCharacters);
 
@@ -39,6 +40,18 @@ public class IcalawaWinConditionTracker : WinconditionTracker {
         }
         totalCharactersToEliminate = 5;
     }
+
+    #region Loading
+    public override void LoadReferences(SaveDataWinConditionTracker data) {
+        base.LoadReferences(data);
+        SaveDataIcalawaWinConditionTracker tracker = data as SaveDataIcalawaWinConditionTracker;
+        if (!string.IsNullOrEmpty(tracker.psychopath)) {
+            psychoPath = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(tracker.psychopath);
+        }
+        villagersToEliminate = SaveUtilities.ConvertIDListToCharacters(tracker.villagersToEliminate);
+        totalCharactersToEliminate = tracker.totalCharactersToEliminate;
+    }
+    #endregion
 
     #region List Maintenance
     private void EliminateVillager(Character p_character) {
@@ -110,5 +123,20 @@ public class IcalawaWinConditionTracker : WinconditionTracker {
     }
     public void UnsubscribeToChangeTraitEvents(IcalawaWinConditionTracker.IListenerChangeTraits p_listener) {
         _characterSuccessChangeTraitToPsychopath -= p_listener.OnCharacterChangeTrait;
+    }
+}
+
+public class SaveDataIcalawaWinConditionTracker : SaveDataWinConditionTracker {
+    public string psychopath;
+    public List<string> villagersToEliminate;
+    public int totalCharactersToEliminate;
+    public override void Save(WinconditionTracker data) {
+        base.Save(data);
+        IcalawaWinConditionTracker tracker = data as IcalawaWinConditionTracker;
+        if (tracker.psychoPath != null) {
+            psychopath = tracker.psychoPath.persistentID;    
+        }
+        villagersToEliminate = SaveUtilities.ConvertSavableListToIDs(tracker.villagersToEliminate);
+        totalCharactersToEliminate = tracker.totalCharactersToEliminate;
     }
 }

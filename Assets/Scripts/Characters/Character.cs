@@ -378,6 +378,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         hasBeenRaisedFromDead = data.hasBeenRaisedFromDead;
         interestedItemNames = data.interestedItemNames;
         state = data.state;
+        causeOfDeath = data.causeOfDeath;
         previousClassName = data.previousClassName;
         isPreplaced = data.isPreplaced;
 

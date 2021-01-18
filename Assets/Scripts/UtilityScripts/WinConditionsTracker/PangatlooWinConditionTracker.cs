@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Ruinarch;
 using UnityEngine;
@@ -18,7 +19,8 @@ public class PangatlooWinConditionTracker : WinconditionTracker {
 
     public List<Character> villagersToEliminate { get; private set; }
     public int totalCharactersToEliminate { get; private set; }
-
+    public override Type serializedData => typeof(SaveDataPangatLooWinConditionTracker);
+    
     public override void Initialize(List<Character> p_allCharacters) {
         base.Initialize(p_allCharacters);
 
@@ -28,7 +30,7 @@ public class PangatlooWinConditionTracker : WinconditionTracker {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_BECOME_CULTIST, CheckIfCharacterIsEliminated);
         Messenger.AddListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_NO_LONGER_CULTIST, OnCharacterNoLongerCultist);
-        Messenger.AddListener<int>(Signals.DAY_STARTED, OnDayChange);
+        Messenger.AddListener(Signals.DAY_STARTED, OnDayChange);
 
         List<Character> villagers = GetAllCharactersToBeEliminated(p_allCharacters);
         villagersToEliminate.Clear();
@@ -37,6 +39,15 @@ public class PangatlooWinConditionTracker : WinconditionTracker {
         }
         totalCharactersToEliminate = villagersToEliminate.Count;
     }
+    
+    #region Loading
+    public override void LoadReferences(SaveDataWinConditionTracker data) {
+        base.LoadReferences(data);
+        SaveDataPangatLooWinConditionTracker tracker = data as SaveDataPangatLooWinConditionTracker;
+        villagersToEliminate = SaveUtilities.ConvertIDListToCharacters(tracker.villagersToEliminate);
+        totalCharactersToEliminate = tracker.totalCharactersToEliminate;
+    }
+    #endregion
 
     #region List Maintenance
     private void EliminateVillager(Character p_character) {
@@ -68,7 +79,8 @@ public class PangatlooWinConditionTracker : WinconditionTracker {
     private void OnCharacterNoLongerCultist(Character p_character) {
         AddVillagerToEliminate(p_character);
     }
-    private void OnDayChange(int p_currentDay) {
+    private void OnDayChange() {
+        int p_currentDay = GameManager.Instance.continuousDays; 
         if (p_currentDay > 8 && villagersToEliminate.Count > 0) {
             PlayerUI.Instance.LoseGameOver("You failed to eliminate all the villagers!");
         } else {
@@ -85,5 +97,16 @@ public class PangatlooWinConditionTracker : WinconditionTracker {
         _characterEliminatedAction -= p_listener.OnCharacterEliminated;
         _characterAddedAsTargetAction -= p_listener.OnCharacterAddedAsTarget;
         _onDayChangedAction -= p_listener.OnDayChangedAction;
+    }
+}
+
+public class SaveDataPangatLooWinConditionTracker : SaveDataWinConditionTracker {
+    public List<string> villagersToEliminate;
+    public int totalCharactersToEliminate;
+    public override void Save(WinconditionTracker data) {
+        base.Save(data);
+        PangatlooWinConditionTracker tracker = data as PangatlooWinConditionTracker;
+        villagersToEliminate = SaveUtilities.ConvertSavableListToIDs(tracker.villagersToEliminate);
+        totalCharactersToEliminate = tracker.totalCharactersToEliminate;
     }
 }

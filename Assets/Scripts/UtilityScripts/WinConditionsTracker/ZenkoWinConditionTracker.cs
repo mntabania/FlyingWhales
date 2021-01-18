@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Ruinarch;
-using UnityEngine;
-using UtilityScripts;
+﻿using System;
+using System.Collections.Generic;
 
 public class ZenkoWinConditionTracker : WinconditionTracker {
 
@@ -10,15 +7,27 @@ public class ZenkoWinConditionTracker : WinconditionTracker {
 
     public int RemainingWarDeclaration { private set; get; }
     public int RemainingFactions { private set; get; }
-
-    private int PossibleWarDeclaration { set; get; }
-
+    public int PossibleWarDeclaration { set; get; }
     private Dictionary<string, List<string>> m_factionsWarDeclarationHistory = new Dictionary<string, List<string>>();
+
+    public Dictionary<string, List<string>> factionsWarDeclarationHistory => m_factionsWarDeclarationHistory;
+    public override Type serializedData => typeof(SaveDataZenkoWinConditionTracker);
 
     public interface Listener {
         void OnFactionRelationshipChanged(int p_remainingWarDeclaration);
     }
 
+    #region Loading
+    public override void LoadReferences(SaveDataWinConditionTracker data) {
+        base.LoadReferences(data);
+        SaveDataZenkoWinConditionTracker tracker = data as SaveDataZenkoWinConditionTracker;
+        RemainingWarDeclaration = tracker.RemainingWarDeclaration;
+        RemainingFactions = tracker.RemainingFactions;
+        PossibleWarDeclaration = tracker.PossibleWarDeclaration;
+        m_factionsWarDeclarationHistory = tracker.factionsWarDeclarationHistory;
+    }
+    #endregion
+    
     public override void Initialize(List<Character> p_allCharacters) {
         base.Initialize(p_allCharacters);
         RemainingWarDeclaration = 3;
@@ -29,17 +38,25 @@ public class ZenkoWinConditionTracker : WinconditionTracker {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_NO_LONGER_CULTIST, OnCharacterNoLongerCultist);
         Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
         Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
-        Messenger.AddListener<Faction, Faction, FactionRelationship, FactionRelationship>(FactionSignals.CHANGE_FACTION_RELATIONSHIP, OnFactionRelationshipChanged);
+        Messenger.AddListener<Faction, Faction, FACTION_RELATIONSHIP_STATUS, FACTION_RELATIONSHIP_STATUS>(FactionSignals.CHANGE_FACTION_RELATIONSHIP, OnFactionRelationshipChanged);
     
     }
 
-    private void OnFactionRelationshipChanged(Faction p_callerFaction, Faction p_subjectFaction, FactionRelationship p_newRelationship, FactionRelationship p_oldRelationship) {
-        if (!m_factionsWarDeclarationHistory[p_callerFaction.name].Contains(p_subjectFaction.name)) {
-            m_factionsWarDeclarationHistory[p_callerFaction.name].Add(p_subjectFaction.name);
-            m_factionsWarDeclarationHistory[p_subjectFaction.name].Add(p_callerFaction.name);
-            RemainingWarDeclaration--;
+    private void OnFactionRelationshipChanged(Faction p_callerFaction, Faction p_subjectFaction, FACTION_RELATIONSHIP_STATUS p_newRelationship, FACTION_RELATIONSHIP_STATUS p_oldRelationship) {
+        if (GameManager.Instance.gameHasStarted && p_callerFaction.isMajorNonPlayer && p_subjectFaction.isMajorNonPlayer && p_newRelationship == FACTION_RELATIONSHIP_STATUS.Hostile) {
+            if (!m_factionsWarDeclarationHistory.ContainsKey(p_callerFaction.name)) {
+                m_factionsWarDeclarationHistory.Add(p_callerFaction.name, new List<string>());
+            }
+            if (!m_factionsWarDeclarationHistory.ContainsKey(p_subjectFaction.name)) {
+                m_factionsWarDeclarationHistory.Add(p_subjectFaction.name, new List<string>());
+            }
+            if (!m_factionsWarDeclarationHistory[p_callerFaction.name].Contains(p_subjectFaction.name)) {
+                m_factionsWarDeclarationHistory[p_callerFaction.name].Add(p_subjectFaction.name);
+                m_factionsWarDeclarationHistory[p_subjectFaction.name].Add(p_callerFaction.name);
+                RemainingWarDeclaration--;
+            }
+            _factionRelationshipChanged?.Invoke(RemainingWarDeclaration);    
         }
-        _factionRelationshipChanged?.Invoke(RemainingWarDeclaration);
     }
 
     private void UpdateFactionInfo() {
@@ -106,5 +123,20 @@ public class ZenkoWinConditionTracker : WinconditionTracker {
     public void Unsubscribe(Listener p_listener) {
         _factionRelationshipChanged -= p_listener.OnFactionRelationshipChanged;
         
+    }
+}
+
+public class SaveDataZenkoWinConditionTracker : SaveDataWinConditionTracker {
+    public int RemainingWarDeclaration;
+    public int RemainingFactions;
+    public int PossibleWarDeclaration;
+    public Dictionary<string, List<string>> factionsWarDeclarationHistory;
+    public override void Save(WinconditionTracker data) {
+        base.Save(data);
+        ZenkoWinConditionTracker tracker = data as ZenkoWinConditionTracker;
+        RemainingWarDeclaration = tracker.RemainingWarDeclaration;
+        RemainingFactions = tracker.RemainingFactions;
+        PossibleWarDeclaration = tracker.PossibleWarDeclaration;
+        factionsWarDeclarationHistory = tracker.factionsWarDeclarationHistory;
     }
 }

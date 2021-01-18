@@ -15,15 +15,18 @@ namespace Quests {
 
         public KillVillagersByPsychopath() : base($"Eliminate 5 Villagers using a psychopath") { }
         protected override void ConstructSteps() {
-            QuestStep turnVillagerToPsychopathStep = new TurnAvillagerToPsychopathStep(GetTurnVillagerToPsychopathDescription);
+            steps = new List<QuestStepCollection>();
+            IcalawaWinConditionTracker winConditionTracker = QuestManager.Instance.winConditionTracker as IcalawaWinConditionTracker;
+            if (winConditionTracker != null && winConditionTracker.psychoPath != null && !winConditionTracker.psychoPath.traitContainer.HasTrait("Psychopath")) {
+                QuestStep turnVillagerToPsychopathStep = new TurnAvillagerToPsychopathStep(GetTurnVillagerToPsychopathDescription);
+                steps.Add(new QuestStepCollection(turnVillagerToPsychopathStep));
+            }
             _eliminateVillagerStep = new KillVillagersByPsychopathStep(GetEliminateAllVillagersDescription);
-            _eliminateVillagerStep.SetObjectsToCenter((QuestManager.Instance.winConditionTracker as IcalawaWinConditionTracker).villagersToEliminate.Count > 0
-                ? (QuestManager.Instance.winConditionTracker as IcalawaWinConditionTracker).villagersToEliminate.Select(x => x as ISelectable).ToList()
+            IcalawaWinConditionTracker icalawaWinConditionTracker = QuestManager.Instance.winConditionTracker as IcalawaWinConditionTracker;
+            _eliminateVillagerStep.SetObjectsToCenter(icalawaWinConditionTracker.villagersToEliminate.Count > 0
+                ? icalawaWinConditionTracker.villagersToEliminate.Select(x => x as ISelectable).ToList()
                 : new List<ISelectable>());
-            steps = new List<QuestStepCollection>() {
-                new QuestStepCollection(turnVillagerToPsychopathStep),
-                new QuestStepCollection(_eliminateVillagerStep),
-            };
+            steps.Add(new QuestStepCollection(_eliminateVillagerStep));
         }
 
         #region Step Helpers

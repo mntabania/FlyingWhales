@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Ruinarch;
 using UnityEngine;
@@ -16,7 +17,8 @@ public class AneemWinConditionTracker : WinconditionTracker {
 
     public List<Character> villagersToEliminate { get; private set; }
     public int totalCharactersToEliminate { get; private set; }
-
+    public override Type serializedData => typeof(SaveDataAneemWinConditionTracker);
+    
     public override void Initialize(List<Character> p_allCharacters) {
         base.Initialize(p_allCharacters);
 
@@ -26,7 +28,7 @@ public class AneemWinConditionTracker : WinconditionTracker {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_BECOME_CULTIST, CheckIfCharacterIsEliminated);
         Messenger.AddListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_NO_LONGER_CULTIST, OnCharacterNoLongerCultist);
-
+        
         List<Character> villagers = GetAllCharactersToBeEliminated(p_allCharacters);
         villagersToEliminate.Clear();
         for (int i = 0; i < villagers.Count; i++) {
@@ -35,6 +37,15 @@ public class AneemWinConditionTracker : WinconditionTracker {
         totalCharactersToEliminate = 10;
     }
 
+    #region Loading
+    public override void LoadReferences(SaveDataWinConditionTracker data) {
+        base.LoadReferences(data);
+        SaveDataAneemWinConditionTracker tracker = data as SaveDataAneemWinConditionTracker;
+        villagersToEliminate = SaveUtilities.ConvertIDListToCharacters(tracker.villagersToEliminate);
+        totalCharactersToEliminate = tracker.totalCharactersToEliminate;
+    }
+    #endregion
+    
     #region List Maintenance
     private void EliminateVillager(Character p_character) {
         if (villagersToEliminate.Remove(p_character)) {
@@ -78,5 +89,16 @@ public class AneemWinConditionTracker : WinconditionTracker {
     public void Unsubscribe(OonaWinConditionTracker.Listener p_listener) {
         _characterEliminatedAction -= p_listener.OnCharacterEliminated;
         _characterAddedAsTargetAction -= p_listener.OnCharacterAddedAsTarget;
+    }
+}
+
+public class SaveDataAneemWinConditionTracker : SaveDataWinConditionTracker {
+    public List<string> villagersToEliminate;
+    public int totalCharactersToEliminate;
+    public override void Save(WinconditionTracker data) {
+        base.Save(data);
+        AneemWinConditionTracker tracker = data as AneemWinConditionTracker;
+        villagersToEliminate = SaveUtilities.ConvertSavableListToIDs(tracker.villagersToEliminate);
+        totalCharactersToEliminate = tracker.totalCharactersToEliminate;
     }
 }

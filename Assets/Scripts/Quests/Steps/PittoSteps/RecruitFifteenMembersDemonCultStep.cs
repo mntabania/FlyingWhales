@@ -22,7 +22,7 @@ namespace Quests.Steps {
             CheckForCompletion(p_character);
         }
         private void CheckForCompletion(Character p_character) {
-            if ((QuestManager.Instance.winConditionTracker as PittoWinConditionTracker).culstists.Count >= 15){
+            if ((QuestManager.Instance.winConditionTracker as PittoWinConditionTracker).cultists.Count >= 15){
                 Complete();
                 Messenger.Broadcast(PlayerSignals.WIN_GAME);
             }
@@ -33,7 +33,7 @@ namespace Quests.Steps {
         #region Description
         protected override string GetStepDescription() {
             if (_descriptionGetter != null) {
-                return _descriptionGetter.Invoke((QuestManager.Instance.winConditionTracker as PittoWinConditionTracker).culstists.Count);
+                return _descriptionGetter.Invoke((QuestManager.Instance.winConditionTracker as PittoWinConditionTracker).cultists.Count);
             }
             return base.GetStepDescription();
         }
