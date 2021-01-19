@@ -31,13 +31,13 @@ public class SettlementGeneration : MapGenerationComponent {
 	}
 	private IEnumerator CreateSettlements(Region region, MapGenerationData data) {
 		foreach (var setting in data.determinedVillages) {
-			FactionSetting factionSetting = setting.Key;
-			Faction faction = FactionManager.Instance.CreateNewFaction(factionSetting.factionType, factionSetting.name, factionSetting.factionEmblem);
+			FactionTemplate factionTemplate = setting.Key;
+			Faction faction = FactionManager.Instance.CreateNewFaction(factionTemplate.factionType, factionTemplate.name, factionTemplate.factionEmblem);
 			faction.factionType.SetAsDefault();
 			LOCATION_TYPE locationType = GetLocationTypeForRace(faction.race);
 			for (int i = 0; i < setting.Value.Count; i++) {
 				HexTile settlementTile = setting.Value[i];
-				VillageSetting villageSetting = factionSetting.villageSettings[i];
+				VillageSetting villageSetting = factionTemplate.villageSettings[i];
 				NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement(region, locationType, settlementTile);
 				npcSettlement.SetName(villageSetting.villageName);
 				LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);
@@ -129,6 +129,9 @@ public class SettlementGeneration : MapGenerationComponent {
 				new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE),
 				new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE),
 			};
+			for (int i = 0; i < 9; i++) {
+				structureSettings.Add(new StructureSetting(STRUCTURE_TYPE.DWELLING, p_faction.factionType.mainResource));
+			}
 		}
 		else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			structureSettings = new List<StructureSetting>() {
@@ -461,7 +464,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				//Apothecary: +6 (disable if already selected from previous hex tile)
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.HOSPICE, RESOURCE.WOOD), 6); //6
 			}
-			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 1); //Farm: +1
+			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 15); //1 //Farm: +1
 			if (!structureTypes.Contains(STRUCTURE_TYPE.TAVERN)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.WOOD), 3);
 			}
@@ -470,13 +473,17 @@ public class SettlementGeneration : MapGenerationComponent {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.WOOD), 2);
 			}
 			if (tilesInRange.HasTileWithFeature(TileFeatureDB.Fertile_Feature)) {
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 15);	
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 10); //15	
 			}
 			if (tilesInRange.HasTileWithFeature(TileFeatureDB.Wood_Source_Feature)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.WOOD), 15);	
 			}
 		} else if (faction.factionType.type == FACTION_TYPE.Human_Empire) {
-			if (structureTypes.Contains(STRUCTURE_TYPE.MAGE_QUARTERS) == false) {
+            structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 15); //1 //Farm: +1
+            if (tilesInRange.HasTileWithFeature(TileFeatureDB.Fertile_Feature)) {
+                structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 10); //15
+            }
+            if (structureTypes.Contains(STRUCTURE_TYPE.MAGE_QUARTERS) == false) {
 				//Mage Quarter: +6 (disable if already selected from previous hex tile)
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.MAGE_QUARTERS, RESOURCE.STONE), 6);
 			}

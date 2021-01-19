@@ -5,13 +5,13 @@ using UnityEngine.UI;
 
 public class FactionSettingUIItem : MonoBehaviour {
 
-    public static System.Action<FactionSetting, FactionSettingUIItem> onClickMinus;
-    public static System.Action<FactionSetting, string> onChangeName;
-    public static System.Action<FactionSetting, FactionSettingUIItem> onClickRandomizeName;
-    public static System.Action<FactionSetting, string> onChangeFactionType;
-    public static System.Action<FactionSetting> onClickEditVillages;
-    public static System.Action<FactionSetting> onHoverOverEditVillages;
-    public static System.Action<FactionSetting> onHoverOutEditVillages;
+    public static System.Action<FactionTemplate, FactionSettingUIItem> onClickMinus;
+    public static System.Action<FactionTemplate, string> onChangeName;
+    public static System.Action<FactionTemplate, FactionSettingUIItem> onClickRandomizeName;
+    public static System.Action<FactionTemplate, string> onChangeFactionType;
+    public static System.Action<FactionTemplate> onClickEditVillages;
+    public static System.Action<FactionTemplate> onHoverOverEditVillages;
+    public static System.Action<FactionTemplate> onHoverOutEditVillages;
     
     public Button btnMinus;
     public Image imgFactionEmblem;
@@ -23,7 +23,7 @@ public class FactionSettingUIItem : MonoBehaviour {
 
     public HoverHandler hoverHandlerEditVillages;
 
-    private FactionSetting _factionSetting;
+    private FactionTemplate _factionTemplate;
     
     private void OnEnable() {
         btnMinus.onClick.AddListener(OnClickMinus);
@@ -51,12 +51,12 @@ public class FactionSettingUIItem : MonoBehaviour {
     public void Reset() {
         dropDownFactionType.SetValueWithoutNotify(0);
     }
-    public void SetItemDetails(FactionSetting p_factionSetting) {
-        _factionSetting = p_factionSetting;
-        imgFactionEmblem.sprite = p_factionSetting.factionEmblem;
-        UpdateName(p_factionSetting.name);
-        dropDownFactionType.value = dropDownFactionType.GetDropdownOptionIndex(p_factionSetting.factionTypeString);
-        txtVillageCount.text = p_factionSetting.villageSettings.Count.ToString();
+    public void SetItemDetails(FactionTemplate p_FactionTemplate) {
+        _factionTemplate = p_FactionTemplate;
+        imgFactionEmblem.sprite = p_FactionTemplate.factionEmblem;
+        UpdateName(p_FactionTemplate.name);
+        dropDownFactionType.value = dropDownFactionType.GetDropdownOptionIndex(p_FactionTemplate.factionTypeString);
+        txtVillageCount.text = p_FactionTemplate.villageSettings.Count.ToString();
     }
     public void SetMinusBtnState(bool p_state) {
         btnMinus.gameObject.SetActive(p_state);
@@ -66,25 +66,25 @@ public class FactionSettingUIItem : MonoBehaviour {
     }
 
     private void OnClickMinus() {
-        onClickMinus?.Invoke(_factionSetting, this);
+        onClickMinus?.Invoke(_factionTemplate, this);
     }
     private void OnChangeName(string p_newValue) {
-        onChangeName?.Invoke(_factionSetting, p_newValue);
+        onChangeName?.Invoke(_factionTemplate, p_newValue);
     }
     private void OnClickRandomizeName() {
-        onClickRandomizeName?.Invoke(_factionSetting, this);
+        onClickRandomizeName?.Invoke(_factionTemplate, this);
     }
     private void OnChangeFactionType(int p_index) {
         string chosen = UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(dropDownFactionType.options[p_index].text);
-        onChangeFactionType?.Invoke(_factionSetting, chosen);
+        onChangeFactionType?.Invoke(_factionTemplate, chosen);
     }
     private void OnClickEditVillages() {
-        onClickEditVillages?.Invoke(_factionSetting);
+        onClickEditVillages?.Invoke(_factionTemplate);
     }
     private void OnHoverOverEditVillages() {
-        onHoverOverEditVillages?.Invoke(_factionSetting);
+        onHoverOverEditVillages?.Invoke(_factionTemplate);
     }
     private void OnHoverOutEditVillages() {
-        onHoverOutEditVillages?.Invoke(_factionSetting);
+        onHoverOutEditVillages?.Invoke(_factionTemplate);
     }
 }

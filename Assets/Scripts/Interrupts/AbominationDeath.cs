@@ -21,7 +21,7 @@ namespace Interrupts {
             Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Abomination, FactionManager.Instance.neutralFaction);
             summon.SetFirstAndLastName(interruptHolder.actor.firstName, interruptHolder.actor.surName);
             interruptHolder.actor.deathLog.AddInvolvedObjectManual(summon.persistentID);
-            CharacterManager.Instance.PlaceSummon(summon, gridTileLocation);
+            CharacterManager.Instance.PlaceSummonInitially(summon, gridTileLocation);
 
             if (UIManager.Instance.characterInfoUI.isShowing && 
                 UIManager.Instance.characterInfoUI.activeCharacter == interruptHolder.actor) {

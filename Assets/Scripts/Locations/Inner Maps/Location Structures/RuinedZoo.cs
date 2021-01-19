@@ -36,7 +36,7 @@ namespace Inner_Maps.Location_Structures {
                 Summon newSummon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, settlementLocation, region, this);
                 List<LocationGridTile> tileChoices = structureRoom.tilesInRoom.Where(x => x.IsPassable()).ToList();
                 LocationGridTile targetTile = CollectionUtilities.GetRandomElement(tileChoices);
-                CharacterManager.Instance.PlaceSummon(newSummon, targetTile);
+                CharacterManager.Instance.PlaceSummonInitially(newSummon, targetTile);
                 newSummon.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
                 newSummon.movementComponent.SetEnableDigging(false);
             }

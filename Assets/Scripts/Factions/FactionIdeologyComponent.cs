@@ -31,29 +31,31 @@ public class FactionIdeologyComponent : FactionComponent {
     }
 
     public void OnLeaderBecameCultist(Character leader) {
-        FactionIdeology currentInclusivityIdeology = null;
-        for (int i = 0; i < owner.factionType.ideologies.Count; i++) {
-            FactionIdeology ideology = owner.factionType.ideologies[i];
-            if (ideology.ideologyType == FACTION_IDEOLOGY.Exclusive ||
-                ideology.ideologyType == FACTION_IDEOLOGY.Inclusive) {
-                currentInclusivityIdeology = ideology;
-                break;
+        if (!WorldSettings.Instance.worldSettingsData.factionSettings.disableFactionIdeologyChanges) {
+            FactionIdeology currentInclusivityIdeology = null;
+            for (int i = 0; i < owner.factionType.ideologies.Count; i++) {
+                FactionIdeology ideology = owner.factionType.ideologies[i];
+                if (ideology.ideologyType == FACTION_IDEOLOGY.Exclusive ||
+                    ideology.ideologyType == FACTION_IDEOLOGY.Inclusive) {
+                    currentInclusivityIdeology = ideology;
+                    break;
+                }
             }
+            owner.factionType.ClearIdeologies();
+
+            //Set Peace-Type Ideology:
+            FactionManager.Instance.RerollPeaceTypeIdeology(owner, leader);
+
+            //Set Inclusivity-Type Ideology:
+            if (currentInclusivityIdeology != null) {
+                owner.factionType.AddIdeology(currentInclusivityIdeology);
+            } else {
+                FactionManager.Instance.RerollInclusiveTypeIdeology(owner, leader);
+            }
+
+            //Set Religion-Type Ideology:
+            FactionManager.Instance.RerollReligionTypeIdeology(owner, leader);
         }
-        owner.factionType.ClearIdeologies();
-
-        //Set Peace-Type Ideology:
-        FactionManager.Instance.RerollPeaceTypeIdeology(owner, leader);
-
-        //Set Inclusivity-Type Ideology:
-        if (currentInclusivityIdeology != null) {
-            owner.factionType.AddIdeology(currentInclusivityIdeology);
-        } else {
-            FactionManager.Instance.RerollInclusiveTypeIdeology(owner, leader);
-        }
-
-        //Set Religion-Type Ideology:
-        FactionManager.Instance.RerollReligionTypeIdeology(owner, leader);
         
         //Validate crimes
         FactionManager.Instance.RevalidateFactionCrimes(owner, leader);

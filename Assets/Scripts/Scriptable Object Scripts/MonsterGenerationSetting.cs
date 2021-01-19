@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+
 [CreateAssetMenu(fileName = "New Monster Generation Setting", menuName = "Scriptable Objects/Monster Generation")]
  public class MonsterGenerationSetting : ScriptableObject {
      [SerializeField] private IntRange _iterations;

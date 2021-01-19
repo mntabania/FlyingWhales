@@ -72,7 +72,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         objectVisual.sprite = sprite;
         hoverObject.sprite = sprite;
     }
-    public void SetColor(Color color) {
+    private void SetColor(Color color) {
         objectVisual.color = color;
     }
     public void SetActiveState(bool state) {
@@ -83,7 +83,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         color.a = alpha;
         SetColor(color);
     }
-    public void SetHoverObjectState(bool state) {
+    protected void SetHoverObjectState(bool state) {
         if (isHoverObjectStateLocked) {
             return; //ignore change because hover state is locked
         }
@@ -95,10 +95,10 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         }
         hoverObject.gameObject.SetActive(state);
     }
-    public void LockHoverObject() {
+    protected void LockHoverObject() {
         isHoverObjectStateLocked = true;
     }
-    public void UnlockHoverObject() {
+    protected void UnlockHoverObject() {
         isHoverObjectStateLocked = false;
     }
     public StatusIcon AddStatusIcon(string statusName) {
@@ -166,6 +166,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     #region Object Pool
     public override void Reset() {
         base.Reset();
+        isHoverObjectStateLocked = false;
         if (objectVisual != null ) {
             SetVisualAlpha(1f);    
         }

@@ -19,7 +19,19 @@ namespace Interrupts {
             Faction faction = actor.faction;
             if (actor.isFactionLeader && faction.factionType.type != FACTION_TYPE.Demon_Cult) {
                 //Change faction type to Demon Cult
+                List<FactionIdeology> previousIdeologies = new List<FactionIdeology>(faction.factionType.ideologies);
                 faction.ChangeFactionType(FACTION_TYPE.Demon_Cult);
+                
+                if (!WorldSettings.Instance.worldSettingsData.factionSettings.disableFactionIdeologyChanges) {
+                    for (int i = 0; i < previousIdeologies.Count; i++) {
+                        FactionIdeology ideology = previousIdeologies[i];
+                        if (ideology.ideologyType.IsReligionType() || ideology.ideologyType.IsInclusivityType()) {
+                            continue; //keep demon worship ideologies
+                        } else {
+                            faction.factionType.AddIdeology(ideology.ideologyType);
+                        }
+                    }
+                }
 
                 //Evaluate all character if they will stay or leave
                 for (int i = 0; i < faction.characters.Count; i++) {
@@ -29,27 +41,32 @@ namespace Interrupts {
                     }
                 }
 
-                //Set Peace-Type Ideology:
-                FactionManager.Instance.RerollPeaceTypeIdeology(faction, actor);
+                if (!WorldSettings.Instance.worldSettingsData.factionSettings.disableFactionIdeologyChanges) {
+                    //Set Peace-Type Ideology:
+                    FactionManager.Instance.RerollPeaceTypeIdeology(faction, actor);
 
-                //Set Inclusivity-Type Ideology:
-                FactionManager.Instance.RerollInclusiveTypeIdeology(faction, actor);
+                    //Set Inclusivity-Type Ideology:
+                    FactionManager.Instance.RerollInclusiveTypeIdeology(faction, actor);
 
-                //Set Religion-Type Ideology:
-                FactionManager.Instance.RerollReligionTypeIdeology(faction, actor);
+                    //Set Religion-Type Ideology:
+                    FactionManager.Instance.RerollReligionTypeIdeology(faction, actor);
 
-                //Set Faction Leader Trait Based Ideology:
-                FactionManager.Instance.RerollFactionLeaderTraitIdeology(faction, actor);
-
+                    //Set Faction Leader Trait Based Ideology:
+                    FactionManager.Instance.RerollFactionLeaderTraitIdeology(faction, actor);
+                    
+                    Messenger.Broadcast(FactionSignals.FACTION_IDEOLOGIES_CHANGED, faction);
+                }
+                
                 //Validate crimes
                 FactionManager.Instance.RevalidateFactionCrimes(faction, actor);
-
-                Messenger.Broadcast(FactionSignals.FACTION_IDEOLOGIES_CHANGED, faction);
+                
                 Messenger.Broadcast(FactionSignals.FACTION_CRIMES_CHANGED, faction);
 
-                //create relationships
-                //NOTE: Should not default relationships to neutral when leader changes, because we only want to overwrite relationships if other leader is friend/enemy 
-                FactionManager.Instance.RerollFactionRelationships(faction, actor, false, true);
+                if (!WorldSettings.Instance.worldSettingsData.factionSettings.disableFactionIdeologyChanges) {
+                    //create relationships
+                    //NOTE: Should not default relationships to neutral when leader changes, because we only want to overwrite relationships if other leader is friend/enemy 
+                    FactionManager.Instance.RerollFactionRelationships(faction, actor, false, true);    
+                }
 
                 Log changeIdeologyLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "ideology_change", null, LOG_TAG.Life_Changes);
                 changeIdeologyLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);

@@ -63,7 +63,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		
 		stopwatch.Reset();
 		stopwatch.Start();
-		yield return MapGenerator.Instance.StartCoroutine(LoadArtifacts());
+		yield return MapGenerator.Instance.StartCoroutine(GenerateArtifacts());
 		stopwatch.Stop();
 		AddLog($"LoadArtifacts took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
 		
@@ -84,6 +84,9 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	private IEnumerator CreateWorldEvents() {
 		//WorldEventManager.Instance.AddActiveEvent(new VillagerMigration());
 		WorldEventManager.Instance.AddActiveEvent(new CultLeaderEvent());
+		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+			WorldEventManager.Instance.AddActiveEvent(new UndeadAttackEvent());
+		}
 		yield return null;
 	}
 	private IEnumerator LoadWorldEvents(SaveDataCurrentProgress saveData) {
@@ -100,22 +103,22 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
 	}
-	public static void ScenarioItemGenerationAfterPickingLoadout() {
-		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
-			//spawn 1 desert rose
-			Region region = GridMap.Instance.allRegions[0];
-			LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-			List<LocationGridTile> locationChoices = wilderness.unoccupiedTiles.Where(t =>
-				t.collectionOwner.isPartOfParentRegionMap && !t.IsAtEdgeOfMap() &&
-				t.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == null &&
-				!t.collectionOwner.partOfHextile.hexTileOwner.IsAtEdgeOfMap() &&
-				t.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.PLAIN).ToList();
-			LocationGridTile desertRoseLocation = CollectionUtilities.GetRandomElement(locationChoices);
-			desertRoseLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.DESERT_ROSE), desertRoseLocation);
-			locationChoices.Remove(desertRoseLocation);
-			Debug.Log($"Placed desert rose at {desertRoseLocation.localPlace.ToString()}");	
-		}
-	}
+	// public static void ScenarioItemGenerationAfterPickingLoadout() {
+	// 	if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+	// 		//spawn 1 desert rose
+	// 		Region region = GridMap.Instance.allRegions[0];
+	// 		LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+	// 		List<LocationGridTile> locationChoices = wilderness.unoccupiedTiles.Where(t =>
+	// 			t.collectionOwner.isPartOfParentRegionMap && !t.IsAtEdgeOfMap() &&
+	// 			t.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == null &&
+	// 			!t.collectionOwner.partOfHextile.hexTileOwner.IsAtEdgeOfMap() &&
+	// 			t.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.PLAIN).ToList();
+	// 		LocationGridTile desertRoseLocation = CollectionUtilities.GetRandomElement(locationChoices);
+	// 		desertRoseLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.DESERT_ROSE), desertRoseLocation);
+	// 		locationChoices.Remove(desertRoseLocation);
+	// 		Debug.Log($"Placed desert rose at {desertRoseLocation.localPlace.ToString()}");	
+	// 	}
+	// }
 	#endregion
 	
 	#region Saved World
@@ -365,7 +368,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	#endregion
 
 	#region Artifacts
-	private IEnumerator LoadArtifacts() {
+	private IEnumerator GenerateArtifacts() {
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			//if demo build, always spawn necronomicon at ancient ruins
 			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
@@ -413,6 +416,28 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			Debug.Log($"Placed Excalibur at {excalibur.gridTileLocation}");
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
 			List<BaseLandmark> landmarks = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
+			LocationStructure structure = landmarks[0].tileLocation.GetMostImportantStructureOnTile();
+			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Berserk_Orb);
+			structure.AddPOI(artifact);
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Aneem) {
+			int artifactCount = 4;
+			List<ARTIFACT_TYPE> artifactChoices = new List<ARTIFACT_TYPE>() {
+				ARTIFACT_TYPE.Necronomicon, ARTIFACT_TYPE.Heart_Of_The_Wind, ARTIFACT_TYPE.Gorgon_Eye, ARTIFACT_TYPE.Berserk_Orb, ARTIFACT_TYPE.Ankh_Of_Anubis
+			};
+			//randomly generate Artifacts
+			for (int i = 0; i < artifactCount; i++) {
+				if (artifactChoices.Count == 0) { break; }
+				Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
+				LocationStructure specialStructure = randomRegion.GetRandomStructureThatMeetCriteria(currStructure => currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0);
+				if (specialStructure != null) {
+					ARTIFACT_TYPE randomArtifact = CollectionUtilities.GetRandomElement(artifactChoices);
+					Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(randomArtifact);
+					specialStructure.AddPOI(artifact);
+					artifactChoices.Remove(randomArtifact);	
+				}
+			}
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
+			List<BaseLandmark> landmarks = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MAGE_TOWER);
 			LocationStructure structure = landmarks[0].tileLocation.GetMostImportantStructureOnTile();
 			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Berserk_Orb);
 			structure.AddPOI(artifact);

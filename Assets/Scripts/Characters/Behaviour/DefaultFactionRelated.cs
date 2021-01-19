@@ -26,19 +26,21 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
                 return true;
             } else {
                 log += $"\nDid not meet chance to join faction. Checking if can create faction...";
-                int villagerFactionCount = FactionManager.Instance.GetActiveVillagerFactionCount();
-                log += $"\nActive villager faction count is {villagerFactionCount.ToString()}";
-                if (villagerFactionCount < 20) {
-                    log += $"\nActive villager factions is less than 20, rolling chances";
-                    int factionsInRegion = GetFactionsInRegion(character.currentRegion);
-                    float createChance = factionsInRegion >= 2 ? 2f : 3f;
-                    if (character.traitContainer.HasTrait("Inspiring", "Ambitious")) {
-                        createChance = factionsInRegion >= 2 ? 0.5f : 15f;
-                    }
-                    if (GameUtilities.RollChance(createChance)) {
-                        log += $"\nChance met, creating new faction";
-                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Faction, character);
-                        return true;
+                if (!WorldSettings.Instance.worldSettingsData.factionSettings.disableNewFactions) {
+                    int villagerFactionCount = FactionManager.Instance.GetActiveVillagerFactionCount();
+                    log += $"\nActive villager faction count is {villagerFactionCount.ToString()}";
+                    if (villagerFactionCount < 20) {
+                        log += $"\nActive villager factions is less than 20, rolling chances";
+                        int factionsInRegion = GetFactionsInRegion(character.currentRegion);
+                        float createChance = factionsInRegion >= 2 ? 2f : 3f;
+                        if (character.traitContainer.HasTrait("Inspiring", "Ambitious")) {
+                            createChance = factionsInRegion >= 2 ? 0.5f : 15f;
+                        }
+                        if (GameUtilities.RollChance(createChance)) {
+                            log += $"\nChance met, creating new faction";
+                            character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Faction, character);
+                            return true;
+                        }
                     }
                 }
             }

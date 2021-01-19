@@ -546,8 +546,8 @@ public class PlayerUI : BaseMonoBehaviour {
         // }
         
     }
-    public void LoseGameOver() {
-        UIManager.Instance.ShowEndDemoScreen("The Portal is in ruins! \nYour invasion has ended prematurely.");
+    public void LoseGameOver(string p_gameOverMessage = "The Portal is in ruins! \nYour invasion has ended prematurely.") {
+        UIManager.Instance.ShowEndDemoScreen(p_gameOverMessage);
         // if (WorldConfigManager.Instance.isTutorialWorld) {
         //     UIManager.Instance.ShowEndDemoScreen("The Portal is in ruins! \nYour invasion has ended prematurely.");
         // } else {

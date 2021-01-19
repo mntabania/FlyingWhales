@@ -90,6 +90,10 @@ public class LogTagSpriteDictionary : SerializableDictionary<LOG_TAG, Sprite> { 
 public class RaceSpriteListDictionary : SerializableDictionary<RACE, CharacterClassAsset> { }
 [System.Serializable]
 public class RaceDataDictionary : SerializableDictionary<RACE, RaceData> { }
+[System.Serializable]
+public class MonsterMigrationBiomeDictionary : SerializableDictionary<BIOMES, MonsterMigrationBiomeData> { }
+[System.Serializable]
+public class ScenarioSettingsDataDictionary : SerializableDictionary<WorldSettingsData.World_Type, ScenarioData> { }
 
 //List storage
 [System.Serializable]

@@ -43,7 +43,7 @@ public class Feed : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         actor.UncarryPOI();
-        (poiTarget as Character).needsComponent.AdjustDoNotGetHungry(-1);
+        poiTarget.traitContainer.RemoveTrait(poiTarget, "Eating");
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
@@ -121,7 +121,7 @@ public class Feed : GoapAction {
     #region Effects
     public void PreFeedSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is Character targetCharacter) {
-            targetCharacter.needsComponent.AdjustDoNotGetHungry(1);
+            targetCharacter.traitContainer.AddTrait(targetCharacter, "Eating");
             if(goapNode.actor.carryComponent.carriedPOI is ResourcePile carriedPile) {
                 FeedUAD uniqueData = goapNode.GetConvertedUniqueActionData<FeedUAD>();
                 if (carriedPile.traitContainer.HasTrait("Poisoned")) {
@@ -151,8 +151,8 @@ public class Feed : GoapAction {
     public void AfterFeedSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is Character targetCharacter) {
             FeedUAD uniqueData = goapNode.GetConvertedUniqueActionData<FeedUAD>();
-            targetCharacter.needsComponent.AdjustDoNotGetHungry(-1);
-            if(goapNode.actor != targetCharacter) {
+            targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Eating");
+            if (goapNode.actor != targetCharacter) {
                 if (uniqueData.usedPoisonedFood) {
                     targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, goapNode.actor, "Poisoned me.", -10);
                 } else {

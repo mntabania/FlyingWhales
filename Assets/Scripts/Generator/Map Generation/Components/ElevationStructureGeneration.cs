@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Tilemaps;
 using UtilityScripts;
+using Random = System.Random;
 
 public class ElevationStructureGeneration : MapGenerationComponent {
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
@@ -213,23 +214,43 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 			}
 			yield return null;
 		}
-		//create ore veins
-		int westMost = elevationStructure.tiles.Min(t => t.localPlace.x);
-		int eastMost = elevationStructure.tiles.Max(t => t.localPlace.x);
-		int southMost = elevationStructure.tiles.Min(t => t.localPlace.y);
-		int northMost = elevationStructure.tiles.Max(t => t.localPlace.y);
+
+		List<BlockWall> validWallsForOreVeins = elevationStructure.GetTileObjectsOfType<BlockWall>(IsBlockWallValidForOreVein);
+
+		var randomOreAmount = elevationIsland.tilesInIsland.Count == 1 ? UnityEngine.Random.Range(4, 11) : UnityEngine.Random.Range(8, 16);
+		for (int i = 0; i < randomOreAmount; i++) {
+			if (validWallsForOreVeins.Count == 0) { break; }
+			BlockWall blockWall = CollectionUtilities.GetRandomElement(validWallsForOreVeins);
+			CreateOreVeinAt(blockWall.gridTileLocation);
+			validWallsForOreVeins.Remove(blockWall);
+		}
 		
-		LocationGridTile northTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == northMost && t.localPlace.x != eastMost && t.localPlace.x != westMost));
-		CreateOreVeinAt(northTile);
-		
-		LocationGridTile southTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == southMost && t.localPlace.x != eastMost && t.localPlace.x != westMost));
-		CreateOreVeinAt(southTile);
-		
-		LocationGridTile westTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == westMost && t.localPlace.y != northMost && t.localPlace.y != southMost));
-		CreateOreVeinAt(westTile);
-		
-		LocationGridTile eastTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == eastMost && t.localPlace.y != northMost && t.localPlace.y != southMost));
-		CreateOreVeinAt(eastTile);
+		// //create ore veins
+		// int westMost = elevationStructure.tiles.Min(t => t.localPlace.x);
+		// int eastMost = elevationStructure.tiles.Max(t => t.localPlace.x);
+		// int southMost = elevationStructure.tiles.Min(t => t.localPlace.y);
+		// int northMost = elevationStructure.tiles.Max(t => t.localPlace.y);
+		//
+		// LocationGridTile northTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == northMost && t.localPlace.x != eastMost && t.localPlace.x != westMost));
+		// CreateOreVeinAt(northTile);
+		//
+		// LocationGridTile southTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.y == southMost && t.localPlace.x != eastMost && t.localPlace.x != westMost));
+		// CreateOreVeinAt(southTile);
+		//
+		// LocationGridTile westTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == westMost && t.localPlace.y != northMost && t.localPlace.y != southMost));
+		// CreateOreVeinAt(westTile);
+		//
+		// LocationGridTile eastTile = CollectionUtilities.GetRandomElement(elevationStructure.tiles.Where(t => t.localPlace.x == eastMost && t.localPlace.y != northMost && t.localPlace.y != southMost));
+		// CreateOreVeinAt(eastTile);
+	}
+	private bool IsBlockWallValidForOreVein(BlockWall p_blockWall) {
+		if (p_blockWall.gridTileLocation != null) {
+			int caveNeighbours = p_blockWall.gridTileLocation.neighbourList.Count(t => t.objHere is BlockWall);
+			if (caveNeighbours == 2 || caveNeighbours == 5) {
+				return p_blockWall.gridTileLocation.neighbourList.Count(t => t.structure is Wilderness) >= 3;	
+			}
+		}
+		return false;
 	}
 	private void CreateOreVeinAt(LocationGridTile tile) {
 		if (tile != null) {

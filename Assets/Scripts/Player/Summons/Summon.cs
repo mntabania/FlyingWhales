@@ -210,7 +210,8 @@ public class Summon : Character {
     /// <param name="tile">The tile the summon was placed on.</param>
     public virtual void OnPlaceSummon(LocationGridTile tile) {
         SubscribeToSignals();
-        Messenger.RemoveListener(Signals.HOUR_STARTED, () => needsComponent.DecreaseNeeds()); //do not make summons decrease needs
+        //Removed this Remove Listener, instead, do not add DecreaseNeeds to listener if character is a monster/summon
+        //Messenger.RemoveListener(Signals.HOUR_STARTED, () => needsComponent.DecreaseNeeds()); //do not make summons decrease needs
         movementComponent.UpdateSpeed();
         behaviourComponent.OnSummon(tile);
     }

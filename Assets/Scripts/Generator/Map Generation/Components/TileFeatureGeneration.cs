@@ -17,15 +17,19 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			DetermineSettlementsForTutorial();
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
-			DetermineSettlementsForSecondWorld();
+			DetermineSettlementsForOona(data);
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
-			DetermineSettlementsForPangatLoo();
+			DetermineSettlementsForPangatLoo(data);
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
 			DetermineSettlementsForZenko();
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
-			DetermineSettlementsForAffatt();
+			DetermineSettlementsForAffatt(data);
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
-			DetermineSettlementsForIcalawa();
+			DetermineSettlementsForIcalawa(data);
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Aneem) {
+			DetermineSettlementsForAneem(data);
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
+			DetermineSettlementsForPitto(data);
 		} else {
 			yield return MapGenerator.Instance.StartCoroutine(ComputeHabitabilityValues(data));
 			yield return MapGenerator.Instance.StartCoroutine(DetermineVillageSpots(data));
@@ -196,19 +200,19 @@ public class TileFeatureGeneration : MapGenerationComponent {
 	}
 	private bool TryAssignSettlementTiles(MapGenerationData data) {
 		int createdVillages = 0;
-		int villagesToCreate = WorldSettings.Instance.worldSettingsData.GetCurrentTotalVillageCount();
+		int villagesToCreate = WorldSettings.Instance.worldSettingsData.factionSettings.GetCurrentTotalVillageCountBasedOnFactions();
 		if (data.villageSpots.Count < villagesToCreate) {
 			//not enough village spots
 			return false;
 		}
 		List<HexTile> preferredTiles = new List<HexTile>();
-		for (int i = 0; i < WorldSettings.Instance.worldSettingsData.factionSettings.Count; i++) {
-			FactionSetting factionSetting = WorldSettings.Instance.worldSettingsData.factionSettings[i];
-			for (int j = 0; j < factionSetting.villageSettings.Count; j++) {
+		for (int i = 0; i < WorldSettings.Instance.worldSettingsData.factionSettings.factionTemplates.Count; i++) {
+			FactionTemplate factionTemplate = WorldSettings.Instance.worldSettingsData.factionSettings.factionTemplates[i];
+			for (int j = 0; j < factionTemplate.villageSettings.Count; j++) {
 				if (data.villageSpots.Count == 0) {
 					return false; //not enough village spots 
 				}
-				VillageSetting villageSetting = factionSetting.villageSettings[j];
+				VillageSetting villageSetting = factionTemplate.villageSettings[j];
 				int tilesInRange = villageSetting.GetTileCountReservedForVillage();
 				preferredTiles.Clear();
 				HexTile chosenTile = null;
@@ -216,7 +220,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 					//if first village, pick from preferred tiles first
 					for (int k = 0; k < data.villageSpots.Count; k++) {
 						HexTile tile = data.villageSpots[k];
-						if (factionSetting.IsTilePreferredByFaction(tile)) {
+						if (factionTemplate.IsTilePreferredByFaction(tile)) {
 							preferredTiles.Add(tile);
 						}
 					}
@@ -225,7 +229,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				} else {
 					//if not first village pick a spot nearest to First Village
 					float nearestDistance = Mathf.Infinity;
-					Vector3 firstVillagePos = data.determinedVillages[factionSetting][0].transform.position;
+					Vector3 firstVillagePos = data.determinedVillages[factionTemplate][0].transform.position;
 					for (int k = 0; k < data.villageSpots.Count; k++) {
 						HexTile villageSpot = data.villageSpots[k];
 						Vector3 directionToTarget = villageSpot.transform.position - firstVillagePos;
@@ -236,8 +240,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 						}
 					}
 				}
-				Assert.IsNotNull(chosenTile, $"Could not find village spot for {factionSetting.name}'s Village #{j.ToString()}");
-				data.AddDeterminedVillage(factionSetting, chosenTile);
+				Assert.IsNotNull(chosenTile, $"Could not find village spot for {factionTemplate.name}'s Village #{j.ToString()}");
+				data.AddDeterminedVillage(factionTemplate, chosenTile);
 				chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
 				//remove game feature from settlement tiles
 				chosenTile.featureComponent.RemoveFeature(TileFeatureDB.Game_Feature, chosenTile);
@@ -424,20 +428,102 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			randomTile.featureComponent.RemoveAllFeatures(randomTile);
 		}
 	}
-	private void DetermineSettlementsForSecondWorld() {
+	private void DetermineSettlementsForOona(MapGenerationData data) {
 		List<HexTile> chosenTiles = new List<HexTile> {
-			GridMap.Instance.map[8, 5],
-			GridMap.Instance.map[7, 5],
-			GridMap.Instance.map[8, 6],
-			GridMap.Instance.map[9, 5],
-			GridMap.Instance.map[8, 4],
+			GridMap.Instance.map[6, 5],
+			// GridMap.Instance.map[5, 5],
+			// GridMap.Instance.map[6, 6],
+			// GridMap.Instance.map[6, 4],
 		};
-	
+
+		FactionTemplate factionTemplate = new FactionTemplate(1);
+		factionTemplate.SetFactionEmblem(FactionEmblemRandomizer.GetUnusedFactionEmblem());
+		
 		for (int i = 0; i < chosenTiles.Count; i++) {
 			HexTile chosenTile = chosenTiles[i];
 			chosenTile.SetElevation(ELEVATION.PLAIN);
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
 			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			data.AddDeterminedVillage(factionTemplate, chosenTile);
+		}
+		
+		// List<HexTile> neighbouringTiles = GetNeighbouringTiles(chosenTiles);
+		// for (int i = 0; i < neighbouringTiles.Count; i++) {
+		// 	HexTile neighbour = neighbouringTiles[i];
+		// 	if (i == 0) {
+		// 		neighbour.SetElevation(ELEVATION.PLAIN);
+		// 	} else {
+		// 		neighbour.SetElevation(ELEVATION.MOUNTAIN);
+		// 	}
+		// }
+	}
+	private void DetermineSettlementsForIcalawa(MapGenerationData data) {
+		List<HexTile> chosenTiles = new List<HexTile> {
+			GridMap.Instance.map[9, 2],
+			// GridMap.Instance.map[11, 2],
+			// GridMap.Instance.map[11, 3],
+			// GridMap.Instance.map[10, 2],
+		};
+
+		FactionTemplate factionTemplate = new FactionTemplate(1);
+		factionTemplate.SetFactionEmblem(FactionEmblemRandomizer.GetUnusedFactionEmblem());
+		
+		for (int i = 0; i < chosenTiles.Count; i++) {
+			HexTile chosenTile = chosenTiles[i];
+			chosenTile.SetElevation(ELEVATION.PLAIN);
+			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
+			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			data.AddDeterminedVillage(factionTemplate, chosenTile);
+		}
+	}
+	private void DetermineSettlementsForPangatLoo(MapGenerationData data) {
+		List<HexTile> chosenTiles = new List<HexTile> {
+			//region 1 (grassland)
+			GridMap.Instance.map[2, 3],
+			// GridMap.Instance.map[1, 2],
+			// GridMap.Instance.map[1, 3],
+			// GridMap.Instance.map[1, 4],
+			// GridMap.Instance.map[0, 2],
+			// GridMap.Instance.map[2, 2],
+			// GridMap.Instance.map[2, 3],
+			// GridMap.Instance.map[2, 4],
+			// GridMap.Instance.map[0, 3],
+		};
+
+		FactionTemplate factionTemplate = new FactionTemplate(1);
+		factionTemplate.SetFactionEmblem(FactionEmblemRandomizer.GetUnusedFactionEmblem());
+		
+		for (int i = 0; i < chosenTiles.Count; i++) {
+			HexTile chosenTile = chosenTiles[i];
+			chosenTile.SetElevation(ELEVATION.PLAIN);
+			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
+			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			data.AddDeterminedVillage(factionTemplate, chosenTile);
+		}
+	}
+	private void DetermineSettlementsForAffatt(MapGenerationData data) {
+		List<HexTile> chosenTiles = new List<HexTile> {
+			GridMap.Instance.map[1, 2],
+			GridMap.Instance.map[3, 8],
+			GridMap.Instance.map[8, 3],
+		};
+
+		FactionTemplate factionTemplate1 = new FactionTemplate(2);
+		factionTemplate1.SetFactionEmblem(FactionEmblemRandomizer.GetUnusedFactionEmblem());
+		
+		FactionTemplate factionTemplate2 = new FactionTemplate(1);
+		factionTemplate2.SetFactionEmblem(FactionEmblemRandomizer.GetUnusedFactionEmblem());
+		
+		for (int i = 0; i < chosenTiles.Count; i++) {
+			HexTile chosenTile = chosenTiles[i];
+			chosenTile.SetElevation(ELEVATION.PLAIN);
+			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
+			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			if (i == 0 || i == 1) {
+				data.AddDeterminedVillage(factionTemplate1, chosenTile);
+			} else {
+				data.AddDeterminedVillage(factionTemplate2, chosenTile);
+			}
 		}
 		
 		// List<HexTile> neighbouringTiles = GetNeighbouringTiles(chosenTiles);
@@ -495,79 +581,52 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		// 	}
 		// }
 	}
-	private void DetermineSettlementsForPangatLoo() {
+	private void DetermineSettlementsForAneem(MapGenerationData data) {
 		List<HexTile> chosenTiles = new List<HexTile> {
-			//region 1 (grassland)
-			GridMap.Instance.map[0, 1],
-			GridMap.Instance.map[1, 2],
-			GridMap.Instance.map[1, 3],
-			GridMap.Instance.map[1, 4],
-			GridMap.Instance.map[0, 2],
-			GridMap.Instance.map[2, 2],
-			GridMap.Instance.map[2, 3],
-			GridMap.Instance.map[2, 4],
-			GridMap.Instance.map[0, 3],
+			GridMap.Instance.map[2, 5],
+			GridMap.Instance.map[12, 2],
 		};
 
-		for (int i = 0; i < chosenTiles.Count; i++) {
-			HexTile chosenTile = chosenTiles[i];
-			chosenTile.SetElevation(ELEVATION.PLAIN);
-			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
-			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
-		}
-	}
-	private void DetermineSettlementsForAffatt() {
-		List<HexTile> chosenTiles = new List<HexTile> {
-			//region 1 (big forest region)
-			//first settlement
-			GridMap.Instance.map[1, 2],
-			// GridMap.Instance.map[1, 3],
-			// GridMap.Instance.map[2, 3],
-			// GridMap.Instance.map[2, 2],
-			//second settlement
-			GridMap.Instance.map[8, 1],
-			// GridMap.Instance.map[8, 3],
-			// GridMap.Instance.map[7, 1],
-			// GridMap.Instance.map[6, 3],
-			// GridMap.Instance.map[7, 2],
-			//region 4 (snow region)
-			GridMap.Instance.map[3, 6],
-			// GridMap.Instance.map[2, 6],
-			// GridMap.Instance.map[2, 7],
-			// GridMap.Instance.map[3, 7],
-			// GridMap.Instance.map[4, 6],
-		};
-
-		for (int i = 0; i < chosenTiles.Count; i++) {
-			HexTile chosenTile = chosenTiles[i];
-			chosenTile.SetElevation(ELEVATION.PLAIN);
-			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
-			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
-		}
+		FactionTemplate factionTemplate1 = new FactionTemplate(1);
+		factionTemplate1.SetFactionEmblem(FactionEmblemRandomizer.GetUnusedFactionEmblem());
 		
-		// List<HexTile> neighbouringTiles = GetNeighbouringTiles(chosenTiles);
-		// for (int i = 0; i < neighbouringTiles.Count; i++) {
-		// 	HexTile neighbour = neighbouringTiles[i];
-		// 	if (i == 0) {
-		// 		neighbour.SetElevation(ELEVATION.PLAIN);
-		// 	} else {
-		// 		neighbour.SetElevation(ELEVATION.MOUNTAIN);
-		// 	}
-		// }
-	}
-	private void DetermineSettlementsForIcalawa() {
-		List<HexTile> chosenTiles = new List<HexTile> {
-			GridMap.Instance.map[11, 1],
-			GridMap.Instance.map[11, 2],
-			GridMap.Instance.map[11, 3],
-			GridMap.Instance.map[10, 2],
-		};
-
+		FactionTemplate factionTemplate2 = new FactionTemplate(1);
+		factionTemplate2.SetFactionEmblem(FactionEmblemRandomizer.GetUnusedFactionEmblem());
+		
 		for (int i = 0; i < chosenTiles.Count; i++) {
 			HexTile chosenTile = chosenTiles[i];
 			chosenTile.SetElevation(ELEVATION.PLAIN);
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
 			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			if (i == 0) {
+				data.AddDeterminedVillage(factionTemplate1, chosenTile);
+			} else {
+				data.AddDeterminedVillage(factionTemplate2, chosenTile);
+			}
+		}
+	}
+	private void DetermineSettlementsForPitto(MapGenerationData data) {
+		List<HexTile> chosenTiles = new List<HexTile> {
+			GridMap.Instance.map[4, 5],
+			GridMap.Instance.map[8, 5],
+		};
+
+		FactionTemplate factionTemplate1 = new FactionTemplate(1);
+		factionTemplate1.SetFactionEmblem(FactionEmblemRandomizer.GetUnusedFactionEmblem());
+		
+		FactionTemplate factionTemplate2 = new FactionTemplate(1);
+		factionTemplate2.SetFactionEmblem(FactionEmblemRandomizer.GetUnusedFactionEmblem());
+		
+		for (int i = 0; i < chosenTiles.Count; i++) {
+			HexTile chosenTile = chosenTiles[i];
+			chosenTile.SetElevation(ELEVATION.PLAIN);
+			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
+			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			if (i == 0) {
+				data.AddDeterminedVillage(factionTemplate1, chosenTile);
+			} else {
+				data.AddDeterminedVillage(factionTemplate2, chosenTile);
+			}
 		}
 	}
 	#endregion

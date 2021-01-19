@@ -114,7 +114,7 @@ public class TreasureChest : TileObject {
         }
     }
     public void SpawnInitialMimic(LocationGridTile tile, Summon summon) {
-        CharacterManager.Instance.PlaceSummon(summon, tile);
+        CharacterManager.Instance.PlaceSummonInitially(summon, tile);
         summon.SetTerritory(tile.GetNearestHexTileWithinRegion());
         TraitManager.Instance.CopyStatuses(this, summon);
     }

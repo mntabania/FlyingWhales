@@ -890,15 +890,33 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         }
     }
     private void CharacterNoLongerPerform(Character character) {
+        if (character.limiterComponent.canMove) {
+            //If character can still move even if he/she cannot perform, do not end quest
+            //In order for the quest to be ended, character must be both cannot perform and move
+            //The reason is so the quest will not end if the character only sleeps or rests
+            return;
+        }
         if (currentQuest.partyQuestType == PARTY_QUEST_TYPE.Exploration || currentQuest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
             if (GameUtilities.RollChance(15)) {
                 if (membersThatJoinedQuest.Contains(character)) {
                     currentQuest.EndQuest(character.name + " is incapacitated");
+                    return;
                 }
+            }
+        }
+        if (isActive) {
+            if (DidMemberJoinQuest(character) && !HasActiveMemberThatJoinedQuest()) {
+                currentQuest.EndQuest("Members are incapacitated");
             }
         }
     }
     private void CharacterNoLongerMove(Character character) {
+        if (character.limiterComponent.canPerform) {
+            //If character can still perform even if he/she cannot move, do not end quest
+            //In order for the quest to be ended, character must be both cannot perform and move
+            //The reason is so the quest will not end if the character only sleeps or rests
+            return;
+        }
         if (currentQuest.partyQuestType == PARTY_QUEST_TYPE.Exploration || currentQuest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
             if (GameUtilities.RollChance(15)) {
                 if (membersThatJoinedQuest.Contains(character)) {

@@ -52,6 +52,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public List<string> interestedItemNames;
 
     public POI_STATE state;
+    public INTERACTION_TYPE causeOfDeath;
 
     public SaveDataLycanthropeData lycanData;
     public bool hasLycan;
@@ -140,6 +141,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         hasBeenRaisedFromDead = data.hasBeenRaisedFromDead;
         interestedItemNames = data.interestedItemNames;
         state = data.state;
+        causeOfDeath = data.causeOfDeath;
         previousClassName = data.previousClassName;
         isPreplaced = data.isPreplaced;
 

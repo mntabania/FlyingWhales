@@ -201,14 +201,14 @@ public class WorldGenOptionsUIView : MVCUIView {
             item.Reset();
         }
     }
-    public void UpdateFactionItems(List<FactionSetting> p_factionSettings) {
+    public void UpdateFactionItems(List<FactionTemplate> p_factionSettings) {
         for (int i = 0; i < UIModel.factionSettingUIItems.Length; i++) {
             FactionSettingUIItem item = UIModel.factionSettingUIItems[i];
-            FactionSetting factionSetting = p_factionSettings.ElementAtOrDefault(i);
+            FactionTemplate factionTemplate = p_factionSettings.ElementAtOrDefault(i);
             item.SetMinusBtnState(i != 0);
-            if (factionSetting != null) {
+            if (factionTemplate != null) {
                 ShowFactionItem(item);
-                item.SetItemDetails(factionSetting);
+                item.SetItemDetails(factionTemplate);
             } else {
                 HideFactionItem(item);
             }

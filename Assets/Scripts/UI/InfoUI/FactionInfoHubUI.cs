@@ -47,11 +47,9 @@ public class FactionInfoHubUI : MonoBehaviour {
         factionItems = new List<FactionItem>();
         //factionPaginationGOs = new List<GameObject>();
     }
-    void OnEnable() {
-        
-    }
-    void OnDisable() {
-        
+    private void InitializeUI() {
+        Messenger.AddListener<Faction>(FactionSignals.FACTION_CREATED, OnFactionCreated);
+        Messenger.AddListener<Faction>(FactionSignals.FACTION_DISBANDED, OnFactionDisbanded);
     }
     public void InitializeAfterGameLoaded() {
         factionInfoUI.Initialize();
@@ -85,7 +83,7 @@ public class FactionInfoHubUI : MonoBehaviour {
         //yield return null;
         for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
             Faction faction = FactionManager.Instance.allFactions[i];
-            if (faction.isMajorNonPlayer) {
+            if (faction.isMajorNonPlayer && !faction.isDisbanded) {
                 FactionItem item = AddFactionItem(faction);
                 SetFactionSelection(item, false);
             }
@@ -110,9 +108,6 @@ public class FactionInfoHubUI : MonoBehaviour {
             yield return null;
             factionScrollSnap.GoToScreen(0);
         }
-    }
-    private void InitializeUI() {
-        Messenger.AddListener<Faction>(FactionSignals.FACTION_CREATED, OnFactionCreated);
     }
 
     public void Open() {
@@ -170,6 +165,13 @@ public class FactionInfoHubUI : MonoBehaviour {
                 //FactionItem item = AddFactionItem(faction);
                 //SetFactionSelection(item, false);
                 //RepopulateFactions();
+                StartCoroutine(RepopulateFactions());
+            }
+        }
+    }
+    private void OnFactionDisbanded(Faction faction) {
+        if (GameManager.Instance.gameHasStarted) {
+            if (faction.isMajorNonPlayer) {
                 StartCoroutine(RepopulateFactions());
             }
         }

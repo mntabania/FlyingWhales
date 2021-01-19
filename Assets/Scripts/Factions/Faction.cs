@@ -47,7 +47,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     
 
     #region getters/setters
-    public bool isDestroyed => characters.Count <= 0;
+    public bool isDisbanded => characters.Count <= 0;
     public bool isMajorOrVagrant => isMajorFaction || this.factionType.type == FACTION_TYPE.Vagrants;
     public bool isMajorNonPlayerOrVagrant => isMajorNonPlayer || this.factionType.type == FACTION_TYPE.Vagrants;
     public bool isMajorNonPlayer => isMajorFaction && !isPlayerFaction;
@@ -150,13 +150,16 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
 
                 if (!isInitial) {
                     //Whenever a character joins a new faction, add Transitioning status, so that if his new faction is hostile with his previous faction he will not be attacked immediately by the people of his previous faction
+                    //Also, cancel all needs recovery job because it might not be applicable upon changing factions, example: if a character has founded a village, it should no longer it in the previous home village
                     character.traitContainer.AddTrait(character, "Transitioning");
+                    character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, 
+                        JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT, JOB_TYPE.HAPPINESS_RECOVERY);
                 }
 
                 //Every time ratman changes faction, behaviour set should update to know if he will use the resident behaviour or the ratmana behaviour
                 //Every time a minion changes faction, behaviour set should update to know if he will use the resident behaviour or the minion behaviour
                 //Reference: https://trello.com/c/8LQpoNGp/3036-when-a-demon-is-recruited-by-a-major-faction-its-behavior-will-be-replaced-by-the-villager-set
-                if(character.race == RACE.RATMAN || character.minion != null) {
+                if (character.race == RACE.RATMAN || character.minion != null) {
                     character.behaviourComponent.UpdateDefaultBehaviourSet();
                 }
 
@@ -175,6 +178,13 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
             character.SetFaction(null);
             Messenger.Broadcast(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, character, this);
+            if (isDisbanded) {
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "disband", providedTags: LOG_TAG.Major);
+                log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+                log.AddLogToDatabase();
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+                Messenger.Broadcast(FactionSignals.FACTION_DISBANDED, this);
+            }
             return true;
         }
         return false;

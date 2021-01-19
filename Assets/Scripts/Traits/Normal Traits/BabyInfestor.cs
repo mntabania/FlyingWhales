@@ -25,12 +25,11 @@ namespace Traits {
             base.OnRemoveTrait(sourcePOI, removedBy);
             if (sourcePOI is Summon babySummon) {
                 if(babySummon.adultSummonType != SUMMON_TYPE.None) {
-                    Character adult = CharacterManager.Instance.CreateNewSummon(babySummon.adultSummonType, babySummon.faction, babySummon.homeSettlement, babySummon.homeRegion, babySummon.homeStructure);
+                    Summon adult = CharacterManager.Instance.CreateNewSummon(babySummon.adultSummonType, babySummon.faction, babySummon.homeSettlement, babySummon.homeRegion, babySummon.homeStructure);
                     if (!babySummon.isUsingDefaultName) {
                         adult.SetFirstAndLastName(babySummon.firstName, babySummon.surName);    
                     }
-                    adult.CreateMarker();
-                    adult.InitialCharacterPlacement(babySummon.gridTileLocation);
+                    CharacterManager.Instance.PlaceSummonInitially(adult, babySummon.gridTileLocation);
                     adult.ClearTerritory();
                     
                     Log growUpLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "become_giant_spider", null, LOG_TAG.Life_Changes);

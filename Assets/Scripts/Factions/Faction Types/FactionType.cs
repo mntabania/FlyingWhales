@@ -57,11 +57,13 @@ namespace Factions.Faction_Types {
         #endregion
 
         #region Ideologies
-        public void AddIdeology(FACTION_IDEOLOGY ideology) {
+        public FactionIdeology AddIdeology(FACTION_IDEOLOGY ideology) {
             if (!HasIdeology(ideology)) {
                 FactionIdeology factionIdeology = FactionManager.Instance.CreateIdeology<FactionIdeology>(ideology);
                 AddIdeologyBase(factionIdeology);
+                return factionIdeology;
             }
+            return null;
         }
         public void AddIdeology(FactionIdeology ideology) {
             if (!HasIdeology(ideology.ideologyType)) {

@@ -35,7 +35,7 @@ public class ThreatComponent {
     // }
 
     public void AdjustThreatAndApplyModification(int amount) {
-        amount = SpellUtilities.GetModifiedSpellCost(amount, WorldSettings.Instance.worldSettingsData.GetThreatModification());
+        amount = SpellUtilities.GetModifiedSpellCost(amount, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetThreatModification());
         AdjustThreat(amount);
     }
     public void AdjustThreat(int amount) {
@@ -156,7 +156,7 @@ public class ThreatComponent {
             if (UnityEngine.Random.Range(0, 2) == 0) { angelType = SUMMON_TYPE.Magical_Angel; }
             LocationGridTile spawnTile = spawnHex.GetRandomTile();
             Summon angel = CharacterManager.Instance.CreateNewSummon(angelType, FactionManager.Instance.vagrantFaction, homeRegion: region);
-            CharacterManager.Instance.PlaceSummon(angel, spawnTile);
+            CharacterManager.Instance.PlaceSummonInitially(angel, spawnTile);
             angel.behaviourComponent.SetIsAttackingDemonicStructure(true, CharacterManager.Instance.currentDemonicStructureTargetOfAngels);
             characters.Add(angel);
         }

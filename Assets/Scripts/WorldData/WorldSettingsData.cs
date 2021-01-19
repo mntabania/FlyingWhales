@@ -1,118 +1,55 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UtilityScripts;
 
 [System.Serializable]
 public class WorldSettingsData {
 
-    public enum World_Type { Tutorial, Oona, Custom, Zenko, Pangat_Loo, Affatt, Icalawa };
+    public enum World_Type { Tutorial, Oona, Custom, Zenko, Pangat_Loo, Affatt, Icalawa, Aneem, Pitto };
 
     public World_Type worldType;
-    public MAP_SIZE mapSize;
-    public MIGRATION_SPEED migrationSpeed;
     public VICTORY_CONDITION victoryCondition;
-    public SKILL_COOLDOWN_SPEED cooldownSpeed;
-    public SKILL_COST_AMOUNT costAmount;
-    public SKILL_CHARGE_AMOUNT chargeAmount;
-    public THREAT_AMOUNT threatAmount;
-    
-    // public bool omnipotentMode;
-    // public bool noThreatMode;
-    public List<BIOMES> biomes;
-    public List<FactionSetting> factionSettings;
+    public PlayerSkillSettings playerSkillSettings;
+    public MapSettings mapSettings;
+    public VillageSettings villageSettings;
+    public FactionSettings factionSettings;
     
     public WorldSettingsData() {
-        biomes = new List<BIOMES>();
         worldType = World_Type.Custom;
-        mapSize = MAP_SIZE.Small;
-        migrationSpeed = MIGRATION_SPEED.Normal;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        cooldownSpeed = SKILL_COOLDOWN_SPEED.Normal;
-        costAmount = SKILL_COST_AMOUNT.Normal;
-        chargeAmount = SKILL_CHARGE_AMOUNT.Normal;
-        threatAmount = THREAT_AMOUNT.Normal;
-        factionSettings = new List<FactionSetting>();
+        playerSkillSettings = new PlayerSkillSettings();
+        mapSettings = new MapSettings();
+        villageSettings = new VillageSettings();
+        factionSettings = new FactionSettings();
     }
-    
-    // public void SetOmnipotentMode(bool state) {
-    //     omnipotentMode = state;
-    // }
-    // public void SetNoThreatMode(bool state) {
-    //     noThreatMode = state;
-    // }
+
+    #region World Type
     public void SetWorldType(World_Type type) {
         worldType = type;
     }
-    public void SetMapSize(MAP_SIZE p_mapSize) {
-        mapSize = p_mapSize;
-    }
-    private void SetDefaultSpellSettings() {
-        SetMigrationSpeed(MIGRATION_SPEED.Normal);
-        SetVictoryCondition(VICTORY_CONDITION.Eliminate_All);
-        SetCooldownSpeed(SKILL_COOLDOWN_SPEED.Normal);
-        SetManaCostAmount(SKILL_COST_AMOUNT.Normal);
-        SetChargeAmount(SKILL_CHARGE_AMOUNT.Normal);
-        SetThreatAmount(THREAT_AMOUNT.Normal);
-    }
-    
-    #region Biomes
-    public void ApplyBiomeSettings(List<string> p_biomes) {
-        ClearBiomes();
-        for (int i = 0; i < p_biomes.Count; i++) {
-            string value = p_biomes[i];
-            if (value == "Random") {
-                BIOMES chosenBiome = CollectionUtilities.GetRandomElement(GameUtilities.customWorldBiomeChoices);
-                AddBiome(chosenBiome);
-            } else {
-                string biomeStr = UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(value).ToUpper();
-                BIOMES chosenBiome = (BIOMES) System.Enum.Parse(typeof(BIOMES), biomeStr);
-                AddBiome(chosenBiome);
-            }
-        }
-    }
-    public void AddBiome(BIOMES biome) {
-        Debug.Log($"Added {biome.ToString()} to biomes");
-        biomes.Add(biome);
-    }
-    public bool RemoveBiome(BIOMES biome) {
-        Debug.Log($"Removed {biome.ToString()} from biomes");
-        return biomes.Remove(biome);
-    }
-    public void ClearBiomes() {
-        biomes.Clear();
-    }
-    public int GetMaxBiomeCount() {
-        switch (mapSize) {
-            case MAP_SIZE.Small:
-                return 1;
-            case MAP_SIZE.Medium:
-                return 2;
-            case MAP_SIZE.Large:
-                return 3;
-            case MAP_SIZE.Extra_Large:
-                return 4;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
-    public bool HasReachedMaxBiomeCount() {
-        return biomes.Count >= GetMaxBiomeCount();
-    }
     #endregion
 
+    #region Utilities
+    private void SetDefaultSpellSettings(VICTORY_CONDITION p_victoryCondition = VICTORY_CONDITION.Eliminate_All) {
+        villageSettings.SetMigrationSpeed(MIGRATION_SPEED.Normal);
+        SetVictoryCondition(p_victoryCondition);
+        playerSkillSettings.SetCooldownSpeed(SKILL_COOLDOWN_SPEED.Normal);
+        playerSkillSettings.SetManaCostAmount(SKILL_COST_AMOUNT.Normal);
+        playerSkillSettings.SetChargeAmount(SKILL_CHARGE_AMOUNT.Normal);
+        playerSkillSettings.SetThreatAmount(THREAT_AMOUNT.Normal);
+    }
+
     public bool AreSettingsValid(out string invalidityReason) {
-        if (GetCurrentTotalVillageCount() > GetMaxVillages()) {
-            invalidityReason = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToString(mapSize.ToString())} maps can only have up to {GetMaxVillages().ToString()} Village/s!";
+        if (factionSettings.GetCurrentTotalVillageCountBasedOnFactions() > mapSettings.GetMaxVillages()) {
+            invalidityReason = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToString(mapSettings.mapSize.ToString())} maps can only have up to {mapSettings.GetMaxVillages().ToString()} Village/s!";
             return false;
         }
         invalidityReason = string.Empty;
         return true;
     }
+    #endregion
 
-    #region Scenario Maps
+    #region Maps
     public bool IsScenarioMap() {
         switch (worldType) {
             case World_Type.Custom:
@@ -142,6 +79,12 @@ public class WorldSettingsData {
             case World_Type.Zenko:
                 SetZenkoWorldSettings();
                 break;
+            case World_Type.Aneem:
+                SetAneemWorldSettings();
+                break;
+            case World_Type.Pitto:
+                SetPittoWorldSettings();
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(p_worldType), p_worldType, null);
         }
@@ -149,212 +92,130 @@ public class WorldSettingsData {
     private void SetTutorialWorldSettings() {
         Debug.Log("Set world settings as Tutorial");
         worldType = World_Type.Tutorial;
-        // omnipotentMode = false;
-        // noThreatMode = false;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings();
+        mapSettings.AllowMonsterMigrations();
+        villageSettings.BlockAllFactionMigrations();
+        villageSettings.BlockNewVillages();
+        factionSettings.BlockNewFactions();
+        villageSettings.SetBlessedMigrantsState(false);
+        factionSettings.AllowFactionIdeologyChanges();
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     private void SetOonaWorldSettings() {
         Debug.Log("Set world settings as Second World");
         worldType = World_Type.Oona;
-        // omnipotentMode = false;
-        // noThreatMode = false;
         victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings();
+        SetDefaultSpellSettings(victoryCondition);
+        mapSettings.AllowMonsterMigrations();
+        villageSettings.AllowAllFactionMigrations();
+        villageSettings.AllowNewVillages();
+        factionSettings.AllowNewFactions();
+        villageSettings.SetBlessedMigrantsState(false);
+        factionSettings.AllowFactionIdeologyChanges();
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     private void SetIcalawaWorldSettings() {
         Debug.Log("Set world settings as Icalawa");
         worldType = World_Type.Icalawa;
-        // omnipotentMode = false;
-        // noThreatMode = false;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings();
+        victoryCondition = VICTORY_CONDITION.Kill_By_Psychopath_Ritual;
+        SetDefaultSpellSettings(victoryCondition);
+        mapSettings.BlockMonsterMigrations();
+        villageSettings.AllowAllFactionMigrations();
+        villageSettings.AllowNewVillages();
+        factionSettings.AllowNewFactions();
+        villageSettings.SetBlessedMigrantsState(true);
+        factionSettings.AllowFactionIdeologyChanges();
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Puppet_Master);
     }
     private void SetPangatLooWorldSettings() {
         Debug.Log("Set world settings as Pangat Loo");
         worldType = World_Type.Pangat_Loo;
-        // omnipotentMode = false;
-        // noThreatMode = false;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings();
+        victoryCondition = VICTORY_CONDITION.Wiped_Village_On_Day8;
+        SetDefaultSpellSettings(victoryCondition);
+        mapSettings.AllowMonsterMigrations();
+        villageSettings.AllowAllFactionMigrations();
+        villageSettings.BlockNewVillages();
+        factionSettings.BlockNewFactions();
+        villageSettings.SetBlessedMigrantsState(false);
+        factionSettings.AllowFactionIdeologyChanges();
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Lich);
     }
     private void SetAffattWorldSettings() {
         Debug.Log("Set world settings as Affatt");
         worldType = World_Type.Affatt;
-        // omnipotentMode = false;
-        // noThreatMode = false;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings();
+        victoryCondition = VICTORY_CONDITION.Wipe_Elven_Kingdom_Survive_Humans;
+        SetDefaultSpellSettings(victoryCondition);
+        mapSettings.AllowMonsterMigrations();
+        villageSettings.AllowAllFactionMigrations();
+        villageSettings.BlockVillagerMigrationForFactionType(FACTION_TYPE.Human_Empire);
+        villageSettings.AllowNewVillages();
+        factionSettings.BlockNewFactions();
+        villageSettings.SetBlessedMigrantsState(false);
+        factionSettings.BlockFactionIdeologyChanges();
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     private void SetZenkoWorldSettings() {
         Debug.Log("Set world settings as Zenko");
         worldType = World_Type.Zenko;
-        // omnipotentMode = false;
-        // noThreatMode = false;
-        victoryCondition = VICTORY_CONDITION.Eliminate_All;
-        SetDefaultSpellSettings();
+        victoryCondition = VICTORY_CONDITION.Declare_3_Wars;
+        SetDefaultSpellSettings(victoryCondition);
+        mapSettings.AllowMonsterMigrations();
+        villageSettings.AllowAllFactionMigrations();
+        villageSettings.BlockNewVillages();
+        factionSettings.BlockNewFactions();
+        villageSettings.SetBlessedMigrantsState(false);
+        factionSettings.AllowFactionIdeologyChanges();
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
+    }
+    private void SetAneemWorldSettings() {
+        Debug.Log("Set world settings as Aneem");
+        worldType = World_Type.Aneem;
+        victoryCondition = VICTORY_CONDITION.Kill_By_Plague;
+        SetDefaultSpellSettings(victoryCondition);
+        mapSettings.AllowMonsterMigrations();
+        villageSettings.AllowAllFactionMigrations();
+        villageSettings.AllowNewVillages();
+        factionSettings.AllowNewFactions();
+        villageSettings.SetBlessedMigrantsState(false);
+        factionSettings.AllowFactionIdeologyChanges();
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Lich);
+    }
+    private void SetPittoWorldSettings() {
+        Debug.Log("Set world settings as Pitto");
+        worldType = World_Type.Pitto;
+        victoryCondition = VICTORY_CONDITION.Create_Demon_Cult;
+        SetDefaultSpellSettings(victoryCondition);
+        mapSettings.AllowMonsterMigrations();
+        villageSettings.AllowAllFactionMigrations();
+        villageSettings.AllowNewVillages();
+        factionSettings.AllowNewFactions();
+        villageSettings.SetBlessedMigrantsState(false);
+        factionSettings.AllowFactionIdeologyChanges();
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
+    }
+    public void ApplyCustomWorldSettings() {
+        mapSettings.AllowMonsterMigrations();
+        villageSettings.AllowAllFactionMigrations();
+        villageSettings.AllowNewVillages();
+        factionSettings.AllowNewFactions();
+        villageSettings.SetBlessedMigrantsState(false);
+        factionSettings.AllowFactionIdeologyChanges();
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     #endregion
 
-    #region Map Size
-    public Vector2 GetMapSize() {
-        switch (mapSize) {
-            case MAP_SIZE.Small:
-                return new Vector2(8, 8);
-            case MAP_SIZE.Medium:
-                return new Vector2(12, 8);
-            case MAP_SIZE.Large:
-                return new Vector2(16, 10);
-            case MAP_SIZE.Extra_Large:
-                return new Vector2(16, 16);
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
-    #endregion
-
-    #region Faction Settings
-    public int GetMaxFactions() {
-        switch (mapSize) {
-            case MAP_SIZE.Small:
-                return 1;
-            case MAP_SIZE.Medium:
-                return 2;
-            case MAP_SIZE.Large:
-                return 3;
-            case MAP_SIZE.Extra_Large:
-                return 4;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
-    public int GetMaxVillages() {
-        switch (mapSize) {
-            case MAP_SIZE.Small:
-                return 1;
-            case MAP_SIZE.Medium:
-                return 4;
-            case MAP_SIZE.Large:
-                return 6;
-            case MAP_SIZE.Extra_Large:
-                return 8;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
-    public int GetCurrentTotalVillageCount() {
-        int villageCount = 0;
-        for (int i = 0; i < factionSettings.Count; i++) {
-            villageCount += factionSettings[i].villageSettings.Count;
-        }
-        return villageCount;
-    }
-    public FactionSetting AddFactionSetting(int p_villageCount) {
-        FactionSetting factionSetting = new FactionSetting(p_villageCount);
-        AddFactionSetting(factionSetting);
-        return factionSetting;
-    }
-    public void AddFactionSetting(FactionSetting p_factionSetting) {
-        factionSettings.Add(p_factionSetting);
-    }
-    public void RemoveFactionSetting(FactionSetting p_factionSetting) {
-        factionSettings.Remove(p_factionSetting);
-    }
+    #region Factions
     public bool HasReachedMaxFactionCount() {
-        return factionSettings.Count >= GetMaxFactions();
-    }
-    public void ClearFactionSettings() {
-        factionSettings.Clear();
+        return factionSettings.factionTemplates.Count >= mapSettings.GetMaxFactions();
     }
     #endregion
 
-    public void SetMigrationSpeed(MIGRATION_SPEED p_value) {
-        migrationSpeed = p_value;
-        Debug.Log($"Set Migration Speed {p_value.ToString()}");
-    }
+    #region Win Condition
     public void SetVictoryCondition(VICTORY_CONDITION p_value) {
         victoryCondition = p_value;
         Debug.Log($"Set Victory Condition {p_value.ToString()}");
     }
-
-    #region Cooldown
-    public void SetCooldownSpeed(SKILL_COOLDOWN_SPEED p_value) {
-        cooldownSpeed = p_value;
-        Debug.Log($"Set Cooldown Speed {p_value.ToString()}");
-    }
-    public float GetCooldownSpeedModification() {
-        switch (cooldownSpeed) {
-            case SKILL_COOLDOWN_SPEED.None:
-                return 0f;
-            case SKILL_COOLDOWN_SPEED.Half:
-                return 0.5f;
-            case SKILL_COOLDOWN_SPEED.Normal:
-                return 1f;
-            case SKILL_COOLDOWN_SPEED.Double:
-                return 2f;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
     #endregion
-
-    #region Mana Costs
-    public void SetManaCostAmount(SKILL_COST_AMOUNT p_value) {
-        costAmount = p_value;
-        Debug.Log($"Set Skill Cost {p_value.ToString()}");
-    }
-    public float GetCostsModification() {
-        switch (costAmount) {
-            case SKILL_COST_AMOUNT.None:
-                return 0f;
-            case SKILL_COST_AMOUNT.Half:
-                return 0.5f;
-            case SKILL_COST_AMOUNT.Normal:
-                return 1f;
-            case SKILL_COST_AMOUNT.Double:
-                return 2f;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
-    #endregion
-
-    #region Charges
-    public void SetChargeAmount(SKILL_CHARGE_AMOUNT p_value) {
-        chargeAmount = p_value;
-        Debug.Log($"Set Charge Amount {p_value.ToString()}");
-    }
-    public float GetChargeCostsModification() {
-        switch (chargeAmount) {
-            case SKILL_CHARGE_AMOUNT.Unlimited:
-            case SKILL_CHARGE_AMOUNT.Normal:
-                return 1f;
-            case SKILL_CHARGE_AMOUNT.Half:
-                return 0.5f;
-            case SKILL_CHARGE_AMOUNT.Double:
-                return 2f;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
-    #endregion
-
-    #region Threat
-    public void SetThreatAmount(THREAT_AMOUNT p_value) {
-        threatAmount = p_value;
-        Debug.Log($"Set Threat Amount {p_value.ToString()}");
-    }
-    public float GetThreatModification() {
-        switch (threatAmount) {
-            case THREAT_AMOUNT.None:
-                return 0f;
-            case THREAT_AMOUNT.Half:
-                return 0.5f;
-            case THREAT_AMOUNT.Normal:
-                return 1f;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
-    #endregion
+    
 }

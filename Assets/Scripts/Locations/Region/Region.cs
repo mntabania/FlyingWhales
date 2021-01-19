@@ -32,7 +32,7 @@ public class Region : ISavable, ILogFiller {
     public List<LocationStructure> allStructures { get; private set; }
     public RegionFeatureComponent regionFeatureComponent { get; }
     public List<BaseSettlement> settlementsInRegion { get; private set; }
-    public RegionTemplate regionTemplate { get; }
+    public RegionDivisionComponent regionDivisionComponent { get; }
     /// <summary>
     /// Number of tile objects in this region categorized by type.
     /// NOTE: This isn't saved/loaded since this is updated every time a new tile object is placed.
@@ -74,6 +74,7 @@ public class Region : ISavable, ILogFiller {
         shuffledNonMountainWaterTiles = new List<HexTile>();
         AddTile(coreTile);
         regionColor = GenerateRandomRegionColor();
+        regionDivisionComponent = new RegionDivisionComponent();
         Debug.Log($"Created region {this.name} with core tile {coreTile.ToString()}");
     }
     public Region(SaveDataRegion data) : this() {
@@ -85,6 +86,9 @@ public class Region : ISavable, ILogFiller {
         shuffledNonMountainWaterTiles = new List<HexTile>();
         regionColor = data.regionColor;
         objectsInRegionCount = new Dictionary<TILE_OBJECT_TYPE, int>();
+
+        //Components
+        regionDivisionComponent = data.regionDivisionComponent.Load();
     }
 
     #region Loading
@@ -804,7 +808,10 @@ public class Region : ISavable, ILogFiller {
         List<TileObject> objs = new List<TileObject>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
             for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                objs.AddRange(keyValuePair.Value[i].GetTileObjectsOfType(type));
+                List<TileObject> tileObjects = keyValuePair.Value[i].GetTileObjectsOfType(type);
+                if(tileObjects != null) {
+                    objs.AddRange(tileObjects);
+                }
             }
         }
         return objs;

@@ -2771,7 +2771,6 @@ MonoBehaviour:
   - {fileID: 265015924740696383}
   - {fileID: 4201932756600703778}
   roomTemplates: []
-  requiredObjectForBuilding: 1
   wallsContributeToDamage: 1
   wallTileMap: {fileID: 6302044190872618751}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}
@@ -11099,7 +11098,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7926033481591855555}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.5, y: -4.5, z: 0}
+  m_LocalPosition: {x: -5.5, y: -3.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3830833595055692294}

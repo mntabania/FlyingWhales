@@ -228,13 +228,14 @@ public class UIManager : BaseMonoBehaviour {
         showAllToggle.onValueChanged.AddListener(OnToggleAllFilters);
         UpdateSearchFieldsState();
         
-        _contextMenuUIController.SetOnHoverOverAction(OnHoverOverPlayerActionContextMenuItem);
-        _contextMenuUIController.SetOnHoverOutAction(OnHoverOutPlayerActionContextMenuItem);
+        contextMenuUIController.SetOnHoverOverAction(OnHoverOverPlayerActionContextMenuItem);
+        contextMenuUIController.SetOnHoverOutAction(OnHoverOutPlayerActionContextMenuItem);
         
         UpdateUI();
     }
     private void OnPlayerActionActivated(PlayerAction p_playerAction) {
-        if (p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_CHARACTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_MONSTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT) {
+        if (p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_CHARACTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_MONSTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT
+            || p_playerAction.type == PLAYER_SKILL_TYPE.REMOVE_BUFF || p_playerAction.type == PLAYER_SKILL_TYPE.REMOVE_FLAW) {
             HidePlayerActionContextMenu();    
         } else {
             if (IsContextMenuShowing()) {
@@ -1804,7 +1805,7 @@ public class UIManager : BaseMonoBehaviour {
 
     #region Context Menu
     [Header("Context Menu")]
-    [SerializeField] private ContextMenuUIController _contextMenuUIController;
+    public ContextMenuUIController contextMenuUIController;
     [SerializeField] private UIHoverPosition _contextMenuTooltipHoverPosition;
     public void ShowPlayerActionContextMenu(IPlayerActionTarget p_target, Transform p_followTarget) {
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(p_target);
@@ -1813,8 +1814,8 @@ public class UIManager : BaseMonoBehaviour {
         //     HidePlayerActionContextMenu();
         //     return;
         // }
-        _contextMenuUIController.SetFollowPosition(p_followTarget);
-        _contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
+        contextMenuUIController.SetFollowPosition(p_followTarget);
+        contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
     }
     public void ShowPlayerActionContextMenu(IPlayerActionTarget p_target, Vector3 p_followTarget, bool p_isScreenPosition) {
@@ -1824,8 +1825,8 @@ public class UIManager : BaseMonoBehaviour {
         //     HidePlayerActionContextMenu();
         //     return;
         // }
-        _contextMenuUIController.SetFollowPosition(p_followTarget, p_isScreenPosition);
-        _contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
+        contextMenuUIController.SetFollowPosition(p_followTarget, p_isScreenPosition);
+        contextMenuUIController.ShowContextMenu(contextMenuItems, Input.mousePosition, p_target.name, InputManager.Instance.currentCursorType);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
     }
     public void RefreshPlayerActionContextMenuWithNewTarget(IPlayerActionTarget p_target) {
@@ -1835,15 +1836,15 @@ public class UIManager : BaseMonoBehaviour {
         //     HidePlayerActionContextMenu();
         //     return;
         // }
-        _contextMenuUIController.ShowContextMenu(contextMenuItems, p_target.name);
+        contextMenuUIController.ShowContextMenu(contextMenuItems, p_target.name);
         Messenger.Broadcast(UISignals.PLAYER_ACTION_CONTEXT_MENU_SHOWN, p_target);
     }
     public void HidePlayerActionContextMenu() {
         PlayerManager.Instance.player.SetCurrentPlayerActionTarget(null);
-        _contextMenuUIController.HideUI();
+        contextMenuUIController.HideUI();
     }
     public bool IsContextMenuShowing() {
-        return _contextMenuUIController.IsShowing();
+        return contextMenuUIController.IsShowing();
     }
     public bool IsContextMenuShowingForTarget(IPlayerActionTarget p_target) {
         return IsContextMenuShowing() && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget == p_target;
@@ -1851,7 +1852,7 @@ public class UIManager : BaseMonoBehaviour {
     private void OnHoverOverPlayerActionContextMenuItem(IContextMenuItem p_item, UIHoverPosition p_hoverPosition) {
         if (p_item is PlayerAction playerAction) {
             OnHoverPlayerAction(playerAction, p_hoverPosition, PlayerManager.Instance.player.currentlySelectedPlayerActionTarget);
-        } else if (p_item is Trait trait && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is Character targetCharacter) {
+        } else if (p_item is Trait trait && PlayerManager.Instance.player.currentlySelectedPlayerActionTarget is Character targetCharacter && contextMenuUIController.currentlyOpenedParentContextItem is TriggerFlawData) {
             OnHoverEnterFlaw(trait.name,  targetCharacter, p_hoverPosition);
         }
     }
@@ -2022,7 +2023,7 @@ public class UIManager : BaseMonoBehaviour {
         //     HidePlayerActionContextMenu();
         //     return;
         // }
-        _contextMenuUIController.UpdateContextMenuItems(contextMenuItems);
+        contextMenuUIController.UpdateContextMenuItems(contextMenuItems);
     }
     private bool IsMouseOnContextMenu() {
         if (_pointer != null) {

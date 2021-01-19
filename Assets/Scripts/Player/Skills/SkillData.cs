@@ -13,11 +13,11 @@ public class SkillData : IPlayerSkill {
     //public virtual INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.NONE;
     public SPELL_TARGET[] targetTypes { get; protected set; }
     //public int radius { get; protected set; }
-    public int maxCharges => SpellUtilities.GetModifiedSpellCost(baseMaxCharges, WorldSettings.Instance.worldSettingsData.GetChargeCostsModification());
+    public int maxCharges => SpellUtilities.GetModifiedSpellCost(baseMaxCharges, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetChargeCostsModification());
     public int charges { get; private set; }
-    public int manaCost => SpellUtilities.GetModifiedSpellCost(baseManaCost, WorldSettings.Instance.worldSettingsData.GetCostsModification());
-    public int cooldown => SpellUtilities.GetModifiedSpellCost(baseCooldown, WorldSettings.Instance.worldSettingsData.GetCooldownSpeedModification());
-    public int threat => SpellUtilities.GetModifiedSpellCost(baseThreat, WorldSettings.Instance.worldSettingsData.GetThreatModification());
+    public int manaCost => SpellUtilities.GetModifiedSpellCost(baseManaCost, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification());
+    public int cooldown => SpellUtilities.GetModifiedSpellCost(baseCooldown, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCooldownSpeedModification());
+    public int threat => SpellUtilities.GetModifiedSpellCost(baseThreat, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetThreatModification());
     public int threatPerHour { get; private set; }
     public bool isInUse { get; private set; }
     public int currentCooldownTick { get; private set; }
@@ -164,7 +164,7 @@ public class SkillData : IPlayerSkill {
     }
     public void OnExecutePlayerSkill() {
         if (!PlayerSkillManager.Instance.unlimitedCast) {
-            if(hasCharges && charges > 0 && WorldSettings.Instance.worldSettingsData.chargeAmount != SKILL_CHARGE_AMOUNT.Unlimited) {
+            if(hasCharges && charges > 0 && WorldSettings.Instance.worldSettingsData.playerSkillSettings.chargeAmount != SKILL_CHARGE_AMOUNT.Unlimited) {
                 AdjustCharges(-1);
             }
             if (hasManaCost) {

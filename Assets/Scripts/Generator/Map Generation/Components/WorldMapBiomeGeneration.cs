@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UtilityScripts;
 
@@ -10,16 +11,17 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(ElevationBiomeRefinement());
 	}
 	private IEnumerator SetBiomePerRegion(MapGenerationData data) {
-		var choices = WorldSettings.Instance.worldSettingsData.biomes;
+		var choices = WorldSettings.Instance.worldSettingsData.mapSettings.biomes;
 		int lastX = 0;
 		int lastY = 0;
 		int regionIndex = 0;
+		Region region = GridMap.Instance.allRegions.First();
 		foreach (var kvp in data.chosenWorldMapTemplate.regions) {
 			for (int i = 0; i < kvp.Value.Length; i++) {
 				RegionTemplate regionTemplate = kvp.Value[i];
 				BIOMES biome = GetBiomeForRegion(regionIndex, choices);
 				choices.Remove(biome);
-				SetBiomeForRegionTemplate(regionTemplate, lastX, lastY, biome);
+				SetBiomeForRegionDivisionTemplate(regionTemplate, lastX, lastY, biome, region);
 				lastX += regionTemplate.width;
 				if (lastX == GridMap.Instance.width) {
 					lastX = 0;
@@ -66,30 +68,22 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 		// }
 		yield return null;
 	}
-	private void SetBiomeForRegionTemplate(RegionTemplate p_template, int startingX, int startingY, BIOMES p_biome) {
+	private void SetBiomeForRegionDivisionTemplate(RegionTemplate p_template, int startingX, int startingY, BIOMES p_biome, Region p_region) {
 		int maxX = startingX + p_template.width;
 		int maxY = startingY + p_template.height;
-		
+		RegionDivision regionDivision = new RegionDivision(p_biome);
 		for (int x = startingX; x < maxX; x++) {
 			for (int y = startingY; y < maxY; y++) {
 				HexTile tile = GridMap.Instance.map[x, y];
 				tile.SetBiome(p_biome);
+				regionDivision.AddTile(tile);
 			}
 		}
+		p_region.regionDivisionComponent.AddRegionDivision(regionDivision);
 	}
 	private BIOMES GetBiomeForRegion(int p_regionIndex, List<BIOMES> p_biomeChoices) {
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			return BIOMES.GRASSLAND;
-		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
-			if (p_regionIndex == 0) {
-				return BIOMES.FOREST;
-			} else if (p_regionIndex == 1) {
-				return BIOMES.DESERT;
-			} else if (p_regionIndex == 2) {
-				return BIOMES.SNOW;
-			} else {
-				return BIOMES.GRASSLAND;
-			}
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			if (p_regionIndex == 0) {
 				return BIOMES.GRASSLAND;
@@ -102,6 +96,24 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 			} else {
 				return BIOMES.SNOW;
 			}
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
+			if (p_regionIndex == 0) {
+				return BIOMES.FOREST;
+			} else if (p_regionIndex == 1) {
+				return BIOMES.DESERT;
+			} else if (p_regionIndex == 2) {
+				return BIOMES.SNOW;
+			} else {
+				return BIOMES.GRASSLAND;
+			}
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Aneem) {
+			if (p_regionIndex == 0) {
+				return BIOMES.FOREST;
+			} else {
+				return BIOMES.SNOW;
+			}
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
+			return BIOMES.FOREST;
 		} else {
 			return CollectionUtilities.GetRandomElement(p_biomeChoices);
 		}

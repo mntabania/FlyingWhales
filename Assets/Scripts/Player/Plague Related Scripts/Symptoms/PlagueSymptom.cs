@@ -42,25 +42,25 @@ namespace Plague.Symptom {
         public static int GetSymptomCost(this PLAGUE_SYMPTOM p_symptom) {
             switch (p_symptom) {
                 case PLAGUE_SYMPTOM.Paralysis:
-                    return SpellUtilities.GetModifiedSpellCost(30, WorldSettings.Instance.worldSettingsData.GetCostsModification()); ;
+                    return SpellUtilities.GetModifiedSpellCost(30, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()); ;
                 case PLAGUE_SYMPTOM.Vomiting:
-                    return SpellUtilities.GetModifiedSpellCost(25, WorldSettings.Instance.worldSettingsData.GetCostsModification()); ;
+                    return SpellUtilities.GetModifiedSpellCost(25, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()); ;
                 case PLAGUE_SYMPTOM.Lethargy:
-                    return SpellUtilities.GetModifiedSpellCost(20, WorldSettings.Instance.worldSettingsData.GetCostsModification()); ;
+                    return SpellUtilities.GetModifiedSpellCost(20, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()); ;
                 case PLAGUE_SYMPTOM.Seizure:
-                    return SpellUtilities.GetModifiedSpellCost(25, WorldSettings.Instance.worldSettingsData.GetCostsModification()); ;
+                    return SpellUtilities.GetModifiedSpellCost(25, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()); ;
                 case PLAGUE_SYMPTOM.Insomnia:
-                    return SpellUtilities.GetModifiedSpellCost(20, WorldSettings.Instance.worldSettingsData.GetCostsModification()); ;
+                    return SpellUtilities.GetModifiedSpellCost(20, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()); ;
                 case PLAGUE_SYMPTOM.Poison_Cloud:
-                    return SpellUtilities.GetModifiedSpellCost(40, WorldSettings.Instance.worldSettingsData.GetCostsModification()); ;
+                    return SpellUtilities.GetModifiedSpellCost(40, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()); ;
                 case PLAGUE_SYMPTOM.Monster_Scent:
-                    return SpellUtilities.GetModifiedSpellCost(20, WorldSettings.Instance.worldSettingsData.GetCostsModification()); ;
+                    return SpellUtilities.GetModifiedSpellCost(20, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()); ;
                 case PLAGUE_SYMPTOM.Sneezing:
-                    return SpellUtilities.GetModifiedSpellCost(35, WorldSettings.Instance.worldSettingsData.GetCostsModification()); ;
+                    return SpellUtilities.GetModifiedSpellCost(35, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()); ;
                 case PLAGUE_SYMPTOM.Depression:
-                    return SpellUtilities.GetModifiedSpellCost(30, WorldSettings.Instance.worldSettingsData.GetCostsModification()); ;
+                    return SpellUtilities.GetModifiedSpellCost(30, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()); ;
                 case PLAGUE_SYMPTOM.Hunger_Pangs:
-                    return SpellUtilities.GetModifiedSpellCost(20, WorldSettings.Instance.worldSettingsData.GetCostsModification()); ;
+                    return SpellUtilities.GetModifiedSpellCost(20, WorldSettings.Instance.worldSettingsData.playerSkillSettings.GetCostsModification()); ;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(p_symptom), p_symptom, null);
             }

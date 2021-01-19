@@ -110,11 +110,11 @@ public class ConsoleBase : InfoUIBase {
         fullDebugLbl.text = string.Empty;
         fullDebug2Lbl.text = string.Empty;
         string worldSettingsText = $"World Settings:";
-        worldSettingsText = $"{worldSettingsText}\nMigration: {WorldSettings.Instance.worldSettingsData.migrationSpeed.ToString()}";
-        worldSettingsText = $"{worldSettingsText}\nCooldown: {WorldSettings.Instance.worldSettingsData.cooldownSpeed.ToString()}";
-        worldSettingsText = $"{worldSettingsText}\nCosts: {WorldSettings.Instance.worldSettingsData.costAmount.ToString()}";
-        worldSettingsText = $"{worldSettingsText}\nCharges: {WorldSettings.Instance.worldSettingsData.chargeAmount.ToString()}";
-        worldSettingsText = $"{worldSettingsText}\nThreat: {WorldSettings.Instance.worldSettingsData.threatAmount.ToString()}";
+        worldSettingsText = $"{worldSettingsText}\nMigration: {WorldSettings.Instance.worldSettingsData.villageSettings.migrationSpeed.ToString()}";
+        worldSettingsText = $"{worldSettingsText}\nCooldown: {WorldSettings.Instance.worldSettingsData.playerSkillSettings.cooldownSpeed.ToString()}";
+        worldSettingsText = $"{worldSettingsText}\nCosts: {WorldSettings.Instance.worldSettingsData.playerSkillSettings.costAmount.ToString()}";
+        worldSettingsText = $"{worldSettingsText}\nCharges: {WorldSettings.Instance.worldSettingsData.playerSkillSettings.chargeAmount.ToString()}";
+        worldSettingsText = $"{worldSettingsText}\nThreat: {WorldSettings.Instance.worldSettingsData.playerSkillSettings.threatAmount.ToString()}";
         
         worldSettingsText = $"{worldSettingsText}\nPathfinding:";
         if (AstarPath.active.graphs.Length > 0) {

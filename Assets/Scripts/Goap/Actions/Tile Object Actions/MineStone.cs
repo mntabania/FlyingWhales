@@ -29,11 +29,14 @@ public class MineStone : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        if (node.actor.characterClass.IsCombatant()) {
-            node.actor.needsComponent.AdjustDoNotGetBored(-1);
-        }
+    //public override void OnStopWhilePerforming(ActualGoapNode node) {
+    //    base.OnStopWhilePerforming(node);
+    //    if (node.actor.characterClass.IsCombatant()) {
+    //        node.actor.needsComponent.AdjustDoNotGetBored(-1);
+    //    }
+    //}
+    public override bool IsHappinessRecoveryAction() {
+        return true;
     }
     #endregion
 
@@ -51,9 +54,9 @@ public class MineStone : GoapAction {
     public void PreMineSuccess(ActualGoapNode goapNode) {
         Rock rock = goapNode.poiTarget as Rock;
         goapNode.descriptionLog.AddToFillers(null, rock.yield.ToString(), LOG_IDENTIFIER.STRING_1);
-        if (goapNode.actor.characterClass.IsCombatant()) {
-            goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
-        }
+        //if (goapNode.actor.characterClass.IsCombatant()) {
+        //    goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+        //}
     }
     public void PerTickMineSuccess(ActualGoapNode goapNode) {
         if (goapNode.actor.characterClass.IsCombatant()) {
@@ -61,9 +64,9 @@ public class MineStone : GoapAction {
         }
     }
     public void AfterMineSuccess(ActualGoapNode goapNode) {
-        if (goapNode.actor.characterClass.IsCombatant()) {
-            goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
-        }
+        //if (goapNode.actor.characterClass.IsCombatant()) {
+        //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+        //}
         Rock rock = goapNode.poiTarget as Rock;
         int stone = rock.yield;
         LocationGridTile tile = rock.gridTileLocation;

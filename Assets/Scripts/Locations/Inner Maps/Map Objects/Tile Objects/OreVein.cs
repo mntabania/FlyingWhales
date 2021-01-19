@@ -63,10 +63,11 @@ public class OreVein : TileObject {
     }
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
         tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(WALL_TYPE.Stone));
-        tile.parentMap.structureTilemap.SetColor(tile.localPlace, Color.cyan);
+        // tile.parentMap.structureTilemap.SetColor(tile.localPlace, Color.cyan);
         tile.SetTileType(LocationGridTile.Tile_Type.Wall);
         Vector2 size = new Vector2(1.15f, 1.15f);
         mapVisual.InitializeGUS(Vector2.zero, size, tile);
+        mapVisual.UpdateTileObjectVisual(this);
 
         base.OnPlaceTileObjectAtTile(tile);
     }

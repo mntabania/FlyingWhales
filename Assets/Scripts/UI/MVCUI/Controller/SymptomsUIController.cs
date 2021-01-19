@@ -124,7 +124,7 @@ public class SymptomsUIController : MVCUIController, SymptomsUIView.IListener
 	}
 	private bool CanAffordSymptom(PLAGUE_SYMPTOM p_symptomType) {
 		if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
-			return PlayerManager.Instance.player.plagueComponent.plaguePoints >= p_symptomType.GetSymptomCost() || (WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.costAmount == SKILL_COST_AMOUNT.None);
+			return PlayerManager.Instance.player.plagueComponent.plaguePoints >= p_symptomType.GetSymptomCost() || (WorldSettings.Instance != null && WorldSettings.Instance.worldSettingsData.playerSkillSettings.costAmount == SKILL_COST_AMOUNT.None);
 		} else {
 			return true;
 		}

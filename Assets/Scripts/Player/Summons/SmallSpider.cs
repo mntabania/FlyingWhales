@@ -108,7 +108,7 @@ public class SmallSpider : Summon {
         growUpLog.AddToFillers(summon, summon.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         growUpLog.AddLogToDatabase();
         
-        CharacterManager.Instance.PlaceSummon(summon, tile);
+        CharacterManager.Instance.PlaceSummonInitially(summon, tile);
         TraitManager.Instance.CopyStatuses(this, summon);
 
         Death("Transform Giant Spider");

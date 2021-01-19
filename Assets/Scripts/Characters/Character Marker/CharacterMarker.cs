@@ -1385,17 +1385,17 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
                     if (poi.mapObjectVisual == null) {
-                        log += $"\n-{poi.nameWithID}'s map visual has been destroyed. Skipping...";
+                        log = $"{log}\n-{poi.nameWithID}'s map visual has been destroyed. Skipping...";
                         continue;
                     }
                     if (poi.isHidden) {
-                        log += $"\n-{poi.nameWithID} is hidden. Skipping...";
+                        log = $"{log}\n-{poi.nameWithID} is hidden. Skipping...";
                         continue;
                     }
                     if(poi is Character target) {
                         //After dropping a character, the carrier should not immediately react to the recently dropped character
                         if(target.carryComponent.justGotCarriedBy != null && target.carryComponent.justGotCarriedBy == character) {
-                            log += $"\n-{poi.nameWithID} is just got dropped. Skipping...";
+                            log = $"{log}\n-{poi.nameWithID} is just got dropped. Skipping...";
                             target.carryComponent.SetJustGotCarriedBy(null);
                             continue;
                         }
@@ -1403,11 +1403,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     if(!visionCollider.IsTheSameStructureOrSameOpenSpaceWithPOI(poi)) {
                         //Before reacting to a character check first if he is in vision list, if he is not and he is not in line of sight, do not react
                         if (!IsCharacterInLineOfSightWith(poi)) {
-                            log += $"\n-{poi.nameWithID} is not in same space and no longer in line of sight with actor. Skipping...";
+                            log = $"{log}\n-{poi.nameWithID} is not in same space and no longer in line of sight with actor. Skipping...";
                             continue;
                         }
                     }
-                    log += $"\n-{poi.nameWithID}";
+                    log = $"{log}\n-{poi.nameWithID}";
                     bool reactToActionOnly = false;
                     if (unprocessedVisionPOIInterruptsOnly.Count > 0) {
                         reactToActionOnly = unprocessedVisionPOIInterruptsOnly.Contains(poi);
@@ -1415,7 +1415,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     character.ThisCharacterSaw(poi, reactToActionOnly);
                 }
             } else {
-                log += "\n - Character is either dead, not processing...";
+                log = $"{log}\n - Character is either dead, not processing...";
             }
             ClearUnprocessedPOI();
         }
@@ -1424,18 +1424,18 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 for (int i = 0; i < unprocessedActionsOnly.Count; i++) {
                     ActualGoapNode action = unprocessedActionsOnly[i];
                     Character actor = action.actor;
-                    log += $"\n-{action.goapName} of {actor.name} towards {action.poiTarget.name}";
+                    log = $"{log}\n-{action.goapName} of {actor.name} towards {action.poiTarget.name}";
                     if (!visionCollider.IsTheSameStructureOrSameOpenSpaceWithPOI(actor)) {
                         //Before reacting to a character check first if he is in vision list, if he is not and he is not in line of sight, do not react
                         if (!IsCharacterInLineOfSightWith(actor)) {
-                            log += $"\n-{actor.nameWithID} is not in same space and no longer in line of sight with actor. Skipping...";
+                            log = $"{log}\n-{actor.nameWithID} is not in same space and no longer in line of sight with actor. Skipping...";
                             continue;
                         }
                     }
                     character.ThisCharacterSawAction(action);
                 }
             } else {
-                log += "\n - Character is either dead, not processing...";
+                log = $"{log}\n - Character is either dead, not processing...";
             }
             ClearUnprocessedActions();
         }
