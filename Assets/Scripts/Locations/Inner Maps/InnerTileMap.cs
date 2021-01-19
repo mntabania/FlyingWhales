@@ -657,9 +657,6 @@ namespace Inner_Maps {
                 positionArray[i] = currTile.localPlace;
                 currTile.SetFloorSample(floorSample);
                 groundTilesArray[i] = GetGroundAssetPerlin(floorSample, currTile.biomeType);
-                if (currTile.localPlace.x == 61 && currTile.localPlace.y == 79) {
-                    Debug.Log($"Set ground tilemap visual of {currTile.localPlace.ToString()} to {groundTilesArray[i].name}");
-                }
             }
             
             //Mass Update tiles
@@ -691,7 +688,7 @@ namespace Inner_Maps {
                         for (int i = 0; i < locationGridTiles.Count; i++) {
                             LocationGridTile tile = locationGridTiles[i];
                             if (tile.isDefault) {
-                                float chance = 0.37f;
+                                float chance = 0.33f;
                                 BIOMES biomeToUse = tile.floorSample < chance ? tile.biomeType : diffBiome;
                                 positions.Add(tile.localPlace);
                                 groundTiles.Add(GetGroundAssetPerlin(tile.floorSample, biomeToUse));    
