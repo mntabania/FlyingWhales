@@ -19,7 +19,7 @@ public class BuildBlueprint : GoapAction {
     // protected override void ConstructBasePreconditionsAndEffects() {
     //     AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasSupply);
     // }
-    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
         if (target is GenericTileObject genericTileObject) {
             if (genericTileObject.blueprintOnTile != null) {
                 //List<Precondition> baseP = base.GetPrecondition(actor, target, otherData, out isOverridden);
@@ -45,7 +45,7 @@ public class BuildBlueprint : GoapAction {
                 return p;
             }
         }
-        return base.GetPrecondition(actor, target, otherData, out isOverridden);
+        return base.GetPrecondition(actor, target, otherData, jobType, out isOverridden);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);

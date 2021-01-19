@@ -37,16 +37,14 @@ public class Eat : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.STAMINA_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
-    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
-        if (target is Table && !(actor is Summon)) { // || target is FoodPile
-            //List<Precondition> baseP = base.GetPrecondition(actor, target, otherData, out isOverridden);
-            //List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
-            //p.AddRange(baseP);
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
+        if (target is Table && !(actor is Summon) && jobType != JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT) {
+            //Only let the character deposit food to table if the job type is not recovery on sight because if it is, it means that is his fullness recovery is an urgent one, so only eat on those tables that already have enough food
             Precondition p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile" /*+ (int)otherData[0]*/, false, GOAP_EFFECT_TARGET.TARGET), HasFood);
             isOverridden = true;
             return p;
         }
-        return base.GetPrecondition(actor, target, otherData, out isOverridden);
+        return base.GetPrecondition(actor, target, otherData, jobType, out isOverridden);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
