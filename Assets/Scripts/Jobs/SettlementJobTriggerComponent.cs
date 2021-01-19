@@ -527,6 +527,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 			_owner.AddToAvailableJobs(job);
 		}
 	}
+    public void TryCreateHaulJobForItems(TileObject target, LocationStructure dropLocation) {
+        if (_owner.HasJob(JOB_TYPE.HAUL, target) == false) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, INTERACTION_TYPE.DROP_ITEM, target, _owner);
+            job.AddOtherData(INTERACTION_TYPE.DROP_ITEM, new object[] { dropLocation });
+            job.SetStillApplicableChecker(JobManager.Haul_Applicability);
+            job.SetCanTakeThisJobChecker(JobManager.Can_Take_Haul);
+            _owner.AddToAvailableJobs(job);
+        }
+    }
     #endregion
 
     #region Judge Prisoner
