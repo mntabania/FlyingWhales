@@ -9,7 +9,7 @@ namespace Quests {
         private DeclareWarQuestStep _declareWarSteps;
 
         #region getters
-        public override Type serializedData => typeof(DeclareWarQuest);
+        public override Type serializedData => typeof(SaveDeclareWarQuest);
         #endregion
 
         public DeclareWarQuest() : base($"Daclare War 3 times (Must be different factions)") { }

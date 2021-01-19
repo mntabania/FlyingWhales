@@ -9,7 +9,7 @@ namespace Quests {
         private WipeElvenKingdomAndSurviveHumanStep _eliminateElvensStep;
 
         #region getters
-        public override Type serializedData => typeof(WipeElvenKingdomAndSurviveHuman);
+        public override Type serializedData => typeof(SaveWipeElvenKingdomAndSurviveHuman);
         #endregion
 
         public WipeElvenKingdomAndSurviveHuman() : base($"Wipe Elven kingdom and survive atleast 5 humans") { }
