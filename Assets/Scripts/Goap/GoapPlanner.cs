@@ -361,7 +361,7 @@ public class GoapPlanner {
         Precondition precondition = null;
         OtherData[] otherData = job.GetOtherDataFor(action.goapType);
         bool isOverriden = false;
-        precondition = action.GetPrecondition(actor, target, otherData, out isOverriden);
+        precondition = action.GetPrecondition(actor, target, otherData, job.jobType, out isOverriden);
         if (precondition != null) {
             log += $"\n--Node {node.action.goapName} has precondition";
             if (!precondition.CanSatisfyCondition(actor, target, otherData, job.jobType)) {

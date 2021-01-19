@@ -146,7 +146,7 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
         }
         else if (character.homeStructure != null) {
             residentCount = character.homeStructure.residents.Count(x => x.isDead == false);
-            eggCount = character.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.SPIDER_EGG).Count;
+            eggCount = character.homeStructure.GetNumberOfTileObjectsThatMeetCriteria(TILE_OBJECT_TYPE.SPIDER_EGG, null);
         }
         else if (character.HasTerritory()) {
             residentCount = character.homeRegion.GetCountOfAliveCharacterWithSameTerritory(character);

@@ -94,7 +94,8 @@ public class Butcher : GoapAction {
                                 int currCost = UtilityScripts.Utilities.Rng.Next(100, 151);
                                 cost += currCost;
                                 costLog += $" +{currCost}(Cannibal, Malnourished, Friend/Close)";
-                            } else if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
+                            }
+                            if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
                                 cost += 300;
                                 costLog += " +300(Cannibal, Malnourished, Human/Elf/Sapient Ratman)";
                             }
@@ -102,7 +103,8 @@ public class Butcher : GoapAction {
                             if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
                                 cost += 2000;
                                 costLog += " +2000(Cannibal, Friend/Close)";
-                            } else if ((targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) && !actor.needsComponent.isStarving) {
+                            }
+                            if ((targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) && !actor.needsComponent.isStarving) {
                                 cost += 400;
                                 costLog += " +2000(Cannibal, Human/Elf/Sapient Ratman, not Starving)";
                             }
@@ -114,23 +116,28 @@ public class Butcher : GoapAction {
                                 int currCost = UtilityScripts.Utilities.Rng.Next(100, 151);
                                 cost += currCost;
                                 costLog += $" +{currCost}(not Cannibal, Malnourished, Friend/Close)";
-                            } else if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
+                            }
+                            if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
                                 cost += 500;
                                 costLog += " +500(not Cannibal, Malnourished, Human/Elf/Sapient Ratman)";
                             }
                         } else {
-                            if (actor.needsComponent.isStarving) {
-                                if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                                    int currCost = 300;
-                                    cost += currCost;
-                                    costLog += $" +300(not Cannibal, not Malnourished but starving, Friend/Close)";
-                                }
-                            } else {
-                                if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
-                                    cost += 2000;
-                                    costLog += " +2000(not Cannibal, not malnourished or starving, Human/Elf/Sapient Ratman)";
-                                }    
+                            if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
+                                cost += 2000;
+                                costLog += " +2000(not Cannibal, not malnourished or starving, Human/Elf/Sapient Ratman)";
                             }
+                            //if (actor.needsComponent.isStarving) {
+                            //    if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                            //        int currCost = 300;
+                            //        cost += currCost;
+                            //        costLog += $" +300(not Cannibal, not Malnourished but starving, Friend/Close)";
+                            //    }
+                            //} else {
+                            //    if (targetCharacter.race.IsSapient() || targetCharacter.IsRatmanThatIsPartOfMajorFaction()) {
+                            //        cost += 2000;
+                            //        costLog += " +2000(not Cannibal, not malnourished or starving, Human/Elf/Sapient Ratman)";
+                            //    }    
+                            //}
                         }
                     }
                 }
@@ -170,23 +177,22 @@ public class Butcher : GoapAction {
                 CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(actor, actor, targetCharacter, CRIME_TYPE.Animal_Killing);
                 int currCost = 0;
                 if (severity == CRIME_SEVERITY.Infraction) {
-                    currCost = UtilityScripts.Utilities.Rng.Next(80, 91);
+                    currCost += UtilityScripts.Utilities.Rng.Next(80, 91);
                     costLog += $" +{currCost}(Animal/Infraction)";
                 } else if (severity == CRIME_SEVERITY.Misdemeanor || severity == CRIME_SEVERITY.Serious || severity == CRIME_SEVERITY.Heinous) {
                     if (actor.traitContainer.HasTrait("Malnourished")) {
                         if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                            currCost = 200;
+                            currCost += 200;
                             costLog += $" +{currCost}(Animal/Misdemeanor/Serious/Heinous/Malnourished/Friend/Close Friend)";
-                        } else {
-                            currCost = UtilityScripts.Utilities.Rng.Next(100, 111);
-                            costLog += $" +{currCost}(Animal/Misdemeanor/Serious/Heinous/Malnourished)";
                         }
+                        currCost += UtilityScripts.Utilities.Rng.Next(100, 111);
+                        costLog += $" +{currCost}(Animal/Misdemeanor/Serious/Heinous/Malnourished)";
                     } else {
-                        currCost = 2000;
+                        currCost += 2000;
                         costLog += $" +{currCost}(Animal/Misdemeanor/Serious/Heinous/not Malnourished)";
                     }
                 } else {
-                    currCost = UtilityScripts.Utilities.Rng.Next(40, 51);
+                    currCost += UtilityScripts.Utilities.Rng.Next(40, 51);
                     costLog += $" +{currCost}(Animal/No Severity)";
                 }
                 cost += currCost;

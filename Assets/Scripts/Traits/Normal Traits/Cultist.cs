@@ -10,8 +10,8 @@ namespace Traits {
         public Cultist() {
             name = "Cultist";
             description = "Worships us, but only secretly.";
-            type = TRAIT_TYPE.FLAW;
-            effect = TRAIT_EFFECT.NEGATIVE;
+            type = TRAIT_TYPE.NEUTRAL;
+            effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             canBeTriggered = false;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CULTIST_TRANSFORM };

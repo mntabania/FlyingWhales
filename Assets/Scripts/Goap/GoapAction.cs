@@ -251,6 +251,9 @@ public class GoapAction {
     public virtual bool ShouldActionBeAnIntel(ActualGoapNode node) {
         return false;
     }
+    public virtual bool IsFullnessRecoveryAction() { return false; }
+    public virtual bool IsTirednessRecoveryAction() { return false; }
+    public virtual bool IsHappinessRecoveryAction() { return false; }
     #endregion
 
     #region Utilities
@@ -428,7 +431,7 @@ public class GoapAction {
     public bool CanSatisfyAllPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType) {
         bool isOverridden = false;
         bool canSatisfy = true;
-        Precondition precondition = GetPrecondition(actor, target, otherData, out isOverridden);
+        Precondition precondition = GetPrecondition(actor, target, otherData, jobType, out isOverridden);
         if (precondition != null && !precondition.CanSatisfyCondition(actor, target, otherData, jobType)) {
             canSatisfy = false;
         }
@@ -448,7 +451,7 @@ public class GoapAction {
         //}
         return canSatisfy;
     }
-    public virtual Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
+    public virtual Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
         isOverridden = false; 
         return basePrecondition;
     }

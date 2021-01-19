@@ -37,16 +37,14 @@ public class Eat : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.STAMINA_RECOVERY, conditionKey = string.Empty, target = GOAP_EFFECT_TARGET.ACTOR });
     }
-    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, out bool isOverridden) {
-        if (target is Table && !(actor is Summon)) { // || target is FoodPile
-            //List<Precondition> baseP = base.GetPrecondition(actor, target, otherData, out isOverridden);
-            //List<Precondition> p = ObjectPoolManager.Instance.CreateNewPreconditionsList();
-            //p.AddRange(baseP);
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
+        if (target is Table && !(actor is Summon) && jobType != JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT) {
+            //Only let the character deposit food to table if the job type is not recovery on sight because if it is, it means that is his fullness recovery is an urgent one, so only eat on those tables that already have enough food
             Precondition p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile" /*+ (int)otherData[0]*/, false, GOAP_EFFECT_TARGET.TARGET), HasFood);
             isOverridden = true;
             return p;
         }
-        return base.GetPrecondition(actor, target, otherData, out isOverridden);
+        return base.GetPrecondition(actor, target, otherData, jobType, out isOverridden);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -232,11 +230,11 @@ public class Eat : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        Character actor = node.actor;
-        actor.needsComponent.AdjustDoNotGetHungry(-1);
-    }
+    //public override void OnStopWhilePerforming(ActualGoapNode node) {
+    //    base.OnStopWhilePerforming(node);
+    //    Character actor = node.actor;
+    //    actor.needsComponent.AdjustDoNotGetHungry(-1);
+    //}
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
         IPointOfInterest poiTarget = node.poiTarget;
@@ -303,20 +301,23 @@ public class Eat : GoapAction {
             }
         }
     }
+    public override bool IsFullnessRecoveryAction() {
+        return true;
+    }
     #endregion
 
     #region Effects
-    public void PreEatSuccess(ActualGoapNode goapNode) {
-        //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-        //goapNode.poiTarget.SetPOIState(POI_STATE.INACTIVE);
-        goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
-        //actor.traitContainer.AddTrait(actor,"Eating");
-    }
+    //public void PreEatSuccess(ActualGoapNode goapNode) {
+    //    //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
+    //    //goapNode.poiTarget.SetPOIState(POI_STATE.INACTIVE);
+    //    goapNode.actor.needsComponent.AdjustDoNotGetHungry(1);
+    //    //actor.traitContainer.AddTrait(actor,"Eating");
+    //}
     //public void PerTickEatSuccess(ActualGoapNode goapNode) {
     //    //goapNode.actor.AdjustFullness(520);
     //}
     public void AfterEatSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetHungry(-1);
+        //goapNode.actor.needsComponent.AdjustDoNotGetHungry(-1);
         //goapNode.poiTarget.SetPOIState(POI_STATE.ACTIVE);
         if (goapNode.actor.traitContainer.HasTrait("Cannibal") == false && 
             (goapNode.poiTarget is ElfMeat || goapNode.poiTarget is HumanMeat) && goapNode.actor.isNotSummonAndDemon) {

@@ -69,11 +69,14 @@ public class HarvestPlant : GoapAction {
         base.AddFillersToLog(ref log, node);
         log.AddToFillers(null, GetTargetString(node.poiTarget), LOG_IDENTIFIER.STRING_2);
     }
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        if (node.actor.characterClass.IsCombatant()) {
-            node.actor.needsComponent.AdjustDoNotGetBored(-1);
-        }
+    //public override void OnStopWhilePerforming(ActualGoapNode node) {
+    //    base.OnStopWhilePerforming(node);
+    //    if (node.actor.characterClass.IsCombatant()) {
+    //        node.actor.needsComponent.AdjustDoNotGetBored(-1);
+    //    }
+    //}
+    public override bool IsHappinessRecoveryAction() {
+        return true;
     }
     #endregion
 
@@ -94,9 +97,9 @@ public class HarvestPlant : GoapAction {
     #region State Effects
     public void PreHarvestSuccess(ActualGoapNode goapNode) {
         goapNode.descriptionLog.AddToFillers(null, "50", LOG_IDENTIFIER.STRING_1);
-        if (goapNode.actor.characterClass.IsCombatant()) {
-            goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
-        }
+        //if (goapNode.actor.characterClass.IsCombatant()) {
+        //    goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+        //}
     }
     public void PerTickHarvestSuccess(ActualGoapNode goapNode) {
         if (goapNode.actor.characterClass.IsCombatant()) {
@@ -104,9 +107,9 @@ public class HarvestPlant : GoapAction {
         }
     }
     public void AfterHarvestSuccess(ActualGoapNode goapNode) {
-        if (goapNode.actor.characterClass.IsCombatant()) {
-            goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
-        }
+        //if (goapNode.actor.characterClass.IsCombatant()) {
+        //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+        //}
         IPointOfInterest poiTarget = goapNode.poiTarget;
         if (poiTarget is Crops crop) {
             crop.SetGrowthState(Crops.Growth_State.Growing);

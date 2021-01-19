@@ -29,11 +29,14 @@ public class ChopWood : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        if (node.actor.characterClass.IsCombatant()) {
-            node.actor.needsComponent.AdjustDoNotGetBored(-1);
-        }
+    //public override void OnStopWhilePerforming(ActualGoapNode node) {
+    //    base.OnStopWhilePerforming(node);
+    //    if (node.actor.characterClass.IsCombatant()) {
+    //        node.actor.needsComponent.AdjustDoNotGetBored(-1);
+    //    }
+    //}
+    public override bool IsHappinessRecoveryAction() {
+        return true;
     }
     #endregion
 
@@ -53,9 +56,9 @@ public class ChopWood : GoapAction {
         //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         goapNode.descriptionLog.AddToFillers(null, tree.yield.ToString(), LOG_IDENTIFIER.STRING_1);
         //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-        if (goapNode.actor.characterClass.IsCombatant()) {
-            goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
-        }
+        //if (goapNode.actor.characterClass.IsCombatant()) {
+        //    goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+        //}
     }
     public void PerTickChopSuccess(ActualGoapNode goapNode) {
         TreeObject tree = goapNode.poiTarget as TreeObject;
@@ -66,9 +69,9 @@ public class ChopWood : GoapAction {
     }
     
     public void AfterChopSuccess(ActualGoapNode goapNode) {
-        if (goapNode.actor.characterClass.IsCombatant()) {
-            goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
-        }
+        //if (goapNode.actor.characterClass.IsCombatant()) {
+        //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+        //}
         TreeObject tree = goapNode.poiTarget as TreeObject;
         LocationGridTile tile = tree.gridTileLocation;
         int wood = tree.yield;

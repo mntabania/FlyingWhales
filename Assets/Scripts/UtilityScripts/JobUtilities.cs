@@ -5,6 +5,41 @@ using Inner_Maps.Location_Structures;
 
 namespace UtilityScripts {
     public static class JobUtilities {
+        public static void PopulatePriorityLocationsForFullnessRecovery(Character actor, GoapPlanJob job) {
+            if (!actor.traitContainer.HasTrait("Travelling")) {
+                bool hasPrioLocation = false;
+                NPCSettlement homeSettlement = actor.homeSettlement;
+                LocationStructure homeStructure = actor.homeStructure;
+                if (homeStructure != null) {
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, homeStructure);
+                    hasPrioLocation = true;
+                }
+                if (homeSettlement != null) {
+                    LocationStructure cityCenter = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+                    LocationStructure tavern = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.TAVERN);
+                    if (cityCenter != null) {
+                        job.AddPriorityLocation(INTERACTION_TYPE.NONE, cityCenter);
+                        hasPrioLocation = true;
+                    }
+                    if (tavern != null) {
+                        job.AddPriorityLocation(INTERACTION_TYPE.NONE, tavern);
+                        hasPrioLocation = true;
+                    }
+                }
+                if (hasPrioLocation) {
+                    LocationStructure currentStructure = actor.currentStructure;
+                    ILocation currentLocation = currentStructure;
+                    if (currentStructure == null || currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || currentStructure.structureType == STRUCTURE_TYPE.OCEAN) {
+                        if (actor.gridTileLocation != null && actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                            currentLocation = actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                        }
+                    }
+                    if (currentLocation != null) {
+                        job.AddPriorityLocation(INTERACTION_TYPE.NONE, currentLocation);
+                    }
+                }
+            }
+        }
         public static void PopulatePriorityLocationsForHappinessRecovery(Character actor, GoapPlanJob job) {
             if (!actor.traitContainer.HasTrait("Travelling")) {
                 bool hasPrioLocation = false;

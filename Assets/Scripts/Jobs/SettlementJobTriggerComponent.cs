@@ -111,7 +111,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
     private void OnGameLoadedVillage() {
 		Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoadedVillage);
 		if (SaveManager.Instance.useSaveData) {
-			LoadTendFarmCheck();
+			//LoadTendFarmCheck();
 			LoadCheckResource();
 		} else {
 			KickstartJobs();
@@ -126,7 +126,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
         }
     }
     public void KickstartJobs() {
-		CheckIfFarmShouldBeTended(true);
+		//CheckIfFarmShouldBeTended(true);
 		ScheduledCheckResource();
 		TryCreateMiningJob();
 	}
@@ -527,6 +527,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 			_owner.AddToAvailableJobs(job);
 		}
 	}
+    public void TryCreateHaulJobForItems(TileObject target, LocationStructure dropLocation) {
+        if (_owner.HasJob(JOB_TYPE.HAUL, target) == false) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, INTERACTION_TYPE.DROP_ITEM, target, _owner);
+            job.AddOtherData(INTERACTION_TYPE.DROP_ITEM, new object[] { dropLocation });
+            job.SetStillApplicableChecker(JobManager.Haul_Applicability);
+            job.SetCanTakeThisJobChecker(JobManager.Can_Take_Haul);
+            _owner.AddToAvailableJobs(job);
+        }
+    }
     #endregion
 
     #region Judge Prisoner
@@ -625,16 +634,18 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		//get all resource piles inside the main storage, then check if iny of them are not at max capacity,
 		//if not at max capacity, check if the pile can handle the resources of the new pile,
 		//if it can, then create combine job
-		List<ResourcePile> resourcePiles = _owner.mainStorage.GetTileObjectsOfType<ResourcePile>(pile.tileObjectType);
+		List<TileObject> resourcePiles = _owner.mainStorage.GetTileObjectsOfType(pile.tileObjectType);
 		ResourcePile targetPile = null;
-		for (int i = 0; i < resourcePiles.Count; i++) {
-			ResourcePile currPile = resourcePiles[i];
-			if (currPile != pile && currPile.mapObjectState == MAP_OBJECT_STATE.BUILT && currPile.IsAtMaxResource(pile.providedResource) == false
-			    && currPile.HasEnoughSpaceFor(pile.providedResource, pile.resourceInPile)) {
-				targetPile = currPile;
-				break;
-			}
-		}
+        if(resourcePiles != null) {
+            for (int i = 0; i < resourcePiles.Count; i++) {
+                ResourcePile currPile = resourcePiles[i] as ResourcePile;
+                if (currPile != pile && currPile.mapObjectState == MAP_OBJECT_STATE.BUILT && currPile.IsAtMaxResource(pile.providedResource) == false
+                    && currPile.HasEnoughSpaceFor(pile.providedResource, pile.resourceInPile)) {
+                    targetPile = currPile;
+                    break;
+                }
+            }
+        }
 		if (targetPile != null && _owner.HasJob(JOB_TYPE.COMBINE_STOCKPILE, targetPile) == false) { //only create job if chosen target pile does not already have a job to combine it with another pile
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMBINE_STOCKPILE, 
 				INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, pile, _owner);
@@ -886,55 +897,55 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 
 	#region Tend Farm
 	private void ScheduleTendFarmCheck() {
-		GameDate checkDate = GameManager.Instance.Today();
-		checkDate.AddDays(1);
-		checkDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(6));
-		SchedulingManager.Instance.AddEntry(checkDate, () => CheckIfFarmShouldBeTended(true), this);
+		//GameDate checkDate = GameManager.Instance.Today();
+		//checkDate.AddDays(1);
+		//checkDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(6));
+		//SchedulingManager.Instance.AddEntry(checkDate, () => CheckIfFarmShouldBeTended(true), this);
 	}
 	private void LoadTendFarmCheck() {
-		if (GameManager.Instance.Today().tick < GameManager.Instance.GetTicksBasedOnHour(6)) {
-			//if current tick is before check time, then schedule check for today at the specified check time.
-			GameDate checkDate = GameManager.Instance.Today();
-			checkDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(6));
-			SchedulingManager.Instance.AddEntry(checkDate, () => CheckIfFarmShouldBeTended(true), this);
-		} else {
-			ScheduleTendFarmCheck();
-		}
+		//if (GameManager.Instance.Today().tick < GameManager.Instance.GetTicksBasedOnHour(6)) {
+		//	//if current tick is before check time, then schedule check for today at the specified check time.
+		//	GameDate checkDate = GameManager.Instance.Today();
+		//	checkDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(6));
+		//	SchedulingManager.Instance.AddEntry(checkDate, () => CheckIfFarmShouldBeTended(true), this);
+		//} else {
+		//	ScheduleTendFarmCheck();
+		//}
 	}
 	public void CheckIfFarmShouldBeTended(bool reschedule) {
-		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) > 16) {
-			return; //already 4pm do not create tend job
-		}
-		if (_owner.HasJob(JOB_TYPE.TEND_FARM)) {
-			return; //already has tend job
-		}
-		List<LocationStructure> farms = _owner.GetStructuresOfType(STRUCTURE_TYPE.FARM);
-		if (farms != null) {
-			int untendedCornCrops = 0;
-			for (int i = 0; i < farms.Count; i++) {
-				LocationStructure farm = farms[i];
-				List<CornCrop> cornCrops = farm.GetTileObjectsOfType<CornCrop>(TILE_OBJECT_TYPE.CORN_CROP);
-				for (int j = 0; j < cornCrops.Count; j++) {
-					CornCrop cornCrop = cornCrops[j];
-					if (cornCrop.traitContainer.HasTrait("Tended") == false) {
-						untendedCornCrops++;
-						if (untendedCornCrops >= 3) {
-							break;
-						}
-					}
-				}
-				if (untendedCornCrops >= 3) {
-					break;
-				}
-			}
-			if (untendedCornCrops >= 3) {
-				CreateTendFarmJob();
-			}	
-		}
-		if (reschedule) {
-			//reschedule check for next day
-			ScheduleTendFarmCheck();	
-		}
+		//if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) > 16) {
+		//	return; //already 4pm do not create tend job
+		//}
+		//if (_owner.HasJob(JOB_TYPE.TEND_FARM)) {
+		//	return; //already has tend job
+		//}
+		//List<LocationStructure> farms = _owner.GetStructuresOfType(STRUCTURE_TYPE.FARM);
+		//if (farms != null) {
+		//	int untendedCornCrops = 0;
+		//	for (int i = 0; i < farms.Count; i++) {
+		//		LocationStructure farm = farms[i];
+		//		List<CornCrop> cornCrops = farm.GetTileObjectsOfType<CornCrop>(TILE_OBJECT_TYPE.CORN_CROP);
+		//		for (int j = 0; j < cornCrops.Count; j++) {
+		//			CornCrop cornCrop = cornCrops[j];
+		//			if (cornCrop.traitContainer.HasTrait("Tended") == false) {
+		//				untendedCornCrops++;
+		//				if (untendedCornCrops >= 3) {
+		//					break;
+		//				}
+		//			}
+		//		}
+		//		if (untendedCornCrops >= 3) {
+		//			break;
+		//		}
+		//	}
+		//	if (untendedCornCrops >= 3) {
+		//		CreateTendFarmJob();
+		//	}	
+		//}
+		//if (reschedule) {
+		//	//reschedule check for next day
+		//	ScheduleTendFarmCheck();	
+		//}
 	}
 	private void CreateTendFarmJob() {
 		GameDate expiry = GameManager.Instance.Today();

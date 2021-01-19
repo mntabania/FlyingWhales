@@ -21,20 +21,23 @@ public class Mine : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        if (node.actor.characterClass.IsCombatant()) {
-            node.actor.needsComponent.AdjustDoNotGetBored(-1);
-        }
+    //public override void OnStopWhilePerforming(ActualGoapNode node) {
+    //    base.OnStopWhilePerforming(node);
+    //    if (node.actor.characterClass.IsCombatant()) {
+    //        node.actor.needsComponent.AdjustDoNotGetBored(-1);
+    //    }
+    //}
+    public override bool IsHappinessRecoveryAction() {
+        return true;
     }
     #endregion
-    
+
     #region State Effects
-    public void PreMineSuccess(ActualGoapNode goapNode) {
-        if (goapNode.actor.characterClass.IsCombatant()) {
-            goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
-        }
-    }
+    //public void PreMineSuccess(ActualGoapNode goapNode) {
+    //    if (goapNode.actor.characterClass.IsCombatant()) {
+    //        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+    //    }
+    //}
     public void PerTickMineSuccess(ActualGoapNode goapNode) {
         if (goapNode.actor.characterClass.IsCombatant()) {
             goapNode.actor.needsComponent.AdjustHappiness(-2);
@@ -42,9 +45,9 @@ public class Mine : GoapAction {
     }
     [UsedImplicitly]
     public void AfterMineSuccess(ActualGoapNode goapNode) {
-        if (goapNode.actor.characterClass.IsCombatant()) {
-            goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
-        }
+        //if (goapNode.actor.characterClass.IsCombatant()) {
+        //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+        //}
         Cave cave = goapNode.targetStructure as Cave;
         Assert.IsNotNull(cave, $"Cave of mine performed by {goapNode.actor.name} is null!");
         string mineResult = cave.resourceYield.PickRandomElementGivenWeights();

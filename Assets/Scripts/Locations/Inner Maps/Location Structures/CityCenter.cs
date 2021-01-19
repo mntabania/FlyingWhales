@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
+
 namespace Inner_Maps.Location_Structures {
     public class CityCenter : ManMadeStructure {
         
@@ -25,11 +27,33 @@ namespace Inner_Maps.Location_Structures {
             return this;
         }
 
+        public override void Initialize() {
+            base.Initialize();
+            Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
+        }
+        protected override void AfterStructureDestruction() {
+            base.AfterStructureDestruction();
+            Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
+        }
+
         #region IPlayerActionTarget
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
             AddPlayerAction(PLAYER_SKILL_TYPE.SCHEME);
         }
         #endregion
+
+        private void OnDayStarted() {
+            if (GameUtilities.RollChance(50)) {
+                HexTile hex = occupiedHexTile.hexTileOwner;
+                LocationGridTile tile = hex.GetRandomTileThatMeetCriteria(t => t.objHere == null && t.structure != this && t.IsPassable());
+                if(tile != null) {
+                    int numberOfHerbPlants = hex.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.HERB_PLANT);
+                    if(numberOfHerbPlants < 4) {
+                        tile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HERB_PLANT), tile);
+                    }
+                }
+            }
+        }
     }
 }

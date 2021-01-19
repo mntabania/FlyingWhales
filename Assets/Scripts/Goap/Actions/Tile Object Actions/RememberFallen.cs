@@ -90,11 +90,11 @@ public class RememberFallen : GoapAction {
         //    log.AddToFillers(actor.specificLocation, actor.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         //}
     }
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        Character actor = node.actor;
-        actor.needsComponent.AdjustDoNotGetBored(-1);
-    }
+    //public override void OnStopWhilePerforming(ActualGoapNode node) {
+    //    base.OnStopWhilePerforming(node);
+    //    Character actor = node.actor;
+    //    actor.needsComponent.AdjustDoNotGetBored(-1);
+    //}
     public override void PopulateReactionsToActor(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         base.PopulateReactionsToActor(reactions, actor, target, witness, node, status);
         if (target is Tombstone) {
@@ -110,6 +110,9 @@ public class RememberFallen : GoapAction {
                 }
             }
         }
+    }
+    public override bool IsHappinessRecoveryAction() {
+        return true;
     }
     #endregion
 
@@ -141,17 +144,17 @@ public class RememberFallen : GoapAction {
     public void PreRememberSuccess(ActualGoapNode goapNode) {
         Tombstone tombstone = goapNode.poiTarget as Tombstone;
         goapNode.descriptionLog.AddToFillers(tombstone.character, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+        //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickRememberSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(-0.84f);
     }
-    public void AfterRememberSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
-        //Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, goapNode.actor.marker.transform.position, 
-        //    2, goapNode.actor.currentRegion.innerMap);
-    }
+    //public void AfterRememberSuccess(ActualGoapNode goapNode) {
+    //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+    //    //Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, goapNode.actor.marker.transform.position, 
+    //    //    2, goapNode.actor.currentRegion.innerMap);
+    //}
     //public void PreTargetMissing() {
     //    Tombstone tombstone = goapNode.poiTarget as Tombstone;
     //    goapNode.descriptionLog.AddToFillers(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);

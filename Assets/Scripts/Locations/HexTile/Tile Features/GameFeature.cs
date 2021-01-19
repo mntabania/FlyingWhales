@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts; //using UnityEditor.VersionControl;
 using Random = UnityEngine.Random;
@@ -55,7 +56,7 @@ namespace Locations.Tile_Features {
         }
         public override void OnRemoveFeature(HexTile tile) {
             base.OnRemoveFeature(tile);
-            Messenger.RemoveListener(Signals.HOUR_STARTED, TryGeneratePerHour);
+            Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
             Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
             if (ownedAnimals != null) {
                 ownedAnimals.Clear();
@@ -85,7 +86,7 @@ namespace Locations.Tile_Features {
                 if (ownedAnimals.Count < MaxAnimals && isGeneratingPerHour == false) {
                     //owned animals is less than max, and is not yet generating, start generation
                     isGeneratingPerHour = true;
-                    Messenger.AddListener(Signals.HOUR_STARTED, TryGeneratePerHour);
+                    Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
                 }
             }
         }
@@ -97,14 +98,25 @@ namespace Locations.Tile_Features {
             if (ownedAnimals.Count >= MaxAnimals) { 
                 //owned animals is at max, stop hourly generation
                 isGeneratingPerHour = false;
-                Messenger.RemoveListener(Signals.HOUR_STARTED, TryGeneratePerHour);
+                Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
             }
         }
 
-        private void TryGeneratePerHour() {
-            if (Random.Range(0, 100) < 10) {
-                SpawnNewAnimal();
+        private void OnHourStarted() {
+            if(GameManager.Instance.currentTick == 72) { //6 am
+                int defaultNumOfLivestockToBeSpawned = 2;
+                int currentNeededNumberOfLivestock = MaxAnimals - ownedAnimals.Count;
+                if(currentNeededNumberOfLivestock < 0) {
+                    currentNeededNumberOfLivestock = 0;
+                }
+                int numOfLivestockToBeSpawned = Mathf.Min(defaultNumOfLivestockToBeSpawned, currentNeededNumberOfLivestock);
+                for (int i = 0; i < numOfLivestockToBeSpawned; i++) {
+                    SpawnNewAnimal();
+                }
             }
+            //if (Random.Range(0, 100) < 10) {
+            //    SpawnNewAnimal();
+            //}
         }
 
         private void SpawnNewAnimal() {
