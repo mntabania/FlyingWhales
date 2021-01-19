@@ -11,7 +11,7 @@ public abstract class ResourcePile : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.TAKE_RESOURCE);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE);
-        AddAdvertisedAction(INTERACTION_TYPE.DROP);
+        //AddAdvertisedAction(INTERACTION_TYPE.DROP);
         AddAdvertisedAction(INTERACTION_TYPE.DESTROY_RESOURCE_AMOUNT);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);

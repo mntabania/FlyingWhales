@@ -1237,11 +1237,21 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         List<TileObject> tileObjects = new List<TileObject>();
         for (int i = 0; i < locationGridTiles.Count; i++) {
             LocationGridTile tile = locationGridTiles[i];
-            if (tile.objHere is TileObject && (tile.objHere as TileObject).tileObjectType == type) {
-                tileObjects.Add(tile.objHere as TileObject);
+            if (tile.objHere != null && tile.objHere is TileObject obj && obj.tileObjectType == type) {
+                tileObjects.Add(obj);
             }
         }
         return tileObjects;
+    }
+    public int GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE type) {
+        int count = 0;
+        for (int i = 0; i < locationGridTiles.Count; i++) {
+            LocationGridTile tile = locationGridTiles[i];
+            if (tile.objHere != null && tile.objHere is TileObject obj && obj.tileObjectType == type) {
+                count++;
+            }
+        }
+        return count;
     }
     public List<T> GetTileObjectsInHexTile<T>() where T : TileObject {
         List<T> tileObjects = null;
