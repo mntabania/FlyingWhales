@@ -811,7 +811,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void CheckIfInventoryJobsAreStillValid(TileObject item, LocationStructure structure) {
         if (structure == mainStorage && neededObjects.Contains(item.tileObjectType)) {
-            if (mainStorage.GetBuiltTileObjectsOfType<TileObject>(item.tileObjectType).Count >= 2) {
+            if (mainStorage.GetNumberOfTileObjectsThatMeetCriteria(item.tileObjectType, t => t.mapObjectState == MAP_OBJECT_STATE.BUILT) >= 2) {
                 List<JobQueueItem> jobs = GetJobs(JOB_TYPE.CRAFT_OBJECT);
                 for (int i = 0; i < jobs.Count; i++) {
                     JobQueueItem jqi = jobs[i];
@@ -1245,7 +1245,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (affectedStructure == mainStorage && (objectThatTriggeredChange == null || neededObjects.Contains(objectThatTriggeredChange.tileObjectType))) {
             for (int i = 0; i < neededObjects.Count; i++) {
                 TILE_OBJECT_TYPE neededObject = neededObjects[i];
-                int objectsCount = affectedStructure.GetTileObjectsOfTypeCount(neededObject); //This includes unbuilt objects 
+                int objectsCount = affectedStructure.GetNumberOfTileObjectsThatMeetCriteria(neededObject, null); //This includes unbuilt objects 
                 int neededCount = 2;
                 if (objectsCount < neededCount) {
                     int missing = neededCount - objectsCount;

@@ -15,6 +15,7 @@ public abstract class Crops : TileObject {
     public int remainingRipeningTicks => _remainingRipeningTicks;
     public override System.Type serializedData => typeof(SaveDataCrops);
     public int growthRate => _growthRate;
+    public virtual bool doesNotGrowPerTick => false;
     #endregion
     
     protected Crops() { }
@@ -31,11 +32,11 @@ public abstract class Crops : TileObject {
     #region Loading
     public override void LoadSecondWave(SaveDataTileObject data) {
         base.LoadSecondWave(data);
-        SaveDataCrops saveDataDrCrops = data as SaveDataCrops;
-        Debug.Assert(saveDataDrCrops != null, nameof(saveDataDrCrops) + " != null");
-        currentGrowthState = saveDataDrCrops.growthState;
-        SetRemainingRipeningTicks(saveDataDrCrops.remainingRipeningTicks);
-        SetGrowthRate(saveDataDrCrops.growthRate);
+        SaveDataCrops saveDataCrops = data as SaveDataCrops;
+        Debug.Assert(saveDataCrops != null, nameof(saveDataCrops) + " != null");
+        currentGrowthState = saveDataCrops.growthState;
+        SetRemainingRipeningTicks(saveDataCrops.remainingRipeningTicks);
+        SetGrowthRate(saveDataCrops.growthRate);
     }
     public override void LoadAdditionalInfo(SaveDataTileObject data) {
         base.LoadAdditionalInfo(data);
@@ -66,11 +67,13 @@ public abstract class Crops : TileObject {
         }
     }
     private void StartPerTickGrowth() {
+        if (doesNotGrowPerTick) { return; }
         if (hasStartedGrowth) { return; }
         hasStartedGrowth = true;
         Messenger.AddListener(Signals.TICK_ENDED, PerTickGrowth);
     }
     private void StopPerTickGrowth() {
+        if (doesNotGrowPerTick) { return; }
         hasStartedGrowth = false;
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
     }

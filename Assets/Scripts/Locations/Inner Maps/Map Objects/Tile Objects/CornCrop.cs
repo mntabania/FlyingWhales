@@ -5,10 +5,11 @@ using Locations.Tile_Features;
 public class CornCrop : Crops {
     
     public override System.Type serializedData => typeof(SaveDataCornCrop);
-    
+    public override bool doesNotGrowPerTick => true;
+
     public CornCrop() : base() {
         Initialize(TILE_OBJECT_TYPE.CORN_CROP);
-        AddAdvertisedAction(INTERACTION_TYPE.TEND);
+        //AddAdvertisedAction(INTERACTION_TYPE.TEND);
     }
     public CornCrop(SaveDataCornCrop data) : base(data) { }
 
