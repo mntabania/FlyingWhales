@@ -361,7 +361,6 @@ namespace Inner_Maps {
                 //if this tile's map object is shown and is showing a visual, update it's sprite to use the updated sprite.
                 genericTileObject.mapObjectVisual.SetVisual(parentMap.groundTilemap.GetSprite(localPlace));
             }
-
             UpdateGroundTypeBasedOnAsset();
             if (updateEdges) {
                 CreateSeamlessEdgesForSelfAndNeighbours();

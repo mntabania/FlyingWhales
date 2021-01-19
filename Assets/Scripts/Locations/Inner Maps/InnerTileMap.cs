@@ -657,8 +657,22 @@ namespace Inner_Maps {
                 positionArray[i] = currTile.localPlace;
                 currTile.SetFloorSample(floorSample);
                 groundTilesArray[i] = GetGroundAssetPerlin(floorSample, currTile.biomeType);
+                if (currTile.localPlace.x == 61 && currTile.localPlace.y == 79) {
+                    Debug.Log($"Set ground tilemap visual of {currTile.localPlace.ToString()} to {groundTilesArray[i].name}");
+                }
             }
-
+            
+            //Mass Update tiles
+            groundTilemap.SetTiles(positionArray, groundTilesArray);
+            for (int i = 0; i < positionArray.Length; i++) {
+                LocationGridTile tile = map[positionArray[i].x, positionArray[i].y];
+                tile.InitialUpdateGroundTypeBasedOnAsset();
+            }
+            yield return null;
+        }
+        protected IEnumerator GenerateBiomeTransitions() {
+            List<Vector3Int> positions = new List<Vector3Int>();
+            List<TileBase> groundTiles = new List<TileBase>();
             //generate biome transitions
             //https://trello.com/c/tLBo6oAp/3451-perlin-noise-on-biome-transitions
             int gridTileCollectionX = locationGridTileCollections.GetUpperBound(0);
@@ -671,15 +685,17 @@ namespace Inner_Maps {
                         clearedCollections.Add(collection);
                         clearedCollections.Add(neighbour);
 
-                        List<LocationGridTile> allTiles = new List<LocationGridTile>(collection.tilesInTerritory);
-                        allTiles.AddRange(neighbour.tilesInTerritory);
+                        List<LocationGridTile> locationGridTiles = new List<LocationGridTile>(collection.tilesInTerritory);
+                        locationGridTiles.AddRange(neighbour.tilesInTerritory);
                         
-                        for (int i = 0; i < allTiles.Count; i++) {
-                            LocationGridTile tile = allTiles[i];
-                            float chance = 0.35f;
-                            BIOMES biomeToUse = tile.floorSample < chance ? tile.biomeType : diffBiome;
-                            int indexOfTile = tiles.IndexOf(tile);
-                            groundTilesArray[indexOfTile] = GetGroundAssetPerlin(tile.floorSample, biomeToUse);
+                        for (int i = 0; i < locationGridTiles.Count; i++) {
+                            LocationGridTile tile = locationGridTiles[i];
+                            if (tile.isDefault) {
+                                float chance = 0.37f;
+                                BIOMES biomeToUse = tile.floorSample < chance ? tile.biomeType : diffBiome;
+                                positions.Add(tile.localPlace);
+                                groundTiles.Add(GetGroundAssetPerlin(tile.floorSample, biomeToUse));    
+                            }
                         }    
                     }
                     
@@ -687,15 +703,18 @@ namespace Inner_Maps {
             }
 
             //Mass Update tiles
-            groundTilemap.SetTiles(positionArray, groundTilesArray);
-            for (int i = 0; i < positionArray.Length; i++) {
-                LocationGridTile tile = map[positionArray[i].x, positionArray[i].y];
+            groundTilemap.SetTiles(positions.ToArray(), groundTiles.ToArray());
+            for (int i = 0; i < positions.Count; i++) {
+                LocationGridTile tile = map[positions[i].x, positions[i].y];
                 tile.InitialUpdateGroundTypeBasedOnAsset();
             }
             yield return null;
         }
+        
+        
         private IEnumerator MapPerlinDetails(List<LocationGridTile> tiles, int xSize, int ySize, float xSeed, float ySeed) {
             yield return StartCoroutine(GroundPerlin(tiles, xSize, ySize, xSeed, ySeed));
+            yield return StartCoroutine(GenerateBiomeTransitions());
             
             int batchCount = 0;
             //flower, rock and garbage

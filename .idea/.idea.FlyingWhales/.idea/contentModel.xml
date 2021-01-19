@@ -3363,6 +3363,9 @@
               <e p="SchemeUIItem.cs" t="Include" />
               <e p="VillageSettingUIItem.cs" t="Include" />
             </e>
+            <e p="UI Utilities" t="Include">
+              <e p="RectTransformEventDispatcher.cs" t="Include" />
+            </e>
             <e p="UIMenuSettings.cs" t="Include" />
             <e p="UnallowOverlaps.cs" t="Include" />
             <e p="WinGameOverItem.cs" t="Include" />

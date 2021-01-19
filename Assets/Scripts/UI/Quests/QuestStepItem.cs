@@ -5,6 +5,7 @@ using Quests;
 using Quests.Steps;
 using TMPro;
 using Tutorial;
+using UI.UI_Utilities;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -16,7 +17,9 @@ public class QuestStepItem : PooledObject {
     [SerializeField] private Image _toggleImage;
     [SerializeField] private EventLabel _eventLabel;
     [SerializeField] private RectTransform _container;
+    [SerializeField] private RectTransform _rtMain;
     [SerializeField] private Button centerButton;
+    [SerializeField] private RectTransformEventDispatcher _rtEventDispatcherStepLbl;
 
     [SerializeField] private Sprite checkSprite;
     [SerializeField] private Sprite crossSprite;
@@ -25,6 +28,15 @@ public class QuestStepItem : PooledObject {
     
     private QuestStep _step;
 
+    #region Monobehaviours
+    private void OnEnable() {
+        _rtEventDispatcherStepLbl.Subscribe(OnStepRectTransformChangedDimensions);
+    }
+    private void OnDisable() {
+        _rtEventDispatcherStepLbl.Unsubscribe(OnStepRectTransformChangedDimensions);
+    }
+    #endregion
+    
     public void SetStep(QuestStep step) {
         _step = step;
         _completedToggle.isOn = step.isCompleted;
@@ -107,4 +119,13 @@ public class QuestStepItem : PooledObject {
         Messenger.RemoveListener<QuestStep>(UISignals.UPDATE_QUEST_STEP_ITEM, UpdateInfo);
     }
     #endregion
+
+    private void OnStepRectTransformChangedDimensions(RectTransform p_rectTransform) {
+        var sizeDelta = p_rectTransform.sizeDelta;
+        float width = sizeDelta.x;
+        float height = sizeDelta.y;
+        
+        _rtMain.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
+        _rtMain.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
+    }
 }
