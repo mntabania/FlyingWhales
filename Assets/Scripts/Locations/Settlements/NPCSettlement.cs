@@ -1087,6 +1087,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return count;
     }
+    public int GetNumberOfJobsThatMeetCriteria(Func<GoapPlanJob, bool> criteria) {
+        int count = 0;
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job is GoapPlanJob goapJob && (criteria == null || criteria.Invoke(goapJob))) {
+                count++;
+            }
+        }
+        return count;
+    }
     public bool HasJob(JOB_TYPE job, IPointOfInterest target) {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem jqi = availableJobs[i];

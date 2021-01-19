@@ -331,11 +331,9 @@ namespace Traits {
             if(homeSettlement != null) {
                 LocationStructure cityCenter = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
                 if(cityCenter != null && herbPlant.gridTileLocation != null && herbPlant.gridTileLocation.structure.structureType != STRUCTURE_TYPE.CITY_CENTER) {
-                    int numOfHerbPlantsInCityCenter = 0;
-                    if (cityCenter.groupedTileObjects.ContainsKey(TILE_OBJECT_TYPE.HERB_PLANT)) {
-                        numOfHerbPlantsInCityCenter = cityCenter.GetNumberOfTileObjectsThatMeetCriteria(TILE_OBJECT_TYPE.HERB_PLANT, null);
-                    }
-                    if(numOfHerbPlantsInCityCenter < 4) {
+                    int numOfHerbPlantsInCityCenter = cityCenter.GetNumberOfTileObjectsThatMeetCriteria(TILE_OBJECT_TYPE.HERB_PLANT, null);
+                    int numberOfHaulJobs = homeSettlement.GetNumberOfJobsThatMeetCriteria(j => j.poiTarget != null && j.poiTarget is HerbPlant);
+                    if((numOfHerbPlantsInCityCenter + numberOfHaulJobs) < 4) {
                         homeSettlement.settlementJobTriggerComponent.TryCreateHaulJobForItems(herbPlant, cityCenter);
                     }
                 }
