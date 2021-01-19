@@ -333,11 +333,7 @@ namespace Traits {
                 if(cityCenter != null && herbPlant.gridTileLocation != null && herbPlant.gridTileLocation.structure.structureType != STRUCTURE_TYPE.CITY_CENTER) {
                     int numOfHerbPlantsInCityCenter = 0;
                     if (cityCenter.groupedTileObjects.ContainsKey(TILE_OBJECT_TYPE.HERB_PLANT)) {
-                        List<TileObject> tileObjects = null;
-                        tileObjects = cityCenter.groupedTileObjects[TILE_OBJECT_TYPE.HERB_PLANT].tileObjects;
-                        if(tileObjects != null) {
-                            numOfHerbPlantsInCityCenter = tileObjects.Count;
-                        }
+                        numOfHerbPlantsInCityCenter = cityCenter.GetNumberOfTileObjectsThatMeetCriteria(TILE_OBJECT_TYPE.HERB_PLANT, null);
                     }
                     if(numOfHerbPlantsInCityCenter < 4) {
                         homeSettlement.settlementJobTriggerComponent.TryCreateHaulJobForItems(herbPlant, cityCenter);
