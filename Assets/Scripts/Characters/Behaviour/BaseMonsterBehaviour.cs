@@ -111,8 +111,14 @@ public abstract class BaseMonsterBehaviour : CharacterBehaviourComponent {
                             }
                         }
                         if (!hasAddedJob) {
-                            p_log += "\n-Stand";
-                            summon.jobComponent.TriggerStand(out p_producedJob);
+                            //Livestocks should not move around its hextile because it will be weird if they keep going outside its hextile even when there is a hunter lodge structure already built
+                            if(summon is Animal) {
+                                p_log += "\n-Roam around tile";
+                                summon.jobComponent.TriggerRoamAroundTile(out p_producedJob);
+                            } else {
+                                p_log += "\n-Stand";
+                                summon.jobComponent.TriggerStand(out p_producedJob);
+                            }
                         }
                         return true;
                     } else {
