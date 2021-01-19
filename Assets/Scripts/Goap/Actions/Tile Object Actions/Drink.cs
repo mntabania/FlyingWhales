@@ -85,22 +85,25 @@ public class Drink : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        Character actor = node.actor;
-        actor.needsComponent.AdjustDoNotGetBored(-1);
-    }
+    //public override void OnStopWhilePerforming(ActualGoapNode node) {
+    //    base.OnStopWhilePerforming(node);
+    //    Character actor = node.actor;
+    //    actor.needsComponent.AdjustDoNotGetBored(-1);
+    //}
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         if (witness.traitContainer.HasTrait("Alcoholic")) {
             return REACTABLE_EFFECT.Positive;
         }
         return REACTABLE_EFFECT.Neutral;
     }
+    public override bool IsHappinessRecoveryAction() {
+        return true;
+    }
     #endregion
 
     #region State Effects
     public void PreDrinkSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+        //goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickDrinkSuccess(ActualGoapNode goapNode) {
@@ -112,7 +115,7 @@ public class Drink : GoapAction {
         // }
     }
     public void AfterDrinkSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+        //goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Drunk");
         if ((goapNode.actor.moodComponent.moodState == MOOD_STATE.Bad && GameUtilities.RollChance(2)) || goapNode.actor.moodComponent.moodState == MOOD_STATE.Critical && GameUtilities.RollChance(4)) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Alcoholic");

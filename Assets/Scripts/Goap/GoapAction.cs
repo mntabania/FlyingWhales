@@ -251,6 +251,9 @@ public class GoapAction {
     public virtual bool ShouldActionBeAnIntel(ActualGoapNode node) {
         return false;
     }
+    public virtual bool IsFullnessRecoveryAction() { return false; }
+    public virtual bool IsTirednessRecoveryAction() { return false; }
+    public virtual bool IsHappinessRecoveryAction() { return false; }
     #endregion
 
     #region Utilities

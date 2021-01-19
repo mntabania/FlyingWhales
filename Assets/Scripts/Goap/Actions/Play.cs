@@ -30,26 +30,26 @@ public class Play : GoapAction {
         //**Cost**: randomize between 6-15
         return UtilityScripts.Utilities.Rng.Next(6, 16);
     }
-    public override void OnStopWhilePerforming(ActualGoapNode node) {
-        base.OnStopWhilePerforming(node);
-        Character actor = node.actor;
-        actor.needsComponent.AdjustDoNotGetBored(-1);
-        actor.needsComponent.AdjustDoNotGetTired(-1);
+    public override bool IsHappinessRecoveryAction() {
+        return true;
     }
+    //public override void OnStopWhilePerforming(ActualGoapNode node) {
+    //    base.OnStopWhilePerforming(node);
+    //    Character actor = node.actor;
+    //    actor.needsComponent.AdjustDoNotGetBored(-1);
+    //}
     #endregion
 
     #region Effects
-    public void PrePlaySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
-        goapNode.actor.needsComponent.AdjustDoNotGetTired(1);
-    }
+    //public void PrePlaySuccess(ActualGoapNode goapNode) {
+    //    goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
+    //}
     public void PerTickPlaySuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(6f);
     }
-    public void AfterPlaySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
-        goapNode.actor.needsComponent.AdjustDoNotGetTired(-1);
-    }
+    //public void AfterPlaySuccess(ActualGoapNode goapNode) {
+    //    goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
+    //}
     #endregion
 
     #region Requirement

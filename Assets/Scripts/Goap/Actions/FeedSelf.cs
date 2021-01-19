@@ -42,7 +42,7 @@ public class FeedSelf : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         //actor.UncarryPOI();
-        (poiTarget as Character).needsComponent.AdjustDoNotGetHungry(-1);
+        poiTarget.traitContainer.RemoveTrait(poiTarget, "Eating");
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
@@ -123,7 +123,7 @@ public class FeedSelf : GoapAction {
     #region Effects
     public void PreFeedSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is Character targetCharacter) {
-            targetCharacter.needsComponent.AdjustDoNotGetHungry(1); 
+            targetCharacter.traitContainer.AddTrait(targetCharacter, "Eating");
         }
     }
     public void PerTickFeedSuccess(ActualGoapNode goapNode) {
@@ -137,7 +137,7 @@ public class FeedSelf : GoapAction {
         if (goapNode.poiTarget is Character targetCharacter) {
             Character actor = goapNode.actor;
 
-            targetCharacter.needsComponent.AdjustDoNotGetHungry(-1);
+            targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Eating");
 
             if (targetCharacter.traitContainer.HasTrait("Vampire")) {
                 //If a vampre drinks the blood of another vampire and he is not a cannibal, add Poor Meal status
