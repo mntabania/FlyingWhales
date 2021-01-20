@@ -672,6 +672,9 @@ public class LocationStructureObject : PooledObject {
     /// <param name="connectionChoices">A list of all OPEN connector choices.</param>
     /// <param name="innerTileMap">The inner map that this structure will be placed on.</param>
     /// <param name="usedConnectorIndex">The index of the connector that was used by this structure object.</param>
+    /// <param name="tileToPlaceStructure">The LocationGridTile to place the structure at. This is the computed center of the structure.</param>
+    /// <param name="connectorTile">The LocationGridTile that the chosen connector is placed at.</param>
+    /// <param name="p_structureSetting">The structure setting to place.</param>
     /// <returns>The first valid connector from the list of choices.</returns>
     public StructureConnector GetFirstValidConnector(List<StructureConnector> connectionChoices, InnerTileMap innerTileMap, out int usedConnectorIndex, out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, StructureSetting p_structureSetting) {
         //loop through connection choices

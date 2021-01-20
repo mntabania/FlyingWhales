@@ -688,7 +688,7 @@ namespace Inner_Maps {
                         for (int i = 0; i < locationGridTiles.Count; i++) {
                             LocationGridTile tile = locationGridTiles[i];
                             if (tile.isDefault) {
-                                float chance = 0.33f;
+                                float chance = 0.37f;
                                 BIOMES biomeToUse = tile.floorSample < chance ? tile.biomeType : diffBiome;
                                 positions.Add(tile.localPlace);
                                 groundTiles.Add(GetGroundAssetPerlin(tile.floorSample, biomeToUse));    

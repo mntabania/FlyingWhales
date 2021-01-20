@@ -44,10 +44,12 @@ public class SettlementGeneration : MapGenerationComponent {
 				SETTLEMENT_TYPE settlementType = LandmarkManager.Instance.GetSettlementTypeForRace(faction.race);
 				npcSettlement.SetSettlementType(settlementType);
 				
-				var structureSettings = GenerateStructureSettings(npcSettlement, faction, villageSetting);
+				var structureSettings = GenerateCityCenterAndDwellings(npcSettlement, faction, villageSetting);
 				
 				Assert.IsTrue(structureSettings.First().structureType == STRUCTURE_TYPE.CITY_CENTER);
 				Assert.IsTrue(npcSettlement.tiles.Count > 0);
+				yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
+				structureSettings = GenerateFacilities(npcSettlement, faction, villageSetting.GetRandomFacilityCount());
 				yield return MapGenerator.Instance.StartCoroutine(EnsuredStructurePlacement(region, structureSettings, npcSettlement));
 				yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjectsCoroutine());
 
@@ -105,7 +107,7 @@ public class SettlementGeneration : MapGenerationComponent {
 	// 		}
 	// 	}
 	// }
-	private List<StructureSetting> GenerateStructureSettings(NPCSettlement p_npcSettlement, Faction p_faction, VillageSetting p_villageSetting) {
+	private List<StructureSetting> GenerateCityCenterAndDwellings(NPCSettlement p_npcSettlement, Faction p_faction, VillageSetting p_villageSetting) {
 		List<StructureSetting> structureSettings;
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			structureSettings = new List<StructureSetting>() {
@@ -146,7 +148,8 @@ public class SettlementGeneration : MapGenerationComponent {
 			};
 		}
 		else {
-			structureSettings = GenerateFacilities(p_npcSettlement, p_faction, p_villageSetting.GetRandomFacilityCount());
+			// structureSettings = GenerateFacilities(p_npcSettlement, p_faction, p_villageSetting.GetRandomFacilityCount());
+			structureSettings =  new List<StructureSetting> { new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, p_faction.factionType.mainResource) };
 			int randomDwellings = p_villageSetting.GetRandomDwellingCount();
 			for (int i = 0; i < randomDwellings; i++) {
 				structureSettings.Add(new StructureSetting(STRUCTURE_TYPE.DWELLING, p_faction.factionType.mainResource));
@@ -157,11 +160,13 @@ public class SettlementGeneration : MapGenerationComponent {
 	private IEnumerator EnsuredStructurePlacement(Region region, List<StructureSetting> structureSettings, NPCSettlement npcSettlement) {
 		List<StructureSetting> unplacedStructures = new List<StructureSetting>();
 		List<StructureSetting> structuresToPlace = new List<StructureSetting>(structureSettings);
-		
-		StructureSetting cityCenter = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, npcSettlement.owner.factionType.mainResource);
-		yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlementCoroutine(npcSettlement, region.innerMap, cityCenter));
-		structuresToPlace.Remove(cityCenter);
-		
+
+		if (!npcSettlement.HasStructure(STRUCTURE_TYPE.CITY_CENTER)) {
+			StructureSetting cityCenter = new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, npcSettlement.owner.factionType.mainResource);
+			yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlementCoroutine(npcSettlement, region.innerMap, cityCenter));
+			structuresToPlace.Remove(cityCenter);	
+		}
+
 		for (int i = 0; i < 2; i++) {
 			yield return MapGenerator.Instance.StartCoroutine(PlaceStructures(region, structuresToPlace, npcSettlement));
 			//check whole structure list to verify if all needed structures were placed.
@@ -205,19 +210,23 @@ public class SettlementGeneration : MapGenerationComponent {
 				// yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlementCoroutine(npcSettlement, region.innerMap, structureSetting));
 				continue;
 			}
-			List<StructureConnector> availableStructureConnectors = npcSettlement.GetStructureConnectorsForStructureType(structureSetting.structureType);
-			availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
-			List<GameObject> prefabChoices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
-			prefabChoices = CollectionUtilities.Shuffle(prefabChoices);
-			for (int j = 0; j < prefabChoices.Count; j++) {
-				GameObject prefabGO = prefabChoices[j];
-				LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
-				StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, region.innerMap, out var connectorIndex, out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, structureSetting);
-				if (validConnector != null) {
-					//instantiate structure object at tile.
-					LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(npcSettlement, region.innerMap, prefabGO, tileToPlaceStructure);
-					break; //stop loop since structure was already placed.
-				}
+			yield return MapGenerator.Instance.StartCoroutine(PlaceStructure(region, structureSetting, npcSettlement));
+		}
+		yield return null;
+	}
+	public static IEnumerator PlaceStructure(Region region, StructureSetting structureSetting, NPCSettlement npcSettlement) {
+		List<StructureConnector> availableStructureConnectors = npcSettlement.GetStructureConnectorsForStructureType(structureSetting.structureType);
+		availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
+		List<GameObject> prefabChoices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
+		prefabChoices = CollectionUtilities.Shuffle(prefabChoices);
+		for (int j = 0; j < prefabChoices.Count; j++) {
+			GameObject prefabGO = prefabChoices[j];
+			LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
+			StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, region.innerMap, out var connectorIndex, out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, structureSetting);
+			if (validConnector != null) {
+				//instantiate structure object at tile.
+				LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(npcSettlement, region.innerMap, prefabGO, tileToPlaceStructure);
+				break; //stop loop since structure was already placed.
 			}
 		}
 		yield return null;
@@ -446,7 +455,7 @@ public class SettlementGeneration : MapGenerationComponent {
 
 	#region Settlement Structures
 	private List<StructureSetting> GenerateFacilities(NPCSettlement settlement, Faction faction, int facilityCount) {
-		List<StructureSetting> structures = new List<StructureSetting> { new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, faction.factionType.mainResource) }; //faction.factionType.GetStructureSettingFor(STRUCTURE_TYPE.CITY_CENTER)
+		List<StructureSetting> structures = new List<StructureSetting>(); //{ new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, faction.factionType.mainResource) }; //faction.factionType.GetStructureSettingFor(STRUCTURE_TYPE.CITY_CENTER)
 		List<STRUCTURE_TYPE> createdStructureTypes = new List<STRUCTURE_TYPE>();
 		for (int i = 0; i < facilityCount; i++) {
 			WeightedDictionary<StructureSetting> structuresChoices = GetStructureWeights(createdStructureTypes, faction, settlement.tiles.First());
@@ -464,7 +473,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				//Apothecary: +6 (disable if already selected from previous hex tile)
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.HOSPICE, RESOURCE.WOOD), 6); //6
 			}
-			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 15); //1 //Farm: +1
+			// structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 15); //1 //Farm: +1
 			if (!structureTypes.Contains(STRUCTURE_TYPE.TAVERN)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.WOOD), 3);
 			}
@@ -472,17 +481,17 @@ public class SettlementGeneration : MapGenerationComponent {
 				//Wooden Graveyard: +2 (disable if already selected from previous hex tile)
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.WOOD), 2);
 			}
-			if (tilesInRange.HasTileWithFeature(TileFeatureDB.Fertile_Feature)) {
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 10); //15	
-			}
+			// if (tilesInRange.HasTileWithFeature(TileFeatureDB.Fertile_Feature)) {
+			// 	structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 10); //15	
+			// }
 			if (tilesInRange.HasTileWithFeature(TileFeatureDB.Wood_Source_Feature)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.WOOD), 15);	
 			}
 		} else if (faction.factionType.type == FACTION_TYPE.Human_Empire) {
-            structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 15); //1 //Farm: +1
-            if (tilesInRange.HasTileWithFeature(TileFeatureDB.Fertile_Feature)) {
-                structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 10); //15
-            }
+            // structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 15); //1 //Farm: +1
+            // if (tilesInRange.HasTileWithFeature(TileFeatureDB.Fertile_Feature)) {
+            //     structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 10); //15
+            // }
             if (structureTypes.Contains(STRUCTURE_TYPE.MAGE_QUARTERS) == false) {
 				//Mage Quarter: +6 (disable if already selected from previous hex tile)
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.MAGE_QUARTERS, RESOURCE.STONE), 6);
@@ -506,9 +515,9 @@ public class SettlementGeneration : MapGenerationComponent {
 			if (tilesInRange.HasTileWithFeature(TileFeatureDB.Metal_Source_Feature)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE), 15);	
 			}
-			if (tilesInRange.HasTileWithFeature(TileFeatureDB.Game_Feature)) {
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE), 15);	
-			}
+			// if (tilesInRange.HasTileWithFeature(TileFeatureDB.Game_Feature)) {
+			// 	structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE), 15);	
+			// }
 		}
 		return structureWeights;
 	}

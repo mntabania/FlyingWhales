@@ -24,13 +24,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(FinalizeInnerMaps());
 		stopwatch.Stop();
 		AddLog($"FinalizeInnerMaps took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
-		
-		stopwatch.Reset();
-		stopwatch.Start();
-		yield return MapGenerator.Instance.StartCoroutine(ExecuteFeatureInitialActions());
-		stopwatch.Stop();
-		AddLog($"ExecuteFeatureInitialActions took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
-		
+
 		stopwatch.Reset();
 		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(RegionalItemGeneration());
@@ -153,17 +147,6 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			foreach (var progress in AstarPath.active.ScanAsync(new NavGraph[] {map.pathfindingGraph, map.unwalkableGraph})) ;
 				// PathfindingManager.Instance.RescanGrid(map.pathfindingGraph);
 			// PathfindingManager.Instance.RescanGrid(map.unwalkableGraph);
-			yield return null;
-		}
-	}
-
-	private IEnumerator ExecuteFeatureInitialActions() {
-		for (int i = 0; i < GridMap.Instance.normalHexTiles.Count; i++) {
-			HexTile tile = GridMap.Instance.normalHexTiles[i];
-			for (int j = 0; j < tile.featureComponent.features.Count; j++) {
-				TileFeature feature = tile.featureComponent.features[j];
-				feature.GameStartActions(tile);
-			}
 			yield return null;
 		}
 	}

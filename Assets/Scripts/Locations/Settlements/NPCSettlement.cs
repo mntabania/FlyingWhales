@@ -942,6 +942,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return count;
     }
+    public bool HasFoodProducingStructure() {
+        return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.FARM, STRUCTURE_TYPE.FISHING_SHACK);
+    }
     #endregion
 
     #region Inner Map

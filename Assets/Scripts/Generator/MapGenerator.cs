@@ -30,7 +30,7 @@ public class MapGenerator : MonoBehaviour {
             new TileFeatureGeneration(), new RegionFeatureGeneration(), new WorldMapLandmarkGeneration(), 
             new FamilyTreeGeneration(), new RegionInnerMapGeneration(), new SettlementGeneration(), 
             new CharacterFinalization(), new LandmarkStructureGeneration(), new ElevationStructureGeneration(), 
-            new RegionFeatureActivation(), new MonsterGeneration(), new MapGenerationFinalization(),
+            new SettlementFinalization(), new FeaturesActivation(), new MonsterGeneration(), new MapGenerationFinalization(),
         };
         yield return StartCoroutine(InitializeWorldCoroutine(mapGenerationComponents));
     }
@@ -120,7 +120,7 @@ public class MapGenerator : MonoBehaviour {
             //new PlayerSettlementGeneration(), 
             new WorldMapLandmarkGeneration(), new FamilyTreeGeneration(), 
             new RegionInnerMapGeneration(), new SettlementGeneration(), new CharacterFinalization(), new LandmarkStructureGeneration(), 
-            new ElevationStructureGeneration(), new RegionFeatureActivation(), new MonsterGeneration(), 
+            new ElevationStructureGeneration(), new SettlementFinalization(), new FeaturesActivation(), new MonsterGeneration(), 
             new FactionFinalization(), new MapGenerationFinalization(), 
             //new PlayerDataGeneration(),
         };

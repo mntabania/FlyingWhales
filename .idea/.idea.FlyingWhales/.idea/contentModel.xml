@@ -1406,6 +1406,7 @@
                 <e p="ElevationStructureGeneration.cs" t="Include" />
                 <e p="FactionFinalization.cs" t="Include" />
                 <e p="FamilyTreeGeneration.cs" t="Include" />
+                <e p="FeaturesActivation.cs" t="Include" />
                 <e p="LandmarkStructureGeneration.cs" t="Include" />
                 <e p="LoadAwarenessGeneration.cs" t="Include" />
                 <e p="LoadCharactersCurrentAction.cs" t="Include" />
@@ -1416,9 +1417,9 @@
                 <e p="MonsterGeneration.cs" t="Include" />
                 <e p="PlayerDataGeneration.cs" t="Include" />
                 <e p="PlayerSettlementGeneration.cs" t="Include" />
-                <e p="RegionFeatureActivation.cs" t="Include" />
                 <e p="RegionFeatureGeneration.cs" t="Include" />
                 <e p="RegionInnerMapGeneration.cs" t="Include" />
+                <e p="SettlementFinalization.cs" t="Include" />
                 <e p="SettlementGeneration.cs" t="Include" />
                 <e p="SettlementLoading.cs" t="Include" />
                 <e p="SingletonDataGeneration.cs" t="Include" />

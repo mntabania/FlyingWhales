@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using Locations.Region_Features;
+using Locations.Tile_Features;
 using Scenario_Maps;
 namespace Generator.Map_Generation.Components {
-    public class RegionFeatureActivation : MapGenerationComponent {
+    public class FeaturesActivation : MapGenerationComponent {
         public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
             for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
                 Region region = GridMap.Instance.allRegions[i];
@@ -11,7 +12,7 @@ namespace Generator.Map_Generation.Components {
                     feature.ActivateFeatureInWorldGen(region);
                 }
             }
-            yield return null;
+            yield return MapGenerator.Instance.StartCoroutine(ExecuteFeatureInitialActions());
         }
 
         #region Scenario Maps
@@ -25,5 +26,16 @@ namespace Generator.Map_Generation.Components {
             yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
         }
         #endregion
+        
+        private IEnumerator ExecuteFeatureInitialActions() {
+            for (int i = 0; i < GridMap.Instance.normalHexTiles.Count; i++) {
+                HexTile tile = GridMap.Instance.normalHexTiles[i];
+                for (int j = 0; j < tile.featureComponent.features.Count; j++) {
+                    TileFeature feature = tile.featureComponent.features[j];
+                    feature.GameStartActions(tile);
+                }
+                yield return null;
+            }
+        }
     }
 }

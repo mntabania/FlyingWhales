@@ -71,6 +71,7 @@ public class MapGenerationData {
 			determinedVillages.Add(p_faction, new List<HexTile>());
 		}
 		determinedVillages[p_faction].Add(p_tile);
+		Debug.Log($"Determined Village for {p_faction.name}: {p_tile.ToString()}");
 	}
 	#endregion
 }
