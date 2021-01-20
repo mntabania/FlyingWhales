@@ -460,11 +460,13 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             previousRuler.behaviourComponent.RemoveBehaviourComponent(typeof(SettlementRulerBehaviour));
             if (!previousRuler.isFactionLeader) {
                 previousRuler.jobComponent.RemovePriorityJob(JOB_TYPE.JUDGE_PRISONER);
+                previousRuler.jobComponent.RemovePriorityJob(JOB_TYPE.PLACE_BLUEPRINT);
             }
         }
         if(ruler != null) {
             ruler.behaviourComponent.AddBehaviourComponent(typeof(SettlementRulerBehaviour));
             ruler.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
+            ruler.jobComponent.AddPriorityJob(JOB_TYPE.PLACE_BLUEPRINT);
             //ResetNewRulerDesignationChance();
             Messenger.Broadcast(CharacterSignals.ON_SET_AS_SETTLEMENT_RULER, ruler, previousRuler);
         } else {
@@ -943,7 +945,21 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         return count;
     }
     public bool HasFoodProducingStructure() {
-        return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.FARM, STRUCTURE_TYPE.FISHING_SHACK);
+        return HasStructure(STRUCTURE_TYPE.HUNTER_LODGE) || HasStructure(STRUCTURE_TYPE.FARM) || HasStructure(STRUCTURE_TYPE.FISHING_SHACK);
+    }
+    public StructureSetting GetValidFoodProducingStructure() {
+        Assert.IsNotNull(owner);
+        List<HexTile> surroundingAreas = GetSurroundingAreas();
+        WeightedDictionary<StructureSetting> choices = new WeightedDictionary<StructureSetting>();
+        if (surroundingAreas.Count(t => t.elevationType == ELEVATION.WATER) > 0) {
+            choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHING_SHACK, owner.factionType.mainResource), 100);
+        }
+        if (HasAvailableStructureConnectorsBasedOnGameFeature()) {
+            choices.AddElement(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, owner.factionType.mainResource), 20);    
+        }
+        choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, owner.factionType.mainResource), 20);
+
+        return choices.PickRandomElementGivenWeights();
     }
     #endregion
 

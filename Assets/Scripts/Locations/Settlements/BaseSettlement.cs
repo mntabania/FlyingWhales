@@ -370,11 +370,14 @@ namespace Locations.Settlements {
         }
         public bool HasStructure(params STRUCTURE_TYPE[] type) {
             for (int i = 0; i < type.Length; i++) {
-                if (structures.ContainsKey(type[i])) {
+                if (HasStructure(type[i])) {
                     return true;
                 }
             }
             return false;
+        }
+        public bool HasStructure(STRUCTURE_TYPE type) {
+            return structures.ContainsKey(type);
         }
         public bool HasStructureForProducingResource(RESOURCE resourceType) {
             switch (resourceType) {
@@ -454,6 +457,24 @@ namespace Locations.Settlements {
                 }
             }
             return connectors;
+        }
+        public bool HasAvailableStructureConnectorsBasedOnGameFeature() {
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure structure = allStructures[i];
+                if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
+                    for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
+                        StructureConnector connector = manMadeStructure.structureObj.connectors[j];
+                        if (connector.isOpen) {
+                            if (connector.tileLocation != null && connector.tileLocation.collectionOwner.isPartOfParentRegionMap &&
+                                (connector.tileLocation.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Game_Feature) || 
+                                 connector.tileLocation.collectionOwner.partOfHextile.hexTileOwner.HasNeighbourWithFeature(TileFeatureDB.Game_Feature))) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
         }
         private List<StructureConnector> GetAvailableRockConnectors() {
             List<StructureConnector> connectors = new List<StructureConnector>();

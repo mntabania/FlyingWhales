@@ -210,6 +210,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                     prevCharacterLeader.behaviourComponent.RemoveBehaviourComponent(typeof(FactionLeaderBehaviour));
                     if (!prevCharacterLeader.isSettlementRuler) {
                         prevCharacterLeader.jobComponent.RemovePriorityJob(JOB_TYPE.JUDGE_PRISONER);
+                        prevCharacterLeader.jobComponent.RemovePriorityJob(JOB_TYPE.PLACE_BLUEPRINT);
                     }
                 }
             }
@@ -219,6 +220,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                     if (isMajorNonPlayer) {
                         newCharacterLeader.behaviourComponent.AddBehaviourComponent(typeof(FactionLeaderBehaviour));
                         newCharacterLeader.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
+                        newCharacterLeader.jobComponent.AddPriorityJob(JOB_TYPE.PLACE_BLUEPRINT);
                     }
                 }
             }

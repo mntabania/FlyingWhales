@@ -1967,6 +1967,7 @@
                 <e p="Smithy.cs" t="Include" />
                 <e p="Structure Objects" t="Include">
                   <e p="AncientGraveyardStructureObject.cs" t="Include" />
+                  <e p="FarmStructureObject.cs" t="Include" />
                   <e p="LocationStructureObject.cs" t="Include" />
                   <e p="PortalStructureObject.cs" t="Include" />
                   <e p="RuinedZooStructureObject.cs" t="Include" />

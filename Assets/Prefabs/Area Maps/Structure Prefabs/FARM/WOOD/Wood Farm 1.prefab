@@ -1416,7 +1416,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3115378873177439579}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5dcce79a4dfc8a7488415d9acab1dcae, type: 3}
+  m_Script: {fileID: 11500000, guid: cc8eba6c016147df9fec4cd08f754ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
@@ -1428,6 +1428,8 @@ MonoBehaviour:
   _blockWallsTilemap: {fileID: 0}
   _size: {x: 6, y: 6}
   _center: {x: 3, y: 3, z: 0}
+  _craftCost: 50
+  _repairCost: 5
   objectsParent: {fileID: 9071505665013807534}
   _blockWallType: 0
   _thinWallResource: 1
@@ -1478,7 +1480,7 @@ MonoBehaviour:
   - {fileID: 2623683006757789051}
   - {fileID: 7841272716470129160}
   roomTemplates: []
-  wallsContributeToDamage: 1
+  wallsContributeToDamage: 0
   wallTileMap: {fileID: 3101858439907874924}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}
   rightWall: {fileID: 1585498277213060, guid: 70407332126550d4b81db31716c0b3fe, type: 3}
