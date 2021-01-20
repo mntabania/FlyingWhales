@@ -78,6 +78,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	}
 	public override void ShowUI() {
 		base.ShowUI();
+		WorldSettings.Instance.worldSettingsData.SetVictoryCondition(VICTORY_CONDITION.Eliminate_All);
 		UpdateUIBasedOnCurrentSettings(WorldSettings.Instance.worldSettingsData);
 	}
 	public void ApplyCurrentSettingsToData() {
@@ -87,6 +88,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	private void UpdateUIBasedOnCurrentSettings(WorldSettingsData p_settings) {
 		//Note: Updating map size dropdown will also update faction and biome data automatically because of on change event 
 		m_worldGenOptionsUIView.SetMapSizeDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.mapSettings.mapSize.ToString()));
+		OnChangeMapSize(p_settings.mapSettings.mapSize);
 		m_worldGenOptionsUIView.SetMigrationDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.villageSettings.migrationSpeed.ToString()));
 		m_worldGenOptionsUIView.SetVictoryDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.victoryCondition.ToString()));
 		m_worldGenOptionsUIView.SetCooldownDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.cooldownSpeed.ToString()));
