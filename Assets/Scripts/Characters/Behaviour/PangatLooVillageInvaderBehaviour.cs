@@ -16,18 +16,21 @@ public class PangatLooVillageInvaderBehaviour : CharacterBehaviourComponent {
             if (character.currentSettlement == targetSettlement) {
                 log += $"\n-Already at village target, will find character to attack";
                 //character is already at target village
-                List<Character> targets = GetTargetChoices(targetSettlement.tiles);
-                if (targets != null) {
+                List<Character> targets = ObjectPoolManager.Instance.CreateNewCharactersList();
+                PopulateTargetChoices(targets, targetSettlement.tiles);
+                if (targets.Count > 0) {
                     //Fight a random target
                     Character chosenTarget = CollectionUtilities.GetRandomElement(targets);
                     log += $"\n-Chosen target is {chosenTarget.name}";
                     character.combatComponent.Fight(chosenTarget, CombatManager.Hostility);
+                    ObjectPoolManager.Instance.ReturnCharactersListToPool(targets);
+                    producedJob = null;
+                    return true;
                 } else {
                     log += $"\n-No more valid targets, roam";
+                    ObjectPoolManager.Instance.ReturnCharactersListToPool(targets);
                     return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                 }
-                producedJob = null;
-                return true;
             } else {
                 log += $"\n-character is not yet at village target, will go there now...";
                 //character is not yet at target village
@@ -41,22 +44,13 @@ public class PangatLooVillageInvaderBehaviour : CharacterBehaviourComponent {
             return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
         }
     }
-    private List<Character> GetTargetChoices(List<HexTile> tiles) {
-        List<Character> characters = null;
+    private void PopulateTargetChoices(List<Character> p_targetChoices, List<HexTile> tiles) {
         for (int i = 0; i < tiles.Count; i++) {
             HexTile tile = tiles[i];
-            List<Character> charactersAtHexTile =
-                tile.GetAllCharactersInsideHexThatMeetCriteria<Character>(c =>
-                    c.isNormalCharacter && c.isDead == false && !c.isInLimbo && !c.isBeingSeized && c.carryComponent.IsNotBeingCarried() &&
-                    !c.traitContainer.HasTrait("Hibernating", "Indestructible")); //Removed checking for allied with player because undead should attack all villagers in pangat loo
-            if (charactersAtHexTile != null) {
-                if(characters == null) {
-                    characters = new List<Character>();
-                }
-                characters.AddRange(charactersAtHexTile);
-            }
+            tile.PopulateCharacterListInsideHexThatMeetCriteria(p_targetChoices, c =>
+                c.isNormalCharacter && c.isDead == false && !c.isInLimbo && !c.isBeingSeized && c.carryComponent.IsNotBeingCarried() &&
+                !c.traitContainer.HasTrait("Hibernating", "Indestructible")); //Removed checking for allied with player because undead should attack all villagers in pangat loo
         }
-        return characters;
     }
     public NPCSettlement GetMainVillageSettlement() {
         for (int i = 0; i < LandmarkManager.Instance.allNonPlayerSettlements.Count; i++) {

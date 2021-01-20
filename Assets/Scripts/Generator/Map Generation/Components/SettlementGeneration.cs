@@ -54,7 +54,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				if (npcSettlement.structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
 					int dwellingCount = npcSettlement.structures[STRUCTURE_TYPE.DWELLING].Count;
 					List<Character> spawnedCharacters = GenerateSettlementResidents(dwellingCount, npcSettlement, faction, data);
-					List<TileObject> objectsInDwellings = npcSettlement.GetTileObjectsFromStructures<TileObject>(STRUCTURE_TYPE.DWELLING, o => true);
+					List<TileObject> objectsInDwellings = npcSettlement.PopulateTileObjectsFromStructures<TileObject>(STRUCTURE_TYPE.DWELLING, o => true);
 					for (int j = 0; j < objectsInDwellings.Count; j++) {
 						TileObject tileObject = objectsInDwellings[j];
 						tileObject.UpdateOwners();
@@ -258,7 +258,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				List<Character> spawnedCharacters = CreateSettlementResidentsForScenario(dwellingCount, npcSettlement, faction, data, settlementTemplate.minimumVillagerCount);
 
 				//update objects owners in dwellings
-				List<TileObject> objectsInDwellings = npcSettlement.GetTileObjectsFromStructures<TileObject>(STRUCTURE_TYPE.DWELLING, o => true);
+				List<TileObject> objectsInDwellings = npcSettlement.PopulateTileObjectsFromStructures<TileObject>(STRUCTURE_TYPE.DWELLING, o => true);
 				for (int j = 0; j < objectsInDwellings.Count; j++) {
 					TileObject tileObject = objectsInDwellings[j];
 					tileObject.UpdateOwners();

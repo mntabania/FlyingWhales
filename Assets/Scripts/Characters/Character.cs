@@ -3874,6 +3874,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.START_PLAGUE_CARE);
         AddAdvertisedAction(INTERACTION_TYPE.CARE);
         AddAdvertisedAction(INTERACTION_TYPE.LONG_STAND_STILL);
+        AddAdvertisedAction(INTERACTION_TYPE.COOK);
 
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);

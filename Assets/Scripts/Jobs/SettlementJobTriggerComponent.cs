@@ -1000,7 +1000,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
     }
     private void CheckIfShouldStopWaterWellCheck() {
 	    LocationStructure cityCenter = _owner.GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
-	    TileObject waterWell = cityCenter.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
+	    TileObject waterWell = cityCenter.GetFirstTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
 	    if (waterWell != null && waterWell.mapObjectState == MAP_OBJECT_STATE.BUILT) {
 		    //already has a built water well at city center, stop hourly check
 		    StopCraftWaterWellCheck();
@@ -1012,7 +1012,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
     
     public void CheckIfShouldCraftWaterWell() {
 	    LocationStructure cityCenter = _owner.GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
-	    TileObject waterWell = cityCenter.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
+	    TileObject waterWell = cityCenter.GetFirstTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
 	    Assert.IsNotNull(waterWell);
 	    //there is water well present, check if water well is unbuilt
 	    if (waterWell.mapObjectState == MAP_OBJECT_STATE.BUILT) {

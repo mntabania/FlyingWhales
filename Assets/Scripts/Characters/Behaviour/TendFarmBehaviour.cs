@@ -14,7 +14,7 @@ public class TendFarmBehaviour : CharacterBehaviourComponent {
             producedJob = null;
             character.traitContainer.RemoveTrait(character, "Tending");
         } else {
-            List<CornCrop> crops = character.homeSettlement.GetTileObjectsFromStructures<CornCrop>(STRUCTURE_TYPE.FARM, IsCornCropUntended);
+            List<CornCrop> crops = character.homeSettlement.PopulateTileObjectsFromStructures<CornCrop>(STRUCTURE_TYPE.FARM, IsCornCropUntended);
             if (crops.Count > 0) {
                 CornCrop chosenCrop = crops[0];
                 ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.TEND], character, chosenCrop, null, 0);

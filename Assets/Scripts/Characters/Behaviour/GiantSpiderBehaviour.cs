@@ -18,8 +18,9 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
         //between 12am to 3am
         if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) >= 0 && 
             GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) <= 3) {
-            List<Character> webbedCharacters = GetWebbedCharactersAtHome(character);
-            if (webbedCharacters == null || webbedCharacters.Count <= 1) { //check if there are only 1 or less abducted "Food" at home structure
+            List<Character> webbedCharacters = ObjectPoolManager.Instance.CreateNewCharactersList();
+            PopulateWebbedCharactersAtHome(webbedCharacters, character);
+            if (webbedCharacters.Count <= 1) { //check if there are only 1 or less abducted "Food" at home structure
                 if (character.behaviourComponent.currentAbductTarget != null 
                     && (character.behaviourComponent.currentAbductTarget.isDead 
                         || character.behaviourComponent.currentAbductTarget.traitContainer.HasTrait("Restrained"))) {
@@ -42,12 +43,15 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
                     ObjectPoolManager.Instance.ReturnCharactersListToPool(characterChoices);
                 }
 
+                ObjectPoolManager.Instance.ReturnCharactersListToPool(webbedCharacters);
+
                 Character targetCharacter = character.behaviourComponent.currentAbductTarget;
                 if (targetCharacter != null) {
                     //create job to abduct target character.
                     return character.jobComponent.TriggerMonsterAbduct(targetCharacter, out producedJob);
                 }
             }
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(webbedCharacters);
         }
 
         //try to lay an egg
@@ -59,13 +63,16 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
 
         if (GameUtilities.RollChance(30)) {
             //Try and eat a webbed character at this spiders home cave
-            List<Character> webbedCharacters = GetWebbedCharactersAtHome(character);
-            if (webbedCharacters != null && webbedCharacters.Count > 0) {
+            List<Character> webbedCharacters = ObjectPoolManager.Instance.CreateNewCharactersList();
+            PopulateWebbedCharactersAtHome(webbedCharacters, character);
+            if (webbedCharacters.Count > 0) {
                 Character webbedCharacter = CollectionUtilities.GetRandomElement(webbedCharacters);
+                ObjectPoolManager.Instance.ReturnCharactersListToPool(webbedCharacters);
                 return character.jobComponent.TriggerEatAlive(webbedCharacter, out producedJob);
-            }    
+            }
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(webbedCharacters);
         }
-        
+
         return character.jobComponent.TriggerRoamAroundTerritory(out producedJob, true);
     }
     protected override bool TamedBehaviour(Character p_character, ref string p_log, out JobQueueItem p_producedJob) {
@@ -158,14 +165,11 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
         producedJob = null;
         return false;
     }
-    private List<Character> GetWebbedCharactersAtHome(Character character) {
+    private void PopulateWebbedCharactersAtHome(List<Character> p_characterList, Character character) {
         if (character.homeStructure != null) {
-            return character.homeStructure.GetCharactersThatMeetCriteria(c => c.traitContainer.HasTrait("Webbed"));
+            character.homeStructure.PopulateCharacterListThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Webbed"));
         } else if (character.HasTerritory()) {
-            List<Character> characters = character.territory.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => c.traitContainer.HasTrait("Webbed"));
-            return characters;
+            character.territory.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Webbed"));
         }
-        return null;
     }
-   
 }

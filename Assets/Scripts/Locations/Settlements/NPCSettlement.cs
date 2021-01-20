@@ -1031,16 +1031,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return pois;
     }
-    public List<TileObject> GetTileObjectsThatAdvertise(params INTERACTION_TYPE[] types) {
-        List<TileObject> objs = new List<TileObject>();
-        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
-            for (int i = 0; i < keyValuePair.Value.Count; i++) {
-                objs.AddRange(keyValuePair.Value[i].GetTileObjectsThatAdvertise(types));
-            }
+    public void GetTileObjectsThatAdvertise(List<TileObject> p_objectList, params INTERACTION_TYPE[] types) {
+        for (int i = 0; i < allStructures.Count; i++) {
+            allStructures[i].PopulateTileObjectsThatAdvertise(p_objectList, types);
         }
-        return objs;
     }
-    public List<T> GetTileObjectsFromStructures<T>(STRUCTURE_TYPE structureType, Func<T, bool> validityChecker = null) where T : TileObject {
+    public List<T> PopulateTileObjectsFromStructures<T>(STRUCTURE_TYPE structureType, Func<T, bool> validityChecker = null) where T : TileObject {
         List<T> objs = new List<T>();
         if (HasStructure(structureType)) {
             List<LocationStructure> structureList = structures[structureType];
