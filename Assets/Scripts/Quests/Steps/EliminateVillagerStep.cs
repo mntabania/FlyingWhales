@@ -15,6 +15,10 @@ namespace Quests.Steps {
         protected override void UnSubscribeListeners() {
             (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).Unsubscribe(this);
         }
+        public override void Activate() {
+            base.Activate();
+            CheckForCompletion();
+        }
 
         #region Listeners
         public void OnCharacterEliminated(Character p_character, int count) {

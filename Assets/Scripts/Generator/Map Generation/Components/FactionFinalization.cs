@@ -4,6 +4,16 @@ using Scenario_Maps;
 using UtilityScripts;
 namespace Generator.Map_Generation.Components {
     public class FactionFinalization : MapGenerationComponent  {
+        
+        #region Random Generation
+        public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
+            GenerateFactionLeadersAndFinalizeIdeologies();
+            GenerateSettlementRulers();
+            yield return null;
+        }
+        #endregion
+
+        #region Scenario Maps
         public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
             if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
                 List<FACTION_IDEOLOGY> ideologies = new List<FACTION_IDEOLOGY>() { FACTION_IDEOLOGY.Peaceful, FACTION_IDEOLOGY.Peaceful, FACTION_IDEOLOGY.Warmonger, FACTION_IDEOLOGY.Warmonger };
@@ -73,7 +83,39 @@ namespace Generator.Map_Generation.Components {
                     }
                 }
             }
+            
+            GenerateFactionLeadersAndFinalizeIdeologies();
+            GenerateSettlementRulers();
             yield return null;
+        }
+        #endregion
+        
+        
+        private void GenerateSettlementRulers() {
+            for (int j = 0; j < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; j++) {
+                NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[j];
+                if (settlement.locationType == LOCATION_TYPE.VILLAGE) {
+                    if (settlement.ruler == null) {
+                        settlement.DesignateNewRuler(false);
+                    }
+                    settlement.GenerateInitialOpinionBetweenResidents();
+                }
+            }
+        }
+        private void GenerateFactionLeadersAndFinalizeIdeologies() {
+            for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+                Faction faction = FactionManager.Instance.allFactions[i];
+                if (faction.isMajorNonPlayer) {
+                    faction.DesignateNewLeader(false);
+                    if (faction.leader is Character leader) {
+                        FactionManager.Instance.RerollFactionLeaderTraitIdeology(faction, leader);
+                        if (!faction.factionType.HasPeaceTypeIdeology()) {
+                            FactionManager.Instance.RerollPeaceTypeIdeology(faction, leader);    
+                        }
+                    }
+                    faction.GenerateInitialOpinionBetweenMembers();
+                }
+            }
         }
     }
 }

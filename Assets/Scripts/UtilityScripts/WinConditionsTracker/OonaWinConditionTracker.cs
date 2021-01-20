@@ -32,7 +32,10 @@ public class OonaWinConditionTracker : WinconditionTracker {
         List<Character> villagers = GetAllCharactersToBeEliminated(p_allCharacters);
         villagersToEliminate.Clear();
         for (int i = 0; i < villagers.Count; i++) {
-            AddVillagerToEliminate(villagers[i]);
+            Character villager = villagers[i];
+            if (!ShouldConsiderCharacterAsEliminated(villager)) {
+                AddVillagerToEliminate(villager);    
+            }
         }
         totalCharactersToEliminate = villagersToEliminate.Count;
     }

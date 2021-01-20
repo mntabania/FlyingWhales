@@ -517,10 +517,21 @@ public class CharacterManager : BaseMonoBehaviour {
         }
         return newCharacter;
     }
-    public Character CreateNewCharacter(PreCharacterData data, string className, Faction faction = null, NPCSettlement homeLocation = null, LocationStructure homeStructure = null) {
+    /// <summary>
+    /// Create a new Character instance.
+    /// </summary>
+    /// <param name="data">Pre determined character data.</param>
+    /// <param name="className">Class that new character will be.</param>
+    /// <param name="faction">The faction this character will be part of. If null, will default to neutral.</param>
+    /// <param name="homeLocation">The Settlement that the new character lives in.</param>
+    /// <param name="homeStructure">The Structure that the new character lives in.</param>
+    /// <param name="afterInitializationAction">Other processes to be performed on new character before it is added to the provided faction.</param>
+    /// <returns></returns>
+    public Character CreateNewCharacter(PreCharacterData data, string className, Faction faction = null, NPCSettlement homeLocation = null, LocationStructure homeStructure = null, System.Action<Character> afterInitializationAction = null) {
         Character newCharacter = new Character(className, data.race, data.gender, data.sexuality, data.id);
         newCharacter.SetFirstAndLastName(data.firstName, data.surName);
         newCharacter.Initialize();
+        afterInitializationAction?.Invoke(newCharacter);
         if (faction != null) {
             if (!faction.JoinFaction(newCharacter, isInitial: true)) {
                 FactionManager.Instance.vagrantFaction.JoinFaction(newCharacter, isInitial: true);

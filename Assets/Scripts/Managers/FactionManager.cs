@@ -139,8 +139,8 @@ public class FactionManager : BaseMonoBehaviour {
     private void SetRatmenFaction(Faction faction) {
         ratmenFaction = faction;
     }
-    public Faction CreateNewFaction(FACTION_TYPE factionType, string factionName = "", Sprite factionEmblem = null) {
-        Faction newFaction = new Faction(factionType);
+    public Faction CreateNewFaction(FACTION_TYPE factionType, string factionName = "", Sprite factionEmblem = null, RACE race = RACE.NONE) {
+        Faction newFaction = new Faction(factionType, race);
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         newFaction.SetIsMajorFaction(true);
         if (factionEmblem == null) {
@@ -166,8 +166,7 @@ public class FactionManager : BaseMonoBehaviour {
             faction.SetEmblem(FactionEmblemRandomizer.undeadFactionEmblem);
         } else if (factionType == FACTION_TYPE.Ratmen) {
             faction.SetEmblem(FactionEmblemRandomizer.ratmenFactionEmblem);
-        } else if (factionType == FACTION_TYPE.Demon_Cult && 
-                   DatabaseManager.Instance.factionDatabase.allFactionsList.Count(f => f.factionType.type == FACTION_TYPE.Demon_Cult) == 1) {
+        } else if (factionType == FACTION_TYPE.Demon_Cult && DatabaseManager.Instance.factionDatabase.allFactionsList.Count(f => f.factionType.type == FACTION_TYPE.Demon_Cult) == 1) {
             //only set cult faction emblem on first cult faction.
             faction.SetEmblem(FactionEmblemRandomizer.cultFactionEmblem);
         } else {

@@ -28,13 +28,13 @@ public class FactionTemplate {
     public void ChangeFactionType(string p_factionType) {
         Debug.Log($"Changed faction type of {name} to {p_factionType}");
         factionTypeString = p_factionType;
-        if (factionTypeString == "Random") {
-            //randomize faction type value now
-            factionType = CollectionUtilities.GetRandomElement(GameUtilities.customWorldFactionTypeChoices);
-        } else {
+        if (factionTypeString != "Random") {
             FACTION_TYPE type = (FACTION_TYPE)System.Enum.Parse(typeof(FACTION_TYPE), factionTypeString, true);
-            factionType = type;
+            SetFactionType(type);
         }
+    }
+    public void SetFactionType(FACTION_TYPE p_factionType) {
+        factionType = p_factionType;
     }
     public void ChangeName(string p_newName) {
         Debug.Log($"Changed name of {name} to {p_newName}");

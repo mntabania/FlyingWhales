@@ -28,7 +28,7 @@ public class MapGenerator : MonoBehaviour {
             new WorldMapGridGeneration(), new WorldMapElevationGeneration(), new SupportingFactionGeneration(), 
             new WorldMapRegionGeneration(), new WorldMapBiomeGeneration(), new WorldMapOuterGridGeneration(),
             new TileFeatureGeneration(), new RegionFeatureGeneration(), new WorldMapLandmarkGeneration(), 
-            new FamilyTreeGeneration(), new RegionInnerMapGeneration(), new SettlementGeneration(), 
+            new FamilyTreeGeneration(), new RegionInnerMapGeneration(), new SettlementGeneration(), new FactionFinalization(),
             new CharacterFinalization(), new LandmarkStructureGeneration(), new ElevationStructureGeneration(), 
             new SettlementFinalization(), new FeaturesActivation(), new MonsterGeneration(), new MapGenerationFinalization(),
         };
@@ -75,27 +75,27 @@ public class MapGenerator : MonoBehaviour {
             loadingWatch.Stop();
             Debug.Log($"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
 
-            for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-                Faction faction = FactionManager.Instance.allFactions[i];
-                if (faction.isMajorNonPlayer) {
-                    faction.DesignateNewLeader(false);
-                    if (faction.leader is Character leader) {
-                        FactionManager.Instance.RerollFactionLeaderTraitIdeology(faction, leader);    
-                    }
-                    faction.GenerateInitialOpinionBetweenMembers();
-                }
-            }
+            // for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            //     Faction faction = FactionManager.Instance.allFactions[i];
+            //     if (faction.isMajorNonPlayer) {
+            //         faction.DesignateNewLeader(false);
+            //         if (faction.leader is Character leader) {
+            //             FactionManager.Instance.RerollFactionLeaderTraitIdeology(faction, leader);    
+            //         }
+            //         faction.GenerateInitialOpinionBetweenMembers();
+            //     }
+            // }
             UtilityScripts.LocationAwarenessUtility.UpdateAllPendingAwareness();
             //yield return StartCoroutine(LocationAwarenessUtility.UpdateAllPendingAwarenessThread());
-            for (int j = 0; j < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; j++) {
-                NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[j];
-                if (settlement.locationType == LOCATION_TYPE.VILLAGE) {
-                    if(settlement.ruler == null) {
-                        settlement.DesignateNewRuler(false);
-                    }
-                    settlement.GenerateInitialOpinionBetweenResidents();
-                }
-            }
+            // for (int j = 0; j < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; j++) {
+            //     NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[j];
+            //     if (settlement.locationType == LOCATION_TYPE.VILLAGE) {
+            //         if(settlement.ruler == null) {
+            //             settlement.DesignateNewRuler(false);
+            //         }
+            //         settlement.GenerateInitialOpinionBetweenResidents();
+            //     }
+            // }
             
             WorldConfigManager.Instance.mapGenerationData = data;
             AudioManager.Instance.TransitionToWorld();
@@ -119,9 +119,9 @@ public class MapGenerator : MonoBehaviour {
             new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), new RegionFeatureGeneration(), 
             //new PlayerSettlementGeneration(), 
             new WorldMapLandmarkGeneration(), new FamilyTreeGeneration(), 
-            new RegionInnerMapGeneration(), new SettlementGeneration(), new CharacterFinalization(), new LandmarkStructureGeneration(), 
+            new RegionInnerMapGeneration(), new SettlementGeneration(), new FactionFinalization(), new CharacterFinalization(), new LandmarkStructureGeneration(), 
             new ElevationStructureGeneration(), new SettlementFinalization(), new FeaturesActivation(), new MonsterGeneration(), 
-            new FactionFinalization(), new MapGenerationFinalization(), 
+            new MapGenerationFinalization(), 
             //new PlayerDataGeneration(),
         };
         yield return StartCoroutine(InitializeScenarioWorldCoroutine(mapGenerationComponents, scenarioMapData));
@@ -167,29 +167,29 @@ public class MapGenerator : MonoBehaviour {
             Debug.Log(
                 $"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
 
-            for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-                Faction faction = FactionManager.Instance.allFactions[i];
-                if (faction.isMajorNonPlayer) {
-                    faction.DesignateNewLeader(false);
-                    if (faction.leader is Character leader) {
-                        FactionManager.Instance.RerollFactionLeaderTraitIdeology(faction, leader);    
-                    }
-                    faction.GenerateInitialOpinionBetweenMembers();
-                }
-            }
+            // for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            //     Faction faction = FactionManager.Instance.allFactions[i];
+            //     if (faction.isMajorNonPlayer) {
+            //         faction.DesignateNewLeader(false);
+            //         if (faction.leader is Character leader) {
+            //             FactionManager.Instance.RerollFactionLeaderTraitIdeology(faction, leader);    
+            //         }
+            //         faction.GenerateInitialOpinionBetweenMembers();
+            //     }
+            // }
 
             UtilityScripts.LocationAwarenessUtility.UpdateAllPendingAwareness();
             //yield return StartCoroutine(LocationAwarenessUtility.UpdateAllPendingAwarenessThread());
 
-            for (int j = 0; j < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; j++) {
-                NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[j];
-                if (settlement.locationType == LOCATION_TYPE.VILLAGE) {
-                    if(settlement.ruler == null) {
-                        settlement.DesignateNewRuler(false);
-                    }
-                    settlement.GenerateInitialOpinionBetweenResidents();
-                }
-            }
+            // for (int j = 0; j < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; j++) {
+            //     NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[j];
+            //     if (settlement.locationType == LOCATION_TYPE.VILLAGE) {
+            //         if(settlement.ruler == null) {
+            //             settlement.DesignateNewRuler(false);
+            //         }
+            //         settlement.GenerateInitialOpinionBetweenResidents();
+            //     }
+            // }
             
             WorldConfigManager.Instance.mapGenerationData = data;
             // WorldMapCameraMove.Instance.CenterCameraOn(data.portal.gameObject);

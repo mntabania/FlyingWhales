@@ -58,34 +58,17 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public JOB_OWNER ownerType => JOB_OWNER.FACTION;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Faction;
     public System.Type serializedData => typeof(SaveDataFaction);
-    public RACE race {
-        get {
-            switch (factionType.type) {
-                case FACTION_TYPE.Elven_Kingdom:
-                    return RACE.ELVES;
-                case FACTION_TYPE.Human_Empire:
-                    return RACE.HUMANS;
-                case FACTION_TYPE.Demons:
-                    return RACE.DEMON;
-                case FACTION_TYPE.Ratmen:
-                    return RACE.RATMAN;
-                default:
-                    if (leader is Character character) {
-                        return character.race;
-                    }
-                    return RACE.HUMANS;
-            }
-        }
-    }
+    public RACE race { get; private set; }
     #endregion
 
-    public Faction(FACTION_TYPE _factionType) {
+    public Faction(FACTION_TYPE p_factionType, RACE p_race = RACE.NONE) {
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         id = UtilityScripts.Utilities.SetID(this);
         SetName(RandomNameGenerator.GenerateFactionName());
         SetFactionColor(UtilityScripts.Utilities.GetColorForFaction());
         SetFactionActiveState(true);
-        SetFactionType(_factionType);
+        SetFactionType(p_factionType);
+        race = p_race == RACE.NONE ? p_factionType.GetRaceForFactionType() : p_race;
         characters = new List<Character>();
         relationships = new Dictionary<Faction, FactionRelationship>();
         ownedSettlements = new List<BaseSettlement>();
@@ -120,6 +103,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         emblem = FactionManager.Instance.GetFactionEmblem(data);
         FactionManager.Instance.SetEmblemAsUsed(emblem);
         factionColor = data.factionColor;
+        race = data.race;
         isActive = data.isActive;
         isMajorFaction = data.isMajorFaction;
         newLeaderDesignationChance = data.newLeaderDesignationChance;

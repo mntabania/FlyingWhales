@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+
 using System.Linq;
 using Inner_Maps.Location_Structures;
 using Locations.Tile_Features;
@@ -18,7 +19,7 @@ namespace Generator.Map_Generation.Components {
                     yield return MapGenerator.Instance.StartCoroutine(SettlementGeneration.PlaceStructure(npcSettlement.region, foodProducingStructure, npcSettlement));
                     if (!npcSettlement.HasStructure(foodProducingStructure.structureType)) {
                         //if structure was not placed, then just place a farm
-                        yield return MapGenerator.Instance.StartCoroutine(SettlementGeneration.PlaceStructure(npcSettlement.region, new StructureSetting(STRUCTURE_TYPE.FARM, faction.factionType.mainResource), npcSettlement));    
+                        yield return MapGenerator.Instance.StartCoroutine(SettlementGeneration.PlaceStructure(npcSettlement.region, new StructureSetting(STRUCTURE_TYPE.FARM, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), npcSettlement));    
                     }
                 }
             }
@@ -33,11 +34,14 @@ namespace Generator.Map_Generation.Components {
         private StructureSetting GenerateFoodProducingStructure(NPCSettlement settlement, Faction faction) {
             List<HexTile> surroundingAreas = settlement.GetSurroundingAreas();
             WeightedDictionary<StructureSetting> choices = new WeightedDictionary<StructureSetting>();
-            if (surroundingAreas.Count(t => t.elevationType == ELEVATION.WATER) > 0) {
-                choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHING_SHACK, faction.factionType.mainResource), 100);
+            if (!faction.factionType.usesCorruptedStructures) {
+                //Added checking since there are no corrupted fishing shacks/Hunters lodge yet.
+                if (surroundingAreas.Count(t => t.elevationType == ELEVATION.WATER) > 0) {
+                    choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHING_SHACK, faction.factionType.mainResource), 100);
+                }
+                choices.AddElement(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, faction.factionType.mainResource), 20);    
             }
-            choices.AddElement(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, faction.factionType.mainResource), 20);
-            choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, faction.factionType.mainResource), 20);
+            choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), 20);
 
             return choices.PickRandomElementGivenWeights();
         }

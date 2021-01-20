@@ -84,6 +84,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	public void ApplyCurrentSettingsToData() {
 		//apply chosen biomes to actual data
 		WorldSettings.Instance.worldSettingsData.mapSettings.ApplyBiomeSettings(_chosenBiomes);
+		WorldSettings.Instance.worldSettingsData.factionSettings.FinalizeFactionTemplates();
 	}
 	private void UpdateUIBasedOnCurrentSettings(WorldSettingsData p_settings) {
 		//Note: Updating map size dropdown will also update faction and biome data automatically because of on change event 
