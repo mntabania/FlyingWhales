@@ -22,6 +22,7 @@ namespace Quests.Steps {
         }
 
         private void CheckForCompletion(int p_remainingWarDeclaration) {
+            Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
             if (p_remainingWarDeclaration <= 0) {
                 Complete();
                 Messenger.Broadcast(PlayerSignals.WIN_GAME);
