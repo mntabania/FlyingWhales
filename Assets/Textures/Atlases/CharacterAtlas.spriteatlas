@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: da1d92a130b3f8f4bb0110cd352dca08, type: 3}
-    totalSpriteSurfaceArea: 5878071
+    totalSpriteSurfaceArea: 5927223
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -325,6 +325,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e36d80a544387534cb3fe7439f2a2eae, type: 3}
   - {fileID: 21300000, guid: a080c3a58551cd84b94bcee5ee5eaa79, type: 3}
   - {fileID: 21300000, guid: 674ba6a5db67e0d4fbb53b28ad142345, type: 3}
+  - {fileID: 21300000, guid: a529e6b50ef39404296a0431f428136a, type: 3}
   - {fileID: 21300000, guid: 0ee48ab5160991749b983db336304ba4, type: 3}
   - {fileID: 21300000, guid: de3afab57bf59cc41995a6652b10992f, type: 3}
   - {fileID: 21300000, guid: ac157bb546347044b855a68d55fb30db, type: 3}
@@ -581,6 +582,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ec370daacd336c54ab051387c159ab35, type: 3}
   - {fileID: 21300000, guid: 8d6456bafc98436478889efbb9ae8ebf, type: 3}
   - {fileID: 21300000, guid: 738296ba7d4178e47ac40651dacfa232, type: 3}
+  - {fileID: 21300000, guid: 4a435cba45810764c8254e081729e4ca, type: 3}
   - {fileID: 21300000, guid: be1dbfba2bd2fb549bc9b7d3478c9206, type: 3}
   - {fileID: 21300000, guid: f2da17ca75aec554bb220cbba97ca20b, type: 3}
   - {fileID: 21300000, guid: 7be0f7ca35248a4428e18136485668a3, type: 3}
@@ -729,6 +731,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4e93d78d9e0c112428c5fc9f3cc35a15, type: 3}
   - {fileID: 21300000, guid: 1e61279de8659e5479539e2b2f0828bf, type: 3}
   - {fileID: 21300000, guid: 05147e9d0b4d4124fad1d770ddb624ec, type: 3}
+  - {fileID: 21300000, guid: 9e9ab0adad8836e4bad69a2b86c05d68, type: 3}
   - {fileID: 21300000, guid: 20ab7aad6e70e4946971dea3d8268ade, type: 3}
   - {fileID: 21300000, guid: bb9bfbadf9ab44148afae91a37726a2b, type: 3}
   - {fileID: 21300000, guid: eb0b42bdb79575f4cb76eb8a9ad6f086, type: 3}
@@ -1128,6 +1131,7 @@ SpriteAtlas:
   - idle_4
   - attack_4
   - interact_2
+  - idle_1
   - dead_1
   - idle_1
   - attack_1
@@ -1385,6 +1389,7 @@ SpriteAtlas:
   - Raise up_00000
   - walk_4
   - dead_1
+  - dead_1
   - idle_2
   - attack_2
   - attack_3
@@ -1532,6 +1537,7 @@ SpriteAtlas:
   - Raise up_00006
   - sleep_1
   - Raise up_00010
+  - sleep_1
   - Raise up_00008
   - mage_human_body
   - dead_1

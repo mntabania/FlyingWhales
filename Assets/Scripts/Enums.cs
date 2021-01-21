@@ -63,6 +63,7 @@ public enum RACE{
     REVENANT = 34,
     RAT = 35,
     RATMAN = 36,
+    SCORPION = 37, 
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -589,6 +590,7 @@ public enum INTERRUPT {
     Leave_Home,
     Leave_Village,
     Declare_War,
+    Pulled_Down,
 }
 
 public enum TRAIT_TYPE {
@@ -871,6 +873,7 @@ public enum TILE_OBJECT_TYPE {
     PROFESSION_PEDESTAL = 163,
     ORE_VEIN = 164,
     FISHING_SPOT = 165,
+    SCORPION_EGG = 166,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1039,6 +1042,7 @@ public enum SUMMON_TYPE {
     Troll,
     Bone_Golem,
     Rat,
+    Scorpion,
 }
 public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb, Heart_Of_The_Wind, Gorgon_Eye }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }

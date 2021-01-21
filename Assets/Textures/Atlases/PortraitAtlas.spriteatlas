@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 891be410796e8554eafb2611643cc64f, type: 3}
-    totalSpriteSurfaceArea: 3478118
+    totalSpriteSurfaceArea: 3490662
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -166,6 +166,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 74855c26ebb5ecd458d725598626c440, type: 3}
   - {fileID: 21300000, guid: ed62d246e7dd62a479e9f3e468c495fa, type: 3}
   - {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
+  - {fileID: 21300000, guid: 178794461f348bf4bbfa485a335d0c96, type: 3}
   - {fileID: 21300000, guid: ce8b4f4633f1b6e4f8beae02c2435ac0, type: 3}
   - {fileID: 21300000, guid: 818c54564f33815448313c9b5ac985a7, type: 3}
   - {fileID: 21300000, guid: f26017566351fd445a08b6dce92bedb8, type: 3}
@@ -451,6 +452,7 @@ SpriteAtlas:
   - mail_human_beard8
   - hermit_hut
   - portrait_border_drag
+  - Head
   - mail_human_nose2
   - mail_human_eyes5
   - male_elf_nose1

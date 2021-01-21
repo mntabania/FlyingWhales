@@ -61,7 +61,9 @@ public class CharacterManager : BaseMonoBehaviour {
         Ratman_Behaviour = "Ratman Behaviour",
         Slave_Behaviour = "Slave Behaviour",
         Fire_Elemental_Behaviour = "Fire Elemental Behaviour",
-        Sludge_Behaviour = "Sludge Behaviour";
+        Sludge_Behaviour = "Sludge Behaviour",
+        Scorpion_Behaviour = "Scorpion Behaviour";
+
     
     public const int VISION_RANGE = 8;
     public const int AVOID_COMBAT_VISION_RANGE = 12;
@@ -391,6 +393,13 @@ public class CharacterManager : BaseMonoBehaviour {
                 typeof(DefaultExtraCatcher),
             }
         },
+        { Scorpion_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(ScorpionBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        }
     };
 
     #region getters/setters
