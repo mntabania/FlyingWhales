@@ -819,6 +819,39 @@ MonoBehaviour:
       mustache: []
       beard: []
       ears: []
+  - raceName: SCORPION
+    race: 37
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 178794461f348bf4bbfa485a335d0c96, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
   - raceName: SHEEP
     race: 25
     neutralAssets:
