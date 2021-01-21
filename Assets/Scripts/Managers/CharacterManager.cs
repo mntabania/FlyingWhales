@@ -62,7 +62,8 @@ public class CharacterManager : BaseMonoBehaviour {
         Slave_Behaviour = "Slave Behaviour",
         Fire_Elemental_Behaviour = "Fire Elemental Behaviour",
         Sludge_Behaviour = "Sludge Behaviour",
-        Scorpion_Behaviour = "Scorpion Behaviour";
+        Scorpion_Behaviour = "Scorpion Behaviour",
+        Harpy_Behaviour = "Harpy Behaviour";
 
     
     public const int VISION_RANGE = 8;
@@ -399,7 +400,14 @@ public class CharacterManager : BaseMonoBehaviour {
                 typeof(ScorpionBehaviour),
                 typeof(DefaultExtraCatcher),
             }
-        }
+        },
+        { Harpy_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(HarpyBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
     };
 
     #region getters/setters
@@ -998,6 +1006,8 @@ public class CharacterManager : BaseMonoBehaviour {
         switch (summonType) {
             case SUMMON_TYPE.Giant_Spider:
                 return TILE_OBJECT_TYPE.SPIDER_EGG;
+            case SUMMON_TYPE.Harpy:
+                return TILE_OBJECT_TYPE.HARPY_EGG;
             default:
                 return TILE_OBJECT_TYPE.NONE;
         }

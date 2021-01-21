@@ -25,10 +25,10 @@ namespace Locations.Tile_Features {
             Messenger.AddListener<TileObject, LocationGridTile>(GridTileSignals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
             Messenger.AddListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         
-            List<TileObject> bigTrees = tile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.BIG_TREE_OBJECT);
-            currentBigTreeCount = bigTrees.Count;
-            if (bigTrees.Count < MaxBigTrees) {
-                int missingTrees = MaxBigTrees - bigTrees.Count;
+            int bigTreesCount = tile.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.BIG_TREE_OBJECT);
+            currentBigTreeCount = bigTreesCount;
+            if (bigTreesCount < MaxBigTrees) {
+                int missingTrees = MaxBigTrees - bigTreesCount;
                 for (int i = 0; i <= missingTrees; i++) {
                     if (CreateNewBigTree() == false) {
                         break;
@@ -36,10 +36,10 @@ namespace Locations.Tile_Features {
                 }
             }
         
-            List<TileObject> smallTrees = tile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.TREE_OBJECT);
-            currentSmallTreeCount = smallTrees.Count;
-            if (smallTrees.Count < MaxSmallTrees) {
-                int missingTrees = MaxSmallTrees - smallTrees.Count;
+            int smallTreesCount = tile.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.TREE_OBJECT);
+            currentSmallTreeCount = smallTreesCount;
+            if (smallTreesCount < MaxSmallTrees) {
+                int missingTrees = MaxSmallTrees - smallTreesCount;
                 for (int i = 0; i <= missingTrees; i++) {
                     if (CreateNewSmallTree() == false) {
                         break;

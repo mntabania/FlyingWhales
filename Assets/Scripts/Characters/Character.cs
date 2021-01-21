@@ -104,7 +104,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CharacterJobTriggerComponent jobComponent { get; private set; }
     public ReactionComponent reactionComponent { get; private set; }
     public LogComponent logComponent { get; private set; }
-    public CombatComponent combatComponent { get; private set; }
+    public CombatComponent combatComponent { get; protected set; }
     public RumorComponent rumorComponent { get; private set; }
     public AssumptionComponent assumptionComponent { get; private set; }
     public MovementComponent movementComponent { get; private set; }
@@ -1741,7 +1741,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return false;
     } 
     public bool HasHome() {
-        return homeSettlement != null || homeStructure != null || HasTerritory();
+        return homeSettlement != null || (homeStructure != null && !homeStructure.hasBeenDestroyed) || HasTerritory();
     }
     public bool IsAtHome() {
         if (homeSettlement != null) {
@@ -2595,27 +2595,33 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //hp was increased
             Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RECOVER_HP, this as IPointOfInterest);
         }
-        if (triggerDeath && currentHP <= 0) {
-            if(source != null && source != this) {
-                if (source is Character character) {
-                    Death("attacked", responsibleCharacter: character);
+        if (currentHP <= 0) { //triggerDeath && 
+            if (triggerDeath) {
+                if (source != null && source != this) {
+                    if (source is Character character) {
+                        Death("attacked", responsibleCharacter: character);
+                    } else {
+                        string cause = "attacked";
+                        cause += $"_{source}";
+                        Death(cause);
+                    }
                 } else {
-                    string cause = "attacked";
-                    cause += $"_{source}";
-                    Death(cause);
+                    Death();
                 }
-            } else {
-                Death();
             }
-        } else if (amount < 0 && IsHealthCriticallyLow() && traitContainer.HasTrait("Coward", "Vampire") && traitContainer.HasTrait("Berserked") == false && !characterClass.IsZombie()) { //do not make berserked characters trigger flight
-            bool willflight = true;
-            if (traitContainer.HasTrait("Vampire") && crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
-                willflight = false;
+        } else if (amount < 0) {
+            if (IsHealthCriticallyLow()) {
+                Messenger.Broadcast(CharacterSignals.HEALTH_CRITICALLY_LOW, this);
+                if(traitContainer.HasTrait("Coward", "Vampire") && traitContainer.HasTrait("Berserked") == false && !characterClass.IsZombie()) {  //do not make berserked characters trigger flight
+                    bool willflight = true;
+                    if (traitContainer.HasTrait("Vampire") && crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
+                        willflight = false;
+                    }
+                    if (willflight) {
+                        combatComponent.FlightAll("critically low health");
+                    }
+                }
             }
-            if (willflight) {
-                combatComponent.FlightAll("critically low health");    
-            }
-            // Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
         }
     }
     public void HPRecovery(float maxHPPercentage) {
@@ -2780,7 +2786,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //Added checking, because character can sometimes change home from dwelling to nothing.
         if(dwelling != null && dwelling.AddResident(this) && GameManager.Instance.gameHasStarted) {
             if (isNormalCharacter) {
-                jobComponent.PlanReturnHomeUrgent();
+                jobComponent.PlanReturnHome(JOB_TYPE.RETURN_HOME_URGENT);
             }
             return true;
         }
@@ -3874,6 +3880,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.START_PLAGUE_CARE);
         AddAdvertisedAction(INTERACTION_TYPE.CARE);
         AddAdvertisedAction(INTERACTION_TYPE.LONG_STAND_STILL);
+        AddAdvertisedAction(INTERACTION_TYPE.COOK);
 
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);
@@ -4109,7 +4116,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     }
                     log = $"{log}\n - Action's preconditions are all satisfied, doing action...";
                     logComponent.PrintLogIfActive(log);
-                    Messenger.Broadcast(JobSignals.CHARACTER_WILL_DO_PLAN, this, plan);
+                    Messenger.Broadcast(JobSignals.CHARACTER_WILL_DO_JOB, this, currentTopPrioJob);
                     currentNode.DoAction(currentTopPrioJob, plan);
                 }
             } else {
@@ -5439,7 +5446,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 MigrateHomeStructureTo(null, affectSettlement: false);
             }
             if (returnHome) {
-                jobComponent.PlanReturnHomeUrgent();    
+                jobComponent.PlanReturnHome(JOB_TYPE.RETURN_HOME_URGENT);    
             }
         }
     }

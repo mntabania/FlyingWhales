@@ -16,13 +16,13 @@ public class ScorpionBehaviour : BaseMonsterBehaviour {
         if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) >= 18 ||
             GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) < 6) {
             if ((character as Scorpion).heldCharacter == null) {
-                character.reactionComponent.SetIsHidden(false);
                 character.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+                character.reactionComponent.SetIsHidden(false);
                 return character.jobComponent.TriggerRoamAroundTerritory(out producedJob, true);
             }
         } else {
-            character.reactionComponent.SetIsHidden(true);
             character.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+            character.reactionComponent.SetIsHidden(true);
             return character.jobComponent.PlanIdleLongStandStill(out producedJob);
         }
 

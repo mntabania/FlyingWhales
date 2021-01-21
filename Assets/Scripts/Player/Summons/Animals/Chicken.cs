@@ -6,13 +6,13 @@ public class Chicken : Animal {
     public override string raceClassName => "Chicken";
     public override COMBAT_MODE defaultCombatMode => COMBAT_MODE.Passive;
     public Chicken() : base(SUMMON_TYPE.Chicken, "Chicken", RACE.CHICKEN) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
     public Chicken(string className) : base(SUMMON_TYPE.Chicken, className, RACE.CHICKEN) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
     public Chicken(SaveDataSummon data) : base(data) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
     
     // #region Listeners

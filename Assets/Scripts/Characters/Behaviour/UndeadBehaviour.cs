@@ -84,7 +84,7 @@ public class UndeadBehaviour : CharacterBehaviourComponent {
                             }
                         } else {
                             if(character.currentStructure != lair) {
-                                character.jobComponent.PlanIdleReturnHome(out producedJob);
+                                character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
                                 return true;
                             } else {
                                 character.jobComponent.TriggerRoamAroundTile(out producedJob);

@@ -9,7 +9,7 @@ public class DazedBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} is dazed, will only return home";
-        return character.jobComponent.PlanIdleReturnHome(out producedJob);
+        return character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
     }
     public override void OnAddBehaviourToCharacter(Character character) {
         base.OnAddBehaviourToCharacter(character);

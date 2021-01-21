@@ -137,7 +137,7 @@ public class TrollBehaviour : BaseMonsterBehaviour {
             return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
         } else {
             log += $"\n-Not in home, go to home";
-            return character.jobComponent.PlanIdleReturnHome(out producedJob);
+            return character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
         }
         //return true;
 	}

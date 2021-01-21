@@ -608,9 +608,10 @@ namespace Inner_Maps {
                 TriggerSnareTrap(character);
             }
 
-            Character scorpion = HasRaceHere(RACE.SCORPION);
-            if (scorpion != null && scorpion != (character as Scorpion) && (scorpion as Scorpion).heldCharacter == null) {
-                (scorpion as Scorpion).heldCharacter = character;
+            Character scorpionCharacter = HasRaceHere(RACE.SCORPION);
+            Scorpion scorpion = scorpionCharacter as Scorpion;
+            if (scorpion != null && !scorpion.isDead && scorpion.limiterComponent.canPerform && scorpion.limiterComponent.canMove && scorpion != character && scorpion.heldCharacter == null) {
+                scorpion.SetHeldCharacter(character);
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Pulled_Down, scorpion);
             }
 
