@@ -68,7 +68,7 @@ public class ZenkoWinConditionTracker : WinconditionTracker {
                 }
                 FactionManager.Instance.allFactions.ForEach((compareFaction) => {
                     if (eachFaction != compareFaction) {
-                        if (!m_factionsWarDeclarationHistory[compareFaction.name].Contains(compareFaction.name)) {
+                        if (m_factionsWarDeclarationHistory.ContainsKey(compareFaction.name) && !m_factionsWarDeclarationHistory[compareFaction.name].Contains(compareFaction.name)) {
                             PossibleWarDeclaration++;
                         }
                     }
