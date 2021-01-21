@@ -16,7 +16,7 @@ public class SlaveBehaviour : CharacterBehaviourComponent {
 
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
-        bool isInHome = character.IsInHomeSettlement() || character.isAtHomeStructure || character.IsInTerritory();
+        bool isInHome = character.IsAtHome();
         if (isInHome) {
             if (character.behaviourComponent.PlanWorkActions(out producedJob)) {
                 //Slaves can do work actions
@@ -27,7 +27,7 @@ public class SlaveBehaviour : CharacterBehaviourComponent {
             return character.jobComponent.PlanIdleLongStandStill(out producedJob);
         } else {
             if (!isInHome) {
-                return character.jobComponent.TriggerReturnTerritory(out producedJob);
+                return character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
             }
             return character.jobComponent.TriggerRoamAroundTile(out producedJob);
         }

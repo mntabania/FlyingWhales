@@ -135,7 +135,8 @@ public class MovementComponent : CharacterComponent {
                     || owner.currentActionNode.associatedJobType == JOB_TYPE.NEUTRALIZE_DANGER
                     || owner.currentActionNode.associatedJobType == JOB_TYPE.APPREHEND
                     || owner.currentActionNode.associatedJobType == JOB_TYPE.REPORT_CORRUPTED_STRUCTURE
-                    || owner.currentActionNode.associatedJobType == JOB_TYPE.RESTRAIN) {
+                    || owner.currentActionNode.associatedJobType == JOB_TYPE.RESTRAIN
+                    || (owner.currentActionNode.associatedJobType == JOB_TYPE.CAPTURE_CHARACTER && owner.race == RACE.HARPY)) {
                     SetIsRunning(true);
                     return;
                 }

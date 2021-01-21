@@ -5,13 +5,13 @@ public class Sheep : Animal {
     public override string raceClassName => "Sheep";
     public override COMBAT_MODE defaultCombatMode => COMBAT_MODE.Passive;
     public Sheep() : base(SUMMON_TYPE.Sheep, "Sheep", RACE.SHEEP) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
     public Sheep(string className) : base(SUMMON_TYPE.Sheep, className, RACE.SHEEP) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
     public Sheep(SaveDataSummon data) : base(data) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
     
     // #region Listeners

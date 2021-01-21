@@ -19,7 +19,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         character.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
-        bool isInHome = character.IsInHomeSettlement() || character.isAtHomeStructure || character.IsInTerritory();
+        bool isInHome = character.IsAtHome();
         if (isInHome) {
             if (character.behaviourComponent.PlanWorkActions(out producedJob)) {
                 //Ratmen can do work actions
@@ -105,7 +105,7 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
             }
         }
         if (!isInHome) {
-            return character.jobComponent.TriggerReturnTerritory(out producedJob);
+            return character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
         }
         return character.jobComponent.TriggerRoamAroundTile(out producedJob);
     }

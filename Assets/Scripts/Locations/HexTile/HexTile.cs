@@ -1233,15 +1233,13 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         //D = (1, 0) to (6, 0)
 
     }
-    public List<TileObject> GetTileObjectsInHexTile(TILE_OBJECT_TYPE type) {
-        List<TileObject> tileObjects = new List<TileObject>();
+    public void PopulateTileObjectsInHexTile(List<TileObject> p_tileObjectList, TILE_OBJECT_TYPE type) {
         for (int i = 0; i < locationGridTiles.Count; i++) {
             LocationGridTile tile = locationGridTiles[i];
             if (tile.objHere != null && tile.objHere is TileObject obj && obj.tileObjectType == type) {
-                tileObjects.Add(obj);
+                p_tileObjectList.Add(obj);
             }
         }
-        return tileObjects;
     }
     public int GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE type) {
         int count = 0;

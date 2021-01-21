@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 891be410796e8554eafb2611643cc64f, type: 3}
-    totalSpriteSurfaceArea: 3478118
+    totalSpriteSurfaceArea: 3490662
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -249,6 +249,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e1e522fa56236994e865d9a2ba0d03e2, type: 3}
   - {fileID: 21300000, guid: e40fd2fa1f5f1f34cbb41ca28e16cc4c, type: 3}
   - {fileID: 21300000, guid: 7f4ef6fa23069b449bebfe5578b48bd8, type: 3}
+  - {fileID: 21300000, guid: ed184afac7a62a7469733a2479af94e8, type: 3}
   - {fileID: 21300000, guid: 5483171b9e7c90743943dbbd7fa20a7a, type: 3}
   - {fileID: 21300000, guid: cd25722b295492042b6eaa246112781c, type: 3}
   - {fileID: 21300000, guid: 55a42e2b40090c949bf109151d5a5837, type: 3}
@@ -534,6 +535,7 @@ SpriteAtlas:
   - male_elf_brows1
   - male_elf_lips1
   - male_elf_brows3
+  - Head
   - Head
   - female_human_hair5
   - portrait_border_locked_recruiter

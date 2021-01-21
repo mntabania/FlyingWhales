@@ -11,13 +11,13 @@ public class GiantSpider : Summon {
     public override bool defaultDigMode => true;
 
     public GiantSpider() : base(SUMMON_TYPE.Giant_Spider, ClassName, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
     public GiantSpider(string className) : base(SUMMON_TYPE.Giant_Spider, className, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
     public GiantSpider(SaveDataSummon data) : base(data) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
 
     #region Overrides

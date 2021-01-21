@@ -7,13 +7,13 @@ public class Pig : Animal {
     public override string raceClassName => "Pig";
     public override COMBAT_MODE defaultCombatMode => COMBAT_MODE.Passive;
     public Pig() : base(SUMMON_TYPE.Pig, "Pig", RACE.PIG) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
     public Pig(string className) : base(SUMMON_TYPE.Pig, className, RACE.PIG) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
     public Pig(SaveDataSummon data) : base(data) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
 
     // #region Listeners

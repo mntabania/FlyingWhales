@@ -61,7 +61,9 @@ public class CharacterManager : BaseMonoBehaviour {
         Ratman_Behaviour = "Ratman Behaviour",
         Slave_Behaviour = "Slave Behaviour",
         Fire_Elemental_Behaviour = "Fire Elemental Behaviour",
-        Sludge_Behaviour = "Sludge Behaviour";
+        Sludge_Behaviour = "Sludge Behaviour",
+        Harpy_Behaviour = "Harpy Behaviour";
+
     
     public const int VISION_RANGE = 8;
     public const int AVOID_COMBAT_VISION_RANGE = 12;
@@ -388,6 +390,13 @@ public class CharacterManager : BaseMonoBehaviour {
             new []{
                 typeof(MovementProcessing),
                 typeof(SludgeBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Harpy_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(HarpyBehaviour),
                 typeof(DefaultExtraCatcher),
             }
         },
@@ -989,6 +998,8 @@ public class CharacterManager : BaseMonoBehaviour {
         switch (summonType) {
             case SUMMON_TYPE.Giant_Spider:
                 return TILE_OBJECT_TYPE.SPIDER_EGG;
+            case SUMMON_TYPE.Harpy:
+                return TILE_OBJECT_TYPE.HARPY_EGG;
             default:
                 return TILE_OBJECT_TYPE.NONE;
         }

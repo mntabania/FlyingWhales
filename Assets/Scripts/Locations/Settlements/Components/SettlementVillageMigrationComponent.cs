@@ -211,7 +211,7 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
                     newCharacter.MigrateHomeStructureTo(null, affectSettlement: false);
                     debugLog += $"\nSpawned new character {newCharacter.name} at {edgeTile}";
                     newCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
-                    newCharacter.jobComponent.PlanReturnHomeUrgent();
+                    newCharacter.jobComponent.PlanReturnHome(JOB_TYPE.RETURN_HOME_URGENT);
                     Messenger.Broadcast(WorldEventSignals.NEW_VILLAGER_ARRIVED, newCharacter);
 
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "WorldEvents", "VillagerMigration", "new_villager", providedTags: LOG_TAG.Major);

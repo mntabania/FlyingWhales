@@ -24,7 +24,7 @@ public class DefaultOutsideHomeRegion : CharacterBehaviourComponent {
                     return character.jobComponent.PlanIdleStrollOutside(out producedJob);
                 } else {
                     log += $"\n  -Otherwise: Return home";
-                    return character.jobComponent.PlanIdleReturnHome(out producedJob);
+                    return character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
                 }
             } else {
                 if(character.currentStructure != null && character.currentStructure.structureType == STRUCTURE_TYPE.TAVERN) {

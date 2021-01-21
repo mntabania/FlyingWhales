@@ -32,7 +32,7 @@ public class DefendBehaviour : CharacterBehaviourComponent {
             }
         } else {
             //character is not at home, go back.
-            return character.jobComponent.TriggerReturnTerritory(out producedJob);
+            return character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
         }
     }
     private Character GetFirstHostileIntruder(Character actor) {

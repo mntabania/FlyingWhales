@@ -16,8 +16,8 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
             return false;
         }
         //between 12am to 3am
-        if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) >= 0 && 
-            GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) <= 3) {
+        if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.currentTick) >= 0 && 
+            GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.currentTick) <= 3) {
             List<Character> webbedCharacters = GetWebbedCharactersAtHome(character);
             if (webbedCharacters == null || webbedCharacters.Count <= 1) { //check if there are only 1 or less abducted "Food" at home structure
                 if (character.behaviourComponent.currentAbductTarget != null 
@@ -52,7 +52,7 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
 
         //try to lay an egg
         if (GameUtilities.RollChance(1) && (character.IsInHomeSettlement() || character.isAtHomeStructure || character.IsInTerritory()) && !(character.currentStructure is RuinedZoo)) {
-            if (TryTriggerLayEgg(character, 4, out producedJob)) {
+            if (TryTriggerLayEgg(character, 4, TILE_OBJECT_TYPE.SPIDER_EGG, out producedJob)) {
                 return true;
             }
         }
@@ -127,7 +127,7 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
 
             p_log = $"{p_log}\n-Will try to lay egg";
             if (GameUtilities.RollChance(3, ref p_log)) {
-                if (TryTriggerLayEgg(p_character, 5, out p_producedJob)) {
+                if (TryTriggerLayEgg(p_character, 5, TILE_OBJECT_TYPE.SPIDER_EGG, out p_producedJob)) {
                     p_log = $"{p_log}\n-Will lay an egg";
                     return true;
                 }
@@ -137,27 +137,6 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
         }
     }
     
-    private bool TryTriggerLayEgg(Character character, int maxResidentCount, out JobQueueItem producedJob) {
-        int residentCount = 0;
-        int eggCount = 0;
-        if (character.homeSettlement != null) {
-            residentCount = character.homeSettlement.residents.Count(x => x.isDead == false && (x is GiantSpider || x is SmallSpider));
-            eggCount = character.homeSettlement.GetTileObjectsOfTypeThatMeetCriteria<SpiderEgg>()?.Count ?? 0;
-        }
-        else if (character.homeStructure != null) {
-            residentCount = character.homeStructure.residents.Count(x => x.isDead == false);
-            eggCount = character.homeStructure.GetNumberOfTileObjectsThatMeetCriteria(TILE_OBJECT_TYPE.SPIDER_EGG, null);
-        }
-        else if (character.HasTerritory()) {
-            residentCount = character.homeRegion.GetCountOfAliveCharacterWithSameTerritory(character);
-            eggCount += character.territory.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.SPIDER_EGG).Count;
-        }
-        if (residentCount < maxResidentCount && eggCount < 2) {
-            return character.jobComponent.TriggerLayEgg(out producedJob);
-        }
-        producedJob = null;
-        return false;
-    }
     private List<Character> GetWebbedCharactersAtHome(Character character) {
         if (character.homeStructure != null) {
             return character.homeStructure.GetCharactersThatMeetCriteria(c => c.traitContainer.HasTrait("Webbed"));
