@@ -9566,6 +9566,7 @@ MonoBehaviour:
   defaultWorldToggle: {fileID: 7229357335225251940}
   mainWindow: {fileID: 1945974015352047005}
   worldGenOptionsUIController: {fileID: 7944080641719070118}
+  btnContinue: {fileID: 9016050650921935958}
   hoverGO: {fileID: 1035131528441808496}
   hoverText: {fileID: 1051141547691287360}
   hoverTitle: {fileID: 5651743549493244524}

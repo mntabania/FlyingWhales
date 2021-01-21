@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Ruinarch.MVCFramework;
+using TMPro;
+using UnityEngine.UI;
+using UtilityScripts;
 
 public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIView.IListener {
 	[SerializeField]
@@ -10,6 +14,8 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	public FactionSettingVillageEditorUIController factionSettingVillageEditorUIController;
 	
 	private List<string> _chosenBiomes;
+
+	private System.Action onUpdateVillageCountAction;
 	
 	//Call this function to Instantiate the UI, on the callback you can call initialization code for the said UI
 	[ContextMenu("Instantiate UI")]
@@ -32,6 +38,8 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	private void OnEnable() {
 		BiomeDropdownUIItem.onChooseBiome += OnChooseBiome;
 		BiomeDropdownUIItem.onClickMinus += OnClickMinusBiome;
+		BiomeDropdownUIItem.onHoverOverBiomeItem += OnHoverOverBiomeItem;
+		BiomeDropdownUIItem.onHoverOutBiomeItem += OnHoverOutBiomeItem;
 		FactionSettingUIItem.onClickMinus += OnDeleteFactionSetting;
 		FactionSettingUIItem.onChangeName += OnChangeFactionSettingName;
 		FactionSettingUIItem.onClickRandomizeName += OnClickRandomizeFactionName;
@@ -43,6 +51,8 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	private void OnDisable() {
 		BiomeDropdownUIItem.onChooseBiome -= OnChooseBiome;
 		BiomeDropdownUIItem.onClickMinus -= OnClickMinusBiome;
+		BiomeDropdownUIItem.onHoverOverBiomeItem -= OnHoverOverBiomeItem;
+		BiomeDropdownUIItem.onHoverOutBiomeItem -= OnHoverOutBiomeItem;
 		FactionSettingUIItem.onClickMinus -= OnDeleteFactionSetting;
 		FactionSettingUIItem.onChangeName -= OnChangeFactionSettingName;
 		FactionSettingUIItem.onClickRandomizeName -= OnClickRandomizeFactionName;
@@ -53,9 +63,11 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		factionSettingVillageEditorUIController.onUIINstantiated -= OnFactionSettingVillageEditorInstantiated;
 	}
 
-	public void InitUI() {
+	public void InitUI(System.Action p_onUpdateVillageCountAction) {
 		InstantiateUI();
 		_chosenBiomes = new List<string>();
+		onUpdateVillageCountAction = p_onUpdateVillageCountAction;
+		
 		m_worldGenOptionsUIView.InitializeMapSizeDropdown();
 		m_worldGenOptionsUIView.InitializeBiomeItems();
 		m_worldGenOptionsUIView.InitializeFactionItems();
@@ -70,7 +82,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		UpdateAddBiomeBtn();
 	}
 	public bool IsUIShowing() {
-		return m_worldGenOptionsUIView.UIModel.gameObject.activeInHierarchy;
+		return m_worldGenOptionsUIView.UIModel.parentDisplay.gameObject.activeInHierarchy;
 	}
 	public override void HideUI() {
 		base.HideUI();
@@ -145,6 +157,12 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 			UpdateAddBiomeBtn();
 		}
 	}
+	private void OnHoverOverBiomeItem() {
+		Tooltip.Instance.ShowSmallInfo("Choose the type of biome for each region.", pos: m_worldGenOptionsUIView.UIModel.tooltipPosition, "Biomes");
+	}
+	private void OnHoverOutBiomeItem() {
+		Tooltip.Instance.HideSmallInfo();
+	}
 	#endregion
 
 	#region Faction Settings Item
@@ -198,6 +216,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		int maxVillages = WorldSettings.Instance.worldSettingsData.mapSettings.GetMaxVillages();
 		int currentVillageCount = WorldSettings.Instance.worldSettingsData.factionSettings.GetCurrentTotalVillageCountBasedOnFactions();
 		m_worldGenOptionsUIView.UpdateVillageCount(currentVillageCount, maxVillages);
+		onUpdateVillageCountAction?.Invoke();
 	}
 	private void OnDoneEditingVillages() {
 		UpdateVillageCount();
@@ -247,6 +266,81 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	}
 	public void OnClickAddFaction() {
 		AddDefaultFactionSetting();
+	}
+	#endregion
+
+	#region Tooltips
+	public void OnHoverOverMapSize(UIHoverPosition p_pos) {
+		string summary = "<b>Small</b> - Can accommodate 1 small region and 1 village only." +
+		                 "\n<b>Medium</b> - Can accommodate 2 regions with up to 4 villages." +
+		                 "\n<b>Large</b> - Can accommodate 3 regions with up to 6 villages." +
+		                 "\n<b>Extra Large</b> - Can accommodate 4 regions with up to 8 villages.";
+		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, "Map Size", autoReplaceText: false);
+	}
+	public void OnHoverOutMapSize() {
+		Tooltip.Instance.HideSmallInfo();
+	}
+	public void OnHoverOverMigration(UIHoverPosition p_pos) {
+		string summary = "Set the frequency of Villager Migrations.\n" +
+		                 "\n<b>None</b> - Migration disabled, No new Villagers will spawn." +
+		                 "\n<b>Slow</b> - Migration rate slowed by half." +
+		                 "\n<b>Normal</b> - Normal migration rate.";
+		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, "Migration Speed", autoReplaceText: false);
+	}
+	public void OnHoverOutMigration() {
+		Tooltip.Instance.HideSmallInfo();
+	}
+	public void OnHoverOverVictory(UIHoverPosition p_pos) {
+		string summary = "Set the game's victory condition.\n" +
+		                 "\n<b>Eliminate All</b> - Wipe out or recruit all Villagers to win the game." +
+		                 "\n<b>Sandbox</b> - No victory conditions. Play to your heart's content.";
+		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, "Victory Condition", autoReplaceText: false);
+	}
+	public void OnHoverOutVictory() {
+		Tooltip.Instance.HideSmallInfo();
+	}
+	public void OnHoverOverCooldown(UIHoverPosition p_pos) {
+		string summary = "Set the speed of your ability's recharge.\n" +
+		                 "\n<b>None</b> - All actions have no cooldown." +
+		                 "\n<b>Half</b> - Cooldown duration reduced to half of normal (rounded up)." +
+		                 "\n<b>Normal</b> - Normal cooldown duration." +
+		                 "\n<b>Double</b> - Cooldown duration twice as long as normal.";
+		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, $"{UtilityScripts.Utilities.CooldownIcon()} Cooldown", autoReplaceText: false);
+	}
+	public void OnHoverOutCooldown() {
+		Tooltip.Instance.HideSmallInfo();
+	}
+	public void OnHoverOverCosts(UIHoverPosition p_pos) {
+		string summary = "Set the mana cost of your abilities.\n" +
+		                 "\n<b>None</b> - All actions have zero mana cost." +
+		                 "\n<b>Half</b> - Mana cost reduced to half of normal (rounded up)." +
+		                 "\n<b>Normal</b> - Normal mana cost." +
+		                 "\n<b>Double</b> - Mana cost double of normal.";
+		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, $"{UtilityScripts.Utilities.ManaIcon()} Costs", autoReplaceText: false);
+	}
+	public void OnHoverOutCosts() {
+		Tooltip.Instance.HideSmallInfo();
+	}
+	public void OnHoverOverCharges(UIHoverPosition p_pos) {
+		string summary = "Set the number of base charges of your abilities.\n" +
+		                 "\n<b>Unlimited</b> - All actions have unlimited number of charges." +
+		                 "\n<b>Half</b> - Number of charges reduced to half of normal (rounded up)." +
+		                 "\n<b>Normal</b> - Normal number of charges." +
+		                 "\n<b>Double</b> - Number of charges double of normal.";
+		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, $"{UtilityScripts.Utilities.ChargesIcon()} Charges", autoReplaceText: false);
+	}
+	public void OnHoverOutCharges() {
+		Tooltip.Instance.HideSmallInfo();
+	}
+	public void OnHoverOverThreat(UIHoverPosition p_pos) {
+		string summary = "Set the threat amount normally produced by your abilities.\n" +
+		                 "\n<b>None</b> - All your actions do not produce Threat." +
+		                 "\n<b>Half</b> - Threat amount decreased by half." +
+		                 "\n<b>Normal</b> - Normal threat amount.";
+		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, $"{UtilityScripts.Utilities.ThreatIcon()} Threat", autoReplaceText: false);
+	}
+	public void OnHoverOutThreat() {
+		Tooltip.Instance.HideSmallInfo();
 	}
 	#endregion
 }

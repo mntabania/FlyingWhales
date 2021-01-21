@@ -24,6 +24,7 @@ public class WorldSettings : MonoBehaviour {
 
     public GameObject mainWindow;
     public WorldGenOptionsUIController worldGenOptionsUIController;
+    public Button btnContinue;
 
     public GameObject hoverGO;
     public RuinarchText hoverText;
@@ -43,7 +44,7 @@ public class WorldSettings : MonoBehaviour {
             Instance = this;
             DontDestroyOnLoad(this.gameObject);
             worldSettingsData = new WorldSettingsData();
-            worldGenOptionsUIController.InitUI();
+            worldGenOptionsUIController.InitUI(OnUpdateVillageCount);
             worldGenOptionsUIController.HideUI();
             worldGenOptionsUIController.SetParent(parentDisplay);
         } else {
@@ -58,6 +59,7 @@ public class WorldSettings : MonoBehaviour {
         InitializeData();
         worldGenOptionsUIController.HideUI();
         UpdateAvailableWorldTypes();
+        UpdateContinueBtnInteractable();
     }
     public void Close() {
         settingsGO.SetActive(false);
@@ -95,6 +97,17 @@ public class WorldSettings : MonoBehaviour {
     public void SetWorldSettingsData(WorldSettingsData data) {
         worldSettingsData = data;
     }
+    private void OnUpdateVillageCount() {
+        UpdateContinueBtnInteractable();
+    }
+    private void UpdateContinueBtnInteractable() {
+        if (worldGenOptionsUIController.IsUIShowing()) {
+            btnContinue.interactable = worldSettingsData.AreSettingsValid(out var invalidityReason);    
+        } else {
+            btnContinue.interactable = true;
+        }
+        
+    }
     #endregion
 
     #region UI References
@@ -125,6 +138,7 @@ public class WorldSettings : MonoBehaviour {
                 MainMenuUI.Instance.generalConfirmation.ShowGeneralConfirmation("Invalid Settings", UtilityScripts.Utilities.InvalidColorize(invalidityReason));
             }
         }
+        UpdateContinueBtnInteractable();
     }
     public void OnClickBack() {
         if (mainWindow.activeSelf) {
@@ -133,6 +147,7 @@ public class WorldSettings : MonoBehaviour {
             mainWindow.SetActive(true);
             worldGenOptionsUIController.HideUI();
         }
+        UpdateContinueBtnInteractable();
     }
     #endregion
 

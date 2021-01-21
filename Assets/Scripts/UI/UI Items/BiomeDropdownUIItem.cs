@@ -8,17 +8,24 @@ public class BiomeDropdownUIItem : MonoBehaviour {
 
     public static System.Action<BiomeDropdownUIItem, string> onChooseBiome;
     public static System.Action<BiomeDropdownUIItem, string> onClickMinus;
+    public static System.Action onHoverOverBiomeItem;
+    public static System.Action onHoverOutBiomeItem;
     
     public TMP_Dropdown dropdownBiome;
     public Button btnMinus;
+    public HoverHandler hoverHandler;
     
     private void OnEnable() {
         dropdownBiome.onValueChanged.AddListener(OnChooseBiome);
         btnMinus.onClick.AddListener(OnClickMinus);
+        hoverHandler.AddOnHoverOverAction(OnHoverOver);
+        hoverHandler.AddOnHoverOutAction(OnHoverOut);
     }
     private void OnDisable() {
         dropdownBiome.onValueChanged.RemoveListener(OnChooseBiome);
         btnMinus.onClick.RemoveListener(OnClickMinus);
+        hoverHandler.RemoveOnHoverOverAction(OnHoverOver);
+        hoverHandler.RemoveOnHoverOutAction(OnHoverOut);
     }
     public void Initialize(List<string> p_biomes) {
         dropdownBiome.ClearOptions();
@@ -37,6 +44,13 @@ public class BiomeDropdownUIItem : MonoBehaviour {
     private void OnClickMinus() {
         string chosen = dropdownBiome.options[dropdownBiome.value].text;
         onClickMinus?.Invoke(this, chosen);
+    }
+
+    private void OnHoverOver() {
+        onHoverOverBiomeItem?.Invoke();
+    }
+    private void OnHoverOut() {
+        onHoverOutBiomeItem?.Invoke();
     }
     
 }

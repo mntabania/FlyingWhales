@@ -541,6 +541,7 @@ namespace Locations.Settlements {
             }
             if (tiles.Contains(tile) == false) {
                 tiles.Add(tile);
+                Debug.Log($"Added tile {tile.ToString()} to settlement {name}");
                 tile.SetSettlementOnTile(this);
                 if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
                     tile.SetCorruption(true);
@@ -558,6 +559,7 @@ namespace Locations.Settlements {
         }
         public virtual bool RemoveTileFromSettlement(HexTile tile) {
             if (tiles.Remove(tile)) {
+                Debug.Log($"Removed tile {tile.ToString()} from settlement {name}");
                 tile.SetSettlementOnTile(null);
                 if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
                     tile.SetCorruption(false);

@@ -26,4 +26,17 @@ public static class UIExtensions {
         }
         return default;
     }
+    public static T ConvertOption<T>(this TMP_Dropdown p_dropDown, int p_optionIndex) where T : struct, IConvertible {
+        if (!typeof(T).IsEnum) {
+            throw new ArgumentException("T must be an enumerated type");
+        }
+        string option = p_dropDown.options[p_optionIndex].text;
+        foreach (T item in Enum.GetValues(typeof(T))) {
+            string normalizedItem = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(item.ToString());
+            if (normalizedItem.ToLower().Equals(option.Trim().ToLower())) {
+                return item;
+            }
+        }
+        return default;
+    }
 }

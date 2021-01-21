@@ -99,16 +99,9 @@ public class RegionDivision {
         }
     }
     private void SpawnMonstersFaunaListProcessing(LocationStructure p_structure) {
-        if (_faunaListWeights.Count <= 0) {
-            for (int i = 0; i < faunaList.Length; i++) {
-                MonsterMigrationBiomeAtomizedData atomizedData = faunaList[i];
-                if (atomizedData.weight > 0) {
-                    _faunaListWeights.AddElement(atomizedData, atomizedData.weight);
-                }
-            }
-        }
-        if (_faunaListWeights.Count > 0) {
-            MonsterMigrationBiomeAtomizedData chosenData = _faunaListWeights.PickRandomElementGivenWeights();
+        WeightedDictionary<MonsterMigrationBiomeAtomizedData> faunaWeights = TryGetFaunaListWeights();
+        if (faunaWeights.Count > 0) {
+            MonsterMigrationBiomeAtomizedData chosenData = faunaWeights.PickRandomElementGivenWeights();
             int numOfSpawns = GameUtilities.RandomBetweenTwoNumbers(chosenData.minRange, chosenData.maxRange);
             for (int i = 0; i < numOfSpawns; i++) {
                 LocationGridTile spawnLocationGridTile = p_structure.GetRandomPassableTile();
@@ -123,6 +116,21 @@ public class RegionDivision {
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         }
+    }
+    public MonsterMigrationBiomeAtomizedData GetRandomMonsterFromFaunaList() {
+        WeightedDictionary<MonsterMigrationBiomeAtomizedData> faunaWeights = TryGetFaunaListWeights();
+        return faunaWeights.PickRandomElementGivenWeights();
+    }
+    private WeightedDictionary<MonsterMigrationBiomeAtomizedData> TryGetFaunaListWeights() {
+        if (_faunaListWeights.Count <= 0) {
+            for (int i = 0; i < faunaList.Length; i++) {
+                MonsterMigrationBiomeAtomizedData atomizedData = faunaList[i];
+                if (atomizedData.weight > 0) {
+                    _faunaListWeights.AddElement(atomizedData, atomizedData.weight);
+                }
+            }
+        }
+        return _faunaListWeights;
     }
     #endregion
 }

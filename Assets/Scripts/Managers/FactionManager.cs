@@ -310,6 +310,17 @@ public class FactionManager : BaseMonoBehaviour {
     public string GetFactionNameColorHex() {
         return _factionNameColorHex;
     }
+    public Faction GetDefaultFactionForMonster(SUMMON_TYPE summonType) {
+        switch (summonType) {
+            case SUMMON_TYPE.Ghost:
+            case SUMMON_TYPE.Skeleton:
+            case SUMMON_TYPE.Vengeful_Ghost:
+            case SUMMON_TYPE.Revenant:
+                return undeadFaction;
+            default:
+                return neutralFaction;
+        }
+    }
     #endregion
 
     #region Relationships

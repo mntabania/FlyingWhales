@@ -132,4 +132,12 @@
     public static string SCHEME_UI_SHOWN = "OnSchemeUIShown";
     public static string TEMPTATIONS_POPUP_SHOWN = "OnTemptationsPopupShown";
     public static string TEMPTATIONS_OFFERED = "OnTemptationsOffered";
+    /// <summary>
+    /// Parameters(TMP_Dropdown parentDropdown, int itemIndex)
+    /// </summary>
+    public static string DROPDOWN_ITEM_HOVERED_OVER = "OnDropdownItemHoveredOver";
+    /// <summary>
+    /// Parameters(TMP_Dropdown parentDropdown, int itemIndex)
+    /// </summary>
+    public static string DROPDOWN_ITEM_HOVERED_OUT = "OnDropdownItemHoveredOut";
 }

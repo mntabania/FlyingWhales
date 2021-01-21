@@ -3124,6 +3124,8 @@
             <e p="Custom UI" t="Include">
               <e p="ButtonConverter.cs" t="Include" />
               <e p="RuinarchButton.cs" t="Include" />
+              <e p="RuinarchDropdown.cs" t="Include" />
+              <e p="RuinarchDropdownItem.cs" t="Include" />
               <e p="RuinarchText.cs" t="Include" />
               <e p="RuinarchToggle.cs" t="Include" />
               <e p="UndraggableScrollRect.cs" t="Include" />
