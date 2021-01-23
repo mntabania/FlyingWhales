@@ -3129,7 +3129,20 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return true;
     }
     #endregion
-    
+
+    #region Triton
+    public bool TriggerTritonKidnap(Character targetCharacter, LocationStructure dropLocationStructure, LocationGridTile dropTileLocation) {
+        if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.TRITON_KIDNAP)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRITON_KIDNAP, INTERACTION_TYPE.DROP_RESTRAINED,
+                targetCharacter, owner);
+            job.AddOtherData(INTERACTION_TYPE.DROP_RESTRAINED, new object[] { dropLocationStructure, dropTileLocation });
+            job.SetDoNotRecalculate(true);
+            return owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
+    }
+    #endregion
+
     #region Loading
     public void LoadReferences(SaveDataCharacterJobTriggerComponent data) {
         //Currently N/A

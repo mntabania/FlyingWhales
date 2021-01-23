@@ -63,7 +63,8 @@ public class CharacterManager : BaseMonoBehaviour {
         Fire_Elemental_Behaviour = "Fire Elemental Behaviour",
         Sludge_Behaviour = "Sludge Behaviour",
         Scorpion_Behaviour = "Scorpion Behaviour",
-        Harpy_Behaviour = "Harpy Behaviour";
+        Harpy_Behaviour = "Harpy Behaviour",
+        Triton_Behaviour = "Triton Behaviour";
 
     
     public const int VISION_RANGE = 8;
@@ -405,6 +406,13 @@ public class CharacterManager : BaseMonoBehaviour {
             new []{
                 typeof(MovementProcessing),
                 typeof(HarpyBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Triton_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(TritonBehaviour),
                 typeof(DefaultExtraCatcher),
             }
         },

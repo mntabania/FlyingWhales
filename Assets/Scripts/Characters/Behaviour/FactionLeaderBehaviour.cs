@@ -122,39 +122,6 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
         producedJob = null;
         return false;
     }
-
-    private bool CanCharacterBeRecruited(Character targetCharacter, Character recruiter) {
-        if (!targetCharacter.traitContainer.HasTrait("Restrained")) {
-            return false;
-        }
-        if (targetCharacter.faction == recruiter.faction) {
-            return false;
-        }
-        if (recruiter.faction == null) {
-            return false;
-        }
-        // if (targetCharacter.faction?.factionType.type == FACTION_TYPE.Undead) {
-        //     return false;
-        // }
-        if (targetCharacter.HasJobTargetingThis(JOB_TYPE.RECRUIT)) {
-            return false;
-        }
-        if (!recruiter.faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(targetCharacter)) {
-            //Cannot recruit characters that does not fit faction ideologies
-            return false;
-        }
-        if (recruiter.faction.IsCharacterBannedFromJoining(targetCharacter)) {
-            //Cannot recruit banned characters
-            return false;
-        }
-        Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
-        if (prisoner == null || !prisoner.IsFactionPrisonerOf(recruiter.faction)) {
-            //Only recruit characters that are prisoners of the recruiters faction.
-            //This was added because sometimes vampire lords will recruit their imprisoned blood sources
-            return false;
-        }
-        return true;
-    }
     private int GetJobsThatWillBuildFacility(List<JobQueueItem> jobs) {
         int count = 0;
         for (int i = 0; i < jobs.Count; i++) {

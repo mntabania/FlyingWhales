@@ -498,3 +498,13 @@ public class HarpyData : SummonPlayerSkill {
         className = "Harpy";
     }
 }
+public class TritonData : SummonPlayerSkill {
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.TRITON;
+    public override string name => "Triton";
+    public override string description => "Triton";
+    public TritonData() {
+        summonType = SUMMON_TYPE.Triton;
+        race = RACE.TRITON;
+        className = "Triton";
+    }
+}

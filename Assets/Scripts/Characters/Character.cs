@@ -3027,7 +3027,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         ProcessForcedCancelJobsOnTickEnded();
         moodComponent.OnTickEnded();
         interruptComponent.OnTickEnded();
-        stateComponent.OnTickEnded();
+        //stateComponent.OnTickEnded();
         ProcessTraitsOnTickEnded();
         TryProcessTraitsOnTickEndedWhileStationaryOrUnoccupied();
         EndTickPerformJobs();
@@ -3035,7 +3035,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     protected virtual void OnHourStarted() {
         ProcessTraitsOnHourStarted();
         if (needsComponent.HasNeeds()) {
+            needsComponent.PlanScheduledFullnessRecovery();
             needsComponent.PlanScheduledTirednessRecovery();
+            needsComponent.PlanScheduledSecondHappinessRecovery();
         }
     }
     protected void StartTickGoapPlanGeneration() {
@@ -3043,11 +3045,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
         //so start doing actions again
         //SetHasAlreadyAskedForPlan(false);
-        if (needsComponent.HasNeeds()) {
-            needsComponent.PlanScheduledFullnessRecovery();
-            //needsComponent.PlanScheduledTirednessRecovery(this);
-            needsComponent.PlanScheduledSecondHappinessRecovery();
-        }
+        //if (needsComponent.HasNeeds()) {
+        //    needsComponent.PlanScheduledFullnessRecovery();
+        //    //needsComponent.PlanScheduledTirednessRecovery(this);
+        //    needsComponent.PlanScheduledSecondHappinessRecovery();
+        //}
         if (isNormalCharacter) {
             //try to take settlement job that this character can see the target of.
             if (CanTryToTakeSettlementJobInVision(out var invalidReason)) {
@@ -3078,7 +3080,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //characters that cannot witness, cannot plan actions.
         //minion == null &&
         return !isDead && numOfActionsBeingPerformedOnThis <= 0 && limiterComponent.canPerform
-            && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE  
+            && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE
             && (jobQueue.jobsInQueue.Count <= 0 || behaviourComponent.GetHighestBehaviourPriority() > jobQueue.jobsInQueue[0].priority)
             && (carryComponent.masterCharacter.movementComponent.isTravellingInWorld == false)
             && (marker && !marker.hasFleePath) && stateComponent.currentState == null && carryComponent.IsNotBeingCarried() && !interruptComponent.isInterrupted;
@@ -5699,7 +5701,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             // if (_role != null) {
             //     _role.OnDeath(this);
             // }
-
+            if (destroyMarkerOnDeath) {
+                //If death is destroy marker, this will leave no corpse, so remove it from the list of characters at location in region
+                if(currentRegion != null) {
+                    currentRegion.RemoveCharacterFromLocation(this);
+                }
+            }
             if (homeRegion != null) {
                 Region home = homeRegion;
                 LocationStructure homeStructure = this.homeStructure;

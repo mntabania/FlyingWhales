@@ -135,10 +135,14 @@ public class DropRestrained : GoapAction {
     #endregion
 
     #region State Effects
-    //public void PreDropSuccess(ActualGoapNode goapNode) {
-    //    //GoapActionState currentState = this.states[goapNode.currentStateName];
-    //    goapNode.descriptionLog.AddToFillers(goapNode.actor.currentStructure, goapNode.actor.currentStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-    //}
+    public void PreDropSuccess(ActualGoapNode goapNode) {
+        if (goapNode.associatedJobType == JOB_TYPE.TRITON_KIDNAP) {
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "triton_kidnap", goapNode, logTags);
+            log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            goapNode.OverrideDescriptionLog(log);
+        }
+    }
     public void AfterDropSuccess(ActualGoapNode goapNode) {
         //Character target = goapNode.poiTarget as Character;
         OtherData[] otherData = goapNode.otherData;
@@ -151,7 +155,12 @@ public class DropRestrained : GoapAction {
         goapNode.actor.UncarryPOI(goapNode.poiTarget, dropLocation: tile);
         if(goapNode.poiTarget is Character targetCharacter) {
             BaseSettlement currentSettlement = goapNode.actor.currentSettlement;
-            if (goapNode.associatedJobType == JOB_TYPE.APPREHEND && currentSettlement != null && currentSettlement is NPCSettlement settlement && targetCharacter.currentStructure == settlement.prison) {
+            if(goapNode.associatedJobType == JOB_TYPE.TRITON_KIDNAP) {
+                if (!targetCharacter.isDead) {
+                    targetCharacter.SetDestroyMarkerOnDeath(true);
+                    targetCharacter.Death("drowned", responsibleCharacter: goapNode.actor);
+                }
+            } else if (goapNode.associatedJobType == JOB_TYPE.APPREHEND && currentSettlement != null && currentSettlement is NPCSettlement settlement && targetCharacter.currentStructure == settlement.prison) {
                 if (targetCharacter.traitContainer.HasTrait("Criminal")) {
                     Criminal criminalTrait = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
                     criminalTrait.SetIsImprisoned(true);

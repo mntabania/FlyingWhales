@@ -917,11 +917,8 @@ public class CombatComponent : CharacterComponent {
                     }
                     break;
                 case JOB_TYPE.MONSTER_ABDUCT:
-                    return CombatManager.Abduct;
                 case JOB_TYPE.CAPTURE_CHARACTER:
-                    if (owner is Troll) {
-                        return CombatManager.Abduct;
-                    }
+                    return CombatManager.Abduct;
                     break;
                 case JOB_TYPE.KIDNAP_RAID:
                     return CombatManager.Raid;

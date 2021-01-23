@@ -413,6 +413,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.STONE_PILE:
             case TILE_OBJECT_TYPE.WOOD_PILE:
             case TILE_OBJECT_TYPE.TABLE:
+            case TILE_OBJECT_TYPE.FISHING_SPOT:
                 return true;
             default:
                 return tileObjectType.IsTileObjectAnItem();
@@ -606,6 +607,7 @@ public static class Extensions {
                 break;
             case JOB_TYPE.MOVE_CHARACTER:
             case JOB_TYPE.CAPTURE_CHARACTER:
+            case JOB_TYPE.TRITON_KIDNAP:
                 priority = 926;
                 break;
             case JOB_TYPE.GO_TO:

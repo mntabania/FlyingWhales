@@ -1231,6 +1231,18 @@ public class ReactionComponent : CharacterComponent {
                 }
             }
         }
+        if(targetTileObject is FishingSpot && targetTileObject.gridTileLocation != null) {
+            if(actor.race != RACE.TRITON) {
+                if (GameUtilities.RollChance(100)) {
+                    if (!actor.traitContainer.HasTrait("Sturdy") && !actor.HasJobTargetingThis(JOB_TYPE.TRITON_KIDNAP)) {
+                        Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Triton, FactionManager.Instance.neutralFaction, homeRegion: targetTileObject.currentRegion, bypassIdeologyChecking: true);
+                        summon.SetIsVolatile(true);
+                        CharacterManager.Instance.PlaceSummonInitially(summon, targetTileObject.gridTileLocation);
+                        (summon as Triton).TriggerTritonKidnap(actor);
+                    }
+                }
+            }
+        }
 
         if (!actor.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to objects

@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: da1d92a130b3f8f4bb0110cd352dca08, type: 3}
-    totalSpriteSurfaceArea: 5976375
+    totalSpriteSurfaceArea: 6025527
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -205,6 +205,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d111b2033998da54dbfeadc44e895174, type: 3}
   - {fileID: 21300000, guid: 6fa9e4133d516fc46bc543c1bf02e779, type: 3}
   - {fileID: 21300000, guid: 3d08cd135c85b5d45a5edd71fc7e83de, type: 3}
+  - {fileID: 21300000, guid: 04584f13eab1ead41ad7e9e590c5d2d3, type: 3}
   - {fileID: 21300000, guid: 2fe4f22340c820e44bb0aab3bdbd43ea, type: 3}
   - {fileID: 21300000, guid: 6a1e8623b9a57ad43a84a7a18e73481a, type: 3}
   - {fileID: 21300000, guid: 3beeb823134a4be418c01930d1f48966, type: 3}
@@ -443,6 +444,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ed0eddd70019f7e45915d9c672cfe2f1, type: 3}
   - {fileID: 21300000, guid: 0b74b3e75c3dfd54cbeec3476fcce62e, type: 3}
   - {fileID: 21300000, guid: aea87ee766936ec4288bee79c445851d, type: 3}
+  - {fileID: 21300000, guid: 2dcc06f7bf048c044a38a18723208233, type: 3}
   - {fileID: 21300000, guid: a51b7ff7049ca0b4b92f9b01c37f6782, type: 3}
   - {fileID: 21300000, guid: dfcc321894854014a871ce00433d201a, type: 3}
   - {fileID: 21300000, guid: 3ff1b318911b3384bacaf3d813063da5, type: 3}
@@ -518,6 +520,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d3e7e8795ac585247a0ef245405d61c6, type: 3}
   - {fileID: 21300000, guid: 33d58979d27d9084eb81735415443e5f, type: 3}
   - {fileID: 21300000, guid: 2026fe79663fede4eb3471f6bfc0f661, type: 3}
+  - {fileID: 21300000, guid: ca1b7a8949f3d0041a5fedf92088f03f, type: 3}
   - {fileID: 21300000, guid: 9b6c7f893c796c44e9b2b1955010e1da, type: 3}
   - {fileID: 21300000, guid: f04c2099f8653794fb728b90132ea122, type: 3}
   - {fileID: 21300000, guid: 7b57e1a9caaae0b4f837523dd4b8b088, type: 3}
@@ -1014,6 +1017,7 @@ SpriteAtlas:
   - craftsman_human_body
   - idle_4
   - interact_1
+  - sleep_1
   - interact_2
   - attack_2
   - attack_3
@@ -1252,6 +1256,7 @@ SpriteAtlas:
   - attack_3
   - walk_1
   - attack_4
+  - dead_1
   - sleep_1
   - idle_1
   - idle_3
@@ -1327,6 +1332,7 @@ SpriteAtlas:
   - attack_1
   - walk_1
   - attack_1
+  - idle_1
   - knight_human_body
   - dead_1
   - idle_1

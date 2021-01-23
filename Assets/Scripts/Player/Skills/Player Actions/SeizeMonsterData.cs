@@ -21,13 +21,18 @@ public class SeizeMonsterData : PlayerAction {
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
         if (canPerform) {
+            if (targetCharacter.race == RACE.TRITON) {
+                return false;
+            }
             return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !targetCharacter.traitContainer.HasTrait("Hibernating");
         }
         return canPerform;
     }
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
-        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter); 
-        if (targetCharacter.traitContainer.HasTrait("Hibernating")) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.race == RACE.TRITON) {
+            reasons += "Tritons cannot be seized,";
+        } else if (targetCharacter.traitContainer.HasTrait("Hibernating")) {
             if (targetCharacter is Golem) {
                 reasons += "Hibernating golems cannot be seized.";
             } else {
