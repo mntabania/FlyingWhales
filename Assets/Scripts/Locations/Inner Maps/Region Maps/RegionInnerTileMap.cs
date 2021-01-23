@@ -48,7 +48,7 @@ namespace Inner_Maps {
             int ySize = maxY - minY;
             
             yield return StartCoroutine(GroundPerlin(allTiles, xSize, ySize, saveDataInnerMap.xSeed, saveDataInnerMap.ySeed));
-            yield return StartCoroutine(GenerateBiomeTransitions());
+            // yield return StartCoroutine(GenerateBiomeTransitions());
             groundMapLocalBounds = groundTilemap.localBounds;
         }
 

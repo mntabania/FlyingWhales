@@ -59,6 +59,9 @@ namespace Inner_Maps {
         [Header("Perlin Noise")]
         [SerializeField] private float _xSeed;
         [SerializeField] private float _ySeed;
+        
+        [SerializeField] private float _biomeTransitionXSeed;
+        [SerializeField] private float _biomeTransitionYSeed;
 
         [Header("For Testing")]
         [SerializeField] protected LineRenderer pathLineRenderer;
@@ -83,13 +86,17 @@ namespace Inner_Maps {
         public bool isShowing => InnerMapManager.Instance.currentlyShowingMap == this;
         public float xSeed => _xSeed;
         public float ySeed => _ySeed;
+        public float biomeTransitionXSeed => _biomeTransitionXSeed;
+        public float biomeTransitionYSeed => _biomeTransitionYSeed;
         #endregion
 
         #region Generation
-        public virtual void Initialize(Region location, float xSeed, float ySeed) {
+        public virtual void Initialize(Region location, float xSeed, float ySeed, float biomeTransitionXSeed, float biomeTransitionYSeed) {
             region = location;
             _xSeed = xSeed;
             _ySeed = ySeed;
+            _biomeTransitionXSeed = biomeTransitionXSeed;
+            _biomeTransitionYSeed = biomeTransitionYSeed;
             
             //set tile map sorting orders
             groundTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder;
@@ -675,27 +682,49 @@ namespace Inner_Maps {
             int gridTileCollectionX = locationGridTileCollections.GetUpperBound(0);
             int gridTileCollectionY = locationGridTileCollections.GetUpperBound(1);
             List<LocationGridTileCollection> clearedCollections = new List<LocationGridTileCollection>();
-            for (int x = 0; x < gridTileCollectionX; x++) {
-                for (int y = 0; y < gridTileCollectionY; y++) {
+            List<LocationGridTile> tilesToPerlin = new List<LocationGridTile>();
+            for (int x = 0; x <= gridTileCollectionX; x++) {
+                for (int y = 0; y <= gridTileCollectionY; y++) {
                     LocationGridTileCollection collection = locationGridTileCollections[x, y];
+                    tilesToPerlin.Clear();
                     if (!clearedCollections.Contains(collection) && collection.HasDifferentBiomeNeighbour(out BIOMES diffBiome, out LocationGridTileCollection neighbour)) {
-                        clearedCollections.Add(collection);
-                        clearedCollections.Add(neighbour);
-
-                        List<LocationGridTile> locationGridTiles = new List<LocationGridTile>(collection.tilesInTerritory);
-                        locationGridTiles.AddRange(neighbour.tilesInTerritory);
+                        tilesToPerlin.AddRange(neighbour.tilesInTerritory);
+                        // tilesToPerlin.AddRange(collection.tilesInTerritory);
                         
-                        for (int i = 0; i < locationGridTiles.Count; i++) {
-                            LocationGridTile tile = locationGridTiles[i];
+                        clearedCollections.Add(neighbour);
+                        clearedCollections.Add(collection);
+                        
+                        int minX = tilesToPerlin.Min(t => t.localPlace.x);
+                        int maxX = tilesToPerlin.Max(t => t.localPlace.x);
+                        int minY = tilesToPerlin.Min(t => t.localPlace.y);
+                        int maxY = tilesToPerlin.Max(t => t.localPlace.y);
+                        int xSize = maxX - minX;
+                        int ySize = maxY - minY;
+
+                        BIOMES biome1 = collection.GetConnectedHextileOrNearestHextile().biomeType;
+                        BIOMES biome2 = diffBiome;
+                        
+                        for (int i = 0; i < tilesToPerlin.Count; i++) {
+                            LocationGridTile tile = tilesToPerlin[i];
                             if (tile.isDefault) {
-                                float chance = 0.37f;
-                                BIOMES biomeToUse = tile.floorSample < chance ? tile.biomeType : diffBiome;
+                                float xCoord = (float)tile.localPlace.x / xSize * 300f; //+ _biomeTransitionXSeed;
+                                float yCoord = (float)tile.localPlace.y / ySize * 300f; //+ _biomeTransitionYSeed;
+                                float sample = Mathf.PerlinNoise(xCoord, yCoord);
+                                // tile.parentMap.groundTilemap.SetColor(tile.localPlace, new Color(sample, sample, sample));
+                                BIOMES biomeToUse;
+                                if (sample < 0.5f) {
+                                    biomeToUse = biome1;
+                                    // tile.parentMap.groundTilemap.SetColor(tile.localPlace, Color.red);
+                                } else {
+                                    biomeToUse = biome2;
+                                    // tile.parentMap.groundTilemap.SetColor(tile.localPlace, Color.blue);
+                                }
                                 positions.Add(tile.localPlace);
-                                groundTiles.Add(GetGroundAssetPerlin(tile.floorSample, biomeToUse));    
+                                groundTiles.Add(GetGroundAssetPerlin(tile.floorSample, biomeToUse));
                             }
                         }    
                     }
-                    
+                    // break;
                 }
             }
 
@@ -711,7 +740,7 @@ namespace Inner_Maps {
         
         private IEnumerator MapPerlinDetails(List<LocationGridTile> tiles, int xSize, int ySize, float xSeed, float ySeed) {
             yield return StartCoroutine(GroundPerlin(tiles, xSize, ySize, xSeed, ySeed));
-            yield return StartCoroutine(GenerateBiomeTransitions());
+            // yield return StartCoroutine(GenerateBiomeTransitions());
             
             int batchCount = 0;
             //flower, rock and garbage

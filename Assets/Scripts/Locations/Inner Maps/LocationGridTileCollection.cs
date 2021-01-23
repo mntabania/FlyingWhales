@@ -115,8 +115,8 @@ namespace Inner_Maps {
         public bool HasDifferentBiomeNeighbour(out BIOMES p_diffBiome, out LocationGridTileCollection p_neighbour) {
             if (HasDifferentBiomeNeighbour(GridNeighbourDirection.West, out p_diffBiome, out p_neighbour)) return true;
             if (HasDifferentBiomeNeighbour(GridNeighbourDirection.East, out p_diffBiome, out p_neighbour)) return true;
-            if (HasDifferentBiomeNeighbour(GridNeighbourDirection.North, out p_diffBiome, out p_neighbour)) return true;
             if (HasDifferentBiomeNeighbour(GridNeighbourDirection.South, out p_diffBiome, out p_neighbour)) return true;
+            if (HasDifferentBiomeNeighbour(GridNeighbourDirection.North, out p_diffBiome, out p_neighbour)) return true;
             else return false;
         }
         private bool HasDifferentBiomeNeighbour(GridNeighbourDirection p_dir, out BIOMES p_diffBiome, out LocationGridTileCollection p_neighbour) {
