@@ -1093,6 +1093,7 @@
               <e p="GluttonBehaviour.cs" t="Include" />
               <e p="GolemBehaviour.cs" t="Include" />
               <e p="HarassBehaviour.cs" t="Include" />
+              <e p="HarpyBehaviour.cs" t="Include" />
               <e p="HeirloomHuntBehaviour.cs" t="Include" />
               <e p="HuntPreyBehaviour.cs" t="Include" />
               <e p="InfestorBehaviour.cs" t="Include" />
@@ -1116,6 +1117,7 @@
               <e p="RatmanBehaviour.cs" t="Include" />
               <e p="RescueBehaviour.cs" t="Include" />
               <e p="RevenantBehaviour.cs" t="Include" />
+              <e p="ScorpionBehaviour.cs" t="Include" />
               <e p="SettlementRulerBehaviour.cs" t="Include" />
               <e p="SlaveBehaviour.cs" t="Include" />
               <e p="SludgeBehaviour.cs" t="Include" />
@@ -1807,6 +1809,7 @@
             <e p="Plagued.cs" t="Include" />
             <e p="Pneumonia.cs" t="Include" />
             <e p="Puke.cs" t="Include" />
+            <e p="PulledDown.cs" t="Include" />
             <e p="RecallAttack.cs" t="Include" />
             <e p="ReduceConflict.cs" t="Include" />
             <e p="Resign.cs" t="Include" />
@@ -2104,6 +2107,7 @@
                   <e p="Grimoire.cs" t="Include" />
                   <e p="GroundBolt.cs" t="Include" />
                   <e p="Guitar.cs" t="Include" />
+                  <e p="HarpyEgg.cs" t="Include" />
                   <e p="HealingPotion.cs" t="Include" />
                   <e p="Heirloom.cs" t="Include" />
                   <e p="HerbPlant.cs" t="Include" />
@@ -2588,6 +2592,7 @@
               <e p="Ghost.cs" t="Include" />
               <e p="GiantSpider.cs" t="Include" />
               <e p="Golem.cs" t="Include" />
+              <e p="Harpy.cs" t="Include" />
               <e p="Incubus.cs" t="Include" />
               <e p="Kobold.cs" t="Include" />
               <e p="Mimic.cs" t="Include" />
@@ -2598,6 +2603,7 @@
                 <e p="WindNymph.cs" t="Include" />
               </e>
               <e p="Revenant.cs" t="Include" />
+              <e p="Scorpion.cs" t="Include" />
               <e p="SeducerSummon.cs" t="Include" />
               <e p="Skeleton.cs" t="Include" />
               <e p="Sludge.cs" t="Include" />

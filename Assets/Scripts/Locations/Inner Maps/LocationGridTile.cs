@@ -1531,7 +1531,7 @@ namespace Inner_Maps {
             return tiles;
         }
         public bool IsPassable() {
-            return (objHere == null || !(objHere is BlockWall)) && groundType != Ground_Type.Water;
+            return (objHere == null || !objHere.IsUnpassable()) && groundType != Ground_Type.Water;
         }
         private LocationGridTile GetTargetTileToGoToRegion(Region region) {
             //if (currentRegion != null) {

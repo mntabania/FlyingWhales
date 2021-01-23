@@ -71,9 +71,6 @@ public class OreVein : TileObject {
 
         base.OnPlaceTileObjectAtTile(tile);
     }
-    public override bool CollectsLogs() {
-        return false;
-    }
     public override void ConstructDefaultActions() {
         base.ConstructDefaultActions();
         RemovePlayerAction(PLAYER_SKILL_TYPE.SEIZE_OBJECT);
@@ -87,6 +84,18 @@ public class OreVein : TileObject {
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
         BaseSettlement.onSettlementBuilt -= UpdateSettlementResourcesParent;
+    }
+    public override bool IsUnpassable() {
+        return true;
+    }
+    public override bool IsValidCombatTargetFor(IPointOfInterest source) {
+        if (gridTileLocation == null) {
+            return false;
+        }
+        if (source.gridTileLocation == null) {
+            return false;
+        }
+        return true;
     }
     #endregion
 
