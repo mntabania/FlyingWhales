@@ -229,13 +229,14 @@ public class CharacterClass {
         return false;
     }
     public bool IsZombie() {
-        return className.Contains("Zombie");
+        return identifier == "Zombie";
     }
     public bool CanDoJob(JOB_TYPE jobType) {
         return priorityJobs.Contains(jobType) || ableJobs.Contains(jobType) || secondaryJobs.Contains(jobType);
     }
     public bool IsSpecialClass() {
-        return className == "Necromancer" || className == "Hero" || className == "Vampire Lord" || className == "Cult Leader";
+        return identifier == "Special";
+        //return className == "Necromancer" || className == "Hero" || className == "Vampire Lord" || className == "Cult Leader";
     }
     #endregion
 }

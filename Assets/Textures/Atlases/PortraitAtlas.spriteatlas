@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 891be410796e8554eafb2611643cc64f, type: 3}
-    totalSpriteSurfaceArea: 3503206
+    totalSpriteSurfaceArea: 3515750
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -282,6 +282,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: c31d66ccc0868e14793b6009979d6876, type: 3}
   - {fileID: 21300000, guid: 003212dc83781b545ae3db4300852022, type: 3}
   - {fileID: 21300000, guid: f75712dcff0e6f84a86a006e6bacaab2, type: 3}
+  - {fileID: 21300000, guid: 5a559ddc24c142e45afcc44ad0833f80, type: 3}
   - {fileID: 21300000, guid: fa84bfdc8ef46db48925a710fb46e9f1, type: 3}
   - {fileID: 21300000, guid: 08c367eceabab164f855614e3d479213, type: 3}
   - {fileID: 21300000, guid: 7cadbe0d1b6d2f543906c3d7be6a7187, type: 3}
@@ -569,6 +570,7 @@ SpriteAtlas:
   - mail_human_mouth5
   - female_elf_brows2
   - female_human_mouth3
+  - M-Triton
   - TheEye
   - mage_tower
   - mail_human_nose5

@@ -1026,27 +1026,58 @@ namespace Inner_Maps {
             }
             return false;
         }
-        public LocationGridTile GetNearestUnoccupiedTileFromThis() {
-            List<LocationGridTile> unoccupiedNeighbours = UnoccupiedNeighbours;
-            if (unoccupiedNeighbours.Count == 0) {
-                if (structure != null) {
-                    LocationGridTile nearestTile = null;
-                    float nearestDist = 99999f;
-                    for (int i = 0; i < structure.unoccupiedTiles.Count; i++) {
-                        LocationGridTile currTile = structure.unoccupiedTiles.ElementAt(i);
-                        if (currTile != this && currTile.groundType != Ground_Type.Water) {
-                            float dist = Vector2.Distance(currTile.localLocation, localLocation);
-                            if (dist < nearestDist) {
-                                nearestTile = currTile;
-                                nearestDist = dist;
-                            }
-                        }
-                    }
-                    return nearestTile;
-                }
-            } else {
-                return unoccupiedNeighbours[Random.Range(0, unoccupiedNeighbours.Count)];
+        //public LocationGridTile GetNearestUnoccupiedTileFromThis() {
+        //    List<LocationGridTile> unoccupiedNeighbours = UnoccupiedNeighbours;
+        //    if (unoccupiedNeighbours.Count == 0) {
+        //        if (structure != null) {
+        //            LocationGridTile nearestTile = null;
+        //            float nearestDist = 99999f;
+        //            for (int i = 0; i < structure.unoccupiedTiles.Count; i++) {
+        //                LocationGridTile currTile = structure.unoccupiedTiles.ElementAt(i);
+        //                if (currTile != this && currTile.groundType != Ground_Type.Water) {
+        //                    float dist = Vector2.Distance(currTile.localLocation, localLocation);
+        //                    if (dist < nearestDist) {
+        //                        nearestTile = currTile;
+        //                        nearestDist = dist;
+        //                    }
+        //                }
+        //            }
+        //            return nearestTile;
+        //        }
+        //    } else {
+        //        return unoccupiedNeighbours[Random.Range(0, unoccupiedNeighbours.Count)];
+        //    }
+        //    return null;
+        //}
+        public LocationGridTile GetNeareastTileFromThisThatMeetCriteria(Func<LocationGridTile, bool> criteria, List<LocationGridTile> checkedTiles) {
+            if(checkedTiles == null) {
+                checkedTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
             }
+            if (!checkedTiles.Contains(this)) {
+                checkedTiles.Add(this);
+                if (criteria.Invoke(this)) {
+                    ObjectPoolManager.Instance.ReturnGridTileListToPool(checkedTiles);
+                    return this;
+                }
+            }
+            for (int i = 0; i < neighbourList.Count; i++) {
+                LocationGridTile tile = neighbourList[i];
+                if (!checkedTiles.Contains(tile)) {
+                    checkedTiles.Add(tile);
+                    if (criteria.Invoke(tile)) {
+                        ObjectPoolManager.Instance.ReturnGridTileListToPool(checkedTiles);
+                        return tile;
+                    }
+                }
+            }
+            for (int i = 0; i < neighbourList.Count; i++) {
+                LocationGridTile tile = neighbourList[i];
+                LocationGridTile chosenTile = tile.GetNeareastTileFromThisThatMeetCriteria(criteria, checkedTiles);
+                if (chosenTile != null) {
+                    return chosenTile;
+                }
+            }
+            ObjectPoolManager.Instance.ReturnGridTileListToPool(checkedTiles);
             return null;
         }
         public LocationStructure GetNearestInteriorStructureFromThis() {
