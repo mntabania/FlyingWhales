@@ -5,29 +5,31 @@ using Quests.Steps;
 using UnityEngine;
 namespace Quests {
     public class EliminateAllVillagersOnGivenDate : ReactionQuest {
-
-
-        private EliminateAllVillagersOnGivenDateStep _eliminateVillagerStep;
-
+        
         #region getters
         public override Type serializedData => typeof(SaveEliminateAllVillagersOnGivenDate);
         #endregion
 
-        public EliminateAllVillagersOnGivenDate() : base($"Eliminate All Villagers and Survive Until Day 9") { }
+        public EliminateAllVillagersOnGivenDate() : base($"Eliminate All Villagers by Day {PangatLooWinConditionTracker.DueDay.ToString()}") { }
         protected override void ConstructSteps() {
-            _eliminateVillagerStep = new EliminateAllVillagersOnGivenDateStep(GetEliminateAllVillagersDescription);
-            _eliminateVillagerStep.SetObjectsToCenter((QuestManager.Instance.winConditionTracker as PangatlooWinConditionTracker).villagersToEliminate.Count > 0
-                ? (QuestManager.Instance.winConditionTracker as PangatlooWinConditionTracker).villagersToEliminate.Select(x => x as ISelectable).ToList()
+            var pangatLooWinConditionTracker = QuestManager.Instance.GetWinConditionTracker<PangatLooWinConditionTracker>();
+            var reachDayStep = new ReachDayStep(GetReachDayDescription, PangatLooWinConditionTracker.DueDay);
+            var eliminateVillagerStep = new EliminateAllVillagersOnGivenDateStep(GetEliminateAllVillagersDescription);
+            eliminateVillagerStep.SetObjectsToCenter(pangatLooWinConditionTracker.villagersToEliminate.Count > 0
+                ? pangatLooWinConditionTracker.villagersToEliminate.Select(x => x as ISelectable).ToList()
                 : new List<ISelectable>());
             steps = new List<QuestStepCollection>() {
-                new QuestStepCollection(_eliminateVillagerStep),
+                new QuestStepCollection(reachDayStep, eliminateVillagerStep),
             };
         }
 
         #region Step Helpers
         private string GetEliminateAllVillagersDescription(List<Character> remainingTargets, int totalCharactersToEliminate) {
-            return $"wiped the villagers until Day 9 : {totalCharactersToEliminate.ToString()} Remaining" ; // /{totalCharactersToEliminate.ToString()}
+            return $"Remaining villagers : {totalCharactersToEliminate.ToString()}" ;
         }
+        private string GetReachDayDescription(int p_targetDay) {
+            return $"Days until the Undead invasion: {Mathf.Max(0, p_targetDay - GameManager.Instance.continuousDays).ToString()}";
+        } 
         #endregion
     }
 

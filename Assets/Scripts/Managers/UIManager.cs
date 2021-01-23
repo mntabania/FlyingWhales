@@ -1645,17 +1645,18 @@ public class UIManager : BaseMonoBehaviour {
     public GeneralConfirmationWithVisual generalConfirmationWithVisual;
     #endregion
 
-    #region Demo
-    [Header("Demo")]
-    [SerializeField] private DemoUI _demoUI;
-    public void ShowStartDemoScreen() {
-        _demoUI.ShowStartScreen();
+    #region Popup Screens
+    [FormerlySerializedAs("_demoUI")]
+    [Header("Popup Screens")]
+    [SerializeField] private PopUpScreensUI popUpScreensUI;
+    public void ShowStartScenario(string message) {
+        popUpScreensUI.ShowStartScreen(message);
     }
     public void ShowEndDemoScreen(string summary) {
-        _demoUI.ShowSummaryThenEndScreen(summary);
+        popUpScreensUI.ShowSummaryThenEndScreen(summary);
     }
     public bool IsShowingEndScreen() {
-        return _demoUI.IsShowingEndScreen();
+        return popUpScreensUI.IsShowingEndScreen();
     }
     #endregion
 

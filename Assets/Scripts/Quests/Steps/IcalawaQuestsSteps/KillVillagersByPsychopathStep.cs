@@ -10,10 +10,10 @@ namespace Quests.Steps {
         }
 
         protected override void SubscribeListeners() {
-            (QuestManager.Instance.winConditionTracker as IcalawaWinConditionTracker).SubscribeToKillingEvents(this);
+            QuestManager.Instance.GetWinConditionTracker<IcalawaWinConditionTracker>().SubscribeToKillingEvents(this);
         }
         protected override void UnSubscribeListeners() {
-            (QuestManager.Instance.winConditionTracker as IcalawaWinConditionTracker).UnsubscribeToKillingEvents(this);
+            QuestManager.Instance.GetWinConditionTracker<IcalawaWinConditionTracker>().UnsubscribeToKillingEvents(this);
         }
 
         #region Listeners
@@ -29,7 +29,7 @@ namespace Quests.Steps {
         private void CheckForCompletion(int p_villagerCount) {
             if (p_villagerCount <= 0) {
                 Complete();
-                Messenger.Broadcast(PlayerSignals.WIN_GAME);
+                Messenger.Broadcast(PlayerSignals.WIN_GAME, $"You've helped the Evil Psychopath kill {IcalawaWinConditionTracker.TotalCharactersToKill.ToString()} Villagers. Congratulations!");
             }
         }
         #endregion

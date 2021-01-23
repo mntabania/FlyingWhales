@@ -6,26 +6,33 @@ using UnityEngine;
 namespace Quests {
     public class WipeElvenKingdomAndSurviveHuman : ReactionQuest {
 
-        private WipeElvenKingdomAndSurviveHumanStep _eliminateElvensStep;
-
+        private Faction _mainElvenFaction;
+        private Faction _mainHumanFaction;
+        
         #region getters
         public override Type serializedData => typeof(SaveWipeElvenKingdomAndSurviveHuman);
         #endregion
 
-        public WipeElvenKingdomAndSurviveHuman() : base($"Wipe Elven kingdom and survive atleast 5 humans") { }
+        public WipeElvenKingdomAndSurviveHuman() : base(string.Empty) {
+            _mainElvenFaction = QuestManager.Instance.GetWinConditionTracker<AffattWinConditionTracker>().GetMainElvenFaction();
+            _mainHumanFaction = QuestManager.Instance.GetWinConditionTracker<AffattWinConditionTracker>().GetMainHumanFaction();
+            ChangeQuestName($"Wipe out {_mainElvenFaction.nameWithColor}");
+
+        }
         protected override void ConstructSteps() {
-            _eliminateElvensStep = new WipeElvenKingdomAndSurviveHumanStep(GetEliminateAllVillagersDescription);
-            _eliminateElvensStep.SetObjectsToCenter((QuestManager.Instance.winConditionTracker as AffatWinConditionTracker).elvensToEliminate.Count > 0
-                ? (QuestManager.Instance.winConditionTracker as AffatWinConditionTracker).elvensToEliminate.Select(x => x as ISelectable).ToList()
-                : new List<ISelectable>());
+            var eliminateElvenStep = new WipeElvenKingdomAndSurviveHumanStep(GetEliminateAllVillagersDescription);
+            var protectHumanStep = new ProtectHumansStep(GetProtectHumanDescription);
             steps = new List<QuestStepCollection>() {
-                new QuestStepCollection(_eliminateElvensStep),
+                new QuestStepCollection(eliminateElvenStep, protectHumanStep),
             };
         }
 
         #region Step Helpers
         private string GetEliminateAllVillagersDescription(List<Character> remainingTargets, int totalCharactersToEliminate) {
-            return $"wipe elven kingdom and survive 5 humans"; // /{totalCharactersToEliminate.ToString()}
+            return $"Wipe {_mainElvenFaction.nameWithColor}. Remaining {remainingTargets.Count.ToString()}";
+        }
+        private string GetProtectHumanDescription(List<Character> remainingTargets, int totalCharactersToEliminate) {
+            return $"Protect the humans. Remaining {remainingTargets.Count.ToString()}/{AffattWinConditionTracker.MinimumHumans.ToString()}";
         }
         #endregion
     }

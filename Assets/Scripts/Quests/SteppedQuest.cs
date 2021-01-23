@@ -55,7 +55,7 @@ namespace Quests {
                     stepCollection.Activate();
                     activeStepCollection = stepCollection;
                     //only re layout if completed collection has a different number of steps compared to the new active one. 
-                    questItem.UpdateStepsDelayed(completedCollection.steps.Count != activeStepCollection.steps.Count);
+                    questItem.CreateStepsDelayed(completedCollection.steps.Count != activeStepCollection.steps.Count);
                 }
             }
         }
@@ -87,6 +87,15 @@ namespace Quests {
         #region UI
         public void SetQuestItem(QuestItem questItem) {
             this.questItem = questItem;
+        }
+        protected void UpdateAllStepsUI() {
+            for (int i = 0; i < steps.Count; i++) {
+                QuestStepCollection stepCollection = steps[i];
+                for (int j = 0; j < stepCollection.steps.Count; j++) {
+                    QuestStep step = stepCollection.steps[j];
+                    Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, step);
+                }
+            }
         }
         #endregion
     }

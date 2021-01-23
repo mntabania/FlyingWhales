@@ -81,7 +81,7 @@
         "biomeType": "GRASSLAND",
         "elevationType": "PLAIN",
         "tileFeatureSaveData": [],
-        "landmarkType": "ANCIENT_GRAVEYARD",
+        "landmarkType": "NONE",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
           "remainingEarthquakeDuration": 0,
@@ -181,7 +181,7 @@
         "biomeType": "GRASSLAND",
         "elevationType": "PLAIN",
         "tileFeatureSaveData": [],
-        "landmarkType": "ANCIENT_GRAVEYARD",
+        "landmarkType": "NONE",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
           "remainingEarthquakeDuration": 0,
@@ -1225,7 +1225,7 @@
         "biomeType": "GRASSLAND",
         "elevationType": "PLAIN",
         "tileFeatureSaveData": [],
-        "landmarkType": "ANCIENT_GRAVEYARD",
+        "landmarkType": "NONE",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
           "remainingEarthquakeDuration": 0,
@@ -1385,7 +1385,7 @@
             "tileFeatureName": "WoodSourceFeature"
           }
         ],
-        "landmarkType": "NONE",
+        "landmarkType": "ANCIENT_GRAVEYARD",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
           "remainingEarthquakeDuration": 0,
@@ -1469,7 +1469,7 @@
             "tileFeatureName": "StoneSourceFeature"
           }
         ],
-        "landmarkType": "NONE",
+        "landmarkType": "ANCIENT_GRAVEYARD",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
           "remainingEarthquakeDuration": 0,

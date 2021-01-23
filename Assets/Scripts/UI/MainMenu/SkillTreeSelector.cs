@@ -12,12 +12,10 @@ public class SkillTreeSelector : MonoBehaviour {
 
     [SerializeField] private HorizontalScrollSnap _horizontalScrollSnap;
     [SerializeField] private Button continueBtn;
-
+    [SerializeField] private RuinarchToggle moreLoadoutOptionsToggle;
+    
     [SerializeField] private Toggle[] archetypeToggles;
-
-    public RuinarchToggle moreLoadoutOptionsToggle;
-
-    public PlayerSkillLoadoutUI[] playerLoadoutUI;
+    [SerializeField] private PlayerSkillLoadoutUI[] playerLoadoutUI;
 
     public void Initialize() {
         this.gameObject.SetActive(true);

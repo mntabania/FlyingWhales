@@ -533,6 +533,15 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return count;
     }
+    public bool HasAliveMember() {
+        for (int i = 0; i < characters.Count; i++) {
+            Character character = characters[i];
+            if (!character.isDead) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Utilities
@@ -1181,4 +1190,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
 
     }
     #endregion
+
+    
 }

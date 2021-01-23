@@ -2688,6 +2688,7 @@
               <e p="ActivateHarassStep.cs" t="Include" />
               <e p="ActivateInvadeStep.cs" t="Include" />
               <e p="AffatQuestSteps" t="Include">
+                <e p="ProtectHumansStep.cs" t="Include" />
                 <e p="WipeElvenKingdomAndSurviveHumanStep.cs" t="Include" />
               </e>
               <e p="AneemSteps" t="Include">
@@ -2728,6 +2729,7 @@
               <e p="ObjectPickerShownStep.cs" t="Include" />
               <e p="PangatlooQuestsSteps" t="Include">
                 <e p="EliminateAllVillagersOnGivenDateStep.cs" t="Include" />
+                <e p="ReachDayStep.cs" t="Include" />
               </e>
               <e p="ParameterlessSignalReceived.cs" t="Include" />
               <e p="PittoSteps" t="Include">
@@ -3144,7 +3146,6 @@
               <e p="TraitPanelUI.cs" t="Include" />
             </e>
             <e p="DaySeparator.cs" t="Include" />
-            <e p="DemoUI.cs" t="Include" />
             <e p="DeveloperNotificationArea.cs" t="Include" />
             <e p="DeveloperNotificationItem.cs" t="Include" />
             <e p="DialogItem.cs" t="Include" />
@@ -3327,6 +3328,7 @@
               <e p="VillagersListUI.cs" t="Include" />
               <e p="YesNoConfirmation.cs" t="Include" />
             </e>
+            <e p="PopUpScreensUI.cs" t="Include" />
             <e p="ProvokeMenu.cs" t="Include" />
             <e p="PsychopathPicker.cs" t="Include" />
             <e p="PsychopathPickerItem.cs" t="Include" />
@@ -3453,7 +3455,7 @@
             <e p="Utilities.cs" t="Include" />
             <e p="VerticalScroller.cs" t="Include" />
             <e p="WinConditionsTracker" t="Include">
-              <e p="AffatWinConditionTracker.cs" t="Include" />
+              <e p="AffattWinConditionTracker.cs" t="Include" />
               <e p="AneemWinConditionTracker.cs" t="Include" />
               <e p="IcalawaWinConditionTracker.cs" t="Include" />
               <e p="OonaWinConditionTracker.cs" t="Include" />

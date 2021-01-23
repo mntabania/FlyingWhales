@@ -29,7 +29,7 @@ public class QuestItem : PooledObject {
     public void SetQuest(SteppedQuest quest) {
         _quest = quest;
         headerLbl.SetTextAndReplaceWithIcons(quest.questName);
-        UpdateSteps();
+        CreateStepItems();
     }
 
     #region Tweening
@@ -65,27 +65,25 @@ public class QuestItem : PooledObject {
     #endregion
 
     #region Steps
-    private void UpdateSteps(bool updateLayout = false) {
+    private void CreateStepItems(bool updateQuestLayout = false) {
         UtilityScripts.Utilities.DestroyChildren(stepsParent);
         for (int i = 0; i < _quest.activeStepCollection.steps.Count; i++) {
             QuestStep step = _quest.activeStepCollection.steps[i];
-            GameObject stepGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(questStepPrefab.name,
-                Vector3.zero, Quaternion.identity, stepsParent);
+            GameObject stepGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(questStepPrefab.name, Vector3.zero, Quaternion.identity, stepsParent);
             stepGO.transform.localScale = Vector3.one;
             QuestStepItem stepItem = stepGO.GetComponent<QuestStepItem>();
             stepItem.SetStep(step);
         }
-        if (updateLayout) {
+        if (updateQuestLayout) {
             UIManager.Instance.questUI.ReLayoutTutorials();    
         }
     }
-    public void UpdateStepsDelayed(bool updateLayout = false) {
-        StartCoroutine(UpdateStepsCoroutine(updateLayout));
+    public void CreateStepsDelayed(bool updateQuestLayout = false) {
+        StartCoroutine(CreateStepsCoroutine(updateQuestLayout));
     }
-    private IEnumerator UpdateStepsCoroutine(bool updateLayout) {
+    private IEnumerator CreateStepsCoroutine(bool updateQuestLayout) {
         yield return new WaitForSecondsRealtime(1.5f);
-        QuestStepItem[] children =
-            GameUtilities.GetComponentsInDirectChildren<QuestStepItem>(stepsParent.gameObject);
+        QuestStepItem[] children = GameUtilities.GetComponentsInDirectChildren<QuestStepItem>(stepsParent.gameObject);
         for (int i = 0; i < children.Length; i++) {
             QuestStepItem child = children[i];
             child.TweenOut();
@@ -95,15 +93,14 @@ public class QuestItem : PooledObject {
         UtilityScripts.Utilities.DestroyChildren(stepsParent);
         for (int i = 0; i < _quest.activeStepCollection.steps.Count; i++) {
             QuestStep step = _quest.activeStepCollection.steps[i];
-            GameObject stepGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(questStepPrefab.name,
-                Vector3.zero, Quaternion.identity, stepsParent);
+            GameObject stepGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(questStepPrefab.name, Vector3.zero, Quaternion.identity, stepsParent);
             stepGO.transform.localScale = Vector3.one;
             QuestStepItem stepItem = stepGO.GetComponent<QuestStepItem>();
             stepItem.SetStep(step);
             stepItem.TweenIn();
             yield return new WaitForSecondsRealtime(0.2f);
         }
-        if (updateLayout) {
+        if (updateQuestLayout) {
             UIManager.Instance.questUI.ReLayoutTutorials();    
         }
     }

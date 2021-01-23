@@ -5,24 +5,21 @@ using Quests.Steps;
 using UnityEngine;
 namespace Quests {
     public class DeclareWarQuest : ReactionQuest {
-
-        private DeclareWarQuestStep _declareWarSteps;
-
+        
         #region getters
         public override Type serializedData => typeof(SaveDeclareWarQuest);
         #endregion
 
-        public DeclareWarQuest() : base($"Daclare War 3 times (Must be different factions)") { }
+        public DeclareWarQuest() : base($"Trigger 3 Concurrent Wars") { }
         protected override void ConstructSteps() {
-            _declareWarSteps = new DeclareWarQuestStep(GetEliminateAllVillagersDescription);
             steps = new List<QuestStepCollection>() {
-                new QuestStepCollection(_declareWarSteps),
+                new QuestStepCollection(new DeclareWarQuestStep(GetEliminateAllVillagersDescription)),
             };
         }
 
         #region Step Helpers
         private string GetEliminateAllVillagersDescription(int p_warCount) {
-            return $"War Declaration remaining: {p_warCount.ToString()}"; // /{totalCharactersToEliminate.ToString()}
+            return $"Major Active Wars: {p_warCount.ToString()}/{ZenkoWinConditionTracker.ActiveWarRequirement.ToString()}";
         }
         #endregion
     }

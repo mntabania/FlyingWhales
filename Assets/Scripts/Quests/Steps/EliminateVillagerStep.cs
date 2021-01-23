@@ -33,7 +33,7 @@ namespace Quests.Steps {
         private void CheckForCompletion() {
             if ((QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).totalCharactersToEliminate <= 0) {
                 Complete();
-                Messenger.Broadcast(PlayerSignals.WIN_GAME);
+                Messenger.Broadcast(PlayerSignals.WIN_GAME, "You managed to wipe out all Villagers. Congratulations!");
             }
         }
         #endregion

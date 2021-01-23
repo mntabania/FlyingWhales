@@ -11,7 +11,7 @@ namespace Quests {
 
         #region Properties
         protected List<QuestCriteria> _activationCriteria;
-        public string questName { get; }
+        public string questName { get; private set; }
         public bool isAvailable { get; protected set; }
         /// <summary>
         /// Is this quest activated? In other words, is this quest currently being shown to the player.
@@ -23,6 +23,10 @@ namespace Quests {
             questName = _questName;
         }
 
+        protected void ChangeQuestName(string p_newName) {
+            questName = p_newName;
+        }
+        
         #region Availability
         /// <summary>
         /// Make this quest available, this means that this quest is put on the list of available tutorials that the

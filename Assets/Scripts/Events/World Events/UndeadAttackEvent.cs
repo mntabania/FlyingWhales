@@ -18,8 +18,7 @@ namespace Events.World_Events {
             Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
         
         }
-
-        public void StartUndeadAttack() {
+        private void StartUndeadAttack() {
             for (int i = 0; i < FactionManager.Instance.undeadFaction.characters.Count; i++) {
                 Character character = FactionManager.Instance.undeadFaction.characters[i];
                 if (!character.isDead) {
@@ -35,7 +34,7 @@ namespace Events.World_Events {
 
         private void OnDayStarted() {
             int p_currentDay = GameManager.Instance.continuousDays;
-            if (p_currentDay == 8) {
+            if (p_currentDay == PangatLooWinConditionTracker.DueDay) {
                 StartUndeadAttack();
             }
         }

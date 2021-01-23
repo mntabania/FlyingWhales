@@ -5,8 +5,10 @@ using Ruinarch;
 using UnityEngine;
 using UtilityScripts;
 
-public class PangatlooWinConditionTracker : WinconditionTracker {
+public class PangatLooWinConditionTracker : WinconditionTracker {
 
+    public const int DueDay = 10;
+    
     private System.Action<Character> _characterEliminatedAction;
     private System.Action<Character> _characterAddedAsTargetAction;
     private System.Action<int, int> _onDayChangedAction;
@@ -16,6 +18,8 @@ public class PangatlooWinConditionTracker : WinconditionTracker {
         void OnCharacterAddedAsTarget(Character p_character);
         void OnDayChangedAction(int currentDay, int p_villagersCount);
     }
+    
+    
 
     public List<Character> villagersToEliminate { get; private set; }
     public int totalCharactersToEliminate { get; private set; }
@@ -81,7 +85,7 @@ public class PangatlooWinConditionTracker : WinconditionTracker {
     }
     private void OnDayChange() {
         int p_currentDay = GameManager.Instance.continuousDays; 
-        if (p_currentDay > 8 && villagersToEliminate.Count > 0) {
+        if (p_currentDay > DueDay && villagersToEliminate.Count > 0) {
             PlayerUI.Instance.LoseGameOver("You failed to eliminate all the villagers!");
         } else {
             _onDayChangedAction?.Invoke(p_currentDay, villagersToEliminate.Count);
@@ -105,7 +109,7 @@ public class SaveDataPangatLooWinConditionTracker : SaveDataWinConditionTracker 
     public int totalCharactersToEliminate;
     public override void Save(WinconditionTracker data) {
         base.Save(data);
-        PangatlooWinConditionTracker tracker = data as PangatlooWinConditionTracker;
+        PangatLooWinConditionTracker tracker = data as PangatLooWinConditionTracker;
         villagersToEliminate = SaveUtilities.ConvertSavableListToIDs(tracker.villagersToEliminate);
         totalCharactersToEliminate = tracker.totalCharactersToEliminate;
     }

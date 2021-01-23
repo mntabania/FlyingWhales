@@ -12,14 +12,6 @@ public class WorldSettings : MonoBehaviour {
 
     public GameObject settingsGO;
 
-    public RuinarchToggle defaultRegionToggle;
-    public RuinarchToggle[] racesToggles;
-    public RuinarchToggle[] biomesToggles;
-
-    public RuinarchToggle omnipotentModeToggle;
-    public RuinarchToggle noThreatModeToggle;
-    public RuinarchToggle chaosVictoryModeToggle;
-
     public RuinarchToggle defaultWorldToggle;
 
     public GameObject mainWindow;
@@ -67,26 +59,6 @@ public class WorldSettings : MonoBehaviour {
     private void InitializeData() {
         defaultWorldToggle.isOn = true;
     }
-    private void InitializeCustomUI() {
-        ToggleAllRaces(true);
-        ToggleAllBiomes(true);
-
-        defaultRegionToggle.isOn = true;
-
-        omnipotentModeToggle.isOn = false;
-        noThreatModeToggle.isOn = false;
-        chaosVictoryModeToggle.isOn = false;
-    }
-    private void ToggleAllRaces(bool state) {
-        for (int i = 0; i < racesToggles.Length; i++) {
-            racesToggles[i].isOn = state;
-        }
-    }
-    private void ToggleAllBiomes(bool state) {
-        for (int i = 0; i < biomesToggles.Length; i++) {
-            biomesToggles[i].isOn = state;
-        }
-    }
     private void UpdateBiomes(BIOMES biome, bool state) {
         if (state) {
             worldSettingsData.mapSettings.AddBiome(biome);
@@ -118,7 +90,6 @@ public class WorldSettings : MonoBehaviour {
                 //show custom map customizer
                 mainWindow.SetActive(false);
                 worldGenOptionsUIController.ShowUI();
-                InitializeCustomUI();
             } else {
                 //load scenario map
                 worldSettingsData.ApplySettingsBasedOnScenarioType(toggledWorldPicker.worldType);
