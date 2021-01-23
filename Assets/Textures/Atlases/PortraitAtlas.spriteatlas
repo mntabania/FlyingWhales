@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 891be410796e8554eafb2611643cc64f, type: 3}
-    totalSpriteSurfaceArea: 3478118
+    totalSpriteSurfaceArea: 3503206
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -166,6 +166,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 74855c26ebb5ecd458d725598626c440, type: 3}
   - {fileID: 21300000, guid: ed62d246e7dd62a479e9f3e468c495fa, type: 3}
   - {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
+  - {fileID: 21300000, guid: 178794461f348bf4bbfa485a335d0c96, type: 3}
   - {fileID: 21300000, guid: ce8b4f4633f1b6e4f8beae02c2435ac0, type: 3}
   - {fileID: 21300000, guid: 818c54564f33815448313c9b5ac985a7, type: 3}
   - {fileID: 21300000, guid: f26017566351fd445a08b6dce92bedb8, type: 3}
@@ -249,6 +250,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e1e522fa56236994e865d9a2ba0d03e2, type: 3}
   - {fileID: 21300000, guid: e40fd2fa1f5f1f34cbb41ca28e16cc4c, type: 3}
   - {fileID: 21300000, guid: 7f4ef6fa23069b449bebfe5578b48bd8, type: 3}
+  - {fileID: 21300000, guid: ed184afac7a62a7469733a2479af94e8, type: 3}
   - {fileID: 21300000, guid: 5483171b9e7c90743943dbbd7fa20a7a, type: 3}
   - {fileID: 21300000, guid: cd25722b295492042b6eaa246112781c, type: 3}
   - {fileID: 21300000, guid: 55a42e2b40090c949bf109151d5a5837, type: 3}
@@ -451,6 +453,7 @@ SpriteAtlas:
   - mail_human_beard8
   - hermit_hut
   - portrait_border_drag
+  - Head
   - mail_human_nose2
   - mail_human_eyes5
   - male_elf_nose1
@@ -534,6 +537,7 @@ SpriteAtlas:
   - male_elf_brows1
   - male_elf_lips1
   - male_elf_brows3
+  - Head
   - Head
   - female_human_hair5
   - portrait_border_locked_recruiter

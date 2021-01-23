@@ -16,7 +16,7 @@ public class SuccubusBehaviour : BaseMonsterBehaviour {
             }
             if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
                 if (character.currentStructure != character.homeStructure && !character.IsInTerritory()) {
-                    if (character.jobComponent.PlanIdleReturnHome(out producedJob)) {
+                    if (character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob)) {
                         return true;
                     }
                 }
@@ -57,7 +57,7 @@ public class SuccubusBehaviour : BaseMonsterBehaviour {
                 }
             } else {
                 log += $"\n-Character is not in home and not in disguise, will return home";
-                if (character.jobComponent.PlanIdleReturnHome(out producedJob)) {
+                if (character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob)) {
                     return true;
                 }
             }
@@ -117,7 +117,7 @@ public class SuccubusBehaviour : BaseMonsterBehaviour {
             }
             if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
                 if (character.currentStructure != character.homeStructure && !character.IsInTerritory()) {
-                    if (character.jobComponent.PlanIdleReturnHome(out producedJob)) {
+                    if (character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob)) {
                         return true;
                     }
                 }

@@ -24,7 +24,7 @@ namespace Interrupts {
             return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
         }
         public override bool PerTickInterrupt(InterruptHolder interruptHolder) {
-            interruptHolder.actor.AdjustHP(-100, ELEMENTAL_TYPE.Fire);
+            interruptHolder.actor.AdjustHP(-500, ELEMENTAL_TYPE.Fire);
             if(interruptHolder.actor.currentHP <= 0) {
                 interruptHolder.actor.Death(cause: "burn_at_stake", responsibleCharacter: interruptHolder.target as Character);
             }

@@ -63,6 +63,8 @@ public enum RACE{
     REVENANT = 34,
     RAT = 35,
     RATMAN = 36,
+    SCORPION = 37, 
+    HARPY = 38,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -589,6 +591,7 @@ public enum INTERRUPT {
     Leave_Home,
     Leave_Village,
     Declare_War,
+    Pulled_Down,
 }
 
 public enum TRAIT_TYPE {
@@ -871,6 +874,7 @@ public enum TILE_OBJECT_TYPE {
     PROFESSION_PEDESTAL = 163,
     ORE_VEIN = 164,
     FISHING_SPOT = 165,
+    HARPY_EGG = 166,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -982,7 +986,7 @@ public enum PLAYER_SKILL_TYPE { NONE = 0, LYCANTHROPY = 1, KLEPTOMANIA = 2, VAMP
     FOUND_CULT = 153, BONE_GOLEM = 154, BIOLAB = 155, PLAGUED_RAT = 156, UPGRADE = 157,
     SCHEME = 158, INSTIGATE_WAR = 159, RESIGN = 160, LEAVE_FACTION = 161, LEAVE_HOME = 162, LEAVE_VILLAGE = 163,
     BREAK_UP = 164, JOIN_FACTION = 165, REBELLION = 166, OVERTHROW_LEADER = 167, INDUCE_MIGRATION = 168, STIFLE_MIGRATION = 169,
-    RELEASE = 170, EXPEL = 172, PROTECTION = 173, REMOVE_BUFF = 174, REMOVE_FLAW = 175,
+    RELEASE = 170, EXPEL = 172, PROTECTION = 173, REMOVE_BUFF = 174, REMOVE_FLAW = 175, SCORPION = 176, HARPY = 177,
 }
 public enum PLAYER_SKILL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON, SCHEME, }
 
@@ -1039,6 +1043,8 @@ public enum SUMMON_TYPE {
     Troll,
     Bone_Golem,
     Rat,
+    Scorpion,
+    Harpy,
 }
 public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb, Heart_Of_The_Wind, Gorgon_Eye }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }

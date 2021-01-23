@@ -818,6 +818,13 @@ namespace Locations.Settlements {
             }
             return objs;
         }
+        public int GetNumberOfTileObjectsThatMeetCriteria(TILE_OBJECT_TYPE tileObjectType, System.Func<TileObject, bool> validityChecker) {
+            int count = 0;
+            for (int i = 0; i < allStructures.Count; i++) {
+                count += allStructures[i].GetNumberOfTileObjectsThatMeetCriteria(tileObjectType, validityChecker);
+            }
+            return count;
+        }
         #endregion
 
         #region Party

@@ -13,10 +13,10 @@ public abstract class Ent : Summon {
     public bool isTree { get; private set; }
     
     protected Ent(SUMMON_TYPE summonType, string className) : base(summonType, className, RACE.ENT, UtilityScripts.Utilities.GetRandomGender()) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
     protected Ent(SaveDataEnt data) : base(data) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
         isTree = data.isTree;
     }
     public override void Initialize() {

@@ -190,7 +190,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                 log += $"\n-It is not Early Night, Late Night, or After Midnight";
                 if (character.currentStructure != character.homeStructure) {
                     log += $"\n-Character is not at home, return home";
-                    character.jobComponent.PlanIdleReturnHome(out producedJob);
+                    character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
                 } else {
                     for (int i = 0; i < character.faction.characters.Count; i++) {
                         if(character.faction.characters[i].race == RACE.SKELETON && !character.faction.characters[i].isDead && character.behaviourComponent.attackVillageTarget != null) {
@@ -225,7 +225,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
             if(character.necromancerTrait.lairStructure != null && character.homeStructure == character.necromancerTrait.lairStructure) {
                 log += $"\n-Lair is set, character home structure is set as the lair";
                 log += $"\n-Character will return home";
-                character.jobComponent.PlanIdleReturnHome(out producedJob);
+                character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
             } else {
                 if(character.necromancerTrait.lairStructure == null) {
                     log += $"\n-Lair is not set, will spawn lair";
@@ -242,7 +242,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                         character.MigrateHomeStructureTo(character.necromancerTrait.lairStructure);
                     }
                     log += $"\n-Character will return home";
-                    character.jobComponent.PlanIdleReturnHome(out producedJob);
+                    character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
                 }
             }
         }

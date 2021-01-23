@@ -179,7 +179,7 @@ namespace Inner_Maps.Location_Structures {
                     //successfully converted
                     GameDate dueDate = GameManager.Instance.Today();
                     dueDate.AddTicks(1);
-                    SchedulingManager.Instance.AddEntry(dueDate, () => chosenTarget.jobComponent.PlanIdleReturnHome(), chosenTarget);
+                    SchedulingManager.Instance.AddEntry(dueDate, () => chosenTarget.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME), chosenTarget);
                     chosenTarget.traitContainer.RemoveRestrainAndImprison(chosenTarget);
                     chosenTarget.traitContainer.RemoveTrait(chosenTarget, "Unconscious");
                     BrainwashDone();

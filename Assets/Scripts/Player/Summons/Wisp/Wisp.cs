@@ -9,11 +9,11 @@ public abstract class Wisp : Summon {
     public override COMBAT_MODE defaultCombatMode => COMBAT_MODE.Passive;
     
     protected Wisp(SUMMON_TYPE summonType, string className) : base(summonType, className, RACE.WISP, UtilityScripts.Utilities.GetRandomGender()) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Passive);
         visuals.SetHasBlood(false);
     }
     protected Wisp(SaveDataSummon data) : base(data) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Passive);
         visuals.SetHasBlood(false);
     }
 

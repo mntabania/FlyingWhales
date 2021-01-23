@@ -153,7 +153,7 @@ public class CombatManager : BaseMonoBehaviour {
                 return true;
             }
         } else if (elementalType == ELEMENTAL_TYPE.Ice) {
-            if (target.traitContainer.HasTrait("Cold Blooded")) {
+            if (target.traitContainer.HasTrait("Cold Blooded", "Iceproof")) {
                 //Immunity - less 85% damage
                 return true;
             }

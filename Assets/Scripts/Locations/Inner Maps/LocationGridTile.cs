@@ -606,6 +606,14 @@ namespace Inner_Maps {
             if (hasSnareTrap) {
                 TriggerSnareTrap(character);
             }
+
+            Character scorpionCharacter = HasRaceHere(RACE.SCORPION);
+            Scorpion scorpion = scorpionCharacter as Scorpion;
+            if (scorpion != null && !scorpion.isDead && scorpion.limiterComponent.canPerform && scorpion.limiterComponent.canMove && scorpion != character && scorpion.heldCharacter == null) {
+                scorpion.SetHeldCharacter(character);
+                character.interruptComponent.TriggerInterrupt(INTERRUPT.Pulled_Down, scorpion);
+            }
+
             if (isCorrupted) {
                 if(!character.isDead && character.limiterComponent.canMove && character.limiterComponent.canPerform) {
                     if (!character.movementComponent.hasMovedOnCorruption) {
@@ -675,6 +683,16 @@ namespace Inner_Maps {
             } else {
                 character.movementComponent.SetHasMovedOnCorruption(false);
             }
+        }
+
+        public Character HasRaceHere(RACE p_lookUprace) {
+            Character found = null;
+            charactersHere.ForEach((eachCharacter) => {
+                if (eachCharacter.race == p_lookUprace) {
+                    found = eachCharacter;
+                }
+            });
+            return found;
         }
         public void RemoveCharacterHere(Character character) {
             charactersHere.Remove(character);

@@ -40,6 +40,7 @@ public class Summon : Character {
 
     #region Overrides
     public override void Initialize() {
+        combatComponent.SetCombatMode(defaultCombatMode);
         ConstructDefaultActions();
         OnUpdateRace();
         OnUpdateCharacterClass();
