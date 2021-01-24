@@ -10,7 +10,7 @@ public class LayEgg : GoapAction {
     public LayEgg() : base(INTERACTION_TYPE.LAY_EGG) {
         actionIconString = GoapActionStateDB.Question_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] {
             RACE.WOLF, RACE.SPIDER, RACE.DRAGON,
             RACE.GOLEM, RACE.KOBOLD, RACE.LESSER_DEMON,

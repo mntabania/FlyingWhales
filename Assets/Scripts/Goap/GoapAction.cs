@@ -31,7 +31,7 @@ public class GoapAction {
     public bool canBeAdvertisedEvenIfTargetIsUnavailable { get; protected set; }
     public bool canBePerformedEvenIfPathImpossible { get; protected set; } //can this action still be advertised even if there is no path towards the target
     protected TIME_IN_WORDS[] validTimeOfDays;
-    public POINT_OF_INTEREST_TYPE[] advertisedBy { get; protected set; } //list of poi types that can advertise this action
+    //public POINT_OF_INTEREST_TYPE[] advertisedBy { get; protected set; } //list of poi types that can advertise this action
     public LOG_TAG[] logTags { get; protected set; }
 
     #region getters

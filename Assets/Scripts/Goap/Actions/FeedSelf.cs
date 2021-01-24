@@ -12,7 +12,7 @@ public class FeedSelf : GoapAction {
     //public override Type uniqueActionDataType => typeof(FeedUAD);
     public FeedSelf() : base(INTERACTION_TYPE.FEED_SELF) {
         actionIconString = GoapActionStateDB.Happy_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         //isNotificationAnIntel = true;
         logTags = new[] {LOG_TAG.Needs};

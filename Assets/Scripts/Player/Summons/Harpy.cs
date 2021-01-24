@@ -24,8 +24,7 @@ public class Harpy : Summon {
     #region Overrides
     public override void Initialize() {
         base.Initialize();
-        movementComponent.SetEnableDigging(true);
-        movementComponent.SetTagAsTraversable(InnerMapManager.Obstacle_Tag);
+        movementComponent.SetIsFlying(true);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Harpy_Behaviour);
     }
     public override void SubscribeToSignals() {

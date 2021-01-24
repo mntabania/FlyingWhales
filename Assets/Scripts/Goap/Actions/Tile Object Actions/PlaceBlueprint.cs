@@ -4,13 +4,14 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Logs;
 using UnityEngine;
+using UtilityScripts;
 
 public class PlaceBlueprint : GoapAction {
 
     public PlaceBlueprint() : base(INTERACTION_TYPE.PLACE_BLUEPRINT) {
         actionIconString = GoapActionStateDB.Blueprint_Icon;
         showNotification = true;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }
@@ -51,11 +52,16 @@ public class PlaceBlueprint : GoapAction {
         if (goapNode.poiTarget is GenericTileObject genericTileObject) {
             if (genericTileObject.PlaceBlueprintOnTile(prefabName)) {
                 //create new build job at npcSettlement
-                GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_BLUEPRINT, INTERACTION_TYPE.BUILD_BLUEPRINT, goapNode.poiTarget, goapNode.actor.homeSettlement);
-                buildJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { genericTileObject.blueprintOnTile.craftCost });
-                buildJob.AddOtherData(INTERACTION_TYPE.BUILD_BLUEPRINT, new object[] { connectorTile });
-                // buildJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildJob);
-                goapNode.actor.homeSettlement.AddToAvailableJobs(buildJob);
+                NPCSettlement settlement = goapNode.actor.homeSettlement;
+                if(settlement != null) {
+                    GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_BLUEPRINT, INTERACTION_TYPE.BUILD_BLUEPRINT, goapNode.poiTarget, settlement);
+                    buildJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { genericTileObject.blueprintOnTile.craftCost });
+                    buildJob.AddOtherData(INTERACTION_TYPE.BUILD_BLUEPRINT, new object[] { connectorTile });
+                    JobUtilities.PopulatePriorityLocationsForTakingNonEdibleResources(settlement, buildJob, INTERACTION_TYPE.TAKE_RESOURCE);
+                    // buildJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildJob);
+                    settlement.AddToAvailableJobs(buildJob);
+                }
+   
                 goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureSetting.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
             } else {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Place Blueprint", "fail", goapNode, LOG_TAG.Work);

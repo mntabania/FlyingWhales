@@ -8,7 +8,7 @@ public class RemoveBuff : GoapAction {
     public RemoveBuff() : base(INTERACTION_TYPE.REMOVE_BUFF) {
         doesNotStopTargetCharacter = true;
         actionIconString = GoapActionStateDB.Cult_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Crimes};
     }

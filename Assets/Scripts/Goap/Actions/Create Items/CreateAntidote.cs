@@ -8,7 +8,7 @@ public class CreateAntidote : GoapAction {
     public CreateAntidote() : base(INTERACTION_TYPE.CREATE_ANTIDOTE) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Work_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES };
         logTags = new[] {LOG_TAG.Work};
     }

@@ -7,7 +7,7 @@ public class StudyMonster : GoapAction {
 
     public StudyMonster() : base(INTERACTION_TYPE.STUDY_MONSTER) {
         actionIconString = GoapActionStateDB.Inspect_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.DEMON };
         logTags = new[] {LOG_TAG.Work};
     }

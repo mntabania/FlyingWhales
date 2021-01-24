@@ -8,7 +8,7 @@ public class DestroyResourceAmount : GoapAction {
 
     public DestroyResourceAmount() : base(INTERACTION_TYPE.DESTROY_RESOURCE_AMOUNT) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.DEMON, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Combat};
     }

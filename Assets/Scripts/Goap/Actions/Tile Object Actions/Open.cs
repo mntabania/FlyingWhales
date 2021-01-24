@@ -10,7 +10,7 @@ public class Open  : GoapAction {
 
     public Open() : base(INTERACTION_TYPE.OPEN) {
         actionIconString = GoapActionStateDB.Inspect_Icon;
-        advertisedBy = new[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }

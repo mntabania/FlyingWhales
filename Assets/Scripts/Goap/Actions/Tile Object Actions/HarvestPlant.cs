@@ -12,7 +12,7 @@ public class HarvestPlant : GoapAction {
     public HarvestPlant() : base(INTERACTION_TYPE.HARVEST_PLANT) {
         actionIconString = GoapActionStateDB.Harvest_Icon;
         
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }

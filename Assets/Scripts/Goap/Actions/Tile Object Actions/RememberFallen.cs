@@ -11,7 +11,7 @@ public class RememberFallen : GoapAction {
     public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.INDIRECT;
     public RememberFallen() : base(INTERACTION_TYPE.REMEMBER_FALLEN) {
         actionIconString = GoapActionStateDB.Sad_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.EARLY_NIGHT, TIME_IN_WORDS.LATE_NIGHT, TIME_IN_WORDS.AFTER_MIDNIGHT, };
         logTags = new[] {LOG_TAG.Social};

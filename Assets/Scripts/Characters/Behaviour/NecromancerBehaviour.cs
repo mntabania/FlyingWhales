@@ -102,10 +102,10 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                 } else {
                     if(character.currentStructure != null) {
                         if(character.currentStructure.structureType == STRUCTURE_TYPE.ANCIENT_GRAVEYARD || character.currentStructure.structureType == STRUCTURE_TYPE.CEMETERY) {
-                            log += $"\n-90% chance to Roam";
+                            log += $"\n-30% chance to Roam";
                             int roll = UnityEngine.Random.Range(0, 100);
                             log += $"\n-Roll: " + roll;
-                            if (roll < 90) {
+                            if (roll < 30) {
                                 character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                                 return true;
                             }

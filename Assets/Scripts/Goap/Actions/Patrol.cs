@@ -5,7 +5,7 @@ public class Patrol : GoapAction {
     public Patrol() : base(INTERACTION_TYPE.PATROL) {
         actionLocationType = ACTION_LOCATION_TYPE.OVERRIDE;
         actionIconString = GoapActionStateDB.Patrol_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.RATMAN };
         shouldAddLogs = false;
         logTags = new[] {LOG_TAG.Work};

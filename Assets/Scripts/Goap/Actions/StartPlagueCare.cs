@@ -1,7 +1,7 @@
 ﻿public class StartPlagueCare : GoapAction {
     public StartPlagueCare() : base(INTERACTION_TYPE.START_PLAGUE_CARE) {
         actionIconString = GoapActionStateDB.Work_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         shouldAddLogs = false;
         logTags = new[] {LOG_TAG.Work};

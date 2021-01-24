@@ -7,7 +7,7 @@ public class BuildNewVillage : GoapAction {
     public BuildNewVillage() : base(INTERACTION_TYPE.BUILD_NEW_VILLAGE) {
         actionIconString = GoapActionStateDB.Found_Icon;
         showNotification = true;
-        advertisedBy = new[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Major};
     }
