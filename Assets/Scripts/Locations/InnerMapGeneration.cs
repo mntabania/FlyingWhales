@@ -11,7 +11,7 @@ public partial class LandmarkManager {
     public IEnumerator GenerateRegionMap(Region region, MapGenerationComponent mapGenerationComponent) {
         GameObject regionMapGo = Instantiate(regionInnerStructurePrefab, innerMapsParent);
         RegionInnerTileMap innerTileMap = regionMapGo.GetComponent<RegionInnerTileMap>();
-        innerTileMap.Initialize(region, Random.Range(0f, 99999f), Random.Range(0f, 99999f));
+        innerTileMap.Initialize(region, Random.Range(0f, 99999f), Random.Range(0f, 99999f), Random.Range(0f, 99999f), Random.Range(0f, 99999f));
         region.GenerateStructures();
         yield return StartCoroutine(innerTileMap.GenerateMap(mapGenerationComponent));
         InnerMapManager.Instance.OnCreateInnerMap(innerTileMap);
@@ -22,7 +22,7 @@ public partial class LandmarkManager {
         RegionInnerTileMap innerTileMap = regionMapGo.GetComponent<RegionInnerTileMap>();
         float xSeed = saveDataInnerMap.xSeed;
         float ySeed = saveDataInnerMap.ySeed;
-        innerTileMap.Initialize(region, xSeed, ySeed);
+        innerTileMap.Initialize(region, xSeed, ySeed, saveDataInnerMap.biomeTransitionXSeed, saveDataInnerMap.biomeTransitionYSeed);
         yield return StartCoroutine(innerTileMap.LoadMap(mapGenerationComponent, saveDataInnerMap, saveData));
         InnerMapManager.Instance.OnCreateInnerMap(innerTileMap);
     }

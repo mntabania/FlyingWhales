@@ -61,12 +61,7 @@ public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     bool Advertises(INTERACTION_TYPE type);
     void SetCurrentLocationAwareness(ILocationAwareness locationAwareness);
     void SetIsInPendingAwarenessList(bool state);
-
-    /// <summary>
-    /// Does this POI collect Logs aka. History
-    /// </summary>
-    /// <returns>True or false</returns>
-    bool CollectsLogs();
+    bool IsUnpassable();
 }
 
 /// <summary>

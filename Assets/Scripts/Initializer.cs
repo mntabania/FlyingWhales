@@ -58,9 +58,9 @@ public class Initializer : MonoBehaviour {
         }
         TutorialManager.Instance.Initialize();
         QuestManager.Instance.InitializeAfterLoadoutPicked();
-        // if (WorldSettings.Instance.worldSettingsData.IsScenarioMap() && !SaveManager.Instance.useSaveData) {
-        //     MapGenerationFinalization.ScenarioItemGenerationAfterPickingLoadout();    
-        // }
+        if (!SaveManager.Instance.useSaveData) {
+            MapGenerationFinalization.ItemGenerationAfterPickingLoadout();    
+        }
         AudioManager.Instance.OnLoadoutSelected();
     }
     

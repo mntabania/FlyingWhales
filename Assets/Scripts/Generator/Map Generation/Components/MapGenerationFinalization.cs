@@ -54,13 +54,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(CharacterFinalization());
 		stopwatch.Stop();
 		AddLog($"CharacterFinalization took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
-		
-		stopwatch.Reset();
-		stopwatch.Start();
-		yield return MapGenerator.Instance.StartCoroutine(GenerateArtifacts());
-		stopwatch.Stop();
-		AddLog($"LoadArtifacts took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
-		
+
 		stopwatch.Reset();
 		stopwatch.Start();
 		yield return MapGenerator.Instance.StartCoroutine(CreateWorldEvents());
@@ -97,22 +91,23 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
 	}
-	// public static void ScenarioItemGenerationAfterPickingLoadout() {
-	// 	if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
-	// 		//spawn 1 desert rose
-	// 		Region region = GridMap.Instance.allRegions[0];
-	// 		LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-	// 		List<LocationGridTile> locationChoices = wilderness.unoccupiedTiles.Where(t =>
-	// 			t.collectionOwner.isPartOfParentRegionMap && !t.IsAtEdgeOfMap() &&
-	// 			t.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == null &&
-	// 			!t.collectionOwner.partOfHextile.hexTileOwner.IsAtEdgeOfMap() &&
-	// 			t.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.PLAIN).ToList();
-	// 		LocationGridTile desertRoseLocation = CollectionUtilities.GetRandomElement(locationChoices);
-	// 		desertRoseLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.DESERT_ROSE), desertRoseLocation);
-	// 		locationChoices.Remove(desertRoseLocation);
-	// 		Debug.Log($"Placed desert rose at {desertRoseLocation.localPlace.ToString()}");	
-	// 	}
-	// }
+	public static void ItemGenerationAfterPickingLoadout() {
+		GenerateArtifacts();
+		// if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+		// 	//spawn 1 desert rose
+		// 	Region region = GridMap.Instance.allRegions[0];
+		// 	LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+		// 	List<LocationGridTile> locationChoices = wilderness.unoccupiedTiles.Where(t =>
+		// 		t.collectionOwner.isPartOfParentRegionMap && !t.IsAtEdgeOfMap() &&
+		// 		t.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == null &&
+		// 		!t.collectionOwner.partOfHextile.hexTileOwner.IsAtEdgeOfMap() &&
+		// 		t.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.PLAIN).ToList();
+		// 	LocationGridTile desertRoseLocation = CollectionUtilities.GetRandomElement(locationChoices);
+		// 	desertRoseLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.DESERT_ROSE), desertRoseLocation);
+		// 	locationChoices.Remove(desertRoseLocation);
+		// 	Debug.Log($"Placed desert rose at {desertRoseLocation.localPlace.ToString()}");	
+		// }
+	}
 	#endregion
 	
 	#region Saved World
@@ -351,7 +346,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	#endregion
 
 	#region Artifacts
-	private IEnumerator GenerateArtifacts() {
+	private static void GenerateArtifacts() {
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			//if demo build, always spawn necronomicon at ancient ruins
 			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
@@ -440,7 +435,6 @@ public class MapGenerationFinalization : MapGenerationComponent {
 				}
 			}
 		}
-		yield return null;
 	}
 	#endregion
 }

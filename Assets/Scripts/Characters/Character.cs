@@ -4883,9 +4883,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //}
         //Messenger.Broadcast(Signals.ON_UNSEIZE_CHARACTER, this);
     }
-    public bool CollectsLogs() {
-        return true;
-    }
     #endregion
 
     #region Resources
@@ -5945,6 +5942,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetIsInPendingAwarenessList(bool state) {
         isInPendingAwarenessList = state;
+    }
+    public bool IsUnpassable() {
+        return false;
     }
     #endregion
 
