@@ -10,7 +10,7 @@ public class Sit : GoapAction {
     public Sit() : base(INTERACTION_TYPE.SIT) {
         actionIconString = GoapActionStateDB.No_Icon;
         shouldAddLogs = false;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
 

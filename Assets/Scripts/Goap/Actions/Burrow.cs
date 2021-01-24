@@ -6,7 +6,7 @@ public class Burrow : GoapAction {
     public Burrow() : base(INTERACTION_TYPE.BURROW) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.No_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.WURM };
         logTags = new[] {LOG_TAG.Life_Changes};
     }

@@ -8,7 +8,7 @@ public class ResolveConflict : GoapAction {
 
     public ResolveConflict() : base(INTERACTION_TYPE.RESOLVE_CONFLICT) {
         actionIconString = GoapActionStateDB.Work_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Social};
     }

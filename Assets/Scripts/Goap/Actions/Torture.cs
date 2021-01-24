@@ -4,7 +4,7 @@ using UnityEngine;
 public class Torture : GoapAction {
     public Torture() : base(INTERACTION_TYPE.TORTURE) {
         actionIconString = GoapActionStateDB.Anger_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.RATMAN };
         logTags = new[] {LOG_TAG.Life_Changes};
     }

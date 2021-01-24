@@ -10,12 +10,16 @@ public class Eat : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.CONSUME; } }
 
+    private Precondition _foodPrecondition;
+
     public Eat() : base(INTERACTION_TYPE.EAT) {
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Eat_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON, RACE.KOBOLD, RACE.RAT, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Needs};
+
+        _foodPrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile" /*+ (int)otherData[0]*/, false, GOAP_EFFECT_TARGET.TARGET), HasFood);
     }
 
     #region Overrides
@@ -40,7 +44,7 @@ public class Eat : GoapAction {
     public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
         if (target is Table && !(actor is Summon) && jobType != JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT) {
             //Only let the character deposit food to table if the job type is not recovery on sight because if it is, it means that is his fullness recovery is an urgent one, so only eat on those tables that already have enough food
-            Precondition p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile" /*+ (int)otherData[0]*/, false, GOAP_EFFECT_TARGET.TARGET), HasFood);
+            Precondition p = _foodPrecondition;
             isOverridden = true;
             return p;
         }

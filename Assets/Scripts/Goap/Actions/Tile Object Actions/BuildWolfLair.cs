@@ -10,7 +10,7 @@ public class BuildWolfLair : GoapAction {
     
     public BuildWolfLair() : base(INTERACTION_TYPE.BUILD_WOLF_LAIR) {
         actionIconString = GoapActionStateDB.Build_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.WOLF };
         logTags = new[] {LOG_TAG.Life_Changes};
     }

@@ -10,7 +10,7 @@ public class HaveAffair : GoapAction {
     public HaveAffair() : base(INTERACTION_TYPE.HAVE_AFFAIR) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Flirt_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Social};
     }

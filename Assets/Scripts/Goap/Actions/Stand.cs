@@ -14,7 +14,7 @@ public class Stand : GoapAction {
         actionIconString = GoapActionStateDB.No_Icon;
         
         shouldAddLogs = false;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         logTags = new[] {LOG_TAG.Needs};
     }
 

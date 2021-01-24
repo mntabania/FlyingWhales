@@ -3,7 +3,7 @@
 public class StartCleanse : GoapAction {
     public StartCleanse() : base(INTERACTION_TYPE.START_CLEANSE) {
         actionIconString = GoapActionStateDB.Clean_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         shouldAddLogs = false;
         logTags = new[] {LOG_TAG.Work};

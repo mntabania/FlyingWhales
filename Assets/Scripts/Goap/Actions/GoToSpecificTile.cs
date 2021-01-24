@@ -4,7 +4,7 @@
 
     public GoToSpecificTile() : base(INTERACTION_TYPE.GO_TO_SPECIFIC_TILE) {
         actionIconString = GoapActionStateDB.No_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         shouldAddLogs = false;
         logTags = new[] {LOG_TAG.Work};
     }

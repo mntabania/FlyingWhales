@@ -11,7 +11,7 @@ public class Feed : GoapAction {
     public override Type uniqueActionDataType => typeof(FeedUAD);
     public Feed() : base(INTERACTION_TYPE.FEED) {
         actionIconString = GoapActionStateDB.FirstAid_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Needs};
     }
