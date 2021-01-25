@@ -28,8 +28,12 @@ public class Pickpocket : GoapAction {
         if(baseEE != null && baseEE.Count > 0) {
             ee.AddRange(baseEE);
         }
-        TileObject item = target as TileObject;
-        ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = item.name, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
+        //Commented this out because it is not yet needed
+        //Character targetCharacter = target as Character;
+        //for (int i = 0; i < targetCharacter.items.Count; i++) {
+        //    TileObject item = targetCharacter.items[i];
+        //    ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = item.name, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
+        //}
         if (actor.traitContainer.HasTrait("Kleptomaniac")) {
             ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
         }
@@ -114,10 +118,12 @@ public class Pickpocket : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             Character targetCharacter = poiTarget as Character;
-            if(otherData != null && otherData.Length == 1 && otherData[0].obj is TileObject tileObject) {
-                return targetCharacter.HasItem(tileObject);
+            if(actor != targetCharacter) {
+                if (otherData != null && otherData.Length == 1 && otherData[0].obj is TileObject tileObject) {
+                    return targetCharacter.HasItem(tileObject);
+                }
+                return targetCharacter.items.Count > 0;
             }
-            return targetCharacter.items.Count > 0;
         }
         return false;
     }

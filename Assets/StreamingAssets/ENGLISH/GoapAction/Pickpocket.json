@@ -1,1 +1,1 @@
-{"items":[{"key":"pickpocket success_description","value":"%00@ stole %10@."},{"key":"thought_bubble_m","value":"%00@ is going to pickpocket %10@."},{"key":"thought_bubble","value":"%00@ is stealing from %10@."}]}
+{"items":[{"key":"pickpocket success_description","value":"%00@ stole from %10@."},{"key":"thought_bubble_m","value":"%00@ is going to pickpocket %10@."},{"key":"thought_bubble","value":"%00@ is stealing from %10@."}]}
