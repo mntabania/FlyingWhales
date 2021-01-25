@@ -183,12 +183,12 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 			chosenTemplate = new WorldMapTemplate() {
 				regionCount = 2,
 				worldMapWidth = 15,
-				worldMapHeight = 6,
+				worldMapHeight = 7,
 				regions = new Dictionary<int, RegionTemplate[]>() {
 					{
 						0, new[] {
-							new RegionTemplate(7, 6),
-							new RegionTemplate(8, 6),
+							new RegionTemplate(7, 7),
+							new RegionTemplate(8, 7),
 						}
 					}
 				}
