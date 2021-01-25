@@ -299,30 +299,28 @@ namespace Inner_Maps.Location_Structures {
             }
             return count;
         }
-        public List<Character> GetCharactersThatMeetCriteria(System.Func<Character, bool> criteria) {
-            List<Character> characters = null;
+        public void PopulateCharacterListThatMeetCriteria(List<Character> characterList, System.Func<Character, bool> criteria) {
             for (int i = 0; i < charactersHere.Count; i++) {
                 Character character = charactersHere[i];
                 if (criteria.Invoke(character)) {
-                    if (characters == null) { characters = new List<Character>(); }
-                    characters.Add(character);
+                    characterList.Add(character);
                 }
             }
-            return characters;
         }
         public Character GetRandomCharacterThatMeetCriteria(System.Func<Character, bool> criteria) {
-            List<Character> characters = null;
+            List<Character> characters = ObjectPoolManager.Instance.CreateNewCharactersList();
             for (int i = 0; i < charactersHere.Count; i++) {
                 Character character = charactersHere[i];
                 if (criteria.Invoke(character)) {
-                    if(characters == null) { characters = new List<Character>(); }
                     characters.Add(character);
                 }
             }
+            Character chosen = null;
             if(characters != null && characters.Count > 0) {
-                return characters[UnityEngine.Random.Range(0, characters.Count)];
+                chosen = characters[UnityEngine.Random.Range(0, characters.Count)];
             }
-            return null;
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(characters);
+            return chosen;
         }
         public int GetNumOfCharactersThatMeetCriteria(System.Func<Character, bool> criteria) {
             int count = 0;
@@ -348,24 +346,21 @@ namespace Inner_Maps.Location_Structures {
             }
             //return objs;
         }
-        public List<TileObject> GetTileObjectsThatAdvertise(params INTERACTION_TYPE[] types) {
-            List<TileObject> objs = new List<TileObject>();
+        public void PopulateTileObjectsThatAdvertise(List<TileObject> p_objectList, params INTERACTION_TYPE[] types) {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest currPOI = pointsOfInterest.ElementAt(i);
-                if (currPOI is TileObject) {
-                    TileObject obj = currPOI as TileObject;
+                if (currPOI is TileObject obj) {
                     if (obj.IsAvailable() && obj.AdvertisesAll(types)) {
-                        objs.Add(obj);
+                        p_objectList.Add(obj);
                     }
                 }
             }
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile currTile = tiles.ElementAt(i);
                 if (currTile.genericTileObject.IsAvailable() && currTile.genericTileObject.AdvertisesAll(types)) {
-                    objs.Add(currTile.genericTileObject);
+                    p_objectList.Add(currTile.genericTileObject);
                 }
             }
-            return objs;
         }
         public TileObject GetUnoccupiedTileObject(params TILE_OBJECT_TYPE[] type) {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
@@ -517,17 +512,31 @@ namespace Inner_Maps.Location_Structures {
             }
             return null;
         }
-        public T GetTileObjectOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
+        public T GetFirstTileObjectOfType<T>(params TILE_OBJECT_TYPE[] types) where T : TileObject {
             //List<TileObject> objs = new List<TileObject>();
-            for (int i = 0; i < pointsOfInterest.Count; i++) {
-                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
-                if (poi is TileObject) {
-                    TileObject obj = poi as TileObject;
-                    if (obj.tileObjectType == type) {
-                        return obj as T;
+            for (int i = 0; i < types.Length; i++) {
+                TILE_OBJECT_TYPE type = types[i];
+                if (groupedTileObjects.ContainsKey(type)) {
+                    List<TileObject> objs = groupedTileObjects[type];
+                    if (objs != null) {
+                        for (int j = 0; j < objs.Count; j++) {
+                            TileObject t = objs[j];
+                            if (t is T converted) {
+                                return converted;
+                            }
+                        }
                     }
                 }
             }
+            //for (int i = 0; i < pointsOfInterest.Count; i++) {
+            //    IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+            //    if (poi is TileObject) {
+            //        TileObject obj = poi as TileObject;
+            //        if (obj.tileObjectType == type) {
+            //            return obj as T;
+            //        }
+            //    }
+            //}
             return null;
         }
         public T GetTileObjectOfType<T>() where T : TileObject {

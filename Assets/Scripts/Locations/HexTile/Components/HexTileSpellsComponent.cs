@@ -148,7 +148,8 @@ public class HexTileSpellsComponent {
         CameraShake();
         Messenger.AddListener(Signals.TICK_STARTED, PerTickEarthquake);
 
-        List<Character> charactersInsideHex = owner.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => !c.isDead);
+        List<Character> charactersInsideHex = ObjectPoolManager.Instance.CreateNewCharactersList();
+        owner.PopulateCharacterListInsideHexThatMeetCriteria(charactersInsideHex, c => !c.isDead);
         if (charactersInsideHex != null) {
             for (int i = 0; i < charactersInsideHex.Count; i++) {
                 Character character = charactersInsideHex[i];
@@ -161,6 +162,7 @@ public class HexTileSpellsComponent {
                 }
             }
         }
+        ObjectPoolManager.Instance.ReturnCharactersListToPool(charactersInsideHex);
     }
     private void StopEarthquake() {
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEarthquake);

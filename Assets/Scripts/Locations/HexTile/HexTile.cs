@@ -1524,10 +1524,9 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         }
         return characters;
     }
-    public List<T> GetAllCharactersInsideHexThatMeetCriteria<T>(System.Func<Character, bool> validityChecker) where T : Character {
-        List<T> characters = null;
+    public void PopulateCharacterListInsideHexThatMeetCriteria(List<Character> p_characterList, System.Func<Character, bool> validityChecker) {
         if(innerMapHexTile == null) {
-            return characters;
+            return;
         }
         LocationGridTile lowerLeftCornerTile = innerMapHexTile.gridTileCollections[0].tilesInTerritory[0];
         int xMin = lowerLeftCornerTile.localPlace.x;
@@ -1542,14 +1541,10 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
             if (character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
                 && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax) {
                 if (validityChecker.Invoke(character)) {
-                    if (character is T converted) {
-                        if (characters == null) { characters = new List<T>(); }
-                        characters.Add(converted);
-                    }
+                    p_characterList.Add(character);
                 }
             }
         }
-        return characters;
     }
     public List<T> GetAllDeadAndAliveCharactersInsideHex<T>() where T : Character {
         List<T> characters = null;

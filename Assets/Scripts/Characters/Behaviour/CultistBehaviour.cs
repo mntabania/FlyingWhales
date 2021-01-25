@@ -56,7 +56,7 @@ public class CultistBehaviour : CharacterBehaviourComponent {
     }
     public bool TryCreateCultistJob(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT) == false 
-            && character.homeStructure?.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT) == null) {
+            && character.homeStructure?.GetFirstTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT) == null) {
             log += $"\n{character.name} has no cultist kit available. Will create obtain personal item job.";
             bool success = character.jobComponent.TryCreateObtainPersonalItemJob("Cultist Kit", out producedJob);
             if (success) {

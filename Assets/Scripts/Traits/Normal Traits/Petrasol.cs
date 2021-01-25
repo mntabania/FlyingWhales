@@ -13,18 +13,18 @@ namespace Traits {
         }
 
         #region Overrides
-        public override void OnAddTrait(ITraitable addedTo) {
-            base.OnAddTrait(addedTo);
-            if (addedTo is Character character) {
-                character.behaviourComponent.AddBehaviourComponent(typeof(SubterraneanBehaviour));
-            }
-        }
-        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
-            base.OnRemoveTrait(removedFrom, removedBy);
-            if (removedFrom is Character character) {
-                character.behaviourComponent.RemoveBehaviourComponent(typeof(SubterraneanBehaviour));
-            }
-        }
+        //public override void OnAddTrait(ITraitable addedTo) {
+        //    base.OnAddTrait(addedTo);
+        //    if (addedTo is Character character) {
+        //        character.behaviourComponent.AddBehaviourComponent(typeof(SubterraneanBehaviour));
+        //    }
+        //}
+        //public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+        //    base.OnRemoveTrait(removedFrom, removedBy);
+        //    if (removedFrom is Character character) {
+        //        character.behaviourComponent.RemoveBehaviourComponent(typeof(SubterraneanBehaviour));
+        //    }
+        //}
         public override void OnTickStarted(ITraitable traitable) {
             base.OnTickStarted(traitable);
             if(traitable is Character character) {

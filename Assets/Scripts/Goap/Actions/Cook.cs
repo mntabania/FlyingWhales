@@ -75,10 +75,11 @@ public class Cook : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
             if (poiTarget is Character targetCharacter) {
-                if (!targetCharacter.isDead) {
-                    goapActionInvalidity.isInvalid = true;
-                    goapActionInvalidity.reason = "target_dead";
-                } else if (!node.actor.carryComponent.IsPOICarried(targetCharacter)) {
+                //if (!targetCharacter.isDead) {
+                //    goapActionInvalidity.isInvalid = true;
+                //    goapActionInvalidity.reason = "target_dead";
+                //} else 
+                if (!node.actor.carryComponent.IsPOICarried(targetCharacter)) {
                     goapActionInvalidity.isInvalid = true;
                     goapActionInvalidity.reason = "target_unavailable";
                 }
@@ -119,10 +120,6 @@ public class Cook : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             Character targetCharacter = poiTarget as Character;
-            //target character must be dead
-            if (!targetCharacter.isDead) {
-                return false;
-            }
             //if (targetCharacter.marker == null) {
             //    return false;
             //}

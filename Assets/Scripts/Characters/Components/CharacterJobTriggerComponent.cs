@@ -1328,21 +1328,38 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
-    public void CreateEatJob(IPointOfInterest target) {
+    public bool CreateEatJob(IPointOfInterest target) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
+            JobQueueItem job = null;
+            CreateEatJob(target, false, out job);
+            if (job != null && owner.jobQueue.AddJobInQueue(job)) {
+                owner.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool CreateEatJob(IPointOfInterest target, bool cancelOtherFullnessRecoveryJobs, out JobQueueItem producedJob) {
+        producedJob = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
             if (owner.partyComponent.isActiveMember) {
-                return;
+                return false;
             }
             if (!owner.limiterComponent.canDoFullnessRecovery) {
-                return;
+                return false;
             }
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, INTERACTION_TYPE.EAT, target, owner);
             JobUtilities.PopulatePriorityLocationsForFullnessRecovery(owner, job);
-            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
-            if (owner.jobQueue.AddJobInQueue(job)) {
+            if (target is Table) {
+                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
+            }
+            producedJob = job;
+            if (cancelOtherFullnessRecoveryJobs) {
                 owner.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
             }
+            return true;
         }
+        return false;
     }
     #endregion
 
@@ -2188,7 +2205,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    List<JobNode> jobNodes = new List<JobNode>();
 	    if (owner.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT) == false) {
 		    //Pick up cultist kit at home
-		    TileObject cultistKitAtHome = owner.homeStructure?.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT);
+		    TileObject cultistKitAtHome = owner.homeStructure?.GetFirstTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT);
 		    Assert.IsNotNull(cultistKitAtHome, $"{owner.name} wants to sabotage neighbour but has no cultist kit at home or in inventory. This should never happen, because the Cultist Behaviour checks this beforehand");
 		    ActualGoapNode pickupNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PICK_UP], owner, cultistKitAtHome, null, 0);
 		    jobNodes.Add(new SingleJobNode(pickupNode));

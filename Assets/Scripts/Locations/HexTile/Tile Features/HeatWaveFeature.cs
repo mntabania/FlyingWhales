@@ -119,7 +119,8 @@ namespace Locations.Tile_Features {
             _effect = go;
         }
         private void PopulateInitialCharactersOutside(HexTile hex) {
-            List<Character> allCharactersInHex = hex.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => !c.isDead);
+            List<Character> allCharactersInHex = ObjectPoolManager.Instance.CreateNewCharactersList();
+            hex.PopulateCharacterListInsideHexThatMeetCriteria(allCharactersInHex, c => !c.isDead);
             if (allCharactersInHex != null) {
                 for (int i = 0; i < allCharactersInHex.Count; i++) {
                     Character character = allCharactersInHex[i];
@@ -128,6 +129,7 @@ namespace Locations.Tile_Features {
                     }
                 }
             }
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(allCharactersInHex);
         }
         private void CheckForOverheating(HexTile hex) {
             for (int i = 0; i < _charactersOutside.Count; i++) {
