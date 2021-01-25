@@ -39,7 +39,7 @@ public class Troll : Summon {
     }
     #endregion
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
-        if (character != this && !structure.isInterior && currentStructure.isInterior) {
+        if (character != this && currentStructure != null && !structure.isInterior && currentStructure.isInterior) {
             TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick(null);
             if (timeInWords != TIME_IN_WORDS.EARLY_NIGHT && timeInWords != TIME_IN_WORDS.LATE_NIGHT && timeInWords != TIME_IN_WORDS.AFTER_MIDNIGHT) {
                 combatComponent.RemoveHostileInRange(character);
