@@ -4,9 +4,9 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;  
 using Traits;
 
-public class Steal : GoapAction {
+public class Pickpocket : GoapAction {
 
-    public Steal() : base(INTERACTION_TYPE.STEAL) {
+    public Pickpocket() : base(INTERACTION_TYPE.PICKPOCKET) {
         actionIconString = GoapActionStateDB.Steal_Icon;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.RATMAN };
@@ -38,7 +38,7 @@ public class Steal : GoapAction {
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        SetState("Steal Success", goapNode);
+        SetState("Pickpocket Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
@@ -55,13 +55,9 @@ public class Steal : GoapAction {
             cost = UtilityScripts.Utilities.Rng.Next(90, 151);
             costLog = " {cost}(Kleptomaniac)";
         } else {
-            TileObject item = null;
-            if(target is TileObject tileObject) {
-                item = tileObject;
-            }
-            if(item?.characterOwner != null) {
-                string opinionLabel = actor.relationshipContainer.GetOpinionLabel(item.characterOwner);
-                if(actor.moodComponent.moodState == MOOD_STATE.Normal || opinionLabel == RelationshipManager.Acquaintance || 
+            if(target is Character targetCharacter) {
+                string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
+                if (actor.moodComponent.moodState == MOOD_STATE.Normal || opinionLabel == RelationshipManager.Acquaintance ||
                    opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                     cost += 2000;
                     costLog += " +2000(not Kleptomaniac, Friend/Close/Acquaintance)";
@@ -75,29 +71,12 @@ public class Steal : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
-        if (goapNode.poiTarget is TileObject) {
-            TileObject item = goapNode.poiTarget as TileObject;
-            if (item.isBeingCarriedBy != null) {
-                return item.isBeingCarriedBy; //make the actor follow the character that is carrying the item instead.
-            }
-        }
-        return base.GetTargetToGoTo(goapNode);
-    }
-    public override LocationStructure GetTargetStructure(ActualGoapNode node) {
-        IPointOfInterest poiTarget = node.poiTarget;
-        TileObject token = poiTarget as TileObject;
-        if (token.isBeingCarriedBy != null) {
-            return token.isBeingCarriedBy.currentStructure;
-        }
-        return base.GetTargetStructure(node);
-    }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         string stateName = "Target Missing";
         bool isInvalid = false;
-        //steal can never be invalid since requirement handle all cases of invalidity.
+        //pickpocket can never be invalid since requirement handle all cases of invalidity.
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(isInvalid, stateName);
         return goapActionInvalidity;
     }
@@ -113,18 +92,15 @@ public class Steal : GoapAction {
             reactions.Add(EMOTION.Betrayal);
         }
     }
-    //public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
-    //    base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
-    //    if (target is TileObject tileObject) {
-    //        Character targetCharacter = tileObject.isBeingCarriedBy;
-    //        if (targetCharacter != null) {
-    //            reactions.Add(EMOTION.Disappointment);
-    //            if (targetCharacter.traitContainer.HasTrait("Hothead") || UnityEngine.Random.Range(0, 100) < 35) {
-    //                reactions.Add(EMOTION.Anger);
-    //            }
-    //        }
-    //    }
-    //}
+    public override void PopulateReactionsOfTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsOfTarget(reactions, actor, target, node, status);
+        if (target is Character targetCharacter) {
+            reactions.Add(EMOTION.Disappointment);
+            if (targetCharacter.traitContainer.HasTrait("Hothead") || UnityEngine.Random.Range(0, 100) < 35) {
+                reactions.Add(EMOTION.Anger);
+            }
+        }
+    }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
     }
@@ -137,12 +113,11 @@ public class Steal : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JobQueueItem job) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
-            TileObject item = poiTarget as TileObject;
-            if (item.gridTileLocation != null) {
-                return item.characterOwner != null && !item.IsOwnedBy(actor);
-            } else {
-                return item.isBeingCarriedBy != null && item.characterOwner != null && !item.IsOwnedBy(actor);
+            Character targetCharacter = poiTarget as Character;
+            if(otherData != null && otherData.Length == 1 && otherData[0].obj is TileObject tileObject) {
+                return targetCharacter.HasItem(tileObject);
             }
+            return targetCharacter.items.Count > 0;
         }
         return false;
     }
@@ -155,9 +130,19 @@ public class Steal : GoapAction {
     //    //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     //    //goapNode.descriptionLog.AddToFillers(goapNode.poiTarget as SpecialToken, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     //}
-    public void AfterStealSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.PickUpItem(goapNode.poiTarget as TileObject);
-        if(goapNode.actor.traitContainer.HasTrait("Kleptomaniac")) {
+    public void AfterPickpocketSuccess(ActualGoapNode goapNode) {
+        OtherData[] otherData = goapNode.otherData;
+        TileObject targetTileObject = null;
+        if (otherData != null && otherData.Length == 1 && otherData[0].obj is TileObject tileObject) {
+            targetTileObject = tileObject;
+        } else {
+            Character targetCharacter = goapNode.poiTarget as Character;
+            targetTileObject = targetCharacter.GetRandomItem();
+        }
+        if(targetTileObject != null) {
+            goapNode.actor.PickUpItem(targetTileObject);
+        }
+        if (goapNode.actor.traitContainer.HasTrait("Kleptomaniac")) {
             goapNode.actor.needsComponent.AdjustHappiness(10);
         }
     }

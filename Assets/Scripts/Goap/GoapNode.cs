@@ -578,7 +578,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if (action.goapType == INTERACTION_TYPE.REMOVE_BUFF) {
             return true;
         }
-        if (action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.DRINK_BLOOD || action.goapType == INTERACTION_TYPE.VAMPIRIC_EMBRACE) {
+        if (action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.DRINK_BLOOD || action.goapType == INTERACTION_TYPE.VAMPIRIC_EMBRACE || action.goapType == INTERACTION_TYPE.PICKPOCKET) {
             return true;
         } else if (action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER && job.jobType != JOB_TYPE.APPREHEND) {
             return true;
@@ -623,12 +623,12 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         GoapActionState currentState = action.states[currentStateName];
 
         IPointOfInterest target = poiTarget;
-        if(poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
-            TileObject item = poiTarget as TileObject;
-            if(item.isBeingCarriedBy != null) {
-                target = item.isBeingCarriedBy;
-            }
-        }
+        //if(poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
+        //    TileObject item = poiTarget as TileObject;
+        //    if(item.isBeingCarriedBy != null) {
+        //        target = item.isBeingCarriedBy;
+        //    }
+        //}
 
         if (isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait("Resting", "Unconscious", "Restrained") == false && !target.isDead) {
             //trigger vigilant, only if character is NOT resting or unconscious
@@ -723,13 +723,13 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         GoapActionState currentState = action.states[currentStateName];
         ActionResult(currentState);
 
-        IPointOfInterest target = poiTarget;
-        if (poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
-            TileObject item = poiTarget as TileObject;
-            if (item.isBeingCarriedBy != null) {
-                target = item.isBeingCarriedBy;
-            }
-        }
+        //IPointOfInterest target = poiTarget;
+        //if (poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
+        //    TileObject item = poiTarget as TileObject;
+        //    if (item.isBeingCarriedBy != null) {
+        //        target = item.isBeingCarriedBy;
+        //    }
+        //}
 
         //After effect and logs should be done after processing action result so that we can be sure that the action is completely done before doing anything
         if (shouldDoAfterEffect) { // && !(isStealth && target.traitContainer.HasTrait("Vigilant"))
@@ -787,12 +787,12 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         currentStateDuration++;
 
         IPointOfInterest target = poiTarget;
-        if(poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
-            TileObject item = poiTarget as TileObject;
-            if(item.isBeingCarriedBy != null) {
-                target = item.isBeingCarriedBy;
-            }
-        }
+        //if(poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
+        //    TileObject item = poiTarget as TileObject;
+        //    if(item.isBeingCarriedBy != null) {
+        //        target = item.isBeingCarriedBy;
+        //    }
+        //}
 
         if (!actor.interruptComponent.hasTriggeredSimultaneousInterrupt) {
             InnerMapManager.Instance.FaceTarget(actor, target);
@@ -1034,11 +1034,11 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if (poiTarget != actor && isStealth && actor.isNormalCharacter) {
             IPointOfInterest trueTarget = poiTarget;
             //If action is steal, we must check the carrier of the item (poiTarget) that is being stolen, instead of the item itself
-            if (action.goapType == INTERACTION_TYPE.STEAL) {
-                if (poiTarget.isBeingCarriedBy != null) {
-                    trueTarget = poiTarget.isBeingCarriedBy;
-                }
-            }
+            //if (action.goapType == INTERACTION_TYPE.STEAL) {
+            //    if (poiTarget.isBeingCarriedBy != null) {
+            //        trueTarget = poiTarget.isBeingCarriedBy;
+            //    }
+            //}
             if (actor.marker && actor.marker.IsPOIInVision(trueTarget) && !actor.marker.CanDoStealthCrimeToTarget(trueTarget, crimeType)) {
                 return true;
             }
