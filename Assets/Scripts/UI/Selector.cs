@@ -38,6 +38,9 @@ public class Selector : MonoBehaviour {
 
         DOTween.To(() => _spriteRenderer.size, x => _spriteRenderer.size = x, toSize, selectionTiming);
     }
+    public bool IsSelected(ISelectable p_selectable) {
+        return _selected == p_selectable;
+    }
     public void Deselect() {
         gameObject.SetActive(false);
         _selected = null;

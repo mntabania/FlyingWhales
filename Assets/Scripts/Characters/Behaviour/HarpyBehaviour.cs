@@ -78,7 +78,7 @@ public class HarpyBehaviour : BaseMonsterBehaviour {
         List<Character> characters = ObjectPoolManager.Instance.CreateNewCharactersList();
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             Character character = region.charactersAtLocation[i];
-            if(character != actor && character.race != actor.race && !character.isHidden && !character.isDead && !character.isBeingSeized && character.isBeingCarriedBy == null) {
+            if(character != actor && character.race != actor.race && !character.isHidden && !character.isDead && !character.isBeingSeized && character.carryComponent.IsNotBeingCarried()) {
                 characters.Add(character);
             }
         }
