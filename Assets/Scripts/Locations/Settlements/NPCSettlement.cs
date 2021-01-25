@@ -751,7 +751,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void OnAddResident(Character character) {
         eventManager.OnResidentAdded(character);
         settlementClassTracker.OnResidentAdded(character);
-        if(residents.Count == 1 && locationType == LOCATION_TYPE.VILLAGE) {
+        if(residents.Count == 1 && locationType == LOCATION_TYPE.VILLAGE && GameManager.Instance.gameHasStarted) {
             //First resident
             ChangeSettlementTypeAccordingTo(character);
         }
