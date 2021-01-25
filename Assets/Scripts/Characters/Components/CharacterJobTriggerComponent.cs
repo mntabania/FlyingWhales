@@ -2851,6 +2851,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool TryCreateEvangelizeJob(Character target, out JobQueueItem producedJob) {
 	    //create predetermined plan and job
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EVANGELIZE, INTERACTION_TYPE.EVANGELIZE, target, owner);
+	    JobUtilities.PopulatePriorityLocationsForCraftingCultistKit(owner, job, INTERACTION_TYPE.NONE);
+	    
 	    // List<JobNode> jobNodes = new List<JobNode>();
 	    // ActualGoapNode evangelizeNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.EVANGELIZE], owner, target, null, 0);
 	    // jobNodes.Add(new SingleJobNode(evangelizeNode));
@@ -2867,6 +2869,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         //create predetermined plan and job
         if(!owner.jobQueue.HasJob(JOB_TYPE.EVANGELIZE, target)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EVANGELIZE, INTERACTION_TYPE.EVANGELIZE, target, owner);
+            JobUtilities.PopulatePriorityLocationsForCraftingCultistKit(owner, job, INTERACTION_TYPE.NONE);
             // List<JobNode> jobNodes = new List<JobNode>();
             // ActualGoapNode evangelizeNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.EVANGELIZE], owner, target, null, 0);
             // jobNodes.Add(new SingleJobNode(evangelizeNode));
