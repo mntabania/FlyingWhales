@@ -179,7 +179,19 @@ public class SettlementVillageMigrationComponent : NPCSettlementComponent {
             if (unspawnedCharacters.Count > 0) {
                 AdjustLongTermModifier(-1);
                 int randomAmount = UnityEngine.Random.Range(2, 6);
-                LocationGridTile edgeTile = CollectionUtilities.GetRandomElement(owner.region.innerMap.allEdgeTiles);
+                List<LocationGridTile> edgeTileChoices = null;
+                for (int i = 0; i < owner.region.innerMap.allEdgeTiles.Count; i++) {
+                    LocationGridTile tile = owner.region.innerMap.allEdgeTiles[i];
+                    if (!tile.isCorrupted) {
+                        if (edgeTileChoices == null) { edgeTileChoices = new List<LocationGridTile>(); }
+                        edgeTileChoices.Add(tile);
+                    }
+                }
+                if (edgeTileChoices == null) {
+                    edgeTileChoices = owner.region.innerMap.allEdgeTiles;
+                }
+                
+                LocationGridTile edgeTile = CollectionUtilities.GetRandomElement(edgeTileChoices);
                 debugLog += $"\nWill spawn {randomAmount.ToString()} characters at {edgeTile}";
                 for (int i = 0; i < randomAmount; i++) {
                     if (unspawnedCharacters.Count <= 0) { break; }
