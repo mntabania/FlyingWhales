@@ -398,7 +398,7 @@ namespace Traits {
             }
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, form as IPointOfInterest, "");
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, form as IPointOfInterest, "");
-            if (form.carryComponent.isBeingCarriedBy != null) {
+            if (!form.carryComponent.IsNotBeingCarried()) {
                 form.carryComponent.masterCharacter.UncarryPOI(form);
             }
             //ForceCancelAllJobsTargettingThisCharacter();

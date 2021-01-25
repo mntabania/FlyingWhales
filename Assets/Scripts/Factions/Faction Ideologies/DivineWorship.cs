@@ -22,6 +22,8 @@ public class DivineWorship : FactionIdeology {
     }
     public override void OnAddIdeology(FactionType factionType) {
         factionType.RemoveIdeology(FACTION_IDEOLOGY.Demon_Worship);
+        factionType.RemoveIdeology(FACTION_IDEOLOGY.Nature_Worship);
+        factionType.RemoveCrime(CRIME_TYPE.Divine_Worship);
     }
     #endregion
 }
