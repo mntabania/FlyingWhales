@@ -164,8 +164,16 @@ public class SkillData : IPlayerSkill {
     }
     public void OnExecutePlayerSkill() {
         if (!PlayerSkillManager.Instance.unlimitedCast) {
-            if(hasCharges && charges > 0 && WorldSettings.Instance.worldSettingsData.playerSkillSettings.chargeAmount != SKILL_CHARGE_AMOUNT.Unlimited) {
-                AdjustCharges(-1);
+            if(hasCharges) {
+                if(charges > 0 && WorldSettings.Instance.worldSettingsData.playerSkillSettings.chargeAmount != SKILL_CHARGE_AMOUNT.Unlimited) {
+                    AdjustCharges(-1);
+                }
+            } else {
+                //Special Case for Schemes
+                //Once the cooldown of specific scheme has no charges but has a cooldown, it will still go into cooldown, and at the end of the cooldown the charge will be added to the parent scheme
+                if (category == PLAYER_SKILL_CATEGORY.SCHEME) {
+                    StartCooldown();
+                }
             }
             if (hasManaCost) {
                 // if (!WorldSettings.Instance.worldSettingsData.omnipotentMode) {
@@ -199,6 +207,15 @@ public class SkillData : IPlayerSkill {
             //SetCharges(maxCharges);
             if(hasCharges && charges < maxCharges) {
                 AdjustCharges(1);
+            } else {
+                //Special Case for Schemes
+                //Once the cooldown of specific scheme is done, the charges will be added to the parent scheme, not the specific scheme
+                if(category == PLAYER_SKILL_CATEGORY.SCHEME) {
+                    SkillData schemeSkill = PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.SCHEME);
+                    if (schemeSkill.hasCharges && schemeSkill.charges < schemeSkill.maxCharges) {
+                        schemeSkill.AdjustCharges(1);
+                    }
+                }
             }
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
             Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_FINISHED, this);
