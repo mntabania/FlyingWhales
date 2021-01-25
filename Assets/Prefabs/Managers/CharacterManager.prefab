@@ -464,6 +464,39 @@ MonoBehaviour:
       mustache: []
       beard: []
       ears: []
+  - raceName: HARPY
+    race: 38
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: ed184afac7a62a7469733a2479af94e8, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
   - raceName: HUMANS
     race: 1
     neutralAssets:
@@ -819,6 +852,39 @@ MonoBehaviour:
       mustache: []
       beard: []
       ears: []
+  - raceName: SCORPION
+    race: 37
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 178794461f348bf4bbfa485a335d0c96, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
   - raceName: SHEEP
     race: 25
     neutralAssets:
@@ -923,6 +989,39 @@ MonoBehaviour:
     neutralAssets:
       head:
       - {fileID: 21300000, guid: 24ddc0decde552649b24891f92edac8b, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+  - raceName: TRITON
+    race: 39
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 5a559ddc24c142e45afcc44ad0833f80, type: 3}
       brows: []
       eyes: []
       mouth: []

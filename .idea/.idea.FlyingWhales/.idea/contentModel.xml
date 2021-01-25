@@ -1093,6 +1093,7 @@
               <e p="GluttonBehaviour.cs" t="Include" />
               <e p="GolemBehaviour.cs" t="Include" />
               <e p="HarassBehaviour.cs" t="Include" />
+              <e p="HarpyBehaviour.cs" t="Include" />
               <e p="HeirloomHuntBehaviour.cs" t="Include" />
               <e p="HuntPreyBehaviour.cs" t="Include" />
               <e p="InfestorBehaviour.cs" t="Include" />
@@ -1116,6 +1117,7 @@
               <e p="RatmanBehaviour.cs" t="Include" />
               <e p="RescueBehaviour.cs" t="Include" />
               <e p="RevenantBehaviour.cs" t="Include" />
+              <e p="ScorpionBehaviour.cs" t="Include" />
               <e p="SettlementRulerBehaviour.cs" t="Include" />
               <e p="SlaveBehaviour.cs" t="Include" />
               <e p="SludgeBehaviour.cs" t="Include" />
@@ -1127,6 +1129,7 @@
               <e p="SuicidalBehaviour.cs" t="Include" />
               <e p="TendFarmBehaviour.cs" t="Include" />
               <e p="TowerBehaviour.cs" t="Include" />
+              <e p="TritonBehaviour.cs" t="Include" />
               <e p="TrollBehaviour.cs" t="Include" />
               <e p="UndeadBehaviour.cs" t="Include" />
               <e p="VampireBehaviour.cs" t="Include" />
@@ -1406,6 +1409,7 @@
                 <e p="ElevationStructureGeneration.cs" t="Include" />
                 <e p="FactionFinalization.cs" t="Include" />
                 <e p="FamilyTreeGeneration.cs" t="Include" />
+                <e p="FeaturesActivation.cs" t="Include" />
                 <e p="LandmarkStructureGeneration.cs" t="Include" />
                 <e p="LoadAwarenessGeneration.cs" t="Include" />
                 <e p="LoadCharactersCurrentAction.cs" t="Include" />
@@ -1416,9 +1420,9 @@
                 <e p="MonsterGeneration.cs" t="Include" />
                 <e p="PlayerDataGeneration.cs" t="Include" />
                 <e p="PlayerSettlementGeneration.cs" t="Include" />
-                <e p="RegionFeatureActivation.cs" t="Include" />
                 <e p="RegionFeatureGeneration.cs" t="Include" />
                 <e p="RegionInnerMapGeneration.cs" t="Include" />
+                <e p="SettlementFinalization.cs" t="Include" />
                 <e p="SettlementGeneration.cs" t="Include" />
                 <e p="SettlementLoading.cs" t="Include" />
                 <e p="SingletonDataGeneration.cs" t="Include" />
@@ -1806,6 +1810,7 @@
             <e p="Plagued.cs" t="Include" />
             <e p="Pneumonia.cs" t="Include" />
             <e p="Puke.cs" t="Include" />
+            <e p="PulledDown.cs" t="Include" />
             <e p="RecallAttack.cs" t="Include" />
             <e p="ReduceConflict.cs" t="Include" />
             <e p="Resign.cs" t="Include" />
@@ -1966,6 +1971,7 @@
                 <e p="Smithy.cs" t="Include" />
                 <e p="Structure Objects" t="Include">
                   <e p="AncientGraveyardStructureObject.cs" t="Include" />
+                  <e p="FarmStructureObject.cs" t="Include" />
                   <e p="LocationStructureObject.cs" t="Include" />
                   <e p="PortalStructureObject.cs" t="Include" />
                   <e p="RuinedZooStructureObject.cs" t="Include" />
@@ -2102,6 +2108,7 @@
                   <e p="Grimoire.cs" t="Include" />
                   <e p="GroundBolt.cs" t="Include" />
                   <e p="Guitar.cs" t="Include" />
+                  <e p="HarpyEgg.cs" t="Include" />
                   <e p="HealingPotion.cs" t="Include" />
                   <e p="Heirloom.cs" t="Include" />
                   <e p="HerbPlant.cs" t="Include" />
@@ -2586,6 +2593,7 @@
               <e p="Ghost.cs" t="Include" />
               <e p="GiantSpider.cs" t="Include" />
               <e p="Golem.cs" t="Include" />
+              <e p="Harpy.cs" t="Include" />
               <e p="Incubus.cs" t="Include" />
               <e p="Kobold.cs" t="Include" />
               <e p="Mimic.cs" t="Include" />
@@ -2596,12 +2604,14 @@
                 <e p="WindNymph.cs" t="Include" />
               </e>
               <e p="Revenant.cs" t="Include" />
+              <e p="Scorpion.cs" t="Include" />
               <e p="SeducerSummon.cs" t="Include" />
               <e p="Skeleton.cs" t="Include" />
               <e p="Sludge.cs" t="Include" />
               <e p="SmallSpider.cs" t="Include" />
               <e p="Succubus.cs" t="Include" />
               <e p="Summon.cs" t="Include" />
+              <e p="Triton.cs" t="Include" />
               <e p="Troll.cs" t="Include" />
               <e p="VengefulGhost.cs" t="Include" />
               <e p="Wisp" t="Include">
@@ -2686,6 +2696,7 @@
               <e p="ActivateHarassStep.cs" t="Include" />
               <e p="ActivateInvadeStep.cs" t="Include" />
               <e p="AffatQuestSteps" t="Include">
+                <e p="ProtectHumansStep.cs" t="Include" />
                 <e p="WipeElvenKingdomAndSurviveHumanStep.cs" t="Include" />
               </e>
               <e p="AneemSteps" t="Include">
@@ -2726,6 +2737,7 @@
               <e p="ObjectPickerShownStep.cs" t="Include" />
               <e p="PangatlooQuestsSteps" t="Include">
                 <e p="EliminateAllVillagersOnGivenDateStep.cs" t="Include" />
+                <e p="ReachDayStep.cs" t="Include" />
               </e>
               <e p="ParameterlessSignalReceived.cs" t="Include" />
               <e p="PittoSteps" t="Include">
@@ -3122,6 +3134,8 @@
             <e p="Custom UI" t="Include">
               <e p="ButtonConverter.cs" t="Include" />
               <e p="RuinarchButton.cs" t="Include" />
+              <e p="RuinarchDropdown.cs" t="Include" />
+              <e p="RuinarchDropdownItem.cs" t="Include" />
               <e p="RuinarchText.cs" t="Include" />
               <e p="RuinarchToggle.cs" t="Include" />
               <e p="UndraggableScrollRect.cs" t="Include" />
@@ -3140,7 +3154,6 @@
               <e p="TraitPanelUI.cs" t="Include" />
             </e>
             <e p="DaySeparator.cs" t="Include" />
-            <e p="DemoUI.cs" t="Include" />
             <e p="DeveloperNotificationArea.cs" t="Include" />
             <e p="DeveloperNotificationItem.cs" t="Include" />
             <e p="DialogItem.cs" t="Include" />
@@ -3323,6 +3336,7 @@
               <e p="VillagersListUI.cs" t="Include" />
               <e p="YesNoConfirmation.cs" t="Include" />
             </e>
+            <e p="PopUpScreensUI.cs" t="Include" />
             <e p="ProvokeMenu.cs" t="Include" />
             <e p="PsychopathPicker.cs" t="Include" />
             <e p="PsychopathPickerItem.cs" t="Include" />
@@ -3362,6 +3376,9 @@
               <e p="FactionSettingUIItem.cs" t="Include" />
               <e p="SchemeUIItem.cs" t="Include" />
               <e p="VillageSettingUIItem.cs" t="Include" />
+            </e>
+            <e p="UI Utilities" t="Include">
+              <e p="RectTransformEventDispatcher.cs" t="Include" />
             </e>
             <e p="UIMenuSettings.cs" t="Include" />
             <e p="UnallowOverlaps.cs" t="Include" />
@@ -3446,7 +3463,7 @@
             <e p="Utilities.cs" t="Include" />
             <e p="VerticalScroller.cs" t="Include" />
             <e p="WinConditionsTracker" t="Include">
-              <e p="AffatWinConditionTracker.cs" t="Include" />
+              <e p="AffattWinConditionTracker.cs" t="Include" />
               <e p="AneemWinConditionTracker.cs" t="Include" />
               <e p="IcalawaWinConditionTracker.cs" t="Include" />
               <e p="OonaWinConditionTracker.cs" t="Include" />

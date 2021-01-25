@@ -17,7 +17,6 @@ public class HoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     [SerializeField] protected UnityEvent onHoverExitAction;
     [SerializeField] protected bool executeHoverEnterActionPerFrame = true;
     
-    
     protected Selectable selectable;
 
 

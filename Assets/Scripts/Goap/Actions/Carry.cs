@@ -6,20 +6,32 @@ using Traits;
 
 public class Carry : GoapAction {
 
+    private Precondition _carryPrecondition;
+
     public Carry() : base(INTERACTION_TYPE.CARRY) {
         actionIconString = GoapActionStateDB.Work_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF,
         //    RACE.SPIDER, RACE.DRAGON, RACE.GOLEM, RACE.DEMON, RACE.ELEMENTAL, RACE.KOBOLD, RACE.MIMIC, RACE.ABOMINATION,
         //    RACE.CHICKEN, RACE.SHEEP, RACE.PIG, RACE.NYMPH, RACE.WISP, RACE.SLUDGE, RACE.GHOST, RACE.LESSER_DEMON, RACE.ANGEL };
         logTags = new[] {LOG_TAG.Work};
+        _carryPrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.CANNOT_MOVE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), TargetCannotMove);
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        SetPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.CANNOT_MOVE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), TargetCannotMove);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET });
+    }
+    public override Precondition GetPrecondition(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType, out bool isOverridden) {
+        if (jobType != JOB_TYPE.MOVE_CHARACTER) {
+            //Only use precondition of carry which is ensuring the target cannot move before carrying if the job is not move character
+            //If the job is move character, this should not have any preconditions so that the plan will end here, since we do not want the actor to attack the target just for him to carry the target
+            Precondition p = _carryPrecondition;
+            isOverridden = true;
+            return p;
+        }
+        return base.GetPrecondition(actor, target, otherData, jobType, out isOverridden);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -88,6 +100,14 @@ public class Carry : GoapAction {
             //     TileObject tileObj = poiTarget as TileObject;
             //     return tileObj.isBeingCarriedBy == null && tileObj.gridTileLocation != null;
             // }
+            if (job.jobType == JOB_TYPE.MOVE_CHARACTER) {
+                //If job is move character and target already is moving, do not do carry anymore
+                if (poiTarget is Character character) {
+                    if (character.limiterComponent.canMove) {
+                        return false;
+                    }
+                }
+            }
             if(actor.gridTileLocation != null && poiTarget.gridTileLocation != null) {
                 if (poiTarget is Character character) {
                     return actor != poiTarget && poiTarget.mapObjectVisual &&

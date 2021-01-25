@@ -204,11 +204,8 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                     log += "\n-Is not in home structure or territory";
                     if (character.currentHP < (character.maxHP * 0.5f)) {
                         log += "\n-HP is less than 50% of max hp, Return Home/Territory";
-                        if (character.homeStructure != null) {
-                            character.jobComponent.PlanIdleReturnHome(out producedJob);
-                            return true;
-                        } else if (character.HasTerritory()) {
-                            character.jobComponent.TriggerReturnTerritory(out producedJob);
+                        if (character.homeStructure != null || character.HasTerritory()) {
+                            character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
                             return true;
                         } else {
                             log += "\n-No home structure or territory: THIS MUST NOT HAPPEN!";
@@ -222,11 +219,8 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                             return true;
                         } else {
                             log += "\n-Otherwise, Return Home/Territory";
-                            if (character.homeStructure != null) {
-                                character.jobComponent.PlanIdleReturnHome(out producedJob);
-                                return true;
-                            } else if (character.HasTerritory()) {
-                                character.jobComponent.TriggerReturnTerritory(out producedJob);
+                            if (character.homeStructure != null || character.HasTerritory()) {
+                                character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
                                 return true;
                             } else {
                                 log += "\n-No home structure or territory: THIS MUST NOT HAPPEN!";

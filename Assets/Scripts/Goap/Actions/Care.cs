@@ -4,7 +4,7 @@ using UnityEngine;
 public class Care : GoapAction {
     public Care() : base(INTERACTION_TYPE.CARE) {
         actionIconString = GoapActionStateDB.FirstAid_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }

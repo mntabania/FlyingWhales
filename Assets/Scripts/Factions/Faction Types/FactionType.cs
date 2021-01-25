@@ -102,6 +102,15 @@ namespace Factions.Faction_Types {
             factionIdeology = null;
             return false;
         }
+        public bool HasPeaceTypeIdeology() {
+            for (int i = 0; i < ideologies.Count; i++) {
+                FactionIdeology ideal = ideologies[i];
+                if (ideal.ideologyType.IsPeaceType()) {
+                    return true;
+                }
+            }
+            return false;
+        }
         #endregion
 
         #region Crimes

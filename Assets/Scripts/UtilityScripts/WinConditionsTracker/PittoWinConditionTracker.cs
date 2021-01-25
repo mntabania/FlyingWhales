@@ -109,10 +109,10 @@ public class PittoWinConditionTracker : WinconditionTracker {
         _onfactionCreated -= p_listener.OnFactionCreated;
     }
 
-    public void SubscribeToChangeTraitEvents(IcalawaWinConditionTracker.IListenerChangeTraits p_listener) {
+    public void SubscribeToChangeTraitEvents(PittoWinConditionTracker.IListenerChangeTraits p_listener) {
         _CharacterChangeTrait += p_listener.OnCharacterChangeTrait;
     }
-    public void UnsubscribeToChangeTraitEvents(IcalawaWinConditionTracker.IListenerChangeTraits p_listener) {
+    public void UnsubscribeToChangeTraitEvents(PittoWinConditionTracker.IListenerChangeTraits p_listener) {
         _CharacterChangeTrait -= p_listener.OnCharacterChangeTrait;
     }
 }

@@ -48,7 +48,7 @@ public class PlayerManager : BaseMonoBehaviour {
         Messenger.AddListener<Vector3, int, InnerTileMap>(PlayerSignals.CREATE_CHAOS_ORBS, CreateChaosOrbsAt);
         Messenger.AddListener<Character, ActualGoapNode>(JobSignals.CHARACTER_DID_ACTION_SUCCESSFULLY, OnCharacterDidActionSuccess);
         // Messenger.AddListener(Signals.CHECK_IF_PLAYER_WINS, CheckWinCondition);
-        Messenger.AddListener(PlayerSignals.WIN_GAME, WinGame);
+        Messenger.AddListener<string>(PlayerSignals.WIN_GAME, WinGame);
     }
     public void InitializePlayer(HexTile portal) {
         player = new Player();
@@ -327,13 +327,13 @@ public class PlayerManager : BaseMonoBehaviour {
     #endregion
 
     #region End Game Mechanics
-    private void WinGame() {
-        StartCoroutine(DelayedWinGame());
+    private void WinGame(string winMessage) {
+        StartCoroutine(DelayedWinGame(winMessage));
     }
-    private IEnumerator DelayedWinGame() {
+    private IEnumerator DelayedWinGame(string winMessage) {
         UIManager.Instance.SetSpeedTogglesState(false);
         yield return GameUtilities.waitFor3Seconds;
-        PlayerUI.Instance.WinGameOver();
+        PlayerUI.Instance.WinGameOver(winMessage);
     }
     // private void OnCharacterDied(Character character) {
     //     CheckWinCondition();

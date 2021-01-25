@@ -444,7 +444,16 @@ public class ReactionComponent : CharacterComponent {
             bool shouldRelease = disguisedActor.isNormalCharacter && !disguisedActor.traitContainer.HasTrait("Enslaved") && targetCharacter.traitContainer.HasTrait("Enslaved") && disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget)
                 && !disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget) && !targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Enslaved").IsResponsibleForTrait(disguisedActor) && disguisedActor.faction != targetCharacter.faction;
             bool isPartOfRescueJob = actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive && actor.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueQuest && rescueQuest.targetCharacter == targetCharacter;
-            if (shouldRelease || isPartOfRescueJob) {
+
+            bool shouldNotAttackSkeletons = disguisedActor.traitContainer.HasTrait("Necromancer") && targetCharacter.race == RACE.SKELETON && targetCharacter.faction == disguisedActor.prevFaction && disguisedActor.prevFaction != null;
+            bool shouldSwitchFaction = actor.race == RACE.SKELETON && disguisedTarget.traitContainer.HasTrait("Necromancer") && actor.faction == disguisedTarget.prevFaction && disguisedTarget.prevFaction != null;
+
+            if (shouldNotAttackSkeletons) {
+                debugLog = $"{debugLog}\n-Actor is a necromancer and target is a skeleton from the previous faction, will not attack even if hostile";
+            } else if (shouldSwitchFaction) {
+                debugLog = $"{debugLog}\n-Actor is a skeleton and target is a necromancer and actor is from the necromancer's previous faction, actor should switch to the faction of target";
+                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, disguisedTarget, identifier: "join_faction_necro");
+            } else if (shouldRelease || isPartOfRescueJob) {
                 actor.jobComponent.TriggerReleaseJob(targetCharacter);
             } else if(disguisedActor is Troll && disguisedTarget.isNormalCharacter && disguisedActor.homeStructure != null && !targetCharacter.isDead) {
                 debugLog = $"{debugLog}\n-Actor is a Troll and target is a Villager and actor has a home structure";
@@ -1227,6 +1236,20 @@ public class ReactionComponent : CharacterComponent {
                     bool cannotCreateHaulJob = (resourcePile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || resourcePile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && actor.faction != null && actor.faction.isMajorNonPlayer;
                     if (!cannotCreateHaulJob) {
                         actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
+                    }
+                }
+            }
+        }
+        if(targetTileObject is FishingSpot && targetTileObject.gridTileLocation != null) {
+            if(actor.race != RACE.TRITON) {
+                if (GameUtilities.RollChance(2)) {
+                    if (actor.canBeTargetedByLandActions) {
+                        if (!actor.traitContainer.HasTrait("Sturdy") && !actor.HasJobTargetingThis(JOB_TYPE.TRITON_KIDNAP)) {
+                            Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Triton, FactionManager.Instance.neutralFaction, homeRegion: targetTileObject.currentRegion, bypassIdeologyChecking: true);
+                            summon.SetIsVolatile(true);
+                            CharacterManager.Instance.PlaceSummonInitially(summon, targetTileObject.gridTileLocation);
+                            (summon as Triton).TriggerTritonKidnap(actor);
+                        }
                     }
                 }
             }

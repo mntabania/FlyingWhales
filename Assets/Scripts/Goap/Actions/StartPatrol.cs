@@ -3,7 +3,7 @@
 public class StartPatrol : GoapAction {
     public StartPatrol() : base(INTERACTION_TYPE.START_PATROL) {
         actionIconString = GoapActionStateDB.Patrol_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         shouldAddLogs = false;
         logTags = new[] {LOG_TAG.Work};

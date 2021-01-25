@@ -20,7 +20,7 @@ public class Rat : Animal {
     public override void Initialize() {
         base.Initialize();
         traitContainer.AddTrait(this, "Plague Reservoir");
-        combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        //combatComponent.SetCombatMode(COMBAT_MODE.Defend);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Rat_Behaviour);
     }
     public override void OnSummonAsPlayerMonster() {

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Ruinarch.Custom_UI;
 using Ruinarch.MVCFramework;
 using TMPro;
 using UnityEngine;
@@ -15,14 +17,48 @@ public class WorldGenOptionsUIModel : MVCUIModel {
     public System.Action<THREAT_AMOUNT> onChangeThreatAmount;
     public System.Action onClickAddBiome;
     public System.Action onClickAddFaction;
-    
+
+    [Header("Map Size")]
     public TMP_Dropdown dropDownMapSize;
+    public HoverHandler hoverHandlerMapSize;
+    public System.Action<UIHoverPosition> onHoverOverMapSizeDropdown;
+    public System.Action onHoverOutMapSizeDropdown;
+    
+    [Header("Migration")]
     public TMP_Dropdown dropDownMigration;
+    public HoverHandler hoverHandlerMigration;
+    public System.Action<UIHoverPosition> onHoverOverMigrationDropdown;
+    public System.Action onHoverOutMigrationDropdown;
+    
+    [Header("Victory Condition")]
     public TMP_Dropdown dropDownVictory;
+    public HoverHandler hoverHandlerVictory;
+    public System.Action<UIHoverPosition> onHoverOverVictoryDropdown;
+    public System.Action onHoverOutVictoryDropdown;
+    
+    [Header("Cooldown")]
     public TMP_Dropdown dropDownCooldown;
+    public HoverHandler hoverHandlerCooldown;
+    public System.Action<UIHoverPosition> onHoverOverCooldownDropdown;
+    public System.Action onHoverOutCooldownDropdown;
+    
+    [Header("Costs")]
     public TMP_Dropdown dropDownCosts;
+    public HoverHandler hoverHandlerCosts;
+    public System.Action<UIHoverPosition> onHoverOverCostsDropdown;
+    public System.Action onHoverOutCostsDropdown;
+    
+    [Header("Charges")]
     public TMP_Dropdown dropDownCharges;
+    public HoverHandler hoverHandlerCharges;
+    public System.Action<UIHoverPosition> onHoverOverChargesDropdown;
+    public System.Action onHoverOutChargesDropdown;
+    
+    [Header("Threat")]
     public TMP_Dropdown dropDownThreat;
+    public HoverHandler hoverHandlerThreat;
+    public System.Action<UIHoverPosition> onHoverOverThreatDropdown;
+    public System.Action onHoverOutThreatDropdown;
 
     [Header("Biomes")] 
     public BiomeDropdownUIItem[] biomeDropdownUIItems;
@@ -32,7 +68,9 @@ public class WorldGenOptionsUIModel : MVCUIModel {
     public FactionSettingUIItem[] factionSettingUIItems;
     public Button btnAddFaction;
     public TextMeshProUGUI txtVillages;
-    
+
+    public UIHoverPosition tooltipPosition;
+
     private void OnEnable() {
         dropDownMapSize.onValueChanged.AddListener(OnChangeMapSize);
         dropDownMigration.onValueChanged.AddListener(OnChangeMigrationSpeed);
@@ -43,6 +81,27 @@ public class WorldGenOptionsUIModel : MVCUIModel {
         dropDownThreat.onValueChanged.AddListener(OnChangeThreatAmount);
         btnAddBiome.onClick.AddListener(OnClickAddBiome);
         btnAddFaction.onClick.AddListener(OnClickAddFaction);
+        
+        hoverHandlerMapSize.AddOnHoverOverAction(OnHoverOverMapSize);
+        hoverHandlerMapSize.AddOnHoverOutAction(OnHoverOutMapSize);
+        
+        hoverHandlerMigration.AddOnHoverOverAction(OnHoverOverMigration);
+        hoverHandlerMigration.AddOnHoverOutAction(OnHoverOutMigration);
+        
+        hoverHandlerVictory.AddOnHoverOverAction(OnHoverOverVictory);
+        hoverHandlerVictory.AddOnHoverOutAction(OnHoverOutVictory);
+        
+        hoverHandlerCooldown.AddOnHoverOverAction(OnHoverOverCooldown);
+        hoverHandlerCooldown.AddOnHoverOutAction(OnHoverOutCooldown);
+        
+        hoverHandlerCosts.AddOnHoverOverAction(OnHoverOverCosts);
+        hoverHandlerCosts.AddOnHoverOutAction(OnHoverOutCosts);
+        
+        hoverHandlerCharges.AddOnHoverOverAction(OnHoverOverCharges);
+        hoverHandlerCharges.AddOnHoverOutAction(OnHoverOutCharges);
+        
+        hoverHandlerThreat.AddOnHoverOverAction(OnHoverOverThreat);
+        hoverHandlerThreat.AddOnHoverOutAction(OnHoverOutThreat);
     }
     private void OnDisable() {
         dropDownMapSize.onValueChanged.RemoveListener(OnChangeMapSize);
@@ -54,6 +113,27 @@ public class WorldGenOptionsUIModel : MVCUIModel {
         dropDownThreat.onValueChanged.RemoveListener(OnChangeThreatAmount);
         btnAddBiome.onClick.RemoveListener(OnClickAddBiome);
         btnAddFaction.onClick.RemoveListener(OnClickAddFaction);
+        
+        hoverHandlerMapSize.RemoveOnHoverOverAction(OnHoverOverMapSize);
+        hoverHandlerMapSize.RemoveOnHoverOutAction(OnHoverOutMapSize);
+
+        hoverHandlerMigration.RemoveOnHoverOverAction(OnHoverOverMigration);
+        hoverHandlerMigration.RemoveOnHoverOutAction(OnHoverOutMigration);
+        
+        hoverHandlerVictory.RemoveOnHoverOverAction(OnHoverOverVictory);
+        hoverHandlerVictory.RemoveOnHoverOutAction(OnHoverOutVictory);
+        
+        hoverHandlerCooldown.RemoveOnHoverOverAction(OnHoverOverCooldown);
+        hoverHandlerCooldown.RemoveOnHoverOutAction(OnHoverOutCooldown);
+        
+        hoverHandlerCosts.RemoveOnHoverOverAction(OnHoverOverCosts);
+        hoverHandlerCosts.RemoveOnHoverOutAction(OnHoverOutCosts);
+        
+        hoverHandlerCharges.RemoveOnHoverOverAction(OnHoverOverCharges);
+        hoverHandlerCharges.RemoveOnHoverOutAction(OnHoverOutCharges);
+        
+        hoverHandlerThreat.RemoveOnHoverOverAction(OnHoverOverThreat);
+        hoverHandlerThreat.RemoveOnHoverOutAction(OnHoverOutThreat);
     }
     
     private void OnChangeMapSize(int p_index) {
@@ -90,4 +170,67 @@ public class WorldGenOptionsUIModel : MVCUIModel {
     private void OnClickAddFaction() {
         onClickAddFaction?.Invoke();
     }
+
+    #region Map Size
+    private void OnHoverOverMapSize() {
+        onHoverOverMapSizeDropdown?.Invoke(tooltipPosition);
+    }
+    private void OnHoverOutMapSize() {
+        onHoverOutMapSizeDropdown?.Invoke();
+    }
+    #endregion
+    
+    #region Migration
+    private void OnHoverOverMigration() {
+        onHoverOverMigrationDropdown?.Invoke(tooltipPosition);
+    }
+    private void OnHoverOutMigration() {
+        onHoverOutMigrationDropdown?.Invoke();
+    }
+    #endregion
+    
+    #region Victory
+    private void OnHoverOverVictory() {
+        onHoverOverVictoryDropdown?.Invoke(tooltipPosition);
+    }
+    private void OnHoverOutVictory() {
+        onHoverOutVictoryDropdown?.Invoke();
+    }
+    #endregion
+    
+    #region Cooldown
+    private void OnHoverOverCooldown() {
+        onHoverOverCooldownDropdown?.Invoke(tooltipPosition);
+    }
+    private void OnHoverOutCooldown() {
+        onHoverOutCooldownDropdown?.Invoke();
+    }
+    #endregion
+    
+    #region Costs
+    private void OnHoverOverCosts() {
+        onHoverOverCostsDropdown?.Invoke(tooltipPosition);
+    }
+    private void OnHoverOutCosts() {
+        onHoverOutCostsDropdown?.Invoke();
+    }
+    #endregion
+    
+    #region Charges
+    private void OnHoverOverCharges() {
+        onHoverOverChargesDropdown?.Invoke(tooltipPosition);
+    }
+    private void OnHoverOutCharges() {
+        onHoverOutChargesDropdown?.Invoke();
+    }
+    #endregion
+    
+    #region Map Size
+    private void OnHoverOverThreat() {
+        onHoverOverThreatDropdown?.Invoke(tooltipPosition);
+    }
+    private void OnHoverOutThreat() {
+        onHoverOutThreatDropdown?.Invoke();
+    }
+    #endregion
 }

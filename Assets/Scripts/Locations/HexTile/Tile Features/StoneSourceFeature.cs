@@ -23,10 +23,10 @@ namespace Locations.Tile_Features {
             Messenger.AddListener<TileObject, LocationGridTile>(GridTileSignals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
             Messenger.AddListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         
-            List<TileObject> rocks = tile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.ROCK);
-            currentRockCount = rocks.Count;
-            if (rocks.Count < MaxRocks) {
-                int missingTrees = MaxRocks - rocks.Count;
+            int rocksCount = tile.GetNumberOfTileObjectsInHexTile(TILE_OBJECT_TYPE.ROCK);
+            currentRockCount = rocksCount;
+            if (rocksCount < MaxRocks) {
+                int missingTrees = MaxRocks - rocksCount;
                 for (int i = 0; i <= missingTrees; i++) {
                     if (!CreateNewRock()) {
                         break;

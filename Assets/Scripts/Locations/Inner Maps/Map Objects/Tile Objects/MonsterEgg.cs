@@ -71,12 +71,15 @@ public abstract class MonsterEgg : TileObject {
         }
     }
     protected virtual void Hatch() {
-        Summon monster = CharacterManager.Instance.CreateNewSummon(summonType, PlayerManager.Instance.player.playerFaction, homeRegion: gridTileLocation.parentMap.region);
-        CharacterManager.Instance.PlaceSummonInitially(monster, gridTileLocation);
-        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            monster.ClearTerritory();
-            monster.SetTerritory(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
+        if(characterThatLay != null) {
+            Summon monster = CharacterManager.Instance.CreateNewSummon(summonType, faction: characterThatLay.faction, homeLocation: characterThatLay.homeSettlement, homeRegion: characterThatLay.homeRegion, homeStructure: characterThatLay.homeStructure, bypassIdeologyChecking: true);
+            CharacterManager.Instance.PlaceSummonInitially(monster, gridTileLocation);
+            if (!monster.HasHome() && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                monster.ClearTerritory();
+                monster.SetTerritory(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
+            }
         }
+
     }
 
     #region Overrides

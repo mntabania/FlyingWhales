@@ -7,7 +7,7 @@ using Inner_Maps.Location_Structures;
 public class Trespassing : GoapAction {
     public Trespassing() : base(INTERACTION_TYPE.TRESPASSING) {
         actionIconString = GoapActionStateDB.No_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         logTags = new[] {LOG_TAG.Crimes};
     }

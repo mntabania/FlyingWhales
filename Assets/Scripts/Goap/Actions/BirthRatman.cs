@@ -10,7 +10,7 @@ public class BirthRatman : GoapAction {
     public BirthRatman() : base(INTERACTION_TYPE.BIRTH_RATMAN) {
         actionIconString = GoapActionStateDB.Happy_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.RATMAN, };
         logTags = new[] {LOG_TAG.Life_Changes};
     }

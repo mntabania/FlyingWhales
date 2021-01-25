@@ -40,6 +40,7 @@ public class Summon : Character {
 
     #region Overrides
     public override void Initialize() {
+        combatComponent.SetCombatMode(defaultCombatMode);
         ConstructDefaultActions();
         OnUpdateRace();
         OnUpdateCharacterClass();
@@ -103,6 +104,12 @@ public class Summon : Character {
             Character carrier = isBeingCarriedBy;
             carrier?.UncarryPOI(this);
 
+            if (destroyMarkerOnDeath) {
+                //If death is destroy marker, this will leave no corpse, so remove it from the list of characters at location in region
+                if (currentRegion != null) {
+                    currentRegion.RemoveCharacterFromLocation(this);
+                }
+            }
             if (homeRegion != null) {
                 Region home = homeRegion;
                 LocationStructure homeStructure = this.homeStructure;

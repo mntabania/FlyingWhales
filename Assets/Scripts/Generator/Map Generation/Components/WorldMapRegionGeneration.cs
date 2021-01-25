@@ -39,7 +39,11 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 		int centerX = mapTemplate.worldMapWidth / 2;
 		int centerY = mapTemplate.worldMapHeight / 2;
 		HexTile center = GridMap.Instance.map[centerX, centerY];
-		Region region = new Region(center);
+		string regionName = string.Empty;
+		if (WorldSettings.Instance.worldSettingsData.IsScenarioMap() && WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {
+			regionName = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(WorldSettings.Instance.worldSettingsData.worldType.ToString());
+		}
+		Region region = new Region(center, regionName);
 		Region[] allRegions = { region };
 		for (int i = 0; i < GridMap.Instance.normalHexTiles.Count; i++) {
 			HexTile hexTile = GridMap.Instance.normalHexTiles[i];

@@ -168,8 +168,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 110.8, y: -418}
-  m_SizeDelta: {x: 127.24838, y: 26.16632}
+  m_AnchoredPosition: {x: 84.9, y: -453.11}
+  m_SizeDelta: {x: 192.50986, y: 26.16632}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &8732504069309160666
 CanvasRenderer:
@@ -198,7 +198,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Villages: 99/99'
+  m_text: 'Starting Villages: 99/99'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f8d165fc58518da4b871ca2551648bf9, type: 2}
   m_sharedMaterial: {fileID: 21189737157306288, guid: f8d165fc58518da4b871ca2551648bf9,
@@ -580,6 +580,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   executeHoverEnterActionPerFrame: 1
+  testField: 
 --- !u!1 &522388255972570626
 GameObject:
   m_ObjectHideFlags: 0
@@ -632,6 +633,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dropdownBiome: {fileID: 2268220031067183493}
   btnMinus: {fileID: 5253319329498180179}
+  hoverHandler: {fileID: 1651227769069926024}
 --- !u!1 &646080118232865666
 GameObject:
   m_ObjectHideFlags: 0
@@ -2106,6 +2108,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   executeHoverEnterActionPerFrame: 1
+  testField: 
 --- !u!1 &1720857862493720891
 GameObject:
   m_ObjectHideFlags: 0
@@ -2965,6 +2968,7 @@ GameObject:
   - component: {fileID: 6872006571866079937}
   - component: {fileID: 102810000507173841}
   - component: {fileID: 4236152766447593389}
+  - component: {fileID: 19445749548238445}
   m_Layer: 5
   m_Name: Dropdown
   m_TagString: Untagged
@@ -3093,6 +3097,29 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_AlphaFadeSpeed: 0.15
+--- !u!114 &19445749548238445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2142506814141597006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 0
+  testField: 
 --- !u!1 &2184642400110988807
 GameObject:
   m_ObjectHideFlags: 0
@@ -3255,6 +3282,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dropdownBiome: {fileID: 7118076254475250880}
   btnMinus: {fileID: 5695743173332758895}
+  hoverHandler: {fileID: 498097849222208249}
 --- !u!1 &2599582120355289905
 GameObject:
   m_ObjectHideFlags: 0
@@ -6184,6 +6212,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dropdownBiome: {fileID: 4236152766447593389}
   btnMinus: {fileID: 5145856574032051907}
+  hoverHandler: {fileID: 19445749548238445}
 --- !u!1 &4630548742732326557
 GameObject:
   m_ObjectHideFlags: 0
@@ -9764,6 +9793,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   executeHoverEnterActionPerFrame: 1
+  testField: 
 --- !u!1 &7074606816386071448
 GameObject:
   m_ObjectHideFlags: 0
@@ -9910,6 +9940,7 @@ GameObject:
   - component: {fileID: 8697334287919994199}
   - component: {fileID: 1602702808598005556}
   - component: {fileID: 7118076254475250880}
+  - component: {fileID: 498097849222208249}
   m_Layer: 5
   m_Name: Dropdown
   m_TagString: Untagged
@@ -10038,6 +10069,29 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_AlphaFadeSpeed: 0.15
+--- !u!114 &498097849222208249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7125306112571145608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 0
+  testField: 
 --- !u!1 &7158105050437403142
 GameObject:
   m_ObjectHideFlags: 0
@@ -10856,6 +10910,56 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &8171051393695768172
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2926638306681117150}
+  - component: {fileID: 8487008390294702272}
+  m_Layer: 5
+  m_Name: Tooltip Position
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2926638306681117150
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8171051393695768172}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8188948355269843099}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 754, y: -32.800003}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0, y: 1}
+--- !u!114 &8487008390294702272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8171051393695768172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a81b96823c9c6704498c188c2c4b997d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pivot: {x: 0, y: 1}
+  anchor: 0
 --- !u!1 &8188948353543846302
 GameObject:
   m_ObjectHideFlags: 0
@@ -12314,6 +12418,9 @@ GameObject:
   - component: {fileID: 8188948353794205182}
   - component: {fileID: 8188948353794205183}
   - component: {fileID: 8188948353794205168}
+  - component: {fileID: 121324273362156901}
+  - component: {fileID: 6703616956678760365}
+  - component: {fileID: 5951189510060345071}
   m_Layer: 5
   m_Name: Dropdown
   m_TagString: Untagged
@@ -12389,7 +12496,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8188948353794205170}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b743370ac3e4ec2a1668f5455a8ef8a, type: 3}
+  m_Script: {fileID: 11500000, guid: f1bb3bc7115842cab3df99f9e29b0513, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -12442,6 +12549,67 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_AlphaFadeSpeed: 0.15
+--- !u!114 &121324273362156901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948353794205170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 1
+  testField: 
+--- !u!223 &6703616956678760365
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948353794205170}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &5951189510060345071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948353794205170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &8188948353821591026
 GameObject:
   m_ObjectHideFlags: 0
@@ -14545,6 +14713,9 @@ GameObject:
   - component: {fileID: 8188948354098795528}
   - component: {fileID: 8188948354098795529}
   - component: {fileID: 8188948354098795530}
+  - component: {fileID: 6720681135633235542}
+  - component: {fileID: 2161799434904966178}
+  - component: {fileID: 1220172651306664881}
   m_Layer: 5
   m_Name: Dropdown
   m_TagString: Untagged
@@ -14620,7 +14791,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8188948354098795532}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b743370ac3e4ec2a1668f5455a8ef8a, type: 3}
+  m_Script: {fileID: 11500000, guid: f1bb3bc7115842cab3df99f9e29b0513, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -14673,6 +14844,67 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_AlphaFadeSpeed: 0.15
+--- !u!114 &6720681135633235542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948354098795532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 1
+  testField: 
+--- !u!223 &2161799434904966178
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948354098795532}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &1220172651306664881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948354098795532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &8188948354104458044
 GameObject:
   m_ObjectHideFlags: 0
@@ -14784,7 +15016,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 4}
+  m_AnchoredPosition: {x: 0, y: 3}
   m_SizeDelta: {x: 0, y: 182.98029}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &8188948354109933684
@@ -14999,10 +15231,10 @@ RectTransform:
   m_Father: {fileID: 8188948355269843099}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 145.3, y: -27.55}
-  m_SizeDelta: {x: 371.23773, y: 453.10873}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -223.7, y: -325.4}
+  m_SizeDelta: {x: 371.23773, y: 480.76135}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8188948354124015502
 CanvasRenderer:
@@ -15223,6 +15455,9 @@ GameObject:
   - component: {fileID: 8188948354190352170}
   - component: {fileID: 8188948354190352171}
   - component: {fileID: 8188948354190352172}
+  - component: {fileID: 3968751991403006572}
+  - component: {fileID: 213338906117409058}
+  - component: {fileID: 8125436914236466948}
   m_Layer: 5
   m_Name: Dropdown
   m_TagString: Untagged
@@ -15298,7 +15533,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8188948354190352174}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b743370ac3e4ec2a1668f5455a8ef8a, type: 3}
+  m_Script: {fileID: 11500000, guid: f1bb3bc7115842cab3df99f9e29b0513, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -15351,6 +15586,67 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_AlphaFadeSpeed: 0.15
+--- !u!114 &3968751991403006572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948354190352174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 1
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 1
+  testField: 
+--- !u!223 &213338906117409058
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948354190352174}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &8125436914236466948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948354190352174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &8188948354198924071
 GameObject:
   m_ObjectHideFlags: 0
@@ -15856,6 +16152,7 @@ GameObject:
   - component: {fileID: 8188948354243300101}
   - component: {fileID: 8188948354243300102}
   - component: {fileID: 8188948354243300103}
+  - component: {fileID: 1872128428666912789}
   m_Layer: 5
   m_Name: Dropdown
   m_TagString: Untagged
@@ -15984,6 +16281,29 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_AlphaFadeSpeed: 0.15
+--- !u!114 &1872128428666912789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948354243300153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 0
+  testField: 
 --- !u!1 &8188948354259004945
 GameObject:
   m_ObjectHideFlags: 0
@@ -16109,7 +16429,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0.89019614, b: 0.47058827, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -17052,6 +17372,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dropdownBiome: {fileID: 8188948354243300103}
   btnMinus: {fileID: 8188948355253877086}
+  hoverHandler: {fileID: 1872128428666912789}
 --- !u!1 &8188948354415052571
 GameObject:
   m_ObjectHideFlags: 0
@@ -18362,6 +18683,9 @@ GameObject:
   - component: {fileID: 8188948354645233813}
   - component: {fileID: 8188948354645233814}
   - component: {fileID: 8188948354645233815}
+  - component: {fileID: 6728102856974996465}
+  - component: {fileID: 4573425659773466661}
+  - component: {fileID: 8465686617957909406}
   m_Layer: 5
   m_Name: Dropdown
   m_TagString: Untagged
@@ -18437,7 +18761,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8188948354645233801}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b743370ac3e4ec2a1668f5455a8ef8a, type: 3}
+  m_Script: {fileID: 11500000, guid: f1bb3bc7115842cab3df99f9e29b0513, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -18490,6 +18814,67 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_AlphaFadeSpeed: 0.15
+--- !u!114 &6728102856974996465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948354645233801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 1
+  testField: 
+--- !u!223 &4573425659773466661
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948354645233801}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &8465686617957909406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948354645233801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &8188948354654087243
 GameObject:
   m_ObjectHideFlags: 0
@@ -19048,6 +19433,9 @@ GameObject:
   - component: {fileID: 8188948354706937621}
   - component: {fileID: 8188948354706937622}
   - component: {fileID: 8188948354706937623}
+  - component: {fileID: 6552202107790528459}
+  - component: {fileID: 484012234750125348}
+  - component: {fileID: 5114137458495647980}
   m_Layer: 5
   m_Name: Dropdown
   m_TagString: Untagged
@@ -19123,7 +19511,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8188948354706937609}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b743370ac3e4ec2a1668f5455a8ef8a, type: 3}
+  m_Script: {fileID: 11500000, guid: f1bb3bc7115842cab3df99f9e29b0513, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -19176,6 +19564,67 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_AlphaFadeSpeed: 0.15
+--- !u!114 &6552202107790528459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948354706937609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 1
+  testField: 
+--- !u!223 &484012234750125348
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948354706937609}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &5114137458495647980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948354706937609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &8188948354728618047
 GameObject:
   m_ObjectHideFlags: 0
@@ -21468,7 +21917,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -22006,6 +22455,9 @@ GameObject:
   - component: {fileID: 8188948355184861784}
   - component: {fileID: 8188948355184861785}
   - component: {fileID: 8188948355184861786}
+  - component: {fileID: 5541457147674281144}
+  - component: {fileID: 6436377660728841197}
+  - component: {fileID: 7741015367560724705}
   m_Layer: 5
   m_Name: Dropdown
   m_TagString: Untagged
@@ -22081,7 +22533,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8188948355184861788}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b743370ac3e4ec2a1668f5455a8ef8a, type: 3}
+  m_Script: {fileID: 11500000, guid: f1bb3bc7115842cab3df99f9e29b0513, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -22134,6 +22586,67 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_AlphaFadeSpeed: 0.15
+--- !u!114 &5541457147674281144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948355184861788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 1
+  testField: 
+--- !u!223 &6436377660728841197
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948355184861788}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &7741015367560724705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948355184861788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &8188948355216685842
 GameObject:
   m_ObjectHideFlags: 0
@@ -22524,13 +23037,14 @@ RectTransform:
   - {fileID: 8188948354423510791}
   - {fileID: 8188948355173069817}
   - {fileID: 8188948354124015488}
+  - {fileID: 2926638306681117150}
   m_Father: {fileID: 5705543895098560569}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 101.1344, y: -21}
-  m_SizeDelta: {x: 738, y: 569}
+  m_AnchoredPosition: {x: 101.1344, y: -29.8}
+  m_SizeDelta: {x: 738, y: 586.6011}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &8188948355269843097
 CanvasRenderer:
@@ -22833,6 +23347,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   executeHoverEnterActionPerFrame: 1
+  testField: 
 --- !u!1 &8188948355314098393
 GameObject:
   m_ObjectHideFlags: 0
@@ -23570,12 +24085,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parentDisplay: {fileID: 5705543895098560569}
   dropDownMapSize: {fileID: 8188948354190352172}
+  hoverHandlerMapSize: {fileID: 3968751991403006572}
   dropDownMigration: {fileID: 8188948354706937623}
+  hoverHandlerMigration: {fileID: 6552202107790528459}
   dropDownVictory: {fileID: 8188948355666015008}
+  hoverHandlerVictory: {fileID: 980508741827315400}
   dropDownCooldown: {fileID: 8188948354098795530}
+  hoverHandlerCooldown: {fileID: 6720681135633235542}
   dropDownCosts: {fileID: 8188948355184861786}
+  hoverHandlerCosts: {fileID: 5541457147674281144}
   dropDownCharges: {fileID: 8188948353794205168}
+  hoverHandlerCharges: {fileID: 121324273362156901}
   dropDownThreat: {fileID: 8188948354645233815}
+  hoverHandlerThreat: {fileID: 6728102856974996465}
   biomeDropdownUIItems:
   - {fileID: 7435605765160622060}
   - {fileID: 746800518149541028}
@@ -23589,6 +24111,7 @@ MonoBehaviour:
   - {fileID: 3950084219381592806}
   btnAddFaction: {fileID: 6350614516003059335}
   txtVillages: {fileID: 8534945756494729046}
+  tooltipPosition: {fileID: 8487008390294702272}
 --- !u!1 &8188948355464828358
 GameObject:
   m_ObjectHideFlags: 0
@@ -24599,6 +25122,9 @@ GameObject:
   - component: {fileID: 8188948355666015022}
   - component: {fileID: 8188948355666015023}
   - component: {fileID: 8188948355666015008}
+  - component: {fileID: 980508741827315400}
+  - component: {fileID: 603265979893645148}
+  - component: {fileID: 7661605194844033378}
   m_Layer: 5
   m_Name: Dropdown
   m_TagString: Untagged
@@ -24674,7 +25200,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8188948355666015010}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b743370ac3e4ec2a1668f5455a8ef8a, type: 3}
+  m_Script: {fileID: 11500000, guid: f1bb3bc7115842cab3df99f9e29b0513, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -24727,6 +25253,67 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_AlphaFadeSpeed: 0.15
+--- !u!114 &980508741827315400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948355666015010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 1
+  testField: 
+--- !u!223 &603265979893645148
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948355666015010}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &7661605194844033378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188948355666015010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &8224672922162845231
 GameObject:
   m_ObjectHideFlags: 0
@@ -25460,6 +26047,7 @@ GameObject:
   - component: {fileID: 606044108488799853}
   - component: {fileID: 7171336741454666300}
   - component: {fileID: 2268220031067183493}
+  - component: {fileID: 1651227769069926024}
   m_Layer: 5
   m_Name: Dropdown
   m_TagString: Untagged
@@ -25588,6 +26176,29 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_AlphaFadeSpeed: 0.15
+--- !u!114 &1651227769069926024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8940403045810788981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be97d49975a8ba24683fa964f9c21b16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipPos: {fileID: 0}
+  tooltipHeader: 
+  ignoreInteractable: 0
+  onHoverOverAction:
+    m_PersistentCalls:
+      m_Calls: []
+  onHoverExitAction:
+    m_PersistentCalls:
+      m_Calls: []
+  executeHoverEnterActionPerFrame: 0
+  testField: 
 --- !u!1 &9034065202098546674
 GameObject:
   m_ObjectHideFlags: 0

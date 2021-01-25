@@ -58,34 +58,17 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public JOB_OWNER ownerType => JOB_OWNER.FACTION;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Faction;
     public System.Type serializedData => typeof(SaveDataFaction);
-    public RACE race {
-        get {
-            switch (factionType.type) {
-                case FACTION_TYPE.Elven_Kingdom:
-                    return RACE.ELVES;
-                case FACTION_TYPE.Human_Empire:
-                    return RACE.HUMANS;
-                case FACTION_TYPE.Demons:
-                    return RACE.DEMON;
-                case FACTION_TYPE.Ratmen:
-                    return RACE.RATMAN;
-                default:
-                    if (leader is Character character) {
-                        return character.race;
-                    }
-                    return RACE.HUMANS;
-            }
-        }
-    }
+    public RACE race { get; private set; }
     #endregion
 
-    public Faction(FACTION_TYPE _factionType) {
+    public Faction(FACTION_TYPE p_factionType, RACE p_race = RACE.NONE) {
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         id = UtilityScripts.Utilities.SetID(this);
         SetName(RandomNameGenerator.GenerateFactionName());
         SetFactionColor(UtilityScripts.Utilities.GetColorForFaction());
         SetFactionActiveState(true);
-        SetFactionType(_factionType);
+        SetFactionType(p_factionType);
+        race = p_race == RACE.NONE ? p_factionType.GetRaceForFactionType() : p_race;
         characters = new List<Character>();
         relationships = new Dictionary<Faction, FactionRelationship>();
         ownedSettlements = new List<BaseSettlement>();
@@ -120,6 +103,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         emblem = FactionManager.Instance.GetFactionEmblem(data);
         FactionManager.Instance.SetEmblemAsUsed(emblem);
         factionColor = data.factionColor;
+        race = data.race;
         isActive = data.isActive;
         isMajorFaction = data.isMajorFaction;
         newLeaderDesignationChance = data.newLeaderDesignationChance;
@@ -178,7 +162,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
             character.SetFaction(null);
             Messenger.Broadcast(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, character, this);
-            if (isDisbanded) {
+            if (isDisbanded && factionType.type != FACTION_TYPE.Undead && factionType.type != FACTION_TYPE.Vagrants) {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "disband", providedTags: LOG_TAG.Major);
                 log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
                 log.AddLogToDatabase();
@@ -210,6 +194,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                     prevCharacterLeader.behaviourComponent.RemoveBehaviourComponent(typeof(FactionLeaderBehaviour));
                     if (!prevCharacterLeader.isSettlementRuler) {
                         prevCharacterLeader.jobComponent.RemovePriorityJob(JOB_TYPE.JUDGE_PRISONER);
+                        prevCharacterLeader.jobComponent.RemovePriorityJob(JOB_TYPE.PLACE_BLUEPRINT);
                     }
                 }
             }
@@ -219,6 +204,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                     if (isMajorNonPlayer) {
                         newCharacterLeader.behaviourComponent.AddBehaviourComponent(typeof(FactionLeaderBehaviour));
                         newCharacterLeader.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
+                        newCharacterLeader.jobComponent.AddPriorityJob(JOB_TYPE.PLACE_BLUEPRINT);
                     }
                 }
             }
@@ -546,6 +532,15 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
         }
         return count;
+    }
+    public bool HasAliveMember() {
+        for (int i = 0; i < characters.Count; i++) {
+            Character character = characters[i];
+            if (!character.isDead) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -1195,4 +1190,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
 
     }
     #endregion
+
+    
 }

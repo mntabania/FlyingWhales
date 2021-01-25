@@ -65,10 +65,10 @@ public class Region : ISavable, ILogFiller {
         neighboursWithDirection = new Dictionary<GridNeighbourDirection, Region>();
         objectsInRegionCount = new Dictionary<TILE_OBJECT_TYPE, int>();
     }
-    public Region(HexTile coreTile) : this() {
+    public Region(HexTile coreTile, string p_name = "") : this() {
         persistentID = System.Guid.NewGuid().ToString();
         id = UtilityScripts.Utilities.SetID(this);
-        name = RandomNameGenerator.GetRegionName();
+        name = string.IsNullOrEmpty(p_name) ? RandomNameGenerator.GetRegionName() : p_name;
         this.coreTile = coreTile;
         tiles = new List<HexTile>();
         shuffledNonMountainWaterTiles = new List<HexTile>();

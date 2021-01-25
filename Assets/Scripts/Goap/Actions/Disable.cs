@@ -6,7 +6,7 @@ public class Disable : GoapAction {
     public Disable() : base(INTERACTION_TYPE.DISABLE) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Magic_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON, RACE.LESSER_DEMON, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Player};
     }

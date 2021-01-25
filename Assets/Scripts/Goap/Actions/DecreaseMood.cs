@@ -6,7 +6,7 @@ public class DecreaseMood : GoapAction {
     public DecreaseMood() : base(INTERACTION_TYPE.DECREASE_MOOD) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Magic_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.DEMON, RACE.LESSER_DEMON, RACE.GHOST };
         logTags = new[] {LOG_TAG.Player, LOG_TAG.Life_Changes};
     }

@@ -120,8 +120,17 @@ public class GameManager : MonoBehaviour {
         Messenger.Broadcast(Signals.DAY_STARTED); //for the first day
         Messenger.Broadcast(Signals.MONTH_START); //for the first month
         Messenger.AddListener<KeyCode>(ControlsSignals.KEY_DOWN, OnKeyDown);
-        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
-            UIManager.Instance.ShowStartDemoScreen();
+        if (WorldSettings.Instance.worldSettingsData.IsScenarioMap() && !SaveManager.Instance.useSaveData) {
+            string message = LocalizationManager.Instance.GetLocalizedValue("Scenarios", $"{WorldSettings.Instance.worldSettingsData.worldType.ToString()}_Text", "popup_text");
+            if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+                message = UtilityScripts.Utilities.StringReplacer(message, new List<LogFillerStruct>() {
+                    new LogFillerStruct(null, PangatLooWinConditionTracker.DueDay.ToString(), LOG_IDENTIFIER.STRING_1)
+                });
+            }
+            if (!string.IsNullOrEmpty(message)) {
+                message = message.Replace("\\n", "\n");
+                UIManager.Instance.ShowStartScenario(message);    
+            }
         }
         Canvas.ForceUpdateCanvases();
     }

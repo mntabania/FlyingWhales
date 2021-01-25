@@ -3709,7 +3709,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8376527815250752655}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5dcce79a4dfc8a7488415d9acab1dcae, type: 3}
+  m_Script: {fileID: 11500000, guid: cc8eba6c016147df9fec4cd08f754ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
@@ -3733,7 +3733,7 @@ MonoBehaviour:
   - {fileID: 140912200863448021}
   - {fileID: 8490120489060921515}
   roomTemplates: []
-  wallsContributeToDamage: 1
+  wallsContributeToDamage: 0
   wallTileMap: {fileID: 7350482501924623824}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}
   rightWall: {fileID: 1585498277213060, guid: 70407332126550d4b81db31716c0b3fe, type: 3}

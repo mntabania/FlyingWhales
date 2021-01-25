@@ -14,7 +14,7 @@ public class Drop : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         actionIconString = GoapActionStateDB.Haul_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF,
         //    RACE.SPIDER, RACE.DRAGON, RACE.GOLEM, RACE.DEMON, RACE.ELEMENTAL, RACE.KOBOLD, RACE.MIMIC, RACE.ABOMINATION,
         //    RACE.CHICKEN, RACE.SHEEP, RACE.PIG, RACE.NYMPH, RACE.WISP, RACE.SLUDGE, RACE.GHOST, RACE.LESSER_DEMON, RACE.ANGEL };
@@ -157,7 +157,7 @@ public class Drop : GoapAction {
                     if (structure is DemonicStructure) {
                         if (structure is Kennel kennel) {
                             if (!kennel.HasReachedKennelCapacity()) {
-                                List<LocationGridTile> choices = structure.passableTiles.Where(t => (t.objHere == null || t.IsPassable()) && !(t.objHere is DoorTileObject)).ToList();
+                                List<LocationGridTile> choices = structure.passableTiles.Where(t => t.objHere == null || t.IsPassable()).ToList();
                                 if (choices.Count > 0) {
                                     LocationGridTile randomTile = CollectionUtilities.GetRandomElement(choices);
                                     targetCharacter.marker.PlaceMarkerAt(randomTile);
@@ -172,7 +172,7 @@ public class Drop : GoapAction {
                             List<StructureRoom> roomChoices = structure.rooms.Where(r => r.CanUnseizeCharacterInRoom(targetCharacter)).ToList();
                             if (roomChoices.Count > 0) {
                                 StructureRoom randomRoom = CollectionUtilities.GetRandomElement(roomChoices);
-                                List<LocationGridTile> choices = randomRoom.tilesInRoom.Where(t => (t.objHere == null || t.IsPassable()) && !(t.objHere is DoorTileObject)).ToList();
+                                List<LocationGridTile> choices = randomRoom.tilesInRoom.Where(t => t.objHere == null || t.IsPassable()).ToList();
                                 if (choices.Count > 0) {
                                     LocationGridTile randomTileInRoom = CollectionUtilities.GetRandomElement(choices);
                                     targetCharacter.marker.PlaceMarkerAt(randomTileInRoom);

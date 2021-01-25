@@ -1,0 +1,29 @@
+{
+    "advertisedInteractions": [],
+    "canBeTriggered": false,
+    "description": "This character is being pulled down!",
+    "effect": 2,
+    "hasOnCollideWith": false,
+    "hasOnEnterGridTile": false,
+    "hindersAttackTarget": false,
+    "hindersMovement": true,
+    "hindersPerform": true,
+    "hindersWitness": false,
+    "hindersSocials": false,
+    "hindersFullnessRecovery": false,
+    "hindersHappinessRecovery": false,
+    "hindersTirednessRecovery": false,
+    "isHidden": true,
+    "isStacking": false,
+    "level": 0,
+    "moodEffect": 0,
+    "mutuallyExclusive": [
+        ""
+    ],
+    "name": "Pulled Down",
+    "stackLimit": 0,
+    "stackModifier": 0,
+    "thoughtText": "",
+    "ticksDuration": 0,
+    "type": 0
+}

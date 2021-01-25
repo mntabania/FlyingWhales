@@ -51,7 +51,7 @@ public class VengefulGhostBehaviour : BaseMonsterBehaviour {
 
                 if (character.HasTerritory() && !character.IsInTerritory()) {
                     log += "\n-Return to territory";
-                    return character.jobComponent.PlanIdleReturnHome(out producedJob);
+                    return character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
                 } else {
                     log += "\n-Already in territory, Roam";
                     return character.jobComponent.TriggerRoamAroundTile(out producedJob);

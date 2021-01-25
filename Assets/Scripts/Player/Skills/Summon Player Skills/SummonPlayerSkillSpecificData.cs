@@ -478,3 +478,33 @@ public class RevenantData : SummonPlayerSkill {
         className = "Revenant";
     }
 }
+public class ScorpionData : SummonPlayerSkill {
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.SCORPION;
+    public override string name => "Scorpion";
+    public override string description => "Scorpion";
+    public ScorpionData() {
+        summonType = SUMMON_TYPE.Scorpion;
+        race = RACE.SCORPION;
+        className = "Scorpion";
+    }
+}
+public class HarpyData : SummonPlayerSkill {
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.HARPY;
+    public override string name => "Harpy";
+    public override string description => "Harpy";
+    public HarpyData() {
+        summonType = SUMMON_TYPE.Harpy;
+        race = RACE.HARPY;
+        className = "Harpy";
+    }
+}
+public class TritonData : SummonPlayerSkill {
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.TRITON;
+    public override string name => "Triton";
+    public override string description => "Triton";
+    public TritonData() {
+        summonType = SUMMON_TYPE.Triton;
+        race = RACE.TRITON;
+        className = "Triton";
+    }
+}

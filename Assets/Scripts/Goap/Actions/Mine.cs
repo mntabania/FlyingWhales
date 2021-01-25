@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 public class Mine : GoapAction {
     public Mine() : base(INTERACTION_TYPE.MINE) {
         actionIconString = GoapActionStateDB.Mine_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
     }

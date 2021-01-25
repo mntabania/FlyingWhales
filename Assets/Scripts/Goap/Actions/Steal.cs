@@ -8,7 +8,7 @@ public class Steal : GoapAction {
 
     public Steal() : base(INTERACTION_TYPE.STEAL) {
         actionIconString = GoapActionStateDB.Steal_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Crimes};
     }
@@ -138,7 +138,7 @@ public class Steal : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData, job);
         if (satisfied) {
             TileObject item = poiTarget as TileObject;
-            if (poiTarget.gridTileLocation != null) {
+            if (item.gridTileLocation != null) {
                 return item.characterOwner != null && !item.IsOwnedBy(actor);
             } else {
                 return item.isBeingCarriedBy != null && item.characterOwner != null && !item.IsOwnedBy(actor);

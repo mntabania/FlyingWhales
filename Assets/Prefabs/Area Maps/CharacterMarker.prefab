@@ -657,6 +657,7 @@ MonoBehaviour:
   hpBarGO: {fileID: 1700488925132308}
   hpFill: {fileID: 114503541738452620}
   aspeedFill: {fileID: 114150021298348714}
+  particleEffectParent: {fileID: 4874270362284724053}
   statusIconsParent: {fileID: 2600264644750238789}
   visualsParent: {fileID: 4833690815638556}
   mainImg: {fileID: 212044654499763036}
@@ -668,7 +669,6 @@ MonoBehaviour:
   bloodSplatterEffect: {fileID: 6358000325474896422}
   bloodSplatterEffectRenderer: {fileID: 3982679798551417162}
   additionalEffectsImg: {fileID: 7754635169517998919}
-  particleEffectParent: {fileID: 4874270362284724053}
   particleEffectParentAllowRotation: {fileID: 2878433674864331503}
   animator: {fileID: 95186138413260264}
   _animationListener: {fileID: 114755964225770220}

@@ -370,11 +370,14 @@ namespace Locations.Settlements {
         }
         public bool HasStructure(params STRUCTURE_TYPE[] type) {
             for (int i = 0; i < type.Length; i++) {
-                if (structures.ContainsKey(type[i])) {
+                if (HasStructure(type[i])) {
                     return true;
                 }
             }
             return false;
+        }
+        public bool HasStructure(STRUCTURE_TYPE type) {
+            return structures.ContainsKey(type);
         }
         public bool HasStructureForProducingResource(RESOURCE resourceType) {
             switch (resourceType) {
@@ -455,6 +458,24 @@ namespace Locations.Settlements {
             }
             return connectors;
         }
+        public bool HasAvailableStructureConnectorsBasedOnGameFeature() {
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure structure = allStructures[i];
+                if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
+                    for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
+                        StructureConnector connector = manMadeStructure.structureObj.connectors[j];
+                        if (connector.isOpen) {
+                            if (connector.tileLocation != null && connector.tileLocation.collectionOwner.isPartOfParentRegionMap &&
+                                (connector.tileLocation.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Game_Feature) || 
+                                 connector.tileLocation.collectionOwner.partOfHextile.hexTileOwner.HasNeighbourWithFeature(TileFeatureDB.Game_Feature))) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
         private List<StructureConnector> GetAvailableRockConnectors() {
             List<StructureConnector> connectors = new List<StructureConnector>();
             for (int i = 0; i < SettlementResources.rocks.Count; i++) {
@@ -520,6 +541,7 @@ namespace Locations.Settlements {
             }
             if (tiles.Contains(tile) == false) {
                 tiles.Add(tile);
+                Debug.Log($"Added tile {tile.ToString()} to settlement {name}");
                 tile.SetSettlementOnTile(this);
                 if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
                     tile.SetCorruption(true);
@@ -537,6 +559,7 @@ namespace Locations.Settlements {
         }
         public virtual bool RemoveTileFromSettlement(HexTile tile) {
             if (tiles.Remove(tile)) {
+                Debug.Log($"Removed tile {tile.ToString()} from settlement {name}");
                 tile.SetSettlementOnTile(null);
                 if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
                     tile.SetCorruption(false);
@@ -794,6 +817,13 @@ namespace Locations.Settlements {
                 }
             }
             return objs;
+        }
+        public int GetNumberOfTileObjectsThatMeetCriteria(TILE_OBJECT_TYPE tileObjectType, System.Func<TileObject, bool> validityChecker) {
+            int count = 0;
+            for (int i = 0; i < allStructures.Count; i++) {
+                count += allStructures[i].GetNumberOfTileObjectsThatMeetCriteria(tileObjectType, validityChecker);
+            }
+            return count;
         }
         #endregion
 

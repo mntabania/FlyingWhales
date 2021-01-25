@@ -149,7 +149,7 @@ namespace Tutorial {
         }
         /// <summary>
         /// Instantiate all Important tutorials. NOTE: This is called after Start Popup is hidden
-        /// <see cref="DemoUI.HideStartDemoScreen"/>
+        /// <see cref="PopUpScreensUI.HideStartDemoScreen"/>
         /// </summary>
         public void InstantiateImportantTutorials() {
             if (SettingsManager.Instance.settings.skipTutorials) {

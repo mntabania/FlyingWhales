@@ -8,7 +8,7 @@ using UnityEngine;
 public class PathfindingManager : BaseMonoBehaviour {
 
     public static PathfindingManager Instance = null;
-    private const float nodeSize = 0.4f; //0.3
+    private const float nodeSize = 0.35f; //0.3
 
     [SerializeField] private AstarPath aStarPath;
 

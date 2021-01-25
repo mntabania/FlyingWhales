@@ -12,6 +12,7 @@ public class CombatState : CharacterState {
 
     private int _currentAttackTimer; //When this timer reaches max, remove currently hostile target from hostile list
     private bool _hasTimerStarted;
+    private const float Wall_Attack_Range_Tolerance = 0.4f;
 
     public bool isAttacking { get; private set; } //if not attacking, it is assumed that the character is fleeing
     public IPointOfInterest currentClosestHostile { get; private set; }
@@ -728,6 +729,9 @@ public class CombatState : CharacterState {
                 // float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.worldPosition);
                 // Profiler.EndSample();
                 float distance = Vector2.Distance(stateComponent.owner.marker.transform.position, currentClosestHostile.worldPosition);
+                if (stateComponent.owner.characterClass.rangeType == RANGE_TYPE.MELEE && currentClosestHostile.IsUnpassable()) {
+                    distance -= Wall_Attack_Range_Tolerance; //because sometimes melee characters cannot reach wall/door
+                }
                 if (stateComponent.owner.characterClass.attackRange >= distance) {
                     if (stateComponent.owner.movementComponent.isStationary) {
                         Attack();

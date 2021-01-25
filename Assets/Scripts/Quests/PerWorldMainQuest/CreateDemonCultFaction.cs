@@ -29,7 +29,7 @@ namespace Quests {
         }
 
         private string GetRecruitFifteenCultist(int p_remainingCultistcount) {
-            return $"Remaing cultist to recruit: "; // /{totalCharactersToEliminate.ToString()}
+            return $"Remaing cultist to recruit: " + (15 - p_remainingCultistcount); // /{totalCharactersToEliminate.ToString()}
         }
         #endregion
     }

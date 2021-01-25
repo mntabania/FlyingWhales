@@ -6,11 +6,15 @@ public class SaveDataInnerMap : SaveData<InnerTileMap> {
 
     public float xSeed;
     public float ySeed;
+    public float biomeTransitionXSeed;
+    public float biomeTransitionYSeed;
     public Dictionary<Point, SaveDataLocationGridTile> tileSaves;
     
     public override void Save(InnerTileMap innerTileMap) {
         xSeed = innerTileMap.xSeed;
         ySeed = innerTileMap.ySeed;
+        biomeTransitionXSeed = innerTileMap.biomeTransitionXSeed;
+        biomeTransitionYSeed = innerTileMap.biomeTransitionYSeed;
         tileSaves = new Dictionary<Point, SaveDataLocationGridTile>();
         for (int x = 0; x < innerTileMap.width; x++) {
             for (int y = 0; y < innerTileMap.height; y++) {

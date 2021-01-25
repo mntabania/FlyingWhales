@@ -361,7 +361,6 @@ namespace Inner_Maps {
                 //if this tile's map object is shown and is showing a visual, update it's sprite to use the updated sprite.
                 genericTileObject.mapObjectVisual.SetVisual(parentMap.groundTilemap.GetSprite(localPlace));
             }
-
             UpdateGroundTypeBasedOnAsset();
             if (updateEdges) {
                 CreateSeamlessEdgesForSelfAndNeighbours();
@@ -607,6 +606,16 @@ namespace Inner_Maps {
             if (hasSnareTrap) {
                 TriggerSnareTrap(character);
             }
+
+            Character scorpionCharacter = HasRaceHere(RACE.SCORPION);
+            Scorpion scorpion = scorpionCharacter as Scorpion;
+            if (scorpion != null && !scorpion.isDead && scorpion.limiterComponent.canPerform && scorpion.limiterComponent.canMove && scorpion != character && scorpion.heldCharacter == null) {
+                if (character.canBeTargetedByLandActions) {
+                    scorpion.SetHeldCharacter(character);
+                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Pulled_Down, scorpion);
+                }
+            }
+
             if (isCorrupted) {
                 if(!character.isDead && character.limiterComponent.canMove && character.limiterComponent.canPerform) {
                     if (!character.movementComponent.hasMovedOnCorruption) {
@@ -676,6 +685,16 @@ namespace Inner_Maps {
             } else {
                 character.movementComponent.SetHasMovedOnCorruption(false);
             }
+        }
+
+        public Character HasRaceHere(RACE p_lookUprace) {
+            Character found = null;
+            charactersHere.ForEach((eachCharacter) => {
+                if (eachCharacter.race == p_lookUprace) {
+                    found = eachCharacter;
+                }
+            });
+            return found;
         }
         public void RemoveCharacterHere(Character character) {
             charactersHere.Remove(character);
@@ -1008,27 +1027,58 @@ namespace Inner_Maps {
             }
             return false;
         }
-        public LocationGridTile GetNearestUnoccupiedTileFromThis() {
-            List<LocationGridTile> unoccupiedNeighbours = UnoccupiedNeighbours;
-            if (unoccupiedNeighbours.Count == 0) {
-                if (structure != null) {
-                    LocationGridTile nearestTile = null;
-                    float nearestDist = 99999f;
-                    for (int i = 0; i < structure.unoccupiedTiles.Count; i++) {
-                        LocationGridTile currTile = structure.unoccupiedTiles.ElementAt(i);
-                        if (currTile != this && currTile.groundType != Ground_Type.Water) {
-                            float dist = Vector2.Distance(currTile.localLocation, localLocation);
-                            if (dist < nearestDist) {
-                                nearestTile = currTile;
-                                nearestDist = dist;
-                            }
-                        }
-                    }
-                    return nearestTile;
-                }
-            } else {
-                return unoccupiedNeighbours[Random.Range(0, unoccupiedNeighbours.Count)];
+        //public LocationGridTile GetNearestUnoccupiedTileFromThis() {
+        //    List<LocationGridTile> unoccupiedNeighbours = UnoccupiedNeighbours;
+        //    if (unoccupiedNeighbours.Count == 0) {
+        //        if (structure != null) {
+        //            LocationGridTile nearestTile = null;
+        //            float nearestDist = 99999f;
+        //            for (int i = 0; i < structure.unoccupiedTiles.Count; i++) {
+        //                LocationGridTile currTile = structure.unoccupiedTiles.ElementAt(i);
+        //                if (currTile != this && currTile.groundType != Ground_Type.Water) {
+        //                    float dist = Vector2.Distance(currTile.localLocation, localLocation);
+        //                    if (dist < nearestDist) {
+        //                        nearestTile = currTile;
+        //                        nearestDist = dist;
+        //                    }
+        //                }
+        //            }
+        //            return nearestTile;
+        //        }
+        //    } else {
+        //        return unoccupiedNeighbours[Random.Range(0, unoccupiedNeighbours.Count)];
+        //    }
+        //    return null;
+        //}
+        public LocationGridTile GetNeareastTileFromThisThatMeetCriteria(Func<LocationGridTile, bool> criteria, List<LocationGridTile> checkedTiles) {
+            if(checkedTiles == null) {
+                checkedTiles = ObjectPoolManager.Instance.CreateNewGridTileList();
             }
+            if (!checkedTiles.Contains(this)) {
+                checkedTiles.Add(this);
+                if (criteria.Invoke(this)) {
+                    ObjectPoolManager.Instance.ReturnGridTileListToPool(checkedTiles);
+                    return this;
+                }
+            }
+            for (int i = 0; i < neighbourList.Count; i++) {
+                LocationGridTile tile = neighbourList[i];
+                if (!checkedTiles.Contains(tile)) {
+                    checkedTiles.Add(tile);
+                    if (criteria.Invoke(tile)) {
+                        ObjectPoolManager.Instance.ReturnGridTileListToPool(checkedTiles);
+                        return tile;
+                    }
+                }
+            }
+            for (int i = 0; i < neighbourList.Count; i++) {
+                LocationGridTile tile = neighbourList[i];
+                LocationGridTile chosenTile = tile.GetNeareastTileFromThisThatMeetCriteria(criteria, checkedTiles);
+                if (chosenTile != null) {
+                    return chosenTile;
+                }
+            }
+            ObjectPoolManager.Instance.ReturnGridTileListToPool(checkedTiles);
             return null;
         }
         public LocationStructure GetNearestInteriorStructureFromThis() {
@@ -1514,7 +1564,7 @@ namespace Inner_Maps {
             return tiles;
         }
         public bool IsPassable() {
-            return (objHere == null || !(objHere is BlockWall)) && groundType != Ground_Type.Water;
+            return (objHere == null || !objHere.IsUnpassable()) && groundType != Ground_Type.Water;
         }
         private LocationGridTile GetTargetTileToGoToRegion(Region region) {
             //if (currentRegion != null) {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 namespace Inner_Maps {
@@ -109,6 +110,28 @@ namespace Inner_Maps {
                 }
             }
             p_tile = null;
+            return false;
+        }
+        public bool HasDifferentBiomeNeighbour(out BIOMES p_diffBiome, out LocationGridTileCollection p_neighbour) {
+            if (HasDifferentBiomeNeighbour(GridNeighbourDirection.West, out p_diffBiome, out p_neighbour)) return true;
+            if (HasDifferentBiomeNeighbour(GridNeighbourDirection.East, out p_diffBiome, out p_neighbour)) return true;
+            if (HasDifferentBiomeNeighbour(GridNeighbourDirection.South, out p_diffBiome, out p_neighbour)) return true;
+            if (HasDifferentBiomeNeighbour(GridNeighbourDirection.North, out p_diffBiome, out p_neighbour)) return true;
+            else return false;
+        }
+        private bool HasDifferentBiomeNeighbour(GridNeighbourDirection p_dir, out BIOMES p_diffBiome, out LocationGridTileCollection p_neighbour) {
+            if (neighbours.ContainsKey(p_dir)) {
+                BIOMES myBiome = GetConnectedHextileOrNearestHextile().biomeType;
+                LocationGridTileCollection collection = neighbours[p_dir];
+                HexTile connectedHextileOrNearestHextile = collection.GetConnectedHextileOrNearestHextile();
+                if (collection.isPartOfParentRegionMap && connectedHextileOrNearestHextile.biomeType != myBiome) {
+                    p_diffBiome = connectedHextileOrNearestHextile.biomeType;
+                    p_neighbour = collection;
+                    return true;    
+                }
+            }
+            p_diffBiome = BIOMES.NONE;
+            p_neighbour = null;
             return false;
         }
         public HexTile GetNearestPlainHexTileWithNoResident() {

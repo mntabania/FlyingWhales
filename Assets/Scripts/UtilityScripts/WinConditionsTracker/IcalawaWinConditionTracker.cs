@@ -4,6 +4,8 @@ using Traits;
 
 public class IcalawaWinConditionTracker : WinconditionTracker {
 
+    public const int TotalCharactersToKill = 5;
+    
     private System.Action<Character, int> _characterEliminatedAction;
     private System.Action<Character> _characterAddedAsTargetAction;
     private System.Action<Character> _characterSuccessChangeTraitToPsychopath;
@@ -15,7 +17,7 @@ public class IcalawaWinConditionTracker : WinconditionTracker {
     }
 
     public interface IListenerChangeTraits {
-        void OnCharacterChangeTrait(Character p_character);
+        void OnCharacterGainedPsychopathTrait(Character p_character);
     }
     #endregion
 
@@ -96,7 +98,6 @@ public class IcalawaWinConditionTracker : WinconditionTracker {
                 _characterSuccessChangeTraitToPsychopath?.Invoke(p_character);
             }
         }
-        
     }
 
     private void CheckIfCharacterIsEliminated(Character p_character) {
@@ -119,10 +120,10 @@ public class IcalawaWinConditionTracker : WinconditionTracker {
     }
 
     public void SubscribeToChangeTraitEvents(IcalawaWinConditionTracker.IListenerChangeTraits p_listener) {
-        _characterSuccessChangeTraitToPsychopath += p_listener.OnCharacterChangeTrait;
+        _characterSuccessChangeTraitToPsychopath += p_listener.OnCharacterGainedPsychopathTrait;
     }
     public void UnsubscribeToChangeTraitEvents(IcalawaWinConditionTracker.IListenerChangeTraits p_listener) {
-        _characterSuccessChangeTraitToPsychopath -= p_listener.OnCharacterChangeTrait;
+        _characterSuccessChangeTraitToPsychopath -= p_listener.OnCharacterGainedPsychopathTrait;
     }
 }
 

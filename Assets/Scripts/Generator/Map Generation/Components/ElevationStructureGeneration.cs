@@ -271,10 +271,12 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
 		blockWall.SetWallType(WALL_TYPE.Stone);
 		structure.AddPOI(blockWall, tile);
+		tile.SetIsDefault(false);
 	}
 	private void SetAsMountainGround(LocationGridTile tile, LocationStructure structure) {
 		tile.SetStructure(structure);
 		tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.caveGroundTile);
+		tile.SetIsDefault(false);
 	}
 	#endregion
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace Quests.Steps {
-    public class RecruitFifteenMembersDemonCultStep : QuestStep, IcalawaWinConditionTracker.IListenerChangeTraits {
+    public class RecruitFifteenMembersDemonCultStep : QuestStep, PittoWinConditionTracker.IListenerChangeTraits {
         private readonly Func<int, string> _descriptionGetter;
 
         public RecruitFifteenMembersDemonCultStep(Func<int, string> descriptionGetter) : base(string.Empty) {
@@ -24,7 +24,7 @@ namespace Quests.Steps {
         private void CheckForCompletion(Character p_character) {
             if ((QuestManager.Instance.winConditionTracker as PittoWinConditionTracker).cultists.Count >= 15){
                 Complete();
-                Messenger.Broadcast(PlayerSignals.WIN_GAME);
+                Messenger.Broadcast(PlayerSignals.WIN_GAME, "You've successfully setup a sizable Demon Cult. Congratulations!");
             }
             
         }

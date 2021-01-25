@@ -25,7 +25,7 @@ public class RevenantBehaviour : BaseMonsterBehaviour {
             }
             if (character.HasHome() && !character.IsAtHome()) {
                 log += "\n-Return to territory";
-                return character.jobComponent.PlanIdleReturnHome(out producedJob);
+                return character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
             } else {
                 log += "\n-Already in territory or has no territory, Roam";
                 return character.jobComponent.TriggerRoamAroundTile(out producedJob);

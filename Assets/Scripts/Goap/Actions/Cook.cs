@@ -15,7 +15,7 @@ public class Cook : GoapAction {
         //actionLocationType = ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         logTags = new[] {LOG_TAG.Needs};
     }
 

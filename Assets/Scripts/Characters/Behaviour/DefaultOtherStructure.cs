@@ -14,7 +14,7 @@ public class DefaultOtherStructure : CharacterBehaviourComponent {
             log += "\n-If character has a Home Structure or Territory, Return Home";
             if ((character.homeStructure != null && !character.homeStructure.hasBeenDestroyed) || character.HasTerritory()) {
                 log += $"\n  -{character.name} will do action Return Home";
-                return character.jobComponent.PlanIdleReturnHome(out producedJob);
+                return character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
             } else {
                 //log += "\n-Character does not have home structure or territory, 25% chance to set home";
                 //if (UnityEngine.Random.Range(0, 100) < 25) {

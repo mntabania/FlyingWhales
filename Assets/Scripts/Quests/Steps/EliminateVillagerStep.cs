@@ -15,6 +15,10 @@ namespace Quests.Steps {
         protected override void UnSubscribeListeners() {
             (QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).Unsubscribe(this);
         }
+        public override void Activate() {
+            base.Activate();
+            CheckForCompletion();
+        }
 
         #region Listeners
         public void OnCharacterEliminated(Character p_character, int count) {
@@ -29,7 +33,7 @@ namespace Quests.Steps {
         private void CheckForCompletion() {
             if ((QuestManager.Instance.winConditionTracker as OonaWinConditionTracker).totalCharactersToEliminate <= 0) {
                 Complete();
-                Messenger.Broadcast(PlayerSignals.WIN_GAME);
+                Messenger.Broadcast(PlayerSignals.WIN_GAME, "You managed to wipe out all Villagers. Congratulations!");
             }
         }
         #endregion

@@ -162,19 +162,19 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
 			chosenTemplate = new WorldMapTemplate() {
 				regionCount = 4,
-				worldMapWidth = 14,
-				worldMapHeight = 12,
+				worldMapWidth = 16,
+				worldMapHeight = 14,
 				regions = new Dictionary<int, RegionTemplate[]>() {
 					{
 						0, new[] {
-							new RegionTemplate(7, 6),
-							new RegionTemplate(7, 6),
+							new RegionTemplate(8, 7),
+							new RegionTemplate(8, 7),
 						}
 					},
 					{
 						1, new[] {
-							new RegionTemplate(7, 6),
-							new RegionTemplate(7, 6),
+							new RegionTemplate(8, 7),
+							new RegionTemplate(8, 7),
 						}
 					}
 				}

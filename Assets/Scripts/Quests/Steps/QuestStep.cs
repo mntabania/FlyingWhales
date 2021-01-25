@@ -57,9 +57,15 @@ namespace Quests.Steps {
         /// <summary>
         /// Activate this quest step. This means that this step will start listening for its completion.
         /// </summary>
-        public void Activate() {
+        public virtual void Activate() {
             SubscribeListeners();
             Messenger.Broadcast(PlayerQuestSignals.QUEST_STEP_ACTIVATED, this);
+            if (CheckIfStepIsAlreadyCompleted()) {
+                Complete();
+            }
+        }
+        protected virtual bool CheckIfStepIsAlreadyCompleted() {
+            return false;
         }
         #endregion
 

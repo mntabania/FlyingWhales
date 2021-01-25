@@ -45,41 +45,49 @@ namespace Quests {
             Messenger.RemoveListener<List<Character>>(PlayerQuestSignals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
             Messenger.RemoveListener<Character, DemonicStructure>(CharacterSignals.CHARACTER_HIT_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
         }
-
-        private void InitializeQuestTracker() {
-            switch (WorldSettings.Instance.worldSettingsData.worldType) {
-                case WorldSettingsData.World_Type.Oona:
-                winConditionTracker = new OonaWinConditionTracker();
-                break;
-                case WorldSettingsData.World_Type.Icalawa:
-                winConditionTracker = new IcalawaWinConditionTracker();
-                break;
-                case WorldSettingsData.World_Type.Pangat_Loo:
-                winConditionTracker = new PangatlooWinConditionTracker();
-                break;
-                case WorldSettingsData.World_Type.Affatt:
-                winConditionTracker = new AffatWinConditionTracker();
-                break;
-                case WorldSettingsData.World_Type.Zenko:
-                winConditionTracker = new ZenkoWinConditionTracker();
-                break;
-                case WorldSettingsData.World_Type.Aneem:
-                winConditionTracker = new AneemWinConditionTracker();
-                break;
-                case WorldSettingsData.World_Type.Pitto:
-                winConditionTracker = new PittoWinConditionTracker();
-                break;
-                default:
-                winConditionTracker = new OonaWinConditionTracker();
-                break;
-            }
-        }
+        
         public void LoadWinConditionTracker(SaveDataWinConditionTracker data) {
             InitializeQuestTracker();
             winConditionTracker.Initialize(CharacterManager.Instance.allCharacters);
             winConditionTracker?.LoadReferences(data);
         }
-        
+
+        #region Win Condition
+        private void InitializeQuestTracker() {
+            switch (WorldSettings.Instance.worldSettingsData.worldType) {
+                case WorldSettingsData.World_Type.Oona:
+                    winConditionTracker = new OonaWinConditionTracker();
+                    break;
+                case WorldSettingsData.World_Type.Icalawa:
+                    winConditionTracker = new IcalawaWinConditionTracker();
+                    break;
+                case WorldSettingsData.World_Type.Pangat_Loo:
+                    winConditionTracker = new PangatLooWinConditionTracker();
+                    break;
+                case WorldSettingsData.World_Type.Affatt:
+                    winConditionTracker = new AffattWinConditionTracker();
+                    break;
+                case WorldSettingsData.World_Type.Zenko:
+                    winConditionTracker = new ZenkoWinConditionTracker();
+                    break;
+                case WorldSettingsData.World_Type.Aneem:
+                    winConditionTracker = new AneemWinConditionTracker();
+                    break;
+                case WorldSettingsData.World_Type.Pitto:
+                    winConditionTracker = new PittoWinConditionTracker();
+                    break;
+                default:
+                    winConditionTracker = new OonaWinConditionTracker();
+                    break;
+            }
+        }
+        public T GetWinConditionTracker<T>() where T : WinconditionTracker {
+            if (winConditionTracker is T converted) {
+                return converted;
+            }
+            throw new Exception($"Problem trying to convert Win Condition {winConditionTracker}");
+        }
+        #endregion
         
         #region Initialization
         public void InitializeAfterGameLoaded() {

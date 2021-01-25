@@ -21,6 +21,7 @@ public class MovementComponent : CharacterComponent {
     public bool isStationary { get; private set; }
     public bool cameFromWurmHole { get; private set; }
     public bool isTravellingInWorld { get; private set; }
+    public bool isFlying { get; private set; }
     public Region targetRegionToTravelInWorld { get; private set; }
     public List<LocationStructure> structuresToAvoid { get; }
     public int enableDiggingCounter { get; private set; }
@@ -55,6 +56,7 @@ public class MovementComponent : CharacterComponent {
         isStationary = data.isStationary;
         cameFromWurmHole = data.cameFromWurmHole;
         isTravellingInWorld = data.isTravellingInWorld;
+        isFlying = data.isFlying;
         enableDiggingCounter = data.enableDiggingCounter;
         avoidSettlementsCounter = data.avoidSettlementsCounter;
         traversableTags = data.traversableTags;
@@ -135,7 +137,9 @@ public class MovementComponent : CharacterComponent {
                     || owner.currentActionNode.associatedJobType == JOB_TYPE.NEUTRALIZE_DANGER
                     || owner.currentActionNode.associatedJobType == JOB_TYPE.APPREHEND
                     || owner.currentActionNode.associatedJobType == JOB_TYPE.REPORT_CORRUPTED_STRUCTURE
-                    || owner.currentActionNode.associatedJobType == JOB_TYPE.RESTRAIN) {
+                    || owner.currentActionNode.associatedJobType == JOB_TYPE.RESTRAIN
+                    || (owner.currentActionNode.associatedJobType == JOB_TYPE.CAPTURE_CHARACTER && owner.race == RACE.HARPY)
+                    || owner.currentActionNode.associatedJobType == JOB_TYPE.TRITON_KIDNAP) {
                     SetIsRunning(true);
                     return;
                 }
@@ -173,6 +177,16 @@ public class MovementComponent : CharacterComponent {
     }
     public void SetCameFromWurmHole(bool state) {
         cameFromWurmHole = state;
+    }
+    public void SetIsFlying(bool state) {
+        if(isFlying != state) {
+            isFlying = state;
+            if (isFlying) {
+                SetTagAsTraversable(InnerMapManager.Obstacle_Tag); //flying characters can traverse the obstacles tag
+            } else {
+                SetTagAsUnTraversable(InnerMapManager.Obstacle_Tag);
+            }
+        }
     }
 
     #region Listeners
@@ -294,7 +308,7 @@ public class MovementComponent : CharacterComponent {
     /// <returns>True or false.</returns>
     public bool HasPathTo(LocationGridTile toTile) {
         LocationGridTile fromTile = owner.gridTileLocation;
-        if (!CanDig()) {
+        if (!CanDig() && !isFlying) {
             if (owner.traitContainer.HasTrait("Vampire")) {
                 //Always has path if the character is a vampire and there are no non hostile villager in range that considers vampire a crime because he can just switch to bat form and move through walls
                 //if (!owner.crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
@@ -309,11 +323,11 @@ public class MovementComponent : CharacterComponent {
             if (fromTile == null || toTile == null) { return false; }
             if (fromTile == toTile) { return true; }
 
-            if(toTile.groundType != LocationGridTile.Ground_Type.Water) {
-                //If digging is enabled, always return true, because the digging will handle the blocked path
-                return true;
+            //If digging is enabled, always return true, because the digging will handle the blocked path
+            if (toTile.groundType == LocationGridTile.Ground_Type.Water && !isFlying) {
+                return false;
             }
-            return false;
+            return true;
         }
     }
     public bool HasPathTo(HexTile toTile) {
@@ -330,15 +344,15 @@ public class MovementComponent : CharacterComponent {
     /// <returns>True or false.</returns>
     public bool HasPathToEvenIfDiffRegion(LocationGridTile toTile) {
         LocationGridTile fromTile = owner.gridTileLocation;
-        if (CanDig()) {
+        if (CanDig() || isFlying) {
             if (fromTile == null || toTile == null) { return false; }
             if (fromTile == toTile) { return true; }
 
             //If digging is enabled, always return true, because the digging will handle the blocked path
-            if (toTile.groundType != LocationGridTile.Ground_Type.Water) {
-                return true;
+            if (toTile.groundType == LocationGridTile.Ground_Type.Water && !isFlying) {
+                return false;
             }
-            return false;
+            return true;
         } else {
             if (owner.traitContainer.HasTrait("Vampire")) {
                 //Always has path if the character is a vampire and there are no non hostile villager in range that considers vampire a crime because he can just switch to bat form and move through walls
@@ -363,11 +377,14 @@ public class MovementComponent : CharacterComponent {
     /// <returns>True or false.</returns>
     public bool HasPathToEvenIfDiffRegion(LocationGridTile toTile, NNConstraint constraint) {
         LocationGridTile fromTile = owner.gridTileLocation;
-        if (CanDig()) {
+        if (CanDig() || isFlying) {
             if (fromTile == null || toTile == null) { return false; }
             if (fromTile == toTile) { return true; }
 
             //If digging is enabled, always return true, because the digging will handle the blocked path
+            if (toTile.groundType == LocationGridTile.Ground_Type.Water && !isFlying) {
+                return false;
+            }
             return true;
         } else {
             if (owner.traitContainer.HasTrait("Vampire")) {
@@ -635,6 +652,7 @@ public class SaveDataMovementComponent : SaveData<MovementComponent> {
     public bool isStationary;
     public bool cameFromWurmHole;
     public bool isTravellingInWorld;
+    public bool isFlying;
     public string targetRegionToTravelInWorld;
     public List<string> structuresToAvoid;
 
@@ -656,6 +674,7 @@ public class SaveDataMovementComponent : SaveData<MovementComponent> {
         isStationary = data.isStationary;
         cameFromWurmHole = data.cameFromWurmHole;
         isTravellingInWorld = data.isTravellingInWorld;
+        isFlying = data.isFlying;
 
         if(data.targetRegionToTravelInWorld != null) {
             targetRegionToTravelInWorld = data.targetRegionToTravelInWorld.persistentID;

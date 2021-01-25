@@ -4,7 +4,7 @@
     
     public Neutralize() : base(INTERACTION_TYPE.NEUTRALIZE) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         actionLocationType = ACTION_LOCATION_TYPE.TARGET_IN_VISION;
         logTags = new[] {LOG_TAG.Work};

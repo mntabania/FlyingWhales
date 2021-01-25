@@ -126,7 +126,7 @@ public class WorldSettingsData {
         factionSettings.AllowNewFactions();
         villageSettings.SetBlessedMigrantsState(true);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Puppet_Master);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Icalawa);
     }
     private void SetPangatLooWorldSettings() {
         Debug.Log("Set world settings as Pangat Loo");
@@ -153,7 +153,7 @@ public class WorldSettingsData {
         factionSettings.BlockNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.BlockFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Affatt);
     }
     private void SetZenkoWorldSettings() {
         Debug.Log("Set world settings as Zenko");
@@ -166,7 +166,7 @@ public class WorldSettingsData {
         factionSettings.BlockNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Puppet_Master);
     }
     private void SetAneemWorldSettings() {
         Debug.Log("Set world settings as Aneem");

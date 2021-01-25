@@ -10,7 +10,7 @@ public class Meditate : GoapAction {
     public Meditate() : base(INTERACTION_TYPE.MEDITATE) {
         actionIconString = GoapActionStateDB.Sad_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON, RACE.DEMON, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Needs};
     }

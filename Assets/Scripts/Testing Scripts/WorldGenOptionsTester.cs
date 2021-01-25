@@ -10,6 +10,6 @@ public class WorldGenOptionsTester : MonoBehaviour {
     private void Awake() {
         RandomNameGenerator.Initialize();
         FactionEmblemRandomizer.Initialize(factionEmblems);
-        controller.InitUI();
+        controller.InitUI(null);
     }
 }

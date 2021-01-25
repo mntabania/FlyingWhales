@@ -104,7 +104,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CharacterJobTriggerComponent jobComponent { get; private set; }
     public ReactionComponent reactionComponent { get; private set; }
     public LogComponent logComponent { get; private set; }
-    public CombatComponent combatComponent { get; private set; }
+    public CombatComponent combatComponent { get; protected set; }
     public RumorComponent rumorComponent { get; private set; }
     public AssumptionComponent assumptionComponent { get; private set; }
     public MovementComponent movementComponent { get; private set; }
@@ -157,6 +157,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isNotSummonAndDemon => (this is Summon) == false && minion == null;
     public bool isNotSummonAndDemonAndZombie => (this is Summon) == false && minion == null && characterClass.IsZombie();
     public bool isConsideredRatman => faction?.factionType.type == FACTION_TYPE.Ratmen && race == RACE.RATMAN;
+    public bool canBeTargetedByLandActions => !movementComponent.isFlying && !reactionComponent.isHidden && !traitContainer.HasTrait("Disabler", "DeMooder");
 
     public int maxHP => combatComponent.maxHP;
     public Vector3 worldPosition => marker.transform.position;
@@ -1741,7 +1742,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return false;
     } 
     public bool HasHome() {
-        return homeSettlement != null || homeStructure != null || HasTerritory();
+        return homeSettlement != null || (homeStructure != null && !homeStructure.hasBeenDestroyed) || HasTerritory();
     }
     public bool IsAtHome() {
         if (homeSettlement != null) {
@@ -2595,27 +2596,33 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //hp was increased
             Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RECOVER_HP, this as IPointOfInterest);
         }
-        if (triggerDeath && currentHP <= 0) {
-            if(source != null && source != this) {
-                if (source is Character character) {
-                    Death("attacked", responsibleCharacter: character);
+        if (currentHP <= 0) { //triggerDeath && 
+            if (triggerDeath) {
+                if (source != null && source != this) {
+                    if (source is Character character) {
+                        Death("attacked", responsibleCharacter: character);
+                    } else {
+                        string cause = "attacked";
+                        cause += $"_{source}";
+                        Death(cause);
+                    }
                 } else {
-                    string cause = "attacked";
-                    cause += $"_{source}";
-                    Death(cause);
+                    Death();
                 }
-            } else {
-                Death();
             }
-        } else if (amount < 0 && IsHealthCriticallyLow() && traitContainer.HasTrait("Coward", "Vampire") && traitContainer.HasTrait("Berserked") == false && !characterClass.IsZombie()) { //do not make berserked characters trigger flight
-            bool willflight = true;
-            if (traitContainer.HasTrait("Vampire") && crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
-                willflight = false;
+        } else if (amount < 0) {
+            if (IsHealthCriticallyLow()) {
+                Messenger.Broadcast(CharacterSignals.HEALTH_CRITICALLY_LOW, this);
+                if(traitContainer.HasTrait("Coward", "Vampire") && traitContainer.HasTrait("Berserked") == false && !characterClass.IsZombie()) {  //do not make berserked characters trigger flight
+                    bool willflight = true;
+                    if (traitContainer.HasTrait("Vampire") && crimeComponent.HasNonHostileVillagerInRangeThatConsidersCrimeTypeACrime(CRIME_TYPE.Vampire)) {
+                        willflight = false;
+                    }
+                    if (willflight) {
+                        combatComponent.FlightAll("critically low health");
+                    }
+                }
             }
-            if (willflight) {
-                combatComponent.FlightAll("critically low health");    
-            }
-            // Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
         }
     }
     public void HPRecovery(float maxHPPercentage) {
@@ -2780,7 +2787,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //Added checking, because character can sometimes change home from dwelling to nothing.
         if(dwelling != null && dwelling.AddResident(this) && GameManager.Instance.gameHasStarted) {
             if (isNormalCharacter) {
-                jobComponent.PlanReturnHomeUrgent();
+                jobComponent.PlanReturnHome(JOB_TYPE.RETURN_HOME_URGENT);
             }
             return true;
         }
@@ -3021,7 +3028,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         ProcessForcedCancelJobsOnTickEnded();
         moodComponent.OnTickEnded();
         interruptComponent.OnTickEnded();
-        stateComponent.OnTickEnded();
+        //stateComponent.OnTickEnded();
         ProcessTraitsOnTickEnded();
         TryProcessTraitsOnTickEndedWhileStationaryOrUnoccupied();
         EndTickPerformJobs();
@@ -3029,7 +3036,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     protected virtual void OnHourStarted() {
         ProcessTraitsOnHourStarted();
         if (needsComponent.HasNeeds()) {
+            needsComponent.PlanScheduledFullnessRecovery();
             needsComponent.PlanScheduledTirednessRecovery();
+            needsComponent.PlanScheduledSecondHappinessRecovery();
         }
     }
     protected void StartTickGoapPlanGeneration() {
@@ -3037,11 +3046,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
         //so start doing actions again
         //SetHasAlreadyAskedForPlan(false);
-        if (needsComponent.HasNeeds()) {
-            needsComponent.PlanScheduledFullnessRecovery();
-            //needsComponent.PlanScheduledTirednessRecovery(this);
-            needsComponent.PlanScheduledSecondHappinessRecovery();
-        }
+        //if (needsComponent.HasNeeds()) {
+        //    needsComponent.PlanScheduledFullnessRecovery();
+        //    //needsComponent.PlanScheduledTirednessRecovery(this);
+        //    needsComponent.PlanScheduledSecondHappinessRecovery();
+        //}
         if (isNormalCharacter) {
             //try to take settlement job that this character can see the target of.
             if (CanTryToTakeSettlementJobInVision(out var invalidReason)) {
@@ -3072,7 +3081,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //characters that cannot witness, cannot plan actions.
         //minion == null &&
         return !isDead && numOfActionsBeingPerformedOnThis <= 0 && limiterComponent.canPerform
-            && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE  
+            && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE
             && (jobQueue.jobsInQueue.Count <= 0 || behaviourComponent.GetHighestBehaviourPriority() > jobQueue.jobsInQueue[0].priority)
             && (carryComponent.masterCharacter.movementComponent.isTravellingInWorld == false)
             && (marker && !marker.hasFleePath) && stateComponent.currentState == null && carryComponent.IsNotBeingCarried() && !interruptComponent.isInterrupted;
@@ -3874,6 +3883,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddAdvertisedAction(INTERACTION_TYPE.START_PLAGUE_CARE);
         AddAdvertisedAction(INTERACTION_TYPE.CARE);
         AddAdvertisedAction(INTERACTION_TYPE.LONG_STAND_STILL);
+        AddAdvertisedAction(INTERACTION_TYPE.COOK);
 
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);
@@ -4109,7 +4119,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     }
                     log = $"{log}\n - Action's preconditions are all satisfied, doing action...";
                     logComponent.PrintLogIfActive(log);
-                    Messenger.Broadcast(JobSignals.CHARACTER_WILL_DO_PLAN, this, plan);
+                    Messenger.Broadcast(JobSignals.CHARACTER_WILL_DO_JOB, this, currentTopPrioJob);
                     currentNode.DoAction(currentTopPrioJob, plan);
                 }
             } else {
@@ -4873,9 +4883,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //}
         //Messenger.Broadcast(Signals.ON_UNSEIZE_CHARACTER, this);
     }
-    public bool CollectsLogs() {
-        return true;
-    }
     #endregion
 
     #region Resources
@@ -5439,7 +5446,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 MigrateHomeStructureTo(null, affectSettlement: false);
             }
             if (returnHome) {
-                jobComponent.PlanReturnHomeUrgent();    
+                jobComponent.PlanReturnHome(JOB_TYPE.RETURN_HOME_URGENT);    
             }
         }
     }
@@ -5692,7 +5699,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             // if (_role != null) {
             //     _role.OnDeath(this);
             // }
-
+            if (destroyMarkerOnDeath) {
+                //If death is destroy marker, this will leave no corpse, so remove it from the list of characters at location in region
+                if(currentRegion != null) {
+                    currentRegion.RemoveCharacterFromLocation(this);
+                }
+            }
             if (homeRegion != null) {
                 Region home = homeRegion;
                 LocationStructure homeStructure = this.homeStructure;
@@ -5868,7 +5880,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (vampireTrait != null && !vampireTrait.isInVampireBatForm) {
             vampireTrait.SetIsInVampireBatForm(true);
             movementComponent.AdjustSpeedModifier(0.20f);
-            movementComponent.SetTagAsTraversable(InnerMapManager.Obstacle_Tag);
+            movementComponent.SetIsFlying(true);
             if (visuals != null) {
                 visuals.UpdateAllVisuals(this);
             }
@@ -5879,7 +5891,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (vampireTrait != null && vampireTrait.isInVampireBatForm) {
             vampireTrait.SetIsInVampireBatForm(false);
             movementComponent.AdjustSpeedModifier(-0.20f);
-            movementComponent.SetTagAsUnTraversable(InnerMapManager.Obstacle_Tag);
+            movementComponent.SetIsFlying(false);
             if (visuals != null) {
                 visuals.UpdateAllVisuals(this);
             }
@@ -5930,6 +5942,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetIsInPendingAwarenessList(bool state) {
         isInPendingAwarenessList = state;
+    }
+    public bool IsUnpassable() {
+        return false;
     }
     #endregion
 

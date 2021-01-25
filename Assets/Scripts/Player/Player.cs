@@ -92,7 +92,6 @@ public class Player : ILeader, IObjectManipulator {
 
     #region Listeners
     private void AddListeners() {
-        AddWinListener();
         //goap
         // Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
         // Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
@@ -233,21 +232,6 @@ public class Player : ILeader, IObjectManipulator {
     //    }
     //}
     private void RejectMinion(object obj) { }
-    #endregion
-
-    #region Win/Lose Conditions
-    private void AddWinListener() {
-        Messenger.AddListener<Faction>(FactionSignals.FACTION_LEADER_DIED, OnFactionLeaderDied);
-    }
-    private void OnFactionLeaderDied(Faction faction) {
-        List<Faction> allUndestroyedFactions = FactionManager.Instance.allFactions.Where(
-            x => x.factionType.type != FACTION_TYPE.Wild_Monsters
-            && !x.isPlayerFaction
-            && x.isActive && !x.isDisbanded).ToList();
-        if (allUndestroyedFactions.Count == 0) {
-            Debug.LogError("All factions are destroyed! Player won!");
-        }        
-    }
     #endregion
 
     #region Role Actions

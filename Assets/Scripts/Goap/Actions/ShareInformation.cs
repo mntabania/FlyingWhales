@@ -10,7 +10,7 @@ public class ShareInformation : GoapAction {
     public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.VERBAL;
     public ShareInformation() : base(INTERACTION_TYPE.SHARE_INFORMATION) {
         actionIconString = GoapActionStateDB.Gossip_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         doesNotStopTargetCharacter = true;
         logTags = new[] {LOG_TAG.Informed, LOG_TAG.Social};

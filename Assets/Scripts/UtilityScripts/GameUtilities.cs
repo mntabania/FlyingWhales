@@ -34,7 +34,7 @@ namespace UtilityScripts {
         private static readonly Color _normalColor = new Color(248f / 255f, 225f / 255f, 169f / 255f);
 
         public static BIOMES[] customWorldBiomeChoices = new[] {BIOMES.GRASSLAND, BIOMES.FOREST, BIOMES.DESERT, BIOMES.SNOW};
-        public static FACTION_TYPE[] customWorldFactionTypeChoices = new[] {FACTION_TYPE.Human_Empire, FACTION_TYPE.Elven_Kingdom};
+        public static FACTION_TYPE[] customWorldFactionTypeChoices = new[] {FACTION_TYPE.Human_Empire, FACTION_TYPE.Elven_Kingdom, FACTION_TYPE.Demon_Cult, FACTION_TYPE.Vampire_Clan, FACTION_TYPE.Lycan_Clan};
         
         public static string GetNormalizedSingularRace(RACE race) {
             switch (race) {

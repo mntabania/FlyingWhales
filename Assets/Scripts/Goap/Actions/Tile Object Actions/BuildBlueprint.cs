@@ -7,12 +7,21 @@ using UnityEngine;
 
 public class BuildBlueprint : GoapAction {
 
+    private Precondition _stonePrecondition;
+    private Precondition _woodPrecondition;
+    private Precondition _metalPrecondition;
+
+
     public BuildBlueprint() : base(INTERACTION_TYPE.BUILD_BLUEPRINT) {
         actionIconString = GoapActionStateDB.Build_Icon;
         showNotification = true;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
+
+        _stonePrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
+        _woodPrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
+        _metalPrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Metal Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
     }
 
     #region Overrides
@@ -29,16 +38,16 @@ public class BuildBlueprint : GoapAction {
 
                 switch (genericTileObject.blueprintOnTile.thinWallResource) {
                     case RESOURCE.STONE:
-                        p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
+                        p = _stonePrecondition;
                         break;
                     case RESOURCE.WOOD:
-                        p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
+                        p = _woodPrecondition;
                         break;
                     case RESOURCE.METAL:
-                        p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Metal Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
+                        p = _metalPrecondition;
                         break;
                     default:
-                        p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
+                        p = _woodPrecondition;
                         break;
                 }
                 isOverridden = true;

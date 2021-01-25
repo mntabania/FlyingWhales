@@ -17,6 +17,21 @@ public class WorldGenOptionsUIView : MVCUIView {
         void OnChangeThreatAmount(THREAT_AMOUNT p_value);
         void OnClickAddBiome();
         void OnClickAddFaction();
+        void OnHoverOverMapSize(UIHoverPosition p_pos);
+        void OnHoverOutMapSize();
+        void OnHoverOverMigration(UIHoverPosition p_pos);
+        void OnHoverOutMigration();
+        void OnHoverOverVictory(UIHoverPosition p_pos);
+        void OnHoverOutVictory();
+        void OnHoverOverCooldown(UIHoverPosition p_pos);
+        void OnHoverOutCooldown();
+        void OnHoverOverCosts(UIHoverPosition p_pos);
+        void OnHoverOutCosts();
+        void OnHoverOverCharges(UIHoverPosition p_pos);
+        void OnHoverOutCharges();
+        void OnHoverOverThreat(UIHoverPosition p_pos);
+        void OnHoverOutThreat();
+        
     }
     #endregion
     #region MVC Properties and functions to override
@@ -59,6 +74,20 @@ public class WorldGenOptionsUIView : MVCUIView {
         UIModel.onChangeThreatAmount += p_listener.OnChangeThreatAmount;
         UIModel.onClickAddBiome += p_listener.OnClickAddBiome;
         UIModel.onClickAddFaction += p_listener.OnClickAddFaction;
+        UIModel.onHoverOverMapSizeDropdown += p_listener.OnHoverOverMapSize;
+        UIModel.onHoverOutMapSizeDropdown += p_listener.OnHoverOutMapSize;
+        UIModel.onHoverOverMigrationDropdown += p_listener.OnHoverOverMigration;
+        UIModel.onHoverOutMigrationDropdown += p_listener.OnHoverOutMigration;
+        UIModel.onHoverOverVictoryDropdown += p_listener.OnHoverOverVictory;
+        UIModel.onHoverOutVictoryDropdown += p_listener.OnHoverOutVictory;
+        UIModel.onHoverOverCooldownDropdown += p_listener.OnHoverOverCooldown;
+        UIModel.onHoverOutCooldownDropdown += p_listener.OnHoverOutCooldown;
+        UIModel.onHoverOverCostsDropdown += p_listener.OnHoverOverCosts;
+        UIModel.onHoverOutCostsDropdown += p_listener.OnHoverOutCosts;
+        UIModel.onHoverOverChargesDropdown += p_listener.OnHoverOverCharges;
+        UIModel.onHoverOutChargesDropdown += p_listener.OnHoverOutCharges;
+        UIModel.onHoverOverThreatDropdown += p_listener.OnHoverOverThreat;
+        UIModel.onHoverOutThreatDropdown += p_listener.OnHoverOutThreat;
     }
     public void Unsubscribe(IListener p_listener) {
         UIModel.onChangeMapSize -= p_listener.OnChangeMapSize;
@@ -70,6 +99,20 @@ public class WorldGenOptionsUIView : MVCUIView {
         UIModel.onChangeThreatAmount -= p_listener.OnChangeThreatAmount;
         UIModel.onClickAddBiome -= p_listener.OnClickAddBiome;
         UIModel.onClickAddFaction -= p_listener.OnClickAddFaction;
+        UIModel.onHoverOverMapSizeDropdown -= p_listener.OnHoverOverMapSize;
+        UIModel.onHoverOutMapSizeDropdown -= p_listener.OnHoverOutMapSize;
+        UIModel.onHoverOverMigrationDropdown -= p_listener.OnHoverOverMigration;
+        UIModel.onHoverOutMigrationDropdown -= p_listener.OnHoverOutMigration;
+        UIModel.onHoverOverVictoryDropdown -= p_listener.OnHoverOverVictory;
+        UIModel.onHoverOutVictoryDropdown -= p_listener.OnHoverOutVictory;
+        UIModel.onHoverOverCooldownDropdown -= p_listener.OnHoverOverCooldown;
+        UIModel.onHoverOutCooldownDropdown -= p_listener.OnHoverOutCooldown;
+        UIModel.onHoverOverCostsDropdown -= p_listener.OnHoverOverCosts;
+        UIModel.onHoverOutCostsDropdown -= p_listener.OnHoverOutCosts;
+        UIModel.onHoverOverChargesDropdown -= p_listener.OnHoverOverCharges;
+        UIModel.onHoverOutChargesDropdown -= p_listener.OnHoverOutCharges;
+        UIModel.onHoverOverThreatDropdown -= p_listener.OnHoverOverThreat;
+        UIModel.onHoverOutThreatDropdown -= p_listener.OnHoverOutThreat;
     }
     #endregion
 
@@ -110,7 +153,7 @@ public class WorldGenOptionsUIView : MVCUIView {
     }
     public void InitializeVictoryConditionDropdown() {
         UIModel.dropDownVictory.ClearOptions();
-        UIModel.dropDownVictory.AddOptions(UtilityScripts.Utilities.GetEnumChoices<VICTORY_CONDITION>());
+        UIModel.dropDownVictory.AddOptions(UtilityScripts.Utilities.GetEnumChoices<VICTORY_CONDITION>(VICTORY_CONDITION.Eliminate_All, VICTORY_CONDITION.Sandbox));
         UIModel.dropDownVictory.value = UIModel.dropDownVictory.GetDropdownOptionIndex("Eliminate All");
     }
     public void SetVictoryDropdownValue(string p_value) {
@@ -216,9 +259,9 @@ public class WorldGenOptionsUIView : MVCUIView {
     }
     public void UpdateVillageCount(int p_count, int p_max) {
         if (p_count > p_max) {
-            UIModel.txtVillages.text = $"Villages: {UtilityScripts.Utilities.ColorizeInvalidText(p_count.ToString())}/{p_max.ToString()}";
+            UIModel.txtVillages.text = $"Starting Villages: {UtilityScripts.Utilities.ColorizeInvalidText(p_count.ToString())}/{p_max.ToString()}";
         } else {
-            UIModel.txtVillages.text = $"Villages: {p_count.ToString()}/{p_max.ToString()}";    
+            UIModel.txtVillages.text = $"Starting Villages: {p_count.ToString()}/{p_max.ToString()}";    
         }
         
     }

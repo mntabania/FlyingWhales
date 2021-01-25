@@ -10,7 +10,7 @@ using Tutorial;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DemoUI : MonoBehaviour {
+public class PopUpScreensUI : MonoBehaviour {
 
     [Header("Summary Screen")]
     [SerializeField] private CanvasGroup summaryScreen;
@@ -23,6 +23,8 @@ public class DemoUI : MonoBehaviour {
     [SerializeField] private Button startGameButton;
     [SerializeField] private TextMeshProUGUI startGameButtonLbl;
     [SerializeField] private Toggle skipTutorialsToggle;
+    [SerializeField] private GameObject skipTutorialsBG;
+    [SerializeField] private TextMeshProUGUI lblStartScreen;
     
     [Header("End Screen")]
     [SerializeField] private GameObject endScreen;
@@ -32,7 +34,7 @@ public class DemoUI : MonoBehaviour {
     [SerializeField] private CanvasGroup endScreenCanvasGroup;
 
     #region Start Screen
-    public void ShowStartScreen() {
+    public void ShowStartScreen(string message) {
         UIManager.Instance.Pause();
         UIManager.Instance.SetSpeedTogglesState(false);
         WorldMapCameraMove.Instance.DisableMovement();
@@ -46,25 +48,16 @@ public class DemoUI : MonoBehaviour {
         startWindowRT.anchoredPosition = new Vector2(0f, -100f);
 
         startMessageWindowCG.alpha = 0;
-        
-        // Color color = startMessageWindow.color;
-        // color.a = 0f;
-        // startMessageWindow.color = color;
-        
-        // //set button starting alpha
-        // Graphic graphic = startGameButton.targetGraphic; 
-        // color = graphic.color;
-        // color.a = 0f;
-        // graphic.color = new Color(color.r, color.g, color.b, color.a);
-        // startGameButtonLbl.alpha = 0f;
-        
+
+        skipTutorialsToggle.gameObject.SetActive(WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial);
+        skipTutorialsBG.SetActive(WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial);
         skipTutorialsToggle.SetIsOnWithoutNotify(SettingsManager.Instance.settings.skipTutorials);
+
+        lblStartScreen.SetText(message);
         
         Sequence sequence = DOTween.Sequence();
         sequence.Append(startWindowRT.DOAnchorPos(Vector2.zero, 0.5f).SetEase(Ease.OutBack));
         sequence.Join(startMessageWindowCG.DOFade(1f, 0.5f).SetEase(Ease.InSine));
-        // sequence.Append(startGameButton.targetGraphic.DOFade(1f, 2f).SetEase(Ease.InCirc).SetDelay(3f).OnComplete(() => startGameButton.interactable = true));
-        // sequence.Join(DOTween.ToAlpha(() => startGameButtonLbl.color, x => startGameButtonLbl.color = x, 1f, 2f).SetEase(Ease.InCirc));
         sequence.Play();
     }
     public void OnClickStartGameButton() {
@@ -80,10 +73,11 @@ public class DemoUI : MonoBehaviour {
         InnerMapCameraMove.Instance.EnableMovement();
         InputManager.Instance.AllowHotkeys(true);
 
-        TutorialManager.Instance.InstantiateImportantTutorials();
-        TutorialManager.Instance.InstantiatePendingBonusTutorials();
-        QuestManager.Instance.InitializeAfterStartTutorial();
-
+        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+            TutorialManager.Instance.InstantiateImportantTutorials();
+            TutorialManager.Instance.InstantiatePendingBonusTutorials();
+            QuestManager.Instance.InitializeAfterStartTutorial();    
+        }
     }
     public void OnToggleSkipTutorials(bool state) {
         SettingsManager.Instance.OnToggleSkipTutorials(state);

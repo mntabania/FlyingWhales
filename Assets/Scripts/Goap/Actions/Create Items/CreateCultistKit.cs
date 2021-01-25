@@ -2,11 +2,17 @@
 using Inner_Maps;
 
 public class CreateCultistKit : GoapAction {
+    private Precondition _stonePrecondition;
+    private Precondition _woodPrecondition;
+
     public CreateCultistKit() : base(INTERACTION_TYPE.CREATE_CULTIST_KIT) {
         actionIconString = GoapActionStateDB.Build_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work, LOG_TAG.Crimes};
+
+        _stonePrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasStone);
+        _woodPrecondition = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasWood);
     }
     
     #region Overrides
@@ -21,9 +27,9 @@ public class CreateCultistKit : GoapAction {
         Precondition p = null;
         //p.AddRange(baseP);
         if (actor.race == RACE.HUMANS) {
-            p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasStone);
+            p = _stonePrecondition;
         } else {
-            p = new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasWood);
+            p = _woodPrecondition;
         }
         isOverridden = true;
         return p;

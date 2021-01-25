@@ -413,6 +413,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.STONE_PILE:
             case TILE_OBJECT_TYPE.WOOD_PILE:
             case TILE_OBJECT_TYPE.TABLE:
+            case TILE_OBJECT_TYPE.FISHING_SPOT:
                 return true;
             default:
                 return tileObjectType.IsTileObjectAnItem();
@@ -606,6 +607,7 @@ public static class Extensions {
                 break;
             case JOB_TYPE.MOVE_CHARACTER:
             case JOB_TYPE.CAPTURE_CHARACTER:
+            case JOB_TYPE.TRITON_KIDNAP:
                 priority = 926;
                 break;
             case JOB_TYPE.GO_TO:
@@ -1069,6 +1071,20 @@ public static class Extensions {
                 return "#F8E1A9";
         }
     }
+    public static RACE GetRaceForFactionType(this FACTION_TYPE p_factionType) {
+        switch (p_factionType) {
+            case FACTION_TYPE.Elven_Kingdom:
+                return RACE.ELVES;
+            case FACTION_TYPE.Human_Empire:
+                return RACE.HUMANS;
+            case FACTION_TYPE.Demons:
+                return RACE.DEMON;
+            case FACTION_TYPE.Ratmen:
+                return RACE.RATMAN;
+            default:
+                return RACE.HUMANS;
+        }
+    }
     #endregion
 
     #region Tiles
@@ -1193,6 +1209,15 @@ public static class Extensions {
         switch (p_factionIdeology) {
             case FACTION_IDEOLOGY.Exclusive:
             case FACTION_IDEOLOGY.Inclusive:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool IsPeaceType(this FACTION_IDEOLOGY p_factionIdeology) {
+        switch (p_factionIdeology) {
+            case FACTION_IDEOLOGY.Warmonger:
+            case FACTION_IDEOLOGY.Peaceful:
                 return true;
             default:
                 return false;
