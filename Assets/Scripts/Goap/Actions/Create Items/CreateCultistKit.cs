@@ -77,7 +77,6 @@ public class CreateCultistKit : GoapAction {
                 actor.logComponent.PrintLogErrorIfActive(actor.name + " is trying to create a Cultist Kit but lacks requirements");
             }
         }
-        
     }
     #endregion
 }
