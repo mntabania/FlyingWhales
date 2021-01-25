@@ -682,6 +682,8 @@ namespace Inner_Maps {
             int gridTileCollectionX = locationGridTileCollections.GetUpperBound(0);
             int gridTileCollectionY = locationGridTileCollections.GetUpperBound(1);
             List<LocationGridTileCollection> clearedCollections = new List<LocationGridTileCollection>();
+//Tama ba to myk?
+//<<<<<<< HEAD
             List<LocationGridTile> tilesToPerlin = new List<LocationGridTile>();
             for (int x = 0; x <= gridTileCollectionX; x++) {
                 for (int y = 0; y <= gridTileCollectionY; y++) {
@@ -725,6 +727,29 @@ namespace Inner_Maps {
                         }    
                     }
                     // break;
+//=======
+//            for (int x = 0; x < gridTileCollectionX; x++) {
+//                for (int y = 0; y < gridTileCollectionY; y++) {
+//                    LocationGridTileCollection collection = locationGridTileCollections[x, y];
+//                    if (!clearedCollections.Contains(collection) && collection.HasDifferentBiomeNeighbour(out BIOMES diffBiome, out LocationGridTileCollection neighbour)) {
+//                        clearedCollections.Add(collection);
+//                        clearedCollections.Add(neighbour);
+
+//                        List<LocationGridTile> locationGridTiles = new List<LocationGridTile>(collection.tilesInTerritory);
+//                        locationGridTiles.AddRange(neighbour.tilesInTerritory);
+                        
+//                        for (int i = 0; i < locationGridTiles.Count; i++) {
+//                            LocationGridTile tile = locationGridTiles[i];
+//                            if (tile.isDefault) {
+//                                float chance = 0.37f;
+//                                BIOMES biomeToUse = tile.floorSample < chance ? tile.biomeType : diffBiome;
+//                                positions.Add(tile.localPlace);
+//                                groundTiles.Add(GetGroundAssetPerlin(tile.floorSample, biomeToUse));    
+//                            }
+//                        }    
+//                    }
+                    
+//>>>>>>> feature/Steal_Issue_Fix_01-24-2021
                 }
             }
 
@@ -740,7 +765,12 @@ namespace Inner_Maps {
         
         private IEnumerator MapPerlinDetails(List<LocationGridTile> tiles, int xSize, int ySize, float xSeed, float ySeed) {
             yield return StartCoroutine(GroundPerlin(tiles, xSize, ySize, xSeed, ySeed));
+//Tama ba to myk?
+//<<<<<<< HEAD
             // yield return StartCoroutine(GenerateBiomeTransitions());
+//=======
+//            yield return StartCoroutine(GenerateBiomeTransitions());
+//>>>>>>> feature/Steal_Issue_Fix_01-24-2021
             
             int batchCount = 0;
             //flower, rock and garbage

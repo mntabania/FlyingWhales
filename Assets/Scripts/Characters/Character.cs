@@ -3920,6 +3920,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.SCREAM_FOR_HELP);
             //AddAdvertisedAction(INTERACTION_TYPE.CHANGE_CLASS);
             AddAdvertisedAction(INTERACTION_TYPE.STUDY_MONSTER);
+            AddAdvertisedAction(INTERACTION_TYPE.PICKPOCKET);
 
             //NOTE: Removed the creation of healing potion, etc. on the fly because it conflicts with the current crafting of objects
             //It is confusing to have a crafting then another one the creates them in the inventory without any crafting

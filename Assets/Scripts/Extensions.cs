@@ -251,6 +251,7 @@ public static class Extensions {
         switch (type) {
             case INTERACTION_TYPE.ASSAULT:
             case INTERACTION_TYPE.STEAL:
+            case INTERACTION_TYPE.PICKPOCKET:
             case INTERACTION_TYPE.RESTRAIN_CHARACTER:
                 return true;
             default:

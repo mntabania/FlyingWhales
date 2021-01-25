@@ -164,13 +164,13 @@ public class ReactionComponent : CharacterComponent {
         if (!reactable.informationLog.hasValue) {
             throw new Exception($"{GameManager.Instance.TodayLogString()}{owner.name} witnessed event {reactable.name} by {reactable.actor.name} does not have a log!");
         }
-        if(reactable.target is TileObject item && reactable is ActualGoapNode node) {
-            if (node.action.goapType == INTERACTION_TYPE.STEAL) {
-                if (item.isBeingCarriedBy != null) {
-                    target = item.isBeingCarriedBy;
-                }
-            }
-        }
+        //if(reactable.target is TileObject item && reactable is ActualGoapNode node) {
+        //    if (node.action.goapType == INTERACTION_TYPE.STEAL) {
+        //        if (item.isBeingCarriedBy != null) {
+        //            target = item.isBeingCarriedBy;
+        //        }
+        //    }
+        //}
         if(actor != owner && target != owner) {
             string emotionsToActor = reactable.ReactionToActor(actor, target, owner, REACTION_STATUS.WITNESSED);
             if(emotionsToActor != string.Empty) {
