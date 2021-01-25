@@ -5926,7 +5926,7 @@
       ],
       "minimumVillagerCount": 12,
       "factionRace": "ELVES",
-      "settlementType": "Default_Elf"
+      "settlementType": "Elven_Hamlet"
     },
     {
       "hexTiles": [
@@ -5983,7 +5983,7 @@
       ],
       "minimumVillagerCount": 12,
       "factionRace": "HUMANS",
-      "settlementType": "Default_Human"
+      "settlementType": "Human_Village"
     },
     {
       "hexTiles": [
@@ -6040,7 +6040,7 @@
       ],
       "minimumVillagerCount": 12,
       "factionRace": "ELVES",
-      "settlementType": "Default_Elf"
+      "settlementType": "Elven_Hamlet"
     },
     {
       "hexTiles": [
@@ -6097,7 +6097,7 @@
       ],
       "minimumVillagerCount": 12,
       "factionRace": "HUMANS",
-      "settlementType": "Default_Human"
+      "settlementType": "Human_Village"
     }
   ]
 }
