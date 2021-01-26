@@ -3182,8 +3182,7 @@ MonoBehaviour:
   _predeterminedOccupiedCoordinates: []
   _connectors:
   - {fileID: 5793444989459678198}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 123394551815450648}
   roomTemplates: []
   wallsContributeToDamage: 1
   wallTileMap: {fileID: 6495424846022631537}
@@ -4930,3 +4929,15 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 6803307102721144006}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &123394551815450648 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6907485484448498910, guid: 3efa5e90b898dc24797fc7d4c4087e90,
+    type: 3}
+  m_PrefabInstance: {fileID: 6803307102721144006}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62d3d928b2f4526930058bbe6df9cce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
