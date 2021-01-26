@@ -65,11 +65,14 @@
     }
     public void AfterEatSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.needsComponent.AdjustDoNotGetHungry(-1);
-        if (goapNode.poiTarget is Character character && character.marker != null) {
-            if (character.currentRegion != null) {
-                character.currentRegion.RemoveCharacterFromLocation(character);
+        if (goapNode.poiTarget is Character targetCharacter && targetCharacter.marker != null) {
+            if (goapNode.actor.race == RACE.ELVES && (targetCharacter.race == RACE.RAT || targetCharacter.race == RACE.RATMAN)) {
+                goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Poor Meal");
             }
-            character.DestroyMarker();
+            if (targetCharacter.currentRegion != null) {
+                targetCharacter.currentRegion.RemoveCharacterFromLocation(targetCharacter);
+            }
+            targetCharacter.DestroyMarker();
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, goapNode.poiTarget, "target is already dead");
             Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, goapNode.poiTarget, "target is already dead");
         }

@@ -679,6 +679,10 @@ public class CharacterManager : BaseMonoBehaviour {
                         case RACE.ELVES:
                             tileObjectType = TILE_OBJECT_TYPE.ELF_MEAT;
                             break;
+                        case RACE.RAT:
+                        case RACE.RATMAN:
+                            tileObjectType = TILE_OBJECT_TYPE.RAT_MEAT;
+                            break;
                         default:
                             tileObjectType = TILE_OBJECT_TYPE.ANIMAL_MEAT;
                             break;

@@ -331,6 +331,9 @@ public class Eat : GoapAction {
             log.AddToFillers(null, goapNode.poiTarget.name, LOG_IDENTIFIER.STRING_1);
             log.AddLogToDatabase();
         }
+        if (goapNode.actor.race == RACE.ELVES && goapNode.poiTarget is RatMeat) {
+            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Poor Meal");
+        }
     }
     //public void PreEatFail(ActualGoapNode goapNode) {
     //    GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];

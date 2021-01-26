@@ -25,6 +25,15 @@
     #region State Effects
     public void PerTickEatAliveSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.AdjustHP(-10, ELEMENTAL_TYPE.Normal, true, goapNode.actor, showHPBar: true);
+
+        if (goapNode.actor.race == RACE.ELVES && goapNode.poiTarget is RatMeat) {
+            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Poor Meal");
+        }
+    }
+    public void AfterEatAliveSuccess(ActualGoapNode goapNode) {
+        if (goapNode.actor.race == RACE.ELVES && goapNode.poiTarget is Character targetCharacter && (targetCharacter.race == RACE.RAT || targetCharacter.race == RACE.RATMAN)) {
+            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Poor Meal");
+        }
     }
     #endregion
 }

@@ -21,6 +21,9 @@ public static class TileObjectDB {
         { TILE_OBJECT_TYPE.ANIMAL_MEAT, new TileObjectData() {
             maxHP = 300,
         } },
+        { TILE_OBJECT_TYPE.RAT_MEAT, new TileObjectData() {
+            maxHP = 300,
+        } },
         { TILE_OBJECT_TYPE.ELF_MEAT, new TileObjectData() {
             maxHP = 300,
         } },
