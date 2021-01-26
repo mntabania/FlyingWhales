@@ -510,16 +510,18 @@ public class GoapPlanner {
     }
     private bool SetLowestCostActionGivenLocationAwareness(ILocationAwareness locationAwareness, GoapPlanJob job, GoapAction action, GoapEffect goalEffect, ref bool isJobTargetEvaluated, ref int lowestCost, ref GoapAction lowestCostAction, ref IPointOfInterest lowestCostTarget, ref string log) {
         bool hasSetAsLowest = false;
-        List<IPointOfInterest> pois = locationAwareness.GetListOfPOIBasedOnActionType(action.goapType);
-        if (pois != null) {
-            for (int i = 0; i < pois.Count; i++) {
-                IPointOfInterest poi = pois[i];
-                if(poi == job.targetPOI) {
-                    isJobTargetEvaluated = true;
-                }
-                if (poi.IsStillConsideredPartOfAwarenessByCharacter(owner)) { //POI must either be the job's target or the actor is still aware of it
-                    if(PopulateLowestCostAction(poi, action, job, goalEffect, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
-                        hasSetAsLowest = true;
+        lock (MultiThreadPool.THREAD_LOCKER) {
+            List<IPointOfInterest> pois = locationAwareness.GetListOfPOIBasedOnActionType(action.goapType);
+            if (pois != null) {
+                for (int i = 0; i < pois.Count; i++) {
+                    IPointOfInterest poi = pois[i];
+                    if (poi == job.targetPOI) {
+                        isJobTargetEvaluated = true;
+                    }
+                    if (poi.IsStillConsideredPartOfAwarenessByCharacter(owner)) { //POI must either be the job's target or the actor is still aware of it
+                        if (PopulateLowestCostAction(poi, action, job, goalEffect, ref lowestCost, ref lowestCostAction, ref lowestCostTarget, ref log)) {
+                            hasSetAsLowest = true;
+                        }
                     }
                 }
             }

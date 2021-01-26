@@ -73,7 +73,7 @@ public class GoapThread : Multithread {
         } else {
             CreateNewPlan();
         }
-        UtilityScripts.LocationAwarenessUtility.UpdateAllPendingAwareness();
+        //UtilityScripts.LocationAwarenessUtility.UpdateAllPendingAwareness();
         //removed by aaron for awareness update GridMap.Instance.UpdateAwarenessInAllRegions();
     }
     private void CreateNewPlan() {
