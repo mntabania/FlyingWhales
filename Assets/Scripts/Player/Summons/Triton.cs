@@ -25,7 +25,6 @@ public class Triton : Summon {
             spawnLocationTile = tile.GetNeareastTileFromThisThatMeetCriteria(t => (t.IsPassable() || t.objHere is BlockWall) && t.structure.structureType != STRUCTURE_TYPE.OCEAN, null);
             if(spawnLocationTile == null) {
                 spawnLocationTile = tile;
-                spawnLocationTile.SetIsDefault(false);
             }
         }
     }
@@ -45,8 +44,8 @@ public class Triton : Summon {
     public override void LoadReferences(SaveDataCharacter data) {
         base.LoadReferences(data);
         if (data is SaveDataTriton savedData) {
-            if (!string.IsNullOrEmpty(savedData.spawnLocationTile)) {
-                spawnLocationTile = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(savedData.spawnLocationTile);
+            if (savedData.tileLocationSave.hasValue) {
+                spawnLocationTile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(savedData.tileLocationSave);
             }
         }
     }
@@ -75,13 +74,13 @@ public class Triton : Summon {
 
 [System.Serializable]
 public class SaveDataTriton : SaveDataSummon {
-    public string spawnLocationTile { get; private set; }
+    public TileLocationSave tileLocationSave;
 
     public override void Save(Character data) {
         base.Save(data);
         if (data is Triton summon) {
             if(summon.spawnLocationTile != null) {
-                spawnLocationTile = summon.spawnLocationTile.persistentID;
+                tileLocationSave = new TileLocationSave(summon.spawnLocationTile);
             }
         }
     }

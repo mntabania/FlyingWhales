@@ -17,10 +17,10 @@ namespace Quests.Steps {
         protected override bool CheckIfStepIsAlreadyCompleted() {
             return GameManager.Instance.continuousDays >= _targetDay;
         }
-        public void OnCharacterEliminated(Character p_character) { }
-        public void OnCharacterAddedAsTarget(Character p_character) { }
-        public void OnDayChangedAction(int currentDay, int p_villagersCount) {
-            if (_targetDay == currentDay) {
+        public void OnCharacterEliminated(Character p_character, int p_villagersCount) { }
+        public void OnCharacterAddedAsTarget(Character p_character, int p_villagersCount) { }
+        public void OnDayChangedAction(int p_currentDay, int p_villagersCount) {
+            if (_targetDay == p_currentDay) {
                 Complete();
             }
             Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);

@@ -9,14 +9,14 @@ public class PangatLooWinConditionTracker : WinconditionTracker {
 
     public const int DueDay = 10;
     
-    private System.Action<Character> _characterEliminatedAction;
-    private System.Action<Character> _characterAddedAsTargetAction;
+    private System.Action<Character, int> _characterEliminatedAction;
+    private System.Action<Character, int> _characterAddedAsTargetAction;
     private System.Action<int, int> _onDayChangedAction;
 
     public interface Listener {
-        void OnCharacterEliminated(Character p_character);
-        void OnCharacterAddedAsTarget(Character p_character);
-        void OnDayChangedAction(int currentDay, int p_villagersCount);
+        void OnCharacterEliminated(Character p_character, int p_villagersCount);
+        void OnCharacterAddedAsTarget(Character p_character, int p_villagersCount);
+        void OnDayChangedAction(int p_currentDay, int p_villagersCount);
     }
     
     
@@ -58,7 +58,7 @@ public class PangatLooWinConditionTracker : WinconditionTracker {
         if (villagersToEliminate.Remove(p_character)) {
             totalCharactersToEliminate--;
             RemoveCharacterFromTrackList(p_character);
-            _characterEliminatedAction?.Invoke(p_character);
+            _characterEliminatedAction?.Invoke(p_character, villagersToEliminate.Count);
         }
     }
     private void AddVillagerToEliminate(Character p_character) {
@@ -66,7 +66,7 @@ public class PangatLooWinConditionTracker : WinconditionTracker {
             villagersToEliminate.Add(p_character);
             AddCharacterToTrackList(p_character);
             totalCharactersToEliminate++;
-            _characterAddedAsTargetAction?.Invoke(p_character);
+            _characterAddedAsTargetAction?.Invoke(p_character, villagersToEliminate.Count);
         }
     }
     #endregion

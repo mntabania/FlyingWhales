@@ -1,43 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using Traits;
-using UnityEngine;
-using UnityEngine.Assertions;
-using UtilityScripts;
-namespace Events.World_Events {
+﻿namespace Events.World_Events {
     public class UndeadAttackEvent : WorldEvent {
 
-        public UndeadAttackEvent() {
-            
-        }
-        public UndeadAttackEvent(SaveUndeadAttackEvent data) {
-            
-        }
+        public UndeadAttackEvent() { }
+        public UndeadAttackEvent(SaveUndeadAttackEvent data) { }
 
         public override void InitializeEvent() {
             Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
-        
+            Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedFaction);
         }
         private void StartUndeadAttack() {
             for (int i = 0; i < FactionManager.Instance.undeadFaction.characters.Count; i++) {
                 Character character = FactionManager.Instance.undeadFaction.characters[i];
                 if (!character.isDead) {
-                    character.behaviourComponent.AddBehaviourComponent(typeof(PangatLooVillageInvaderBehaviour));
-                    character.jobQueue.CancelAllJobs();
+                    AddInvaderBehaviourToCharacter(character);
                 }
             }
-
+            for (int i = 0; i < PlayerManager.Instance.player.playerFaction.characters.Count; i++) {
+                Character character = PlayerManager.Instance.player.playerFaction.characters[i];
+                // if (character is Summon summon && 
+                //     (summon.summonType == SUMMON_TYPE.Ghost || summon.summonType == SUMMON_TYPE.Skeleton || 
+                //      summon.summonType == SUMMON_TYPE.Vengeful_Ghost || summon.summonType == SUMMON_TYPE.Revenant)) {
+                if (!character.isDead) {
+                    AddInvaderBehaviourToCharacter(character);
+                }
+            }
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Tile Object", "DesertRose", "activated_village", providedTags: LOG_TAG.Player);
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         }
 
+        #region Listeners
         private void OnDayStarted() {
             int p_currentDay = GameManager.Instance.continuousDays;
             if (p_currentDay == PangatLooWinConditionTracker.DueDay) {
                 StartUndeadAttack();
             }
         }
+        private void OnCharacterAddedFaction(Character p_character, Faction p_faction) {
+            int p_currentDay = GameManager.Instance.continuousDays;
+            if ((p_faction.isPlayerFaction || p_faction.factionType.type == FACTION_TYPE.Undead) && p_currentDay >= PangatLooWinConditionTracker.DueDay) {
+                AddInvaderBehaviourToCharacter(p_character);
+            }
+        }
+        #endregion
+
+        #region Undead Attack
+        private void AddInvaderBehaviourToCharacter(Character p_character) {
+            p_character.behaviourComponent.AddBehaviourComponent(typeof(PangatLooVillageInvaderBehaviour));
+            p_character.jobQueue.CancelAllJobs();
+        }
+        #endregion
 
         #region Saving
         public override SaveDataWorldEvent Save() {
