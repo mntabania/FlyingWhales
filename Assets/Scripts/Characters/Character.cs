@@ -82,7 +82,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Necromancer necromancerTrait { get; protected set; }
     public POI_STATE state { get; private set; }
     public ILocationAwareness currentLocationAwareness { get; private set; }
-    public bool isInPendingAwarenessList { get; private set; }
+    //public bool isInPendingAwarenessList { get; private set; }
 
     //misc
     public Tombstone grave { get; private set; }
@@ -5948,9 +5948,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetCurrentLocationAwareness(ILocationAwareness locationAwareness) {
         currentLocationAwareness = locationAwareness;
     }
-    public void SetIsInPendingAwarenessList(bool state) {
-        isInPendingAwarenessList = state;
-    }
+    //public void SetIsInPendingAwarenessList(bool state) {
+    //    isInPendingAwarenessList = state;
+    //}
     public bool IsUnpassable() {
         return false;
     }

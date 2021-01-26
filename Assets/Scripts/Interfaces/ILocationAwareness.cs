@@ -4,11 +4,11 @@ namespace Locations {
     public interface ILocationAwareness { 
 
         Dictionary<INTERACTION_TYPE, List<IPointOfInterest>> awareness { get; } //main list of awareness
-        List<IPointOfInterest> pendingAwarenessToBeAdded { get; }
-        List<IPointOfInterest> pendingAwarenessToBeRemoved { get; }
-        List<KeyValuePair<INTERACTION_TYPE, IPointOfInterest>> pendingSpecificAwarenessToBeRemoved { get; }
-        List<KeyValuePair<INTERACTION_TYPE, IPointOfInterest>> pendingSpecificAwarenessToBeAdded { get; }
-        bool flaggedForUpdate { get; }
+        //List<IPointOfInterest> pendingAwarenessToBeAdded { get; }
+        //List<IPointOfInterest> pendingAwarenessToBeRemoved { get; }
+        //List<KeyValuePair<INTERACTION_TYPE, IPointOfInterest>> pendingSpecificAwarenessToBeRemoved { get; }
+        //List<KeyValuePair<INTERACTION_TYPE, IPointOfInterest>> pendingSpecificAwarenessToBeAdded { get; }
+        //bool flaggedForUpdate { get; }
 
         #region add pending list
         void AddSpecificAwarenessToPendingAddList(INTERACTION_TYPE actionType, IPointOfInterest poi);
@@ -27,15 +27,17 @@ namespace Locations {
         #endregion
 
         void UpdateAwareness();
-        void SetFlaggedForUpdate(bool state);
-        bool HasPendingAddOrRemoveAwareness();
+        //void SetFlaggedForUpdate(bool state);
+        //bool HasPendingAddOrRemoveAwareness();
 
         #region main list
         bool AddAwarenessToMainList(IPointOfInterest poi);
+        bool AddAwarenessToMainList(INTERACTION_TYPE actionType, IPointOfInterest pointOfInterest);
         void RemoveAwarenessFromMainList(IPointOfInterest poi);
-		#endregion
+        void RemoveAwarenessFromMainList(INTERACTION_TYPE actionType, IPointOfInterest pointOfInterest);
+        #endregion
 
-		bool HasAwareness(INTERACTION_TYPE actionType, IPointOfInterest poi);
+        bool HasAwareness(INTERACTION_TYPE actionType, IPointOfInterest poi);
 	}
 }
 
