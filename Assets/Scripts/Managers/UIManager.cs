@@ -307,13 +307,22 @@ public class UIManager : BaseMonoBehaviour {
         UpdateSpeedToggles(GameManager.Instance.isPaused);
     }
     public void SetProgressionSpeed1X() {
+        if (!GameManager.Instance.isPaused && GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X1) {
+            PauseByPlayer();
+            return;
+        }
         if (!x1Btn.IsInteractable()) {
             return;
         }
         Unpause();
+        
         GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X1);
     }
     public void SetProgressionSpeed2X() {
+        if (!GameManager.Instance.isPaused && GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
+            PauseByPlayer();
+            return;
+        }
         if (!x2Btn.IsInteractable()) {
             return;
         }
@@ -321,6 +330,10 @@ public class UIManager : BaseMonoBehaviour {
         GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X2);
     }
     public void SetProgressionSpeed4X() {
+        if (!GameManager.Instance.isPaused && GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
+            PauseByPlayer();
+            return;
+        }
         if (!x4Btn.IsInteractable()) {
             return;
         }
@@ -331,6 +344,10 @@ public class UIManager : BaseMonoBehaviour {
     /// Helper function to call if the player is the one that paused the game.
     /// </summary>
     public void PauseByPlayer() {
+        if (GameManager.Instance.isPaused) {
+            Unpause();
+            return;
+        }
         Pause();
         // Debug.Log("Game was paused by player.");
         Messenger.Broadcast(UISignals.PAUSED_BY_PLAYER);

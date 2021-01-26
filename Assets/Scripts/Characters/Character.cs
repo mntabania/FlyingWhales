@@ -5557,6 +5557,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
+
+    public void ResetNeeds() {
+        needsComponent.ResetFullnessMeter();
+        needsComponent.ResetTirednessMeter();
+        needsComponent.ResetHappinessMeter();
+    }
+
     public virtual void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = default, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null) {
         if (minion != null) {
             minion.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
