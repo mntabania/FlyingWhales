@@ -12,7 +12,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
 	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         log += $"\n-{character.name} is a necromancer";
-        if (character.homeStructure != null && !character.homeStructure.hasBeenDestroyed && character.homeStructure == character.necromancerTrait.lairStructure) {
+        if (character.HasHome()) {
             log += $"\n-Character has a home structure/territory";
             if (character.marker) {
                 Character deadCharacter = null;
@@ -77,6 +77,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     ELEMENTAL_TYPE elementalType = deadSummon.characterClass.elementalType;
                     if (elementalType != ELEMENTAL_TYPE.Normal) {
                         if (!character.traitContainer.HasTrait(elementalType.ToString() + " Attacker")) {
+                            //NOTE: Rename to absorb element
                             character.jobComponent.TriggerAbsorbPower(deadSummon, out producedJob);
                             return true;
                         }
@@ -90,7 +91,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
             if(currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT || currentTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
                 log += $"\n-It is Early Night, Late Night, or After Midnight";
                 int skeletonFollowers = character.necromancerTrait.GetNumOfSkeletonFollowersThatAreNotAttackingAndIsAlive();
-                if (skeletonFollowers > 5 && UnityEngine.Random.Range(0, 100) < 65) {
+                if (skeletonFollowers > 5 && UnityEngine.Random.Range(0, 100) < 4) {
                     log += $"\n-Skeleton followers are more than 5, attack village";
                     //Attack
                     //character.faction.ClearAllDeadCharactersFromFaction();
@@ -118,11 +119,11 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                                 int roll = UnityEngine.Random.Range(0, 100);
                                 log += $"\n-Roll: " + roll;
                                 if (roll < 50) {
-                                    log += $"\n-65% chance to visit an Ancient Graveyard, Otherwise visit Cemetery";
+                                    log += $"\n-90% chance to visit an Ancient Graveyard, Otherwise visit Cemetery";
                                     roll = UnityEngine.Random.Range(0, 100);
                                     log += $"\n-Roll: " + roll;
                                     STRUCTURE_TYPE structureTypeToVisit = STRUCTURE_TYPE.CEMETERY;
-                                    if (roll < 65) {
+                                    if (roll < 90) {
                                         structureTypeToVisit = STRUCTURE_TYPE.ANCIENT_GRAVEYARD;
                                     }
                                     LocationStructure chosenStructure = character.currentRegion.GetRandomStructureOfTypeThatMeetCriteria(s => s.HasTileObjectOfType(TILE_OBJECT_TYPE.TOMBSTONE), structureTypeToVisit);
@@ -188,7 +189,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                 }
             } else {
                 log += $"\n-It is not Early Night, Late Night, or After Midnight";
-                if (character.currentStructure != character.homeStructure) {
+                if (!character.IsAtHome()) {
                     log += $"\n-Character is not at home, return home";
                     character.jobComponent.PlanReturnHome(JOB_TYPE.IDLE_RETURN_HOME, out producedJob);
                 } else {
