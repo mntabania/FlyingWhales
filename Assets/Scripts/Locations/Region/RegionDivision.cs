@@ -105,7 +105,7 @@ public class RegionDivision {
             int numOfSpawns = GameUtilities.RandomBetweenTwoNumbers(chosenData.minRange, chosenData.maxRange);
             for (int i = 0; i < numOfSpawns; i++) {
                 LocationGridTile spawnLocationGridTile = p_structure.GetRandomPassableTile();
-                Summon monster = CharacterManager.Instance.CreateNewSummon(chosenData.monsterType, FactionManager.Instance.neutralFaction, homeLocation: p_structure.settlementLocation, homeRegion: p_structure.region, homeStructure: p_structure, bypassIdeologyChecking: true);
+                Summon monster = CharacterManager.Instance.CreateNewSummon(chosenData.monsterType, FactionManager.Instance.GetDefaultFactionForMonster(chosenData.monsterType), homeLocation: p_structure.settlementLocation, homeRegion: p_structure.region, homeStructure: p_structure, bypassIdeologyChecking: true);
                 CharacterManager.Instance.PlaceSummonInitially(monster, spawnLocationGridTile);
             }
             string monsterTypeStr = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(chosenData.monsterType.ToString());

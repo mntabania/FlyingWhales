@@ -575,10 +575,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		if (hasStartedScreamCheck == false) {
 			return;
 		}
+		if (owner.isDead || owner.currentStructure == null) {
+			//TODO: Make this better
+			hasStartedScreamCheck = false;
+			Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyScreamCheck);
+			owner.logComponent.PrintLogIfActive($"<color=red>{GameManager.Instance.TodayLogString()}{owner.name} has stopped scream check</color>");
+			return;
+		}
 		bool isNotNeedy = !owner.traitContainer.HasTrait("Exhausted", "Starving", "Sulking");
 		bool isNotRestrained = !owner.traitContainer.HasTrait("Restrained");
-		bool isRestrainedButInPrison = owner.traitContainer.HasTrait("Restrained") &&
-		                               owner.currentStructure.structureType == STRUCTURE_TYPE.PRISON;
+		bool isRestrainedButInPrison = owner.traitContainer.HasTrait("Restrained") && owner.currentStructure.structureType == STRUCTURE_TYPE.PRISON;
 		
 		//scream will stop check if
 		// - character can already move or

@@ -1,4 +1,7 @@
-﻿public class EatAlive : GoapAction {
+﻿using System.Collections.Generic;
+using Traits;
+
+public class EatAlive : GoapAction {
     public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.CONSUME;
 
     public EatAlive() : base(INTERACTION_TYPE.EAT_ALIVE) {
@@ -19,6 +22,38 @@
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
+    }
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string reaction = base.ReactionToActor(actor, target, witness, node, status);
+        if (!actor.isNormalCharacter && witness.homeSettlement != null && witness.faction != null && actor.homeStructure != null && target is Character targetCharacter) {
+            Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+            if (node.targetStructure == actor.homeStructure || (prisoner != null && prisoner.IsConsideredPrisonerOf(actor))) {
+                string relationshipName = witness.relationshipContainer.GetRelationshipNameWith(targetCharacter);
+                if (relationshipName == RelationshipManager.Acquaintance || witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                    witness.faction.partyQuestBoard.CreateExterminatePartyQuest(witness, witness.homeSettlement, actor.homeStructure, witness.homeSettlement);    
+                }    
+            }
+        }
+        return reaction;
+    }
+    public override void PopulateReactionsToTarget(List<EMOTION> reactions, Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        base.PopulateReactionsToTarget(reactions, actor, target, witness, node, status);
+        if (target is Character targetCharacter) {
+            if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
+                    reactions.Add(EMOTION.Despair);
+                    reactions.Add(EMOTION.Sadness);    
+                }
+            } else if (witness.relationshipContainer.IsRelativeLoverOrAffairAndNotRival(targetCharacter)) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
+                    reactions.Add(EMOTION.Despair);
+                    reactions.Add(EMOTION.Sadness);    
+                }
+            }
+        }
+    }
+    public override bool ShouldActionBeAnIntel(ActualGoapNode node) {
+        return !node.actor.isNormalCharacter && node.target is Character targetCharacter && targetCharacter.isNormalCharacter;
     }
     #endregion
     

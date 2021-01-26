@@ -7,7 +7,7 @@ using UtilityScripts;
 
 public class AneemWinConditionTracker : WinconditionTracker {
 
-    public const int Elimination_Requirement = 10;
+    public const int Elimination_Requirement = 14;
     
     private System.Action<Character, int> _characterEliminatedAction;
     private System.Action<Character> _characterAddedAsTargetAction;

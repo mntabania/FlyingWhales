@@ -16,25 +16,26 @@ namespace Quests.Steps {
             QuestManager.Instance.GetWinConditionTracker<PangatLooWinConditionTracker>().Unsubscribe(this);
         }
 
-        private void CheckForCompletion(int p_currentDay, int p_villagersCount) {
-            if (p_currentDay > PangatLooWinConditionTracker.DueDay && p_villagersCount <= 0) {
+        private void CheckForCompletion(int p_villagersCount) {
+            if (p_villagersCount <= 0) {
                 Complete();
-                Messenger.Broadcast(PlayerSignals.WIN_GAME, $"You've successfully wiped out all villagers before Day {PangatLooWinConditionTracker.DueDay.ToString()}. Congratulations!");
+                Messenger.Broadcast(PlayerSignals.WIN_GAME, $"You've successfully wiped out all villagers before Day {(PangatLooWinConditionTracker.DueDay + 1).ToString()}. Congratulations!");
             }
         }
 
         #region Listeners
-        public void OnCharacterEliminated(Character p_character) {
+        public void OnCharacterEliminated(Character p_character, int p_villagersCount) {
             objectsToCenter?.Remove(p_character);
             Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
+            CheckForCompletion(p_villagersCount);
         }
-        public void OnCharacterAddedAsTarget(Character p_character) {
+        public void OnCharacterAddedAsTarget(Character p_character, int p_villagersCount) {
             objectsToCenter?.Add(p_character);
             Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
         }
 
         public void OnDayChangedAction(int p_currentDay, int p_villagersCount) {
-            CheckForCompletion(p_currentDay, p_villagersCount);
+            CheckForCompletion(p_villagersCount);
         }
        #endregion
 

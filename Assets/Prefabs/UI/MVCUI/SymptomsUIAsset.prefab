@@ -5694,6 +5694,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7970687571697915100}
   - component: {fileID: 2410689979741162838}
+  - component: {fileID: 3408261064040569511}
   m_Layer: 5
   m_Name: Tooltip Position
   m_TagString: Untagged
@@ -5734,6 +5735,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pivot: {x: 0, y: 1}
   anchor: 0
+--- !u!223 &3408261064040569511
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6686266143742362488}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 7
+  m_TargetDisplay: 0
 --- !u!1 &7209311988247524371
 GameObject:
   m_ObjectHideFlags: 0
@@ -5797,6 +5819,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &994303114844877455
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6031,6 +6054,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &9009904467846916646
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6131,6 +6155,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &2528465031964575460
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6231,6 +6256,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &6075739000255624818
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6331,6 +6357,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &3592282610501512985
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6431,6 +6458,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &1409603522403073099
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6812,6 +6840,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &3738138900627840881
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6912,6 +6941,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &3622110174369984610
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7012,6 +7042,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &1556701497975909145
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7246,6 +7277,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &4728171660104812173
 CanvasRenderer:
   m_ObjectHideFlags: 0

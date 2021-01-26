@@ -5,7 +5,7 @@ using Traits;
 public class ProtectionData : SkillData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.PROTECTION;
     public override string name => "Protection";
-    public override string description => "This Spell will apply Protection to all non-hostile units within its area of effect.";
+    public override string description => "This Spell will apply Protection to all non-hostile units within its area of effect - significantly reducing damage they receive.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
 
     public ProtectionData() : base() {

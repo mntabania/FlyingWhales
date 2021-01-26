@@ -1542,6 +1542,7 @@
               <e p="Murder.cs" t="Include" />
               <e p="NarcolepticNap.cs" t="Include" />
               <e p="Patrol.cs" t="Include" />
+              <e p="Pickpocket.cs" t="Include" />
               <e p="PickUp.cs" t="Include" />
               <e p="PlaceFreezingTrap.cs" t="Include" />
               <e p="Play.cs" t="Include" />
