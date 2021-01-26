@@ -194,7 +194,7 @@ public class MonsterGeneration : MapGenerationComponent {
 	                    MonsterMigrationBiomeAtomizedData chosenMMonster = regionDivision.GetRandomMonsterFromFaunaList();
 	                    int randomAmount = GameUtilities.RandomBetweenTwoNumbers(chosenMMonster.minRange, chosenMMonster.maxRange);;
 	                    for (int k = 0; k < randomAmount; k++) {
-		                    Summon summon = CreateMonster(chosenMMonster.monsterType, locationChoices, structure);
+		                    Summon summon = CreateMonster(chosenMMonster.monsterType, locationChoices, structure, faction: FactionManager.Instance.GetDefaultFactionForMonster(chosenMMonster.monsterType));
 		                    locationChoices.Remove(summon.gridTileLocation);
 	                    }
 	                    if (locationChoices.Count == 0) {
@@ -283,7 +283,7 @@ public class MonsterGeneration : MapGenerationComponent {
 							MonsterMigrationBiomeAtomizedData chosenMMonster = regionDivision.GetRandomMonsterFromFaunaList();
 							int randomAmount = GameUtilities.RandomBetweenTwoNumbers(chosenMMonster.minRange, chosenMMonster.maxRange);;
 							for (int k = 0; k < randomAmount; k++) {
-								Summon summon = CreateMonster(chosenMMonster.monsterType, locationChoices, cave);
+								Summon summon = CreateMonster(chosenMMonster.monsterType, locationChoices, cave, faction: FactionManager.Instance.GetDefaultFactionForMonster(chosenMMonster.monsterType));
 								locationChoices.Remove(summon.gridTileLocation);
 							}
 							if (locationChoices.Count == 0) {
