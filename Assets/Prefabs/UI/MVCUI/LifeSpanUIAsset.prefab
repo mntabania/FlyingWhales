@@ -567,6 +567,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &1162223053659326910
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1069,6 +1070,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &3113654273079317068
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2468,6 +2470,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &3320230890687920311
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3787,6 +3790,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &1259701540075218401
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4168,6 +4172,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls: []
+  executeHoverEnterActionPerFrame: 1
 --- !u!222 &8718810464466440531
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4215,6 +4220,7 @@ GameObject:
   m_Component:
   - component: {fileID: 394731645281844540}
   - component: {fileID: 567450087436821073}
+  - component: {fileID: 4348207874226198381}
   m_Layer: 5
   m_Name: Tooltip Position
   m_TagString: Untagged
@@ -4255,6 +4261,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pivot: {x: 0, y: 1}
   anchor: 0
+--- !u!223 &4348207874226198381
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5794904575767668867}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 7
+  m_TargetDisplay: 0
 --- !u!1 &5892199147136412695
 GameObject:
   m_ObjectHideFlags: 0
