@@ -225,6 +225,10 @@ public class GameManager : MonoBehaviour {
         Messenger.Broadcast(UISignals.UPDATE_UI);
     }
     private void TickEnded(){
+        Messenger.Broadcast(Signals.CHECK_SCHEDULES);
+        Messenger.Broadcast(CharacterSignals.CHARACTER_TICK_ENDED_MOVEMENT);
+        Messenger.Broadcast(CharacterSignals.PROCESS_ALL_UNPOROCESSED_POIS);
+        Messenger.Broadcast(CharacterSignals.CHARACTER_TICK_ENDED);
         Messenger.Broadcast(Signals.TICK_ENDED);
         
         today.tick += 1;

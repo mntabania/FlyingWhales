@@ -60,8 +60,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     private bool hasSubscribedToListeners;
     public LogComponent logComponent { get; protected set; }
     public virtual StructureConnector structureConnector { get; protected set; }
-    
+
     #region getters
+    public string nameplateName => GetNameplateName();
     public OBJECT_TYPE objectType => OBJECT_TYPE.Tile_Object;
     public virtual Type serializedData => typeof(SaveDataTileObject);
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.TILE_OBJECT;
@@ -207,6 +208,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     #endregion
 
     #region Virtuals
+    protected virtual string GetNameplateName() {
+        return name;
+    }
     /// <summary>
     /// Called when a character starts to do an action towards this object.
     /// </summary>

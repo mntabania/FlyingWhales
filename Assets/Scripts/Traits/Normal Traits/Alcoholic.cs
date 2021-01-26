@@ -75,11 +75,16 @@ namespace Traits {
                     }
                     if (character.homeSettlement != null && character.homeSettlement.HasStructure(STRUCTURE_TYPE.TAVERN)) {
                         LocationStructure tavern = character.homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.TAVERN);
-                        List<TileObject> choices = tavern.GetTileObjectsThatAdvertise(INTERACTION_TYPE.DRINK);
+                        List<TileObject> choices = ObjectPoolManager.Instance.CreateNewTileObjectList();
+                        tavern.PopulateTileObjectsThatAdvertise(choices, INTERACTION_TYPE.DRINK);
+                        TileObject target = null;
                         if (choices.Count > 0) {
-                            TileObject target = CollectionUtilities.GetRandomElement(choices);
+                            target = CollectionUtilities.GetRandomElement(choices);
+                        }
+                        ObjectPoolManager.Instance.ReturnTileObjectListToPool(choices);
+                        if(target != null) {
                             GoapPlanJob drinkJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.DRINK, target, character);
-                            character.jobQueue.AddJobInQueue(drinkJob);    
+                            character.jobQueue.AddJobInQueue(drinkJob);
                         } else {
                             return "no_target";            
                         }

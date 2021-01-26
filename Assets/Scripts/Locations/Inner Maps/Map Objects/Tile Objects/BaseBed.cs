@@ -55,6 +55,14 @@ public abstract class BaseBed : TileObject {
                 //disable the character's marker
                 character.marker.SetVisualState(false);
                 Messenger.Broadcast(TileObjectSignals.ADD_TILE_OBJECT_USER, GetBase(), character);
+
+                //Once a character enters a bed and the current selector highlight (the white square outline) is on them, transfer the highlight to the bed because the character's marker will become invisible
+                //https://trello.com/c/kaVJHBV5/3459-selection-on-sleeping
+                if (Selector.Instance.IsSelected(character)) {
+                    if (mapObjectVisual != null) {
+                        Selector.Instance.Select(this, mapObjectVisual.transform);
+                    }
+                }
                 return true;
             }
         }

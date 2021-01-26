@@ -741,7 +741,6 @@ namespace Inner_Maps {
         private IEnumerator MapPerlinDetails(List<LocationGridTile> tiles, int xSize, int ySize, float xSeed, float ySeed) {
             yield return StartCoroutine(GroundPerlin(tiles, xSize, ySize, xSeed, ySeed));
             // yield return StartCoroutine(GenerateBiomeTransitions());
-            
             int batchCount = 0;
             //flower, rock and garbage
             for (int i = 0; i < tiles.Count; i++) {

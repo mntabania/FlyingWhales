@@ -509,6 +509,7 @@ public enum INTERACTION_TYPE {
     LONG_STAND_STILL = 219,
     BURROW = 220,
     PLAGUE_FATALITY = 221,
+    PICKPOCKET = 222,
 }
 public enum INTERRUPT {
     None,

@@ -26,7 +26,7 @@ public class SchedulingManager : BaseMonoBehaviour {
     }
     public void StartScheduleCalls() {
         checkGameDate = GameManager.Instance.Today();
-		Messenger.AddListener(Signals.TICK_ENDED, CheckSchedule);
+		Messenger.AddListener(Signals.CHECK_SCHEDULES, CheckSchedule);
     }
 	private void CheckSchedule(){
         checkGameDate = GameManager.Instance.Today();

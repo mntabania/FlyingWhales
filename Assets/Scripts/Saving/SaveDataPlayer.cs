@@ -428,6 +428,12 @@ public class SaveDataPlayer {
                 break;
             case WorldSettingsData.World_Type.Affatt:
                 UnlockWorld(WorldSettingsData.World_Type.Zenko);
+                UnlockWorld(WorldSettingsData.World_Type.Aneem);
+                UnlockWorld(WorldSettingsData.World_Type.Pitto);
+                break;
+            case WorldSettingsData.World_Type.Zenko:
+                UnlockWorld(WorldSettingsData.World_Type.Aneem);
+                UnlockWorld(WorldSettingsData.World_Type.Pitto);    
                 break;
         }
         SaveManager.Instance.savePlayerManager.SavePlayerData();

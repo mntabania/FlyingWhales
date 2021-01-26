@@ -771,9 +771,9 @@ namespace Locations.Settlements {
             }
             return false;
         }
-        public T GetTileObjectOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
+        public T GetFirstTileObjectOfType<T>(params TILE_OBJECT_TYPE[] type) where T : TileObject {
             for (int i = 0; i < allStructures.Count; i++) {
-                T obj = allStructures[i].GetTileObjectOfType<T>(type);
+                T obj = allStructures[i].GetFirstTileObjectOfType<T>(type);
                 if(obj != null) {
                     return obj as T;
                 }

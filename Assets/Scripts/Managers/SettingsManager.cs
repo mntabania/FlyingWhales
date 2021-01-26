@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -27,7 +28,7 @@ namespace Settings {
         
         [Header("Gameplay Settings UI")] 
         [SerializeField] private Toggle edgePanningToggle;
-        [SerializeField] private Toggle skipTutorialsToggle;
+        [FormerlySerializedAs("skipTutorialsToggle")] [SerializeField] private Toggle skipAdvancedTutorialsToggle;
         [SerializeField] private Toggle confineCursorToggle;
         [SerializeField] private Toggle vsyncToggle;
         [SerializeField] private Toggle showVideosToggle;
@@ -99,8 +100,8 @@ namespace Settings {
             hoverHandlerEdgePanning.AddOnHoverOverAction(OnHoverOverEdgePanning);
             hoverHandlerEdgePanning.AddOnHoverOutAction(OnHoverOutEdgePanning);
             
-            hoverHandlerSkipTutorials.AddOnHoverOverAction(OnHoverOverSkipTutorials);
-            hoverHandlerSkipTutorials.AddOnHoverOutAction(OnHoverOutSkipTutorials);
+            hoverHandlerSkipTutorials.AddOnHoverOverAction(OnHoverOverSkipAdvancedTutorials);
+            hoverHandlerSkipTutorials.AddOnHoverOutAction(OnHoverOutSkipAdvancedTutorials);
             
             hoverHandlerConfineCursor.AddOnHoverOverAction(OnHoverOverConfineCursor);
             hoverHandlerConfineCursor.AddOnHoverOutAction(OnHoverOutConfineCursor);
@@ -147,10 +148,10 @@ namespace Settings {
         private void UpdateUI() {
             edgePanningToggle.isOn = settings.useEdgePanning;
             confineCursorToggle.SetIsOnWithoutNotify(settings.confineCursor);
-            skipTutorialsToggle.SetIsOnWithoutNotify(settings.skipTutorials);
+            skipAdvancedTutorialsToggle.SetIsOnWithoutNotify(settings.skipAdvancedTutorials);
             cameraShakeToggle.SetIsOnWithoutNotify(settings.disableCameraShake);
             randomizeMonsterNamesToggle.SetIsOnWithoutNotify(settings.randomizeMonsterNames);
-            skipTutorialsToggle.gameObject.SetActive(SceneManager.GetActiveScene().name == "MainMenu");
+            skipAdvancedTutorialsToggle.gameObject.SetActive(SceneManager.GetActiveScene().name == "MainMenu");
 
             resolutionsDropdown.value = UtilityScripts.GameUtilities.GetOptionIndex(resolutionsDropdown, settings.resolution);
             graphicsDropdown.value = settings.graphicsQuality;
@@ -194,7 +195,9 @@ namespace Settings {
                      doNotShowVideos = true,
                      skipEarlyAccessAnnouncement = false,
                      disableCameraShake = false,
-                     randomizeMonsterNames =  false
+                     randomizeMonsterNames =  false,
+                     skipTutorials = false,
+                     skipAdvancedTutorials = false
                  };
                  Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, settings.fullscreen);
                  QualitySettings.SetQualityLevel(settings.graphicsQuality);
@@ -211,7 +214,7 @@ namespace Settings {
             SetFullscreen();
 
             _settings.useEdgePanning = edgePanningToggle.isOn;
-            _settings.skipTutorials = skipTutorialsToggle.isOn;
+            _settings.skipTutorials = skipAdvancedTutorialsToggle.isOn;
             _settings.isVsyncOn = vsyncToggle.isOn;
             _settings.doNotShowVideos = !showVideosToggle.isOn;
             _settings.confineCursor = confineCursorToggle.isOn;
@@ -263,14 +266,16 @@ namespace Settings {
         #endregion
 
         #region Tutorials
+        public void OnToggleSkipAdvancedTutorials(bool state) {
+            _settings.skipAdvancedTutorials = state;
+        }
         public void OnToggleSkipTutorials(bool state) {
             _settings.skipTutorials = state;
-            Messenger.Broadcast(SettingsSignals.ON_SKIP_TUTORIALS_CHANGED, state);
         }
-        private void OnHoverOverSkipTutorials() {
+        private void OnHoverOverSkipAdvancedTutorials() {
             // Tooltip.Instance.ShowSmallInfo("Toggle tutorials on/off", "Skip Tutorials", autoReplaceText: false);
         }
-        private void OnHoverOutSkipTutorials() {
+        private void OnHoverOutSkipAdvancedTutorials() {
             // Tooltip.Instance.HideSmallInfo();
         }
         #endregion

@@ -149,6 +149,18 @@ namespace UtilityScripts {
                 }
             }
         }
+        public static void PopulatePriorityLocationsForCraftingCultistKit(Character actor, GoapPlanJob job, INTERACTION_TYPE actionType) {
+            NPCSettlement homeSettlement = actor.homeSettlement;
+            if (homeSettlement != null) {
+                LocationStructure cityCenter = homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+                if (cityCenter != null) {
+                    job.AddPriorityLocation(actionType, cityCenter);
+                }
+            }
+            if (actor.homeStructure != null) {
+                job.AddPriorityLocation(actionType, actor.homeStructure);
+            }
+        }
 
         #region Produce Resources
         public static void PopulatePriorityLocationsForProduceResources(NPCSettlement settlement, GoapPlanJob job, RESOURCE resourceType) {

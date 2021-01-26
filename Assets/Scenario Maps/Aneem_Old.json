@@ -3,18 +3,18 @@
     "worldMapTemplate": {
       "regionCount": 2,
       "worldMapWidth": 15,
-      "worldMapHeight": 7,
+      "worldMapHeight": 6,
       "regions": [
         {
           "Key": 0,
           "Value": [
             {
               "width": 7,
-              "height": 7
+              "height": 6
             },
             {
               "width": 8,
-              "height": 7
+              "height": 6
             }
           ]
         }
@@ -22,908 +22,19 @@
     },
     "hextileSaves": [
       {
-        "persistentID": "9fd45585-353f-4027-a574-c4adaffade72",
+        "persistentID": "cc8a3507-5eb1-49eb-8533-38a08e4e4fc1",
         "id": 0,
         "xCoordinate": 0,
         "yCoordinate": 0,
-        "tileName": "Vre",
-        "elevationNoise": 0.6054512,
-        "moistureNoise": 0.4573815,
-        "temperature": 0.892934,
+        "tileName": "Ecetia",
+        "elevationNoise": 0.3594425,
+        "moistureNoise": 0.4591956,
+        "temperature": 0.8684187,
         "biomeType": "FOREST",
         "elevationType": "TREES",
         "tileFeatureSaveData": [
           {
             "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "6d88fae6-e28c-4277-91fe-1a67ecb6a7e1",
-        "id": 1,
-        "xCoordinate": 0,
-        "yCoordinate": 1,
-        "tileName": "Creadian",
-        "elevationNoise": 0.3400691,
-        "moistureNoise": 0.308291,
-        "temperature": 0.7012736,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "8c24d2fa-6529-4724-9687-84907004585e",
-        "id": 2,
-        "xCoordinate": 0,
-        "yCoordinate": 2,
-        "tileName": "Heonar",
-        "elevationNoise": 0.5754262,
-        "moistureNoise": 0.128596,
-        "temperature": 0.550142,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "79a14847-83cc-44ec-94b0-e2f70d7d3cdc",
-        "id": 3,
-        "xCoordinate": 0,
-        "yCoordinate": 3,
-        "tileName": "Waereata",
-        "elevationNoise": 0.450021,
-        "moistureNoise": 0.555967,
-        "temperature": 0.3157188,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "01377a29-1770-4af3-be86-193a6833a05c",
-        "id": 4,
-        "xCoordinate": 0,
-        "yCoordinate": 4,
-        "tileName": "Wreagira",
-        "elevationNoise": 0.337654,
-        "moistureNoise": 0.4847445,
-        "temperature": 0.6066715,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "58148974-e27f-481e-8ebe-aa4d284dbbea",
-        "id": 5,
-        "xCoordinate": 0,
-        "yCoordinate": 5,
-        "tileName": "Zeann",
-        "elevationNoise": 0.06420473,
-        "moistureNoise": 0.5676425,
-        "temperature": 0.7014447,
-        "biomeType": "FOREST",
-        "elevationType": "WATER",
-        "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "9232ccd0-2c83-4b79-b97c-778c01c0f19c",
-        "id": 6,
-        "xCoordinate": 0,
-        "yCoordinate": 6,
-        "tileName": "Kreatope",
-        "elevationNoise": 0.3617862,
-        "moistureNoise": 0.1369082,
-        "temperature": 0.6323461,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "aaf26681-1db1-4bee-90f7-0cac09fe22db",
-        "id": 7,
-        "xCoordinate": 1,
-        "yCoordinate": 0,
-        "tileName": "Iodiann",
-        "elevationNoise": 0.6486776,
-        "moistureNoise": 0.3435428,
-        "temperature": 0.8236562,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "4d94277e-0f06-4113-b000-4a7de85e0cdd",
-        "id": 8,
-        "xCoordinate": 1,
-        "yCoordinate": 1,
-        "tileName": "Hearunet",
-        "elevationNoise": 0.4143073,
-        "moistureNoise": 0.6377087,
-        "temperature": 0.6470225,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "9baccd7d-61f6-473a-b9da-41105fe6c20c",
-        "id": 9,
-        "xCoordinate": 1,
-        "yCoordinate": 2,
-        "tileName": "Ceamond",
-        "elevationNoise": 0.4458334,
-        "moistureNoise": 0.7106295,
-        "temperature": 0.5295328,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "TEMPLE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "1d50644f-1425-47c5-9114-c123d28ee258",
-        "id": 10,
-        "xCoordinate": 1,
-        "yCoordinate": 3,
-        "tileName": "Krialiar",
-        "elevationNoise": 0.3342432,
-        "moistureNoise": 0.5657071,
-        "temperature": 0.2932381,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "693bd2ef-6553-42b7-b992-ac65368941e0",
-        "id": 11,
-        "xCoordinate": 1,
-        "yCoordinate": 4,
-        "tileName": "Breagar",
-        "elevationNoise": 0.3639118,
-        "moistureNoise": 0.6405061,
-        "temperature": 0.5799769,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "f73e3b30-b1f4-4c3a-9a68-ef04da0eba7e",
-        "id": 12,
-        "xCoordinate": 1,
-        "yCoordinate": 5,
-        "tileName": "Tianial",
-        "elevationNoise": 0.5412054,
-        "moistureNoise": 0.4723702,
-        "temperature": 0.7254984,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "647a790e-4b44-423b-aa6f-7badebe7f994",
-        "id": 13,
-        "xCoordinate": 1,
-        "yCoordinate": 6,
-        "tileName": "Klodiria",
-        "elevationNoise": 0.5274743,
-        "moistureNoise": 0.6126738,
-        "temperature": 0.7106553,
-        "biomeType": "FOREST",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "StoneSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "7ab2a61c-59ca-4e33-bd08-28d028684ec9",
-        "id": 14,
-        "xCoordinate": 2,
-        "yCoordinate": 0,
-        "tileName": "Criarias",
-        "elevationNoise": 0.4784984,
-        "moistureNoise": 0.4000739,
-        "temperature": 0.7777572,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "d993e1ad-2f51-4cee-8aae-67339c62b7d3",
-        "id": 15,
-        "xCoordinate": 2,
-        "yCoordinate": 1,
-        "tileName": "Chomial",
-        "elevationNoise": 0.3682334,
-        "moistureNoise": 0.5285082,
-        "temperature": 0.6231883,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "86ef1edb-3410-49a7-9cec-f8a9193ae097",
-        "id": 16,
-        "xCoordinate": 2,
-        "yCoordinate": 2,
-        "tileName": "Zemarune",
-        "elevationNoise": 0.6572417,
-        "moistureNoise": 0.7589032,
-        "temperature": 0.5041,
-        "biomeType": "FOREST",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "FertileFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "f0ebe32b-e858-44b2-8bff-e9f2ee6ced2d",
-        "id": 17,
-        "xCoordinate": 2,
-        "yCoordinate": 3,
-        "tileName": "Siaritha",
-        "elevationNoise": 0.6534524,
-        "moistureNoise": 0.4960548,
-        "temperature": 0.2362536,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "87faf252-5acb-4536-927a-67d4d29ba581",
-        "id": 18,
-        "xCoordinate": 2,
-        "yCoordinate": 4,
-        "tileName": "Heagria",
-        "elevationNoise": 0.5182427,
-        "moistureNoise": 0.5630369,
-        "temperature": 0.5172127,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "d5becdf5-b1c8-44ca-a31b-d6bc4d86dd73",
-        "id": 19,
-        "xCoordinate": 2,
-        "yCoordinate": 5,
-        "tileName": "Acliarah",
-        "elevationNoise": 0.1836387,
-        "moistureNoise": 0.9150963,
-        "temperature": 0.734094,
-        "biomeType": "FOREST",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "InhabitedFeature"
-          }
-        ],
-        "landmarkType": "HOUSES",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "590b7c00-578e-4529-9f3a-03e19ad5ae89",
-        "id": 20,
-        "xCoordinate": 2,
-        "yCoordinate": 6,
-        "tileName": "Zemarean",
-        "elevationNoise": 0.681949,
-        "moistureNoise": 0.567304,
-        "temperature": 0.7955426,
-        "biomeType": "FOREST",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "BARRACKS",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "20dbd98a-da21-4625-aff0-c3afffcacdbe",
-        "id": 21,
-        "xCoordinate": 3,
-        "yCoordinate": 0,
-        "tileName": "Kresalan",
-        "elevationNoise": 0.6316684,
-        "moistureNoise": 0.498816,
-        "temperature": 0.7527648,
-        "biomeType": "FOREST",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "6bb1599c-02a5-4524-916e-ddb28fd21c37",
-        "id": 22,
-        "xCoordinate": 3,
-        "yCoordinate": 1,
-        "tileName": "Anniary",
-        "elevationNoise": 0.1317127,
-        "moistureNoise": 0.4928595,
-        "temperature": 0.6228616,
-        "biomeType": "FOREST",
-        "elevationType": "WATER",
-        "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "23e1750b-52e3-4df1-a10e-2cf6650760c1",
-        "id": 23,
-        "xCoordinate": 3,
-        "yCoordinate": 2,
-        "tileName": "Rionatan",
-        "elevationNoise": 0.3653222,
-        "moistureNoise": 0.6753715,
-        "temperature": 0.4881916,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "b960a5fa-5527-4670-b3c7-6994187f7890",
-        "id": 24,
-        "xCoordinate": 3,
-        "yCoordinate": 3,
-        "tileName": "Aclisiore",
-        "elevationNoise": 0.480062,
-        "moistureNoise": 0.1061849,
-        "temperature": 0.1802158,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "f81995ab-93e0-4d35-80d3-0f8572329396",
-        "id": 25,
-        "xCoordinate": 3,
-        "yCoordinate": 4,
-        "tileName": "Aereal",
-        "elevationNoise": 0.6211106,
-        "moistureNoise": 0.2905704,
-        "temperature": 0.455223,
-        "biomeType": "FOREST",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          },
-          {
-            "summon": "Pig",
-            "tileFeatureName": "GameFeature",
-            "$type": "Locations.Tile_Features.SaveDataGameFeature"
-          }
-        ],
-        "landmarkType": "HOUSES",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "391adb02-c0fc-4187-9f13-c3115a934263",
-        "id": 26,
-        "xCoordinate": 3,
-        "yCoordinate": 5,
-        "tileName": "Zeagrana",
-        "elevationNoise": 0.2776877,
-        "moistureNoise": 0.408287,
-        "temperature": 0.7366729,
-        "biomeType": "FOREST",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "HOUSES",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "c5e1a692-6bb9-4ca7-9587-71073be173dc",
-        "id": 27,
-        "xCoordinate": 3,
-        "yCoordinate": 6,
-        "tileName": "Aereodu",
-        "elevationNoise": 0.592235,
-        "moistureNoise": 0.5818472,
-        "temperature": 0.8644167,
-        "biomeType": "FOREST",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "BARRACKS",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "781cbbe2-ae33-4069-9c48-509474702b23",
-        "id": 28,
-        "xCoordinate": 4,
-        "yCoordinate": 0,
-        "tileName": "Anniata",
-        "elevationNoise": 0.5639378,
-        "moistureNoise": 0.7000676,
-        "temperature": 0.7134839,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "MAGE_TOWER",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "e8de73c9-b8f1-4da1-a8d6-b6261c5efb60",
-        "id": 29,
-        "xCoordinate": 4,
-        "yCoordinate": 1,
-        "tileName": "Edrarana",
-        "elevationNoise": 0.3496515,
-        "moistureNoise": 0.8314033,
-        "temperature": 0.6228498,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "85637337-7446-484b-ba6c-7f819c3c0fc0",
-        "id": 30,
-        "xCoordinate": 4,
-        "yCoordinate": 2,
-        "tileName": "Ximemona",
-        "elevationNoise": 0.2617044,
-        "moistureNoise": 0.360857,
-        "temperature": 0.4860633,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "c6fd68be-e301-4986-92c3-416341c2dfa7",
-        "id": 31,
-        "xCoordinate": 4,
-        "yCoordinate": 3,
-        "tileName": "Jiapial",
-        "elevationNoise": 0.4800967,
-        "moistureNoise": 0.5792101,
-        "temperature": 0.1726492,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "7b551dcd-9f1d-4866-95f9-47b26eda011c",
-        "id": 32,
-        "xCoordinate": 4,
-        "yCoordinate": 4,
-        "tileName": "Rioryone",
-        "elevationNoise": 0.7413078,
-        "moistureNoise": 0.5051237,
-        "temperature": 0.4479867,
-        "biomeType": "FOREST",
-        "elevationType": "MOUNTAIN",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "MetalSourceFeature"
           },
           {
             "summon": "Sheep",
@@ -944,71 +55,19 @@
         }
       },
       {
-        "persistentID": "6c2b4a8c-ae44-4e14-930b-ef3b5f7dbb76",
-        "id": 33,
-        "xCoordinate": 4,
-        "yCoordinate": 5,
-        "tileName": "Ioddiara",
-        "elevationNoise": 0.2402426,
-        "moistureNoise": 0.5701373,
-        "temperature": 0.7718638,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "fd3b0b06-3f49-4e72-9997-2f9853359617",
-        "id": 34,
-        "xCoordinate": 4,
-        "yCoordinate": 6,
-        "tileName": "Breartha",
-        "elevationNoise": 0.4902526,
-        "moistureNoise": 0.8784684,
-        "temperature": 0.9221095,
+        "persistentID": "a979a360-9df9-4feb-bf3b-49c0b3565543",
+        "id": 1,
+        "xCoordinate": 0,
+        "yCoordinate": 1,
+        "tileName": "Riocrana",
+        "elevationNoise": 0.5658446,
+        "moistureNoise": 0.1826769,
+        "temperature": 0.6096831,
         "biomeType": "FOREST",
         "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "73e975a2-f9d7-4fc1-8ff8-2a49f759fe3c",
-        "id": 35,
-        "xCoordinate": 5,
-        "yCoordinate": 0,
-        "tileName": "Vreaqior",
-        "elevationNoise": 0.3397744,
-        "moistureNoise": 0.3841626,
-        "temperature": 0.6681926,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
         "tileFeatureSaveData": [
           {
-            "tileFeatureName": "WoodSourceFeature"
+            "tileFeatureName": "StoneSourceFeature"
           }
         ],
         "landmarkType": "NONE",
@@ -1024,42 +83,14 @@
         }
       },
       {
-        "persistentID": "392e2f5f-a073-4aaa-8c45-e538327df35d",
-        "id": 36,
-        "xCoordinate": 5,
-        "yCoordinate": 1,
-        "tileName": "Jianare",
-        "elevationNoise": 0.4368244,
-        "moistureNoise": 0.5557194,
-        "temperature": 0.6228336,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "053665e0-ab1e-4291-9008-fccef7da7da7",
-        "id": 37,
-        "xCoordinate": 5,
+        "persistentID": "b1888456-ec8a-4d80-a64a-d5f1b8885005",
+        "id": 2,
+        "xCoordinate": 0,
         "yCoordinate": 2,
-        "tileName": "Breaqion",
-        "elevationNoise": 0.5491815,
-        "moistureNoise": 0.4389628,
-        "temperature": 0.4980856,
+        "tileName": "Slasiodu",
+        "elevationNoise": 0.4417261,
+        "moistureNoise": 0.6590108,
+        "temperature": 0.392112,
         "biomeType": "FOREST",
         "elevationType": "TREES",
         "tileFeatureSaveData": [
@@ -1080,264 +111,352 @@
         }
       },
       {
-        "persistentID": "ac0977ed-f1de-4cdd-9906-51e6a16fd64c",
-        "id": 38,
-        "xCoordinate": 5,
+        "persistentID": "bd6df3cf-9926-476c-903b-a231271bfa68",
+        "id": 3,
+        "xCoordinate": 0,
         "yCoordinate": 3,
-        "tileName": "Heomiona",
-        "elevationNoise": 0.5009024,
-        "moistureNoise": 0.2961891,
-        "temperature": 0.2153895,
-        "biomeType": "FOREST",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "e9e7f1a6-4382-4de1-af47-4813c007c1f7",
-        "id": 39,
-        "xCoordinate": 5,
-        "yCoordinate": 4,
-        "tileName": "Ihoceth",
-        "elevationNoise": 0.3108496,
-        "moistureNoise": 0.3705041,
-        "temperature": 0.4972424,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "b2c40c03-9c8c-4286-9a28-403eaad98bd4",
-        "id": 40,
-        "xCoordinate": 5,
-        "yCoordinate": 5,
-        "tileName": "Teartha",
-        "elevationNoise": 0.5420375,
-        "moistureNoise": 0.5949558,
-        "temperature": 0.8269274,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "46746012-4d42-4e76-a6f4-1dcbf6a699d9",
-        "id": 41,
-        "xCoordinate": 5,
-        "yCoordinate": 6,
-        "tileName": "Kreanata",
-        "elevationNoise": 0.2974515,
-        "moistureNoise": 0.7627642,
-        "temperature": 0.9396613,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "014d753f-e828-4e62-b30a-3965f1568f72",
-        "id": 42,
-        "xCoordinate": 6,
-        "yCoordinate": 0,
-        "tileName": "Edren",
-        "elevationNoise": 0.4252261,
-        "moistureNoise": 0.4116446,
-        "temperature": 0.6350407,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "696aa318-7e8f-44a2-959e-2c0b1c4b62da",
-        "id": 43,
-        "xCoordinate": 6,
-        "yCoordinate": 1,
-        "tileName": "Vrelalar",
-        "elevationNoise": 0.2356003,
-        "moistureNoise": 0.4644526,
-        "temperature": 0.6228199,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "78ea302d-fe70-4e2c-9b08-aaa5d5163d86",
-        "id": 44,
-        "xCoordinate": 6,
-        "yCoordinate": 2,
-        "tileName": "Headalia",
-        "elevationNoise": 0.2270231,
-        "moistureNoise": 0.3272433,
-        "temperature": 0.5115349,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "74df525c-f515-4a4a-8ef5-c62ee875d06c",
-        "id": 45,
-        "xCoordinate": 6,
-        "yCoordinate": 3,
-        "tileName": "Jianiota",
-        "elevationNoise": 0.6100912,
-        "moistureNoise": 0.6409984,
-        "temperature": 0.263203,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "30d89ebb-9129-4b92-917e-41853716c0e1",
-        "id": 46,
-        "xCoordinate": 6,
-        "yCoordinate": 4,
-        "tileName": "Strelara",
-        "elevationNoise": 0.2279567,
-        "moistureNoise": 0.4358763,
-        "temperature": 0.5517096,
-        "biomeType": "FOREST",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "d472356a-5869-48cd-af67-92aeef9754b4",
-        "id": 47,
-        "xCoordinate": 6,
-        "yCoordinate": 5,
-        "tileName": "Siastia",
-        "elevationNoise": 0.5199581,
-        "moistureNoise": 0.5938568,
-        "temperature": 0.8643306,
+        "tileName": "Zeataer",
+        "elevationNoise": 0.7155995,
+        "moistureNoise": 0.6893113,
+        "temperature": 0.4317555,
         "biomeType": "FOREST",
         "elevationType": "MOUNTAIN",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "MetalSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "49dbef56-c573-4ccd-8125-7d5b71bcf7f1",
+        "id": 4,
+        "xCoordinate": 0,
+        "yCoordinate": 4,
+        "tileName": "Slaspe",
+        "elevationNoise": 0.2642349,
+        "moistureNoise": 0.5135103,
+        "temperature": 0.6272775,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "98c466c1-ff1e-45a7-9c03-2fd768fefcd5",
+        "id": 5,
+        "xCoordinate": 0,
+        "yCoordinate": 5,
+        "tileName": "Ialastia",
+        "elevationNoise": 0.7195182,
+        "moistureNoise": 0.3625883,
+        "temperature": 0.7915307,
+        "biomeType": "FOREST",
+        "elevationType": "MOUNTAIN",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "MetalSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "048254b8-98ae-4e36-8a07-8e49e75482c7",
+        "id": 6,
+        "xCoordinate": 1,
+        "yCoordinate": 0,
+        "tileName": "Edrarim",
+        "elevationNoise": 0.6256481,
+        "moistureNoise": 0.4088524,
+        "temperature": 0.9637082,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "37af54d6-abca-476e-ad25-3e84058a0131",
+        "id": 7,
+        "xCoordinate": 1,
+        "yCoordinate": 1,
+        "tileName": "Heommare",
+        "elevationNoise": 0.6617003,
+        "moistureNoise": 0.5155939,
+        "temperature": 0.6548513,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "134e3987-fefc-4ba1-a515-4dcd98b608a1",
+        "id": 8,
+        "xCoordinate": 1,
+        "yCoordinate": 2,
+        "tileName": "Mealaspe",
+        "elevationNoise": 0.4265985,
+        "moistureNoise": 0.5106721,
+        "temperature": 0.3632277,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "ANCIENT_RUIN",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "59823a50-a62b-49b9-9825-8d32691d1561",
+        "id": 9,
+        "xCoordinate": 1,
+        "yCoordinate": 3,
+        "tileName": "Tiacran",
+        "elevationNoise": 0.3346392,
+        "moistureNoise": 0.8110532,
+        "temperature": 0.3773602,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "6650e83e-eba4-46c4-b1eb-32a66d9009ac",
+        "id": 10,
+        "xCoordinate": 1,
+        "yCoordinate": 4,
+        "tileName": "Teaggare",
+        "elevationNoise": 0.3916777,
+        "moistureNoise": 0.5308052,
+        "temperature": 0.688962,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "05102f9f-23bc-41c6-8898-ca93475f55be",
+        "id": 11,
+        "xCoordinate": 1,
+        "yCoordinate": 5,
+        "tileName": "Drelala",
+        "elevationNoise": 0.6434855,
+        "moistureNoise": 0.4661106,
+        "temperature": 0.8931965,
+        "biomeType": "FOREST",
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "BARRACKS",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "691ca834-dc26-4a92-9524-d70521ce0679",
+        "id": 12,
+        "xCoordinate": 2,
+        "yCoordinate": 0,
+        "tileName": "Blealior",
+        "elevationNoise": 0.2011157,
+        "moistureNoise": 0.6289839,
+        "temperature": 1.061872,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "e44febc0-543c-4a03-ae5a-38afd717e74a",
+        "id": 13,
+        "xCoordinate": 2,
+        "yCoordinate": 1,
+        "tileName": "Breaggar",
+        "elevationNoise": 0.6565011,
+        "moistureNoise": 0.6028776,
+        "temperature": 0.7358642,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "a90f76da-b093-4945-8d54-6a8a12d21fbb",
+        "id": 14,
+        "xCoordinate": 2,
+        "yCoordinate": 2,
+        "tileName": "Aecassiar",
+        "elevationNoise": 0.8062599,
+        "moistureNoise": 0.8110496,
+        "temperature": 0.3673327,
+        "biomeType": "FOREST",
+        "elevationType": "MOUNTAIN",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "MetalSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "20fb95dc-edb6-430f-a732-222fd5c23478",
+        "id": 15,
+        "xCoordinate": 2,
+        "yCoordinate": 3,
+        "tileName": "Wrelarus",
+        "elevationNoise": 0.1843332,
+        "moistureNoise": 0.7993031,
+        "temperature": 0.2683269,
+        "biomeType": "FOREST",
+        "elevationType": "WATER",
         "tileFeatureSaveData": [],
         "landmarkType": "NONE",
         "saveDataHexTileSpellsComponent": {
@@ -1352,14 +471,150 @@
         }
       },
       {
-        "persistentID": "b366e0eb-2c09-4919-b05d-158bd0f4b0df",
-        "id": 48,
-        "xCoordinate": 6,
-        "yCoordinate": 6,
-        "tileName": "Ashorial",
-        "elevationNoise": 0.4791515,
-        "moistureNoise": 0.4281116,
-        "temperature": 0.9129965,
+        "persistentID": "101b011e-62be-4a13-ac91-8b670bde63de",
+        "id": 16,
+        "xCoordinate": 2,
+        "yCoordinate": 4,
+        "tileName": "Staruhor",
+        "elevationNoise": 0.8062276,
+        "moistureNoise": 0.2528357,
+        "temperature": 0.6637415,
+        "biomeType": "FOREST",
+        "elevationType": "MOUNTAIN",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "MetalSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "edeb31aa-8aac-47d8-9bac-6a160793970b",
+        "id": 17,
+        "xCoordinate": 2,
+        "yCoordinate": 5,
+        "tileName": "Meammela",
+        "elevationNoise": 0.7172793,
+        "moistureNoise": 0.2835373,
+        "temperature": 0.9310352,
+        "biomeType": "FOREST",
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "InhabitedFeature"
+          }
+        ],
+        "landmarkType": "BARRACKS",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "13730819-fd71-4243-bdfa-572e720e904f",
+        "id": 18,
+        "xCoordinate": 3,
+        "yCoordinate": 0,
+        "tileName": "Grulanne",
+        "elevationNoise": 0.4363236,
+        "moistureNoise": 0.1149807,
+        "temperature": 1.09095,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "3d610725-2311-48af-a689-7983f2cd07c8",
+        "id": 19,
+        "xCoordinate": 3,
+        "yCoordinate": 1,
+        "tileName": "Acliocia",
+        "elevationNoise": 0.6565011,
+        "moistureNoise": 0.1588091,
+        "temperature": 0.7912533,
+        "biomeType": "FOREST",
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "3635d921-9534-48ed-b568-f6d3db66ad74",
+        "id": 20,
+        "xCoordinate": 3,
+        "yCoordinate": 2,
+        "tileName": "Rioceah",
+        "elevationNoise": 0.3696422,
+        "moistureNoise": 0.2626742,
+        "temperature": 0.379898,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "64365845-c207-4bb3-9960-009050a59fc5",
+        "id": 21,
+        "xCoordinate": 3,
+        "yCoordinate": 3,
+        "tileName": "Krimiath",
+        "elevationNoise": 0.362706,
+        "moistureNoise": 0.8312262,
+        "temperature": 0.1627438,
         "biomeType": "FOREST",
         "elevationType": "TREES",
         "tileFeatureSaveData": [
@@ -1367,7 +622,7 @@
             "tileFeatureName": "WoodSourceFeature"
           },
           {
-            "summon": "Chicken",
+            "summon": "Pig",
             "tileFeatureName": "GameFeature",
             "$type": "Locations.Tile_Features.SaveDataGameFeature"
           }
@@ -1385,21 +640,733 @@
         }
       },
       {
-        "persistentID": "4a68eba2-1f16-454f-b8fb-247a16568142",
+        "persistentID": "c1018ee7-e085-4fe0-8ca3-0eec05c9f456",
+        "id": 22,
+        "xCoordinate": 3,
+        "yCoordinate": 4,
+        "tileName": "Staryond",
+        "elevationNoise": 0.5721362,
+        "moistureNoise": 0.3660886,
+        "temperature": 0.5843721,
+        "biomeType": "FOREST",
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "HOUSES",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "109a01db-ac8a-40c1-88ec-a89bc9fe1119",
+        "id": 23,
+        "xCoordinate": 3,
+        "yCoordinate": 5,
+        "tileName": "Eossia",
+        "elevationNoise": 0.598947,
+        "moistureNoise": 0.3189799,
+        "temperature": 0.9131336,
+        "biomeType": "FOREST",
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "HOUSES",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "07243a93-d221-4251-9609-e85d9b8edc18",
+        "id": 24,
+        "xCoordinate": 4,
+        "yCoordinate": 0,
+        "tileName": "Eolann",
+        "elevationNoise": 0.3618568,
+        "moistureNoise": 0.6705494,
+        "temperature": 1.046239,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "MAGE_TOWER",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "f35b8085-be1e-4a21-bdf0-a2e75b957075",
+        "id": 25,
+        "xCoordinate": 4,
+        "yCoordinate": 1,
+        "tileName": "Staedran",
+        "elevationNoise": 0.6565011,
+        "moistureNoise": 0.6125147,
+        "temperature": 0.7947953,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "d32866ca-4c61-4d5f-a62d-dda12bd67089",
+        "id": 26,
+        "xCoordinate": 4,
+        "yCoordinate": 2,
+        "tileName": "Abbeomond",
+        "elevationNoise": 0.2349589,
+        "moistureNoise": 0.3826154,
+        "temperature": 0.3781559,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "4e277d49-7059-4804-9ee4-382fb6818daf",
+        "id": 27,
+        "xCoordinate": 4,
+        "yCoordinate": 3,
+        "tileName": "Meatanar",
+        "elevationNoise": 0.508306,
+        "moistureNoise": 0.3227467,
+        "temperature": 0.09939608,
+        "biomeType": "FOREST",
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "716a0b0f-20f6-4b44-a6d0-5c211cb4712e",
+        "id": 28,
+        "xCoordinate": 4,
+        "yCoordinate": 4,
+        "tileName": "Heagarea",
+        "elevationNoise": 0.3376603,
+        "moistureNoise": 0.6346723,
+        "temperature": 0.5099341,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "65acebcd-9b23-4d9c-942a-914ca2f6b111",
+        "id": 29,
+        "xCoordinate": 4,
+        "yCoordinate": 5,
+        "tileName": "Oseocior",
+        "elevationNoise": 0.5047286,
+        "moistureNoise": 0.1921827,
+        "temperature": 0.8819503,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "049e5a10-0dd2-4a49-81fa-a74b993a69ff",
+        "id": 30,
+        "xCoordinate": 5,
+        "yCoordinate": 0,
+        "tileName": "Umularim",
+        "elevationNoise": 0.2461587,
+        "moistureNoise": 0.5693205,
+        "temperature": 1.005574,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "45c6dddc-78fb-4ab9-8897-83dac09608df",
+        "id": 31,
+        "xCoordinate": 5,
+        "yCoordinate": 1,
+        "tileName": "Slaereah",
+        "elevationNoise": 0.6113456,
+        "moistureNoise": 0.5810319,
+        "temperature": 0.7898648,
+        "biomeType": "FOREST",
+        "elevationType": "MOUNTAIN",
+        "tileFeatureSaveData": [],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "817d3f41-8fda-49b7-b865-9a879e7bf086",
+        "id": 32,
+        "xCoordinate": 5,
+        "yCoordinate": 2,
+        "tileName": "Teapiary",
+        "elevationNoise": 0.6271523,
+        "moistureNoise": 0.3609014,
+        "temperature": 0.3750964,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "fce4d7ad-71b8-41da-909d-02c0496e5807",
+        "id": 33,
+        "xCoordinate": 5,
+        "yCoordinate": 3,
+        "tileName": "Slaniara",
+        "elevationNoise": 0.5282647,
+        "moistureNoise": 0.3156582,
+        "temperature": 0.06667614,
+        "biomeType": "FOREST",
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [],
+        "landmarkType": "THE_PORTAL",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "7d2e38f4-0f43-4f60-964c-667ff79c2562",
+        "id": 34,
+        "xCoordinate": 5,
+        "yCoordinate": 4,
+        "tileName": "Breomial",
+        "elevationNoise": 0.4062645,
+        "moistureNoise": 0.2478577,
+        "temperature": 0.4677617,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "69c9c198-f3f3-420a-be69-c67d9b81f236",
+        "id": 35,
+        "xCoordinate": 5,
+        "yCoordinate": 5,
+        "tileName": "Criarara",
+        "elevationNoise": 0.5865083,
+        "moistureNoise": 0.5624251,
+        "temperature": 0.8485307,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "fa14a136-5349-499a-9953-7aa2ddd8fe74",
+        "id": 36,
+        "xCoordinate": 6,
+        "yCoordinate": 0,
+        "tileName": "Ugrarune",
+        "elevationNoise": 0.3518642,
+        "moistureNoise": 0.32269,
+        "temperature": 0.9989806,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "ed12863d-c7b6-4531-a1c2-c05d9309ac2e",
+        "id": 37,
+        "xCoordinate": 6,
+        "yCoordinate": 1,
+        "tileName": "Teataria",
+        "elevationNoise": 0.2757145,
+        "moistureNoise": 0.6160696,
+        "temperature": 0.7860453,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "f745897c-3d68-4324-b220-2541de85c824",
+        "id": 38,
+        "xCoordinate": 6,
+        "yCoordinate": 2,
+        "tileName": "Krelarea",
+        "elevationNoise": 0.2814325,
+        "moistureNoise": 0.3312823,
+        "temperature": 0.3768163,
+        "biomeType": "FOREST",
+        "elevationType": "MOUNTAIN",
+        "tileFeatureSaveData": [],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "ed27f188-ddd1-4a2b-a57a-7106f18ad3cc",
+        "id": 39,
+        "xCoordinate": 6,
+        "yCoordinate": 3,
+        "tileName": "Cearus",
+        "elevationNoise": 0.5848115,
+        "moistureNoise": 0.5272481,
+        "temperature": 0.08506988,
+        "biomeType": "FOREST",
+        "elevationType": "MOUNTAIN",
+        "tileFeatureSaveData": [],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "5338dd40-0e1d-4a99-a387-79b70de19da0",
+        "id": 40,
+        "xCoordinate": 6,
+        "yCoordinate": 4,
+        "tileName": "Ceasiory",
+        "elevationNoise": 0.3741904,
+        "moistureNoise": 0.3243857,
+        "temperature": 0.4898405,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "056bc475-c8c5-4495-9a4b-da86c870c0a6",
+        "id": 41,
+        "xCoordinate": 6,
+        "yCoordinate": 5,
+        "tileName": "Fliocrim",
+        "elevationNoise": 0.4607884,
+        "moistureNoise": 0.1290178,
+        "temperature": 0.8086175,
+        "biomeType": "FOREST",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "9d650eda-ac8e-4b4f-af09-bad34af3fb07",
+        "id": 42,
+        "xCoordinate": 7,
+        "yCoordinate": 0,
+        "tileName": "Siaryon",
+        "elevationNoise": 0.2766277,
+        "moistureNoise": 0.1516534,
+        "temperature": 1.01083,
+        "biomeType": "SNOW",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "6d7fa870-c9f2-4b0b-8219-7da347e2e0eb",
+        "id": 43,
+        "xCoordinate": 7,
+        "yCoordinate": 1,
+        "tileName": "Eddiran",
+        "elevationNoise": 0.5188317,
+        "moistureNoise": 0.3968295,
+        "temperature": 0.7828271,
+        "biomeType": "SNOW",
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "12b56070-8701-4148-9443-7ba4a76100f2",
+        "id": 44,
+        "xCoordinate": 7,
+        "yCoordinate": 2,
+        "tileName": "Ihocrah",
+        "elevationNoise": 0.289548,
+        "moistureNoise": 0.715233,
+        "temperature": 0.3811233,
+        "biomeType": "SNOW",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "7bd1b7dd-7c0a-4c67-83f9-758ed88a4d2d",
+        "id": 45,
+        "xCoordinate": 7,
+        "yCoordinate": 3,
+        "tileName": "Kresaren",
+        "elevationNoise": 0.6702747,
+        "moistureNoise": 0.5072572,
+        "temperature": 0.131132,
+        "biomeType": "SNOW",
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "8a41a751-6f35-4560-a10c-5cede21a35c0",
+        "id": 46,
+        "xCoordinate": 7,
+        "yCoordinate": 4,
+        "tileName": "Meaniara",
+        "elevationNoise": 0.1027664,
+        "moistureNoise": 0.7350816,
+        "temperature": 0.5466989,
+        "biomeType": "SNOW",
+        "elevationType": "WATER",
+        "tileFeatureSaveData": [],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "ac3e6251-7783-462d-8896-aea6abb52f01",
+        "id": 47,
+        "xCoordinate": 7,
+        "yCoordinate": 5,
+        "tileName": "Vreapha",
+        "elevationNoise": 0.1075067,
+        "moistureNoise": 0.4767534,
+        "temperature": 0.7651892,
+        "biomeType": "SNOW",
+        "elevationType": "WATER",
+        "tileFeatureSaveData": [],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "e42569d1-8da3-4ba4-82af-b87d5339bbc9",
+        "id": 48,
+        "xCoordinate": 8,
+        "yCoordinate": 0,
+        "tileName": "Headalia",
+        "elevationNoise": 0.4232956,
+        "moistureNoise": 0.2809208,
+        "temperature": 1.010138,
+        "biomeType": "SNOW",
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [],
+        "landmarkType": "MONSTER_LAIR",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "dd01c659-08e4-4feb-93b5-fd60669148bd",
         "id": 49,
-        "xCoordinate": 7,
-        "yCoordinate": 0,
-        "tileName": "Siareah",
-        "elevationNoise": 0.7188557,
-        "moistureNoise": 0.526059,
-        "temperature": 0.6214465,
+        "xCoordinate": 8,
+        "yCoordinate": 1,
+        "tileName": "Zemollea",
+        "elevationNoise": 0.4876954,
+        "moistureNoise": 0.1197023,
+        "temperature": 0.7792001,
         "biomeType": "SNOW",
-        "elevationType": "MOUNTAIN",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "MetalSourceFeature"
-          }
-        ],
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [],
         "landmarkType": "NONE",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
@@ -1413,18 +1380,18 @@
         }
       },
       {
-        "persistentID": "6736eac9-e764-4f46-9bb0-196fa3e48119",
+        "persistentID": "e5a4ab47-7d8d-4b6f-ba76-9947e53f15e6",
         "id": 50,
-        "xCoordinate": 7,
-        "yCoordinate": 1,
-        "tileName": "Meataepe",
-        "elevationNoise": 0.5610975,
-        "moistureNoise": 0.3279026,
-        "temperature": 0.622813,
+        "xCoordinate": 8,
+        "yCoordinate": 2,
+        "tileName": "Ceaniar",
+        "elevationNoise": 0.6934541,
+        "moistureNoise": 0.508715,
+        "temperature": 0.3836712,
         "biomeType": "SNOW",
         "elevationType": "PLAIN",
         "tileFeatureSaveData": [],
-        "landmarkType": "MONSTER_LAIR",
+        "landmarkType": "NONE",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
           "remainingEarthquakeDuration": 0,
@@ -1437,17 +1404,21 @@
         }
       },
       {
-        "persistentID": "ff9f5aaa-3576-4873-bdd7-2d02368956c3",
+        "persistentID": "42ac272b-04a9-4f0f-9f27-2e536086b5ad",
         "id": 51,
-        "xCoordinate": 7,
-        "yCoordinate": 2,
-        "tileName": "Vrel",
-        "elevationNoise": 0.4610226,
-        "moistureNoise": 0.1187369,
-        "temperature": 0.512555,
+        "xCoordinate": 8,
+        "yCoordinate": 3,
+        "tileName": "Pepenet",
+        "elevationNoise": 0.2537774,
+        "moistureNoise": 0.7706872,
+        "temperature": 0.1583796,
         "biomeType": "SNOW",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
         "landmarkType": "NONE",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
@@ -1461,21 +1432,17 @@
         }
       },
       {
-        "persistentID": "0df1a627-fbc8-4d52-9d81-7aa87cc40281",
+        "persistentID": "8b0c84b7-2611-4581-b9da-1b3c0c7be5b9",
         "id": 52,
-        "xCoordinate": 7,
-        "yCoordinate": 3,
-        "tileName": "Sleapiar",
-        "elevationNoise": 0.2870204,
-        "moistureNoise": 0.3451723,
-        "temperature": 0.2668294,
+        "xCoordinate": 8,
+        "yCoordinate": 4,
+        "tileName": "Graerel",
+        "elevationNoise": 0.5851224,
+        "moistureNoise": 0.7479731,
+        "temperature": 0.5799071,
         "biomeType": "SNOW",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [],
         "landmarkType": "NONE",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
@@ -1489,17 +1456,21 @@
         }
       },
       {
-        "persistentID": "ffdd337b-0887-4829-98c3-15a63c71775b",
+        "persistentID": "c3f00060-59c6-478c-8b44-4f4c1e2fa91f",
         "id": 53,
-        "xCoordinate": 7,
-        "yCoordinate": 4,
-        "tileName": "Oseona",
-        "elevationNoise": 0.1915587,
-        "moistureNoise": 0.4862115,
-        "temperature": 0.5560134,
+        "xCoordinate": 8,
+        "yCoordinate": 5,
+        "tileName": "Stannion",
+        "elevationNoise": 0.3883018,
+        "moistureNoise": 0.2395495,
+        "temperature": 0.7241512,
         "biomeType": "SNOW",
-        "elevationType": "WATER",
-        "tileFeatureSaveData": [],
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
         "landmarkType": "NONE",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
@@ -1513,19 +1484,19 @@
         }
       },
       {
-        "persistentID": "54dd3cf8-d019-47bb-b465-64267333b3e0",
+        "persistentID": "ed8450f5-0900-49cf-83f7-7570961bcad1",
         "id": 54,
-        "xCoordinate": 7,
-        "yCoordinate": 5,
-        "tileName": "Olaratha",
-        "elevationNoise": 0.3803367,
-        "moistureNoise": 0.542837,
-        "temperature": 0.8622493,
+        "xCoordinate": 9,
+        "yCoordinate": 0,
+        "tileName": "Eolarian",
+        "elevationNoise": 0.6795022,
+        "moistureNoise": 0.661465,
+        "temperature": 0.9760755,
         "biomeType": "SNOW",
-        "elevationType": "TREES",
+        "elevationType": "PLAIN",
         "tileFeatureSaveData": [
           {
-            "tileFeatureName": "WoodSourceFeature"
+            "tileFeatureName": "StoneSourceFeature"
           }
         ],
         "landmarkType": "NONE",
@@ -1541,14 +1512,14 @@
         }
       },
       {
-        "persistentID": "85ee3322-35a4-49cd-b89e-c454f2ac1df0",
+        "persistentID": "ce554cd4-4b16-441e-be74-d845000ea0a5",
         "id": 55,
-        "xCoordinate": 7,
-        "yCoordinate": 6,
-        "tileName": "Brelasia",
-        "elevationNoise": 0.3506485,
-        "moistureNoise": 0.4846268,
-        "temperature": 0.876589,
+        "xCoordinate": 9,
+        "yCoordinate": 1,
+        "tileName": "Krussath",
+        "elevationNoise": 0.1932976,
+        "moistureNoise": 0.8256789,
+        "temperature": 0.7744848,
         "biomeType": "SNOW",
         "elevationType": "WATER",
         "tileFeatureSaveData": [],
@@ -1565,19 +1536,19 @@
         }
       },
       {
-        "persistentID": "ac6374d7-3b48-42b6-a738-97153f2ed320",
+        "persistentID": "00257489-82a9-4197-bf9e-66d9bb630118",
         "id": 56,
-        "xCoordinate": 8,
-        "yCoordinate": 0,
-        "tileName": "Luvene",
-        "elevationNoise": 0.3138734,
-        "moistureNoise": 0.2807738,
-        "temperature": 0.619853,
+        "xCoordinate": 9,
+        "yCoordinate": 2,
+        "tileName": "Vreadra",
+        "elevationNoise": 0.7501073,
+        "moistureNoise": 0.7352808,
+        "temperature": 0.3815378,
         "biomeType": "SNOW",
-        "elevationType": "TREES",
+        "elevationType": "MOUNTAIN",
         "tileFeatureSaveData": [
           {
-            "tileFeatureName": "WoodSourceFeature"
+            "tileFeatureName": "MetalSourceFeature"
           }
         ],
         "landmarkType": "NONE",
@@ -1593,21 +1564,17 @@
         }
       },
       {
-        "persistentID": "27685edd-936f-4b6c-b323-0f8ba2d5f45f",
+        "persistentID": "f751e8a3-ffa3-4223-8d38-c7acaaf8fdea",
         "id": 57,
-        "xCoordinate": 8,
-        "yCoordinate": 1,
-        "tileName": "Wreariar",
-        "elevationNoise": 0.8159825,
-        "moistureNoise": 0.4805928,
-        "temperature": 0.6228122,
+        "xCoordinate": 9,
+        "yCoordinate": 3,
+        "tileName": "Iossarar",
+        "elevationNoise": 0.1544839,
+        "moistureNoise": 0.5529304,
+        "temperature": 0.1355643,
         "biomeType": "SNOW",
-        "elevationType": "MOUNTAIN",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "MetalSourceFeature"
-          }
-        ],
+        "elevationType": "WATER",
+        "tileFeatureSaveData": [],
         "landmarkType": "NONE",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
@@ -1621,294 +1588,14 @@
         }
       },
       {
-        "persistentID": "dd283df4-9da2-4507-a05b-e90b5055477e",
+        "persistentID": "23cbd211-9fdc-402d-a819-a51cbacd31be",
         "id": 58,
-        "xCoordinate": 8,
-        "yCoordinate": 2,
-        "tileName": "Cistrund",
-        "elevationNoise": 0.5386267,
-        "moistureNoise": 0.2224855,
-        "temperature": 0.4983521,
-        "biomeType": "SNOW",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "f920608b-9cd1-4690-866b-19e20d84a8de",
-        "id": 59,
-        "xCoordinate": 8,
-        "yCoordinate": 3,
-        "tileName": "Ploddian",
-        "elevationNoise": 0.4796813,
-        "moistureNoise": 0.3152679,
-        "temperature": 0.2163479,
-        "biomeType": "SNOW",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "d9be5359-ab4c-4e7f-9249-f6ca4d864740",
-        "id": 60,
-        "xCoordinate": 8,
-        "yCoordinate": 4,
-        "tileName": "Dreann",
-        "elevationNoise": 0.2206675,
-        "moistureNoise": 0.6576777,
-        "temperature": 0.4993477,
-        "biomeType": "SNOW",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "d753d8d0-acb3-40e0-9aee-73dcb57103e8",
-        "id": 61,
-        "xCoordinate": 8,
-        "yCoordinate": 5,
-        "tileName": "Teagrath",
-        "elevationNoise": 0.7702355,
-        "moistureNoise": 0.1892437,
-        "temperature": 0.8302748,
-        "biomeType": "SNOW",
-        "elevationType": "MOUNTAIN",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "MetalSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "d72cfa5d-fbbc-4fc5-98ba-090e0f90154f",
-        "id": 62,
-        "xCoordinate": 8,
-        "yCoordinate": 6,
-        "tileName": "Zeaddith",
-        "elevationNoise": 0.5752825,
-        "moistureNoise": 0.24629,
-        "temperature": 0.8659697,
-        "biomeType": "SNOW",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "acb60168-736c-42c9-b653-566f9da8b251",
-        "id": 63,
-        "xCoordinate": 9,
-        "yCoordinate": 0,
-        "tileName": "Anniocion",
-        "elevationNoise": 0.313322,
-        "moistureNoise": 0.6414281,
-        "temperature": 0.6330711,
-        "biomeType": "SNOW",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "4e3ca058-e2c4-48d6-960d-1736458c33c1",
-        "id": 64,
-        "xCoordinate": 9,
-        "yCoordinate": 1,
-        "tileName": "Staryon",
-        "elevationNoise": 0.6271675,
-        "moistureNoise": 0.6318232,
-        "temperature": 0.6235711,
-        "biomeType": "SNOW",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "25dfd446-cfc7-4a56-af02-17fdb2fb6052",
-        "id": 65,
-        "xCoordinate": 9,
-        "yCoordinate": 2,
-        "tileName": "Siagare",
-        "elevationNoise": 0.7407084,
-        "moistureNoise": 0.2522698,
-        "temperature": 0.470996,
-        "biomeType": "SNOW",
-        "elevationType": "MOUNTAIN",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "MetalSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "060ff57d-2cd8-4161-a6d4-91af56f267a5",
-        "id": 66,
-        "xCoordinate": 9,
-        "yCoordinate": 3,
-        "tileName": "Iocrias",
-        "elevationNoise": 0.6604356,
-        "moistureNoise": 0.4918619,
-        "temperature": 0.1534479,
-        "biomeType": "SNOW",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "df3c6f83-858b-4958-96b0-1f873e7d3125",
-        "id": 67,
         "xCoordinate": 9,
         "yCoordinate": 4,
-        "tileName": "Teaggare",
-        "elevationNoise": 0.390692,
-        "moistureNoise": 0.2734937,
-        "temperature": 0.4326388,
-        "biomeType": "SNOW",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "34c04cf4-8ce6-4571-aad0-7ce66f7620be",
-        "id": 68,
-        "xCoordinate": 9,
-        "yCoordinate": 5,
-        "tileName": "Ashommea",
-        "elevationNoise": 0.4478877,
-        "moistureNoise": 0.3859901,
-        "temperature": 0.7951764,
-        "biomeType": "SNOW",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "d3c54701-3b70-44aa-956e-e45cc5e5bc9c",
-        "id": 69,
-        "xCoordinate": 9,
-        "yCoordinate": 6,
-        "tileName": "Healar",
-        "elevationNoise": 0.5962656,
-        "moistureNoise": 0.691501,
-        "temperature": 0.8646667,
+        "tileName": "Grarular",
+        "elevationNoise": 0.5047668,
+        "moistureNoise": 0.2543702,
+        "temperature": 0.5501852,
         "biomeType": "SNOW",
         "elevationType": "PLAIN",
         "tileFeatureSaveData": [],
@@ -1925,14 +1612,42 @@
         }
       },
       {
-        "persistentID": "d3cd0b79-e278-4803-975d-6f0875474405",
-        "id": 70,
+        "persistentID": "840bf7e6-b545-4616-a1e9-37577c85b4de",
+        "id": 59,
+        "xCoordinate": 9,
+        "yCoordinate": 5,
+        "tileName": "Heokkim",
+        "elevationNoise": 0.7172646,
+        "moistureNoise": 0.4366616,
+        "temperature": 0.6894733,
+        "biomeType": "SNOW",
+        "elevationType": "MOUNTAIN",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "MetalSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "ad823657-923c-4296-b78a-424a41f57c3f",
+        "id": 60,
         "xCoordinate": 10,
         "yCoordinate": 0,
-        "tileName": "Stasior",
-        "elevationNoise": 0.3079171,
-        "moistureNoise": 0.4584664,
-        "temperature": 0.6950204,
+        "tileName": "Heon",
+        "elevationNoise": 0.3237409,
+        "moistureNoise": 0.7017161,
+        "temperature": 0.919462,
         "biomeType": "SNOW",
         "elevationType": "TREES",
         "tileFeatureSaveData": [
@@ -1953,14 +1668,47 @@
         }
       },
       {
-        "persistentID": "54c4fbe0-8a09-47d1-88ca-98f473dd5e0b",
-        "id": 71,
+        "persistentID": "79dce448-134f-4e8e-b4e3-4ec97cb496fa",
+        "id": 61,
         "xCoordinate": 10,
         "yCoordinate": 1,
-        "tileName": "Cratare",
-        "elevationNoise": 0.4258814,
-        "moistureNoise": 0.5502741,
-        "temperature": 0.6268024,
+        "tileName": "Wreala",
+        "elevationNoise": 0.654164,
+        "moistureNoise": 0.5306528,
+        "temperature": 0.7655114,
+        "biomeType": "SNOW",
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "FertileFeature"
+          },
+          {
+            "summon": "Pig",
+            "tileFeatureName": "GameFeature",
+            "$type": "Locations.Tile_Features.SaveDataGameFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "eed87f10-4845-4d57-b14d-5b6d4e150854",
+        "id": 62,
+        "xCoordinate": 10,
+        "yCoordinate": 2,
+        "tileName": "Glone",
+        "elevationNoise": 0.6362962,
+        "moistureNoise": 0.6693749,
+        "temperature": 0.3742097,
         "biomeType": "SNOW",
         "elevationType": "PLAIN",
         "tileFeatureSaveData": [
@@ -1981,42 +1729,86 @@
         }
       },
       {
-        "persistentID": "aff376b1-398f-45f1-b70e-6514b4eabb71",
-        "id": 72,
-        "xCoordinate": 10,
-        "yCoordinate": 2,
-        "tileName": "Tianarah",
-        "elevationNoise": 0.2811797,
-        "moistureNoise": 0.1527075,
-        "temperature": 0.4164991,
-        "biomeType": "SNOW",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "049bb41b-22da-41fc-8ab9-f64af0bb6e07",
-        "id": 73,
+        "persistentID": "b0b52183-7641-43fc-a71a-a15fccd0d639",
+        "id": 63,
         "xCoordinate": 10,
         "yCoordinate": 3,
-        "tileName": "Meamonar",
-        "elevationNoise": 0.3817697,
-        "moistureNoise": 0.3213164,
-        "temperature": 0.1059281,
+        "tileName": "Edreodu",
+        "elevationNoise": 0.4411536,
+        "moistureNoise": 0.8144225,
+        "temperature": 0.07928577,
+        "biomeType": "SNOW",
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "f57d78c7-63c2-48d1-b828-0538698aa2a8",
+        "id": 64,
+        "xCoordinate": 10,
+        "yCoordinate": 4,
+        "tileName": "Meadalis",
+        "elevationNoise": 0.6381225,
+        "moistureNoise": 0.6916369,
+        "temperature": 0.4786326,
+        "biomeType": "SNOW",
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "ab2366b8-e50f-40a5-a6c5-b0890b52e670",
+        "id": 65,
+        "xCoordinate": 10,
+        "yCoordinate": 5,
+        "tileName": "Plodiata",
+        "elevationNoise": 0.6013138,
+        "moistureNoise": 0.1761916,
+        "temperature": 0.659364,
+        "biomeType": "SNOW",
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "66d260b3-a668-4ad2-978e-5cc7be5bd231",
+        "id": 66,
+        "xCoordinate": 11,
+        "yCoordinate": 0,
+        "tileName": "Stasial",
+        "elevationNoise": 0.3029711,
+        "moistureNoise": 0.6182656,
+        "temperature": 0.8468685,
         "biomeType": "SNOW",
         "elevationType": "TREES",
         "tileFeatureSaveData": [
@@ -2037,14 +1829,38 @@
         }
       },
       {
-        "persistentID": "03681f60-6223-4b96-a758-ac935491e58e",
-        "id": 74,
-        "xCoordinate": 10,
-        "yCoordinate": 4,
-        "tileName": "Crimior",
-        "elevationNoise": 0.7568508,
-        "moistureNoise": 0.4775068,
-        "temperature": 0.3959252,
+        "persistentID": "abf37744-1596-4059-913e-92a2ae4f53d5",
+        "id": 67,
+        "xCoordinate": 11,
+        "yCoordinate": 1,
+        "tileName": "Mear",
+        "elevationNoise": 0.6459913,
+        "moistureNoise": 0.4567759,
+        "temperature": 0.7153643,
+        "biomeType": "SNOW",
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [],
+        "landmarkType": "HOUSES",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "c9718481-f200-4ca2-83eb-22cf6a38423f",
+        "id": 68,
+        "xCoordinate": 11,
+        "yCoordinate": 2,
+        "tileName": "Teadalis",
+        "elevationNoise": 0.7044896,
+        "moistureNoise": 0.3816487,
+        "temperature": 0.3446842,
         "biomeType": "SNOW",
         "elevationType": "MOUNTAIN",
         "tileFeatureSaveData": [
@@ -2065,149 +1881,23 @@
         }
       },
       {
-        "persistentID": "51cfad44-9c5c-4874-a138-7e7fcaec0a62",
-        "id": 75,
-        "xCoordinate": 10,
-        "yCoordinate": 5,
-        "tileName": "Zeatatan",
-        "elevationNoise": 0.1722836,
-        "moistureNoise": 0.5190428,
-        "temperature": 0.7758599,
-        "biomeType": "SNOW",
-        "elevationType": "WATER",
-        "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "320ad1a5-8367-48c5-b18b-118c83fcd4a4",
-        "id": 76,
-        "xCoordinate": 10,
-        "yCoordinate": 6,
-        "tileName": "Eaconara",
-        "elevationNoise": 0.4709096,
-        "moistureNoise": 0.5193889,
-        "temperature": 0.8639497,
-        "biomeType": "SNOW",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "f4d401ba-9cf4-43d9-8360-8f1e2a843ac9",
-        "id": 77,
-        "xCoordinate": 11,
-        "yCoordinate": 0,
-        "tileName": "Oseomos",
-        "elevationNoise": 0.3608687,
-        "moistureNoise": 0.472858,
-        "temperature": 0.8006608,
-        "biomeType": "SNOW",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "a7be1d1f-5fd2-4c3f-894e-dcef4d341a67",
-        "id": 78,
-        "xCoordinate": 11,
-        "yCoordinate": 1,
-        "tileName": "Tatareah",
-        "elevationNoise": 0.2069112,
-        "moistureNoise": 0.5642916,
-        "temperature": 0.6317378,
-        "biomeType": "SNOW",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "403eaff5-8d99-4dda-abd5-def1f0cb147e",
-        "id": 79,
-        "xCoordinate": 11,
-        "yCoordinate": 2,
-        "tileName": "Ialastre",
-        "elevationNoise": 0.3337305,
-        "moistureNoise": 0.4733312,
-        "temperature": 0.3513965,
-        "biomeType": "SNOW",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "HOUSES",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "764c2edf-4dc4-4103-912d-3969de3f5709",
-        "id": 80,
+        "persistentID": "fd16e262-a42d-4e23-84bc-e3df536dbb9b",
+        "id": 69,
         "xCoordinate": 11,
         "yCoordinate": 3,
-        "tileName": "Strearah",
-        "elevationNoise": 0.3983934,
-        "moistureNoise": 0.3722382,
-        "temperature": 0.09770243,
+        "tileName": "Polalare",
+        "elevationNoise": 0.6121573,
+        "moistureNoise": 0.3820534,
+        "temperature": 0.006796135,
         "biomeType": "SNOW",
         "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
+        "tileFeatureSaveData": [
+    	  {
+            "summon": "Chicken",
+            "tileFeatureName": "GameFeature",
+            "$type": "Locations.Tile_Features.SaveDataGameFeature"
+          }
+        ],
         "landmarkType": "HOUSES",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
@@ -2221,14 +1911,14 @@
         }
       },
       {
-        "persistentID": "221d4084-948d-4292-a63a-4a79e6016ba6",
-        "id": 81,
+        "persistentID": "da5b81e7-627d-49aa-81ad-051927755c25",
+        "id": 70,
         "xCoordinate": 11,
         "yCoordinate": 4,
-        "tileName": "Annialana",
-        "elevationNoise": 0.4435565,
-        "moistureNoise": 0.4398884,
-        "temperature": 0.4120878,
+        "tileName": "Accanar",
+        "elevationNoise": 0.425489,
+        "moistureNoise": 0.4603599,
+        "temperature": 0.3876598,
         "biomeType": "SNOW",
         "elevationType": "PLAIN",
         "tileFeatureSaveData": [],
@@ -2245,14 +1935,14 @@
         }
       },
       {
-        "persistentID": "752fdc11-79ae-40aa-a46f-8a9544dcac31",
-        "id": 82,
+        "persistentID": "74a1197d-57a9-45e0-a0a2-993d16ded57c",
+        "id": 71,
         "xCoordinate": 11,
         "yCoordinate": 5,
-        "tileName": "Wrearaer",
-        "elevationNoise": 0.1986507,
-        "moistureNoise": 0.5205889,
-        "temperature": 0.7843637,
+        "tileName": "Heamaren",
+        "elevationNoise": 0.1518108,
+        "moistureNoise": 0.3150699,
+        "temperature": 0.6458693,
         "biomeType": "SNOW",
         "elevationType": "WATER",
         "tileFeatureSaveData": [],
@@ -2269,22 +1959,46 @@
         }
       },
       {
-        "persistentID": "24fe07b5-c2a5-48a9-a801-5ada24987d12",
-        "id": 83,
-        "xCoordinate": 11,
-        "yCoordinate": 6,
-        "tileName": "Dreappea",
-        "elevationNoise": 0.2938778,
-        "moistureNoise": 0.6033737,
-        "temperature": 0.8642653,
+        "persistentID": "e2ee13c8-0b66-4421-81bc-b2b0051360e3",
+        "id": 72,
+        "xCoordinate": 12,
+        "yCoordinate": 0,
+        "tileName": "Riodorel",
+        "elevationNoise": 0.6735085,
+        "moistureNoise": 0.5332993,
+        "temperature": 0.7808001,
         "biomeType": "SNOW",
-        "elevationType": "TREES",
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "b19d34e9-bf0f-46fd-bdf2-f8190daf7ea8",
+        "id": 73,
+        "xCoordinate": 12,
+        "yCoordinate": 1,
+        "tileName": "Hearitha",
+        "elevationNoise": 0.2892825,
+        "moistureNoise": 0.4175563,
+        "temperature": 0.6366634,
+        "biomeType": "SNOW",
+        "elevationType": "PLAIN",
         "tileFeatureSaveData": [
           {
             "tileFeatureName": "WoodSourceFeature"
           }
         ],
-        "landmarkType": "NONE",
+        "landmarkType": "HOUSES",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
           "remainingEarthquakeDuration": 0,
@@ -2297,62 +2011,14 @@
         }
       },
       {
-        "persistentID": "4eb8cf45-5b71-4042-8531-5eaf67760027",
-        "id": 84,
-        "xCoordinate": 12,
-        "yCoordinate": 0,
-        "tileName": "Teamarah",
-        "elevationNoise": 0.4894344,
-        "moistureNoise": 0.3733488,
-        "temperature": 0.9087828,
-        "biomeType": "SNOW",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "b645def8-ff58-47f9-bbbe-f4f91f7d8f32",
-        "id": 85,
-        "xCoordinate": 12,
-        "yCoordinate": 1,
-        "tileName": "Riorynn",
-        "elevationNoise": 0.007452912,
-        "moistureNoise": 0.4993354,
-        "temperature": 0.6361418,
-        "biomeType": "SNOW",
-        "elevationType": "WATER",
-        "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "55e2311a-ec0b-4351-9815-1f86897a8424",
-        "id": 86,
+        "persistentID": "cdac4da5-d63a-432a-8322-cbd697ae8aac",
+        "id": 74,
         "xCoordinate": 12,
         "yCoordinate": 2,
-        "tileName": "Eolasira",
-        "elevationNoise": 0.4036459,
-        "moistureNoise": 0.4733312,
-        "temperature": 0.3025088,
+        "tileName": "Siapiath",
+        "elevationNoise": 0.3696954,
+        "moistureNoise": 0.717114,
+        "temperature": 0.3142453,
         "biomeType": "SNOW",
         "elevationType": "PLAIN",
         "tileFeatureSaveData": [
@@ -2373,14 +2039,14 @@
         }
       },
       {
-        "persistentID": "8e7c8590-1b7a-4c04-85a1-3f7fd70e7d7a",
-        "id": 87,
+        "persistentID": "44b151e9-f5f5-401f-a961-9500da5fe0cb",
+        "id": 75,
         "xCoordinate": 12,
         "yCoordinate": 3,
-        "tileName": "Zeadias",
-        "elevationNoise": 0.5541844,
-        "moistureNoise": 0.5715219,
-        "temperature": 0.1229528,
+        "tileName": "Wreaphas",
+        "elevationNoise": 0.4284871,
+        "moistureNoise": 0.6566066,
+        "temperature": -0.0380007,
         "biomeType": "SNOW",
         "elevationType": "PLAIN",
         "tileFeatureSaveData": [],
@@ -2397,62 +2063,14 @@
         }
       },
       {
-        "persistentID": "a4ee9b52-fe8c-44fe-bf59-4795c4ba9af9",
-        "id": 88,
+        "persistentID": "90eb5763-9fd0-44b4-b086-aaf3a492df34",
+        "id": 76,
         "xCoordinate": 12,
         "yCoordinate": 4,
-        "tileName": "Teapia",
-        "elevationNoise": 0.5692087,
-        "moistureNoise": 0.4258854,
-        "temperature": 0.4630839,
-        "biomeType": "SNOW",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "04359e97-75c7-4349-8fda-9b534657ba51",
-        "id": 89,
-        "xCoordinate": 12,
-        "yCoordinate": 5,
-        "tileName": "Sianiata",
-        "elevationNoise": 0.1501809,
-        "moistureNoise": 0.6361641,
-        "temperature": 0.8111949,
-        "biomeType": "SNOW",
-        "elevationType": "WATER",
-        "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "c9be8279-4066-4d41-9202-862eb2acbd84",
-        "id": 90,
-        "xCoordinate": 12,
-        "yCoordinate": 6,
-        "tileName": "Krimiann",
-        "elevationNoise": 0.7685925,
-        "moistureNoise": 0.6925641,
-        "temperature": 0.8652614,
+        "tileName": "Waerea",
+        "elevationNoise": 0.8492095,
+        "moistureNoise": 0.2020414,
+        "temperature": 0.3260574,
         "biomeType": "SNOW",
         "elevationType": "MOUNTAIN",
         "tileFeatureSaveData": [
@@ -2473,14 +2091,38 @@
         }
       },
       {
-        "persistentID": "478ad04f-d71f-4b7a-9b92-13ee842bfbe8",
-        "id": 91,
+        "persistentID": "d3cf12ea-df91-48cc-a692-45b7ce7cb35c",
+        "id": 77,
+        "xCoordinate": 12,
+        "yCoordinate": 5,
+        "tileName": "Mealare",
+        "elevationNoise": 0.5531542,
+        "moistureNoise": 0.9023533,
+        "temperature": 0.6775723,
+        "biomeType": "SNOW",
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "28f407c0-80d5-48e7-b816-f6b6bda8f96e",
+        "id": 78,
         "xCoordinate": 13,
         "yCoordinate": 0,
-        "tileName": "Meammon",
-        "elevationNoise": 0.536221,
-        "moistureNoise": 0.5448397,
-        "temperature": 0.975253,
+        "tileName": "Aerelalis",
+        "elevationNoise": 0.3908425,
+        "moistureNoise": 0.7491359,
+        "temperature": 0.7541485,
         "biomeType": "SNOW",
         "elevationType": "PLAIN",
         "tileFeatureSaveData": [],
@@ -2497,17 +2139,21 @@
         }
       },
       {
-        "persistentID": "56082b91-df32-40f4-a6c6-10eaa2d3586e",
-        "id": 92,
+        "persistentID": "0eb450ad-e454-43f3-87d4-c78cb2a94e58",
+        "id": 79,
         "xCoordinate": 13,
         "yCoordinate": 1,
-        "tileName": "Funiata",
-        "elevationNoise": 0.1098211,
-        "moistureNoise": 0.4923878,
-        "temperature": 0.6382025,
+        "tileName": "Drelarim",
+        "elevationNoise": 0.3654812,
+        "moistureNoise": 0.6848768,
+        "temperature": 0.5876189,
         "biomeType": "SNOW",
-        "elevationType": "WATER",
-        "tileFeatureSaveData": [],
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
         "landmarkType": "NONE",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
@@ -2521,17 +2167,21 @@
         }
       },
       {
-        "persistentID": "c1e2d67f-ff77-40c9-86c2-df5c256cadce",
-        "id": 93,
+        "persistentID": "303ca7d4-ae03-4ef6-8228-7356d86ea8a9",
+        "id": 80,
         "xCoordinate": 13,
         "yCoordinate": 2,
-        "tileName": "Anniarel",
-        "elevationNoise": 0.6660734,
-        "moistureNoise": 0.5427823,
-        "temperature": 0.282991,
+        "tileName": "Eddeadin",
+        "elevationNoise": 0.3676141,
+        "moistureNoise": 0.7348379,
+        "temperature": 0.3238269,
         "biomeType": "SNOW",
         "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
         "landmarkType": "HOUSES",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
@@ -2545,98 +2195,14 @@
         }
       },
       {
-        "persistentID": "2eacc020-2f13-4596-ba0a-83c4a359ef5a",
-        "id": 94,
+        "persistentID": "221d9636-4b23-4d1c-b92f-1a3ae8393187",
+        "id": 81,
         "xCoordinate": 13,
         "yCoordinate": 3,
-        "tileName": "Stareal",
-        "elevationNoise": 0.5244038,
-        "moistureNoise": 0.7308409,
-        "temperature": 0.146545,
-        "biomeType": "SNOW",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "StoneSourceFeature"
-          }
-        ],
-        "landmarkType": "HOUSES",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "25590617-d99b-4824-a4e0-454abf020365",
-        "id": 95,
-        "xCoordinate": 13,
-        "yCoordinate": 4,
-        "tileName": "Eacrare",
-        "elevationNoise": 0.2545432,
-        "moistureNoise": 0.6124094,
-        "temperature": 0.50015,
-        "biomeType": "SNOW",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "3730b3b7-b529-4f9e-b21f-f35e986ae7bc",
-        "id": 96,
-        "xCoordinate": 13,
-        "yCoordinate": 5,
-        "tileName": "Waereah",
-        "elevationNoise": 0.293663,
-        "moistureNoise": 0.7314413,
-        "temperature": 0.8306968,
-        "biomeType": "SNOW",
-        "elevationType": "TREES",
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "WoodSourceFeature"
-          }
-        ],
-        "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "5ee76ffc-2c50-43f8-889a-3abe5980c999",
-        "id": 97,
-        "xCoordinate": 13,
-        "yCoordinate": 6,
-        "tileName": "Funetika",
-        "elevationNoise": 0.6253642,
-        "moistureNoise": 0.2808864,
-        "temperature": 0.8659854,
+        "tileName": "Jiasirar",
+        "elevationNoise": 0.4186908,
+        "moistureNoise": 0.1934611,
+        "temperature": -0.008351684,
         "biomeType": "SNOW",
         "elevationType": "PLAIN",
         "tileFeatureSaveData": [],
@@ -2653,14 +2219,66 @@
         }
       },
       {
-        "persistentID": "d1fcf01a-b98d-4d5d-ada4-fd6047e2e6ea",
-        "id": 98,
+        "persistentID": "bdf37370-12d1-42e9-bc0c-6a14edc7f1fb",
+        "id": 82,
+        "xCoordinate": 13,
+        "yCoordinate": 4,
+        "tileName": "Statata",
+        "elevationNoise": 0.5972865,
+        "moistureNoise": 0.1906828,
+        "temperature": 0.3471308,
+        "biomeType": "SNOW",
+        "elevationType": "PLAIN",
+        "tileFeatureSaveData": [],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "152fa5ca-02e8-49df-8b40-8b7f8d9f72ba",
+        "id": 83,
+        "xCoordinate": 13,
+        "yCoordinate": 5,
+        "tileName": "Ashorimel",
+        "elevationNoise": 0.2918097,
+        "moistureNoise": 0.4927452,
+        "temperature": 0.7539998,
+        "biomeType": "SNOW",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
+        "saveDataHexTileSpellsComponent": {
+          "hasEarthquake": false,
+          "remainingEarthquakeDuration": 0,
+          "hasBrimstones": false,
+          "remainingBrimstoneDuration": 0,
+          "hasElectricStorm": false,
+          "remainingElectricStormDuration": 0,
+          "hasIceteroids": false,
+          "remainingIceteroidsDuration": 0
+        }
+      },
+      {
+        "persistentID": "8bac1457-08a8-4f7a-b0b2-854a7e8a132d",
+        "id": 84,
         "xCoordinate": 14,
         "yCoordinate": 0,
-        "tileName": "Krialian",
-        "elevationNoise": 0.2400608,
-        "moistureNoise": 0.465452,
-        "temperature": 1.000126,
+        "tileName": "Anniana",
+        "elevationNoise": 0.2062539,
+        "moistureNoise": 0.1465267,
+        "temperature": 0.7656366,
         "biomeType": "SNOW",
         "elevationType": "TREES",
         "tileFeatureSaveData": [
@@ -2681,14 +2299,14 @@
         }
       },
       {
-        "persistentID": "030f5e0d-86ab-432a-a0c8-49b2885c1880",
-        "id": 99,
+        "persistentID": "67161c8b-d220-4656-a4a8-a109a8329589",
+        "id": 85,
         "xCoordinate": 14,
         "yCoordinate": 1,
-        "tileName": "Polalan",
-        "elevationNoise": 0.3965592,
-        "moistureNoise": 0.4111634,
-        "temperature": 0.6373016,
+        "tileName": "Vreasos",
+        "elevationNoise": 0.5063093,
+        "moistureNoise": 0.3229065,
+        "temperature": 0.5999963,
         "biomeType": "SNOW",
         "elevationType": "PLAIN",
         "tileFeatureSaveData": [],
@@ -2705,18 +2323,22 @@
         }
       },
       {
-        "persistentID": "f85e1c7a-46d8-4474-95d2-76e88dc4fc52",
-        "id": 100,
+        "persistentID": "4d524116-564c-4fab-a93b-5dadc5e40397",
+        "id": 86,
         "xCoordinate": 14,
         "yCoordinate": 2,
-        "tileName": "Staeddia",
-        "elevationNoise": 0.4466889,
-        "moistureNoise": 0.4647498,
-        "temperature": 0.2815599,
+        "tileName": "Teapiath",
+        "elevationNoise": 0.2855797,
+        "moistureNoise": 0.2583869,
+        "temperature": 0.3796326,
         "biomeType": "SNOW",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
-        "landmarkType": "FARM",
+        "elevationType": "TREES",
+        "tileFeatureSaveData": [
+          {
+            "tileFeatureName": "WoodSourceFeature"
+          }
+        ],
+        "landmarkType": "NONE",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
           "remainingEarthquakeDuration": 0,
@@ -2729,19 +2351,19 @@
         }
       },
       {
-        "persistentID": "d895efb4-ebef-4052-85eb-f2148f601c8a",
-        "id": 101,
+        "persistentID": "c02bcf34-3f04-4f1a-89cf-78c1c0200d05",
+        "id": 87,
         "xCoordinate": 14,
         "yCoordinate": 3,
-        "tileName": "Waereana",
-        "elevationNoise": 0.3050067,
-        "moistureNoise": 0.284873,
-        "temperature": 0.1503551,
+        "tileName": "Ximel",
+        "elevationNoise": 0.7536606,
+        "moistureNoise": 0.6413578,
+        "temperature": 0.07849854,
         "biomeType": "SNOW",
-        "elevationType": "TREES",
+        "elevationType": "MOUNTAIN",
         "tileFeatureSaveData": [
           {
-            "tileFeatureName": "WoodSourceFeature"
+            "tileFeatureName": "MetalSourceFeature"
           }
         ],
         "landmarkType": "NONE",
@@ -2757,14 +2379,14 @@
         }
       },
       {
-        "persistentID": "bf983b50-c0e7-4455-83d1-cd016315c647",
-        "id": 102,
+        "persistentID": "5708bde3-331d-43f6-afa8-ecfe4474d468",
+        "id": 88,
         "xCoordinate": 14,
         "yCoordinate": 4,
-        "tileName": "Edramond",
-        "elevationNoise": 0.4974935,
-        "moistureNoise": 0.4554213,
-        "temperature": 0.504898,
+        "tileName": "Breacrah",
+        "elevationNoise": 0.4685283,
+        "moistureNoise": 0.2730249,
+        "temperature": 0.4330508,
         "biomeType": "SNOW",
         "elevationType": "PLAIN",
         "tileFeatureSaveData": [],
@@ -2781,14 +2403,14 @@
         }
       },
       {
-        "persistentID": "97c1f128-4567-4632-832f-da02c4e2f428",
-        "id": 103,
+        "persistentID": "c052dbe5-16c6-40da-8ec5-a9b49e34544e",
+        "id": 89,
         "xCoordinate": 14,
         "yCoordinate": 5,
-        "tileName": "Teacond",
-        "elevationNoise": 0.3641986,
-        "moistureNoise": 0.1354249,
-        "temperature": 0.8329738,
+        "tileName": "Drelaer",
+        "elevationNoise": 0.3816252,
+        "moistureNoise": 0.5585968,
+        "temperature": 0.8369604,
         "biomeType": "SNOW",
         "elevationType": "TREES",
         "tileFeatureSaveData": [
@@ -2797,30 +2419,6 @@
           }
         ],
         "landmarkType": "NONE",
-        "saveDataHexTileSpellsComponent": {
-          "hasEarthquake": false,
-          "remainingEarthquakeDuration": 0,
-          "hasBrimstones": false,
-          "remainingBrimstoneDuration": 0,
-          "hasElectricStorm": false,
-          "remainingElectricStormDuration": 0,
-          "hasIceteroids": false,
-          "remainingIceteroidsDuration": 0
-        }
-      },
-      {
-        "persistentID": "085a1eb2-bdd0-4cae-bacb-09a4bcf7c6fe",
-        "id": 104,
-        "xCoordinate": 14,
-        "yCoordinate": 6,
-        "tileName": "Eaconet",
-        "elevationNoise": 0.4652375,
-        "moistureNoise": 0.6000972,
-        "temperature": 0.8660617,
-        "biomeType": "SNOW",
-        "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
-        "landmarkType": "THE_PORTAL",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
           "remainingEarthquakeDuration": 0,

@@ -189,7 +189,8 @@ public class CrimeManager : BaseMonoBehaviour {
         } else if (consideredAction.associatedJobType == JOB_TYPE.SPREAD_RUMOR) {
             return CRIME_SEVERITY.Infraction;
         } else if (actionType == INTERACTION_TYPE.STEAL
-            || actionType == INTERACTION_TYPE.POISON) {
+            || actionType == INTERACTION_TYPE.POISON
+            || actionType == INTERACTION_TYPE.PICKPOCKET) {
             return CRIME_SEVERITY.Misdemeanor;
         } else if (actionType == INTERACTION_TYPE.PICK_UP) {
             if(consideredAction.poiTarget is TileObject targetTileObject) {

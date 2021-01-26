@@ -14,13 +14,6 @@ namespace Tutorial {
                 new StructureBuiltCriteria(STRUCTURE_TYPE.BIOLAB)
             };
         }
-        protected override bool HasMetAllCriteria() {
-            bool hasMetCriteria = base.HasMetAllCriteria();
-            if (hasMetCriteria) {
-                return !SettingsManager.Instance.settings.skipTutorials;
-            }
-            return false;
-        }
         #endregion
       
         protected override void ConstructSteps() {

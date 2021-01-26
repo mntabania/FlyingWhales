@@ -131,7 +131,7 @@ public class TileObjectInfoUI : InfoUIBase {
         }
     }
     private void UpdateBasicInfo() {
-        nameLbl.text = activeTileObject.name;
+        nameLbl.text = activeTileObject.nameplateName;
     }
     private void UpdateInfo() {
         hpLbl.text = $"{activeTileObject.currentHP}/{activeTileObject.maxHP}";

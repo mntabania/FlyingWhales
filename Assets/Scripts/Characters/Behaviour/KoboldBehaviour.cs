@@ -37,8 +37,9 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
             }
         } else {
             log += $"\nChance to place freezing trap NOT met.";
-            List<Character> frozenCharacters = GetFrozenCharactersSurroundingHome(character);
-            if (frozenCharacters != null) {
+            List<Character> frozenCharacters = ObjectPoolManager.Instance.CreateNewCharactersList();
+            PopulateFrozenCharactersSurroundingHome(frozenCharacters, character);
+            if (frozenCharacters.Count > 0) {
                 //check if a character is frozen in any of the neighbouring areas,
                 //if there are, then create a job to carry then drop them at this character's home/territory
                 Character chosenCharacter = CollectionUtilities.GetRandomElement(frozenCharacters);
@@ -52,21 +53,23 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
                     LocationGridTile targetTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {targetTile.structure, targetTile});
                 }
+                ObjectPoolManager.Instance.ReturnCharactersListToPool(frozenCharacters);
                 producedJob = job;
                 log += $"\nFrozen character at surrounding area found, will carry {chosenCharacter.name} and drop at home.";
                 return true;
             } else {
                 log += $"\nNo frozen characters at surrounding area found, checking frozen characters at home.";
                 //if there are none, check if there are any characters inside this character's home/territory that is frozen
-                List<Character> frozenCharactersAtHome = GetFrozenCharactersInHome(character);
-                if (frozenCharactersAtHome != null && frozenCharactersAtHome.Count > 0) {
+                PopulateFrozenCharactersInHome(frozenCharacters, character);
+                if (frozenCharacters.Count > 0) {
                     log += $"\nFrozen characters at home found.";
                     //if there are, 8% chance to butcher one, otherwise mock or laugh at one
-                    Character chosenCharacter = CollectionUtilities.GetRandomElement(frozenCharactersAtHome);
+                    Character chosenCharacter = CollectionUtilities.GetRandomElement(frozenCharacters);
                     if (GameUtilities.RollChance(8)) {
                         log += $"\nChance to butcher met, will butcher {chosenCharacter.name}.";
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_BUTCHER, INTERACTION_TYPE.BUTCHER, chosenCharacter, character);
                         job.SetCancelOnDeath(false);
+                        ObjectPoolManager.Instance.ReturnCharactersListToPool(frozenCharacters);
                         producedJob = job;
                         return true;
                     } else {
@@ -74,13 +77,15 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
                         if (GameUtilities.RollChance(30) && character.marker.IsPOIInVision(chosenCharacter)) {
                             log += $"\nMock/Laugh triggered.";
                             character.interruptComponent.TriggerInterrupt(GameUtilities.RollChance(50) ? INTERRUPT.Mock : INTERRUPT.Laugh_At, chosenCharacter);
+                            ObjectPoolManager.Instance.ReturnCharactersListToPool(frozenCharacters);
                             producedJob = null;
                             return true;    
                         }
                     }
                 }
             }
-            
+            ObjectPoolManager.Instance.ReturnCharactersListToPool(frozenCharacters);
+
             log += $"\nNo jobs related to frozen characters created. Checking food piles at home";
             //if none of the jobs above were created, check for food piles inside this character's home/territory,
             if (GameUtilities.RollChance(15)) {
@@ -116,34 +121,25 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
         }
         return null;
     }
-    private List<Character> GetFrozenCharactersSurroundingHome(Character character) {
-        List<Character> characters = null;
+    private void PopulateFrozenCharactersSurroundingHome(List<Character> p_characterList, Character character) {
         List<HexTile> surroundingAreas = GetAreasSurroundingHome(character);
         if (surroundingAreas != null) {
             for (int i = 0; i < surroundingAreas.Count; i++) {
                 HexTile tile = surroundingAreas[i];
-                List<Character> charactersAtTile = tile.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD &&
+                tile.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD &&
                                                                                                                   c.HasJobTargetingThis(JOB_TYPE.CAPTURE_CHARACTER) == false);
-                if (charactersAtTile != null) {
-                    if (characters == null) {
-                        characters = new List<Character>();
-                    }
-                    characters.AddRange(charactersAtTile);
-                }
             }    
         }
-        return characters;
     }
-    private List<Character> GetFrozenCharactersInHome(Character character) {
+    private void PopulateFrozenCharactersInHome(List<Character> p_characterList, Character character) {
         if (character.homeSettlement?.mainStorage != null) {
-            return character.homeSettlement.mainStorage.charactersHere.Where(x => x.traitContainer.HasTrait("Frozen") && x.race != RACE.KOBOLD).ToList();
+            character.homeSettlement.mainStorage.PopulateCharacterListThatMeetCriteria(p_characterList, x => x.traitContainer.HasTrait("Frozen") && x.race != RACE.KOBOLD);
+            //return character.homeSettlement.mainStorage.charactersHere.Where(x => x.traitContainer.HasTrait("Frozen") && x.race != RACE.KOBOLD).ToList();
         } else if (character.homeStructure != null) {
-            return character.homeStructure.charactersHere.Where(x => x.traitContainer.HasTrait("Frozen") && x.race != RACE.KOBOLD).ToList();
+            character.homeStructure.PopulateCharacterListThatMeetCriteria(p_characterList, x => x.traitContainer.HasTrait("Frozen") && x.race != RACE.KOBOLD);
         } else if (character.HasTerritory()) {
-            List<Character> characters = character.territory.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD);
-            return characters;
+            character.territory.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, c => c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD);
         }
-        return null;
     }
 
     private List<HexTile> GetAreasSurroundingHome(Character character) {

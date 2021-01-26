@@ -645,10 +645,12 @@ public class FactionManager : BaseMonoBehaviour {
     }
     public void RevalidateFactionCrimes(Faction faction, Character leader) {
         //religion based crimes
-        if (leader.traitContainer.HasTrait("Cultist")) {
+        if (faction.factionType.type == FACTION_TYPE.Demon_Cult) {
             faction.factionType.RemoveCrime(CRIME_TYPE.Demon_Worship);
             faction.factionType.AddCrime(CRIME_TYPE.Divine_Worship, CRIME_SEVERITY.Serious);
             faction.factionType.AddCrime(CRIME_TYPE.Nature_Worship, CRIME_SEVERITY.Serious);
+            faction.factionType.RemoveIdeology(FACTION_IDEOLOGY.Divine_Worship);
+            faction.factionType.RemoveIdeology(FACTION_IDEOLOGY.Nature_Worship);
         } else if (leader.religionComponent.religion == RELIGION.Divine_Worship) {
             faction.factionType.RemoveCrime(CRIME_TYPE.Divine_Worship);
         } else if (leader.religionComponent.religion == RELIGION.Nature_Worship) {

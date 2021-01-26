@@ -376,10 +376,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
         Messenger.AddListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
-        Messenger.AddListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
+        Messenger.AddListener(CharacterSignals.PROCESS_ALL_UNPOROCESSED_POIS, ProcessAllUnprocessedVisionPOIs);
         Messenger.AddListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.REPROCESS_POI, ReprocessPOI);
-        Messenger.AddListener(Signals.TICK_ENDED, PerTickMovement);
+        Messenger.AddListener(CharacterSignals.CHARACTER_TICK_ENDED_MOVEMENT, PerTickMovement);
         Messenger.AddListener<IIntel>(PlayerSignals.ACTIVE_INTEL_SET, OnActiveIntelSet);
         Messenger.AddListener(PlayerSignals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
@@ -389,10 +389,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.RemoveListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.RemoveListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
         Messenger.RemoveListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
-        Messenger.RemoveListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
+        Messenger.RemoveListener(CharacterSignals.PROCESS_ALL_UNPOROCESSED_POIS, ProcessAllUnprocessedVisionPOIs);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(GridTileSignals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
         Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.REPROCESS_POI, ReprocessPOI);
-        Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
+        Messenger.RemoveListener(CharacterSignals.CHARACTER_TICK_ENDED_MOVEMENT, PerTickMovement);
         Messenger.RemoveListener<IIntel>(PlayerSignals.ACTIVE_INTEL_SET, OnActiveIntelSet);
         Messenger.RemoveListener(PlayerSignals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
