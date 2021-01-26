@@ -95,37 +95,37 @@ internal static class Messenger {
 		Debug.Log("\n");
 	}
 
-    private static void OrderEvents(string eventType) {
-        if (eventTable.ContainsKey(eventType) && Signals.orderedSignalExecution.ContainsKey(eventType)) {
-            Profiler.BeginSample($"Order Events {eventType}");
-            Delegate[] actions = eventTable[eventType].GetInvocationList();
-            Delegate ordered = null;
-            SignalMethod[] orderedEvents = Signals.orderedSignalExecution[eventType];
-            for (int i = 0; i < orderedEvents.Length; i++) {
-                //Loop through ordered events
-                //Then check all actions if any of them are equal to the current event
-                //if they are, add that action to the new delegate object, then set the action in the current invocation list to null 
-                //(This is so that all actions remaining in the invocation list after all ordered events are done, are considered uncategorized, and thus cannot be ordered)
-                SignalMethod e = orderedEvents[i];
-                for (int j = 0; j < actions.Length; j++) {
-                    Delegate currAction = actions[j];
-                    if (currAction != null && e.Equals(currAction)) {
-                        ordered = (Callback)ordered + (Callback)currAction;
-                        actions[j] = null;
-                    }
-                }
-            }
-
-            for (int i = 0; i < actions.Length; i++) {
-                if (actions[i] != null) {
-                    ordered = (Callback)ordered + (Callback)actions[i];
-                }
-            }
-
-            eventTable[eventType] = ordered;
-            Profiler.EndSample();
-        }
-    }
+    // private static void OrderEvents(string eventType) {
+    //     if (eventTable.ContainsKey(eventType) && Signals.orderedSignalExecution.ContainsKey(eventType)) {
+    //         Profiler.BeginSample($"Order Events {eventType}");
+    //         Delegate[] actions = eventTable[eventType].GetInvocationList();
+    //         Delegate ordered = null;
+    //         SignalMethod[] orderedEvents = Signals.orderedSignalExecution[eventType];
+    //         for (int i = 0; i < orderedEvents.Length; i++) {
+    //             //Loop through ordered events
+    //             //Then check all actions if any of them are equal to the current event
+    //             //if they are, add that action to the new delegate object, then set the action in the current invocation list to null 
+    //             //(This is so that all actions remaining in the invocation list after all ordered events are done, are considered uncategorized, and thus cannot be ordered)
+    //             SignalMethod e = orderedEvents[i];
+    //             for (int j = 0; j < actions.Length; j++) {
+    //                 Delegate currAction = actions[j];
+    //                 if (currAction != null && e.Equals(currAction)) {
+    //                     ordered = (Callback)ordered + (Callback)currAction;
+    //                     actions[j] = null;
+    //                 }
+    //             }
+    //         }
+    //
+    //         for (int i = 0; i < actions.Length; i++) {
+    //             if (actions[i] != null) {
+    //                 ordered = (Callback)ordered + (Callback)actions[i];
+    //             }
+    //         }
+    //
+    //         eventTable[eventType] = ordered;
+    //         Profiler.EndSample();
+    //     }
+    // }
     //static private void OrderEvents(string eventType, Callback newEvent) {
     //    if (eventTable.ContainsKey(eventType) && Signals.orderedSignalExecution.ContainsKey(eventType)) {
     //        SignalMethod matchingMethod;
@@ -209,7 +209,7 @@ internal static class Messenger {
         OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback)eventTable[eventType] + handler;
         // GameManager.Instance.StartCoroutine(OrderEventsCoroutine(eventType));
-        OrderEvents(eventType);
+        // OrderEvents(eventType);
     }
  
 	//Single parameter

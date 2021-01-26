@@ -12,7 +12,7 @@ using Scenario_Maps;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
-public class MapGenerator : MonoBehaviour {
+public class MapGenerator : BaseMonoBehaviour {
 
     public static MapGenerator Instance;
     
@@ -289,4 +289,9 @@ public class MapGenerator : MonoBehaviour {
         }
     }
     #endregion
+
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        Instance = null;
+    }
 }

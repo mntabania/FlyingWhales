@@ -140,4 +140,5 @@
     /// Parameters(TMP_Dropdown parentDropdown, int itemIndex)
     /// </summary>
     public static string DROPDOWN_ITEM_HOVERED_OUT = "OnDropdownItemHoveredOut";
+    public static string SAVE_LOADOUTS = "SaveLoadouts";
 }

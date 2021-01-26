@@ -84,7 +84,7 @@ public class SkillTreeSelector : MonoBehaviour {
             PlayerManager.Instance.player.playerFaction.SetRelationshipFor(FactionManager.Instance.undeadFaction, FACTION_RELATIONSHIP_STATUS.Friendly);
         }
         SaveManager.Instance.currentSaveDataPlayer.SetMoreLoadoutOptions(moreLoadoutOptionsToggle.isOn);
-        Messenger.Broadcast(UISignals.START_GAME_AFTER_LOADOUT_SELECT);
+        BroadcastLoadoutSelectedSignals();
         PlagueDisease.Instance.OnLoadoutPicked();
         GameManager.Instance.StartProgression();
         UIManager.Instance.initialWorldSetupMenu.Hide();
@@ -95,13 +95,17 @@ public class SkillTreeSelector : MonoBehaviour {
     }
     public void LoadLoadout(PLAYER_ARCHETYPE archetype) {
         PlayerSkillManager.Instance.SetSelectedArchetype(archetype);
-        Messenger.Broadcast(UISignals.START_GAME_AFTER_LOADOUT_SELECT);
+        BroadcastLoadoutSelectedSignals();
         GameManager.Instance.LoadProgression();
         UIManager.Instance.initialWorldSetupMenu.Hide();
 
         WorldMapCameraMove.Instance.CenterCameraOn(WorldConfigManager.Instance.mapGenerationData.portal.gameObject);
         InnerMapManager.Instance.TryShowLocationMap(WorldConfigManager.Instance.mapGenerationData.portal.region);
         InnerMapCameraMove.Instance.CenterCameraOnTile(WorldConfigManager.Instance.mapGenerationData.portal);
+    }
+    private void BroadcastLoadoutSelectedSignals() {
+        Messenger.Broadcast(UISignals.SAVE_LOADOUTS);
+        Messenger.Broadcast(UISignals.START_GAME_AFTER_LOADOUT_SELECT);
     }
 
     private PLAYER_ARCHETYPE GetSelectedArchetype() {
