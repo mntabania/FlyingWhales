@@ -2661,8 +2661,12 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: Eliminate at least 10 Villagers through Plague fatality only. Hurry
+      value: 'Eliminate at least 10 Villagers through Plague fatality only. Hurry
         before the two warring factions wipe each other out.
+
+
+        Unique Features:
+        Lich only.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -3655,7 +3659,8 @@ PrefabInstance:
         fixed loadout.
 
 
-        Finishing this unlocks: <b>Zenko</b>.'
+        Finishing this unlocks: <b>Zenko</b>, <b>Aneem</b>
+        and <b>Pitto</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -4163,7 +4168,11 @@ PrefabInstance:
 
 
         Special
-        Features: No new Factions and Villages. Puppetmaster only.'
+        Features: No new Factions and Villages. Puppetmaster only.
+
+
+        Finishing
+        this unlocks: <b>Aneem</b> and <b>Pitto</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}

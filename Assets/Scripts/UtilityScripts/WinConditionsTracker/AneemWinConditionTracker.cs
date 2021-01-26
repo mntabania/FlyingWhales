@@ -7,6 +7,8 @@ using UtilityScripts;
 
 public class AneemWinConditionTracker : WinconditionTracker {
 
+    public const int Elimination_Requirement = 10;
+    
     private System.Action<Character, int> _characterEliminatedAction;
     private System.Action<Character> _characterAddedAsTargetAction;
 
@@ -34,7 +36,7 @@ public class AneemWinConditionTracker : WinconditionTracker {
         for (int i = 0; i < villagers.Count; i++) {
             AddVillagerToEliminate(villagers[i]);
         }
-        totalCharactersToEliminate = 10;
+        totalCharactersToEliminate = Elimination_Requirement;
     }
 
     #region Loading
@@ -53,7 +55,7 @@ public class AneemWinConditionTracker : WinconditionTracker {
                 totalCharactersToEliminate--;
             }
             RemoveCharacterFromTrackList(p_character);
-            _characterEliminatedAction?.Invoke(p_character, villagersToEliminate.Count);
+            _characterEliminatedAction?.Invoke(p_character, totalCharactersToEliminate);
         }
         if (totalCharactersToEliminate > villagersToEliminate.Count) {
             PlayerUI.Instance.LoseGameOver("You were not able to plague 10 villagers. You failed");
@@ -82,11 +84,11 @@ public class AneemWinConditionTracker : WinconditionTracker {
         AddVillagerToEliminate(p_character);
     }
 
-    public void Subscribe(OonaWinConditionTracker.Listener p_listener) {
+    public void Subscribe(AneemWinConditionTracker.Listener p_listener) {
         _characterEliminatedAction += p_listener.OnCharacterEliminated;
         _characterAddedAsTargetAction += p_listener.OnCharacterAddedAsTarget;
     }
-    public void Unsubscribe(OonaWinConditionTracker.Listener p_listener) {
+    public void Unsubscribe(AneemWinConditionTracker.Listener p_listener) {
         _characterEliminatedAction -= p_listener.OnCharacterEliminated;
         _characterAddedAsTargetAction -= p_listener.OnCharacterAddedAsTarget;
     }
