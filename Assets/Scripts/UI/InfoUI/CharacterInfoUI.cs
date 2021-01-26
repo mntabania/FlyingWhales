@@ -192,7 +192,13 @@ public class CharacterInfoUI : InfoUIBase {
             UIManager.Instance.HideObjectPicker();
         }
         if (_activeCharacter.marker && _activeCharacter.marker.transform != null) {
-            Selector.Instance.Select(_activeCharacter, _activeCharacter.marker.transform);
+            if (_activeCharacter.tileObjectComponent.isUsingBed) {
+                if (_activeCharacter.tileObjectComponent.bedBeingUsed.mapObjectVisual) {
+                    Selector.Instance.Select(_activeCharacter.tileObjectComponent.bedBeingUsed, _activeCharacter.tileObjectComponent.bedBeingUsed.mapObjectVisual.transform);
+                }
+            } else {
+                Selector.Instance.Select(_activeCharacter, _activeCharacter.marker.transform);
+            }
             _activeCharacter.marker.UpdateNameplateElementsState();
         }
         UpdateCharacterInfo();

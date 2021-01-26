@@ -118,7 +118,13 @@ public class MonsterInfoUI : InfoUIBase {
             UIManager.Instance.HideObjectPicker();
         }
         if (_activeMonster.marker && _activeMonster.marker.transform != null) {
-            Selector.Instance.Select(_activeMonster, _activeMonster.marker.transform);
+            if (_activeMonster.tileObjectComponent.isUsingBed) {
+                if (_activeMonster.tileObjectComponent.bedBeingUsed.mapObjectVisual) {
+                    Selector.Instance.Select(_activeMonster.tileObjectComponent.bedBeingUsed, _activeMonster.tileObjectComponent.bedBeingUsed.mapObjectVisual.transform);
+                }
+            } else {
+                Selector.Instance.Select(_activeMonster, _activeMonster.marker.transform);
+            }
             _activeMonster.marker.UpdateNameplateElementsState();
         }
         UpdateMonsterInfo();

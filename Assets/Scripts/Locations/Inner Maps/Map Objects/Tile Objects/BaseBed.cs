@@ -54,6 +54,7 @@ public abstract class BaseBed : TileObject {
                 UpdateUsedBedAsset();
                 //disable the character's marker
                 character.marker.SetVisualState(false);
+                character.tileObjectComponent.SetBedBeingUsed(this);
                 Messenger.Broadcast(TileObjectSignals.ADD_TILE_OBJECT_USER, GetBase(), character);
 
                 //Once a character enters a bed and the current selector highlight (the white square outline) is on them, transfer the highlight to the bed because the character's marker will become invisible
@@ -76,6 +77,7 @@ public abstract class BaseBed : TileObject {
                 UpdateUsedBedAsset();
                 //enable the character's marker
                 character.marker.SetVisualState(true);
+                character.tileObjectComponent.SetBedBeingUsed(null);
                 if (character.gridTileLocation != null && character.traitContainer.HasTrait("Paralyzed")) {
                     //When a paralyzed character awakens, place it on an adjacent tile in the same Structure
                     LocationGridTile gridTile = character.gridTileLocation.GetFirstNeighborThatMeetCriteria(x => x.structure == character.gridTileLocation.structure && x.IsPassable());
