@@ -15,7 +15,7 @@ public class Triton : Summon {
     }
     public Triton(string className) : base(SUMMON_TYPE.Triton, className, RACE.TRITON, UtilityScripts.Utilities.GetRandomGender()) {
     }
-    public Triton(SaveDataHarpy data) : base(data) {
+    public Triton(SaveDataSummon data) : base(data) {
     }
 
     #region Overrides

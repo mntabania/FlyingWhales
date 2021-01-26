@@ -57,6 +57,9 @@ public abstract class ResourcePile : TileObject {
     #endregion
 
     #region Overrides
+    protected override string GetNameplateName() {
+        return $"{name} (x{resourceInPile.ToString()})";
+    }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
         Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.DESTROY, this as IPointOfInterest);
