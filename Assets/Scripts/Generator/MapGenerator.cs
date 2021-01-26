@@ -85,7 +85,11 @@ public class MapGenerator : BaseMonoBehaviour {
             //         faction.GenerateInitialOpinionBetweenMembers();
             //     }
             // }
-            UtilityScripts.LocationAwarenessUtility.UpdateAllPendingAwareness();
+
+
+            //UtilityScripts.LocationAwarenessUtility.UpdateAllPendingAwareness();
+
+
             //yield return StartCoroutine(LocationAwarenessUtility.UpdateAllPendingAwarenessThread());
             // for (int j = 0; j < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; j++) {
             //     NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[j];
@@ -178,8 +182,7 @@ public class MapGenerator : BaseMonoBehaviour {
             //     }
             // }
 
-            UtilityScripts.LocationAwarenessUtility.UpdateAllPendingAwareness();
-            //yield return StartCoroutine(LocationAwarenessUtility.UpdateAllPendingAwarenessThread());
+            //UtilityScripts.LocationAwarenessUtility.UpdateAllPendingAwareness();
 
             // for (int j = 0; j < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; j++) {
             //     NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[j];
@@ -225,7 +228,7 @@ public class MapGenerator : BaseMonoBehaviour {
             new WorldMapLandmarkGeneration(), new SettlementLoading(), new FamilyTreeGeneration(),
             new RegionInnerMapGeneration(), new SingletonDataGeneration(),
             new LoadFirstWave(), new LoadSecondWave(), new TileFeatureGeneration(), new MapGenerationFinalization(),
-            new PlayerDataGeneration(), new LoadAwarenessGeneration(), new LoadCharactersCurrentAction(), new LoadPlayerQuests(),
+            new PlayerDataGeneration()/*, new LoadAwarenessGeneration()*/, new LoadCharactersCurrentAction(), new LoadPlayerQuests(),
         };
         yield return StartCoroutine(InitializeSavedWorldCoroutine(mapGenerationComponents, saveData));
     }

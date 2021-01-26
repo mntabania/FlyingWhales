@@ -56,7 +56,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public int repairCounter { get; protected set; } //If greater than zero, this tile object cannot be repaired
     public int numOfActionsBeingPerformedOnThis { get; private set; } //this is increased, when the action of another character stops this characters movement
     public ILocationAwareness currentLocationAwareness { get; private set; }
-    public bool isInPendingAwarenessList { get; private set; }
+    //public bool isInPendingAwarenessList { get; private set; }
     private bool hasSubscribedToListeners;
     public LogComponent logComponent { get; protected set; }
     public virtual StructureConnector structureConnector { get; protected set; }
@@ -674,9 +674,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public void SetCurrentLocationAwareness(ILocationAwareness locationAwareness) {
         currentLocationAwareness = locationAwareness;
     }
-    public void SetIsInPendingAwarenessList(bool state) {
-        isInPendingAwarenessList = state;
-    }
+    //public void SetIsInPendingAwarenessList(bool state) {
+    //    isInPendingAwarenessList = state;
+    //}
     public virtual bool IsUnpassable() {
         return false;
     }
