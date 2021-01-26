@@ -46,17 +46,17 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
         LoadSkillDataToUI(loadout.miscs.fixedSkills, loadout.miscs.extraSlots, miscsSkillSlotItems, SaveManager.Instance.currentSaveDataPlayer.GetLoadoutExtraMiscs(loadout.archetype), miscsScrollRect.content);
 
         Messenger.AddListener<SkillSlotItem, PLAYER_ARCHETYPE>(UISignals.SKILL_SLOT_ITEM_CLICKED, OnClickSkillSlotItem);
-        Messenger.AddListener(UISignals.START_GAME_AFTER_LOADOUT_SELECT, OnStartGameAfterLoadoutSelect);
+        Messenger.AddListener(UISignals.SAVE_LOADOUTS, SaveLoadoutSettings);
 
         spellsTab.isOn = true;
     }
     public void OnDestroy() {
         Messenger.RemoveListener<SkillSlotItem, PLAYER_ARCHETYPE>(UISignals.SKILL_SLOT_ITEM_CLICKED, OnClickSkillSlotItem);
-        Messenger.RemoveListener(UISignals.START_GAME_AFTER_LOADOUT_SELECT, OnStartGameAfterLoadoutSelect);
+        Messenger.RemoveListener(UISignals.SAVE_LOADOUTS, SaveLoadoutSettings);
     }
 
     #region General
-    private void OnStartGameAfterLoadoutSelect() {
+    private void SaveLoadoutSettings() {
         if (SaveManager.Instance.useSaveData) {
             return; //If using a save data, do not reset player skills because we will use the ones that are saved
         }

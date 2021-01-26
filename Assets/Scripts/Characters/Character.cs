@@ -465,7 +465,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         hasSubscribedToSignals = true; //This is done so there will be no duplication of listening to signals
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnOtherCharacterDied);
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
-        Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.AddListener(CharacterSignals.CHARACTER_TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
         Messenger.AddListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.AddListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnLeaveArea);
@@ -504,7 +504,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         hasSubscribedToSignals = false; //This is done so there will be no duplication of listening to signals
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnOtherCharacterDied);
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
-        Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.RemoveListener(CharacterSignals.CHARACTER_TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.RemoveListener<Character>(CharacterSignals.STARTED_TRAVELLING_IN_WORLD, OnLeaveArea);
