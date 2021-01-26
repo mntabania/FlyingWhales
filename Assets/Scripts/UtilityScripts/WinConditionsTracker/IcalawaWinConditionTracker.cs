@@ -66,7 +66,7 @@ public class IcalawaWinConditionTracker : WinconditionTracker {
         } else if (p_character == psychoPath) {
             PlayerUI.Instance.LoseGameOver("Psychopath Died, Mission Failed");
         }
-        _characterEliminatedAction?.Invoke(p_character, villagersToEliminate.Count);
+        _characterEliminatedAction?.Invoke(p_character, totalCharactersToEliminate);
     }
     private void AddVillagerToEliminate(Character p_character) {
         if (!villagersToEliminate.Contains(p_character)) {

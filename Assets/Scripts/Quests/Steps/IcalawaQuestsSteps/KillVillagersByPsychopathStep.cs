@@ -17,17 +17,17 @@ namespace Quests.Steps {
         }
 
         #region Listeners
-        public void OnCharacterEliminated(Character p_character, int p_villagerCount) {
+        public void OnCharacterEliminated(Character p_character, int p_remainingKillCounts) {
             objectsToCenter?.Remove(p_character);
             Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
-            CheckForCompletion(p_villagerCount);
+            CheckForCompletion(p_remainingKillCounts);
         }
         public void OnCharacterAddedAsTarget(Character p_character) {
             objectsToCenter?.Add(p_character);
             Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
         }
-        private void CheckForCompletion(int p_villagerCount) {
-            if (p_villagerCount <= 0) {
+        private void CheckForCompletion(int p_remainingKillCounts) {
+            if (p_remainingKillCounts <= 0) {
                 Complete();
                 Messenger.Broadcast(PlayerSignals.WIN_GAME, $"You've helped the Evil Psychopath kill {IcalawaWinConditionTracker.TotalCharactersToKill.ToString()} Villagers. Congratulations!");
             }
