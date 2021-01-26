@@ -146,6 +146,7 @@ public class WorldSettingsData {
         worldType = World_Type.Affatt;
         victoryCondition = VICTORY_CONDITION.Wipe_Elven_Kingdom_Survive_Humans;
         SetDefaultSpellSettings(victoryCondition);
+        villageSettings.SetMigrationSpeed(MIGRATION_SPEED.Slow);
         mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
         villageSettings.BlockVillagerMigrationForFactionType(FACTION_TYPE.Human_Empire);
