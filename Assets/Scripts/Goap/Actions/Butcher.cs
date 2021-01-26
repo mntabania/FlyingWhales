@@ -165,6 +165,16 @@ public class Butcher : GoapAction {
                 cost += currCost;
                 costLog += $" +{currCost}(Demon)";
             }
+
+            //Not everyone loves eating Rat/Ratman
+            //Humans are into butchering rat/ratman but Elves are not
+            if(actor.race == RACE.ELVES) {
+                if(targetCharacter.race == RACE.RATMAN || targetCharacter.race == RACE.RAT) {
+                    cost += 150;
+                    costLog += $" +150(Actor is Elf, Target is Rat/Ratman)";
+                }
+            }
+
             if (!targetCharacter.isDead) {
                 cost *= 2;
                 costLog += $" {cost}(Still Alive)";
