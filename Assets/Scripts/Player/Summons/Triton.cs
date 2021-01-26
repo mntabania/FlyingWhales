@@ -25,6 +25,7 @@ public class Triton : Summon {
             spawnLocationTile = tile.GetNeareastTileFromThisThatMeetCriteria(t => (t.IsPassable() || t.objHere is BlockWall) && t.structure.structureType != STRUCTURE_TYPE.OCEAN, null);
             if(spawnLocationTile == null) {
                 spawnLocationTile = tile;
+                spawnLocationTile.SetIsDefault(false);
             }
         }
     }
