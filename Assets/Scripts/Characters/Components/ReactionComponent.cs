@@ -629,13 +629,14 @@ public class ReactionComponent : CharacterComponent {
                                     || disguisedActor.traitContainer.HasTrait("Unfaithful")) {
                                     debugLog = $"{debugLog}\n-Flirt has 1% (multiplied by Compatibility value) chance to trigger";
                                     int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(disguisedActor, disguisedTarget);
+                                    
                                     int baseChance = 1;
                                     if (actor.moodComponent.moodState == MOOD_STATE.Normal) {
                                         debugLog = $"{debugLog}\n-Flirt has +2% chance to trigger because character is in a normal mood";
                                         baseChance += 2;
                                     }
 
-                                    int flirtChance;
+                                    float flirtChance;
                                     if (compatibility != -1) {
                                         flirtChance = baseChance * compatibility;
                                         debugLog = $"{debugLog}\n-Chance: {flirtChance.ToString()}";
@@ -643,9 +644,13 @@ public class ReactionComponent : CharacterComponent {
                                         flirtChance = baseChance * 2;
                                         debugLog = $"{debugLog}\n-Chance: {flirtChance.ToString()} (No Compatibility)";
                                     }
-                                    int flirtRoll = UnityEngine.Random.Range(0, 100);
-                                    debugLog = $"{debugLog}\n-Roll: {flirtRoll.ToString()}";
-                                    if (flirtRoll < flirtChance) {
+                                    if (actor.relationshipContainer.GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER) == targetCharacter) {
+                                        flirtChance = 0.2f;
+                                    }
+                                    bool succeed = GameUtilities.RollChance(flirtChance);
+                                    
+                                    debugLog = $"{debugLog}\n-Chance: {flirtChance.ToString()}";
+                                    if (succeed) {
                                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
                                     } else {
                                         debugLog = $"{debugLog}\n-Flirt did not trigger";
