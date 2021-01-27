@@ -563,8 +563,15 @@ namespace Inner_Maps {
         public void AddCharacterHere(Character character) {
             // if (!charactersHere.Contains(character)) {
                 charactersHere.Add(character);
+            if (character.race.IsSapient()) {
+                if (character.currentSettlement != null) {
+                    character.currentSettlement.SettlementResources?.RemoveCharacterFromSettlement(character);
+                    collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources?.AddCharacterToSettlement(character);
+                }
+            }
+                
             // }
-            if(genericTileObject != null) {
+            if (genericTileObject != null) {
                 List<Trait> traitOverrideFunctions = genericTileObject.traitContainer.GetTraitOverrideFunctions(TraitManager.Enter_Grid_Tile_Trait);
                 if (traitOverrideFunctions != null) {
                     for (int i = 0; i < traitOverrideFunctions.Count; i++) {
@@ -611,8 +618,11 @@ namespace Inner_Maps {
             Scorpion scorpion = scorpionCharacter as Scorpion;
             if (scorpion != null && !scorpion.isDead && scorpion.limiterComponent.canPerform && scorpion.limiterComponent.canMove && scorpion != character && scorpion.heldCharacter == null) {
                 if (character.canBeTargetedByLandActions) {
-                    scorpion.SetHeldCharacter(character);
-                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Pulled_Down, scorpion);
+                    if (!scorpion.hasPulledForTheDay) {
+                        scorpion.SetHasPulledForTheDay(true);
+                        scorpion.SetHeldCharacter(character);
+                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Pulled_Down, scorpion);
+                    }
                 }
             }
 
@@ -1675,18 +1685,14 @@ namespace Inner_Maps {
                     }
                     if (poi is TileObject obj) {
                         if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                            obj.AdjustHP(-500, ELEMENTAL_TYPE.Normal, true,
-                                elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs), showHPBar: true);
+                            obj.AdjustHP(-500, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
                         } else {
-                            CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Normal, obj,
-                                elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs));
+                            CombatManager.Instance.ApplyElementalDamage(0, ELEMENTAL_TYPE.Normal, obj);
                         }
                     } else if (poi is Character character) {
-                        character.AdjustHP(-500, ELEMENTAL_TYPE.Normal, true,
-                            elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs), showHPBar: true);
+                        character.AdjustHP(-500, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
                     } else {
-                        poi.AdjustHP(-500, ELEMENTAL_TYPE.Normal, true,
-                            elementalTraitProcessor: (target, trait) => TraitManager.Instance.ProcessBurningTrait(target, trait, ref bs), showHPBar: true);
+                        poi.AdjustHP(-500, ELEMENTAL_TYPE.Normal, true, showHPBar: true);
                     }
                 }
             }

@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scenarioSettings: {fileID: 4900000, guid: 7961ac218bdcff3479fa939e34867298, type: 3}
   faunaList:
-  - monsterType: 1
-    minRange: 1
-    maxRange: 5
-    weight: 10
-  - monsterType: 3
-    minRange: 1
-    maxRange: 5
-    weight: 10
   - monsterType: 8
     minRange: 1
+    maxRange: 3
+    weight: 50
+  - monsterType: 3
+    minRange: 3
+    maxRange: 3
+    weight: 50
+  - monsterType: 26
+    minRange: 3
     maxRange: 5
-    weight: 10
+    weight: 80

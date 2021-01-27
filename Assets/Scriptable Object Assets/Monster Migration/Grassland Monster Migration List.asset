@@ -13,27 +13,47 @@ MonoBehaviour:
   m_Name: Grassland Monster Migration List
   m_EditorClassIdentifier: 
   dataList:
-  - monsterType: 4
-    minRange: 1
-    maxRange: 5
-    weight: 10
   - monsterType: 7
-    minRange: 1
+    minRange: 3
     maxRange: 5
-    weight: 10
-  - monsterType: 18
+    weight: 150
+  - monsterType: 8
     minRange: 1
+    maxRange: 3
+    weight: 120
+  - monsterType: 31
+    minRange: 3
     maxRange: 5
-    weight: 10
+    weight: 100
+  - monsterType: 38
+    minRange: 2
+    maxRange: 4
+    weight: 80
   - monsterType: 26
-    minRange: 1
+    minRange: 3
     maxRange: 5
-    weight: 10
-  - monsterType: 34
-    minRange: 1
-    maxRange: 5
-    weight: 10
+    weight: 80
+  - monsterType: 5
+    minRange: 2
+    maxRange: 4
+    weight: 50
   - monsterType: 6
+    minRange: 3
+    maxRange: 3
+    weight: 50
+  - monsterType: 22
+    minRange: 4
+    maxRange: 7
+    weight: 50
+  - monsterType: 23
+    minRange: 4
+    maxRange: 7
+    weight: 50
+  - monsterType: 24
+    minRange: 4
+    maxRange: 7
+    weight: 20
+  - monsterType: 33
     minRange: 1
-    maxRange: 5
-    weight: 10
+    maxRange: 1
+    weight: 3

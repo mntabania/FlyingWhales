@@ -21,7 +21,10 @@ namespace Quests {
         }
         protected override void ConstructSteps() {
             var eliminateElvenStep = new WipeElvenKingdomAndSurviveHumanStep(GetEliminateAllVillagersDescription);
-            var protectHumanStep = new ProtectHumansStep(GetProtectHumanDescription);
+            eliminateElvenStep.SetObjectsToCenter(QuestManager.Instance.GetWinConditionTracker<AffattWinConditionTracker>().elvenToEliminate.Count > 0
+                ? QuestManager.Instance.GetWinConditionTracker<AffattWinConditionTracker>().elvenToEliminate.Select(x => x as ISelectable).ToList()
+                : new List<ISelectable>());
+            var protectHumanStep = new ProtectHumansStep(GetProtectHumanDescription).SetHoverOverAction(OnHoverProtectHumans).SetHoverOutAction(UIManager.Instance.HideSmallInfo);
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(eliminateElvenStep, protectHumanStep),
             };
@@ -33,6 +36,18 @@ namespace Quests {
         }
         private string GetProtectHumanDescription(List<Character> remainingTargets, int totalCharactersToEliminate) {
             return $"Protect the humans. Remaining {remainingTargets.Count.ToString()}/{AffattWinConditionTracker.MinimumHumans.ToString()}";
+        }
+        #endregion
+
+        #region Tooltips
+        private void OnHoverProtectHumans(QuestStepItem item) {
+            UIManager.Instance.ShowSmallInfo(
+                $"Keep at least {AffattWinConditionTracker.MinimumHumans.ToString()} humans alive and part of {_mainHumanFaction.nameWithColor}.\n" +
+                $"Important Notes:\n " +
+                $"\t- Human vagrants do not count!\n" +
+                $"\t- Human Villagers cannot be replenished, while Elven Villagers can.\n" +
+                $"\t- Elven vagrants are considered as eliminated.", 
+                item.hoverPosition);
         }
         #endregion
     }

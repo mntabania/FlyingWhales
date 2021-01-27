@@ -16,17 +16,17 @@ MonoBehaviour:
   faunaList:
   - monsterType: 8
     minRange: 1
-    maxRange: 5
-    weight: 10
+    maxRange: 3
+    weight: 50
   - monsterType: 7
-    minRange: 1
+    minRange: 3
     maxRange: 5
-    weight: 10
+    weight: 100
   - monsterType: 3
-    minRange: 1
-    maxRange: 5
-    weight: 10
+    minRange: 3
+    maxRange: 3
+    weight: 50
   - monsterType: 20
-    minRange: 1
-    maxRange: 5
-    weight: 10
+    minRange: 4
+    maxRange: 7
+    weight: 50

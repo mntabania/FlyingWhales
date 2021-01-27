@@ -22,7 +22,11 @@ public class RegionDivisionComponent {
         divisions.Add(p_division);
         if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
             ScenarioData scenarioData = WorldSettings.Instance.GetScenarioDataByWorldType(WorldSettings.Instance.worldSettingsData.worldType);
-            p_division.PopulateFaunaList(scenarioData.faunaList);
+            if(scenarioData.faunaList == null || scenarioData.faunaList.Length <= 0) {
+                p_division.PopulateFaunaList(MAX_FAUNA_LIST_CAPACITY);
+            } else {
+                p_division.PopulateFaunaList(scenarioData.faunaList);
+            }
         } else {
             p_division.PopulateFaunaList(MAX_FAUNA_LIST_CAPACITY);
         }

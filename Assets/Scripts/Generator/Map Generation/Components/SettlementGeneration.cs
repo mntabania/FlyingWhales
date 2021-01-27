@@ -150,7 +150,10 @@ public class SettlementGeneration : MapGenerationComponent {
 			StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, region.innerMap, out var connectorIndex, out LocationGridTile tileToPlaceStructure, out LocationGridTile connectorTile, structureSetting);
 			if (validConnector != null) {
 				//instantiate structure object at tile.
-				LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(npcSettlement, region.innerMap, prefabGO, tileToPlaceStructure);
+				LocationStructure structure =  LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(npcSettlement, region.innerMap, prefabGO, tileToPlaceStructure);
+				if (structure is ManMadeStructure mmStructure) {
+					mmStructure.OnUseStructureConnector(connectorTile);    
+				}
 				break; //stop loop since structure was already placed.
 			}
 		}

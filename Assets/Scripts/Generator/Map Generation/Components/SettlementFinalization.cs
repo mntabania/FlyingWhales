@@ -37,7 +37,7 @@ namespace Generator.Map_Generation.Components {
             if (!faction.factionType.usesCorruptedStructures) {
                 //Added checking since there are no corrupted fishing shacks/Hunters lodge yet.
                 if (surroundingAreas.Count(t => t.elevationType == ELEVATION.WATER) > 0) {
-                    choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHING_SHACK, faction.factionType.mainResource), 100);
+                    choices.AddElement(new StructureSetting(STRUCTURE_TYPE.FISHING_SHACK, faction.factionType.mainResource), 200);
                 }
                 choices.AddElement(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, faction.factionType.mainResource), 20);    
             }

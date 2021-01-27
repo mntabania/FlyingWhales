@@ -17,10 +17,7 @@
             }
             for (int i = 0; i < PlayerManager.Instance.player.playerFaction.characters.Count; i++) {
                 Character character = PlayerManager.Instance.player.playerFaction.characters[i];
-                // if (character is Summon summon && 
-                //     (summon.summonType == SUMMON_TYPE.Ghost || summon.summonType == SUMMON_TYPE.Skeleton || 
-                //      summon.summonType == SUMMON_TYPE.Vengeful_Ghost || summon.summonType == SUMMON_TYPE.Revenant)) {
-                if (!character.isDead) {
+                if (!character.isDead && IsUndead(character)) {
                     AddInvaderBehaviourToCharacter(character);
                 }
             }
@@ -38,9 +35,24 @@
         }
         private void OnCharacterAddedFaction(Character p_character, Faction p_faction) {
             int p_currentDay = GameManager.Instance.continuousDays;
-            if ((p_faction.isPlayerFaction || p_faction.factionType.type == FACTION_TYPE.Undead) && p_currentDay >= PangatLooWinConditionTracker.DueDay) {
-                AddInvaderBehaviourToCharacter(p_character);
+            if (p_currentDay >= PangatLooWinConditionTracker.DueDay) {
+                bool shouldBeInvader = false;
+                if (p_faction.factionType.type == FACTION_TYPE.Undead) {
+                    shouldBeInvader = true;
+                } else if (p_faction.isPlayerFaction && IsUndead(p_character)) {
+                    shouldBeInvader = true;
+                }
+                if (shouldBeInvader) {
+                    AddInvaderBehaviourToCharacter(p_character);
+                }
             }
+        }
+        private bool IsUndead(Character p_character) {
+            if (p_character.characterClass.IsZombie() || (p_character is Summon summon && 
+                (summon.summonType == SUMMON_TYPE.Ghost || summon.summonType == SUMMON_TYPE.Skeleton || summon.summonType == SUMMON_TYPE.Vengeful_Ghost || summon.summonType == SUMMON_TYPE.Revenant))) {
+                return true;
+            }
+            return false;
         }
         #endregion
 

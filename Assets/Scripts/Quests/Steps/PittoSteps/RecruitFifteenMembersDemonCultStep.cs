@@ -21,12 +21,17 @@ namespace Quests.Steps {
             Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
             CheckForCompletion(p_character);
         }
+
+        public void OnCharacterDied(Character p_character) {
+            Messenger.Broadcast(UISignals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
+            CheckForCompletion(p_character);
+        }
+
         private void CheckForCompletion(Character p_character) {
-            if ((QuestManager.Instance.winConditionTracker as PittoWinConditionTracker).cultists.Count >= 15){
+            if ((QuestManager.Instance.winConditionTracker as PittoWinConditionTracker).cultists.Count >= 12){
                 Complete();
                 Messenger.Broadcast(PlayerSignals.WIN_GAME, "You've successfully setup a sizable Demon Cult. Congratulations!");
             }
-            
         }
         #endregion
 

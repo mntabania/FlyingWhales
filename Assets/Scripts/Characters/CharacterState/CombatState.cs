@@ -846,7 +846,8 @@ public class CombatState : CharacterState {
                 }
             }
         }
-        
+
+        stateComponent.owner.logComponent.PrintLogIfActive(attackSummary);
         // if (stateComponent.currentState == this) { //so that if the combat state has been exited, this no longer executes that results in endless execution of this coroutine.
         //     attackSummary += $"\n{stateComponent.character.name}'s state is still this, running check coroutine.";
         //     stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());

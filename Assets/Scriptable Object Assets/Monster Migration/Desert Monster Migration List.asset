@@ -13,27 +13,51 @@ MonoBehaviour:
   m_Name: Desert Monster Migration List
   m_EditorClassIdentifier: 
   dataList:
-  - monsterType: 22
-    minRange: 1
+  - monsterType: 1
+    minRange: 3
     maxRange: 5
-    weight: 10
-  - monsterType: 25
-    minRange: 1
-    maxRange: 5
-    weight: 10
+    weight: 120
   - monsterType: 6
-    minRange: 1
+    minRange: 3
+    maxRange: 3
+    weight: 100
+  - monsterType: 7
+    minRange: 3
     maxRange: 5
-    weight: 10
-  - monsterType: 2
-    minRange: 1
-    maxRange: 5
-    weight: 10
+    weight: 100
   - monsterType: 31
-    minRange: 1
+    minRange: 3
     maxRange: 5
-    weight: 10
-  - monsterType: 15
+    weight: 100
+  - monsterType: 38
+    minRange: 2
+    maxRange: 4
+    weight: 80
+  - monsterType: 37
     minRange: 1
+    maxRange: 2
+    weight: 80
+  - monsterType: 11
+    minRange: 2
+    maxRange: 4
+    weight: 50
+  - monsterType: 27
+    minRange: 2
     maxRange: 5
-    weight: 10
+    weight: 50
+  - monsterType: 24
+    minRange: 4
+    maxRange: 7
+    weight: 50
+  - monsterType: 8
+    minRange: 1
+    maxRange: 3
+    weight: 50
+  - monsterType: 25
+    minRange: 4
+    maxRange: 7
+    weight: 20
+  - monsterType: 33
+    minRange: 1
+    maxRange: 1
+    weight: 3
