@@ -1352,7 +1352,7 @@ public class CharacterManager : BaseMonoBehaviour {
     #region Listeners
     private void OnCharacterFinishedAction(ActualGoapNode node) {
         if (node.actor.marker) {
-            node.actor.marker.UpdateActionIcon();
+            //node.actor.marker.UpdateActionIcon();
             node.actor.marker.UpdateAnimation();
         }
         //for (int i = 0; i < actor.marker.inVisionCharacters.Count; i++) {

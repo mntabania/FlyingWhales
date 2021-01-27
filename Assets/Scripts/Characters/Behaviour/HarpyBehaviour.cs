@@ -22,11 +22,11 @@ public class HarpyBehaviour : BaseMonsterBehaviour {
                     return true;
                 }
             }
-
-            if (GameUtilities.RollChance(15)) {
-                Harpy harpy = character as Harpy;
-                if (!harpy.hasCapturedForTheDay) {
-                    if(TryCaptureCharacter(character, out producedJob)) {
+            Harpy harpy = character as Harpy;
+            if (!harpy.hasCapturedForTheDay) {
+                harpy.SetHasCapturedForTheDay(true);
+                if (GameUtilities.RollChance(15)) {
+                    if (TryCaptureCharacter(character, out producedJob)) {
                         return true;
                     }
                 }
@@ -65,10 +65,7 @@ public class HarpyBehaviour : BaseMonsterBehaviour {
             if(chosenTargetCharacter != null) {
                 LocationStructure chosenTargetStructure = GetDestinationToDropCapturedCharacter(actor, region);
                 if(chosenTargetCharacter != null) {
-                    if(actor.jobComponent.TryTriggerCaptureCharacter(chosenTargetCharacter, chosenTargetStructure, out producedJob, true)) {
-                        (actor as Harpy).SetHasCapturedForTheDay(true);
-                        return true;
-                    }
+                    return actor.jobComponent.TryTriggerCaptureCharacter(chosenTargetCharacter, chosenTargetStructure, out producedJob, true);
                 }
             }
         }

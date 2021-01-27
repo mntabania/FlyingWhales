@@ -154,6 +154,9 @@ public class CombatState : CharacterState {
     //}
     public override void AfterExitingState() {
         base.AfterExitingState();
+        if (stateComponent.owner.marker) {
+            stateComponent.owner.marker.visionCollider.ReCategorizeVision();
+        }
         if (!stateComponent.owner.isDead) {
             //TEMPORARILY REMOVED THIS UNTIL FURTHER NOTICE
             if (isBeingApprehended && stateComponent.owner.traitContainer.HasTrait("Criminal") && stateComponent.owner.limiterComponent.canPerform && stateComponent.owner.limiterComponent.canMove) { //!stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)

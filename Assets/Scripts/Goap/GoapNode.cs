@@ -144,7 +144,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         // CreateThoughtBubbleLog(targetStructure);
         //parentPlan?.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
         Messenger.Broadcast(JobSignals.CHARACTER_DOING_ACTION, actor, this);
-        actor.marker.UpdateActionIcon();
+        //actor.marker.UpdateActionIcon();
         action.OnActionStarted(this);
         //poiTarget.AddTargettedByAction(this);
 

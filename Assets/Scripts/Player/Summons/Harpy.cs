@@ -26,6 +26,16 @@ public class Harpy : Summon {
         base.Initialize();
         movementComponent.SetIsFlying(true);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Harpy_Behaviour);
+        hasCapturedForTheDay = true;
+        int randomNextCaptureTick = UnityEngine.Random.Range(0, 288);
+        if(randomNextCaptureTick == 0) {
+            SetHasCapturedForTheDay(false);
+        } else {
+            nextCaptureDate = GameManager.Instance.Today().AddTicks(randomNextCaptureTick);
+            SchedulingManager.Instance.AddEntry(nextCaptureDate, () => SetHasCapturedForTheDay(false), this);
+        }
+
+
     }
     public override void SubscribeToSignals() {
         base.SubscribeToSignals();

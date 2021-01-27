@@ -535,7 +535,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Action Icon
     public void UpdateActionIcon() {
-        if (_nameplate) {
+        //Do not show action icon if character is invisible
+        if (_nameplate && isMainVisualActive) {
             _nameplate.UpdateActionIcon();    
         }
     }

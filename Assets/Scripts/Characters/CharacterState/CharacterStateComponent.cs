@@ -18,7 +18,12 @@ public class CharacterStateComponent : CharacterComponent {
         PerTickCurrentState();
     }
     public void SetCurrentState(CharacterState state) {
-        currentState = state;
+        if(currentState != state) {
+            currentState = state;
+            if (owner.marker) {
+                owner.marker.UpdateActionIcon();
+            }
+        }
     }
 
     public CharacterStateComponent() {
