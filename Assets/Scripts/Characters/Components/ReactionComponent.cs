@@ -433,6 +433,16 @@ public class ReactionComponent : CharacterComponent {
                 }
             }
         }
+
+        if (actor.race == RACE.RATMAN) {
+            Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+            if (prisoner != null && targetCharacter.traitContainer.HasTrait("Restrained")) {
+                if (actor.faction == prisoner.prisonerOfFaction) {
+                    actor.jobComponent.CreateAbductJob(targetCharacter);
+                    return;
+                }
+            }
+        }
         
         if (isHostile) {
             debugLog = $"{debugLog}\n-Target is hostile";
@@ -1536,7 +1546,6 @@ public class ReactionComponent : CharacterComponent {
                     log.AddToFillers(targetTileObject, targetTileObject.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddToFillers(targetTileObject.gridTileLocation.structure,  targetTileObject.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
                     log.AddLogToDatabase();
-                    actor.jobComponent.CreateDropItemJob(JOB_TYPE.DROP_ITEM, targetTileObject, actor.homeStructure);
                 }
             }
             if(targetTileObject.tileObjectType.IsTileObjectAnItem() && !actor.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, targetTileObject) && targetTileObject.Advertises(INTERACTION_TYPE.PICK_UP) && actor.limiterComponent.canMove) {

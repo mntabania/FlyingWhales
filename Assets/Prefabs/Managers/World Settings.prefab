@@ -2172,7 +2172,12 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: Create a Demon Cult faction and have it grow to at least 15 members.
+      value: 'Create a Demon Cult faction and have it grow to at least 12 members.
+
+        
+
+        Warning:
+        Ensure that you have the Defiler on your loadout!'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
