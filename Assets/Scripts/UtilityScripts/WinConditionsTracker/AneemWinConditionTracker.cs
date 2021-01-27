@@ -65,7 +65,6 @@ public class AneemWinConditionTracker : WinconditionTracker {
         if (!villagersToEliminate.Contains(p_character)) {
             villagersToEliminate.Add(p_character);
             AddCharacterToTrackList(p_character);
-            totalCharactersToEliminate++;
             _characterAddedAsTargetAction?.Invoke(p_character);
         }
     }

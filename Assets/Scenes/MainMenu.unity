@@ -2010,7 +2010,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1418532462}
-        m_MethodName: OnToggleSkipTutorials
+        m_MethodName: OnToggleSkipAdvancedTutorials
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4046,8 +4046,8 @@ MonoBehaviour:
         m_RotationOrder: 4
       StartPos: {x: -8, y: 155, z: 0}
       EndPos: {x: -8, y: -155, z: 0}
-      StartWorldPos: {x: 1904, y: 1510, z: 0}
-      EndWorldPos: {x: 1904, y: 890, z: 0}
+      StartWorldPos: {x: 952, y: 1235, z: 0}
+      EndWorldPos: {x: 952, y: 925, z: 0}
     ScalePropetiesAnim:
       scaleEnabled: 0
       TweenCurveEnterScale:
@@ -17091,8 +17091,8 @@ MonoBehaviour:
         m_RotationOrder: 4
       StartPos: {x: -237, y: 0, z: 0}
       EndPos: {x: 202, y: 0, z: 0}
-      StartWorldPos: {x: -263.33334, y: 600, z: 0}
-      EndWorldPos: {x: 224.44446, y: 600, z: 0}
+      StartWorldPos: {x: -237, y: 540, z: 0}
+      EndWorldPos: {x: 202, y: 540, z: 0}
     ScalePropetiesAnim:
       scaleEnabled: 0
       TweenCurveEnterScale:
@@ -24469,7 +24469,7 @@ MonoBehaviour:
   fullscreenToggle: {fileID: 1999545694}
   targetFrameRate: 60
   edgePanningToggle: {fileID: 86800207}
-  skipTutorialsToggle: {fileID: 182572116}
+  skipAdvancedTutorialsToggle: {fileID: 182572116}
   confineCursorToggle: {fileID: 807539086}
   vsyncToggle: {fileID: 1447438332}
   showVideosToggle: {fileID: 525747289}
@@ -25445,7 +25445,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Skip Tutorials
+  m_text: Skip Advanced Tutorials
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 44b0e75cf1a2d2246a2de46e846fa57d, type: 2}
   m_sharedMaterial: {fileID: 21554341954933024, guid: 44b0e75cf1a2d2246a2de46e846fa57d,

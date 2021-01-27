@@ -55,7 +55,7 @@ public class FactionSettingUIItem : MonoBehaviour {
         _factionTemplate = p_FactionTemplate;
         imgFactionEmblem.sprite = p_FactionTemplate.factionEmblem;
         UpdateName(p_FactionTemplate.name);
-        dropDownFactionType.value = dropDownFactionType.GetDropdownOptionIndex(p_FactionTemplate.factionTypeString);
+        dropDownFactionType.value = dropDownFactionType.GetDropdownOptionIndex(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_FactionTemplate.factionTypeString));
         txtVillageCount.text = p_FactionTemplate.villageSettings.Count.ToString();
     }
     public void SetMinusBtnState(bool p_state) {

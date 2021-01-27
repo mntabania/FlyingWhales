@@ -1946,7 +1946,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (character.id != id) {
             //RemoveRelationship(characterThatDied); //do not remove relationships when dying
             marker.OnSeizeOtherCharacter(character);
-            currentSettlement.SettlementResources?.RemoveCharacterFromSettlement(this);
+            currentSettlement?.SettlementResources?.RemoveCharacterFromSettlement(this);
         }
     }
     private void OnBeforeSeizingTileObject(TileObject tileObject) {
@@ -5789,7 +5789,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
 
             SetHP(0);
-            currentSettlement.SettlementResources?.RemoveCharacterFromSettlement(this);
+            currentSettlement?.SettlementResources?.RemoveCharacterFromSettlement(this);
 
             marker?.OnDeath(deathTile);
 
