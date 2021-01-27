@@ -2918,11 +2918,11 @@ PrefabInstance:
         to win.
 
 
-        Features: No Villager migrations. Special fixed loadout.
+        Features: Special fixed loadout.
 
 
-        Finishing
-        this unlocks: <b>Affatt</b> and <b>Custom</b>.'
+        Finishing this
+        unlocks: <b>Affatt</b> and <b>Custom</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}

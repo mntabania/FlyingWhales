@@ -180,47 +180,37 @@ public class MonsterGeneration : MapGenerationComponent {
 		// }  else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
 		// 	PittoLandmarkMonsterGeneration();
 		// } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
-			List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks();
-			List<LocationGridTile> locationChoices = new List<LocationGridTile>();
-			for (int i = 0; i < allLandmarks.Count; i++) {
-				BaseLandmark landmark = allLandmarks[i];
-				if (landmark.specificLandmarkType != LANDMARK_TYPE.CAVE) {
-					RegionDivision regionDivision = landmark.tileLocation.regionDivision;
-					LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-					if (GameUtilities.RollChance(70)) {
-						locationChoices.Clear();
-						locationChoices.AddRange(structure.passableTiles);
-						
-	                    MonsterMigrationBiomeAtomizedData chosenMMonster = regionDivision.GetRandomMonsterFromFaunaList();
-	                    int randomAmount = GameUtilities.RandomBetweenTwoNumbers(chosenMMonster.minRange, chosenMMonster.maxRange);;
-	                    for (int k = 0; k < randomAmount; k++) {
-		                    Summon summon = CreateMonster(chosenMMonster.monsterType, locationChoices, structure, faction: FactionManager.Instance.GetDefaultFactionForMonster(chosenMMonster.monsterType));
-		                    locationChoices.Remove(summon.gridTileLocation);
-	                    }
-	                    if (locationChoices.Count == 0) {
-		                    Debug.LogWarning($"Ran out of grid tiles to place monsters at structure {structure.name}");
-		                    break;
-	                    }
-                    }
-                    // if (landmark.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR && GenerateRatmen(structure, GameUtilities.RandomBetweenTwoNumbers(1, 3))) {
-                    //     //Ratmen has been generated
-                    // } else {
-                    //     LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmark.specificLandmarkType);
-                    //     if (landmarkData.monsterGenerationSetting != null) {
-                    //         WeightedDictionary<MonsterSetting> monsterChoices = landmarkData.monsterGenerationSetting.GetMonsterChoicesForBiome(landmark.tileLocation.biomeType);
-                    //         if (monsterChoices != null && GameUtilities.RollChance(landmarkData.monsterGenerationChance)) {
-                    //             MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
-                    //             int randomAmount = randomMonsterSetting.minMaxRange.Random();
-                    //             for (int k = 0; k < randomAmount; k++) {
-                    //                 CreateMonster(randomMonsterSetting.monsterType, landmark.tileLocation.settlementOnTile, landmark, structure);
-                    //             }
-                    //             yield return null;
-                    //         }
-                    //     }
-                    // }
+		
+		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+			PangatLooLandmarkMonsterGeneration();
+		}
+		List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks();
+		List<LocationGridTile> locationChoices = new List<LocationGridTile>();
+		for (int i = 0; i < allLandmarks.Count; i++) {
+			BaseLandmark landmark = allLandmarks[i];
+			if (landmark.specificLandmarkType != LANDMARK_TYPE.CAVE) {
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo && landmark.specificLandmarkType == LANDMARK_TYPE.ANCIENT_GRAVEYARD) {
+					continue; //do not spawn other monsters in ancient graveyard for Pangat Loo since there are already skeletons there.
 				}
-			}	
-		// }
+				RegionDivision regionDivision = landmark.tileLocation.regionDivision;
+				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+				if (GameUtilities.RollChance(70)) {
+					locationChoices.Clear();
+					locationChoices.AddRange(structure.passableTiles);
+					
+                    MonsterMigrationBiomeAtomizedData chosenMMonster = regionDivision.GetRandomMonsterFromFaunaList();
+                    int randomAmount = GameUtilities.RandomBetweenTwoNumbers(chosenMMonster.minRange, chosenMMonster.maxRange);;
+                    for (int k = 0; k < randomAmount; k++) {
+	                    Summon summon = CreateMonster(chosenMMonster.monsterType, locationChoices, structure, faction: FactionManager.Instance.GetDefaultFactionForMonster(chosenMMonster.monsterType));
+	                    locationChoices.Remove(summon.gridTileLocation);
+                    }
+                    if (locationChoices.Count == 0) {
+	                    Debug.LogWarning($"Ran out of grid tiles to place monsters at structure {structure.name}");
+	                    break;
+                    }
+                }
+			}
+		}	
 		yield return null;
 	}
 	private IEnumerator CaveMonsterGeneration() {
@@ -495,7 +485,7 @@ public class MonsterGeneration : MapGenerationComponent {
 		for (int i = 0; i < graveyards.Count; i++) {
 			BaseLandmark landmark = graveyards[i];
 			LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-			int randomAmount = 3;
+			int randomAmount = 2;
 			for (int k = 0; k < randomAmount; k++) {
 				CreateMonster(SUMMON_TYPE.Skeleton, landmark.tileLocation.settlementOnTile, landmark, structure, FactionManager.Instance.undeadFaction);
 			}
