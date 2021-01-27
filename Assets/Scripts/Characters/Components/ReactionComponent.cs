@@ -1528,6 +1528,7 @@ public class ReactionComponent : CharacterComponent {
                         Character chosenSuspect = _assumptionSuspects[UnityEngine.Random.Range(0, _assumptionSuspects.Count)];
                         debugLog = debugLog + ("\n-Will create Steal assumption on " + chosenSuspect.name);
                         actor.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, targetTileObject, INTERACTION_TYPE.STEAL, REACTION_STATUS.WITNESSED);
+                        actor.jobComponent.CreateDropItemJob(JOB_TYPE.DROP_ITEM, targetTileObject, actor.homeStructure);
                     }
                 } else {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_steal_assumption", providedTags: LOG_TAG.Crimes);
@@ -1535,6 +1536,7 @@ public class ReactionComponent : CharacterComponent {
                     log.AddToFillers(targetTileObject, targetTileObject.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddToFillers(targetTileObject.gridTileLocation.structure,  targetTileObject.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
                     log.AddLogToDatabase();
+                    actor.jobComponent.CreateDropItemJob(JOB_TYPE.DROP_ITEM, targetTileObject, actor.homeStructure);
                 }
             }
             if(targetTileObject.tileObjectType.IsTileObjectAnItem() && !actor.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, targetTileObject) && targetTileObject.Advertises(INTERACTION_TYPE.PICK_UP) && actor.limiterComponent.canMove) {

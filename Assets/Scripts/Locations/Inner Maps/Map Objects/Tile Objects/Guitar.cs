@@ -8,6 +8,8 @@ public class Guitar : TileObject {
     public Guitar() {
         Initialize(TILE_OBJECT_TYPE.GUITAR);
         AddAdvertisedAction(INTERACTION_TYPE.PLAY_GUITAR);
+        AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
+        AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
     }
     public Guitar(SaveDataTileObject data) {
     }

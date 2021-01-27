@@ -70,8 +70,8 @@ namespace Traits {
                     //    }
                     //}
                     List<Character> choices = ObjectPoolManager.Instance.CreateNewCharactersList();
-                    for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
-                        Character otherCharacter = character.currentRegion.charactersAtLocation[i];
+                    for (int i = 0; i < character.currentSettlement.SettlementResources.characters.Count; i++) {
+                        Character otherCharacter = character.currentSettlement.SettlementResources.characters[i];
                         if (otherCharacter.HasItem()) {
                             choices.Add(otherCharacter);
                         }
@@ -92,6 +92,7 @@ namespace Traits {
                     } else {
                         return "no_target";
                     }
+                    ObjectPoolManager.Instance.ReturnCharactersListToPool(choices);
                 } else {
                     heartbroken.TriggerBrokenhearted();
                 }

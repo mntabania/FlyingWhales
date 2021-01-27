@@ -29,6 +29,7 @@ namespace UtilityScripts {
                     summary += $"\nRocks Count: {npcSettlement.SettlementResources.rocks.Count}";
                     summary += $"\nTrees Count: {npcSettlement.SettlementResources.trees.Count}";
                     summary += $"\nFishing Spots Count: {npcSettlement.SettlementResources.fishingSpots.Count}";
+                    summary += $"\nCharacters inside: {npcSettlement.SettlementResources.characters.Count}";
                     summary += $"\nNeeded Items: ";
                     for (int j = 0; j < npcSettlement.neededObjects.Count; j++) {
                         summary += $"|{npcSettlement.neededObjects[j].ToString()}|";

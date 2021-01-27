@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class SettlementResources
 {
-    public enum StructureRequirement { NONE = 0, ROCK, TREE, FISHING_SPOT, FEATURE_GAME, ORE_VEIN }
+    public enum StructureRequirement { NONE = 0, ROCK, TREE, FISHING_SPOT, FEATURE_GAME, ORE_VEIN, CHARACTER }
     public List<Rock> rocks = new List<Rock>();
     public List<TreeObject> trees = new List<TreeObject>();
     public List<FishingSpot> fishingSpots = new List<FishingSpot>();
     public List<OreVein> oreVeins = new List<OreVein>();
+    public List<Character> characters = new List<Character>();
 
     public TileObject GetAvailableRequiredObject(StructureRequirement p_structureRequirement) {
         switch (p_structureRequirement) {
@@ -53,8 +54,17 @@ public class SettlementResources
             }
             break;
         }
-        // Debug.LogError("WELL " + fishingSpots.Count);
-        // Debug.LogError("TREE " + trees.Count);
-        // Debug.LogError("ROCK " + rocks.Count);
+    }
+
+    public void AddCharacterToSettlement(Character p_character) {
+        if (!characters.Contains(p_character)) {
+            characters.Add(p_character);
+        }
+	}
+
+    public void RemoveCharacterFromSettlement(Character p_character) {
+        if (characters.Contains(p_character)) {
+            characters.Remove(p_character);
+        }
     }
 }
