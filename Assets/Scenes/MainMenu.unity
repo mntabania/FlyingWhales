@@ -24469,7 +24469,7 @@ MonoBehaviour:
   fullscreenToggle: {fileID: 1999545694}
   targetFrameRate: 60
   edgePanningToggle: {fileID: 86800207}
-  skipTutorialsToggle: {fileID: 182572116}
+  skipAdvancedTutorialsToggle: {fileID: 182572116}
   confineCursorToggle: {fileID: 807539086}
   vsyncToggle: {fileID: 1447438332}
   showVideosToggle: {fileID: 525747289}

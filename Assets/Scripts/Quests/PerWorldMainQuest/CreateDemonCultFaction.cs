@@ -36,8 +36,8 @@ namespace Quests {
             return $"Start a Demon Cult"; // /{totalCharactersToEliminate.ToString()}
         }
 
-        private string GetRecruitFifteenCultist(int p_remainingCultistcount) {
-            return $"Remaing cultist to recruit: " + p_remainingCultistcount + "/12"; // /{totalCharactersToEliminate.ToString()}
+        private string GetRecruitFifteenCultist(int p_cultistCount) {
+            return $"Demon Cult Members: " + p_cultistCount + "/12"; // /{totalCharactersToEliminate.ToString()}
         }
         #endregion
     }
