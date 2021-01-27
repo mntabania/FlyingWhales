@@ -49,7 +49,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement(region, locationType, settlementTile);
 				npcSettlement.SetName(villageSetting.villageName);
 				LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);
-				SETTLEMENT_TYPE settlementType = LandmarkManager.Instance.GetSettlementTypeForRace(faction.race);
+				SETTLEMENT_TYPE settlementType = LandmarkManager.Instance.GetSettlementTypeForFaction(faction);
 				npcSettlement.SetSettlementType(settlementType);
 				
 				var structureSettings = GenerateCityCenterAndDwellings(faction, villageSetting);
@@ -441,18 +441,12 @@ public class SettlementGeneration : MapGenerationComponent {
 			// 	structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE), 15);	
 			// }
 		} else {
-			if (structureTypes.Contains(STRUCTURE_TYPE.PRISON) == false) {
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE, faction.factionType.usesCorruptedStructures), 2);
-			}
-			if (structureTypes.Contains(STRUCTURE_TYPE.BARRACKS) == false) {
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.BARRACKS, RESOURCE.STONE, faction.factionType.usesCorruptedStructures), 6);
-			}
-			if (structureTypes.Contains(STRUCTURE_TYPE.TAVERN) == false) {
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE, faction.factionType.usesCorruptedStructures), 3);
-			}
-			if (structureTypes.Contains(STRUCTURE_TYPE.BARRACKS) == false) {
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.BARRACKS, RESOURCE.STONE, faction.factionType.usesCorruptedStructures), 6);
-			}
+			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.PRISON, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), 2);
+			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.BARRACKS, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), 6);
+			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.TAVERN, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), 3);
+			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), 6);
+			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.HOSPICE, faction.factionType.mainResource, faction.factionType.usesCorruptedStructures), 6);
+			
 		}
 		return structureWeights;
 	}
