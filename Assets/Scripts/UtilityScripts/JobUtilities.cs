@@ -189,7 +189,8 @@ namespace UtilityScripts {
 
             if (farms != null) {
                 for (int i = 0; i < farms.Count; i++) {
-                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, farms[i]);
+                    var farm = farms[i];
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, farm);
                 }
             }
             if (fishingShacks != null) {
@@ -200,8 +201,9 @@ namespace UtilityScripts {
             }
             if (hunterLodge != null) {
                 for (int i = 0; i < hunterLodge.Count; i++) {
-                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, hunterLodge[i]);
-                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, hunterLodge[i].occupiedHexTile.hexTileOwner);
+                    var lodge = hunterLodge[i];
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, lodge);
+                    job.AddPriorityLocation(INTERACTION_TYPE.NONE, lodge.occupiedHexTile.hexTileOwner);
                 }
             }
         }
