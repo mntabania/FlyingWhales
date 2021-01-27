@@ -648,10 +648,15 @@ namespace Inner_Maps {
         }
         public List<GameObject> GetIndividualStructurePrefabsForStructure(StructureSetting structureSetting) {
             if (structureSetting.isCorrupted) {
-                return corruptedStructurePrefabs[structureSetting];
+                if (corruptedStructurePrefabs.ContainsKey(structureSetting)) {
+                    return corruptedStructurePrefabs[structureSetting];    
+                }
             } else {
-                return individualStructurePrefabs[structureSetting];    
+                if (individualStructurePrefabs.ContainsKey(structureSetting)) {
+                    return individualStructurePrefabs[structureSetting];    
+                }
             }
+            throw new Exception($"No structure prefabs for {structureSetting.ToString()}");
         }
         public void AddWorldKnownDemonicStructure(LocationStructure structure) {
             worldKnownDemonicStructures.Add(structure);

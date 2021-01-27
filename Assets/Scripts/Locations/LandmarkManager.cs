@@ -366,6 +366,21 @@ public partial class LandmarkManager : BaseMonoBehaviour {
                 return SETTLEMENT_TYPE.Human_Village;
         }
     }
+    public SETTLEMENT_TYPE GetSettlementTypeForFaction(Faction faction) {
+        switch (faction.factionType.type) {
+            case FACTION_TYPE.Elven_Kingdom:
+                return SETTLEMENT_TYPE.Elven_Hamlet;
+            case FACTION_TYPE.Human_Empire:
+                return SETTLEMENT_TYPE.Human_Village;
+            case FACTION_TYPE.Vampire_Clan:
+            case FACTION_TYPE.Lycan_Clan:
+                return GetSettlementTypeForRace(faction.race);
+            case FACTION_TYPE.Demon_Cult:
+                return SETTLEMENT_TYPE.Cult_Town;
+            default:
+                return GetSettlementTypeForRace(faction.race);
+        }
+    }
     
     #endregion
 
