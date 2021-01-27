@@ -66,7 +66,7 @@ public class BehaviourComponent : CharacterComponent {
     public bool isCurrentlySnatching;
 
     //pest
-    public List<HexTile> pestVillageTarget { get; private set; }
+    public BaseSettlement pestSettlementTarget { get; private set; }
 
     //private COMBAT_MODE combatModeBeforeHarassRaidInvade;
     public COMBAT_MODE combatModeBeforeAttackingDemonicStructure { get; private set; }
@@ -973,8 +973,8 @@ public class BehaviourComponent : CharacterComponent {
     #endregion
 
     #region Pest
-    public void SetPestVillageTarget(List<HexTile> targets) {
-        pestVillageTarget = targets;
+    public void SetPestSettlementTarget(BaseSettlement p_settlement) {
+        pestSettlementTarget = p_settlement;
     }
     #endregion
 
@@ -1080,12 +1080,15 @@ public class BehaviourComponent : CharacterComponent {
                 arsonVillageTarget.Add(hex);
             }
         }
-        if (data.pestVillageTarget != null) {
-            pestVillageTarget = new List<HexTile>();
-            for (int i = 0; i < data.pestVillageTarget.Count; i++) {
-                HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.pestVillageTarget[i]);
-                pestVillageTarget.Add(hex);
+        if (data.pestSettlementTarget != null) {
+            if (!string.IsNullOrEmpty(data.pestSettlementTarget)) {
+                pestSettlementTarget = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.pestSettlementTarget);
             }
+            //pestSettlementTarget = new List<HexTile>();
+            //for (int i = 0; i < data.pestSettlementTarget.Count; i++) {
+            //    HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.pestSettlementTarget[i]);
+            //    pestSettlementTarget.Add(hex);
+            //}
         }
         if (data.currentBehaviourComponents != null) {
             for (int i = 0; i < data.currentBehaviourComponents.Count; i++) {
@@ -1150,7 +1153,7 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
     public bool isCurrentlySnatching;
 
     //pest
-    public List<string> pestVillageTarget;
+    public string pestSettlementTarget;
 
     public COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
 
@@ -1225,11 +1228,12 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
                 arsonVillageTarget.Add(data.arsonVillageTarget[i].persistentID);
             }
         }
-        if (data.pestVillageTarget != null) {
-            pestVillageTarget = new List<string>();
-            for (int i = 0; i < data.pestVillageTarget.Count; i++) {
-                pestVillageTarget.Add(data.pestVillageTarget[i].persistentID);
-            }
+        if (data.pestSettlementTarget != null) {
+            pestSettlementTarget = data.pestSettlementTarget.persistentID;
+            //pestSettlementTarget = new List<string>();
+            //for (int i = 0; i < data.pestSettlementTarget.Count; i++) {
+            //    pestSettlementTarget.Add(data.pestSettlementTarget[i].persistentID);
+            //}
         }
     }
 
