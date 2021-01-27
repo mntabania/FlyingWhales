@@ -40,8 +40,10 @@ public class RegionDivision {
 
     #region Listeners
     private void OnDayStarted() {
-        if (!WorldSettings.Instance.worldSettingsData.mapSettings.disableAllMonsterMigrations) {
-            MonsterMigrationPerDay();    
+        if (!WorldSettings.Instance.worldSettingsData.mapSettings.disableAllMonsterMigrations && WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Affatt) {
+            if(faunaList != null && faunaList.Length > 0) {
+                MonsterMigrationPerDay();
+            }
         }
     }
     #endregion
