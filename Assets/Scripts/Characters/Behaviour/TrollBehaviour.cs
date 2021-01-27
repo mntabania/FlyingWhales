@@ -102,9 +102,9 @@ public class TrollBehaviour : BaseMonsterBehaviour {
             if (GameUtilities.RollChance(25)) {
                 FoodPile meat = null;
                 if (character.homeSettlement != null) {
-                    meat = character.homeSettlement.GetFirstTileObjectOfType<FoodPile>(TILE_OBJECT_TYPE.HUMAN_MEAT, TILE_OBJECT_TYPE.ELF_MEAT, TILE_OBJECT_TYPE.ANIMAL_MEAT);
+                    meat = character.homeSettlement.GetFirstTileObjectOfType<FoodPile>(TILE_OBJECT_TYPE.HUMAN_MEAT, TILE_OBJECT_TYPE.ELF_MEAT, TILE_OBJECT_TYPE.ANIMAL_MEAT, TILE_OBJECT_TYPE.RAT_MEAT);
                 } else if (character.homeStructure != null) {
-                    meat = character.homeStructure.GetFirstTileObjectOfType<FoodPile>(TILE_OBJECT_TYPE.HUMAN_MEAT, TILE_OBJECT_TYPE.ELF_MEAT, TILE_OBJECT_TYPE.ANIMAL_MEAT);
+                    meat = character.homeStructure.GetFirstTileObjectOfType<FoodPile>(TILE_OBJECT_TYPE.HUMAN_MEAT, TILE_OBJECT_TYPE.ELF_MEAT, TILE_OBJECT_TYPE.ANIMAL_MEAT, TILE_OBJECT_TYPE.RAT_MEAT);
                 }
                 if (meat != null) {
                     if (character.jobComponent.CreateEatJob(meat, false, out producedJob)) {

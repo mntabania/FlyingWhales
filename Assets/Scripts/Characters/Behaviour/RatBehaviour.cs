@@ -13,15 +13,15 @@ public class RatBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n{character.name} is a Rat";
         if (!character.limiterComponent.canDoFullnessRecovery) {
-            if (character.behaviourComponent.pestVillageTarget != null && character.behaviourComponent.pestVillageTarget.Count > 0) {
-                BaseSettlement targetSettlement = character.behaviourComponent.pestVillageTarget[0].settlementOnTile;
+            if (character.behaviourComponent.pestSettlementTarget != null) {
+                BaseSettlement targetSettlement = character.behaviourComponent.pestSettlementTarget;
                 if (targetSettlement != null) {
                     if (character.currentRegion != null) {
                         HexTile targetHex = character.currentRegion.GetRandomHexThatMeetCriteria(h => h.settlementOnTile == null && h.elevationType != ELEVATION.WATER && h.elevationType != ELEVATION.MOUNTAIN);
                         if (targetHex != null) {
                             LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetHex.locationGridTiles);
                             if (targetTile != null) {
-                                character.behaviourComponent.SetPestVillageTarget(null);
+                                character.behaviourComponent.SetPestSettlementTarget(null);
                                 return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
                             }
                         }
@@ -29,12 +29,17 @@ public class RatBehaviour : CharacterBehaviourComponent {
                 }
             }
         } else {
-            if (character.behaviourComponent.pestVillageTarget == null) {
-                character.behaviourComponent.SetPestVillageTarget(GetVillageTargetsByPriority(character));
+            if (character.behaviourComponent.pestSettlementTarget == null) {
+                BaseSettlement currentSettlement = character.currentSettlement;
+                if(currentSettlement != null && (currentSettlement.locationType == LOCATION_TYPE.VILLAGE || currentSettlement.locationType == LOCATION_TYPE.DUNGEON)) {
+                    character.behaviourComponent.SetPestSettlementTarget(currentSettlement);
+                } else {
+                    character.behaviourComponent.SetPestSettlementTarget(GetVillageTargetsByPriority(character));
+                }
             }
-            if (character.behaviourComponent.pestVillageTarget != null && character.behaviourComponent.pestVillageTarget.Count > 0) {
+            if (character.behaviourComponent.pestSettlementTarget != null) {
                 log += $"\n-Already has village target";
-                BaseSettlement targetSettlement = character.behaviourComponent.pestVillageTarget[0].settlementOnTile;
+                BaseSettlement targetSettlement = character.behaviourComponent.pestSettlementTarget;
                 if (targetSettlement != null) {
                     if (character.gridTileLocation != null && character.gridTileLocation.IsPartOfSettlement(targetSettlement)) {
                         return character.jobComponent.CreateRatFullnessRecovery(targetSettlement, out producedJob);
@@ -52,7 +57,7 @@ public class RatBehaviour : CharacterBehaviourComponent {
         }
         return character.jobComponent.TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_TILE, out producedJob);
     }
-    private List<HexTile> GetVillageTargetsByPriority(Character owner) {
+    private BaseSettlement GetVillageTargetsByPriority(Character owner) {
         //get settlements in region that have normal characters living there.
         List<BaseSettlement> settlementsInRegion = owner.currentRegion?.GetSettlementsInRegion(
             settlement => settlement.HasResidentThatMeetsCriteria(x => owner != x && !x.isDead)
@@ -64,13 +69,13 @@ public class RatBehaviour : CharacterBehaviourComponent {
             if (villageChoices.Count > 0) {
                 //a random village occupied by Villagers within current region
                 BaseSettlement chosenVillage = CollectionUtilities.GetRandomElement(villageChoices);
-                return new List<HexTile>(chosenVillage.tiles);
+                return chosenVillage;
             } else {
                 //a random special structure occupied by Villagers within current region
                 List<BaseSettlement> specialStructureChoices = settlementsInRegion.Where(x => x.locationType == LOCATION_TYPE.DUNGEON).ToList();
                 if (specialStructureChoices.Count > 0) {
                     BaseSettlement chosenSpecialStructure = CollectionUtilities.GetRandomElement(specialStructureChoices);
-                    return new List<HexTile>(chosenSpecialStructure.tiles);
+                    return chosenSpecialStructure;
                 }
             }
         }

@@ -877,6 +877,7 @@ public enum TILE_OBJECT_TYPE {
     ORE_VEIN = 164,
     FISHING_SPOT = 165,
     HARPY_EGG = 166,
+    RAT_MEAT = 167,
 }
 public enum POI_STATE {
     ACTIVE,

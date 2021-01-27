@@ -671,20 +671,20 @@ public class CharacterManager : BaseMonoBehaviour {
             //determine tile object type based on what poi to convert to food pile.
             TILE_OBJECT_TYPE tileObjectType;
             if (deadCharacter != null) {
-                if (deadCharacter.isNormalCharacter) {
-                    switch (deadCharacter.race) {
-                        case RACE.HUMANS:
-                            tileObjectType = TILE_OBJECT_TYPE.HUMAN_MEAT;
-                            break;
-                        case RACE.ELVES:
-                            tileObjectType = TILE_OBJECT_TYPE.ELF_MEAT;
-                            break;
-                        default:
-                            tileObjectType = TILE_OBJECT_TYPE.ANIMAL_MEAT;
-                            break;
-                    }
-                } else {
-                    tileObjectType = TILE_OBJECT_TYPE.ANIMAL_MEAT;
+                switch (deadCharacter.race) {
+                    case RACE.HUMANS:
+                        tileObjectType = TILE_OBJECT_TYPE.HUMAN_MEAT;
+                        break;
+                    case RACE.ELVES:
+                        tileObjectType = TILE_OBJECT_TYPE.ELF_MEAT;
+                        break;
+                    case RACE.RAT:
+                    case RACE.RATMAN:
+                        tileObjectType = TILE_OBJECT_TYPE.RAT_MEAT;
+                        break;
+                    default:
+                        tileObjectType = TILE_OBJECT_TYPE.ANIMAL_MEAT;
+                        break;
                 }
             } else {
                 tileObjectType = poi is Crops ? TILE_OBJECT_TYPE.VEGETABLES : TILE_OBJECT_TYPE.ANIMAL_MEAT;
