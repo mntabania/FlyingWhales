@@ -2493,10 +2493,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //If target is cannot perform/cannot move, 100% chance to knockout, reason: for abducting resting characters
         //Put this here so that we will have the chance to knockout before applying damage, since once the character receives damage they will automatically wake up from sleeping
         //So we need to check the knockout chance before applying damage
-        int chanceToKnockout = 15;
+        int chanceToKnockout = 0;
         if (!limiterComponent.canPerform || !limiterComponent.canMove) {
             //https://trello.com/c/QTYC0Rb4/3161-non-lethal-attack-of-sleeping-characters-should-only-have-50-instant-knockout-rate
             chanceToKnockout = 50;
+            attackSummary += $"\nTarget Cannot Perform/Move Knockout Chance: 50%";
+        } else {
+            chanceToKnockout = GetChanceToBeKnockedOutBy(characterThatAttacked, ref attackSummary);
         }
 
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
@@ -2539,6 +2542,27 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             CombatRateTransmission.Instance.Transmit(characterThatAttacked, this, PlagueDisease.Instance.GetTransmissionLevel(PLAGUE_TRANSMISSION.Combat));
         }
         Messenger.Broadcast(CharacterSignals.CHARACTER_WAS_HIT, this, characterThatAttacked);
+    }
+    private int GetChanceToBeKnockedOutBy(Character p_attacker, ref string p_attackSummary) {
+        int finalChance = 0;
+        float attackerPercentHP = (p_attacker.currentHP / (float) p_attacker.maxHP) * 100f;
+        float defenderPercentHP = (currentHP / (float) maxHP) * 100f;
+
+        p_attackSummary += $"\nAttacker Percent HP: {attackerPercentHP}%, Defender Percent HP: {defenderPercentHP}%";
+
+        float attackerHPRatio = (100 - attackerPercentHP) * 0.2f;
+        float defenderHPRatio = (100 - defenderPercentHP) * 0.25f;
+
+        float rawChance = (defenderHPRatio - attackerHPRatio) + 1f;
+        if (!characterClass.IsCombatant()) {
+            rawChance += 10f;
+        }
+
+        if(rawChance > 0f) {
+            finalChance = Mathf.RoundToInt(rawChance);
+        }
+        p_attackSummary += $"\nKnockout Chance: {finalChance}%";
+        return finalChance;
     }
     private Character GetCharacterResponsibleForUnconsciousness(Character characterThatAttacked, CombatState combatStateOfAttacker) {
         Character responsibleCharacter = null;
