@@ -46,6 +46,7 @@ public class CharacterAIPath : AILerp {
     #region Overrides
     public override void OnTargetReached() {
         base.OnTargetReached();
+        Profiler.BeginSample($"{marker.character.name} Target Reached");
         if (!_hasReachedTarget && reachedEndOfPath && //&& !pathPending
             //only execute target reach if the agent has a destination transform, vector or has a flee path
             (marker.destinationSetter.target != null || !float.IsPositiveInfinity(destination.x) || marker.hasFleePath)) {
@@ -62,6 +63,7 @@ public class CharacterAIPath : AILerp {
                 marker.StartMovement();    
             }
         }
+        Profiler.EndSample();
     }
     protected override void OnPathComplete(Path newPath) {
         if (marker.character.isDead) {
@@ -76,7 +78,7 @@ public class CharacterAIPath : AILerp {
             marker.OnFleePathComputed(newPath);
             base.OnPathComplete(newPath);
         } else if (newPath is ConstantPath constantPath) {
-            marker.OnConstantPathComputed(constantPath);
+            marker.OnStrollPathComputed(constantPath);
         } else {
             // currentPath = newPath as CustomABPath;
             //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == marker.character && currentPath.traversalProvider != null) { //&& marker.terrifyingCharacters.Count > 0

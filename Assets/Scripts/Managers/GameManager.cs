@@ -736,6 +736,9 @@ public class GameManager : MonoBehaviour {
     public static Log CreateNewLog(GameDate date, string category, string file, string key, ActualGoapNode node = null, params LOG_TAG[] providedTags) {
         return new Log(date, category, file, key, node, providedTags);
     }
+    public static Log CreateNewLog(GameDate date, string category, string file, string key, ActualGoapNode node = null, LOG_TAG providedTags = LOG_TAG.Work) {
+        return new Log(date, category, file, key, node, providedTags);
+    }
     public static Log CreateNewLog(string id, GameDate date, string logText, string category, string key, string file, string involvedObjects, List<LOG_TAG> providedTags, string rawText, List<LogFillerStruct> fillers = null) {
         return new Log(id, date, logText, category, key, file, involvedObjects, providedTags, rawText, fillers);
     }

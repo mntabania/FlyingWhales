@@ -20,7 +20,7 @@ namespace Locations.Settlements.Settlement_Types {
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.HOSPICE, RESOURCE.STONE), 10, 1);
         }
         public override StructureSetting GetDwellingSetting(Faction faction) {
-            return new StructureSetting(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE);
+            return new StructureSetting(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE, faction.factionType.usesCorruptedStructures);
         }
     }
 }

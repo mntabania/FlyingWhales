@@ -20,7 +20,7 @@ namespace Interrupts {
         //see PerformJob in Character script in line 4095
 
         //public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-        //    if (interruptHolder.actor.marker != null && !interruptHolder.actor.marker.inVisionPOIs.Contains(interruptHolder.target)) {
+        //    if (interruptHolder.actor.hasMarker && !interruptHolder.actor.marker.inVisionPOIs.Contains(interruptHolder.target)) {
         //        return interruptHolder.actor.jobComponent.CreateGoToJob(interruptHolder.target);    
         //    }
         //    return false;

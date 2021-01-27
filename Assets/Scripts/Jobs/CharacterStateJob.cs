@@ -43,7 +43,7 @@ public class CharacterStateJob : JobQueueItem {
             return true;
         }
         if (assignedState == null) {
-            Profiler.BeginSample($"Character State Job - Process Job - Switch To State");
+            Profiler.BeginSample($"Character State Job - Process Job - Switch To State - {targetState.ToString()}");
             CharacterState newState = assignedCharacter.stateComponent.SwitchToState(targetState, targetPOI);
             Profiler.EndSample();
             if (hasBeenReset) { return true; } //Need to check since job can be reset when the assignedCharacter switches states.

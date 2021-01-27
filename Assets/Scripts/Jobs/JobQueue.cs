@@ -151,18 +151,9 @@ public class JobQueue {
             Messenger.Broadcast(JobSignals.JOB_REMOVED_FROM_QUEUE, job, owner);
             owner.combatComponent.OnJobRemovedFromQueue(job);
             job.UnassignJob(shouldDoAfterEffect, reason);
-            string ownerName = owner.name;
-            string removeLog = $"{job.name} has been removed from {ownerName} job queue.";
-            //removeLog += "\nIs Personal: " + (character != null ? character.name : "False");
-            //removeLog += "\nAssigned Character: " + (job.assignedCharacter != null ? job.assignedCharacter.name : "None");
-            //if(job is GoapPlanJob) {
-            //    GoapPlanJob planJob = job as GoapPlanJob;
-            //removeLog += "\nAssigned Plan: " + (planJob.assignedPlan != null);
-            //}
-            Debug.Log(GameManager.Instance.TodayLogString() + removeLog);
-            //if (quest != null) {
-            //    quest.OnRemoveJob(job);
-            //}
+            // string ownerName = owner.name;
+            // string removeLog = $"{job.name} has been removed from {ownerName} job queue.";
+            // Debug.Log(GameManager.Instance.TodayLogString() + removeLog);
             bool state = job.OnRemoveJobFromQueue();
             job.originalOwner.OnJobRemovedFromCharacterJobQueue(job, owner);
             return state;

@@ -29,11 +29,11 @@ public struct VillageSetting {
     public int GetRandomDwellingCount() {
         switch (villageSize) {
             case VILLAGE_SIZE.Small:
-                return UtilityScripts.Utilities.Rng.Next(5, 7);
+                return UtilityScripts.Utilities.Rng.Next(4, 7);
             case VILLAGE_SIZE.Medium:
-                return UtilityScripts.Utilities.Rng.Next(7, 9);
+                return UtilityScripts.Utilities.Rng.Next(6, 8);
             case VILLAGE_SIZE.Large:
-                return UtilityScripts.Utilities.Rng.Next(9, 12);
+                return UtilityScripts.Utilities.Rng.Next(7, 9);
             default:
                 throw new ArgumentOutOfRangeException();
         }

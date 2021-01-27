@@ -548,19 +548,19 @@ public class MovementComponent : CharacterComponent {
     #region Tags
     public void SetTagAsTraversable(int tag) {
         traversableTags = traversableTags | tag;
-        if (owner != null && owner.marker != null) {
+        if (owner != null && owner.hasMarker) {
             owner.marker.UpdateTraversableTags();
         }
     }
     public void SetTagAsUnTraversable(int tag) {
         traversableTags = traversableTags & ~tag;
-        if (owner != null && owner.marker != null) {
+        if (owner != null && owner.hasMarker) {
             owner.marker.UpdateTraversableTags();
         }
     }
     public void SetPenaltyForTag(int tag, int penalty) {
         tagPenalties[tag] = penalty;
-        if (owner != null && owner.marker != null) {
+        if (owner != null && owner.hasMarker) {
             owner.marker.UpdateTagPenalties();
         }
     }

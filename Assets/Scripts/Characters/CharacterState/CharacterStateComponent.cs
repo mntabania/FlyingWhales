@@ -13,12 +13,15 @@ public class CharacterStateComponent : CharacterComponent {
     //This is the character's current state
     public CharacterState currentState { get; private set; }
     private StrollOutsideState _strollOutsideState;
+    private CombatState _combatState;
 
     public CharacterStateComponent() {
         _strollOutsideState = new StrollOutsideState(this);
+        _combatState = new CombatState(this);
     }
     public CharacterStateComponent(SaveDataCharacterStateComponent data) {
         _strollOutsideState = new StrollOutsideState(this);
+        _combatState = new CombatState(this);
     }
    
     //This switches from one state to another
@@ -111,6 +114,7 @@ public class CharacterStateComponent : CharacterComponent {
                 }
             }
         }
+        currState.Reset();
     }
     private void PerTickCurrentState() {
         if(currentState != null && !currentState.isPaused && !currentState.isDone) {
@@ -148,7 +152,8 @@ public class CharacterStateComponent : CharacterComponent {
                 newState = new BerserkedState(this);
                 break;
             case CHARACTER_STATE.COMBAT:
-                newState = new CombatState(this);
+                // newState = new CombatState(this);
+                newState = _combatState;
                 break;
             case CHARACTER_STATE.DOUSE_FIRE:
                 newState = new DouseFireState(this);

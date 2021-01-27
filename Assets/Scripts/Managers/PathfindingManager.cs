@@ -9,7 +9,7 @@ using UnityEngine.Profiling;
 public class PathfindingManager : BaseMonoBehaviour {
 
     public static PathfindingManager Instance = null;
-    private const float nodeSize = 0.4f; //0.3
+    private const float nodeSize = 0.3f; //0.4
 
     [SerializeField] private AstarPath aStarPath;
 
@@ -122,7 +122,7 @@ public class PathfindingManager : BaseMonoBehaviour {
         gg.center = pos;
         gg.collision.use2D = true;
         gg.collision.type = ColliderType.Sphere;
-        gg.collision.diameter = 0.75f;
+        gg.collision.diameter = 0.8f;
         gg.collision.mask = LayerMask.GetMask("Unpassable");
         return gg;
     }

@@ -185,6 +185,14 @@ public class CharacterState {
             }
         }
     }
+    public virtual void Reset() {
+        currentDuration = 0;
+        isDone = false;
+        hasStarted = false;
+        isPaused = false;
+        job = null;
+        targetPOI = null;
+    }
     #endregion
 
     //private void FakeEndAction(string str, GoapAction action) {
@@ -261,18 +269,17 @@ public class CharacterState {
     //}
     //This is the one must be called to exit and end this state
     public void ExitState() {
-        stateComponent.owner.logComponent.PrintLogIfActive(
-            $"Exiting {stateName} for {stateComponent.owner.name}" /*+ " targetting " + targetCharacter?.name ?? "No One"*/);
+        // stateComponent.owner.logComponent.PrintLogIfActive($"Exiting {stateName} for {stateComponent.owner.name}" /*+ " targetting " + targetCharacter?.name ?? "No One"*/);
         EndState();
     }
     public void SetJob(CharacterStateJob job) {
         this.job = job;
-        if (job != null) {
-            Debug.Log($"{GameManager.Instance.TodayLogString()}{this} Set job to {job}!");
-            OnJobSet();
-        } else {
-            Debug.Log($"{GameManager.Instance.TodayLogString()}{this} Set job to null!");
-        }
+        // if (job != null) {
+        //     Debug.Log($"{GameManager.Instance.TodayLogString()}{this} Set job to {job}!");
+        //     OnJobSet();
+        // } else {
+        //     Debug.Log($"{GameManager.Instance.TodayLogString()}{this} Set job to null!");
+        // }
     }
     /// <summary>
     /// What should happen once the job of this state is set to anything other than null?

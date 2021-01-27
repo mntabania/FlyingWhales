@@ -83,15 +83,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Necromancer necromancerTrait { get; protected set; }
     public POI_STATE state { get; private set; }
     public ILocationAwareness currentLocationAwareness { get; private set; }
+    public Vector2Int gridTilePosition { get; private set; }
+    public bool hasMarker { get; private set; }
     //public bool isInPendingAwarenessList { get; private set; }
 
     //misc
     public Tombstone grave { get; private set; }
-
-    //For Testing
-    public List<string> locationHistory { get; }
-    public List<string> actionHistory { get; }
-
+    
     //Components / Managers
     public TrapStructure trapStructure { get; private set; }
     public GoapPlanner planner { get; private set; }
@@ -165,7 +163,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Vector2 selectableSize => visuals.selectableSize;
     public Transform worldObject {
         get {
-            if (marker != null) {
+            if (hasMarker) {
                 return marker.transform;
             }
             return null;
@@ -182,7 +180,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public BaseSettlement currentSettlement => gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap ? gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile : null;
     public ProjectileReceiver projectileReceiver {
         get {
-            if (marker != null && marker.visionTrigger != null) {
+            if (hasMarker && marker.visionTrigger != null) {
                 return marker.visionTrigger.projectileReceiver;
             }
             return null;
@@ -211,7 +209,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public LocationGridTile gridTileLocation {
         get {
-            if (ReferenceEquals(marker, null)) {
+            if (!hasMarker) {
                 return null;
             }
             Character carrier = carryComponent.isBeingCarriedBy;
@@ -227,14 +225,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 return gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
             }
             return null;
-        }
-    }
-    public Vector2Int gridTilePosition {
-        get {
-            if (!marker) {
-                throw new Exception($"{name} marker is null!");
-            }
-            return new Vector2Int(Mathf.FloorToInt(marker.anchoredPos.x), Mathf.FloorToInt(marker.anchoredPos.y));
         }
     }
     public LocationStructure currentStructure {
@@ -298,10 +288,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         SetPOIState(POI_STATE.ACTIVE);
         ConstructResources();
 
-        //for testing
-        locationHistory = new List<string>();
-        actionHistory = new List<string>();
-
         jobQueue = new JobQueue(this);
         trapStructure = new TrapStructure();
         planner = new GoapPlanner(this);
@@ -342,10 +328,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         traitsNeededToBeRemoved = new List<Trait>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         interestedItemNames = new List<string>();
-
-        locationHistory = new List<string>();
-        actionHistory = new List<string>();
-
+        
         jobQueue = new JobQueue(this);
         planner = new GoapPlanner(this);
         visuals = new CharacterVisuals(this, data);
@@ -683,6 +666,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Marker
+    public void SetGridTilePosition(Vector2 p_anchoredPos) {
+        gridTilePosition = new Vector2Int(Mathf.FloorToInt(p_anchoredPos.x), Mathf.FloorToInt(p_anchoredPos.y));
+    }
     public void CreateMarker() {
         GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", Vector3.zero, Quaternion.identity, InnerMapManager.Instance.transform);
         CharacterMarker _marker = portraitGO.GetComponent<CharacterMarker>();
@@ -728,7 +714,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private void SetCharacterMarker(CharacterMarker marker) {
         this.marker = marker;
         if (marker == null) {
+            hasMarker = false;
             Messenger.Broadcast(CharacterSignals.CHARACTER_MARKER_DESTROYED, this);
+        } else {
+            hasMarker = true;
         }
     }
     public virtual void PerTickDuringMovement() {
@@ -1622,16 +1611,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         LocationStructure previousStructure = _currentStructure;
         _currentStructure = newStructure;
-        //if (marker && currentStructure != null) {
-        //    marker.RevalidatePOIsInVisionRange(); //when the character changes structures, revalidate pois in range
-        //}
-        var summary = newStructure != null ? $"{GameManager.Instance.TodayLogString()}Arrived at <color=\"green\">{newStructure}</color>" 
-            : $"{GameManager.Instance.TodayLogString()}Left <color=\"red\">{previousStructure}</color>";
-        locationHistory.Add(summary);
-        if (locationHistory.Count > 80) {
-            locationHistory.RemoveAt(0);
-        }
-
         if (broadcast) {
             if (newStructure != null) {
                 Messenger.Broadcast(CharacterSignals.CHARACTER_ARRIVED_AT_STRUCTURE, this, newStructure);
@@ -2058,7 +2037,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public virtual bool IsValidCombatTargetFor(IPointOfInterest source) {
-        return isDead == false /*&& (limiterComponent.canPerform || canMove)*/ && marker != null 
+        return isDead == false /*&& (limiterComponent.canPerform || canMove)*/ && hasMarker 
                 && gridTileLocation != null && source.gridTileLocation != null && (source is Character character && character.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation)); //traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false
     }
     public void SetHasUnresolvedCrime(bool state) {
@@ -4218,18 +4197,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void PerformGoapAction() {
-        string log = string.Empty;
+        // string log = string.Empty;
         if (currentActionNode == null) {
-            log = $"{name} cannot PerformGoapAction because there is no current action!";
-            logComponent.PrintLogIfActive(log);
-            //Debug.LogError(log);
-            //if (!DropPlan(plan)) {
-            //    //PlanGoapActions();
-            //}
-            //StartDailyGoapPlanGeneration();
+            // log = $"{name} cannot PerformGoapAction because there is no current action!";
+            // logComponent.PrintLogIfActive(log);
             return;
         }
-        log = $"{name} is performing goap action: {currentActionNode.action.goapName}";
+        // log = $"{name} is performing goap action: {currentActionNode.action.goapName}";
         InnerMapManager.Instance.FaceTarget(this, currentActionNode.poiTarget);
         bool willStillContinueAction = true;
         OnStartPerformGoapAction(currentActionNode, ref willStillContinueAction);
@@ -4238,19 +4212,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentActionNode.action.goapType, currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData, currentActionNode.associatedJob)
             && currentActionNode.action.CanSatisfyAllPreconditions(currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData, currentActionNode.associatedJobType)) {
-            log +=
-                $"\nAction satisfies all requirements and preconditions, proceeding to perform actual action: {currentActionNode.action.goapName} to {currentActionNode.poiTarget.name} at {currentActionNode.poiTarget.gridTileLocation}" ?? "No Tile Location";
-            logComponent.PrintLogIfActive(log);
+            // log += $"\nAction satisfies all requirements and preconditions, proceeding to perform actual action: {currentActionNode.action.goapName} to {currentActionNode.poiTarget.name} at {currentActionNode.poiTarget.gridTileLocation}" ?? "No Tile Location";
+            // logComponent.PrintLogIfActive(log);
             currentActionNode.PerformAction();
         } else {
-            log += "\nAction did not meet all requirements and preconditions. Will try to recalculate plan...";
+            // log += "\nAction did not meet all requirements and preconditions. Will try to recalculate plan...";
             GoapPlan plan = currentPlan;
             if (plan.doNotRecalculate) {
-                log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
-                logComponent.PrintLogIfActive(log);
+                // log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
+                // logComponent.PrintLogIfActive(log);
                 currentJob.CancelJob(false);
             } else {
-                logComponent.PrintLogIfActive(log);
+                // logComponent.PrintLogIfActive(log);
                 Assert.IsNotNull(currentJob);
                 Assert.IsTrue(currentJob is GoapPlanJob);
                 planner.RecalculateJob(currentJob as GoapPlanJob);
@@ -4259,62 +4232,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 SetCurrentActionNode(null, null, null);
             }
         }
-        //if (currentActionNode.isStopped) {
-        //    log += "\n Action is stopped! Dropping plan...";
-        //    PrintLogIfActive(log);
-        //    SetCurrentActionNode(null);
-        //    if (!DropPlan(currentActionNode.parentPlan)) {
-        //        //PlanGoapActions();
-        //    }
-        //} else {
-        //    bool willStillContinueAction = true;
-        //    OnStartPerformGoapAction(currentActionNode, ref willStillContinueAction);
-        //    if (!willStillContinueAction) {
-        //        return;
-        //    }
-        //    if (currentActionNode.IsHalted()) {
-        //        log += "\n Action is waiting! Not doing action...";
-        //        //if (currentAction.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-        //        //    Character targetCharacter = currentAction.poiTarget as Character;
-        //        //    targetCharacter.AdjustIsWaitingForInteraction(-1);
-        //        //}
-        //        SetCurrentActionNode(null);
-        //        return;
-        //    }
-        //    if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentActionNode.goapType, currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData) 
-        //        && currentActionNode.CanSatisfyAllPreconditions()) {
-        //        //if (currentAction.poiTarget != this && currentAction.isStealth) {
-        //        //    //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
-        //        //    if (marker.IsPOIInVision(currentAction.poiTarget) && !marker.CanDoStealthActionToTarget(currentAction.poiTarget)) {
-        //        //        log += "\n - Action is stealth and character cannot do stealth action right now...";
-        //        //        PrintLogIfActive(log);
-        //        //        return;
-        //        //    }
-        //        //}
-        //        log += "\nAction satisfies all requirements and preconditions, proceeding to perform actual action: " + currentActionNode.goapName + " to " + currentActionNode.poiTarget.name + " at " + currentActionNode.poiTarget.gridTileLocation?.ToString() ?? "No Tile Location";
-        //        PrintLogIfActive(log);
-        //        currentActionNode.Perform();
-        //    } else {
-        //        log += "\nAction did not meet all requirements and preconditions. Will try to recalculate plan...";
-        //        //if (currentAction.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-        //        //    Character targetCharacter = currentAction.poiTarget as Character;
-        //        //    targetCharacter.AdjustIsWaitingForInteraction(-1);
-        //        //}
-        //        GoapPlan plan = currentActionNode.parentPlan;
-        //        SetCurrentActionNode(null);
-        //        if (plan.doNotRecalculate) {
-        //            log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
-        //            PrintLogIfActive(log);
-        //            if (!DropPlan(plan)) {
-        //                //PlanGoapActions();
-        //            }
-        //        } else {
-        //            PrintLogIfActive(log);
-        //            planner.RecalculateJob(plan);
-        //            //IdlePlans();
-        //        }
-        //    }
-        //}
     }
     public void GoapActionResult(string result, ActualGoapNode actionNode) {
         string log = $"{name} is done performing goap action: {actionNode.action.goapName}";
@@ -4515,10 +4432,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         currentActionNode = actionNode;
         if (currentActionNode != null) {
-            logComponent.PrintLogIfActive(
-                $"{name} will do action {actionNode.action.goapType} to {actionNode.poiTarget}");
-            //stateComponent.SetStateToDo(null, stopMovement: false);
-
+            // logComponent.PrintLogIfActive($"{name} will do action {actionNode.action.goapType} to {actionNode.poiTarget}");
             //Current Job must always be the job in the top prio, if there is inconsistency with the currentActionNode, then the problem lies on what you set as the currentActionNode
         }
         SetCurrentJob(job);
@@ -4526,19 +4440,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         if (marker) {
             marker.UpdateActionIcon();
-        }
-        
-        string summary = $"{GameManager.Instance.TodayLogString()}Set current action to ";
-        if (currentActionNode == null) {
-            summary += "null";
-        } else {
-            summary += $"{currentActionNode.action.goapName} targetting {currentActionNode.poiTarget.name}";
-        }
-        //summary += "\n StackTrace: " + StackTraceUtility.ExtractStackTrace();
-
-        actionHistory.Add(summary);
-        if (actionHistory.Count > 10) {
-            actionHistory.RemoveAt(0);
         }
     }
     public void SetCurrentPlan(GoapPlan plan) {
@@ -4610,18 +4511,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //Every time current node is stopped, drop carried poi
         if (carryComponent.IsNotBeingCarried()) {
             if (carryComponent.isCarryingAnyPOI) {
-                IPointOfInterest carriedPOI = carryComponent.carriedPOI;
-                string log = $"Dropping carried POI: {carriedPOI.name} because current action is stopped!";
-                log += "\nAdditional Info:";
-                if (carriedPOI is ResourcePile) {
-                    ResourcePile pile = carriedPOI as ResourcePile;
-                    log += $"\n-Stored resources on drop: {pile.resourceInPile} {pile.providedResource}";
-                } else if (carriedPOI is Table) {
-                    Table table = carriedPOI as Table;
-                    log += $"\n-Stored resources on drop: {table.food} Food.";
-                }
+                // IPointOfInterest carriedPOI = carryComponent.carriedPOI;
+                // string log = $"Dropping carried POI: {carriedPOI.name} because current action is stopped!";
+                // log += "\nAdditional Info:";
+                // if (carriedPOI is ResourcePile) {
+                //     ResourcePile pile = carriedPOI as ResourcePile;
+                //     log += $"\n-Stored resources on drop: {pile.resourceInPile} {pile.providedResource}";
+                // } else if (carriedPOI is Table) {
+                //     Table table = carriedPOI as Table;
+                //     log += $"\n-Stored resources on drop: {table.food} Food.";
+                // }
 
-                logComponent.PrintLogIfActive(log);
+                // logComponent.PrintLogIfActive(log);
                 UncarryPOI();
             }
         }
@@ -4635,8 +4536,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             UIManager.Instance.characterInfoUI.UpdateBasicInfo();
         }
         //Messenger.Broadcast<GoapAction>(Signals.STOP_ACTION, this);
-        logComponent.PrintLogIfActive(
-            $"Stopped action of {name} which is {previousCurrentActionNode.action.goapName} targetting {previousCurrentActionNode.poiTarget.name}!");
+        logComponent.PrintLogIfActive($"Stopped action of {name} which is {previousCurrentActionNode.action.goapName} targetting {previousCurrentActionNode.poiTarget.name}!");
         return true;
     }
     //public void SetHasAlreadyAskedForPlan(bool state) {
@@ -5413,7 +5313,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Middle);
     }
     public bool CanBeSelected() {
-        if (marker != null && marker.IsShowingVisuals() == false) {
+        if (hasMarker && marker.IsShowingVisuals() == false) {
             return false;
         }
         return true;

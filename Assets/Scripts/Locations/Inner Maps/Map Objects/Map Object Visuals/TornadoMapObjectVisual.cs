@@ -4,6 +4,7 @@ using DG.Tweening;
 using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 
 public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
@@ -251,6 +252,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (gridTileLocation == null) {
             return;
         }
+        Profiler.BeginSample($"Tornado Per Tick");
         List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(_radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
@@ -274,6 +276,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
                 //}
             }
         }
+        Profiler.EndSample();
     }
     private void DealDamage(IDamageable damageable) {
         if (damageable.CanBeDamaged()) {

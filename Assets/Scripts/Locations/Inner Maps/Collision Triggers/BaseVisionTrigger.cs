@@ -50,6 +50,7 @@ public abstract class BaseVisionTrigger : MonoBehaviour{
         if (_mainCollider != null) {
             _mainCollider.enabled = true;    
         }
+        TransferToNonFilteredLayer();
     }
 
     #region Layers
@@ -89,6 +90,7 @@ public abstract class BaseVisionTrigger : MonoBehaviour{
         }
     }
     private void TransferToFilteredLayer() {
+        Debug.Log($"Transferred {damageable.name} to filtered layer");
         gameObject.layer = LayerMask.NameToLayer(GameUtilities.Filtered_Object_Layer);
     }
     private void TransferToNonFilteredLayer() {

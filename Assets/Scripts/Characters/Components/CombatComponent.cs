@@ -112,7 +112,7 @@ public class CombatComponent : CharacterComponent {
                 //So this part is useless
                 //else {
                 //    log += "\n-Combat job not added";
-                //    if (owner.marker != null && owner.marker.hasFleePath && owner.combatComponent.isInCombat) {
+                //    if (owner.hasMarker && owner.marker.hasFleePath && owner.combatComponent.isInCombat) {
                 //        CombatState combatState = owner.stateComponent.currentState as CombatState;
                 //        combatState.CheckFlee(ref log);
                 //    }
@@ -552,19 +552,13 @@ public class CombatComponent : CharacterComponent {
     //}
     public bool RemoveHostileInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
         if (hostilesInRange.Remove(poi)) {
-            //if (poi is Character character) {
-            //    fightCombatData.Remove(character);
-            //} else 
             if (poi is TileObject targetTileObject) {
                 targetTileObject.AdjustRepairCounter(-1);
             } else if (poi is Character targetCharacter) {
                 AddPOIToBannedFromHostile(targetCharacter);
-                //if (fightCombatData.ContainsKey(targetCharacter) && fightCombatData[targetCharacter].reasonForCombat == CombatManager.Hostility) {
-                //    AddPOIToBannedFromHostile(targetCharacter);
-                //}
             }
-            string removeHostileSummary = $"{poi.name} was removed from {owner.name}'s hostile range.";
-            owner.logComponent.PrintLogIfActive(removeHostileSummary);
+            // string removeHostileSummary = $"{poi.name} was removed from {owner.name}'s hostile range.";
+            // owner.logComponent.PrintLogIfActive(removeHostileSummary);
             //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
             if (processCombatBehavior) {
                 if (owner.combatComponent.isInCombat) {

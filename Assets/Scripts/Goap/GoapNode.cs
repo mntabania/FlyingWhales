@@ -340,7 +340,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     private bool MoveToDoAction(JobQueueItem job) {
         if (targetTile == null) {
             //Here we check if there is a target tile to go to because if there is not, the target might already be destroyed/taken/disabled, if that happens, we must cancel job
-            Debug.LogWarning($"{GameManager.Instance.TodayLogString()}{actor.name} is trying to move to do action {action.goapName} with target {poiTarget.name} but target tile is null, will cancel job {job.name} instead.");
+            // Debug.LogWarning($"{GameManager.Instance.TodayLogString()}{actor.name} is trying to move to do action {action.goapName} with target {poiTarget.name} but target tile is null, will cancel job {job.name} instead.");
             job.CancelJob(false);
             return false;
         }
@@ -379,6 +379,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         return true;
     }
     private void OnArriveAtTargetLocation() {
+        Profiler.BeginSample($"{actor.name} - {action.name} - OnArriveAtTargetLocation");
         if(action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
             if(actor.marker && actor.marker.IsPOIInVision(poiTarget)) {
                 //Only do perform goap action on arrive at location if the location type is not target in vision, because if it is, we no longer need this function because perform goap action is already called upon entering vision
@@ -392,6 +393,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         } else {
             actor.PerformGoapAction();
         }
+        Profiler.EndSample();
     }
     public void PerformAction() {
         GoapActionInvalidity goapActionInvalidity = action.IsInvalid(this);

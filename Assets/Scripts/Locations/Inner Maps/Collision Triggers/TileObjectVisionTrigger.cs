@@ -24,5 +24,4 @@ public class TileObjectVisionTrigger : POIVisionTrigger {
         }
         return false;
     }
-    
 }

@@ -52,6 +52,22 @@ public struct Log {
             AddTag(LOG_TAG.Work);
         }
     }
+    public Log(GameDate date, string category, string file, string key, ActualGoapNode node = null, LOG_TAG providedTag = LOG_TAG.Work) {
+        persistentID = UtilityScripts.Utilities.GetNewUniqueID();
+        this.category = category;
+        this.file = file;
+        this.key = key;
+        gameDate = date;
+        _logText = LocalizationManager.Instance.GetLocalizedValue(category, file, key);
+        rawText = string.Empty;
+        actionID = node?.persistentID ?? string.Empty;
+        fillers = new List<LogFillerStruct>();
+        tags = new List<LOG_TAG>();
+        hasValue = true;
+        hasBeenFinalized = false;
+        allInvolvedObjectIDs = string.Empty;
+        AddTag(providedTag);
+    }
     public Log(string id, GameDate date, string logText, string category, string key, string file, string involvedObjects, List<LOG_TAG> providedTags, string rawText, List<LogFillerStruct> fillers = null) {
         persistentID = id;
         this.category = category;

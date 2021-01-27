@@ -9,7 +9,7 @@ public class UndeadChaosOrb : PassiveSkill {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
     }
     private void OnCharacterDied(Character character) {
-        if (character.faction?.factionType.type == FACTION_TYPE.Undead && character.marker != null) {
+        if (character.faction?.factionType.type == FACTION_TYPE.Undead && character.hasMarker) {
             bool shouldCreateChaosOrbs = true;
             if (character.characterClass.IsZombie()) {
                 //Note: add chance to create chaos orbs when character is Zombie, because this passive skill can become OP

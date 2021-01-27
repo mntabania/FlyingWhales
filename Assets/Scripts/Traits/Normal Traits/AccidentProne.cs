@@ -33,7 +33,7 @@ namespace Traits {
             }
         }
         public override bool PerTickWhileStationaryOrUnoccupied() {
-            if (owner.marker != null && owner.marker.isMoving) {
+            if (owner.hasMarker && owner.marker.isMoving) {
                 int stumbleChance = UnityEngine.Random.Range(0, 100);
                 if (stumbleChance < 2) {
                     return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Stumble, owner);
