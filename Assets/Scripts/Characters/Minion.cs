@@ -5,6 +5,7 @@ using System;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Traits;
+using UnityEngine.Profiling;
 
 public class Minion {
     public const int MAX_INTERVENTION_ABILITY_SLOT = 5;
@@ -188,20 +189,24 @@ public class Minion {
 
     #region Invasion
     private void OnTickEnded() {
+        Profiler.BeginSample($"Minion On Tick Ended");
         if (character.isDead) { return; }
         character.interruptComponent.OnTickEnded();
         character.stateComponent.OnTickEnded();
         character.ProcessTraitsOnTickEnded();
         character.TryProcessTraitsOnTickEndedWhileStationaryOrUnoccupied();
         character.EndTickPerformJobs();
+        Profiler.EndSample();
     }
     private void OnTickStarted() {
+        Profiler.BeginSample($"Minion On Tick Started");
         if (character.isDead) { return; }
         character.ProcessTraitsOnTickStarted();
         if (character.CanPlanGoap()) {
             character.PerStartTickActionPlanning();
         }
         // character.AdjustHP(-5, ELEMENTAL_TYPE.Normal, triggerDeath: true, showHPBar: true, source: character);
+        Profiler.EndSample();
     }
     #endregion
 
@@ -281,6 +286,7 @@ public class Minion {
         Messenger.Broadcast(SpellSignals.UNSUMMON_MINION, this);
     }
     private void UnsummonedHPRecovery() {
+        Profiler.BeginSample($"Minion Unsummoned HP Recovery");
         this.character.AdjustHP(7, ELEMENTAL_TYPE.Normal);
         SkillData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
         spellData.SetCurrentCooldownTick(spellData.currentCooldownTick + 1);
@@ -291,6 +297,7 @@ public class Minion {
             Messenger.Broadcast(SpellSignals.SPELL_COOLDOWN_FINISHED, spellData);
             Messenger.RemoveListener(Signals.TICK_STARTED, UnsummonedHPRecovery);
         }
+        Profiler.EndSample();
     }
     public void OnSeize() {
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);

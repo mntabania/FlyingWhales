@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Traits;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.UI;
 using UtilityScripts;
 
@@ -80,8 +81,10 @@ public class CharacterNameplateItem : NameplateItem<Character> {
 
     #region Sub Text
     private void UpdateAllTextsAndIcon() {
+        Profiler.BeginSample($"Character Nameplate - Update All Texts and Icon");
         UpdateMainAndActionText();
         UpdateSubTextAndIcon();
+        Profiler.EndSample();
     }
     private void UpdateMainAndActionText() {
         mainLbl.text = $"<b>{character.firstNameWithColor}</b>";

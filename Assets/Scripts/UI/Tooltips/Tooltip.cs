@@ -26,7 +26,6 @@ public class Tooltip : MonoBehaviour {
         }
     }
     public void ShowSmallInfo(string info, string header = "", bool autoReplaceText = true) {
-        Profiler.BeginSample("Show Small Info Sample");
         string message = string.Empty;
         if (!string.IsNullOrEmpty(header)) {
             message = $"<font=\"Eczar-Medium\"><line-height=100%><size=18>{header}</font>\n";
@@ -49,7 +48,6 @@ public class Tooltip : MonoBehaviour {
             }
         }
         PositionTooltip(smallInfoGO, smallInfoRT, smallInfoBGRT);
-        Profiler.EndSample();
     }
     public void ShowSmallInfo(string info, UIHoverPosition pos, string header = "", bool autoReplaceText = true) {
         string message = string.Empty;

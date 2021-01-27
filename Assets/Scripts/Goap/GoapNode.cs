@@ -9,6 +9,7 @@ using Logs;
 using UnityEngine;
 using Traits;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 using UtilityScripts;
 
 public class GoapNode {
@@ -140,22 +141,41 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         SetJob(job);
         isStealth = IsActionStealth(job);
         avoidCombat = IsActionAvoidCombat(job);
+        Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Set Current Action Node");
         actor.SetCurrentActionNode(this, job, plan);
+        Profiler.EndSample();
         // CreateThoughtBubbleLog(targetStructure);
         //parentPlan?.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
+        Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Doing Action Signal");
         Messenger.Broadcast(JobSignals.CHARACTER_DOING_ACTION, actor, this);
+        Profiler.EndSample();
         //actor.marker.UpdateActionIcon();
+        Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - On Action Started");
         action.OnActionStarted(this);
+        Profiler.EndSample();
         //poiTarget.AddTargettedByAction(this);
 
         //Set Crime Type
+        Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Set Crime Type");
         SetCrimeType();
+        Profiler.EndSample();
 
         //Move To Do Action
+        Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Reset End Reached");
         actor.marker.pathfindingAI.ResetEndReachedDistance();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Set target to go to");
         SetTargetToGoTo();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Create Thought Bubble Log");
         CreateThoughtBubbleLog();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"Do Action - {actor.name} - {action.name} - Check and move to do action");
         CheckAndMoveToDoAction(job);
+        Profiler.EndSample();
     }
     private void SetTargetToGoTo() {
         if (targetStructure == null) {
@@ -783,6 +803,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         }
     }
     private void PerTickEffect() {
+        Profiler.BeginSample($"{actor.name} - {action.name} - Per Tick Effect");
         GoapActionState currentState = action.states[currentStateName];
         currentStateDuration++;
 
@@ -817,8 +838,11 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             }
         //}
         if (currentStateDuration >= currentState.duration) {
+            Profiler.BeginSample($"{actor.name} - {action.name} - End Per Tick Effect");
             EndPerTickEffect();
+            Profiler.EndSample();
         }
+        Profiler.EndSample();
     }
     private void OnPerformActualActionToTarget() {
         if (GoapActionStateDB.GetStateResult(action.goapType, currentStateName) != InteractionManager.Goap_State_Success) {

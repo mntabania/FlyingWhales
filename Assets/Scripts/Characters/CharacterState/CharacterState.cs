@@ -163,8 +163,7 @@ public class CharacterState {
         if (!isPaused) {
             return; //if this state is not paused then do not resume.
         }
-        stateComponent.owner.logComponent.PrintLogIfActive(
-            $"Resuming {stateName} for {stateComponent.owner.name}");
+        stateComponent.owner.logComponent.PrintLogIfActive($"Resuming {stateName} for {stateComponent.owner.name}");
         isPaused = false;
         if (stateComponent.currentState != this) {
             stateComponent.SetCurrentState(this);

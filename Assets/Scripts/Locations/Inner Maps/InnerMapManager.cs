@@ -382,8 +382,8 @@ namespace Inner_Maps {
                 return; //do not show tooltip if right click menu is currently targeting the hovered object
             }
 
-            Profiler.BeginSample("Show Tile Data Sample");
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            //|| DEVELOPMENT_BUILD
+#if UNITY_EDITOR
             Character showingCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
             HexTile hexTile = tile.collectionOwner.partOfHextile?.hexTileOwner;
             string summary = tile.localPlace.ToString();
@@ -462,7 +462,6 @@ namespace Inner_Maps {
             } else {
                 summary = $"{summary}\nStructure: None";
             }
-            Profiler.EndSample();
             UIManager.Instance.ShowSmallInfo(summary, autoReplaceText: false);
 #else
          //For build only

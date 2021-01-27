@@ -9,6 +9,7 @@ using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using Logs;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 
 public class InterruptComponent : CharacterComponent {
     public InterruptHolder currentInterrupt { get; private set; }
@@ -162,6 +163,7 @@ public class InterruptComponent : CharacterComponent {
         }
     }
     private void PerTickSimultaneousInterrupt() {
+        Profiler.BeginSample($"Per Tick Simultaneous Interrupt");
         if (hasTriggeredSimultaneousInterrupt) {
             currentSimultaneousInterruptDuration++;
             if (currentSimultaneousInterruptDuration > 2) {
@@ -173,6 +175,7 @@ public class InterruptComponent : CharacterComponent {
                 //TryExecutePendingSimultaneousInterrupt();
             }
         }
+        Profiler.EndSample();
     }
     //public void ForceEndAllInterrupt() {
     //    ForceEndNonSimultaneousInterrupt();

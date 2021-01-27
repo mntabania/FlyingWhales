@@ -5,6 +5,7 @@ using DG.Tweening;
 using UnityEngine;
 using EZObjectPools;
 using TMPro;
+using UnityEngine.Profiling;
 using UnityEngine.UI;
 
 public class SpellItem : NameplateItem<SkillData> {
@@ -156,8 +157,10 @@ public class SpellItem : NameplateItem<SkillData> {
         Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
     }
     private void PerTickCooldown() {
+        Profiler.BeginSample($"Spell Item Per Tick Effect");
         float fillAmount = ((float)spellData.currentCooldownTick / spellData.cooldown);
         cooldownCoverImage.DOFillAmount(fillAmount, 0.4f);
+        Profiler.EndSample();
     }
     private void StopCooldownFill() {
         cooldownCoverImage.fillAmount = 0f;

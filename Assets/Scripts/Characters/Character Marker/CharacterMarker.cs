@@ -180,11 +180,16 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void ManualUpdate() {
         if (GameManager.Instance.gameHasStarted && !GameManager.Instance.isPaused) {
             if (character.isBeingSeized) { return; }
+            Profiler.BeginSample($"{character.name} - Attack Speed Meter");
             if (attackSpeedMeter < character.combatComponent.attackSpeed) {
                 attackSpeedMeter += ((Time.deltaTime * 1000f) * progressionSpeedMultiplier);
                 UpdateAttackSpeedMeter();
             }
+            Profiler.EndSample();
+
+            Profiler.BeginSample($"{character.name} - Pathfinding Update Me Call");
             pathfindingAI.UpdateMe();
+            Profiler.EndSample();
         }
     }
     private void LateUpdate() {
@@ -806,8 +811,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //    return;
         //}
         isMoving = false;
-        string log = $"{character.name} StopMovement function is called!";
-        character.logComponent.PrintLogIfActive(log);
+        // string log = $"{character.name} StopMovement function is called!";
+        // character.logComponent.PrintLogIfActive(log);
         pathfindingAI.SetIsStopMovement(true);
         UpdateAnimation();
         // Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
@@ -1379,10 +1384,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void ProcessAllUnprocessedVisionPOIs() {
         if (character == null) { return; }
-        Profiler.BeginSample($"{character.name} ProcessAllUnprocessedVisionPOIs");
         string log = $"{character.name} tick ended! Processing all unprocessed in visions...";
         if (unprocessedVisionPOIs.Count > 0) {
             if (!character.isDead && character.reactionComponent.disguisedCharacter == null /* && character.limiterComponent.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
+                Profiler.BeginSample($"{character.name} ProcessAllUnprocessedVisionPOIs - Objects");
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
                     if (poi.mapObjectVisual == null) {
@@ -1415,6 +1420,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     }
                     character.ThisCharacterSaw(poi, reactToActionOnly);
                 }
+                Profiler.EndSample();
             } else {
                 log = $"{log}\n - Character is either dead, not processing...";
             }
@@ -1422,6 +1428,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         if (unprocessedActionsOnly.Count > 0) {
             if (!character.isDead) {
+                Profiler.BeginSample($"{character.name} ProcessAllUnprocessedVisionPOIs - Actions");
                 for (int i = 0; i < unprocessedActionsOnly.Count; i++) {
                     ActualGoapNode action = unprocessedActionsOnly[i];
                     Character actor = action.actor;
@@ -1435,6 +1442,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     }
                     character.ThisCharacterSawAction(action);
                 }
+                Profiler.EndSample();
             } else {
                 log = $"{log}\n - Character is either dead, not processing...";
             }
@@ -1445,7 +1453,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         character.SetHasSeenWet(false);
         character.SetHasSeenPoisoned(false);
         character.combatComponent.CheckCombatPerTickEnded();
-        Profiler.EndSample();
     }
     public bool IsPOIInVision(IPointOfInterest poi) {
         return (poi is Character character && inVisionCharacters.Contains(character)) || (poi is TileObject tileObject && inVisionTileObjects.Contains(tileObject));
@@ -1870,14 +1877,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //private readonly RaycastHit2D[] linOfSightHitObjects = new RaycastHit2D[5];
     private RaycastHit2D[] lineOfSightHitObjects;
     public bool IsCharacterInLineOfSightWith(IPointOfInterest target, float rayDistance = 5f) {
-        Profiler.BeginSample($"{character.name} IsCharacterInLineOfSightWith Pre Check");
-        //if (target is BlockWall == false) {
-        //    //only Check in vision list if target is NOT Block Wall. 
-        //    //TODO: Rework this after build. This issue arises when angels try to attack demonic structures.
-
-        //    //if (IsPOIInVision(target) == false) { return false; } 
-        //}
-
         //No longer checks if target is in vision, rather, it should check if target has a map visual object, if it does not, there will be no line of sight
         //Also, there is no line of sight if actor and target is in a different region
         if (target.mapObjectVisual == null) {
@@ -1886,18 +1885,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character == null || character.currentRegion == null || target.gridTileLocation == null || character.currentRegion != target.gridTileLocation.structure.region) {
             return false;
         }
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"{character.name} start set");
         //precompute our ray settings
         Vector3 start = transform.position;
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"{character.name} Vector3 subtraction");
         Vector3 direction = GameUtilities.VectorSubtraction(target.worldPosition, start).normalized;
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"{character.name} Raycast");
         float distance = rayDistance;
         if (target.IsUnpassable()) {
             distance += 1.5f;
@@ -1906,9 +1896,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //int size = Physics2D.RaycastNonAlloc(start, direction, linOfSightHitObjects, distance, 
         //    GameUtilities.Line_Of_Sight_Layer_Mask);
         lineOfSightHitObjects = Physics2D.RaycastAll(start, direction, distance, GameUtilities.Line_Of_Sight_Layer_Mask);
-        Profiler.EndSample();
         
-        Profiler.BeginSample($"{character.name} Raycast result loop");
         if(lineOfSightHitObjects != null) {
             for (int i = 0; i < lineOfSightHitObjects.Length; i++) {
                 RaycastHit2D hit = lineOfSightHitObjects[i];
@@ -1919,7 +1907,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 }
             }
         }
-        Profiler.EndSample();
         return false;
     }
     #endregion

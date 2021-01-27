@@ -219,24 +219,49 @@ public class GameManager : MonoBehaviour {
     private void TickStarted() {
         if (today.tick % ticksPerHour == 0 && !IsStartOfGame()) {
             //hour reached
+            Profiler.BeginSample("Hour Started");
             Messenger.Broadcast(Signals.HOUR_STARTED);
+            Profiler.EndSample();
         }
+        Profiler.BeginSample("Tick Started Signal");
         Messenger.Broadcast(Signals.TICK_STARTED);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample("Tick Started - Update UI");
         Messenger.Broadcast(UISignals.UPDATE_UI);
+        Profiler.EndSample();
     }
     private void TickEnded(){
+        Profiler.BeginSample("Check Schedules");
         Messenger.Broadcast(Signals.CHECK_SCHEDULES);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample("Character Tick Ended Movement");
         Messenger.Broadcast(CharacterSignals.CHARACTER_TICK_ENDED_MOVEMENT);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample("Process All Unprocessed POIS");
         Messenger.Broadcast(CharacterSignals.PROCESS_ALL_UNPOROCESSED_POIS);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample("Character Tick Ended");
         Messenger.Broadcast(CharacterSignals.CHARACTER_TICK_ENDED);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample("Generic Tick Ended Signal");
         Messenger.Broadcast(Signals.TICK_ENDED);
+        Profiler.EndSample();
         
         today.tick += 1;
         if (today.tick > ticksPerDay) {
             today.tick = 1;
+            Profiler.BeginSample("Tick Ended - Day Started");
             DayStarted(false);
+            Profiler.EndSample();
         }
+        Profiler.BeginSample("Tick Ended - Update UI");
         Messenger.Broadcast(UISignals.UPDATE_UI);
+        Profiler.EndSample();
     }
     public void SetTick(int amount) {
         today.tick = amount;

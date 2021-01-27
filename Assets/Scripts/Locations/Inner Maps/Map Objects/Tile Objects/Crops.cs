@@ -1,6 +1,7 @@
 ﻿using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 using Debug = System.Diagnostics.Debug;
 
 public abstract class Crops : TileObject {
@@ -84,19 +85,27 @@ public abstract class Crops : TileObject {
     /// <returns></returns>
     public abstract int GetRipeningTicks();
     private void PerTickGrowth() {
+        Profiler.BeginSample($"{name} - Crop Per Tick Growth");
         if (_remainingRipeningTicks == -1) {
             //if value is set to -1 then it means that this crop has just started growing, set its remaining ripening ticks here
+            Profiler.BeginSample($"{name} - Crop Per Tick Growth - Get Ripening");
             _remainingRipeningTicks = GetRipeningTicks();
+            Profiler.EndSample();
         }
         if (_remainingRipeningTicks == 0) {
+            Profiler.BeginSample($"{name} - Set Growth State");
             SetGrowthState(Growth_State.Ripe);
+            Profiler.EndSample();
         }
         _remainingRipeningTicks = _remainingRipeningTicks - growthRate;
         //Make sure to set this to be at maximum 0, so as not to trigger the above -1 if statement, since that is meant to reset the per tick growth
         _remainingRipeningTicks = Mathf.Max(0, _remainingRipeningTicks);
         if (mapVisual != null) {
+            Profiler.BeginSample($"{name} - Update Visual");
             mapVisual.UpdateTileObjectVisual(this);    
+            Profiler.EndSample();
         }
+        Profiler.EndSample();
     }
     public void SetGrowthRate(int growthRate) {
         _growthRate = growthRate;

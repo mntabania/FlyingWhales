@@ -13,6 +13,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
 using Traits;
+using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 
 public class NPCSettlement : BaseSettlement, IJobOwner {
@@ -334,13 +335,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         
     }
     private void OnTickEnded() {
+        Profiler.BeginSample($"Settlement On Tick Ended");
         ProcessForcedCancelJobsOnTickEnded();
+        Profiler.EndSample();
     }
     private void OnDayStarted() {
         hasTriedToStealCorpse = false;
         ClearAllBlacklistToAllExistingJobs();
     }
     private void OnHourStarted() {
+        Profiler.BeginSample($"{name} settlement OnHourStarted");
         CheckSlaveResidents();
         CheckForJudgePrisoners();
         if(locationType == LOCATION_TYPE.VILLAGE) {
@@ -377,6 +381,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         npcSettlementEventDispatcher.ExecuteHourStartedEvent(this);
         migrationComponent.OnHourStarted();    
+        Profiler.EndSample();
     }
     #endregion
 

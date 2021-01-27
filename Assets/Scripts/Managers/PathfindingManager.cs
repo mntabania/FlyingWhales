@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Inner_Maps;
 using PathFinding;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 public class PathfindingManager : BaseMonoBehaviour {
 
@@ -145,7 +146,9 @@ public class PathfindingManager : BaseMonoBehaviour {
     private void Update() {
         for (int i = 0; i < _allAgents.Count; i++) {
             CharacterAIPath currentAI = _allAgents[i];
+            Profiler.BeginSample($"{currentAI.marker.character.name} - Pathfinding Update");
             currentAI.marker.ManualUpdate();
+            Profiler.EndSample();
         }
     }
     protected override void OnDestroy() {

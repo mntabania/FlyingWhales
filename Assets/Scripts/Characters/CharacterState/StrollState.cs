@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
+using UtilityScripts;
 
 public class StrollState : CharacterState {
     //private int _planDuration;
@@ -58,12 +59,12 @@ public class StrollState : CharacterState {
         //Debug.Log(stateComponent.character.name + " will stroll to " + target.ToString());
     }
     private LocationGridTile PickRandomTileToGoTo() {
-        List<LocationGridTile> tiles = stateComponent.owner.gridTileLocation.parentMap.GetUnoccupiedTilesInRadius(stateComponent.owner.gridTileLocation, 4, 3, false, true);
+        List<LocationGridTile> tiles = ObjectPoolManager.Instance.CreateNewGridTileList();
+         stateComponent.owner.gridTileLocation.parentMap.GetUnoccupiedTilesInRadius(tiles, stateComponent.owner.gridTileLocation, 3, 2, false, true);
         if (tiles.Count > 0) {
-            return tiles[UnityEngine.Random.Range(0, tiles.Count)];
+            return CollectionUtilities.GetRandomElement(tiles);
         } else {
-            throw new System.Exception(
-                $"No unoccupied tile in 3-tile radius for {stateComponent.owner.name} to go to in {stateName}");
+            throw new System.Exception($"No unoccupied tile in 3-tile radius for {stateComponent.owner.name} to go to in {stateName}");
         }
         //int multiplier = 1;//UnityEngine.Random.Range(5, 8);
         //Vector3 forwardPos = stateComponent.character.marker.visualsParent.up * multiplier;

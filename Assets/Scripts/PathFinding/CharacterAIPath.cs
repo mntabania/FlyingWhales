@@ -5,6 +5,7 @@ using UnityEngine;
 using Pathfinding;
 using System.Linq;
 using Inner_Maps;
+using UnityEngine.Profiling;
 
 public class CharacterAIPath : AILerp {
     public CharacterMarker marker;
@@ -157,12 +158,19 @@ public class CharacterAIPath : AILerp {
         if (!marker.gameObject.activeSelf || marker.character == null) {
             return;
         }
+        Profiler.BeginSample($"{marker.character.name} - Update Position");
         marker.UpdatePosition();
+        Profiler.EndSample();
         //added checking for marker.character again because the call to UpdatePosition can cause the character to die or possibly turn to a food pile,
         //resulting in his marker being reset, before this function is finished 
         if (marker.character == null || marker.character.limiterComponent.canMove == false || isStopMovement || GameManager.Instance.isPaused) { return; }
+        Profiler.BeginSample($"{marker.character.name} - Update Rotation");
         UpdateRotation();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"{marker.character.name} - Base Update Me Call");
         base.UpdateMe();
+        Profiler.EndSample();
         //Vector3 markerPos = marker.transform.position; 
         //marker.transform.position = new Vector3(markerPos.x, markerPos.y, 0f);
     }

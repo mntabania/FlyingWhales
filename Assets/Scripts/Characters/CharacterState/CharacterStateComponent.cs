@@ -12,25 +12,13 @@ public class CharacterStateComponent : CharacterComponent {
     //public CharacterState previousMajorState { get; private set; }
     //This is the character's current state
     public CharacterState currentState { get; private set; }
-    
-
-    public void OnTickEnded() {
-        PerTickCurrentState();
-    }
-    public void SetCurrentState(CharacterState state) {
-        if(currentState != state) {
-            currentState = state;
-            if (owner.marker) {
-                owner.marker.UpdateActionIcon();
-            }
-        }
-    }
+    private StrollOutsideState _strollOutsideState;
 
     public CharacterStateComponent() {
-
+        _strollOutsideState = new StrollOutsideState(this);
     }
     public CharacterStateComponent(SaveDataCharacterStateComponent data) {
-
+        _strollOutsideState = new StrollOutsideState(this);
     }
    
     //This switches from one state to another
@@ -66,19 +54,17 @@ public class CharacterStateComponent : CharacterComponent {
         newState.EnterState();
         return newState;
     }
-    /// <summary>
-    /// Load a Character State given save data. 
-    /// NOTE: This will also make the character enter the loaded state.
-    /// </summary>
-    /// <param name="saveData">Save data to load.</param>
-    /// <returns>The state that was loaded.</returns>
-    public CharacterState LoadState(SaveDataCharacterState saveData) {
-        CharacterState loadedState = CreateNewState(saveData.characterState);
-        loadedState.Load(saveData);
-        loadedState.EnterState();
-        return loadedState;
+    public void OnTickEnded() {
+        PerTickCurrentState();
     }
-
+    public void SetCurrentState(CharacterState state) {
+        if(currentState != state) {
+            currentState = state;
+            if (owner.marker) {
+                owner.marker.UpdateActionIcon();
+            }
+        }
+    }
     /// <summary>
     /// This ends the current state.
     /// This is triggered when the timer is out, or the character simply wants to end its state and go back to normal state.
@@ -156,7 +142,7 @@ public class CharacterStateComponent : CharacterComponent {
                 newState = new StrollState(this);
                 break;
             case CHARACTER_STATE.STROLL_OUTSIDE:
-                newState = new StrollOutsideState(this);
+                newState = _strollOutsideState; //new StrollOutsideState(this);
                 break;
             case CHARACTER_STATE.BERSERKED:
                 newState = new BerserkedState(this);
