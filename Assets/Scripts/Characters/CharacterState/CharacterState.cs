@@ -57,6 +57,11 @@ public class CharacterState {
         CreateThoughtBubbleLog();
         DoMovementBehavior();
         Messenger.Broadcast(CharacterSignals.CHARACTER_STARTED_STATE, stateComponent.owner, this);
+        if (characterState.IsCombatState()) {
+            if (stateComponent.owner.marker) {
+                stateComponent.owner.marker.visionCollider.TransferAllDifferentStructureCharacters();
+            }
+        }
         ProcessInVisionPOIsOnStartState();
         //if(startStateAction != null) {
         //    startStateAction();
@@ -121,9 +126,9 @@ public class CharacterState {
     //public virtual void SetOtherDataOnStartState(object otherData) { }
     //This is called on ExitCurrentState function in CharacterStateComponent after all exit processing is finished
     public virtual void AfterExitingState() {
-        if (stateComponent.owner.marker) {
-            stateComponent.owner.marker.UpdateActionIcon();
-        }
+        //if (stateComponent.owner.marker) {
+        //    stateComponent.owner.marker.UpdateActionIcon();
+        //}
         Messenger.Broadcast(CharacterSignals.CHARACTER_ENDED_STATE, stateComponent.owner, this);
     }
     //public virtual bool CanResumeState() {

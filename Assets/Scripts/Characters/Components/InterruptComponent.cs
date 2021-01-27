@@ -110,11 +110,12 @@ public class InterruptComponent : CharacterComponent {
         currentSimultaneousInterruptDuration = 0;
         if (!alreadyHasSimultaneousInterrupt) {
             Messenger.AddListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
-        } else {
-            if (owner.marker) {
-                owner.marker.UpdateActionIcon();
-            }
-        }
+        } 
+        //else {
+        //    if (owner.marker) {
+        //        owner.marker.UpdateActionIcon();
+        //    }
+        //}
     }
     //private void AddPendingSimultaneousInterrupt(System.Action pendingSimultaneousInterrupt) {
     //    _pendingSimultaneousInterrupts.Add(pendingSimultaneousInterrupt);
@@ -143,9 +144,9 @@ public class InterruptComponent : CharacterComponent {
             effectLog.AddTag(LOG_TAG.Intel);
         }
         interruptHolder.SetEffectLog(effectLog);
-        if (owner.marker) {
-            owner.marker.UpdateActionIcon();
-        }
+        //if (owner.marker) {
+        //    owner.marker.UpdateActionIcon();
+        //}
         InnerMapManager.Instance.FaceTarget(owner, interruptHolder.target);
     }
     public void OnTickEnded() {
@@ -166,9 +167,9 @@ public class InterruptComponent : CharacterComponent {
             if (currentSimultaneousInterruptDuration > 2) {
                 Messenger.RemoveListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
                 SetSimultaneousInterrupt(null);
-                if (owner.marker) {
-                    owner.marker.UpdateActionIcon();
-                }
+                //if (owner.marker) {
+                //    owner.marker.UpdateActionIcon();
+                //}
                 //TryExecutePendingSimultaneousInterrupt();
             }
         }
@@ -197,6 +198,9 @@ public class InterruptComponent : CharacterComponent {
             //This can happen if the actor is a minion and the ExecuteInterruptEndEffect triggers the death of the actor
             //In this manner, the minion actor will have already ended the interrupt during death because we the ForceEndNonSimultaneousInterrupt is being called when a minion dies/unsummoned
             //so when the EndInterrupt is called again after the ExecuteInterruptEndEffect call, the current interrupt is already null
+            //if (owner.marker) {
+            //    owner.marker.UpdateActionIcon();
+            //}
             return;
         }
         //if (shouldAddLog) {
@@ -229,9 +233,9 @@ public class InterruptComponent : CharacterComponent {
                 }
             }
         }
-        if (owner.marker) {
-            owner.marker.UpdateActionIcon();
-        }
+        //if (owner.marker) {
+        //    owner.marker.UpdateActionIcon();
+        //}
         thoughtBubbleLog = default;
         Messenger.Broadcast(CharacterSignals.INTERRUPT_FINISHED, finishedInterrupt.type, owner);
     }
@@ -303,6 +307,9 @@ public class InterruptComponent : CharacterComponent {
                 ObjectPoolManager.Instance.ReturnInterruptToPool(currentInterrupt);
             }
             currentInterrupt = interrupt;
+            if (owner.marker) {
+                owner.marker.UpdateActionIcon();
+            }
         }
     }
     public void SetSimultaneousInterrupt(InterruptHolder interrupt) {
@@ -311,6 +318,9 @@ public class InterruptComponent : CharacterComponent {
                 ObjectPoolManager.Instance.ReturnInterruptToPool(triggeredSimultaneousInterrupt);
             }
             triggeredSimultaneousInterrupt = interrupt;
+            if (owner.marker) {
+                owner.marker.UpdateActionIcon();
+            }
         }
     }
     public void OnSeizedOwner() {

@@ -11,7 +11,7 @@ public class DropItem : GoapAction {
     }
 
     public DropItem() : base(INTERACTION_TYPE.DROP_ITEM) {
-        actionIconString = GoapActionStateDB.No_Icon;
+        actionIconString = GoapActionStateDB.Haul_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         //advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON, RACE.TROLL, RACE.RATMAN };

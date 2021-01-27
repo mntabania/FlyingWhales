@@ -474,8 +474,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(CharacterSignals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelAllJobsOfTypeTargetingPOI);
         Messenger.AddListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, ForceCancelAllJobsTargetingPOIExceptSelf);
         Messenger.AddListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, ForceCancelAllActionsTargetingPOI);
-        Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-        Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+
+        //NOTE: To improve performance, since the calls here are just calls directly to the statecomponent owner, instead of all characters listening to the signal, i just directly call the statecomponent owner on the specific code
+        //Less signal subscription, less checking
+        //Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        //Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.AddListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnActionPerformed);
         Messenger.AddListener<InterruptHolder>(InterruptSignals.INTERRUPT_STARTED, OnInterruptStarted);
         Messenger.AddListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
@@ -513,8 +516,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(CharacterSignals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelAllJobsOfTypeTargetingPOI);
         Messenger.RemoveListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, ForceCancelAllJobsTargetingPOIExceptSelf);
         Messenger.RemoveListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, ForceCancelAllActionsTargetingPOI);
-        Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-        Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+        //Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        //Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.RemoveListener<ActualGoapNode>(JobSignals.STARTED_PERFORMING_ACTION, OnActionPerformed);
         Messenger.RemoveListener<InterruptHolder>(InterruptSignals.INTERRUPT_STARTED, OnInterruptStarted);
         Messenger.RemoveListener<IPointOfInterest>(CharacterSignals.ON_SEIZE_POI, OnSeizePOI);
@@ -4540,6 +4543,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         SetCurrentJob(job);
         SetCurrentPlan(plan);
+
+        if (marker) {
+            marker.UpdateActionIcon();
+        }
         
         string summary = $"{GameManager.Instance.TodayLogString()}Set current action to ";
         if (currentActionNode == null) {
@@ -5051,54 +5058,54 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     #endregion
 
-    #region States
-    private void OnCharacterStartedState(Character characterThatStartedState, CharacterState state) {
-        if (characterThatStartedState == this) {
-            marker.UpdateActionIcon();
-            if (state.characterState.IsCombatState()) {
-                marker.visionCollider.TransferAllDifferentStructureCharacters();
-            }
-        } else {
-            //if (state.characterState == CHARACTER_STATE.COMBAT && traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null && isAtHomeRegion && !ownParty.icon.isTravellingOutside) {
-            //    //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
-            //    CombatState combatState = state as CombatState;
-            //    float distance = Vector2.Distance(this.marker.transform.position, characterThatStartedState.marker.transform.position);
-            //    Character targetCharacter = null;
-            //    if (combatState.isAttacking && combatState.currentClosestHostile is Character) {
-            //        targetCharacter = combatState.currentClosestHostile as Character;
-            //    }
-            //    //Debug.Log(this.name + " distance with " + characterThatStartedState.name + " is " + distance.ToString());
-            //    if (targetCharacter != null && this.isPartOfHomeFaction && characterThatStartedState.isAtHomeRegion && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
-            //        && this.IsHostileOutsider(targetCharacter) && (RelationshipManager.GetRelationshipEffectWith(characterThatStartedState) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
-            //        && distance <= Combat_Signalled_Distance) {
-            //        if (combatComponent.AddHostileInRange(targetCharacter, false)) {
-            //            if (!combatComponent.avoidInRange.Contains(targetCharacter)) {
-            //                Log joinLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_signaled");
-            //                joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            //                joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            //                joinLog.AddToFillers(characterThatStartedState, characterThatStartedState.name, LOG_IDENTIFIER.CHARACTER_3);
-            //                joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-            //                PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
-            //            }
-            //            //combatComponent.ProcessCombatBehavior();
-            //            return; //do not do watch.
-            //        }
-            //    }
-            //    if (marker.IsPOIInVision(characterThatStartedState)) {
-            //        ThisCharacterWatchEvent(characterThatStartedState, null, null);
-            //    }
-            //}
-        }
-    }
-    private void OnCharacterEndedState(Character character, CharacterState state) {
-        if (character == this) {
-            if (state is CombatState && marker) {
-                //combatComponent.OnThisCharacterEndedCombatState();
-                marker.visionCollider.ReCategorizeVision();
-            }
-        }
-    }
-    #endregion
+    //#region States
+    //private void OnCharacterStartedState(Character characterThatStartedState, CharacterState state) {
+    //    if (characterThatStartedState == this) {
+    //        //marker.UpdateActionIcon();
+    //        if (state.characterState.IsCombatState()) {
+    //            marker.visionCollider.TransferAllDifferentStructureCharacters();
+    //        }
+    //    } else {
+    //        //if (state.characterState == CHARACTER_STATE.COMBAT && traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null && isAtHomeRegion && !ownParty.icon.isTravellingOutside) {
+    //        //    //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
+    //        //    CombatState combatState = state as CombatState;
+    //        //    float distance = Vector2.Distance(this.marker.transform.position, characterThatStartedState.marker.transform.position);
+    //        //    Character targetCharacter = null;
+    //        //    if (combatState.isAttacking && combatState.currentClosestHostile is Character) {
+    //        //        targetCharacter = combatState.currentClosestHostile as Character;
+    //        //    }
+    //        //    //Debug.Log(this.name + " distance with " + characterThatStartedState.name + " is " + distance.ToString());
+    //        //    if (targetCharacter != null && this.isPartOfHomeFaction && characterThatStartedState.isAtHomeRegion && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
+    //        //        && this.IsHostileOutsider(targetCharacter) && (RelationshipManager.GetRelationshipEffectWith(characterThatStartedState) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
+    //        //        && distance <= Combat_Signalled_Distance) {
+    //        //        if (combatComponent.AddHostileInRange(targetCharacter, false)) {
+    //        //            if (!combatComponent.avoidInRange.Contains(targetCharacter)) {
+    //        //                Log joinLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_signaled");
+    //        //                joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+    //        //                joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //        //                joinLog.AddToFillers(characterThatStartedState, characterThatStartedState.name, LOG_IDENTIFIER.CHARACTER_3);
+    //        //                joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //        //                PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
+    //        //            }
+    //        //            //combatComponent.ProcessCombatBehavior();
+    //        //            return; //do not do watch.
+    //        //        }
+    //        //    }
+    //        //    if (marker.IsPOIInVision(characterThatStartedState)) {
+    //        //        ThisCharacterWatchEvent(characterThatStartedState, null, null);
+    //        //    }
+    //        //}
+    //    }
+    //}
+    //private void OnCharacterEndedState(Character character, CharacterState state) {
+    //    if (character == this) {
+    //        if (state is CombatState && marker) {
+    //            //combatComponent.OnThisCharacterEndedCombatState();
+    //            marker.visionCollider.ReCategorizeVision();
+    //        }
+    //    }
+    //}
+    //#endregion
 
     #region Alter Egos
     //private void InitializeAlterEgos() {

@@ -309,8 +309,10 @@ public class Minion {
     private void SubscribeListeners() {
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStarted);
-        Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-        Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+
+        //For explanation why this part is commented out, please see Character.cs SubscribeToSignals
+        //Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        //Messenger.AddListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.AddListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character.ForceCancelAllJobsTargetingPOI);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CAN_PERFORM_AGAIN, OnCharacterCanPerformAgain);
         character.religionComponent.SubscribeListeners();
@@ -318,20 +320,20 @@ public class Minion {
     private void UnSubscribeListeners() {
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
-        Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-        Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+        //Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        //Messenger.RemoveListener<Character, CharacterState>(CharacterSignals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.RemoveListener<IPointOfInterest, string>(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character.ForceCancelAllJobsTargetingPOI);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CAN_PERFORM_AGAIN, OnCharacterCanPerformAgain);
         character.religionComponent.UnsubscribeListeners();
     }
-    private void OnCharacterStartedState(Character characterThatStartedState, CharacterState state) {
-        if (characterThatStartedState == character) {
-            character.marker.UpdateActionIcon();
-            if (state.characterState.IsCombatState()) {
-                character.marker.visionCollider.TransferAllDifferentStructureCharacters();
-            }
-        }
-    }
+    //private void OnCharacterStartedState(Character characterThatStartedState, CharacterState state) {
+    //    if (characterThatStartedState == character) {
+    //        //character.marker.UpdateActionIcon();
+    //        if (state.characterState.IsCombatState()) {
+    //            character.marker.visionCollider.TransferAllDifferentStructureCharacters();
+    //        }
+    //    }
+    //}
     private void OnCharacterCanPerformAgain(Character character) {
         if (character == this.character) {
             
@@ -342,13 +344,13 @@ public class Minion {
             }
         }
     }
-    private void OnCharacterEndedState(Character character, CharacterState state) {
-        if (character == this.character) {
-            if (state is CombatState && character.marker) {
-                character.marker.visionCollider.ReCategorizeVision();
-            }
-        }
-    }
+    //private void OnCharacterEndedState(Character character, CharacterState state) {
+    //    if (character == this.character) {
+    //        if (state is CombatState && character.marker) {
+    //            character.marker.visionCollider.ReCategorizeVision();
+    //        }
+    //    }
+    //}
     #endregion
 }
 
