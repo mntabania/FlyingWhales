@@ -6,7 +6,7 @@ using Inner_Maps;
 public class LandmineData : SkillData {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.LANDMINE;
     public override string name => "Landmine";
-    public override string description => "This Spell places an invisible trap on a target unoccupied tile. Any character that walks into the tile will activate it, causing it to explode and deal Fire damage to a small area around it.";
+    public override string description => "This Spell places an invisible trap on a target unoccupied tile. Any character that walks into the tile will activate it, causing it to explode and deal Normal damage to a small area around it.";
     public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SPELL;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public virtual int abilityRadius => 1;

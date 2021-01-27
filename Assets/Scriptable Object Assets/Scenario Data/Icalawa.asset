@@ -15,6 +15,6 @@ MonoBehaviour:
   scenarioSettings: {fileID: 4900000, guid: 5d1c1a6eea360fb45b5f85176d6c171d, type: 3}
   faunaList:
   - monsterType: 31
-    minRange: 1
+    minRange: 3
     maxRange: 5
-    weight: 10
+    weight: 100

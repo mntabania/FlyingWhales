@@ -13,27 +13,55 @@ MonoBehaviour:
   m_Name: Forest Monster Migration List
   m_EditorClassIdentifier: 
   dataList:
+  - monsterType: 1
+    minRange: 3
+    maxRange: 5
+    weight: 80
   - monsterType: 8
     minRange: 1
+    maxRange: 3
+    weight: 80
+  - monsterType: 26
+    minRange: 3
     maxRange: 5
-    weight: 10
-  - monsterType: 1
-    minRange: 1
-    maxRange: 5
-    weight: 10
-  - monsterType: 21
-    minRange: 1
-    maxRange: 5
-    weight: 10
-  - monsterType: 24
-    minRange: 1
-    maxRange: 5
-    weight: 10
-  - monsterType: 16
-    minRange: 1
-    maxRange: 5
-    weight: 10
+    weight: 80
   - monsterType: 34
-    minRange: 1
+    minRange: 2
+    maxRange: 4
+    weight: 80
+  - monsterType: 27
+    minRange: 2
     maxRange: 5
-    weight: 10
+    weight: 80
+  - monsterType: 3
+    minRange: 3
+    maxRange: 3
+    weight: 50
+  - monsterType: 7
+    minRange: 3
+    maxRange: 5
+    weight: 50
+  - monsterType: 4
+    minRange: 2
+    maxRange: 4
+    weight: 50
+  - monsterType: 21
+    minRange: 4
+    maxRange: 7
+    weight: 50
+  - monsterType: 22
+    minRange: 4
+    maxRange: 7
+    weight: 50
+  - monsterType: 20
+    minRange: 4
+    maxRange: 7
+    weight: 50
+  - monsterType: 25
+    minRange: 4
+    maxRange: 7
+    weight: 50
+  - monsterType: 33
+    minRange: 1
+    maxRange: 1
+    weight: 3

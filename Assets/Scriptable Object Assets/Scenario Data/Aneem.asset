@@ -13,20 +13,4 @@ MonoBehaviour:
   m_Name: Aneem
   m_EditorClassIdentifier: 
   scenarioSettings: {fileID: 4900000, guid: d0689c4eac046ad4199faf9cccd81e5f, type: 3}
-  faunaList:
-  - monsterType: 8
-    minRange: 1
-    maxRange: 5
-    weight: 10
-  - monsterType: 7
-    minRange: 1
-    maxRange: 5
-    weight: 10
-  - monsterType: 3
-    minRange: 1
-    maxRange: 5
-    weight: 10
-  - monsterType: 20
-    minRange: 1
-    maxRange: 5
-    weight: 10
+  faunaList: []

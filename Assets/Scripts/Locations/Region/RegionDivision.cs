@@ -40,8 +40,10 @@ public class RegionDivision {
 
     #region Listeners
     private void OnDayStarted() {
-        if (!WorldSettings.Instance.worldSettingsData.mapSettings.disableAllMonsterMigrations) {
-            MonsterMigrationPerDay();    
+        if (!WorldSettings.Instance.worldSettingsData.mapSettings.disableAllMonsterMigrations && WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Affatt) {
+            if(faunaList != null && faunaList.Length > 0) {
+                MonsterMigrationPerDay();
+            }
         }
     }
     #endregion
@@ -112,7 +114,7 @@ public class RegionDivision {
             monsterTypeStr = UtilityScripts.Utilities.PluralizeString(monsterTypeStr);
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "WorldEvents", "Monster Migration", "monster_migration", providedTags: LOG_TAG.Major);
             log.AddToFillers(null, monsterTypeStr, LOG_IDENTIFIER.STRING_1);
-            log.AddToFillers(null, p_structure.name, LOG_IDENTIFIER.LANDMARK_1);
+            log.AddToFillers(p_structure, p_structure.name, LOG_IDENTIFIER.LANDMARK_1);
             log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         }
