@@ -36,7 +36,7 @@ namespace Quests {
 
     public class SaveDataCreateDemonCultFaction : SaveDataReactionQuest {
         public override ReactionQuest Load() {
-            return new KillVillagersByPsychopath();
+            return new CreateDemonCultFaction();
         }
     }
 }
