@@ -17,11 +17,18 @@ public class HealData : PlayerAction {
         }
         base.ActivateAbility(targetPOI);
     }
-    public override bool IsValid(IPlayerActionTarget target) {
-        if (target is Character targetCharacter) {
-            return targetCharacter.currentHP < targetCharacter.maxHP;
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        if(targetCharacter.currentHP >= targetCharacter.maxHP) {
+            return false;
         }
-        return false;
+        return base.CanPerformAbilityTowards(targetCharacter);
+    }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.currentHP >= targetCharacter.maxHP) {
+            reasons += $"{targetCharacter.name} is at full HP,";
+        }
+        return reasons;
     }
     #endregion
 }
