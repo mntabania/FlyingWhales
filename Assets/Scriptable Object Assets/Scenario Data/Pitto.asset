@@ -13,20 +13,4 @@ MonoBehaviour:
   m_Name: Pitto
   m_EditorClassIdentifier: 
   scenarioSettings: {fileID: 4900000, guid: 4fe1ca86cce4eb94ca9096d361568ee2, type: 3}
-  faunaList:
-  - monsterType: 8
-    minRange: 1
-    maxRange: 5
-    weight: 10
-  - monsterType: 7
-    minRange: 1
-    maxRange: 5
-    weight: 10
-  - monsterType: 3
-    minRange: 1
-    maxRange: 5
-    weight: 10
-  - monsterType: 20
-    minRange: 1
-    maxRange: 5
-    weight: 10
+  faunaList: []
