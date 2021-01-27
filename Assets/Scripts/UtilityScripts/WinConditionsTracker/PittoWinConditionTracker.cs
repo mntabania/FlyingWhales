@@ -6,6 +6,7 @@ public class PittoWinConditionTracker : WinconditionTracker {
 
     private System.Action<Faction> _onfactionCreated;
     private System.Action<Character> _CharacterChangeTrait;
+    private System.Action<Character> _CharacterDied;
 
     public List<Character> cultists = new List<Character>();
     public override Type serializedData => typeof(SaveDataPittoWinConditionTracker);
@@ -17,6 +18,7 @@ public class PittoWinConditionTracker : WinconditionTracker {
 
     public interface IListenerChangeTraits {
         void OnCharacterChangeTrait(Character p_character);
+        void OnCharacterDied(Character p_character);
     }
     #endregion
 
@@ -52,10 +54,13 @@ public class PittoWinConditionTracker : WinconditionTracker {
 
     #region List Maintenance
     private void EliminateVillager(Character p_character) {
-        
+        _CharacterDied?.Invoke(p_character);
     }
     private void AddVillagerToEliminate(Character p_character) {
-        AddCharacterToTrackList(p_character);
+        if (cultists.Contains(p_character)) {
+            cultists.Remove(p_character);
+        }
+        _CharacterDied?.Invoke(p_character);
     }
     #endregion
 
@@ -111,9 +116,11 @@ public class PittoWinConditionTracker : WinconditionTracker {
 
     public void SubscribeToChangeTraitEvents(PittoWinConditionTracker.IListenerChangeTraits p_listener) {
         _CharacterChangeTrait += p_listener.OnCharacterChangeTrait;
+        _CharacterDied += p_listener.OnCharacterDied;
     }
     public void UnsubscribeToChangeTraitEvents(PittoWinConditionTracker.IListenerChangeTraits p_listener) {
         _CharacterChangeTrait -= p_listener.OnCharacterChangeTrait;
+        _CharacterDied -= p_listener.OnCharacterDied;
     }
 }
 

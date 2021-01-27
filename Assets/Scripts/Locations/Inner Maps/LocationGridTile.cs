@@ -563,8 +563,15 @@ namespace Inner_Maps {
         public void AddCharacterHere(Character character) {
             // if (!charactersHere.Contains(character)) {
                 charactersHere.Add(character);
+            if (character.race.IsSapient()) {
+                if (character.currentSettlement != null) {
+                    character.currentSettlement.SettlementResources?.RemoveCharacterFromSettlement(character);
+                    collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.SettlementResources?.AddCharacterToSettlement(character);
+                }
+            }
+                
             // }
-            if(genericTileObject != null) {
+            if (genericTileObject != null) {
                 List<Trait> traitOverrideFunctions = genericTileObject.traitContainer.GetTraitOverrideFunctions(TraitManager.Enter_Grid_Tile_Trait);
                 if (traitOverrideFunctions != null) {
                     for (int i = 0; i < traitOverrideFunctions.Count; i++) {

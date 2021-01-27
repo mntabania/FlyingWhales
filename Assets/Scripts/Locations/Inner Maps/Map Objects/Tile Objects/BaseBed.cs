@@ -9,9 +9,13 @@ public abstract class BaseBed : TileObject {
         get { return bedUsers.Where(x => x != null).ToArray(); }
     }
     public BaseBed(int slots) {
+        AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
+        AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         bedUsers = new Character[slots];
     }
     public BaseBed(SaveDataTileObject data, int slots) : base(data) {
+        AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
+        AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         bedUsers = new Character[slots];
     }
     

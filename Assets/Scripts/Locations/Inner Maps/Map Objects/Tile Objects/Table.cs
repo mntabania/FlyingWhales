@@ -13,6 +13,8 @@ public class Table : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.DRINK);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_RESOURCE);
         AddAdvertisedAction(INTERACTION_TYPE.SIT);
+        AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
+        AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
 
         SetFood(UnityEngine.Random.Range(20, 81)); //20
         traitContainer.AddTrait(this, "Edible");
