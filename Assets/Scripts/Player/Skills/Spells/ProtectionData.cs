@@ -13,6 +13,7 @@ public class ProtectionData : SkillData {
     }
     public override void ActivateAbility(LocationGridTile targetTile) {
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        GameManager.Instance.CreateParticleEffectAtWithScale(targetTile, PARTICLE_EFFECT.Protection, 4f);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
             for (int j = 0; j < tile.charactersHere.Count; j++) {

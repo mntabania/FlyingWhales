@@ -9,6 +9,8 @@ public class PittoWinConditionTracker : WinconditionTracker {
     private System.Action<Character> _CharacterDied;
 
     public List<Character> cultists = new List<Character>();
+
+    private Faction m_createdFaction;
     public override Type serializedData => typeof(SaveDataPittoWinConditionTracker);
 
     #region IListener
@@ -27,9 +29,10 @@ public class PittoWinConditionTracker : WinconditionTracker {
                 
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, CheckIfCharacterIsEliminated);
         Messenger.AddListener<Character>(FactionSignals.FACTION_SET, CheckIfCharacterIsEliminated);
-        Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharactertraitGain);
+        Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, CharacterJoinFaction);
         Messenger.AddListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
         Messenger.AddListener<Faction>(FactionSignals.FACTION_CREATED, OnFactionCreated);
+        Messenger.AddListener<Faction>(FactionSignals.FACTION_DISBANDED, OnFactionDisbanded);
 
         List<Character> charactersToTrack = GetQuestCharacters(p_allCharacters);
         
@@ -47,20 +50,27 @@ public class PittoWinConditionTracker : WinconditionTracker {
     #endregion
 
     private void OnFactionCreated(Faction p_createdFaction) {
-        if (p_createdFaction.factionType.type == FACTION_TYPE.Demon_Cult) {
+        if (p_createdFaction.factionType.type == FACTION_TYPE.Demon_Cult && m_createdFaction == null) {
+            m_createdFaction = p_createdFaction;
             _onfactionCreated?.Invoke(p_createdFaction);
+        }
+    }
+
+    private void OnFactionDisbanded(Faction p_disbandedFaction) {
+        if (m_createdFaction != null && m_createdFaction == p_disbandedFaction) {
+            PlayerUI.Instance.LoseGameOver("Your demon cult has been wiped out. Mission Failed");
         }
     }
 
     #region List Maintenance
     private void EliminateVillager(Character p_character) {
-        _CharacterDied?.Invoke(p_character);
-    }
-    private void AddVillagerToEliminate(Character p_character) {
         if (cultists.Contains(p_character)) {
             cultists.Remove(p_character);
         }
         _CharacterDied?.Invoke(p_character);
+    }
+    private void AddVillagerToEliminate(Character p_character) {
+       
     }
     #endregion
 
@@ -75,15 +85,6 @@ public class PittoWinConditionTracker : WinconditionTracker {
         return characters;
     }
 
-    private void OnCharactertraitGain(Character p_character, Trait p_trait) {
-        if (p_character.traitContainer.HasTrait("Cultist")) {
-            if (!cultists.Contains(p_character)) {
-                cultists.Add(p_character);
-                _CharacterChangeTrait?.Invoke(p_character);
-            }
-        }
-    }
-
     private int GetFactionCount() {
         int count = 0;
         FactionManager.Instance.allFactions.ForEach((eachFaction) => {
@@ -92,6 +93,16 @@ public class PittoWinConditionTracker : WinconditionTracker {
             }
         });
         return count;
+    }
+
+    private void CharacterJoinFaction(Character p_newMember, Faction p_faction) {
+        if (m_createdFaction != null) {
+            if (m_createdFaction == p_faction && !cultists.Contains(p_newMember)) {
+                cultists.Add(p_newMember);
+                _CharacterChangeTrait?.Invoke(p_newMember);
+            }
+        }
+        
     }
 
     private void CheckIfCharacterIsEliminated(Character p_character) {
@@ -104,7 +115,7 @@ public class PittoWinConditionTracker : WinconditionTracker {
         }
     }
     private void OnNewVillagerArrived(Character newVillager) {
-        AddVillagerToEliminate(newVillager);
+        
     }
 
     public void SubscribeToFactionEvents(PittoWinConditionTracker.IListenerFactionEvents p_listener) {
