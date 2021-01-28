@@ -72,7 +72,7 @@ public class SnatchData : PlayerAction {
                 HexTile hexTile = structure.occupiedHexTile.hexTileOwner;
                 choices = hexTile.locationGridTiles.Where(t => t.structure is Wilderness && t.IsPassable() && !t.isOccupied).ToList();  
             } else {
-                choices = structure.passableTiles.Where(t => !t.structure.IsTilePartOfARoom(t, out var room)).ToList();    
+                choices = structure.passableTiles.Where(t => !t.structure.IsTilePartOfARoom(t, out var room)).ToList();
             }
             if (choices.Count > 0) {
                 availableSkeletonOrCultist.jobComponent.CreateSnatchJob(targetCharacter, CollectionUtilities.GetRandomElement(choices), structure);
@@ -93,6 +93,9 @@ public class SnatchData : PlayerAction {
             if (!CharacterManager.Instance.allCharacters.Any(CanDoSnatch)) {
                 return false;
             }
+            if(targetCharacter.traitContainer.HasTrait("Hibernating", "Sturdy", "Indestructible")) {
+                return false;
+            }
             if (targetCharacter is Summon) {
                 return PlayerManager.Instance.player.playerSettlement.HasAvailableKennelForSnatch();
             } else {
@@ -106,6 +109,9 @@ public class SnatchData : PlayerAction {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
         if (!CharacterManager.Instance.allCharacters.Any(CanDoSnatch)) {
             reasons += "You have no available Snatchers \n(NOTE: Cultists in an active quest cannot be instructed),";
+        }
+        if (targetCharacter.traitContainer.HasTrait("Hibernating", "Sturdy", "Indestructible")) {
+            reasons += "Cannot target characters that are Hibernating/Sturdy/Indestructible,";
         }
         if (targetCharacter is Summon) {
             if (!PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.KENNEL)) {

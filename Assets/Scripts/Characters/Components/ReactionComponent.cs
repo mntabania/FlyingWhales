@@ -1263,7 +1263,7 @@ public class ReactionComponent : CharacterComponent {
             if(actor.race != RACE.TRITON) {
                 if (GameUtilities.RollChance(0.5f)) {
                     if (actor.canBeTargetedByLandActions) {
-                        if (!actor.traitContainer.HasTrait("Sturdy") && !actor.HasJobTargetingThis(JOB_TYPE.TRITON_KIDNAP)) {
+                        if (!actor.traitContainer.HasTrait("Sturdy", "Hibernating") && !actor.HasJobTargetingThis(JOB_TYPE.TRITON_KIDNAP)) {
                             Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Triton, FactionManager.Instance.neutralFaction, homeRegion: targetTileObject.currentRegion, bypassIdeologyChecking: true);
                             summon.SetIsVolatile(true);
                             CharacterManager.Instance.PlaceSummonInitially(summon, targetTileObject.gridTileLocation);
