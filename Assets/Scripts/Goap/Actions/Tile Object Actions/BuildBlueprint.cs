@@ -36,22 +36,24 @@ public class BuildBlueprint : GoapAction {
                 Precondition p = null;
                 //p.AddRange(baseP);
 
-                switch (genericTileObject.blueprintOnTile.thinWallResource) {
-                    case RESOURCE.STONE:
-                        p = _stonePrecondition;
-                        break;
-                    case RESOURCE.WOOD:
-                        p = _woodPrecondition;
-                        break;
-                    case RESOURCE.METAL:
-                        p = _metalPrecondition;
-                        break;
-                    default:
-                        p = _woodPrecondition;
-                        break;
+                if (genericTileObject.blueprintOnTile.craftCost > 0) {
+                    switch (genericTileObject.blueprintOnTile.thinWallResource) {
+                        case RESOURCE.STONE:
+                            p = _stonePrecondition;
+                            break;
+                        case RESOURCE.WOOD:
+                            p = _woodPrecondition;
+                            break;
+                        case RESOURCE.METAL:
+                            p = _metalPrecondition;
+                            break;
+                        default:
+                            p = _woodPrecondition;
+                            break;
+                    }
+                    isOverridden = true;
+                    return p;    
                 }
-                isOverridden = true;
-                return p;
             }
         }
         return base.GetPrecondition(actor, target, otherData, jobType, out isOverridden);
@@ -124,9 +126,11 @@ public class BuildBlueprint : GoapAction {
 
     #region State Effects
     public void PreBuildSuccess(ActualGoapNode goapNode) {
-        if (goapNode.actor.carryComponent.carriedPOI is ResourcePile carriedPile && goapNode.poiTarget is GenericTileObject genericTileObject && genericTileObject.blueprintOnTile != null) {
-            carriedPile.AdjustResourceInPile(-genericTileObject.blueprintOnTile.craftCost);
-            goapNode.poiTarget.AdjustResource(genericTileObject.blueprintOnTile.thinWallResource, genericTileObject.blueprintOnTile.craftCost);
+        if (goapNode.poiTarget is GenericTileObject genericTileObject) {
+            if (goapNode.actor.carryComponent.carriedPOI is ResourcePile carriedPile) {
+                carriedPile.AdjustResourceInPile(-genericTileObject.blueprintOnTile.craftCost);
+                goapNode.poiTarget.AdjustResource(genericTileObject.blueprintOnTile.thinWallResource, genericTileObject.blueprintOnTile.craftCost);    
+            }
             goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(genericTileObject.blueprintOnTile.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
         }
     }
@@ -149,7 +153,6 @@ public class BuildBlueprint : GoapAction {
                             }
                         }
                     }
-
                     if(importantCharacterThatShouldSetHome != null) {
                         importantCharacterThatShouldSetHome.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
                     }
