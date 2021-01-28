@@ -4738,6 +4738,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             marker.SetCharacter(this);
         }
+        //Note: This is added because, there is a bug wherein after unseizing the character, it does not animate anymore, the reason is that while character is being seized, the "UpdateAnimationSpeed" function is not called
+        //Refer to this: https://trello.com/c/oFbPZlmT/3521-character-not-animating-after-seizing
+        marker.UpdatePauseAnimationSpeed();
         //marker.SetAllColliderStates(true);
         EnableMarker();
         marker.OnUnseize();

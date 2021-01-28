@@ -58,7 +58,7 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                 log += "\n-Has home structure or territory";
                 if (character.isAtHomeStructure || character.IsInTerritory()) {
                     log += "\n-Is in home structure or territory";
-                    if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME) {
+                    if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.IsReturnHome()) {
                         log += $"\n-Just returned home";
                         TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                         log += "\n-Sit if there is still an unoccupied Table or Desk in the current location";
