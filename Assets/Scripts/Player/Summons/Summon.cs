@@ -224,7 +224,12 @@ public class Summon : Character {
     }
     protected virtual void AfterDeath(LocationGridTile deathTileLocation) {
         if (marker == null && destroyMarkerOnDeath) {
-            GameManager.Instance.CreateParticleEffectAt(deathTileLocation, PARTICLE_EFFECT.Minion_Dissipate);
+            if (race == RACE.TRITON) {
+                GameManager.Instance.CreateParticleEffectAt(deathTileLocation, PARTICLE_EFFECT.Water_Bomb);
+            } else {
+                GameManager.Instance.CreateParticleEffectAt(deathTileLocation, PARTICLE_EFFECT.Minion_Dissipate);
+            }
+            
         }
         behaviourComponent.SetIsHarassing(false, null);
         behaviourComponent.SetIsInvading(false, null);
