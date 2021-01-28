@@ -63,7 +63,7 @@ public class MakeLove : GoapAction {
             costLog += " +2000(Actor is sapient and Time is not Early Night/Late Night/After Midnight)";
         }
         Angry angry = actor.traitContainer.GetTraitOrStatus<Angry>("Angry");
-        if (actor.traitContainer.HasTrait("Chaste") || (angry != null && angry.responsibleCharacters.Contains(targetCharacter))) {
+        if (actor.traitContainer.HasTrait("Chaste") || (angry != null && angry.IsResponsibleForTrait(targetCharacter))) {
             cost += 2000;
             costLog += " +2000(Chaste or Angry at target)";
         }
