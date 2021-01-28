@@ -778,7 +778,8 @@ namespace Inner_Maps {
                             TileBase tileBase = null;
                             //plant or herb plant
 
-                            tileBase = UtilityScripts.GameUtilities.RollChance(35) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
+                            //35
+                            tileBase = UtilityScripts.GameUtilities.RollChance(60) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
                             if (currTile.biomeType == BIOMES.FOREST || currTile.biomeType == BIOMES.GRASSLAND) {
                                 if (tileBase == InnerMapManager.Instance.assetManager.herbPlantTile) {
                                     if (UtilityScripts.GameUtilities.RollChance(10)) {
