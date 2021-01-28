@@ -2030,6 +2030,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
+    public bool CreateGoToSpecificTileJob(LocationGridTile tile, out JobQueueItem producedJob) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.GO_TO)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO_SPECIFIC_TILE, tile.genericTileObject, owner);
+            job.SetCannotBePushedBack(true);
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
+    }
     public bool CreatePartyGoToSpecificTileJob(LocationGridTile tile, out JobQueueItem producedJob) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.PARTY_GO_TO)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTY_GO_TO, INTERACTION_TYPE.GO_TO_SPECIFIC_TILE, tile.genericTileObject, owner);

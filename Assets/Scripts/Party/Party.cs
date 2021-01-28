@@ -680,8 +680,8 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         character.behaviourComponent.RemoveBehaviourComponent(currentQuest.relatedBehaviour);
 
         //Remove trap structure every time a character is remove from the quest so that he will return to normal behaviour
-        character.trapStructure.SetForcedStructure(null);
-        character.trapStructure.SetForcedHex(null);
+        //character.trapStructure.SetForcedStructure(null);
+        //character.trapStructure.SetForcedHex(null);
         if (isActive) {
             currentQuest.OnRemoveMemberThatJoinedQuest(character);
         }

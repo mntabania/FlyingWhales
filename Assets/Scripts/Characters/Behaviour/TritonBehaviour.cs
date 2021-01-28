@@ -24,7 +24,7 @@ public class TritonBehaviour : BaseMonsterBehaviour {
                     triton.Death("disappear");
                     return true;
                 } else {
-                    return character.jobComponent.CreateGoToJob(triton.spawnLocationTile, out producedJob);
+                    return character.jobComponent.CreateGoToSpecificTileJob(triton.spawnLocationTile, out producedJob);
                 }
             }
         }
