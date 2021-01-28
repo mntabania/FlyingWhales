@@ -409,7 +409,6 @@ public class UIManager : BaseMonoBehaviour {
 
     #region Tooltips
     public void ShowSmallInfo(string info, string header = "", bool autoReplaceText = true) {
-        Profiler.BeginSample("Show Small Info Sample");
         smallInfoGO.transform.SetAsLastSibling();
         string message = string.Empty;
         if (!string.IsNullOrEmpty(header)) {
@@ -433,7 +432,6 @@ public class UIManager : BaseMonoBehaviour {
             }
         }
         PositionTooltip(smallInfoGO, smallInfoRT, smallInfoBGRT);
-        Profiler.EndSample();
     }
     public void ShowSmallInfo(string info, UIHoverPosition pos, string header = "", bool autoReplaceText = true, bool relayout = false) {
         smallInfoGO.transform.SetAsLastSibling();

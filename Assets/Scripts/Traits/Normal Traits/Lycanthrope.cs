@@ -85,7 +85,7 @@ namespace Traits {
             }
         }
         public override bool PerTickWhileStationaryOrUnoccupied() {
-            if (owner.marker != null && owner.marker.isMoving && (owner.lycanData.activeForm == owner.lycanData.lycanthropeForm || owner.lycanData.isInWerewolfForm)) {
+            if (owner.hasMarker && owner.marker.isMoving && (owner.lycanData.activeForm == owner.lycanData.lycanthropeForm || owner.lycanData.isInWerewolfForm)) {
                 float roll = Random.Range(0f, 100f);
                 float chance = 0.85f;
                 if (owner.currentRegion.GetTileObjectInRegionCount(TILE_OBJECT_TYPE.WEREWOLF_PELT) >= 3) {

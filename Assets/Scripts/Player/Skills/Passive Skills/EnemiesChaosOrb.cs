@@ -8,9 +8,9 @@ public class EnemiesChaosOrb : PassiveSkill {
         Messenger.AddListener<Character, Character, string>(CharacterSignals.OPINION_LABEL_DECREASED, OnOpinionLabelChanged);
     }
     private void OnOpinionLabelChanged(Character character, Character targetCharacter, string newOpinion) {
-        if (newOpinion == RelationshipManager.Enemy && character.marker != null) {
+        if (newOpinion == RelationshipManager.Enemy && character.hasMarker) {
             Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.currentRegion.innerMap);
-        } else if (newOpinion == RelationshipManager.Rival && character.marker != null) {
+        } else if (newOpinion == RelationshipManager.Rival && character.hasMarker) {
             Messenger.Broadcast(PlayerSignals.CREATE_CHAOS_ORBS, character.worldPosition, 2, character.currentRegion.innerMap);
         }
     }

@@ -4,6 +4,7 @@ using DG.Tweening;
 using Inner_Maps;
 using Traits;
 using UnityEngine;
+using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 
 public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
@@ -122,9 +123,11 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (isSpawned == false) {
             return;
         }
+        Profiler.BeginSample($"Frosty Fog Per Tick");
         for (int i = 0; i < _objsInRange.Count; i++) {
             _objsInRange[i].traitContainer.AddTrait(_objsInRange[i], "Freezing");
         }
+        Profiler.EndSample();
     }
     #endregion
 

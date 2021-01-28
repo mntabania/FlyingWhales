@@ -200,18 +200,6 @@ public class ConsoleBase : InfoUIBase {
         //} else {
         //    text += "\nNone";
         //}
-
-        text += "\n<b>Action History:</b> ";
-        List<string> reverseHistory = new List<string>(character.actionHistory);
-        reverseHistory.Reverse();
-        if (reverseHistory.Count > 0) {
-            for (int i = 0; i < reverseHistory.Count; i++) {
-                text += $"\n\n{reverseHistory[i]}";
-            }
-        } else {
-            text += "\nNone";
-        }
-
         return text;
     }
     private string GetSecondaryCharacterInfo() {
@@ -224,9 +212,6 @@ public class ConsoleBase : InfoUIBase {
         //}
 
         string text = $"\n{character.name}'s Location History:";
-        for (int i = 0; i < character.locationHistory.Count; i++) {
-            text += $"\n\t{character.locationHistory[i]}";
-        }
         return text;
     }
     #endregion

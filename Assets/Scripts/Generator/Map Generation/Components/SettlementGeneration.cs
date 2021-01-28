@@ -52,7 +52,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				SETTLEMENT_TYPE settlementType = LandmarkManager.Instance.GetSettlementTypeForFaction(faction);
 				npcSettlement.SetSettlementType(settlementType);
 				
-				var structureSettings = GenerateCityCenterAndDwellings(faction, villageSetting);
+				var structureSettings = GenerateCityCenterAndDwellings(faction, villageSetting, npcSettlement);
 				
 				Assert.IsTrue(structureSettings.First().structureType == STRUCTURE_TYPE.CITY_CENTER);
 				Assert.IsTrue(npcSettlement.tiles.Count > 0);
@@ -74,11 +74,12 @@ public class SettlementGeneration : MapGenerationComponent {
 			}
 		}
 	}
-	private List<StructureSetting> GenerateCityCenterAndDwellings(Faction p_faction, VillageSetting p_villageSetting) {
+	private List<StructureSetting> GenerateCityCenterAndDwellings(Faction p_faction, VillageSetting p_villageSetting, NPCSettlement p_settlement) {
 		List<StructureSetting> structureSettings =  new List<StructureSetting> { new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, p_faction.factionType.mainResource, p_faction.factionType.usesCorruptedStructures) };
 		int randomDwellings = p_villageSetting.GetRandomDwellingCount();
+		var dwellingSetting = p_settlement.settlementType.GetDwellingSetting(p_faction);
 		for (int i = 0; i < randomDwellings; i++) {
-			structureSettings.Add(new StructureSetting(STRUCTURE_TYPE.DWELLING, p_faction.factionType.mainResource, p_faction.factionType.usesCorruptedStructures));
+			structureSettings.Add(dwellingSetting);
 		}
 		return structureSettings;
 	}
@@ -380,17 +381,17 @@ public class SettlementGeneration : MapGenerationComponent {
 		List<StructureSetting> structures = new List<StructureSetting>(); //{ new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, faction.factionType.mainResource) }; //faction.factionType.GetStructureSettingFor(STRUCTURE_TYPE.CITY_CENTER)
 		List<STRUCTURE_TYPE> createdStructureTypes = new List<STRUCTURE_TYPE>();
 		for (int i = 0; i < facilityCount; i++) {
-			WeightedDictionary<StructureSetting> structuresChoices = GetStructureWeights(createdStructureTypes, faction, settlement.tiles.First());
+			WeightedDictionary<StructureSetting> structuresChoices = GetStructureWeights(createdStructureTypes, faction, settlement.tiles.First(), settlement);
 			StructureSetting chosenSetting = structuresChoices.PickRandomElementGivenWeights();
 			structures.Add(chosenSetting);
 			createdStructureTypes.Add(chosenSetting.structureType);
 		}
 		return structures;
 	}
-	private WeightedDictionary<StructureSetting> GetStructureWeights(List<STRUCTURE_TYPE> structureTypes, Faction faction, HexTile villageCenterTile) {
+	private WeightedDictionary<StructureSetting> GetStructureWeights(List<STRUCTURE_TYPE> structureTypes, Faction faction, HexTile villageCenterTile, NPCSettlement settlement) {
 		WeightedDictionary<StructureSetting> structureWeights = new WeightedDictionary<StructureSetting>();
 		List<HexTile> tilesInRange = villageCenterTile.GetTilesInRange(3);
-		if (faction.factionType.type == FACTION_TYPE.Elven_Kingdom) {
+		if (faction.factionType.type == FACTION_TYPE.Elven_Kingdom || settlement.settlementType.settlementType == SETTLEMENT_TYPE.Elven_Hamlet) {
 			if (!structureTypes.Contains(STRUCTURE_TYPE.HOSPICE)) {
 				//Apothecary: +6 (disable if already selected from previous hex tile)
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.HOSPICE, RESOURCE.WOOD), 6); //6
@@ -409,7 +410,7 @@ public class SettlementGeneration : MapGenerationComponent {
 			if (tilesInRange.HasTileWithFeature(TileFeatureDB.Wood_Source_Feature)) {
 				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.WOOD), 15);	
 			}
-		} else if (faction.factionType.type == FACTION_TYPE.Human_Empire) {
+		} else if (faction.factionType.type == FACTION_TYPE.Human_Empire || settlement.settlementType.settlementType == SETTLEMENT_TYPE.Human_Village) {
             // structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 15); //1 //Farm: +1
             // if (tilesInRange.HasTileWithFeature(TileFeatureDB.Fertile_Feature)) {
             //     structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 10); //15

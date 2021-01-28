@@ -6,6 +6,7 @@ using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using UtilityScripts;
 using Logs;
+using UnityEngine.Profiling;
 
 public class Party : ILogFiller, ISavable, IJobOwner {
     public string persistentID { get; private set; }
@@ -139,7 +140,9 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         OnMeetingPlaceDestroyed(structure);
     }
     private void OnTickEnded() {
+        Profiler.BeginSample($"Party On Tick Ended");
         ProcessForcedCancelJobsOnTickEnded();
+        Profiler.EndSample();
     }
     private void OnHourStarted() {
         if (isActive) {

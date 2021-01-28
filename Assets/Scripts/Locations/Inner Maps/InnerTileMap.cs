@@ -301,8 +301,7 @@ namespace Inner_Maps {
         #endregion
 
         #region Data Getting
-        public List<LocationGridTile> GetUnoccupiedTilesInRadius(LocationGridTile centerTile, int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
-            List<LocationGridTile> tiles = new List<LocationGridTile>();
+        public void GetUnoccupiedTilesInRadius(List<LocationGridTile> tiles, LocationGridTile centerTile, int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
             int mapSizeX = map.GetUpperBound(0);
             int mapSizeY = map.GetUpperBound(1);
             int x = centerTile.localPlace.x;
@@ -331,7 +330,6 @@ namespace Inner_Maps {
                     }
                 }
             }
-            return tiles;
         }
         public LocationGridTile GetRandomUnoccupiedEdgeTile() {
             List<LocationGridTile> unoccupiedEdgeTiles = new List<LocationGridTile>();
@@ -780,7 +778,8 @@ namespace Inner_Maps {
                             TileBase tileBase = null;
                             //plant or herb plant
 
-                            tileBase = UtilityScripts.GameUtilities.RollChance(35) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
+                            //35
+                            tileBase = UtilityScripts.GameUtilities.RollChance(60) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
                             if (currTile.biomeType == BIOMES.FOREST || currTile.biomeType == BIOMES.GRASSLAND) {
                                 if (tileBase == InnerMapManager.Instance.assetManager.herbPlantTile) {
                                     if (UtilityScripts.GameUtilities.RollChance(10)) {

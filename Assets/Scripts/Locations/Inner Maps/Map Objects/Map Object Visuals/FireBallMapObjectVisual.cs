@@ -4,6 +4,7 @@ using DG.Tweening;
 using Inner_Maps;
 using Traits;
 using UnityEngine;
+using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 
 public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
@@ -113,6 +114,7 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (isSpawned == false) {
             return;
         }
+        Profiler.BeginSample($"Poison Cloud Per Tick");
         BurningSource bs = null;
         for (int i = 0; i < _objsInRange.Count; i++) {
             ITraitable traitable = _objsInRange[i];
@@ -125,6 +127,7 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
                 burningTrait.SetSourceOfBurning(bs, traitable);
             }
         }
+        Profiler.EndSample();
     }
     #endregion
     

@@ -7,6 +7,7 @@ using Locations.Settlements;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 
 public class GoapPlanJob : JobQueueItem {
 
@@ -120,6 +121,7 @@ public class GoapPlanJob : JobQueueItem {
         if (hasBeenReset) { return false; }
         //Should goap plan in multithread if character is being carried or being seized
         if(assignedPlan == null && originalOwner != null && assignedCharacter != null && assignedCharacter.carryComponent.IsNotBeingCarried() && !assignedCharacter.isBeingSeized) {
+            Profiler.BeginSample($"Goap Plan Job Process Job");
             Character characterOwner = assignedCharacter;
             bool isPersonal = originalOwner.ownerType == JOB_OWNER.CHARACTER;
             IPointOfInterest target = targetPOI ?? assignedCharacter; //if provided target is null, default to the assigned character.
@@ -134,6 +136,7 @@ public class GoapPlanJob : JobQueueItem {
                 //    }
                 //}
             }
+            Profiler.EndSample();
             return true;
         }
         return base.ProcessJob();

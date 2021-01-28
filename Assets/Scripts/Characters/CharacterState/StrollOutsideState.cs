@@ -17,7 +17,7 @@ public class StrollOutsideState : CharacterState {
     }
     #endregion
 
-    private void StartStrollMovement() {
-        stateComponent.owner.marker.DoStrollMovement(StartStrollMovement);
+    public void StartStrollMovement() {
+        stateComponent.owner.marker.DoStrollMovement();
     }
 }

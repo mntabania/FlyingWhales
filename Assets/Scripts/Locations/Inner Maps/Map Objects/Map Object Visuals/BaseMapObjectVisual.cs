@@ -186,6 +186,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
                 }
             }    
         }
+        SetMaterial(InnerMapManager.Instance.assetManager.defaultObjectMaterial);
     }
     void OnEnable() {
         Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);

@@ -182,7 +182,7 @@ public class CharacterInfoUI : InfoUIBase {
         _previousCharacter = _activeCharacter;
         _activeCharacter = _data as Character;
         base.OpenMenu();
-        if (_previousCharacter != null && _previousCharacter.marker != null) {
+        if (_previousCharacter != null && _previousCharacter.hasMarker) {
             _previousCharacter.marker.UpdateNameplateElementsState();
         }
         if (UIManager.Instance.IsConversationMenuOpen()) {

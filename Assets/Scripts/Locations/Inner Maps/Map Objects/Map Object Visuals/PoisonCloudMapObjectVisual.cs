@@ -5,6 +5,7 @@ using Inner_Maps;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 
 public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
@@ -131,6 +132,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (isSpawned == false) {
             return;
         }
+        Profiler.BeginSample($"Poison Cloud Per Tick");
         choices.Clear();
         int size = _size / 2;
         List<LocationGridTile> tiles =
@@ -145,6 +147,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         chosenTraitable.traitContainer.AddTrait(chosenTraitable, "Poisoned");
         summary = $"{summary}\nChance met! Target is {chosenTraitable.ToString()}";
         Debug.Log(summary);
+        Profiler.EndSample();
     }
     public void Explode() {
         Debug.Log($"{GameManager.Instance.TodayLogString()}{this.name} has exploded!");

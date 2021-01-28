@@ -8,7 +8,7 @@ namespace Goap.Job_Checkers {
             Character target = goapPlanJob.targetPOI as Character;
             Assert.IsNotNull(target);
 
-            return target.gridTileLocation != null && target.marker != null;
+            return target.gridTileLocation != null && target.hasMarker;
         }
     }
 }

@@ -6,6 +6,7 @@ using Inner_Maps;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 namespace Traits {
     public class Burning : Status {
@@ -218,6 +219,7 @@ namespace Traits {
                 //Temporary fix only, if the burning object has no longer have a tile location (presumably destroyed), spreading of fire should not trigger
                 return;
             }
+            Profiler.BeginSample($"Burning - Tick Ended Part 1");
             owner.AdjustHP(-2, ELEMENTAL_TYPE.Normal, true, this, showHPBar: true);
 
             //Sleeping characters in bed should also receive damage
@@ -230,10 +232,12 @@ namespace Traits {
                     }
                 }
             }
+            Profiler.EndSample();
 
             if (Random.Range(0, 100) >= 4) {
                 return;
             }
+            Profiler.BeginSample($"Burning - Tick Ended Part 2");
             _burningSpreadChoices.Clear();
             if (ShouldSpreadFire()) {
                 LocationGridTile origin = owner.gridTileLocation;
@@ -249,6 +253,7 @@ namespace Traits {
                     }
                 }    
             }
+            Profiler.EndSample();
 
         }
         #endregion

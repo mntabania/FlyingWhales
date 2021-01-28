@@ -89,7 +89,7 @@ public class TreeObject : TileObject {
     }
     public override void LoadAdditionalInfo(SaveDataTileObject data) {
         base.LoadAdditionalInfo(data);
-        if (ent != null && ent.marker != null && gridTileLocation != null) {
+        if (ent != null && ent.hasMarker && gridTileLocation != null) {
             ent.marker.PlaceMarkerAt(gridTileLocation);
             ent.marker.SetVisualState(false);
         }

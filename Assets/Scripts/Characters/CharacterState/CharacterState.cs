@@ -163,8 +163,7 @@ public class CharacterState {
         if (!isPaused) {
             return; //if this state is not paused then do not resume.
         }
-        stateComponent.owner.logComponent.PrintLogIfActive(
-            $"Resuming {stateName} for {stateComponent.owner.name}");
+        stateComponent.owner.logComponent.PrintLogIfActive($"Resuming {stateName} for {stateComponent.owner.name}");
         isPaused = false;
         if (stateComponent.currentState != this) {
             stateComponent.SetCurrentState(this);
@@ -185,6 +184,14 @@ public class CharacterState {
                 thoughtBubbleLog.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
             }
         }
+    }
+    public virtual void Reset() {
+        currentDuration = 0;
+        isDone = false;
+        hasStarted = false;
+        isPaused = false;
+        job = null;
+        targetPOI = null;
     }
     #endregion
 
@@ -262,18 +269,17 @@ public class CharacterState {
     //}
     //This is the one must be called to exit and end this state
     public void ExitState() {
-        stateComponent.owner.logComponent.PrintLogIfActive(
-            $"Exiting {stateName} for {stateComponent.owner.name}" /*+ " targetting " + targetCharacter?.name ?? "No One"*/);
+        // stateComponent.owner.logComponent.PrintLogIfActive($"Exiting {stateName} for {stateComponent.owner.name}" /*+ " targetting " + targetCharacter?.name ?? "No One"*/);
         EndState();
     }
     public void SetJob(CharacterStateJob job) {
         this.job = job;
-        if (job != null) {
-            Debug.Log($"{GameManager.Instance.TodayLogString()}{this} Set job to {job}!");
-            OnJobSet();
-        } else {
-            Debug.Log($"{GameManager.Instance.TodayLogString()}{this} Set job to null!");
-        }
+        // if (job != null) {
+        //     Debug.Log($"{GameManager.Instance.TodayLogString()}{this} Set job to {job}!");
+        //     OnJobSet();
+        // } else {
+        //     Debug.Log($"{GameManager.Instance.TodayLogString()}{this} Set job to null!");
+        // }
     }
     /// <summary>
     /// What should happen once the job of this state is set to anything other than null?

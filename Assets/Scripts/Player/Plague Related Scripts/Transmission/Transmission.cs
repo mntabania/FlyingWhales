@@ -32,7 +32,7 @@ namespace Plague.Transmission {
         protected void TryTransmitToInRange(IPointOfInterest p_infector, int p_transmissionLvl) {
             int chance = GetTransmissionRate(p_transmissionLvl);
             chance = AdjustTransmissionChancesBasedOnInfector(p_infector, chance);
-            if (p_infector is Character infector && infector.marker != null) {
+            if (p_infector is Character infector && infector.hasMarker) {
                 for (int i = 0; i < infector.marker.inVisionCharacters.Count; i++) {
                     Character inVisionCharacter = infector.marker.inVisionCharacters[i];
                     if (GameUtilities.RollChance(chance)) {
