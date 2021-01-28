@@ -589,6 +589,30 @@ public class GameManager : MonoBehaviour {
         return go;
     }
 
+    public GameObject CreateParticleEffectAtWithScale(LocationGridTile tile, PARTICLE_EFFECT particle, float p_scaleFactor = 1f, int sortingOrder = -1) {
+        GameObject prefab = null;
+        GameObject go = null;
+        if (particleEffectsDictionary.ContainsKey(particle)) {
+            prefab = particleEffectsDictionary[particle];
+        } else {
+            Debug.LogError("No prefab for particle effect: " + particle.ToString());
+            return null;
+        }
+        go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefab.name, Vector3.zero, Quaternion.identity, tile.parentMap.objectsParent);
+        go.transform.localPosition = tile.centeredLocalLocation;
+        go.transform.GetChild(0).localScale = new Vector3(go.transform.GetChild(0).localScale.x * p_scaleFactor, go.transform.GetChild(0).localScale.y * p_scaleFactor, go.transform.GetChild(0).localScale.z);
+        go.SetActive(true);
+        BaseParticleEffect particleEffectScript = go.GetComponent<BaseParticleEffect>();
+        if (particleEffectScript) {
+            if (sortingOrder != -1) {
+                particleEffectScript.SetSortingOrder(sortingOrder);
+            }
+            particleEffectScript.SetTargetTile(tile);
+            particleEffectScript.PlayParticleEffect();
+        }
+        return go;
+    }
+
     //public GameObject CreateElectricEffectAt(IPointOfInterest poi) {
     //    GameObject go = null;
     //    if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {

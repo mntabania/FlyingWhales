@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: da1d92a130b3f8f4bb0110cd352dca08, type: 3}
-    totalSpriteSurfaceArea: 6025527
+    totalSpriteSurfaceArea: 6027977
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -251,6 +251,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: c85f2b04b39630c41b6ef5115c8e195a, type: 3}
   - {fileID: 21300000, guid: 810dcc14fa6c7bd46b6461152761ee42, type: 3}
   - {fileID: 21300000, guid: eb7254244880c694f82c522756f59a78, type: 3}
+  - {fileID: 21300000, guid: c0ba642466a29304c8bbca82ae9f1598, type: 3}
   - {fileID: 21300000, guid: 00e8e42420e4ae745a7ab33717c9aedf, type: 3}
   - {fileID: 21300000, guid: 3a0ec23466d41b64e8f053ab57eb85f8, type: 3}
   - {fileID: 21300000, guid: d0304b340e3e76944b8c483ce9fb72e4, type: 3}
@@ -1063,6 +1064,7 @@ SpriteAtlas:
   - peasant_human_body
   - walk_3
   - dead_1
+  - protection
   - attack_3
   - interact_4
   - hidden_4
