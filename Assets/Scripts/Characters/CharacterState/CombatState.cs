@@ -785,8 +785,8 @@ public class CombatState : CharacterState {
         summary += "\nExecuting attack...";
         InnerMapManager.Instance.FaceTarget(stateComponent.owner, currentClosestHostile);
         if (isExecutingAttack == false) {
-            stateComponent.owner.marker.SetAnimationTrigger("Attack");
             isExecutingAttack = true;
+            stateComponent.owner.marker.SetAnimationTrigger("Attack");
         }
         //Reset Attack Speed
         stateComponent.owner.marker.ResetAttackSpeed();
