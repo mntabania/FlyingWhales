@@ -69,7 +69,7 @@ public class MapSettings {
             case MAP_SIZE.Large:
                 return new Vector2(16, 10);
             case MAP_SIZE.Extra_Large:
-                return new Vector2(20, 16);
+                return new Vector2(20, 14);
             default:
                 throw new ArgumentOutOfRangeException();
         }
