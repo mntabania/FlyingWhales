@@ -5548,7 +5548,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1712332734}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -82321,11 +82321,9 @@ MonoBehaviour:
     - data:
       - {fileID: 3155686037787929853, guid: f60f53f9537b49c4ca60d026b24a3c20, type: 3}
     - data:
-      - {fileID: 334954033198625523, guid: 0d3c7326ab3f60c4b950be5bac572e13, type: 3}
       - {fileID: 4975527039402339271, guid: 33a4edcf2ab2d5947abdf454f85ae72f, type: 3}
       - {fileID: 1318641501492832096, guid: 8366f3b2df4d9fb43bd85b75561350c9, type: 3}
     - data:
-      - {fileID: 8305651066923425098, guid: ec6bba2afe79685408bf71fe306dc701, type: 3}
       - {fileID: 1488659619888436793, guid: 953bce2abf434df429ae25c5c7ca0b87, type: 3}
       - {fileID: 4850251799321415751, guid: 634c01c526c991d409d4b677dcbfbe1c, type: 3}
     - data:
@@ -99933,8 +99931,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "<color=#FB6F37>Ruinarch</color> is a work in progress. Your feedback during
-    \nour Early Access is welcome and appreciated!\n\nOur next update will improve
-    performance and increase map size.\n\nPlease join us on our <color=#FB6F37>Discord
+    \nour Early Access is welcome and appreciated!\n\nOur next update will introduce
+    player progression to the game.\n\nPlease join us on our <color=#FB6F37>Discord
     channel</color> or \nsubmit your feedback on the form below. Thank you!"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 57aeb108c5856cb45a7fdd5452dc5403, type: 2}
