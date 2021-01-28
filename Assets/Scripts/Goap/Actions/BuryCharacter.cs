@@ -54,6 +54,7 @@ public class BuryCharacter : GoapAction {
             if (targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
                 if(goapNode.actor.homeSettlement != null) {
                     List<HexTile> surroundingAreas = goapNode.actor.homeSettlement.GetSurroundingAreas();
+                    surroundingAreas = CollectionUtilities.Shuffle(surroundingAreas);
                     List<LocationGridTile> validTiles = null;
                     for (int i = 0; i < surroundingAreas.Count; i++) {
                         HexTile surroundingArea = surroundingAreas[i];
