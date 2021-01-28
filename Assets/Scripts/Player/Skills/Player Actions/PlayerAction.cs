@@ -80,6 +80,13 @@ public class PlayerAction : SkillData, IContextMenuItem {
         }
         return CanPerformAbility();
     }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (!canBeCastOnBlessed && targetCharacter.traitContainer.IsBlessed()) {
+            reasons += $"Cannot target Blessed characters,";
+        }
+        return reasons;
+    }
 
     #region IContextMenuItem Implementation
     public void OnPickAction() {
