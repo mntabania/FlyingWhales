@@ -5,7 +5,7 @@ using Inner_Maps.Location_Structures;
 using UtilityScripts;
 
 public class RegionDivisionComponent {
-    private const int MAX_FAUNA_LIST_CAPACITY = 3;
+    private const int MAX_FAUNA_LIST_CAPACITY = 5;
 
     public List<RegionDivision> divisions { get; private set; }
 

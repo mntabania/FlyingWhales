@@ -1483,6 +1483,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                     //Pick one of the character class's needed items and only choose the ones that he doesn't have yet in his inventory
                     continue;
                 }
+                if (owner.HasOwnedItemInHomeStructure(itemName)) {
+                    //Pick one of the character class's needed items and only choose the ones that he doesn't have yet in his home structure
+                    continue;
+                }
                 bool itemHasBeenAdded = false;
                 for (int j = 0; j < owner.homeSettlement.tiles.Count; j++) {
                     HexTile hexInSettlement = owner.homeSettlement.tiles[j];

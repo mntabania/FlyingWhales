@@ -117,15 +117,18 @@ public abstract class Crops : TileObject {
     
     public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
         base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
-        Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
+        //Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
+        StopPerTickGrowth();
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        Messenger.AddListener(Signals.TICK_ENDED, PerTickGrowth);
+        StartPerTickGrowth();
+        //Messenger.AddListener(Signals.TICK_ENDED, PerTickGrowth);
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
-        Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
+        StopPerTickGrowth();
+        //Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
     }
 
     #region Testing

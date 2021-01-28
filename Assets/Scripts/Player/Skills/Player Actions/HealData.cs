@@ -18,6 +18,9 @@ public class HealData : PlayerAction {
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        if (targetCharacter.isDead) {
+            return false;
+        }
         if(targetCharacter.currentHP >= targetCharacter.maxHP) {
             return false;
         }
@@ -25,6 +28,9 @@ public class HealData : PlayerAction {
     }
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.isDead) {
+            reasons += $"{targetCharacter.name} is already dead,";
+        }
         if (targetCharacter.currentHP >= targetCharacter.maxHP) {
             reasons += $"{targetCharacter.name} is at full HP,";
         }
