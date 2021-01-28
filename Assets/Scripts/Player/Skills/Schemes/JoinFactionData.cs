@@ -23,7 +23,8 @@ public class JoinFactionData : SchemeData {
                 Faction faction = FactionManager.Instance.allFactions[i];
                 if (faction != sourceFaction && faction.factionType.type != FACTION_TYPE.Vagrants && faction.factionType.type != FACTION_TYPE.Demons && faction.factionType.type != FACTION_TYPE.Wild_Monsters
                     && faction.factionType.type != FACTION_TYPE.Undead
-                    && faction.HasMemberThatMeetCriteria(c => !c.isDead)) {
+                    && faction.HasMemberThatMeetCriteria(c => !c.isDead)
+                    && !faction.isDisbanded) {
                     choices.Add(faction);
                 }
             }

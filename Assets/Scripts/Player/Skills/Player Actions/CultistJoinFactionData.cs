@@ -6,8 +6,8 @@ using Logs;
 
 public class CultistJoinFactionData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.CULTIST_JOIN_FACTION;
-    public override string name => "Cultist Join Faction";
-    public override string description => "This Action instructs the character to join a target Faction.";
+    public override string name => "Join Faction";
+    public override string description => "This Action instructs the character to join a target Faction. This is a special action available only on Cultists.";
     public override bool canBeCastOnBlessed => true;
 
     public CultistJoinFactionData() : base() {

@@ -13,7 +13,7 @@ public class DefendBehaviour : CharacterBehaviourComponent {
         priority = 10;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-        if (character.isAtHomeStructure || character.IsInTerritory()) {
+        if (character.IsAtHome()) {
             //List<Character> choices = GetTargetChoices(character.territories, character);
             //if (choices != null) {
             //    Character chosenTarget = CollectionUtilities.GetRandomElement(choices);

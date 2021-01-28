@@ -1366,7 +1366,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             viableFactions.Clear();
             for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                 Faction faction = FactionManager.Instance.allFactions[i];
-                if (faction.factionType.type == FACTION_TYPE.Demon_Cult && faction != prevFaction) {
+                if (faction.factionType.type == FACTION_TYPE.Demon_Cult 
+                    && faction != prevFaction
+                    && !faction.isDisbanded
+                    && !faction.IsCharacterBannedFromJoining(this)
+                    && faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(this)) {
                     bool hasCultLeader = faction.HasMemberThatMeetCriteria(m => !m.isDead && m.characterClass.className == "Cult Leader");
                     if (hasCultLeader) {
                         chosenFaction = faction;
