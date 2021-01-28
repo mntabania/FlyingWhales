@@ -927,7 +927,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             int cap = settlementType.GetFacilityCap(kvp.Key);
             int currentAmount = GetStructureCount(kvp.Key.structureType);
             SettlementResources.StructureRequirement required = kvp.Key.structureType.GetRequiredObjectForBuilding();
-            if (currentAmount >= cap && !m_settlementResources.IsRequirementAvailable(required)) {
+            if (currentAmount >= cap || !m_settlementResources.IsRequirementAvailable(required)) {
                 facilityWeights.SetElementWeight(kvp.Key, 0); //remove weight of object since it is already at max.
             }
         }

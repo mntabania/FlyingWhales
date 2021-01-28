@@ -194,6 +194,8 @@ public static class Extensions {
                 return SettlementResources.StructureRequirement.ROCK;
             case STRUCTURE_TYPE.HUNTER_LODGE:
                 return SettlementResources.StructureRequirement.FEATURE_GAME;
+            case STRUCTURE_TYPE.MINE_SHACK:
+                return SettlementResources.StructureRequirement.ORE_VEIN;
             case STRUCTURE_TYPE.ABANDONED_MINE:
             case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
             case STRUCTURE_TYPE.ANCIENT_RUIN:

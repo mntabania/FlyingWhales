@@ -7142,7 +7142,7 @@ MonoBehaviour:
   _blockWallsTilemap: {fileID: 0}
   _size: {x: 9, y: 7}
   _center: {x: 4, y: 3, z: 0}
-  _craftCost: 0
+  _craftCost: 50
   _repairCost: 5
   objectsParent: {fileID: 7167252659451173467}
   _blockWallType: 0
