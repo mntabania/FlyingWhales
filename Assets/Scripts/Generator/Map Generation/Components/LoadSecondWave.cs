@@ -15,11 +15,11 @@ public class LoadSecondWave : MapGenerationComponent {
 
     #region Saved World
     public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
-        yield return MapGenerator.Instance.StartCoroutine(Load(saveData));
+        yield return MapGenerator.Instance.StartCoroutine(Load(data, saveData));
     }
     #endregion
 
-    private IEnumerator Load(SaveDataCurrentProgress saveData) {
+    private IEnumerator Load(MapGenerationData data, SaveDataCurrentProgress saveData) {
         //Load region references
         yield return MapGenerator.Instance.StartCoroutine(LoadRegionReferences(saveData));
         
@@ -73,6 +73,8 @@ public class LoadSecondWave : MapGenerationComponent {
         
         //Load Second wave trait data
         yield return MapGenerator.Instance.StartCoroutine(LoadTraitsSecondWave(saveData));
+        
+        yield return MapGenerator.Instance.StartCoroutine(LoadPlayerReferences(data, saveData));
     }
 
     #region Region
@@ -423,6 +425,15 @@ public class LoadSecondWave : MapGenerationComponent {
                 }
             }
         }
+        yield return null;
+    }
+    #endregion
+
+    #region Player
+    private IEnumerator LoadPlayerReferences(MapGenerationData data, SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Player Data...");
+        saveData.LoadPlayerReferences();
+        data.portal = PlayerManager.Instance.player.portalTile;
         yield return null;
     }
     #endregion
