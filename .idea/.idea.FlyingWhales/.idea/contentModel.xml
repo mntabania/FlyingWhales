@@ -2485,6 +2485,7 @@
                 <e p="BreedMonsterData.cs" t="Include" />
                 <e p="BuildDemonicStructureData.cs" t="Include" />
                 <e p="CultistBoobyTrapData.cs" t="Include" />
+                <e p="CultistJoinFactionData.cs" t="Include" />
                 <e p="CultistPoisonData.cs" t="Include" />
                 <e p="CultistTransformData.cs" t="Include" />
                 <e p="DestroyData.cs" t="Include" />

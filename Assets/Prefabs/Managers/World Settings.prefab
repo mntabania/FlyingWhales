@@ -2175,7 +2175,6 @@ PrefabInstance:
       value: 'Create a Demon Cult faction and have it grow to at least 12 members.
 
 
-
         Warning:
         Ensure that you have the Defiler on your loadout!'
       objectReference: {fileID: 0}
@@ -2670,8 +2669,8 @@ PrefabInstance:
         before the two warring factions wipe each other out.
 
 
-        Unique Features:
-        Lich only.'
+        <color="green">Unique
+        Features:</color> Lich only.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -2923,11 +2922,11 @@ PrefabInstance:
         to win.
 
 
-        Features: Special fixed loadout.
+        <color="green">Features:</color> Special fixed loadout.
 
 
-        Finishing this
-        unlocks: <b>Affatt</b> and <b>Custom</b>.'
+        <color="green">Unlocks:</color>
+        <b>Affatt</b> and <b>Custom</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -3172,8 +3171,8 @@ PrefabInstance:
       value: "A single desert region with a burgeoning human town. Unknown to these
         residents, the surrounding caves are filled with danger. \r\n\r\nThere is
         a strange artifact of unknown origin somewhere nearby - is it connected to
-        the dozens of various crystals scattered around the place?\n\nFinishing this
-        unlocks: <b>Icalawa</b> and <b>Pangat Loo</b>."
+        the dozens of various crystals scattered around the place?\n\n<color=\"green\">Unlocks:</color>
+        <b>Icalawa</b> and <b>Pangat Loo</b>."
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -3660,12 +3659,12 @@ PrefabInstance:
         out those pretentious elves.
 
 
-        Special Features: No monsters. Special
-        fixed loadout.
+        <color="green">Special Features:</color>
+        No monsters. Special fixed loadout.
 
 
-        Finishing this unlocks: <b>Zenko</b>, <b>Aneem</b>
-        and <b>Pitto</b>.'
+        <color="green">Unlocks:</color>
+        <b>Zenko</b>, <b>Aneem</b> and <b>Pitto</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -3916,12 +3915,12 @@ PrefabInstance:
         army there and then wipeout all humans in one apocalyptic invasion.
 
 
-        Special
-        features: No new Factions and Villages. Necronomicon. Graveyards.
+        <color="green">Special
+        features:</color> No new Factions and Villages. Necronomicon. Graveyards.
 
 
-        Finishing
-        this unlocks: <b>Affatt</b> and <b>Custom</b>.'
+        <color="green">Unlocks:</color>
+        <b>Affatt</b> and <b>Custom</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -4176,7 +4175,7 @@ PrefabInstance:
         new Factions and Villages.
 
 
-        Finishing this unlocks: <b>Aneem</b>
+        <color="green">Unlocks:</color> <b>Aneem</b>
         and <b>Pitto</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
