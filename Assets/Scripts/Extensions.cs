@@ -157,6 +157,8 @@ public static class Extensions {
             case STRUCTURE_TYPE.TAILORING:
             case STRUCTURE_TYPE.TANNERY:
             case STRUCTURE_TYPE.FISHING_SHACK:
+            case STRUCTURE_TYPE.TEMPLE:
+            case STRUCTURE_TYPE.CULT_TEMPLE:
                 return true;
             default:
                 return false;

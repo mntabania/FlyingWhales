@@ -2174,7 +2174,7 @@ PrefabInstance:
       propertyPath: description
       value: 'Create a Demon Cult faction and have it grow to at least 12 members.
 
-        
+
 
         Warning:
         Ensure that you have the Defiler on your loadout!'
@@ -4169,15 +4169,15 @@ PrefabInstance:
         type: 3}
       propertyPath: description
       value: 'This land is home to four Factions that are at peace with each other.
-        End this boring lull by triggering at least 3 active wars.
+        End this boring lull and wipe them all out.
 
 
-        Special
-        Features: No new Factions and Villages. Puppetmaster only.
+        Special Features: No
+        new Factions and Villages.
 
 
-        Finishing
-        this unlocks: <b>Aneem</b> and <b>Pitto</b>.'
+        Finishing this unlocks: <b>Aneem</b>
+        and <b>Pitto</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}

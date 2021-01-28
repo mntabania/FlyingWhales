@@ -159,7 +159,7 @@ public class WorldSettingsData {
     private void SetZenkoWorldSettings() {
         Debug.Log("Set world settings as Zenko");
         worldType = World_Type.Zenko;
-        victoryCondition = VICTORY_CONDITION.Declare_3_Wars;
+        victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings(victoryCondition);
         mapSettings.AllowMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
@@ -167,7 +167,7 @@ public class WorldSettingsData {
         factionSettings.BlockNewFactions();
         villageSettings.SetBlessedMigrantsState(false);
         factionSettings.AllowFactionIdeologyChanges();
-        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Puppet_Master);
+        playerSkillSettings.SetForcedArchetype(PLAYER_ARCHETYPE.Normal);
     }
     private void SetAneemWorldSettings() {
         Debug.Log("Set world settings as Aneem");

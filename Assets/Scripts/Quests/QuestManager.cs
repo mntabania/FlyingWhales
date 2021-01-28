@@ -68,7 +68,7 @@ namespace Quests {
                     winConditionTracker = new AffattWinConditionTracker();
                     break;
                 case WorldSettingsData.World_Type.Zenko:
-                    winConditionTracker = new ZenkoWinConditionTracker();
+                    winConditionTracker = new OonaWinConditionTracker(); //reverted for now. Since zenko win condition is currently difficult.
                     break;
                 case WorldSettingsData.World_Type.Aneem:
                     winConditionTracker = new AneemWinConditionTracker();
