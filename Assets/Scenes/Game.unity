@@ -82538,7 +82538,7 @@ MonoBehaviour:
   - 29
   - 30
   - 31
-  heuristic: 0
+  heuristic: 2
   heuristicScale: 1
   threadCount: -2
   maxFrameTime: 10

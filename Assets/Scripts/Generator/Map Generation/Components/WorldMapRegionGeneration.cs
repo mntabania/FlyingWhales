@@ -164,16 +164,18 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
     private void LoadSavedRegionDivisions(WorldMapTemplate p_template, Region p_region) {
         int lastX = 0;
         int lastY = 0;
+        int regionIndex = 0;
         foreach (var mapTemplateRegion in p_template.regions) {
             for (int i = 0; i < mapTemplateRegion.Value.Length; i++) {
                 RegionTemplate regionTemplate = mapTemplateRegion.Value[i];
-                RegionDivision division = p_region.regionDivisionComponent.divisions[i];
+                RegionDivision division = p_region.regionDivisionComponent.divisions[regionIndex];
                 PopulateRegionDivisionHexTilesFromTemplate(division, regionTemplate, lastX, lastY);
                 lastX += regionTemplate.width;
                 if (lastX == GridMap.Instance.width) {
                     lastX = 0;
                     lastY += regionTemplate.height;
                 }
+                regionIndex++;
             }
         }
     }
