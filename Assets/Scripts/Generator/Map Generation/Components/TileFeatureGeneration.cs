@@ -218,12 +218,12 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				HexTile chosenTile = null;
 				if (j == 0) {
 					//if first village, pick from preferred tiles first
-					for (int k = 0; k < data.villageSpots.Count; k++) {
-						HexTile tile = data.villageSpots[k];
-						if (factionTemplate.IsTilePreferredByFaction(tile)) {
-							preferredTiles.Add(tile);
-						}
-					}
+					// for (int k = 0; k < data.villageSpots.Count; k++) {
+					// 	HexTile tile = data.villageSpots[k];
+					// 	if (factionTemplate.IsTilePreferredByFaction(tile)) {
+					// 		preferredTiles.Add(tile);
+					// 	}
+					// }
 					//if no preferred tiles are available, then just choose at random from available village spots
 					chosenTile = CollectionUtilities.GetRandomElement(preferredTiles.Count > 0 ? preferredTiles : data.villageSpots);
 				} else {
