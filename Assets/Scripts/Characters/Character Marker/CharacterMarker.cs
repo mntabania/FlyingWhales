@@ -1002,7 +1002,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         _pauseAnimationCounter--;
         UpdatePauseAnimationSpeed();
     }
-    private void UpdatePauseAnimationSpeed() {
+    public void UpdatePauseAnimationSpeed() {
         if(_pauseAnimationCounter > 0) {
             animator.speed = 0;
         } else {

@@ -1366,7 +1366,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             viableFactions.Clear();
             for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                 Faction faction = FactionManager.Instance.allFactions[i];
-                if (faction.factionType.type == FACTION_TYPE.Demon_Cult && faction != prevFaction) {
+                if (faction.factionType.type == FACTION_TYPE.Demon_Cult 
+                    && faction != prevFaction
+                    && !faction.isDisbanded
+                    && !faction.IsCharacterBannedFromJoining(this)
+                    && faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(this)) {
                     bool hasCultLeader = faction.HasMemberThatMeetCriteria(m => !m.isDead && m.characterClass.className == "Cult Leader");
                     if (hasCultLeader) {
                         chosenFaction = faction;
@@ -4738,6 +4742,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             marker.SetCharacter(this);
         }
+        //Note: This is added because, there is a bug wherein after unseizing the character, it does not animate anymore, the reason is that while character is being seized, the "UpdateAnimationSpeed" function is not called
+        //Refer to this: https://trello.com/c/oFbPZlmT/3521-character-not-animating-after-seizing
+        marker.UpdatePauseAnimationSpeed();
         //marker.SetAllColliderStates(true);
         EnableMarker();
         marker.OnUnseize();

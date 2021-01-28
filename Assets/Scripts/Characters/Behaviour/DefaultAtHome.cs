@@ -27,7 +27,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
             //}
             return true;
         } else if (character.isAtHomeStructure || character.IsInTerritory()) {
-            if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME) {
+            if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.IsReturnHome()) {
                 log += $"\n-{character.name} is in home structure and just returned home";
 
                 if((character.characterClass.IsCombatant() || character.characterClass.className == "Noble") && !character.partyComponent.hasParty && character.homeSettlement != null && !character.traitContainer.HasTrait("Enslaved")) {

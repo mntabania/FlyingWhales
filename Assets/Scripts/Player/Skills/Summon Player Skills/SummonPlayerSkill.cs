@@ -23,8 +23,8 @@ public class SummonPlayerSkill : SkillData {
         CharacterManager.Instance.PlaceSummonInitially(summon, targetTile);
 
         BaseSettlement settlement = null;
-        if (targetTile.IsPartOfSettlement(out settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE) {
-            summon.MigrateHomeStructureTo(targetTile.structure);	
+        if (targetTile.structure.structureType != STRUCTURE_TYPE.WILDERNESS && targetTile.structure.structureType != STRUCTURE_TYPE.OCEAN && targetTile.IsPartOfSettlement(out settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE) {
+            summon.MigrateHomeStructureTo(targetTile.structure);
         } else {
             if (targetTile.collectionOwner.isPartOfParentRegionMap) {
                 summon.SetTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);

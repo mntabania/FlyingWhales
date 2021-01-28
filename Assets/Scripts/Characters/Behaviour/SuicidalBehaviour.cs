@@ -13,7 +13,7 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.currentStructure == character.homeStructure) {
-            if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME) {
+            if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.IsReturnHome()) {
                 log += $"\n-{character.name} is in home structure and just returned home";
                 log += "\n-50% chance to Sit if there is still an unoccupied Table or Desk in the current location";
                 int chance = UnityEngine.Random.Range(0, 100);
