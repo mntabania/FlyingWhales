@@ -102,6 +102,9 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                         if (facilityCount < (character.homeSettlement.settlementType.maxFacilities/2)) {
                             chance = 3;
                         }
+                        if(!character.homeSettlement.HasStructure(STRUCTURE_TYPE.LUMBERYARD) && !character.homeSettlement.HasStructure(STRUCTURE_TYPE.MINE_SHACK)) {
+                            chance *= 2;
+                        }
                         // chance = 100;
                         if (GameUtilities.RollChance(chance, ref log)) {
                             log += $"\n-Chance to build facility met.";

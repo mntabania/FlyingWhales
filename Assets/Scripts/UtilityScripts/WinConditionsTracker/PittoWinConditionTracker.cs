@@ -30,6 +30,7 @@ public class PittoWinConditionTracker : WinconditionTracker {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, CheckIfCharacterIsEliminated);
         Messenger.AddListener<Character>(FactionSignals.FACTION_SET, CheckIfCharacterIsEliminated);
         Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, CharacterJoinFaction);
+        Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, CharacterRemoveFaction);
         Messenger.AddListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
         Messenger.AddListener<Faction>(FactionSignals.FACTION_CREATED, OnFactionCreated);
         Messenger.AddListener<Faction>(FactionSignals.FACTION_DISBANDED, OnFactionDisbanded);
@@ -51,6 +52,7 @@ public class PittoWinConditionTracker : WinconditionTracker {
 
     private void OnFactionCreated(Faction p_createdFaction) {
         if (p_createdFaction.factionType.type == FACTION_TYPE.Demon_Cult && m_createdFaction == null) {
+            UnityEngine.Debug.LogError(p_createdFaction.name + " CREATED");
             m_createdFaction = p_createdFaction;
             _onfactionCreated?.Invoke(p_createdFaction);
         }
@@ -95,6 +97,15 @@ public class PittoWinConditionTracker : WinconditionTracker {
         return count;
     }
 
+    private void CharacterRemoveFaction(Character p_newMember, Faction p_faction) {
+        if (m_createdFaction != null) {
+            if (m_createdFaction == p_faction && !cultists.Contains(p_newMember)) {
+                cultists.Remove(p_newMember);
+                _CharacterChangeTrait?.Invoke(p_newMember);
+            }
+        }
+    }
+
     private void CharacterJoinFaction(Character p_newMember, Faction p_faction) {
         if (m_createdFaction != null) {
             if (m_createdFaction == p_faction && !cultists.Contains(p_newMember)) {
@@ -102,7 +113,6 @@ public class PittoWinConditionTracker : WinconditionTracker {
                 _CharacterChangeTrait?.Invoke(p_newMember);
             }
         }
-        
     }
 
     private void CheckIfCharacterIsEliminated(Character p_character) {
