@@ -2665,7 +2665,7 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: 'Eliminate at least 10 Villagers through Plague fatality only. Hurry
+      value: 'Eliminate at least 14 Villagers through Plague fatality only. Hurry
         before the two warring factions wipe each other out.
 
 
@@ -4171,12 +4171,12 @@ PrefabInstance:
         End this boring lull and wipe them all out.
 
 
-        Special Features: No
-        new Factions and Villages.
+        <color="green">Special
+        Features:</color> No new Factions and Villages.
 
 
-        <color="green">Unlocks:</color> <b>Aneem</b>
-        and <b>Pitto</b>.'
+        <color="green">Unlocks:</color>
+        <b>Aneem</b> and <b>Pitto</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}

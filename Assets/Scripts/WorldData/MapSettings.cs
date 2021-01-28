@@ -26,6 +26,7 @@ public class MapSettings {
         return biomes.Remove(biome);
     }
     public void ClearBiomes() {
+        Debug.Log($"Cleared Biomes");
         biomes.Clear();
     }
     public int GetMaxBiomeCount() {

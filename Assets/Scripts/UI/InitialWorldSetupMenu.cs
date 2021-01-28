@@ -76,6 +76,7 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
     }
     private void ReGenerateWorld() {
         DOTween.Clear(true);
+        WorldSettings.Instance.worldGenOptionsUIController.ApplyBiomeSettings(); //this is  so that random biomes will be randomized again
         MainMenuManager.Instance.StartGame();
     }
     #endregion

@@ -59,13 +59,6 @@ public class WorldSettings : MonoBehaviour {
     private void InitializeData() {
         defaultWorldToggle.isOn = true;
     }
-    private void UpdateBiomes(BIOMES biome, bool state) {
-        if (state) {
-            worldSettingsData.mapSettings.AddBiome(biome);
-        } else {
-            worldSettingsData.mapSettings.RemoveBiome(biome);
-        }
-    }
     public void SetWorldSettingsData(WorldSettingsData data) {
         worldSettingsData = data;
     }

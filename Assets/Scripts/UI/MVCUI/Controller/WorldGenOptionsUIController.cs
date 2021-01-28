@@ -93,9 +93,12 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		WorldSettings.Instance.worldSettingsData.SetVictoryCondition(VICTORY_CONDITION.Eliminate_All);
 		UpdateUIBasedOnCurrentSettings(WorldSettings.Instance.worldSettingsData);
 	}
+	public void ApplyBiomeSettings() {
+		WorldSettings.Instance.worldSettingsData.mapSettings.ApplyBiomeSettings(_chosenBiomes);
+	}
 	public void ApplyCurrentSettingsToData() {
 		//apply chosen biomes to actual data
-		WorldSettings.Instance.worldSettingsData.mapSettings.ApplyBiomeSettings(_chosenBiomes);
+		ApplyBiomeSettings();
 		WorldSettings.Instance.worldSettingsData.factionSettings.FinalizeFactionTemplates();
 	}
 	private void UpdateUIBasedOnCurrentSettings(WorldSettingsData p_settings) {

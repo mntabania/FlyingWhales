@@ -159,6 +159,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.FISHING_SHACK:
             case STRUCTURE_TYPE.TEMPLE:
             case STRUCTURE_TYPE.CULT_TEMPLE:
+            case STRUCTURE_TYPE.MONSTER_LAIR:
                 return true;
             default:
                 return false;

@@ -11,7 +11,7 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(ElevationBiomeRefinement());
 	}
 	private IEnumerator SetBiomePerRegion(MapGenerationData data) {
-		var choices = WorldSettings.Instance.worldSettingsData.mapSettings.biomes;
+		var choices = new List<BIOMES>(WorldSettings.Instance.worldSettingsData.mapSettings.biomes);
 		int lastX = 0;
 		int lastY = 0;
 		int regionIndex = 0;
@@ -21,6 +21,9 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 				RegionTemplate regionTemplate = kvp.Value[i];
 				BIOMES biome = GetBiomeForRegion(regionIndex, choices);
 				choices.Remove(biome);
+				if (choices.Count <= 0) {
+					choices.AddRange(WorldSettings.Instance.worldSettingsData.mapSettings.biomes);
+				}
 				SetBiomeForRegionDivisionTemplate(regionTemplate, lastX, lastY, biome, region);
 				lastX += regionTemplate.width;
 				if (lastX == GridMap.Instance.width) {

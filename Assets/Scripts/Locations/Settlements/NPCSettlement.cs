@@ -979,12 +979,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void PlaceResourcePiles() {
         WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
         mainStorage.AddPOI(woodPile);
+        woodPile.SetResourceInPile(500);
 
         StonePile stonePile = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
         mainStorage.AddPOI(stonePile);
+        stonePile.SetResourceInPile(500);
 
         MetalPile metalPile = InnerMapManager.Instance.CreateNewTileObject<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE);
         mainStorage.AddPOI(metalPile);
+        metalPile.SetResourceInPile(500);
 
         FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.ANIMAL_MEAT);
         mainStorage.AddPOI(foodPile);

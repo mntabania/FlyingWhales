@@ -1218,7 +1218,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 	    }
     }
     private void TriggerBuildFoodProducingStructure() {
-	    if (!_owner.HasJob(JOB_TYPE.PLACE_BLUEPRINT) && !_owner.HasJob(JOB_TYPE.BUILD_BLUEPRINT)) {
+	    if (_owner.owner != null && !_owner.HasJob(JOB_TYPE.PLACE_BLUEPRINT) && !_owner.HasJob(JOB_TYPE.BUILD_BLUEPRINT)) {
 		    StructureSetting foodProducingStructure = _owner.GetValidFoodProducingStructure();
 		    if (LandmarkManager.Instance.CanPlaceStructureBlueprint(_owner, foodProducingStructure, out var targetTile, out var structurePrefabName, out var connectorToUse, out var connectorTile)) {
 			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_BLUEPRINT, INTERACTION_TYPE.PLACE_BLUEPRINT, targetTile.genericTileObject, _owner);
