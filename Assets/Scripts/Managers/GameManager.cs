@@ -219,24 +219,49 @@ public class GameManager : MonoBehaviour {
     private void TickStarted() {
         if (today.tick % ticksPerHour == 0 && !IsStartOfGame()) {
             //hour reached
+            Profiler.BeginSample("Hour Started");
             Messenger.Broadcast(Signals.HOUR_STARTED);
+            Profiler.EndSample();
         }
+        Profiler.BeginSample("Tick Started Signal");
         Messenger.Broadcast(Signals.TICK_STARTED);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample("Tick Started - Update UI");
         Messenger.Broadcast(UISignals.UPDATE_UI);
+        Profiler.EndSample();
     }
     private void TickEnded(){
+        Profiler.BeginSample("Check Schedules");
         Messenger.Broadcast(Signals.CHECK_SCHEDULES);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample("Character Tick Ended Movement");
         Messenger.Broadcast(CharacterSignals.CHARACTER_TICK_ENDED_MOVEMENT);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample("Process All Unprocessed POIS");
         Messenger.Broadcast(CharacterSignals.PROCESS_ALL_UNPOROCESSED_POIS);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample("Character Tick Ended");
         Messenger.Broadcast(CharacterSignals.CHARACTER_TICK_ENDED);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample("Generic Tick Ended Signal");
         Messenger.Broadcast(Signals.TICK_ENDED);
+        Profiler.EndSample();
         
         today.tick += 1;
         if (today.tick > ticksPerDay) {
             today.tick = 1;
+            Profiler.BeginSample("Tick Ended - Day Started");
             DayStarted(false);
+            Profiler.EndSample();
         }
+        Profiler.BeginSample("Tick Ended - Update UI");
         Messenger.Broadcast(UISignals.UPDATE_UI);
+        Profiler.EndSample();
     }
     public void SetTick(int amount) {
         today.tick = amount;
@@ -709,6 +734,9 @@ public class GameManager : MonoBehaviour {
         return new Log();
     }
     public static Log CreateNewLog(GameDate date, string category, string file, string key, ActualGoapNode node = null, params LOG_TAG[] providedTags) {
+        return new Log(date, category, file, key, node, providedTags);
+    }
+    public static Log CreateNewLog(GameDate date, string category, string file, string key, ActualGoapNode node = null, LOG_TAG providedTags = LOG_TAG.Work) {
         return new Log(date, category, file, key, node, providedTags);
     }
     public static Log CreateNewLog(string id, GameDate date, string logText, string category, string key, string file, string involvedObjects, List<LOG_TAG> providedTags, string rawText, List<LogFillerStruct> fillers = null) {

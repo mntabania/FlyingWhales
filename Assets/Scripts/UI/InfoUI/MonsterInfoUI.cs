@@ -108,7 +108,7 @@ public class MonsterInfoUI : InfoUIBase {
         Character previousMonster = _activeMonster;
         _activeMonster = _data as Character;
         base.OpenMenu();
-        if (previousMonster != null && previousMonster.marker != null) {
+        if (previousMonster != null && previousMonster.hasMarker) {
             previousMonster.marker.UpdateNameplateElementsState();
         }
         if (UIManager.Instance.IsConversationMenuOpen()) {

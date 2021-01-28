@@ -45,7 +45,7 @@ public class TreasureChest : TileObject {
                 Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataTreasureChest.objectInsideID);
                 if (character != null) {
                     SetObjectInside(character);
-                    if (character.marker != null) {
+                    if (character.hasMarker) {
                         character.marker.PlaceMarkerAt(gridTileLocation);
                         character.DisableMarker();
                     }    

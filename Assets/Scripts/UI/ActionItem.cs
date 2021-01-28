@@ -5,6 +5,7 @@ using DG.Tweening;
 using EZObjectPools;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.UI;
 
 public class ActionItem : PooledObject {
@@ -112,8 +113,10 @@ public class ActionItem : PooledObject {
 	    Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
     }
     private void PerTickCooldown() {
+	    Profiler.BeginSample($"Action Item Per Tick Cooldown");
 	    float fillAmount = ((float)playerAction.currentCooldownTick / playerAction.cooldown);
         cooldownCoverImg.DOFillAmount(fillAmount, 0.4f);
+        Profiler.EndSample();
     }
     private void StopCooldownFill() {
         SetCooldownState(false);

@@ -6,6 +6,7 @@ using Traits;
 using UnityEngine;
 using UtilityScripts;
 using Inner_Maps.Location_Structures;
+using UnityEngine.Profiling;
 using Random = System.Random;
 
 public class CharacterNeedsComponent : CharacterComponent {
@@ -211,12 +212,14 @@ public class CharacterNeedsComponent : CharacterComponent {
     #endregion
 
     private void PerHour() {
+        Profiler.BeginSample($"{owner.name} Needs Component Hour Started");
         if (!_hasTriggeredThisHour) {
             _hasTriggeredThisHour = true;
             EveryOtherHour();
         } else {
             _hasTriggeredThisHour = false;
         }
+        Profiler.EndSample();
     }
     private void EveryOtherHour() {
         if (HasNeeds() == false) { return; }
@@ -269,6 +272,7 @@ public class CharacterNeedsComponent : CharacterComponent {
             /*&& _character.isAtHomeRegion && _character.homeNpcSettlement != null*/; //Characters living on a region without a npcSettlement must not decrease needs
     }
     public void DecreaseNeeds() {
+        Profiler.BeginSample($"{owner.name} Decrease Needs");
         //Stamina is not affected by HasNeeds checker, so anyone, even demons will decrease their stamina
         if (doNotGetDrained <= 0) {
             if (owner.marker && owner.marker.isMoving) {
@@ -294,6 +298,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         if (!doesNotGetBored) {
             AdjustHappiness(-(EditableValuesManager.Instance.baseHappinessDecreaseRate + happinessDecreaseRate));
         }
+        Profiler.EndSample();
     }
     public string GetNeedsSummary() {
         string summary = $"Fullness: {fullness.ToString(CultureInfo.InvariantCulture)}/{FULLNESS_DEFAULT.ToString(CultureInfo.InvariantCulture)}";

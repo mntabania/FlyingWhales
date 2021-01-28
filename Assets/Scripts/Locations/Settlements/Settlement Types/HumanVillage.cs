@@ -24,7 +24,7 @@ namespace Locations.Settlements.Settlement_Types {
             SetInitialFacilityWeightAndCap(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE), 80, 1);
         }
         public override StructureSetting GetDwellingSetting(Faction faction) {
-            return new StructureSetting(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE);
+            return new StructureSetting(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE, faction.factionType.usesCorruptedStructures);
         }
     }
 }

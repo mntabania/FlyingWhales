@@ -32,7 +32,7 @@ public class SeizeCharacterData : PlayerAction {
                 }
             }
             return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && 
-                   targetCharacter.marker != null && targetCharacter.grave == null;
+                   targetCharacter.hasMarker && targetCharacter.grave == null;
         }
         return canPerform;
     }

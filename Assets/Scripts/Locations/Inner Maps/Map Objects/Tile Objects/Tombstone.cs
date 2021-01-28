@@ -102,7 +102,7 @@ public class Tombstone : TileObject {
     public override void SetInventoryOwner(Character character) {
         base.SetInventoryOwner(character);
         if (character != null) {
-            if (this.character.marker != null) {
+            if (this.character.hasMarker) {
                 this.character.marker.SetNameState(false);
             }
         }

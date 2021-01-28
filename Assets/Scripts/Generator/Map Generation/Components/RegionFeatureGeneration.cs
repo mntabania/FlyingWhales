@@ -11,10 +11,10 @@ public class RegionFeatureGeneration : MapGenerationComponent {
         RegionFeatureDB.Crystals, 
         RegionFeatureDB.Dragon, 
         RegionFeatureDB.Haunted, 
-        RegionFeatureDB.Poison_Vents,
+        // RegionFeatureDB.Poison_Vents,
         RegionFeatureDB.Ruins, 
         RegionFeatureDB.Teeming, 
-        RegionFeatureDB.Vapor_Vents
+        // RegionFeatureDB.Vapor_Vents
     };
     
     public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Tutorial;
+using UnityEngine.Profiling;
 namespace Quests {
     public class IsAtTime : QuestCriteria {
 
@@ -17,6 +18,7 @@ namespace Quests {
         }
 
         private void CheckCriteria() {
+            Profiler.BeginSample($"Is At Time Quest");
             if (_validTimes.Contains(GameManager.Instance.Today().tick)) {
                 if (hasCriteriaBeenMet == false) {
                     SetCriteriaAsMet();    
@@ -26,6 +28,7 @@ namespace Quests {
                     SetCriteriaAsUnMet();    
                 }
             }
+            Profiler.EndSample();
         }
     }
 }

@@ -5,7 +5,7 @@ using Inner_Maps;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Traits;
-
+using UnityEngine.Profiling;
 #if UNITY_EDITOR
 using Packages.Rider.Editor;
 #endif
@@ -243,6 +243,7 @@ public class HexTileSpellsComponent {
         to.structure.AddPOI(poi, to);
     }
     private void PerTickEarthquake() {
+        Profiler.BeginSample($"Per Tick Earthquake");
         if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingLocation == owner.region) {
             if (InnerMapCameraMove.Instance.CanSee(_centerEarthquakeTile)) {
                 if (!DOTween.IsTweening(InnerMapCameraMove.Instance.camera)) {
@@ -291,6 +292,7 @@ public class HexTileSpellsComponent {
         if (currentEarthquakeDuration >= 3) {
             SetHasEarthquake(false);
         }
+        Profiler.EndSample();
     }
     #endregion
     
@@ -363,10 +365,12 @@ public class HexTileSpellsComponent {
     //    }
     //}
     private void PerTickBrimstones() {
+        Profiler.BeginSample($"Per Tick Brimstones");
         currentBrimstonesDuration++;
         if (currentBrimstonesDuration >= 12) {
             SetHasBrimstones(false);
         }
+        Profiler.EndSample();
     }
     public void ResetBrimstoneDuration() {
         currentBrimstonesDuration = 0;
@@ -415,10 +419,12 @@ public class HexTileSpellsComponent {
         }
     }
     private void PerTickElectricStorm() {
+        Profiler.BeginSample($"Per Tick Electric Storm");
         currentElectricStormDuration++;
         if (currentElectricStormDuration >= 12) {
             SetHasElectricStorm(false);
         }
+        Profiler.EndSample();
     }
     public void ResetElectricStormDuration() {
         currentElectricStormDuration = 0;
@@ -460,10 +466,12 @@ public class HexTileSpellsComponent {
         }
     }
     private void PerTickIceteroids() {
+        Profiler.BeginSample($"Per Tick Iceteroids");
         currentIceteroidsDuration++;
         if (currentIceteroidsDuration >= GameManager.ticksPerHour) {
             SetHasIceteroids(false);
         }
+        Profiler.EndSample();
     }
     public void ResetIceteroidDuration() {
         currentIceteroidsDuration = 0;

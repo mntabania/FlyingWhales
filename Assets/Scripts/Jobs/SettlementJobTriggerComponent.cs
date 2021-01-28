@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using Locations.Settlements;
 using Locations.Settlements.Components;
+using UnityEngine.Profiling;
 
 public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClassTracker.ISettlementTrackerListener, NPCSettlementEventDispatcher.ITileListener {
 
@@ -131,10 +132,12 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		TryCreateMiningJob();
 	}
 	private void HourlyJobActions() {
+		Profiler.BeginSample($"{_owner.name} settlement Hourly Job Actions");
 		CreatePatrolJobs();
 		TryCreateMiningJob();
 		HourlyCheckForNeededCharacterClasses();
 		TryCreateMissingFoodProducingStructure();
+		Profiler.EndSample();
 	}
 	private void OnResourceInPileChangedVillage(ResourcePile resourcePile) {
 		if (resourcePile.gridTileLocation != null && resourcePile.structureLocation == _owner.mainStorage) {
@@ -1012,6 +1015,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
     }
     
     public void CheckIfShouldCraftWaterWell() {
+	    Profiler.BeginSample($"{_owner.name} settlementt Craft Water Well Check");
 	    LocationStructure cityCenter = _owner.GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
 	    TileObject waterWell = cityCenter.GetFirstTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
 	    Assert.IsNotNull(waterWell);
@@ -1027,6 +1031,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent, SettlementClas
 		    job.SetCanTakeThisJobChecker(JobManager.Can_Craft_Well);
 		    _owner.AddToAvailableJobs(job); 
 	    }
+	    Profiler.EndSample();
     }
     #endregion
 

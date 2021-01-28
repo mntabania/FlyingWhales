@@ -3,6 +3,7 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Locations.Settlements;
+using UnityEngine.Profiling;
 using UtilityScripts;
 
 public class SkillData : IPlayerSkill {
@@ -201,6 +202,7 @@ public class SkillData : IPlayerSkill {
         }
     }
     private void PerTickCooldown() {
+        Profiler.BeginSample($"{name} Per Tick Cooldown");
         currentCooldownTick++;
         // Assert.IsFalse(currentCooldownTick > cooldown, $"Cooldown tick became higher than cooldown in {name}. Cooldown is {cooldown.ToString()}. Cooldown Tick is {currentCooldownTick.ToString()}");
         if(currentCooldownTick >= cooldown) {
@@ -225,6 +227,7 @@ public class SkillData : IPlayerSkill {
                 StartCooldown();
             }
         }
+        Profiler.EndSample();
     }
     public string GetManaCostChargesCooldownStr() {
         string str = "Mana Cost: " + manaCost;

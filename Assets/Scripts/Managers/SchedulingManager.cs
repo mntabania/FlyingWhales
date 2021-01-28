@@ -43,8 +43,7 @@ public class SchedulingManager : BaseMonoBehaviour {
         }
         string newID = GenerateScheduleID();
         schedules[gameDate].Add(new ScheduledAction() { scheduleID = newID, action = act, scheduler = adder });
-        Debug.Log(
-            $"{GameManager.Instance.TodayLogString()}Created new schedule on {gameDate.ConvertToContinuousDaysWithTime()}. Action is {act.Method.Name}, by {adder}");
+        // Debug.Log($"{GameManager.Instance.TodayLogString()}Created new schedule on {gameDate.ConvertToContinuousDaysWithTime()}. Action is {act.Method.Name}, by {adder}");
         return newID;
 	}
 	internal void RemoveEntry(GameDate gameDate){

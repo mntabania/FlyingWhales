@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 
 public class CharacterStateJob : JobQueueItem {
     
@@ -42,7 +43,9 @@ public class CharacterStateJob : JobQueueItem {
             return true;
         }
         if (assignedState == null) {
+            Profiler.BeginSample($"Character State Job - Process Job - Switch To State - {targetState.ToString()}");
             CharacterState newState = assignedCharacter.stateComponent.SwitchToState(targetState, targetPOI);
+            Profiler.EndSample();
             if (hasBeenReset) { return true; } //Need to check since job can be reset when the assignedCharacter switches states.
             //check if the new state is the assigned character's state, before assigning the state to this job.
             if (newState != null && assignedCharacter.stateComponent.currentState == newState) {
@@ -61,10 +64,14 @@ public class CharacterStateJob : JobQueueItem {
             }
         } else {
             if (assignedState.isDone) {
+                Profiler.BeginSample($"Character State Job - Process Job - Cancel Job - isDone");
                 CancelJob(false);
+                Profiler.EndSample();
                 return true;
             } else if(assignedState.isPaused) {
+                Profiler.BeginSample($"Character State Job - Process Job - Resume State - {assignedState.stateName}");
                 assignedState.ResumeState();
+                Profiler.EndSample();
                 if (assignedState != null) {
                     if (assignedState.isDone && assignedCharacter.currentJob == this) {
                         assignedCharacter.SetCurrentJob(null);

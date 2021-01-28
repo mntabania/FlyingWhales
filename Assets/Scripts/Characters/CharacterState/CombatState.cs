@@ -1006,4 +1006,21 @@ public class CombatState : CharacterState {
     //    actionThatTriggeredThisState = action;
     //}
     #endregion
+
+    public override void Reset() {
+        base.Reset();
+        _currentAttackTimer = 0;
+        _hasTimerStarted = false;
+        isAttacking = false;
+        currentClosestHostile = null;
+        forcedTarget = null;
+        allCharactersThatDegradedRel.Clear();
+        allCharactersThatReactedToThisCombat.Clear();
+        endedInternally = false;
+        lastFledFrom = null;
+        lastFledFromStructure = null;
+        isBeingApprehended = false;
+        isFleeToHome = false;
+        _timesHitCurrentTarget = 0;
+    }
 }

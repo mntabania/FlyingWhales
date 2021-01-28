@@ -1,22 +1,15 @@
-﻿using EZObjectPools;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 using System;
-using TMPro;
 using Pathfinding;
 using System.Linq;
 using Inner_Maps;
-using Inner_Maps.Location_Structures;
 using Traits;
 using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UtilityScripts;
-using UnityEngine.Assertions;
 using Locations.Settlements;
-using Random = UnityEngine.Random;
 
 public class CharacterMarker : MapObjectVisual<Character> {
     public Character character { get; private set; }
@@ -69,7 +62,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     //movement
     public IPointOfInterest targetPOI { get; private set; }
-    public Vector2 anchoredPos { get; private set; }
     public LocationGridTile destinationTile { get; private set; }
     public float progressionSpeedMultiplier { get; private set; }
     public bool isMoving { get; private set; }
@@ -180,11 +172,16 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void ManualUpdate() {
         if (GameManager.Instance.gameHasStarted && !GameManager.Instance.isPaused) {
             if (character.isBeingSeized) { return; }
+            Profiler.BeginSample($"{character.name} - Attack Speed Meter");
             if (attackSpeedMeter < character.combatComponent.attackSpeed) {
                 attackSpeedMeter += ((Time.deltaTime * 1000f) * progressionSpeedMultiplier);
                 UpdateAttackSpeedMeter();
             }
+            Profiler.EndSample();
+
+            Profiler.BeginSample($"{character.name} - Pathfinding Update Me Call");
             pathfindingAI.UpdateMe();
+            Profiler.EndSample();
         }
     }
     private void LateUpdate() {
@@ -231,7 +228,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         visualsParent.transform.localRotation = data.rotation;
         UpdateActionIcon();
         UpdateAnimation();
-        anchoredPos = transform.localPosition;
+        character.SetGridTilePosition(transform.localPosition);
         if (character.gridTileLocation != null) {
             LocationAwarenessUtility.AddToAwarenessList(character, character.gridTileLocation);    
         }
@@ -751,7 +748,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Action action = arrivalAction;
         //set arrival action to null, because some arrival actions set it
         ClearArrivalAction();
+        Profiler.BeginSample($"{character.name} - Arrived At Target - Action Invoke");
         action?.Invoke();   
+        Profiler.EndSample();
         
         // if (actualDestinationTile == attainedDestinationTile || (attainedDestinationTile != null && actualDestinationTile != null && attainedDestinationTile.IsNeighbour(actualDestinationTile))) {
         //     Action action = arrivalAction;
@@ -806,8 +805,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //    return;
         //}
         isMoving = false;
-        string log = $"{character.name} StopMovement function is called!";
-        character.logComponent.PrintLogIfActive(log);
+        // string log = $"{character.name} StopMovement function is called!";
+        // character.logComponent.PrintLogIfActive(log);
         pathfindingAI.SetIsStopMovement(true);
         UpdateAnimation();
         // Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
@@ -1099,7 +1098,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void UpdatePosition() {
         //This is checked per update, stress test this for performance
         //I'm keeping a separate field called anchoredPos instead of using the rect transform anchoredPosition directly because the multithread cannot access transform components
-        anchoredPos = transform.localPosition;
+        character.SetGridTilePosition(transform.localPosition);
 
         if (previousGridTile != character.gridTileLocation && character.gridTileLocation != null) {
             character.gridTileLocation.parentMap.OnCharacterMovedTo(character, character.gridTileLocation, previousGridTile);
@@ -1379,24 +1378,24 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void ProcessAllUnprocessedVisionPOIs() {
         if (character == null) { return; }
-        Profiler.BeginSample($"{character.name} ProcessAllUnprocessedVisionPOIs");
-        string log = $"{character.name} tick ended! Processing all unprocessed in visions...";
+        // string log = $"{character.name} tick ended! Processing all unprocessed in visions...";
         if (unprocessedVisionPOIs.Count > 0) {
             if (!character.isDead && character.reactionComponent.disguisedCharacter == null /* && character.limiterComponent.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
+                Profiler.BeginSample($"{character.name} ProcessAllUnprocessedVisionPOIs - Objects");
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
                     if (poi.mapObjectVisual == null) {
-                        log = $"{log}\n-{poi.nameWithID}'s map visual has been destroyed. Skipping...";
+                        // log = $"{log}\n-{poi.nameWithID}'s map visual has been destroyed. Skipping...";
                         continue;
                     }
                     if (poi.isHidden) {
-                        log = $"{log}\n-{poi.nameWithID} is hidden. Skipping...";
+                        // log = $"{log}\n-{poi.nameWithID} is hidden. Skipping...";
                         continue;
                     }
                     if(poi is Character target) {
                         //After dropping a character, the carrier should not immediately react to the recently dropped character
                         if(target.carryComponent.justGotCarriedBy != null && target.carryComponent.justGotCarriedBy == character) {
-                            log = $"{log}\n-{poi.nameWithID} is just got dropped. Skipping...";
+                            // log = $"{log}\n-{poi.nameWithID} is just got dropped. Skipping...";
                             target.carryComponent.SetJustGotCarriedBy(null);
                             continue;
                         }
@@ -1404,48 +1403,50 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     if(!visionCollider.IsTheSameStructureOrSameOpenSpaceWithPOI(poi)) {
                         //Before reacting to a character check first if he is in vision list, if he is not and he is not in line of sight, do not react
                         if (!IsCharacterInLineOfSightWith(poi)) {
-                            log = $"{log}\n-{poi.nameWithID} is not in same space and no longer in line of sight with actor. Skipping...";
+                            // log = $"{log}\n-{poi.nameWithID} is not in same space and no longer in line of sight with actor. Skipping...";
                             continue;
                         }
                     }
-                    log = $"{log}\n-{poi.nameWithID}";
+                    // log = $"{log}\n-{poi.nameWithID}";
                     bool reactToActionOnly = false;
                     if (unprocessedVisionPOIInterruptsOnly.Count > 0) {
                         reactToActionOnly = unprocessedVisionPOIInterruptsOnly.Contains(poi);
                     }
                     character.ThisCharacterSaw(poi, reactToActionOnly);
                 }
+                Profiler.EndSample();
             } else {
-                log = $"{log}\n - Character is either dead, not processing...";
+                // log = $"{log}\n - Character is either dead, not processing...";
             }
             ClearUnprocessedPOI();
         }
         if (unprocessedActionsOnly.Count > 0) {
             if (!character.isDead) {
+                Profiler.BeginSample($"{character.name} ProcessAllUnprocessedVisionPOIs - Actions");
                 for (int i = 0; i < unprocessedActionsOnly.Count; i++) {
                     ActualGoapNode action = unprocessedActionsOnly[i];
                     Character actor = action.actor;
-                    log = $"{log}\n-{action.goapName} of {actor.name} towards {action.poiTarget.name}";
+                    // log = $"{log}\n-{action.goapName} of {actor.name} towards {action.poiTarget.name}";
                     if (!visionCollider.IsTheSameStructureOrSameOpenSpaceWithPOI(actor)) {
                         //Before reacting to a character check first if he is in vision list, if he is not and he is not in line of sight, do not react
                         if (!IsCharacterInLineOfSightWith(actor)) {
-                            log = $"{log}\n-{actor.nameWithID} is not in same space and no longer in line of sight with actor. Skipping...";
+                            // log = $"{log}\n-{actor.nameWithID} is not in same space and no longer in line of sight with actor. Skipping...";
                             continue;
                         }
                     }
                     character.ThisCharacterSawAction(action);
                 }
+                Profiler.EndSample();
             } else {
-                log = $"{log}\n - Character is either dead, not processing...";
+                // log = $"{log}\n - Character is either dead, not processing...";
             }
             ClearUnprocessedActions();
         }
-        character.logComponent.PrintLogIfActive(log);
+        // character.logComponent.PrintLogIfActive(log);
         character.SetHasSeenFire(false);
         character.SetHasSeenWet(false);
         character.SetHasSeenPoisoned(false);
         character.combatComponent.CheckCombatPerTickEnded();
-        Profiler.EndSample();
     }
     public bool IsPOIInVision(IPointOfInterest poi) {
         return (poi is Character character && inVisionCharacters.Contains(character)) || (poi is TileObject tileObject && inVisionTileObjects.Contains(tileObject));
@@ -1870,14 +1871,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //private readonly RaycastHit2D[] linOfSightHitObjects = new RaycastHit2D[5];
     private RaycastHit2D[] lineOfSightHitObjects;
     public bool IsCharacterInLineOfSightWith(IPointOfInterest target, float rayDistance = 5f) {
-        Profiler.BeginSample($"{character.name} IsCharacterInLineOfSightWith Pre Check");
-        //if (target is BlockWall == false) {
-        //    //only Check in vision list if target is NOT Block Wall. 
-        //    //TODO: Rework this after build. This issue arises when angels try to attack demonic structures.
-
-        //    //if (IsPOIInVision(target) == false) { return false; } 
-        //}
-
         //No longer checks if target is in vision, rather, it should check if target has a map visual object, if it does not, there will be no line of sight
         //Also, there is no line of sight if actor and target is in a different region
         if (target.mapObjectVisual == null) {
@@ -1886,18 +1879,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character == null || character.currentRegion == null || target.gridTileLocation == null || character.currentRegion != target.gridTileLocation.structure.region) {
             return false;
         }
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"{character.name} start set");
         //precompute our ray settings
         Vector3 start = transform.position;
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"{character.name} Vector3 subtraction");
         Vector3 direction = GameUtilities.VectorSubtraction(target.worldPosition, start).normalized;
-        Profiler.EndSample();
-        
-        Profiler.BeginSample($"{character.name} Raycast");
         float distance = rayDistance;
         if (target.IsUnpassable()) {
             distance += 1.5f;
@@ -1906,9 +1890,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //int size = Physics2D.RaycastNonAlloc(start, direction, linOfSightHitObjects, distance, 
         //    GameUtilities.Line_Of_Sight_Layer_Mask);
         lineOfSightHitObjects = Physics2D.RaycastAll(start, direction, distance, GameUtilities.Line_Of_Sight_Layer_Mask);
-        Profiler.EndSample();
         
-        Profiler.BeginSample($"{character.name} Raycast result loop");
         if(lineOfSightHitObjects != null) {
             for (int i = 0; i < lineOfSightHitObjects.Length; i++) {
                 RaycastHit2D hit = lineOfSightHitObjects[i];
@@ -1919,7 +1901,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 }
             }
         }
-        Profiler.EndSample();
         return false;
     }
     #endregion
@@ -2043,24 +2024,42 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #endregion
 
     #region Stroll
-    public void DoStrollMovement(Action onReachPathAction, STRUCTURE_TYPE[] notAllowedStructures = null) {
+    public void DoStrollMovement() {
+        Profiler.BeginSample($"{character.name} - Do Stroll Movement");
+        StopMovement();
         pathfindingAI.ClearAllCurrentPathData();
-        arrivalAction = onReachPathAction;
-        pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
-        ConstantPath constantPath = ConstantPath.Construct(transform.position, 10000, null);
+        ConstantPath constantPath = ConstantPath.Construct(transform.position, 10000, OnStrollPathComputed);
         AstarPath.StartPath(constantPath);
-        constantPath.BlockUntilCalculated();
-        if (constantPath.allNodes != null && constantPath.allNodes.Count > 0) {
-            GoTo(PathUtilities.GetPointsOnNodes(constantPath.allNodes, 1).Last(), arrivalAction);    
-        } else {
-            if (character.stateComponent.currentState is StrollOutsideState) {
-                //could not find nodes to stroll to. Just exit stroll state.
-                character.stateComponent.ExitCurrentState();    
-            }
-        }
-        
+        // constantPath.BlockUntilCalculated();
+        // if (constantPath.allNodes != null && constantPath.allNodes.Count > 0) {
+        //     GoTo(PathUtilities.GetPointsOnNodes(constantPath.allNodes, 1, 5).Last(), arrivalAction);    
+        // } else {
+        //     if (character.stateComponent.currentState is StrollOutsideState) {
+        //         //could not find nodes to stroll to. Just exit stroll state.
+        //         character.stateComponent.ExitCurrentState();    
+        //     }
+        // }
+        UpdateAnimation();
+        Profiler.EndSample();
     }
-    public void OnConstantPathComputed(ConstantPath constantPath) { }
+    public void OnStrollPathComputed(Path path) {
+        if (character == null) {
+            return;
+        }
+        if (path is ConstantPath constantPath && character.stateComponent.currentState is StrollOutsideState strollOutsideState) {
+            if (character.jobQueue.jobsInQueue.Count > 1 && character.jobQueue.jobsInQueue[0] != strollOutsideState.job) {
+                character.stateComponent.ExitCurrentState();
+            } else {
+                if (constantPath.allNodes != null && constantPath.allNodes.Count > 0) {
+                    GoTo(PathUtilities.GetPointsOnNodes(constantPath.allNodes, 1, 5).Last(), strollOutsideState.StartStrollMovement);    
+                } else {
+                    //could not find nodes to stroll to. Just exit stroll state.
+                    character.stateComponent.ExitCurrentState();
+                }    
+            }
+                
+        }
+    }
     #endregion
 
     #region Tags

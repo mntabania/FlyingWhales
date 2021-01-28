@@ -65,7 +65,7 @@
     }
     public void AfterEatSuccess(ActualGoapNode goapNode) {
         //goapNode.actor.needsComponent.AdjustDoNotGetHungry(-1);
-        if (goapNode.poiTarget is Character targetCharacter && targetCharacter.marker != null) {
+        if (goapNode.poiTarget is Character targetCharacter && targetCharacter.hasMarker) {
             if (goapNode.actor.race == RACE.ELVES && (targetCharacter.race == RACE.RAT || targetCharacter.race == RACE.RATMAN)) {
                 goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Poor Meal");
             }

@@ -22,7 +22,7 @@ public class PlayerAction : SkillData, IContextMenuItem {
     #region Virtuals
     public virtual bool IsValid(IPlayerActionTarget target) {
         if (target is Character character) {
-            return character.marker != null;
+            return character.hasMarker;
         } else if (target is TileObject tileObject) {
             return tileObject.mapObjectVisual != null;
         }

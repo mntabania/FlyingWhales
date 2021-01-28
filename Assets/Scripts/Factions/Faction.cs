@@ -10,6 +10,7 @@ using Traits;
 using Inner_Maps.Location_Structures;
 using Logs;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 
 public class Faction : IJobOwner, ISavable, ILogFiller {
@@ -607,7 +608,9 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         return $"{UtilityScripts.GameUtilities.GetNormalizedRaceAdjective(race)} Faction";
     }
     private void OnTickEnded() {
+        Profiler.BeginSample($"Faction On Tick Ended");
         ProcessForcedCancelJobsOnTickEnded();
+        Profiler.EndSample();
     }
     private void OnDayStarted() {
         ClearAllBlacklistToAllExistingJobs();

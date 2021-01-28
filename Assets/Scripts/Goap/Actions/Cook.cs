@@ -32,7 +32,7 @@ public class Cook : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
         actor.UncarryPOI(targetCharacter, addToLocation: false);
-        if (targetCharacter != null && targetCharacter.marker != null) {
+        if (targetCharacter != null && targetCharacter.hasMarker) {
             targetCharacter.marker.SetActiveState(true);    
         }
     }
@@ -42,7 +42,7 @@ public class Cook : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
         actor.UncarryPOI(targetCharacter, addToLocation: false);
-        if (targetCharacter != null && targetCharacter.marker != null) {
+        if (targetCharacter != null && targetCharacter.hasMarker) {
             targetCharacter.marker.SetActiveState(true);    
         }
         

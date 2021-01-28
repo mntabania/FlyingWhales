@@ -61,7 +61,7 @@
         private void OnJobRemovedFromQueue(JobQueueItem job, Character character) {
             if (_owner == character && job.jobType == JOB_TYPE.DOUSE_FIRE && !job.finishedSuccessfully) {
                 bool hasFireInVision = false;
-                if (character.marker != null) {
+                if (character.hasMarker) {
                     for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
                         IPointOfInterest poi = character.marker.inVisionPOIs[i];
                         if (poi.traitContainer.HasTrait("Burning")) {
