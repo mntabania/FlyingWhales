@@ -5,7 +5,6 @@ public class CultistBoobyTrapData : PlayerAction {
     public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.CULTIST_BOOBY_TRAP;
     public override string name => "Booby Trap";
     public override string description => "This Action instructs the character to Booby Trap an object owned by someone they know.";
-    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.PLAYER_ACTION;
     public override bool canBeCastOnBlessed => true;
     
     public CultistBoobyTrapData() : base() {

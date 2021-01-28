@@ -91,11 +91,18 @@ public class CombatManager : BaseMonoBehaviour {
             NormalElementProcess(target);
         }
     }
-    public void DamageModifierByElements(ref int damage, ELEMENTAL_TYPE elementalType, ITraitable target) {
+    public void DamageModifierByElementsAndTraits(ref int damage, ELEMENTAL_TYPE elementalType, ITraitable target) {
         if(damage < 0) {
             if (target.traitContainer.HasTrait("Immune")) {
                 damage = 0;
             } else {
+                if (target.traitContainer.HasTrait("Protection")) {
+                    //Protected - less 85% damage
+                    damage = Mathf.RoundToInt(damage * 0.5f);
+                    if (damage >= 0) {
+                        damage = -1;
+                    }
+                }
                 if (IsImmuneToElement(target, elementalType)) {
                     if (target is Vapor) {
                         damage = 0;

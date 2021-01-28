@@ -4,13 +4,13 @@ using UnityEngine;
 using Inner_Maps.Location_Structures;
 using Logs;
 
-public class JoinFactionData : SchemeData {
-    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.JOIN_FACTION;
-    public override string name => "Join Faction";
-    public override string description => "Convince a Villager to join a target Faction.";
-    public override PLAYER_SKILL_CATEGORY category => PLAYER_SKILL_CATEGORY.SCHEME;
+public class CultistJoinFactionData : PlayerAction {
+    public override PLAYER_SKILL_TYPE type => PLAYER_SKILL_TYPE.CULTIST_JOIN_FACTION;
+    public override string name => "Cultist Join Faction";
+    public override string description => "This Action instructs the character to join a target Faction.";
+    public override bool canBeCastOnBlessed => true;
 
-    public JoinFactionData() : base() {
+    public CultistJoinFactionData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
 
@@ -21,9 +21,14 @@ public class JoinFactionData : SchemeData {
             List<Faction> choices = ObjectPoolManager.Instance.CreateNewFactionList();
             for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                 Faction faction = FactionManager.Instance.allFactions[i];
-                if (faction != sourceFaction && faction.factionType.type != FACTION_TYPE.Vagrants && faction.factionType.type != FACTION_TYPE.Demons && faction.factionType.type != FACTION_TYPE.Wild_Monsters
+                if (faction.factionType.type != FACTION_TYPE.Vagrants 
+                    && faction.factionType.type != FACTION_TYPE.Demons 
+                    && faction.factionType.type != FACTION_TYPE.Wild_Monsters
                     && faction.factionType.type != FACTION_TYPE.Undead
-                    && faction.HasMemberThatMeetCriteria(c => !c.isDead)) {
+                    && faction.factionType.type != FACTION_TYPE.Ratmen
+                    && faction.HasMemberThatMeetCriteria(c => !c.isDead)
+                    && !faction.isDisbanded
+                    && faction.isMajorNonPlayer) {
                     choices.Add(faction);
                 }
             }
@@ -34,23 +39,28 @@ public class JoinFactionData : SchemeData {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character character) {
-            return character.isVagrant;
+            if (!character.traitContainer.HasTrait("Cultist")) {
+                return false;
+            }
+        }
+        return base.IsValid(target);
+    }
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerform) {
+            if (targetCharacter.traitContainer.HasTrait("Enslaved")) {
+                return false;
+            }
+            return targetCharacter.isDead == false; //&& targetCharacter.homeSettlement != null;
         }
         return false;
     }
-    protected override void OnSuccessScheme(Character character, object target) {
-        base.OnSuccessScheme(character, target);
-        if(target is Faction targetFaction) {
-            Character targetFactionMember = targetFaction.characters[0];
-            character.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, targetFactionMember, "join_faction_normal");
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.traitContainer.HasTrait("Enslaved")) {
+            reasons += "Cannot target Slaves,";
         }
-    }
-    protected override void PopulateSchemeConversation(List<ConversationData> conversationList, Character character, object target, bool isSuccessful) {
-        if (target is Faction targetFaction) {
-            ConversationData data = ObjectPoolManager.Instance.CreateNewConversationData($"Why don't you try and join {targetFaction.nameWithColor}?", null, DialogItem.Position.Right);
-            conversationList.Add(data);
-        }
-        base.PopulateSchemeConversation(conversationList, character, target, isSuccessful);
+        return reasons;
     }
     #endregion
 
@@ -59,6 +69,9 @@ public class JoinFactionData : SchemeData {
             return false;
         }
         if (target.IsCharacterBannedFromJoining(source)) {
+            return false;
+        }
+        if (target == source.faction) {
             return false;
         }
         return true;
@@ -72,6 +85,10 @@ public class JoinFactionData : SchemeData {
             if(text != string.Empty) { text += "\n"; }
             text += UtilityScripts.Utilities.InvalidColorize($"This faction already banned {source.name} from joining.");
         }
+        if (target == source.faction) {
+            if (text != string.Empty) { text += "\n"; }
+            text += UtilityScripts.Utilities.InvalidColorize($"This faction is the current faction of {source.name}.");
+        }
         if (text != string.Empty) {
             UIManager.Instance.ShowSmallInfo(text);
         }
@@ -82,8 +99,8 @@ public class JoinFactionData : SchemeData {
     private void OnChooseFaction(object obj, Character source) {
         UIManager.Instance.HideObjectPicker();
         if (obj is Faction targetFaction) {
-            //Show Scheme UI
-            UIManager.Instance.ShowSchemeUI(source, targetFaction, this);
+            Character targetFactionMember = targetFaction.characters[0];
+            source.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, targetFactionMember, "join_faction_normal");
         }
     }
 }

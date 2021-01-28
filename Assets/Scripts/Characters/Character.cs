@@ -2569,7 +2569,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
         object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
         
-        CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
+        CombatManager.Instance.DamageModifierByElementsAndTraits(ref amount, elementalDamageType, this);
         
         if ((amount < 0 && CanBeDamaged()) || amount > 0) {
             //only added checking here because even if objects cannot be damaged,
@@ -5270,6 +5270,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AddPlayerAction(PLAYER_SKILL_TYPE.HEAL);
         AddPlayerAction(PLAYER_SKILL_TYPE.REMOVE_BUFF);
         AddPlayerAction(PLAYER_SKILL_TYPE.REMOVE_FLAW);
+        AddPlayerAction(PLAYER_SKILL_TYPE.CULTIST_JOIN_FACTION);
     }
     public void AddPlayerAction(PLAYER_SKILL_TYPE action) {
         if (actions.Contains(action) == false) {

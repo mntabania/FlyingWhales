@@ -46,7 +46,7 @@ public class BallLightning : MovingTileObject {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
         LocationGridTile tileLocation = gridTileLocation;
-        CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
+        CombatManager.Instance.DamageModifierByElementsAndTraits(ref amount, elementalDamageType, this);
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         if (amount < 0) { 
