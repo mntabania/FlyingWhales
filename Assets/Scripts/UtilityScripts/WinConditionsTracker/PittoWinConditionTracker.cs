@@ -47,7 +47,11 @@ public class PittoWinConditionTracker : WinconditionTracker {
         base.LoadReferences(data);
         SaveDataPittoWinConditionTracker tracker = data as SaveDataPittoWinConditionTracker;
         cultists = SaveUtilities.ConvertIDListToCharacters(tracker.cultists);
-        createdFaction = DatabaseManager.Instance.factionDatabase.GetFactionBasedOnPersistentID(tracker.createdFaction);
+        if (!String.IsNullOrEmpty(tracker.createdFaction)) {
+            createdFaction = DatabaseManager.Instance.factionDatabase.GetFactionBasedOnPersistentID(tracker.createdFaction);
+        } else {
+            createdFaction = null;
+        }
     }
     #endregion
 
@@ -152,6 +156,11 @@ public class SaveDataPittoWinConditionTracker : SaveDataWinConditionTracker {
         base.Save(data);
         PittoWinConditionTracker tracker = data as PittoWinConditionTracker;
         cultists = SaveUtilities.ConvertSavableListToIDs(tracker.cultists);
-        createdFaction = tracker.createdFaction.persistentID;
+        if (tracker.createdFaction != null) {
+            createdFaction = tracker.createdFaction.persistentID;
+        } else {
+            createdFaction = String.Empty;
+        }
+        
     }
 }
