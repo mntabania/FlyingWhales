@@ -1162,7 +1162,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -25.270004}
+  m_AnchoredPosition: {x: 0, y: -89.26999}
   m_SizeDelta: {x: 596.6533, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &132072805
@@ -10814,7 +10814,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -25}
+  m_AnchoredPosition: {x: 0, y: -95.72998}
   m_SizeDelta: {x: 596, y: 350}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &573868123
@@ -16927,7 +16927,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -77}
   m_SizeDelta: {x: 0, y: 33}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &729813063
@@ -17447,7 +17447,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1018222494}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.5261485
+  m_Size: 0.5261026
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -17876,7 +17876,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -84}
   m_SizeDelta: {x: 0, y: 33}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &816932137
@@ -18995,7 +18995,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -25}
+  m_AnchoredPosition: {x: 0, y: -49}
   m_SizeDelta: {x: 596.6533, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &925394050
@@ -19021,7 +19021,14 @@ MonoBehaviour:
 
     Mykel Abania
 
-    Christopher Ian Chy'
+    Christopher Ian Chy
+
+    Aaron
+    Emmanuel Aranas
+
+    Victor Javier
+
+    Alden Dumana'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 44b0e75cf1a2d2246a2de46e846fa57d, type: 2}
   m_sharedMaterial: {fileID: 21554341954933024, guid: 44b0e75cf1a2d2246a2de46e846fa57d,
@@ -19779,7 +19786,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 6.1772, y: -24.03}
-  m_SizeDelta: {x: 757.2456, y: 680.5593}
+  m_SizeDelta: {x: 757.2456, y: 680.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1015045675
 MonoBehaviour:
@@ -19880,7 +19887,7 @@ RectTransform:
   m_Father: {fileID: 580283315}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.4738515}
+  m_AnchorMin: {x: 0, y: 0.4738974}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
@@ -21475,7 +21482,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -25.270004}
+  m_AnchoredPosition: {x: 0, y: -96}
   m_SizeDelta: {x: 596.6533, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1160747319
@@ -21899,7 +21906,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -25}
+  m_AnchoredPosition: {x: 0, y: -80}
   m_SizeDelta: {x: 596.6533, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1201331329
@@ -21925,14 +21932,10 @@ MonoBehaviour:
 
     Frederik Max
 
-    Victor Javier
+    Fiel Gabriel
 
-    Alden Dumana
-
-    Fiel
-    Gabriel
-
-    Roman "mekyses" Mesmer'
+    Roman "mekyses"
+    Mesmer'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 44b0e75cf1a2d2246a2de46e846fa57d, type: 2}
   m_sharedMaterial: {fileID: 21554341954933024, guid: 44b0e75cf1a2d2246a2de46e846fa57d,
@@ -22266,7 +22269,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -25.270004}
+  m_AnchoredPosition: {x: 0, y: -107}
   m_SizeDelta: {x: 596.6533, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1222234230
@@ -35145,7 +35148,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -62.72998}
   m_SizeDelta: {x: 0, y: 33}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &1991979422
@@ -35512,7 +35515,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -25}
+  m_AnchoredPosition: {x: 0, y: -106.72998}
   m_SizeDelta: {x: 596.6533, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2030018099

@@ -52,7 +52,6 @@ public class PittoWinConditionTracker : WinconditionTracker {
 
     private void OnFactionCreated(Faction p_createdFaction) {
         if (p_createdFaction.factionType.type == FACTION_TYPE.Demon_Cult && m_createdFaction == null) {
-            UnityEngine.Debug.LogError(p_createdFaction.name + " CREATED");
             m_createdFaction = p_createdFaction;
             _onfactionCreated?.Invoke(p_createdFaction);
         }
