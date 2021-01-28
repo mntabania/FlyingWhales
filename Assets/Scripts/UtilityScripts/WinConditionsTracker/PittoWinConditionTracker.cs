@@ -10,7 +10,7 @@ public class PittoWinConditionTracker : WinconditionTracker {
 
     public List<Character> cultists = new List<Character>();
 
-    private Faction m_createdFaction;
+    public Faction createdFaction;
     public override Type serializedData => typeof(SaveDataPittoWinConditionTracker);
 
     #region IListener
@@ -47,18 +47,19 @@ public class PittoWinConditionTracker : WinconditionTracker {
         base.LoadReferences(data);
         SaveDataPittoWinConditionTracker tracker = data as SaveDataPittoWinConditionTracker;
         cultists = SaveUtilities.ConvertIDListToCharacters(tracker.cultists);
+        createdFaction = DatabaseManager.Instance.factionDatabase.GetFactionBasedOnPersistentID(tracker.createdFaction);
     }
     #endregion
 
     private void OnFactionCreated(Faction p_createdFaction) {
-        if (p_createdFaction.factionType.type == FACTION_TYPE.Demon_Cult && m_createdFaction == null) {
-            m_createdFaction = p_createdFaction;
+        if (p_createdFaction.factionType.type == FACTION_TYPE.Demon_Cult && createdFaction == null) {
+            createdFaction = p_createdFaction;
             _onfactionCreated?.Invoke(p_createdFaction);
         }
     }
 
     private void OnFactionDisbanded(Faction p_disbandedFaction) {
-        if (m_createdFaction != null && m_createdFaction == p_disbandedFaction) {
+        if (createdFaction != null && createdFaction == p_disbandedFaction) {
             PlayerUI.Instance.LoseGameOver("Your demon cult has been wiped out. Mission Failed");
         }
     }
@@ -97,8 +98,8 @@ public class PittoWinConditionTracker : WinconditionTracker {
     }
 
     private void CharacterRemoveFaction(Character p_newMember, Faction p_faction) {
-        if (m_createdFaction != null) {
-            if (m_createdFaction == p_faction && !cultists.Contains(p_newMember)) {
+        if (createdFaction != null) {
+            if (createdFaction == p_faction && !cultists.Contains(p_newMember)) {
                 cultists.Remove(p_newMember);
                 _CharacterChangeTrait?.Invoke(p_newMember);
             }
@@ -106,8 +107,8 @@ public class PittoWinConditionTracker : WinconditionTracker {
     }
 
     private void CharacterJoinFaction(Character p_newMember, Faction p_faction) {
-        if (m_createdFaction != null) {
-            if (m_createdFaction == p_faction && !cultists.Contains(p_newMember)) {
+        if (createdFaction != null) {
+            if (createdFaction == p_faction && !cultists.Contains(p_newMember)) {
                 cultists.Add(p_newMember);
                 _CharacterChangeTrait?.Invoke(p_newMember);
             }
@@ -146,9 +147,11 @@ public class PittoWinConditionTracker : WinconditionTracker {
 
 public class SaveDataPittoWinConditionTracker : SaveDataWinConditionTracker {
     public List<string> cultists;
+    public string createdFaction;
     public override void Save(WinconditionTracker data) {
         base.Save(data);
         PittoWinConditionTracker tracker = data as PittoWinConditionTracker;
         cultists = SaveUtilities.ConvertSavableListToIDs(tracker.cultists);
+        createdFaction = tracker.createdFaction.persistentID;
     }
 }
