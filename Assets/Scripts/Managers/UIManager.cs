@@ -1937,6 +1937,9 @@ public class UIManager : BaseMonoBehaviour {
                     if (activeTileObject is AnkhOfAnubis ankh && ankh.isActivated && spellData.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT) {
                         additionalText = $"{additionalText}{UtilityScripts.Utilities.ColorizeInvalidText("Activated Ankh can no longer be seized.")}\n";
                     }
+                    string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeTileObject);
+                    wholeReason = UtilityScripts.Utilities.SplitStringIntoNewLines(wholeReason, ',');
+                    additionalText += $"{UtilityScripts.Utilities.ColorizeInvalidText(wholeReason)}";
                 } else if (activePOI is BaseSettlement activeSettlement) {
                     if (spellData.CanPerformAbilityTowards(activeSettlement) == false) {
                         string wholeReason = spellData.GetReasonsWhyCannotPerformAbilityTowards(activeSettlement);

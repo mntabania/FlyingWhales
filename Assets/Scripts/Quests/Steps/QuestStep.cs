@@ -60,6 +60,8 @@ namespace Quests.Steps {
         public virtual void Activate() {
             SubscribeListeners();
             Messenger.Broadcast(PlayerQuestSignals.QUEST_STEP_ACTIVATED, this);
+        }
+        public void TryToCompleteStep() {
             if (CheckIfStepIsAlreadyCompleted()) {
                 Complete();
             }

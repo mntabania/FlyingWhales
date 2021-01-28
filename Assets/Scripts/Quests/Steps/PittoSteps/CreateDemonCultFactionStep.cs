@@ -15,6 +15,12 @@ namespace Quests.Steps {
         protected override void UnSubscribeListeners() {
             (QuestManager.Instance.winConditionTracker as PittoWinConditionTracker).UnsubscribeToFactionEvents(this);
         }
+        protected override bool CheckIfStepIsAlreadyCompleted() {
+            if (DatabaseManager.Instance.factionDatabase.GetFactionsWithFactionType(FACTION_TYPE.Demon_Cult)?.Count > 0) {
+                return true;
+            }
+            return false;
+        }
 
         #region Listeners
         public void OnFactionCreated(Faction p_faction) {

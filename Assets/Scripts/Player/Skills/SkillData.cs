@@ -64,6 +64,7 @@ public class SkillData : IPlayerSkill {
         OnExecutePlayerSkill();
     }
     public virtual string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) { return null; }
+    public virtual string GetReasonsWhyCannotPerformAbilityTowards(TileObject targetTileObject) { return null; }
     public virtual string GetReasonsWhyCannotPerformAbilityTowards(BaseSettlement p_targetSettlement) { return string.Empty; }
     public virtual string GetReasonsWhyCannotPerformAbilityTowards(LocationStructure p_targetStructure) { return string.Empty; }
     public virtual bool CanPerformAbilityTowards(Character targetCharacter) {

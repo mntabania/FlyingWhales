@@ -172,6 +172,7 @@ namespace Quests {
             if (quest is SteppedQuest steppedQuest) {
                 QuestItem questItem = UIManager.Instance.questUI.ShowQuest(steppedQuest, true);
                 steppedQuest.SetQuestItem(questItem);
+                steppedQuest.CheckForAlreadyCompletedSteps();
             }
             Messenger.Broadcast(PlayerQuestSignals.QUEST_ACTIVATED, quest);
         }

@@ -19,6 +19,15 @@ namespace Quests {
         /// Construct this quests' steps.
         /// </summary>
         protected abstract void ConstructSteps();
+        public void CheckForAlreadyCompletedSteps() {
+            for (int i = 0; i < steps.Count; i++) {
+                QuestStepCollection stepCollection = steps[i];
+                for (int j = 0; j < stepCollection.steps.Count; j++) {
+                    QuestStep step = stepCollection.steps[j];
+                    step.TryToCompleteStep();
+                }
+            }
+        }
         #endregion
 
         #region Availability
