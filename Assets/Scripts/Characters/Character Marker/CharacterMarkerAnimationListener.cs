@@ -17,9 +17,9 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
             Debug.Log($"{parentMarker.character.name} executed attack.");
             if (parentMarker.character.characterClass.rangeType == RANGE_TYPE.RANGED) {
                 CreateProjectile(combatState.currentClosestHostile, combatState);
-                combatState.isExecutingAttack = false;
+                //combatState.isExecutingAttack = false;
             } else {
-                combatState.isExecutingAttack = false;
+                //combatState.isExecutingAttack = false;
                 combatState.OnAttackHit(combatState.currentClosestHostile);
                 if (parentMarker.character is Summon) {
                     AudioManager.Instance.TryCreateAudioObject(AudioManager.Instance.GetRandomPunchAudio(),
@@ -48,6 +48,7 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
                     }
                 }
             }
+            combatState.isExecutingAttack = false;
         }
     }
     public void StartAttackExecution() {
