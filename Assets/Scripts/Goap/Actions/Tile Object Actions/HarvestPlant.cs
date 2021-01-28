@@ -134,7 +134,7 @@ public class HarvestPlant : GoapAction {
             tile.structure.RemovePOI(poiTarget);
             
             FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.VEGETABLES);
-            foodPile.SetResourceInPile(50);
+            foodPile.SetResourceInPile(30);
             tile.structure.AddPOI(foodPile, tile);
             if (foodPile != null && goapNode.actor.homeSettlement != null) {
                 goapNode.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(foodPile);
