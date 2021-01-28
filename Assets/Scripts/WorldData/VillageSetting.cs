@@ -29,7 +29,7 @@ public struct VillageSetting {
     public int GetRandomDwellingCount() {
         switch (villageSize) {
             case VILLAGE_SIZE.Small:
-                return UtilityScripts.Utilities.Rng.Next(4, 7);
+                return UtilityScripts.Utilities.Rng.Next(4, 6);
             case VILLAGE_SIZE.Medium:
                 return UtilityScripts.Utilities.Rng.Next(6, 8);
             case VILLAGE_SIZE.Large:

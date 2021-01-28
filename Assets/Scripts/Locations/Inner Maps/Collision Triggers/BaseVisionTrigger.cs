@@ -90,7 +90,6 @@ public abstract class BaseVisionTrigger : MonoBehaviour{
         }
     }
     private void TransferToFilteredLayer() {
-        Debug.Log($"Transferred {damageable.name} to filtered layer");
         gameObject.layer = LayerMask.NameToLayer(GameUtilities.Filtered_Object_Layer);
     }
     private void TransferToNonFilteredLayer() {

@@ -151,11 +151,10 @@ public class JobQueue {
             Messenger.Broadcast(JobSignals.JOB_REMOVED_FROM_QUEUE, job, owner);
             owner.combatComponent.OnJobRemovedFromQueue(job);
             job.UnassignJob(shouldDoAfterEffect, reason);
-            // string ownerName = owner.name;
-            // string removeLog = $"{job.name} has been removed from {ownerName} job queue.";
-            // Debug.Log(GameManager.Instance.TodayLogString() + removeLog);
+            string ownerName = owner.name;
+            Debug.Log(GameManager.Instance.TodayLogString() + $"{job.name} has been removed from {ownerName} job queue.");
             bool state = job.OnRemoveJobFromQueue();
-            job.originalOwner.OnJobRemovedFromCharacterJobQueue(job, owner);
+            job.originalOwner?.OnJobRemovedFromCharacterJobQueue(job, owner);
             return state;
         }
         return false;

@@ -225,12 +225,10 @@ public abstract class JobQueueItem : ISavable {
         Character previousAssignedCharacter = null;
         if (assignedCharacter != null) {
             previousAssignedCharacter = assignedCharacter;
-            // assignedCharacter.logComponent.PrintLogIfActive($"{assignedCharacter.name} quit job {name}");
+            assignedCharacter.logComponent.PrintLogIfActive($"{assignedCharacter.name} quit job {name}");
         }
-        // if (character != null) {
-        //     character.logComponent.PrintLogIfActive($"{character.name} took job {name}");
-        // }
-        
+        character?.logComponent.PrintLogIfActive($"{character.name} took job {name}");
+
         assignedCharacter = character;
         if (assignedCharacter != null) {
             OnCharacterAssignedToJob(assignedCharacter);

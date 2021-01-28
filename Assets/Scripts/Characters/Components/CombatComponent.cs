@@ -557,8 +557,7 @@ public class CombatComponent : CharacterComponent {
             } else if (poi is Character targetCharacter) {
                 AddPOIToBannedFromHostile(targetCharacter);
             }
-            // string removeHostileSummary = $"{poi.name} was removed from {owner.name}'s hostile range.";
-            // owner.logComponent.PrintLogIfActive(removeHostileSummary);
+            owner.logComponent.PrintLogIfActive($"{poi.name} was removed from {owner.name}'s hostile range.");
             //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
             if (processCombatBehavior) {
                 if (owner.combatComponent.isInCombat) {
