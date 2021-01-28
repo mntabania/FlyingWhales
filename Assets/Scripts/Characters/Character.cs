@@ -2846,6 +2846,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             } else if(homeSettlement != null && gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap && gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != homeSettlement){
                 stateAwarenessComponent.StartMissingTimer();
             }
+            if(faction != null) {
+                faction.ProcessFactionLeaderAsSettlementRuler();
+            }
         }
     }
     private void OnStructureDestroyed(LocationStructure structure) {

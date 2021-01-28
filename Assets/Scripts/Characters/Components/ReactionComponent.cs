@@ -448,8 +448,10 @@ public class ReactionComponent : CharacterComponent {
             debugLog = $"{debugLog}\n-Target is hostile";
             if(actor.currentJob != null && actor.currentActionNode != null && actor.currentActionNode.avoidCombat && actor.currentActionNode.actionStatus == ACTION_STATUS.STARTED
                 && !targetCharacter.isDead && targetCharacter.limiterComponent.canPerform && targetCharacter.combatComponent.combatMode != COMBAT_MODE.Passive) {
+                debugLog = $"{debugLog}\n-Actor encountered a hostile";
                 actor.currentJob.CancelJob(false);
                 actor.combatComponent.Flight(targetCharacter, CombatManager.Encountered_Hostile);
+                return;
             }
             bool shouldRelease = disguisedActor.isNormalCharacter && !disguisedActor.traitContainer.HasTrait("Enslaved") && targetCharacter.traitContainer.HasTrait("Enslaved") && disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget)
                 && !disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget) && !targetCharacter.traitContainer.GetTraitOrStatus<Trait>("Enslaved").IsResponsibleForTrait(disguisedActor) && disguisedActor.faction != targetCharacter.faction;
@@ -519,7 +521,9 @@ public class ReactionComponent : CharacterComponent {
                     debugLog = $"{debugLog}\n-{actor.name} triggered pray.";
                     actor.jobComponent.TriggerPray();
                 }
-            } else if (!targetCharacter.isDead && disguisedTarget.combatComponent.combatMode != COMBAT_MODE.Passive && !targetCharacter.traitContainer.HasTrait("Hibernating")) {
+            } else if (!targetCharacter.isDead && (disguisedTarget.combatComponent.combatMode != COMBAT_MODE.Passive || targetCharacter.race == RACE.HARPY) && !targetCharacter.traitContainer.HasTrait("Hibernating")) {
+                //NOTE: Special case for Harpies: Even if harpies are passive, they should still be attacked. Reason: When a harpy tries to abduct a character in a village, all other villagers just ignores it
+                //https://trello.com/c/nOPHWxxk/3518-unity-034080127-harpy-not-being-attacked-while-doing-abduct
                 debugLog = $"{debugLog}\n-If Target is alive and not in Passive State and not Hibernating:";
                 debugLog = $"{debugLog}\n-Fight or Flight response";
                 //Fight or Flight

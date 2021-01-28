@@ -48,7 +48,8 @@ public class FactionInfoHubUI : MonoBehaviour {
         //factionPaginationGOs = new List<GameObject>();
     }
     private void InitializeUI() {
-        Messenger.AddListener<Faction>(FactionSignals.FACTION_CREATED, OnFactionCreated);
+        //Messenger.AddListener<Faction>(FactionSignals.FACTION_CREATED, OnFactionCreated);
+        Messenger.AddListener<Faction, Character>(FactionSignals.CREATE_FACTION_INTERRUPT, OnFactionCreated);
         Messenger.AddListener<Faction>(FactionSignals.FACTION_DISBANDED, OnFactionDisbanded);
     }
     public void InitializeAfterGameLoaded() {
@@ -159,7 +160,7 @@ public class FactionInfoHubUI : MonoBehaviour {
     #endregion
 
     #region Listeners
-    private void OnFactionCreated(Faction faction) {
+    private void OnFactionCreated(Faction faction, Character creator) {
         if (GameManager.Instance.gameHasStarted) {
             if (faction.isMajorNonPlayer || faction.factionType.type == FACTION_TYPE.Vagrants || faction.factionType.type == FACTION_TYPE.Undead || faction.factionType.type == FACTION_TYPE.Ratmen) {
                 //FactionItem item = AddFactionItem(faction);

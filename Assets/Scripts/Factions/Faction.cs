@@ -215,29 +215,33 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
             factionEventDispatcher.ExecuteFactionLeaderChangedEvent(newLeader);
 
-            //https://trello.com/c/KDgydAWd/3005-faction-leader-also-doubles-as-the-settlement-ruler-of-its-current-settlement
-            if (newCharacterLeader != null) {
-                NPCSettlement homeSettlement = newCharacterLeader.homeSettlement as NPCSettlement;
-                if (homeSettlement != null) {
-                    Character previousRuler = homeSettlement.ruler;
-                    if(previousRuler != newCharacterLeader) {
-                        if (GameManager.Instance.gameHasStarted) {
-                            if (previousRuler == null) {
-                                newCharacterLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Settlement_Ruler, newCharacterLeader);
-                            } else {
-                                //Do not trigger Become_Settlement_Ruler because we have a special log for this
-                                homeSettlement.SetRuler(newCharacterLeader);
-
-                                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "replace_ruler", null, LOG_TAG.Life_Changes);
-                                log.AddToFillers(newCharacterLeader, newCharacterLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                                log.AddToFillers(previousRuler, previousRuler.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                log.AddToFillers(homeSettlement, homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
-                                log.AddLogToDatabase();
-                            }
+            ProcessFactionLeaderAsSettlementRuler();
+        }
+    }
+    public void ProcessFactionLeaderAsSettlementRuler() {
+        //https://trello.com/c/KDgydAWd/3005-faction-leader-also-doubles-as-the-settlement-ruler-of-its-current-settlement
+        if (leader != null && leader is Character newCharacterLeader) {
+            NPCSettlement homeSettlement = newCharacterLeader.homeSettlement;
+            if (homeSettlement != null && homeSettlement.locationType == LOCATION_TYPE.VILLAGE && homeSettlement.owner == this) {
+                //Only do this for villages since special structures does not have settlement rulers
+                Character previousRuler = homeSettlement.ruler;
+                if (previousRuler != newCharacterLeader) {
+                    if (GameManager.Instance.gameHasStarted) {
+                        if (previousRuler == null) {
+                            newCharacterLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Settlement_Ruler, newCharacterLeader);
                         } else {
-                            //If the game has not yet started yet, just set the ruler and do not log it because this is the first state of the world/game
+                            //Do not trigger Become_Settlement_Ruler because we have a special log for this
                             homeSettlement.SetRuler(newCharacterLeader);
+
+                            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "replace_ruler", null, LOG_TAG.Life_Changes);
+                            log.AddToFillers(newCharacterLeader, newCharacterLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                            log.AddToFillers(previousRuler, previousRuler.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                            log.AddToFillers(homeSettlement, homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
+                            log.AddLogToDatabase();
                         }
+                    } else {
+                        //If the game has not yet started yet, just set the ruler and do not log it because this is the first state of the world/game
+                        homeSettlement.SetRuler(newCharacterLeader);
                     }
                 }
             }
