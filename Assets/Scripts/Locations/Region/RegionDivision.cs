@@ -109,6 +109,9 @@ public class RegionDivision {
                 LocationGridTile spawnLocationGridTile = p_structure.GetRandomPassableTile();
                 Summon monster = CharacterManager.Instance.CreateNewSummon(chosenData.monsterType, FactionManager.Instance.GetDefaultFactionForMonster(chosenData.monsterType), homeLocation: p_structure.settlementLocation, homeRegion: p_structure.region, homeStructure: p_structure, bypassIdeologyChecking: true);
                 CharacterManager.Instance.PlaceSummonInitially(monster, spawnLocationGridTile);
+                if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
+                    monster.traitContainer.AddTrait(monster, "Mighty");
+                }
             }
             string monsterTypeStr = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(chosenData.monsterType.ToString());
             monsterTypeStr = UtilityScripts.Utilities.PluralizeString(monsterTypeStr);
@@ -133,6 +136,14 @@ public class RegionDivision {
             }
         }
         return _faunaListWeights;
+    }
+    #endregion
+
+    #region Testing
+    public string GetTestingInfo() {
+        string info = $"Tiles: {tiles.Count.ToString()}. Biome: {biome.ToString()}";
+        info = $"{info}" + _faunaListWeights.GetWeightsSummary("\nFauna List:");
+        return info;
     }
     #endregion
 }

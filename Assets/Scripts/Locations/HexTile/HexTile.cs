@@ -963,7 +963,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     public override string ToString() {
         return $"{locationName} - {biomeType.ToString()} - {landmarkOnTile?.specificLandmarkType.ToString() ?? "No Landmark"} - {elevationType.ToString()} - {region?.name ?? "No Region"}";
     }
-    public void ShowTileInfo() {
+    private void ShowTileInfo() {
         string summary = $"{ToString()}";
         summary += $"\nBiome: {biomeType.ToString()}";
         summary += $"\nElevation: {elevationType.ToString()}";
@@ -971,6 +971,10 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         for (int i = 0; i < featureComponent.features.Count; i++) {
             TileFeature feature = featureComponent.features[i];
             summary += $"{feature.name}, ";
+        }
+        if (regionDivision != null) {
+            summary += "\nRegion Division Info:\n";
+            summary += regionDivision.GetTestingInfo();
         }
         summary += $"\nSettlement on Tile: {settlementOnTile?.name}";
         UIManager.Instance.ShowSmallInfo(summary);

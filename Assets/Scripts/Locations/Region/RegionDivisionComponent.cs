@@ -21,12 +21,18 @@ public class RegionDivisionComponent {
     public void AddRegionDivision(RegionDivision p_division) {
         divisions.Add(p_division);
         if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
-            ScenarioData scenarioData = WorldSettings.Instance.GetScenarioDataByWorldType(WorldSettings.Instance.worldSettingsData.worldType);
-            if(scenarioData.faunaList == null || scenarioData.faunaList.Length <= 0) {
-                p_division.PopulateFaunaList(MAX_FAUNA_LIST_CAPACITY);
+            if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
+                //https://www.notion.so/ruinarch/08b940d81ce74b24826650200ad2df0c?v=05a2de69f70c4e27987aeb65ff0727d5&p=e347e3b46ac64198b144ec6707374f11
+                p_division.PopulateFaunaList(8);
             } else {
-                p_division.PopulateFaunaList(scenarioData.faunaList);
+                ScenarioData scenarioData = WorldSettings.Instance.GetScenarioDataByWorldType(WorldSettings.Instance.worldSettingsData.worldType);
+                if(scenarioData.faunaList == null || scenarioData.faunaList.Length <= 0) {
+                    p_division.PopulateFaunaList(MAX_FAUNA_LIST_CAPACITY);
+                } else {
+                    p_division.PopulateFaunaList(scenarioData.faunaList);
+                }    
             }
+            
         } else {
             p_division.PopulateFaunaList(MAX_FAUNA_LIST_CAPACITY);
         }

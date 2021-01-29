@@ -13,4 +13,7 @@ public class MonsterMigrationBiomeAtomizedData {
     public int minRange;
     public int maxRange;
     public int weight;
+    public override string ToString() {
+        return $"{monsterType.ToString()} - Min: {minRange.ToString()} - Max: {maxRange.ToString()} - Weight: {weight.ToString()}";
+    }
 }

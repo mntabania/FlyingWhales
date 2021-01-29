@@ -194,6 +194,9 @@ public class MonsterGeneration : MapGenerationComponent {
 				}
 				RegionDivision regionDivision = landmark.tileLocation.regionDivision;
 				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+				if (structure is RuinedZoo) {
+					continue; //skip
+				}
 				if (GameUtilities.RollChance(70)) {
 					locationChoices.Clear();
 					locationChoices.AddRange(structure.passableTiles);
@@ -202,6 +205,9 @@ public class MonsterGeneration : MapGenerationComponent {
                     int randomAmount = GameUtilities.RandomBetweenTwoNumbers(chosenMMonster.minRange, chosenMMonster.maxRange);;
                     for (int k = 0; k < randomAmount; k++) {
 	                    Summon summon = CreateMonster(chosenMMonster.monsterType, locationChoices, structure, faction: FactionManager.Instance.GetDefaultFactionForMonster(chosenMMonster.monsterType));
+	                    if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
+		                    summon.traitContainer.AddTrait(summon, "Mighty");
+	                    }
 	                    locationChoices.Remove(summon.gridTileLocation);
                     }
                     if (locationChoices.Count == 0) {
@@ -274,6 +280,9 @@ public class MonsterGeneration : MapGenerationComponent {
 							int randomAmount = GameUtilities.RandomBetweenTwoNumbers(chosenMMonster.minRange, chosenMMonster.maxRange);;
 							for (int k = 0; k < randomAmount; k++) {
 								Summon summon = CreateMonster(chosenMMonster.monsterType, locationChoices, cave, faction: FactionManager.Instance.GetDefaultFactionForMonster(chosenMMonster.monsterType));
+								if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
+									summon.traitContainer.AddTrait(summon, "Mighty");
+								}
 								locationChoices.Remove(summon.gridTileLocation);
 							}
 							if (locationChoices.Count == 0) {
