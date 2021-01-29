@@ -420,6 +420,9 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.WOOD_PILE:
             case TILE_OBJECT_TYPE.TABLE:
             case TILE_OBJECT_TYPE.FISHING_SPOT:
+            case TILE_OBJECT_TYPE.FEEBLE_SPIRIT:
+            case TILE_OBJECT_TYPE.FORLORN_SPIRIT:
+            case TILE_OBJECT_TYPE.RAVENOUS_SPIRIT:
                 return true;
             default:
                 return tileObjectType.IsTileObjectAnItem();
