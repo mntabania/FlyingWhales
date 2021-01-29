@@ -2172,11 +2172,15 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: 'Create a Demon Cult faction and have it grow to at least 12 members.
+      value: 'This wild jungle was the resting place of an old god. Its divine energy
+        still seeps out and empowers all monsters within. In this place, they will
+        be hostile to you. You must assemble your own Demon Cult and grow it in sufficient
+        numbers for a ritual that will end the dead god''s influence once and for
+        all.
 
 
-        Warning:
-        Ensure that you have the Defiler on your loadout!'
+        <color="red">Warning</color>: Ensure that you have the Defiler
+        on your loadout!'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -2665,8 +2669,9 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: 'Eliminate at least 14 Villagers through Plague fatality only. Hurry
-        before the two warring factions wipe each other out.
+      value: 'Two Factions in some sort of blood feud are going at it! Well, war
+        pairs well with pestilence. Challenge yourself by wiping more of them out
+        with your homebrewed Plague before their own petty wars eradicate everyone.
 
 
         <color="green">Unique
@@ -2917,16 +2922,17 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: 'A frozen world with an elven faction full of robust individuals. Turn
-        a Villager into a Psychopath and use them to eliminate 5 other Villagers
-        to win.
+      value: 'A frozen world of purebred elves blessed by Nature. Harvest the spirit
+        of at least 10 of these undefiled creatures. There is a tainted one amongst
+        their midst that may hold the key.
 
 
-        <color="green">Features:</color> Special fixed loadout.
+        <color="green">Features:</color>
+        Special fixed loadout.
 
 
-        <color="green">Unlocks:</color>
-        <b>Affatt</b> and <b>Custom</b>.'
+        <color="green">Unlocks:</color> <b>Affatt</b>
+        and <b>Custom</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -3409,8 +3415,7 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: A single region world with a small human village. Walks you through
-        the basics of the game.
+      value: Walks you through the basics of the game.
       objectReference: {fileID: 0}
     - target: {fileID: 5885265226405307719, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -3911,8 +3916,9 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: 'Near a large human town is a desert wasteland. Build up a large undead
-        army there and then wipeout all humans in one apocalyptic invasion.
+      value: 'A bustling human town is unaware of the dangers lurking in the nearby
+        desert wasteland. There, the undead have been preparing for an imminent invasion,
+        but their decimated forces will need your help. Time is ticking!
 
 
         <color="green">Special
@@ -4167,8 +4173,8 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: 'This land is home to four Factions that are at peace with each other.
-        End this boring lull and wipe them all out.
+      value: 'This land is home to four Factions that are living in quiet harmony
+        with each other. Wipe them out and end this boring lull.
 
 
         <color="green">Special

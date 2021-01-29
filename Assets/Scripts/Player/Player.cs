@@ -148,6 +148,11 @@ public class Player : ILeader, IObjectManipulator {
         Faction faction = FactionManager.Instance.CreateNewFaction(FACTION_TYPE.Demons, "Demons");
         faction.SetLeader(this);
         SetPlayerFaction(faction);
+        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pitto) {
+            //https://trello.com/c/hZOagpaZ/3537-pitto-tweaks-v2
+            FactionRelationship relationship = faction.GetRelationshipWith(FactionManager.Instance.neutralFaction);
+            relationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Hostile);
+        }
     }
     private void SetPlayerFaction(Faction faction) {
         playerFaction = faction;

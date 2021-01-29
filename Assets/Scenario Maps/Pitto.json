@@ -2499,7 +2499,7 @@
         "biomeType": "FOREST",
         "elevationType": "MOUNTAIN",
         "tileFeatureSaveData": [],
-        "landmarkType": "NONE",
+        "landmarkType": "TEMPLE",
         "saveDataHexTileSpellsComponent": {
           "hasEarthquake": false,
           "remainingEarthquakeDuration": 0,
@@ -4718,7 +4718,7 @@
           "structureType": "DWELLING",
           "hasValue": true,
           "isCorrupted": false
-        },
+        }
       ],
       "minimumVillagerCount": 24,
       "factionRace": "HUMANS",
@@ -4727,7 +4727,7 @@
     {
       "hexTiles": [
         {
-          "X": 9,
+          "X": 10,
           "Y": 6
         },
         {
@@ -4835,7 +4835,7 @@
           "structureType": "DWELLING",
           "hasValue": true,
           "isCorrupted": false
-        },
+        }
       ],
       "minimumVillagerCount": 24,
       "factionRace": "HUMANS",

@@ -30,7 +30,7 @@ namespace Quests.Steps {
         private void CheckForCompletion(Character p_character) {
             if ((QuestManager.Instance.winConditionTracker as PittoWinConditionTracker).cultists.Count >= 12){
                 Complete();
-                Messenger.Broadcast(PlayerSignals.WIN_GAME, "You've successfully setup a sizable Demon Cult. Congratulations!");
+                Messenger.Broadcast(PlayerSignals.WIN_GAME, "Your Cultists performed the dark ritual, tainting the divine energy for your own consumption!");
             }
         }
         #endregion
