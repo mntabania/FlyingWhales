@@ -61,11 +61,17 @@ public class Dragon : Summon {
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Dragon_Behaviour);
     }
     public override void SubscribeToSignals() {
+        if (hasSubscribedToSignals) {
+            return;
+        }
         base.SubscribeToSignals();
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.AddListener(Signals.TICK_STARTED, TryLeaveWorld);
     }
     public override void UnsubscribeSignals() {
+        if (!hasSubscribedToSignals) {
+            return;
+        }
         base.UnsubscribeSignals();
         Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.RemoveListener(Signals.TICK_STARTED, TryLeaveWorld);

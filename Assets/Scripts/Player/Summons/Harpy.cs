@@ -38,12 +38,18 @@ public class Harpy : Summon {
 
     }
     public override void SubscribeToSignals() {
+        if (hasSubscribedToSignals) {
+            return;
+        }
         base.SubscribeToSignals();
         Messenger.AddListener<Character, GoapPlanJob>(JobSignals.CHARACTER_WILL_DO_JOB, OnCharacterWillDoJob);
         Messenger.AddListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromQueue);
         Messenger.AddListener<Character>(CharacterSignals.HEALTH_CRITICALLY_LOW, OnHealthCriticallyLow);
     }
     public override void UnsubscribeSignals() {
+        if (!hasSubscribedToSignals) {
+            return;
+        }
         base.UnsubscribeSignals();
         Messenger.RemoveListener<Character, GoapPlanJob>(JobSignals.CHARACTER_WILL_DO_JOB, OnCharacterWillDoJob);
         Messenger.RemoveListener<JobQueueItem, Character>(JobSignals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromQueue);

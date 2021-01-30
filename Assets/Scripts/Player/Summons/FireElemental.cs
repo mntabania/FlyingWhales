@@ -17,10 +17,16 @@ public class FireElemental : Summon {
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Fire_Elemental_Behaviour);
     }
     public override void SubscribeToSignals() {
+        if (hasSubscribedToSignals) {
+            return;
+        }
         base.SubscribeToSignals();
         Messenger.AddListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
     public override void UnsubscribeSignals() {
+        if (!hasSubscribedToSignals) {
+            return;
+        }
         base.UnsubscribeSignals();
         Messenger.RemoveListener<ActualGoapNode>(JobSignals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }

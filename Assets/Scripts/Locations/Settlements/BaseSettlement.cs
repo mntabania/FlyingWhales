@@ -853,6 +853,9 @@ namespace Locations.Settlements {
             if(structure == null) {
                 structure = GetRandomStructure();
             }
+            if(structure == null) {
+                return null;
+            }
             return structure.GetRandomPassableTile();
         }
         public bool IsAtTargetDestination(Character character) {
