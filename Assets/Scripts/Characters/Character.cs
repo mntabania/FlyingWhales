@@ -889,8 +889,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    public void ForceCancelAllActionsTargetingPOI(IPointOfInterest target, string reason) {
+    private void ForceCancelAllActionsTargetingPOI(IPointOfInterest target, string reason) {
         if(currentActionNode != null && currentActionNode.associatedJob != null && currentActionNode.poiTarget == target) {
+            //if target is main target of the job, stop the whole job
             currentActionNode.associatedJob.ForceCancelJob(false, reason);
         }
     }
@@ -1755,7 +1756,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Utilities
-    public bool AssignRace(RACE race, bool isInitial = false) {
+    private bool AssignRace(RACE race, bool isInitial = false) {
         if(_raceSetting == null || _raceSetting.race != race) {
             if (_raceSetting != null) {
                 if (_raceSetting.race == race) {
@@ -1797,9 +1798,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             RemoveAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
         }
-    }
-    public void ChangeGender(GENDER gender) {
-        _gender = gender;
     }
     public void SetRandomName() {
         string newName = RandomNameGenerator.GenerateRandomName(race, gender);
@@ -2119,6 +2117,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool IsRatmanThatIsPartOfMajorFaction() {
         return race == RACE.RATMAN && faction != null && faction.isMajorNonPlayer;
+    }
+    public string GetCultistUnableToDoJobReason(GoapPlanJob job, Precondition failedPrecondition, INTERACTION_TYPE failedPreconditionActionType) {
+        string reason = job.GetJobDetailString();
+        if (failedPrecondition != null && failedPrecondition.goapEffect.conditionType == GOAP_EFFECT_CONDITION.TAKE_POI) {
+            reason = $"{reason}, could not find a {failedPrecondition.goapEffect.conditionKey} to do action {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(failedPreconditionActionType.ToString())}";
+        }
+        return reason;
+    }
+    public void LogUnableToDoJob(string reason) {
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan", providedTags: LOG_TAG.Work);
+        log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
+        logComponent.RegisterLog(log);    
     }
     #endregion    
 
@@ -4093,7 +4104,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             
             if (canCharacterDoGoapAction && canSatisfyGoapActionRequirements) {
                 Profiler.BeginSample($"{name} - {currentNode.action.name} - Can Satisfy All Preconditions");    
-                bool preconditionsSatisfied = currentNode.action.CanSatisfyAllPreconditions(currentNode.actor, currentNode.poiTarget, currentNode.otherData, currentTopPrioJob.jobType);
+                bool preconditionsSatisfied = currentNode.action.CanSatisfyAllPreconditions(currentNode.actor, currentNode.poiTarget, currentNode.otherData, currentTopPrioJob.jobType, out Precondition failedPrecondition);
                 Profiler.EndSample();
                 
                 if (!preconditionsSatisfied) {
@@ -4102,8 +4113,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     if (plan.doNotRecalculate) {
                         log = $"{log}\n - {currentNode} Action's plan has doNotRecalculate state set to true, dropping plan...";
                         logComponent.PrintLogIfActive(log);
+                        string reason = string.Empty;
+                        if (currentTopPrioJob.jobType.IsCultistJob()) {
+                            reason = GetCultistUnableToDoJobReason(currentTopPrioJob, failedPrecondition, currentNode.goapType);
+                        }
                         currentNode.action.OnStopWhileStarted(currentNode);
-                        currentTopPrioJob.CancelJob(false);
+                        currentTopPrioJob.CancelJob(false, reason);
                     } else {
                         logComponent.PrintLogIfActive(log);
                         planner.RecalculateJob(currentTopPrioJob);
@@ -4197,8 +4212,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 Profiler.BeginSample($"{name} - {currentNode.action.name} - Did not meet requirements");
                 log = $"{log}\n - {plan.currentActualNode} Action did not meet current requirements and allowed actions, dropping plan...";
                 logComponent.PrintLogIfActive(log);
+                string reason = string.Empty;
+                if (currentNode.associatedJob != null && currentNode.associatedJob.jobType.IsCultistJob()) {
+                    Precondition failedPrecondition = currentNode.action.GetPrecondition(this, currentNode.poiTarget, currentNode.otherData, currentTopPrioJob.jobType, out bool isOverridden);
+                    if (failedPrecondition != null) {
+                        reason = GetCultistUnableToDoJobReason(currentTopPrioJob, failedPrecondition, currentNode.action.goapType);    
+                    }
+                }
                 currentNode.action.OnStopWhileStarted(currentNode);
-                currentTopPrioJob.CancelJob(false);
+                currentTopPrioJob.CancelJob(false, reason);
                 Profiler.EndSample();
             }
         }
@@ -4472,7 +4494,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (shouldLogReason) {
             Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason", providedTags: LOG_TAG.Social);
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(null, currentActionNode.action.goapName, LOG_IDENTIFIER.STRING_1);
+            string jobName = currentActionNode.action.goapName;
+            if (currentActionNode.associatedJobType.IsCultistJob()) {
+                jobName = $"{jobName} for {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(currentActionNode.associatedJobType.ToString())}";
+            }
+            log.AddToFillers(null, jobName, LOG_IDENTIFIER.STRING_1);
             log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
             logComponent.RegisterLog(log, onlyClickedCharacter: false);
         }
