@@ -1542,7 +1542,7 @@ public class ReactionComponent : CharacterComponent {
                         Character chosenSuspect = _assumptionSuspects[UnityEngine.Random.Range(0, _assumptionSuspects.Count)];
                         debugLog = debugLog + ("\n-Will create Steal assumption on " + chosenSuspect.name);
                         actor.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, targetTileObject, INTERACTION_TYPE.STEAL, REACTION_STATUS.WITNESSED);
-                        actor.jobComponent.CreateDropItemJob(JOB_TYPE.DROP_ITEM, targetTileObject, actor.homeStructure);
+                        actor.jobComponent.CreateDropItemJob(JOB_TYPE.RETURN_STOLEN_THING, targetTileObject, actor.homeStructure);
                     }
                 } else {
                     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_steal_assumption", providedTags: LOG_TAG.Crimes);
