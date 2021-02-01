@@ -660,7 +660,7 @@ public static class Extensions {
             case JOB_TYPE.CULTIST_TRANSFORM:
             case JOB_TYPE.CULTIST_POISON:
             case JOB_TYPE.CULTIST_BOOBY_TRAP:
-            case JOB_TYPE.EVANGELIZE:
+            case JOB_TYPE.PREACH:
             case JOB_TYPE.SNATCH:
             case JOB_TYPE.VAMPIRIC_EMBRACE:
             case JOB_TYPE.IMPRISON_BLOOD_SOURCE:
@@ -935,6 +935,16 @@ public static class Extensions {
                 return false;
             default:
                 return true;
+        }
+    }
+    public static bool IsCultistJob(this JOB_TYPE type) {
+        switch (type) {
+            case JOB_TYPE.PREACH:
+            case JOB_TYPE.CULTIST_POISON:
+            case JOB_TYPE.CULTIST_BOOBY_TRAP:
+                return true;
+            default:
+                return false;
         }
     }
     #endregion

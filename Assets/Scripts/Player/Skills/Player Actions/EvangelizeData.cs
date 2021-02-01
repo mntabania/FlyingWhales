@@ -67,9 +67,9 @@ public class EvangelizeData : PlayerAction {
     }
     private string GetDescription() {
         if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.characterClass.className == "Cult Leader") {
-            return "This Action instructs the character to Preach about Demon Worship to any Villager."; 
+            return "This Action instructs the character to Preach about Demon Worship to any Villager. NOTE: This requires the actor to have a Cultist Kit"; 
         }
-        return "This Action instructs the character to Preach about Demon Worship to someone they know.";
+        return "This Action instructs the character to Preach about Demon Worship to someone they know. NOTE: This requires the actor to have a Cultist Kit";
     }
     #endregion
 

@@ -77,6 +77,14 @@ public class TrapStructure {
     public void ResetAllTrapHexes() {
         SetForcedHex(null);
     }
+    public void ResetAllTrappedValues() {
+        if (IsTrapped()) {
+            ResetAllTrapStructures();
+        }
+        if (IsTrappedInHex()) {
+            ResetAllTrapHexes();
+        }
+    }
     public bool IsTrapped() {
         return forcedStructure != null || structure != null;
     }

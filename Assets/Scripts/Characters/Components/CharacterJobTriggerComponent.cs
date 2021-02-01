@@ -2888,7 +2888,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool TryCreateEvangelizeJob(Character target, out JobQueueItem producedJob) {
 	    //create predetermined plan and job
-	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EVANGELIZE, INTERACTION_TYPE.EVANGELIZE, target, owner);
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PREACH, INTERACTION_TYPE.EVANGELIZE, target, owner);
         JobUtilities.PopulatePriorityLocationsForTakingNonEdibleResources(owner, job, INTERACTION_TYPE.TAKE_RESOURCE);
         // List<JobNode> jobNodes = new List<JobNode>();
         // ActualGoapNode evangelizeNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.EVANGELIZE], owner, target, null, 0);
@@ -2904,8 +2904,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool TryCreateEvangelizeJob(Character target) {
         //create predetermined plan and job
-        if(!owner.jobQueue.HasJob(JOB_TYPE.EVANGELIZE, target)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EVANGELIZE, INTERACTION_TYPE.EVANGELIZE, target, owner);
+        if(!owner.jobQueue.HasJob(JOB_TYPE.PREACH, target)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PREACH, INTERACTION_TYPE.EVANGELIZE, target, owner);
             JobUtilities.PopulatePriorityLocationsForTakingNonEdibleResources(owner, job, INTERACTION_TYPE.TAKE_RESOURCE);
             // List<JobNode> jobNodes = new List<JobNode>();
             // ActualGoapNode evangelizeNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.EVANGELIZE], owner, target, null, 0);

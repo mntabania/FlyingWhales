@@ -225,7 +225,7 @@ public class TakeResource : GoapAction {
             }
         } else {
             if (jobQueueItem is GoapPlanJob job) {
-                if (job.jobType == JOB_TYPE.DARK_RITUAL || job.jobType == JOB_TYPE.EVANGELIZE) {
+                if (job.jobType == JOB_TYPE.DARK_RITUAL || job.jobType == JOB_TYPE.PREACH) {
                     //if job is dark ritual, assume that take resource is for a cultist kit, this isn't ideal, but cannot think of another solution at the moment.
                     TileObjectData data = TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT);
                     TileObjectRecipe recipe = data.GetRecipeThatUses(resourcePile.tileObjectType);
