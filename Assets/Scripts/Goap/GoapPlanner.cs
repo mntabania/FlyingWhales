@@ -10,7 +10,9 @@ using Locations.Settlements;
 public class GoapPlanner {
     public Character owner { get; private set; }
     public GOAP_PLANNING_STATUS status { get; private set; }
-
+    private Precondition failedPrecondition { get; set; }
+    public INTERACTION_TYPE failedPreconditionActionType { get; private set; }
+    
     private List<GoapNode> _rawPlan;
 
     public GoapPlanner(Character owner) {
@@ -83,9 +85,6 @@ public class GoapPlanner {
             ObjectPoolManager.Instance.ReturnGoapThreadToPool(goapThread);
             return;
         }
-        //status = GOAP_PLANNING_STATUS.PROCESSING_RESULT;
-
-        //owner.ExecutePendingActionsAfterMultithread();
         string additionalLog = string.Empty;
         if (goapThread.job.originalOwner == null) {
             //This means that the job is already in the object pool, meaning that the received plan for the job is no longer applicable since the job is already deleted/cancelled
@@ -127,12 +126,7 @@ public class GoapPlanner {
             JOB_TYPE jobType = goapThread.job.jobType;
             if (jobType.IsNeedsTypeJob()) {
                 //If unable to do a Need while in a Trapped Structure, remove Trap Structure.
-                if (owner.trapStructure.IsTrapped()) {
-                    owner.trapStructure.ResetAllTrapStructures();
-                }
-                if (owner.trapStructure.IsTrappedInHex()) {
-                    owner.trapStructure.ResetAllTrapHexes();
-                }
+                owner.trapStructure.ResetAllTrappedValues();
                 if (owner.partyComponent.isActiveMember) {
                     if (owner.partyComponent.currentParty.startedTrueRestingState) {
                         if (jobType.IsFullnessRecoveryTypeJob()) {
@@ -155,7 +149,7 @@ public class GoapPlanner {
                         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
                         owner.logComponent.RegisterLog(log);
-                    }    
+                    }
                 }
                 if (goapThread.job.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
                     goapThread.job.AddBlacklistedCharacter(owner);
@@ -177,6 +171,10 @@ public class GoapPlanner {
                     owner.logComponent.PrintLogIfActive(log);
                 }
                 owner.UncarryPOI();
+            }
+            if (goapThread.job != null && goapThread.job.jobType.IsCultistJob()) {
+                string reason = owner.GetCultistUnableToDoJobReason(goapThread.job, failedPrecondition, failedPreconditionActionType);
+                owner.LogUnableToDoJob(reason);
             }
             goapThread.job.CancelJob(false);
 
@@ -237,6 +235,8 @@ public class GoapPlanner {
         //Cache all needed data
         Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect = InteractionManager.Instance.actionsCategorizedByEffect;
         _rawPlan.Clear();
+        failedPrecondition = null;
+        failedPreconditionActionType = INTERACTION_TYPE.NONE;
 
         owner.logComponent.ClearCostLog();
         owner.logComponent.AppendCostLog($"BASE COSTS OF {owner.name} ACTIONS ON {job.name} PLANNING");
@@ -286,6 +286,9 @@ public class GoapPlanner {
     public GoapPlan PlanActions(IPointOfInterest target, GoapAction goalAction, bool isPersonalPlan, ref string log, GoapPlanJob job) {
         Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect = InteractionManager.Instance.actionsCategorizedByEffect;
         _rawPlan.Clear();
+        failedPrecondition = null;
+        failedPreconditionActionType = INTERACTION_TYPE.NONE;
+        
         owner.logComponent.ClearCostLog();
         owner.logComponent.AppendCostLog($"BASE COSTS OF {owner.name} ACTIONS ON {job.name} PLANNING");
         if(target != job.targetPOI && !target.IsStillConsideredPartOfAwarenessByCharacter(owner)) {
@@ -317,6 +320,8 @@ public class GoapPlanner {
         //That is why we recalculate from the previous node up to the starting node
         Dictionary<GOAP_EFFECT_CONDITION, List<GoapAction>> actionsCategorizedByEffect = InteractionManager.Instance.actionsCategorizedByEffect;
         _rawPlan.Clear();
+        failedPrecondition = null;
+        failedPreconditionActionType = INTERACTION_TYPE.NONE;
 
         JobNode currentJobNode = currentPlan.currentNode;
         ActualGoapNode actualNode = currentJobNode.singleNode;
@@ -385,6 +390,8 @@ public class GoapPlanner {
                         //Fail - rawPlan must be set to null so the plan will fail
                         rawPlan.Clear();
                         log += "\n--Could not find action to satisfy precondition, setting raw plan to null and exiting goap tree...";
+                        failedPrecondition = precondition;
+                        failedPreconditionActionType = action.goapType;
                         return;
                     }
                 } else if (preconditionEffect.target == GOAP_EFFECT_TARGET.ACTOR) {
@@ -402,6 +409,8 @@ public class GoapPlanner {
                         //Fail - rawPlan must be set to null so the plan will fail
                         rawPlan.Clear();
                         log += "\n--Could not find action to satisfy precondition, setting raw plan to null and exiting goap tree...";
+                        failedPrecondition = precondition;
+                        failedPreconditionActionType = action.goapType;
                         return;
                     }
                 }

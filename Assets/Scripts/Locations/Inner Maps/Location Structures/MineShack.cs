@@ -8,10 +8,10 @@ namespace Inner_Maps.Location_Structures {
         public Cave connectedCave { get; private set; }
         public override Type serializedData => typeof(SaveDataMineShack);
         public MineShack(Region location) : base(STRUCTURE_TYPE.MINE_SHACK, location) {
-            SetMaxHPAndReset(8000);
+            SetMaxHPAndReset(4000);
         }
         public MineShack(Region location, SaveDataManMadeStructure data) : base(location, data) {
-            SetMaxHP(8000);
+            SetMaxHP(4000);
         }
 
         #region Loading
