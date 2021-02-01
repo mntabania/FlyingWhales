@@ -1944,7 +1944,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 273774673}
   m_HandleRect: {fileID: 273774671}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -13787,7 +13787,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 2
   m_TargetDisplay: 0
 --- !u!1 &309556337
 GameObject:

@@ -26,7 +26,7 @@ public class CombatManager : BaseMonoBehaviour {
         Slaying_Monster = "Slaying_Monster", Slaying_Undead = "Slaying_Undead", Slaying_Demon = "Slaying_Demon", Slaying_Villager = "Slaying_Villager",
         Incapacitating_Monster = "Incapacitating_Monster", Incapacitating_Undead = "Incapacitating_Undead", Incapacitating_Demon = "Incapacitating_Demon", Incapacitating_Villager = "Incapacitating_Villager",
         Fighting_Vagrant = "Fighting_Vagrant", Feral_Monster = "Feral_Monster",
-        Hostile_Undead = "Hostile_Undead", Defending_Territory = "Defending_Territory";
+        Hostile_Undead = "Hostile_Undead", Defending_Territory = "Defending_Territory", Defending_Home = "Defending_Home";
 
     //Retaliation reasons
     public const string Resisting_Arrest = "Resisting_Arrest", Resisting_Abduction = "Resisting_Abduction", Defending_Self = "Defending_Self";

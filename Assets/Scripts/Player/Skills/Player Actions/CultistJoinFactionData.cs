@@ -98,6 +98,7 @@ public class CultistJoinFactionData : PlayerAction {
     }
     private void OnChooseFaction(object obj, Character source) {
         UIManager.Instance.HideObjectPicker();
+        base.ActivateAbility(source);
         if (obj is Faction targetFaction) {
             Character targetFactionMember = targetFaction.characters[0];
             source.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, targetFactionMember, "join_faction_normal");

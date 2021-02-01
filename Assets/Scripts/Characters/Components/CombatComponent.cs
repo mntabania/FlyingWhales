@@ -964,7 +964,7 @@ public class CombatComponent : CharacterComponent {
         if (targetCharacter != null) {
             if(owner.IsInHomeSettlement()) {
                 if(targetCharacter.homeSettlement != owner.homeSettlement && targetCharacter.currentSettlement == owner.homeSettlement) {
-                    return CombatManager.Defending_Territory;
+                    return CombatManager.Defending_Home;
                 }
             } else if (owner.IsInTerritory()) {
                 if (!targetCharacter.IsTerritory(owner.hexTileLocation) && targetCharacter.IsInTerritoryOf(owner)) {

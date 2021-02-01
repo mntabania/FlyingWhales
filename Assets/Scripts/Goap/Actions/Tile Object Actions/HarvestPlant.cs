@@ -96,7 +96,7 @@ public class HarvestPlant : GoapAction {
 
     #region State Effects
     public void PreHarvestSuccess(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(null, "50", LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, "30", LOG_IDENTIFIER.STRING_1);
         //if (goapNode.actor.characterClass.IsCombatant()) {
         //    goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         //}
