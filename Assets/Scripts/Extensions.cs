@@ -544,8 +544,9 @@ public static class Extensions {
             //case JOB_TYPE.FLEE_CRIME:
             //case JOB_TYPE.BERSERK_ATTACK:
             case JOB_TYPE.DESTROY:
-                //case JOB_TYPE.BERSERK_STROLL:
-                ////case JOB_TYPE.GO_TO:
+            case JOB_TYPE.RETURN_STOLEN_THING:
+            //case JOB_TYPE.BERSERK_STROLL:
+            ////case JOB_TYPE.GO_TO:
                 priority = 1085;
                 break;
             case JOB_TYPE.REPORT_CORRUPTED_STRUCTURE:
