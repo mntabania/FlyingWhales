@@ -163,6 +163,11 @@ public class StructureInfoUI : InfoUIBase {
     }
     #endregion
 
+    #region Click
+    public void OnClickItem() {
+        activeStructure.CenterOnStructure();
+    }
+    #endregion
     #region Hover
     public void OnHoverEnterMigrationMeter() {
         if (activeStructure.settlementLocation != null && activeStructure.settlementLocation is NPCSettlement npcSettlement) {

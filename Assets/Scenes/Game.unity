@@ -1944,7 +1944,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 273774673}
   m_HandleRect: {fileID: 273774671}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -7891,6 +7891,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: StructureInfoUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 1086249575366272666, guid: af544682ce629014cbd330544a76975d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af544682ce629014cbd330544a76975d, type: 3}
@@ -17936,6 +17941,10 @@ PrefabInstance:
     - target: {fileID: 1642837813464840, guid: c38c7e75a0c6c0e46888d93ecdc69be4, type: 3}
       propertyPath: m_Name
       value: TileObjectInfoUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 1642837813464840, guid: c38c7e75a0c6c0e46888d93ecdc69be4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224725604692175578, guid: c38c7e75a0c6c0e46888d93ecdc69be4,
         type: 3}

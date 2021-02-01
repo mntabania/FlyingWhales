@@ -45,7 +45,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public FactionSuccessionComponent successionComponent { get; private set; }
 
     //private readonly WeightedDictionary<Character> newLeaderDesignationWeights;
-    
+
 
     #region getters/setters
     public bool isDisbanded => characters.Count <= 0;
@@ -137,7 +137,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                     //Whenever a character joins a new faction, add Transitioning status, so that if his new faction is hostile with his previous faction he will not be attacked immediately by the people of his previous faction
                     //Also, cancel all needs recovery job because it might not be applicable upon changing factions, example: if a character has founded a village, it should no longer it in the previous home village
                     character.traitContainer.AddTrait(character, "Transitioning");
-                    character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, 
+                    character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT,
                         JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT, JOB_TYPE.HAPPINESS_RECOVERY);
                 }
 
@@ -187,11 +187,11 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         return false;
     }
     public void OnlySetLeader(ILeader newLeader) {
-        if(leader != newLeader) {
+        if (leader != newLeader) {
             ILeader prevLeader = leader;
             leader = newLeader;
-            if(prevLeader != null && prevLeader is Character prevCharacterLeader) {
-                if(isMajorNonPlayer) {
+            if (prevLeader != null && prevLeader is Character prevCharacterLeader) {
+                if (isMajorNonPlayer) {
                     prevCharacterLeader.behaviourComponent.RemoveBehaviourComponent(typeof(FactionLeaderBehaviour));
                     if (!prevCharacterLeader.isSettlementRuler) {
                         prevCharacterLeader.jobComponent.RemovePriorityJob(JOB_TYPE.JUDGE_PRISONER);
@@ -200,8 +200,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                 }
             }
             Character newCharacterLeader = leader as Character;
-            if(leader != null) {
-                if(newCharacterLeader != null) {
+            if (leader != null) {
+                if (newCharacterLeader != null) {
                     if (isMajorNonPlayer) {
                         newCharacterLeader.behaviourComponent.AddBehaviourComponent(typeof(FactionLeaderBehaviour));
                         newCharacterLeader.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
@@ -302,7 +302,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         return bannedCharacters.Remove(character);
     }
     public void KickOutCharacter(Character character) {
-        if(character.faction == this) {
+        if (character.faction == this) {
             AddBannedCharacter(character);
 
             character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "kick_out_faction_character");
@@ -323,9 +323,10 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             SetLeader(null);
         }
         successionComponent.OnCharacterDied(deadCharacter);
+        FactionInfoHubUI.Instance.UpdateFactionItem(this);
     }
     public void SetLeader(ILeader newLeader) {
-        if(!isMajorFaction && !isPlayerFaction) {
+        if (!isMajorFaction && !isPlayerFaction) {
             //Neutral, Friendly Neutral, Disguised Factions cannot have a leader
             return;
         }
@@ -359,7 +360,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         string log = $"Designating a new npcSettlement faction leader for: {name}(chance it triggered: {newLeaderDesignationChance.ToString()})";
 
         Character chosenLeader = successionComponent.PickSuccessor();
-        if(chosenLeader != null) {
+        if (chosenLeader != null) {
             log += $"\nCHOSEN LEADER: {chosenLeader.name}";
             if (willLog) {
                 chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, chosenLeader);
@@ -515,7 +516,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             Character character1 = characters[i];
             for (int j = 0; j < characters.Count; j++) {
                 Character character2 = characters[j];
-                if(character1 != character2) {
+                if (character1 != character2) {
                     character1.relationshipContainer.AdjustOpinion(character1, character2, "Base", 0);
                 }
             }
@@ -538,6 +539,17 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
         return count;
     }
+
+    public int GetAliveMembersCount() {
+        int count = 0;
+        characters.ForEach((eachCharacter) => {
+            if (!eachCharacter.isDead) {
+                count++;
+            }
+        });
+        return count;
+    }
+
     public bool HasAliveMember() {
         for (int i = 0; i < characters.Count; i++) {
             Character character = characters[i];

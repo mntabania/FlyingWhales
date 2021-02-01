@@ -24,12 +24,14 @@ public class FactionItem : PooledObject {
         this.faction = faction;
         emblem.sprite = faction.emblem;
         nameLbl.text = faction.name;
+        nameLbl.text += " (" + faction.GetAliveMembersCount().ToString() + ")";
         typeLbl.text = faction.factionType.name;
     }
     public void UpdateFaction() {
         if(faction != null) {
             emblem.sprite = faction.emblem;
             nameLbl.text = faction.name;
+            nameLbl.text += " (" + faction.GetAliveMembersCount().ToString() + ")";
             typeLbl.text = faction.factionType.name;
         }
     }
