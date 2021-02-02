@@ -158,6 +158,9 @@ public struct Log {
          return false;
     }
     public bool IsInvolved(ILogFiller obj) {
+        if (obj == null) {
+            return false;
+        }
         return !string.IsNullOrEmpty(allInvolvedObjectIDs) && allInvolvedObjectIDs.Contains(obj.persistentID);
     }
     private void AddInvolvedObject(string persistentID) {

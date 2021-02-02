@@ -111,6 +111,7 @@ namespace UtilityScripts {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         string summary = $"Home structure: {activeCharacter.homeStructure?.ToString() ?? "None"}";
         summary = $"{summary} {$"Territory: {activeCharacter.territory?.name ?? "None"}"}";
+        summary = $"{summary} Home Settlement: {activeCharacter.homeSettlement?.name ?? "None"}";
         summary = $"{summary} Current structure: {activeCharacter.currentStructure}";
         summary = $"{summary} Previous Home Structure: {activeCharacter.previousCharacterDataComponent.previousHomeStructure?.name}";
         summary = $"{summary} Previous Home Settlement: {activeCharacter.previousCharacterDataComponent.previousHomeSettlement?.name}";

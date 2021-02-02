@@ -28,19 +28,25 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
                 }
             
                 //set abduction target if none, and chance met
-                if (character.homeStructure != null && character.behaviourComponent.currentAbductTarget == null  && GameUtilities.RollChance(1)) {
-                    List<Character> characterChoices = ObjectPoolManager.Instance.CreateNewCharactersList();
-                    for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
-                        Character c = character.currentRegion.charactersAtLocation[i];
-                        if (c != character && !c.isDead && (c is Animal || (c.isNormalCharacter && c.traitContainer.HasTrait("Resting"))) && c.currentStructure is Kennel == false) {
-                            characterChoices.Add(c);
+                if (character.homeStructure != null) { 
+                    if (character.behaviourComponent.currentAbductTarget == null  && GameUtilities.RollChance(100)) { //1
+                        List<Character> characterChoices = ObjectPoolManager.Instance.CreateNewCharactersList();
+                        for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
+                            Character c = character.currentRegion.charactersAtLocation[i];
+                            if (c != character && !c.isDead && (c is Animal || (c.isNormalCharacter && c.traitContainer.HasTrait("Resting"))) && c.currentStructure is Kennel == false) {
+                                characterChoices.Add(c);
+                            }
                         }
+                        if (characterChoices.Count > 0) {
+                            Character chosenCharacter = CollectionUtilities.GetRandomElement(characterChoices);
+                            character.behaviourComponent.SetAbductionTarget(chosenCharacter);
+                        }
+                        ObjectPoolManager.Instance.ReturnCharactersListToPool(characterChoices);
                     }
-                    if (characterChoices.Count > 0) {
-                        Character chosenCharacter = CollectionUtilities.GetRandomElement(characterChoices);
-                        character.behaviourComponent.SetAbductionTarget(chosenCharacter);
+                } else {
+                    if (character.behaviourComponent.currentAbductTarget != null) {
+                        character.behaviourComponent.SetAbductionTarget(null);    
                     }
-                    ObjectPoolManager.Instance.ReturnCharactersListToPool(characterChoices);
                 }
 
                 ObjectPoolManager.Instance.ReturnCharactersListToPool(webbedCharacters);

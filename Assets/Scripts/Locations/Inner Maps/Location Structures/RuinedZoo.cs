@@ -68,11 +68,23 @@ namespace Inner_Maps.Location_Structures {
         //         
         //     }
         // }
+        protected override void DestroyStructure() {
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character character = charactersHere[i];
+                if (character is Summon summon && summon.homeStructure == this) {
+                    RevertCombatModeAndDiggingToDefault(summon);
+                }
+            }
+            base.DestroyStructure();
+        }
         private void OnCharacterLeftStructure(Character character, LocationStructure structure) {
             if (structure == this && character is Summon summon) {
-                summon.combatComponent.SetCombatMode(summon.defaultCombatMode);
-                summon.movementComponent.SetEnableDigging(summon.defaultDigMode);
+                RevertCombatModeAndDiggingToDefault(summon);
             }
+        }
+        private void RevertCombatModeAndDiggingToDefault(Summon summon) {
+            summon.combatComponent.SetCombatMode(summon.defaultCombatMode);
+            summon.movementComponent.SetEnableDigging(summon.defaultDigMode);
         }
     }
 }
