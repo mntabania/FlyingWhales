@@ -15,6 +15,7 @@ public class WorldGenOptionsUIModel : MVCUIModel {
     public System.Action<SKILL_COST_AMOUNT> onChangeSkillCostAmount;
     public System.Action<SKILL_CHARGE_AMOUNT> onChangeSkillChargeAmount;
     public System.Action<THREAT_AMOUNT> onChangeThreatAmount;
+    public System.Action<OMNIPOTENT_MODE> onChangeOmnipotent;
     public System.Action onClickAddBiome;
     public System.Action onClickAddFaction;
 
@@ -68,6 +69,12 @@ public class WorldGenOptionsUIModel : MVCUIModel {
     public FactionSettingUIItem[] factionSettingUIItems;
     public Button btnAddFaction;
     public TextMeshProUGUI txtVillages;
+    
+    [Header("Omnipotent")]
+    public TMP_Dropdown dropDownOmnipotent;
+    public HoverHandler hoverHandlerOmnipotent;
+    public System.Action<UIHoverPosition> onHoverOverOmnipotentDropdown;
+    public System.Action onHoverOutOmnipotentDropdown;
 
     public UIHoverPosition tooltipPosition;
 
@@ -79,6 +86,8 @@ public class WorldGenOptionsUIModel : MVCUIModel {
         dropDownCosts.onValueChanged.AddListener(OnChangeSkillCost);
         dropDownCharges.onValueChanged.AddListener(OnChangeChargesAmount);
         dropDownThreat.onValueChanged.AddListener(OnChangeThreatAmount);
+        dropDownOmnipotent.onValueChanged.AddListener(OnChangeOmnipotent);
+        
         btnAddBiome.onClick.AddListener(OnClickAddBiome);
         btnAddFaction.onClick.AddListener(OnClickAddFaction);
         
@@ -102,6 +111,9 @@ public class WorldGenOptionsUIModel : MVCUIModel {
         
         hoverHandlerThreat.AddOnHoverOverAction(OnHoverOverThreat);
         hoverHandlerThreat.AddOnHoverOutAction(OnHoverOutThreat);
+        
+        hoverHandlerOmnipotent.AddOnHoverOverAction(OnHoverOverOmnipotent);
+        hoverHandlerOmnipotent.AddOnHoverOutAction(OnHoverOutOmnipotent);
     }
     private void OnDisable() {
         dropDownMapSize.onValueChanged.RemoveListener(OnChangeMapSize);
@@ -111,6 +123,8 @@ public class WorldGenOptionsUIModel : MVCUIModel {
         dropDownCosts.onValueChanged.RemoveListener(OnChangeSkillCost);
         dropDownCharges.onValueChanged.RemoveListener(OnChangeChargesAmount);
         dropDownThreat.onValueChanged.RemoveListener(OnChangeThreatAmount);
+        dropDownOmnipotent.onValueChanged.RemoveListener(OnChangeOmnipotent);
+        
         btnAddBiome.onClick.RemoveListener(OnClickAddBiome);
         btnAddFaction.onClick.RemoveListener(OnClickAddFaction);
         
@@ -134,6 +148,9 @@ public class WorldGenOptionsUIModel : MVCUIModel {
         
         hoverHandlerThreat.RemoveOnHoverOverAction(OnHoverOverThreat);
         hoverHandlerThreat.RemoveOnHoverOutAction(OnHoverOutThreat);
+        
+        hoverHandlerOmnipotent.RemoveOnHoverOverAction(OnHoverOverOmnipotent);
+        hoverHandlerOmnipotent.RemoveOnHoverOutAction(OnHoverOutOmnipotent);
     }
     
     private void OnChangeMapSize(int p_index) {
@@ -163,6 +180,10 @@ public class WorldGenOptionsUIModel : MVCUIModel {
     private void OnChangeThreatAmount(int p_index) {
         THREAT_AMOUNT threatAmount = dropDownThreat.ConvertCurrentSelectedOption<THREAT_AMOUNT>();
         onChangeThreatAmount?.Invoke(threatAmount);
+    }
+    private void OnChangeOmnipotent(int p_index) {
+        OMNIPOTENT_MODE omnipotentMode = dropDownOmnipotent.ConvertCurrentSelectedOption<OMNIPOTENT_MODE>();
+        onChangeOmnipotent?.Invoke(omnipotentMode);
     }
     private void OnClickAddBiome() {
         onClickAddBiome?.Invoke();
@@ -225,12 +246,21 @@ public class WorldGenOptionsUIModel : MVCUIModel {
     }
     #endregion
     
-    #region Map Size
+    #region Threat
     private void OnHoverOverThreat() {
         onHoverOverThreatDropdown?.Invoke(tooltipPosition);
     }
     private void OnHoverOutThreat() {
         onHoverOutThreatDropdown?.Invoke();
+    }
+    #endregion
+    
+    #region Omnipotent
+    private void OnHoverOverOmnipotent() {
+        onHoverOverOmnipotentDropdown?.Invoke(tooltipPosition);
+    }
+    private void OnHoverOutOmnipotent() {
+        onHoverOutOmnipotentDropdown?.Invoke();
     }
     #endregion
 }

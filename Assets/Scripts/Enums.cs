@@ -1171,6 +1171,10 @@ public enum SKILL_CHARGE_AMOUNT {
 public enum THREAT_AMOUNT {
     None, Half, Normal 
 }
+public enum OMNIPOTENT_MODE {
+    Disabled, Enabled 
+}
+
 public enum VICTORY_CONDITION {
     Eliminate_All, Kill_By_Psychopath_Ritual, Wiped_Village_On_Day8, Wipe_Elven_Kingdom_Survive_Humans, Declare_3_Wars, Kill_By_Plague, Create_Demon_Cult, Sandbox
 }

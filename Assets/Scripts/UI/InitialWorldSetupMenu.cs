@@ -58,7 +58,7 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
         
         pickPortalMessage.DOAnchorPosY(-110f, 0.5f).SetEase(Ease.InBack);
 
-        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial || WorldSettings.Instance.worldSettingsData.playerSkillSettings.omnipotentMode == OMNIPOTENT_MODE.Enabled) {
             loadOutMenu.OnClickContinue();
         } else {
             configureLoadoutBtnGO.gameObject.SetActive(true);    

@@ -111,6 +111,8 @@ public class SkillTreeSelector : MonoBehaviour {
     private PLAYER_ARCHETYPE GetSelectedArchetype() {
         if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
             return PLAYER_ARCHETYPE.Tutorial;
+        } else if (WorldSettings.Instance.worldSettingsData.playerSkillSettings.omnipotentMode == OMNIPOTENT_MODE.Enabled) {
+            return PLAYER_ARCHETYPE.Ravager;
         } else {
             for (int i = 0; i < archetypeToggles.Length; i++) {
                 Toggle archetypeToggle = archetypeToggles[i];

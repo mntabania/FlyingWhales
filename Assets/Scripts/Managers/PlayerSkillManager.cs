@@ -18,10 +18,10 @@ public class PlayerSkillManager : MonoBehaviour {
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
     public bool unlimitedCast => _unlimitedCast;
-    public bool unlockAllSkills => _unlockAllSkills; //|| WorldSettings.Instance.worldSettingsData.omnipotentMode;
+    public bool unlockAllSkills => _unlockAllSkills || WorldSettings.Instance.worldSettingsData.playerSkillSettings.omnipotentMode == OMNIPOTENT_MODE.Enabled;
 #else
     public bool unlimitedCast => false;
-    public bool unlockAllSkills => false;
+    public bool unlockAllSkills => false || WorldSettings.Instance.worldSettingsData.playerSkillSettings.omnipotentMode == OMNIPOTENT_MODE.Enabled;
 #endif
 
     [SerializeField] private PlayerSkillDataDictionary _playerSkillDataDictionary;
