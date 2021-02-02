@@ -1416,6 +1416,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.PICK_UP, targetItem, owner);
         owner.jobQueue.AddJobInQueue(job);
     }
+    public void CreateStealItemJob(JOB_TYPE jobType, TileObject targetItem) {
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.STEAL, targetItem, owner);
+	    owner.jobQueue.AddJobInQueue(job);
+    }
     public bool TryCreateObtainPersonalItemJob() {
         if (!owner.IsInventoryAtFullCapacity()) {
             string chosenItemName = GetItemNameForObtainPersonalItemJob();

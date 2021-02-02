@@ -13,9 +13,9 @@ public class Necronomicon : Artifact {
     public Necronomicon(SaveDataArtifact data) : base(data) { }
 
     #region Overrides
-    public override void SetInventoryOwner(Character character) {
-        if(isBeingCarriedBy != character) {
-            base.SetInventoryOwner(character);
+    public override void SetInventoryOwner(Character p_newOwner) {
+        if(isBeingCarriedBy != p_newOwner) {
+            base.SetInventoryOwner(p_newOwner);
             if (isBeingCarriedBy != null) {
                 isBeingCarriedBy.interruptComponent.NecromanticTranform();
             }

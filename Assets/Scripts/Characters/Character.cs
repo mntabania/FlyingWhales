@@ -814,6 +814,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         combatComponent.UpdateElementalType();
     }
+    public void OverridePreviousClassName(string p_className) {
+        previousClassName = p_className;
+    }
     #endregion
 
     #region Jobs

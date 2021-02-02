@@ -1558,7 +1558,7 @@ public class ReactionComponent : CharacterComponent {
             }
         }
 
-        if (targetTileObject is CultistKit && targetTileObject.IsOwnedBy(actor) == false) {
+        if (targetTileObject is CultistKit && !targetTileObject.IsOwnedBy(actor)) {
             debugLog = $"{debugLog}\n-Object is a cultist kit";
             if (targetTileObject.gridTileLocation != null) {
                 if (targetTileObject.structureLocation is ManMadeStructure && 
@@ -1589,7 +1589,7 @@ public class ReactionComponent : CharacterComponent {
                             }
                         }
                         Character chosenTarget = CollectionUtilities.GetRandomElement(_assumptionSuspects);
-                        if(chosenTarget != null) {
+                        if(chosenTarget != null && CrimeManager.Instance.IsConsideredACrimeByCharacter(actor, chosenTarget, targetTileObject, CRIME_TYPE.Demon_Worship)) {
                             actor.assumptionComponent.CreateAndReactToNewAssumption(chosenTarget, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);
                         }
                     }
@@ -1626,7 +1626,7 @@ public class ReactionComponent : CharacterComponent {
             if (carrier.reactionComponent.disguisedCharacter != null) {
                 disguisedTarget = carrier.reactionComponent.disguisedCharacter;
             }
-            if (!disguisedTarget.isDead) {
+            if (!disguisedTarget.isDead && CrimeManager.Instance.IsConsideredACrimeByCharacter(actor, disguisedTarget, targetTileObject, CRIME_TYPE.Demon_Worship)) {
                 actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);
             }
         }

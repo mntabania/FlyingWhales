@@ -333,6 +333,10 @@ public class CrimeManager : BaseMonoBehaviour {
         }
         return finalCrimeSeverity;
     }
+    public bool IsConsideredACrimeByCharacter(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType) {
+        CRIME_SEVERITY crimeSeverity = GetCrimeSeverity(witness, actor, target, crimeType);
+        return crimeSeverity != CRIME_SEVERITY.None && crimeSeverity != CRIME_SEVERITY.Unapplicable;
+    }
 
     //public void ReactToCrime(Character reactor, Character crimeCommitter, ActualGoapNode committedCrime, JOB_TYPE crimeJobType, CRIME_SEVERITY crimeType) {
     //    switch (crimeType) {

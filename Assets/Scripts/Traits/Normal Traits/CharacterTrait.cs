@@ -154,7 +154,11 @@ namespace Traits {
                             }
                         }
                         if (UnityEngine.Random.Range(0, 100) < chance) {
-                            characterThatWillDoJob.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, item);
+                            if (item.characterOwner != null &&  !item.IsOwnedBy(characterThatWillDoJob)) {
+                                characterThatWillDoJob.jobComponent.CreateStealItemJob(JOB_TYPE.TAKE_ITEM, item);
+                            } else {
+                                characterThatWillDoJob.jobComponent.CreateTakeItemJob(JOB_TYPE.TAKE_ITEM, item);    
+                            }
                             return true;
                         }
                         if (item.tileObjectType == TILE_OBJECT_TYPE.HERB_PLANT) {
