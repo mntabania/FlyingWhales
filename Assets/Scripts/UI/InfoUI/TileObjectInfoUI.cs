@@ -287,6 +287,11 @@ public class TileObjectInfoUI : InfoUIBase {
             UIManager.Instance.ShowPlayerActionContextMenu(playerActionTarget, Input.mousePosition, true);
         }
     }
+
+    public void OnClickItem() {
+        InnerMapCameraMove.Instance.CenterCameraOn(activeTileObject.worldObject.gameObject);
+    }
+
     public void OnHoverTrait(object obj) {
         if (obj is string) {
             string text = (string) obj;

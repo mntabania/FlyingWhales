@@ -238,7 +238,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
         //removed by aaron aranas awareness update previousTile?.parentMap.region.RemovePendingAwareness(this);
         Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
-        Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "");
+        Messenger.Broadcast(CharacterSignals.FORCE_CANCEL_ALL_ACTIONS_TARGETING_POI, this as IPointOfInterest, "Target Destroyed");
         OnRemoveTileObject(null, previousTile);
         DestroyMapVisualGameObject();
         SetPOIState(POI_STATE.INACTIVE);

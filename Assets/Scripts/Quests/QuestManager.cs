@@ -59,7 +59,7 @@ namespace Quests {
                     winConditionTracker = new OonaWinConditionTracker();
                     break;
                 case WorldSettingsData.World_Type.Icalawa:
-                    winConditionTracker = new IcalawaWinConditionTracker();
+                    winConditionTracker = new OonaWinConditionTracker();
                     break;
                 case WorldSettingsData.World_Type.Pangat_Loo:
                     winConditionTracker = new PangatLooWinConditionTracker();

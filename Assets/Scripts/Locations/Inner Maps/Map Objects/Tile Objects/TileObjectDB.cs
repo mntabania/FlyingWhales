@@ -255,6 +255,9 @@ public static class TileObjectDB {
                     new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.STONE_PILE, 10)
                     //new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WOOD_PILE, 10)
                 ),
+                new TileObjectRecipe(
+                    new TileObjectRecipeIngredient(TILE_OBJECT_TYPE.WOOD_PILE, 10)
+                ),
             }
         } },
         { TILE_OBJECT_TYPE.TORCH, new TileObjectData() {

@@ -22,7 +22,11 @@ namespace Traits {
                 if (objectToBeInspected.lastManipulatedBy is Player) {
                     //Must not destroy even if suspicious if the tile object is edible and character is starving
                     if ((!objectToBeInspected.traitContainer.HasTrait("Edible") || !characterThatWillDoJob.needsComponent.isStarving) && !(objectToBeInspected is Heirloom)) {
-                        characterThatWillDoJob.jobComponent.TriggerDestroy(objectToBeInspected);
+                        if (targetPOI.IsOwnedBy(characterThatWillDoJob)) {
+                            characterThatWillDoJob.jobComponent.CreateDropItemJob(JOB_TYPE.RETURN_STOLEN_THING, targetPOI as TileObject, characterThatWillDoJob.homeStructure);
+                        } else {
+                            characterThatWillDoJob.jobComponent.TriggerDestroy(objectToBeInspected);
+                        }
                     }
                 }
             }

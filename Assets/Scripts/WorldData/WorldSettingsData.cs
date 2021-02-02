@@ -118,7 +118,7 @@ public class WorldSettingsData {
     private void SetIcalawaWorldSettings() {
         Debug.Log("Set world settings as Icalawa");
         worldType = World_Type.Icalawa;
-        victoryCondition = VICTORY_CONDITION.Kill_By_Psychopath_Ritual;
+        victoryCondition = VICTORY_CONDITION.Eliminate_All;
         SetDefaultSpellSettings(victoryCondition);
         mapSettings.BlockMonsterMigrations();
         villageSettings.AllowAllFactionMigrations();
