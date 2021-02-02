@@ -155,11 +155,12 @@ public class CrimeManager : BaseMonoBehaviour {
         }
 
         if (key != string.Empty) {
-            Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", key, null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+            Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", key, null, LOG_TAG.Life_Changes, LOG_TAG.Crimes, LOG_TAG.Major);
             addLog.AddToFillers(authority, authority.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             addLog.AddToFillers(null, crimeData.crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
             addLog.AddLogToDatabase();
+            PlayerManager.Instance.player.ShowNotificationFrom(criminal, addLog);
         }
         return key == "wanted";
     }

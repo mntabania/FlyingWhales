@@ -220,11 +220,12 @@ public class ReportCrime : GoapAction {
                 CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, crime as ActualGoapNode);
 
                 //Will only log on not believe because the log for believe report crime is already in the crime system
-                Log believeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, result, providedTags: LOG_TAG.Crimes);
+                Log believeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", name, result, shareActionItself, LOG_TAG.Crimes, LOG_TAG.Major);
                 believeLog.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 believeLog.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 believeLog.AddToFillers(null, "crime", LOG_IDENTIFIER.STRING_1);
                 believeLog.AddLogToDatabase();
+                PlayerManager.Instance.player.ShowNotificationFrom(actor, believeLog);
             }
         }
     }
