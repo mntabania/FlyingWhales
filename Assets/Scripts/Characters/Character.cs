@@ -2849,7 +2849,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private void OnStructureDestroyed(LocationStructure structure) {
         //character's home was destroyed.
         if (structure == homeStructure) {
-            MigrateHomeStructureTo(null, affectSettlement: false);
+            //affect settlement if home settlement structures have been reduced to 0
+            bool affectSettlement = homeSettlement != null && homeSettlement.structures.Count == 0;
+            MigrateHomeStructureTo(null, affectSettlement: affectSettlement);
             interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
             //MigrateHomeTo(null);
             //interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
