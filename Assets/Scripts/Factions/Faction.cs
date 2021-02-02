@@ -323,6 +323,22 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             SetLeader(null);
         }
         successionComponent.OnCharacterDied(deadCharacter);
+        UpdateFactionCount();
+    }
+
+    private void OnCharacterReturnToLife(Character deadCharacter) {
+        UpdateFactionCount();
+    }
+
+    private void OnFactionmemberChanges(Character newMember, Faction faction) {
+        UpdateFactionCount();
+    }
+
+    private void OnNewVillagerMigrated(Character character) {
+        UpdateFactionCount();
+    }
+
+    private void UpdateFactionCount() {
         FactionInfoHubUI.Instance.UpdateFactionItem(this);
     }
     public void SetLeader(ILeader newLeader) {
@@ -567,6 +583,10 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character>(CharacterSignals.CHARACTER_RETURNED_TO_LIFE, OnCharacterReturnToLife);
+        Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, OnFactionmemberChanges);
+        Messenger.AddListener<Character, Faction>(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, OnFactionmemberChanges);
+        Messenger.AddListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnNewVillagerMigrated);
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
@@ -578,6 +598,10 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
         Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.RemoveListener<Character>(CharacterSignals.CHARACTER_RETURNED_TO_LIFE, OnCharacterReturnToLife);
+        Messenger.RemoveListener<Character, Faction>(FactionSignals.CHARACTER_ADDED_TO_FACTION, OnFactionmemberChanges);
+        Messenger.RemoveListener<Character, Faction>(FactionSignals.CHARACTER_REMOVED_FROM_FACTION, OnFactionmemberChanges);
+        Messenger.RemoveListener<Character>(WorldEventSignals.NEW_VILLAGER_ARRIVED, OnNewVillagerMigrated);
         Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener<Character, Trait>(CharacterSignals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
