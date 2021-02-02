@@ -48,9 +48,9 @@ public class CombatManager : BaseMonoBehaviour {
         Instance = null;
     }
 
-    public void ApplyElementalDamage(int damage, ELEMENTAL_TYPE elementalType, ITraitable target, Character characterResponsible = null, ElementalTraitProcessor elementalTraitProcessor = null) {
+    public void ApplyElementalDamage(int damage, ELEMENTAL_TYPE elementalType, ITraitable target, Character characterResponsible = null, ElementalTraitProcessor elementalTraitProcessor = null, bool createHitEffect = true) {
         ElementalDamageData elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
-        if (target != null) {
+        if (target != null && createHitEffect) {
             CreateHitEffectAt(target, elementalType);
         }
         if (damage < 0) {
@@ -73,7 +73,12 @@ public class CombatManager : BaseMonoBehaviour {
                 if (elementalType == ELEMENTAL_TYPE.Electric) {
                     ChainElectricDamage(target, damage, characterResponsible, target);
                 }
-                elementalTraitProcessor?.Invoke(target, trait);
+                if (elementalTraitProcessor != null) {
+                    elementalTraitProcessor.Invoke(target, trait);    
+                } else {
+                    DefaultElementalTraitProcessor(target, trait);
+                }
+                
             }
         }
         GeneralElementProcess(target, characterResponsible);

@@ -9,6 +9,7 @@ using Locations.Settlements;
 using Pathfinding;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using UtilityScripts;
@@ -425,9 +426,17 @@ namespace Inner_Maps {
                 }
                 from.RemoveCharacterHere(character);
                 to.AddCharacterHere(character);
+                Profiler.BeginSample($"Check job applicability - Remove Status");
                 Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.REMOVE_STATUS, character as IPointOfInterest);
+                Profiler.EndSample();
+                
+                Profiler.BeginSample($"Check job applicability - Apprehend");
                 Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.APPREHEND, character as IPointOfInterest);
+                Profiler.EndSample();
+                
+                Profiler.BeginSample($"Check job applicability - Knockout");
                 Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.KNOCKOUT, character as IPointOfInterest);
+                Profiler.EndSample();
             }
         
         }

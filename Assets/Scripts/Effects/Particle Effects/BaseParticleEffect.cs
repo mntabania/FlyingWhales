@@ -19,12 +19,8 @@ public class BaseParticleEffect : PooledObject {
         if (pauseOnGamePaused) {
             Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
         }
-        //Messenger.AddListener<ParticleSystem>(Signals.PARTICLE_EFFECT_DONE, OnParticleEffectDonePlaying);
     }
     private void OnDisable() {
-        //if (Messenger.eventTable.ContainsKey(Signals.PARTICLE_EFFECT_DONE)) {
-        //    Messenger.RemoveListener<ParticleSystem>(Signals.PARTICLE_EFFECT_DONE, OnParticleEffectDonePlaying);
-        //}
         if (pauseOnGamePaused) {
             Messenger.RemoveListener<bool>(UISignals.PAUSED, OnGamePaused);
         }
@@ -37,12 +33,6 @@ public class BaseParticleEffect : PooledObject {
             }
         }
     }
-    //private void OnParticleEffectDonePlaying(ParticleSystem particleSystem) {
-    //    if (particleSystems.Contains(particleSystem)) {
-    //        Messenger.RemoveListener<ParticleSystem>(Signals.PARTICLE_EFFECT_DONE, OnParticleEffectDonePlaying);
-    //        ParticleAfterEffect(particleSystem);
-    //    }
-    //}
     public void PlayParticleEffect() {
         StartCoroutine(PlayParticleCoroutine());
     }

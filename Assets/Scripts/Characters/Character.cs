@@ -667,7 +667,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Marker
     public void SetGridTilePosition(Vector2 p_anchoredPos) {
-        gridTilePosition = new Vector2Int(Mathf.FloorToInt(p_anchoredPos.x), Mathf.FloorToInt(p_anchoredPos.y));
+        Profiler.BeginSample($"{name} - SetGridTilePosition - Floor to Int");
+        int xFloorToInt = Mathf.FloorToInt(p_anchoredPos.x);
+        int yFloorToInt = Mathf.FloorToInt(p_anchoredPos.y);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"{name} - SetGridTilePosition");
+        gridTilePosition = new Vector2Int(xFloorToInt, yFloorToInt);
+        Profiler.EndSample();
     }
     public void CreateMarker() {
         GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", Vector3.zero, Quaternion.identity, InnerMapManager.Instance.transform);
@@ -2611,10 +2618,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ??
-                                                        CombatManager.Instance.DefaultElementalTraitProcessor;
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this,
-                responsibleCharacter, etp);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
         } else {
             //hp was increased
             Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RECOVER_HP, this as IPointOfInterest);

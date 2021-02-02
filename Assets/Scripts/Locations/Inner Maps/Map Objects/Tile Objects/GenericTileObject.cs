@@ -7,6 +7,7 @@ using Pathfinding.Util;
 using UnityEngine;
 using Traits;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 using Debug = System.Diagnostics.Debug;
 
 public class GenericTileObject : TileObject {
@@ -103,7 +104,10 @@ public class GenericTileObject : TileObject {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
+        Profiler.BeginSample($"GTO - Adjust HP - DamageModifierByElementsAndTraits");
         CombatManager.Instance.DamageModifierByElementsAndTraits(ref amount, elementalDamageType, this);
+        Profiler.EndSample();
+        
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         _owner.SetIsDefault(false);
@@ -112,20 +116,25 @@ public class GenericTileObject : TileObject {
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ?? 
-                                                        CombatManager.Instance.DefaultElementalTraitProcessor;
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
-                responsibleCharacter, etp);
+            Profiler.BeginSample($"GTO - Adjust HP - ApplyElementalDamage - {elementalDamageType.ToString()}");
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor, createHitEffect: false);
+            Profiler.EndSample();
         }
         
         if (currentHP <= 0) {
+            Profiler.BeginSample($"GTO - Adjust HP - DetermineNextGroundTypeAfterDestruction");
             //floor has been destroyed
             gridTileLocation.DetermineNextGroundTypeAfterDestruction();
+            Profiler.EndSample();
         } 
         if (amount < 0) {
+            Profiler.BeginSample($"GTO - Adjust HP - OnTileDamaged");
             structureLocation.OnTileDamaged(gridTileLocation, amount);
+            Profiler.EndSample();
         } else if (amount > 0) {
+            Profiler.BeginSample($"GTO - Adjust HP - OnTileRepaired");
             structureLocation.OnTileRepaired(gridTileLocation, amount);
+            Profiler.EndSample();
         }
 
         if (currentHP <= 0) {
@@ -254,33 +263,68 @@ public class GenericTileObject : TileObject {
         
     }
     public LocationStructure BuildBlueprint(NPCSettlement npcSettlement, LocationGridTile p_usedConnector) {
+        Profiler.BeginSample($"Build Blueprint - Add Tile To Settlement");
         HexTile hexTile = gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
         npcSettlement.AddTileToSettlement(hexTile);
+        Profiler.EndSample();
         
+        Profiler.BeginSample($"Build Blueprint - Set Visual Mode");
         blueprintOnTile.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Built, gridTileLocation.parentMap);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"Build Blueprint - Create Structure Instance");
         LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(gridTileLocation.parentMap.region, blueprintOnTile.structureType, npcSettlement);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"Build Blueprint - Clear Out Objects");
         blueprintOnTile.ClearOutUnimportantObjectsBeforePlacement();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"Build Blueprint - Transfer Tiles to new Structure");
         for (int j = 0; j < blueprintOnTile.tiles.Length; j++) {
             LocationGridTile tile = blueprintOnTile.tiles[j];
             tile.SetStructure(structure);
             tile.SetHasBlueprint(false);
         }
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"Build Blueprint - Set Structure Object");
         Assert.IsTrue(structure is DemonicStructure || structure is ManMadeStructure);
         if (structure is DemonicStructure demonicStructure) {
             demonicStructure.SetStructureObject(blueprintOnTile);    
         } else if (structure is ManMadeStructure manMadeStructure) {
             manMadeStructure.SetStructureObject(blueprintOnTile);    
         }
+        Profiler.EndSample();
+        
         structure.SetOccupiedHexTile(hexTile.innerMapHexTile);
+        
+        Profiler.BeginSample($"Build Blueprint - OnBuiltStructureObjectPlaced");
         blueprintOnTile.OnBuiltStructureObjectPlaced(gridTileLocation.parentMap, structure, out int createdWalls, out int totalWalls);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"Build Blueprint - Create Rooms");
         structure.CreateRoomsBasedOnStructureObject(blueprintOnTile);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"Build Blueprint - On Built New Structure {structure.name}");
         structure.OnBuiltNewStructure();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"Build Blueprint - OnBuiltNewStructureFromBlueprint");
         structure.OnBuiltNewStructureFromBlueprint();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"Build Blueprint - OnUseStructureConnector");
         if (structure is ManMadeStructure mmStructure) {
             mmStructure.OnUseStructureConnector(p_usedConnector);    
         }
+        Profiler.EndSample();
 
+        Profiler.BeginSample($"Build Blueprint - Cancel Expiry");
         CancelBlueprintExpiry();
+        Profiler.EndSample();
+        
         blueprintOnTile = null;
         isCurrentlyBuilding = false;
         return structure;

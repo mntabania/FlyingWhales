@@ -184,7 +184,13 @@ public class CharacterAIPath : AILerp {
             } else {
                 direction = interpolator.tangent;
             }
-            marker.visualsParent.localRotation = Quaternion.LookRotation(Vector3.forward, direction);
+            Profiler.BeginSample("Quaternion.LookRotation");
+            Quaternion lookRotation = Quaternion.LookRotation(Vector3.forward, direction);
+            Profiler.EndSample();
+            
+            Profiler.BeginSample("Set look rotation");
+            marker.visualsParent.localRotation = lookRotation;
+            Profiler.EndSample();
             //if(marker.character.currentParty.icon.travelLine == null) {
             //    if (!IsNodeWalkable(destination)) {
             //        //if(marker.character.currentAction)
@@ -192,7 +198,9 @@ public class CharacterAIPath : AILerp {
             //}
         } else if (marker.character.currentActionNode != null && marker.character.currentActionNode.poiTarget != marker.character) {
             if (marker.character.currentActionNode.poiTarget.gridTileLocation != null) {
+                Profiler.BeginSample("LookAt");
                 marker.LookAt(marker.character.currentActionNode.poiTarget.gridTileLocation.centeredWorldLocation); //so that the charcter will always face the target, even if it is moving
+                Profiler.EndSample();
             }
         }
     }

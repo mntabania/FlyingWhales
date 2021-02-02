@@ -1098,25 +1098,44 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void UpdatePosition() {
         //This is checked per update, stress test this for performance
         //I'm keeping a separate field called anchoredPos instead of using the rect transform anchoredPosition directly because the multithread cannot access transform components
+        Profiler.BeginSample($"{character.name} Set Grid Tile Position");
         character.SetGridTilePosition(transform.localPosition);
+        Profiler.EndSample();
 
         if (previousGridTile != character.gridTileLocation && character.gridTileLocation != null) {
+            Profiler.BeginSample($"{character.name} On Character Moved To");
             character.gridTileLocation.parentMap.OnCharacterMovedTo(character, character.gridTileLocation, previousGridTile);
+            Profiler.EndSample();
             if(character != null) {
                 previousGridTile = character.gridTileLocation;
                 if (_previousHexTileLocation == null || (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap &&
                     _previousHexTileLocation != character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
                     if (_previousHexTileLocation != null) {
+                        _previousHexTileLocation.locationCharacterTracker.RemoveCharacterFromLocation(character);
+                        
+                        Profiler.BeginSample($"{character.name} Character Exited Hextile Broadcast");
                         Messenger.Broadcast(CharacterSignals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
+                        Profiler.EndSample();
+
+                        Profiler.BeginSample($"{character.name} Remove From Awareness List");
                         if(character.currentLocationAwareness == _previousHexTileLocation.locationAwareness) {
                             LocationAwarenessUtility.RemoveFromAwarenessList(character);
                         }
+                        Profiler.EndSample();
                     }
                     if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                         //When character enters new hex tile it becomes the previous hex tile altogether
                         _previousHexTileLocation = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                        
+                        _previousHexTileLocation.locationCharacterTracker.AddCharacterAtLocation(character);
+                        
+                        Profiler.BeginSample($"{character.name} Character Entered Hextile Broadcast");
                         Messenger.Broadcast(CharacterSignals.CHARACTER_ENTERED_HEXTILE, character, _previousHexTileLocation); //character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner
+                        Profiler.EndSample();
+                        
+                        Profiler.BeginSample($"{character.name} Add To Awareness List");
                         LocationAwarenessUtility.AddToAwarenessList(character, character.gridTileLocation);
+                        Profiler.EndSample();
                     } else {
                         _previousHexTileLocation = null;
                     }

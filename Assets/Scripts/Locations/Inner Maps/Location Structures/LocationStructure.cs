@@ -28,7 +28,7 @@ namespace Inner_Maps.Location_Structures {
         //Inner Map
         public HashSet<LocationGridTile> tiles { get; private set; }
         public List<LocationGridTile> passableTiles { get; private set; }
-        public LinkedList<LocationGridTile> unoccupiedTiles { get; private set; }
+        public List<LocationGridTile> unoccupiedTiles { get; private set; }
         public bool isInterior { get; private set; }
         public bool hasBeenDestroyed { get; private set; }
         //HP
@@ -79,7 +79,7 @@ namespace Inner_Maps.Location_Structures {
             groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
             tiles = new HashSet<LocationGridTile>();
             passableTiles = new List<LocationGridTile>();
-            unoccupiedTiles = new LinkedList<LocationGridTile>();
+            unoccupiedTiles = new List<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             structureTags = new List<STRUCTURE_TAG>();
             residents = new List<Character>();
@@ -104,7 +104,7 @@ namespace Inner_Maps.Location_Structures {
             structureTags = new List<STRUCTURE_TAG>(data.structureTags);
             tiles = new HashSet<LocationGridTile>();
             passableTiles = new List<LocationGridTile>();
-            unoccupiedTiles = new LinkedList<LocationGridTile>();
+            unoccupiedTiles = new List<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             residents = new List<Character>();
             occupiedHexTiles = new List<HexTile>();
@@ -895,7 +895,7 @@ namespace Inner_Maps.Location_Structures {
             //Debug.Log(name + " removed passable tile: " + tile.ToString());
         }
         public void AddUnoccupiedTile(LocationGridTile tile) {
-            unoccupiedTiles.AddLast(tile);
+            unoccupiedTiles.Add(tile);
         }
         public void RemoveUnoccupiedTile(LocationGridTile tile) {
             unoccupiedTiles.Remove(tile);

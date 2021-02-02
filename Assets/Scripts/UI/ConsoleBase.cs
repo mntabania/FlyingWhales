@@ -107,6 +107,9 @@ public class ConsoleBase : InfoUIBase {
         tglAlwaysSuccessScheme.onValueChanged.AddListener(OnToggleAlwaysSuccessScheme);
     }
     private void Update() {
+        if (!isShowing) {
+            return;
+        }
         fullDebugLbl.text = string.Empty;
         fullDebug2Lbl.text = string.Empty;
         string worldSettingsText = $"World Settings:";

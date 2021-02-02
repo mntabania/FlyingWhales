@@ -46,10 +46,7 @@ public class LocustSwarm : MovingTileObject {
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ?? 
-                                                        CombatManager.Instance.DefaultElementalTraitProcessor;
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
-                responsibleCharacter, etp);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
         }
         if (currentHP == 0) {
             //object has been destroyed
