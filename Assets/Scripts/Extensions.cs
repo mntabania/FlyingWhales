@@ -558,6 +558,7 @@ public static class Extensions {
             case JOB_TYPE.STEAL_CORPSE:
             case JOB_TYPE.SUMMON_BONE_GOLEM:
             case JOB_TYPE.REPORT_CRIME:
+            case JOB_TYPE.PREACH:
                 priority = 1050;
                 break;
             case JOB_TYPE.RETURN_HOME_URGENT:
@@ -661,7 +662,6 @@ public static class Extensions {
             case JOB_TYPE.CULTIST_TRANSFORM:
             case JOB_TYPE.CULTIST_POISON:
             case JOB_TYPE.CULTIST_BOOBY_TRAP:
-            case JOB_TYPE.PREACH:
             case JOB_TYPE.SNATCH:
             case JOB_TYPE.VAMPIRIC_EMBRACE:
             case JOB_TYPE.IMPRISON_BLOOD_SOURCE:
