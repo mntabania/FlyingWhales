@@ -993,8 +993,20 @@ public class LocationStructureObject : PooledObject {
                     // _groundTileMap.SetColor(pos, Color.red);
                 }
             }
-        }    
-        
+        }
+    }
+    [ContextMenu("Log Ground Tile Map Assets")]
+    public void LogGroundTileMapAssets() {
+        BoundsInt bounds = _groundTileMap.cellBounds;
+        for (int x = bounds.xMin; x < bounds.xMax; x++) {
+            for (int y = bounds.yMin; y < bounds.yMax; y++) {
+                Vector3Int pos = new Vector3Int(x, y, 0);
+                TileBase tb = _groundTileMap.GetTile(pos);
+                if (tb != null) {
+                    Debug.Log($"{pos.ToString()} - {tb.name}");
+                }
+            }
+        }
     }
     #endregion
 
