@@ -89,6 +89,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     //misc
     public Tombstone grave { get; private set; }
+    public FoodPile connectedFoodPile { get; private set; }
     
     //Components / Managers
     public TrapStructure trapStructure { get; private set; }
@@ -1850,15 +1851,39 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         WorldMapCameraMove.Instance.CenterCameraOn(carryComponent.masterCharacter.currentRegion.coreTile.gameObject);
                     }
                 } else if (carryComponent.masterCharacter.gridTileLocation != null) {
-                    // if (marker.gameObject.activeInHierarchy) {
-                        bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(currentRegion);
-                        if (instantCenter) {
-                            InnerMapManager.Instance.ShowInnerMap(carryComponent.masterCharacter.gridTileLocation.structure.region, false);
-                        }
-                        InnerMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
-                    // }
+                    bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(currentRegion);
+                    if (instantCenter) {
+                        InnerMapManager.Instance.ShowInnerMap(carryComponent.masterCharacter.gridTileLocation.structure.region, false);
+                    }
+                    InnerMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
                 }
-            } 
+            } else if (grave != null && grave.mapObjectVisual != null && (grave.gridTileLocation != null || grave.isBeingCarriedBy != null)) {
+                Region region = null;
+                if (grave.isBeingCarriedBy != null) {
+                    region = grave.isBeingCarriedBy.currentRegion;
+                } else if (grave.gridTileLocation != null){
+                    region = grave.gridTileLocation.parentMap.region;
+                }
+                if (region != null) {
+                    if (!InnerMapManager.Instance.IsShowingInnerMap(region)) {
+                        InnerMapManager.Instance.ShowInnerMap(region, false);
+                    }
+                    InnerMapCameraMove.Instance.CenterCameraOn(grave.mapObjectVisual.gameObject);    
+                }
+            } else if (connectedFoodPile != null && connectedFoodPile.mapObjectVisual != null && (connectedFoodPile.gridTileLocation != null || connectedFoodPile.isBeingCarriedBy != null)) {
+                Region region = null;
+                if (connectedFoodPile.isBeingCarriedBy != null) {
+                    region = connectedFoodPile.isBeingCarriedBy.currentRegion;
+                } else if (connectedFoodPile.gridTileLocation != null){
+                    region = connectedFoodPile.gridTileLocation.parentMap.region;
+                }
+                if (region != null) {
+                    if (!InnerMapManager.Instance.IsShowingInnerMap(region)) {
+                        InnerMapManager.Instance.ShowInnerMap(region, false);
+                    }
+                    InnerMapCameraMove.Instance.CenterCameraOn(connectedFoodPile.mapObjectVisual.gameObject);    
+                }
+            }
         }
         
         // else {
@@ -5748,6 +5773,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetGrave(Tombstone grave) {
         this.grave = grave;
     }
+    public void SetConnectedFoodPile(FoodPile p_foodPile) {
+        connectedFoodPile = p_foodPile;
+    }
     #endregion
 
     #region Necromancer
@@ -5898,6 +5926,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (!string.IsNullOrEmpty(data.grave)) {
             grave = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.grave) as Tombstone;
+        }
+        if (!string.IsNullOrEmpty(data.connectedFoodPile)) {
+            connectedFoodPile = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.connectedFoodPile) as FoodPile;
         }
         if (data.deathLog.hasValue) {
             deathLog = data.deathLog;
