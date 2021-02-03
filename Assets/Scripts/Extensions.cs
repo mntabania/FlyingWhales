@@ -354,12 +354,21 @@ public static class Extensions {
     #endregion
 
     #region Tile Objects
-    public static FURNITURE_TYPE ConvertTileObjectToFurniture(this TILE_OBJECT_TYPE type) {
-        FURNITURE_TYPE to;
-        if (System.Enum.TryParse<FURNITURE_TYPE>(type.ToString(), out to)) {
-            return to;
+    public static bool IsArtifact(this TILE_OBJECT_TYPE tileObjectType, out ARTIFACT_TYPE artifactType) {
+        switch (tileObjectType) {
+            case TILE_OBJECT_TYPE.NECRONOMICON:
+                artifactType = ARTIFACT_TYPE.Necronomicon;
+                return true;
+            case TILE_OBJECT_TYPE.ANKH_OF_ANUBIS:
+                artifactType = ARTIFACT_TYPE.Ankh_Of_Anubis;
+                return true;
+            case TILE_OBJECT_TYPE.CHAOS_ORB:
+                artifactType = ARTIFACT_TYPE.Berserk_Orb;
+                return true;
+            default:
+                artifactType = ARTIFACT_TYPE.None;
+                return false;
         }
-        return FURNITURE_TYPE.NONE;
     }
     public static bool IsPreBuilt(this TILE_OBJECT_TYPE tileObjectType) {
         switch (tileObjectType) {
