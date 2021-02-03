@@ -437,8 +437,18 @@ public class ReactionComponent : CharacterComponent {
         if (actor.race == RACE.RATMAN) {
             Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
             if (prisoner != null && targetCharacter.traitContainer.HasTrait("Restrained")) {
-                if (actor.faction == prisoner.prisonerOfFaction) {
-                    actor.jobComponent.CreateAbductJob(targetCharacter);
+                if (actor.faction == prisoner.prisonerOfFaction && !actor.IsAtHome()) {
+                    LocationStructure targetStructureToDrop = null;
+                    if (actor.homeStructure != null) {
+                        if (!(actor.homeStructure is ThePortal)) {
+                            targetStructureToDrop = actor.homeStructure;
+                        }
+                    } else if (actor.homeSettlement != null && actor.homeSettlement.mainStorage != null) {
+                        targetStructureToDrop = actor.homeSettlement.mainStorage;
+                    }
+                    if (targetStructureToDrop != null) {
+                        actor.jobComponent.CreateAbductJob(targetCharacter, targetStructureToDrop);
+                    }
                     return;
                 }
             }
