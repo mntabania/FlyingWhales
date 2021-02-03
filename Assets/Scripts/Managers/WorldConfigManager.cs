@@ -9,12 +9,10 @@ using UnityEngine;
 public class WorldConfigManager : MonoBehaviour {
 
     public static WorldConfigManager Instance;
-
-    [Header("Monster Generation")]
-    public MonsterGenerationSetting worldWideMonsterGenerationSetting;
+    
     [Header("Item Generation")] 
     public ItemGenerationSetting worldWideItemGenerationSetting;
-    public List<ARTIFACT_TYPE> initialArtifactChoices;
+    public List<TILE_OBJECT_TYPE> initialArtifactChoices;
 
     [Header("Testing")] 
     [SerializeField] private bool _disableLogs;

@@ -421,17 +421,24 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			structure.AddPOI(artifact);
 		} else {
 			int artifactCount = GridMap.Instance.allRegions.Length <= 2 ? 1 : 2;
-			List<ARTIFACT_TYPE> artifactChoices = WorldConfigManager.Instance.initialArtifactChoices;
+			List<TILE_OBJECT_TYPE> artifactChoices = WorldConfigManager.Instance.initialArtifactChoices;
 			//randomly generate Artifacts
 			for (int i = 0; i < artifactCount; i++) {
 				if (artifactChoices.Count == 0) { break; }
 				Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
 				LocationStructure specialStructure = randomRegion.GetRandomStructureThatMeetCriteria(currStructure => currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0);
 				if (specialStructure != null) {
-					ARTIFACT_TYPE randomArtifact = CollectionUtilities.GetRandomElement(artifactChoices);
-					Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(randomArtifact);
-					specialStructure.AddPOI(artifact);
-					artifactChoices.Remove(randomArtifact);	
+					TILE_OBJECT_TYPE randomArtifact = CollectionUtilities.GetRandomElement(artifactChoices);
+					if (randomArtifact.IsArtifact(out ARTIFACT_TYPE artifactType)) {
+						Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(artifactType);
+						specialStructure.AddPOI(artifact);
+						artifactChoices.Remove(randomArtifact);	
+					} else {
+						TileObject tileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(randomArtifact);
+						specialStructure.AddPOI(tileObject);
+						artifactChoices.Remove(randomArtifact);	
+					}
+					
 				}
 			}
 		}
