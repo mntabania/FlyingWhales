@@ -289,7 +289,18 @@ public class TileObjectInfoUI : InfoUIBase {
     }
 
     public void OnClickItem() {
-        InnerMapCameraMove.Instance.CenterCameraOn(activeTileObject.worldObject.gameObject);
+        if(activeTileObject == null) {
+            return;
+		}
+        if (activeTileObject.worldObject == null && activeTileObject.isBeingCarriedBy != null) {
+            InnerMapCameraMove.Instance.CenterCameraOn(activeTileObject.isBeingCarriedBy.worldObject.gameObject);
+        } else if (activeTileObject.worldObject != null && activeTileObject.isBeingCarriedBy == null) {
+            InnerMapCameraMove.Instance.CenterCameraOn(activeTileObject.worldObject.gameObject);
+        } else if (activeTileObject.worldObject != null && activeTileObject.isBeingCarriedBy != null) {
+            InnerMapCameraMove.Instance.CenterCameraOn(activeTileObject.worldObject.gameObject); 
+        } else {
+            return;
+        }
     }
 
     public void OnHoverTrait(object obj) {
