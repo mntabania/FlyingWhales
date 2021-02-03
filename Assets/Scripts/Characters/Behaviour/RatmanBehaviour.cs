@@ -74,9 +74,19 @@ public class RatmanBehaviour : CharacterBehaviourComponent {
                         Character targetCharacter = character.behaviourComponent.currentAbductTarget;
                         if (targetCharacter != null) {
                             //create job to abduct target character.
-                            if(character.jobComponent.TriggerMonsterAbduct(targetCharacter, out producedJob)) {
-                                character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
-                                return true;
+                            LocationGridTile targetStructureToDrop = null;
+                            if (character.homeStructure != null) {
+                                if (!(character.homeStructure is ThePortal)) {
+                                    targetStructureToDrop = character.homeStructure.GetRandomPassableTile();
+                                }
+                            } else if(character.homeSettlement != null && character.homeSettlement.mainStorage != null) {
+                                targetStructureToDrop = character.homeSettlement.mainStorage.GetRandomPassableTile();
+                            }
+                            if (targetStructureToDrop != null) {
+                                if (character.jobComponent.TriggerMonsterAbduct(targetCharacter, out producedJob, targetStructureToDrop)) {
+                                    character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+                                    return true;
+                                }
                             }
                         }
                     }
