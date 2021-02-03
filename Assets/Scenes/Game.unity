@@ -1944,7 +1944,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 273774673}
   m_HandleRect: {fileID: 273774671}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -82501,7 +82501,7 @@ MonoBehaviour:
   showSearchTree: 0
   unwalkableNodeDebugSize: 0.3
   logPathResults: 4
-  maxNearestNodeDistance: 300
+  maxNearestNodeDistance: 100
   scanOnStartup: 0
   fullGetNearestSearch: 0
   prioritizeGraphs: 0
@@ -82547,8 +82547,8 @@ MonoBehaviour:
   - 29
   - 30
   - 31
-  heuristic: 2
-  heuristicScale: 1
+  heuristic: 0
+  heuristicScale: 0.5
   threadCount: -2
   maxFrameTime: 10
   batchGraphUpdates: 0

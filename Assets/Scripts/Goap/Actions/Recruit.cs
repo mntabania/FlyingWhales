@@ -48,7 +48,7 @@ public class Recruit : GoapAction {
             // failWeight = 0;
             
             weightDictionary.AddElement(true, successWeight);
-            //weightDictionary.AddElement(false, failWeight);
+            weightDictionary.AddElement(false, failWeight);
 
             bool result = weightDictionary.PickRandomElementGivenWeights();
             if (!result) {
