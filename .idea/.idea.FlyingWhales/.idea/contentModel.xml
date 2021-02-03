@@ -1613,6 +1613,7 @@
                 <e p="BuildWolfLair.cs" t="Include" />
                 <e p="ChopWood.cs" t="Include" />
                 <e p="CraftTileObject.cs" t="Include" />
+                <e p="DisposeFood.cs" t="Include" />
                 <e p="Drink.cs" t="Include" />
                 <e p="Eat.cs" t="Include" />
                 <e p="Fish.cs" t="Include" />

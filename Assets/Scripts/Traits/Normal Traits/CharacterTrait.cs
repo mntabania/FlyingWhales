@@ -20,6 +20,7 @@ namespace Traits {
         public List<TileObject> alreadyInspectedTileObjects { get; private set; }
         public List<Character> charactersAlreadySawForHope { get; private set; }
         public HashSet<Character> charactersThatHaveReactedToThis { get; private set; }
+        public List<TileObject> alreadyReactedToFoodPiles { get; private set; }
         private Dictionary<Character, List<string>> _traitsFromOtherCharacterThatThisIsAwareOf; 
         public Character owner { get; private set; }
         /// <summary>
@@ -53,6 +54,7 @@ namespace Traits {
             alreadyInspectedTileObjects = new List<TileObject>();
             charactersAlreadySawForHope = new List<Character>();
             charactersThatHaveReactedToThis = new HashSet<Character>();
+            alreadyReactedToFoodPiles = new List<TileObject>();
             _traitsFromOtherCharacterThatThisIsAwareOf = new Dictionary<Character, List<string>>();
             AddTraitOverrideFunctionIdentifier(TraitManager.Start_Perform_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
@@ -66,6 +68,7 @@ namespace Traits {
             alreadyInspectedTileObjects = SaveUtilities.ConvertIDListToTileObjects(saveDataCharacterTrait.alreadyInspectedTileObjects);
             charactersAlreadySawForHope.AddRange(SaveUtilities.ConvertIDListToCharacters(saveDataCharacterTrait.charactersAlreadySawForHope));
             charactersThatHaveReactedToThis = new HashSet<Character>(SaveUtilities.ConvertIDListToCharacters(saveDataCharacterTrait.charactersThatHaveReactedToThis));
+            alreadyReactedToFoodPiles = SaveUtilities.ConvertIDListToTileObjects(saveDataCharacterTrait.alreadyReactedFoodPiles);
             hasBeenAbductedByPlayerMonster = saveDataCharacterTrait.hasBeenAbductedByPlayerMonster;
             hasBeenAbductedByWildMonster = saveDataCharacterTrait.hasBeenAbductedByWildMonster;
             if (saveDataCharacterTrait.traitsFromOtherCharacterThatThisIsAwareOf != null) {
@@ -400,6 +403,18 @@ namespace Traits {
             }
         }
         #endregion
+
+        #region Food Piles
+        public void AddFoodPileAsReactedTo(FoodPile p_foodPile) {
+            alreadyReactedToFoodPiles.Add(p_foodPile);
+        }
+        public void RemoveFoodPileAsReactedTo(FoodPile p_foodPile) {
+            alreadyReactedToFoodPiles.Remove(p_foodPile);
+        }
+        public bool HasAlreadyReactedToFoodPile(FoodPile p_foodPile) {
+            return alreadyReactedToFoodPiles.Contains(p_foodPile);
+        }
+        #endregion
     }
 }
 
@@ -409,6 +424,7 @@ public class SaveDataCharacterTrait : SaveDataTrait {
     public List<string> alreadyInspectedTileObjects;
     public List<string> charactersAlreadySawForHope;
     public List<string> charactersThatHaveReactedToThis;
+    public List<string> alreadyReactedFoodPiles;
     public bool hasBeenAbductedByPlayerMonster;
     public bool hasBeenAbductedByWildMonster;
     public Dictionary<string, List<string>> traitsFromOtherCharacterThatThisIsAwareOf;
@@ -420,6 +436,7 @@ public class SaveDataCharacterTrait : SaveDataTrait {
         alreadyInspectedTileObjects = SaveUtilities.ConvertSavableListToIDs(characterTrait.alreadyInspectedTileObjects);
         charactersAlreadySawForHope = SaveUtilities.ConvertSavableListToIDs(characterTrait.charactersAlreadySawForHope);
         charactersThatHaveReactedToThis = SaveUtilities.ConvertSavableListToIDs(characterTrait.charactersThatHaveReactedToThis.ToList());
+        alreadyReactedFoodPiles = SaveUtilities.ConvertSavableListToIDs(characterTrait.alreadyReactedToFoodPiles);
         hasBeenAbductedByPlayerMonster = characterTrait.hasBeenAbductedByPlayerMonster;
         hasBeenAbductedByWildMonster = characterTrait.hasBeenAbductedByWildMonster;
         traitsFromOtherCharacterThatThisIsAwareOf = new Dictionary<string, List<string>>();

@@ -78,12 +78,12 @@ namespace Pathfinding {
             Vector3 avoidCollected = Vector3.zero;
             if (avoid.Count > 0) {
                 for (int i = 0; i < avoid.Count; i++) {
-                avoidCollected += avoid[i];
+					avoidCollected += avoid[i];
                 }
                 avoidCollected /= avoid.Count;
             }
             aim = start - (avoidCollected - start) * 10;
-            Debug.LogWarning("Aim: " + aim);
+            // Debug.LogWarning("Aim: " + aim);
         }
     }
 }

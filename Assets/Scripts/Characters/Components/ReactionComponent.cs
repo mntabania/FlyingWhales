@@ -1258,6 +1258,14 @@ public class ReactionComponent : CharacterComponent {
                     }
                 }
             }
+            if (actor.race.IsSapient() && (resourcePile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || resourcePile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && resourcePile is FoodPile foodPile && 
+                !actor.traitContainer.HasTrait("Cannibal") && !actor.traitContainer.HasTrait("Malnourished")) {
+                if (!actor.defaultCharacterTrait.HasAlreadyReactedToFoodPile(foodPile)) {
+                    actor.defaultCharacterTrait.AddFoodPileAsReactedTo(foodPile);
+                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, foodPile, $"saw {foodPile.name}");    
+                }
+                actor.jobComponent.TryCreateDisposeFoodPileJob(foodPile);
+            }
         }
         if(targetTileObject is FishingSpot && targetTileObject.gridTileLocation != null) {
             if(actor.race != RACE.TRITON) {

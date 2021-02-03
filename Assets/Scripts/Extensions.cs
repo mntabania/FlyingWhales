@@ -423,6 +423,8 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.FEEBLE_SPIRIT:
             case TILE_OBJECT_TYPE.FORLORN_SPIRIT:
             case TILE_OBJECT_TYPE.RAVENOUS_SPIRIT:
+            case TILE_OBJECT_TYPE.HUMAN_MEAT:
+            case TILE_OBJECT_TYPE.ELF_MEAT:
                 return true;
             default:
                 return tileObjectType.IsTileObjectAnItem();
@@ -687,6 +689,7 @@ public static class Extensions {
                 priority = 750;
                 break;
             case JOB_TYPE.HAUL:
+            case JOB_TYPE.DISPOSE_FOOD_PILE:
                 priority = 700;
                 break;
             case JOB_TYPE.REPAIR:

@@ -495,6 +495,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return false;
     }
+    public bool HasJobTargetingThis(JOB_TYPE jobType) {
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            JobQueueItem job = allJobsTargetingThis[i];
+            if (job.jobType == jobType) {
+                return true;
+            }
+        }
+        return false;
+    }
     public GoapPlanJob GetJobTargetingThisCharacter(JOB_TYPE jobType) {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
             if (allJobsTargetingThis[i] is GoapPlanJob) {

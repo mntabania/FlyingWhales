@@ -683,6 +683,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.BURROW, new[]{
             new StateNameAndDuration(){ name = "Burrow Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
         } },
+        {INTERACTION_TYPE.DISPOSE_FOOD, new[]{
+            new StateNameAndDuration(){ name = "Dispose Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(5) },
+        } },
     };
 }
 

@@ -3175,6 +3175,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     #endregion
+    
+    #region Dispose Food Pile
+    public void TryCreateDisposeFoodPileJob(FoodPile target) {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.DISPOSE_FOOD_PILE, target) && !target.HasJobTargetingThis(JOB_TYPE.DISPOSE_FOOD_PILE)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DISPOSE_FOOD_PILE, INTERACTION_TYPE.DISPOSE_FOOD, target, owner);
+		    owner.jobQueue.AddJobInQueue(job);
+	    }
+    }
+    #endregion
 
     #region Loading
     public void LoadReferences(SaveDataCharacterJobTriggerComponent data) {
