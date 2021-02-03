@@ -235,7 +235,8 @@ public class UIManager : BaseMonoBehaviour {
     }
     private void OnPlayerActionActivated(PlayerAction p_playerAction) {
         if (p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_CHARACTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_MONSTER || p_playerAction.type == PLAYER_SKILL_TYPE.SEIZE_OBJECT
-            || p_playerAction.type == PLAYER_SKILL_TYPE.REMOVE_BUFF || p_playerAction.type == PLAYER_SKILL_TYPE.REMOVE_FLAW) {
+            || p_playerAction.type == PLAYER_SKILL_TYPE.REMOVE_BUFF || p_playerAction.type == PLAYER_SKILL_TYPE.REMOVE_FLAW 
+            || p_playerAction.category == PLAYER_SKILL_CATEGORY.SCHEME) {
             HidePlayerActionContextMenu();    
         } else {
             if (IsContextMenuShowing()) {

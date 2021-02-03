@@ -77,6 +77,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		m_worldGenOptionsUIView.InitializeCostsDropdown();
 		m_worldGenOptionsUIView.InitializeChargesDropdown();
 		m_worldGenOptionsUIView.InitializeThreatDropdown();
+		m_worldGenOptionsUIView.InitializeOmnipotentModeDropdown();
 		
 		OnChangeMapSize(0);
 		UpdateAddBiomeBtn();
@@ -111,6 +112,7 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		m_worldGenOptionsUIView.SetCostsDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.costAmount.ToString()));
 		m_worldGenOptionsUIView.SetChargesDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.chargeAmount.ToString()));
 		m_worldGenOptionsUIView.SetThreatDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.threatAmount.ToString()));
+		m_worldGenOptionsUIView.SetOmnipotentDropdownValue(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(p_settings.playerSkillSettings.omnipotentMode.ToString()));
 	}
 
 	#region Biomes
@@ -264,6 +266,9 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 	public void OnChangeThreatAmount(THREAT_AMOUNT p_value) {
 		WorldSettings.Instance.worldSettingsData.playerSkillSettings.SetThreatAmount(p_value);
 	}
+	public void OnChangeOmnipotentMode(OMNIPOTENT_MODE p_value) {
+		WorldSettings.Instance.worldSettingsData.playerSkillSettings.SetOmnipotentMode(p_value);
+	}
 	public void OnClickAddBiome() {
 		AddDefaultBiomeItem();
 	}
@@ -343,6 +348,13 @@ public class WorldGenOptionsUIController : MVCUIController, WorldGenOptionsUIVie
 		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, $"{UtilityScripts.Utilities.ThreatIcon()} Threat", autoReplaceText: false);
 	}
 	public void OnHoverOutThreat() {
+		Tooltip.Instance.HideSmallInfo();
+	}
+	public void OnHoverOverOmnipotent(UIHoverPosition p_pos) {
+		string summary = "Enable or Disable Omnipotent Mode. Omnipotent Mode allows you to use all skills, regardless of archetype";
+		Tooltip.Instance.ShowSmallInfo(summary, pos: p_pos, $"Omnipotent Mode", autoReplaceText: false);
+	}
+	public void OnHoverOutOmnipotent() {
 		Tooltip.Instance.HideSmallInfo();
 	}
 	#endregion

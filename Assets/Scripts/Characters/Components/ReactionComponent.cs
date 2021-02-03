@@ -1258,6 +1258,14 @@ public class ReactionComponent : CharacterComponent {
                     }
                 }
             }
+            if (actor.race.IsSapient() && (resourcePile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || resourcePile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) && resourcePile is FoodPile foodPile && 
+                !actor.traitContainer.HasTrait("Cannibal") && !actor.traitContainer.HasTrait("Malnourished")) {
+                if (!actor.defaultCharacterTrait.HasAlreadyReactedToFoodPile(foodPile)) {
+                    actor.defaultCharacterTrait.AddFoodPileAsReactedTo(foodPile);
+                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, foodPile, $"saw {foodPile.name}");    
+                }
+                actor.jobComponent.TryCreateDisposeFoodPileJob(foodPile);
+            }
         }
         if(targetTileObject is FishingSpot && targetTileObject.gridTileLocation != null) {
             if(actor.race != RACE.TRITON) {
@@ -1558,7 +1566,7 @@ public class ReactionComponent : CharacterComponent {
             }
         }
 
-        if (targetTileObject is CultistKit && targetTileObject.IsOwnedBy(actor) == false) {
+        if (targetTileObject is CultistKit && !targetTileObject.IsOwnedBy(actor)) {
             debugLog = $"{debugLog}\n-Object is a cultist kit";
             if (targetTileObject.gridTileLocation != null) {
                 if (targetTileObject.structureLocation is ManMadeStructure && 
@@ -1589,7 +1597,7 @@ public class ReactionComponent : CharacterComponent {
                             }
                         }
                         Character chosenTarget = CollectionUtilities.GetRandomElement(_assumptionSuspects);
-                        if(chosenTarget != null) {
+                        if(chosenTarget != null && CrimeManager.Instance.IsConsideredACrimeByCharacter(actor, chosenTarget, targetTileObject, CRIME_TYPE.Demon_Worship)) {
                             actor.assumptionComponent.CreateAndReactToNewAssumption(chosenTarget, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);
                         }
                     }
@@ -1626,7 +1634,7 @@ public class ReactionComponent : CharacterComponent {
             if (carrier.reactionComponent.disguisedCharacter != null) {
                 disguisedTarget = carrier.reactionComponent.disguisedCharacter;
             }
-            if (!disguisedTarget.isDead) {
+            if (!disguisedTarget.isDead && CrimeManager.Instance.IsConsideredACrimeByCharacter(actor, disguisedTarget, targetTileObject, CRIME_TYPE.Demon_Worship)) {
                 actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);
             }
         }

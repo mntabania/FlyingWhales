@@ -13,20 +13,20 @@
     protected override string GenerateName() { return "Werewolf Pelt"; }
 
     #region Ownership
-    public override void SetInventoryOwner(Character character) {
-        base.SetInventoryOwner(character);
-        if (character != null) {
-            if (!character.traitContainer.HasTrait("Lycanthrope")) {
-                if (character.HasItem(TILE_OBJECT_TYPE.PHYLACTERY)) {
-                    character.UnobtainItem(TILE_OBJECT_TYPE.PHYLACTERY);
-                    character.UnobtainItem(TILE_OBJECT_TYPE.WEREWOLF_PELT);
+    public override void SetInventoryOwner(Character p_newOwner) {
+        base.SetInventoryOwner(p_newOwner);
+        if (p_newOwner != null) {
+            if (!p_newOwner.traitContainer.HasTrait("Lycanthrope")) {
+                if (p_newOwner.HasItem(TILE_OBJECT_TYPE.PHYLACTERY)) {
+                    p_newOwner.UnobtainItem(TILE_OBJECT_TYPE.PHYLACTERY);
+                    p_newOwner.UnobtainItem(TILE_OBJECT_TYPE.WEREWOLF_PELT);
                     Log log = new Log(GameManager.Instance.Today(), "Tile Object", "Werewolf Pelt", "activated phylactery");
-                    log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(p_newOwner, p_newOwner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddLogToDatabase();
                 } else {
-                    character.UnobtainItem(TILE_OBJECT_TYPE.WEREWOLF_PELT);
-                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Lycanthrope, this);
+                    p_newOwner.UnobtainItem(TILE_OBJECT_TYPE.WEREWOLF_PELT);
+                    p_newOwner.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Lycanthrope, this);
                 }
             }
         }

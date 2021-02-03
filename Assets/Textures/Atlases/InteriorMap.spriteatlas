@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 3591317
+    totalSpriteSurfaceArea: 3521685
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -219,7 +219,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 95ab6aa30060bf14a98f8c70aab2cf46, type: 3}
   - {fileID: 21300000, guid: e71531b360b4d394b964b5100f269350, type: 3}
   - {fileID: 21300000, guid: b00946b3dbb24254085a24713a612bdc, type: 3}
-  - {fileID: 21300000, guid: dde5a7c3c54a000408ba4ab161ebdda5, type: 3}
   - {fileID: 21300000, guid: a40718c3e7e98c04e8ea3cfa5842e05d, type: 3}
   - {fileID: 21300000, guid: a68b0ac386ee95e4eb60a449c6e6880b, type: 3}
   - {fileID: 21300000, guid: e2a76cc3419e7784fb89ab7a53ee42f9, type: 3}
@@ -466,7 +465,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b6503b88d4f05ba45952c4c941e2ccf9, type: 3}
   - {fileID: 21300000, guid: ce7fa298e4478584393245d871ecd743, type: 3}
   - {fileID: 21300000, guid: cbcaf8a872766104b9933560e0d06e55, type: 3}
-  - {fileID: 21300000, guid: 694d89a8bcd92864aa2df8096da51bda, type: 3}
   - {fileID: 21300000, guid: 26d75ba8516161040a8283184431facd, type: 3}
   - {fileID: 21300000, guid: 66f292b82d7dfaa45b7fad07f08ba800, type: 3}
   - {fileID: 21300000, guid: 3b031bb8781bf1d4fb6be6d19db75a7d, type: 3}
@@ -986,7 +984,6 @@ SpriteAtlas:
   - d_wood_vertical_1
   - shelf_swords
   - laidWallA10001000-01
-  - PondWall
   - well04
   - shore01000111-00
   - laidWallA10111111-00
@@ -1233,7 +1230,6 @@ SpriteAtlas:
   - stone_v00
   - wallA-1010-wall0001
   - floorRuins01
-  - Pond
   - gorgon_eye
   - demonCultCarpetLong00
   - water03

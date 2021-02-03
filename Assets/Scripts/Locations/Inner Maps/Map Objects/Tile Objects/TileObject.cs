@@ -495,6 +495,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return false;
     }
+    public bool HasJobTargetingThis(JOB_TYPE jobType) {
+        for (int i = 0; i < allJobsTargetingThis.Count; i++) {
+            JobQueueItem job = allJobsTargetingThis[i];
+            if (job.jobType == jobType) {
+                return true;
+            }
+        }
+        return false;
+    }
     public GoapPlanJob GetJobTargetingThisCharacter(JOB_TYPE jobType) {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
             if (allJobsTargetingThis[i] is GoapPlanJob) {
@@ -964,9 +973,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     /// Set who currently has this item.
     /// This can be any character, and is not limited to just the owner of this object (i.e. if the object was stolen)
     /// </summary>
-    /// <param name="character"></param>
-    public virtual void SetInventoryOwner(Character character) {
-        this.isBeingCarriedBy = character;
+    /// <param name="p_newOwner"></param>
+    public virtual void SetInventoryOwner(Character p_newOwner) {
+        this.isBeingCarriedBy = p_newOwner;
         Debug.Log($"Set Carried by character of item {this.ToString()} to {(isBeingCarriedBy?.name ?? "null")}");
     }
     public bool CanBePickedUpNormallyUponVisionBy(Character character) {
@@ -1016,8 +1025,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             return true;
         } else {
             //https://www.notion.so/ruinarch/c818a20f153d4b6ea49e823a04515394?v=5767c0da06f347549ce48dd37384af59&p=7e7a8a17d989411eaec3ebe4ba4b5460
-            //Can be picked up even if item has owner if character is Evil, Treacherous or Kleptomaniac
-            if(character.traitContainer.HasTrait("Evil", "Treacherous", "Kleptomaniac")) {
+            //Can be picked up even if item has owner if character is Kleptomaniac
+            if(character.traitContainer.HasTrait("Kleptomaniac")) {
                 return true;
             }
         }

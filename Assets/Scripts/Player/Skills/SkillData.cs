@@ -117,7 +117,25 @@ public class SkillData : IPlayerSkill {
         return CanPerformAbility();
     }
     public bool CanPerformAbility() {
-        return (!hasCharges || charges > 0) && (!hasManaCost || PlayerManager.Instance.player.mana >= manaCost); // && (!hasCooldown || currentCooldownTick >= cooldown);
+        bool canBePerformed = (!hasCharges || charges > 0) && (!hasManaCost || PlayerManager.Instance.player.mana >= manaCost); // && (!hasCooldown || currentCooldownTick >= cooldown);
+        if (!canBePerformed) {
+            if (type == PLAYER_SKILL_TYPE.SCHEME) {
+                //This is the scheme parent, even if there are no charges, it can be performed so that the player can see the second column
+                //This is assuming that the scheme parent does not have its personal cooldown, it should not have any cooldown itself because its cooldown is based on the specific schemes
+                return true;
+            }
+        } else {
+            if(category == PLAYER_SKILL_CATEGORY.SCHEME) {
+                SkillData parentSchemeData = PlayerSkillManager.Instance.GetPlayerActionData(PLAYER_SKILL_TYPE.SCHEME);
+                if (parentSchemeData.charges <= 0) {
+                    //This is the specific scheme
+                    //If the scheme parent does not have any charges, it should not be clickable
+                    //This part will only also be called if the scheme parent does not have any charges
+                    return false;
+                }
+            }
+        }
+        return canBePerformed;
     }
     /// <summary>
     /// Function that determines whether this action can target the given character or not.

@@ -579,8 +579,8 @@ public class MovementComponent : CharacterComponent {
     private void AvoidFaction(Faction p_faction) {
         if (DoesFactionUsePathfindingTag(p_faction)) {
             int pathfindingTag = (int)p_faction.pathfindingTag;
-            SetPenaltyForTag(pathfindingTag, 100); //500
-            SetPenaltyForTag((int)p_faction.pathfindingDoorTag, 100); //500    
+            SetPenaltyForTag(pathfindingTag, 500); //500
+            SetPenaltyForTag((int)p_faction.pathfindingDoorTag, 500); //500    
         }
     }
     public void RedetermineFactionsToAvoid(Character p_character) {

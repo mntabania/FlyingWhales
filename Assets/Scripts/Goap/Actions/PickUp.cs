@@ -84,6 +84,9 @@ public class PickUp : GoapAction {
             if(targetTileObject is Heirloom && job != null && job.jobType == JOB_TYPE.DROP_ITEM_PARTY) { //|| job.jobType == JOB_TYPE.DROP_ITEM
                 cost += 10;
                 costLog = $"{costLog} +10(Heirloom)";
+            } else if(targetTileObject is FoodPile && job != null && job.jobType == JOB_TYPE.DISPOSE_FOOD_PILE) { //|| job.jobType == JOB_TYPE.DROP_ITEM
+                cost += 10;
+                costLog = $"{costLog} +10(Dispose Food Pile)";
             } else {
                 if (targetTileObject.characterOwner == null) {
                     if (job != null && (job.jobType == JOB_TYPE.TAKE_ITEM || job.jobType == JOB_TYPE.HAUL)) {

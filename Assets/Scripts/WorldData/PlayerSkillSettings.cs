@@ -12,6 +12,7 @@ public class PlayerSkillSettings {
     /// If this is set to Normal, it means that the player can choose between the Pre-set archetypes. 
     /// </summary>
     public PLAYER_ARCHETYPE forcedArchetype;
+    public OMNIPOTENT_MODE omnipotentMode;
     
     public PlayerSkillSettings() {
         cooldownSpeed = SKILL_COOLDOWN_SPEED.Normal;
@@ -19,6 +20,7 @@ public class PlayerSkillSettings {
         chargeAmount = SKILL_CHARGE_AMOUNT.Normal;
         threatAmount = THREAT_AMOUNT.Normal;
         forcedArchetype = PLAYER_ARCHETYPE.Normal;
+        omnipotentMode = OMNIPOTENT_MODE.Disabled;
     }
     public void SetCooldownSpeed(SKILL_COOLDOWN_SPEED p_value) {
         cooldownSpeed = p_value;
@@ -93,6 +95,12 @@ public class PlayerSkillSettings {
     #region Forced Archetype
     public void SetForcedArchetype(PLAYER_ARCHETYPE p_archetype) {
         forcedArchetype = p_archetype;
+    }
+    #endregion
+
+    #region Omnipotent Mode
+    public void SetOmnipotentMode(OMNIPOTENT_MODE p_omnipotentMode) {
+        omnipotentMode = p_omnipotentMode;
     }
     #endregion
 }

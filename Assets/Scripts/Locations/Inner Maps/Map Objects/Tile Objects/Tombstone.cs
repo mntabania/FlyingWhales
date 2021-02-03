@@ -99,9 +99,9 @@ public class Tombstone : TileObject {
     public override string ToString() {
         return $"Tombstone of {character?.name}";
     }
-    public override void SetInventoryOwner(Character character) {
-        base.SetInventoryOwner(character);
-        if (character != null) {
+    public override void SetInventoryOwner(Character p_newOwner) {
+        base.SetInventoryOwner(p_newOwner);
+        if (p_newOwner != null) {
             if (this.character.hasMarker) {
                 this.character.marker.SetNameState(false);
             }

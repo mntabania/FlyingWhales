@@ -107,6 +107,7 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<Character>(UISignals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
         Messenger.AddListener<MoodComponent>(CharacterSignals.MOOD_SUMMARY_MODIFIED, OnMoodModified);
         Messenger.AddListener<Character>(CharacterSignals.CHARACTER_CHANGED_NAME, OnCharacterChangedName);
+        Messenger.AddListener<Character, CharacterClass, CharacterClass>(CharacterSignals.CHARACTER_CLASS_CHANGE, OnCharacterChangedClass);
 
         actionEventLabel.SetOnRightClickAction(OnRightClickThoughtBubble);
         relationshipNamesEventLbl.SetOnLeftClickAction(OnLeftClickRelationship);
@@ -235,6 +236,11 @@ public class CharacterInfoUI : InfoUIBase {
         if (isShowing) {
             //update all basic info regardless of character since changed character might be referenced in active characters thought bubble.
             UpdateBasicInfo();    
+        }
+    }
+    private void OnCharacterChangedClass(Character p_character, CharacterClass p_previousClass, CharacterClass p_newClass) {
+        if (isShowing && activeCharacter == p_character) {
+            UpdateBasicInfo();
         }
     }
     public void UpdateBasicInfo() {

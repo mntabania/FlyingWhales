@@ -37,6 +37,7 @@ public class WorldSettingsData {
         playerSkillSettings.SetManaCostAmount(SKILL_COST_AMOUNT.Normal);
         playerSkillSettings.SetChargeAmount(SKILL_CHARGE_AMOUNT.Normal);
         playerSkillSettings.SetThreatAmount(THREAT_AMOUNT.Normal);
+        playerSkillSettings.SetOmnipotentMode(OMNIPOTENT_MODE.Disabled);
     }
 
     public bool AreSettingsValid(out string invalidityReason) {

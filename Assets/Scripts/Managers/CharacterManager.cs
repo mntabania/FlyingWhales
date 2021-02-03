@@ -701,12 +701,15 @@ public class CharacterManager : BaseMonoBehaviour {
                     PlagueDisease.Instance.AddPlaguedStatusOnPOIWithLifespanDuration(foodPile);
                 }
 
-                if (deadCharacter != null && createLog) {
-                    //add log if food pile came from character
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "became_food_pile", providedTags: LOG_TAG.Life_Changes);
-                    log.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(foodPile, foodPile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddLogToDatabase();
+                if (deadCharacter != null) {
+                    deadCharacter.SetConnectedFoodPile(foodPile);
+                    if (createLog) {
+                        //add log if food pile came from character
+                        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "became_food_pile", providedTags: LOG_TAG.Life_Changes);
+                        log.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        log.AddToFillers(foodPile, foodPile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        log.AddLogToDatabase();
+                    }
                 }
 
                 foodPile.SetResourceInPile(food);

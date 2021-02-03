@@ -1423,6 +1423,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.PICK_UP, targetItem, owner);
         owner.jobQueue.AddJobInQueue(job);
     }
+    public void CreateStealItemJob(JOB_TYPE jobType, TileObject targetItem) {
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.STEAL, targetItem, owner);
+	    owner.jobQueue.AddJobInQueue(job);
+    }
     public bool TryCreateObtainPersonalItemJob() {
         if (!owner.IsInventoryAtFullCapacity()) {
             string chosenItemName = GetItemNameForObtainPersonalItemJob();
@@ -3176,6 +3180,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             return owner.jobQueue.AddJobInQueue(job);
         }
         return false;
+    }
+    #endregion
+    
+    #region Dispose Food Pile
+    public void TryCreateDisposeFoodPileJob(FoodPile target) {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.DISPOSE_FOOD_PILE, target) && !target.HasJobTargetingThis(JOB_TYPE.DISPOSE_FOOD_PILE)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DISPOSE_FOOD_PILE, INTERACTION_TYPE.DISPOSE_FOOD, target, owner);
+		    owner.jobQueue.AddJobInQueue(job);
+	    }
     }
     #endregion
 

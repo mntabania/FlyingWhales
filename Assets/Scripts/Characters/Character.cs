@@ -89,6 +89,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     //misc
     public Tombstone grave { get; private set; }
+    public FoodPile connectedFoodPile { get; private set; }
     
     //Components / Managers
     public TrapStructure trapStructure { get; private set; }
@@ -820,6 +821,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Messenger.Broadcast(CharacterSignals.CHARACTER_CLASS_CHANGE, this, previousClass, _characterClass);
         }
         combatComponent.UpdateElementalType();
+    }
+    public void OverridePreviousClassName(string p_className) {
+        previousClassName = p_className;
     }
     #endregion
 
@@ -1854,15 +1858,39 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         WorldMapCameraMove.Instance.CenterCameraOn(carryComponent.masterCharacter.currentRegion.coreTile.gameObject);
                     }
                 } else if (carryComponent.masterCharacter.gridTileLocation != null) {
-                    // if (marker.gameObject.activeInHierarchy) {
-                        bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(currentRegion);
-                        if (instantCenter) {
-                            InnerMapManager.Instance.ShowInnerMap(carryComponent.masterCharacter.gridTileLocation.structure.region, false);
-                        }
-                        InnerMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
-                    // }
+                    bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(currentRegion);
+                    if (instantCenter) {
+                        InnerMapManager.Instance.ShowInnerMap(carryComponent.masterCharacter.gridTileLocation.structure.region, false);
+                    }
+                    InnerMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
                 }
-            } 
+            } else if (grave != null && grave.mapObjectVisual != null && (grave.gridTileLocation != null || grave.isBeingCarriedBy != null)) {
+                Region region = null;
+                if (grave.isBeingCarriedBy != null) {
+                    region = grave.isBeingCarriedBy.currentRegion;
+                } else if (grave.gridTileLocation != null){
+                    region = grave.gridTileLocation.parentMap.region;
+                }
+                if (region != null) {
+                    if (!InnerMapManager.Instance.IsShowingInnerMap(region)) {
+                        InnerMapManager.Instance.ShowInnerMap(region, false);
+                    }
+                    InnerMapCameraMove.Instance.CenterCameraOn(grave.mapObjectVisual.gameObject);    
+                }
+            } else if (connectedFoodPile != null && connectedFoodPile.mapObjectVisual != null && (connectedFoodPile.gridTileLocation != null || connectedFoodPile.isBeingCarriedBy != null)) {
+                Region region = null;
+                if (connectedFoodPile.isBeingCarriedBy != null) {
+                    region = connectedFoodPile.isBeingCarriedBy.currentRegion;
+                } else if (connectedFoodPile.gridTileLocation != null){
+                    region = connectedFoodPile.gridTileLocation.parentMap.region;
+                }
+                if (region != null) {
+                    if (!InnerMapManager.Instance.IsShowingInnerMap(region)) {
+                        InnerMapManager.Instance.ShowInnerMap(region, false);
+                    }
+                    InnerMapCameraMove.Instance.CenterCameraOn(connectedFoodPile.mapObjectVisual.gameObject);    
+                }
+            }
         }
         
         // else {
@@ -2853,7 +2881,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private void OnStructureDestroyed(LocationStructure structure) {
         //character's home was destroyed.
         if (structure == homeStructure) {
-            MigrateHomeStructureTo(null, affectSettlement: false);
+            //affect settlement if home settlement structures have been reduced to 0
+            bool affectSettlement = homeSettlement != null && homeSettlement.structures.Count == 0;
+            MigrateHomeStructureTo(null, affectSettlement: affectSettlement);
             interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
             //MigrateHomeTo(null);
             //interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
@@ -5747,6 +5777,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetGrave(Tombstone grave) {
         this.grave = grave;
     }
+    public void SetConnectedFoodPile(FoodPile p_foodPile) {
+        connectedFoodPile = p_foodPile;
+    }
     #endregion
 
     #region Necromancer
@@ -5897,6 +5930,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (!string.IsNullOrEmpty(data.grave)) {
             grave = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.grave) as Tombstone;
+        }
+        if (!string.IsNullOrEmpty(data.connectedFoodPile)) {
+            connectedFoodPile = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.connectedFoodPile) as FoodPile;
         }
         if (data.deathLog.hasValue) {
             deathLog = data.deathLog;

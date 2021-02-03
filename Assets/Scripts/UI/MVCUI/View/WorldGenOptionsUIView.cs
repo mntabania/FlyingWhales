@@ -15,6 +15,7 @@ public class WorldGenOptionsUIView : MVCUIView {
         void OnChangeSkillCostAmount(SKILL_COST_AMOUNT p_value);
         void OnChangeSkillChargeAmount(SKILL_CHARGE_AMOUNT p_value);
         void OnChangeThreatAmount(THREAT_AMOUNT p_value);
+        void OnChangeOmnipotentMode(OMNIPOTENT_MODE p_value);
         void OnClickAddBiome();
         void OnClickAddFaction();
         void OnHoverOverMapSize(UIHoverPosition p_pos);
@@ -31,6 +32,8 @@ public class WorldGenOptionsUIView : MVCUIView {
         void OnHoverOutCharges();
         void OnHoverOverThreat(UIHoverPosition p_pos);
         void OnHoverOutThreat();
+        void OnHoverOverOmnipotent(UIHoverPosition p_pos);
+        void OnHoverOutOmnipotent();
         
     }
     #endregion
@@ -88,6 +91,9 @@ public class WorldGenOptionsUIView : MVCUIView {
         UIModel.onHoverOutChargesDropdown += p_listener.OnHoverOutCharges;
         UIModel.onHoverOverThreatDropdown += p_listener.OnHoverOverThreat;
         UIModel.onHoverOutThreatDropdown += p_listener.OnHoverOutThreat;
+        UIModel.onChangeOmnipotent += p_listener.OnChangeOmnipotentMode;
+        UIModel.onHoverOverOmnipotentDropdown += p_listener.OnHoverOverOmnipotent;
+        UIModel.onHoverOutOmnipotentDropdown += p_listener.OnHoverOutOmnipotent;
     }
     public void Unsubscribe(IListener p_listener) {
         UIModel.onChangeMapSize -= p_listener.OnChangeMapSize;
@@ -113,6 +119,9 @@ public class WorldGenOptionsUIView : MVCUIView {
         UIModel.onHoverOutChargesDropdown -= p_listener.OnHoverOutCharges;
         UIModel.onHoverOverThreatDropdown -= p_listener.OnHoverOverThreat;
         UIModel.onHoverOutThreatDropdown -= p_listener.OnHoverOutThreat;
+        UIModel.onChangeOmnipotent -= p_listener.OnChangeOmnipotentMode;
+        UIModel.onHoverOverOmnipotentDropdown -= p_listener.OnHoverOverOmnipotent;
+        UIModel.onHoverOutOmnipotentDropdown -= p_listener.OnHoverOutOmnipotent;
     }
     #endregion
 
@@ -190,6 +199,14 @@ public class WorldGenOptionsUIView : MVCUIView {
     }
     public void SetThreatDropdownValue(string p_value) {
         UIModel.dropDownThreat.value = UIModel.dropDownThreat.GetDropdownOptionIndex(p_value);
+    }
+    public void InitializeOmnipotentModeDropdown() {
+        UIModel.dropDownOmnipotent.ClearOptions();
+        UIModel.dropDownOmnipotent.AddOptions(UtilityScripts.Utilities.GetEnumChoices<OMNIPOTENT_MODE>());
+        UIModel.dropDownOmnipotent.value = UIModel.dropDownOmnipotent.GetDropdownOptionIndex("Disabled");
+    }
+    public void SetOmnipotentDropdownValue(string p_value) {
+        UIModel.dropDownOmnipotent.value = UIModel.dropDownOmnipotent.GetDropdownOptionIndex(p_value);
     }
     public void HideBiomeItem(BiomeDropdownUIItem p_biomeItem) {
         p_biomeItem.gameObject.SetActive(false);
