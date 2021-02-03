@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine.Profiling;
 using UtilityScripts;
 namespace Locations {
     public class LocationCharacterTracker {
@@ -14,6 +15,18 @@ namespace Locations {
         }
         public void RemoveCharacterFromLocation(Character p_character) {
             charactersAtLocation.Remove(p_character);
+            
+            Profiler.BeginSample($"Check job applicability - Remove Status");
+            Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.REMOVE_STATUS, p_character as IPointOfInterest);
+            Profiler.EndSample();
+                
+            Profiler.BeginSample($"Check job applicability - Apprehend");
+            Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.APPREHEND, p_character as IPointOfInterest);
+            Profiler.EndSample();
+                
+            Profiler.BeginSample($"Check job applicability - Knockout");
+            Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.KNOCKOUT, p_character as IPointOfInterest);
+            Profiler.EndSample();
         }
 
         #region Utilities

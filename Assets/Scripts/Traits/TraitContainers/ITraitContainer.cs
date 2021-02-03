@@ -43,6 +43,7 @@ namespace Traits {
 
         #region Getting
         T GetTraitOrStatus<T>(params string[] traitNames) where T : Trait;
+        T GetTraitOrStatus<T>(string traitName) where T : Trait;
         List<T> GetTraitsOrStatuses<T>(params string[] traitNames) where T : Trait;
         bool HasTrait(params string[] traitNames);
         bool HasTrait(string traitName);

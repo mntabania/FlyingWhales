@@ -6,6 +6,10 @@ using Inner_Maps;
 using EZObjectPools;
 
 public class BaseParticleEffect : PooledObject {
+
+    public static System.Action<BaseParticleEffect> particleEffectActivated;
+    public static System.Action<BaseParticleEffect> particleEffectDeactivated;
+    
     public ParticleSystem[] particleSystems;
     private ParticleSystemRenderer[] _particleSystemRenderers;
     public bool pauseOnGamePaused;
@@ -16,14 +20,16 @@ public class BaseParticleEffect : PooledObject {
         targetTile = tile;
     }
     private void OnEnable() {
-        if (pauseOnGamePaused) {
-            Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
-        }
+        // if (pauseOnGamePaused) {
+        //     Messenger.AddListener<bool>(UISignals.PAUSED, OnGamePaused);
+        // }
+        particleEffectActivated?.Invoke(this);
     }
     private void OnDisable() {
-        if (pauseOnGamePaused) {
-            Messenger.RemoveListener<bool>(UISignals.PAUSED, OnGamePaused);
-        }
+        // if (pauseOnGamePaused) {
+        //     Messenger.RemoveListener<bool>(UISignals.PAUSED, OnGamePaused);
+        // }
+        particleEffectDeactivated?.Invoke(this);
     }
     private void TryConstructParticleSystemRenderers() {
         if(_particleSystemRenderers == null || _particleSystemRenderers.Length <= 0) {
@@ -79,10 +85,7 @@ public class BaseParticleEffect : PooledObject {
             ps.Stop();
         }
     }
-    protected virtual void ParticleAfterEffect(ParticleSystem particleSystem) {
-    }
-
-    protected virtual void OnGamePaused(bool state) {
+    public void OnGamePaused(bool state) {
         if (state) {
             for (int i = 0; i < particleSystems.Length; i++) {
                 if (particleSystems[i].isPlaying) {

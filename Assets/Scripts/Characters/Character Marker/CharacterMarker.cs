@@ -86,6 +86,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private GameDate _destroyDate;
     private List<HexTile> hexInWildernessForFlee;
     private List<Vector3> avoidThisPositions;
+    private int _currentColliderSize;
 
     #region Getters
     public GameDate destroyDate => _destroyDate;
@@ -1936,7 +1937,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         visionTrigger.SetAllCollidersState(state);
     }
     public void SetVisionColliderSize(int size) {
-        collider.size = new Vector2(size, size);
+        if (_currentColliderSize != size) {
+            _currentColliderSize = size;
+            collider.size = new Vector2(size, size);    
+        }
     }
     #endregion
 

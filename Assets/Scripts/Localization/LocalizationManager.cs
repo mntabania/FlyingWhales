@@ -85,14 +85,11 @@ public class LocalizationManager : BaseMonoBehaviour {
 	public string GetLocalizedValue(string category, string file, string key){
 		string result = string.Empty;
         if (!this._localizedText.ContainsKey(category)) {
-            Debug.LogWarning($"Localization error! {category}/");
-            //throw new System.Exception("Localization error! " + category + "/");
+	        Debug.LogWarning($"Localization error! {category}/");
         } else if (!this._localizedText[category].ContainsKey(file)) {
             Debug.LogWarning($"Localization error! {category}/{file}/");
-            //throw new System.Exception("Localization error! " + category + "/" + file + "/");
         } else if (!this._localizedText[category][file].ContainsKey(key)) {
             Debug.LogWarning($"Localization error! {category}/{file}/{key}");
-            //throw new System.Exception("Localization error! " + category + "/" + file + "/" + key);
         } else {
             result = this._localizedText[category][file][key];
         }
