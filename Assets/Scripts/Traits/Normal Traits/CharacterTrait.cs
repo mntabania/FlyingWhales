@@ -68,7 +68,9 @@ namespace Traits {
             alreadyInspectedTileObjects = SaveUtilities.ConvertIDListToTileObjects(saveDataCharacterTrait.alreadyInspectedTileObjects);
             charactersAlreadySawForHope.AddRange(SaveUtilities.ConvertIDListToCharacters(saveDataCharacterTrait.charactersAlreadySawForHope));
             charactersThatHaveReactedToThis = new HashSet<Character>(SaveUtilities.ConvertIDListToCharacters(saveDataCharacterTrait.charactersThatHaveReactedToThis));
-            alreadyReactedToFoodPiles = SaveUtilities.ConvertIDListToTileObjects(saveDataCharacterTrait.alreadyReactedFoodPiles);
+            if (saveDataCharacterTrait.alreadyReactedFoodPiles != null) {
+                alreadyReactedToFoodPiles = SaveUtilities.ConvertIDListToTileObjects(saveDataCharacterTrait.alreadyReactedFoodPiles);    
+            }
             hasBeenAbductedByPlayerMonster = saveDataCharacterTrait.hasBeenAbductedByPlayerMonster;
             hasBeenAbductedByWildMonster = saveDataCharacterTrait.hasBeenAbductedByWildMonster;
             if (saveDataCharacterTrait.traitsFromOtherCharacterThatThisIsAwareOf != null) {
