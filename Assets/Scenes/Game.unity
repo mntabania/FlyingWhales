@@ -84064,6 +84064,7 @@ MonoBehaviour:
     - d_wood_corner_1
     - d_wood_horizontal_1
     - d_wood_vertical_1
+    - harpy_egg
     m_values:
     - {fileID: 21300000, guid: 47925766893f5664493bc782e664f4b9, type: 3}
     - {fileID: 21300000, guid: 87f6c55abd2da114ebc141713ab6dba3, type: 3}
@@ -84593,6 +84594,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 2bdd76dc16a512b4fa3ccfa83e0dccd1, type: 3}
     - {fileID: 21300000, guid: a00693e3a0046bc4cace6805e967adc3, type: 3}
     - {fileID: 21300000, guid: 95ab6aa30060bf14a98f8c70aab2cf46, type: 3}
+    - {fileID: 21300000, guid: 82d6f6c47a4db414599736d715179452, type: 3}
   burntMaterial: {fileID: 2100000, guid: 1010dec766f2511479731f5cc07e612d, type: 2}
   defaultObjectMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3,
     type: 2}
