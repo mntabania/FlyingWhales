@@ -3,10 +3,10 @@
     public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.DIRECT;
     public DisposeFood() : base(INTERACTION_TYPE.DISPOSE_FOOD) {
         actionIconString = GoapActionStateDB.Haul_Icon;
-        actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
+        actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.RATMAN };
         logTags = new[] {LOG_TAG.Work};
-
+        canBeAdvertisedEvenIfTargetIsUnavailable = true;
     }
 
     #region Overrides

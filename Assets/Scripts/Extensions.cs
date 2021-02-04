@@ -549,6 +549,7 @@ public static class Extensions {
             case JOB_TYPE.MONSTER_EAT_CORPSE:
                 priority = 1087;
                 break;
+            case JOB_TYPE.DISPOSE_FOOD_PILE:
             case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
                 priority = 1086;
                 break;
@@ -698,7 +699,6 @@ public static class Extensions {
                 priority = 750;
                 break;
             case JOB_TYPE.HAUL:
-            case JOB_TYPE.DISPOSE_FOOD_PILE:
                 priority = 700;
                 break;
             case JOB_TYPE.REPAIR:
