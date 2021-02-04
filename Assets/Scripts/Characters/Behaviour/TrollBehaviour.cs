@@ -121,10 +121,10 @@ public class TrollBehaviour : BaseMonsterBehaviour {
                 Character chosenCharacter = null;
                 TrollCauldron cauldron = null;
                 if (character.homeSettlement != null) {
-                    chosenCharacter = character.homeSettlement.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD));
+                    chosenCharacter = character.homeSettlement.GetRandomCharacterThatMeetCriteria(x => character != x && x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
                     cauldron = character.homeSettlement.GetFirstTileObjectOfType<TrollCauldron>(TILE_OBJECT_TYPE.TROLL_CAULDRON);
                 } else if (character.homeStructure != null) {
-                    chosenCharacter = character.homeStructure.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD));
+                    chosenCharacter = character.homeStructure.GetRandomCharacterThatMeetCriteria(x => character != x && x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
                     cauldron = character.homeStructure.GetFirstTileObjectOfType<TrollCauldron>(TILE_OBJECT_TYPE.TROLL_CAULDRON);
                 }
                 if (chosenCharacter != null && cauldron != null) {
@@ -140,9 +140,9 @@ public class TrollBehaviour : BaseMonsterBehaviour {
             if (roll < 10) {
                 Character chosenCharacter = null;
                 if (character.homeSettlement != null) {
-                    chosenCharacter = character.homeSettlement.GetRandomCharacterThatMeetCriteria(x => character != chosenCharacter && x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && !x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
+                    chosenCharacter = character.homeSettlement.GetRandomCharacterThatMeetCriteria(x => character != x && x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && !x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
                 } else if (character.homeStructure != null) {
-                    chosenCharacter = character.homeStructure.GetRandomCharacterThatMeetCriteria(x => character != chosenCharacter && x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && !x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
+                    chosenCharacter = character.homeStructure.GetRandomCharacterThatMeetCriteria(x => character != x && x.isNormalCharacter && !x.isBeingSeized && x.isBeingCarriedBy == null && !x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
                 }
                 if (chosenCharacter != null) {
                     log += $"\n-Chosen character: " + chosenCharacter.name;

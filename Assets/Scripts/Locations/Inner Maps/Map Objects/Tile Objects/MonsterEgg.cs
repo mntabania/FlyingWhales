@@ -24,6 +24,17 @@ public abstract class MonsterEgg : TileObject {
     public MonsterEgg(SaveDataMonsterEgg data) : base(data) {
         //SaveDataMonsterEgg saveDataMonsterEgg  = data as SaveDataMonsterEgg;
         Assert.IsNotNull(data);
+        summonType = data.summonType;
+
+        //Only a temp fix so that the old save data of players can still be used
+        //Remove this when we do not need this anym
+        if (summonType == SUMMON_TYPE.None) {
+            if (data is SaveDataSpiderEgg) {
+                summonType = SUMMON_TYPE.Giant_Spider;
+            } else if (data is SaveDataHarpyEgg) {
+                summonType = SUMMON_TYPE.Harpy;
+            }
+        }
         hatchDate = data.hatchDate;
         hasHatched = data.hasHatched;
         isSupposedToHatch = data.isSupposedToHatch;
@@ -90,6 +101,7 @@ public abstract class MonsterEgg : TileObject {
 }
 
 public class SaveDataMonsterEgg : SaveDataTileObject {
+    public SUMMON_TYPE summonType;
     public string characterThatLayID;
     public GameDate hatchDate;
     public bool isSupposedToHatch;
@@ -99,6 +111,7 @@ public class SaveDataMonsterEgg : SaveDataTileObject {
         base.Save(tileObject);
         MonsterEgg monsterEgg = tileObject as MonsterEgg;
         Assert.IsNotNull(monsterEgg);
+        summonType = monsterEgg.summonType;
         characterThatLayID = monsterEgg.characterThatLay.persistentID;
         hatchDate = monsterEgg.hatchDate;
         isSupposedToHatch = monsterEgg.isSupposedToHatch;
