@@ -57,10 +57,7 @@ public class FrostyFog : MovingTileObject {
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ?? 
-                                                        CombatManager.Instance.DefaultElementalTraitProcessor;
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
-                responsibleCharacter, etp);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
         }
         if (elementalDamageType == ELEMENTAL_TYPE.Fire) {
             //Wet

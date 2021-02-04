@@ -37,6 +37,9 @@ public class GoapNode {
 
 //actual nodes located in a finished plan that is going to be executed by a character
 public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
+
+    private static string[] vigilantCancellingTraits = new[] { "Resting", "Unconscious", "Restrained" };
+    
     public string persistentID { get; private set; }
     public Character actor { get; private set; }
     public IPointOfInterest poiTarget { get; private set; }
@@ -354,25 +357,31 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         } else {
             if (targetPOIToGoTo == null) {
                 if (targetTile == actor.gridTileLocation) {
+                    Profiler.BeginSample("Perform Goap Action 1");
                     actor.marker.StopMovement();
                     actor.PerformGoapAction();
+                    Profiler.EndSample();
                 } else {
-                    if ((action.canBePerformedEvenIfPathImpossible == false && 
-                        !actor.movementComponent.HasPathTo(targetTile)) || !actor.limiterComponent.canMove) {
+                    if ((action.canBePerformedEvenIfPathImpossible == false && !actor.movementComponent.HasPathTo(targetTile)) || !actor.limiterComponent.canMove) {
                         return false;
                     }
+                    Profiler.BeginSample("GoTo 1");
                     actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
+                    Profiler.EndSample();
                 }
             } else {
                 if(actor.gridTileLocation == targetPOIToGoTo.gridTileLocation) {
+                    Profiler.BeginSample("Perform Goap Action 2");
                     actor.marker.StopMovement();
                     actor.PerformGoapAction();
+                    Profiler.EndSample();
                 } else {
-                    if ((action.canBePerformedEvenIfPathImpossible == false && 
-                        !actor.movementComponent.HasPathTo(targetPOIToGoTo.gridTileLocation)) || !actor.limiterComponent.canMove) {
+                    if ((action.canBePerformedEvenIfPathImpossible == false && !actor.movementComponent.HasPathTo(targetPOIToGoTo.gridTileLocation)) || !actor.limiterComponent.canMove) {
                         return false;
                     }
+                    Profiler.BeginSample("Go To POI");
                     actor.marker.GoToPOI(targetPOIToGoTo, OnArriveAtTargetLocation);
+                    Profiler.EndSample();
                 }
             }
         }
@@ -717,7 +726,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             return;
         }
         //Separate calls for end effect if target is vigilang and the action is stealth because there are things that will be called in normal effect that does not apply to vigilant
-        if(isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait("Resting", "Unconscious", "Restrained") == false && !target.isDead) {
+        if(isStealth && target.traitContainer.HasTrait("Vigilant") && !target.traitContainer.HasTrait(vigilantCancellingTraits) && !target.isDead) {
             EndEffectVigilant();
         } else {
             EndEffectNormal(shouldDoAfterEffect);

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using EZObjectPools;
-using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
-using UtilityScripts;
 
 public class LogsTagButton : PooledObject {
 
@@ -16,8 +13,11 @@ public class LogsTagButton : PooledObject {
 
     private List<LOG_TAG> localTags;
     private bool hasPopulatedTagsGO;
+    private List<PooledObject> _logTagObjects; 
+    
     private void Awake() {
         localTags = new List<LOG_TAG>();
+        _logTagObjects = new List<PooledObject>();
     }
     public void SetTags(List<LOG_TAG> tags) {
         LOG_TAG mainTag = tags[0];
@@ -37,7 +37,9 @@ public class LogsTagButton : PooledObject {
         for (int i = 0; i < localTags.Count; i++) {
             LOG_TAG logTag = localTags[i];
             GameObject tagGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(tagWithNamePrefab.name, Vector3.zero, Quaternion.identity, additionalTagsRect);
-            tagGO.GetComponent<LogTagWithName>().SetTag(logTag);
+            LogTagWithName logTagWithName = tagGO.GetComponent<LogTagWithName>();
+            logTagWithName.SetTag(logTag);
+            _logTagObjects.Add(logTagWithName);
         }
         hasPopulatedTagsGO = true;
     }
@@ -48,6 +50,10 @@ public class LogsTagButton : PooledObject {
     public override void Reset() {
         hasPopulatedTagsGO = false;
         localTags.Clear();
-        UtilityScripts.Utilities.DestroyChildren(additionalTagsRect);    
+        for (int i = 0; i < _logTagObjects.Count; i++) {
+            PooledObject logTagObj = _logTagObjects[i];
+            ObjectPoolManager.Instance.DestroyObjectWithoutCheckingChildren(logTagObj);
+        }
+        _logTagObjects.Clear();
     }
 }

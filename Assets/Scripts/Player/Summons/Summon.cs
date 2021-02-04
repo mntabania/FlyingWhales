@@ -6,6 +6,7 @@ using Inner_Maps.Location_Structures;
 using Traits;
 using UnityEngine;
 using Interrupts;
+using UnityEngine.Profiling;
 
 public class Summon : Character {
 
@@ -172,8 +173,10 @@ public class Summon : Character {
         }
     }
     protected override void OnTickStarted() {
+        Profiler.BeginSample($"{name} OnTickStarted");
         ProcessTraitsOnTickStarted();
         StartTickGoapPlanGeneration();
+        Profiler.EndSample();
     }
     public override void OnUnseizePOI(LocationGridTile tileLocation) {
         base.OnUnseizePOI(tileLocation);

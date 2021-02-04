@@ -1,6 +1,7 @@
 ﻿using Inner_Maps;
 using Interrupts;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 public abstract class Nymph : Summon {
     
@@ -53,14 +54,21 @@ public abstract class Nymph : Summon {
     }
     private void ExecuteAOEEffect() {
         if (Random.Range(0, 100) < 25) {
+            Profiler.BeginSample($"Nymph - Adjust HP Current Tile");
             gridTileLocation.genericTileObject.AdjustHP(-50, combatComponent.elementalDamage.type, true, this);
+            Profiler.EndSample();
+            
+            Profiler.BeginSample($"Nymph - Adjust HP Neighbours");
             for (int i = 0; i < gridTileLocation.neighbourList.Count; i++) {
                 LocationGridTile tile = gridTileLocation.neighbourList[i];
                 tile.genericTileObject.AdjustHP(-50, combatComponent.elementalDamage.type, true, this);
             }
+            Profiler.EndSample();
         }
+        Profiler.BeginSample($"Nymph - Schedule AOE Effect");
         //reschedule after 20 minutes
         ScheduleAOEEffect();
+        Profiler.EndSample();
     }
     #endregion
 

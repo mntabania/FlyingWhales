@@ -88,6 +88,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     public InnerMapHexTile innerMapHexTile { get; private set; }
     public List<TileObject> itemsInHex { get; protected set; }
     public RegionDivision regionDivision { get; protected set; }
+    public LocationCharacterTracker locationCharacterTracker { get; private set; }
 
     private List<LocationGridTile> corruptedTiles;
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
@@ -150,6 +151,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         spellsComponent = new HexTileSpellsComponent(this);
         _hexTileBiomeEffectTrigger = new HexTileBiomeEffectTrigger(this);
         selectableSize = new Vector2Int(12, 12);
+        locationCharacterTracker = new LocationCharacterTracker();
         SetBordersState(false, false, Color.red);
         if (listenForGameLoad) {
             Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);    
@@ -977,6 +979,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
             summary += regionDivision.GetTestingInfo();
         }
         summary += $"\nSettlement on Tile: {settlementOnTile?.name}";
+        summary += $"\nCharacters:\n {locationCharacterTracker.GetCharactersSummary()}";
         UIManager.Instance.ShowSmallInfo(summary);
         
     }
@@ -1508,47 +1511,10 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
 
     #region Characters
     public List<T> GetAllCharactersInsideHex<T>() where T : Character {
-        List<T> characters = null;
-        LocationGridTile lowerLeftCornerTile = innerMapHexTile.gridTileCollections[0].tilesInTerritory[0];
-        int xMin = lowerLeftCornerTile.localPlace.x;
-        int yMin = lowerLeftCornerTile.localPlace.y;
-        int xMax = xMin + (InnerMapManager.BuildingSpotSize.x * 2);
-        int yMax = yMin + (InnerMapManager.BuildingSpotSize.y * 2);
-
-        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
-            Character character = region.charactersAtLocation[i];
-            if (character.gridTileLocation == null) { continue; }
-            if (character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
-                && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax) {
-                if (character is T converted) {
-                    if (characters == null) { characters = new List<T>(); }
-                    characters.Add(converted);
-                }
-            }
-        }
-        return characters;
+        return locationCharacterTracker.GetAllCharactersInsideHex<T>();
     }
     public void PopulateCharacterListInsideHexThatMeetCriteria(List<Character> p_characterList, System.Func<Character, bool> validityChecker) {
-        if(innerMapHexTile == null) {
-            return;
-        }
-        LocationGridTile lowerLeftCornerTile = innerMapHexTile.gridTileCollections[0].tilesInTerritory[0];
-        int xMin = lowerLeftCornerTile.localPlace.x;
-        int yMin = lowerLeftCornerTile.localPlace.y;
-        int xMax = xMin + (InnerMapManager.BuildingSpotSize.x * 2);
-        int yMax = yMin + (InnerMapManager.BuildingSpotSize.y * 2);
-
-        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
-            Character character = region.charactersAtLocation[i];
-            if (character.gridTileLocation == null) { continue; }
-            if (character.isBeingSeized) { continue; }
-            if (character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
-                && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax) {
-                if (validityChecker.Invoke(character)) {
-                    p_characterList.Add(character);
-                }
-            }
-        }
+        locationCharacterTracker.PopulateCharacterListInsideHexThatMeetCriteria(p_characterList, validityChecker);
     }
     public List<T> GetAllDeadAndAliveCharactersInsideHex<T>() where T : Character {
         List<T> characters = null;
@@ -1567,77 +1533,13 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         return characters;
     }
     public T GetFirstCharacterInsideHexThatMeetCriteria<T>(System.Func<Character, bool> validityChecker) where T : Character {
-        LocationGridTile lowerLeftCornerTile = innerMapHexTile.gridTileCollections[0].tilesInTerritory[0];
-        int xMin = lowerLeftCornerTile.localPlace.x;
-        int yMin = lowerLeftCornerTile.localPlace.y;
-        int xMax = xMin + (InnerMapManager.BuildingSpotSize.x * 2);
-        int yMax = yMin + (InnerMapManager.BuildingSpotSize.y * 2);
-
-        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
-            Character character = region.charactersAtLocation[i];
-            if (character.gridTileLocation == null) {
-                continue; //skip this character
-            }
-            if (character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
-                && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax) {
-                if (validityChecker.Invoke(character)) {
-                    if (character is T converted) {
-                        return converted;
-                    }
-                }
-            }
-        }
-        return null;
+        return locationCharacterTracker.GetFirstCharacterInsideHexThatMeetCriteria<T>(validityChecker);
     }
     public T GetRandomCharacterInsideHexThatMeetCriteria<T>(System.Func<Character, bool> validityChecker) where T : Character {
-        List<T> characters = null;
-        LocationGridTile lowerLeftCornerTile = innerMapHexTile.gridTileCollections[0].tilesInTerritory[0];
-        int xMin = lowerLeftCornerTile.localPlace.x;
-        int yMin = lowerLeftCornerTile.localPlace.y;
-        int xMax = xMin + (InnerMapManager.BuildingSpotSize.x * 2);
-        int yMax = yMin + (InnerMapManager.BuildingSpotSize.y * 2);
-
-        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
-            Character character = region.charactersAtLocation[i];
-            if (character.gridTileLocation == null) {
-                continue; //skip this character
-            }
-            if (character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
-                && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax) {
-                if (validityChecker.Invoke(character)) {
-                    if (character is T converted) {
-                        if (characters == null) { characters = new List<T>(); }
-                        characters.Add(converted);
-                    }
-                }
-            }
-        }
-        if (characters != null && characters.Count > 0) {
-            return characters[UnityEngine.Random.Range(0, characters.Count)];
-        }
-        return null;
+        return locationCharacterTracker.GetRandomCharacterInsideHexThatMeetCriteria<T>(validityChecker);
     }
     public int GetNumOfCharactersInsideHexThatMeetCriteria(System.Func<Character, bool> criteria) {
-        int count = 0;
-        LocationGridTile lowerLeftCornerTile = innerMapHexTile.gridTileCollections[0].tilesInTerritory[0];
-        int xMin = lowerLeftCornerTile.localPlace.x;
-        int yMin = lowerLeftCornerTile.localPlace.y;
-        int xMax = xMin + (InnerMapManager.BuildingSpotSize.x * 2);
-        int yMax = yMin + (InnerMapManager.BuildingSpotSize.y * 2);
-
-        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
-            Character character = region.charactersAtLocation[i];
-            if (character.gridTileLocation == null) {
-                continue; //skip this character
-            }
-            if (character.gridTileLocation != null && character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
-                && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax) {
-                if (criteria.Invoke(character)) {
-                    count++;
-                }
-            }
-        }
-        return count;
+        return locationCharacterTracker.GetNumOfCharactersInsideHexThatMeetCriteria(criteria);
     }
     public LocationGridTile GetCenterLocationGridTile() {
         LocationGridTile lowerLeftCornerTile = innerMapHexTile.gridTileCollections[0].tilesInTerritory[0];

@@ -561,14 +561,12 @@ namespace Traits {
                     return allTraitsAndStatuses[name] as T;
                 }
             }
-            //for (int i = 0; i < allTraitsAndStatuses.Count; i++) {
-            //    Trait trait = allTraitsAndStatuses[i];
-            //    for (int j = 0; j < traitNames.Length; j++) {
-            //        if (trait.name == traitNames[j]) { // || trait.GetType().ToString() == traitNames[j]
-            //            return trait as T;
-            //        }
-            //    }
-            //}
+            return null;
+        }
+        public T GetTraitOrStatus<T>(string traitName) where T : Trait {
+            if (HasTrait(traitName)) {
+                return allTraitsAndStatuses[traitName] as T;
+            }
             return null;
         }
         public List<T> GetTraitsOrStatuses<T>(params string[] traitNames) where T : Trait {

@@ -633,6 +633,12 @@ namespace Locations.Settlements {
             }
             return null;
         }
+        public void PopulatePassableTilesList(List<LocationGridTile> p_tiles) {
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure structure = allStructures[i];
+                p_tiles.AddRange(structure.passableTiles);
+            }
+        }
         private List<LocationGridTile> GetLocationGridTilesInSettlement(System.Func<LocationGridTile, bool> validityChecker) {
             List<LocationGridTile> locationGridTiles = new List<LocationGridTile>();
             for (int i = 0; i < tiles.Count; i++) {

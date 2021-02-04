@@ -12,6 +12,7 @@ using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
+using UnityEngine.Profiling;
 using UnityEngine.Tilemaps;
 using UtilityScripts;
 using Random = UnityEngine.Random;
@@ -24,6 +25,8 @@ namespace Inner_Maps {
             Desert_Grass, Sand, Desert_Stone, Bone, Demon_Stone, Flesh, Structure_Stone,
             Ruined_Stone
         }
+
+        private static readonly GridNeighbourDirection[] gridNeighbourDirections = CollectionUtilities.GetEnumValues<GridNeighbourDirection>();
         
         public string persistentID { get; }
         public InnerTileMap parentMap { get; private set; }
@@ -536,16 +539,27 @@ namespace Inner_Maps {
 
         #region Structures
         public void SetStructure(LocationStructure structure) {
+            Profiler.BeginSample("Remove Tile");
             this.structure?.RemoveTile(this);
+            Profiler.EndSample();
+            
             this.structure = structure;
+            
+            Profiler.BeginSample("Add Tile");
             this.structure.AddTile(this);
+            Profiler.EndSample();
+            
+            Profiler.BeginSample("Generic Tile Object Initialize");
             genericTileObject.ManualInitialize(this);
+            Profiler.EndSample();
 
+            Profiler.BeginSample("Update Awareness");
             if(objHere != null) {
                 //Whenever a grid tile changes its structure (might be because a new structure is built on top of it), the object inside must update its awareness to that new structure
                 LocationAwarenessUtility.RemoveFromAwarenessList(objHere);
                 LocationAwarenessUtility.AddToAwarenessList(objHere, this);
             }
+            Profiler.EndSample();
         }
         public void SetTileState(Tile_State state) {
             if (structure != null) {
@@ -561,6 +575,7 @@ namespace Inner_Maps {
 
         #region Characters
         public void AddCharacterHere(Character character) {
+            Profiler.BeginSample($"{character.name} Add Character To Tile");
             // if (!charactersHere.Contains(character)) {
                 charactersHere.Add(character);
             if (character.race.IsSapient()) {
@@ -695,6 +710,7 @@ namespace Inner_Maps {
             } else {
                 character.movementComponent.SetHasMovedOnCorruption(false);
             }
+            Profiler.EndSample();
         }
 
         public Character HasRaceHere(RACE p_lookUprace) {
@@ -853,9 +869,8 @@ namespace Inner_Maps {
             return false;
         }
         public bool IsAtEdgeOfMap() {
-            GridNeighbourDirection[] dirs = CollectionUtilities.GetEnumValues<GridNeighbourDirection>();
-            for (int i = 0; i < dirs.Length; i++) {
-                if (!_neighbours.ContainsKey(dirs[i])) {
+            for (int i = 0; i < gridNeighbourDirections.Length; i++) {
+                if (!_neighbours.ContainsKey(gridNeighbourDirections[i])) {
                     return true;
                 }
             }
