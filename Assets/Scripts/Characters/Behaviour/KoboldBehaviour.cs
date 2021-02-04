@@ -2,6 +2,7 @@
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using UnityEngine.Profiling;
 using UtilityScripts;
 
 public class KoboldBehaviour : BaseMonsterBehaviour {
@@ -14,6 +15,7 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
         log += $"\n{character.name} is Kobold";
         if (UnityEngine.Random.Range(0, 100) < 10) {
             log += $"\nChance to place freezing trap met.";
+            Profiler.BeginSample($"Kobold Place Freezing Trap");
             List<HexTile> hexTileChoices = GetValidHexTilesNextToHome(character);
             if (hexTileChoices != null && hexTileChoices.Count > 0) {
                 HexTile chosenTile = CollectionUtilities.GetRandomElement(hexTileChoices);
@@ -24,24 +26,30 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_TRAP, INTERACTION_TYPE.PLACE_FREEZING_TRAP, targetTile.genericTileObject, character);
                     producedJob = job;
                     log += $"\nCreated job to place trap at {targetTile}.";
+                    Profiler.EndSample();
                     return true;
                 } else {
                     log += $"\nNo valid tiles at {chosenTile} to place trap.";
                     producedJob = null;
+                    Profiler.EndSample();
                     return false;
                 }
             } else {
                 log += $"\nNo valid areas to place freezing traps found.";
                 producedJob = null;
+                Profiler.EndSample();
                 return false;
             }
         } else {
             log += $"\nChance to place freezing trap NOT met.";
+            Profiler.BeginSample($"Kobold Get Frozen Characters Surrounding Home");
             List<Character> frozenCharacters = ObjectPoolManager.Instance.CreateNewCharactersList();
             PopulateFrozenCharactersSurroundingHome(frozenCharacters, character);
+            Profiler.EndSample();
             if (frozenCharacters.Count > 0) {
                 //check if a character is frozen in any of the neighbouring areas,
                 //if there are, then create a job to carry then drop them at this character's home/territory
+                Profiler.BeginSample($"Kobold Capture Frozen Characters");
                 Character chosenCharacter = CollectionUtilities.GetRandomElement(frozenCharacters);
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CAPTURE_CHARACTER, INTERACTION_TYPE.DROP, chosenCharacter, character);
                 if (character.homeSettlement?.mainStorage != null) {
@@ -56,11 +64,14 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
                 ObjectPoolManager.Instance.ReturnCharactersListToPool(frozenCharacters);
                 producedJob = job;
                 log += $"\nFrozen character at surrounding area found, will carry {chosenCharacter.name} and drop at home.";
+                Profiler.EndSample();
                 return true;
             } else {
                 log += $"\nNo frozen characters at surrounding area found, checking frozen characters at home.";
                 //if there are none, check if there are any characters inside this character's home/territory that is frozen
+                Profiler.BeginSample($"Kobold Populate Frozen Characters in Home");
                 PopulateFrozenCharactersInHome(frozenCharacters, character);
+                Profiler.EndSample();
                 if (frozenCharacters.Count > 0) {
                     log += $"\nFrozen characters at home found.";
                     //if there are, 8% chance to butcher one, otherwise mock or laugh at one
@@ -89,13 +100,17 @@ public class KoboldBehaviour : BaseMonsterBehaviour {
             log += $"\nNo jobs related to frozen characters created. Checking food piles at home";
             //if none of the jobs above were created, check for food piles inside this character's home/territory,
             if (GameUtilities.RollChance(15)) {
+                Profiler.BeginSample($"Kobold Get Food Piles at Home");
                 List<FoodPile> foodPiles = GetFoodPilesAtHome(character);
+                Profiler.EndSample();
                 if (foodPiles != null && foodPiles.Count > 0) {
+                    Profiler.BeginSample($"Kobold Monster Eat Job");
                     //if there are any, create job to eat a random food pile
                     FoodPile chosenPile = CollectionUtilities.GetRandomElement(foodPiles);
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_EAT, INTERACTION_TYPE.EAT, chosenPile, character);
                     producedJob = job;
                     log += $"\nFood Piles found, will eat {chosenPile}";
+                    Profiler.EndSample();
                     return true;
                 }
             }

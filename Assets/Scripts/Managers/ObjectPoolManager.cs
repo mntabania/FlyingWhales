@@ -137,6 +137,12 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         pooledObject.SendObjectBackToPool();
         //pooledObject.transform.SetParent(pooledObject.ParentPool.transform);
     }
+    public void DestroyObjectWithoutCheckingChildren(PooledObject pooledObject) {
+        Messenger.Broadcast(ObjectPoolSignals.POOLED_OBJECT_DESTROYED, pooledObject.gameObject);
+        pooledObject.BeforeDestroyActions();
+        pooledObject.Reset();
+        pooledObject.SendObjectBackToPool();
+    }
     public void DestroyObject(GameObject gameObject) {
         PooledObject[] pooledObjects = gameObject.GetComponents<PooledObject>();
         Messenger.Broadcast(ObjectPoolSignals.POOLED_OBJECT_DESTROYED, gameObject);

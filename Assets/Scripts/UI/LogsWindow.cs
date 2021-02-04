@@ -7,6 +7,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Profiling;
 using UnityEngine.UI;
 
 public class LogsWindow : MonoBehaviour {
@@ -53,6 +54,9 @@ public class LogsWindow : MonoBehaviour {
             logFilterItem.SetOnToggleAction(OnToggleFilter);
             logFilterItem.SetIsOnWithoutNotify(true);
         }    
+        for (int i = 0; i < 200; i++) {
+            CreateNewLogHistoryItem();
+        }
     }
     private void Update() {
         if (Input.GetKeyDown(KeyCode.Return) && EventSystem.current.currentSelectedGameObject == searchField.gameObject) {
@@ -80,43 +84,6 @@ public class LogsWindow : MonoBehaviour {
         logHistoryItems.Add(logHistoryItem);
     }
     public void UpdateAllHistoryInfo() {
-        // Stopwatch timer = new Stopwatch();
-        // timer.Start();
-        // List<Log> logs = DatabaseManager.Instance.mainSQLDatabase.GetLogsThatMatchCriteria(_objPersistentID, SharedSearch, SharedEnabledFilters);
-        // int historyCount = logs?.Count ?? 0;
-        // int historyLastIndex = historyCount - 1;
-        // int missingItems = historyCount - logHistoryItems.Count;
-        // for (int i = 0; i < missingItems; i++) {
-        //     CreateNewLogHistoryItem();
-        // }
-        // for (int i = 0; i < daySeparators.Count; i++) {
-        //     ObjectPoolManager.Instance.DestroyObject(daySeparators[i]);
-        // }
-        // daySeparators.Clear();
-        //
-        // int currentDay = 0;
-        // for (int i = 0; i < logHistoryItems.Count; i++) {
-        //     LogHistoryItem currItem = logHistoryItems[i];
-        //     currItem.ManualReset();
-        //     if(logs != null && i < historyCount) {
-        //         Log currLog = logs[historyLastIndex - i];
-        //         currItem.gameObject.SetActive(true);
-        //         currItem.SetLog(currLog);
-        //         currItem.SetHoverPosition(logHoverPosition);
-        //         if (currLog.gameDate.day != currentDay) {
-        //             int siblingIndex = currItem.transform.GetSiblingIndex();
-        //             if (siblingIndex < 0) {
-        //                 siblingIndex = 0;
-        //             }
-        //             CreateDaySeparator(currLog.gameDate.day, siblingIndex);
-        //             currentDay = currLog.gameDate.day;
-        //         }
-        //     } else {
-        //         currItem.gameObject.SetActive(false);
-        //     }
-        // }
-        // timer.Stop();
-        // UnityEngine.Debug.Log($"Log items creation time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
         UIManager.Instance.StartCoroutine(UpdateAllHistoryInfoCoroutine());
     }
 
@@ -125,7 +92,9 @@ public class LogsWindow : MonoBehaviour {
         Stopwatch timer = new Stopwatch();
         timer.Start();
 #endif
+        Profiler.BeginSample("Get Logs that match criteria");
         List<Log> logs = DatabaseManager.Instance.mainSQLDatabase.GetLogsThatMatchCriteria(_objPersistentID, SharedSearch, SharedEnabledFilters);
+        Profiler.EndSample();
         int historyCount = logs?.Count ?? 0;
         int historyLastIndex = historyCount - 1;
         int missingItems = historyCount - logHistoryItems.Count;

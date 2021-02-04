@@ -668,7 +668,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Marker
     public void SetGridTilePosition(Vector2 p_anchoredPos) {
-        gridTilePosition = new Vector2Int(Mathf.FloorToInt(p_anchoredPos.x), Mathf.FloorToInt(p_anchoredPos.y));
+        Profiler.BeginSample($"{name} - SetGridTilePosition - Floor to Int");
+        int xFloorToInt = Mathf.FloorToInt(p_anchoredPos.x);
+        int yFloorToInt = Mathf.FloorToInt(p_anchoredPos.y);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"{name} - SetGridTilePosition");
+        gridTilePosition = new Vector2Int(xFloorToInt, yFloorToInt);
+        Profiler.EndSample();
     }
     public void CreateMarker() {
         GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", Vector3.zero, Quaternion.identity, InnerMapManager.Instance.transform);
@@ -2639,10 +2646,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ??
-                                                        CombatManager.Instance.DefaultElementalTraitProcessor;
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this,
-                responsibleCharacter, etp);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, elementalTraitProcessor);
         } else {
             //hp was increased
             Messenger.Broadcast(JobSignals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RECOVER_HP, this as IPointOfInterest);
@@ -3073,15 +3077,26 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //What happens every start of tick
 
         //Check Trap Structure
+        Profiler.BeginSample($"{name} OnTickStarted - Increment Trap Structure");
         trapStructure.IncrementCurrentDuration(1);
+        Profiler.EndSample();
 
         //Out of combat hp recovery
         //if (!isDead && !isInCombat) {
         //    HPRecovery(0.0025f);
         //}
+        Profiler.BeginSample($"{name} OnTickStarted - State Component Awareness");
         stateAwarenessComponent.PerTick();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"{name} OnTickStarted - Process Traits");
         ProcessTraitsOnTickStarted();
+        Profiler.EndSample();
+        
+        Profiler.BeginSample($"{name} OnTickStarted - GoapPlanGeneration");
         StartTickGoapPlanGeneration();
+        Profiler.EndSample();
+        
         Profiler.EndSample();
     }
     protected virtual void OnTickEnded() {
@@ -4271,14 +4286,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentActionNode.action.goapType, currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData, currentActionNode.associatedJob)
             && currentActionNode.action.CanSatisfyAllPreconditions(currentActionNode.actor, currentActionNode.poiTarget, currentActionNode.otherData, currentActionNode.associatedJobType)) {
-            log += $"\nAction satisfies all requirements and preconditions, proceeding to perform actual action: {currentActionNode.action.goapName} to {currentActionNode.poiTarget.name} at {currentActionNode.poiTarget.gridTileLocation}" ?? "No Tile Location";
+            log =  $"{log}\nAction satisfies all requirements and preconditions, proceeding to perform actual action: {currentActionNode.action.goapName} to {currentActionNode.poiTarget.name} at {currentActionNode.poiTarget.gridTileLocation}";
             logComponent.PrintLogIfActive(log);
             currentActionNode.PerformAction();
         } else {
-            log += "\nAction did not meet all requirements and preconditions. Will try to recalculate plan...";
+            log = $"{log}\nAction did not meet all requirements and preconditions. Will try to recalculate plan...";
             GoapPlan plan = currentPlan;
             if (plan.doNotRecalculate) {
-                log += "\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
+                log = $"{log}\n - Action's plan has doNotRecalculate state set to true, dropping plan...";
                 logComponent.PrintLogIfActive(log);
                 currentJob.CancelJob(false);
             } else {
@@ -4304,18 +4319,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
         if (isDead || !limiterComponent.canPerform) {
-            log += $"\n{name} is dead or cannot perform! Do not do GoapActionResult, automatically CancelJob";
+            log = $"{log}\n{name} is dead or cannot perform! Do not do GoapActionResult, automatically CancelJob";
             logComponent.PrintLogIfActive(log);
             job.CancelJob(false);
             return;
         }
 
         if(result == InteractionManager.Goap_State_Success) {
-            log += "\nPlan is setting next action to be done...";
+            log = log + "\nPlan is setting next action to be done...";
             Messenger.Broadcast(JobSignals.CHARACTER_DID_ACTION_SUCCESSFULLY, this, actionNode);
             plan.SetNextNode();
             if (plan.currentNode == null) {
-                log += "\nThis action is the end of plan.";
+                log = $"{log}\nThis action is the end of plan.";
                 //if (job.originalOwner.ownerType != JOB_OWNER.CHARACTER && traitContainer.GetNormalTrait<Trait>("Hardworking") != null) {
                 //    log += "\nFinished a npcSettlement job and character is hardworking, increase happiness by 3000...";
                 //    needsComponent.AdjustHappiness(3000);
@@ -4332,7 +4347,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 //this means that this is the end goal so end this plan now
                 job.ForceCancelJob(false);
             } else {
-                log += $"\nNext action for this plan: {plan.currentActualNode.goapName}";
+                log = $"{log}\nNext action for this plan: {plan.currentActualNode.goapName}";
                 //if (plan.job != null && plan.job.assignedCharacter != this) {
                 //    log += "\nPlan has a job: " + plan.job.name + ". Assigned character " + (plan.job.assignedCharacter != null ? plan.job.assignedCharacter.name : "None") + " does not match with " + name + ".";
                 //    log += "Drop plan because this character is no longer the one assigned";
@@ -4352,146 +4367,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    //public bool DropPlan(GoapPlan plan, bool forceRemoveJob = false, bool forceProcessPlanJob = false) {
-    //    bool hasBeenRemoved = false;
-    //    if (allGoapPlans.Remove(plan)) {
-    //        Debug.Log(GameManager.Instance.TodayLogString() + plan.name + " was removed from " + this.name + "'s plan list");
-    //        plan.EndPlan();
-    //        hasBeenRemoved = true;
-    //    }
-    //    if(hasBeenRemoved || forceProcessPlanJob) {
-    //        if (plan.job != null) {
-    //            if (plan.job.cancelJobOnFail || plan.job.cancelJobOnDropPlan || forceRemoveJob) {
-    //                plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
-    //            }
-    //            plan.job.SetAssignedCharacter(null);
-    //            plan.job.SetAssignedPlan(null);
-    //        }
-    //    }
-    //    return hasBeenRemoved;
-    //}
-    //public bool JustDropPlan(GoapPlan plan, bool forceRemoveJob = false, bool forceProcessPlanJob = false) {
-    //    bool hasBeenRemoved = false;
-    //    if (allGoapPlans.Remove(plan)) {
-    //        Debug.Log(GameManager.Instance.TodayLogString() + plan.name + " was removed from " + this.name + "'s plan list");
-    //        plan.EndPlan();
-    //        hasBeenRemoved = true;
-    //    }
-    //    if (hasBeenRemoved || forceProcessPlanJob) {
-    //        if (plan.job != null) {
-    //            if (plan.job.cancelJobOnDropPlan || forceRemoveJob) {
-    //                plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
-    //            }
-    //            plan.job.SetAssignedCharacter(null);
-    //            plan.job.SetAssignedPlan(null);
-    //        }
-    //    }
-    //    return hasBeenRemoved;
-    //}
-    //public void DropAllPlans(GoapPlan planException = null) {
-    //    if (planException == null) {
-    //        while (allGoapPlans.Count > 0) {
-    //            DropPlan(allGoapPlans[0]);
-    //        }
-    //    } else {
-    //        for (int i = 0; i < allGoapPlans.Count; i++) {
-    //            if (allGoapPlans[i] != planException) {
-    //                DropPlan(allGoapPlans[i]);
-    //                i--;
-    //            }
-    //        }
-    //    }
-    //}
-    //public void JustDropAllPlansOfType(INTERACTION_TYPE type) {
-    //    for (int i = 0; i < allGoapPlans.Count; i++) {
-    //        GoapPlan currPlan = allGoapPlans[i];
-    //        if (currPlan.endNode.action != null && currPlan.endNode.action.goapType == type) {
-    //            if (JustDropPlan(currPlan)) {
-    //                i--;
-    //            }
-    //        }
-    //    }
-    //}
-    //public void DropAllPlansOfType(INTERACTION_TYPE type) {
-    //    for (int i = 0; i < allGoapPlans.Count; i++) {
-    //        GoapPlan currPlan = allGoapPlans[i];
-    //        if (currPlan.endNode.action != null && currPlan.endNode.action.goapType == type) {
-    //            if (DropPlan(currPlan)) {
-    //                i--;
-    //            }
-    //        }
-    //    }
-    //}
-    //public bool HasPlanWithType(INTERACTION_TYPE type) {
-    //    for (int i = 0; i < allGoapPlans.Count; i++) {
-    //        GoapPlan currPlan = allGoapPlans[i];
-    //        if (currPlan.endNode.action != null && currPlan.endNode.action.goapType == type) {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
-    //public GoapPlan GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION goalEffect) {
-    //    for (int i = 0; i < allGoapPlans.Count; i++) {
-    //        if (allGoapPlans[i].goalEffects.Contains(goalEffect)) {
-    //            return allGoapPlans[i];
-    //        }
-    //    }
-    //    return null;
-    //}
-    //public GoapPlan GetPlanByCategory(GOAP_CATEGORY category) {
-    //    for (int i = 0; i < allGoapPlans.Count; i++) {
-    //        if (allGoapPlans[i].category == category) {
-    //            return allGoapPlans[i];
-    //        }
-    //    }
-    //    return null;
-    //}
-    //For testing: Drop Character
-    //public void DropACharacter() {
-    //    if (awareness.ContainsKey(POINT_OF_INTEREST_TYPE.CHARACTER)) {
-    //        List<IPointOfInterest> characterAwarenesses = awareness[POINT_OF_INTEREST_TYPE.CHARACTER];
-    //        Character randomTarget = characterAwarenesses[UnityEngine.Random.Range(0, characterAwarenesses.Count)] as Character;
-    //        GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeRegion, targetPOI = randomTarget };
-    //        StartGOAP(goapEffect, randomTarget, GOAP_CATEGORY.REACTION);
-    //    }
-    //}
-    //public GoapPlan GetPlanWithAction(GoapAction action) {
-    //    for (int i = 0; i < allGoapPlans.Count; i++) {
-    //        for (int j = 0; j < allGoapPlans[i].allNodes.Count; j++) {
-    //            if (allGoapPlans[i].allNodes[j].actionType == action) {
-    //                return allGoapPlans[i];
-    //            }
-    //        }
-    //    }
-    //    return null;
-    //}
-    //public void FaceTarget(IPointOfInterest target) {
-    //    if (this != target && !this.isDead && gridTileLocation != null) {
-    //        if (target is Character) {
-    //            Character targetCharacter = target as Character;
-    //            if (targetCharacter.isDead) {
-    //                return;
-    //            }
-    //            CharacterMarker lookAtMarker = targetCharacter.currentParty.owner.marker;
-    //            if (lookAtMarker.character != this) {
-    //                marker.LookAt(lookAtMarker.transform.position);
-    //            }
-    //        } else {
-    //            if (target.gridTileLocation == null) {
-    //                return;
-    //            }
-    //            marker.LookAt(target.gridTileLocation.centeredWorldLocation);
-    //        }
-    //    }
-    //}
     public void SetCurrentActionNode(ActualGoapNode actionNode, JobQueueItem job, GoapPlan plan) {
         if (currentActionNode != null) {
             previousCurrentActionNode = currentActionNode;
         }
         currentActionNode = actionNode;
         if (currentActionNode != null) {
-            logComponent.PrintLogIfActive($"{name} will do action {actionNode.action.goapType} to {actionNode.poiTarget}");
+            logComponent.PrintLogIfActive($"{name} will do action {actionNode.action.name} to {actionNode.poiTarget}");
             //Current Job must always be the job in the top prio, if there is inconsistency with the currentActionNode, then the problem lies on what you set as the currentActionNode
         }
         SetCurrentJob(job);
@@ -4501,7 +4383,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             marker.UpdateActionIcon();
         }
     }
-    public void SetCurrentPlan(GoapPlan plan) {
+    private void SetCurrentPlan(GoapPlan plan) {
         currentPlan = plan;
     }
     //Only stop an action node if it is the current action node
@@ -4648,7 +4530,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //        }
     //    }
     //}
-    public void OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
+    private void OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
         bool stillContinueCurrentAction = true;
 
         List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Start_Perform_Trait);

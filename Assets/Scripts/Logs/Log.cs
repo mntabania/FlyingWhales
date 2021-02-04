@@ -2,6 +2,7 @@
 using Inner_Maps.Location_Structures;
 using Logs;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 [System.Serializable]
 public struct Log {
@@ -190,8 +191,13 @@ public struct Log {
         
     #region Addition
     public void AddLogToDatabase() {
+        Profiler.BeginSample("Add Log To Database");
         DatabaseManager.Instance.mainSQLDatabase.InsertLog(this);
+        Profiler.EndSample();
+        
+        Profiler.BeginSample("Log Added Signal");
         Messenger.Broadcast(UISignals.LOG_ADDED, this);
+        Profiler.EndSample();
     }
     #endregion
 

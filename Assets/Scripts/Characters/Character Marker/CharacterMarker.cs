@@ -86,6 +86,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private GameDate _destroyDate;
     private List<HexTile> hexInWildernessForFlee;
     private List<Vector3> avoidThisPositions;
+    private int _currentColliderSize;
 
     #region Getters
     public GameDate destroyDate => _destroyDate;
@@ -801,21 +802,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
         // Messenger.AddListener(Signals.TICK_ENDED, PerTickMovement);
     }
     public void StopMovement() {
-        //if (!isMoving) {
-        //    return;
-        //}
         isMoving = false;
         // string log = $"{character.name} StopMovement function is called!";
         // character.logComponent.PrintLogIfActive(log);
         pathfindingAI.SetIsStopMovement(true);
         UpdateAnimation();
-        // Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
     }
     private void PerTickMovement() {
-        // if (character == null) {
-        //     Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
-        //     return;
-        // }
         if (isMoving) {
             Profiler.BeginSample($"{character.name} PerTickMovement");
             character.PerTickDuringMovement();    
@@ -940,16 +933,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         animator.Play(animation, 0, 0.5f);
     }
     public void UpdateAnimation() {
-        //if (isInCombatTick) {
-        //    return;
-        //}
         if (gameObject.activeSelf == false) { return; }
         if (!character.carryComponent.IsNotBeingCarried()) {
             PlaySleepGround();
             ResetBlood();
-            //if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
-            //    PlaySleepGround();
-            //}
             return; //if not in own party do not update any other animations
         }
         if (character.isDead) {
@@ -968,7 +955,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
             } else if ((character.limiterComponent.canMove == false || (!character.limiterComponent.canPerform && !character.limiterComponent.canWitness)) && (!character.traitContainer.HasTrait("Hibernating", "Stoned") || (!(character is Golem) && !(character is Troll)))) {
                 PlaySleepGround();
             } else if (isMoving) {
-                //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
                 PlayWalkingAnimation();
             } else if (character.currentActionNode != null && string.IsNullOrEmpty(character.currentActionNode.currentStateName) == false 
                                                            && string.IsNullOrEmpty(character.currentActionNode.currentState.animationName) == false) {
@@ -1098,25 +1084,44 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void UpdatePosition() {
         //This is checked per update, stress test this for performance
         //I'm keeping a separate field called anchoredPos instead of using the rect transform anchoredPosition directly because the multithread cannot access transform components
+        Profiler.BeginSample($"{character.name} Set Grid Tile Position");
         character.SetGridTilePosition(transform.localPosition);
+        Profiler.EndSample();
 
         if (previousGridTile != character.gridTileLocation && character.gridTileLocation != null) {
+            Profiler.BeginSample($"{character.name} On Character Moved To");
             character.gridTileLocation.parentMap.OnCharacterMovedTo(character, character.gridTileLocation, previousGridTile);
+            Profiler.EndSample();
             if(character != null) {
                 previousGridTile = character.gridTileLocation;
                 if (_previousHexTileLocation == null || (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap &&
                     _previousHexTileLocation != character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
                     if (_previousHexTileLocation != null) {
+                        _previousHexTileLocation.locationCharacterTracker.RemoveCharacterFromLocation(character);
+                        
+                        Profiler.BeginSample($"{character.name} Character Exited Hextile Broadcast");
                         Messenger.Broadcast(CharacterSignals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
+                        Profiler.EndSample();
+
+                        Profiler.BeginSample($"{character.name} Remove From Awareness List");
                         if(character.currentLocationAwareness == _previousHexTileLocation.locationAwareness) {
                             LocationAwarenessUtility.RemoveFromAwarenessList(character);
                         }
+                        Profiler.EndSample();
                     }
                     if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                         //When character enters new hex tile it becomes the previous hex tile altogether
                         _previousHexTileLocation = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                        
+                        _previousHexTileLocation.locationCharacterTracker.AddCharacterAtLocation(character);
+                        
+                        Profiler.BeginSample($"{character.name} Character Entered Hextile Broadcast");
                         Messenger.Broadcast(CharacterSignals.CHARACTER_ENTERED_HEXTILE, character, _previousHexTileLocation); //character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner
+                        Profiler.EndSample();
+                        
+                        Profiler.BeginSample($"{character.name} Add To Awareness List");
                         LocationAwarenessUtility.AddToAwarenessList(character, character.gridTileLocation);
+                        Profiler.EndSample();
                     } else {
                         _previousHexTileLocation = null;
                     }
@@ -1205,7 +1210,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         mainImg.color = color;
     }
     private void UpdateHairState() {
-        //TODO: Find another way to unify this
         Character character = this.character;
         if(character.reactionComponent.disguisedCharacter != null) {
             character = character.reactionComponent.disguisedCharacter;
@@ -1917,7 +1921,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         visionTrigger.SetAllCollidersState(state);
     }
     public void SetVisionColliderSize(int size) {
-        collider.size = new Vector2(size, size);
+        if (_currentColliderSize != size) {
+            _currentColliderSize = size;
+            collider.size = new Vector2(size, size);    
+        }
     }
     #endregion
 

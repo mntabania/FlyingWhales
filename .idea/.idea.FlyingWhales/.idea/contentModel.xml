@@ -1863,6 +1863,7 @@
             <e p="LogFiller.cs" t="Include" />
             <e p="LogFillers.cs" t="Include" />
           </e>
+          <e p="LocationGridTileListExtension.cs" t="Include" />
           <e p="Locations" t="Include">
             <e p="Biomes.cs" t="Include" />
             <e p="GridMap.cs" t="Include" />
@@ -2235,6 +2236,7 @@
             <e p="InnerMapGeneration.cs" t="Include" />
             <e p="LandmarkManager.cs" t="Include" />
             <e p="LightingManager.cs" t="Include" />
+            <e p="LocationCharacterTracker.cs" t="Include" />
             <e p="LocationClassManager.cs" t="Include" />
             <e p="LocationEventManager.cs" t="Include" />
             <e p="Region" t="Include">

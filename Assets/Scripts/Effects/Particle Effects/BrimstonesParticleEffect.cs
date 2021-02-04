@@ -15,7 +15,7 @@ public class BrimstonesParticleEffect : BaseParticleEffect {
         yield return new WaitForSeconds(0.6f);
         OnBrimstoneFell();
     }
-    protected override void ParticleAfterEffect(ParticleSystem particleSystem) {
+    protected virtual void ParticleAfterEffect(ParticleSystem particleSystem) {
         ObjectPoolManager.Instance.DestroyObject(gameObject);
     }
     public void OnBrimstoneFell() {

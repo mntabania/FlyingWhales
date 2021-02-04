@@ -10,6 +10,7 @@ using Locations.Settlements;
 using UnityEngine.Assertions;
 using UtilityScripts;
 using Crime_System;
+using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 
 public class CharacterJobTriggerComponent : JobTriggerComponent {
@@ -838,46 +839,53 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool TriggerRoamAroundTerritory(out JobQueueItem producedJob, bool checkIfPathPossibleWithoutDigging = false) {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TERRITORY)) {
-		    LocationGridTile chosenTile;
+		    Profiler.BeginSample($"{owner.name} TriggerRoamAroundTerritory");
+		    LocationGridTile chosenTile = null;
 		    if (owner.homeSettlement != null) {
-			    chosenTile = checkIfPathPossibleWithoutDigging ? 
-				    owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t)) : 
-				    owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+			    Profiler.BeginSample($"Home settlement");
+			    List<LocationGridTile> choices = ObjectPoolManager.Instance.CreateNewGridTileList();
+			    owner.homeSettlement.PopulatePassableTilesList(choices);
+			    choices.Shuffle();
+			    chosenTile = choices.GetFirstTileCharacterCanGoTo(owner);
+			    ObjectPoolManager.Instance.ReturnGridTileListToPool(choices);
+			    Profiler.EndSample();
 		    } else if (owner.homeStructure != null) {
+			    Profiler.BeginSample($"Home structure");
                 if (checkIfPathPossibleWithoutDigging) {
-				    List<LocationGridTile> choices = owner.homeStructure.passableTiles
-                        .Where(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
-				    chosenTile = choices.Count > 0 ? CollectionUtilities.GetRandomElement(choices) : CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
+	                List<LocationGridTile> choices = ObjectPoolManager.Instance.CreateNewGridTileList();
+	                choices.AddRange(owner.homeStructure.passableTiles);
+	                choices.Shuffle();
+	                chosenTile = choices.Count > 0 ? choices.GetFirstTileCharacterCanGoTo(owner) : CollectionUtilities.GetRandomElement(owner.homeStructure.tiles);
+	                ObjectPoolManager.Instance.ReturnGridTileListToPool(choices);
 			    } else {
 				    chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
                 }
+                Profiler.EndSample();
 		    } else if(owner.HasTerritory()) {
+			    Profiler.BeginSample($"Territory");
 			    HexTile chosenTerritory = owner.territory;
 			    if (checkIfPathPossibleWithoutDigging) {
-				    List<LocationGridTile> choices = chosenTerritory.locationGridTiles
-					    .Where(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
-				    if (choices.Count > 0) {
-					    chosenTile = CollectionUtilities.GetRandomElement(choices);	    
-				    } else {
-					    //only added this so there is a fallback if ever no valid tiles were found.
-					    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);    
-				    }
+				    List<LocationGridTile> choices = ObjectPoolManager.Instance.CreateNewGridTileList();
+				    chosenTerritory.locationGridTiles.PopulateListWithTilesCharacterCanGoTo(owner, choices);
+				    chosenTile = CollectionUtilities.GetRandomElement(choices.Count > 0 ? choices : chosenTerritory.locationGridTiles);
 			    } else {
 				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);    
 			    }
-		    } else {
-                if(owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-                    if (owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
-                        HexTile chosenHex = owner.gridTileLocation.GetNearestHexTileWithinRegion();
-                        chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
-                    } else {
-                        HexTile chosenHex = owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-                        chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
-                    }
-                } else {
-                    chosenTile = CollectionUtilities.GetRandomElement(owner.currentStructure.passableTiles);
-                }
-            }
+			    Profiler.EndSample();
+		    }
+		    if (chosenTile == null) {
+			    if(owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+				    Profiler.BeginSample($"Wilderness");
+				    HexTile chosenHex = owner.gridTileLocation.collectionOwner.GetConnectedHextileOrNearestHextile();
+				    chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
+				    Profiler.EndSample();
+			    } else {
+				    Profiler.BeginSample($"Current Structure");
+				    chosenTile = CollectionUtilities.GetRandomElement(owner.currentStructure.passableTiles);
+				    Profiler.EndSample();
+			    }
+		    }
+            Profiler.EndSample();
 		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile),  }, 0);
 		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_TERRITORY, INTERACTION_TYPE.ROAM, owner, owner);
