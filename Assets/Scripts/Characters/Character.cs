@@ -1767,6 +1767,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Utilities
+    public bool IsUndead() {
+        if (characterClass.IsZombie() || (this is Summon summon && 
+            (summon.summonType == SUMMON_TYPE.Ghost || summon.summonType == SUMMON_TYPE.Skeleton || 
+             summon.summonType == SUMMON_TYPE.Vengeful_Ghost || summon.summonType == SUMMON_TYPE.Revenant))) {
+            return true;
+        }
+        return false;
+    }
     private bool AssignRace(RACE race, bool isInitial = false) {
         if(_raceSetting == null || _raceSetting.race != race) {
             if (_raceSetting != null) {
