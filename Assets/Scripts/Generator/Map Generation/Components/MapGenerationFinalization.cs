@@ -421,7 +421,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			structure.AddPOI(artifact);
 		} else {
 			int artifactCount = GridMap.Instance.allRegions.Length <= 2 ? 1 : 2;
-			List<TILE_OBJECT_TYPE> artifactChoices = WorldConfigManager.Instance.initialArtifactChoices;
+			List<TILE_OBJECT_TYPE> artifactChoices = new List<TILE_OBJECT_TYPE>(WorldConfigManager.Instance.initialArtifactChoices);
 			//randomly generate Artifacts
 			for (int i = 0; i < artifactCount; i++) {
 				if (artifactChoices.Count == 0) { break; }
