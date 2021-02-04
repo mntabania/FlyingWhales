@@ -29,7 +29,7 @@ public class GiantSpiderBehaviour : BaseMonsterBehaviour {
             
                 //set abduction target if none, and chance met
                 if (character.homeStructure != null) { 
-                    if (character.behaviourComponent.currentAbductTarget == null  && GameUtilities.RollChance(100)) { //1
+                    if (character.behaviourComponent.currentAbductTarget == null  && GameUtilities.RollChance(1)) { //1
                         List<Character> characterChoices = ObjectPoolManager.Instance.CreateNewCharactersList();
                         for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                             Character c = character.currentRegion.charactersAtLocation[i];
