@@ -139,11 +139,17 @@ public class Cook : GoapAction {
     public void AfterCookSuccess(ActualGoapNode goapNode) {
         if(goapNode.poiTarget is Character targetCharacter) {
             goapNode.actor.UncarryPOI(addToLocation: false);
-            // if (targetCharacter.currentRegion != null) {
-            //     targetCharacter.currentRegion.RemoveCharacterFromLocation(targetCharacter);
-            // }
-            targetCharacter.SetDestroyMarkerOnDeath(true);
-            targetCharacter.Death(deathFromAction: goapNode, responsibleCharacter: goapNode.actor, _deathLog: goapNode.descriptionLog);
+            if (targetCharacter.isDead) {
+                if (targetCharacter.currentRegion != null) {
+                    targetCharacter.currentRegion.RemoveCharacterFromLocation(targetCharacter);
+                }
+                if (targetCharacter.hasMarker) {
+                    targetCharacter.DestroyMarker();
+                }
+            } else {
+                targetCharacter.SetDestroyMarkerOnDeath(true);
+                targetCharacter.Death(deathFromAction: goapNode, responsibleCharacter: goapNode.actor, _deathLog: goapNode.descriptionLog);    
+            }
         }
         CharacterManager.Instance.CreateFoodPileForPOI(goapNode.poiTarget, goapNode.actor.gridTileLocation);
     }
