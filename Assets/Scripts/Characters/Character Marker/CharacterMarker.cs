@@ -802,21 +802,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
         // Messenger.AddListener(Signals.TICK_ENDED, PerTickMovement);
     }
     public void StopMovement() {
-        //if (!isMoving) {
-        //    return;
-        //}
         isMoving = false;
         // string log = $"{character.name} StopMovement function is called!";
         // character.logComponent.PrintLogIfActive(log);
         pathfindingAI.SetIsStopMovement(true);
         UpdateAnimation();
-        // Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
     }
     private void PerTickMovement() {
-        // if (character == null) {
-        //     Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
-        //     return;
-        // }
         if (isMoving) {
             Profiler.BeginSample($"{character.name} PerTickMovement");
             character.PerTickDuringMovement();    
@@ -941,16 +933,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         animator.Play(animation, 0, 0.5f);
     }
     public void UpdateAnimation() {
-        //if (isInCombatTick) {
-        //    return;
-        //}
         if (gameObject.activeSelf == false) { return; }
         if (!character.carryComponent.IsNotBeingCarried()) {
             PlaySleepGround();
             ResetBlood();
-            //if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
-            //    PlaySleepGround();
-            //}
             return; //if not in own party do not update any other animations
         }
         if (character.isDead) {
@@ -969,7 +955,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
             } else if ((character.limiterComponent.canMove == false || (!character.limiterComponent.canPerform && !character.limiterComponent.canWitness)) && (!character.traitContainer.HasTrait("Hibernating", "Stoned") || (!(character is Golem) && !(character is Troll)))) {
                 PlaySleepGround();
             } else if (isMoving) {
-                //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
                 PlayWalkingAnimation();
             } else if (character.currentActionNode != null && string.IsNullOrEmpty(character.currentActionNode.currentStateName) == false 
                                                            && string.IsNullOrEmpty(character.currentActionNode.currentState.animationName) == false) {
@@ -1225,7 +1210,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         mainImg.color = color;
     }
     private void UpdateHairState() {
-        //TODO: Find another way to unify this
         Character character = this.character;
         if(character.reactionComponent.disguisedCharacter != null) {
             character = character.reactionComponent.disguisedCharacter;

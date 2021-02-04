@@ -4373,7 +4373,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         currentActionNode = actionNode;
         if (currentActionNode != null) {
-            logComponent.PrintLogIfActive($"{name} will do action {actionNode.action.goapType} to {actionNode.poiTarget}");
+            logComponent.PrintLogIfActive($"{name} will do action {actionNode.action.name} to {actionNode.poiTarget}");
             //Current Job must always be the job in the top prio, if there is inconsistency with the currentActionNode, then the problem lies on what you set as the currentActionNode
         }
         SetCurrentJob(job);

@@ -1022,5 +1022,6 @@ public class CombatState : CharacterState {
         isBeingApprehended = false;
         isFleeToHome = false;
         _timesHitCurrentTarget = 0;
+        isExecutingAttack = false;
     }
 }
