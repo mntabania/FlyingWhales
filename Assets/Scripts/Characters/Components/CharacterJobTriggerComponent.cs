@@ -840,7 +840,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool TriggerRoamAroundTerritory(out JobQueueItem producedJob, bool checkIfPathPossibleWithoutDigging = false) {
 	    if (!owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TERRITORY)) {
 		    Profiler.BeginSample($"{owner.name} TriggerRoamAroundTerritory");
-		    LocationGridTile chosenTile;
+		    LocationGridTile chosenTile = null;
 		    if (owner.homeSettlement != null) {
 			    Profiler.BeginSample($"Home settlement");
 			    List<LocationGridTile> choices = ObjectPoolManager.Instance.CreateNewGridTileList();
@@ -872,19 +872,20 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);    
 			    }
 			    Profiler.EndSample();
-		    } else {
-                if(owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-	                Profiler.BeginSample($"Wilderness");
-	                HexTile chosenHex = owner.gridTileLocation.collectionOwner.GetConnectedHextileOrNearestHextile();
-	                chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
-	                Profiler.EndSample();
-                } else {
-	                Profiler.BeginSample($"Current Structure");
-                    chosenTile = CollectionUtilities.GetRandomElement(owner.currentStructure.passableTiles);
-                    Profiler.EndSample();
-                }
-            }
-		    Profiler.EndSample();
+		    }
+		    if (chosenTile == null) {
+			    if(owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+				    Profiler.BeginSample($"Wilderness");
+				    HexTile chosenHex = owner.gridTileLocation.collectionOwner.GetConnectedHextileOrNearestHextile();
+				    chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
+				    Profiler.EndSample();
+			    } else {
+				    Profiler.BeginSample($"Current Structure");
+				    chosenTile = CollectionUtilities.GetRandomElement(owner.currentStructure.passableTiles);
+				    Profiler.EndSample();
+			    }
+		    }
+            Profiler.EndSample();
 		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile),  }, 0);
 		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_TERRITORY, INTERACTION_TYPE.ROAM, owner, owner);
