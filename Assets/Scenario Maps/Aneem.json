@@ -2920,7 +2920,7 @@
       ],
       "minimumVillagerCount": 14,
       "factionRace": "ELVES",
-      "settlementType": "Elvent_Hamlet"
+      "settlementType": "Elven_Hamlet"
     },
     {
       "hexTiles": [
